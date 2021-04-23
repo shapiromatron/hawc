@@ -69,7 +69,7 @@ class LitOverview(BaseList):
         return context
 
 
-class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
+class SearchCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     """
     Select an existing search and copy-as-new
     """
@@ -77,14 +77,11 @@ class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
     template_name = "lit/search_copy_selector.html"
     form_class = forms.SearchSelectorForm
 
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
-        self.permission_check_user_can_view()
-        return super().dispatch(*args, **kwargs)
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
         context["breadcrumbs"] = lit_overview_crumbs(
             self.request.user, self.assessment, "Copy literature search or import"
         )

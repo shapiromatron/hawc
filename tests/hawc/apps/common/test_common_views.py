@@ -1,5 +1,4 @@
 import pytest
-from django.contrib.sites.shortcuts import get_current_site
 from django.test import RequestFactory
 from django.urls import reverse
 
@@ -11,8 +10,8 @@ def test_get_referrer():
     factory = RequestFactory()
 
     request = factory.get("/")
-    current_site = get_current_site(request)
-    default_url = f'https://{get_current_site(request)}{reverse("portal")}'
+    current_site = "testserver"
+    default_url = f'https://{current_site}{reverse("portal")}'
 
     # url should resolve and will pass-through
     for good_url in [
@@ -34,9 +33,16 @@ def test_get_referrer():
         request = factory.get("/", HTTP_REFERER=bad_url)
         assert get_referrer(request, default_url) == default_url
 
+    # extra arguments removed
+    for bad_url in [
+        f'https://{current_site}/portal/?onmouseover="alert(26)"&extra=true',
+    ]:
+        request = factory.get("/", HTTP_REFERER=bad_url)
+        assert get_referrer(request, default_url) == f"https://{current_site}/portal/"
+
     # check default options
     request = factory.get("/")
-    assert get_referrer(request, "/path-test/") == f"https://{get_current_site(request)}/path-test/"
+    assert get_referrer(request, "/path-test/") == f"https://{current_site}/path-test/"
     assert (
         get_referrer(request, "https://complete-url.com/path-test/")
         == "https://complete-url.com/path-test/"

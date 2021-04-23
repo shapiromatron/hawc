@@ -169,7 +169,7 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
 class AssessmentScoreViewset(AssessmentEditViewset):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
-    assessment_filter_args = "metric__domain_assessment"
+    assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
 
     def get_assessment(self, request, *args, **kwargs):

@@ -414,14 +414,9 @@ class Study(Reference):
     def get_study(self):
         return self
 
-    def user_can_edit_study(self, assessment, user):
-        # TODO - remove, or user super()? this is almost already implemented with standard methods?
-        if user.is_superuser or user in assessment.project_manager.all():
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return self.editable and user in assessment.team_members.all()
+    def user_can_edit_study(self, assessment, user) -> bool:
+        perms = assessment.get_permissions()
+        return perms.can_edit_study(self, user)
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
