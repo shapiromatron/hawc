@@ -959,7 +959,14 @@ class Content(models.Model):
         return f"assessment.Content.{content_type}"
 
     @classmethod
-    def rendered_page(cls, content_type: ContentTypeChoices, request: HttpRequest, context: Dict):
+    def rendered_page(
+        cls, content_type: ContentTypeChoices, request: HttpRequest, context: Dict
+    ) -> str:
+        """Return rendered template response for the requested content.
+
+        Return cached content for this page if one exists, or if it does not exist, render using
+        the current context provided, cache, and return.
+        """
         key = cls.get_cache_key(content_type)
         html = cache.get(key)
         if html is None:
