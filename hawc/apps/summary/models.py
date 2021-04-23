@@ -252,8 +252,10 @@ class SummaryTable(models.Model):
         except ValueError as e:
             raise ValidationError({"content": str(e)})
 
+        # clean up control characters before string validation
+        content_str = json.dumps(self.content).replace('\\"', '"')
+
         # validate tags used in text
-        content_str = json.dumps(self.content)
         validate_html_tags(content_str)
         validate_hyperlinks(content_str)
 
