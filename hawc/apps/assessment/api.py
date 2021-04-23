@@ -498,6 +498,8 @@ class DatasetViewset(AssessmentViewset):
     def data(self, request, pk: int = None):
         instance = self.get_object()
         revision = instance.get_latest_revision()
+        if not revision.data_exists():
+            raise Http404()
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)
 
@@ -507,7 +509,7 @@ class DatasetViewset(AssessmentViewset):
         if not self.assessment.user_is_team_member_or_higher(request.user):
             raise PermissionDenied()
         revision = instance.revisions.filter(version=version).first()
-        if revision is None:
+        if revision is None or not revision.data_exists():
             raise Http404()
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)

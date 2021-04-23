@@ -1,4 +1,5 @@
 import json
+import logging
 import uuid
 from typing import Any, Dict, List, NamedTuple
 
@@ -28,6 +29,8 @@ from ..vocab.models import VocabularyNamespace
 from . import jobs, managers
 from .permissions import AssessmentPermissions
 from .tasks import add_time_spent
+
+logger = logging.getLogger(__name__)
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
@@ -785,6 +788,14 @@ class DatasetRevision(models.Model):
 
     def get_df(self) -> pd.DataFrame:
         return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
+
+    def data_exists(self) -> bool:
+        try:
+            _ = self.data.file
+            return True
+        except FileNotFoundError:
+            logger.error(f"DatasetRevision {self.id} not found: {self.data.path}")
+            return False
 
     @classmethod
     def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
