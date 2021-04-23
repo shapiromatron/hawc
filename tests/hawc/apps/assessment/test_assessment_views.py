@@ -24,11 +24,12 @@ class TestAssessmentClearCache:
         # test successes
         for client in ["pm@hawcproject.org", "team@hawcproject.org"]:
             c = Client()
-            if client:
-                assert c.login(username=client, password="pw") is True
-            # this is success behavior in test environment w/o redis - TODO improve?
-            with pytest.raises(NotImplementedError):
-                response = c.get(url)
+            assert c.login(username=client, password="pw") is True
+
+            # this is "success" using a non-redis cache
+            with pytest.raises(NotImplementedError) as err:
+                c.get(url)
+            assert "Cannot wipe assessment cache using this cache backend" in str(err)
 
     @pytest.mark.django_db
     def test_functionality(self, db_keys):
