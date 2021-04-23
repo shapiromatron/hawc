@@ -51,7 +51,9 @@ urlpatterns = [
         name="experiment_copy_selector",
     ),
     path("experiment/<int:pk>/", views.ExperimentRead.as_view(), name="experiment_detail",),
-    path("experiment/<int:pk>/edit/", views.ExperimentUpdate.as_view(), name="experiment_update",),
+    path(
+        "experiment/<int:pk>/update/", views.ExperimentUpdate.as_view(), name="experiment_update",
+    ),
     path(
         "experiment/<int:pk>/delete/", views.ExperimentDelete.as_view(), name="experiment_delete",
     ),
@@ -68,7 +70,7 @@ urlpatterns = [
     ),
     path("animal-group/<int:pk>/", views.AnimalGroupRead.as_view(), name="animal_group_detail",),
     path(
-        "animal-group/<int:pk>/edit/",
+        "animal-group/<int:pk>/update/",
         views.AnimalGroupUpdate.as_view(),
         name="animal_group_update",
     ),
@@ -84,7 +86,7 @@ urlpatterns = [
     ),
     # Dosing Regime
     path(
-        "dosing-regime/<int:pk>/edit/",
+        "dosing-regime/<int:pk>/update/",
         views.DosingRegimeUpdate.as_view(),
         name="dosing_regime_update",
     ),
@@ -104,6 +106,6 @@ urlpatterns = [
         "animal-group/<int:pk>/endpoint/new/", views.EndpointCreate.as_view(), name="endpoint_new",
     ),
     path("endpoint/<int:pk>/", views.EndpointRead.as_view(), name="endpoint_detail"),
-    path("endpoint/<int:pk>/edit/", views.EndpointUpdate.as_view(), name="endpoint_update",),
+    path("endpoint/<int:pk>/update/", views.EndpointUpdate.as_view(), name="endpoint_update",),
     path("endpoint/<int:pk>/delete/", views.EndpointDelete.as_view(), name="endpoint_delete",),
 ]

@@ -12,7 +12,7 @@ def user_permissions(driver, root_url):
     - authenticated users with project permissions can view update pages
     """
     detail_url = root_url + assessment_url
-    edit_url = root_url + assessment_url + "edit/"
+    edit_url = root_url + assessment_url + "update/"
 
     # check w/o authentication we can view the public url
     h.go_to(detail_url)
