@@ -411,3 +411,27 @@ print and (min-width: 58em) {
     margin: 0;
     text-rendering: optimizeLegibility;
   }
+
+/* https://github.com/USEPA/OneEPA-Standalone-App-Template/blob/master/css/core/style.css#L1390 */
+/** EPA Disclaimers ****************************************************************/
+  .disclaimer {
+    background: #f1f1f1;
+    display: block;
+    margin: 0 0 1.5em;
+    padding: .75em 1.5em;
+    word-wrap: break-word;
+  }
+
+  .epa-archive-link,
+  .exit-disclaimer,
+  .free-viewers {
+    background-color: #aeb0b5;
+    border-radius: 3px;
+    color: #323a45 !important;
+    display: inline-block;
+    font-size: 88.2352941176%;
+    margin: 0 0.3333333333em;
+    padding: 0.0666666667em 0.4666666667em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
