@@ -946,10 +946,6 @@ class Content(models.Model):
         super().save(*args, **kwargs)
         self.clear_cache()
 
-    def render(self, context):
-        template = engines["django"].from_string(self.template)
-        return template.render(context)
-
     def clear_cache(self):
         key = self.get_cache_key(self.content_type)
         cache.delete(key)

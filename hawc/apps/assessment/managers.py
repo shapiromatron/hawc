@@ -1,7 +1,7 @@
 import json
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import QuerySet, Q
+from django.db.models import Q, QuerySet
 
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
