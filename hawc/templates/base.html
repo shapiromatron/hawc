@@ -34,7 +34,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     {% if extra_branding and flavor == "EPA" %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/accordions.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/boxes.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/forms.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/tables.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/tabs.css' %}" />
     {% endif %}
     {% block extrastyle %}{% endblock %}
 
