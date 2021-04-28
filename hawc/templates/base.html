@@ -67,7 +67,7 @@
     {% include 'includes/navigation.html' %}
 
     {% block content_row_outer %}
-      <div class="main-content clearfix" id="main-content">
+      <section class="main-content clearfix" id="main-content">
         <div class="row no-gutters" style="min-height: 100vh;">
           {% block sidebar_outer %}{% endblock sidebar_outer %}
           <div class="col overflow-auto">
@@ -90,7 +90,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
     {% endblock content_row_outer %}
 
     {% cache 3600 footer %}
