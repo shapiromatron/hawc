@@ -1,7 +1,7 @@
 {% load static %}
 
 {% block navbar_outer %}
-<nav class="navbar navbar-expand-sm navbar-light bg-light sticky-top hawc-header">
+<nav class="navbar navbar-expand-sm navbar-light bg-light hawc-header">
 
     <a class="ml-3 navbar-brand" href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
         {% if extra_branding and flavor == "EPA" %}
