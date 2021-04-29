@@ -37,9 +37,3 @@ section a.btn {
     vertical-align: baseline;
     white-space: normal
 }
-
-/** Forms ***/
-.form-text.text-muted {
-  min-width: initial;
-  border: initial;
-}
