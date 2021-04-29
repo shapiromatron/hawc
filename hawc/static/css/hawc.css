@@ -31,12 +31,25 @@
 .sidebar-collapsed {
     width: 50px;
 }
-.sidebar .nav {
-    font-weight: bold;
-}
+
 .sidebar-collapsed .nav {
     opacity: 0;
 }
+
+.sidebar .nav-item.nav-link {
+    color: rgba(255,255,255,.5);
+    font-weight: bold;
+}
+
+.sidebar .nav-item .nav-link, #toggle-sidebar {
+    color: #f8f9fa;
+}
+
+.sidebar .nav-item .nav-link:hover, #toggle-sidebar:hover {
+    color: #cbd3da;
+}
+
+
 /* end sidebar */
 
 iframe {

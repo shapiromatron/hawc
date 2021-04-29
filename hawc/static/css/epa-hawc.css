@@ -1,0 +1,39 @@
+/* sidebar  */
+.sidebar {
+    width: 230px;
+    background-color: #ffffff;
+}
+.sidebar-collapsed {
+    width: 50px;
+}
+
+.sidebar-collapsed .nav {
+    opacity: 0;
+}
+
+.sidebar .nav-item.nav-link {
+    color: #000000;
+    font-weight: bold;
+}
+
+.sidebar .nav-item .nav-link{
+    color: #000000;
+}
+
+#toggle-sidebar-container {
+    display: none;
+}
+
+.sidebar .nav-item .nav-link:hover {
+    color: #0071bc;
+    background-color: #f1f1f1;
+}
+
+.sidebar li {
+    border-top: 1px solid #5b616b;
+}
+.sidebar li:first-child {
+    border-top: 0px;
+}
+
+/* end sidebar */
