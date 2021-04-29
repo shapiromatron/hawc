@@ -6,22 +6,19 @@
 }
 
 /** Tables ********************************************************************/
-table, table.table-striped tr:nth-of-type(odd) {
-  background-color: #ffffff;
-}
 .table td, .table th {
   border: 1px solid #5b616b;
 }
-.table-striped tr:nth-of-type(even) {
-  background-color: #f0f4f9;
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #ffffff;
 }
-th {
-  background-color: #f1f1f1;
+.table-striped tbody tr:nth-of-type(even) {
+  background-color: #f0f4f9;
 }
 
 /** Buttons ***/
 .btn-primary {
-    color: var(--epa-white);
+    color: var(--epa-white) !important;
     background-color: var(--epa-primary);
 }
 
@@ -29,15 +26,22 @@ th {
     background-color: var(--epa-primary-hover)
 }
 
-section .btn {
+section input[type='button'].btn, section input[type='submit'].btn, section a.btn {
     border: 0;
     cursor: pointer;
     display: inline-block;
     font-weight: bold;
     line-height: 1;
-    margin: 0 0 1.5em;
+    margin: initial;
+    padding: 0.5882em 1.1765em;
     text-align: center;
     text-decoration: none;
     vertical-align: baseline;
     white-space: normal
+}
+
+/** Forms ***/
+.form-text.text-muted {
+  min-width: initial;
+  border: initial;
 }
