@@ -26,14 +26,12 @@
     background-color: var(--epa-primary-hover)
 }
 
-section input[type='button'].btn, section input[type='submit'].btn, section a.btn {
+section a.btn {
     border: 0;
     cursor: pointer;
     display: inline-block;
     font-weight: bold;
     line-height: 1;
-    margin: initial;
-    padding: 0.5882em 1.1765em;
     text-align: center;
     text-decoration: none;
     vertical-align: baseline;
