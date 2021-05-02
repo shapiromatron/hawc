@@ -64,10 +64,9 @@
     {% endif %}
     {% endcache %}
 
-    {% include 'includes/navigation.html' %}
-
     {% block content_row_outer %}
       <section class="main-content clearfix" id="main-content">
+        {% include 'includes/navigation.html' %}
         <div class="row no-gutters" style="min-height: 100vh;">
           {% block sidebar_outer %}{% endblock sidebar_outer %}
           <div class="col overflow-auto">
