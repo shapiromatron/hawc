@@ -167,21 +167,6 @@
     padding-bottom: 0.25em !important;
   }
 
-  dd,ol,p,ul,
-  .fieldset-description,
-  .form-actions,
-  .form-item,
-  .pane-content > .node,
-  .node-teaser,
-  .view-mode-teaser:not(.file),
-  .view-mode-teaser2,
-  .view-mode-title2,
-  ul.accordion ul {
-    margin: 0;
-    padding-bottom: 1.5em;
-    word-wrap: break-word;
-  }
-
   div.links,
   .box,
   .panel-pane,
@@ -942,13 +927,6 @@
 	}
 	section {
 		background: #fff
-	}
-	@media screen {
-		section dd, section ol, section p, section ul, section .fieldset-description, section .form-actions, section .form-item, section .pane-content>.node, section .node-teaser, section :not(.file).view-mode-teaser, section .view-mode-teaser2, section .view-mode-title2, section ul.accordion ul {
-			margin: 0;
-			padding-bottom: 1.5em;
-			word-wrap: break-word;
-		}
 	}
 	@media screen {
 		section ul {
