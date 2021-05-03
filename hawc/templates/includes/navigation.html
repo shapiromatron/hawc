@@ -1,14 +1,58 @@
 {% load static %}
 
 {% block navbar_outer %}
+{% if extra_branding and flavor == "EPA" %}
+<nav class="navbar navbar-expand-sm hawc-header">
+
+    <h2>
+        <a href="https://hero.epa.gov/hero/index.cfm/content/home">Health Assessment Workspace Collaborative (HAWC)</a>
+    </h2>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <ul id="navbarSupportedContent" class="nav navbar-nav collapse navbar-collapse justify-content-end">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ CONTACT_US }}">Contact Us</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
+        </li>
+
+        {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">Your HAWC</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'portal' %}">Portal</a>
+                <a class="dropdown-item" href="{% url 'user:settings' %}">Profile</a>
+                <a class="dropdown-item" href="{% url 'mgmt:user_assignments' %}">Assigned tasks</a>
+                {% if user.is_staff %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{%url 'admin:index' %}">Admin</a>
+                {% endif %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'user:logout' %}">Logout</a>
+            </div>
+        </li>
+        {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
+        </li>
+        {% endif %}
+    </ul>
+
+</nav>
+{% else %}
 <nav class="navbar navbar-expand-sm navbar-light bg-light hawc-header">
 
     <a class="ml-3 navbar-brand" href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
-        {% if extra_branding and flavor == "EPA" %}
-        <span>HAWC</span>
-        {% else %}
         <img src="{% static 'img/HAWC-40.png' %}">
-        {% endif %}
     </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -51,4 +95,5 @@
     </ul>
 
 </nav>
+{% endif %}
 {% endblock navbar_outer %}
