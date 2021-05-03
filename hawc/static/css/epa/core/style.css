@@ -974,16 +974,7 @@
 		color: #fff;
 		text-shadow: none
 	}
-	section.main-content, section .main-footer>.main-footer__inner, section .main-nav>.nav__inner, section .masthead, section .region-alert>.block-alert, section .secondary-nav {
-		margin: 0 auto;
-		max-width: 35em;
-		padding: 0 1em
-	}
-	@media screen and (min-width:35em), print and (min-width:35em) {
-		section .main-nav>.nav__inner, section .masthead, section .region-alert>.block-alert, section .secondary-nav, section.main-content, section .main-footer>.main-footer__inner {
-			max-width: 60em;
-		}
-	}
+
 	section.main-content {
 		background-color: #fff;
 		color: #212121
