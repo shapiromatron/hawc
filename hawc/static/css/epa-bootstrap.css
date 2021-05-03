@@ -26,7 +26,7 @@
     background-color: var(--epa-primary-hover)
 }
 
-section a.btn {
+section button.btn, section input[type="button"].btn, section a.btn {
     border: 0;
     cursor: pointer;
     display: inline-block;
@@ -36,4 +36,95 @@ section a.btn {
     text-decoration: none;
     vertical-align: baseline;
     white-space: normal
+}
+
+/** Header **/
+
+#search-box {
+  margin-top: 0px;
+}
+
+/** Tabs *********************************************************************/
+.nav-tabs > li > a,
+.nav-tabs > li > a:visited, .react-tabs__tab-list > li,
+.react-tabs__tab-list > li:visited {
+  background-color: #d6d7d9;
+  color: #212121;
+  line-height: 1;
+  margin: 0;
+  padding: .5882em 1.1765em;
+  text-decoration: none;
+}
+@media screen and (min-width: 30em) {
+  .nav-tabs > li > a,
+  .nav-tabs > li > a:visited, .react-tabs__tab-list > li,
+  .react-tabs__tab-list > li:visited {
+    margin: 0 0 .5em;
+  }
+  .nav-tabs > li > a:hover,
+  .nav-tabs > li > a:focus,
+  .nav-tabs > li > a:active, .react-tabs__tab-list > li:hover,
+  .react-tabs__tab-list > li:focus,
+  .react-tabs__tab-list > li:active {
+    background-color: #aeb0b5;
+    box-shadow: none;
+    color: #212121;
+    outline: 0;
+    text-decoration: none;
+  }
+  .nav-tabs > li > a.nav-link.active,
+  .nav-tabs > li > a.nav-link.active:hover, .react-tabs__tab-list > li.react-tabs__tab--selected,
+  .react-tabs__tab-list > li.react-tabs__tab--selected:hover {
+    background-color: #212121;
+    color: #fff;
+  }
+  .nav-tabs > li > a.nav-link.active:focus, .react-tabs__tab-list > li.react-tabs__tab--selected:focus {
+    background-color: #323a45;
+  }
+  .nav-tabs > li > a.nav-link.active:hover, .react-tabs__tab-list > li.react-tabs__tab--selected:hover {
+    cursor: default;
+  }
+
+  .nav-tabs, .react-tabs__tab-list {
+    margin-bottom: 1.5em;
+  }
+  .nav-tabs > li > a > br, .react-tabs__tab-list > li > br {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 30em) {
+  .nav-tabs, .react-tabs__tab-list {
+    margin-bottom: 1em;
+  }
+  .nav-tabs > li, .react-tabs__tab-list > li {
+    border-bottom: 1px solid #aeb0b5;
+    padding-right: .5em; /* LTR */
+    margin-bottom: .5em;
+  }
+  .nav-tabs > li:first-child, .react-tabs__tab-list > li:first-child {
+    padding-left: .5em; /* LTR */
+  }
+  .nav-tabs > li > a, .react-tabs__tab-list > li {
+    border-radius: 3px 3px 0 0 !important;
+    margin: 0;
+  }
+  .nav-tabs > li > a > br, .react-tabs__tab-list > li > br {
+    display: block;
+  }
+}
+.nav-tabs > li > a:focus,
+.nav-tabs > li > a:hover, .react-tabs__tab-list > li:focus,
+.react-tabs__tab-list > li:hover {
+  border-color: #aeb0b5;
+}
+.nav-tabs > li:first-child > a, .react-tabs__tab-list > li:first-child {
+  border-radius: 3px 3px 0 0;
+}
+.nav-tabs > li:last-child > a, .react-tabs__tab-list > li:last-child {
+  border-radius: 0 0 3px 3px;
+}
+
+.nav-tabs, .nav-tabs .nav-link {
+  border: 0px;
 }
