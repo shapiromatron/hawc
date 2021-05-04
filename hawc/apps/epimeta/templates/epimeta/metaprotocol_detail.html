@@ -6,12 +6,12 @@
     <div class="dropdown btn-group float-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
       <div class="dropdown-menu dropdown-menu-right">
-          <h6 class="dropdown-header">Meta-protocol editing</h6>
+          <span class="dropdown-header">Meta-protocol editing</span>
           <a class="dropdown-item" href="{% url 'meta:protocol_update' object.pk %}">Update</a>
           <a class="dropdown-item" href="{% url 'meta:protocol_delete' object.pk %}">Delete</a>
 
           <div class="dropdown-divider"></div>
-          <h6 class="dropdown-header">Meta-result editing</h6>
+          <span class="dropdown-header">Meta-result editing</span>
           <a class="dropdown-item" href="{% url 'meta:result_create' object.pk %}">Create new</a>
           <a class="dropdown-item" href="{% url 'meta:result_copy_selector' object.pk %}">Copy from existing</a>
       </div>

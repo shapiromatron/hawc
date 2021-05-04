@@ -6,21 +6,21 @@
       <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
         <div class="dropdown-menu dropdown-menu-right">
-            <h6 class="dropdown-header">Study population editing</h6>
+            <span class="dropdown-header">Study population editing</span>
             <a class="dropdown-item" href="{% url 'epi:sp_update' object.pk %}">Update</a>
             <a class="dropdown-item" href="{% url 'epi:sp_delete' pk=object.pk %}">Delete</a>
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Exposure measurements</h6>
+            <span class="dropdown-header">Exposure measurements</span>
             <a class="dropdown-item" href="{% url 'epi:exp_create' object.pk %}">Create</a>
             <a class="dropdown-item" href="{% url 'epi:exp_copy_selector' object.pk %}">Copy from existing</a>
             {% if object.can_create_sets %}
               <div class="dropdown-divider"></div>
-              <h6 class="dropdown-header">Comparison sets</h6>
+              <span class="dropdown-header">Comparison sets</span>
               <a class="dropdown-item" href="{% url 'epi:cs_create' object.pk %}">Create</a>
               <a class="dropdown-item" href="{% url 'epi:cs_copy_selector' object.pk %}">Copy from existing</a>
             {% endif %}
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Outcomes</h6>
+            <span class="dropdown-header">Outcomes</span>
             <a class="dropdown-item" href="{% url 'epi:outcome_create' object.pk %}">Create</a>
             <a class="dropdown-item" href="{% url 'epi:outcome_copy_selector' object.pk %}">Copy from existing</a>
         </div>

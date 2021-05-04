@@ -7,7 +7,7 @@
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
       <div class="dropdown-menu dropdown-menu-right">
 
-          <h6 class="dropdown-header">Study editing</h6>
+          <span class="dropdown-header">Study editing</span>
           {% if object.editable %}
           <a class="dropdown-item" href="{% url 'study:update' object.pk %}">Update study details</a>
           <a class="dropdown-item" href="{% url 'lit:ref_edit' object.pk %}">Update reference</a>
@@ -24,14 +24,14 @@
 
             {% if object.bioassay %}
               <div class="dropdown-divider"></div>
-              <h6 class="dropdown-header">Animal bioassay editing</h6>
+              <span class="dropdown-header">Animal bioassay editing</span>
               <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
               <a class="dropdown-item" href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a>
             {% endif %}
 
             {% if object.in_vitro %}
               <div class="dropdown-divider"></div>
-              <h6 class="dropdown-header">In-vitro analysis editing</h6>
+              <span class="dropdown-header">In-vitro analysis editing</span>
               <a class="dropdown-item" href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a>
               <a class="dropdown-item" href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a>
               <a class="dropdown-item" href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a>
@@ -39,14 +39,14 @@
 
             {% if object.epi %}
               <div class="dropdown-divider"></div>
-              <h6 class="dropdown-header">Epidemiology editing</h6>
+              <span class="dropdown-header">Epidemiology editing</span>
               <a class="dropdown-item" href="{% url 'epi:sp_create' object.pk %}">Create new study population</a>
               <a class="dropdown-item" href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a>
             {% endif %}
 
             {% if object.epi_meta %}
               <div class="dropdown-divider"></div>
-              <h6 class="dropdown-header">Epidemiology meta-analysis editing</h6>
+              <span class="dropdown-header">Epidemiology meta-analysis editing</span>
               <a class="dropdown-item" href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a>
             {% endif %}
           {% endif %}

@@ -6,24 +6,24 @@
   <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
-      <h6 class="dropdown-header">Search/import editing</h6>
+      <span class="dropdown-header">Search/import editing</span>
       <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
       <a class="dropdown-item" href="{% url 'lit:import_new' assessment.pk %}">New import</a>
       <a class="dropdown-item" href="{% url 'lit:import_ris_new' assessment.pk %}">New import from file</a>
       <a class="dropdown-item" href="{% url 'lit:copy_search' assessment.pk %}">Copy search from existing</a>
       <div class="dropdown-divider"></div>
-      <h6 class="dropdown-header">Reference editing</h6>
+      <span class="dropdown-header">Reference editing</span>
       <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
       <a class="dropdown-item" href="{% url 'lit:search_tags_edit' assessment.pk manual_import.slug %}">Tag manually-added references</a>
       <a class="dropdown-item" href="{% url 'lit:tag_untagged' assessment.pk %}">Tag untagged references</a>
       {% if obj_perms.edit_assessment %}
         <div class="dropdown-divider"></div>
-        <h6 class="dropdown-header">Assessment-level editing</h6>
+        <span class="dropdown-header">Assessment-level editing</span>
         <a class="dropdown-item" href="{% url 'lit:tags_update' assessment.pk %}">Update literature tags</a>
         <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full-text URLs</a>
       {% endif %}
       <div class="dropdown-divider"></div>
-      <h6 class="dropdown-header">Exports</h6>
+      <span class="dropdown-header">Exports</span>
       <a class="dropdown-item" href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download all references</a>
     </div>
   </div>
