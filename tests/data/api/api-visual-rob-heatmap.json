@@ -44,7 +44,7 @@
         "id": 2,
         "url": "/assessment/2/",
         "enable_risk_of_bias": true,
-        "name": "public final"
+        "name": "Chemical B"
       },
       "searches": [
         5
@@ -77,7 +77,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical B"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -124,7 +124,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical B"
                   },
                   "name": "overall",
                   "description": "<p>description</p>",
@@ -193,7 +193,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical B"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -240,7 +240,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical B"
                   },
                   "name": "overall",
                   "description": "<p>description</p>",
@@ -309,7 +309,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical B"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -356,7 +356,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical B"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -420,7 +420,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical B"
                   },
                   "name": "overall",
                   "description": "<p>description</p>",

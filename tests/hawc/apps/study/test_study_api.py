@@ -24,7 +24,7 @@ def test_study_detail_api(db_keys):
             "id": 1,
             "url": "/assessment/1/",
             "enable_risk_of_bias": True,
-            "name": "working",
+            "name": "Chemical A",
         },
         "searches": [],
         "identifiers": [

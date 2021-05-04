@@ -639,7 +639,7 @@
 - model: assessment.assessment
   pk: 1
   fields:
-    name: working
+    name: Chemical A
     year: 1999
     version: '1.0'
     cas: ''
@@ -672,7 +672,7 @@
 - model: assessment.assessment
   pk: 2
   fields:
-    name: public final
+    name: Chemical B
     year: 2001
     version: final
     cas: 7732-18-5
@@ -709,7 +709,7 @@
 - model: assessment.assessment
   pk: 3
   fields:
-    name: public client
+    name: Chemical C
     year: 2020
     version: draft
     cas: ''
