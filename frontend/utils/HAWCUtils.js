@@ -268,6 +268,12 @@ class HAWCUtils {
                 console.error(`Unrecognized filter: ${str}`);
         }
     }
+
+    static loading() {
+        return $(`<p class="loader">
+            Loading, please wait...&nbsp;<span class="fa fa-spin fa-spinner"></span>
+        </p>`);
+    }
 }
 
 export default HAWCUtils;

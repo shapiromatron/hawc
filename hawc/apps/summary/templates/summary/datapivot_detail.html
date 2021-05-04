@@ -22,9 +22,7 @@
 
     <div id="dp_display"></div>
 
-    <div id="loading_div">
-      <p>Fetching the latest data from {{assessment}}... <img src="{% static 'img/loading.gif' %}"></p>
-    </div>
+    <div id="loading_div"></div>
 
     <div id="caption">{{object.caption|safe}}</div>
 
@@ -35,6 +33,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    $('#loading_div').html(window.app.utils.HAWCUtils.loading())
     window.app.dataPivotStartup(function(dataPivot){
       dataPivot.DataPivot.get_object({{object.id}}, function(dp){
         $('#loading_div').fadeOut(function(){
