@@ -1,4 +1,4 @@
-/* sidebar  */
+/** Sidebar  **/
 .sidebar {
     width: 230px;
     background-color: #ffffff;
@@ -35,5 +35,3 @@
 .sidebar li:first-child {
     border-top: 0px;
 }
-
-/* end sidebar */

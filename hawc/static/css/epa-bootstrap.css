@@ -5,7 +5,7 @@
     --epa-white-hover: #f1f1f1;
 }
 
-/** Tables ********************************************************************/
+/** Tables **/
 .table td, .table th {
   border: 1px solid #5b616b;
 }
@@ -16,7 +16,7 @@
   background-color: #f0f4f9;
 }
 
-/** Buttons ***/
+/** Buttons **/
 .btn-primary {
     color: var(--epa-white) !important;
     background-color: var(--epa-primary);
@@ -48,7 +48,7 @@ section button.btn, section input[type="button"].btn, section a.btn {
   margin-top: 0px;
 }
 
-/** Tabs *********************************************************************/
+/** Tabs **/
 .nav-tabs > li > a,
 .nav-tabs > li > a:visited, .react-tabs__tab-list > li,
 .react-tabs__tab-list > li:visited {
