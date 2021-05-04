@@ -2,12 +2,17 @@
 
 {% block navbar_outer %}
 {% if extra_branding and flavor == "EPA" %}
-<nav class="navbar navbar-expand hawc-header">
+<nav class="navbar navbar-expand-sm hawc-header">
 
-    <h2>
-        <a href="https://hero.epa.gov/hero/index.cfm/content/home">Health Assessment Workspace Collaborative (HAWC)</a>
-    </h2>
-
+    <div class="d-flex flex-nowrap">
+        <h2>
+            <a href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">Health Assessment Workspace Collaborative (HAWC)</a>
+        </h2>
+        <button class="navbar-toggler align-self-center" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+        </button>
+    </div>
     <ul id="navbarSupportedContent" class="nav navbar-nav collapse navbar-collapse justify-content-end text-right">
         <li class="nav-item">
             <a class="nav-link" href="{{ CONTACT_US }}">Contact Us</a>

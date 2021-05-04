@@ -11,6 +11,10 @@
     opacity: 0;
 }
 
+#toggle-sidebar, #toggle-sidebar:hover {
+    color: #000000;
+}
+
 .sidebar .nav-item.nav-link {
     color: #000000;
     font-weight: bold;
@@ -18,10 +22,6 @@
 
 .sidebar .nav-item .nav-link{
     color: #000000;
-}
-
-#toggle-sidebar-container {
-    display: none;
 }
 
 .sidebar .nav-item .nav-link:hover {
@@ -32,6 +32,12 @@
 .sidebar li {
     border-top: 1px solid #5b616b;
 }
-.sidebar li:first-child {
-    border-top: 0px;
+
+/** Top nav **/
+.hawc-header .navbar-toggler {
+    color: initial;
+}
+
+.hawc-header .navbar-toggler:focus {
+    outline: initial;
 }

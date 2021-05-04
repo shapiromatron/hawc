@@ -8,7 +8,7 @@
 <div id="sidebar-container" class="sidebar pl-1 {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
     data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
 
-    <div class="pb-3" id="toggle-sidebar-container">
+    <div id="toggle-sidebar-container">
         <a class="nav-link text-center" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
             <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
         </a>
