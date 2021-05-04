@@ -22,12 +22,12 @@
     background-color: var(--epa-primary);
 }
 
-.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus, .show > .btn-primary.dropdown-toggle {
     background-color: var(--epa-primary-hover);
 }
 
 section button.btn, section input[type="button"].btn, section a.btn {
-    border: 0;
+    border: 0 !important;
     cursor: pointer;
     display: inline-block;
     font-weight: bold;
@@ -36,6 +36,10 @@ section button.btn, section input[type="button"].btn, section a.btn {
     text-decoration: none;
     vertical-align: baseline;
     white-space: normal
+}
+
+.dropdown-header {
+  color: var(--epa-primary);
 }
 
 /** Header **/
