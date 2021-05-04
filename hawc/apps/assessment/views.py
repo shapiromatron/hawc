@@ -206,6 +206,17 @@ class About(TemplateView):
         return context
 
 
+class Resources(TemplateView):
+    template_name = "hawc/resources.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.RESOURCES, self.request, context
+        )
+        return context
+
+
 class Contact(LoginRequiredMixin, MessageMixin, FormView):
     template_name = "hawc/contact.html"
     form_class = forms.ContactForm
