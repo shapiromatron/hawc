@@ -99,11 +99,7 @@ section button.btn, section input[type="button"].btn, section a.btn {
   }
   .nav-tabs > li, .react-tabs__tab-list > li {
     border-bottom: 1px solid #aeb0b5;
-    padding-right: .5em; /* LTR */
     margin-bottom: .5em;
-  }
-  .nav-tabs > li:first-child, .react-tabs__tab-list > li:first-child {
-    padding-left: .5em; /* LTR */
   }
   .nav-tabs > li > a, .react-tabs__tab-list > li {
     border-radius: 3px 3px 0 0 !important;
@@ -125,6 +121,6 @@ section button.btn, section input[type="button"].btn, section a.btn {
   border-radius: 0 0 3px 3px;
 }
 
-.nav-tabs, .nav-tabs .nav-link {
-  border: 0px;
+.nav-tabs, .nav-tabs .nav-link, .react-tabs__tab-list {
+  border: 0px !important;
 }
