@@ -3,16 +3,15 @@
 {% block content %}
   <div class="row pl-1">
     <div class="col-md-12">
-        <h1>Summary text
-          <div class="dropdown btn-group float-right">
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-            <div class="dropdown-menu dropdown-menu-right">
-              {% if obj_perms.edit %}
-              <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
-              {% endif %}
-            </div>
+        <h1 style="display:inline-block;">Summary text</h1>
+        <div class="dropdown btn-group float-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+            {% if obj_perms.edit %}
+            <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
+            {% endif %}
           </div>
-        </h1>
+        </div>
     </div>
     <div id="main" class="container-fluid col-md-12"></div>
   </div>

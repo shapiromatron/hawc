@@ -1,18 +1,17 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h1>Available tables
-  {% if obj_perms.edit %}
-  <div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-      <a class="dropdown-item" href="{% url 'summary:tables_create_selector' assessment.pk %}">
-        <i class="fa fa-fw fa-edit"></i>&nbsp;Create new table
-      </a>
-    </div>
+<h1 style="display:inline-block;">Available tables</h1>
+{% if obj_perms.edit %}
+<div class="dropdown btn-group float-right">
+  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+  <div class="dropdown-menu dropdown-menu-right">
+    <a class="dropdown-item" href="{% url 'summary:tables_create_selector' assessment.pk %}">
+      <i class="fa fa-fw fa-edit"></i>&nbsp;Create new table
+    </a>
   </div>
-  {% endif %}
-</h1>
+</div>
+{% endif %}
 
 {% if object_list.exists %}
   <table class="table table-sm table-striped">

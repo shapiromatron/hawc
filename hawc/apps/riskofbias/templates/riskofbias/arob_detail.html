@@ -1,38 +1,37 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h1>{{assessment.get_rob_name_display}} requirements
-    {% if obj_perms.edit %}
-      <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-          {% if crud == "Read" %}
-            {% if obj_perms.edit_assessment %}
-            <h6 class="dropdown-header">{{assessment.get_rob_name_display}} settings</h6>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
-            <div class="dropdown-divider"></div>
-            {% endif %}
-
-            <h6 class="dropdown-header">Study assignment</h6>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a>
-
-            {% if obj_perms.edit_assessment %}
-            <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Data cleanup</h6>
-            <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean {{assessment.get_rob_name_display|lower}} responses</a>
-            {% endif %}
-          {% elif crud == "Update" %}
-            <h6 class="dropdown-header">{{assessment.get_rob_name_display}} changes</h6>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.pk %}">Update instructions</a>
-            <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Domain changes</h6>
-            <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
+  <h1 style="display:inline-block;">{{assessment.get_rob_name_display}} requirements</h1>
+  {% if obj_perms.edit %}
+    <div class="btn-group float-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+      <div class="dropdown-menu dropdown-menu-right">
+        {% if crud == "Read" %}
+          {% if obj_perms.edit_assessment %}
+          <h6 class="dropdown-header">{{assessment.get_rob_name_display}} settings</h6>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
+          <div class="dropdown-divider"></div>
           {% endif %}
-        </div>
-    </div>
-    {% endif %}
-  </h1>
+
+          <h6 class="dropdown-header">Study assignment</h6>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a>
+
+          {% if obj_perms.edit_assessment %}
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">Data cleanup</h6>
+          <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean {{assessment.get_rob_name_display|lower}} responses</a>
+          {% endif %}
+        {% elif crud == "Update" %}
+          <h6 class="dropdown-header">{{assessment.get_rob_name_display}} changes</h6>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.pk %}">Update instructions</a>
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">Domain changes</h6>
+          <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
+        {% endif %}
+      </div>
+  </div>
+  {% endif %}
 
   {{assessment.rob_settings.help_text|safe}}
 

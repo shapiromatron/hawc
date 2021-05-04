@@ -1,15 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2>Task assignments
-    <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="{% url 'mgmt:assessment_modify' assessment.pk %}">Modify tasks</a>
-            <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
-        </div>
-    </div>
-  </h2>
+  <h2 style="display:inline-block;">Task assignments</h2>
+  <div class="btn-group float-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+      <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'mgmt:assessment_modify' assessment.pk %}">Modify tasks</a>
+          <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
+      </div>
+  </div>
   <div id='taskTable' class='mb-3'></div>
 {% endblock %}
 

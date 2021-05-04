@@ -1,18 +1,17 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h1>{{object}}
-    {% if crud == "Read" and obj_perms.edit %}
-    <div class="dropdown btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <h6 class="dropdown-header">Dataset Editing</h6>
-            <a class="dropdown-item" href="{{ object.get_edit_url }}">Update dataset</a>
-            <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete dataset</a>
-        </div>
+<h1 style="display:inline-block;">{{object}}</h1>
+{% if crud == "Read" and obj_perms.edit %}
+<div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+        <h6 class="dropdown-header">Dataset Editing</h6>
+        <a class="dropdown-item" href="{{ object.get_edit_url }}">Update dataset</a>
+        <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete dataset</a>
     </div>
-    {% endif %}
-</h1>
+</div>
+{% endif %}
 
 <table class="table table-sm table-striped">
     <colgroup>

@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2>{{object}}: {{assessment.get_rob_name_display}} review
+  <h2 style="display:inline-block;">{{object}}: {{assessment.get_rob_name_display}} review</h2>
   {% if obj_perms.edit %}
       <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -11,7 +11,6 @@
         </div>
       </div>
   {% endif %}
-  </h2>
   <div id="robTable"></div>
 {% endblock %}
 
