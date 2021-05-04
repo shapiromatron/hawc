@@ -55,8 +55,9 @@ class Home(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content"] = models.Content.rendered_page(
-            models.ContentTypeChoices.HOMEPAGE, context
+        context["recent_assessments"] = models.Assessment.objects.recent_public()
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.HOMEPAGE, self.request, context
         )
         return context
 
@@ -199,7 +200,9 @@ class About(TemplateView):
             rob_name=self.get_rob_name(),
             counts=self.get_object_counts(),
         )
-        context["content"] = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, context)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.ABOUT, self.request, context
+        )
         return context
 
 
@@ -361,7 +364,8 @@ class AssessmentClearCache(MessageMixin, View):
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(self.model, pk=kwargs["pk"])
         url = get_referrer(self.request, assessment.get_absolute_url())
-        if not assessment.user_can_edit_object(request.user):
+
+        if not assessment.user_is_team_member_or_higher(request.user):
             raise PermissionDenied()
 
         assessment.bust_cache()

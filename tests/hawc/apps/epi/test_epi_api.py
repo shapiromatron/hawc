@@ -1503,15 +1503,13 @@ class TestExposureApi:
                 "data": self.get_upload_data(),
                 "post_request_test": exposure_lookup_test,
             },
-            # TODO - restore this test once dsstox is online
-            # https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=mercury
-            # {
-            #     "desc": "on the fly dtxsid creation",
-            #     "expected_code": 201,
-            #     "expected_keys": {"id"},
-            #     "data": self.get_upload_data({"dtxsid": new_dtxsid}),
-            #     "post_request_test": exposure_lookup_test_with_new_dtxsid,
-            # },
+            {
+                "desc": "on the fly dtxsid creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"dtxsid": new_dtxsid}),
+                "post_request_test": exposure_lookup_test_with_new_dtxsid,
+            },
             {
                 "desc": "dose unit by name",
                 "expected_code": 201,

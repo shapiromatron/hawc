@@ -1478,24 +1478,21 @@ class Result(models.Model):
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies
-        df2 = (
-            cls.heatmap_df(assessment_id, published_only)
-            .groupby("study id")
-            .agg(
-                {
-                    "overall study evaluation": unique_items,
-                    "study design": unique_items,
-                    "study population source": unique_items,
-                    "exposure name": unique_items,
-                    "exposure route": unique_list_items,
-                    "exposure measure": unique_list_items,
-                    "exposure metric": unique_list_items,
-                    "system": unique_items,
-                    "effect": unique_items,
-                    "effect subtype": unique_items,
-                }
-            )
-        )
+        df2 = cls.heatmap_df(assessment_id, published_only)
+        aggregates = {
+            "study design": unique_items,
+            "study population source": unique_items,
+            "exposure name": unique_items,
+            "exposure route": unique_list_items,
+            "exposure measure": unique_list_items,
+            "exposure metric": unique_list_items,
+            "system": unique_items,
+            "effect": unique_items,
+            "effect subtype": unique_items,
+        }
+        if "overall study evaluation" in df2:
+            aggregates["overall study evaluation"] = unique_items
+        df2 = df2.groupby("study id").agg(aggregates)
 
         # merge all the data frames together
         df = df1.merge(df2, how="left", left_index=True, right_index=True).fillna("").reset_index()
