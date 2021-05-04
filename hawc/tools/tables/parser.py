@@ -31,9 +31,9 @@ def ol_wrapper(texts):
 class QuillParser(HTMLParser):
 
     # Inline tags
-    _inline_tags = ["strong", "em", "a"]
+    _inline_tags = ["strong", "em", "u", "a"]
     # Inline tags to their font attribute
-    _tag_font_attr = {"strong": "bold", "em": "italic"}
+    _tag_font_attr = {"strong": "bold", "em": "italic", "u": "underline"}
     # Cached inline tags
     _tags = set()
 

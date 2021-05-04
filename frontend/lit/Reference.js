@@ -29,7 +29,7 @@ class Reference {
     }
 
     get_edit_url() {
-        return `/lit/reference/${this.data.pk}/edit/`;
+        return `/lit/reference/${this.data.pk}/update/`;
     }
 
     get_study_url() {

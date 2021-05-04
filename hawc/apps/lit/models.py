@@ -5,7 +5,7 @@ import pickle
 import re
 from io import BytesIO
 from math import ceil
-from typing import Dict, Optional
+from typing import Dict
 from urllib import parse
 
 import pandas as pd
@@ -578,7 +578,7 @@ class Identifiers(models.Model):
     def create_reference(self, assessment, block_id=None):
         # create, but don't save reference object
         try:
-            content = self.get_content_json()
+            content = self.get_content()
         except ValueError:
             if self.database == constants.PUBMED:
                 self.update_pubmed_content([self])
@@ -587,11 +587,11 @@ class Identifiers(models.Model):
         if self.database == constants.PUBMED:
             ref = Reference(
                 assessment=assessment,
-                title=content.get("title", ""),
-                authors_short=content.get("authors_short", ""),
+                title=content.get("title", "[no title]"),
+                authors_short=content.get("authors_short", "[no authors]"),
                 authors=", ".join(content.get("authors", [])),
-                journal=content.get("citation", ""),
-                abstract=content.get("abstract", ""),
+                journal=content.get("citation", "[no journal citation]"),
+                abstract=content.get("abstract", "[no abstract]"),
                 year=content.get("year", None),
                 block_id=block_id,
             )
@@ -611,8 +611,8 @@ class Identifiers(models.Model):
             "url": self.get_url(),
         }
 
-    def get_content_json(self) -> Optional[Dict]:
-        return json.loads(self.content, encoding="utf-8") if self.content else None
+    def get_content(self) -> Dict:
+        return json.loads(self.content, encoding="utf-8") if self.content else {}
 
     @staticmethod
     def update_pubmed_content(idents):

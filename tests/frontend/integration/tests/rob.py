@@ -19,8 +19,8 @@ def rob(driver, root_url):
     assert len(driver.find_elements_by_css_selector("td")) > 4
     assert h.Text("Foo et al.", to_left_of="Team Member").exists()
 
-    # /rob/:id/edit/
-    h.go_to(root_url + "/rob/3/edit/")
+    # /rob/:id/update/
+    h.go_to(root_url + "/rob/3/update/")
     h.wait_until(h.Text("example metric").exists)
     assert len(driver.find_elements_by_css_selector(".score-form")) == 3
 
