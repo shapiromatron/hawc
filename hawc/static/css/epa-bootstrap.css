@@ -22,8 +22,8 @@
     background-color: var(--epa-primary);
 }
 
-.btn-primary:hover {
-    background-color: var(--epa-primary-hover)
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+    background-color: var(--epa-primary-hover);
 }
 
 section button.btn, section input[type="button"].btn, section a.btn {
