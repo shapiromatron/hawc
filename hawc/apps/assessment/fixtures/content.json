@@ -18,15 +18,5 @@
       "created": "2021-02-21T04:35:45.821Z",
       "last_updated": "2021-03-02T02:19:24.209Z"
     }
-  },
-  {
-    "model": "assessment.content",
-    "pk": 3,
-    "fields": {
-      "content_type": 3,
-      "template": "{% load static %}\n\n\n<h2>Resources</h2>",
-      "created": "2021-03-01T18:00:00Z",
-      "last_updated": "2021-02-27T05:46:45.278Z"
-    }
   }
 ]
