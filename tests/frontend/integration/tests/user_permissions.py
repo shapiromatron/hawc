@@ -16,7 +16,7 @@ def user_permissions(driver, root_url):
 
     # check w/o authentication we can view the public url
     h.go_to(detail_url)
-    assessmentName = "public client (2020)"
+    assessmentName = "Chemical Y (2020)"
     h1Elem = h.Text(assessmentName)
     assert h1Elem.exists() is True
 
