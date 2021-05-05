@@ -300,6 +300,13 @@ class AssessmentPublicList(ListView):
             )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context[
+            "desc"
+        ] = """
+            Publicly available assessments are below. Each assessment was conducted by an independent
+            team; details on the objectives and methodology applied are described in each assessment.
+            Data can also be downloaded for each individual assessment.
+        """
         return context
 
 
