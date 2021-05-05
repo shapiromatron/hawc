@@ -96,7 +96,7 @@ class TestReferenceReplaceHeroIdSerializer:
         Test case where we add new hero references
         """
         ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
-        refs = Reference.objects.filter(id__in=ref_ids)
+        refs = Reference.objects.filter(id__in=ref_ids).order_by('id')
         old_titles = [ref.title for ref in refs]
         assessment = refs[0].assessment
         data = {"replace": [[refs[0].id, 1010101], [refs[1].id, 1010102]]}
@@ -121,7 +121,7 @@ class TestReferenceReplaceHeroIdSerializer:
         Swap IDs on existing references.
         """
         ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
-        refs = Reference.objects.filter(id__in=ref_ids)
+        refs = Reference.objects.filter(id__in=ref_ids).order_by("id")
         old_titles = [ref.title for ref in refs]
         assessment = refs[0].assessment
         data = {

@@ -639,7 +639,7 @@
 - model: assessment.assessment
   pk: 1
   fields:
-    name: Chemical A
+    name: Chemical Z
     year: 1999
     version: '1.0'
     cas: ''
@@ -672,7 +672,7 @@
 - model: assessment.assessment
   pk: 2
   fields:
-    name: Chemical B
+    name: Chemical X
     year: 2001
     version: final
     cas: 7732-18-5
@@ -690,8 +690,8 @@
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_text: true
-    conflicts_of_interest: <p>The authors report COI</p>
-    funding_source: <p>This was funded by coffee</p>
+    conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
+    funding_source: ''
     noel_name: 0
     rob_name: 0
     vocabulary: 1
@@ -709,11 +709,11 @@
 - model: assessment.assessment
   pk: 3
   fields:
-    name: Chemical C
+    name: Chemical Y
     year: 2020
     version: draft
-    cas: ''
-    assessment_objective: '... ADD HERE'
+    cas: 58-08-2
+    assessment_objective: '<p>Example the health effects of Chemical C. Drafted by scientists and contractors at US EPA.</p>'
     editable: true
     public: true
     hide_from_public_page: false
@@ -724,7 +724,7 @@
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_text: true
-    conflicts_of_interest: ''
+    conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: 'US EPA'
     noel_name: 0
     rob_name: 0
