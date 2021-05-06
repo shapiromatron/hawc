@@ -1,4 +1,17 @@
-/** Sidebar  **/
+/* Header */
+#search-box {
+  margin-top: 0px;
+}
+
+/* Top nav */
+.hawc-header .navbar-toggler {
+    color: initial;
+}
+.hawc-header .navbar-toggler:focus {
+    outline: initial;
+}
+
+/* Sidebar  */
 .sidebar {
     width: 230px;
     background-color: #ffffff;
@@ -31,13 +44,4 @@
 
 .sidebar li {
     border-top: 1px solid #5b616b;
-}
-
-/** Top nav **/
-.hawc-header .navbar-toggler {
-    color: initial;
-}
-
-.hawc-header .navbar-toggler:focus {
-    outline: initial;
 }
