@@ -36,22 +36,21 @@
   {{assessment.rob_settings.help_text|safe}}
 
   {% for object in object_list %}
-    <h2>{{object}} Domain
-      {% if crud == "Update" %}
-        <div class="dropdown btn-group float-right">
-          <a class="btn btn-info dropdown-toggle" data-toggle="dropdown">Actions</a>
-          <div class="dropdown-menu dropdown-menu-right">
-            <span class="dropdown-header">{{object}} domain changes</span>
-            <a class="dropdown-item" href="{% url 'riskofbias:robd_update' object.pk %}">Update domain</a>
-            <a class="dropdown-item" href="{% url 'riskofbias:robd_delete' object.pk %}">Delete domain</a>
+    <h2 class="d-inline-block">{{object}} Domain</h2>
+    {% if crud == "Update" %}
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <span class="dropdown-header">{{object}} domain changes</span>
+          <a class="dropdown-item" href="{% url 'riskofbias:robd_update' object.pk %}">Update domain</a>
+          <a class="dropdown-item" href="{% url 'riskofbias:robd_delete' object.pk %}">Delete domain</a>
 
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-header">{{object}} metric changes</span>
-            <a class="dropdown-item" href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a>
-          </div>
+          <div class="dropdown-divider"></div>
+          <span class="dropdown-header">{{object}} metric changes</span>
+          <a class="dropdown-item" href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a>
         </div>
-      {% endif %}
-    </h2>
+      </div>
+    {% endif %}
     <p class="form-text text-muted">{{object.description|safe}}</p>
     <table class="table table-compressed">
       <colgroup>

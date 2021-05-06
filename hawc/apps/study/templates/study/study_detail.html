@@ -59,9 +59,8 @@
   {% if crud == "Read" %}
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
-      <h3>{{assessment.get_rob_name_display}} visualization
-        <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
-      </h3>
+      <h3 class="d-inline-block">{{assessment.get_rob_name_display}} visualization</h3>
+      <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
       {% if assessment.hide_rob_scores %}
       <div>Click button on right to view study evaluation details</div>
       {% else %}
