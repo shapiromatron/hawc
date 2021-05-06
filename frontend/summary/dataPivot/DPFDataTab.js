@@ -75,7 +75,7 @@ let buildChartSelector = function(tab, dp) {
             addDataRow(i);
         }
 
-        tab.append($("<h3>Data point options</h3>").append(newRowBtn));
+        tab.append([newRowBtn, $("<h3>Data point options</h3>")]);
         tab.append(tbl);
     },
     buildLineTable = function(tab, dp) {
