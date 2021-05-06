@@ -639,7 +639,7 @@
 - model: assessment.assessment
   pk: 1
   fields:
-    name: Working
+    name: working
     year: 1999
     version: '1.0'
     cas: ''
@@ -672,8 +672,8 @@
 - model: assessment.assessment
   pk: 2
   fields:
-    name: Public Final
-    year: 2020
+    name: public final
+    year: 2001
     version: final
     cas: 7732-18-5
     assessment_objective: <p>This is an example public final assessment, with lots
@@ -709,7 +709,7 @@
 - model: assessment.assessment
   pk: 3
   fields:
-    name: Public Client
+    name: public client
     year: 2020
     version: draft
     cas: ''
