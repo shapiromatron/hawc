@@ -42,7 +42,7 @@
         "id": 2,
         "url": "/assessment/2/",
         "enable_risk_of_bias": true,
-        "name": "public final"
+        "name": "Chemical X"
       },
       "searches": [
         5
@@ -75,7 +75,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical X"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -122,7 +122,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical X"
                   },
                   "name": "overall",
                   "description": "<p>description</p>",
@@ -191,7 +191,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical X"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -238,7 +238,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical X"
                   },
                   "name": "overall",
                   "description": "<p>description</p>",
@@ -307,7 +307,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical X"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -354,7 +354,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical X"
                   },
                   "name": "domain 1",
                   "description": "<p>description</p>",
@@ -418,7 +418,7 @@
                     "id": 2,
                     "url": "/assessment/2/",
                     "enable_risk_of_bias": true,
-                    "name": "public final"
+                    "name": "Chemical X"
                   },
                   "name": "overall",
                   "description": "<p>description</p>",

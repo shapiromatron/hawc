@@ -3,6 +3,9 @@
 {% block content %}
 <div>
   <h1>Available Assessments</h1>
+  {% if desc %}
+  <p>{{desc}}</p>
+  {% endif %}
   {% include "assessment/_assessment_list_tbl.html" %}
 </div>
 

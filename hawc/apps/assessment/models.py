@@ -939,6 +939,7 @@ class Blog(models.Model):
 class ContentTypeChoices(models.IntegerChoices):
     HOMEPAGE = 1
     ABOUT = 2
+    RESOURCES = 3
 
 
 class Content(models.Model):

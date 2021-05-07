@@ -598,9 +598,9 @@ class TestEndpointCreateApi:
 @pytest.mark.django_db
 class TestEndpointApi:
     def test_update_terms_permissions(self, db_keys):
-        assessment_id = 3
+        assessment_id = 1
         url = reverse("animal:api:endpoint-update-terms") + f"?assessment_id={assessment_id}"
-        data = [{"id": 2, "name_term_id": 5}]
+        data = [{"id": 1, "name_term_id": 5}]
 
         # public shouldn't be able to update terms
         client = APIClient()
