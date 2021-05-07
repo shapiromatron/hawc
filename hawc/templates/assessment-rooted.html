@@ -8,21 +8,18 @@
 <div id="sidebar-container" class="sidebar pl-1 {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
     data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
 
-    <div id="toggle-sidebar-container">
-        <a class="nav-link text-center" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
-            <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
-        </a>
-    </div>
+    <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
+        <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
+    </a>
 
-    <nav class="nav flex-column">
+    <nav class="nav flex-column pt-3">
 
-        <li class="nav-item nav-link">Selected assessment</li>
-        <li class="nav-item">
+        <li class="nav-item nav-link text-white-50">Selected assessment</li>
+        <li class="nav-item bg-primary">
             <a class="nav-link" href="{% url 'assessment:detail' assessment.pk %}">{{ assessment }}</a>
         </li>
 
-        <li class="nav-item nav-link">Available modules</li>
-
+        <li class="nav-item nav-link text-white-50">Available modules</li>
 
         {% if assessment.enable_literature_review %}
         <li class="nav-item">
@@ -70,7 +67,7 @@
         </li>
         {% endif %}
 
-        <li class="nav-item nav-link">Downloads</li>
+        <li class="nav-item nav-link text-white-50">Downloads</li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a>
         </li>
