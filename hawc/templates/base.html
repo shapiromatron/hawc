@@ -3,7 +3,7 @@
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
-<html lang="en-us">
+<html class="js" lang="en-us">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta charset="UTF-8" />
@@ -34,12 +34,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     {% if extra_branding and flavor == "EPA" %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/accordions.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/boxes.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/tables.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/tabs.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-hawc.css' %}" />
     {% endif %}
     {% block extrastyle %}{% endblock %}
 
   </head>
-  <body>
+  <body class="html">
 
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
@@ -58,31 +64,32 @@
     {% endif %}
     {% endcache %}
 
-    {% include 'includes/navigation.html' %}
-
     {% block content_row_outer %}
-      <div class="row no-gutters" style="min-height: 100vh;">
-        {% block sidebar_outer %}{% endblock sidebar_outer %}
-        <div id="main-content" class="col overflow-auto">
-          <div id="main-content-container" class="container-fluid">
-            {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
+      <section class="main-content clearfix" id="main-content">
+        {% include 'includes/navigation.html' %}
+        <div class="row no-gutters" style="min-height: 100vh;">
+          {% block sidebar_outer %}{% endblock sidebar_outer %}
+          <div class="col overflow-auto">
+            <div id="main-content-container" class="container-fluid">
+              {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
-            {% include "includes/messages.html" %}
-            {% if UA_SUPPORTED is False %}
-              {% include "includes/unsupported_browser.html" %}
-            {% endif %}
+              {% include "includes/messages.html" %}
+              {% if UA_SUPPORTED is False %}
+                {% include "includes/unsupported_browser.html" %}
+              {% endif %}
 
-            {% block content_header %}{% endblock content_header %}
-            {% block content_outer %}
-              <div class="row  overflow-auto"  style="min-height: 50vh;">
-                <div class="col overflow-auto">
-                {% block content %}{% endblock content %}
+              {% block content_header %}{% endblock content_header %}
+              {% block content_outer %}
+                <div class="row  overflow-auto"  style="min-height: 50vh;">
+                  <div class="col overflow-auto">
+                  {% block content %}{% endblock content %}
+                  </div>
                 </div>
-              </div>
-            {% endblock content_outer %}
+              {% endblock content_outer %}
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     {% endblock content_row_outer %}
 
     {% cache 3600 footer %}

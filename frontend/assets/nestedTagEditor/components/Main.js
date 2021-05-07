@@ -50,15 +50,13 @@ class TagEditorMain extends Component {
 
         return (
             <div>
-                <h1>
-                    {store.config.title}
-                    <button
-                        onClick={() => this.setState({showCreate: true})}
-                        className="float-right btn btn-primary">
-                        <i className="fa fa-fw fa-plus" />
-                        {store.config.btnLabel}
-                    </button>
-                </h1>
+                <h1 className="d-inline-block">{store.config.title}</h1>
+                <button
+                    onClick={() => this.setState({showCreate: true})}
+                    className="float-right btn btn-primary">
+                    <i className="fa fa-fw fa-plus" />
+                    {store.config.btnLabel}
+                </button>
                 <p className="form-text text-muted">
                     <span
                         dangerouslySetInnerHTML={{
