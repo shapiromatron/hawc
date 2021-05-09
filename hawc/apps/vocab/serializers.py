@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.utils import timezone
 from rest_framework import serializers
 
 from ..common.serializers import BulkSerializer
@@ -22,7 +21,7 @@ class TermSerializer(serializers.ModelSerializer):
     def validate(self, data):
         deprecated = data.pop("deprecated", None)
         if deprecated is not None:
-            data["deprecated_on"] = datetime.now() if deprecated else None
+            data["deprecated_on"] = timezone.now() if deprecated else None
         return data
 
     class Meta:

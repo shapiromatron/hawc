@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta
-
 import pytest
+from django.utils import timezone
 
 from hawc.apps.vocab.models import Term
 from hawc.apps.vocab.serializers import TermSerializer
@@ -43,6 +42,7 @@ class TestTermSerializer:
             {"id": 2, "name": "Serum", "type": 1, "deprecated": True},
             {"id": unchanged_term.id, "name": unchanged_term.name},
         ]
+        before_test = timezone.now()
         ser = TermSerializer(instance=terms, data=data, many=True, partial=True)
         assert ser.is_valid()
         updated_instances = ser.save()
@@ -64,7 +64,4 @@ class TestTermSerializer:
         instance = next(
             instance for instance in updated_instances if instance.id == instance_data["id"]
         )
-        five_minutes_ago = datetime.now() - timedelta(minutes=5)
-        assert (
-            instance.deprecated_on > five_minutes_ago and instance.last_updated > five_minutes_ago
-        )
+        assert instance.deprecated_on > before_test and instance.last_updated > before_test
