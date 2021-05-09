@@ -624,7 +624,7 @@
 - model: assessment.assessment
   pk: 1
   fields:
-    name: working
+    name: Chemical Z
     year: 1999
     version: '1.0'
     cas: ''
@@ -657,8 +657,8 @@
 - model: assessment.assessment
   pk: 2
   fields:
-    name: public final
-    year: 2001
+    name: Chemical X
+    year: 2020
     version: final
     cas: 7732-18-5
     assessment_objective: <p>This is an example public final assessment, with lots
@@ -675,8 +675,8 @@
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_text: true
-    conflicts_of_interest: <p>The authors report COI</p>
-    funding_source: <p>This was funded by coffee</p>
+    conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
+    funding_source: ''
     noel_name: 0
     rob_name: 0
     vocabulary: 1
@@ -694,23 +694,23 @@
 - model: assessment.assessment
   pk: 3
   fields:
-    name: public client
+    name: Chemical Y
     year: 2020
     version: draft
-    cas: ''
-    assessment_objective: ''
+    cas: 58-08-2
+    assessment_objective: '<p>Example the health effects of Chemical C. Drafted by scientists and contractors at US EPA.</p>'
     editable: true
     public: true
-    hide_from_public_page: false
+    hide_from_public_page: true
     is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
-    enable_summary_text: true
-    conflicts_of_interest: ''
-    funding_source: ''
+    enable_summary_text: false
+    conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
+    funding_source: 'US EPA'
     noel_name: 0
     rob_name: 0
     vocabulary: 1
@@ -774,14 +774,6 @@
     last_updated: 2020-02-27 20:53:19.390902+00:00
     effects: []
 - model: assessment.baseendpoint
-  pk: 2
-  fields:
-    assessment: 3
-    name: Test Endpoint
-    created: 2020-04-10 19:37:19.983403+00:00
-    last_updated: 2020-04-10 19:37:19.983403+00:00
-    effects: []
-- model: assessment.baseendpoint
   pk: 3
   fields:
     assessment: 2
@@ -817,14 +809,6 @@
     last_updated: 2020-07-06 19:46:42.948733+00:00
     effects: []
 - model: assessment.baseendpoint
-  pk: 7
-  fields:
-    assessment: 3
-    name: Test Endpoint
-    created: 2020-07-06 19:45:07.271513+00:00
-    last_updated: 2020-07-06 19:46:42.948733+00:00
-    effects: []
-- model: assessment.baseendpoint
   pk: 8
   fields:
     assessment: 2
@@ -838,8 +822,7 @@
     assessment: 1
     name: iris flowers
     description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
-      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
-      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
+      problems". Annals of Eugenics. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137</p>'
     published: true
     created: 2020-06-02 20:01:31.798361+00:00
     last_updated: 2020-06-02 20:04:30.023508+00:00
@@ -849,8 +832,7 @@
     assessment: 2
     name: iris flowers final
     description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
-      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
-      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
+      problems". Annals of Eugenics. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137</p>'
     published: true
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -860,8 +842,7 @@
     assessment: 1
     name: iris flowers unpublished
     description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
-      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
-      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
+      problems". Annals of Eugenics. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137</p>'
     published: false
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -1018,6 +999,13 @@
   fields:
     content_type: 2
     template: <h1>About HAWC</h1>
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.content
+  pk: 3
+  fields:
+    content_type: 3
+    template: <h1>Resources</h1>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: lit.literatureassessment
@@ -1445,12 +1433,12 @@
   pk: 4
   fields:
     assessment: 3
-    title: ''
-    authors_short: ''
-    authors: ''
-    year: null
-    journal: ''
-    abstract: ''
+    title: 'Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application of oxidative stress markers to cancer risk assessment of dioxins.'
+    authors_short: Yoshida R and Ogawa Y
+    authors: Yoshida R, Ogawa Y
+    year: 2000
+    journal: 'Ind Health 2000; 38 (1):5-14'
+    abstract: 'Dioxins are known to be a class of highly toxic and persistent environmental contaminants. Among them the toxicity of 2,3,7,8-tetrachlorodibenzo-p-dioxin (TCDD) has been the most intensively studied, and it has been classified as a human carcinogenic substance by the International Agency for Research on Cancer (IARC). Although the mechanism of carcinogenesis by TCDD is unclear, it is now considered to have act a cancer promoter. In this review, was discuss the ability of TCDD to induce oxidative stress in vivo, the mechanism of the oxidative stress induction, and how oxidative stress relates to the development of cancer. We then discuss the advantages of measuring the level of oxidative stress in people exposed to dioxins in epidemiological studies for cancer risk assessment. We also discuss several methods of measuring the level of oxidative stress in humans.'
     full_text_url: ''
     created: 2020-04-10 19:18:09.163184+00:00
     last_updated: 2020-04-10 19:18:10.164173+00:00
@@ -1644,9 +1632,9 @@
     epi: true
     epi_meta: true
     in_vitro: true
-    short_citation: Smith
-    full_citation: John Smith
-    coi_reported: 2
+    short_citation: Yoshida R and Ogawa Y 2000
+    full_citation: "Yoshida R, Ogawa Y. Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application of oxidative stress markers to cancer risk assessment of dioxins. Ind Health 2000; 38 (1):5-14."
+    coi_reported: 0
     coi_details: ''
     funding_source: ''
     study_identifier: ''
@@ -1781,19 +1769,19 @@
   pk: 2
   fields:
     study: 4
-    name: Test Experiment
+    name: Acute TCDD experiment
     type: Ac
     has_multiple_generations: false
-    chemical: ''
-    cas: ''
+    chemical: 2,3,7,8-Tetrachlorodibenzo-p-dioxin
+    cas: 1746-01-6
     dtxsid: null
-    chemical_source: ''
+    chemical_source: Fisher Scientific
     purity_available: true
     purity_qualifier: '>'
-    purity: 10.0
-    vehicle: ''
+    purity: 99.9
+    vehicle: DMSO
     guideline_compliance: ''
-    description: ''
+    description: 'Demonstration of data extraction of a study included in an assessment'
     created: 2020-04-10 19:21:14.709371+00:00
     last_updated: 2020-04-10 19:21:14.710369+00:00
 - model: animal.experiment
@@ -1839,18 +1827,18 @@
   pk: 2
   fields:
     experiment: 2
-    name: Test Animal Group
+    name: Male Sprague Dawley Rats
     species: 1
     strain: 1
     sex: M
-    animal_source: ''
-    lifestage_exposed: ''
-    lifestage_assessed: ''
+    animal_source: Charles River
+    lifestage_exposed: adult
+    lifestage_assessed: adult
     siblings: null
     generation: ''
     dosing_regime: 2
-    comments: ''
-    diet: ''
+    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>'
+    diet: 'Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)'
     created: 2020-04-10 19:35:26.254532+00:00
     last_updated: 2020-04-10 19:35:26.881519+00:00
     parents: []
@@ -1868,8 +1856,8 @@
     siblings: null
     generation: P0
     dosing_regime: 3
-    comments: <p>source</p>
-    diet: diet
+    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>'
+    diet: 'Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)'
     created: 2020-05-08 17:40:30.086088+00:00
     last_updated: 2020-05-08 17:40:30.333334+00:00
     parents: []
@@ -1948,7 +1936,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 0
-    dose: 1.0
+    dose: 0
     created: 2020-04-10 19:35:26.748525+00:00
     last_updated: 2020-04-10 19:35:26.748525+00:00
 - model: animal.dosegroup
@@ -1957,7 +1945,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 1
-    dose: 2.0
+    dose: 0.0001
     created: 2020-04-10 19:35:26.812520+00:00
     last_updated: 2020-04-10 19:35:26.812520+00:00
 - model: animal.dosegroup
@@ -1966,7 +1954,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 2
-    dose: 3.0
+    dose: 0.0005
     created: 2020-04-10 19:35:26.833524+00:00
     last_updated: 2020-04-10 19:35:26.833524+00:00
 - model: animal.dosegroup
@@ -1975,7 +1963,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 3
-    dose: 4.0
+    dose: 0.0010
     created: 2020-04-10 19:35:26.856523+00:00
     last_updated: 2020-04-10 19:35:26.856523+00:00
 - model: animal.dosegroup
@@ -2064,46 +2052,6 @@
     endpoint_notes: ''
     additional_fields: '{}'
 - model: animal.endpoint
-  pk: 2
-  fields:
-    baseendpoint_ptr: 2
-    animal_group: 2
-    name_term: null
-    system: ''
-    system_term: null
-    organ: ''
-    organ_term: null
-    effect: ''
-    effect_term: null
-    effect_subtype: ''
-    effect_subtype_term: null
-    litter_effects: NA
-    litter_effect_notes: ''
-    observation_time: null
-    observation_time_units: 0
-    observation_time_text: ''
-    data_location: ''
-    expected_adversity_direction: 4
-    response_units: ''
-    data_type: C
-    variance_type: 1
-    confidence_interval: null
-    NOEL: -999
-    LOEL: -999
-    FEL: -999
-    data_reported: true
-    data_extracted: false
-    values_estimated: false
-    monotonicity: 8
-    statistical_test: ''
-    trend_value: null
-    trend_result: 3
-    diagnostic: ''
-    power_notes: ''
-    results_notes: ''
-    endpoint_notes: ''
-    additional_fields: '{}'
-- model: animal.endpoint
   pk: 3
   fields:
     baseendpoint_ptr: 3
@@ -2173,46 +2121,6 @@
     FEL: 3
     data_reported: true
     data_extracted: true
-    values_estimated: false
-    monotonicity: 8
-    statistical_test: ''
-    trend_value: null
-    trend_result: 3
-    diagnostic: ''
-    power_notes: ''
-    results_notes: ''
-    endpoint_notes: ''
-    additional_fields: '{}'
-- model: animal.endpoint
-  pk: 7
-  fields:
-    baseendpoint_ptr: 7
-    animal_group: 2
-    name_term: null
-    system: ''
-    system_term: null
-    organ: ''
-    organ_term: null
-    effect: ''
-    effect_term: null
-    effect_subtype: ''
-    effect_subtype_term: null
-    litter_effects: NA
-    litter_effect_notes: ''
-    observation_time: null
-    observation_time_units: 0
-    observation_time_text: ''
-    data_location: ''
-    expected_adversity_direction: 4
-    response_units: ''
-    data_type: C
-    variance_type: 1
-    confidence_interval: null
-    NOEL: -999
-    LOEL: -999
-    FEL: -999
-    data_reported: true
-    data_extracted: false
     values_estimated: false
     monotonicity: 8
     statistical_test: ''
@@ -4940,7 +4848,7 @@
         header: false
         col_span: 1
         row_span: 1
-        quill_text: <p><strong>Other features</strong></p><ul><li>bullets can be added</li><li><a
+        quill_text: <p><strong><em><u>Other features</u></em></strong></p><ul><li>bullets can be added</li><li><a
           href="https://google.com" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
           can be added</li></ul>
       - row: 7

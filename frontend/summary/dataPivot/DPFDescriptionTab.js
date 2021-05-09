@@ -38,7 +38,7 @@ let buildDescriptionTable = function(tab, dp) {
             addDataRow(i);
         }
 
-        return tab.append($("<h3>Descriptive text columns</h3>").append(newRowBtn), tbl);
+        return tab.append([newRowBtn, $("<h3>Descriptive text columns</h3>")], tbl);
     },
     buildDescriptionTab = function(dp) {
         let tab = $('<div class="tab-pane active" id="data_pivot_settings_description">');

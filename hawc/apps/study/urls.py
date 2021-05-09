@@ -16,7 +16,7 @@ urlpatterns = [
     path("assessment/<int:pk>/new-study/", views.ReferenceStudyCreate.as_view(), name="new_ref",),
     path("assessment/<int:pk>/copy-studies/", views.StudiesCopy.as_view(), name="studies_copy",),
     path("<int:pk>/", views.StudyRead.as_view(), name="detail"),
-    path("<int:pk>/edit/", views.StudyUpdate.as_view(), name="update"),
+    path("<int:pk>/update/", views.StudyUpdate.as_view(), name="update"),
     path("<int:pk>/delete/", views.StudyDelete.as_view(), name="delete"),
     path("<int:pk>/risk-of-bias/", views.StudyRoBRedirect.as_view(), name="rob_redirect",),
     # attachment

@@ -31,7 +31,7 @@ class EndpointAggregation extends BaseVisual {
 
         options = options || {};
 
-        if (window.isEditable) title.append(this.addActionsMenu());
+        const actions = window.isEditable ? this.addActionsMenu() : null;
 
         this.$tblDiv = $("<div>");
         this.$plotDiv = $("<div>");
@@ -47,9 +47,7 @@ class EndpointAggregation extends BaseVisual {
             .append(this.$tblDiv);
 
         if (!options.visualOnly) {
-            $el.prepend(title)
-                .append("<h2>Caption</h2>")
-                .append(captionDiv);
+            $el.prepend([actions, title]).append(captionDiv);
         }
 
         this.buildTbl();

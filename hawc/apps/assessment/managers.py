@@ -1,7 +1,7 @@
 import json
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
@@ -19,7 +19,11 @@ class AssessmentManager(BaseManager):
         optionally excluding assessment exclusion_id,
         not including public assessments
         """
-        filters = Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user)
+        filters = (
+            Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user)
+            if user.is_authenticated
+            else Q(pk__in=[])
+        )
         if public:
             filters |= Q(public=True) & Q(hide_from_public_page=False)
         return self.filter(filters).exclude(id=exclusion_id).distinct()
@@ -35,6 +39,17 @@ class AssessmentManager(BaseManager):
             .exclude(id=exclusion_id)
             .distinct()
         )
+
+    def recent_public(self, n: int = 5) -> QuerySet:
+        """Get recent public, published assessments
+
+        Args:
+            n (int, optional): Number of assessments; defaults to 5.
+
+        Returns:
+            models.QuerySet: An assessment queryset
+        """
+        return self.filter(public=True, hide_from_public_page=False).order_by("-last_updated")[:n]
 
 
 class AttachmentManager(BaseManager):
