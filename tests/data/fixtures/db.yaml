@@ -486,6 +486,7 @@
 - model: vocab.term
   pk: 1
   fields:
+    uid: 1
     namespace: 1
     parent: null
     type: 1
@@ -497,6 +498,7 @@
 - model: vocab.term
   pk: 2
   fields:
+    uid: 2
     namespace: 1
     parent: 1
     type: 2
@@ -508,6 +510,7 @@
 - model: vocab.term
   pk: 3
   fields:
+    uid: 3
     namespace: 1
     parent: 2
     type: 3
@@ -519,6 +522,7 @@
 - model: vocab.term
   pk: 4
   fields:
+    uid: 4
     namespace: 1
     parent: 3
     type: 4
@@ -530,6 +534,7 @@
 - model: vocab.term
   pk: 5
   fields:
+    uid: 5
     namespace: 1
     parent: 4
     type: 5
