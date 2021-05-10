@@ -167,16 +167,16 @@ class ExploreHeatmap extends BaseVisual {
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             callback = resp => {
-                if (this.data.title) {
-                    title.append(this.addActionsMenu(window.isEditable));
-                }
                 if (resp.dataset) {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
+                    const actions = this.data.title ? this.addActionsMenu(window.isEditable) : null;
+
                     $el.empty().append($plotDiv);
+
                     if (!options.visualOnly) {
-                        $el.prepend(title).append(captionDiv);
+                        $el.prepend([actions, title]).append(captionDiv);
                     }
 
                     startupHeatmapAppRender($plotDiv[0], settings, dataset, options);

@@ -319,18 +319,6 @@ class TeamMemberOrHigherMixin:
         return context
 
 
-class IsAuthorMixin:
-    # Throw error if user is not author
-
-    owner_field = "author"
-
-    def get_object(self):
-        obj = super().get_object()
-        if getattr(obj, self.owner_field) != self.request.user:
-            raise PermissionDenied
-        return obj
-
-
 class CanCreateMixin:
     """
     Checks to make sure that the user has appropriate permissions before adding
