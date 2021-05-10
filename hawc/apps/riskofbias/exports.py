@@ -9,32 +9,35 @@ class RiskOfBiasFlat(FlatFileExporter):
     reviewer information.
     """
 
+    final_only = True  # only return final data
+
     def _get_header_row(self):
         header = []
         header.extend(Study.flat_complete_header_row())
+        header.extend(models.RiskOfBias.flat_header_row(final_only=self.final_only))
         header.extend(models.RiskOfBiasScore.flat_complete_header_row())
-        header.extend(["rob-created", "rob-last_updated"])
         return header
 
     def _get_data_rows(self):
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
-            row = []
-            row.extend(Study.flat_complete_data_row(ser))
 
-            try:
-                rob = next(
-                    rob for rob in ser.get("riskofbiases", []) if rob["final"] and rob["active"]
-                )
-            except StopIteration:
-                rob = {"scores": []}
+            row1 = []
+            row1.extend(Study.flat_complete_data_row(ser))
 
-            for score in rob["scores"]:
-                row_copy = list(row)  # clone
-                row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
-                row_copy.extend([rob["created"], rob["last_updated"]])
-                rows.append(row_copy)
+            robs = [rob for rob in ser.get("riskofbiases", [])]
+            if self.final_only:
+                robs = [rob for rob in robs if rob["final"] and rob["active"]]
+
+            for rob in robs:
+                row2 = list(row1)
+                row2.extend(models.RiskOfBias.flat_data_row(rob, final_only=self.final_only))
+                for score in rob["scores"]:
+                    row3 = list(row2)
+                    row3.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
+                    rows.append(row3)
+
         return rows
 
 
@@ -44,23 +47,4 @@ class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
     information.
     """
 
-    def _get_header_row(self):
-        header = super()._get_header_row()
-        header.extend(models.RiskOfBias.flat_complete_header_row())
-        return header
-
-    def _get_data_rows(self):
-        rows = []
-        for obj in self.queryset:
-            ser = obj.get_json(json_encode=False)
-            row = []
-            row.extend(Study.flat_complete_data_row(ser))
-            for rob in ser.get("riskofbiases", []):
-                rob_data = models.RiskOfBias.flat_complete_data_row(rob)
-                for score in rob["scores"]:
-                    row_copy = list(row)
-                    row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
-                    row_copy.extend([rob["created"], rob["last_updated"]])
-                    row_copy.extend(rob_data)
-                    rows.append(row_copy)
-        return rows
+    final_only = False
