@@ -353,28 +353,42 @@ class RoBHeatmapPlot extends D3Visualization {
     }
 
     resize_plot_dimensions() {
-        // Resize plot based on the dimensions of the labels.
-        var ylabel_height = this.vis
-                .select(".x_axis")
-                .node()
-                .getBoundingClientRect().height,
-            ylabel_width = this.vis
-                .select(".x_axis")
-                .node()
-                .getBoundingClientRect().width,
-            xlabel_width = this.vis
-                .select(".y_axis")
-                .node()
-                .getBoundingClientRect().width;
+        /*
+        Resize plot based on the dimensions of the labels.
+        - top padding is padding specified by user + the x-axis label height
+        - left padding is padding specified by user + the y-axis label width
+        - right padding is the padding specified by the user,
+            or the width of the label overhang over the heatmap,
+            whichever is greater
+        - (no change to bottom padding; whatever user specifies is used)
+        */
+        const xlabel_height = Math.ceil(
+                this.vis
+                    .select(".x_axis")
+                    .node()
+                    .getBoundingClientRect().height
+            ),
+            xlabel_width = Math.ceil(
+                this.vis
+                    .select(".x_axis")
+                    .node()
+                    .getBoundingClientRect().width
+            ),
+            ylabel_width = Math.ceil(
+                this.vis
+                    .select(".y_axis")
+                    .node()
+                    .getBoundingClientRect().width
+            ),
+            xlabel_overhang = xlabel_width - this.w + 5,
+            top = xlabel_height + this.padding.top_original,
+            left = ylabel_width + this.padding.left_original,
+            right = Math.max(this.padding.right_original, xlabel_overhang);
 
-        if (
-            this.padding.top < this.padding.top_original + ylabel_height ||
-            this.padding.left < this.padding.left_original + xlabel_width ||
-            this.padding.right < ylabel_width - this.w + this.padding.right_original
-        ) {
-            this.padding.top = this.padding.top_original + ylabel_height;
-            this.padding.left = this.padding.left_original + xlabel_width;
-            this.padding.right = ylabel_width - this.w + this.padding.right_original;
+        if (this.padding.top < top || this.padding.left < left || this.padding.right < right) {
+            this.padding.top = top;
+            this.padding.left = left;
+            this.padding.right = right;
             this.render(this.plot_div);
         }
     }
