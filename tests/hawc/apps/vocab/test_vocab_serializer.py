@@ -9,8 +9,8 @@ from hawc.apps.vocab.serializers import TermSerializer
 class TestTermSerializer:
     def test_bulk_create(self):
         data = [
-            {"name": "serializer test 1", "type": 1, "parent_id": 1},
-            {"name": "serializer test 2", "type": 1, "deprecated": True},
+            {"uid": 100, "name": "serializer test 1", "type": 1, "parent_id": 1},
+            {"uid": 101, "name": "serializer test 2", "type": 1, "deprecated": True},
         ]
         ser = TermSerializer(data=data, many=True)
         assert ser.is_valid()
@@ -64,4 +64,7 @@ class TestTermSerializer:
         instance = next(
             instance for instance in updated_instances if instance.id == instance_data["id"]
         )
-        assert instance.deprecated_on > before_test and instance.last_updated > before_test
+        assert (
+            instance.deprecated_on > before_test
+            and timezone.make_aware(instance.last_updated) > before_test
+        )

@@ -83,7 +83,7 @@ class TestTermViewset:
             ({}, ["Data must be list of dicts"]),
             # id provided
             (
-                [{"id": 1, "uid": 1, "type": 1, "name": "name"}],
+                [{"id": 1, "uid": 100, "type": 1, "name": "name"}],
                 {"non_field_errors": ["'id' is prohibited."]},
             ),
             # wrong attr type
@@ -102,14 +102,14 @@ class TestTermViewset:
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         # simple singular create
-        data = [{"uid": 1, "type": 1, "name": "new term 1", "notes": "notes"}]
+        data = [{"uid": 100, "type": 1, "name": "new term 1", "notes": "notes"}]
         response = client.post(url, data, format="json")
         assert response.status_code == 201
         assert response.json()[0].items() >= data[0].items()
         # multiple create with parents / deprecated
         data = [
-            {"uid": 2, "type": 1, "name": "new term 2", "parent_id": 1},
-            {"uid": 3, "type": 1, "name": "new term 3", "deprecated": True},
+            {"uid": 101, "type": 1, "name": "new term 2", "parent_id": 1},
+            {"uid": 102, "type": 1, "name": "new term 3", "deprecated": True},
         ]
         response = client.post(url, data, format="json")
         assert response.status_code == 201
@@ -129,7 +129,7 @@ class TestTermViewset:
             # invalid id
             ([{"id": 9999, "name": "name"}], {"non_field_errors": ["Invalid 'id's: 9999."]}),
             # wrong attr type
-            ([{"id": 9999, "type": "one"}], {"type": ['"one" is not a valid choice.']}),
+            ([{"id": 1, "type": "one"}], {"type": ['"one" is not a valid choice.']}),
         ]
 
         for data, err in test_cases:
