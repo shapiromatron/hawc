@@ -13,6 +13,7 @@ def ul_items(qs, method):
 class TermAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "uid",
         "namespace",
         "type",
         "name",
@@ -27,7 +28,7 @@ class TermAdmin(admin.ModelAdmin):
         "type",
     )
     list_select_related = ("parent",)
-    search_fields = ("name",)
+    search_fields = ("name", "uid")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
