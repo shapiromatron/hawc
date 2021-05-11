@@ -1,9 +1,9 @@
-from datetime import datetime
 from typing import Any, Dict, List, Tuple, Type
 
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
 from rest_framework.settings import api_settings
@@ -371,6 +371,7 @@ class BulkSerializer(serializers.ListSerializer):
     def update_fields(self, instance, data) -> Tuple[bool, List]:
         fields = list(data.keys())
         fields.remove("id")
+        now = timezone.now()
         updated_fields = []
         for field in fields:
             value = data[field]
@@ -379,7 +380,7 @@ class BulkSerializer(serializers.ListSerializer):
                 updated_fields.append(set_field)
         updated = bool(updated_fields)
         if updated and hasattr(instance, "last_updated"):
-            instance.last_updated = datetime.now()
+            instance.last_updated = now
             updated_fields.append("last_updated")
         return updated, updated_fields
 
