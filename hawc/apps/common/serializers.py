@@ -297,10 +297,12 @@ class BulkSerializer(serializers.ListSerializer):
 
     def to_internal_value(self, data):
         """
-        This is the inherited method from ListSerializer, with a few lines added to work around an error.
-        `exclude_current_instance` on `UniqueValidator` examines the `instance` set on the serializer to exclude it from the uniqueness constraint:
+        This is the inherited method from ListSerializer, with a changes.
+        `exclude_current_instance` on `UniqueValidator` examines the `instance` set on the
+        serializer to exclude it from the uniqueness constraint:
         https://github.com/encode/django-rest-framework/blob/3875d3284e73ed4d8e36c07d9b70c1b22c9d5998/rest_framework/validators.py#L138
-        However, `instance` in this case is the queryset passed in to the constructor, so it throws an error when it attempts to retrieve the `pk` attribute of the queryset.
+        However, `instance` in this case is the queryset passed in to the constructor, so it
+        throws an error when it attempts to retrieve the `pk` attribute of the queryset.
         The fix is to set the correct `instance` before validation is run.
 
         Further description of issue and fix:
