@@ -1,9 +1,10 @@
 from typing import Optional
 
+from django.db import transaction
 from django.db.models import QuerySet
-from rest_framework import exceptions, status, viewsets
+from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -12,7 +13,7 @@ from . import models, serializers
 
 
 class EhvTermViewset(viewsets.GenericViewSet):
-    serializer_class = serializers.TermSerializer
+    serializer_class = serializers.SimpleTermSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self) -> QuerySet:
@@ -83,3 +84,34 @@ class EhvTermViewset(viewsets.GenericViewSet):
         entity.terms.add(term, through_defaults={"notes": request.data.get("notes", "")})
         serializer = self.get_serializer(entity.terms.all(), many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.TermSerializer
+    queryset = models.Term.objects.all()
+
+    @transaction.atomic
+    @action(
+        detail=False, methods=("post",), permission_classes=(IsAdminUser,), url_path="bulk-create"
+    )
+    def bulk_create(self, request: Request) -> Response:
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @transaction.atomic
+    @action(
+        detail=False, methods=("patch",), permission_classes=(IsAdminUser,), url_path="bulk-update"
+    )
+    def bulk_update(self, request: Request) -> Response:
+        qs = self.get_queryset().filter(id__in=[obj_data.get("id") for obj_data in request.data])
+        serializer = self.get_serializer(instance=qs, data=request.data, many=True, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    @action(detail=False, methods=("get",), permission_classes=(IsAuthenticated,))
+    def uids(self, request: Request) -> Response:
+        qs = self.get_queryset().exclude(uid=None)
+        return Response(qs.values_list("id", "uid"))
