@@ -115,6 +115,27 @@ class TestAssessmentViewset:
         )
         self._test_flat_export(rewrite_data_files, fn, url)
 
+    def test_ehv_check(self, db_keys):
+        client = APIClient()
+        url = (
+            reverse("animal:api:assessment-ehv-check", args=(db_keys.assessment_working,))
+            + "?format=csv"
+        )
+
+        # permissions check
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+        # content check
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+        data = resp.content.decode().split("\n")
+        assert (
+            data[0]
+            == "assessment_id,endpoint_id,endpoint_url,term_type,endpoint_term_free_text,vocabulary_term_text,vocabulary_term_id,issue_class,issue_description"
+        )
+
 
 @pytest.mark.django_db
 class TestExperimentCreateApi:

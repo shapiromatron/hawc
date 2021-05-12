@@ -31,6 +31,19 @@ class TestEhvTermViewset:
         for url, resp in test_cases:
             assert client.get(url).json() == resp
 
+    def test_nested(self):
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        url = reverse("vocab:api:ehv-nested") + "?format=csv"
+        resp = client.get(url)
+        assert resp.status_code == 200
+        data = resp.content.decode().split("\n")
+        assert len(data) >= 2
+        assert (
+            data[0]
+            == "system_term_id,system,organ_term_id,organ,effect_term_id,effect,effect_subtype_term_id,effect_subtype,name_term_id,name"
+        )
+
     def test_query_params(self):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
