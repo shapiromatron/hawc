@@ -312,11 +312,15 @@ class BulkSerializer(serializers.ListSerializer):
 
         if not isinstance(data, list):
             message = self.error_messages["not_a_list"].format(input_type=type(data).__name__)
-            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="not_a_list")
+            raise serializers.ValidationError(
+                {api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="not_a_list"
+            )
 
         if not self.allow_empty and len(data) == 0:
             message = self.error_messages["empty"]
-            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="empty")
+            raise serializers.ValidationError(
+                {api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="empty"
+            )
 
         ret = []
         errors = []
@@ -328,14 +332,14 @@ class BulkSerializer(serializers.ListSerializer):
                 self.child.initial_data = item
                 # End inserted code
                 validated = self.child.run_validation(item)
-            except ValidationError as exc:
+            except serializers.ValidationError as exc:
                 errors.append(exc.detail)
             else:
                 ret.append(validated)
                 errors.append({})
 
         if any(errors):
-            raise ValidationError(errors)
+            raise serializers.ValidationError(errors)
 
         return ret
 

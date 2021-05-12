@@ -1,6 +1,5 @@
 from typing import Optional
 
-import jsonschema
 from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import exceptions, mixins, status, viewsets
@@ -96,11 +95,6 @@ class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
         detail=False, methods=("post",), permission_classes=(IsAdminUser,), url_path="bulk-create"
     )
     def bulk_create(self, request: Request) -> Response:
-        # ensure data is list of dicts
-        try:
-            jsonschema.validate(request.data, {"type": "array", "items": {"type": "object"}})
-        except jsonschema.ValidationError:
-            raise exceptions.ValidationError("Data must be list of dicts")
         serializer = self.get_serializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -111,11 +105,6 @@ class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
         detail=False, methods=("patch",), permission_classes=(IsAdminUser,), url_path="bulk-update"
     )
     def bulk_update(self, request: Request) -> Response:
-        # ensure data is list of dicts
-        try:
-            jsonschema.validate(request.data, {"type": "array", "items": {"type": "object"}})
-        except jsonschema.ValidationError:
-            raise exceptions.ValidationError("Data must be list of dicts")
         qs = self.get_queryset().filter(id__in=[obj_data.get("id") for obj_data in request.data])
         serializer = self.get_serializer(instance=qs, data=request.data, many=True, partial=True)
         serializer.is_valid(raise_exception=True)
