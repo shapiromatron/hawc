@@ -26,6 +26,7 @@ from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
+from .actions.term_check import EhvTermCheck
 
 
 class AnimalAssessmentViewset(
@@ -159,6 +160,16 @@ class AnimalAssessmentViewset(
             )
             cache.set(key, df, settings.CACHE_1_HR)
         export = FlatExport(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
+        return Response(export)
+
+    @action(detail=True, url_path="ehv-check", renderer_classes=PandasRenderers)
+    def ehv_check(self, request, pk):
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_edit()
+        action = EhvTermCheck(data={"assessment_id": pk})
+        action.validate()
+        df = action.evaluate()
+        export = FlatExport(df, f"term-report-{pk}")
         return Response(export)
 
 
