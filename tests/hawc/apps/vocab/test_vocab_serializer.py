@@ -64,7 +64,4 @@ class TestTermSerializer:
         instance = next(
             instance for instance in updated_instances if instance.id == instance_data["id"]
         )
-        assert (
-            instance.deprecated_on > before_test
-            and timezone.make_aware(instance.last_updated) > before_test
-        )
+        assert instance.deprecated_on > before_test and instance.last_updated > before_test

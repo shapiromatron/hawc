@@ -93,7 +93,7 @@ class TestTermViewset:
 
         test_cases = [
             # not array
-            ({}, ["Data must be list of dicts"]),
+            ({}, {"non_field_errors": ['Expected a list of items but got type "dict".']}),
             # id provided
             (
                 [{"id": 1, "uid": 100, "type": 1, "name": "name"}],
@@ -102,7 +102,7 @@ class TestTermViewset:
             # wrong attr type
             (
                 [{"uid": "slug", "type": 1, "name": "name"}],
-                {"uid": ["A valid integer is required."]},
+                [{"uid": ["A valid integer is required."]}],
             ),
         ]
 
@@ -136,13 +136,13 @@ class TestTermViewset:
 
         test_cases = [
             # not array
-            ({}, ["Data must be list of dicts"]),
+            ({}, {"non_field_errors": ['Expected a list of items but got type "dict".']}),
             # id missing
             ([{"name": "name"}], {"non_field_errors": ["'id' is required to map to instance."]}),
             # invalid id
             ([{"id": 9999, "name": "name"}], {"non_field_errors": ["Invalid 'id's: 9999."]}),
             # wrong attr type
-            ([{"id": 1, "type": "one"}], {"type": ['"one" is not a valid choice.']}),
+            ([{"id": 1, "type": "one"}], [{"type": ['"one" is not a valid choice.']}]),
         ]
 
         for data, err in test_cases:

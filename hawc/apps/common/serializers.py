@@ -297,98 +297,140 @@ class BulkSerializer(serializers.ListSerializer):
 
     def to_internal_value(self, data):
         """
-        List of dicts of native values <- List of dicts of primitive datatypes.
+        This is the inherited method from ListSerializer, with a few lines added to work around an error.
+        `exclude_current_instance` on `UniqueValidator` examines the `instance` set on the serializer to exclude it from the uniqueness constraint:
+        https://github.com/encode/django-rest-framework/blob/3875d3284e73ed4d8e36c07d9b70c1b22c9d5998/rest_framework/validators.py#L138
+        However, `instance` in this case is the queryset passed in to the constructor, so it throws an error when it attempts to retrieve the `pk` attribute of the queryset.
+        The fix is to set the correct `instance` before validation is run.
+
+        Further description of issue and fix:
+        https://github.com/encode/django-rest-framework/issues/6130
+        https://github.com/miki725/django-rest-framework-bulk/issues/68
         """
         if html.is_html_input(data):
             data = html.parse_html_list(data, default=[])
 
         if not isinstance(data, list):
             message = self.error_messages["not_a_list"].format(input_type=type(data).__name__)
-            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="not_a_list")
+            raise serializers.ValidationError(
+                {api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="not_a_list"
+            )
 
         if not self.allow_empty and len(data) == 0:
             message = self.error_messages["empty"]
-            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="empty")
+            raise serializers.ValidationError(
+                {api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="empty"
+            )
 
         ret = []
         errors = []
 
         for item in data:
             try:
-                # https://github.com/miki725/django-rest-framework-bulk/issues/68#issuecomment-361895823
-                self.child.instance = (
-                    next((_ for _ in self.instance if _.id == item.get("id")), None)
-                    if self.instance
-                    else None
-                )
+                # Inserted code
+                self.child.instance = self.instance.get(id=item["id"]) if self.instance else None
+                self.child.initial_data = item
+                # End inserted code
                 validated = self.child.run_validation(item)
-            except ValidationError as exc:
+            except serializers.ValidationError as exc:
                 errors.append(exc.detail)
             else:
                 ret.append(validated)
                 errors.append({})
 
         if any(errors):
-            raise ValidationError(errors)
+            raise serializers.ValidationError(errors)
 
         return ret
 
     def validate_update(self, data):
+        """
+        Validates data for bulk update operation.
+        """
         # ids must be in data
-        data_ids = [obj_data.get("id") for obj_data in data if obj_data.get("id") is not None]
-        if len(data_ids) != len(data):
+        data_ids = set([obj_data.get("id") for obj_data in data])
+        if None in data_ids:
             raise serializers.ValidationError("'id' is required to map to instance.")
         # all data ids should be in instance
-        instance_ids = [obj.id for obj in self.instance]
-        invalid_data_ids = set(data_ids) - set(instance_ids)
+        instance_ids = set([obj.id for obj in self.instance])
+        invalid_data_ids = data_ids - instance_ids
         if invalid_data_ids:
             raise serializers.ValidationError(
                 f"Invalid 'id's: {', '.join([str(_) for _ in invalid_data_ids])}."
             )
 
     def validate_create(self, data):
-        data_ids = [obj_data.get("id") for obj_data in data if obj_data.get("id") is not None]
-        if data_ids:
+        """
+        Validates data for bulk create operation.
+        """
+        # ids must not be in data
+        if any("id" in obj_data for obj_data in data):
             raise serializers.ValidationError("'id' is prohibited.")
 
     def validate(self, data):
-        # ids needed for update operation
+        """
+        Validates data.
+
+        If the serializer has an `instance`, then the data is validated for bulk update on that `instance`.
+        Otherwise it is validated for bulk create.
+        """
+        # if instance is set, its an update
         if self.instance is not None:
             self.validate_update(data)
-        # ids forbidden for create operation
+        # otherwise its a create
         else:
             self.validate_create(data)
 
         return data
 
     def values_equal(self, instance, field, value) -> bool:
+        """
+        Returns whether the value of an instance field and another given value are equal.
+
+        Args:
+            instance (Model): model instance
+            field (str): field name
+            value (Any): value to equate
+
+        Returns:
+            bool: equality of instance field value and given value
+        """
         return getattr(instance, field) == value
 
-    def update_field(self, instance, field, value) -> str:
-        setattr(instance, field, value)
-        return field
-
     def update_fields(self, instance, data) -> Tuple[bool, List]:
+        """
+        Attempts to update an instance with given data.
+
+        Args:
+            instance (Model): model instance
+            data (dict): serialized instance data
+
+        Returns:
+            Tuple[bool, List]: a tuple of whether the instance has been updated, and a list of updated fields
+        """
         fields = list(data.keys())
         fields.remove("id")
-        now = timezone.now()
         updated_fields = []
         for field in fields:
             value = data[field]
             if not self.values_equal(instance, field, value):
-                set_field = self.update_field(instance, field, value)
-                updated_fields.append(set_field)
-        updated = bool(updated_fields)
-        if updated and hasattr(instance, "last_updated"):
-            instance.last_updated = now
+                setattr(instance, field, value)
+                updated_fields.append(field)
+        requires_update = bool(updated_fields)
+        if requires_update and hasattr(instance, "last_updated"):
+            instance.last_updated = timezone.now()
             updated_fields.append("last_updated")
-        return updated, updated_fields
+        return requires_update, updated_fields
 
     def update(self, instances, validated_data):
+        """
+        Bulk update.
+        """
         updated_instances = []
         updated_fields = set()
+        instance_mapping = {instance.id: instance for instance in instances}
         for data in validated_data:
-            instance = next(instance for instance in instances if instance.id == data["id"])
+            instance = instance_mapping.get(data["id"])
             updated, fields = self.update_fields(instance, data)
             if updated:
                 updated_instances.append(instance)
@@ -399,6 +441,9 @@ class BulkSerializer(serializers.ListSerializer):
         return updated_instances
 
     def create(self, validated_data):
+        """
+        Bulk create.
+        """
         Model = self.child.Meta.model
         instances = [Model(**data) for data in validated_data]
         return Model.objects.bulk_create(instances)
