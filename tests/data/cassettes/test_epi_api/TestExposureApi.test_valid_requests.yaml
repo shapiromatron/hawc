@@ -1,0 +1,73 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+    method: GET
+    uri: https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=DTXSID1020190
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAJVS62/aMBD/V6p8qEAbeY1ShhRVzBElhSYVgXUPVZUXH4m3OKa2eanq/z47FMS6
+        qds+2Mrd7+HL3T1aIVZ4wtdW79HiguYRgUrROQVh9axw+imNQs/1Xe+9a721MixFpfPdjtvy/ZZJ
+        LQTMQQggMWagIWRH9kk/o+TkQ7mEk/O25shtdSkpsXq1Tx1PtwvDDtN0yjf36fKbVLjK4D4iO/6r
+        ZRC1qe3+BGR7AEVh19WQf972NfQdFcCiChXRCLaaMRqOP45GyVU4RFfXl63ZcDAY9JPPab811mxa
+        EZrzf6ZLRkuQmvY1xm/u7Oc7ad2ljSBpmoO8AKEA+TFqoDr2A+Q19YnNl0YaBtWspJk2jLJWBYk2
+        Z7wccMGWJTbt9TrDbuzH2E+6qb9Db4HmhbJ67U7Hfnemp8TLkhJa5bumV8uyPEqi3QxfZG9+HeMO
+        VYIyBuS2oArkAmcamONSwgEZAzbiLyC4PGDaSZeLlQJyPMVnNCsg+yGXTP9L3K/3h2cgJZC+6d84
+        SUazm3oAc34t830laywq/dBRhsmJfnxrOmOEhVKLnuPgTHGxljYssJ3z1T52iJSKb5yV6ztMCiO8
+        oIfagt+35UFi8f/WRvW6L2U4h9lk/Hdb3SdGM1w6teRit9kvHU/XgXfmnhb1PWcqkKvcenr6CSmL
+        d1TVAwAA
+    headers:
+      Access-Control-Allow-Headers:
+      - x-requested-with
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS, DELETE
+      Access-Control-Allow-Origin:
+      - '*'
+      Allow:
+      - GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS
+      Cache-Control:
+      - no-cache, no-store, max-age=0
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en-US
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 21 Apr 2021 19:00:42 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache-Coyote/1.1
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+version: 1

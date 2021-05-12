@@ -26,7 +26,7 @@ def literature(driver, root_url):
 
     # /lit/assessment/:id/references/visualization/
     h.go_to(root_url + "/lit/assessment/2/references/visualization/")
-    h.wait_until(h.Text("public final").exists)
+    h.wait_until(h.Text("Chemical X").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .tagnode")) == 3
 

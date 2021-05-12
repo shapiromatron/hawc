@@ -4,6 +4,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.models import Assessment
+from hawc.apps.assessment.permissions import AssessmentPermissions
 
 _successful_post = {
     "name": "testing",
@@ -116,6 +117,10 @@ class TestEditPermissions:
                     follow=True,
                 )
                 assert response.status_code == 200
+
+        # rollback in test doesn't clear permissions cache; clear manually
+        AssessmentPermissions.clear_cache(db_keys.assessment_working)
+        AssessmentPermissions.clear_cache(db_keys.assessment_final)
 
     def test_failure(self, db_keys):
         clients = (None, "team@hawcproject.org", "reviewer@hawcproject.org")

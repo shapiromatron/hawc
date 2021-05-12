@@ -437,7 +437,7 @@ class Endpoint extends Observee {
         let tbl = new BaseTable();
         tbl.addHeaderRow(["Methodology"]);
         tbl.setColGroup([100]);
-        tbl.tbody.append(this.data.endpoint_notes);
+        tbl.tbody.append(`<tr><td>${this.data.endpoint_notes}</td></tr>`);
         $(div).html(tbl.getTbl());
     }
 

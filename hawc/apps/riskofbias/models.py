@@ -282,18 +282,23 @@ class RiskOfBias(models.Model):
         SerializerHelper.delete_caches(cls, ids)
 
     @staticmethod
-    def flat_complete_header_row():
-        return ("rob-id", "rob-active", "rob-final", "rob-author_id", "rob-author_name")
+    def flat_header_row(final_only: bool = True):
+        col = ["rob-id", "rob-created", "rob-last_updated"]
+        if not final_only:
+            col[1:1] = ["rob-active", "rob-final", "rob-author_id", "rob-author_name"]
+        return col
 
     @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["active"],
-            ser["final"],
-            ser["author"]["id"],
-            ser["author"]["full_name"],
-        )
+    def flat_data_row(ser, final_only: bool = True):
+        row = [ser["id"], ser["created"], ser["last_updated"]]
+        if not final_only:
+            row[1:1] = [
+                ser["active"],
+                ser["final"],
+                ser["author"]["id"],
+                ser["author"]["full_name"],
+            ]
+        return row
 
     def copy_across_assessments(self, cw):
         children = list(self.scores.all().order_by("id"))

@@ -23,6 +23,7 @@ valid_html_tags_re = {
     "span",
     "strong",
     "ul",
+    "u",
 }
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {".gov", ".edu", ".who.int", "sciencedirect.com", "elsevier.com"}

@@ -1,76 +1,61 @@
-<div class="epa-style app-header">
-
-    <header class="masthead clearfix" role="banner">
-        <form class="float-right form-inline d-none d-md-block d-lg-none mr-2 epa-search-fixed-size">
-            <div class="input-group input-group-sm">
-                <input type="text" class="form-control " placeholder="Search EPA.gov" name="querytext">
-                <div class="input-group-append">
-                    <button type="submit" class="btn epa-search-button" formaction="https://search.epa.gov/epasearch/">
-                        <i class="fa fa-search text-light" aria-hidden="true"></i></button>
-                </div>
-                <input type="hidden" name="areaname" value="">
-                <input type="hidden" name="areacontacts" value="">
-                <input type="hidden" name="areasearchurl" value="">
-                <input type="hidden" name="typeofsearch" value="epa">
-                <input type="hidden" name="result_template" value="2col.ftl">
-            </div>
-        </form>
-        <img alt="" class="site-logo" src="https://www.epa.gov/sites/all/themes/epa/logo.png">
-        <div class="ml-3 site-name-and-slogan">
-            <h1 class="site-name"><a href="https://www.epa.gov/" rel="home" title="Go to the home page"><span>US EPA</span></a>
-            </h1>
-            <div class="site-slogan">United States Environmental Protection Agency</div>
+<header class="masthead clearfix" role="banner">
+    <img alt="" class="site-logo" src="https://www.epa.gov/sites/all/themes/epa/logo.png">
+    <div class="site-name-and-slogan">
+        <h1 class="site-name"><a href="https://www.epa.gov/" rel="home" title="Go to the home page"><span>US
+                    EPA</span></a></h1>
+        <div class="site-slogan">United States Environmental Protection Agency</div>
+    </div>
+    <div class="region-header">
+        <div class="block-epa-core-gsa-epa-search" id="block-epa-core-gsa-epa-search">
+            <form action="https://search.epa.gov/epasearch" class="epa-search" method="get">
+                <label class="element-hidden" for="search-box">Search</label>
+                <input class="form-text" id="search-box" name="querytext" placeholder="Search EPA.gov" value="">
+                <button class="epa-search-button" id="search-button" title="Search" type="submit">Search</button>
+                <input name="areaname" type="hidden" value="">
+                <input name="areacontacts" type="hidden" value="">
+                <input name="areasearchurl" type="hidden" value="">
+                <input name="typeofsearch" type="hidden" value="epa">
+                <input name="result_template" type="hidden" value="2col.ftl">
+            </form>
         </div>
-    </header>
-
-    <nav class="navbar navbar-expand-md epanavbar">
-        <div class="collapse navbar-collapse" id="epanavbarcontent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link " href="https://epa.gov/environmental-topics"
-                        aria-haspopup="true" aria-expanded="false"
-                        title="View links to the most popular pages for each of EPA’s top environmental topics.">Environmental Topics</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://epa.gov/laws-regulations"
-                        aria-haspopup="true" aria-expanded="false"
-                        title="View links to regulatory information by topic and sector, and to top pages about environmental laws, regulations, policies, compliance, and enforcement.">Laws &amp; Regulations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://epa.gov/aboutepa" aria-haspopup="true"
-                        title="Learn more about our mission, organization, and locations." >About EPA</a>
-                </li>
-            </ul>
-        </div>
-
-        <form class="form-inline d-none d-lg-block epa-search-fixed-size">
-            <div class="input-group input-group-sm">
-                <input type="text" class="form-control " placeholder="Search EPA.gov" name="querytext">
-                <div class="input-group-append">
-                    <button type="submit" class="btn epa-search-button" formaction="https://search.epa.gov/epasearch/">
-                        <i class="fa fa-search text-light" aria-hidden="true"></i></button>
-                </div>
-                <input type="hidden" name="areaname" value="">
-                <input type="hidden" name="areacontacts" value="">
-                <input type="hidden" name="areasearchurl" value="">
-                <input type="hidden" name="typeofsearch" value="epa">
-                <input type="hidden" name="result_template" value="2col.ftl">
-            </div>
-        </form>
-    </nav>
-
-    <form class="form-inline d-sm-block d-md-none p-2">
-        <div class="input-group input-group-sm">
-            <input type="text" class="form-control " placeholder="Search EPA.gov" name="querytext">
-            <div class="input-group-append">
-                <button type="submit" class="btn epa-search-button" formaction="https://search.epa.gov/epasearch/">
-                    <i class="fa fa-search text-light" aria-hidden="true"></i></button>
-            </div>
-            <input type="hidden" name="areaname" value="">
-            <input type="hidden" name="areacontacts" value="">
-            <input type="hidden" name="areasearchurl" value="">
-            <input type="hidden" name="typeofsearch" value="epa">
-            <input type="hidden" name="result_template" value="2col.ftl">
-        </div>
-    </form>
+    </div>
+</header>
+<nav class="nav main-nav clearfix" role="navigation">
+    <div class="nav__inner">
+        <h2 class="element-invisible">Main menu</h2>
+        <ul class="menu" role="menu">
+            <li class="menu-item" role="presentation"><a class="menu-link"
+                    href="https://www.epa.gov/environmental-topics" role="menuitem"
+                    title="Learn about Environmental Topics that EPA covers.">Environmental Topics</a></li>
+            <li class="menu-item" role="presentation"><a class="menu-link" href="https://www.epa.gov/laws-regulations"
+                    role="menuitem"
+                    title="Laws written by Congress provide the authority for EPA to write regulations. Regulations explain the technical, operational, and legal details necessary to implement laws.">Laws
+                    &amp; Regulations</a></li>
+            <li class="menu-item" role="presentation"><a class="menu-link" href="https://www.epa.gov/aboutepa"
+                    role="menuitem"
+                    title="Learn more about our mission and what we do, how we are organized, and our history.">About
+                    EPA</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-bar clearfix">
+        <label class="menu-button" for="mobile-nav-toggle">Menu</label>
+    </div>
+    <input checked id="mobile-nav-toggle" type="checkbox">
+    <div class="mobile-links element-hidden" id="mobile-links" style="height:2404px;">
+        <ul class="mobile-menu">
+            <li class="menu-item" role="presentation"><a class="menu-link"
+                    href="https://www.epa.gov/environmental-topics" role="menuitem"
+                    title="Learn about Environmental Topics that EPA covers.">Environmental Topics</a></li>
+            <li class="menu-item" role="presentation"><a class="menu-link" href="https://www.epa.gov/laws-regulations"
+                    role="menuitem"
+                    title="Laws written by Congress provide the authority for EPA to write regulations. Regulations explain the technical, operational, and legal details necessary to implement laws.">Laws
+                    &amp; Regulations</a></li>
+            <li class="menu-item" role="presentation"><a class="menu-link" href="https://www.epa.gov/aboutepa"
+                    role="menuitem"
+                    title="Learn more about our mission and what we do, how we are organized, and our history.">About
+                    EPA</a></li>
+        </ul>
+    </div>
 </div>

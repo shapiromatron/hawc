@@ -16,10 +16,13 @@ class RoBBarchart extends RoBHeatmap {
 
         options = options || {};
 
-        if (window.isEditable) title.append(this.addActionsMenu());
+        const actions = window.isEditable ? this.addActionsMenu() : null;
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend(title).append(captionDiv);
+
+        if (!options.visualOnly) {
+            $el.prepend([actions, title]).append(captionDiv);
+        }
 
         new RoBBarchartPlot(this, data, options).render($plotDiv);
         caption.renderAndEnable();

@@ -49,7 +49,7 @@ def update_hero_fields(ref_ids: List[int]):
     with transaction.atomic():
         references = Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
         for reference in references:
-            content = reference.identifiers.get(database=constants.HERO).get_content_json()
+            content = reference.identifiers.get(database=constants.HERO).get_content()
             reference.update_from_hero_content(content, save=True)
 
 

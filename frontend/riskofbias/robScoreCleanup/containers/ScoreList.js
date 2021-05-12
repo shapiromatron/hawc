@@ -31,26 +31,26 @@ class ScoreList extends Component {
 
         return (
             <div>
-                <h4>
+                <h4 className="d-inline-block">
                     Responses which meet your filtered criteria above:
-                    <div className="float-right">
-                        <button
-                            className="btn btn-secondary"
-                            onClick={() => {
-                                this.props.store.clearSelectedStudyScores();
-                            }}>
-                            Clear selected
-                        </button>
-                        <span>&nbsp;</span>
-                        <button
-                            className="btn btn-primary"
-                            onClick={() => {
-                                this.props.store.selectAllStudyScores();
-                            }}>
-                            Select all responses
-                        </button>
-                    </div>
                 </h4>
+                <div className="float-right">
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => {
+                            this.props.store.clearSelectedStudyScores();
+                        }}>
+                        Clear selected
+                    </button>
+                    <span>&nbsp;</span>
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                            this.props.store.selectAllStudyScores();
+                        }}>
+                        Select all responses
+                    </button>
+                </div>
                 <br />
 
                 {_.map(visibleStudyScores, studyScore => {

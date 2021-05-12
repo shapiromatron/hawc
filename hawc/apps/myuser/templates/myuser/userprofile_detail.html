@@ -3,19 +3,19 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row m-auto">
-  <h1>
-    User Profile
-  </h1>
-  <div class="ml-auto">
-    <a href="{% url 'user:profile_update' %}" class="btn btn-primary" type="button" id="dropdownMenuButton">
-      Update Profile
-    </a>
-  </div>
-</div>
+<h1 class="d-inline-block">
+  User Profile
+</h1>
+<a href="{% url 'user:profile_update' %}" class="float-right btn btn-primary" type="button" id="dropdownMenuButton">
+  Update Profile
+</a>
 
-<h2>Account settings</h2>
 <table class="table table-sm table-striped table-hover table-bordered">
+  <colgroup>
+    <col width="25%" />
+    <col width="25%" />
+    <col width="50%" />
+  </colgroup>
   <tbody>
     <tr>
       <th>Username (email)</th>
@@ -34,15 +34,9 @@
       <th>Can create assessments</th>
       <td colspan="2">{{user.can_create_assessments}}</td>
     </tr>
-  </tbody>
-</table>
-
-<h2>HAWC settings</h2>
-<table class="table table-bordered table-striped">
-  <tbody>
     <tr>
       <th>Authenticated HERO Access</th>
-      <td>{{object.HERO_access}}</td>
+      <td colspan="2">{{object.HERO_access}}</td>
     </tr>
   </tbody>
 </table>

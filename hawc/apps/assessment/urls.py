@@ -21,9 +21,9 @@ urlpatterns = [
     path("public/", views.AssessmentPublicList.as_view(), name="public_list"),
     path("new/", views.AssessmentCreate.as_view(), name="new"),
     path("<int:pk>/", views.AssessmentRead.as_view(), name="detail"),
-    path("<int:pk>/edit/", views.AssessmentUpdate.as_view(), name="update"),
+    path("<int:pk>/update/", views.AssessmentUpdate.as_view(), name="update"),
     path(
-        "<int:pk>/enabled-modules/edit/",
+        "<int:pk>/enabled-modules/update/",
         views.AssessmentModulesUpdate.as_view(),
         name="modules_update",
     ),
