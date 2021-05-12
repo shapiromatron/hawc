@@ -9,7 +9,8 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ..common.helper import tryParseInt
+from ..common.helper import FlatExport, tryParseInt
+from ..common.renderers import PandasRenderers
 from . import models, serializers
 
 
@@ -32,6 +33,12 @@ class EhvTermViewset(viewsets.GenericViewSet):
         if parent:
             qs = qs.filter(parent=parent)
         return qs[:limit]
+
+    @action(detail=False, renderer_classes=PandasRenderers)
+    def nested(self, request: Request):
+        df = models.Term.ehv_dataframe()
+        export = FlatExport(df=df, filename="ehv")
+        return Response(export)
 
     @action(detail=False)
     def system(self, request: Request) -> Response:
