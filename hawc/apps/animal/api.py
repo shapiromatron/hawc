@@ -26,7 +26,7 @@ from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
-from .actions.term_check import EhvTermCheck
+from .actions.term_check import term_check
 
 
 class AnimalAssessmentViewset(
@@ -166,9 +166,7 @@ class AnimalAssessmentViewset(
     def ehv_check(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_edit()
-        action = EhvTermCheck(data={"assessment_id": pk})
-        action.validate()
-        df = action.evaluate()
+        df = term_check(pk)
         export = FlatExport(df, f"term-report-{pk}")
         return Response(export)
 
