@@ -41,6 +41,7 @@ urlpatterns = [
         "robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
     path("about/", views.About.as_view(), name="about"),
+    path("resources/", views.Resources.as_view(), name="resources"),
     path("contact/", views.Contact.as_view(), name="contact"),
     path("blog/", views.BlogList.as_view(), name="blog"),
     # Apps

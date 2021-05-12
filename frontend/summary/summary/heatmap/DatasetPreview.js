@@ -21,38 +21,30 @@ class DatasetPreview extends Component {
 
         return (
             <div>
-                <h4>
-                    Dataset overview
-                    <div className="dropdown btn-group float-right">
-                        <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            Actions
+                <h4 className="d-inline-block">Dataset overview</h4>
+                <div className="dropdown btn-group float-right">
+                    <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        Actions
+                    </a>
+                    <div className="dropdown-menu dropdown-menu-right">
+                        {clearCacheUrl ? (
+                            <a className="dropdown-item" href={clearCacheUrl}>
+                                <i className="fa fa-fw fa-refresh"></i>&nbsp;Clear assessment cache
+                            </a>
+                        ) : null}
+                        <a
+                            className="dropdown-item"
+                            href={url.includes("?") ? `${url}&format=csv` : `${url}?format=csv`}>
+                            <i className="fa fa-fw fa-file-text-o"></i>&nbsp;Download dataset (csv)
                         </a>
-                        <div className="dropdown-menu dropdown-menu-right">
-                            {clearCacheUrl ? (
-                                <a className="dropdown-item" href={clearCacheUrl}>
-                                    <i className="fa fa-fw fa-refresh"></i>&nbsp;Clear assessment
-                                    cache
-                                </a>
-                            ) : null}
-                            <a
-                                className="dropdown-item"
-                                href={
-                                    url.includes("?") ? `${url}&format=csv` : `${url}?format=csv`
-                                }>
-                                <i className="fa fa-fw fa-file-text-o"></i>&nbsp;Download dataset
-                                (csv)
-                            </a>
-                            <a
-                                className="dropdown-item"
-                                href={
-                                    url.includes("?") ? `${url}&format=xlsx` : `${url}?format=xlsx`
-                                }>
-                                <i className="fa fa-fw fa-file-excel-o"></i>&nbsp;Download dataset
-                                (xlsx)
-                            </a>
-                        </div>
+                        <a
+                            className="dropdown-item"
+                            href={url.includes("?") ? `${url}&format=xlsx` : `${url}?format=xlsx`}>
+                            <i className="fa fa-fw fa-file-excel-o"></i>&nbsp;Download dataset
+                            (xlsx)
+                        </a>
                     </div>
-                </h4>
+                </div>
                 <ul>
                     <li>
                         <b>Number of rows:</b>&nbsp;{summary.numRows}

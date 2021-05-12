@@ -5,6 +5,7 @@ from itertools import chain
 from typing import Any, Dict
 
 import pandas as pd
+from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -15,7 +16,13 @@ from scipy import stats
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
+from ..common.helper import (
+    HAWCDjangoJSONEncoder,
+    SerializerHelper,
+    cleanHTML,
+    df_move_column,
+    tryParseInt,
+)
 from ..study.models import Study
 from ..vocab.models import Term
 from . import managers
@@ -149,7 +156,7 @@ class Experiment(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:experiment_detail", args=[str(self.pk)])
+        return reverse("animal:experiment_detail", args=(self.pk,))
 
     def is_generational(self):
         return self.has_multiple_generations
@@ -345,7 +352,7 @@ class AnimalGroup(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:animal_group_detail", args=[str(self.pk)])
+        return reverse("animal:animal_group_detail", args=(self.pk,))
 
     def get_assessment(self):
         return self.experiment.get_assessment()
@@ -371,7 +378,11 @@ class AnimalGroup(models.Model):
 
     @property
     def generation_short(self):
-        return "Other" if self.generation == "Ot" else self.generation
+        return self.get_generation_short(self.generation)
+
+    @classmethod
+    def get_generation_short(cls, value) -> str:
+        return "Other" if value == "Ot" else value
 
     @staticmethod
     def flat_complete_header_row():
@@ -967,33 +978,33 @@ class Endpoint(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters: Dict[str, Any] = {"assessment_id": assessment}
+    def heatmap_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        filters: Dict[str, Any] = {"assessment_id": assessment_id}
         if published_only:
             filters["animal_group__experiment__study__published"] = True
         columns = {
-            "id": "endpoint id",
-            "name": "endpoint name",
-            "system": "system",
-            "organ": "organ",
-            "effect": "effect",
-            "effect_subtype": "effect subtype",
-            "animal_group__dosing_regime__route_of_exposure": "route of exposure",
-            "animal_group__species__name": "species",
-            "animal_group__strain__name": "strain",
-            "animal_group__name": "animal group name",
-            "animal_group__sex": "sex",
-            "animal_group__generation": "generation",
-            "animal_group_id": "animal group id",
+            "animal_group__experiment__study_id": "study id",
+            "animal_group__experiment__study__short_citation": "study citation",
+            "animal_group__experiment__study__study_identifier": "study identifier",
             "animal_group__experiment_id": "experiment id",
             "animal_group__experiment__name": "experiment name",
             "animal_group__experiment__type": "experiment type",
             "animal_group__experiment__cas": "experiment cas",
             "animal_group__experiment__dtxsid": "experiment dtxsid",
             "animal_group__experiment__chemical": "experiment chemical",
-            "animal_group__experiment__study_id": "study id",
-            "animal_group__experiment__study__short_citation": "study citation",
-            "animal_group__experiment__study__study_identifier": "study identifier",
+            "animal_group_id": "animal group id",
+            "animal_group__name": "animal group name",
+            "animal_group__species__name": "species",
+            "animal_group__strain__name": "strain",
+            "animal_group__sex": "sex",
+            "animal_group__generation": "generation",
+            "animal_group__dosing_regime__route_of_exposure": "route of exposure",
+            "id": "endpoint id",
+            "system": "system",
+            "organ": "organ",
+            "effect": "effect",
+            "effect_subtype": "effect subtype",
+            "name": "endpoint name",
         }
         qs = (
             cls.objects.select_related(
@@ -1015,25 +1026,54 @@ class Endpoint(BaseEndpoint):
         df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
         df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
         df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
+
+        # get animal-group values
+        df = (
+            df.merge(
+                AnimalGroup.objects.animal_description(assessment_id),
+                how="left",
+                left_on="animal group id",
+                right_on="animal group id",
+            )
+            .pipe(df_move_column, "animal description", "animal group name")
+            .pipe(df_move_column, "animal description, with n", "animal description")
+            .pipe(df_move_column, "treatment period", "experiment type")
+        )
+
+        # overall risk of bias evaluation
+        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+        df2 = RiskOfBiasScore.objects.overall_scores(assessment_id)
+        if df2 is not None:
+            df = (
+                df.merge(df2, how="left", left_on="study id", right_on="study id")
+                .pipe(df_move_column, "overall study evaluation", "study identifier")
+                .fillna("")
+            )
         return df
 
     @classmethod
-    def heatmap_doses_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        df1 = cls.heatmap_df(assessment, published_only).set_index("endpoint id")
+    def heatmap_doses_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        df1 = cls.heatmap_df(assessment_id, published_only).set_index("endpoint id")
 
         columns = "dose units id|dose units name|doses|noel|loel|fel|bmd|bmdl".split("|")
-        df2 = cls.objects.endpoint_df(assessment, published_only).set_index("endpoint id")[columns]
+        df2 = cls.objects.endpoint_df(assessment_id, published_only).set_index("endpoint id")[
+            columns
+        ]
 
-        df3 = df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        df3 = (
+            df1.merge(df2, how="left", left_index=True, right_index=True)
+            .reset_index()
+            .pipe(df_move_column, "endpoint id", "route of exposure")
+        )
         return df3
 
     @classmethod
-    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+    def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment, "bioassay": True}
+        filters: Dict[str, Any] = {"assessment_id": assessment_id, "bioassay": True}
         if published_only:
             filters["published"] = True
         columns = {
@@ -1045,23 +1085,21 @@ class Endpoint(BaseEndpoint):
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies
-        df2 = (
-            cls.heatmap_df(assessment, published_only)
-            .groupby("study id")
-            .agg(
-                {
-                    "experiment type": unique_items,
-                    "species": unique_items,
-                    "strain": unique_items,
-                    "route of exposure": unique_items,
-                    "experiment chemical": unique_items,
-                    "sex": unique_items,
-                    "system": unique_items,
-                    "organ": unique_items,
-                    "effect": unique_items,
-                }
-            )
-        )
+        df2 = cls.heatmap_df(assessment_id, published_only)
+        aggregates = {
+            "experiment type": unique_items,
+            "experiment chemical": unique_items,
+            "species": unique_items,
+            "sex": unique_items,
+            "strain": unique_items,
+            "route of exposure": unique_items,
+            "system": unique_items,
+            "organ": unique_items,
+            "effect": unique_items,
+        }
+        if "overall study evaluation" in df2:
+            aggregates["overall study evaluation"] = unique_items
+        df2 = df2.groupby("study id").agg(aggregates)
 
         # rollup dose-units to study
         values = dict(
@@ -1070,7 +1108,7 @@ class Endpoint(BaseEndpoint):
         )
         qs = (
             DoseGroup.objects.filter(
-                dose_regime__dosed_animals__experiment__study__assessment_id=assessment
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
             )
             .select_related("dose_regime__dosed_animals__experiment__study",)
             .values_list(*values.keys())
@@ -1118,7 +1156,7 @@ class Endpoint(BaseEndpoint):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:endpoint_detail", args=[str(self.pk)])
+        return reverse("animal:endpoint_detail", args=(self.pk,))
 
     def save(self, *args, **kwargs):
         # ensure our controlled vocabulary terms don't have leading/trailing whitespace

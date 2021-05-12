@@ -56,8 +56,13 @@ class SelectInput extends Component {
     }
 
     render() {
-        const fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
+        const fieldId = this.props.id
+                ? this.props.id
+                : this.props.name
+                ? `id_${this.props.name}`
+                : null,
             {errors} = this.props;
+
         if (this.props.fieldOnly) {
             return this.renderField("react-select", fieldId);
         }
@@ -86,7 +91,7 @@ SelectInput.propTypes = {
     helpText: PropTypes.string,
     id: PropTypes.string,
     label: PropTypes.string,
-    multiple: PropTypes.bool.isRequired,
+    multiple: PropTypes.bool,
     name: PropTypes.string,
     required: PropTypes.bool,
     selectSize: PropTypes.number,
@@ -96,6 +101,7 @@ SelectInput.propTypes = {
 
 SelectInput.defaultProps = {
     className: "form-control",
+    multiple: false,
 };
 
 export default SelectInput;

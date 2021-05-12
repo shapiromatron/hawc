@@ -5,6 +5,7 @@ from operator import xor
 from typing import Any, Dict
 
 import pandas as pd
+from django.apps import apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -43,6 +44,9 @@ class Criteria(models.Model):
 
     def __str__(self):
         return self.description
+
+    def get_assessment(self):
+        return self.assessment
 
     def copy_across_assessments(self, cw):
         new_obj, _ = self._meta.model.objects.get_or_create(
@@ -302,7 +306,7 @@ class StudyPopulation(models.Model):
         ordering = ("name",)
 
     def get_absolute_url(self):
-        return reverse("epi:sp_detail", kwargs={"pk": self.pk})
+        return reverse("epi:sp_detail", args=(self.pk,))
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -447,7 +451,7 @@ class Outcome(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     def get_absolute_url(self):
-        return reverse("epi:outcome_detail", kwargs={"pk": self.pk})
+        return reverse("epi:outcome_detail", args=(self.pk,))
 
     def can_create_sets(self):
         return not self.study_population.can_create_sets()
@@ -581,7 +585,7 @@ class ComparisonSet(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("epi:cs_detail", kwargs={"pk": self.pk})
+        return reverse("epi:cs_detail", args=(self.pk,))
 
     def get_assessment(self):
         if self.outcome:
@@ -716,7 +720,7 @@ class Group(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse("epi:g_detail", kwargs={"pk": self.pk})
+        return reverse("epi:g_detail", args=(self.pk,))
 
     def get_assessment(self):
         return self.comparison_set.get_assessment()
@@ -915,7 +919,7 @@ class Exposure(models.Model):
         return self.study_population.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("epi:exp_detail", kwargs={"pk": self.pk})
+        return reverse("epi:exp_detail", args=(self.pk,))
 
     @classmethod
     def delete_caches(cls, ids):
@@ -1154,6 +1158,9 @@ class GroupNumericalDescriptions(models.Model):
     def __str__(self):
         return self.description
 
+    def get_assessment(self):
+        return self.group.get_assessment()
+
     def copy_across_assessments(self, cw):
         old_id = self.id
         self.id = None
@@ -1357,7 +1364,7 @@ class Result(models.Model):
         return self.outcome.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("epi:result_detail", kwargs={"pk": self.pk})
+        return reverse("epi:result_detail", args=(self.pk,))
 
     @staticmethod
     def flat_complete_header_row():
@@ -1450,7 +1457,7 @@ class Result(models.Model):
         return self.outcome.get_study()
 
     @classmethod
-    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+    def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
@@ -1459,7 +1466,7 @@ class Result(models.Model):
             return "|".join(sorted(items))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment, "epi": True}
+        filters: Dict[str, Any] = {"assessment_id": assessment_id, "epi": True}
         if published_only:
             filters["published"] = True
         columns = {
@@ -1471,31 +1478,29 @@ class Result(models.Model):
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies
-        df2 = (
-            cls.heatmap_df(assessment, published_only)
-            .groupby("study id")
-            .agg(
-                {
-                    "study design": unique_items,
-                    "study population source": unique_items,
-                    "exposure name": unique_items,
-                    "exposure route": unique_list_items,
-                    "exposure measure": unique_list_items,
-                    "exposure metric": unique_list_items,
-                    "system": unique_items,
-                    "effect": unique_items,
-                    "effect subtype": unique_items,
-                }
-            )
-        )
+        df2 = cls.heatmap_df(assessment_id, published_only)
+        aggregates = {
+            "study design": unique_items,
+            "study population source": unique_items,
+            "exposure name": unique_items,
+            "exposure route": unique_list_items,
+            "exposure measure": unique_list_items,
+            "exposure metric": unique_list_items,
+            "system": unique_items,
+            "effect": unique_items,
+            "effect subtype": unique_items,
+        }
+        if "overall study evaluation" in df2:
+            aggregates["overall study evaluation"] = unique_items
+        df2 = df2.groupby("study id").agg(aggregates)
 
         # merge all the data frames together
         df = df1.merge(df2, how="left", left_index=True, right_index=True).fillna("").reset_index()
         return df
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters = {"outcome__assessment": assessment}
+    def heatmap_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        filters = {"outcome__assessment": assessment_id}
         if published_only:
             filters["outcome__study_population__study__published"] = True
         columns = {
@@ -1538,7 +1543,7 @@ class Result(models.Model):
 
         # add exposure column
         exposure_cols = ["inhalation", "dermal", "oral", "in_utero", "iv", "unknown_route"]
-        qs = Exposure.objects.filter(study_population__study__assessment=assessment).values(
+        qs = Exposure.objects.filter(study_population__study__assessment=assessment_id).values(
             "id", *exposure_cols
         )
 
@@ -1549,11 +1554,22 @@ class Result(models.Model):
         df2 = df2.drop(columns=exposure_cols)
 
         # join data together
-        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True)
-        df = df_move_column(df, "exposure route", "exposure name")
+        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True).pipe(
+            df_move_column, "exposure route", "exposure name"
+        )
         df["exposure route"].fillna("", inplace=True)
         df["exposure measure"].fillna("", inplace=True)
         df["exposure metric"].fillna("", inplace=True)
+
+        # overall risk of bias evaluation
+        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+        df2 = RiskOfBiasScore.objects.overall_scores(assessment_id)
+        if df2 is not None:
+            df = (
+                df.merge(df2, how="left", left_on="study id", right_on="study id")
+                .pipe(df_move_column, "overall study evaluation", "study identifier")
+                .fillna("")
+            )
 
         return df
 
@@ -1717,7 +1733,7 @@ class GroupResult(models.Model):
             ser["upper_range"],
             ser["lower_bound_interval"],
             ser["upper_bound_interval"],
-            ser["p_value_qualifier"],
+            ser["p_value_qualifier_display"],
             ser["p_value"],
             ser["is_main_finding"],
             ser["main_finding_support"],
@@ -1854,6 +1870,9 @@ class GroupResult(models.Model):
         self.group_id = cw[Group.COPY_NAME][self.group_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+    def get_assessment(self):
+        return self.result.get_assessment()
 
 
 reversion.register(Country)

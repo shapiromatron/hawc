@@ -25,16 +25,12 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 
-DEBUG_TOOLBAR_CONFIG = dict(JQUERY_URL="/static/debug/jquery/1.9.1/jquery.js",)
-
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "TIMEOUT": 60 * 10,  # 10 minutes (in seconds)
     }
 }
-CACHE_1_HR = 0  # disable cache in dev mode
-CACHE_10_MIN = 0  # disable cache in dev mode
 
 LOGGING["loggers"][""]["handlers"] = ["console"]
 LOGGING["loggers"][""]["level"] = "INFO"

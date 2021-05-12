@@ -6,16 +6,22 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
 router.register(r"study-population", api.StudyPopulation, basename="study-population")
+router.register(r"criteria", api.Criteria, basename="criteria")
 router.register(r"exposure", api.Exposure, basename="exposure")
 router.register(r"outcome", api.Outcome, basename="outcome")
 router.register(r"result", api.Result, basename="result")
 router.register(r"comparison-set", api.ComparisonSet, basename="set")
 router.register(r"group", api.Group, basename="group")
+router.register(r"group-result", api.GroupResult, basename="group-result")
+router.register(
+    r"numerical-descriptions", api.GroupNumericalDescriptions, basename="numerical-descriptions"
+)
 router.register(r"outcome-cleanup", api.OutcomeCleanup, basename="outcome-cleanup")
 router.register(
     r"studypopulation-cleanup", api.StudyPopulationCleanup, basename="studypopulation-cleanup",
 )
 router.register(r"exposure-cleanup", api.ExposureCleanup, basename="exposure-cleanup")
+router.register(r"metadata", api.Metadata, basename="metadata")
 
 
 app_name = "epi"

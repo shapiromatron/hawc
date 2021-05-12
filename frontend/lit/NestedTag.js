@@ -68,6 +68,8 @@ class NestedTag {
                         .map(datum => new Reference(datum, this.tree))
                         .filter(ref => expected_references.has(ref.data.pk));
 
+                refs = Reference.sorted(refs);
+
                 ReactDOM.render(<ReferenceTable references={refs} showActions={false} />, el);
             } else {
                 ReactDOM.render(<GenericError />, el);

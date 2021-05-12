@@ -3,7 +3,10 @@ import _ from "lodash";
 import * as d3 from "d3";
 import slugify from "slugify";
 
+import Hero from "./Hero";
+
 class HAWCUtils {
+    static Hero = Hero;
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
     static booleanCheckbox(value) {
@@ -69,7 +72,7 @@ class HAWCUtils {
             if (d instanceof Object) {
                 $menu.append(`<a href="${d.url}" class="dropdown-item">${d.text}</a>`);
             } else if (typeof d === "string") {
-                $menu.append(`<h6 class="dropdown-header">${d}</h6>`);
+                $menu.append(`<span class="dropdown-header">${d}</span>`);
             } else {
                 console.error("unknown input type");
             }

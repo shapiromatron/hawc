@@ -15,14 +15,18 @@
     "compress_y": true,
     "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
     "hawc_interactivity": true,
+    "filters": [],
+    "filtersLogic": "and",
     "filter_widgets": [
       {
         "column": "species",
+        "header": "",
         "delimiter": "",
         "on_click_event": "---"
       },
       {
         "column": "strain",
+        "header": "",
         "delimiter": "",
         "on_click_event": "---"
       }
@@ -43,26 +47,31 @@
     "table_fields": [
       {
         "column": "study citation",
+        "header": "",
         "delimiter": "",
         "on_click_event": "study"
       },
       {
         "column": "experiment name",
+        "header": "",
         "delimiter": "",
         "on_click_event": "experiment"
       },
       {
         "column": "animal group name",
+        "header": "",
         "delimiter": "",
         "on_click_event": "animal_group"
       },
       {
         "column": "endpoint name",
+        "header": "",
         "delimiter": "",
         "on_click_event": "endpoint_complete"
       },
       {
         "column": "---",
+        "header": "",
         "delimiter": "",
         "on_click_event": "---"
       }
@@ -110,9 +119,9 @@
   "last_updated": "2020-11-25T08:29:33.991892-06:00",
   "assessment": 2,
   "dose_units": null,
-  "url": "/summary/visual/8/",
-  "url_update": "/summary/visual/8/update/",
-  "url_delete": "/summary/visual/8/delete/",
+  "url": "/summary/visual/assessment/2/exploratory-heatmap/",
+  "url_update": "/summary/visual/assessment/2/exploratory-heatmap/update/",
+  "url_delete": "/summary/visual/assessment/2/exploratory-heatmap/delete/",
   "endpoints": [],
   "studies": [],
   "assessment_rob_name": "Risk of bias"

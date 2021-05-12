@@ -69,6 +69,7 @@ MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "hawc.apps.common.middleware.CsrfRefererCheckMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -114,6 +115,7 @@ INSTALLED_APPS = (
     "hawc.apps.bmd",
     "hawc.apps.summary",
     "hawc.apps.mgmt",
+    "hawc.apps.eco",
 )
 
 
@@ -258,6 +260,9 @@ def get_git_commit() -> Commit:
 GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
 COMMIT = get_git_commit()
 
+
+# Google Tag Manager settings
+GTM_ID = os.getenv("GTM_ID")
 
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")

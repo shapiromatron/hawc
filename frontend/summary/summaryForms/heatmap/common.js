@@ -58,4 +58,12 @@ DataStatusIndicator.propTypes = {
     store: PropTypes.object,
 };
 
-export {MissingData, RefreshRequired, DataStatusIndicator};
+const HelpText = {
+    delimiter:
+        "If data are delimited in a cell, the delimiter character used. If unspecified, the data are not delimited",
+    header:
+        "By default the data column name is shown as the header; this can be overridden with custom text here.",
+    wrapText: "Wrap text at a specified length, else auto calculated",
+};
+
+export {MissingData, RefreshRequired, DataStatusIndicator, HelpText};

@@ -140,6 +140,11 @@ class Study(Reference):
         attrs[parent_link_field.name] = reference
         for field in reference._meta.fields:
             attrs[field.name] = getattr(reference, field.name)
+        # Set default citations
+        if "full_citation" not in attrs:
+            attrs["full_citation"] = reference.ref_full_citation
+        if "short_citation" not in attrs:
+            attrs["short_citation"] = reference.ref_short_citation
         return Study.objects.create(**attrs)
 
     @classmethod
@@ -173,10 +178,10 @@ class Study(Reference):
                 children.extend(list(study.riskofbiases.all().order_by("id")))
 
             if study.bioassay:
-                children.extend(list(study.experiments.all()).order_by("id"))
+                children.extend(list(study.experiments.all().order_by("id")))
 
             if study.epi:
-                children.extend(list(study.study_populations.all()).order_by("id"))
+                children.extend(list(study.study_populations.all().order_by("id")))
 
             if study.in_vitro:
                 children.extend(
@@ -251,7 +256,7 @@ class Study(Reference):
         return self.short_citation
 
     def get_absolute_url(self):
-        return reverse("study:detail", args=[str(self.pk)])
+        return reverse("study:detail", args=(self.pk,))
 
     def get_update_url(self):
         return reverse("study:update", args=[str(self.pk)])
@@ -409,14 +414,9 @@ class Study(Reference):
     def get_study(self):
         return self
 
-    def user_can_edit_study(self, assessment, user):
-        # TODO - remove, or user super()? this is almost already implemented with standard methods?
-        if user.is_superuser or user in assessment.project_manager.all():
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return self.editable and user in assessment.team_members.all()
+    def user_can_edit_study(self, assessment, user) -> bool:
+        perms = assessment.get_permissions()
+        return perms.can_edit_study(self, user)
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
@@ -438,7 +438,7 @@ class Attachment(models.Model):
         return self.filename
 
     def get_absolute_url(self):
-        return reverse("study:attachment_detail", args=[self.pk])
+        return reverse("study:attachment_detail", args=(self.pk,))
 
     def get_delete_url(self):
         return reverse("study:attachment_delete", args=[self.pk])

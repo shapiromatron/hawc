@@ -189,7 +189,7 @@ class RiskOfBias(models.Model):
         return reverse("riskofbias:rob_detail", args=[self.study_id])
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.get_assessment().pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.study.assessment_id])
 
     def get_edit_url(self):
         return reverse("riskofbias:rob_update", args=[self.pk])
@@ -282,18 +282,23 @@ class RiskOfBias(models.Model):
         SerializerHelper.delete_caches(cls, ids)
 
     @staticmethod
-    def flat_complete_header_row():
-        return ("rob-id", "rob-active", "rob-final", "rob-author_id", "rob-author_name")
+    def flat_header_row(final_only: bool = True):
+        col = ["rob-id", "rob-created", "rob-last_updated"]
+        if not final_only:
+            col[1:1] = ["rob-active", "rob-final", "rob-author_id", "rob-author_name"]
+        return col
 
     @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["active"],
-            ser["final"],
-            ser["author"]["id"],
-            ser["author"]["full_name"],
-        )
+    def flat_data_row(ser, final_only: bool = True):
+        row = [ser["id"], ser["created"], ser["last_updated"]]
+        if not final_only:
+            row[1:1] = [
+                ser["active"],
+                ser["final"],
+                ser["author"]["id"],
+                ser["author"]["full_name"],
+            ]
+        return row
 
     def copy_across_assessments(self, cw):
         children = list(self.scores.all().order_by("id"))
@@ -355,6 +360,7 @@ class RiskOfBias(models.Model):
             riskofbias__study__in=study_ids,
             riskofbias__final=True,
             riskofbias__active=True,
+            is_default=True,
         ).prefetch_related("riskofbias")
         default_value = '{"sortValue": -1, "display": "N/A"}'
         scores_map = {(score.riskofbias.study_id, score.metric_id): score for score in scores}
@@ -740,7 +746,7 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.assessment.pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.assessment_id])
 
     @classmethod
     def build_default(cls, assessment):

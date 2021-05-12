@@ -135,7 +135,7 @@ class TagReferencesMain extends Component {
                                     Saved!
                                 </span>
                                 <a
-                                    className="btn float-right"
+                                    className="btn btn-light float-right"
                                     rel="noopener noreferrer"
                                     target="_blank"
                                     href={store.selectedReference.get_edit_url()}

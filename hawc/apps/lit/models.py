@@ -5,7 +5,7 @@ import pickle
 import re
 from io import BytesIO
 from math import ceil
-from typing import Dict, Optional
+from typing import Dict
 from urllib import parse
 
 import pandas as pd
@@ -100,7 +100,7 @@ class LiteratureAssessment(models.Model):
         return self.assessment
 
     def get_absolute_url(self):
-        return reverse("lit:tags_update", args=(self.assessment.id,))
+        return reverse("lit:tags_update", args=(self.assessment_id,))
 
     def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
@@ -247,7 +247,7 @@ class Search(models.Model):
             raise ValidationError("Error- slug name must be unique for assessment.")
 
     def get_absolute_url(self):
-        return reverse("lit:search_detail", kwargs={"pk": self.assessment.pk, "slug": self.slug})
+        return reverse("lit:search_detail", args=(self.assessment_id, self.slug))
 
     def get_assessment(self):
         return self.assessment
@@ -402,7 +402,7 @@ class Search(models.Model):
         dicts = []
         pubmed_queries = PubMedQuery.objects.filter(search=self)
         for pubmed_query in pubmed_queries:
-            dicts.append(pubmed_query.get_json(json_encode=False))
+            dicts.append(pubmed_query.to_dict())
         return dicts
 
     def get_all_reference_tags(self, json_encode=True):
@@ -449,14 +449,13 @@ class Search(models.Model):
     def references_untagged(self):
         return self.references.all().annotate(tag_count=models.Count("tags")).filter(tag_count=0)
 
-    def get_json(self):
-        d = {}
-        fields = ("pk", "title")
-        for field in fields:
-            d[field] = getattr(self, field)
-        d["url"] = self.get_absolute_url()
-        d["search_type"] = self.get_search_type_display()
-        return d
+    def to_dict(self):
+        return dict(
+            pk=self.pk,
+            title=self.title,
+            url=self.get_absolute_url(),
+            search_type=self.get_search_type_display(),
+        )
 
 
 class PubMedQuery(models.Model):
@@ -527,7 +526,7 @@ class PubMedQuery(models.Model):
                 )
             Identifiers.objects.bulk_create(identifiers)
 
-    def get_json(self, json_encode=True):
+    def to_dict(self):
         def get_len(obj):
             if obj is not None:
                 return len(obj)
@@ -541,10 +540,7 @@ class PubMedQuery(models.Model):
             "total_added": get_len(details["added"]),
             "total_removed": get_len(details["removed"]),
         }
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        return d
 
 
 class Identifiers(models.Model):
@@ -582,7 +578,7 @@ class Identifiers(models.Model):
     def create_reference(self, assessment, block_id=None):
         # create, but don't save reference object
         try:
-            content = self.get_content_json()
+            content = self.get_content()
         except ValueError:
             if self.database == constants.PUBMED:
                 self.update_pubmed_content([self])
@@ -591,11 +587,11 @@ class Identifiers(models.Model):
         if self.database == constants.PUBMED:
             ref = Reference(
                 assessment=assessment,
-                title=content.get("title", ""),
-                authors_short=content.get("authors_short", ""),
+                title=content.get("title", "[no title]"),
+                authors_short=content.get("authors_short", "[no authors]"),
                 authors=", ".join(content.get("authors", [])),
-                journal=content.get("citation", ""),
-                abstract=content.get("abstract", ""),
+                journal=content.get("citation", "[no journal citation]"),
+                abstract=content.get("abstract", "[no abstract]"),
                 year=content.get("year", None),
                 block_id=block_id,
             )
@@ -607,7 +603,7 @@ class Identifiers(models.Model):
 
         return ref
 
-    def get_json(self, json_encode=True):
+    def to_dict(self):
         return {
             "id": self.unique_id,
             "database": self.get_database_display(),
@@ -615,8 +611,8 @@ class Identifiers(models.Model):
             "url": self.get_url(),
         }
 
-    def get_content_json(self) -> Optional[Dict]:
-        return json.loads(self.content, encoding="utf-8") if self.content else None
+    def get_content(self) -> Dict:
+        return json.loads(self.content, encoding="utf-8") if self.content else {}
 
     @staticmethod
     def update_pubmed_content(idents):
@@ -724,15 +720,16 @@ class Reference(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("lit:ref_detail", kwargs={"pk": self.pk})
+        return reverse("lit:ref_detail", args=(self.pk,))
 
     def __str__(self):
         return self.ref_short_citation
 
-    def get_json(self, json_encode=True):
+    def to_dict(self):
         d = {}
         fields = (
             "pk",
+            "assessment_id",
             "title",
             "authors_short",
             "authors",
@@ -740,6 +737,7 @@ class Reference(models.Model):
             "journal",
             "abstract",
             "full_text_url",
+            "has_study",
         )
         for field in fields:
             d[field] = getattr(self, field)
@@ -749,15 +747,16 @@ class Reference(models.Model):
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
 
-        d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
-        d["searches"] = [ref.get_json() for ref in self.searches.all()]
+        d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
+        d["searches"] = [search.to_dict() for search in self.searches.all()]
+        d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
 
-        d["tags"] = list(self.tags.all().values_list("pk", flat=True))
-        d["tags_text"] = list(self.tags.all().values_list("name", flat=True))
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        d["tags"] = [tag.id for tag in self.tags.all()]
+        d["tags_text"] = [tag.name for tag in self.tags.all()]
+        return d
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
     @classmethod
     def delete_caches(cls, ids):
@@ -826,6 +825,10 @@ class Reference(models.Model):
             citation += " " + year
 
         return citation
+
+    @property
+    def has_study(self) -> bool:
+        return apps.get_model("study", "Study").objects.filter(id=self.id).exists()
 
     def get_pubmed_id(self):
         for ident in self.identifiers.all():

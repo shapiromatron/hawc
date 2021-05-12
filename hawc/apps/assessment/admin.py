@@ -6,6 +6,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
+from reversion.admin import VersionAdmin
 
 from ..animal.models import Endpoint
 from . import models
@@ -148,9 +149,8 @@ class DatasetAdmin(admin.ModelAdmin):
     )
     list_display_links = ("id",)
     list_filter = (("assessment", admin.RelatedOnlyFieldListFilter),)
-    inlines = [
-        DatasetRevisionInline,
-    ]
+    inlines = [DatasetRevisionInline]
+    readonly_fields = ("assessment_id", "assessment")
 
 
 @admin.register(models.DoseUnits)
@@ -307,3 +307,13 @@ class DSSXToxAdmin(admin.ModelAdmin):
 
     get_ivchemicals.short_description = "IVChemicals"
     get_ivchemicals.allow_tags = True
+
+
+@admin.register(models.Content)
+class ContentAdmin(VersionAdmin):
+    list_display = (
+        "content_type",
+        "template_truncated",
+        "created",
+        "last_updated",
+    )

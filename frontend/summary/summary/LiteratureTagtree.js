@@ -49,9 +49,7 @@ class LiteratureTagtree extends BaseVisual {
         // change root node
         tagtree.reset_root_node(this.data.settings.root_node);
 
-        new TagTreeViz(tagtree, $plotDiv, title, url, {
-            hide_empty_tag_nodes: this.data.settings.hide_empty_tag_nodes,
-        });
+        new TagTreeViz(tagtree, $plotDiv, title, url, this.data.settings);
     }
 
     buildViz($plotDiv, data) {
@@ -77,10 +75,13 @@ class LiteratureTagtree extends BaseVisual {
 
         options = options || {};
 
-        if (window.isEditable) title.append(this.addActionsMenu());
+        const actions = window.isEditable ? this.addActionsMenu() : null;
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend(title).append(captionDiv);
+
+        if (!options.visualOnly) {
+            $el.prepend([actions, title]).append(captionDiv);
+        }
 
         this.getPlotData($plotDiv);
 

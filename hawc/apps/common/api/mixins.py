@@ -108,3 +108,19 @@ class LegacyAssessmentAdapterMixin:
     def set_legacy_attr(self, pk):
         self.parent = get_object_or_404(self.parent_model, pk=pk)
         self.assessment = self.parent.get_assessment()
+
+
+class ReadWriteSerializerMixin:
+    """
+    Class to be mixed into viewsets which enforces use of separate read/write serializers
+
+    idea from https://www.revsys.com/tidbits/using-different-read-and-write-serializers-django-rest-framework/
+    """
+
+    read_serializer_class = None
+    write_serializer_class = None
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return self.write_serializer_class
+        return self.read_serializer_class

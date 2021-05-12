@@ -10,7 +10,7 @@ const createCell = function(row, column) {
             header: row === 0,
             col_span: 1,
             row_span: 1,
-            quill_text: "<p>...</p>",
+            quill_text: "<p></p>",
         };
     },
     sortCells = function(cells) {

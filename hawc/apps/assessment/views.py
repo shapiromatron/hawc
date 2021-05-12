@@ -53,6 +53,14 @@ class Home(TemplateView):
             return HttpResponseRedirect(reverse_lazy("portal"))
         return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["recent_assessments"] = models.Assessment.objects.recent_public()
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.HOMEPAGE, self.request, context
+        )
+        return context
+
 
 class About(TemplateView):
     template_name = "hawc/about.html"
@@ -187,9 +195,25 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["HAWC_FLAVOR"] = settings.HAWC_FLAVOR
-        context["rob_name"] = self.get_rob_name()
-        context["counts"] = self.get_object_counts()
+        context.update(
+            HAWC_FLAVOR=settings.HAWC_FLAVOR,
+            rob_name=self.get_rob_name(),
+            counts=self.get_object_counts(),
+        )
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.ABOUT, self.request, context
+        )
+        return context
+
+
+class Resources(TemplateView):
+    template_name = "hawc/resources.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.RESOURCES, self.request, context
+        )
         return context
 
 
@@ -276,6 +300,13 @@ class AssessmentPublicList(ListView):
             )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context[
+            "desc"
+        ] = """
+            Publicly available assessments are below. Each assessment was conducted by an independent
+            team; details on the objectives and methodology applied are described in each assessment.
+            Data can also be downloaded for each individual assessment.
+        """
         return context
 
 
@@ -351,7 +382,8 @@ class AssessmentClearCache(MessageMixin, View):
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(self.model, pk=kwargs["pk"])
         url = get_referrer(self.request, assessment.get_absolute_url())
-        if not assessment.user_can_edit_object(request.user):
+
+        if not assessment.user_is_team_member_or_higher(request.user):
             raise PermissionDenied()
 
         assessment.bust_cache()

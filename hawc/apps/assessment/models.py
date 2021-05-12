@@ -1,6 +1,7 @@
 import json
+import logging
 import uuid
-from typing import Any, List, NamedTuple
+from typing import Any, Dict, List, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -11,17 +12,25 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.http import HttpRequest
+from django.template import RequestContext, Template
+from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
+
+from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
 from ..common.models import IntChoiceEnum, get_private_data_storage
 from ..myuser.models import HAWCUser
 from ..vocab.models import VocabularyNamespace
 from . import jobs, managers
+from .permissions import AssessmentPermissions
 from .tasks import add_time_spent
+
+logger = logging.getLogger(__name__)
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
@@ -74,6 +83,20 @@ class DSSTox(models.Model):
 
     def __str__(self):
         return self.dtxsid
+
+    def save(self, *args, **kwargs):
+        """
+        Save the DSSTox to the database.
+
+        Raises:
+            ValueError if the supplied dtxsid isn't valid
+        """
+        if len(self.content) == 0:
+            # If no content set, then attempt to set it based on the dtxsid.
+            substance = DssSubstance.create_from_dtxsid(self.dtxsid)
+            self.content = substance.content
+
+        super().save(*args, **kwargs)
 
     @property
     def verbose_str(self) -> str:
@@ -290,83 +313,43 @@ class Assessment(models.Model):
     def __str__(self):
         return f"{self.name} ({self.year})"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        AssessmentPermissions.clear_cache(self.id)
+
+    def get_permissions(self) -> AssessmentPermissions:
+        return AssessmentPermissions.get(self)
+
     def user_permissions(self, user):
+        perms = self.get_permissions()
         return {
-            "view": self.user_can_view_object(user),
-            "edit": self.user_can_edit_object(user),
-            "edit_assessment": self.user_can_edit_assessment(user),
+            "view": perms.can_view_object(user),
+            "edit": perms.can_edit_object(user),
+            "edit_assessment": perms.can_edit_assessment(user),
         }
 
-    def user_can_view_object(self, user):
-        """
-        Superusers can view all, noneditible reviews can be viewed, team
-        members or project managers can view.
-        Anonymous users on noneditable projects cannot view, nor can those who
-        are non members of a project.
-        """
-        if self.public or user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return (
-                (user in self.project_manager.all())
-                or (user in self.team_members.all())
-                or (user in self.reviewers.all())
-            )
+    def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
+        if perms is None:
+            perms = self.get_permissions()
+        return perms.can_view_object(user)
 
-    def user_can_edit_object(self, user):
-        """
-        If person has enhanced permissions beyond the general public, which may
-        be used to view attachments associated with a study.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return self.editable and (
-                user in self.project_manager.all() or user in self.team_members.all()
-            )
+    def user_can_edit_object(self, user, perms: AssessmentPermissions = None) -> bool:
+        if perms is None:
+            perms = self.get_permissions()
+        return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user):
-        """
-        If person is superuser or assessment is editible and user is a project
-        manager or team member.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return user in self.project_manager.all()
+    def user_can_edit_assessment(self, user, perms: AssessmentPermissions = None) -> bool:
+        if perms is None:
+            perms = self.get_permissions()
+        return perms.can_edit_assessment(user)
 
-    def user_is_part_of_team(self, user):
-        """
-        Used for permissions-checking if attachments for a study can be
-        viewed. Checks to ensure user is part of the team.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return (
-                (user in self.project_manager.all())
-                or (user in self.team_members.all())
-                or (user in self.reviewers.all())
-            )
+    def user_is_part_of_team(self, user) -> bool:
+        perms = self.get_permissions()
+        return perms.part_of_team(user)
 
     def user_is_team_member_or_higher(self, user) -> bool:
-        """
-        Check if user is superuser, project-manager, or team-member, otherwise False.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return user in self.project_manager.all() or user in self.team_members.all()
+        perms = self.get_permissions()
+        return perms.team_member_or_higher(user)
 
     def get_vocabulary_display(self) -> str:
         # override default method
@@ -806,6 +789,14 @@ class DatasetRevision(models.Model):
     def get_df(self) -> pd.DataFrame:
         return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
 
+    def data_exists(self) -> bool:
+        try:
+            _ = self.data.file
+            return True
+        except FileNotFoundError:
+            logger.error(f"DatasetRevision {self.id} not found: {self.data.path}")
+            return False
+
     @classmethod
     def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
         """
@@ -915,6 +906,9 @@ class Log(models.Model):
     assessment = models.ForeignKey(
         Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
     )
+    user = models.ForeignKey(
+        HAWCUser, blank=True, null=True, related_name="logs", on_delete=models.SET_NULL
+    )
     message = models.TextField()
 
     created = models.DateTimeField(auto_now_add=True)
@@ -942,6 +936,59 @@ class Blog(models.Model):
         return self.subject
 
 
+class ContentTypeChoices(models.IntegerChoices):
+    HOMEPAGE = 1
+    ABOUT = 2
+    RESOURCES = 3
+
+
+class Content(models.Model):
+    content_type = models.PositiveIntegerField(choices=ContentTypeChoices.choices, unique=True)
+    template = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+    def __str__(self) -> str:
+        return self.get_content_type_display()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.clear_cache()
+
+    def clear_cache(self):
+        key = self.get_cache_key(self.content_type)
+        cache.delete(key)
+
+    @property
+    def template_truncated(self):
+        return truncatewords(self.template, 100)
+
+    @classmethod
+    def get_cache_key(cls, content_type: ContentTypeChoices) -> str:
+        return f"assessment.Content.{content_type}"
+
+    @classmethod
+    def rendered_page(
+        cls, content_type: ContentTypeChoices, request: HttpRequest, context: Dict
+    ) -> str:
+        """Return rendered template response for the requested content.
+
+        Return cached content for this page if one exists, or if it does not exist, render using
+        the current context provided, cache, and return.
+        """
+        key = cls.get_cache_key(content_type)
+        html = cache.get(key)
+        if html is None:
+            context = RequestContext(request, context)
+            content = cls.objects.get(content_type=content_type)
+            html = Template(content.template).render(context)
+            cache.set(key, html, settings.CACHE_10_MIN)
+        return html
+
+
 reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(EffectTag)
@@ -953,3 +1000,4 @@ reversion.register(DatasetRevision)
 reversion.register(Job)
 reversion.register(Log)
 reversion.register(Blog)
+reversion.register(Content)

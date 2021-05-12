@@ -16,6 +16,7 @@ from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
+from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import GenericTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
@@ -31,7 +32,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
-from ..common.validators import validate_html_tags
+from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -127,7 +128,7 @@ class SummaryText(MP_Node):
         return cls.get_tree(parent=root)
 
     def get_absolute_url(self):
-        return f"{reverse('summary:list', kwargs={'assessment': self.assessment.pk})}#{self.slug}"
+        return f"{reverse('summary:list', args=(self.assessment_id,))}#{self.slug}"
 
     def get_assessment(self):
         return self.assessment
@@ -160,9 +161,11 @@ class SummaryTable(models.Model):
     class TableType(models.IntegerChoices):
         GENERIC = 0
         EVIDENCE_PROFILE = 1
-        EVIDENCE_INTEGRATION = 2
 
-    TABLE_SCHEMA_MAP = {TableType.GENERIC: GenericTable}
+    TABLE_SCHEMA_MAP = {
+        TableType.GENERIC: GenericTable,
+        TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
+    }
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
@@ -233,7 +236,7 @@ class SummaryTable(models.Model):
         """Build an incomplete, but default SummaryTable instance"""
         instance = cls(assessment_id=assessment_id, table_type=table_type)
         schema = instance.get_content_schema_class()
-        instance.content = schema.build_default().dict()
+        instance.content = schema.get_default_props()
         return instance
 
     def to_docx(self):
@@ -246,10 +249,15 @@ class SummaryTable(models.Model):
             self.get_table()
         except PydanticError as e:
             raise ValidationError({"content": e.json()})
+        except ValueError as e:
+            raise ValidationError({"content": str(e)})
+
+        # clean up control characters before string validation
+        content_str = json.dumps(self.content).replace('\\"', '"')
 
         # validate tags used in text
-        content_str = json.dumps(self.content)
         validate_html_tags(content_str)
+        validate_hyperlinks(content_str)
 
 
 class HeatmapDataset(PydanticModel):
@@ -287,6 +295,8 @@ class Visual(models.Model):
         ("short_citation", "Short Citation"),
         ("overall_confidence", "Final Study Confidence"),
     )
+
+    FAKE_INITIAL_ID = -1
 
     title = models.CharField(max_length=128)
     slug = models.SlugField(
@@ -333,16 +343,16 @@ class Visual(models.Model):
 
     @staticmethod
     def get_list_url(assessment_id):
-        return reverse("summary:visualization_list", args=[str(assessment_id)])
+        return reverse("summary:visualization_list", args=(assessment_id,))
 
     def get_absolute_url(self):
-        return reverse("summary:visualization_detail", args=[str(self.pk)])
+        return reverse("summary:visualization_detail", args=(self.assessment_id, self.slug))
 
     def get_update_url(self):
-        return reverse("summary:visualization_update", args=[str(self.pk)])
+        return reverse("summary:visualization_update", args=(self.assessment_id, self.slug))
 
     def get_delete_url(self):
-        return reverse("summary:visualization_delete", args=[str(self.pk)])
+        return reverse("summary:visualization_delete", args=(self.assessment_id, self.slug))
 
     def get_assessment(self):
         return self.assessment
@@ -631,10 +641,10 @@ class DataPivot(models.Model):
         return reverse("summary:visualization_list", args=[str(assessment_id)])
 
     def get_absolute_url(self):
-        return reverse("summary:dp_detail", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:dp_detail", args=(self.assessment_id, self.slug))
 
     def get_visualization_update_url(self):
-        return reverse("summary:dp_update", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:dp_update", args=(self.assessment_id, self.slug))
 
     def get_assessment(self):
         return self.assessment

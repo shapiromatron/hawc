@@ -9,14 +9,20 @@ EXTRA_BRANDING = os.getenv("HAWC_EXTRA_BRANDING", "True") == "True"
 SERVER_ROLE = "staging"
 SERVER_BANNER_COLOR = "#EE8416"
 
-SESSION_COOKIE_SECURE = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
-CSRF_COOKIE_SECURE = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
+HTTPS_ONLY = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
+SESSION_COOKIE_SECURE = HTTPS_ONLY
+CSRF_COOKIE_SECURE = HTTPS_ONLY
+SECURE_SSL_REDIRECT = HTTPS_ONLY
+if HTTPS_ONLY:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_HSTS_SECONDS = 0  # handle upstream in reverse proxy
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 email_backend = os.environ["DJANGO_EMAIL_BACKEND"]
+EMAIL_MESSAGEID_FQDN = None
 if email_backend == "SMTP":
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = os.environ.get("DJANGO_EMAIL_HOST", None)
@@ -24,6 +30,7 @@ if email_backend == "SMTP":
     EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_PASSWORD", None)
     EMAIL_PORT = int(os.environ.get("DJANGO_EMAIL_PORT", 25))
     EMAIL_USE_SSL = bool(os.environ.get("DJANGO_EMAIL_USE_SSL") == "True")
+    EMAIL_MESSAGEID_FQDN = os.environ.get("DJANGO_EMAIL_MESSAGEID_FQDN")
 elif email_backend == "MAILGUN":
     INSTALLED_APPS += ("anymail",)
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
@@ -45,3 +52,15 @@ HAWC_LOAD_TEST_DB = bool(os.environ.get("HAWC_LOAD_TEST_DB") == "True")
 if HAWC_LOAD_TEST_DB:
     PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
     TEST_DB_FIXTURE = PROJECT_ROOT / "test-db-fixture.yaml"
+
+
+if email_backend == "SMTP" and EMAIL_MESSAGEID_FQDN is not None:
+    """
+    Monkey-patch the FQDN for SMTP to our desired name; by default picks up container ID
+    Can be removed if this PR is merged:
+    - https://code.djangoproject.com/ticket/6989
+    - https://github.com/django/django/pull/13728/files
+    """
+    from django.core.mail.utils import DNS_NAME
+
+    DNS_NAME._fqdn = EMAIL_MESSAGEID_FQDN

@@ -4,13 +4,13 @@ import {inject, observer} from "mobx-react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import CheckboxInput from "shared/components/CheckboxInput";
+import FloatInput from "shared/components/FloatInput";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
 
-import FloatInput from "shared/components/FloatInput";
-
 import {MissingData, RefreshRequired} from "./common";
 import AxisLabelTable from "./AxisLabelTable";
+import FilterTable from "./FilterTable";
 import FilterWidgetTable from "./FilterWidgetTable";
 import DetailTable from "./DetailTable";
 
@@ -48,11 +48,15 @@ class VisualCustomizationPanel extends Component {
                 onSelect={changeActiveVisualCustomizationTab}>
                 <TabList>
                     <Tab>Heatmap</Tab>
-                    <Tab>Filters/Details</Tab>
+                    <Tab>Data filters</Tab>
+                    <Tab>Filter widgets</Tab>
+                    <Tab>Data tables</Tab>
                     <Tab>Advanced</Tab>
                 </TabList>
                 <TabPanel>{this.renderHeatmapTab()}</TabPanel>
-                <TabPanel>{this.renderFiltersTab()}</TabPanel>
+                <TabPanel>{this.renderFilterTab()}</TabPanel>
+                <TabPanel>{this.renderFilterWidgetTab()}</TabPanel>
+                <TabPanel>{this.renderDataTableTab()}</TabPanel>
                 <TabPanel>{this.renderAdvancedTab()}</TabPanel>
             </Tabs>
         );
@@ -109,18 +113,51 @@ class VisualCustomizationPanel extends Component {
             </div>
         );
     }
-    renderFiltersTab() {
+    renderFilterTab() {
+        return (
+            <div>
+                <div className="card">
+                    <div className="card-body">
+                        <h4 className="card-title">Data filters</h4>
+                        <p className="text-muted">
+                            Determine which rows of your dataset should be displayed. By default all
+                            data from a dataset are shown on the heatmp, but filters can be added to
+                            only present a subset of the data.
+                        </p>
+                        <FilterTable />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    renderFilterWidgetTab() {
         return (
             <div>
                 <div className="card">
                     <div className="card-body">
                         <h4 className="card-title">Filter widgets</h4>
+                        <p className="text-muted">
+                            A filter widget is shown to the right of a heatmap and allows users to
+                            interactively filter content which should be presented in the heatmap
+                            and summary table. Filter widgets are optional, but enable users to
+                            interactively slice the data in new ways.
+                        </p>
                         <FilterWidgetTable />
                     </div>
                 </div>
+            </div>
+        );
+    }
+    renderDataTableTab() {
+        return (
+            <div>
                 <div className="card">
                     <div className="card-body">
-                        <h4 className="card-title">Table display</h4>
+                        <h4 className="card-title">Data tables</h4>
+                        <p className="text-muted">
+                            Summary table of selected content below the heatmap. If one or more
+                            columns are displayed, then the summary table will be shown.
+                        </p>
                         <DetailTable />
                     </div>
                 </div>

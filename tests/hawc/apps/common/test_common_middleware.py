@@ -1,7 +1,9 @@
+import pytest
 from django.http import HttpRequest, HttpResponse
 from django.test import TestCase
+from django.test.client import Client, RequestFactory
 
-from hawc.apps.common.middleware import MicrosoftOfficeLinkMiddleware
+from hawc.apps.common.middleware import CsrfRefererCheckMiddleware, MicrosoftOfficeLinkMiddleware
 
 
 class MicrosoftOfficeLinkMiddlewareTests(TestCase):
@@ -65,3 +67,47 @@ class MicrosoftOfficeLinkMiddlewareTests(TestCase):
             resp = self.middleware(self.request)
             assert isinstance(resp, HttpResponse)
             assert resp.getvalue().decode() == "passthrough"
+
+
+class TestCsrfRefererCheckMiddleware:
+    EXTERNAL_URL = "https://external-url.com"
+
+    def test_passthrough(self):
+
+        rf = RequestFactory()
+        success = b"passthrough"
+        middleware = CsrfRefererCheckMiddleware(lambda request: HttpResponse(success))
+
+        # no header
+        request = rf.get("/")
+        resp = middleware(request)
+        assert resp.getvalue() == success
+
+        # valid referer/origin headers
+        for key, value in [
+            ("HTTP_REFERER", "http://testserver"),
+            ("HTTP_ORIGIN", "http://testserver"),
+        ]:
+            request = rf.get("/")
+            request.META[key] = value
+            assert middleware(request).getvalue() == success
+
+        # invalid refer/origin headers
+        for key, value in [
+            ("HTTP_REFERER", self.EXTERNAL_URL),
+            ("HTTP_ORIGIN", self.EXTERNAL_URL),
+        ]:
+            request = rf.get("/")
+            request.META[key] = value
+            assert middleware(request).getvalue() == CsrfRefererCheckMiddleware.REFRESH
+
+    @pytest.mark.django_db
+    def test_integration(self):
+        client = Client()
+
+        resp = client.get("/")
+        assert resp.status_code == 200
+        assert resp.content != CsrfRefererCheckMiddleware.REFRESH
+
+        resp = client.get("/", HTTP_REFERER=self.EXTERNAL_URL)
+        assert resp.content == CsrfRefererCheckMiddleware.REFRESH

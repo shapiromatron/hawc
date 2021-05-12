@@ -1,15 +1,18 @@
 import _ from "lodash";
 
+import Hero from "utils/Hero";
+
 class Reference {
     constructor(data, tagtree) {
         this.data = data;
+        this._quickSearchText = `${data.title}-${data.year}-${data.authors}-${data.authors_short}`.toLowerCase();
         this.tags = data.tags.map(tagId => tagtree.dict[tagId]);
     }
 
     static get_detail_url(id, subtype) {
         switch (subtype) {
             case "hero":
-                return `https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/${id}`;
+                return Hero.getUrl(id);
             case "pubmed":
                 return `https://pubmed.ncbi.nlm.nih.gov/${id}/`;
             case "reference":
@@ -18,8 +21,22 @@ class Reference {
         }
     }
 
+    static sorted(references) {
+        return _.chain(references)
+            .sortBy(d => d.data.year)
+            .reverse()
+            .value();
+    }
+
     get_edit_url() {
-        return `/lit/reference/${this.data.pk}/edit/`;
+        return `/lit/reference/${this.data.pk}/update/`;
+    }
+
+    get_study_url() {
+        if (this.data.has_study) {
+            return `/study/${this.data.pk}/`;
+        }
+        return null;
     }
 
     shortCitation() {

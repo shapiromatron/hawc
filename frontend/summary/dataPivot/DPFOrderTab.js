@@ -41,7 +41,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         tab.append(
-            $("<h3>Row filters</h3>").append(newRowBtn),
+            newRowBtn,
+            $("<h3>Row filters</h3>"),
             '<p class="form-text text-muted">Use filters to determine which components of your dataset should be displayed on the figure.</p>',
             tbl
         );
@@ -109,7 +110,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         tab.append(
-            $("<h3>Row sorting</h3>").append(newRowBtn),
+            newRowBtn,
+            $("<h3>Row sorting</h3>"),
             '<p class="form-text text-muted">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
             tbl,
             "<hr/>"
@@ -144,7 +146,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         tab.append(
-            $("<h3>Additional row spacing</h3>").append(newRowBtn),
+            newRowBtn,
+            $("<h3>Additional row spacing</h3>"),
             '<p class="form-text text-muted">Add additional-space between rows, and optionally a horizontal line.</p>',
             tbl,
             "<hr/>"
@@ -252,7 +255,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 buildManualOverrideRows(dp, tbody);
             },
             refreshRowsBtn = $(
-                '<button class="btn btn-info" style="margin-left: 2em"><i class="fa fa-refresh"></i> Refresh</button>'
+                '<button class="btn btn-info float-right mr-2"><i class="fa fa-refresh"></i> Refresh</button>'
             ).on("click", () => buildManualOverrideRows(dp, tbody)),
             resetOverridesBtn = $(
                 '<button class="btn btn-danger float-right"><i class="fa fa-trash"></i> Reset</button>'
@@ -265,7 +268,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         buildManualOverrideRows(dp, tbody);
 
         tab.append(
-            $("<h3>Row-level customization</h3>").append(refreshRowsBtn, resetOverridesBtn),
+            resetOverridesBtn,
+            refreshRowsBtn,
+            $("<h3>Row-level customization</h3>"),
             '<p class="form-text text-muted">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
             tbl
         );

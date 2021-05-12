@@ -6,7 +6,7 @@ import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 
 class TextInput extends Component {
-    renderField(fieldClass, fieldId) {
+    renderField(fieldId) {
         const {errors} = this.props;
         return (
             <input

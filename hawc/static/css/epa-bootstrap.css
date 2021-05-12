@@ -1,0 +1,64 @@
+/* global bootstrap overrides for EPA style guide */
+:root {
+    --epa-primary: #0071bc;
+    --epa-primary-hover: #205493;
+    --epa-white: #ffffff;
+    --epa-white-hover: #f1f1f1;
+}
+
+/* Tables */
+.table td, .table th {
+  border: 1px solid #5b616b;
+}
+.table thead th {
+  border-bottom: 1px solid #5b616b;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+.table-striped tbody tr:nth-of-type(even) {
+  background-color: #f0f4f9;
+}
+
+/* Buttons */
+.btn-primary {
+    color: var(--epa-white) !important;
+    background-color: var(--epa-primary);
+}
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus, .show > .btn-primary.dropdown-toggle {
+    background-color: var(--epa-primary-hover);
+}
+section button.btn,
+section input[type="button"].btn,
+section a.btn {
+    border: 0 !important;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: baseline;
+    white-space: normal
+}
+
+/* btn-group dropdown-menu */
+.dropdown-header {
+  color: var(--epa-primary);
+}
+
+/* preserve original color for some `a:visited` */
+a.btn:visited, a.badge:visited {
+  color: white;
+}
+a.btn-light:visited, a.badge-light:visited,
+a.btn-warning:visited, a.badge-warning:visited {
+  color: black;
+}
+.dropdown-menu a:visited{
+  color: #212529;
+}
+.hawc-header a:visited,
+.breadcrumb-item a:visited{
+  color: var(--epa-primary);
+}

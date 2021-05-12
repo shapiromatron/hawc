@@ -140,7 +140,9 @@ class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
         return self.model.objects.get_qs(self.assessment).prefetch_related(
             Prefetch(
                 "riskofbiases",
-                queryset=models.RiskOfBias.objects.all_active().prefetch_related("author"),
+                queryset=models.RiskOfBias.objects.all_active().prefetch_related(
+                    "author", "scores",
+                ),
                 to_attr="active_riskofbiases",
             )
         )
@@ -230,7 +232,7 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
                         rob.activate()
 
     def get_success_url(self):
-        return reverse_lazy("riskofbias:arob_reviewers", kwargs={"pk": self.assessment.pk})
+        return reverse_lazy("riskofbias:arob_reviewers", args=(self.assessment.id,))
 
 
 # Risk of bias domain views
