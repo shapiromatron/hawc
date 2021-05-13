@@ -33,6 +33,7 @@ class RiskOfBiasDomain(models.Model):
         verbose_name="Overall confidence?",
         help_text="Is this domain for overall confidence?",
     )
+    sort_order = models.PositiveSmallIntegerField()
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -121,6 +122,7 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
+    sort_order = models.PositiveSmallIntegerField()
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
