@@ -90,6 +90,11 @@ class RiskOfBiasDomain(models.Model):
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
+    class ScoreChoices(models.IntegerChoices):
+        PRIME = 0
+        EPA = 1
+        NONE = 2
+
     domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
     name = models.CharField(max_length=256)
     short_name = models.CharField(max_length=50, blank=True)
@@ -121,6 +126,7 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
+    score_choices = models.PositiveSmallIntegerField(choices=ScoreChoices.choices)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
