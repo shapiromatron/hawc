@@ -3,14 +3,14 @@
 from django.db import migrations, models
 
 
-def set_default_score_choices(apps, schema_editor):
+def set_default_responses(apps, schema_editor):
     RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
 
     RiskOfBiasMetric.objects.filter(domain__assessment__rob_settings__responses=0).update(
-        score_choices=0
+        responses=0
     )
     RiskOfBiasMetric.objects.filter(domain__assessment__rob_settings__responses=1).update(
-        score_choices=1
+        responses=1
     )
 
     # TODO set it for edge case assessment that needs no score choices?
@@ -25,11 +25,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="riskofbiasmetric",
-            name="score_choices",
+            name="responses",
             field=models.PositiveSmallIntegerField(
                 choices=[(0, "Prime"), (1, "Epa"), (2, "None")], default=0
             ),
             preserve_default=False,
         ),
-        migrations.RunPython(set_default_score_choices, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(set_default_responses, reverse_code=migrations.RunPython.noop),
     ]

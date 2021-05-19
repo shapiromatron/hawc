@@ -135,7 +135,7 @@ class ScoreForm extends Component {
                             <div>
                                 <ScoreInput
                                     scoreId={score.id}
-                                    choices={store.study.rob_response_values}
+                                    choices={score.metric.response_values}
                                     value={score.score}
                                     handleChange={value => {
                                         store.updateFormState(scoreId, "score", parseInt(value));

@@ -42,6 +42,11 @@ class RiskOfBiasDomainSerializer(serializers.ModelSerializer):
 class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
     domain = RiskOfBiasDomainSerializer(read_only=True)
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["response_values"] = instance.get_response_values()
+        return ret
+
     class Meta:
         model = models.RiskOfBiasMetric
         fields = "__all__"
@@ -240,16 +245,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 update_score["id"] = initial_score_data["id"]
 
             override_options = self.instance.get_override_options()
-
-        # check to make sure submitted score values are valid
-        rob_assessment = models.RiskOfBiasAssessment()
-        valid_score_values = rob_assessment.get_rob_response_values()
-
-        scores = self.initial_data["scores"]
-        for score in scores:
-            score_value = score["score"]
-            if score_value not in valid_score_values:
-                raise serializers.ValidationError(f"score {score_value} is not valid")
 
         # check overrides
         for key, values in override_options.items():

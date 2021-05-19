@@ -90,10 +90,21 @@ class RiskOfBiasDomain(models.Model):
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
-    class ScoreChoices(models.IntegerChoices):
-        PRIME = 0
-        EPA = 1
-        NONE = 2
+    RESPONSES_OHAT = 0
+    RESPONSES_EPA = 1
+    RESPONSES_NONE = 2
+
+    RESPONSES_CHOICES = (
+        (RESPONSES_OHAT, "OHAT"),
+        (RESPONSES_EPA, "EPA"),
+        (RESPONSES_NONE, "None"),
+    )
+
+    RESPONSES_VALUES = {
+        RESPONSES_OHAT: [17, 16, 15, 12, 14, 10],
+        RESPONSES_EPA: [27, 26, 25, 24, 37, 36, 35, 34, 22, 20],
+        RESPONSES_NONE: [],
+    }
 
     domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
     name = models.CharField(max_length=256)
@@ -126,7 +137,7 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
-    score_choices = models.PositiveSmallIntegerField(choices=ScoreChoices.choices)
+    responses = models.PositiveSmallIntegerField(choices=RESPONSES_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -144,6 +155,9 @@ class RiskOfBiasMetric(models.Model):
 
     def get_absolute_url(self):
         return reverse("riskofbias:arob_detail", args=(self.domain.assessment_id,))
+
+    def get_response_values(self):
+        return self.RESPONSES_VALUES[self.responses]
 
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
