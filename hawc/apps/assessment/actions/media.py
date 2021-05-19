@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 from django.conf import settings
+from django.urls import reverse
+from django.utils.html import urlencode
 
 
 def media_metadata_report(root_uri: str) -> pd.DataFrame:
@@ -15,13 +17,16 @@ def media_metadata_report(root_uri: str) -> pd.DataFrame:
         pd.DataFrame: a dataframe of content
     """
     # grab all files recursively in the media root path
-    path = Path(settings.MEDIA_ROOT)
-    files = [f for f in path.glob("**/*") if f.is_file()]
+    media_root = Path(settings.MEDIA_ROOT)
+    media_url = root_uri + settings.MEDIA_URL[:-1]
+    files = [f for f in media_root.glob("**/*") if f.is_file()]
+    media_preview = root_uri + reverse("admin_media_preview")
 
     # process metadata for each file individually
     data = []
     for fn in files:
         metadata = fn.stat()
+        item = str(fn).replace(str(media_root) + "/", "")
         data.append(
             dict(
                 name=fn.name,
@@ -29,6 +34,7 @@ def media_metadata_report(root_uri: str) -> pd.DataFrame:
                 full_path=fn,
                 hash=blake2b(fn.read_bytes()).hexdigest(),
                 uri=fn.as_uri(),
+                media_preview=media_preview + f"?{urlencode(dict(item=item))}",
                 size_mb=metadata.st_size,
                 created=metadata.st_ctime,
                 modified=metadata.st_mtime,
@@ -39,7 +45,7 @@ def media_metadata_report(root_uri: str) -> pd.DataFrame:
     df = pd.DataFrame(data)
 
     # transform columns using vectorized operations
-    df.uri = df.uri.str.replace(path.as_uri(), root_uri)
+    df.uri = df.uri.str.replace(media_root.as_uri(), media_url)
     df.size_mb = df.size_mb / (1024 * 1024)
     df.created = pd.to_datetime(df.created, unit="s")
     df.modified = pd.to_datetime(df.modified, unit="s")

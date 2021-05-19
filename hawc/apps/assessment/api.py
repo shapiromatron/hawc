@@ -4,7 +4,6 @@ from typing import Optional
 
 import pandas as pd
 from django.apps import apps
-from django.conf import settings
 from django.core import exceptions
 from django.db.models import Count
 from django.http import Http404
@@ -538,7 +537,7 @@ class AdminDashboardViewset(viewsets.ViewSet):
 
     @action(detail=False, renderer_classes=PandasRenderers)
     def media(self, request):
-        uri = request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
+        uri = request.build_absolute_uri(location="/")[:-1]
         df = media_metadata_report(uri)
         export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
         return Response(export)

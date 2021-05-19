@@ -75,6 +75,11 @@ urlpatterns = [
         views.AdminAssessmentSize.as_view(),
         name="admin_assessment_size",
     ),
+    path(
+        f"admin/{settings.ADMIN_URL_PREFIX}/media-preview/",
+        views.AdminMediaPreview.as_view(),
+        name="admin_media_preview",
+    ),
     path(f"admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     path("selectable/", include("selectable.urls")),
     path(
