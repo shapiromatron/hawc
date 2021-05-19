@@ -319,4 +319,4 @@ class TestAdminDashboardViewset:
         resp = client.get(url)
         assert resp.status_code == 200
         header = resp.content.decode().split("\n")[0]
-        assert header == "name,extension,full_path,hash,uri,size_mb,created,modified"
+        assert header == "name,extension,full_path,hash,uri,media_preview,size_mb,created,modified"
