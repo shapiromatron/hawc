@@ -1,0 +1,27 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load add_class %}
+{% load get_at_index %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2>{{object}}&nbsp;{% if object.final %}[final]{% else %}[individual review]{% endif %}</h2>
+    {% if object.final and not object.study_reviews_complete %}
+        <h4 class="alert alert-danger">All other {{assessment.get_rob_name_display|lower}} reviews for
+            {{object.study}} must be complete in order to complete the final review.
+        </h4>
+    {% else %}
+        <div id='robTable'></div>
+    {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+  <script id="config" type="text/json" charset="utf-8">{{config|safe}}</script>
+  <script type="text/javascript">
+  $(document).ready(function(){
+      window.app.riskofbiasStartup(function(riskofbias){
+          riskofbias.RobSortFormStartup(document.getElementById('robTable'));
+      })
+  });
+  </script>
+{% endblock extrajs %}

@@ -410,3 +410,22 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
         context["breadcrumbs"][4] = Breadcrumb(name="Update review")
         return context
+
+
+class ARoBSort(BaseDetail):
+    """
+    Displays a form for sorting domain and metric.
+    """
+
+    model = models.Assessment
+    template_name = "riskofbias/arob_sort.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["config"] = json.dumps(
+            {
+                "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}"
+            }
+        )
+        return context
+
