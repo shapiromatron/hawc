@@ -1155,6 +1155,9 @@ class GroupNumericalDescriptions(models.Model):
 
     COPY_NAME = "group_descriptions"
 
+    class Meta:
+        verbose_name_plural = "Group Numerical Descriptions"
+
     def __str__(self):
         return self.description
 

@@ -315,6 +315,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
+            options={"verbose_name_plural": "Group Numerical Descriptions"},
         ),
         migrations.CreateModel(
             name="GroupResult",
