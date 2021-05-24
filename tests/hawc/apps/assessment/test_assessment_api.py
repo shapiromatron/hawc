@@ -1,6 +1,16 @@
+from pathlib import Path
+
 import pytest
+from django.conf import settings
 from django.urls import reverse
 from rest_framework.test import APIClient
+
+
+@pytest.fixture(scope="module")
+def media_file():
+    fn = Path(settings.MEDIA_ROOT) / "test.txt"
+    if not fn.exists():
+        fn.write_text("hello\n")
 
 
 @pytest.mark.django_db
@@ -311,7 +321,7 @@ class TestAdminDashboardViewset:
         resp = client.get(url)
         assert resp.status_code == 200
 
-    def test_media_report(self):
+    def test_media_report(self, media_file):
         client = APIClient()
         # check that media report successfully returns a csv header
         assert client.login(username="admin@hawcproject.org", password="pw") is True
