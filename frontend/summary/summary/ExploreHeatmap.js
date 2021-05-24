@@ -15,6 +15,8 @@ import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import {NULL_VALUE} from "./constants";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
+import SortableList from "shared/components/SortableList";
+import DemoStore from "../summaryForms/heatmap/tmpFilter";
 
 let startupHeatmapAppRender = function(el, settings, datastore, options) {
     const store = new HeatmapDatastore(settings, datastore, options);
@@ -22,6 +24,18 @@ let startupHeatmapAppRender = function(el, settings, datastore, options) {
         <Provider store={store}>
             <ExploreHeatmapComponent options={options} />
         </Provider>,
+        el
+    );
+};
+
+const startupHeatmapAppRender2 = function(el, settings, datastore, options) {
+    const store = new DemoStore();
+    ReactDOM.render(
+        <SortableList
+            items={store.items}
+            onOrderChange={store.handleOrderChange}
+            onSelectChange={store.handleSelectChange}
+        />,
         el
     );
 };
@@ -179,7 +193,7 @@ class ExploreHeatmap extends BaseVisual {
                         $el.prepend([actions, title]).append(captionDiv);
                     }
 
-                    startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
+                    startupHeatmapAppRender2($plotDiv[0], settings, dataset, options);
 
                     if (options.cb) {
                         options.cb(this);
