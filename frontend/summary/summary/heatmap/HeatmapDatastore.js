@@ -120,8 +120,13 @@ class HeatmapDatastore {
     setScales() {
         const setScales = (fields, intersection) => {
             const columns = fields.map(field => field.column),
-                items = columns.map(column => _.keys(intersection[column]).sort()),
+                items = fields.map(field => {
+                    return _.isArray(field.items)
+                        ? field.items.filter(item => item.included).map(item => item.id)
+                        : _.keys(intersection[field.column]).sort();
+                }),
                 permutations = h.cartesian(items);
+
             if (columns.length == 0) {
                 return [];
             } else if (columns.length == 1) {
