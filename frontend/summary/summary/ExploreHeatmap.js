@@ -51,27 +51,29 @@ class ExploreHeatmapComponent extends Component {
         }
 
         return (
-            <div style={{display: "flex", flexDirection: "row"}}>
-                <div style={{flex: 9}}>
-                    <div id={id}>
-                        <Loading />
+            <>
+                <div style={{display: "flex", flexDirection: "row"}}>
+                    <div style={{flex: 9}}>
+                        <div id={id}>
+                            <Loading />
+                        </div>
                     </div>
-                    <DatasetTable />
+                    {hasFilters ? (
+                        <div
+                            className="col-3 ml-2"
+                            style={{
+                                display: "flex",
+                                flex: 3,
+                                minWidth: 300,
+                                maxWidth: 400,
+                            }}>
+                            <FilterWidgetContainer />
+                        </div>
+                    ) : null}
+                    <div id={`tooltip-${id}`} style={{position: "absolute"}}></div>
                 </div>
-                {hasFilters ? (
-                    <div
-                        className="ml-2"
-                        style={{
-                            display: "flex",
-                            flex: 3,
-                            minWidth: 300,
-                            maxWidth: 400,
-                        }}>
-                        <FilterWidgetContainer />
-                    </div>
-                ) : null}
-                <div id={`tooltip-${id}`} style={{position: "absolute"}}></div>
-            </div>
+                <DatasetTable />
+            </>
         );
     }
 }

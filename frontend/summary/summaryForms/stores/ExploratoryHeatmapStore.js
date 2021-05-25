@@ -12,7 +12,7 @@ import {
 } from "shared/components/EditableRowData";
 
 let createDefaultAxisItem = function() {
-        return {column: NULL_VALUE, wrap_text: 0, delimiter: ""};
+        return {column: NULL_VALUE, items: null, wrap_text: 0, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
         return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};

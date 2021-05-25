@@ -42,8 +42,27 @@ class HeatmapDatastore {
 
     setIntersection() {
         /*
-        here, we have "red" in the color column with element index 1, 2, and 3
-        intersection["color"]["red"] = Set([1,2,3])
+        An intersection is an object:
+
+        - each key is a column
+        - each value is a object
+            - each key is a column value
+            - each value is a set of row indexes
+
+        As an example, assume with have two columns and six rows:
+        color  shape
+        red    circle
+        blue   circle
+
+        {
+            color: {
+                red: Set([1]),
+                blue: Set([2])
+            },
+            shape: {
+                circle: Set([1, 2])
+            }
+        }
         */
         let intersection = {},
             allRows = [...this.usableRows],
