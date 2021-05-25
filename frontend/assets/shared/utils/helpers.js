@@ -268,6 +268,7 @@ const helpers = {
         }
         history.pushState(null, null, "?" + queryParams.toString());
     },
+    nullString: "<null>",
 };
 
 export default helpers;

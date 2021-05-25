@@ -110,7 +110,7 @@ class FilterWidget extends Component {
                         }}>
                         <span>{numItems}</span>
                     </div>
-                    <span>{item == "" ? "<null>" : item}</span>
+                    <span>{item == "" ? h.nullString : item}</span>
                     {filterWidgetExtension && filterWidgetExtension.hasModal
                         ? this.renderButton(widget, item)
                         : null}
