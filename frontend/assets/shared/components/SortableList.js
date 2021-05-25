@@ -8,10 +8,10 @@ const SortableElement = observer(props => {
     const {item, onSelectChange, prefix} = props,
         id = `${prefix}-${item.id}`;
     return (
-        <li data-id={item.id} className="list-group-item draggable">
+        <li data-id={item.id} className="list-group-item draggable py-2">
             <button
                 type="button"
-                className="btn btn-secondary btn-sm draggable-handle mx-2"
+                className="btn btn-secondary btn-sm draggable-handle mx-1"
                 title="Drag to move to preferred location">
                 <span className="fa fa-fw fa-arrows-v"></span>
             </button>

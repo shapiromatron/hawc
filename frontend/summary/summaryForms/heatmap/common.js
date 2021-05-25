@@ -59,10 +59,12 @@ DataStatusIndicator.propTypes = {
 };
 
 const HelpText = {
-    delimiter:
-        "If data are delimited in a cell, the delimiter character used. If unspecified, the data are not delimited",
-    header:
-        "By default the data column name is shown as the header; this can be overridden with custom text here.",
+    customItems: `By default, all items are presented and in alphabetical order.
+        If customized, users can select which items to show on the heatmap and in what order`,
+    delimiter: `If data are delimited in a cell, the delimiter character used.
+        If unspecified, the data are not delimited`,
+    header: `By default the data column name is shown as the header;
+        this can be overridden with custom text here.`,
     wrapText: "Wrap text at a specified length, else auto calculated",
 };
 
