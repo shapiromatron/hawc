@@ -10,16 +10,8 @@ import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import SortableList from "shared/components/SortableList";
 
+import {getColumnValues} from "../../summary/heatmap/common";
 import {HelpText} from "./common";
-
-const setDefaultItems = function(row) {
-    return [
-        {id: 1, label: "This is item A", included: true},
-        {id: 2, label: "This is item B", included: true},
-        {id: 3, label: "This is item C", included: true},
-        {id: 4, label: "This is item D", included: true},
-    ];
-};
 
 @inject("store")
 @observer
@@ -71,6 +63,7 @@ class AxisLabelTable extends Component {
                 changeOrderArrayItems,
                 changeIncludedArrayItems,
             } = this.props.store.subclass,
+            {dataset} = this.props.store.base,
             hasItems = _.isArray(row.items);
 
         return (
@@ -88,7 +81,9 @@ class AxisLabelTable extends Component {
                     <CheckboxInput
                         checked={hasItems}
                         onChange={e => {
-                            const items = e.target.checked ? setDefaultItems(row) : null;
+                            const items = e.target.checked
+                                ? getColumnValues(dataset, row.column, row.delimiter)
+                                : null;
                             changeArraySettings(key, index, "items", items);
                         }}
                         label="Customize items"
