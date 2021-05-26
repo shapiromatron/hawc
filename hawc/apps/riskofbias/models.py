@@ -97,7 +97,7 @@ class RiskOfBiasMetric(models.Model):
     RESPONSES_CHOICES = (
         (RESPONSES_OHAT, "OHAT"),
         (RESPONSES_EPA, "EPA"),
-        (RESPONSES_NONE, "None"),
+        (RESPONSES_NONE, "No scores"),
     )
 
     RESPONSES_VALUES = {

@@ -2,6 +2,8 @@
 
 from django.db import migrations, models
 
+from ..models import RiskOfBiasMetric
+
 
 def set_default_responses(apps, schema_editor):
     RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
@@ -25,7 +27,8 @@ class Migration(migrations.Migration):
             model_name="riskofbiasmetric",
             name="responses",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "Prime"), (1, "Epa"), (2, "None")], default=0
+                choices=[(0, "OHAT"), (1, "EPA"), (2, "No scores")],
+                default=RiskOfBiasMetric.get_default_responses,
             ),
             preserve_default=False,
         ),

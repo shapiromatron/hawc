@@ -108,6 +108,7 @@ class RoBMetricForm(forms.ModelForm):
         helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
         helper.add_row("required_animal", 3, "col-md-4")
         helper.add_row("hide_description", 2, "col-md-6")
+        helper.add_row("responses", 1, "col-md-12")
         return helper
 
 
