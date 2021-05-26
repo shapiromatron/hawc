@@ -72,7 +72,7 @@ def test_db(django_db_setup, django_db_blocker):
     logging.info("Loading db fixture...")
     with django_db_blocker.unblock():
         call_command("load_test_db")
-        call_command("create_materialized_views")
+        call_command("create_views")
 
         with connections["default"].cursor() as cursor:
             # since we skip migrations, apply lit.0015_unaccent manually
