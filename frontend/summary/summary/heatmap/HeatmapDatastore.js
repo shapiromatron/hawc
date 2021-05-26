@@ -156,16 +156,17 @@ class HeatmapDatastore {
                         let rows,
                             first = true;
                         _.each(d, e => {
+                            const v = h.randomString();
+                            console.log(v, d, first, e.column, e.value);
                             rows = first
                                 ? intersection[e.column][e.value]
                                 : h.setIntersection(rows, intersection[e.column][e.value]);
+                            console.log(v, rows, first, e.column, e.value);
                             first = false;
                         });
                         return rows;
                     })
-                    .map(d => {
-                        return d.size;
-                    });
+                    .map(d => d.size);
             },
             x = setGrandTotals(toJS(this.intersection), this.scales.x),
             y = setGrandTotals(toJS(this.intersection), this.scales.y);
