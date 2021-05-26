@@ -104,15 +104,17 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
             raise ValueError(f"Unsupported data type {data_type}; expected {data_types}")
 
         filters = dict(domain__assessment_id=assessment_id)
+        qs = cls.objects.filter(study__assessment_id=assessment_id)
         if data_type == "animal":
             filters["required_animal"] = True
-            scores_map = cls.objects.filter(study__assessment_id=assessment_id).endpoint_scores(ids)
+            scores_map = qs.endpoint_scores(ids)
         elif data_type == "epi":
             filters["required_epi"] = True
-            scores_map = cls.objects.filter(study__assessment_id=assessment_id).outcome_scores(ids)
+            scores_map = qs.outcome_scores(ids)
         elif data_type == "invitro":
             filters["required_invitro"] = True
-            scores_map = cls.objects.filter(study__assessment_id=assessment_id).study_scores(ids)
+            scores_map = qs.study_scores(ids)
+
         # return headers
         RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
         metric_qs = list(

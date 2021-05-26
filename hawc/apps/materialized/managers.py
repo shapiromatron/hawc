@@ -32,6 +32,14 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
         ]
 
     def study_scores(self, study_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
+        """Return default scores for study and metric.
+
+        Args:
+            study_ids (List[int]): A list of study ids
+
+        Returns:
+            Dict[Tuple[int, int], Dict]: Keys are equal to (study_id, metric_id)
+        """
         return {
             (score["study_id"], score["metric_id"]): score
             for score in self.score_values
@@ -80,9 +88,10 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         Result = apps.get_model("epi", "Result")
         Outcome = apps.get_model("epi", "Outcome")
+        Exposure = apps.get_model("epi", "Exposure")
 
         results = Result.objects.filter(pk__in=result_ids).select_related(
-            "outcome__study_population"
+            "outcome__study_population", "comparison_set"
         )
 
         result_scores = {}
@@ -91,6 +100,7 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             study_id = result.outcome.study_population.study_id
             for metric_id, score in chain(
                 self._default_tuples(study_id),
+                self._override_tuples(study_id, Exposure, result.comparison_set.exposure_id),
                 self._override_tuples(study_id, Outcome, result.outcome_id),
                 self._override_tuples(study_id, Result, result.id),
             ):
