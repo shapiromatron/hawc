@@ -75,9 +75,12 @@ class RiskOfBiasDomain(models.Model):
         with open(fn, "r") as f:
             objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
-        for domain in objects["domains"]:
+        for sort_order, domain in enumerate(objects["domains"]):
             d = RiskOfBiasDomain.objects.create(
-                assessment=assessment, name=domain["name"], description=domain["description"],
+                assessment=assessment,
+                sort_order=sort_order + 1,
+                name=domain["name"],
+                description=domain["description"],
             )
             RiskOfBiasMetric.build_metrics_for_one_domain(d, domain["metrics"])
 
@@ -156,8 +159,8 @@ class RiskOfBiasMetric(models.Model):
         list of python dictionaries for each metric.
         """
         objs = []
-        for metric in metrics:
-            obj = RiskOfBiasMetric(**metric)
+        for sort_order, metric in enumerate(metrics):
+            obj = RiskOfBiasMetric(sort_order=sort_order + 1, **metric)
             obj.domain = domain
             objs.append(obj)
         RiskOfBiasMetric.objects.bulk_create(objs)
