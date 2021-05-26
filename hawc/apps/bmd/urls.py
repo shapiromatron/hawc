@@ -16,12 +16,12 @@ urlpatterns = [
         name="assess_settings_detail",
     ),
     path(
-        "assessment/<int:pk>/settings/edit/",
+        "assessment/<int:pk>/settings/update/",
         views.AssessSettingsUpdate.as_view(),
         name="assess_settings_update",
     ),
     path(
-        "assessment/<int:pk>/logic/edit/",
+        "assessment/<int:pk>/logic/update/",
         views.AssessLogicUpdate.as_view(),
         name="assess_logic_update",
     ),

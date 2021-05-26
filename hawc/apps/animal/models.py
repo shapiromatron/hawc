@@ -1085,24 +1085,21 @@ class Endpoint(BaseEndpoint):
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies
-        df2 = (
-            cls.heatmap_df(assessment_id, published_only)
-            .groupby("study id")
-            .agg(
-                {
-                    "overall study evaluation": unique_items,
-                    "experiment type": unique_items,
-                    "experiment chemical": unique_items,
-                    "species": unique_items,
-                    "sex": unique_items,
-                    "strain": unique_items,
-                    "route of exposure": unique_items,
-                    "system": unique_items,
-                    "organ": unique_items,
-                    "effect": unique_items,
-                }
-            )
-        )
+        df2 = cls.heatmap_df(assessment_id, published_only)
+        aggregates = {
+            "experiment type": unique_items,
+            "experiment chemical": unique_items,
+            "species": unique_items,
+            "sex": unique_items,
+            "strain": unique_items,
+            "route of exposure": unique_items,
+            "system": unique_items,
+            "organ": unique_items,
+            "effect": unique_items,
+        }
+        if "overall study evaluation" in df2:
+            aggregates["overall study evaluation"] = unique_items
+        df2 = df2.groupby("study id").agg(aggregates)
 
         # rollup dose-units to study
         values = dict(
@@ -1252,6 +1249,11 @@ class Endpoint(BaseEndpoint):
             "endpoint-organ",
             "endpoint-effect",
             "endpoint-effect_subtype",
+            "endpoint-name_term_id",
+            "endpoint-system_term_id",
+            "endpoint-organ_term_id",
+            "endpoint-effect_term_id",
+            "endpoint-effect_subtype_term_id",
             "endpoint-litter_effects",
             "endpoint-litter_effect_notes",
             "endpoint-observation_time",
@@ -1288,6 +1290,11 @@ class Endpoint(BaseEndpoint):
             ser["organ"],
             ser["effect"],
             ser["effect_subtype"],
+            ser["name_term"],
+            ser["system_term"],
+            ser["organ_term"],
+            ser["effect_term"],
+            ser["effect_subtype_term"],
             ser["litter_effects"],
             ser["litter_effect_notes"],
             ser["observation_time"],

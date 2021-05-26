@@ -10,9 +10,9 @@ from hawc.apps.assessment.models import Assessment
 @pytest.mark.django_db
 class TestEndpointManager:
     def test_bad_update_terms(self):
-        assessment = Assessment.objects.get(pk=3)
-        bad_endpoint_id = 1
-        valid_endpoint_id = 2
+        assessment = Assessment.objects.get(pk=1)
+        bad_endpoint_id = 3
+        valid_endpoint_id = 1
         # empty data
         data = []
         expected_error = "List of endpoints must be > 1"
@@ -78,15 +78,11 @@ class TestEndpointManager:
             assert getattr(endpoint, field) == field_to_value[field]
 
     def test_valid_update_terms(self):
-        assessment = Assessment.objects.get(pk=3)
-        # multiple endpoints
-        endpoint_1 = models.Endpoint.objects.get(pk=2)
-        endpoint_2 = models.Endpoint.objects.get(pk=7)
-        assert endpoint_1.name_term_id is None and endpoint_2.name_term_id is None
-        data = [{"id": endpoint_1.id, "name_term_id": 5}, {"id": endpoint_2.id, "name_term_id": 5}]
+        assessment = Assessment.objects.get(pk=1)
+        endpoint = models.Endpoint.objects.get(pk=1)
+        assert endpoint.name_term_id is None
+        data = [{"id": endpoint.id, "name_term_id": 5}]
         updated_endpoints = models.Endpoint.objects.update_terms(data, assessment)
-        assert len(updated_endpoints) == 2
-        endpoint_1.refresh_from_db()
-        endpoint_2.refresh_from_db()
-        self._test_updated_terms(endpoint_1)
-        self._test_updated_terms(endpoint_2)
+        assert len(updated_endpoints) == 1
+        endpoint.refresh_from_db()
+        self._test_updated_terms(endpoint)

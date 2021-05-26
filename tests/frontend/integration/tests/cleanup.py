@@ -8,7 +8,7 @@ def cleanup(driver, root_url):
 
     # /assessment/:id/clean-extracted-data/
     h.go_to(root_url + "/assessment/1/clean-extracted-data/")
-    h.wait_until(h.Text("Cleanup working").exists)
+    h.wait_until(h.Text("Cleanup Chemical Z").exists)
     h.click("1 animal bioassay endpoints")
     h.wait_until(h.Text("Cleanup Animal Bioassay Endpoints").exists)
     h.click("system")

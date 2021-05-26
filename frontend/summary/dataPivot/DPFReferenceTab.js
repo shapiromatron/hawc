@@ -34,7 +34,7 @@ let buildReferenceLines = function(tab, dp) {
         for (var i = 0; i < numRows; i++) {
             addDataRow(i);
         }
-        tab.append($("<h3>Reference lines</h3>").append(newRowBtn), tbl);
+        tab.append(newRowBtn, $("<h3>Reference lines</h3>"), tbl);
     },
     buildReferenceRanges = function(tab, dp) {
         let thead = $("<thead>").html(
@@ -64,7 +64,7 @@ let buildReferenceLines = function(tab, dp) {
             addDataRow(i);
         }
 
-        tab.append($("<h3>Reference ranges</h3>").append(newRowBtn), tbl);
+        tab.append(newRowBtn, $("<h3>Reference ranges</h3>"), tbl);
     },
     buildReferenceLabels = function(tab, dp) {
         var thead = $("<thead>").html(buildHeaderTr(["Text", "Style", "Delete"])),
@@ -92,7 +92,7 @@ let buildReferenceLines = function(tab, dp) {
             addDataRow(i);
         }
 
-        tab.append($("<h3>Labels</h3>").append(newRowBtn), tbl);
+        tab.append(newRowBtn, $("<h3>Labels</h3>"), tbl);
     },
     buildReferenceTab = function(dp) {
         let tab = $('<div class="tab-pane" id="data_pivot_settings_ref">');

@@ -4,9 +4,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ...assessment.api import DisabledPagination
+from ..exceptions import ClassConfigurationException
 from .filters import CleanupBulkIdFilter
 from .mixins import ListUpdateModelMixin
-from .permissions import CleanupFieldsPermissions
+from .permissions import CleanupFieldsPermissions, user_can_edit_object
 
 
 class CleanupFieldsBaseViewSet(
@@ -50,3 +51,70 @@ class CleanupFieldsBaseViewSet(
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
         queryset.model.delete_caches(ids)
+
+
+class PermCheckerMixin:
+    """
+    Class to be mixed into api viewsets which provides permission checking during create/update/destroy operations.
+
+    Fires "user_can_edit_object" checks during requests to create/update/destroy. Viewsets mixing this in should
+    define a variable "perm_checker_key" which can be either a string or a list of strings that should be used as
+    the source for the checks, via looking them up in the validated_data of the associated serializer.
+    """
+
+    def generate_things_to_check(self, serializer, append_self_obj):
+        """
+        Internal helper function that generates a list of model objects to check permissions against.
+
+        As an example - when creating an epi Outcome, "perm_checker_key" is defined as ["assessment", "study_population"].
+        Generate things to check will look at the supplied input data - if "assessment" was supplied, it will add the
+        Assessment object. If "study_population" was supplied, it will add the StudyPopulation object. If "append_self_obj"
+        was True (during an update), then the Outcome object itself will be added.
+
+        Each object returned can then be checked using user_can_edit_object, throwing an exception if necessary.
+
+        Args:
+            serializer: the serializer of the associated viewset
+            append_self_obj (bool): specify whether the object itself should be checked
+
+        Returns:
+            list: The list of objects that should be checked using user_can_edit_object
+        """
+        things_to_check = []
+
+        if hasattr(self, "perm_checker_key"):
+            # perm_checker_key can either be a string or an array of strings
+            checker_keys = self.perm_checker_key
+            if type(self.perm_checker_key) is str:
+                checker_keys = [self.perm_checker_key]
+
+            for checker_key in checker_keys:
+                if checker_key in serializer.validated_data:
+                    things_to_check.append(serializer.validated_data.get(checker_key))
+
+            if append_self_obj:
+                things_to_check.append(self.get_object())
+
+        # Can't guard & must raise this at the end; a class might have perm_checker_key defined but
+        # without any good keys and we won't know it until we check.
+        if len(things_to_check) == 0:
+            raise ClassConfigurationException(
+                f"Improperly configured viewset {self}; needs defined perm_checker_key with one or more valid keys"
+            )
+
+        return things_to_check
+
+    def perform_create(self, serializer):
+        for thing_to_check in self.generate_things_to_check(serializer, False):
+            user_can_edit_object(thing_to_check, self.request.user, raise_exception=True)
+        super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        for thing_to_check in self.generate_things_to_check(serializer, True):
+            user_can_edit_object(thing_to_check, self.request.user, raise_exception=True)
+
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        user_can_edit_object(instance, self.request.user, raise_exception=True)
+        super().perform_destroy(instance)

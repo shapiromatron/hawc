@@ -46,7 +46,7 @@ docs: ## Generate Sphinx HTML documentation, including API docs
 
 loc: ## Generate lines of code report
 	@cloc \
-		--exclude-dir=debug,migrations,node_modules,public,private,vendor,venv \
+		--exclude-dir=migrations,node_modules,public,private,vendor,venv \
 		--exclude-ext=json,yaml,svg,toml,ini \
 		--vcs=git \
 		--counted loc-files.txt \

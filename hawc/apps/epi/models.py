@@ -45,6 +45,9 @@ class Criteria(models.Model):
     def __str__(self):
         return self.description
 
+    def get_assessment(self):
+        return self.assessment
+
     def copy_across_assessments(self, cw):
         new_obj, _ = self._meta.model.objects.get_or_create(
             assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
@@ -1155,6 +1158,9 @@ class GroupNumericalDescriptions(models.Model):
     def __str__(self):
         return self.description
 
+    def get_assessment(self):
+        return self.group.get_assessment()
+
     def copy_across_assessments(self, cw):
         old_id = self.id
         self.id = None
@@ -1472,24 +1478,21 @@ class Result(models.Model):
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies
-        df2 = (
-            cls.heatmap_df(assessment_id, published_only)
-            .groupby("study id")
-            .agg(
-                {
-                    "overall study evaluation": unique_items,
-                    "study design": unique_items,
-                    "study population source": unique_items,
-                    "exposure name": unique_items,
-                    "exposure route": unique_list_items,
-                    "exposure measure": unique_list_items,
-                    "exposure metric": unique_list_items,
-                    "system": unique_items,
-                    "effect": unique_items,
-                    "effect subtype": unique_items,
-                }
-            )
-        )
+        df2 = cls.heatmap_df(assessment_id, published_only)
+        aggregates = {
+            "study design": unique_items,
+            "study population source": unique_items,
+            "exposure name": unique_items,
+            "exposure route": unique_list_items,
+            "exposure measure": unique_list_items,
+            "exposure metric": unique_list_items,
+            "system": unique_items,
+            "effect": unique_items,
+            "effect subtype": unique_items,
+        }
+        if "overall study evaluation" in df2:
+            aggregates["overall study evaluation"] = unique_items
+        df2 = df2.groupby("study id").agg(aggregates)
 
         # merge all the data frames together
         df = df1.merge(df2, how="left", left_index=True, right_index=True).fillna("").reset_index()
@@ -1730,7 +1733,7 @@ class GroupResult(models.Model):
             ser["upper_range"],
             ser["lower_bound_interval"],
             ser["upper_bound_interval"],
-            ser["p_value_qualifier"],
+            ser["p_value_qualifier_display"],
             ser["p_value"],
             ser["is_main_finding"],
             ser["main_finding_support"],
@@ -1867,6 +1870,9 @@ class GroupResult(models.Model):
         self.group_id = cw[Group.COPY_NAME][self.group_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+    def get_assessment(self):
+        return self.result.get_assessment()
 
 
 reversion.register(Country)

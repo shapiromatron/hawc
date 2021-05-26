@@ -57,15 +57,17 @@ class ExternalWebsite extends BaseVisual {
         var title = $("<h1>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
-            $plotDiv = $("<div>"),
-            linkOut = $();
+            $plotDiv = $("<div>");
 
         options = options || {};
 
-        title.append(this.addActionsMenu());
+        const actions = this.addActionsMenu();
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend([title, linkOut]).append(captionDiv);
+
+        if (!options.visualOnly) {
+            $el.prepend([actions, title]).append(captionDiv);
+        }
 
         this.embedPage($plotDiv[0]);
         caption.renderAndEnable();
