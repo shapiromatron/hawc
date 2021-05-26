@@ -59,21 +59,27 @@ class TestFinalRiskOfBiasScoreManager:
             actual_scores[(endpoint_id, expected_score.metric_id)]["score_id"] == expected_score.id
         )
 
-        # endpoint 2 has no override
-        endpoint_id = 2
+        # endpoint 6 has no override on one metric (but animal-group on other metric); check default
+        endpoint_id = 6
+        metric_id = 15
         endpoint = Endpoint.objects.get(pk=endpoint_id)
         endpoint_study_id = endpoint.animal_group.experiment.study_id
         actual_scores = models.FinalRiskOfBiasScore.objects.all().endpoint_scores([endpoint_id])
-        expected_scores = RiskOfBiasScore.objects.filter(
-            is_default=True,
-            riskofbias__final=True,
-            riskofbias__active=True,
-            riskofbias__study_id=endpoint_study_id,
-        ).select_related("riskofbias")
-        assert len(actual_scores) == len(expected_scores)
-        for (endpoint_id, metric_id), actual_value in actual_scores.items():
-            assert actual_value["score_id"] == next(
-                score.id
-                for score in expected_scores
-                if score.riskofbias.study_id == endpoint_study_id and score.metric_id == metric_id
+        expected_scores_set = set(
+            RiskOfBiasScore.objects.filter(
+                is_default=True,
+                metric_id=metric_id,
+                riskofbias__final=True,
+                riskofbias__active=True,
+                riskofbias__study_id=endpoint_study_id,
             )
+            .select_related("riskofbias")
+            .values_list("riskofbias__study_id", "id", "metric_id")
+        )
+        actual_scores_set = set(
+            [
+                (s["study_id"], s["score_id"], s["metric_id"])
+                for s in [actual_scores[(endpoint_id, metric_id)]]
+            ]
+        )
+        assert expected_scores_set == actual_scores_set

@@ -39,7 +39,6 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
         }
 
     def endpoint_scores(self, endpoint_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
-
         Endpoint = apps.get_model("animal", "Endpoint")
         AnimalGroup = apps.get_model("animal", "AnimalGroup")
 
