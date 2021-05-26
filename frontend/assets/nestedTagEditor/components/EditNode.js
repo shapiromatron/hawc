@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import ConfirmDeleteButton from "shared/components/ConfirmDeleteButton";
+
 class EditNodeForm extends React.Component {
     constructor(props) {
         super(props);
@@ -77,15 +79,14 @@ class EditNodeForm extends React.Component {
                             Cancel
                         </button>
                     </div>
-                    <div className="col-md-6">
-                        {isNew ? null : (
-                            <button
-                                className="btn btn-danger float-right"
-                                onClick={this.props.handleDelete}>
-                                <i className="fa fa-trash"></i>&nbsp;Delete
-                            </button>
-                        )}
-                    </div>
+
+                    {isNew ? null : (
+                        <div className="col-md-6">
+                            <div className="float-right">
+                                <ConfirmDeleteButton handleDelete={this.props.handleDelete} />
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         );

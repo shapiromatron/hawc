@@ -13,6 +13,7 @@ def ul_items(qs, method):
 class TermAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "uid",
         "namespace",
         "type",
         "name",
@@ -27,7 +28,7 @@ class TermAdmin(admin.ModelAdmin):
         "type",
     )
     list_select_related = ("parent",)
-    search_fields = ("name",)
+    search_fields = ("name", "uid")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -76,20 +77,3 @@ class EntityAdmin(admin.ModelAdmin):
 
     get_terms.short_description = "Related terms"
     get_terms.allow_tags = True
-
-
-@admin.register(models.Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = (
-        "commenter",
-        "comment",
-        "reviewed",
-        "reviewer_notes",
-        "created_on",
-        "last_updated",
-    )
-    list_filter = (
-        "reviewed",
-        ("commenter", admin.RelatedOnlyFieldListFilter),
-    )
-    search_fields = ("comment",)

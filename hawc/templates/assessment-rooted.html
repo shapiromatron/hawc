@@ -12,65 +12,64 @@
         <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
     </a>
 
-    <nav class="nav flex-column navbar-dark pt-3">
+    <nav class="nav flex-column pt-3">
 
         <li class="nav-item nav-link text-white-50">Selected assessment</li>
         <li class="nav-item bg-primary">
-            <a class="nav-link text-light" href="{% url 'assessment:detail' assessment.pk %}">{{ assessment }}</a>
+            <a class="nav-link" href="{% url 'assessment:detail' assessment.pk %}">{{ assessment }}</a>
         </li>
 
         <li class="nav-item nav-link text-white-50">Available modules</li>
 
-
         {% if assessment.enable_literature_review %}
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'lit:overview' assessment.pk %}">Literature review</a>
+            <a class="nav-link" href="{% url 'lit:overview' assessment.pk %}">Literature review</a>
         </li>
         {% endif %}
 
         {% if assessment.enable_project_management and request.user.is_authenticated %}
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management
+            <a class="nav-link" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management
                 dashboard</a>
         </li>
         {% endif %}
 
         {% if assessment.enable_data_extraction %}
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'study:list' assessment.pk %}">Study list</a>
+            <a class="nav-link" href="{% url 'study:list' assessment.pk %}">Study list</a>
         </li>
 
         {% if assessment.enable_risk_of_bias %}
         <li class="nav-item">
-            <a class="nav-link text-light"
+            <a class="nav-link"
                 href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a>
         </li>
         {% endif %}
 
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a>
+            <a class="nav-link" href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a>
         </li>
         {% endif %}
 
         <li class="nav-item">
-            <a class="nav-link text-light"
+            <a class="nav-link"
                 href="{% url 'summary:tables_list' assessment.pk %}">Summary tables</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-light"
+            <a class="nav-link"
                 href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
         </li>
 
         {% if assessment.enable_summary_text %}
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'summary:list' assessment.pk %}">Executive summary</a>
+            <a class="nav-link" href="{% url 'summary:list' assessment.pk %}">Executive summary</a>
         </li>
         {% endif %}
 
         <li class="nav-item nav-link text-white-50">Downloads</li>
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a>
+            <a class="nav-link" href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a>
         </li>
 
     </nav>

@@ -67,6 +67,7 @@ class VocabularyTermType(IntChoiceEnum):
 class Term(models.Model):
     objects = managers.TermManager()
 
+    uid = models.PositiveIntegerField(unique=True, blank=True, null=True)
     namespace = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.choices(), default=VocabularyNamespace.EHV
     )
@@ -220,23 +221,6 @@ class EntityTermRelation(models.Model):
         return f"{self.term} -> {self.entity}"
 
 
-class Comment(models.Model):
-    commenter = models.ForeignKey(HAWCUser, on_delete=models.CASCADE)
-    last_url_visited = models.CharField(max_length=128)
-    comment = models.TextField()
-    reviewed = models.BooleanField(default=False)
-    reviewer_notes = models.TextField(blank=True)
-    created_on = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ("id",)
-
-    def __str__(self) -> str:
-        return f"{self.commenter} on {self.created_on}"
-
-
 reversion.register(Term)
 reversion.register(Entity)
 reversion.register(EntityTermRelation)
-reversion.register(Comment)
