@@ -54,7 +54,7 @@
     "Significant 3": "No",
     "Significant 4": "No",
     "Significant 5": "Yes - \u2193",
-    "RoB (domain 1: metric 1)": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}",
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
     "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
@@ -112,7 +112,7 @@
     "Significant 3": "No",
     "Significant 4": "No",
     "Significant 5": "No",
-    "RoB (domain 1: metric 1)": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}",
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
     "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
@@ -170,7 +170,7 @@
     "Significant 3": "No",
     "Significant 4": "No",
     "Significant 5": "No",
-    "RoB (domain 1: metric 1)": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}",
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
     "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   }
 ]
