@@ -30,7 +30,6 @@ class Migration(migrations.Migration):
                 choices=[(0, "OHAT"), (1, "EPA"), (2, "No scores")],
                 default=RiskOfBiasMetric.get_default_responses,
             ),
-            preserve_default=False,
         ),
         migrations.RunPython(set_default_responses, reverse_code=migrations.RunPython.noop),
     ]
