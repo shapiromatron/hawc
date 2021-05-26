@@ -1,10 +1,15 @@
 from itertools import chain
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, NamedTuple, Optional, Tuple
 
 import pandas as pd
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+
+
+class MetricScore(NamedTuple):
+    metric_id: int
+    score: Dict
 
 
 class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
@@ -14,21 +19,20 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             self._score_values = self.values()
         return self._score_values
 
-    def _default_tuples(self, study_id) -> List[Tuple[int, Dict]]:
-        return [
-            (score["metric_id"], score)
-            for score in self.score_values
-            if study_id == score["study_id"] and score["is_default"]
-        ]
+    def _study_scores(self, study_id: int) -> List[Dict]:
+        return [score for score in self.score_values if study_id == score["study_id"]]
 
-    def _override_tuples(self, study_id, override_model, object_id) -> List[Tuple[int, Dict]]:
+    def _default_tuples(self, scores: List[Dict]) -> List[MetricScore]:
+        return [MetricScore(score["metric_id"], score) for score in scores if score["is_default"]]
+
+    def _override_tuples(
+        self, scores: List[Dict], override_model, object_id: int
+    ) -> List[MetricScore]:
         content_type_id = ContentType.objects.get_for_model(override_model).id
         return [
-            (score["metric_id"], score)
-            for score in self.score_values
-            if study_id == score["study_id"]
-            and score["content_type_id"] == content_type_id
-            and object_id == score["object_id"]
+            MetricScore(score["metric_id"], score)
+            for score in scores
+            if score["content_type_id"] == content_type_id and object_id == score["object_id"]
         ]
 
     def study_scores(self, study_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
@@ -58,10 +62,11 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         for endpoint in endpoints:
             study_id = endpoint.animal_group.experiment.study_id
+            study_scores = self._study_scores(study_id)
             for metric_id, score in chain(
-                self._default_tuples(study_id),
-                self._override_tuples(study_id, AnimalGroup, endpoint.animal_group_id),
-                self._override_tuples(study_id, Endpoint, endpoint.id),
+                self._default_tuples(study_scores),
+                self._override_tuples(study_scores, AnimalGroup, endpoint.animal_group_id),
+                self._override_tuples(study_scores, Endpoint, endpoint.id),
             ):
                 endpoint_scores[endpoint.id, metric_id] = score
 
@@ -77,8 +82,10 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         for outcome in outcomes:
             study_id = outcome.study_population.study_id
+            study_scores = self._study_scores(study_id)
             for metric_id, score in chain(
-                self._default_tuples(study_id), self._override_tuples(study_id, Outcome, outcome.id)
+                self._default_tuples(study_scores),
+                self._override_tuples(study_scores, Outcome, outcome.id),
             ):
                 outcome_scores[outcome.id, metric_id] = score
 
@@ -98,11 +105,12 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         for result in results:
             study_id = result.outcome.study_population.study_id
+            study_scores = self._study_scores(study_id)
             for metric_id, score in chain(
-                self._default_tuples(study_id),
-                self._override_tuples(study_id, Exposure, result.comparison_set.exposure_id),
-                self._override_tuples(study_id, Outcome, result.outcome_id),
-                self._override_tuples(study_id, Result, result.id),
+                self._default_tuples(study_scores),
+                self._override_tuples(study_scores, Exposure, result.comparison_set.exposure_id),
+                self._override_tuples(study_scores, Outcome, result.outcome_id),
+                self._override_tuples(study_scores, Result, result.id),
             ):
                 result_scores[result.id, metric_id] = score
 
