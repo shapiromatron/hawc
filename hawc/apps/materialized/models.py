@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.db import connection, models, transaction
+from django.db import connection, models
 
 from . import managers
 
@@ -31,23 +31,15 @@ class MaterializedViewModel(models.Model):
         cache.set(f"refresh-{cls._meta.db_table}", refresh)
 
     @classmethod
-    def should_refresh(cls):
-        cache.get(f"refresh-{cls._meta.db_table}", False)
-
-    @classmethod
-    @transaction.atomic
-    def _refresh(cls):
-        with connection.cursor() as cursor:
-            cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {cls._meta.db_table}")
+    def should_refresh(cls) -> bool:
+        return bool(cache.get(f"refresh-{cls._meta.db_table}", False))
 
     @classmethod
     def refresh(cls, force: bool = False):
-        if force:
-            cls._refresh()
-        else:
-            if cls.should_refresh():
-                cls._refresh()
-                cls.set_refresh_flag(False)
+        if force or cls.should_refresh():
+            with connection.cursor() as cursor:
+                cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {cls._meta.db_table}")
+            cls.set_refresh_flag(False)
 
 
 class FinalRiskOfBiasScore(MaterializedViewModel):

@@ -38,9 +38,14 @@ app.conf.beat_schedule = {
         "schedule": timedelta(hours=6),
         "kwargs": dict(delete=False),
     },
-    "refresh_all_mvs": {
+    "check-refresh-mvs": {
         "task": "hawc.apps.materialized.tasks.refresh_all_mvs",
         "schedule": timedelta(minutes=5),
+    },
+    "refresh-mvs": {
+        "task": "hawc.apps.materialized.tasks.refresh_all_mvs",
+        "schedule": timedelta(days=1),
+        "kwargs": dict(force=True),
     },
 }
 

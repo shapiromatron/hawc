@@ -265,12 +265,9 @@ class AssessmentList(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class AssessmentFullList(LoginRequiredMixin, ListView):
     model = models.Assessment
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

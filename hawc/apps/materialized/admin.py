@@ -31,7 +31,7 @@ class FinalRiskOfBiasScoreAdmin(ReadOnlyAdmin):
         ("content_type", admin.RelatedOnlyFieldListFilter),
     )
 
-    def is_override(self, obj):
+    def is_override(self, obj) -> bool:
         return obj.object_id is not None
 
     is_override.boolean = True
