@@ -106,6 +106,14 @@ class RiskOfBiasMetric(models.Model):
         RESPONSES_NONE: [],
     }
 
+    def get_default_responses():
+        if settings.HAWC_FLAVOR == "PRIME":
+            return 0
+        elif settings.HAWC_FLAVOR == "EPA":
+            return 1
+        else:
+            raise ValueError("Unknown HAWC flavor")
+
     domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
     name = models.CharField(max_length=256)
     short_name = models.CharField(max_length=50, blank=True)
@@ -137,7 +145,9 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
-    responses = models.PositiveSmallIntegerField(choices=RESPONSES_CHOICES)
+    responses = models.PositiveSmallIntegerField(
+        choices=RESPONSES_CHOICES, default=get_default_responses
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

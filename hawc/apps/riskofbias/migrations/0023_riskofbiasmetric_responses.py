@@ -13,8 +13,6 @@ def set_default_responses(apps, schema_editor):
         responses=1
     )
 
-    # TODO set it for edge case assessment that needs no score choices?
-
 
 class Migration(migrations.Migration):
 
