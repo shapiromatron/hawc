@@ -18,8 +18,8 @@ from ..assessment.api import (
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import (
     CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
     CleanupFieldsPermissions,
+    LegacyAssessmentAdapterMixin,
 )
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers

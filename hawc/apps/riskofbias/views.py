@@ -438,4 +438,3 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
         context["breadcrumbs"][4] = Breadcrumb(name="Update review")
         return context
-
