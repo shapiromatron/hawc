@@ -24,6 +24,7 @@ from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
 from ..common.models import IntChoiceEnum, get_private_data_storage
+from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
 from ..vocab.models import VocabularyNamespace
 from . import jobs, managers
@@ -412,6 +413,9 @@ class Assessment(models.Model):
             else:
                 # in prod, throw exception
                 raise NotImplementedError("Cannot wipe assessment cache using this cache backend")
+
+        # refresh materialized views
+        refresh_all_mvs(force=True)
 
     @classmethod
     def size_df(cls) -> pd.DataFrame:
