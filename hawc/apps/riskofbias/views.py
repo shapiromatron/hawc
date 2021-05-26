@@ -68,6 +68,34 @@ class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
         return context
 
 
+class ARoBSort(ProjectManagerOrHigherMixin, BaseDetail):
+    """
+    Displays a form for sorting domain and metric.
+    """
+
+    crud = "Update"
+
+    model = models.Assessment
+    template_name = "riskofbias/arob_sort.html"
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].append(Breadcrumb(name="Sort"))
+        context["config"] = json.dumps(
+            {
+                "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+                "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
+                "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
+                "csrf": get_token(self.request),
+            }
+        )
+        return context
+
+
 class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
     parent_model = Assessment
     model = models.RiskOfBiasAssessment
@@ -409,23 +437,5 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
         )
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
         context["breadcrumbs"][4] = Breadcrumb(name="Update review")
-        return context
-
-
-class ARoBSort(BaseDetail):
-    """
-    Displays a form for sorting domain and metric.
-    """
-
-    model = models.Assessment
-    template_name = "riskofbias/arob_sort.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"] = json.dumps(
-            {
-                "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}"
-            }
-        )
         return context
 

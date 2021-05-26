@@ -37,22 +37,20 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="riskofbiasdomain",
             name="sort_order",
-            field=models.PositiveSmallIntegerField(null=True),
+            field=models.PositiveSmallIntegerField(default=0),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name="riskofbiasmetric",
             name="sort_order",
-            field=models.PositiveSmallIntegerField(null=True),
+            field=models.PositiveSmallIntegerField(default=0),
+            preserve_default=False,
+        ),
+        migrations.AlterModelOptions(
+            name="riskofbiasdomain", options={"ordering": ("assessment", "sort_order")},
+        ),
+        migrations.AlterModelOptions(
+            name="riskofbiasmetric", options={"ordering": ("domain", "sort_order")},
         ),
         migrations.RunPython(set_default_sort_order, reverse_code=migrations.RunPython.noop),
-        migrations.AlterField(
-            model_name="riskofbiasdomain",
-            name="sort_order",
-            field=models.PositiveSmallIntegerField(),
-        ),
-        migrations.AlterField(
-            model_name="riskofbiasmetric",
-            name="sort_order",
-            field=models.PositiveSmallIntegerField(),
-        ),
     ]

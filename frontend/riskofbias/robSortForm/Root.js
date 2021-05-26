@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import Domain from "./Domain";
+import SortTable from "./SortTable";
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
@@ -23,9 +23,7 @@ class Root extends Component {
         return (
             <div className="riskofbias-display">
                 <ScrollToErrorBox error={store.error} />
-                {store.domains.map((domain, domainIndex) => {
-                    return <Domain key={domain.id} domainIndex={domainIndex} domain={domain} />;
-                })}
+                <SortTable />
                 <button
                     className="btn btn-primary space"
                     type="button"

@@ -42,7 +42,11 @@ class RiskOfBiasDomain(models.Model):
 
     class Meta:
         unique_together = ("assessment", "name")
-        ordering = ("pk",)
+        ordering = ("assessment", "sort_order")
+
+    def clean(self):
+        if self.sort_order is None:
+            self.sort_order = len(self.assessment.rob_domains.all())
 
     def __str__(self):
         return self.name
@@ -130,7 +134,11 @@ class RiskOfBiasMetric(models.Model):
     BREADCRUMB_PARENT = "domain"
 
     class Meta:
-        ordering = ("domain", "id")
+        ordering = ("domain", "sort_order")
+
+    def clean(self):
+        if self.sort_order is None:
+            self.sort_order = len(self.domain.metrics.all())
 
     def __str__(self):
         return self.name

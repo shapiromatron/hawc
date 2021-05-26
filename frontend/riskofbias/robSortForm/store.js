@@ -1,26 +1,6 @@
-import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {NR_KEYS} from "riskofbias/constants";
 import h from "shared/utils/helpers";
-
-const updateRobScore = function(score, riskofbias, overrideOptions) {
-    let overrideDataTypeValue;
-    if (score.is_default) {
-        overrideDataTypeValue = null;
-    } else if (score.overridden_objects.length > 0) {
-        overrideDataTypeValue = score.overridden_objects[0].content_type_name;
-    } else {
-        overrideDataTypeValue = _.keys(overrideOptions)[0] || null;
-    }
-    return Object.assign({}, score, {
-        overrideDataTypeValue,
-        author: riskofbias.author,
-        final: riskofbias.final,
-        domain_name: score.metric.domain.name,
-        domain_id: score.metric.domain.id,
-    });
-};
 
 class RobFormStore {
     // content
@@ -31,45 +11,6 @@ class RobFormStore {
     // computed props
     @computed get dataLoaded() {
         return this.domains !== null;
-    }
-    @computed get activeRiskOfBias() {
-        return _.find(this.study.riskofbiases, {id: this.config.riskofbias.id});
-    }
-    @computed get numIncompleteScores() {
-        return [...this.editableScores.values()].filter(score => {
-            return (
-                _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
-            );
-        }).length;
-    }
-
-    getScoresForDomain(domainId) {
-        return this.scores.filter(score => score.metric.domain.id == domainId);
-    }
-    getEditableScoresForMetric(metricId) {
-        return [...this.editableScores.values()].filter(score => score.metric.id == metricId);
-    }
-    getNonEditableScoresForMetric(metricId) {
-        return this.nonEditableScores.filter(score => score.metric.id == metricId);
-    }
-    metricHasOverrides(metricId) {
-        return _.chain(this.scores)
-            .filter(score => score.metric.id == metricId)
-            .map(score => score.is_default === false)
-            .some()
-            .value();
-    }
-    editableMetricHasOverride(metricId) {
-        return _.chain(this.getEditableScoresForMetric(metricId))
-            .map(score => score.is_default === false)
-            .some()
-            .value();
-    }
-    getEditableScore(scoreId) {
-        if (!this.editableScores.has(scoreId)) {
-            throw `Score ${scoreId} does not exist.`;
-        }
-        return this.editableScores.get(scoreId);
     }
 
     // actions
@@ -115,84 +56,26 @@ class RobFormStore {
             .catch(exception => {
                 this.error = exception;
             });
-
-        console.log(this.domains);
-    }
-
-    @action.bound updateFormState(scoreId, key, value) {
-        this.getEditableScore(scoreId)[key] = value;
     }
 
     // CRUD actions
     @action.bound cancelSubmitScores() {
-        window.location.href = this.config.cancelUrl;
+        window.location.href = this.config.cancel_url;
     }
     @action.bound submitScores() {
-        const payload = {
-                id: this.config.riskofbias.id,
-                scores: [...this.editableScores.values()].map(score => {
-                    return {
-                        id: score.id,
-                        score: score.score,
-                        bias_direction: score.bias_direction,
-                        label: score.label,
-                        notes: score.notes,
-                        overridden_objects: score.overridden_objects.map(obj => {
-                            return {
-                                object_id: obj.object_id,
-                                content_type_name: obj.content_type_name,
-                            };
-                        }),
-                    };
-                }),
-            },
+        const payload = this.domains.map(d => [d.id, d.metrics.map(m => m.id)]),
             opts = h.fetchPost(this.config.csrf, payload, "PATCH"),
-            url = `${h.getObjectUrl(
-                this.config.host,
-                this.config.riskofbias.url,
-                this.config.riskofbias.id
-            )}`;
+            url = this.config.submit_url;
 
         this.error = null;
         return fetch(url, opts)
             .then(response => {
                 if (response.ok) {
-                    window.location.href = this.config.cancelUrl;
+                    window.location.href = this.config.cancel_url;
                 } else {
                     response.text().then(text => {
                         this.error = text;
                     });
-                }
-            })
-            .catch(error => {
-                this.error = error;
-            });
-    }
-    @action.bound createScoreOverride(payload) {
-        let url = `${this.config.riskofbias.scores_url}?assessment_id=${this.config.assessment_id}`,
-            csrf = this.config.csrf,
-            activeRiskOfBias = this.activeRiskOfBias;
-
-        return fetch(url, h.fetchPost(csrf, payload, "POST"))
-            .then(response => response.json())
-            .then(json => {
-                this.editableScores.set(
-                    json.id,
-                    updateRobScore(json, activeRiskOfBias, this.overrideOptions)
-                );
-            })
-            .catch(error => {
-                this.error = error;
-            });
-    }
-    @action.bound deleteScoreOverride(scoreId) {
-        let url = `${this.config.riskofbias.scores_url}${scoreId}/?assessment_id=${this.config.assessment_id}&ids=${scoreId}`,
-            csrf = this.config.csrf;
-
-        return fetch(url, h.fetchDelete(csrf))
-            .then(response => {
-                if (response.status === 204) {
-                    this.editableScores.delete(scoreId);
                 }
             })
             .catch(error => {
