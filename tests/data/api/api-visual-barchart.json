@@ -92,9 +92,18 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+                "last_updated": "2020-05-08T12:06:18.057493-05:00",
+                "response_values": [
+                  17,
+                  16,
+                  15,
+                  12,
+                  14,
+                  10
+                ]
               },
               "overridden_objects": [],
               "riskofbias_id": 4,
@@ -141,9 +150,18 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
-                "last_updated": "2020-05-08T12:06:55.509353-05:00"
+                "last_updated": "2020-05-08T12:06:55.509353-05:00",
+                "response_values": [
+                  17,
+                  16,
+                  15,
+                  12,
+                  14,
+                  10
+                ]
               },
               "overridden_objects": [],
               "riskofbias_id": 4,
@@ -212,9 +230,18 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+                "last_updated": "2020-05-08T12:06:18.057493-05:00",
+                "response_values": [
+                  17,
+                  16,
+                  15,
+                  12,
+                  14,
+                  10
+                ]
               },
               "overridden_objects": [],
               "riskofbias_id": 5,
@@ -261,9 +288,18 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
-                "last_updated": "2020-05-08T12:06:55.509353-05:00"
+                "last_updated": "2020-05-08T12:06:55.509353-05:00",
+                "response_values": [
+                  17,
+                  16,
+                  15,
+                  12,
+                  14,
+                  10
+                ]
               },
               "overridden_objects": [],
               "riskofbias_id": 5,
@@ -332,9 +368,18 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+                "last_updated": "2020-05-08T12:06:18.057493-05:00",
+                "response_values": [
+                  17,
+                  16,
+                  15,
+                  12,
+                  14,
+                  10
+                ]
               },
               "overridden_objects": [],
               "riskofbias_id": 6,
@@ -381,9 +426,18 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+                "last_updated": "2020-05-08T12:06:18.057493-05:00",
+                "response_values": [
+                  17,
+                  16,
+                  15,
+                  12,
+                  14,
+                  10
+                ]
               },
               "overridden_objects": [
                 {
@@ -447,9 +501,18 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
-                "last_updated": "2020-05-08T12:06:55.509353-05:00"
+                "last_updated": "2020-05-08T12:06:55.509353-05:00",
+                "response_values": [
+                  17,
+                  16,
+                  15,
+                  12,
+                  14,
+                  10
+                ]
               },
               "overridden_objects": [],
               "riskofbias_id": 6,
