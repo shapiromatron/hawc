@@ -1,4 +1,3 @@
-import collections
 import json
 import logging
 from typing import Dict, List, Tuple
@@ -71,14 +70,12 @@ class RiskOfBiasDomain(models.Model):
         else:
             raise ValueError("Unknown HAWC flavor")
 
-        fn = str(settings.PROJECT_PATH / f"apps/riskofbias/fixtures/{fixture}")
-        with open(fn, "r") as f:
-            objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
-
-        for sort_order, domain in enumerate(objects["domains"]):
+        fn = settings.PROJECT_PATH / f"apps/riskofbias/fixtures/{fixture}"
+        objects = json.loads(fn.read_text())
+        for sort_order, domain in enumerate(objects["domains"], start=1):
             d = RiskOfBiasDomain.objects.create(
                 assessment=assessment,
-                sort_order=sort_order + 1,
+                sort_order=sort_order,
                 name=domain["name"],
                 description=domain["description"],
             )
@@ -159,8 +156,8 @@ class RiskOfBiasMetric(models.Model):
         list of python dictionaries for each metric.
         """
         objs = []
-        for sort_order, metric in enumerate(metrics):
-            obj = RiskOfBiasMetric(sort_order=sort_order + 1, **metric)
+        for sort_order, metric in enumerate(metrics, start=1):
+            obj = RiskOfBiasMetric(sort_order=sort_order, **metric)
             obj.domain = domain
             objs.append(obj)
         RiskOfBiasMetric.objects.bulk_create(objs)
