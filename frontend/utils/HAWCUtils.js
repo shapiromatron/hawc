@@ -72,7 +72,7 @@ class HAWCUtils {
             if (d instanceof Object) {
                 $menu.append(`<a href="${d.url}" class="dropdown-item">${d.text}</a>`);
             } else if (typeof d === "string") {
-                $menu.append(`<h6 class="dropdown-header">${d}</h6>`);
+                $menu.append(`<span class="dropdown-header">${d}</span>`);
             } else {
                 console.error("unknown input type");
             }

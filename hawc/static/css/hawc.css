@@ -28,11 +28,14 @@
     width: 230px;
     background-color: #323a45;
 }
-.sidebar-collapsed {
-    width: 50px;
+.sidebar a {
+    color: #f8f9fa!important;
 }
 .sidebar .nav {
     font-weight: bold;
+}
+.sidebar-collapsed {
+    width: 50px;
 }
 .sidebar-collapsed .nav {
     opacity: 0;

@@ -1,5 +1,5 @@
 # web application
-Django==3.1.8
+Django==3.1.10
 django-crispy-forms==1.9.1
 django-filter==2.4.0
 django-redis==4.12.1
@@ -24,7 +24,7 @@ lxml==4.5.0
 psycopg2-binary==2.8.4
 redis==3.4.1
 requests==2.25.1
-pydantic==1.5.1
+pydantic==1.8.2
 myst-parser==0.12.10
 
 # computational
