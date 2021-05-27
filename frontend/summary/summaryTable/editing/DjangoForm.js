@@ -38,6 +38,7 @@ class DjangoForm extends Component {
                             updateContent("slug", HAWCUtils.urlify(e.target.value));
                         }
                     }}
+                    helpText="Enter the title of the visualization (spaces and special-characters allowed). Eg., Hepatic Effects of Oral [Chemical] Exposure"
                     errors={formErrors.title}
                     required
                 />

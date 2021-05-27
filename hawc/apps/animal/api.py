@@ -26,6 +26,7 @@ from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
+from .actions.term_check import term_check
 
 
 class AnimalAssessmentViewset(
@@ -114,7 +115,7 @@ class AnimalAssessmentViewset(
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
         df = cache.get(key)
         if df is None:
-            df = models.Endpoint.heatmap_df(self.assessment, published_only=not unpublished)
+            df = models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
         export = FlatExport(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
         return Response(export)
@@ -158,7 +159,15 @@ class AnimalAssessmentViewset(
                 self.assessment, published_only=not unpublished
             )
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-lis-{self.assessment.id}")
+        export = FlatExport(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
+        return Response(export)
+
+    @action(detail=True, url_path="ehv-check", renderer_classes=PandasRenderers)
+    def ehv_check(self, request, pk):
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_edit()
+        df = term_check(pk)
+        export = FlatExport(df, f"term-report-{pk}")
         return Response(export)
 
 

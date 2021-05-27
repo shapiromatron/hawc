@@ -14,12 +14,7 @@
 {% block content %}
 <div class="container-fluid" id="main"></div>
 
-{% if debug %}
-<script type="text/javascript" src="{% static 'debug/jquery/1.9.1/jquery.js' %}"></script>
-{% else %}
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-{% endif %}
-
+<script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
 {% render_bundle "main" %}
 <script type="text/javascript">
 window.app.adminStartup(function (app) {

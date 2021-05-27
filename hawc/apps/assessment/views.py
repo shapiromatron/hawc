@@ -33,6 +33,7 @@ from ..common.views import (
     beta_tester_required,
     get_referrer,
 )
+from ..materialized.models import refresh_all_mvs
 from . import forms, models, serializers, tasks
 
 
@@ -55,8 +56,9 @@ class Home(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content"] = models.Content.rendered_page(
-            models.ContentTypeChoices.HOMEPAGE, context
+        context["recent_assessments"] = models.Assessment.objects.recent_public()
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.HOMEPAGE, self.request, context
         )
         return context
 
@@ -199,7 +201,20 @@ class About(TemplateView):
             rob_name=self.get_rob_name(),
             counts=self.get_object_counts(),
         )
-        context["content"] = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, context)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.ABOUT, self.request, context
+        )
+        return context
+
+
+class Resources(TemplateView):
+    template_name = "hawc/resources.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.RESOURCES, self.request, context
+        )
         return context
 
 
@@ -250,12 +265,9 @@ class AssessmentList(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class AssessmentFullList(LoginRequiredMixin, ListView):
     model = models.Assessment
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -286,6 +298,13 @@ class AssessmentPublicList(ListView):
             )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context[
+            "desc"
+        ] = """
+            Publicly available assessments are below. Each assessment was conducted by an independent
+            team; details on the objectives and methodology applied are described in each assessment.
+            Data can also be downloaded for each individual assessment.
+        """
         return context
 
 
@@ -361,10 +380,13 @@ class AssessmentClearCache(MessageMixin, View):
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(self.model, pk=kwargs["pk"])
         url = get_referrer(self.request, assessment.get_absolute_url())
-        if not assessment.user_can_edit_object(request.user):
+
+        if not assessment.user_is_team_member_or_higher(request.user):
             raise PermissionDenied()
 
         assessment.bust_cache()
+        refresh_all_mvs(force=True)
+
         self.send_message()
         return HttpResponseRedirect(url)
 

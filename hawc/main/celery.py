@@ -38,4 +38,21 @@ app.conf.beat_schedule = {
         "schedule": timedelta(hours=6),
         "kwargs": dict(delete=False),
     },
+    "check-refresh-mvs": {
+        "task": "hawc.apps.materialized.tasks.refresh_all_mvs",
+        "schedule": timedelta(minutes=5),
+    },
+    "refresh-mvs": {
+        "task": "hawc.apps.materialized.tasks.refresh_all_mvs",
+        "schedule": timedelta(days=1),
+        "kwargs": dict(force=True),
+    },
 }
+
+# optional; only if service is available and service is real
+has_bmds_service_url = "example" not in os.environ.get("BMDS_SUBMISSION_URL", "example")
+if has_bmds_service_url:
+    app.conf.beat_schedule["bmds2-healthcheck"] = {
+        "task": "hawc.apps.bmd.tasks.bmds2_healthcheck",
+        "schedule": timedelta(hours=12),
+    }

@@ -32,7 +32,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
-from ..common.validators import validate_html_tags
+from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -249,10 +249,15 @@ class SummaryTable(models.Model):
             self.get_table()
         except PydanticError as e:
             raise ValidationError({"content": e.json()})
+        except ValueError as e:
+            raise ValidationError({"content": str(e)})
+
+        # clean up control characters before string validation
+        content_str = json.dumps(self.content).replace('\\"', '"')
 
         # validate tags used in text
-        content_str = json.dumps(self.content)
         validate_html_tags(content_str)
+        validate_hyperlinks(content_str)
 
 
 class HeatmapDataset(PydanticModel):

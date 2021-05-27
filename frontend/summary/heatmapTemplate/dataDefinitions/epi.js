@@ -12,6 +12,7 @@ const ESD = {
         studyId: defineProps("studyId", "Study ID", "study id"),
         studyCitation: defineProps("studyCitation", "Study citation", "study citation"),
         studyIdentifier: defineProps("studyIdentifier", "Study identifier", "study identifier"),
+        studyEval: defineProps("studyEval", "Overall study evaluation", "overall study evaluation"),
         studyDesign: defineProps("studyDesign", "Study design", "study design"),
         studyPopulationSource: defineProps(
             "studyPopulationSource",
@@ -39,6 +40,7 @@ const ESD = {
                 {delimiter: "|"}
             ),
             studyCitation: defineAxis(ESD.studyCitation),
+            studyEval: defineAxis(ESD.studyEval, {delimiter: "|"}),
             studyDesign: defineAxis(ESD.studyDesign, {delimiter: "|"}),
             studyPopulationSource: defineAxis(ESD.studyPopulationSource, {delimiter: "|"}),
             system: defineAxis(ESD.system, {delimiter: "|"}),
@@ -52,6 +54,7 @@ const ESD = {
         },
         FILTER_OPTIONS: {
             studyCitation: defineFilter(ESD.studyCitation, {on_click_event: "study"}),
+            studyEval: defineFilter(ESD.studyEval),
             studyDesign: defineFilter(ESD.studyDesign, {delimiter: "|"}),
             studyPopulationSource: defineFilter(ESD.studyPopulationSource, {delimiter: "|"}),
             exposureMeasure: defineFilter(ESD.exposureMeasure, {delimiter: "|"}),
@@ -64,6 +67,7 @@ const ESD = {
         TABLE_FIELDS: {
             studyCitation: defineTable(ESD.studyCitation, {on_click_event: "study"}),
             studyIdentifier: defineTable(ESD.studyIdentifier, {on_click_event: "study"}),
+            studyEval: defineTable(ESD.studyEval),
             studyDesign: defineTable(ESD.studyDesign, {delimiter: "|"}),
             studyPopulationSource: defineTable(ESD.studyPopulationSource, {delimiter: "|"}),
             exposureName: defineTable(ESD.exposureName, {delimiter: "|"}),
@@ -217,6 +221,7 @@ const ER = {
         studyId: defineProps("studyId", "Study ID", "study id"),
         studyCitation: defineProps("studyCitation", "Study citation", "study citation"),
         studyIdentifier: defineProps("studyIdentifier", "Study identifier", "study identifier"),
+        studyEval: defineProps("studyEval", "Overall study evaluation", "overall study evaluation"),
         studyPopulationId: defineProps(
             "studyPopulationId",
             "Study Population ID",
@@ -232,7 +237,7 @@ const ER = {
             "Study population source",
             "study population source"
         ),
-        studyDesign: defineProps("studyDesign", "study design", "study design"),
+        studyDesign: defineProps("studyDesign", "Study design", "study design"),
         comparisonSetId: defineProps("comparisonSetId", "comparison set ID", "comparison set id"),
         comparisonSetName: defineProps(
             "comparisonSetName",
@@ -255,6 +260,7 @@ const ER = {
     ERSettings = {
         AXIS_OPTIONS: {
             studyCitation: defineAxis(ER.studyCitation),
+            studyEval: defineAxis(ER.studyEval),
             studyPopulationSource: defineAxis(ER.studyPopulationSource),
             studyDesign: defineAxis(ER.studyDesign),
             exposureName: defineAxis(ER.exposureName),
@@ -278,6 +284,7 @@ const ER = {
         },
         FILTER_OPTIONS: {
             studyCitation: defineFilter(ER.studyCitation, {on_click_event: "study"}),
+            studyEval: defineFilter(ER.studyEval),
             studyDesign: defineFilter(ER.studyDesign),
             studyPopulationSource: defineFilter(ER.studyPopulationSource),
             exposureRoute: defineFilter(ER.exposureRoute, {delimiter: "|"}),
@@ -289,6 +296,7 @@ const ER = {
         },
         TABLE_FIELDS: {
             studyCitation: defineTable(ER.studyCitation, {on_click_event: "study"}),
+            studyEval: defineTable(ER.studyEval),
             studyPopulationName: defineTable(ER.studyPopulationName, {
                 on_click_event: "study_population",
             }),

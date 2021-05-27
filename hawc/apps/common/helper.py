@@ -289,3 +289,61 @@ class FlatFileExporter:
 
 
 re_digits = r"\d+"
+
+
+def get_id_from_choices(items, lookup_value):
+    """Checks a Django choice tuple and returns the id that matches the lookup value.
+
+    For example, given items like:
+
+    JERSEY_NUMBERS = (
+        (23, "jordan"),
+        (99, "gretzky"),
+        (56, "taylor")
+    )
+
+    Call this function like:
+
+    num = get_id_from_choices(JERSEY_NUMBERS, "TAYLOR")
+    # num == 56
+
+    This function will traverse the series of lists/tuples, find the one that matches the
+    supplied lookup value, and return another value from that list/tuple.
+
+    This is used for instance by the FlexibleChoiceField, when allowing API clients to supply
+    either the internal HAWC code for a given value, or the human-readable name.
+
+    Args:
+        items (list, tuple): list of items to search
+        lookup_value: the value to search for
+
+    Returns:
+        The value, if a single match can be found.
+
+        Returns None if no matches are found.
+
+    Raises:
+        ValueError if multiple matches are found.
+    """
+
+    # This function used to be a little more generic and could accept these as arguments; no longer
+    # needed but keeping them here in case we ever want to expand the function back to what it used to support.
+    case_insensitive = True
+    lookup_index = 1
+    return_index = 0
+
+    if case_insensitive and type(lookup_value) is str:
+        lookup_value = lookup_value.lower()
+        matching_vals = [
+            x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value
+        ]
+    else:
+        matching_vals = [x[return_index] for x in items if x[lookup_index] == lookup_value]
+
+    num_matches = len(matching_vals)
+    if num_matches == 0:
+        return None
+    elif num_matches > 1:
+        raise ValueError(f"Found multiple matches when searching {items} for {lookup_value}")
+    else:
+        return matching_vals[0]

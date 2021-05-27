@@ -32,6 +32,7 @@ class Command(BaseCommand):
             else:
                 call_command("flush", verbosity=0, interactive=False)
                 call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=1)
+                call_command("create_views", verbosity=1)
                 message = "Migrations complete; fixture loaded"
 
         self.stdout.write(self.style.SUCCESS(message))

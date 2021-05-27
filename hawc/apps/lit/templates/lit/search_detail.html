@@ -1,22 +1,21 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h1>{{object}}
-    {% if crud == "Read" %}
-      <div class="dropdown btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-          {% if obj_perms.edit %}
-            {% if not object.is_manual_import %}
-              <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
-              <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
-            {% endif %}
+  <h1 class="d-inline-block">{{object}}</h1>
+  {% if crud == "Read" %}
+    <div class="dropdown btn-group float-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+      <div class="dropdown-menu dropdown-menu-right">
+        {% if obj_perms.edit %}
+          {% if not object.is_manual_import %}
+            <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
+            <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
           {% endif %}
-          <a class="dropdown-item" href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a>
-        </div>
+        {% endif %}
+        <a class="dropdown-item" href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a>
       </div>
-    {% endif %}
-  </h1>
+    </div>
+  {% endif %}
   <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">

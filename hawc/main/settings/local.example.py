@@ -14,11 +14,14 @@ DATABASES = {
     }
 }
 
+# disable cache (comment to use cache; uncomment to disable)
+CACHES["default"]["BACKEND"] = "django.core.cache.backends.dummy.DummyCache"
+
+# view all database queries in console
+# LOGGING["loggers"]["django.db.backends"] = {"handlers": ["console"], "level": "DEBUG"}
+
 # BMD MODELING SETTINGS
 BMD_HOST = "http://example.com"  # optional; used for BMD module
 
 # SET HAWC FLAVOR (see docs)
 HAWC_FLAVOR = "PRIME"
-
-# cache for 1 sec instead
-CACHE_1_HR = 1

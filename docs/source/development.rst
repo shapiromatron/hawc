@@ -404,8 +404,8 @@ Then, create the example docker container and start a celery worker instance:
 .. code-block:: bash
 
     # build container
-    docker-compose build redis
-    docker-compose up -d redis
+    docker-compose -f compose/dc-build.yml --project-directory . build redis
+    docker-compose -f compose/dc-build.yml --project-directory . up -d redis
 
     # check redis is up and can be pinged successfully
     redis-cli -h localhost -a default-password ping
@@ -415,7 +415,7 @@ Then, create the example docker container and start a celery worker instance:
     celery beat --app=hawc.main.celery --loglevel=INFO
 
     # stop redis when you're done
-    docker-compose down
+    docker-compose -f compose/dc-build.yml --project-directory . down
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 
@@ -451,6 +451,28 @@ When writing these tests, it's often easiest to write the tests in an interactiv
     driver.close()
 
 Then, transfer the interactive potions into unit-tests...
+
+Materialized views and reporting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+HAWC is in essence two different systems with very different data requirements:
+
+1. It is a content-management capture system for data used in systematic reviews
+2. It is a data visualization and summarization system of these data
+
+To facilitate #2, materialized views have been added and other caching systems to precompute views
+of the data frequently used for generate data visuals and other insights. In production, materialized
+views are refreshed daily via a persistent celery task, as well as up to every five minutes if a
+flag for updating the data is set.
+
+In development however, we generally do not run the celery task service in the backend. Thus, to
+trigger a materialized view rest, you can use a manage.py command:
+
+.. code-block:: bash
+
+    manage.py refresh_views
+
+You may need to do this periodically if your data is stale.
 
 Distributing HAWC clients
 ~~~~~~~~~~~~~~~~~~~~~~~~~

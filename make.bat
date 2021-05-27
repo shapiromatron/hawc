@@ -85,5 +85,5 @@ echo "Report ready; open ./coverage_html/index.html to view"
 goto :eof
 
 :loc
-cloc --exclude-dir=debug,migrations,node_modules,public,private,vendor,venv --exclude-ext=json,yaml,svg,toml,ini --vcs=git --counted loc-files.txt .
+cloc --exclude-dir=migrations,node_modules,public,private,vendor,venv --exclude-ext=json,yaml,svg,toml,ini --vcs=git --counted loc-files.txt .
 goto :eof

@@ -132,10 +132,6 @@
     model: entitytermrelation
 - model: contenttypes.contenttype
   fields:
-    app_label: vocab
-    model: comment
-- model: contenttypes.contenttype
-  fields:
     app_label: lit
     model: literatureassessment
 - model: contenttypes.contenttype
@@ -349,6 +345,10 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
+    model: summarytable
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
     model: visual
 - model: contenttypes.contenttype
   fields:
@@ -366,6 +366,42 @@
   fields:
     app_label: mgmt
     model: task
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: state
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: climate
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: ecoregion
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: reference
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: metadata
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: cause
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: effect
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: quantitative
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
@@ -450,6 +486,7 @@
 - model: vocab.term
   pk: 1
   fields:
+    uid: 1
     namespace: 1
     parent: null
     type: 1
@@ -461,6 +498,7 @@
 - model: vocab.term
   pk: 2
   fields:
+    uid: 2
     namespace: 1
     parent: 1
     type: 2
@@ -472,6 +510,7 @@
 - model: vocab.term
   pk: 3
   fields:
+    uid: 3
     namespace: 1
     parent: 2
     type: 3
@@ -483,6 +522,7 @@
 - model: vocab.term
   pk: 4
   fields:
+    uid: 4
     namespace: 1
     parent: 3
     type: 4
@@ -494,6 +534,7 @@
 - model: vocab.term
   pk: 5
   fields:
+    uid: 5
     namespace: 1
     parent: 4
     type: 5
@@ -521,17 +562,6 @@
     deprecated_on: null
     created_on: 2020-08-12 14:11:50.023861+00:00
     last_updated: 2020-08-12 14:11:50.023879+00:00
-- model: vocab.comment
-  pk: 1
-  fields:
-    commenter:
-    - pm@hawcproject.org
-    last_url_visited: /portal/
-    comment: I like this idea.
-    reviewed: false
-    reviewer_notes: ''
-    created_on: 2020-08-12 14:11:50.023861+00:00
-    last_updated: 2020-08-12 14:11:50.023861+00:00
 - model: assessment.dsstox
   pk: DTXSID6026296
   fields:
@@ -599,7 +629,7 @@
 - model: assessment.assessment
   pk: 1
   fields:
-    name: working
+    name: Chemical Z
     year: 1999
     version: '1.0'
     cas: ''
@@ -632,8 +662,8 @@
 - model: assessment.assessment
   pk: 2
   fields:
-    name: public final
-    year: 2001
+    name: Chemical X
+    year: 2020
     version: final
     cas: 7732-18-5
     assessment_objective: <p>This is an example public final assessment, with lots
@@ -650,8 +680,8 @@
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_text: true
-    conflicts_of_interest: <p>The authors report COI</p>
-    funding_source: <p>This was funded by coffee</p>
+    conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
+    funding_source: ''
     noel_name: 0
     rob_name: 0
     vocabulary: 1
@@ -669,23 +699,23 @@
 - model: assessment.assessment
   pk: 3
   fields:
-    name: public client
+    name: Chemical Y
     year: 2020
     version: draft
-    cas: ''
-    assessment_objective: ''
+    cas: 58-08-2
+    assessment_objective: '<p>Example the health effects of Chemical C. Drafted by scientists and contractors at US EPA.</p>'
     editable: true
     public: true
-    hide_from_public_page: false
+    hide_from_public_page: true
     is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
-    enable_summary_text: true
-    conflicts_of_interest: ''
-    funding_source: ''
+    enable_summary_text: false
+    conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
+    funding_source: 'US EPA'
     noel_name: 0
     rob_name: 0
     vocabulary: 1
@@ -749,14 +779,6 @@
     last_updated: 2020-02-27 20:53:19.390902+00:00
     effects: []
 - model: assessment.baseendpoint
-  pk: 2
-  fields:
-    assessment: 3
-    name: Test Endpoint
-    created: 2020-04-10 19:37:19.983403+00:00
-    last_updated: 2020-04-10 19:37:19.983403+00:00
-    effects: []
-- model: assessment.baseendpoint
   pk: 3
   fields:
     assessment: 2
@@ -792,14 +814,6 @@
     last_updated: 2020-07-06 19:46:42.948733+00:00
     effects: []
 - model: assessment.baseendpoint
-  pk: 7
-  fields:
-    assessment: 3
-    name: Test Endpoint
-    created: 2020-07-06 19:45:07.271513+00:00
-    last_updated: 2020-07-06 19:46:42.948733+00:00
-    effects: []
-- model: assessment.baseendpoint
   pk: 8
   fields:
     assessment: 2
@@ -813,8 +827,7 @@
     assessment: 1
     name: iris flowers
     description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
-      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
-      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
+      problems". Annals of Eugenics. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137</p>'
     published: true
     created: 2020-06-02 20:01:31.798361+00:00
     last_updated: 2020-06-02 20:04:30.023508+00:00
@@ -824,8 +837,7 @@
     assessment: 2
     name: iris flowers final
     description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
-      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
-      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
+      problems". Annals of Eugenics. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137</p>'
     published: true
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -835,8 +847,7 @@
     assessment: 1
     name: iris flowers unpublished
     description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
-      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
-      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
+      problems". Annals of Eugenics. 7 (2): 179–188. doi:10.1111/j.1469-1809.1936.tb02137</p>'
     published: false
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -993,6 +1004,13 @@
   fields:
     content_type: 2
     template: <h1>About HAWC</h1>
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.content
+  pk: 3
+  fields:
+    content_type: 3
+    template: <h1>Resources</h1>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: lit.literatureassessment
@@ -1420,12 +1438,12 @@
   pk: 4
   fields:
     assessment: 3
-    title: ''
-    authors_short: ''
-    authors: ''
-    year: null
-    journal: ''
-    abstract: ''
+    title: 'Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application of oxidative stress markers to cancer risk assessment of dioxins.'
+    authors_short: Yoshida R and Ogawa Y
+    authors: Yoshida R, Ogawa Y
+    year: 2000
+    journal: 'Ind Health 2000; 38 (1):5-14'
+    abstract: 'Dioxins are known to be a class of highly toxic and persistent environmental contaminants. Among them the toxicity of 2,3,7,8-tetrachlorodibenzo-p-dioxin (TCDD) has been the most intensively studied, and it has been classified as a human carcinogenic substance by the International Agency for Research on Cancer (IARC). Although the mechanism of carcinogenesis by TCDD is unclear, it is now considered to have act a cancer promoter. In this review, was discuss the ability of TCDD to induce oxidative stress in vivo, the mechanism of the oxidative stress induction, and how oxidative stress relates to the development of cancer. We then discuss the advantages of measuring the level of oxidative stress in people exposed to dioxins in epidemiological studies for cancer risk assessment. We also discuss several methods of measuring the level of oxidative stress in humans.'
     full_text_url: ''
     created: 2020-04-10 19:18:09.163184+00:00
     last_updated: 2020-04-10 19:18:10.164173+00:00
@@ -1619,9 +1637,9 @@
     epi: true
     epi_meta: true
     in_vitro: true
-    short_citation: Smith
-    full_citation: John Smith
-    coi_reported: 2
+    short_citation: Yoshida R and Ogawa Y 2000
+    full_citation: "Yoshida R, Ogawa Y. Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application of oxidative stress markers to cancer risk assessment of dioxins. Ind Health 2000; 38 (1):5-14."
+    coi_reported: 0
     coi_details: ''
     funding_source: ''
     study_identifier: ''
@@ -1756,19 +1774,19 @@
   pk: 2
   fields:
     study: 4
-    name: Test Experiment
+    name: Acute TCDD experiment
     type: Ac
     has_multiple_generations: false
-    chemical: ''
-    cas: ''
+    chemical: 2,3,7,8-Tetrachlorodibenzo-p-dioxin
+    cas: 1746-01-6
     dtxsid: null
-    chemical_source: ''
+    chemical_source: Fisher Scientific
     purity_available: true
     purity_qualifier: '>'
-    purity: 10.0
-    vehicle: ''
+    purity: 99.9
+    vehicle: DMSO
     guideline_compliance: ''
-    description: ''
+    description: 'Demonstration of data extraction of a study included in an assessment'
     created: 2020-04-10 19:21:14.709371+00:00
     last_updated: 2020-04-10 19:21:14.710369+00:00
 - model: animal.experiment
@@ -1814,18 +1832,18 @@
   pk: 2
   fields:
     experiment: 2
-    name: Test Animal Group
+    name: Male Sprague Dawley Rats
     species: 1
     strain: 1
     sex: M
-    animal_source: ''
-    lifestage_exposed: ''
-    lifestage_assessed: ''
+    animal_source: Charles River
+    lifestage_exposed: adult
+    lifestage_assessed: adult
     siblings: null
     generation: ''
     dosing_regime: 2
-    comments: ''
-    diet: ''
+    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>'
+    diet: 'Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)'
     created: 2020-04-10 19:35:26.254532+00:00
     last_updated: 2020-04-10 19:35:26.881519+00:00
     parents: []
@@ -1843,8 +1861,8 @@
     siblings: null
     generation: P0
     dosing_regime: 3
-    comments: <p>source</p>
-    diet: diet
+    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>'
+    diet: 'Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)'
     created: 2020-05-08 17:40:30.086088+00:00
     last_updated: 2020-05-08 17:40:30.333334+00:00
     parents: []
@@ -1923,7 +1941,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 0
-    dose: 1.0
+    dose: 0
     created: 2020-04-10 19:35:26.748525+00:00
     last_updated: 2020-04-10 19:35:26.748525+00:00
 - model: animal.dosegroup
@@ -1932,7 +1950,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 1
-    dose: 2.0
+    dose: 0.0001
     created: 2020-04-10 19:35:26.812520+00:00
     last_updated: 2020-04-10 19:35:26.812520+00:00
 - model: animal.dosegroup
@@ -1941,7 +1959,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 2
-    dose: 3.0
+    dose: 0.0005
     created: 2020-04-10 19:35:26.833524+00:00
     last_updated: 2020-04-10 19:35:26.833524+00:00
 - model: animal.dosegroup
@@ -1950,7 +1968,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 3
-    dose: 4.0
+    dose: 0.0010
     created: 2020-04-10 19:35:26.856523+00:00
     last_updated: 2020-04-10 19:35:26.856523+00:00
 - model: animal.dosegroup
@@ -2039,46 +2057,6 @@
     endpoint_notes: ''
     additional_fields: '{}'
 - model: animal.endpoint
-  pk: 2
-  fields:
-    baseendpoint_ptr: 2
-    animal_group: 2
-    name_term: null
-    system: ''
-    system_term: null
-    organ: ''
-    organ_term: null
-    effect: ''
-    effect_term: null
-    effect_subtype: ''
-    effect_subtype_term: null
-    litter_effects: NA
-    litter_effect_notes: ''
-    observation_time: null
-    observation_time_units: 0
-    observation_time_text: ''
-    data_location: ''
-    expected_adversity_direction: 4
-    response_units: ''
-    data_type: C
-    variance_type: 1
-    confidence_interval: null
-    NOEL: -999
-    LOEL: -999
-    FEL: -999
-    data_reported: true
-    data_extracted: false
-    values_estimated: false
-    monotonicity: 8
-    statistical_test: ''
-    trend_value: null
-    trend_result: 3
-    diagnostic: ''
-    power_notes: ''
-    results_notes: ''
-    endpoint_notes: ''
-    additional_fields: '{}'
-- model: animal.endpoint
   pk: 3
   fields:
     baseendpoint_ptr: 3
@@ -2148,46 +2126,6 @@
     FEL: 3
     data_reported: true
     data_extracted: true
-    values_estimated: false
-    monotonicity: 8
-    statistical_test: ''
-    trend_value: null
-    trend_result: 3
-    diagnostic: ''
-    power_notes: ''
-    results_notes: ''
-    endpoint_notes: ''
-    additional_fields: '{}'
-- model: animal.endpoint
-  pk: 7
-  fields:
-    baseendpoint_ptr: 7
-    animal_group: 2
-    name_term: null
-    system: ''
-    system_term: null
-    organ: ''
-    organ_term: null
-    effect: ''
-    effect_term: null
-    effect_subtype: ''
-    effect_subtype_term: null
-    litter_effects: NA
-    litter_effect_notes: ''
-    observation_time: null
-    observation_time_units: 0
-    observation_time_text: ''
-    data_location: ''
-    expected_adversity_direction: 4
-    response_units: ''
-    data_type: C
-    variance_type: 1
-    confidence_interval: null
-    NOEL: -999
-    LOEL: -999
-    FEL: -999
-    data_reported: true
-    data_extracted: false
     values_estimated: false
     monotonicity: 8
     statistical_test: ''
@@ -4811,6 +4749,254 @@
     text: <p>Level 1-B-beta text.</p>
     created: 2020-11-25 20:25:37.723914+00:00
     last_updated: 2020-11-25 20:25:37.723938+00:00
+- model: summary.summarytable
+  pk: 1
+  fields:
+    assessment: 1
+    title: 'Generic #1'
+    slug: Generic-1
+    content:
+      cells:
+      - row: 0
+        column: 0
+        header: true
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Atrribute</p>
+      - row: 0
+        column: 1
+        header: true
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Value</p>
+      - row: 0
+        column: 2
+        header: true
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Comments</p>
+      - row: 1
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Common name</p>
+      - row: 1
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p><a href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search=DTXSID6026296"
+          rel="noopener noreferrer" target="_blank">Water</a></p>
+      - row: 2
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Melting point</p>
+      - row: 2
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p>0 C</p>
+      - row: 3
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Boiling point</p>
+      - row: 3
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p>100 C</p>
+      - row: 4
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Molar mass</p>
+      - row: 4
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: '<p><span style="color: rgb(32, 33, 36);">18.02 g/mol</span></p>'
+      - row: 5
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>CASRN</p>
+      - row: 5
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: '<p><span style="color: rgb(34, 34, 34);">7732-18-5</span></p>'
+      - row: 6
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Ichl Key</p>
+      - row: 6
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p>XLYOFNOQVPJJNP-UHFFFAOYSA-N</p>
+      - row: 7
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p><strong><em><u>Other features</u></em></strong></p><ul><li>bullets can be added</li><li><a
+          href="https://google.com" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
+          can be added</li></ul>
+      - row: 7
+        column: 1
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Rows can be merged</p>
+      - row: 7
+        column: 2
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Columns can be merged too</p>
+      column_widths:
+      - 12
+      - 12
+      - 5
+    table_type: 0
+    published: true
+    created: 2021-03-22 19:51:13.482094+00:00
+    last_updated: 2021-03-22 20:02:33.434980+00:00
+- model: summary.summarytable
+  pk: 2
+  fields:
+    assessment: 1
+    title: 'Evidence profile #1'
+    slug: Evidence-Profile-1
+    content:
+      animal:
+        rows:
+        - summary:
+            findings: <p></p>
+          evidence:
+            description: <p><a href="Baz 2021" rel="noopener noreferrer" target="_blank">Baz
+              2021</a></p>
+          judgement:
+            judgement: 20
+            description: <p></p>
+            custom_judgement_icon: ''
+            custom_judgement_label: ''
+          certain_factors:
+            text: <p></p>
+            factors:
+            - key: 30
+              long_description: ''
+              short_description: ''
+            - key: 40
+              long_description: ''
+              short_description: ''
+          uncertain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+        - summary:
+            findings: <p></p>
+          evidence:
+            description: <p><a href="Foo 2020 " rel="noopener noreferrer" target="_blank">Foo
+              2020 </a></p>
+          judgement:
+            judgement: 1
+            description: <p></p>
+            custom_judgement_icon: ''
+            custom_judgement_label: ''
+          certain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+          uncertain_factors:
+            text: <p></p>
+            factors:
+            - key: -30
+              long_description: ''
+              short_description: ''
+            - key: -20
+              long_description: ''
+              short_description: ''
+        hide_content: false
+        no_content_text: No data available
+        title: Evidence from animal studies
+        merge_judgement: false
+      mechanistic:
+        rows:
+        - summary:
+            findings: "<p>Key findings were....\t</p>"
+          evidence:
+            description: '<p>Event #1. Event #2. Event #3.</p>'
+          judgement:
+            description: <p>Judgement was...</p>
+        hide_content: false
+        no_content_text: No data available
+        title: Mechanistic evidence and supplemental information
+        col_header_1: Biological events or pathways
+        merge_judgement: true
+      exposed_human:
+        rows:
+        - summary:
+            findings: <p>Exposure orally. 8oz multiple times a day for 70 years.</p>
+          evidence:
+            description: <ul><li><a href="Doe et al. 2015" rel="noopener noreferrer"
+              target="_blank">Doe et al. 2015</a></li><li><a href="Doe et al 2018."
+              rel="noopener noreferrer" target="_blank">Doe et al 2018.</a></li></ul>
+          judgement:
+            judgement: 30
+            description: <p>Robust findings.</p>
+            custom_judgement_icon: ''
+            custom_judgement_label: ''
+          certain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+            - key: 30
+              long_description: <p>notes</p>
+              short_description: hydration response detected
+          uncertain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+        hide_content: false
+        no_content_text: No data available
+        title: Evidence from studies of exposed humans
+        merge_judgement: true
+      summary_judgement:
+        judgement: 20
+        hide_content: false
+        description: <p>Water hydrates individuals who drink it.</p>
+        susceptibility: <p>No additionally susceptible groups.</p>
+        human_relevance: <p>Humans require water as well.</p>
+        custom_judgement_icon: ''
+        cross_stream_coherence: <p>Observed in multiple evidence streams.</p>
+        custom_judgement_label: ''
+    table_type: 1
+    published: true
+    created: 2021-03-22 20:02:50.190759+00:00
+    last_updated: 2021-03-22 20:35:02.445924+00:00
 - model: summary.visual
   pk: 1
   fields:
@@ -4948,36 +5134,7 @@
     visual_type: 6
     dose_units: null
     prefilters: '{}'
-    settings: "{\r\n  \"cell_height\": 50,\r\n  \"cell_width\": 50,\r\n  \"color_range\"\
-      : [\r\n    \"#ffffff\",\r\n    \"#cc4700\"\r\n  ],\r\n  \"compress_x\": true,\r\
-      \n  \"compress_y\": true,\r\n  \"data_url\": \"/ani/api/assessment/2/endpoint-heatmap/\"\
-      ,\r\n  \"hawc_interactivity\": true,\r\n  \"filter_widgets\": [\r\n    {\r\n\
-      \      \"column\": \"species\",\r\n      \"delimiter\": \"\",\r\n      \"on_click_event\"\
-      : \"---\"\r\n    },\r\n    {\r\n      \"column\": \"strain\",\r\n      \"delimiter\"\
-      : \"\",\r\n      \"on_click_event\": \"---\"\r\n    }\r\n  ],\r\n  \"padding\"\
-      : {\r\n    \"top\": 30,\r\n    \"left\": 30,\r\n    \"bottom\": 30,\r\n    \"\
-      right\": 30\r\n  },\r\n  \"show_axis_border\": true,\r\n  \"show_grid\": true,\r\
-      \n  \"show_tooltip\": true,\r\n  \"show_totals\": true,\r\n  \"show_null\":\
-      \ true,\r\n  \"autosize_cells\": true,\r\n  \"autorotate_tick_labels\": true,\r\
-      \n  \"table_fields\": [\r\n    {\r\n      \"column\": \"study citation\",\r\n\
-      \      \"delimiter\": \"\",\r\n      \"on_click_event\": \"study\"\r\n    },\r\
-      \n    {\r\n      \"column\": \"experiment name\",\r\n      \"delimiter\": \"\
-      \",\r\n      \"on_click_event\": \"experiment\"\r\n    },\r\n    {\r\n     \
-      \ \"column\": \"animal group name\",\r\n      \"delimiter\": \"\",\r\n     \
-      \ \"on_click_event\": \"animal_group\"\r\n    },\r\n    {\r\n      \"column\"\
-      : \"endpoint name\",\r\n      \"delimiter\": \"\",\r\n      \"on_click_event\"\
-      : \"endpoint_complete\"\r\n    },\r\n    {\r\n      \"column\": \"---\",\r\n\
-      \      \"delimiter\": \"\",\r\n      \"on_click_event\": \"---\"\r\n    }\r\n\
-      \  ],\r\n  \"title\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\n    \"y\"\
-      : 0,\r\n    \"rotate\": 0\r\n  },\r\n  \"x_fields\": [\r\n    {\r\n      \"\
-      column\": \"system\",\r\n      \"wrap_text\": 0,\r\n      \"delimiter\": \"\"\
-      \r\n    }\r\n  ],\r\n  \"x_label\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\
-      \n    \"y\": 0,\r\n    \"rotate\": 0\r\n  },\r\n  \"x_tick_rotate\": 0,\r\n\
-      \  \"y_fields\": [\r\n    {\r\n      \"column\": \"study citation\",\r\n   \
-      \   \"wrap_text\": 0,\r\n      \"delimiter\": \"\"\r\n    }\r\n  ],\r\n  \"\
-      y_label\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\n    \"y\": 0,\r\n  \
-      \  \"rotate\": 0\r\n  },\r\n  \"y_tick_rotate\": -90,\r\n  \"x_axis_bottom\"\
-      : false\r\n}"
+    settings: '{"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic": "and"}'
     caption: ''
     published: true
     sort_order: short_citation

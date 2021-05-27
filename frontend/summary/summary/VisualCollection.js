@@ -47,7 +47,8 @@ class VisualCollection {
 
         let tbl = new BaseTable(),
             headers = ["Title", "Visual type", "Description", "Created", "Modified"],
-            headerWidths = [20, 20, 36, 12, 12];
+            headerWidths = [20, 20, 36, 12, 12],
+            noun = this.visuals.length === 1 ? "visual" : "visuals";
 
         if (this.opts.showPublished) {
             headers.splice(3, 0, "Published");
@@ -59,7 +60,9 @@ class VisualCollection {
         for (var i = 0; i < this.visuals.length; i++) {
             tbl.addRow(this.visuals[i].build_row(this.opts));
         }
-        $el.append(this.setTableFilter()).append(tbl.getTbl());
+        $el.append(this.setTableFilter())
+            .append(tbl.getTbl())
+            .append($(`<p><b>${this.visuals.length} ${noun} available.</b></p>`));
         this.$tbl = $($el.find("table"));
         this.setTableSorting(this.$tbl);
         return $el;
