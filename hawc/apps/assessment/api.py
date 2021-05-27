@@ -226,14 +226,14 @@ class Assessment(AssessmentViewset):
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
 
-    @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
+    @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
         queryset = self.model.objects.get_public_assessments()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @method_decorator(cache_page(60 * 60 * 24))
-    @action(detail=False, methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=False, renderer_classes=PandasRenderers)
     def bioassay_ml_dataset(self, request):
         Endpoint = apps.get_model("animal", "Endpoint")
         # map of django field names to friendlier column names

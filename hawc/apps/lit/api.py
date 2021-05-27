@@ -36,7 +36,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=True, renderer_classes=PandasRenderers)
     def tags(self, request, pk):
         """
         Show literature tags for entire assessment.
@@ -46,7 +46,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, methods=("get",), pagination_class=PaginationWithCount)
+    @action(detail=True, pagination_class=PaginationWithCount)
     def references(self, request, pk):
         assessment = self.get_object()
 
@@ -72,9 +72,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         serializer = serializers.ReferenceSerializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
-    @action(
-        detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
-    )
+    @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
     def reference_ids(self, request, pk):
         """
         Get literature reference ids for all assessment references
@@ -108,9 +106,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(
-        detail=True, methods=("get",), url_path="reference-year-histogram",
-    )
+    @action(detail=True, url_path="reference-year-histogram")
     def reference_year_histogram(self, request, pk):
         instance = self.get_object()
         # get all the years for a given assessment
@@ -147,17 +143,13 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
         return Response(payload)
 
-    @action(
-        detail=True, methods=("get",), url_path="topic-model",
-    )
+    @action(detail=True, url_path="topic-model")
     def topic_model(self, request, pk):
         assessment = self.get_object()
         fig_dict = assessment.literature_settings.get_topic_tsne_fig_dict()
         return Response(fig_dict)
 
-    @action(
-        detail=True, methods=("post",), url_path="topic-model-request-refresh",
-    )
+    @action(detail=True, methods=("post",), url_path="topic-model-request-refresh")
     def topic_model_request_refresh(self, request, pk):
         assessment = self.get_object()
         if not assessment.user_can_edit_object(request.user):
@@ -270,9 +262,7 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(
-        detail=True, methods=("get",), renderer_classes=PandasRenderers,
-    )
+    @action(detail=True, renderer_classes=PandasRenderers)
     def references(self, request, pk):
         """
         Return all references for a given Search
