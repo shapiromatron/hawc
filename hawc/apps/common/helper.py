@@ -4,9 +4,8 @@ import logging
 import re
 import uuid
 from collections import OrderedDict, defaultdict
-from dataclasses import dataclass
 from math import inf
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, NamedTuple, Optional, Set
 
 import pandas as pd
 from django.conf import settings
@@ -237,8 +236,7 @@ class SerializerHelper:
         cls.delete_caches(Model, ids)
 
 
-@dataclass(frozen=True)
-class ReportExport:
+class ReportExport(NamedTuple):
     """
     Document export.
     """
@@ -247,8 +245,7 @@ class ReportExport:
     filename: str
 
 
-@dataclass(frozen=True)
-class FlatExport:
+class FlatExport(NamedTuple):
     """
     Response class of an exporter method.
     """
