@@ -1,7 +1,7 @@
 import collections
 import json
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict
 
 from django.apps import apps
 from django.conf import settings
@@ -309,81 +309,6 @@ class RiskOfBias(models.Model):
         cw[self.COPY_NAME][old_id] = self.id
         for child in children:
             child.copy_across_assessments(cw)
-
-    @classmethod
-    def get_dp_export(
-        cls, assessment_id: int, study_ids: List[int], data_type: str
-    ) -> Tuple[Dict, Dict]:
-        """
-        Given an assessment, a list of studies, and a data type, return all the data required to
-        build a data pivot risk of bias export for only active, final data.
-
-        Args:
-            assessment_id (int): An assessment identifier
-            study_ids (List[int]): A list of studies ids to include
-            data_type (str): The data type to use; one of {"animal", "epi", "invitro"}
-
-        Returns:
-            Tuple[Dict, Dict]: A {metric_id: header_name} dict for building headers, and a
-                {(study_id, metric_id): text} dict for building rows
-        """
-        data_types = {"animal", "epi", "invitro"}
-        if data_type not in data_types:
-            raise ValueError(f"Unsupported data type {data_type}; expected {data_types}")
-
-        filters = dict(domain__assessment_id=assessment_id)
-        if data_type == "animal":
-            filters["required_animal"] = True
-        elif data_type == "epi":
-            filters["required_epi"] = True
-        elif data_type == "invitro":
-            filters["required_invitro"] = True
-
-        # return headers
-        metric_qs = list(
-            RiskOfBiasMetric.objects.filter(**filters).select_related("domain").order_by("id")
-        )
-        header_map = {metric.id: "" for metric in metric_qs}
-        for metric in metric_qs:
-            if metric.domain.is_overall_confidence:
-                text = "Overall study confidence"
-            elif metric.use_short_name:
-                text = f"RoB ({metric.short_name})"
-            else:
-                text = f"RoB ({metric.domain.name}: {metric.name})"
-            header_map[metric.id] = text
-
-        # return data
-        metric_ids = list(header_map.keys())
-        scores = RiskOfBiasScore.objects.filter(
-            metric__in=metric_ids,
-            riskofbias__study__in=study_ids,
-            riskofbias__final=True,
-            riskofbias__active=True,
-            is_default=True,
-        ).prefetch_related("riskofbias")
-        default_value = '{"sortValue": -1, "display": "N/A"}'
-        scores_map = {(score.riskofbias.study_id, score.metric_id): score for score in scores}
-        for metric_id in metric_ids:
-            for study_id in study_ids:
-                key = (study_id, metric_id)
-                if key in scores_map and not isinstance(scores_map[key], str):
-                    # convert values in our map to a str-based JSON
-                    score = scores_map[key]
-                    content = json.dumps(
-                        {"sortValue": score.score, "display": score.get_score_display()}
-                    )
-
-                    # special case for N/A
-                    if score.score in RiskOfBiasScore.NA_SCORES:
-                        content = default_value
-
-                    scores_map[key] = content
-
-                else:
-                    scores_map[key] = default_value
-
-        return header_map, scores_map
 
     def get_override_options(self) -> Dict:
         """Get risk of bias override options and overrides
