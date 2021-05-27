@@ -80,7 +80,7 @@ class RoBDomainForm(forms.ModelForm):
 class RoBMetricForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasMetric
-        exclude = ("domain",)
+        exclude = ("domain", "sort_order")
 
     def __init__(self, *args, **kwargs):
         domain = kwargs.pop("parent", None)

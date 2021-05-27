@@ -16,7 +16,11 @@ from ..assessment.api import (
     get_assessment_id_param,
 )
 from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.api import (
+    CleanupFieldsBaseViewSet,
+    CleanupFieldsPermissions,
+    LegacyAssessmentAdapterMixin,
+)
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -84,6 +88,54 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related("metrics")
+
+    def validate_ids(self, ids, expected_ids, name):
+        missing_ids = set(expected_ids) - set(ids)
+        invalid_ids = set(ids) - set(expected_ids)
+        if missing_ids:
+            raise ValidationError(
+                f"Missing {name} id(s): {', '.join([str(id) for id in missing_ids])}"
+            )
+        if invalid_ids:
+            raise ValidationError(
+                f"Invalid {name} id(s): {', '.join([str(id) for id in invalid_ids])}"
+            )
+
+    @action(detail=False, methods=("patch",), permission_classes=(CleanupFieldsPermissions,))
+    def order_rob(self, request):
+        qs = self.get_queryset().filter(assessment=self.assessment)
+        domain_id_to_domain = {domain.id: domain for domain in qs}
+        metric_id_to_metric = {
+            metric.id: metric for domain in qs for metric in domain.metrics.all()
+        }
+        domain_id_to_metric_ids = {
+            domain.id: [metric.id for metric in domain.metrics.all()] for domain in qs
+        }
+        updated_domains = []
+        updated_metrics = []
+
+        expected_domain_ids = list(domain_id_to_metric_ids.keys())
+        domain_ids = [domain_id for domain_id, _ in request.data]
+        self.validate_ids(domain_ids, expected_domain_ids, "domain")
+        for i, (domain_id, metric_ids) in enumerate(request.data):
+            expected_metric_ids = domain_id_to_metric_ids[domain_id]
+            self.validate_ids(metric_ids, expected_metric_ids, "metric")
+
+            domain = domain_id_to_domain[domain_id]
+            if domain.sort_order != i:
+                domain.sort_order = i
+                updated_domains.append(domain)
+
+            for j, metric_id in enumerate(metric_ids):
+                metric = metric_id_to_metric[metric_id]
+                if metric.sort_order != j:
+                    metric.sort_order = i
+                    updated_metrics.append(metric)
+
+        models.RiskOfBiasDomain.objects.bulk_update(updated_domains, ["sort_order"])
+        models.RiskOfBiasMetric.objects.bulk_update(updated_metrics, ["sort_order"])
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RiskOfBias(viewsets.ModelViewSet):
