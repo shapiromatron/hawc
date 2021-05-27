@@ -34,7 +34,7 @@ FinalRiskOfBiasScore = SQL(
     """,
 )
 
-MaterializedEndpoint = SQL(
+EndpointSummary = SQL(
     """
     create materialized view materialized_endpointsummary as
     select

@@ -1,6 +1,6 @@
 from django.db import migrations
 
-from ..sql import MaterializedEndpoint
+from ..sql import EndpointSummary
 
 
 class Migration(migrations.Migration):
@@ -12,4 +12,4 @@ class Migration(migrations.Migration):
         ("animal", "0030_django31"),
     ]
 
-    operations = [migrations.RunSQL(MaterializedEndpoint.create, MaterializedEndpoint.drop)]
+    operations = [migrations.RunSQL(EndpointSummary.create, EndpointSummary.drop)]

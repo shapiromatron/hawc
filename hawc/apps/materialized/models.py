@@ -162,6 +162,8 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
 
 class EndpointSummary(MaterializedViewModel):
 
+    sql = sql.EndpointSummary
+
     endpoint = models.ForeignKey("animal.Endpoint", on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=128)
     system = models.CharField(max_length=128)
