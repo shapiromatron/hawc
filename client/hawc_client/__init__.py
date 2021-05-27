@@ -546,6 +546,95 @@ class EpiClient(BaseClient):
         generator = self.session.iter_pages(url, payload)
         return [res for results in generator for res in results]
 
+    def get_study_populations(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves all of the study populations for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: study population data
+        """
+        url = f"{self.session.root_url}/epi/api/study-population/?assessment_id={assessment_id}"
+        response_json = self.session.get(url).json()
+        return pd.DataFrame(response_json)
+
+    def get_study_population(self, study_population_id: int) -> Dict:
+        """
+        Retrieves data for a single study population
+
+        Args:
+            study_population_id (int): Study Population ID
+
+        Returns:
+            pd.DataFrame: study population data
+        """
+        url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
+        return self.session.get(url).json()
+
+    def create_study_population(self, data: Dict) -> Dict:
+        """
+        Create a new study population.
+
+        Args:
+            data (Dict): fields to create on the study population. Example keys:
+                name (str): name of the study population
+                study (int): id of the study to associate with this study population
+                countries (List[str]): list of country codes to associate with the study pop
+                design (str): Study Design (CO == Cohort, RT == Randomized controlled trial, etc.)
+                etc.
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/study-population/"
+        return self.session.post(url, data).json()
+
+    def update_study_population(self, study_population_id: int, data: Dict) -> Dict:
+        """
+        Update an existing study population.
+
+        Args:
+            study_population_id (int): Study Population ID
+
+            data: fields to update in the study pop.
+                See "create_study_population" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_study_population(self, study_population_id) -> Response:
+        """
+        Delete a study population.
+
+        Args:
+            study_population_id (int): Study Population ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
+        return self.session.delete(url)
+
+    # TODO
+    # metadata
+    #
+    # For each of these we need to do CRUD. Sometimes CRUDL (e.g. we can list all study pops in an assessment)
+    # studypop
+    #   (criteria)
+    #   outcomes
+    #       results (inc factors)
+    #           groupResults
+    #   comparison set
+    #       group
+    #           group numerical descriptions
+    #   exposures (inc. ct's)
+
 
 class AnimalClient(BaseClient):
     """
