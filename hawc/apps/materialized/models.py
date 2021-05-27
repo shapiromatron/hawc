@@ -158,3 +158,36 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
                     scores_map[key] = default_value
 
         return header_map, scores_map
+
+
+class EndpointSummary(MaterializedViewModel):
+
+    endpoint = models.ForeignKey("animal.Endpoint", on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=128)
+    system = models.CharField(max_length=128)
+    organ = models.CharField(max_length=128)
+    effect = models.CharField(max_length=128)
+    effect_subtype = models.CharField(max_length=128)
+    data_extracted = models.BooleanField()
+    NOEL = models.SmallIntegerField()
+    LOEL = models.SmallIntegerField()
+
+    animal_group = models.ForeignKey("animal.AnimalGroup", on_delete=models.DO_NOTHING)
+    lifestage_exposed = models.CharField(max_length=32)
+    lifestage_assessed = models.CharField(max_length=32)
+    species = models.ForeignKey("assessment.Species", on_delete=models.DO_NOTHING)
+    strain = models.ForeignKey("assessment.Strain", on_delete=models.DO_NOTHING)
+    sex = models.CharField(max_length=1)
+
+    dosing_regime = models.ForeignKey("animal.DosingRegime", on_delete=models.DO_NOTHING)
+
+    experiment = models.ForeignKey("animal.Experiment", on_delete=models.DO_NOTHING)
+    chemical = models.CharField(max_length=128)
+    cas = models.CharField(max_length=40)
+
+    study = models.ForeignKey("study.Study", on_delete=models.DO_NOTHING)
+
+    assessment = models.ForeignKey("assessment.Assessment", on_delete=models.DO_NOTHING)
+
+    class Meta:
+        verbose_name_plural = "Endpoint summaries"

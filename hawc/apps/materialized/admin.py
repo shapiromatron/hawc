@@ -35,3 +35,19 @@ class FinalRiskOfBiasScoreAdmin(ReadOnlyAdmin):
         return obj.object_id is not None
 
     is_override.boolean = True
+
+
+@admin.register(models.EndpointSummary)
+class EndpointSummaryAdmin(ReadOnlyAdmin):
+    list_display = (
+        "endpoint_id",
+        "assessment_id",
+        "name",
+        "system",
+        "organ",
+        "effect",
+        "effect_subtype",
+        "data_extracted",
+        "NOEL",
+        "LOEL",
+    )
