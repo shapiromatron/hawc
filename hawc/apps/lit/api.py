@@ -1,5 +1,3 @@
-import pandas as pd
-import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
@@ -23,6 +21,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
+from .actions.year_histogram import reference_year_histogram
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -86,38 +85,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     )
     def reference_year_histogram(self, request, pk):
         instance = self.get_object()
-        # get all the years for a given assessment
-        years = list(
-            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list(
-                "year", flat=True
-            )
-        )
-        payload = {}
-        if len(years) > 0:
-
-            df = pd.DataFrame(years, columns=["Year"])
-            nbins = min(max(df.Year.max() - df.Year.min() + 1, 4), 30)
-
-            try:
-                fig = px.histogram(df, x="Year", nbins=nbins)
-            except ValueError:
-                # in some cases a bad nbins can be provided; just use default bins instead
-                # Invalid value of type 'numpy.int64' received for the 'nbinsx' property of histogram
-                # [2005, 2013, 1995, 2001, 2017, 1991, 1991, 2009, 2006, 2005]; nbins=27
-                fig = px.histogram(df, x="Year")
-
-            fig.update_yaxes(title_text="# References")
-            fig.update_xaxes(title_text="Year")
-            fig.update_traces(marker=dict(color="#003d7b"))
-
-            fig.update_layout(
-                bargap=0.1,
-                plot_bgcolor="white",
-                autosize=True,
-                margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
-            )
-            payload = fig.to_dict()
-
+        fig = reference_year_histogram(instance)
+        payload = fig.to_dict() if fig else {}
         return Response(payload)
 
     @action(
@@ -151,13 +120,13 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         assessment = self.get_object()
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
-        exporter = exports.ReferenceFlatComplete(
+        qs = (
             models.Reference.objects.get_qs(assessment)
             .prefetch_related("identifiers")
-            .order_by("id"),
-            filename=f"references-{assessment}",
-            assessment=assessment,
-            tags=tags,
+            .order_by("id")
+        )
+        exporter = exports.ReferenceFlatComplete(
+            qs, filename=f"references-{assessment}", assessment=assessment, tags=tags,
         )
         return Response(exporter.build_export())
 
