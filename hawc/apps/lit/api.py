@@ -6,7 +6,6 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -19,6 +18,7 @@ from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
     OncePerMinuteThrottle,
+    PaginationWithCount,
 )
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
@@ -46,7 +46,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, methods=("get",), pagination_class=PageNumberPagination)
+    @action(detail=True, methods=("get",), pagination_class=PaginationWithCount)
     def references(self, request, pk):
         assessment = self.get_object()
 
@@ -65,7 +65,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             qs = models.Reference.objects.get_untagged_references(assessment)
 
         page = self.paginate_queryset(
-            qs.select_related("study").prefetch_related("searches", "identifiers", "tags")
+            qs.select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
+            .order_by("id")
         )
         serializer = serializers.ReferenceSerializer(page, many=True)
         return self.get_paginated_response(serializer.data)

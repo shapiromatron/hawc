@@ -36,7 +36,7 @@ class CriteriaForm(forms.ModelForm):
         )
         self.instance.assessment = assessment
         self.fields["description"].widget.update_query_parameters(
-            {"related": self.instance.assessment.id}
+            {"related": self.instance.assessment_id}
         )
 
     def clean(self):
@@ -229,7 +229,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         )
         self.instance.assessment = assessment
         self.fields["description"].widget.update_query_parameters(
-            {"related": self.instance.assessment.id}
+            {"related": self.instance.assessment_id}
         )
 
     def clean(self):

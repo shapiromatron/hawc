@@ -253,6 +253,9 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
+        ret["pk"] = instance.id
+        ret["assessment_id"] = instance.assessment_id
+
         ret["has_study"] = instance.has_study
         ret["url"] = instance.get_absolute_url()
         ret["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": instance.pk})
@@ -264,7 +267,6 @@ class ReferenceSerializer(serializers.ModelSerializer):
         ret["study_short_citation"] = instance.study.short_citation if ret["has_study"] else None
 
         ret["tags"] = [tag.id for tag in instance.tags.all()]
-        ret["tags_text"] = [tag.name for tag in instance.tags.all()]
         return ret
 
     def validate_tags(self, value):

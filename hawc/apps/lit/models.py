@@ -632,7 +632,9 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     @classmethod
     def get_tag_in_assessment(cls, assessment_pk, tag_id):
         tag = cls.objects.get(id=tag_id)
-        assert tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
+        same_assessment = tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
+        if not same_assessment:
+            raise ValueError(f"Tag {tag_id} not in  assessment {assessment_pk} tag tree")
         return tag
 
     @classmethod
@@ -752,7 +754,6 @@ class Reference(models.Model):
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
 
         d["tags"] = [tag.id for tag in self.tags.all()]
-        d["tags_text"] = [tag.name for tag in self.tags.all()]
         return d
 
     def to_json(self):
