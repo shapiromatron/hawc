@@ -14,17 +14,21 @@ from django.views.decorators.cache import cache_page
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
 
-from ..common.api import DisabledPagination
 from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
 from . import models, serializers
+
+
+class DisabledPagination(PageNumberPagination):
+    page_size = None
 
 
 class RequiresAssessmentID(APIException):
