@@ -4,11 +4,18 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
+from ..assessment.models import Assessment
 from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
 from ..study.models import Study
 from . import models
+
+
+class RiskOfBiasAssessmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasAssessment
+        fields = "__all__"
 
 
 class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
@@ -28,6 +35,21 @@ class AssessmentDomainSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBiasDomain
+        fields = "__all__"
+
+
+class AssessmentRiskOfBiasSerializer(serializers.ModelSerializer):
+    rob_domains = AssessmentDomainSerializer(many=True)
+    rob_settings = RiskOfBiasAssessmentSerializer()
+
+    class Meta:
+        model = Assessment
+        fields = ("id", "rob_settings", "rob_domains")
+
+
+class AssessmentScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasScore
         fields = "__all__"
 
 
