@@ -82,7 +82,7 @@ class SearchForm(forms.ModelForm):
                     the search will not be executed, but can instead by run on
                     the next page. The search should be well-tested before
                     attempting to import into HAWC.""",
-                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id)),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -118,7 +118,7 @@ class ImportForm(SearchForm):
                     specifying a comma-separated list of primary keys from the
                     database. This is an import or known references, not a
                     search based on a query.""",
-                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id)),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -207,7 +207,7 @@ class RisImportForm(SearchForm):
                     universal data-format which is used by reference management
                     software solutions such as EndNote or Reference Manager.
                 """,
-                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id)),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
