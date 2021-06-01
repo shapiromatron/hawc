@@ -208,7 +208,7 @@ class BaseVisualForm {
 
     setPreviewLoading() {
         var $preview = this.$el.find("#preview"),
-            loading = HAWCUtils.loader();
+            loading = HAWCUtils.loading();
         $preview.html(loading);
     }
 
@@ -216,7 +216,7 @@ class BaseVisualForm {
         var div = $("#settings"),
             loader = div.find("p.loader");
         if (loader.length === 0) {
-            loader = HAWCUtils.loader();
+            loader = HAWCUtils.loading();
         }
         div.children().hide(0, function() {
             div.append(loader).show();
