@@ -4,18 +4,11 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
-from ..assessment.models import Assessment
 from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
 from ..study.models import Study
 from . import models
-
-
-class RiskOfBiasAssessmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RiskOfBiasAssessment
-        fields = "__all__"
 
 
 class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
@@ -38,19 +31,49 @@ class AssessmentDomainSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class AssessmentRiskOfBiasSerializer(serializers.ModelSerializer):
-    rob_domains = AssessmentDomainSerializer(many=True)
-    rob_settings = RiskOfBiasAssessmentSerializer()
-
-    class Meta:
-        model = Assessment
-        fields = ("id", "rob_settings", "rob_domains")
-
-
 class AssessmentScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasScore
         fields = "__all__"
+
+
+class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasDomain
+        fields = ("id", "name", "description", "is_overall_confidence")
+
+
+class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasMetric
+        fields = ("id", "name", "description")
+
+
+class RiskOfBiasAssessmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasAssessment
+        fields = "__all__"
+
+
+class AssessmentRiskOfBiasSerializer(serializers.Serializer):
+    assessment_id = serializers.IntegerField(source="id")
+    domains = SimpleRiskOfBiasDomainSerializer(source="rob_domains", many=True)
+    metrics = serializers.SerializerMethodField("get_metrics")
+    rob_settings = RiskOfBiasAssessmentSerializer()
+    score_metadata = serializers.SerializerMethodField("get_score_metadata")
+
+    def get_metrics(self, instance):
+        metrics = models.RiskOfBiasMetric.objects.filter(domain__assessment=instance)
+        serializer = SimpleRiskOfBiasMetricSerializer(metrics, many=True)
+        return serializer.data
+
+    def get_score_metadata(self, instance):
+        return {
+            "choices": models.RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES_MAP,
+            "symbols": models.RiskOfBiasScore.SCORE_SYMBOLS,
+            "colors": models.RiskOfBiasScore.SCORE_SHADES,
+            "bias_direction": {k: v for k, v in models.RiskOfBiasScore.BIAS_DIRECTION_CHOICES},
+        }
 
 
 class RiskOfBiasDomainSerializer(serializers.ModelSerializer):
