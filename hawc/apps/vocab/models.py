@@ -67,7 +67,7 @@ class VocabularyTermType(IntChoiceEnum):
 class Term(models.Model):
     objects = managers.TermManager()
 
-    uid = models.PositiveIntegerField(unique=True, blank=True, null=True)
+    uid = models.PositiveIntegerField(unique=True)
     namespace = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.choices(), default=VocabularyNamespace.EHV
     )
