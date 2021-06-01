@@ -1,4 +1,3 @@
-import django.views.static
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
@@ -76,6 +75,11 @@ urlpatterns = [
         views.AdminAssessmentSize.as_view(),
         name="admin_assessment_size",
     ),
+    path(
+        f"admin/{settings.ADMIN_URL_PREFIX}/media-preview/",
+        views.AdminMediaPreview.as_view(),
+        name="admin_media_preview",
+    ),
     path(f"admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     path("selectable/", include("selectable.urls")),
     path(
@@ -92,13 +96,10 @@ urlpatterns = [
 
 # only for DEBUG, want to use static server otherwise
 if settings.DEBUG:
+    from django.conf.urls.static import static
     import debug_toolbar
 
-    urlpatterns += [
-        path("__debug__/", include(debug_toolbar.urls)),
-        path(
-            "media/<path:str>", django.views.static.serve, {"document_root": settings.MEDIA_ROOT},
-        ),
-    ]
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.autodiscover()

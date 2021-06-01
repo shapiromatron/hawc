@@ -25,6 +25,7 @@ from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
 from . import models, serializers
+from .actions import media_metadata_report
 
 
 class DisabledPagination(PageNumberPagination):
@@ -532,6 +533,13 @@ class AdminDashboardViewset(viewsets.ViewSet):
     def assessment_size(self, request):
         df = models.Assessment.size_df()
         export = FlatExport(df=df, filename="assessment-size")
+        return Response(export)
+
+    @action(detail=False, renderer_classes=PandasRenderers)
+    def media(self, request):
+        uri = request.build_absolute_uri(location="/")[:-1]
+        df = media_metadata_report(uri)
+        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
         return Response(export)
 
 
