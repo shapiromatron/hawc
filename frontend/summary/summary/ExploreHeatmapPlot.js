@@ -870,6 +870,8 @@ class ExploreHeatmapPlot {
                 .appendTo(this.plot_div);
 
         // set correct aspect ratio to get proper height/widths set on parent elements
+        // TODO - conditional here - if the native width/height is <= current svg size,
+        // don't set this
         d3.select(this.svg)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .attr(
@@ -883,7 +885,7 @@ class ExploreHeatmapPlot {
             <VisualToolbar
                 svg={this.svg}
                 parentContainer={parentContainer}
-                nativeSize={nativeSize}
+                nativeSize={nativeSize} // propagate this through here too...
             />,
             div[0]
         );
