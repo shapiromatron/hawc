@@ -10,7 +10,6 @@
           {% if obj_perms.edit_assessment %}
           <span class="dropdown-header">{{assessment.get_rob_name_display}} settings</span>
           <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
           <div class="dropdown-divider"></div>
           {% endif %}
 
@@ -24,10 +23,16 @@
           {% endif %}
         {% elif crud == "Update" %}
           <span class="dropdown-header">{{assessment.get_rob_name_display}} changes</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.pk %}">Update instructions</a>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.pk %}">
+            <i class="fa fa-fw fa-edit"></i>Update instructions</a>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">
+            <i class="fa fa-fw fa-copy"></i>Copy metric-set</a>
+          <a class='dropdown-item'href="{% url 'riskofbias:arob_load_approach' assessment.pk %}">
+            <i class="fa fa-fw fa-book"></i>Load existing approach</a>
           <div class="dropdown-divider"></div>
           <span class="dropdown-header">Domain changes</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
+          <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">
+            <i class="fa fa-fw fa-plus"></i>New domain</a>
         {% endif %}
       </div>
   </div>

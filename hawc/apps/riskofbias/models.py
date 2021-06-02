@@ -52,30 +52,6 @@ class RiskOfBiasDomain(models.Model):
     def get_absolute_url(self):
         return reverse("riskofbias:arob_detail", args=(self.assessment_id,))
 
-    @classmethod
-    def build_default(cls, assessment):
-        """
-        Construct default risk of bias domains/metrics for an assessment.
-        The risk of bias domains and metrics are those defined by NTP/OHAT
-        protocols for risk of bias
-        """
-        if settings.HAWC_FLAVOR == "PRIME":
-            fixture = "ohat_study_quality_defaults.json"
-        elif settings.HAWC_FLAVOR == "EPA":
-            fixture = "iris_study_quality_defaults.json"
-        else:
-            raise ValueError("Unknown HAWC flavor")
-
-        fn = str(settings.PROJECT_PATH / f"apps/riskofbias/fixtures/{fixture}")
-        with open(fn, "r") as f:
-            objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
-
-        for domain in objects["domains"]:
-            d = RiskOfBiasDomain.objects.create(
-                assessment=assessment, name=domain["name"], description=domain["description"],
-            )
-            RiskOfBiasMetric.build_metrics_for_one_domain(d, domain["metrics"])
-
     def copy_across_assessments(self, cw):
         children = list(self.metrics.all().order_by("id"))
         old_id = self.id
@@ -138,19 +114,6 @@ class RiskOfBiasMetric(models.Model):
 
     def get_absolute_url(self):
         return reverse("riskofbias:arob_detail", args=(self.domain.assessment_id,))
-
-    @classmethod
-    def build_metrics_for_one_domain(cls, domain, metrics):
-        """
-        Build multiple risk of bias metrics given a domain django object and a
-        list of python dictionaries for each metric.
-        """
-        objs = []
-        for metric in metrics:
-            obj = RiskOfBiasMetric(**metric)
-            obj.domain = domain
-            objs.append(obj)
-        RiskOfBiasMetric.objects.bulk_create(objs)
 
     def copy_across_assessments(self, cw):
         old_id = self.id

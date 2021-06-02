@@ -10,6 +10,7 @@ from ..common.forms import BaseFormHelper
 from ..myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from ..study.models import Study
 from . import models
+from .actions import rob_metric_copy
 
 
 class RobTextForm(forms.ModelForm):
@@ -287,6 +288,34 @@ class RiskOfBiasCopyForm(forms.Form):
 
     def copy_riskofbias(self):
         models.RiskOfBias.copy_riskofbias(self.assessment, self.cleaned_data["assessment"])
+
+
+class RiskOfBiasLoadApproachForm(forms.Form):
+    rob_type = forms.TypedChoiceField(
+        label="Select existing approach",
+        choices=rob_metric_copy.RobMetricProfile.choices,
+        coerce=int,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment", None)
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        rob_name = self.assessment.get_rob_name_display().lower()
+        inputs = {
+            "legend_text": f"Load {rob_name} approach from predefined approaches",
+            "help_text": f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",
+            "cancel_url": reverse("riskofbias:arob_update", args=(self.assessment.id,)),
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
+        return helper
+
+    def evaluate(self):
+        rob_type = rob_metric_copy.RobMetricProfile(self.cleaned_data["rob_type"])
+        rob_metric_copy.build_default(self.assessment.id, rob_type)
 
 
 RoBFormSet = modelformset_factory(

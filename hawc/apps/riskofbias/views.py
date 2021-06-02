@@ -124,6 +124,39 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return reverse_lazy("riskofbias:arob_detail", kwargs={"pk": self.assessment.pk})
 
 
+class ARoBLoadApproach(ProjectManagerOrHigherMixin, MessageMixin, FormView):
+    model = models.RiskOfBiasDomain
+    parent_model = Assessment
+    template_name = "riskofbias/arob_load_approach.html"
+    form_class = forms.RiskOfBiasLoadApproachForm
+    success_message = "Settings have been updated."
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
+            self.request.user, self.assessment
+        )
+        context["breadcrumbs"].extend(
+            [get_breadcrumb_rob_setting(self.assessment), Breadcrumb(name="Load Approach")]
+        )
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["assessment"] = self.assessment
+        return kwargs
+
+    def form_valid(self, form):
+        form.evaluate()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("riskofbias:arob_detail", args=(self.assessment_id,))
+
+
 class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
     """
     List an assessment's studies with their active risk of bias reviewers.
