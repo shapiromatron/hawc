@@ -174,7 +174,7 @@ class HeatmapDatastore {
                         });
                         return rows;
                     })
-                    .map(d => d.size);
+                    .map(d => (d ? d.size : 0));
             },
             x = setGrandTotals(toJS(this.intersection), this.scales.x),
             y = setGrandTotals(toJS(this.intersection), this.scales.y);
