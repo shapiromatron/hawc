@@ -283,7 +283,7 @@ class HeatmapDatastore {
             index = -1,
             removedRows = this.rowsRemovedByFilters,
             getIntersection = function(arr, set2) {
-                return arr.filter(x => set2.has(x));
+                return set2 ? arr.filter(x => set2.has(x)) : [];
             },
             getRows = filters => {
                 let rows;
