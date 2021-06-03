@@ -129,12 +129,6 @@ class ExploratoryHeatmapStore {
         this.settings[arrayKey][arrayIndex].items = items;
     }
 
-    @action.bound changeIncludedArrayItems(arrayKey, arrayIndex, id, checked) {
-        const items = this.settings[arrayKey][arrayIndex].items,
-            itemIndex = _.findIndex(items, d => d.id === id);
-        this.settings[arrayKey][arrayIndex].items[itemIndex].included = checked;
-    }
-
     @action.bound changeDatasetUrl(value) {
         if (this.settings.data_url === value) {
             return;

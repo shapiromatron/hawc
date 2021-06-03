@@ -119,12 +119,23 @@ class HeatmapDatastore {
 
     setScales() {
         const setScales = (fields, intersection) => {
-            const columns = fields.map(field => field.column),
-                items = fields.map(field => {
-                    return _.isArray(field.items)
-                        ? field.items.filter(item => item.included).map(item => item.id)
-                        : _.keys(intersection[field.column]).sort();
-                }),
+            const getSpecifiedAxisOrder = function(field) {
+                    /*
+                    If an order is not specified, sort tokens.
+                    If an order is specified, use the specified order, and append additional tokens to the end.
+                    */
+                    let items = _.keys(intersection[field.column]).sort();
+                    if (!_.isArray(field.items)) {
+                        return items.sort();
+                    }
+                    let itemsSet = new Set(items);
+                    items = field.items.map(item => item.id);
+                    items.forEach(item => itemsSet.delete(item));
+                    items.push([...itemsSet].sort());
+                    return _.flatten(items);
+                },
+                columns = fields.map(field => field.column),
+                items = fields.map(getSpecifiedAxisOrder),
                 permutations = h.cartesian(items);
 
             if (columns.length == 0) {

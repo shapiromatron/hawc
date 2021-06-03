@@ -9,7 +9,7 @@ export const getColumnValues = function(dataset, column, delimiter) {
         .uniq()
         .sort()
         .map(d => {
-            return {id: d, label: d, included: true};
+            return {id: d, label: d};
         })
         .value();
 };

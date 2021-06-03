@@ -59,8 +59,8 @@ DataStatusIndicator.propTypes = {
 };
 
 const HelpText = {
-    customItems: `By default, all items are presented and in alphabetical order.
-        If customized, users can select which items to show on the heatmap and in what order`,
+    customItems: `By default, items are presented in alphabetical order.
+        If customized, users can customize the order of display.`,
     delimiter: `If data are delimited in a cell, the delimiter character used.
         If unspecified, the data are not delimited`,
     header: `By default the data column name is shown as the header;

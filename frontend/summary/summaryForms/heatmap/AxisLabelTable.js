@@ -61,7 +61,6 @@ class AxisLabelTable extends Component {
                 moveArrayElementDown,
                 deleteArrayElement,
                 changeOrderArrayItems,
-                changeIncludedArrayItems,
             } = this.props.store.subclass,
             {dataset} = this.props.store.base,
             hasItems = _.isArray(row.items);
@@ -93,9 +92,6 @@ class AxisLabelTable extends Component {
                             items={row.items}
                             onOrderChange={(id, oldIndex, newIndex) => {
                                 changeOrderArrayItems(key, index, oldIndex, newIndex);
-                            }}
-                            onSelectChange={(id, checked) => {
-                                changeIncludedArrayItems(key, index, id, checked);
                             }}
                         />
                     ) : null}
