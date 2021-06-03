@@ -3,7 +3,7 @@ from itertools import chain
 
 from django.db import migrations
 
-literature_tagtree = 6
+EXPLORE_HEATMAP = 6
 
 
 def add_heatmap_axis(apps, schema_editor):
@@ -11,7 +11,7 @@ def add_heatmap_axis(apps, schema_editor):
     updates = []
     failures = []
 
-    for visual in Visual.objects.filter(visual_type=6):
+    for visual in Visual.objects.filter(visual_type=EXPLORE_HEATMAP):
         try:
             settings = json.loads(visual.settings)
         except json.JSONDecodeError:
@@ -32,7 +32,7 @@ def undo_heatmap_axis(apps, schema_editor):
     updates = []
     failures = []
 
-    for visual in apps.get_model("summary", "Visual").objects.filter(visual_type=6):
+    for visual in apps.get_model("summary", "Visual").objects.filter(visual_type=EXPLORE_HEATMAP):
         try:
             settings = json.loads(visual.settings)
         except json.JSONDecodeError:
