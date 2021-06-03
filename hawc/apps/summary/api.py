@@ -70,7 +70,7 @@ class DataPivotViewset(AssessmentViewset):
             cls = serializers.CollectionDataPivotSerializer
         return cls
 
-    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=True, renderer_classes=PandasRenderers)
     def data(self, request, pk):
         obj = self.get_object()
         export = obj.get_dataset()
