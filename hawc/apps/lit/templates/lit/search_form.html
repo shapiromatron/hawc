@@ -21,7 +21,7 @@
         // add a loading notification
         $('input[type=submit]').click(function(e){
             $(e.target).addClass('disabled').css('pointer-events', 'none');
-            $(e.target).parent().append('<p><br>Please wait, loading... <img src="/static/img/loading.gif"></p>');
+            $(e.target).parent().append(window.app.utils.HAWCUtils.loading());
             return true;
         });
     });
