@@ -68,14 +68,10 @@ class ToolbarStore {
         this.svg = svg;
         this.d3svg = d3.select(svg);
         this.$parentContainer = $(parentContainer);
-        this.showZoomButton = _.isObject(nativeSize);
-        this.nativeSize = nativeSize;
         this.setParentSize();
-        if (this.showZoomButton) {
-            this.nativeAspectRatio = nativeSize.height / nativeSize.width;
-        } else {
-            this.nativeAspectRatio = this.currentParentSize.height / this.currentParentSize.width;
-        }
+        this.showZoomButton = _.isObject(nativeSize);
+        this.nativeSize = _.isObject(nativeSize) ? nativeSize : this.currentParentSize;
+        this.nativeAspectRatio = this.nativeSize.height / this.nativeSize.width;
         this.isFullSize = !this.showZoomButton;
     }
 
@@ -94,17 +90,12 @@ class ToolbarStore {
     }
 
     @action.bound scaleSize() {
+        this.$parentContainer
+            .attr("width", this.currentParentSize.width)
+            .attr("height", this.currentParentSize.height);
         if (this.isFullSize) {
-            // make fullsize
-            this.$parentContainer
-                .attr("width", this.$parentContainer.width())
-                .attr("height", this.$parentContainer.height());
             this.d3svg.attr("width", this.nativeSize.width).attr("height", this.nativeSize.height);
         } else {
-            // scale
-            this.$parentContainer
-                .attr("width", this.currentParentSize.width)
-                .attr("height", this.currentParentSize.height);
             this.d3svg
                 .attr("width", this.currentParentSize.width)
                 .attr("height", this.currentParentSize.height);
