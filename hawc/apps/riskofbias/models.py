@@ -6,6 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -108,7 +109,7 @@ class RiskOfBiasMetric(models.Model):
     RESPONSES_VALUES = {
         RESPONSES_OHAT: [17, 16, 15, 12, 14, 10],
         RESPONSES_EPA: [27, 26, 25, 24, 37, 36, 35, 34, 22, 20],
-        RESPONSES_NONE: [],
+        RESPONSES_NONE: [0],
     }
 
     def get_default_responses():
@@ -500,6 +501,7 @@ class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
 
     RISK_OF_BIAS_SCORE_CHOICES = (
+        (0, "No score"),
         (10, "Not applicable"),
         (12, "Not reported"),
         (14, "Definitely high risk of bias"),
@@ -523,6 +525,7 @@ class RiskOfBiasScore(models.Model):
     NA_SCORES = (10, 20)
 
     SCORE_SYMBOLS = {
+        0: "N/A",
         10: "N/A",
         12: "NR",
         14: "--",
@@ -542,6 +545,7 @@ class RiskOfBiasScore(models.Model):
     }
 
     SCORE_SHADES = {
+        0: "#E8E8E8",
         10: "#E8E8E8",
         12: "#FFCC00",
         14: "#CC3333",
@@ -595,6 +599,16 @@ class RiskOfBiasScore(models.Model):
 
     def __str__(self):
         return f"{self.riskofbias} {self.metric}"
+
+    def clean(self):
+        if self.score not in self.metric.get_response_values():
+            raise ValidationError(
+                f"'{self.get_score_display()}' is not a valid score for this metric."
+            )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     def get_assessment(self):
         return self.metric.get_assessment()

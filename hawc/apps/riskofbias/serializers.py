@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
@@ -103,6 +103,9 @@ class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
         ret["study_id"] = instance.riskofbias.study.id
         ret["study_types"] = instance.riskofbias.study.get_study_type()
         return ret
+
+    def validate(self, data):
+        return data
 
 
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
@@ -299,14 +302,17 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
         scores_to_create = validated_data["scores"]
         for score_to_create in scores_to_create:
-            score = models.RiskOfBiasScore.objects.create(
-                riskofbias=rob,
-                metric=score_to_create["metric"],
-                is_default=score_to_create["is_default"],
-                label=score_to_create["label"],
-                score=score_to_create["score"],
-                notes=score_to_create["notes"],
-            )
+            try:
+                score = models.RiskOfBiasScore.objects.create(
+                    riskofbias=rob,
+                    metric=score_to_create["metric"],
+                    is_default=score_to_create["is_default"],
+                    label=score_to_create["label"],
+                    score=score_to_create["score"],
+                    notes=score_to_create["notes"],
+                )
+            except ValidationError as err:
+                raise serializers.ValidationError(err.message)
 
             overridden_objects = score_to_create["overridden_objects"]
             for overridden_object in overridden_objects:
@@ -335,7 +341,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             score = scores[update_score["id"]]
             for key in ["score", "label", "bias_direction", "notes"]:
                 setattr(score, key, update_score[key])
-            score.save()
+            try:
+                score.save()
+            except ValidationError as err:
+                raise serializers.ValidationError(err.message)
 
         # update overrides
         new_overrides = []
