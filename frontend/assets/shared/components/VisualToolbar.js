@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
@@ -66,9 +67,12 @@ class ToolbarStore {
         this.svg = svg;
         this.d3svg = d3.select(svg);
         this.$parentContainer = $(parentContainer);
+        this.showZoomButton = _.isObject(nativeSize);
         this.nativeSize = nativeSize;
-        this.nativeAspectRatio = nativeSize.height / nativeSize.width;
-        this.updateCurrentParentSize();
+        if (this.showZoomButton) {
+            this.nativeAspectRatio = nativeSize.height / nativeSize.width;
+            this.updateCurrentParentSize();
+        }
     }
 
     @action.bound updateCurrentParentSize() {
@@ -108,12 +112,13 @@ class VisualToolbar extends Component {
                     updateCurrentParentSize();
                 }
             };
-
-        let resizeTimer;
-        $(window).on("resize", () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(onPageResize, 1000);
-        });
+        if (this.store.showZoomButton) {
+            let resizeTimer;
+            $(window).on("resize", () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(onPageResize, 1000);
+            });
+        }
     }
     renderDownload() {
         const {svg} = this.props;
@@ -172,9 +177,10 @@ class VisualToolbar extends Component {
         );
     }
     render() {
+        const {showZoomButton} = this.store;
         return (
             <div className="float-right">
-                {this.renderZoom()}
+                {showZoomButton ? this.renderZoom() : null}
                 {this.renderDownload()}
             </div>
         );
@@ -187,7 +193,7 @@ VisualToolbar.propTypes = {
     nativeSize: PropTypes.shape({
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
-    }).isRequired,
+    }),
 };
 
 export default VisualToolbar;

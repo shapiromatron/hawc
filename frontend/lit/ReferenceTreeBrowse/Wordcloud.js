@@ -104,7 +104,7 @@ const padding = 0,
             .append(toolbarNode);
 
         ReactDOM.render(
-            <VisualToolbar svg={svg.node()} parentContainer={el} nativeSize={{height, width}} />,
+            <VisualToolbar svg={svg.node()} parentContainer={el} />,
             toolbarNode.get(0)
         );
     };

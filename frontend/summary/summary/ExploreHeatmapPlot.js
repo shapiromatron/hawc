@@ -870,22 +870,26 @@ class ExploreHeatmapPlot {
                 .appendTo(this.plot_div);
 
         // set correct aspect ratio to get proper height/widths set on parent elements
-        // TODO - conditional here - if the native width/height is <= current svg size,
-        // don't set this
+        const currentWidth = Math.ceil(div.width()),
+            scaledHeight = currentWidth * (nativeSize.height / nativeSize.width),
+            currentHeight = Math.ceil(Math.min(nativeSize.height, scaledHeight)),
+            zoomable = nativeSize.width > currentWidth;
+
         d3.select(this.svg)
-            .attr("preserveAspectRatio", "xMidYMid meet")
-            .attr(
-                "viewBox",
-                `0 ${settings.x_axis_bottom ? 0 : -this.y_axis_label_padding} ${nativeSize.width} ${
-                    nativeSize.height
-                }`
-            );
+            .attr("width", currentWidth)
+            .attr("height", currentHeight);
+
+        if (zoomable) {
+            d3.select(this.svg)
+                .attr("preserveAspectRatio", "xMidYMin meet")
+                .attr("viewBox", `0 0 ${nativeSize.width} ${nativeSize.height}`);
+        }
 
         ReactDOM.render(
             <VisualToolbar
                 svg={this.svg}
                 parentContainer={parentContainer}
-                nativeSize={nativeSize} // propagate this through here too...
+                nativeSize={zoomable ? nativeSize : null}
             />,
             div[0]
         );
