@@ -68,9 +68,7 @@ class AxisLabelTable extends Component {
                     <TextInput
                         name={`${key}-delimiter-${index}`}
                         value={row.delimiter}
-                        onChange={e =>
-                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
-                        }
+                        onChange={e => changeArraySettings(key, index, "delimiter", e.target.value)}
                     />
                 </td>
                 <td>

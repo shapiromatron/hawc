@@ -121,7 +121,7 @@ class ReferenceStudyForm(BaseStudyForm):
         inputs = {
             "legend_text": "Create a new study",
             "help_text": "",
-            "cancel_url": reverse("study:list", args=[self.instance.assessment.id]),
+            "cancel_url": reverse("study:list", args=[self.instance.assessment_id]),
         }
         return super().setHelper(inputs)
 
