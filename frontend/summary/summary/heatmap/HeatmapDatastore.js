@@ -156,12 +156,9 @@ class HeatmapDatastore {
                         let rows,
                             first = true;
                         _.each(d, e => {
-                            const v = h.randomString();
-                            console.log(v, d, first, e.column, e.value);
                             rows = first
                                 ? intersection[e.column][e.value]
                                 : h.setIntersection(rows, intersection[e.column][e.value]);
-                            console.log(v, rows, first, e.column, e.value);
                             first = false;
                         });
                         return rows;
