@@ -873,17 +873,14 @@ class ExploreHeatmapPlot {
         const currentWidth = Math.ceil(div.width()),
             scaledHeight = currentWidth * (nativeSize.height / nativeSize.width),
             currentHeight = Math.ceil(Math.min(nativeSize.height, scaledHeight)),
-            zoomable = nativeSize.width > currentWidth;
+            zoomable = nativeSize.width > currentWidth,
+            yOffset = settings.x_axis_bottom ? 0 : -this.y_axis_label_padding;
 
         d3.select(this.svg)
             .attr("width", currentWidth)
-            .attr("height", currentHeight);
-
-        if (zoomable) {
-            d3.select(this.svg)
-                .attr("preserveAspectRatio", "xMidYMin meet")
-                .attr("viewBox", `0 0 ${nativeSize.width} ${nativeSize.height}`);
-        }
+            .attr("height", currentHeight)
+            .attr("preserveAspectRatio", "xMidYMin meet")
+            .attr("viewBox", `0 ${yOffset} ${nativeSize.width} ${nativeSize.height}`);
 
         ReactDOM.render(
             <VisualToolbar
