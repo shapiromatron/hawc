@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -33,7 +34,7 @@ class RiskOfBiasDomain(models.Model):
         verbose_name="Overall confidence?",
         help_text="Is this domain for overall confidence?",
     )
-    sort_order = models.PositiveSmallIntegerField()
+    sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -46,7 +47,7 @@ class RiskOfBiasDomain(models.Model):
 
     def clean(self):
         if self.sort_order is None:
-            self.sort_order = len(self.assessment.rob_domains.all())
+            self.sort_order = len(self.assessment.rob_domains.all()) + 1
 
     def __str__(self):
         return self.name
@@ -154,7 +155,7 @@ class RiskOfBiasMetric(models.Model):
     responses = models.PositiveSmallIntegerField(
         choices=RESPONSES_CHOICES, default=get_default_responses
     )
-    sort_order = models.PositiveSmallIntegerField()
+    sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -166,7 +167,7 @@ class RiskOfBiasMetric(models.Model):
 
     def clean(self):
         if self.sort_order is None:
-            self.sort_order = len(self.domain.metrics.all())
+            self.sort_order = len(self.domain.metrics.all()) + 1
 
     def __str__(self):
         return self.name

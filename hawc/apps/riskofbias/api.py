@@ -117,7 +117,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         expected_domain_ids = list(domain_id_to_metric_ids.keys())
         domain_ids = [domain_id for domain_id, _ in request.data]
         self.validate_ids(domain_ids, expected_domain_ids, "domain")
-        for i, (domain_id, metric_ids) in enumerate(request.data):
+        for i, (domain_id, metric_ids) in enumerate(request.data, start=1):
             expected_metric_ids = domain_id_to_metric_ids[domain_id]
             self.validate_ids(metric_ids, expected_metric_ids, "metric")
 
@@ -126,7 +126,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
                 domain.sort_order = i
                 updated_domains.append(domain)
 
-            for j, metric_id in enumerate(metric_ids):
+            for j, metric_id in enumerate(metric_ids, start=1):
                 metric = metric_id_to_metric[metric_id]
                 if metric.sort_order != j:
                     metric.sort_order = i
