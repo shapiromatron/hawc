@@ -104,9 +104,6 @@ class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
         ret["study_types"] = instance.riskofbias.study.get_study_type()
         return ret
 
-    def validate(self, data):
-        return data
-
 
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
     class Meta:
