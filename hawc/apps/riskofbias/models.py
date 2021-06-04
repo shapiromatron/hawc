@@ -1,5 +1,6 @@
 import json
 import logging
+from textwrap import dedent
 from typing import Dict
 
 from django.apps import apps
@@ -13,7 +14,6 @@ from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
-from ..common.models import get_flavored_text
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import managers
@@ -639,7 +639,15 @@ class RiskOfBiasAssessment(models.Model):
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(
             assessment=assessment,
-            help_text=get_flavored_text("riskofbias__riskofbiasassessment_help_text_default"),
+            help_text=dedent(
+                """\
+                <p>Study evaluation and/or risk of bias can be conducted on studies in HAWC.
+                Metrics are organized into different domains. Depending on the study type for
+                the study entered in HAWC, different metrics may be required (e.g., some metrics
+                may be required for epidemiological studies, while others are required for animal
+                bioassay studies). There may also be an overall judgment on the the study.</p>
+                <p>The following questions are required for this assessment:</p>"""
+            ),
         )
 
     def get_rob_response_values(self):

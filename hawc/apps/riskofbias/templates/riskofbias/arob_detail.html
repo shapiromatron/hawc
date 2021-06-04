@@ -104,8 +104,10 @@
     </table>
   {% empty %}
   <div class="alert alert-info">
-    <p>None exist!</p>
+    <p><b>No content available.</b>&nbsp;No domains or metrics currently exist.</p>
+    {% if obj_perms.edit %}
     <p>TODO... add links to create if you have rights...</p>
+    {% endif %}
   </div>
   {% endfor %}
 {% endblock %}

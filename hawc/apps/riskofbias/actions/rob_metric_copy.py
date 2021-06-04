@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import transaction
 from django.db.models import IntegerChoices
 
-from ..models import RiskOfBiasDomain, RiskOfBiasMetric
+from ..models import RiskOfBiasAssessment, RiskOfBiasDomain, RiskOfBiasMetric
 
 
 class RobMetricProfile(IntegerChoices):
@@ -48,3 +48,7 @@ def build_default(assessment_id: int, rob_type: RobMetricProfile):
             ]
         )
     RiskOfBiasMetric.objects.bulk_create(metrics)
+
+    settings = RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
+    settings.help_text = data["help_text"]
+    settings.save()
