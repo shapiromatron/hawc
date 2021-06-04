@@ -4,7 +4,8 @@ from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
-from hawc.apps.assessment.models import Strain
+from hawc.apps.assessment.models import DoseUnits, Strain
+from hawc.apps.epi.models import ComparisonSet, Exposure, StudyPopulation
 from hawc.apps.lit.models import Reference
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
@@ -228,10 +229,85 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.epi.endpoints(self.db_keys.assessment_client)
         assert isinstance(response, list)
 
+    def test_epi_create(self):
+        """
+        Test all the create methods for epi
+        """
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+
+        # study population
+        study_pop_name = "test study pop"
+        data = dict(
+            study=self.db_keys.study_working,
+            name=study_pop_name,
+            design="CO",
+            age_profile="pregnant women",
+            source="some source",
+            countries=["JP"],
+            region="some region",
+        )
+        study_pop = client.epi.create_study_population(data)
+
+        assert isinstance(study_pop, dict) and study_pop["name"] == study_pop_name
+        study_pop_id = study_pop["id"]
+        # assessment_id = study_pop["study"]["assessment"]
+
+        #exposure
+        exposure_name = "test exposure"
+        dose_units = DoseUnits.objects.first()
+        exposure = client.epi.create_exposure({
+            "name": exposure_name,
+            "metric_description": "my description here",
+            "metric": "my metric here",
+            "analytical_method": "my analytical method here",
+            "dtxsid": "DTXSID1020190",
+            "inhalation": True,
+            "measured": "this is measurement",
+            "sampling_period": "sample period here",
+            "age_of_exposure": 1,
+            "duration": "my duration",
+            "exposure_distribution": "my distro",
+            "study_population": study_pop_id,
+            "metric_units": dose_units.name,
+            "n": 9,
+            "description": "my desc",
+            "central_tendencies": [
+                {
+                    "estimate": 14,
+                    "estimate_type": 2,
+                    "variance": 5.5,
+                    "variance_type": "SD",
+                    "lower_ci": 4,
+                    "upper_ci": 99,
+                    "lower_range": 1.2,
+                    "upper_range": 1.5,
+                    "description": "this is my description",
+                },
+            ],
+        })
+        assert isinstance(exposure, dict) and exposure["name"] == exposure_name
+        exposure_id = exposure["id"]
+
+        # comparison set
+        comparison_set_name = "test comparison set"
+        comparison_set = client.epi.create_comparison_set({
+            "name": comparison_set_name,
+            "description": "cs description here",
+            "exposure": exposure_id,
+            "study_population": study_pop_id
+        })
+        assert isinstance(comparison_set, dict) and comparison_set["name"] == comparison_set_name
+        comparison_set_id = comparison_set["id"]
+
+        # test cleanup; remove what we just created
+        ComparisonSet.objects.filter(id=comparison_set_id).delete()
+        Exposure.objects.filter(id=exposure_id).delete()
+        StudyPopulation.objects.filter(id=study_pop_id).delete()
+
+    """
     def test_epi_study_population(self):
-        """
-        Test the CRUD(L) methods for study population
-        """
+        # Test the CRUD(L) methods for study population
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
 
@@ -270,6 +346,7 @@ class TestClient(LiveServerTestCase, TestCase):
         # Delete
         resp = client.epi.delete_study_population(study_pop_id)
         assert resp.status_code == 204
+    """
 
     #######################
     # EpiMetaClient tests #

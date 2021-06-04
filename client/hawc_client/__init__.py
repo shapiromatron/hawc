@@ -621,19 +621,140 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
         return self.session.delete(url)
 
+    def get_comparison_set(self, comparison_set_id: int) -> Dict:
+        """
+        Retrieves data for a single comparison set
+
+        Args:
+            comparison_set_id (int): comparison set ID
+
+        Returns:
+            pd.DataFrame: comparison set data
+        """
+        url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
+        return self.session.get(url).json()
+
+    def create_comparison_set(self, data: Dict) -> Dict:
+        """
+        Create a new comparison set
+
+        Args:
+            data (Dict): fields to create on the comparison set. Example keys:
+                name (str): name of the comparison set
+                description (str): description
+                exposure (int): id of the associated exposure population
+                study_population (int): id of the associated study population
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/comparison-set/"
+        return self.session.post(url, data).json()
+
+    def update_comparison_set(self, comparison_set_id: int, data: Dict) -> Dict:
+        """
+        Update an existing comparison set
+
+        Args:
+            comparison_set_id (int): comparison set ID
+
+            data: fields to update in the comparison set
+                See "create_comparison_set" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_comparison_set(self, comparison_set_id) -> Response:
+        """
+        Delete a comparison set
+
+        Args:
+            comparison_set_id (int): comparison set ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
+        return self.session.delete(url)
+
+    def get_exposure(self, exposure_id: int) -> Dict:
+        """
+        Retrieves data for a single exposure
+
+        Args:
+            exposure_id (int): Exposure ID
+
+        Returns:
+            pd.DataFrame: exposure data
+        """
+        url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
+        return self.session.get(url).json()
+
+    def create_exposure(self, data: Dict) -> Dict:
+        """
+        Create a new exposure
+
+        Args:
+            data (Dict): fields to create on the exposure. Example keys:
+                name (str): name of the exposure
+                study_population (int): id of the associated study population
+                dtxsid (str): e.g. "DTXSID1020190",
+                central_tendendices (List[Dict]): list of CT's with keys like "estimate", "estimate_type", "lower_ci", etc.
+                etc.
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/exposure/"
+        return self.session.post(url, data).json()
+
+    def update_exposure(self, exposure_id: int, data: Dict) -> Dict:
+        """
+        Update an existing exposure
+
+        Args:
+            exposure_id (int): Exposure ID
+
+            data: fields to update in the exposure
+                See "create_exposure" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_exposure(self, exposure_id) -> Response:
+        """
+        Delete an exposure
+
+        Args:
+            exposure_id (int): Exposure ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
+        return self.session.delete(url)
+
     # TODO
     # metadata
     #
     # For each of these we need to do CRUD. Sometimes CRUDL (e.g. we can list all study pops in an assessment)
-    # studypop
+    # studypop                                  <<<<<<
     #   (criteria)
     #   outcomes
     #       results (inc factors)
     #           groupResults
-    #   comparison set
+    #   comparison set                          <<<<<<
     #       group
     #           group numerical descriptions
-    #   exposures (inc. ct's)
+    #   exposures (inc. ct's)                   <<<<<<
 
 
 class AnimalClient(BaseClient):
