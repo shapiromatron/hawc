@@ -160,7 +160,7 @@ class TagTreeViz extends D3Plot {
                     .addFooter("")
                     .show({maxWidth: 1200});
 
-                tag.renderReferenceList(div.get(0));
+                tag.renderPaginatedReferenceList(div.get(0));
             },
             update = function(source) {
                 var duration = d3.event && d3.event.altKey ? 5000 : 500,

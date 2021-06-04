@@ -70,9 +70,7 @@ class FilterWidgetTable extends Component {
                     <TextInput
                         name={`${key}-header-${index}`}
                         value={row.header}
-                        onChange={e =>
-                            changeArraySettings(key, index, "header", e.target.value.trim())
-                        }
+                        onChange={e => changeArraySettings(key, index, "header", e.target.value)}
                     />
                 </td>
                 <td>
@@ -80,9 +78,7 @@ class FilterWidgetTable extends Component {
                         name={`${key}-delimiter-${index}`}
                         className="col-md-12"
                         value={row.delimiter}
-                        onChange={e =>
-                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
-                        }
+                        onChange={e => changeArraySettings(key, index, "delimiter", e.target.value)}
                     />
                 </td>
                 <td>
