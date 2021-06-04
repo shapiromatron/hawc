@@ -425,49 +425,6 @@ class TestClient(LiveServerTestCase, TestCase):
         Exposure.objects.filter(id=exposure_id).delete()
         StudyPopulation.objects.filter(id=study_pop_id).delete()
 
-    """
-    def test_epi_study_population(self):
-        # Test the CRUD(L) methods for study population
-        client = HawcClient(self.live_server_url)
-        client.authenticate("pm@hawcproject.org", "pw")
-
-        # Create
-        study_pop_name = "test study pop"
-        data = dict(
-            study=self.db_keys.study_working,
-            name=study_pop_name,
-            design="CO",
-            age_profile="pregnant women",
-            source="some source",
-            countries=["JP"],
-            region="some region",
-        )
-        study_pop = client.epi.create_study_population(data)
-        assert isinstance(study_pop, dict) and study_pop["name"] == study_pop_name
-
-        study_pop_id = study_pop["id"]
-        assessment_id = study_pop["study"]["assessment"]
-
-        # Read
-        lookup_study_pop = client.epi.get_study_population(study_pop_id)
-        assert isinstance(lookup_study_pop, dict) and lookup_study_pop["name"] == study_pop_name
-
-        # Update
-        updated_name = "change via update"
-        update_study_pop = client.epi.update_study_population(study_pop_id, {"name": updated_name})
-        assert isinstance(update_study_pop, dict) and update_study_pop["name"] == updated_name
-
-        # List
-        df = client.epi.get_study_populations(assessment_id)
-        assert isinstance(df, pd.DataFrame)
-        study_pops = df.values.tolist()
-        assert len(study_pops) > 0
-
-        # Delete
-        resp = client.epi.delete_study_population(study_pop_id)
-        assert resp.status_code == 204
-    """
-
     #######################
     # EpiMetaClient tests #
     #######################
