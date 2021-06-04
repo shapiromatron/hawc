@@ -266,12 +266,12 @@ class RiskOfBiasCopyForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user")
+        self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
-            user, exclusion_id=self.assessment.id
+            self.user, exclusion_id=self.assessment.id
         )
 
     @property
@@ -288,7 +288,7 @@ class RiskOfBiasCopyForm(forms.Form):
         return helper
 
     def evaluate(self):
-        clone_approach(self.assessment, self.cleaned_data["assessment"])
+        clone_approach(self.assessment, self.cleaned_data["assessment"], self.user.id)
 
 
 class RiskOfBiasLoadApproachForm(forms.Form):
@@ -297,7 +297,7 @@ class RiskOfBiasLoadApproachForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        _ = kwargs.pop("user")
+        self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
 
@@ -315,7 +315,7 @@ class RiskOfBiasLoadApproachForm(forms.Form):
 
     def evaluate(self):
         rob_type = RobApproach(self.cleaned_data["rob_type"])
-        load_approach(self.assessment.id, rob_type)
+        load_approach(self.assessment.id, rob_type, self.user.id)
 
 
 RoBFormSet = modelformset_factory(

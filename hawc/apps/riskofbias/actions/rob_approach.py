@@ -1,13 +1,14 @@
 import json
 from pathlib import Path
+from textwrap import dedent
 from typing import Any, Dict, List
 
 from django.conf import settings
 from django.db import transaction
 from django.db.models import IntegerChoices
 
-from ...assessment.models import Assessment
-from ..models import RiskOfBiasAssessment, RiskOfBiasDomain, RiskOfBiasMetric
+from ...assessment.models import Assessment, Log
+from ..models import RiskOfBias, RiskOfBiasAssessment, RiskOfBiasDomain, RiskOfBiasMetric
 
 
 class RobApproach(IntegerChoices):
@@ -25,15 +26,27 @@ class RobApproach(IntegerChoices):
 
 
 @transaction.atomic
-def load_approach(assessment_id: int, approach: RobApproach):
+def load_approach(assessment_id: int, approach: RobApproach, user_id: int = None):
     """
     Construct default risk of bias domains/metrics for an assessment.
     """
     # fetch data
     data = approach.load_fixture_data()
 
+    # log about changes being made
+    domains = RiskOfBiasDomain.objects.filter(assessment_id=assessment_id)
+    robs = RiskOfBias.objects.filter(study__assessment=assessment_id)
+    log_message = dedent(
+        f"""\
+        Loading Risk of Bias approach {approach.name} into assessment {assessment_id}
+        Deleting {domains.count()} RiskOfBiasDomain:
+        Deleting {robs.count()} RiskOfBias objects"""
+    )
+    Log.objects.create(assessment_id=assessment_id, user_id=user_id, message=log_message)
+
     # delete existing data (recursively deletes domains, metrics, scores, etc)
-    RiskOfBiasDomain.objects.filter(assessment_id=assessment_id).delete()
+    domains.delete()
+    robs.delete()
 
     # load help text
     settings = RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
@@ -43,28 +56,37 @@ def load_approach(assessment_id: int, approach: RobApproach):
     # create domains and metrics
     metrics: List[RiskOfBiasMetric] = []
     for sort_order, domain_data in enumerate(data["domains"], start=1):
-        domain = RiskOfBiasDomain.objects.create(
-            assessment_id=assessment_id,
-            sort_order=sort_order,
-            name=domain_data["name"],
-            description=domain_data["description"],
-        )
+        metrics_data = domain_data.pop("metrics")
+        domain = RiskOfBiasDomain.objects.create(assessment_id=assessment_id, **domain_data)
         metrics.extend(
             [
-                RiskOfBiasMetric(domain_id=domain.id, sort_order=sort_order, **metric_data)
-                for sort_order, metric_data in enumerate(domain["metrics"], start=1)
+                RiskOfBiasMetric(domain_id=domain.id, **metric_data)
+                for sort_order, metric_data in enumerate(metrics_data, start=1)
             ]
         )
     RiskOfBiasMetric.objects.bulk_create(metrics)
 
 
 @transaction.atomic
-def clone_approach(dest_assessment: Assessment, src_assessment: Assessment):
+def clone_approach(dest_assessment: Assessment, src_assessment: Assessment, user_id: int = None):
     """
     Clone approach from one assessment to another.
     """
+
+    # log about changes being made
+    domains = dest_assessment.rob_domains.all()
+    robs = RiskOfBias.objects.filter(study__assessment=dest_assessment)
+    log_message = dedent(
+        f"""\
+        Cloning Risk of Bias approach: {src_assessment.id} -> {dest_assessment.id}
+        Deleting {domains.count()} RiskOfBiasDomain:
+        Deleting {robs.count()} RiskOfBias objects"""
+    )
+    Log.objects.create(assessment=dest_assessment, user_id=user_id, message=log_message)
+
     # delete existing data (recursively deletes domains, metrics, scores, etc)
-    dest_assessment.rob_domains.all().delete()
+    domains.delete()
+    robs.delete()
 
     # copy help-text
     dest_rob_settings = dest_assessment.rob_settings

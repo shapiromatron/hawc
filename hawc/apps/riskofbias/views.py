@@ -121,7 +121,7 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("riskofbias:arob_detail", args=(self.assessment.id,))
+        return reverse("riskofbias:arob_update", args=(self.assessment.id,))
 
 
 class ARoBLoadApproach(ARoBCopy):
