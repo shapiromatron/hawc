@@ -262,12 +262,12 @@ class RoBReviewersForm(forms.ModelForm):
 
 class RiskOfBiasCopyForm(forms.Form):
     assessment = forms.ModelChoiceField(
-        label="Existing assessment", queryset=Assessment.objects.all(), empty_label=None
+        label="Select an assessment", queryset=Assessment.objects.all(), empty_label=None
     )
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("assessment", None)
+        user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
@@ -278,12 +278,13 @@ class RiskOfBiasCopyForm(forms.Form):
     def helper(self):
         rob_name = self.assessment.get_rob_name_display().lower()
         inputs = {
-            "legend_text": f"Copy {rob_name} approach from existing assessments",  # noqa
+            "legend_text": f"Copy {rob_name} approach from another assessment",  # noqa
             "help_text": f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
-            "cancel_url": reverse("riskofbias:arob_detail", args=[self.assessment.id]),
+            "cancel_url": reverse("riskofbias:arob_update", args=(self.assessment.id,)),
         }
         helper = BaseFormHelper(self, **inputs)
-        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
+        helper.layout.insert(3, cfl.Div(css_id="approach"))
+        helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
         return helper
 
     def copy_riskofbias(self):
@@ -292,21 +293,19 @@ class RiskOfBiasCopyForm(forms.Form):
 
 class RiskOfBiasLoadApproachForm(forms.Form):
     rob_type = forms.TypedChoiceField(
-        label="Select existing approach",
-        choices=rob_metric_copy.RobMetricProfile.choices,
-        coerce=int,
+        label="Select an approach", choices=rob_metric_copy.RobMetricProfile.choices, coerce=int,
     )
 
     def __init__(self, *args, **kwargs):
-        self.assessment = kwargs.pop("assessment", None)
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
         rob_name = self.assessment.get_rob_name_display().lower()
         inputs = {
-            "legend_text": f"Load {rob_name} approach from predefined approaches",
-            "help_text": f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",
+            "legend_text": f"Load a predefined {rob_name} approach",
+            "help_text": f"Select a standardized and predefined approach to use in this assessment.",
             "cancel_url": reverse("riskofbias:arob_update", args=(self.assessment.id,)),
         }
         helper = BaseFormHelper(self, **inputs)

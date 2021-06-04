@@ -7,9 +7,10 @@
   {% crispy form %}
   <div id='extra_content' class="hidden">
     <div class="alert alert-warning">
-      <a class="close" href="#" data-dismiss="alert">×</a>
       <h4>Warning!</h4>
-      <p>Copying the approach from another assessment will delete all {{assessment.get_rob_name_display|lower}} information currently saved for this assessment.</p>
+      <p>Loading this approach will delete all {{assessment.get_rob_name_display|lower}}
+        information currently saved in this assessment. This includes all domains and metrics
+        which currently exist, as well as any completed evaluations for studies already assessed.</p>
     </div>
   </div>
 {% endblock %}

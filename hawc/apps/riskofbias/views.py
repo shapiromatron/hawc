@@ -121,7 +121,7 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("riskofbias:arob_detail", kwargs={"pk": self.assessment.pk})
+        return reverse_lazy("riskofbias:arob_detail", args=(self.assessment.id,))
 
 
 class ARoBLoadApproach(ProjectManagerOrHigherMixin, MessageMixin, FormView):
@@ -140,7 +140,7 @@ class ARoBLoadApproach(ProjectManagerOrHigherMixin, MessageMixin, FormView):
             self.request.user, self.assessment
         )
         context["breadcrumbs"].extend(
-            [get_breadcrumb_rob_setting(self.assessment), Breadcrumb(name="Load Approach")]
+            [get_breadcrumb_rob_setting(self.assessment), Breadcrumb(name="Load approach")]
         )
         return context
 
@@ -154,7 +154,7 @@ class ARoBLoadApproach(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("riskofbias:arob_detail", args=(self.assessment_id,))
+        return reverse_lazy("riskofbias:arob_detail", args=(self.assessment.id,))
 
 
 class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
