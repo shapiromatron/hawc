@@ -10,7 +10,7 @@ from ..common.forms import BaseFormHelper
 from ..myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from ..study.models import Study
 from . import models
-from .actions import rob_metric_copy
+from .actions import RobApproach, clone_approach, load_approach
 
 
 class RobTextForm(forms.ModelForm):
@@ -287,16 +287,17 @@ class RiskOfBiasCopyForm(forms.Form):
         helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
         return helper
 
-    def copy_riskofbias(self):
-        models.RiskOfBias.copy_riskofbias(self.assessment, self.cleaned_data["assessment"])
+    def evaluate(self):
+        clone_approach(self.assessment, self.cleaned_data["assessment"])
 
 
 class RiskOfBiasLoadApproachForm(forms.Form):
     rob_type = forms.TypedChoiceField(
-        label="Select an approach", choices=rob_metric_copy.RobMetricProfile.choices, coerce=int,
+        label="Select an approach", choices=RobApproach.choices, coerce=int,
     )
 
     def __init__(self, *args, **kwargs):
+        _ = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
 
@@ -313,8 +314,8 @@ class RiskOfBiasLoadApproachForm(forms.Form):
         return helper
 
     def evaluate(self):
-        rob_type = rob_metric_copy.RobMetricProfile(self.cleaned_data["rob_type"])
-        rob_metric_copy.build_default(self.assessment.id, rob_type)
+        rob_type = RobApproach(self.cleaned_data["rob_type"])
+        load_approach(self.assessment.id, rob_type)
 
 
 RoBFormSet = modelformset_factory(

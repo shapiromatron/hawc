@@ -223,22 +223,6 @@ class RiskOfBias(models.Model):
     def study_reviews_complete(self):
         return all([rob.is_complete for rob in self.study.get_active_robs(with_final=False)])
 
-    @staticmethod
-    def copy_riskofbias(copy_to_assessment, copy_from_assessment):
-        # delete existing study quality metrics and domains
-        copy_to_assessment.rob_domains.all().delete()
-
-        # copy domains and metrics to assessment
-        for domain in copy_from_assessment.rob_domains.all():
-            metrics = list(domain.metrics.all())  # force evaluation
-            domain.id = None
-            domain.assessment = copy_to_assessment
-            domain.save()
-            for metric in metrics:
-                metric.id = None
-                metric.domain = domain
-                metric.save()
-
     @classmethod
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
