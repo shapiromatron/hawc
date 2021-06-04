@@ -608,7 +608,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_study_population(self, study_population_id) -> Response:
+    def delete_study_population(self, study_population_id:int) -> Response:
         """
         Delete a study population.
 
@@ -666,7 +666,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_criteria(self, criteria_id) -> Response:
+    def delete_criteria(self, criteria_id:int) -> Response:
         """
         Delete a criteria
 
@@ -726,7 +726,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_comparison_set(self, comparison_set_id) -> Response:
+    def delete_comparison_set(self, comparison_set_id:int) -> Response:
         """
         Delete a comparison set
 
@@ -786,7 +786,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/group/{group_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_group(self, group_id) -> Response:
+    def delete_group(self, group_id:int) -> Response:
         """
         Delete a group
 
@@ -847,7 +847,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_numerical_description(self, numerical_description_id) -> Response:
+    def delete_numerical_description(self, numerical_description_id:int) -> Response:
         """
         Delete a numerical description
 
@@ -908,7 +908,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_outcome(self, outcome_id) -> Response:
+    def delete_outcome(self, outcome_id:int) -> Response:
         """
         Delete an outcome
 
@@ -970,7 +970,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/result/{result_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_result(self, result_id) -> Response:
+    def delete_result(self, result_id:int) -> Response:
         """
         Delete a result
 
@@ -1030,7 +1030,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_group_result(self, group_result_id) -> Response:
+    def delete_group_result(self, group_result_id:int) -> Response:
         """
         Delete a group result
 
@@ -1091,7 +1091,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
         return self.session.patch(url, data).json()
 
-    def delete_exposure(self, exposure_id) -> Response:
+    def delete_exposure(self, exposure_id:int) -> Response:
         """
         Delete an exposure
 
@@ -1104,6 +1104,15 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
         return self.session.delete(url)
 
+    def metadata(self, assessment_id:int) -> Dict:
+        """
+        Retrieves field choices for all epi models.
+
+        Returns:
+            Dict: Model metadata
+        """
+        url = f"{self.session.root_url}/epi/api/metadata/{assessment_id}"
+        return self.session.get(url).json()
 
 class AnimalClient(BaseClient):
     """
