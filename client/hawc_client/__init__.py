@@ -681,12 +681,133 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
         return self.session.delete(url)
 
+    def get_group(self, group_id: int) -> Dict:
+        """
+        Retrieves data for a single group
+
+        Args:
+            group_id (int): group ID
+
+        Returns:
+            pd.DataFrame: group data
+        """
+        url = f"{self.session.root_url}/epi/api/group/{group_id}/"
+        return self.session.get(url).json()
+
+    def create_group(self, data: Dict) -> Dict:
+        """
+        Create a new group
+
+        Args:
+            data (Dict): fields to create on the group. Example keys:
+                name (str): name of the group
+                comparison_set (int): id of the associated comparison set
+                ethnicities (List[Any]): list of id's/names of associated ethnicities
+                etc.
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/group/"
+        return self.session.post(url, data).json()
+
+    def update_group(self, group_id: int, data: Dict) -> Dict:
+        """
+        Update an existing group
+
+        Args:
+            group_id (int): group ID
+
+            data: fields to update in the group
+                See "create_group" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/group/{group_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_group(self, group_id) -> Response:
+        """
+        Delete a group
+
+        Args:
+            group_id (int): group ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/group/{group_id}/"
+        return self.session.delete(url)
+
+    def get_numerical_description(self, numerical_description_id: int) -> Dict:
+        """
+        Retrieves data for a single numerical_description
+
+        Args:
+            numerical_description_id (int): numerical_description ID
+
+        Returns:
+            pd.DataFrame: numerical_description data
+        """
+        url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
+        return self.session.get(url).json()
+
+    def create_numerical_description(self, data: Dict) -> Dict:
+        """
+        Create a new numerical description
+
+        Args:
+            data (Dict): fields to create on the numerical description. Example keys:
+                description (str): description
+                group (int): id of the associated group
+                mean (Number): mean value
+                mean (Any): median, geometric mean, etc. readable name or underlying id
+                etc.
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/numerical-descriptions/"
+        return self.session.post(url, data).json()
+
+    def update_numerical_description(self, numerical_description_id: int, data: Dict) -> Dict:
+        """
+        Update an existing numerical description
+
+        Args:
+            numerical_description_id (int): numerical description ID
+
+            data: fields to update in the numerical description
+                See "create_numerical_description" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_numerical_description(self, numerical_description_id) -> Response:
+        """
+        Delete a numerical description
+
+        Args:
+            numerical_description_id (int): numerical description ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
+        return self.session.delete(url)
+
     def get_exposure(self, exposure_id: int) -> Dict:
         """
         Retrieves data for a single exposure
 
         Args:
-            exposure_id (int): Exposure ID
+            exposure_id (int): exposure ID
 
         Returns:
             pd.DataFrame: exposure data
@@ -717,7 +838,7 @@ class EpiClient(BaseClient):
         Update an existing exposure
 
         Args:
-            exposure_id (int): Exposure ID
+            exposure_id (int): exposure ID
 
             data: fields to update in the exposure
                 See "create_exposure" docstring for example fields.
@@ -734,7 +855,7 @@ class EpiClient(BaseClient):
         Delete an exposure
 
         Args:
-            exposure_id (int): Exposure ID
+            exposure_id (int): exposure ID
 
         Returns:
             Response: The response object.
@@ -752,8 +873,8 @@ class EpiClient(BaseClient):
     #       results (inc factors)
     #           groupResults
     #   comparison set                          <<<<<<
-    #       group
-    #           group numerical descriptions
+    #       group                               <<<<<<
+    #           group numerical descriptions    <<<<<<
     #   exposures (inc. ct's)                   <<<<<<
 
 

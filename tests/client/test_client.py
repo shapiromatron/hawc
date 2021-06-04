@@ -5,7 +5,7 @@ from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment.models import DoseUnits, Strain
-from hawc.apps.epi.models import ComparisonSet, Exposure, StudyPopulation
+from hawc.apps.epi.models import ComparisonSet, Exposure, Group, GroupNumericalDescriptions, StudyPopulation
 from hawc.apps.lit.models import Reference
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
@@ -300,7 +300,42 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(comparison_set, dict) and comparison_set["name"] == comparison_set_name
         comparison_set_id = comparison_set["id"]
 
+        #group
+        group_name = "test group"
+        group = client.epi.create_group({
+            "name": group_name,
+            "comparison_set": comparison_set_id,
+            "group_id": 0,
+            "numeric": 1,
+            "comparative_name": "compname",
+            "sex": "female",
+            "eligible_n": 500,
+            "invited_n": 250,
+            "participant_n": 10,
+            "isControl": True,
+            "comments": "comments go here",
+            "ethnicities": [ "Asian" ]
+        })
+        assert isinstance(group, dict) and group["name"] == group_name
+        group_id = group["id"]
+
+        #group numerical description
+        num_desc = "test numerical description"
+        nd = client.epi.create_numerical_description({
+            "description": num_desc,
+            "group": group_id,
+            "mean": 2.3,
+            "mean_type": "median",
+            "variance_type": "gsd",
+            "lower_type": 3,
+            "upper_type": "UPPER limit"
+        })
+        assert isinstance(nd, dict) and nd["description"] == num_desc
+        nd_id = nd["id"]
+
         # test cleanup; remove what we just created
+        GroupNumericalDescriptions.objects.filter(id=nd_id).delete()
+        Group.objects.filter(id=group_id).delete()
         ComparisonSet.objects.filter(id=comparison_set_id).delete()
         Exposure.objects.filter(id=exposure_id).delete()
         StudyPopulation.objects.filter(id=study_pop_id).delete()
