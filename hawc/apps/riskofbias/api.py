@@ -42,7 +42,7 @@ class RiskOfBiasAssessmentViewset(
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment.id)
 
-    @action(detail=True, methods=("get",), url_path="export", renderer_classes=PandasRenderers)
+    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
     def export(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
@@ -50,7 +50,7 @@ class RiskOfBiasAssessmentViewset(
         exporter = actions.RiskOfBiasFlat(self.get_queryset(), filename=filename)
         return Response(exporter.build_export())
 
-    @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
+    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()

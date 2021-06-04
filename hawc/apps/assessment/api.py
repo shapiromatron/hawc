@@ -19,9 +19,11 @@ from hawc.services.epa import dsstox
 
 from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
-from . import models, serializers
-from .actions.cleanup import endpoint_cleanup_metadata
-from .actions.ml_dataset import bioassay_ml_dataset
+from . import actions, models, serializers
+
+
+class DisabledPagination(PageNumberPagination):
+    page_size = None
 
 
 class RequiresAssessmentID(APIException):
@@ -32,10 +34,6 @@ class RequiresAssessmentID(APIException):
 class InvalidAssessmentID(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "Assessment does not exist for given `assessment_id`."
-
-
-class DisabledPagination(PageNumberPagination):
-    page_size = None
 
 
 def get_assessment_id_param(request) -> int:
@@ -216,16 +214,16 @@ class Assessment(AssessmentViewset):
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
 
-    @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
+    @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
         queryset = self.model.objects.get_public_assessments()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @method_decorator(cache_page(60 * 60 * 24))
-    @action(detail=False, methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=False, renderer_classes=PandasRenderers)
     def bioassay_ml_dataset(self, request):
-        df = bioassay_ml_dataset()
+        df = actions.bioassay_ml_dataset()
         today = timezone.now().strftime("%Y-%m-%d")
         export = FlatExport(df=df, filename=f"hawc-bioassay-dataset-{today}")
         return Response(export)
@@ -238,7 +236,7 @@ class Assessment(AssessmentViewset):
         required which significantly decreases query speed.
         """
         assessment = self.get_object()
-        payload = endpoint_cleanup_metadata(assessment)
+        payload = actions.endpoint_cleanup_metadata(assessment)
         return Response(payload)
 
     @action(
@@ -322,6 +320,13 @@ class AdminDashboardViewset(viewsets.ViewSet):
     def assessment_size(self, request):
         df = models.Assessment.size_df()
         export = FlatExport(df=df, filename="assessment-size")
+        return Response(export)
+
+    @action(detail=False, renderer_classes=PandasRenderers)
+    def media(self, request):
+        uri = request.build_absolute_uri(location="/")[:-1]
+        df = actions.media_metadata_report(uri)
+        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
         return Response(export)
 
 

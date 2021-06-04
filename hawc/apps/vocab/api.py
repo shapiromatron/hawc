@@ -118,7 +118,7 @@ class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data)
 
-    @action(detail=False, methods=("get",), permission_classes=(IsAuthenticated,))
+    @action(detail=False, permission_classes=(IsAuthenticated,))
     def uids(self, request: Request) -> Response:
         qs = self.get_queryset().exclude(uid=None)
         return Response(qs.values_list("id", "uid"))

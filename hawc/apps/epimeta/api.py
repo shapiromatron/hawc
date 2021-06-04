@@ -27,7 +27,7 @@ class EpiMetaAssessmentViewset(
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
-    @action(detail=True, methods=("get",), url_path="export", renderer_classes=PandasRenderers)
+    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
     def export(self, request, pk):
         """
         Retrieve epidemiology metadata for assessment.
