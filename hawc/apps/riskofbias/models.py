@@ -1,4 +1,3 @@
-import collections
 import json
 import logging
 from typing import Dict
