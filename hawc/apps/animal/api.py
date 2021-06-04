@@ -44,7 +44,7 @@ class AnimalAssessmentViewset(
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
-    @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
+    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         """
         Retrieve complete animal data
@@ -58,9 +58,7 @@ class AnimalAssessmentViewset(
         )
         return Response(exporter.build_export())
 
-    @action(
-        detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers
-    )
+    @action(detail=True, url_path="endpoint-export", renderer_classes=PandasRenderers)
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data

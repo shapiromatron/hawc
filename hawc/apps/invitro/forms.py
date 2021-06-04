@@ -295,12 +295,12 @@ class IVEndpointForm(forms.ModelForm):
         )
 
         self.fields["category"].queryset = self.fields["category"].queryset.model.get_assessment_qs(
-            self.instance.assessment.id
+            self.instance.assessment_id
         )
 
         for field in ("assay_type", "response_units", "effect"):
             self.fields[field].widget.update_query_parameters(
-                {"related": self.instance.assessment.id}
+                {"related": self.instance.assessment_id}
             )
 
     def clean_additional_fields(self):
