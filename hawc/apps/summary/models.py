@@ -19,7 +19,7 @@ from treebeard.mp_tree import MP_Node
 from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import GenericTable
 
-from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
+from ..animal.actions import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
@@ -33,11 +33,11 @@ from ..common.helper import (
 )
 from ..common.models import get_model_copy_name
 from ..common.validators import validate_html_tags, validate_hyperlinks
-from ..epi.exports import OutcomeDataPivot
+from ..epi.actions import OutcomeDataPivot
 from ..epi.models import Outcome
-from ..epimeta.exports import MetaResultFlatDataPivot
+from ..epimeta.actions import MetaResultFlatDataPivot
 from ..epimeta.models import MetaResult
-from ..invitro import exports as ivexports
+from ..invitro import actions as ivactions
 from ..invitro.models import IVEndpoint
 from ..study.models import Study
 from . import managers
@@ -878,14 +878,17 @@ class DataPivotQuery(DataPivot):
 
             # select export class
             if self.export_style == self.EXPORT_GROUP:
-                Exporter = ivexports.DataPivotEndpointGroup
+                Exporter = ivactions.DataPivotEndpointGroup
             elif self.export_style == self.EXPORT_ENDPOINT:
-                Exporter = ivexports.DataPivotEndpoint
+                Exporter = ivactions.DataPivotEndpoint
 
             # generate export
             exporter = Exporter(
                 qs, assessment=self.assessment, filename=f"{self.assessment}-invitro",
             )
+
+        else:
+            raise ValueError("No export available")
 
         return exporter
 

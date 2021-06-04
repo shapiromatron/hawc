@@ -1,7 +1,7 @@
-from ..common.helper import FlatFileExporter
-from ..materialized.models import FinalRiskOfBiasScore
-from ..study.models import Study
-from . import models
+from ...common.helper import FlatFileExporter
+from ...materialized.models import FinalRiskOfBiasScore
+from ...study.models import Study
+from .. import models
 
 
 class OutcomeComplete(FlatFileExporter):

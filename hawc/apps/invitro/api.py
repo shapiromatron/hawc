@@ -13,7 +13,7 @@ from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
-from . import exports, models, serializers
+from . import actions, models, serializers
 
 
 class IVAssessmentViewset(
@@ -36,9 +36,8 @@ class IVAssessmentViewset(
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         self.object_list = self.get_queryset()
-        exporter = exports.DataPivotEndpoint(
-            self.object_list, filename=f"{self.assessment}-invitro"
-        )
+        filename = f"{self.assessment}-invitro"
+        exporter = actions.DataPivotEndpoint(self.object_list, filename=filename)
         return Response(exporter.build_export())
 
 

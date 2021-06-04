@@ -2,8 +2,8 @@ from copy import copy
 
 from django.apps import apps
 
-from ..common.helper import FlatFileExporter
-from ..materialized.models import FinalRiskOfBiasScore
+from ...common.helper import FlatFileExporter
+from ...materialized.models import FinalRiskOfBiasScore
 
 
 def getDose(ser, tag):
@@ -27,7 +27,7 @@ class DataPivotEndpoint(FlatFileExporter):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
-            study_ids = set(self.queryset.values_list("experiment__study_id", flat=True))
+            study_ids = list(set(self.queryset.values_list("experiment__study_id", flat=True)))
             self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
                 self.queryset.first().assessment_id, study_ids, "invitro",
             )

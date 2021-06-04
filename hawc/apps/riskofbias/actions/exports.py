@@ -1,6 +1,6 @@
-from ..common.helper import FlatFileExporter
-from ..study.models import Study
-from . import models
+from ...common.helper import FlatFileExporter
+from ...study.models import Study
+from .. import models
 
 
 class RiskOfBiasFlat(FlatFileExporter):

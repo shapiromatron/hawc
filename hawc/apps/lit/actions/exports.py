@@ -2,8 +2,8 @@ from copy import copy, deepcopy
 
 from django.utils.html import strip_tags
 
-from ..common.helper import FlatFileExporter
-from . import models
+from ...common.helper import FlatFileExporter
+from .. import models
 
 
 class ReferenceFlatComplete(FlatFileExporter):

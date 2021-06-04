@@ -9,7 +9,7 @@ from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
-from . import exports, models, serializers
+from . import actions, models, serializers
 
 
 class EpiMetaAssessmentViewset(
@@ -34,7 +34,7 @@ class EpiMetaAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
-        exporter = exports.MetaResultFlatComplete(
+        exporter = actions.MetaResultFlatComplete(
             self.get_queryset(), filename=f"{self.assessment}-epi-meta"
         )
         return Response(exporter.build_export())

@@ -22,10 +22,8 @@ from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
-from ..riskofbias import exports
 from ..study.models import Study
-from . import models, serializers
-from .actions.rob_clone import BulkRobCopyAction
+from . import actions, models, serializers
 
 
 class RiskOfBiasAssessmentViewset(
@@ -48,21 +46,16 @@ class RiskOfBiasAssessmentViewset(
     def export(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
-        rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}"
-        )
-
+        filename = f"{self.assessment}-{self.assessment.get_rob_name_display().lower()}"
+        exporter = actions.RiskOfBiasFlat(self.get_queryset(), filename=filename)
         return Response(exporter.build_export())
 
     @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
-        rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}-complete"
-        )
+        filename = f"{self.assessment}-{self.assessment.get_rob_name_display().lower()}-complete"
+        exporter = actions.RiskOfBiasCompleteFlat(self.get_queryset(), filename=filename)
         return Response(exporter.build_export())
 
     @action(detail=False, methods=("post",), permission_classes=(IsAdminUser,))
@@ -70,7 +63,7 @@ class RiskOfBiasAssessmentViewset(
         """
         Bulk copy risk of bias responses from one assessment to another.
         """
-        return BulkRobCopyAction.handle_request(request, atomic=True)
+        return actions.BulkRobCopyAction.handle_request(request, atomic=True)
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):

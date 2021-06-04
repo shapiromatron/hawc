@@ -20,8 +20,7 @@ from ..common.api import (
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import exports, models, serializers
-from .actions.year_histogram import reference_year_histogram
+from . import actions, models, serializers
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -85,7 +84,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     )
     def reference_year_histogram(self, request, pk):
         instance = self.get_object()
-        fig = reference_year_histogram(instance)
+        fig = actions.reference_year_histogram(instance)
         payload = fig.to_dict() if fig else {}
         return Response(payload)
 
@@ -125,9 +124,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             .prefetch_related("identifiers")
             .order_by("id")
         )
-        exporter = exports.ReferenceFlatComplete(
-            qs, filename=f"references-{assessment}", assessment=assessment, tags=tags,
-        )
+        fn = f"references-{assessment}"
+        exporter = actions.ReferenceFlatComplete(qs, filename=fn, assessment=assessment, tags=tags)
         return Response(exporter.build_export())
 
     @action(detail=True, renderer_classes=PandasRenderers, url_path="tag-heatmap")
@@ -220,7 +218,7 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
         Return all references for a given Search
         """
         instance = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
+        exporter = actions.ReferenceFlatComplete(
             instance.references.all(),
             filename=f"{instance.assessment}-search-{instance.slug}",
             assessment=self.assessment,
@@ -240,7 +238,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         Return all references for a selected tag; does not include tag-descendants.
         """
         tag = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
+        exporter = actions.ReferenceFlatComplete(
             queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
@@ -256,7 +254,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         tag-descendants.
         """
         tag = self.get_object()
-        exporter = exports.TableBuilderFormat(
+        exporter = actions.TableBuilderFormat(
             queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,

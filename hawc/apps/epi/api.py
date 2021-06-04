@@ -21,8 +21,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
-from . import exports, models, serializers
-from .actions.model_metadata import EpiAssessmentMetadata
+from . import actions, models, serializers
 
 
 class EpiAssessmentViewset(
@@ -47,7 +46,7 @@ class EpiAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
-        exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
+        exporter = actions.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
         return Response(exporter.build_export())
 
     @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
@@ -526,7 +525,7 @@ class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def retrieve(self, request, *args, **kwargs):
         assessment = self.get_object()
         if assessment.user_can_view_object(request.user):
-            eam = EpiAssessmentMetadata(None)
+            eam = actions.EpiAssessmentMetadata(None)
             return eam.handle_assessment_request(request, assessment)
         else:
             raise PermissionDenied("Invalid permission to view assessment metadata")

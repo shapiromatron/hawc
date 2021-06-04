@@ -1,4 +1,4 @@
-from hawc.apps.animal.exports import EndpointFlatDataPivot, get_significance_and_direction
+from hawc.apps.animal.actions.exports import EndpointFlatDataPivot, get_significance_and_direction
 from hawc.apps.animal.models import Endpoint
 
 

@@ -1,11 +1,11 @@
 from copy import copy
 from typing import Dict, List, Optional, Tuple
 
-from ..assessment.models import DoseUnits
-from ..common.helper import FlatFileExporter
-from ..materialized.models import FinalRiskOfBiasScore
-from ..study.models import Study
-from . import models
+from ...assessment.models import DoseUnits
+from ...common.helper import FlatFileExporter
+from ...materialized.models import FinalRiskOfBiasScore
+from ...study.models import Study
+from .. import models
 
 
 def get_gen_species_strain_sex(e, withN=False):

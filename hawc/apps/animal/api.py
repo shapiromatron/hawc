@@ -24,9 +24,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
-from . import exports, models, serializers
-from .actions.model_metadata import AnimalMetadata
-from .actions.term_check import term_check
+from . import actions, models, serializers
 
 
 class AnimalAssessmentViewset(
@@ -51,7 +49,7 @@ class AnimalAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
-        exporter = exports.EndpointGroupFlatComplete(
+        exporter = actions.EndpointGroupFlatComplete(
             self.get_queryset(),
             filename=f"{self.assessment}-bioassay-complete",
             assessment=self.assessment,
@@ -67,7 +65,7 @@ class AnimalAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
-        exporter = exports.EndpointSummary(
+        exporter = actions.EndpointSummary(
             self.get_queryset(),
             filename=f"{self.assessment}-bioassay-summary",
             assessment=self.assessment,
@@ -166,7 +164,7 @@ class AnimalAssessmentViewset(
     def ehv_check(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_edit()
-        df = term_check(pk)
+        df = actions.term_check(pk)
         export = FlatExport(df, f"term-report-{pk}")
         return Response(export)
 
@@ -306,4 +304,4 @@ class DoseUnits(DoseUnitsViewset):
 
 class Metadata(viewsets.ViewSet):
     def list(self, request):
-        return AnimalMetadata.handle_request(request)
+        return actions.AnimalMetadata.handle_request(request)
