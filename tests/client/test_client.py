@@ -5,7 +5,7 @@ from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment.models import DoseUnits, Strain
-from hawc.apps.epi.models import ComparisonSet, Exposure, Group, GroupNumericalDescriptions, StudyPopulation
+from hawc.apps.epi.models import ComparisonSet, Exposure, Group, GroupNumericalDescriptions, GroupResult, Outcome, Result, ResultMetric, StudyPopulation
 from hawc.apps.lit.models import Reference
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
@@ -251,7 +251,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
         assert isinstance(study_pop, dict) and study_pop["name"] == study_pop_name
         study_pop_id = study_pop["id"]
-        # assessment_id = study_pop["study"]["assessment"]
+        assessment_id = study_pop["study"]["assessment"]
 
         #exposure
         exposure_name = "test exposure"
@@ -333,7 +333,76 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(nd, dict) and nd["description"] == num_desc
         nd_id = nd["id"]
 
+        # outcome
+        outcome_name = "test outcome"
+        outcome = client.epi.create_outcome({
+            "name": outcome_name,
+            "system": "blood",
+            "assessment": assessment_id,
+            "diagnostic_description": "this is my description",
+            "diagnostic": 5,
+            "outcome_n": 2,
+            "study_population": study_pop_id,
+            "age_of_measurement": "12 years old",
+            "summary": "my dsummary",
+            "effect": "my effect",
+            "effect_subtype": "my subtype"
+        })
+        assert isinstance(outcome, dict) and outcome["name"] == outcome_name
+        outcome_id = outcome["id"]
+
+        # result
+        result_name = "test result"
+        result_metric = ResultMetric.objects.first()
+        result = client.epi.create_result({
+            "name": result_name,
+            "outcome": outcome_id,
+            "comparison_set": comparison_set_id,
+            "metric": result_metric.metric,
+            "metric_description": "met desc here",
+            "data_location": "Data location here",
+            "population_description": "pop desc",
+            "dose_response": "monotonic",
+            "dose_response_details": "drd",
+            "prevalence_incidence": "drd",
+            "statistical_power": 2,
+            "statistical_power_details": "power_details",
+            "statistical_test_results": "stat test results",
+            "trend_test": "trend test results",
+            "estimate_type": "point",
+            "variance_type": 4,
+            "ci_units": 0.95,
+            "factors_applied": [ "birth order" ],
+            "factors_considered": [ "dynamic factor", "study center" ],
+            "comments": "comments go here"
+        })
+        assert isinstance(result, dict) and result["name"] == result_name
+        result_id = result["id"]
+
+        # group result
+        gr_pval = 0.432
+        group_result = client.epi.create_group_result({
+            "result": result_id,
+            "n": 50,
+            "main_finding_support": "inconclusive",
+            "p_value_qualifier": "<",
+            "p_value": gr_pval,
+            "group": group_id,
+            "estimate": 12,
+            "variance": 15,
+            "lower_ci": 1,
+            "upper_ci": 9,
+            "lower_range": 5,
+            "upper_range": 7,
+            "is_main_finding": False
+        })
+        assert isinstance(group_result, dict) and group_result["p_value"] == gr_pval
+        group_result_id = group_result["id"]
+
         # test cleanup; remove what we just created
+        GroupResult.objects.filter(id=group_result_id).delete()
+        Result.objects.filter(id=result_id).delete()
+        Outcome.objects.filter(id=outcome_id).delete()
         GroupNumericalDescriptions.objects.filter(id=nd_id).delete()
         Group.objects.filter(id=group_id).delete()
         ComparisonSet.objects.filter(id=comparison_set_id).delete()

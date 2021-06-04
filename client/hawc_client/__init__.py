@@ -802,6 +802,189 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
         return self.session.delete(url)
 
+    def get_outcome(self, outcome_id: int) -> Dict:
+        """
+        Retrieves data for a single outcome
+
+        Args:
+            outcome_id (int): outcome ID
+
+        Returns:
+            pd.DataFrame: outcome data
+        """
+        url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
+        return self.session.get(url).json()
+
+    def create_outcome(self, data: Dict) -> Dict:
+        """
+        Create a new outcome
+
+        Args:
+            data (Dict): fields to create on the outcome. Example keys:
+                name (str): name of the outcome
+                assessment (int): id of the associated assessment
+                study_population (int): id of the associated study population
+                system (str): system
+                etc.
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/outcome/"
+        return self.session.post(url, data).json()
+
+    def update_outcome(self, outcome_id: int, data: Dict) -> Dict:
+        """
+        Update an existing outcome
+
+        Args:
+            outcome_id (int): outcome ID
+
+            data: fields to update in the outcome
+                See "create_outcome" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_outcome(self, outcome_id) -> Response:
+        """
+        Delete an outcome
+
+        Args:
+            outcome_id (int): outcome ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
+        return self.session.delete(url)
+
+    def get_result(self, result_id: int) -> Dict:
+        """
+        Retrieves data for a single result
+
+        Args:
+            result_id (int): result ID
+
+        Returns:
+            pd.DataFrame: result data
+        """
+        url = f"{self.session.root_url}/epi/api/result/{result_id}/"
+        return self.session.get(url).json()
+
+    def create_result(self, data: Dict) -> Dict:
+        """
+        Create a new result
+
+        Args:
+            data (Dict): fields to create on the result. Example keys:
+                name (str): name of the result
+                comments (str): comments on this result
+                outcome (int): id of the associated outcome
+                comparison_set (int): id of the associated comparison_set
+                factors_applied (List[str]): list of factor names to apply
+                etc.
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/result/"
+        return self.session.post(url, data).json()
+
+    def update_result(self, result_id: int, data: Dict) -> Dict:
+        """
+        Update an existing result
+
+        Args:
+            result_id (int): result ID
+
+            data: fields to update in the result
+                See "create_result" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/result/{result_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_result(self, result_id) -> Response:
+        """
+        Delete a result
+
+        Args:
+            result_id (int): result ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/result/{result_id}/"
+        return self.session.delete(url)
+
+    def get_group_result(self, group_result_id: int) -> Dict:
+        """
+        Retrieves data for a single group result
+
+        Args:
+            group_result_id (int): group result ID
+
+        Returns:
+            pd.DataFrame: group result data
+        """
+        url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
+        return self.session.get(url).json()
+
+    def create_group_result(self, data: Dict) -> Dict:
+        """
+        Create a new group result
+
+        Args:
+            data (Dict): fields to create on the group result. Example keys:
+                name (str): name of the result
+                group (int): id of the associated group
+                result (int): id of the associated result
+                etc.
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/group-result/"
+        return self.session.post(url, data).json()
+
+    def update_group_result(self, group_result_id: int, data: Dict) -> Dict:
+        """
+        Update an existing group result
+
+        Args:
+            group_result_id (int): group result ID
+
+            data: fields to update in the group result
+                See "create_group_result" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_group_result(self, group_result_id) -> Response:
+        """
+        Delete a group result
+
+        Args:
+            group_result_id (int): group result ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
+        return self.session.delete(url)
+
     def get_exposure(self, exposure_id: int) -> Dict:
         """
         Retrieves data for a single exposure
@@ -869,9 +1052,9 @@ class EpiClient(BaseClient):
     # For each of these we need to do CRUD. Sometimes CRUDL (e.g. we can list all study pops in an assessment)
     # studypop                                  <<<<<<
     #   (criteria)
-    #   outcomes
-    #       results (inc factors)
-    #           groupResults
+    #   outcomes                                <<<<<<
+    #       results (inc factors)               <<<<<<
+    #           groupResults                    <<<<<<
     #   comparison set                          <<<<<<
     #       group                               <<<<<<
     #           group numerical descriptions    <<<<<<
