@@ -102,5 +102,10 @@
         </tr>
       {% endfor %}
     </table>
+  {% empty %}
+  <div class="alert alert-info">
+    <p>None exist!</p>
+    <p>TODO... add links to create if you have rights...</p>
+  </div>
   {% endfor %}
 {% endblock %}

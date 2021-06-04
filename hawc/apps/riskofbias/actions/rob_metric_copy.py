@@ -25,6 +25,10 @@ class RobMetricProfile(IntegerChoices):
 
 @transaction.atomic
 def build_default(assessment_id: int, rob_type: RobMetricProfile):
+    # rename functions
+    # update language
+    # add some unit tests
+    # http://127.0.0.1:8000/rob/assessment/100500270/load-approach/
     """
     Construct default risk of bias domains/metrics for an assessment.
     """
