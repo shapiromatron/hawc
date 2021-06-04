@@ -5,7 +5,18 @@ from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment.models import Assessment, DoseUnits, Strain
-from hawc.apps.epi.models import ComparisonSet, Criteria, Exposure, Group, GroupNumericalDescriptions, GroupResult, Outcome, Result, ResultMetric, StudyPopulation
+from hawc.apps.epi.models import (
+    ComparisonSet,
+    Criteria,
+    Exposure,
+    Group,
+    GroupNumericalDescriptions,
+    GroupResult,
+    Outcome,
+    Result,
+    ResultMetric,
+    StudyPopulation,
+)
 from hawc.apps.lit.models import Reference
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
@@ -261,156 +272,169 @@ class TestClient(LiveServerTestCase, TestCase):
 
         # criteria
         criteria_desc = "test criteria"
-        criteria = client.epi.create_criteria({
-            "description": criteria_desc,
-            "assessment": assessment_id
-        })
+        criteria = client.epi.create_criteria(
+            {"description": criteria_desc, "assessment": assessment_id}
+        )
         assert isinstance(criteria, dict) and criteria["description"] == criteria_desc
         criteria_id = criteria["id"]
 
-        #exposure
+        # exposure
         exposure_name = "test exposure"
         dose_units = DoseUnits.objects.first()
-        exposure = client.epi.create_exposure({
-            "name": exposure_name,
-            "metric_description": "my description here",
-            "metric": "my metric here",
-            "analytical_method": "my analytical method here",
-            "dtxsid": "DTXSID1020190",
-            "inhalation": True,
-            "measured": "this is measurement",
-            "sampling_period": "sample period here",
-            "age_of_exposure": 1,
-            "duration": "my duration",
-            "exposure_distribution": "my distro",
-            "study_population": study_pop_id,
-            "metric_units": dose_units.name,
-            "n": 9,
-            "description": "my desc",
-            "central_tendencies": [
-                {
-                    "estimate": 14,
-                    "estimate_type": 2,
-                    "variance": 5.5,
-                    "variance_type": "SD",
-                    "lower_ci": 4,
-                    "upper_ci": 99,
-                    "lower_range": 1.2,
-                    "upper_range": 1.5,
-                    "description": "this is my description",
-                },
-            ],
-        })
+        exposure = client.epi.create_exposure(
+            {
+                "name": exposure_name,
+                "metric_description": "my description here",
+                "metric": "my metric here",
+                "analytical_method": "my analytical method here",
+                "dtxsid": "DTXSID1020190",
+                "inhalation": True,
+                "measured": "this is measurement",
+                "sampling_period": "sample period here",
+                "age_of_exposure": 1,
+                "duration": "my duration",
+                "exposure_distribution": "my distro",
+                "study_population": study_pop_id,
+                "metric_units": dose_units.name,
+                "n": 9,
+                "description": "my desc",
+                "central_tendencies": [
+                    {
+                        "estimate": 14,
+                        "estimate_type": 2,
+                        "variance": 5.5,
+                        "variance_type": "SD",
+                        "lower_ci": 4,
+                        "upper_ci": 99,
+                        "lower_range": 1.2,
+                        "upper_range": 1.5,
+                        "description": "this is my description",
+                    },
+                ],
+            }
+        )
         assert isinstance(exposure, dict) and exposure["name"] == exposure_name
         exposure_id = exposure["id"]
 
         # comparison set
         comparison_set_name = "test comparison set"
-        comparison_set = client.epi.create_comparison_set({
-            "name": comparison_set_name,
-            "description": "cs description here",
-            "exposure": exposure_id,
-            "study_population": study_pop_id
-        })
+        comparison_set = client.epi.create_comparison_set(
+            {
+                "name": comparison_set_name,
+                "description": "cs description here",
+                "exposure": exposure_id,
+                "study_population": study_pop_id,
+            }
+        )
         assert isinstance(comparison_set, dict) and comparison_set["name"] == comparison_set_name
         comparison_set_id = comparison_set["id"]
 
-        #group
+        # group
         group_name = "test group"
-        group = client.epi.create_group({
-            "name": group_name,
-            "comparison_set": comparison_set_id,
-            "group_id": 0,
-            "numeric": 1,
-            "comparative_name": "compname",
-            "sex": "female",
-            "eligible_n": 500,
-            "invited_n": 250,
-            "participant_n": 10,
-            "isControl": True,
-            "comments": "comments go here",
-            "ethnicities": [ "Asian" ]
-        })
+        group = client.epi.create_group(
+            {
+                "name": group_name,
+                "comparison_set": comparison_set_id,
+                "group_id": 0,
+                "numeric": 1,
+                "comparative_name": "compname",
+                "sex": "female",
+                "eligible_n": 500,
+                "invited_n": 250,
+                "participant_n": 10,
+                "isControl": True,
+                "comments": "comments go here",
+                "ethnicities": ["Asian"],
+            }
+        )
         assert isinstance(group, dict) and group["name"] == group_name
         group_id = group["id"]
 
-        #group numerical description
+        # group numerical description
         num_desc = "test numerical description"
-        nd = client.epi.create_numerical_description({
-            "description": num_desc,
-            "group": group_id,
-            "mean": 2.3,
-            "mean_type": "median",
-            "variance_type": "gsd",
-            "lower_type": 3,
-            "upper_type": "UPPER limit"
-        })
+        nd = client.epi.create_numerical_description(
+            {
+                "description": num_desc,
+                "group": group_id,
+                "mean": 2.3,
+                "mean_type": "median",
+                "variance_type": "gsd",
+                "lower_type": 3,
+                "upper_type": "UPPER limit",
+            }
+        )
         assert isinstance(nd, dict) and nd["description"] == num_desc
         nd_id = nd["id"]
 
         # outcome
         outcome_name = "test outcome"
-        outcome = client.epi.create_outcome({
-            "name": outcome_name,
-            "system": "blood",
-            "assessment": assessment_id,
-            "diagnostic_description": "this is my description",
-            "diagnostic": 5,
-            "outcome_n": 2,
-            "study_population": study_pop_id,
-            "age_of_measurement": "12 years old",
-            "summary": "my dsummary",
-            "effect": "my effect",
-            "effect_subtype": "my subtype"
-        })
+        outcome = client.epi.create_outcome(
+            {
+                "name": outcome_name,
+                "system": "blood",
+                "assessment": assessment_id,
+                "diagnostic_description": "this is my description",
+                "diagnostic": 5,
+                "outcome_n": 2,
+                "study_population": study_pop_id,
+                "age_of_measurement": "12 years old",
+                "summary": "my dsummary",
+                "effect": "my effect",
+                "effect_subtype": "my subtype",
+            }
+        )
         assert isinstance(outcome, dict) and outcome["name"] == outcome_name
         outcome_id = outcome["id"]
 
         # result
         result_name = "test result"
         result_metric = ResultMetric.objects.first()
-        result = client.epi.create_result({
-            "name": result_name,
-            "outcome": outcome_id,
-            "comparison_set": comparison_set_id,
-            "metric": result_metric.metric,
-            "metric_description": "met desc here",
-            "data_location": "Data location here",
-            "population_description": "pop desc",
-            "dose_response": "monotonic",
-            "dose_response_details": "drd",
-            "prevalence_incidence": "drd",
-            "statistical_power": 2,
-            "statistical_power_details": "power_details",
-            "statistical_test_results": "stat test results",
-            "trend_test": "trend test results",
-            "estimate_type": "point",
-            "variance_type": 4,
-            "ci_units": 0.95,
-            "factors_applied": [ "birth order" ],
-            "factors_considered": [ "dynamic factor", "study center" ],
-            "comments": "comments go here"
-        })
+        result = client.epi.create_result(
+            {
+                "name": result_name,
+                "outcome": outcome_id,
+                "comparison_set": comparison_set_id,
+                "metric": result_metric.metric,
+                "metric_description": "met desc here",
+                "data_location": "Data location here",
+                "population_description": "pop desc",
+                "dose_response": "monotonic",
+                "dose_response_details": "drd",
+                "prevalence_incidence": "drd",
+                "statistical_power": 2,
+                "statistical_power_details": "power_details",
+                "statistical_test_results": "stat test results",
+                "trend_test": "trend test results",
+                "estimate_type": "point",
+                "variance_type": 4,
+                "ci_units": 0.95,
+                "factors_applied": ["birth order"],
+                "factors_considered": ["dynamic factor", "study center"],
+                "comments": "comments go here",
+            }
+        )
         assert isinstance(result, dict) and result["name"] == result_name
         result_id = result["id"]
 
         # group result
         gr_pval = 0.432
-        group_result = client.epi.create_group_result({
-            "result": result_id,
-            "n": 50,
-            "main_finding_support": "inconclusive",
-            "p_value_qualifier": "<",
-            "p_value": gr_pval,
-            "group": group_id,
-            "estimate": 12,
-            "variance": 15,
-            "lower_ci": 1,
-            "upper_ci": 9,
-            "lower_range": 5,
-            "upper_range": 7,
-            "is_main_finding": False
-        })
+        group_result = client.epi.create_group_result(
+            {
+                "result": result_id,
+                "n": 50,
+                "main_finding_support": "inconclusive",
+                "p_value_qualifier": "<",
+                "p_value": gr_pval,
+                "group": group_id,
+                "estimate": 12,
+                "variance": 15,
+                "lower_ci": 1,
+                "upper_ci": 9,
+                "lower_range": 5,
+                "upper_range": 7,
+                "is_main_finding": False,
+            }
+        )
         assert isinstance(group_result, dict) and group_result["p_value"] == gr_pval
         group_result_id = group_result["id"]
 
