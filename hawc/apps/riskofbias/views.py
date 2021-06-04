@@ -56,27 +56,15 @@ class ARoBDetail(BaseList):
         return context
 
 
-class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
-    crud = "Update"
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].append(Breadcrumb(name="Update"))
-        return context
-
-
-class ARoBSort(ProjectManagerOrHigherMixin, BaseDetail):
+class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
     """
-    Displays a form for sorting domain and metric.
+    Displays a form for sorting and editing domain and metric.
     """
 
     crud = "Update"
 
     model = models.Assessment
-    template_name = "riskofbias/arob_sort.html"
+    template_name = "riskofbias/arob_edit.html"
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
@@ -84,7 +72,7 @@ class ARoBSort(ProjectManagerOrHigherMixin, BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
-        context["breadcrumbs"].append(Breadcrumb(name="Sort"))
+        context["breadcrumbs"].append(Breadcrumb(name="Update"))
         context["config"] = json.dumps(
             {
                 "assessment_id": self.assessment.id,
