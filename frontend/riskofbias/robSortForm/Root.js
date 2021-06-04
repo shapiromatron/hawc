@@ -23,16 +23,12 @@ class Root extends Component {
         return (
             <div className="riskofbias-display">
                 <ScrollToErrorBox error={store.error} />
+                <a
+                    className="btn btn-primary"
+                    href={`/rob/assessment/${store.config.assessment_id}/domain/create/`}>
+                    <i className="fa fa-fw fa-plus"></i> Add domain
+                </a>
                 <SortTable />
-                <button
-                    className="btn btn-primary space"
-                    type="button"
-                    onClick={store.submitScores}>
-                    Save changes
-                </button>
-                <button className="btn space" onClick={store.cancelSubmitScores}>
-                    Cancel
-                </button>
             </div>
         );
     }

@@ -18,6 +18,17 @@ class RobFormStore {
         this.config = JSON.parse(document.getElementById(elementId).textContent);
     }
 
+    @action.bound fetchRoBData() {
+        fetch(this.config.api_url)
+            .then(resp => resp.json())
+            .then(json => {
+                this.domains = json;
+            })
+            .catch(exception => {
+                this.error = exception;
+            });
+    }
+
     @action.bound moveMetric(domainIndex, metricIndex, down) {
         let domain = this.domains[domainIndex];
         if (down) {
@@ -31,6 +42,7 @@ class RobFormStore {
             }
             domain.metrics.splice(metricIndex - 1, 0, domain.metrics.splice(metricIndex, 1)[0]);
         }
+        this.submitSort();
     }
 
     @action.bound moveDomain(domainIndex, down) {
@@ -45,24 +57,12 @@ class RobFormStore {
             }
             this.domains.splice(domainIndex - 1, 0, this.domains.splice(domainIndex, 1)[0]);
         }
-    }
-
-    @action.bound fetchRoBData() {
-        fetch(this.config.api_url)
-            .then(resp => resp.json())
-            .then(json => {
-                this.domains = json;
-            })
-            .catch(exception => {
-                this.error = exception;
-            });
+        this.submitSort();
     }
 
     // CRUD actions
-    @action.bound cancelSubmitScores() {
-        window.location.href = this.config.cancel_url;
-    }
-    @action.bound submitScores() {
+
+    @action.bound submitSort() {
         const payload = this.domains.map(d => [d.id, d.metrics.map(m => m.id)]),
             opts = h.fetchPost(this.config.csrf, payload, "PATCH"),
             url = this.config.submit_url;
@@ -70,9 +70,7 @@ class RobFormStore {
         this.error = null;
         return fetch(url, opts)
             .then(response => {
-                if (response.ok) {
-                    window.location.href = this.config.cancel_url;
-                } else {
+                if (!response.ok) {
                     response.text().then(text => {
                         this.error = text;
                     });

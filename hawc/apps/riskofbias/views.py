@@ -87,6 +87,7 @@ class ARoBSort(ProjectManagerOrHigherMixin, BaseDetail):
         context["breadcrumbs"].append(Breadcrumb(name="Sort"))
         context["config"] = json.dumps(
             {
+                "assessment_id": self.assessment.id,
                 "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
                 "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
                 "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
