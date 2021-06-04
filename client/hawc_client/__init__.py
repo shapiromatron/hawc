@@ -621,6 +621,64 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
         return self.session.delete(url)
 
+    def get_criteria(self, criteria_id: int) -> Dict:
+        """
+        Retrieves data for a single criteria
+
+        Args:
+            criteria_id (int): criteria ID
+
+        Returns:
+            pd.DataFrame: criteria data
+        """
+        url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
+        return self.session.get(url).json()
+
+    def create_criteria(self, data: Dict) -> Dict:
+        """
+        Create a new criteria
+
+        Args:
+            data (Dict): fields to create on the criteria. Keys:
+                description (str): description of the criteria
+                assessment (int): id of the associated assessment
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/epi/api/criteria/"
+        return self.session.post(url, data).json()
+
+    def update_criteria(self, criteria_id: int, data: Dict) -> Dict:
+        """
+        Update an existing criteria
+
+        Args:
+            criteria_id (int): criteria ID
+
+            data: fields to update in the criteria
+                See "create_criteria" docstring for example fields.
+
+        Returns:
+            Dict: The resulting object, if update was successful
+        """
+
+        url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
+        return self.session.patch(url, data).json()
+
+    def delete_criteria(self, criteria_id) -> Response:
+        """
+        Delete a criteria
+
+        Args:
+            criteria_id (int): criteria ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
+        return self.session.delete(url)
+
     def get_comparison_set(self, comparison_set_id: int) -> Dict:
         """
         Retrieves data for a single comparison set
@@ -639,7 +697,7 @@ class EpiClient(BaseClient):
         Create a new comparison set
 
         Args:
-            data (Dict): fields to create on the comparison set. Example keys:
+            data (Dict): fields to create on the comparison set. Keys:
                 name (str): name of the comparison set
                 description (str): description
                 exposure (int): id of the associated exposure population
@@ -1045,20 +1103,6 @@ class EpiClient(BaseClient):
         """
         url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
         return self.session.delete(url)
-
-    # TODO
-    # metadata
-    #
-    # For each of these we need to do CRUD. Sometimes CRUDL (e.g. we can list all study pops in an assessment)
-    # studypop                                  <<<<<<
-    #   (criteria)
-    #   outcomes                                <<<<<<
-    #       results (inc factors)               <<<<<<
-    #           groupResults                    <<<<<<
-    #   comparison set                          <<<<<<
-    #       group                               <<<<<<
-    #           group numerical descriptions    <<<<<<
-    #   exposures (inc. ct's)                   <<<<<<
 
 
 class AnimalClient(BaseClient):

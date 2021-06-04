@@ -5,7 +5,7 @@ from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment.models import DoseUnits, Strain
-from hawc.apps.epi.models import ComparisonSet, Exposure, Group, GroupNumericalDescriptions, GroupResult, Outcome, Result, ResultMetric, StudyPopulation
+from hawc.apps.epi.models import ComparisonSet, Criteria, Exposure, Group, GroupNumericalDescriptions, GroupResult, Outcome, Result, ResultMetric, StudyPopulation
 from hawc.apps.lit.models import Reference
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
@@ -253,6 +253,15 @@ class TestClient(LiveServerTestCase, TestCase):
         study_pop_id = study_pop["id"]
         assessment_id = study_pop["study"]["assessment"]
 
+        # criteria
+        criteria_desc = "test criteria"
+        criteria = client.epi.create_criteria({
+            "description": criteria_desc,
+            "assessment": assessment_id
+        })
+        assert isinstance(criteria, dict) and criteria["description"] == criteria_desc
+        criteria_id = criteria["id"]
+
         #exposure
         exposure_name = "test exposure"
         dose_units = DoseUnits.objects.first()
@@ -400,6 +409,7 @@ class TestClient(LiveServerTestCase, TestCase):
         group_result_id = group_result["id"]
 
         # test cleanup; remove what we just created
+        Criteria.objects.filter(id=criteria_id).delete()
         GroupResult.objects.filter(id=group_result_id).delete()
         Result.objects.filter(id=result_id).delete()
         Outcome.objects.filter(id=outcome_id).delete()
