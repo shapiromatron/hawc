@@ -39,7 +39,7 @@ def load_approach(assessment_id: int, approach: RobApproach, user_id: int = None
     log_message = dedent(
         f"""\
         Loading Risk of Bias approach {approach.name} into assessment {assessment_id}
-        Deleting {domains.count()} RiskOfBiasDomain:
+        Deleting {domains.count()} RiskOfBiasDomain objects
         Deleting {robs.count()} RiskOfBias objects"""
     )
     Log.objects.create(assessment_id=assessment_id, user_id=user_id, message=log_message)
@@ -79,7 +79,7 @@ def clone_approach(dest_assessment: Assessment, src_assessment: Assessment, user
     log_message = dedent(
         f"""\
         Cloning Risk of Bias approach: {src_assessment.id} -> {dest_assessment.id}
-        Deleting {domains.count()} RiskOfBiasDomain:
+        Deleting {domains.count()} RiskOfBiasDomain objects
         Deleting {robs.count()} RiskOfBias objects"""
     )
     Log.objects.create(assessment=dest_assessment, user_id=user_id, message=log_message)
