@@ -391,14 +391,11 @@ class EndpointUpdate(BaseUpdateWithFormset):
         return context
 
 
+@method_decorator(beta_tester_required, name="dispatch")
 class EndpointListV2(BaseList):
     parent_model = Assessment
     model = models.Endpoint
     template_name = "animal/endpoint_list_v2.html"
-
-    @method_decorator(beta_tester_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
