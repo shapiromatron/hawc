@@ -26,6 +26,7 @@ const increaseFactors = [
         {key: -40, label: "Lack of expected coherence", displayLabel: true},
         {key: -50, label: "Evidence demonstrating implausibility", displayLabel: true},
         {key: -60, label: "Low confidence studies", displayLabel: true},
+        {key: -70, label: "Interpretation limitations", displayLabel: true},
         {key: -100, label: "Other", displayLabel: false},
     ],
     FactorsForm = observer(props => {

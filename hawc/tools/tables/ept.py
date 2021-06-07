@@ -128,6 +128,7 @@ class FactorLabel(Enum):
     DownCoherence = "Lack of expected coherence"
     DownImplausible = "Evidence demonstrating implausibility"
     DownConfidence = "Low confidence studies"
+    DownInterpretation = "Interpretation limitations"
     DownOther = ""
 
 
@@ -145,6 +146,7 @@ class FactorType(IntEnum):
     DownCoherence = -40
     DownImplausible = -50
     DownConfidence = -60
+    DownInterpretation = -70
     DownOther = -100
 
 
