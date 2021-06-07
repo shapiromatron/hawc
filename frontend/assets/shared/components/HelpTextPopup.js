@@ -8,7 +8,11 @@ class HelpTextPopover extends Component {
         this.domNode = React.createRef();
     }
     componentDidMount() {
-        $(this.domNode.current).popover({placement: "auto", trigger: "hover"});
+        $(this.domNode.current).popover({
+            placement: "auto",
+            trigger: "hover focus",
+            delay: {show: 100, hide: 1000},
+        });
     }
     componentWillUnmount() {
         $(this.domNode.current).popover("dispose");

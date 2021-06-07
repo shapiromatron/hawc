@@ -7,7 +7,6 @@ import h from "shared/utils/helpers";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
-import TextInput from "shared/components/TextInput";
 
 const increaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
@@ -47,14 +46,14 @@ const increaseFactors = [
                             />
                             {selectedIndex >= 0 ? (
                                 <>
-                                    <TextInput
+                                    <QuillTextInput
                                         label="Short description"
                                         name={key}
                                         value={content.factors[selectedIndex].short_description}
-                                        onChange={e =>
+                                        onChange={value =>
                                             store.updateValue(
                                                 `${updateKey}.factors[${selectedIndex}].short_description`,
-                                                e.target.value
+                                                value
                                             )
                                         }
                                     />
@@ -85,7 +84,26 @@ const increaseFactors = [
     }),
     FactorsCell = observer(props => {
         const {content} = props,
-            _factors = increaseFactors.concat(decreaseFactors);
+            _factors = increaseFactors.concat(decreaseFactors),
+            injectText = (block, injectionText) => block.replace(/^<p>/gm, `<p>${injectionText}`),
+            injectPopup = (block, factorType, factor) => {
+                if (h.hasInnerText(factor.long_description)) {
+                    // TODO - resume here?
+                    // - docs to explain why?
+                    // - cleanup, keep popop open if hovering?
+                    // - word export
+                    const popup = `<span
+                            class="fa fa-info-circle"
+                            aria-hidden="true"
+                            data-html="true"
+                            data-toggle="popover"
+                            title="${factorType.label}"
+                            data-content="${factor.long_description}"></span>`;
+                    block = block.replace(/<\/p>$/gm, `&nbsp;${popup}</p>`);
+                }
+                return block;
+            };
+
         return (
             <td>
                 {content.factors.length > 0 ? (
@@ -93,21 +111,15 @@ const increaseFactors = [
                         {content.factors.map((factor, index) => {
                             let factorType = _factors.find(_factor => _factor.key == factor.key),
                                 dashText = factor.short_description.length > 0 ? " - " : "",
-                                html = factorType.displayLabel
-                                    ? `<em>${factorType.label}</em>${dashText}${factor.short_description}`
-                                    : factor.short_description;
-                            return (
-                                <li key={index}>
-                                    <span dangerouslySetInnerHTML={{__html: html}}></span>
-                                    {h.hasInnerText(factor.long_description) ? (
-                                        <HelpTextPopup
-                                            icon={"fa-info-circle"}
-                                            title={factorType.label}
-                                            content={factor.long_description}
-                                        />
-                                    ) : null}
-                                </li>
-                            );
+                                labelText = `<em>${factorType.label}</em>${dashText}`,
+                                html = factor.short_description;
+                            // prefix label if it exists
+                            if (factorType.displayLabel) {
+                                html = injectText(factor.short_description, labelText);
+                            }
+                            // inject popup if it exists
+                            html = injectPopup(html, factorType, factor);
+                            return <li key={index} dangerouslySetInnerHTML={{__html: html}}></li>;
                         })}
                     </ul>
                 ) : null}

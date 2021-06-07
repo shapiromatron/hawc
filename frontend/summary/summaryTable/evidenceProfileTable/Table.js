@@ -214,13 +214,29 @@ MechanisticEvidenceRows.propTypes = {
 
 @observer
 class Table extends Component {
+    constructor(props) {
+        super(props);
+        this.domNode = React.createRef();
+    }
+    componentDidMount() {
+        if (this.domNode.current) {
+            $(this.domNode.current)
+                .find('[data-toggle="popover"]')
+                .popover({
+                    placement: "auto",
+                    trigger: "hover focus",
+                    delay: {show: 100, hide: 1000},
+                });
+        }
+    }
+
     render() {
         const {store} = this.props,
             {exposed_human, animal, mechanistic, summary_judgement} = store.settings,
             hide_evidence =
                 exposed_human.hide_content && animal.hide_content && mechanistic.hide_content;
         return hide_evidence && summary_judgement.hide_content ? null : (
-            <table className="summaryTable table table-bordered table-sm">
+            <table ref={this.domNode} className="summaryTable table table-bordered table-sm">
                 {hide_evidence ? null : (
                     <colgroup>
                         <col style={{width: "15%"}}></col>
