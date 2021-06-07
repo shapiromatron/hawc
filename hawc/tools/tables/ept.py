@@ -19,7 +19,7 @@ class JudgementTexts(Enum):
 
 class SummaryJudgementTexts(Enum):
     Confident = ("⊕⊕⊕", "Evidence demonstrates")
-    Likely = ("⊕⊕⊙", "Evidence likely indicates")
+    Likely = ("⊕⊕⊙", "Evidence indicates (likely)")
     Suggests = ("⊕⊙⊙", "Evidence suggests")
     Inadequate = ("⊙⊙⊙", "Evidence inadequate")
     NoEffect = ("⊝⊝⊝", "Strong evidence supports no effect")
