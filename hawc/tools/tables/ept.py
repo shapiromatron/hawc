@@ -424,14 +424,40 @@ class EvidenceProfileTable(BaseTable):
         return {
             "exposed_human": {
                 "title": "Evidence from studies of exposed humans",
-                "rows": [],
+                "rows": [
+                    {
+                        "summary": {"findings": "<p></p>"},
+                        "evidence": {"description": "<p><em>No data available</em></p>"},
+                        "judgement": {
+                            "judgement": JudgementChoices.Indeterminate,
+                            "description": "<p></p>",
+                            "custom_judgement_icon": "",
+                            "custom_judgement_label": "",
+                        },
+                        "certain_factors": {"text": "<p></p>", "factors": []},
+                        "uncertain_factors": {"text": "<p></p>", "factors": []},
+                    }
+                ],
                 "merge_judgement": True,
                 "hide_content": False,
                 "no_content_text": "No data available",
             },
             "animal": {
                 "title": "Evidence from animal studies",
-                "rows": [],
+                "rows": [
+                    {
+                        "summary": {"findings": "<p></p>"},
+                        "evidence": {"description": "<p><em>No data available</em></p>"},
+                        "judgement": {
+                            "judgement": JudgementChoices.Indeterminate,
+                            "description": "<p></p>",
+                            "custom_judgement_icon": "",
+                            "custom_judgement_label": "",
+                        },
+                        "certain_factors": {"text": "<p></p>", "factors": []},
+                        "uncertain_factors": {"text": "<p></p>", "factors": []},
+                    }
+                ],
                 "merge_judgement": True,
                 "hide_content": False,
                 "no_content_text": "No data available",
