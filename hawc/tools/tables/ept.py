@@ -427,7 +427,7 @@ class EvidenceProfileTable(BaseTable):
                 "rows": [
                     {
                         "summary": {"findings": "<p></p>"},
-                        "evidence": {"description": "<p><em>No data available</em></p>"},
+                        "evidence": {"description": "<p><em>No evidence available</em></p>"},
                         "judgement": {
                             "judgement": JudgementChoices.Indeterminate,
                             "description": "<p></p>",
@@ -440,14 +440,14 @@ class EvidenceProfileTable(BaseTable):
                 ],
                 "merge_judgement": True,
                 "hide_content": False,
-                "no_content_text": "No data available",
+                "no_content_text": "No evidence available",
             },
             "animal": {
                 "title": "Evidence from animal studies",
                 "rows": [
                     {
                         "summary": {"findings": "<p></p>"},
-                        "evidence": {"description": "<p><em>No data available</em></p>"},
+                        "evidence": {"description": "<p><em>No evidence available</em></p>"},
                         "judgement": {
                             "judgement": JudgementChoices.Indeterminate,
                             "description": "<p></p>",
@@ -460,7 +460,7 @@ class EvidenceProfileTable(BaseTable):
                 ],
                 "merge_judgement": True,
                 "hide_content": False,
-                "no_content_text": "No data available",
+                "no_content_text": "No evidence available",
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
@@ -468,7 +468,7 @@ class EvidenceProfileTable(BaseTable):
                 "rows": [],
                 "merge_judgement": True,
                 "hide_content": False,
-                "no_content_text": "No data available",
+                "no_content_text": "No evidence available",
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
