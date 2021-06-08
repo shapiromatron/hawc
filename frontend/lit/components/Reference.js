@@ -74,7 +74,12 @@ class Reference extends Component {
         const {reference, showActions, showTags, showHr, actionsBtnClassName} = this.props,
             {data, tags} = reference,
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
-            year = data.year || "";
+            year = data.year || "",
+            actionItems = [
+                <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
+                <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
+                <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
+            ];
 
         return (
             <div className="referenceDetail">
@@ -87,19 +92,7 @@ class Reference extends Component {
                         {showActions ? (
                             <ActionsButton
                                 dropdownClasses={actionsBtnClassName}
-                                items={[
-                                    <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
-                                    <ActionLink
-                                        key={0}
-                                        label="Edit reference"
-                                        href={data.editReferenceUrl}
-                                    />,
-                                    <ActionLink
-                                        key={0}
-                                        label="Delete reference"
-                                        href={data.deleteReferenceUrl}
-                                    />,
-                                ]}
+                                items={actionItems}
                             />
                         ) : null}
                     </div>

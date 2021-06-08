@@ -81,7 +81,4 @@ class RobFormStore {
     }
 }
 
-const store = new RobFormStore();
-
-// singleton pattern
-export default store;
+export default RobFormStore;

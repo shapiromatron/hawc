@@ -30,7 +30,7 @@
           <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
         {% endif %}
       </div>
-  </div>
+    </div>
   {% endif %}
 
   {{assessment.rob_settings.help_text|safe}}

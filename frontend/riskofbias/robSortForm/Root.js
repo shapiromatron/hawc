@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import SortTable from "./SortTable";
+import DomainTable from "./DomainTable";
 import Loading from "shared/components/Loading";
 
 @inject("store")
@@ -15,11 +15,12 @@ class Root extends Component {
 
     render() {
         let {store} = this.props;
-        if (store.dataLoaded === false) {
+        if (!store.dataLoaded) {
             return <Loading />;
         }
-
-        return <SortTable />;
+        return store.domains.map((domain, domainIndex) => (
+            <DomainTable key={domain.id} domain={domain} domainIndex={domainIndex} />
+        ));
     }
 }
 
