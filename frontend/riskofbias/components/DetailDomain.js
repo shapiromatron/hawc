@@ -12,7 +12,10 @@ const DetailDomain = props => {
                 Overall confidence:&nbsp;
                 {h.booleanCheckbox(object.is_overall_confidence)}
             </li>
-            <li>Description: {object.description}</li>
+            <li>
+                <b>Description:&nbsp;</b>
+                <span dangerouslySetInnerHTML={{__html: object.description}}></span>
+            </li>
         </ul>
     );
 };
