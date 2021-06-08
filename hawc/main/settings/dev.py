@@ -33,7 +33,7 @@ CACHES = {
 }
 
 LOGGING["loggers"][""]["handlers"] = ["console"]
-LOGGING["loggers"][""]["level"] = "INFO"
+LOGGING["loggers"]["hawc"]["handlers"] = ["console"]
 
 
 COMPRESS_ENABLED = False

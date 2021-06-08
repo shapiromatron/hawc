@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 
-from hawc.apps.common.validators import validate_html_tags, validate_hyperlinks
+from hawc.apps.common.validators import validate_exact_ids, validate_html_tags, validate_hyperlinks
 
 
 def test_validate_html_tags():
@@ -51,3 +51,15 @@ def test_validate_hyperlinks():
     ]:
         with pytest.raises(ValidationError, match="Invalid hyperlinks"):
             validate_hyperlinks(text)
+
+
+def test_validate_exact_ids():
+    # success cases
+    assert validate_exact_ids([1, 2], [1, 2], "foo") is None
+    assert validate_exact_ids([1, 2], [2, 1], "foo") is None
+
+    # failure cases
+    with pytest.raises(ValidationError, match=r"Missing ID\(s\) in foo: 1"):
+        validate_exact_ids([1, 2], [2], "foo")
+    with pytest.raises(ValidationError, match=r"Extra ID\(s\) in foo: 3"):
+        validate_exact_ids([1, 2], [1, 2, 3], "foo")
