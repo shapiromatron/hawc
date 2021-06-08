@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
+import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 import Loading from "shared/components/Loading";
 import TextInput from "shared/components/TextInput";
 import TagTree from "../components/TagTree";
@@ -61,18 +62,11 @@ class ReferenceTreeMain extends Component {
             <div className="row">
                 <div className="col-md-12 pb-2">
                     {actions.length > 0 ? (
-                        <div className="dropdown btn-group float-right">
-                            <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                Actions
-                            </a>
-                            <div className="dropdown-menu dropdown-menu-right">
-                                {actions.map((action, index) => (
-                                    <a key={index} className="dropdown-item" href={action[0]}>
-                                        {action[1]}
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
+                        <ActionsButton
+                            items={actions.map((action, index) => (
+                                <ActionLink key={index} label={action[1]} href={action[0]} />
+                            ))}
+                        />
                     ) : null}
                     {store.untaggedReferencesSelected === true ? (
                         <h4>Untagged references</h4>

@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 import h from "shared/utils/helpers";
 import {getReferenceTagListUrl} from "shared/utils/urls";
 import Hero from "utils/Hero";
@@ -84,22 +85,22 @@ class Reference extends Component {
                             {authors}&nbsp;{year}
                         </span>
                         {showActions ? (
-                            <div className="dropdown btn-group float-right">
-                                <a className={actionsBtnClassName} data-toggle="dropdown">
-                                    Actions
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                    <a className="dropdown-item" href={data.editTagUrl}>
-                                        Edit tags
-                                    </a>
-                                    <a className="dropdown-item" href={data.editReferenceUrl}>
-                                        Edit reference
-                                    </a>
-                                    <a className="dropdown-item" href={data.deleteReferenceUrl}>
-                                        Delete reference
-                                    </a>
-                                </div>
-                            </div>
+                            <ActionsButton
+                                dropdownClasses={actionsBtnClassName}
+                                items={[
+                                    <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
+                                    <ActionLink
+                                        key={0}
+                                        label="Edit reference"
+                                        href={data.editReferenceUrl}
+                                    />,
+                                    <ActionLink
+                                        key={0}
+                                        label="Delete reference"
+                                        href={data.deleteReferenceUrl}
+                                    />,
+                                ]}
+                            />
                         ) : null}
                     </div>
                 }
@@ -153,7 +154,7 @@ Reference.propTypes = {
 
 Reference.defaultProps = {
     showActions: false,
-    actionsBtnClassName: "btn btn-sm dropdown-toggle",
+    actionsBtnClassName: "btn-sm",
     showHr: false,
     showTags: true,
 };

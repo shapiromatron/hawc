@@ -21,7 +21,7 @@ export default {
             ref = new Reference(reference, tagtree),
             options = {
                 showActions: canEdit,
-                actionsBtnClassName: "btn btn-primary dropdown-toggle",
+                actionsBtnClassName: "btn-primary",
             };
 
         ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 
-import ActionsBtn from "shared/components/ActionsBtn";
+import {ActionLink, ActionItem, ActionsButton} from "shared/components/ActionsButton";
 import h from "shared/utils/helpers";
 
 const domainCreateUrl = id => `/rob/assessment/${id}/domain/create/`,
@@ -30,19 +30,21 @@ class DomainTable extends Component {
 
         return (
             <>
-                <ActionsBtn
-                    extraClasses="mb-2"
+                <ActionsButton
+                    containerClasses="mb-2"
                     items={[
-                        <a key={0} className="dropdown-item" href={metricCreateUrl(domain.id)}>
-                            <i className="fa fa-fw fa-plus"></i> Create new metric
-                        </a>,
-                        <button
-                            type="button"
+                        <ActionLink
+                            key={0}
+                            icon="fa-plus"
+                            label="Create new metric"
+                            href={metricCreateUrl(domain.id)}
+                        />,
+                        <ActionItem
                             key={1}
-                            className="dropdown-item"
-                            onClick={() => this.setState({detailedView: !detailedView})}>
-                            <i className="fa fa-fw fa-eye"></i>&nbsp;{btnCaption}
-                        </button>,
+                            icon="fa-eye"
+                            label={btnCaption}
+                            onClick={() => this.setState({detailedView: !detailedView})}
+                        />,
                     ]}
                 />
                 <table className="table mt-2">
