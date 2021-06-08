@@ -118,7 +118,7 @@ class Reference extends Component {
                     <p className="my-1">
                         <strong>HAWC searches/imports:</strong>
                         {data.searches.map((d, i) => (
-                            <span key={i}>
+                            <span className="badge badge-light mr-1" key={i}>
                                 &nbsp;<a href={d.url}>{d.title}</a>
                             </span>
                         ))}

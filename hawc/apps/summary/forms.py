@@ -545,7 +545,7 @@ class VisualForm(forms.ModelForm):
                     "Settings" tab. To view a preview of the visual at any time,
                     select the "Preview" tab.
                 """,
-                "cancel_url": self.instance.get_list_url(self.instance.assessment.id),
+                "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -872,7 +872,7 @@ class DataPivotForm(forms.ModelForm):
                     Generally, you will select a subset of available data, then
                     customize the visualization the next-page.
                 """,
-                "cancel_url": self.instance.get_list_url(self.instance.assessment.id),
+                "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
 
         helper = BaseFormHelper(self, **inputs)

@@ -13,7 +13,11 @@
     </h2>
 
     <ul id="navbarSupportedContent" class="nav navbar-nav collapse navbar-collapse justify-content-end text-right">
-        {% include "includes/_navigation_links.html" %}
+        {% if user.is_authenticated %}
+            {% include "includes/_navigation_links.html" with contact_only=False %}
+        {% else %}
+            {% include "includes/_navigation_links.html" with contact_only=True %}
+        {% endif %}
     </ul>
 
 </nav>
@@ -30,7 +34,7 @@
     </button>
 
     <ul id="navbarSupportedContent" class="nav navbar-nav collapse navbar-collapse justify-content-end" >
-        {% include "includes/_navigation_links.html" %}
+        {% include "includes/_navigation_links.html" with contact_only=False %}
     </ul>
 
 </nav>

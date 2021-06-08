@@ -70,18 +70,14 @@ class DetailTable extends Component {
                     <TextInput
                         name={`${key}-header-${index}`}
                         value={row.header}
-                        onChange={e =>
-                            changeArraySettings(key, index, "header", e.target.value.trim())
-                        }
+                        onChange={e => changeArraySettings(key, index, "header", e.target.value)}
                     />
                 </td>
                 <td>
                     <TextInput
                         name={`${key}-delimiter-${index}`}
                         value={row.delimiter}
-                        onChange={e =>
-                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
-                        }
+                        onChange={e => changeArraySettings(key, index, "delimiter", e.target.value)}
                     />
                 </td>
                 <td>
