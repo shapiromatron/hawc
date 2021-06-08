@@ -237,13 +237,13 @@ LOGGING = {
     },
     "loggers": {
         "": {"handlers": ["null"], "level": "INFO"},
-        "django": {"handlers": ["null"], "propagate": True, "level": "INFO"},
-        "hawc": {"handlers": ["null"], "propagate": False, "level": "INFO"},
+        "django": {"handlers": ["null"], "propagate": False, "level": "INFO"},
         "django.request": {
             "handlers": ["console", "file_500s", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
         },
+        "hawc": {"handlers": ["null"], "propagate": False, "level": "INFO"},
     },
 }
 

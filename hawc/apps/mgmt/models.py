@@ -9,6 +9,8 @@ from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..study.models import Study
 from . import managers
 
+logger = logging.getLogger(__name__)
+
 
 class Task(models.Model):
 
@@ -94,7 +96,7 @@ class Task(models.Model):
     def start_if_unstarted(self, user):
         """Save task as started by user if currently not started."""
         if self.status == self.STATUS_NOT_STARTED:
-            logging.info(f'Starting "{self.get_type_display()}" task {self.id}')
+            logger.info(f'Starting "{self.get_type_display()}" task {self.id}')
             self.owner = user
             self.status = self.STATUS_STARTED
             self.save()
@@ -102,6 +104,6 @@ class Task(models.Model):
     def stop_if_started(self):
         """Stop task if currently started."""
         if self.status == self.STATUS_STARTED:
-            logging.info(f'Stopping "{self.get_type_display()}" task {self.id}')
+            logger.info(f'Stopping "{self.get_type_display()}" task {self.id}')
             self.status = self.STATUS_COMPLETED
             self.save()

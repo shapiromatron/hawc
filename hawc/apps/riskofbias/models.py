@@ -19,6 +19,8 @@ from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import managers
 
+logger = logging.getLogger(__name__)
+
 
 class RiskOfBiasDomain(models.Model):
     objects = managers.RiskOfBiasDomainManager()
@@ -231,12 +233,12 @@ class RiskOfBias(models.Model):
         # add any scores that are required and not currently created
         for metric in metrics:
             if not (metric.scores.all() & scores):
-                logging.info(f"Creating score: {self.study}->{metric}")
+                logger.info(f"Creating score: {self.study}->{metric}")
                 RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
         # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
-                logging.info(f"Deleting score: {self.study}->{score.metric}")
+                logger.info(f"Deleting score: {self.study}->{score.metric}")
                 score.delete()
 
     def build_scores(self, assessment, study):

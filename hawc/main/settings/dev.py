@@ -33,6 +33,7 @@ CACHES = {
 }
 
 LOGGING["loggers"][""]["handlers"] = ["console"]
+LOGGING["loggers"]["django"]["handlers"] = ["console"]
 LOGGING["loggers"]["hawc"]["handlers"] = ["console"]
 
 
