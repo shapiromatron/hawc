@@ -4,7 +4,6 @@ import {inject, observer} from "mobx-react";
 
 import SortTable from "./SortTable";
 import Loading from "shared/components/Loading";
-import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
 @inject("store")
 @observer
@@ -20,17 +19,7 @@ class Root extends Component {
             return <Loading />;
         }
 
-        return (
-            <div className="riskofbias-display">
-                <ScrollToErrorBox error={store.error} />
-                <a
-                    className="btn btn-primary"
-                    href={`/rob/assessment/${store.config.assessment_id}/domain/create/`}>
-                    <i className="fa fa-fw fa-plus"></i> Add domain
-                </a>
-                <SortTable />
-            </div>
-        );
+        return <SortTable />;
     }
 }
 

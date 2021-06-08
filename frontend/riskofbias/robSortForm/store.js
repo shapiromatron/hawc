@@ -61,7 +61,6 @@ class RobFormStore {
     }
 
     // CRUD actions
-
     @action.bound submitSort() {
         const payload = this.domains.map(d => [d.id, d.metrics.map(m => m.id)]),
             opts = h.fetchPost(this.config.csrf, payload, "PATCH"),
