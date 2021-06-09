@@ -178,20 +178,22 @@ def test_riskofbias_delete_score(db_keys):
     assert c.login(username="team@hawcproject.org", password="pw") is True
 
     # ensure you can delete a non-default score
-    score = RiskOfBiasScore.objects.filter(is_default=False).first()
+    assessment_id = 1  # editable assessment
+    assessment_scores = RiskOfBiasScore.objects.filter(metric__domain__assessment_id=assessment_id)
+    score = assessment_scores.filter(is_default=False).first()
     url = (
         reverse("riskofbias:api:scores-detail", args=(score.id,))
-        + f"?assessment_id={score.riskofbias.study.assessment_id}&ids={score.id}"
+        + f"?assessment_id={assessment_id}&ids={score.id}"
     )
     assert c.get(url).status_code == 200
     assert c.delete(url).status_code == 204
     assert c.get(url).status_code == 404
 
     # but cannot delete a default score
-    score = RiskOfBiasScore.objects.filter(is_default=True).first()
+    score = assessment_scores.filter(is_default=True).first()
     url = (
         reverse("riskofbias:api:scores-detail", args=(score.id,))
-        + f"?assessment_id={score.riskofbias.study.assessment_id}&ids={score.id}"
+        + f"?assessment_id={assessment_id}&ids={score.id}"
     )
     assert c.get(url).status_code == 200
     assert c.delete(url).status_code == 403

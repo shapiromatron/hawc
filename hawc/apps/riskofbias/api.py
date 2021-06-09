@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -16,16 +18,23 @@ from ..assessment.api import (
     get_assessment_id_param,
 )
 from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.api import (
+    CleanupFieldsBaseViewSet,
+    CleanupFieldsPermissions,
+    LegacyAssessmentAdapterMixin,
+)
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
+from ..common.validators import validate_exact_ids
 from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
 from . import models, serializers
 from .actions.rob_clone import BulkRobCopyAction
+
+logger = logging.getLogger(__name__)
 
 
 class RiskOfBiasAssessmentViewset(
@@ -84,6 +93,55 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related("metrics")
+
+    @action(detail=False, methods=("patch",), permission_classes=(CleanupFieldsPermissions,))
+    def order_rob(self, request):
+        """Reorder domains/metrics in the order specified.
+
+        The requests.data is expected to be a list in the following format:
+            List[Tuple[int, List[int]]] where, the first item in the tuple is a domain_id and
+            the second is al ist of metric_ids associated with that domain.
+        """
+        qs = self.get_queryset().filter(assessment=self.assessment).prefetch_related("metrics")
+        domain_id_to_domain = {domain.id: domain for domain in qs}
+        metric_id_to_metric = {
+            metric.id: metric for domain in qs for metric in domain.metrics.all()
+        }
+        domain_id_to_metric_ids = {
+            domain.id: [metric.id for metric in domain.metrics.all()] for domain in qs
+        }
+        updated_domains = []
+        updated_metrics = []
+
+        expected_domain_ids = list(domain_id_to_metric_ids.keys())
+        domain_ids = [domain_id for domain_id, _ in request.data]
+        validate_exact_ids(expected_domain_ids, domain_ids, "domain")
+        for i, (domain_id, metric_ids) in enumerate(request.data, start=1):
+            expected_metric_ids = domain_id_to_metric_ids[domain_id]
+            validate_exact_ids(expected_metric_ids, metric_ids, "metric")
+
+            domain = domain_id_to_domain[domain_id]
+            if domain.sort_order != i:
+                domain.sort_order = i
+                updated_domains.append(domain)
+
+            for j, metric_id in enumerate(metric_ids, start=1):
+                metric = metric_id_to_metric[metric_id]
+                if metric.sort_order != j:
+                    metric.sort_order = j
+                    updated_metrics.append(metric)
+
+        if updated_domains:
+            obj_ids = [obj.id for obj in updated_domains]
+            logger.info(f"Updating order for assessment {self.assessment.id}, domains {obj_ids}")
+            models.RiskOfBiasDomain.objects.bulk_update(updated_domains, ["sort_order"])
+
+        if updated_metrics:
+            obj_ids = [obj.id for obj in updated_metrics]
+            logger.info(f"Updating order for assessment {self.assessment.id}, metrics {obj_ids}")
+            models.RiskOfBiasMetric.objects.bulk_update(updated_metrics, ["sort_order"])
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RiskOfBias(viewsets.ModelViewSet):
