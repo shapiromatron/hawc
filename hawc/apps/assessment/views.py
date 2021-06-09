@@ -35,6 +35,7 @@ from ..common.views import (
     beta_tester_required,
     get_referrer,
 )
+from ..materialized.models import refresh_all_mvs
 from . import forms, models, serializers, tasks
 
 logger = logging.getLogger(__name__)
@@ -388,6 +389,8 @@ class AssessmentClearCache(MessageMixin, View):
             raise PermissionDenied()
 
         assessment.bust_cache()
+        refresh_all_mvs(force=True)
+
         self.send_message()
         return HttpResponseRedirect(url)
 

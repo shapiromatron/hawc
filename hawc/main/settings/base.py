@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     "hawc.apps.summary",
     "hawc.apps.mgmt",
     "hawc.apps.eco",
+    "hawc.apps.materialized",
 )
 
 
