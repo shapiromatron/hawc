@@ -213,7 +213,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                                 .attr("class", "critical-dose-legend-text")
                                 .attr("x", x.range()[0])
                                 .attr("y", 0)
-                                .text(d => d.name || "<null>");
+                                .text(d => d.name || h.nullString);
                         },
                         update =>
                             update

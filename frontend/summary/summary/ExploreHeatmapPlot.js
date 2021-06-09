@@ -200,7 +200,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${x_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -365,7 +365,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${x_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -499,7 +499,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${y_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
