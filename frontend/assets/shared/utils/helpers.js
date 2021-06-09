@@ -124,9 +124,9 @@ const helpers = {
     },
     booleanCheckbox(val) {
         if (val) {
-            return <i className="fa fa-check-square-o" title="checked" />;
+            return <i className="fa fa-check-square-o" title="true" />;
         } else {
-            return <i className="fa fa-square-o" title="un-checked" />;
+            return <i className="fa fa-times-rectangle-o" title="false" />;
         }
     },
     deepCopy(object) {

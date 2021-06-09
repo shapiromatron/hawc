@@ -206,7 +206,7 @@ LOGGING = {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
         },
-        "simple": {"format": "%(levelname)s %(message)s"},
+        "simple": {"format": "%(levelname)s %(name)s %(message)s"},
     },
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "handlers": {
@@ -236,13 +236,14 @@ LOGGING = {
         },
     },
     "loggers": {
-        "": {"handlers": ["null"], "level": "DEBUG"},
-        "django": {"handlers": ["null"], "propagate": True, "level": "INFO"},
+        "": {"handlers": ["null"], "level": "INFO"},
+        "django": {"handlers": ["null"], "propagate": False, "level": "INFO"},
         "django.request": {
             "handlers": ["console", "file_500s", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
         },
+        "hawc": {"handlers": ["null"], "propagate": False, "level": "INFO"},
     },
 }
 

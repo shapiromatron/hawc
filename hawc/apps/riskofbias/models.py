@@ -1,4 +1,3 @@
-import collections
 import json
 import logging
 from typing import Dict, List, Tuple
@@ -7,6 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -18,6 +18,8 @@ from ..common.models import get_flavored_text
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import managers
+
+logger = logging.getLogger(__name__)
 
 
 class RiskOfBiasDomain(models.Model):
@@ -33,6 +35,7 @@ class RiskOfBiasDomain(models.Model):
         verbose_name="Overall confidence?",
         help_text="Is this domain for overall confidence?",
     )
+    sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -41,7 +44,11 @@ class RiskOfBiasDomain(models.Model):
 
     class Meta:
         unique_together = ("assessment", "name")
-        ordering = ("pk",)
+        ordering = ("assessment", "sort_order")
+
+    def clean(self):
+        if self.sort_order is None:
+            self.sort_order = len(self.assessment.rob_domains.all()) + 1
 
     def __str__(self):
         return self.name
@@ -66,13 +73,14 @@ class RiskOfBiasDomain(models.Model):
         else:
             raise ValueError("Unknown HAWC flavor")
 
-        fn = str(settings.PROJECT_PATH / f"apps/riskofbias/fixtures/{fixture}")
-        with open(fn, "r") as f:
-            objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
-
-        for domain in objects["domains"]:
+        fn = settings.PROJECT_PATH / f"apps/riskofbias/fixtures/{fixture}"
+        objects = json.loads(fn.read_text())
+        for sort_order, domain in enumerate(objects["domains"], start=1):
             d = RiskOfBiasDomain.objects.create(
-                assessment=assessment, name=domain["name"], description=domain["description"],
+                assessment=assessment,
+                sort_order=sort_order,
+                name=domain["name"],
+                description=domain["description"],
             )
             RiskOfBiasMetric.build_metrics_for_one_domain(d, domain["metrics"])
 
@@ -121,6 +129,7 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
+    sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -128,7 +137,11 @@ class RiskOfBiasMetric(models.Model):
     BREADCRUMB_PARENT = "domain"
 
     class Meta:
-        ordering = ("domain", "id")
+        ordering = ("domain", "sort_order")
+
+    def clean(self):
+        if self.sort_order is None:
+            self.sort_order = len(self.domain.metrics.all()) + 1
 
     def __str__(self):
         return self.name
@@ -146,8 +159,8 @@ class RiskOfBiasMetric(models.Model):
         list of python dictionaries for each metric.
         """
         objs = []
-        for metric in metrics:
-            obj = RiskOfBiasMetric(**metric)
+        for sort_order, metric in enumerate(metrics, start=1):
+            obj = RiskOfBiasMetric(sort_order=sort_order, **metric)
             obj.domain = domain
             objs.append(obj)
         RiskOfBiasMetric.objects.bulk_create(objs)
@@ -220,12 +233,12 @@ class RiskOfBias(models.Model):
         # add any scores that are required and not currently created
         for metric in metrics:
             if not (metric.scores.all() & scores):
-                logging.info(f"Creating score: {self.study}->{metric}")
+                logger.info(f"Creating score: {self.study}->{metric}")
                 RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
         # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
-                logging.info(f"Deleting score: {self.study}->{score.metric}")
+                logger.info(f"Deleting score: {self.study}->{score.metric}")
                 score.delete()
 
     def build_scores(self, assessment, study):

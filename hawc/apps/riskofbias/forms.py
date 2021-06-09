@@ -62,6 +62,7 @@ class RoBDomainForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} domain."
 
         helper = BaseFormHelper(self, **inputs)
+        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
         helper.add_row("name", 2, "col-md-6")
         return helper
 
@@ -80,7 +81,7 @@ class RoBDomainForm(forms.ModelForm):
 class RoBMetricForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasMetric
-        exclude = ("domain",)
+        exclude = ("domain", "sort_order")
 
     def __init__(self, *args, **kwargs):
         domain = kwargs.pop("parent", None)

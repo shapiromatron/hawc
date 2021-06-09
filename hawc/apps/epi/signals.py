@@ -5,6 +5,8 @@ from django.dispatch import receiver
 
 from . import models
 
+logger = logging.getLogger(__name__)
+
 
 @receiver(post_save, sender=models.StudyPopulation)
 @receiver(pre_delete, sender=models.StudyPopulation)
@@ -69,7 +71,7 @@ def modify_group_result(sender, instance, created, **kwargs):
 
     if len(grs) > 0:
         assessment_id = instance.get_assessment().id
-        logging.info(
+        logger.info(
             "Assessment %s -> Group %s (post_save creation signal) "
             "-> %s GroupResult(s) created." % (assessment_id, instance.id, len(grs))
         )

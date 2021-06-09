@@ -17,6 +17,8 @@ from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 from ..lit.models import Reference, Search
 from . import managers
 
+logger = logging.getLogger(__name__)
+
 
 class Study(Reference):
     objects = managers.StudyManager()
@@ -169,7 +171,7 @@ class Study(Reference):
         # copy studies; flag if any epi-meta studies exist
         any_epi_meta = False
         for study in studies:
-            logging.info(f"Copying study {study.id} to assessment {assessment.id}")
+            logger.info(f"Copying study {study.id} to assessment {assessment.id}")
 
             # get child-types and copy
             children = []
@@ -205,7 +207,7 @@ class Study(Reference):
         # Copy epimeta.SingleResult after copying studies because to ensure
         # Study clones have already been created.
         if any_epi_meta:
-            logging.info("Copying epi results")
+            logger.info("Copying epi results")
             SingleResult = apps.get_model("epimeta", "SingleResult")
             results = SingleResult.objects.filter(
                 meta_result__protocol__study__in=studies

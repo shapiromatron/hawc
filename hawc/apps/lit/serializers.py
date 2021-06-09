@@ -19,6 +19,8 @@ from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from . import constants, forms, models, tasks
 
+logger = logging.getLogger(__name__)
+
 
 class SearchSerializer(serializers.ModelSerializer):
     class Meta:
@@ -232,7 +234,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
         if operation == "replace":
             tags_to_delete = models.ReferenceTags.objects.assessment_qs(assessment_id)
-            logging.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
+            logger.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
             tags_to_delete.delete()
 
         new_tags = [
@@ -242,7 +244,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         ]
 
         if new_tags:
-            logging.info(f"Creating {len(new_tags)} reference tags for {assessment_id}")
+            logger.info(f"Creating {len(new_tags)} reference tags for {assessment_id}")
             models.ReferenceTags.objects.bulk_create(new_tags)
 
             models.Reference.delete_cache(assessment_id)

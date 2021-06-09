@@ -9,6 +9,8 @@ from RISparser.config import TAG_KEY_MAPPING
 
 from .authors import get_author_short_text, normalize_authors
 
+logger = logging.getLogger(__name__)
+
 
 class RisImporter:
     @classmethod
@@ -28,7 +30,7 @@ class RisImporter:
             f.seek(0)
             return True
         except IOError as err:
-            logging.warning(err)
+            logger.warning(err)
             return False
 
     def __init__(self, f):
@@ -248,5 +250,5 @@ class ReferenceParser:
             citation = self.content.get("short_title", "")
         else:
             id_ = self.content.get("id", None)
-            logging.warning(f'Unknown type: "{refType}", id="{id_}"')
+            logger.warning(f'Unknown type: "{refType}", id="{id_}"')
         return citation
