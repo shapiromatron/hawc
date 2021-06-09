@@ -267,7 +267,7 @@ class Study {
     }
 
     createDonutVisualization(element) {
-        new Donut(this, element);
+        new Donut(this.data, this, element);
     }
 }
 

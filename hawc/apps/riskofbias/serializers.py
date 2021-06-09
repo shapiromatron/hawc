@@ -34,7 +34,16 @@ class AssessmentDomainSerializer(serializers.ModelSerializer):
 class AssessmentScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasScore
-        fields = "__all__"
+        fields = (
+            "id",
+            "score",
+            "is_default",
+            "label",
+            "bias_direction",
+            "notes",
+            "metric_id",
+            "riskofbias_id",
+        )
 
 
 class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
@@ -46,7 +55,7 @@ class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
 class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasMetric
-        fields = ("id", "name", "description")
+        fields = ("id", "name", "description", "domain_id")
 
 
 class RiskOfBiasAssessmentSerializer(serializers.ModelSerializer):

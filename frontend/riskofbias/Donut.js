@@ -2,6 +2,8 @@ import _ from "lodash";
 import $ from "$";
 import * as d3 from "d3";
 
+import store from "./store";
+
 import D3Plot from "utils/D3Plot";
 
 import {
@@ -11,20 +13,24 @@ import {
 } from "riskofbias/constants";
 
 class Donut extends D3Plot {
-    constructor(study, el) {
+    constructor(data, study, el) {
         super();
-        this.plot_div = $(el);
-        this.set_defaults();
-        this.data = this.get_dataset_info(study);
-        if (this.data === null) {
-            // stop here if we have no data
-            return;
-        }
-        this.build_plot();
-        $("body").on("keydown", () => {
-            if (event.ctrlKey || event.metaKey) {
-                this.toggle_lock_view();
+        this.store = store;
+        this.store.study = data;
+        this.store.fetchSettings(study.data.assessment.id).then(d => {
+            this.plot_div = $(el);
+            this.set_defaults();
+            this.data = this.get_dataset_info(study);
+            if (this.data === null) {
+                // stop here if we have no data
+                return;
             }
+            this.build_plot();
+            $("body").on("keydown", () => {
+                if (event.ctrlKey || event.metaKey) {
+                    this.toggle_lock_view();
+                }
+            });
         });
     }
 
@@ -83,14 +89,14 @@ class Donut extends D3Plot {
 
         var domain_donut_data = [],
             question_donut_data = [],
-            scores = study.final.scores.filter(
-                score => score.metric.domain.is_overall_confidence === false
+            scores = store.final.scores.filter(
+                score => store.metricDomains[score.metric.id].is_overall_confidence === false
             ),
-            overallScores = study.final.scores.filter(
-                score => score.metric.domain.is_overall_confidence
+            overallScores = store.final.scores.filter(
+                score => store.metricDomains[score.metric.id].is_overall_confidence
             ),
             scoresByDomain = _.chain(scores)
-                .groupBy("metric.domain.id")
+                .groupBy(s => store.metricDomains[s.metric.id].id)
                 .values()
                 .value(),
             getDataForMetric = (numMetrics, scores) => {
