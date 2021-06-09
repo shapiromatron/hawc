@@ -49,6 +49,7 @@ class Migration(migrations.Migration):
             name="score",
             field=models.PositiveSmallIntegerField(
                 choices=[
+                    (0, "None"),
                     (10, "Not applicable"),
                     (12, "Not reported"),
                     (14, "Definitely high risk of bias"),

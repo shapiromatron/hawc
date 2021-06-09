@@ -22,7 +22,6 @@ urlpatterns = [
     path(
         "assessment/<int:pk>/text-update/", views.ARoBTextEdit.as_view(), name="arob_text_update",
     ),
-    path("assessment/<int:pk>/sort/", views.ARoBSort.as_view(), name="arob_sort"),
     # modify domains
     path(
         "assessment/<int:pk>/domain/create/", views.RoBDomainCreate.as_view(), name="robd_create",

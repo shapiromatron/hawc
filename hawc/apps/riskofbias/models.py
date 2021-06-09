@@ -504,7 +504,7 @@ class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
 
     RISK_OF_BIAS_SCORE_CHOICES = (
-        (0, "No score"),
+        (0, "None"),
         (10, "Not applicable"),
         (12, "Not reported"),
         (14, "Definitely high risk of bias"),
