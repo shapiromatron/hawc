@@ -18,6 +18,8 @@ from django.utils.encoding import force_str
 from docx.document import Document
 from rest_framework.renderers import JSONRenderer
 
+logger = logging.getLogger(__name__)
+
 
 def read_excel(*args, **kwargs):
     """
@@ -184,7 +186,7 @@ class SerializerHelper:
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
-                logging.debug(f"using cache: {name}")
+                logger.debug(f"using cache: {name}")
             else:
                 cached = cls._serialize_and_cache(obj, json=json)
             return cached
@@ -212,7 +214,7 @@ class SerializerHelper:
         json_str = JSONRenderer().render(serialized).decode("utf8")
         serialized = OrderedDict(serialized)  # for pickling
 
-        logging.debug(f"setting cache: {name}")
+        logger.debug(f"setting cache: {name}")
         cache.set_many({name: serialized, json_name: json_str})
 
         if json:
@@ -228,7 +230,7 @@ class SerializerHelper:
     def delete_caches(cls, model, ids):
         names = [cls._get_cache_name(model, id, json=False) for id in ids]
         names.extend([cls._get_cache_name(model, id, json=True) for id in ids])
-        logging.debug(f"Removing caches: {', '.join(names)}")
+        logger.debug(f"Removing caches: {', '.join(names)}")
         cache.delete_many(names)
 
     @classmethod

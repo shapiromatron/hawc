@@ -80,6 +80,7 @@
                   "name": "domain 1",
                   "description": "<p>description</p>",
                   "is_overall_confidence": false,
+                  "sort_order": 1,
                   "created": "2020-05-08T12:05:55.142679-05:00",
                   "last_updated": "2020-05-08T12:05:55.142703-05:00"
                 },
@@ -91,6 +92,7 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00"
               },
@@ -127,6 +129,7 @@
                   "name": "overall",
                   "description": "<p>description</p>",
                   "is_overall_confidence": true,
+                  "sort_order": 2,
                   "created": "2020-05-08T12:06:37.006374-05:00",
                   "last_updated": "2020-05-08T12:06:37.006406-05:00"
                 },
@@ -138,6 +141,7 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
                 "last_updated": "2020-05-08T12:06:55.509353-05:00"
               },
@@ -196,6 +200,7 @@
                   "name": "domain 1",
                   "description": "<p>description</p>",
                   "is_overall_confidence": false,
+                  "sort_order": 1,
                   "created": "2020-05-08T12:05:55.142679-05:00",
                   "last_updated": "2020-05-08T12:05:55.142703-05:00"
                 },
@@ -207,6 +212,7 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00"
               },
@@ -243,6 +249,7 @@
                   "name": "overall",
                   "description": "<p>description</p>",
                   "is_overall_confidence": true,
+                  "sort_order": 2,
                   "created": "2020-05-08T12:06:37.006374-05:00",
                   "last_updated": "2020-05-08T12:06:37.006406-05:00"
                 },
@@ -254,6 +261,7 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
                 "last_updated": "2020-05-08T12:06:55.509353-05:00"
               },
@@ -312,6 +320,7 @@
                   "name": "domain 1",
                   "description": "<p>description</p>",
                   "is_overall_confidence": false,
+                  "sort_order": 1,
                   "created": "2020-05-08T12:05:55.142679-05:00",
                   "last_updated": "2020-05-08T12:05:55.142703-05:00"
                 },
@@ -323,6 +332,7 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00"
               },
@@ -359,6 +369,7 @@
                   "name": "domain 1",
                   "description": "<p>description</p>",
                   "is_overall_confidence": false,
+                  "sort_order": 1,
                   "created": "2020-05-08T12:05:55.142679-05:00",
                   "last_updated": "2020-05-08T12:05:55.142703-05:00"
                 },
@@ -370,6 +381,7 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00"
               },
@@ -423,6 +435,7 @@
                   "name": "overall",
                   "description": "<p>description</p>",
                   "is_overall_confidence": true,
+                  "sort_order": 2,
                   "created": "2020-05-08T12:06:37.006374-05:00",
                   "last_updated": "2020-05-08T12:06:37.006406-05:00"
                 },
@@ -434,6 +447,7 @@
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
+                "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
                 "last_updated": "2020-05-08T12:06:55.509353-05:00"
               },
