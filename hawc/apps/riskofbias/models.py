@@ -531,6 +531,8 @@ class RiskOfBiasScore(models.Model):
         35: "-",
         36: "+",
         37: "++",
+        40: "Y",
+        41: "N",
     }
 
     SCORE_SHADES = {
@@ -551,6 +553,8 @@ class RiskOfBiasScore(models.Model):
         35: "#FFCC00",
         36: "#6FFF00",
         37: "#00CC00",
+        40: "#00CC00",
+        41: "#CC3333",
     }
 
     BIAS_DIRECTION_UNKNOWN = 0
