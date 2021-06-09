@@ -56,15 +56,32 @@ class ARoBDetail(BaseList):
         return context
 
 
-class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
+class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
+    """
+    Displays a form for sorting and editing domain and metric.
+    """
+
     crud = "Update"
 
+    model = models.Assessment
+    template_name = "riskofbias/arob_edit.html"
+
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+        return get_object_or_404(self.model, pk=kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Update"))
+        context["config"] = json.dumps(
+            {
+                "assessment_id": self.assessment.id,
+                "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+                "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
+                "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
+                "csrf": get_token(self.request),
+            }
+        )
         return context
 
 

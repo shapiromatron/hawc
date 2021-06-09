@@ -15,6 +15,8 @@ ANYONE_CAN_CREATE_ASSESSMENTS = True
 
 DATABASES["default"]["NAME"] = "hawc-fixture-test"
 
+IS_TESTING = True
+
 PRIVATE_DATA_ROOT = PROJECT_ROOT / "tests/data/private-data"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)

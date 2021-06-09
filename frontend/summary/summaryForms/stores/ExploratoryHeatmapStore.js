@@ -1,4 +1,4 @@
-import {observable, action, computed} from "mobx";
+import {observable, action, computed, toJS} from "mobx";
 
 import _ from "lodash";
 import h from "shared/utils/helpers";
@@ -12,7 +12,7 @@ import {
 } from "shared/components/EditableRowData";
 
 let createDefaultAxisItem = function() {
-        return {column: NULL_VALUE, wrap_text: 0, delimiter: ""};
+        return {column: NULL_VALUE, items: null, wrap_text: 0, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
         return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
@@ -120,6 +120,13 @@ class ExploratoryHeatmapStore {
 
     @action.bound changeArraySettings(arrayKey, index, key, value) {
         this.settings[arrayKey][index][key] = value;
+    }
+
+    @action.bound changeOrderArrayItems(arrayKey, arrayIndex, oldIndex, newIndex) {
+        const items = _.cloneDeep(toJS(this.settings[arrayKey][arrayIndex].items)),
+            item = items.splice(oldIndex, 1)[0];
+        items.splice(newIndex, 0, item);
+        this.settings[arrayKey][arrayIndex].items = items;
     }
 
     @action.bound changeDatasetUrl(value) {

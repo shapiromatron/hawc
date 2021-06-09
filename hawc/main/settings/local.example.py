@@ -17,6 +17,9 @@ DATABASES = {
 # disable cache (comment to use cache; uncomment to disable)
 CACHES["default"]["BACKEND"] = "django.core.cache.backends.dummy.DummyCache"
 
+# to show lots of debugging:
+# LOGGING["loggers"]["hawc"]["level"] = "DEBUG"
+
 # view all database queries in console
 # LOGGING["loggers"]["django.db.backends"] = {"handlers": ["console"], "level": "DEBUG"}
 

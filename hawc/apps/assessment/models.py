@@ -407,8 +407,8 @@ class Assessment(models.Model):
             # django-redis can delete by key pattern
             cache.delete_pattern(f"assessment-{self.id}-*")
         except AttributeError:
-            if settings.DEBUG:
-                # no big-deal in debug, just wipe the whole cache
+            if settings.DEBUG or settings.IS_TESTING:
+                # if debug/testing, wipe whole cache
                 cache.clear()
             else:
                 # in prod, throw exception

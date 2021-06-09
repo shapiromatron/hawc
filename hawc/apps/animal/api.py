@@ -271,6 +271,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
         # update endpoint terms (all other validation done in manager)
         updated_endpoints = self.model.objects.update_terms(request.data, assessment)
         serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
+        assessment.bust_cache()
         return Response(serializer.data)
 
 

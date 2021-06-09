@@ -35,7 +35,6 @@ class TagEditorMain extends Component {
         Sortable.create(componentBackingInstance, {
             draggable: ".draggable",
             ghostClass: "draggable-ghost",
-            chosenClass: "draggable-chosen",
             animation: 200,
             onUpdate: e => store.moveTag(parseInt(e.item.dataset.id), e.oldIndex, e.newIndex),
         });

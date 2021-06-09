@@ -1,4 +1,5 @@
 import re
+from typing import Sequence
 from urllib import parse
 
 from django.core.exceptions import ValidationError
@@ -98,3 +99,24 @@ class CustomURLValidator(URLValidator):
                 raise ValidationError(self.message, code=self.code)
         else:
             super().__call__(value)
+
+
+def validate_exact_ids(expected_ids: Sequence[int], ids: Sequence[int], name: str):
+    """
+    Valid that each and every ID is included in the sequence, with no additional IDs.
+
+    Args:
+        expected_ids (Sequence[int]): A sequence of expected IDs
+        ids (Sequence[int]): A sequence of actual ids
+        name (str): The name for describing validation errors
+    """
+    missing = set(expected_ids) - set(ids)
+    extra = set(ids) - set(expected_ids)
+
+    if missing:
+        ids = ", ".join([str(v) for v in sorted(missing)])
+        raise ValidationError(f"Missing ID(s) in {name}: {ids}")
+
+    if extra:
+        ids = ", ".join([str(v) for v in sorted(extra)])
+        raise ValidationError(f"Extra ID(s) in {name}: {ids}")

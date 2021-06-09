@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
@@ -61,26 +62,44 @@ const getSvgObject = function(svgElement) {
 
 class ToolbarStore {
     @observable currentParentSize = null;
+    @observable isFullSize = false;
 
     constructor(svg, parentContainer, nativeSize) {
         this.svg = svg;
         this.d3svg = d3.select(svg);
         this.$parentContainer = $(parentContainer);
-        this.nativeSize = nativeSize;
-        this.nativeAspectRatio = nativeSize.height / nativeSize.width;
-        this.updateCurrentParentSize();
+        this.setParentSize();
+        this.showZoomButton = _.isObject(nativeSize);
+        this.nativeSize = _.isObject(nativeSize) ? nativeSize : this.currentParentSize;
+        this.nativeAspectRatio = this.nativeSize.height / this.nativeSize.width;
+        this.isFullSize = !this.showZoomButton;
     }
 
-    @action.bound updateCurrentParentSize() {
+    @action.bound setParentSize() {
         this.currentParentSize = getDomSize($(this.parentContainer));
     }
 
-    @action.bound isFullSize() {
-        let currentSize = getDomSize(this.$parentContainer);
-        return (
-            currentSize.width >= this.nativeSize.width &&
-            currentSize.height >= this.nativeSize.height
-        );
+    @action.bound handleResizeClick() {
+        this.isFullSize = !this.isFullSize;
+        this.scaleSize();
+    }
+
+    @action.bound handlePageResize() {
+        this.setParentSize();
+        this.scaleSize();
+    }
+
+    @action.bound scaleSize() {
+        this.$parentContainer
+            .attr("width", this.currentParentSize.width)
+            .attr("height", this.currentParentSize.height);
+        if (this.isFullSize) {
+            this.d3svg.attr("width", this.nativeSize.width).attr("height", this.nativeSize.height);
+        } else {
+            this.d3svg
+                .attr("width", this.currentParentSize.width)
+                .attr("height", this.currentParentSize.height);
+        }
     }
 }
 
@@ -89,93 +108,63 @@ class VisualToolbar extends Component {
     constructor(props) {
         super(props);
         this.store = new ToolbarStore(props.svg, props.parentContainer, props.nativeSize);
-    }
-    componentDidMount() {
-        const {
-                $parentContainer,
-                d3svg,
-                nativeAspectRatio,
-                isFullSize,
-                updateCurrentParentSize,
-            } = this.store,
-            onPageResize = () => {
-                const targetWidth = $parentContainer.width(),
-                    targetHeight = targetWidth * nativeAspectRatio;
-
-                $parentContainer.attr("width", targetWidth).attr("height", targetHeight);
-                d3svg.attr("width", targetWidth).attr("height", targetHeight);
-                if (!isFullSize()) {
-                    updateCurrentParentSize();
-                }
-            };
 
         let resizeTimer;
-        $(window).on("resize", () => {
+        this.handleResizeEvent = () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(onPageResize, 1000);
-        });
+            resizeTimer = setTimeout(this.store.handlePageResize, 1000);
+        };
     }
-    renderDownload() {
-        const {svg} = this.props;
-        return (
-            <div className="btn-group dropup" title="Download image">
-                <button className="btn btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i className="fa fa-download"></i>
-                </button>
-                <div className="dropdown-menu float-right dropdown-menu-right">
-                    <a className="dropdown-item" href="#" onClick={() => downloadImage(svg, "svg")}>
-                        <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download SVG
-                    </a>
-                    <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() => downloadImage(svg, "pptx")}>
-                        <i className="fa fa-fw fa-file-powerpoint-o"></i>&nbsp;Download PPTX
-                    </a>
-                    <a className="dropdown-item" href="#" onClick={() => downloadImage(svg, "pdf")}>
-                        <i className="fa fa-fw fa-file-pdf-o"></i>&nbsp;Download PDF
-                    </a>
-                    <a className="dropdown-item" href="#" onClick={() => downloadImage(svg, "png")}>
-                        <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download PNG
-                    </a>
-                </div>
-            </div>
-        );
+
+    componentDidMount() {
+        window.addEventListener("resize", this.handleResizeEvent);
     }
-    renderZoom() {
-        const {$parentContainer, d3svg, nativeSize, currentParentSize, isFullSize} = this.store,
-            makeFullSize = () => {
-                $parentContainer
-                    .attr("width", $parentContainer.width())
-                    .attr("height", $parentContainer.height());
-                d3svg.attr("width", nativeSize.width).attr("height", nativeSize.height);
-            },
-            setOriginalSize = () => {
-                $parentContainer
-                    .attr("width", currentParentSize.width)
-                    .attr("height", currentParentSize.height);
-                d3svg
-                    .attr("width", currentParentSize.width)
-                    .attr("height", currentParentSize.height);
-            },
-            handleClick = () => {
-                if (isFullSize()) {
-                    setOriginalSize();
-                } else {
-                    makeFullSize();
-                }
-            };
-        return (
-            <button className="btn btn-sm" title="Zoom in/out" onClick={handleClick}>
-                <i className={isFullSize() ? "fa fa-search-minus" : "fa fa-search-plus"}></i>
-            </button>
-        );
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.handleResizeEvent);
     }
+
     render() {
+        const {showZoomButton, isFullSize, handleResizeClick} = this.store,
+            {svg} = this.props;
         return (
             <div className="float-right">
-                {this.renderZoom()}
-                {this.renderDownload()}
+                {showZoomButton ? (
+                    <button className="btn btn-sm" title="Zoom in/out" onClick={handleResizeClick}>
+                        <i className={isFullSize ? "fa fa-search-minus" : "fa fa-search-plus"}></i>
+                    </button>
+                ) : null}
+                <div className="btn-group dropup" title="Download image">
+                    <button className="btn btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <i className="fa fa-download"></i>
+                    </button>
+                    <div className="dropdown-menu float-right dropdown-menu-right">
+                        <a
+                            className="dropdown-item"
+                            href="#"
+                            onClick={() => downloadImage(svg, "svg")}>
+                            <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download SVG
+                        </a>
+                        <a
+                            className="dropdown-item"
+                            href="#"
+                            onClick={() => downloadImage(svg, "pptx")}>
+                            <i className="fa fa-fw fa-file-powerpoint-o"></i>&nbsp;Download PPTX
+                        </a>
+                        <a
+                            className="dropdown-item"
+                            href="#"
+                            onClick={() => downloadImage(svg, "pdf")}>
+                            <i className="fa fa-fw fa-file-pdf-o"></i>&nbsp;Download PDF
+                        </a>
+                        <a
+                            className="dropdown-item"
+                            href="#"
+                            onClick={() => downloadImage(svg, "png")}>
+                            <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download PNG
+                        </a>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -187,7 +176,7 @@ VisualToolbar.propTypes = {
     nativeSize: PropTypes.shape({
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
-    }).isRequired,
+    }),
 };
 
 export default VisualToolbar;
