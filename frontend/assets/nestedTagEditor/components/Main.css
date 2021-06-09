@@ -21,11 +21,7 @@
     cursor: pointer;
 }
 .draggable-ghost {
-    opacity: 1 !important;
-    border-top: 2px solid orange;
-    border-bottom: 2px solid orange;
-}
-.draggable-chosen {
-    background-color: white;
-    opacity: 0.3;
+    outline: 0.5rem solid orange;
+    z-index: 999;
+    background-color: #C8EBFB;
 }

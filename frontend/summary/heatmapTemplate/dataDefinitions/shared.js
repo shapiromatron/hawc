@@ -8,7 +8,9 @@ const defineProps = function(id, label, column) {
         return {
             id: field.id,
             label: field.label,
-            settings: [{column: field.column, delimiter: opts.delimiter || "", wrap_text: 0}],
+            settings: [
+                {column: field.column, items: null, delimiter: opts.delimiter || "", wrap_text: 0},
+            ],
         };
     },
     defineMultiAxis = function(fields, id, label, opts) {
@@ -17,7 +19,12 @@ const defineProps = function(id, label, column) {
             id,
             label,
             settings: fields.map(field => {
-                return {column: field.column, delimiter: opts.delimiter || "", wrap_text: 0};
+                return {
+                    column: field.column,
+                    items: null,
+                    delimiter: opts.delimiter || "",
+                    wrap_text: 0,
+                };
             }),
         };
     },
