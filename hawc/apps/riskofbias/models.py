@@ -96,32 +96,27 @@ class RiskOfBiasDomain(models.Model):
             child.copy_across_assessments(cw)
 
 
+class RiskOfBiasResponses(models.IntegerChoices):
+    NONE = 0, "None"
+    OHAT = 1, "NTP/OHAT"
+    EPA = 2, "EPA"
+
+
+RESPONSES_VALUES = {
+    RiskOfBiasResponses.NONE: [0],
+    RiskOfBiasResponses.OHAT: [17, 16, 15, 12, 14, 10],
+    RiskOfBiasResponses.EPA: [27, 26, 25, 24, 37, 36, 35, 34, 22, 20],
+}
+
+RESPONSES_VALUES_DEFAULT = {
+    RiskOfBiasResponses.NONE: 0,
+    RiskOfBiasResponses.OHAT: 12,
+    RiskOfBiasResponses.EPA: 22,
+}
+
+
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
-
-    RESPONSES_OHAT = 0
-    RESPONSES_EPA = 1
-    RESPONSES_NONE = 2
-
-    RESPONSES_CHOICES = (
-        (RESPONSES_OHAT, "OHAT"),
-        (RESPONSES_EPA, "EPA"),
-        (RESPONSES_NONE, "No scores"),
-    )
-
-    RESPONSES_VALUES = {
-        RESPONSES_OHAT: [17, 16, 15, 12, 14, 10],
-        RESPONSES_EPA: [27, 26, 25, 24, 37, 36, 35, 34, 22, 20],
-        RESPONSES_NONE: [0],
-    }
-
-    def get_default_responses():
-        if settings.HAWC_FLAVOR == "PRIME":
-            return 0
-        elif settings.HAWC_FLAVOR == "EPA":
-            return 1
-        else:
-            raise ValueError("Unknown HAWC flavor")
 
     domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
     name = models.CharField(max_length=256)
@@ -154,9 +149,7 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
-    responses = models.PositiveSmallIntegerField(
-        choices=RESPONSES_CHOICES, default=get_default_responses
-    )
+    responses = models.PositiveSmallIntegerField(choices=RiskOfBiasResponses.choices)
     sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -181,7 +174,7 @@ class RiskOfBiasMetric(models.Model):
         return reverse("riskofbias:arob_detail", args=(self.domain.assessment_id,))
 
     def get_response_values(self):
-        return self.RESPONSES_VALUES[self.responses]
+        return RESPONSES_VALUES[self.responses]
 
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
@@ -491,15 +484,6 @@ class RiskOfBias(models.Model):
         return options
 
 
-def build_default_rob_score():
-    if settings.HAWC_FLAVOR == "PRIME":
-        return 12
-    elif settings.HAWC_FLAVOR == "EPA":
-        return 22
-    else:
-        raise ValueError("Unknown HAWC flavor")
-
-
 class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
 
@@ -521,6 +505,8 @@ class RiskOfBiasScore(models.Model):
         (35, "Low confidence"),
         (36, "Medium confidence"),
         (37, "High confidence"),
+        (40, "Yes"),
+        (41, "No"),
     )
 
     RISK_OF_BIAS_SCORE_CHOICES_MAP = {k: v for k, v in RISK_OF_BIAS_SCORE_CHOICES}
@@ -585,9 +571,7 @@ class RiskOfBiasScore(models.Model):
     metric = models.ForeignKey(RiskOfBiasMetric, on_delete=models.CASCADE, related_name="scores")
     is_default = models.BooleanField(default=True)
     label = models.CharField(max_length=128, blank=True)
-    score = models.PositiveSmallIntegerField(
-        choices=RISK_OF_BIAS_SCORE_CHOICES, default=build_default_rob_score
-    )
+    score = models.PositiveSmallIntegerField(choices=RISK_OF_BIAS_SCORE_CHOICES, default=0)
     bias_direction = models.PositiveSmallIntegerField(
         choices=BIAS_DIRECTION_CHOICES,
         default=BIAS_DIRECTION_UNKNOWN,
@@ -742,41 +726,8 @@ class RiskOfBiasScoreOverrideObject(models.Model):
         return message
 
 
-DEFAULT_QUESTIONS_OHAT = 1
-DEFAULT_QUESTIONS_EPA = 2
-
-RESPONSES_OHAT = 0
-RESPONSES_EPA = 1
-
-
 class RiskOfBiasAssessment(models.Model):
     objects = managers.RiskOfBiasAssessmentManager()
-
-    DEFAULT_QUESTIONS_CHOICES = (
-        (DEFAULT_QUESTIONS_OHAT, "OHAT"),
-        (DEFAULT_QUESTIONS_EPA, "EPA"),
-    )
-
-    def get_default_default_questions():
-        if settings.HAWC_FLAVOR == "PRIME":
-            return DEFAULT_QUESTIONS_OHAT
-        elif settings.HAWC_FLAVOR == "EPA":
-            return DEFAULT_QUESTIONS_EPA
-        else:
-            raise ValueError("Unknown HAWC flavor")
-
-    RESPONSES_CHOICES = (
-        (RESPONSES_OHAT, "OHAT"),
-        (RESPONSES_EPA, "EPA"),
-    )
-
-    def get_default_responses():
-        if settings.HAWC_FLAVOR == "PRIME":
-            return RESPONSES_OHAT
-        elif settings.HAWC_FLAVOR == "EPA":
-            return RESPONSES_EPA
-        else:
-            raise ValueError("Unknown HAWC flavor")
 
     assessment = models.OneToOneField(
         Assessment, on_delete=models.CASCADE, related_name="rob_settings"
@@ -785,18 +736,6 @@ class RiskOfBiasAssessment(models.Model):
     help_text = models.TextField(
         default="Instructions for reviewers completing assessments",
         help_text="Detailed instructions for completing risk of bias assessments.",
-    )
-    default_questions = models.PositiveSmallIntegerField(
-        choices=DEFAULT_QUESTIONS_CHOICES,
-        default=get_default_default_questions,
-        verbose_name="Default questions",
-        help_text="If no questions exist, which default questions should be used? If questions already exist, changing this will have no impact.",
-    )
-    responses = models.PositiveSmallIntegerField(
-        choices=RESPONSES_CHOICES,
-        default=get_default_responses,
-        verbose_name="Question responses",
-        help_text="Why responses should be used to answering questions:",
     )
 
     COPY_NAME = "riskofbiasassessments"
@@ -813,13 +752,8 @@ class RiskOfBiasAssessment(models.Model):
         )
 
     def get_rob_response_values(self):
-        # get valid RiskOfBiasScore response options given responses selection
-        if self.responses == RESPONSES_OHAT:
-            return [17, 16, 15, 12, 14, 10]
-        elif self.responses == RESPONSES_EPA:
-            return [27, 26, 25, 24, 37, 36, 35, 34, 22, 20]
-        else:
-            raise ValueError(f"Unknown responses: {self.responses}")
+        # TODO - remove this; no longer relevent
+        return [0]
 
     def copy_across_assessments(self, cw):
         old_id = self.id

@@ -2,8 +2,6 @@
 
 from django.db import migrations, models
 
-import hawc.apps.riskofbias.models
-
 
 def update_overall_confidence(apps, schema_editor):
     RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
@@ -66,8 +64,10 @@ class Migration(migrations.Migration):
                     (35, "Low confidence"),
                     (36, "Medium confidence"),
                     (37, "High confidence"),
+                    (40, "Yes"),
+                    (41, "No"),
                 ],
-                default=hawc.apps.riskofbias.models.build_default_rob_score,
+                default=0,
             ),
         ),
         migrations.RunPython(update_overall_confidence, reverse_code=rollback_changes),
