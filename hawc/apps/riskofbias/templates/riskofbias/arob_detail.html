@@ -1,68 +1,40 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h1 class="d-inline-block">{{assessment.get_rob_name_display}} requirements</h1>
-  {% if obj_perms.edit %}
+  <h2 class="d-inline-block">{{assessment.get_rob_name_display}} requirements</h1>
+  {% if obj_perms.edit and crud == "Read" %}
     <div class="btn-group float-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
       <div class="dropdown-menu dropdown-menu-right">
-        {% if crud == "Read" %}
-          {% if obj_perms.edit_assessment %}
-          <span class="dropdown-header">{{assessment.get_rob_name_display}} settings</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_sort' assessment.pk %}">Sort requirements</a>
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
-          <div class="dropdown-divider"></div>
-          {% endif %}
+        {% if obj_perms.edit_assessment %}
+        <span class="dropdown-header">{{assessment.get_rob_name_display}} settings</span>
+        <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
+        <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
+        <div class="dropdown-divider"></div>
+        {% endif %}
 
-          <span class="dropdown-header">Study assignment</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a>
+        <span class="dropdown-header">Study assignment</span>
+        <a class="dropdown-item" href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">View assignments</a>
 
-          {% if obj_perms.edit_assessment %}
-          <div class="dropdown-divider"></div>
-          <span class="dropdown-header">Data cleanup</span>
-          <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean {{assessment.get_rob_name_display|lower}} responses</a>
-          {% endif %}
-        {% elif crud == "Update" %}
-          <span class="dropdown-header">{{assessment.get_rob_name_display}} changes</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.pk %}">Update instructions</a>
-          <div class="dropdown-divider"></div>
-          <span class="dropdown-header">Domain changes</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
+        {% if obj_perms.edit_assessment %}
+        <div class="dropdown-divider"></div>
+        <span class="dropdown-header">Data cleanup</span>
+        <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean {{assessment.get_rob_name_display|lower}} responses</a>
         {% endif %}
       </div>
-  </div>
+    </div>
   {% endif %}
 
   {{assessment.rob_settings.help_text|safe}}
 
   {% for object in object_list %}
-    <h2 class="d-inline-block">{{object}} Domain</h2>
-    {% if crud == "Update" %}
-      <div class="dropdown btn-group float-right">
-        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-          <span class="dropdown-header">{{object}} domain changes</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:robd_update' object.pk %}">Update domain</a>
-          <a class="dropdown-item" href="{% url 'riskofbias:robd_delete' object.pk %}">Delete domain</a>
-
-          <div class="dropdown-divider"></div>
-          <span class="dropdown-header">{{object}} metric changes</span>
-          <a class="dropdown-item" href="{% url 'riskofbias:robm_create' object.pk %}">New metric</a>
-        </div>
-      </div>
-    {% endif %}
+    <h3 class="d-inline-block">{{object}} Domain</h3>
     <p class="form-text text-muted">{{object.description|safe}}</p>
     <table class="table table-compressed">
       <colgroup>
           <col width="5%"></col>
           <col width="35%"></col>
-        {% if crud == "Read" %}
           <col width="60%"></col>
-        {% else %}
-          <col width="40%"></col>
-          <col width="20%"></col>
-        {% endif %}
       </colgroup>
 
       <thead>
@@ -70,9 +42,6 @@
           <th>ID</th>
           <th>Metric</th>
           <th>Description</th>
-          {% if crud == "Update" %}
-            <th>Modify</th>
-          {% endif %}
         </tr>
       </thead>
 
@@ -91,10 +60,6 @@
           <td>
             {{metric.description|safe}}<br>
           </td>
-          {% if crud == "Update" %}
-            <td><a class="btn btn-info" href="{% url 'riskofbias:robm_update' metric.pk %}">Edit</a>
-                <a class="btn btn-danger" href="{% url 'riskofbias:robm_delete' metric.pk %}">Delete</a></td>
-          {% endif %}
         </tr>
       {% endfor %}
     </table>

@@ -13,6 +13,8 @@ from ..common.forms import BaseFormHelper, addPopupLink, build_form_actions
 from ..common.helper import read_excel
 from . import constants, models
 
+logger = logging.getLogger(__name__)
+
 
 class LiteratureAssessmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -82,9 +84,7 @@ class SearchForm(forms.ModelForm):
                     the search will not be executed, but can instead by run on
                     the next page. The search should be well-tested before
                     attempting to import into HAWC.""",
-                "cancel_url": reverse_lazy(
-                    "lit:overview", kwargs={"pk": self.instance.assessment.pk}
-                ),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -120,9 +120,7 @@ class ImportForm(SearchForm):
                     specifying a comma-separated list of primary keys from the
                     database. This is an import or known references, not a
                     search based on a query.""",
-                "cancel_url": reverse_lazy(
-                    "lit:overview", kwargs={"pk": self.instance.assessment.pk}
-                ),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -211,9 +209,7 @@ class RisImportForm(SearchForm):
                     universal data-format which is used by reference management
                     software solutions such as EndNote or Reference Manager.
                 """,
-                "cancel_url": reverse_lazy(
-                    "lit:overview", kwargs={"pk": self.instance.assessment.pk}
-                ),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -435,10 +431,10 @@ class ReferenceForm(forms.ModelForm):
         pubmed_id = self.cleaned_data["pubmed_id"]
         if self.fields["pubmed_id"].initial != pubmed_id:
             if pubmed_id is None:
-                logging.info(f"Removing PMID for reference {self.instance.id}")
+                logger.info(f"Removing PMID for reference {self.instance.id}")
                 self._new_pubmed_identifier = -1
             else:
-                logging.info(f"Setting PMID {pubmed_id} for reference {self.instance.id}")
+                logger.info(f"Setting PMID {pubmed_id} for reference {self.instance.id}")
                 self._new_pubmed_identifier = check_external_id(
                     self.instance.assessment, constants.PUBMED, pubmed_id
                 )
@@ -452,10 +448,10 @@ class ReferenceForm(forms.ModelForm):
         hero_id = self.cleaned_data["hero_id"]
         if self.fields["hero_id"].initial != hero_id:
             if hero_id is None:
-                logging.info(f"Removing HEROID for reference {self.instance.id}")
+                logger.info(f"Removing HEROID for reference {self.instance.id}")
                 self._new_hero_identifier = -1
             else:
-                logging.info(f"Setting HEROID {hero_id} for reference {self.instance.id}")
+                logger.info(f"Setting HEROID {hero_id} for reference {self.instance.id}")
                 self._new_hero_identifier = check_external_id(
                     self.instance.assessment, constants.HERO, hero_id
                 )
@@ -550,7 +546,7 @@ class ReferenceExcelUploadForm(forms.Form):
             assert df["Full text URL"].dtype == np.object0
             self.cleaned_data["df"] = df
         except Exception as e:
-            logging.warning(e)
+            logger.warning(e)
             raise forms.ValidationError(
                 "Invalid Excel format. The first worksheet in the workbook "
                 'must contain at least two columns- "HAWC ID", and '

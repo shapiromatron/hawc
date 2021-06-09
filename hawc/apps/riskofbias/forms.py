@@ -62,6 +62,7 @@ class RoBDomainForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} domain."
 
         helper = BaseFormHelper(self, **inputs)
+        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
         helper.add_row("name", 2, "col-md-6")
         return helper
 

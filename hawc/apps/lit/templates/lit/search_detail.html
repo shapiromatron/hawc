@@ -28,7 +28,10 @@
       <tr><th>Search type</th><td>{{object.get_search_type_display}}</td></tr>
       <tr><th>Search database</th><td>{{object.get_source_display}}</td></tr>
       {% if object.search_string %}
-      <tr><th>{{object.get_search_type_display}} text</th><td>{{object.search_string|safe}}</td></tr>
+      <tr>
+        <th>{{object.get_search_type_display}} text</th>
+        <td style="overflow-wrap: anywhere;">{{object.search_string|safe}}</td>
+      </tr>
       {% endif %}
       {% if obj_perms.edit and object.import_file %}
       <tr>
