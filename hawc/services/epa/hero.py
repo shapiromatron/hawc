@@ -6,6 +6,8 @@ import requests
 
 from ..utils.authors import get_author_short_text, normalize_authors
 
+logger = logging.getLogger(__name__)
+
 
 def _parse_pseudo_json(d: Dict, field: str) -> Any:
     # built-in json parser doesn't identify nulls in HERO returns
@@ -75,9 +77,9 @@ class HEROFetch:
                     for ref in data["results"]:
                         self.content.append(parse_article(ref))
                 else:
-                    logging.info(f"HERO request failure: {url}")
+                    logger.info(f"HERO request failure: {url}")
             except requests.exceptions.Timeout:
-                logging.info(f"HERO request timeout: {url}")
+                logger.info(f"HERO request timeout: {url}")
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 

@@ -7,6 +7,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -17,6 +18,8 @@ from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import managers
+
+logger = logging.getLogger(__name__)
 
 
 class RiskOfBiasDomain(models.Model):
@@ -32,6 +35,7 @@ class RiskOfBiasDomain(models.Model):
         verbose_name="Overall confidence?",
         help_text="Is this domain for overall confidence?",
     )
+    sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -40,7 +44,11 @@ class RiskOfBiasDomain(models.Model):
 
     class Meta:
         unique_together = ("assessment", "name")
-        ordering = ("pk",)
+        ordering = ("assessment", "sort_order")
+
+    def clean(self):
+        if self.sort_order is None:
+            self.sort_order = len(self.assessment.rob_domains.all()) + 1
 
     def __str__(self):
         return self.name
@@ -96,6 +104,7 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
+    sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -103,7 +112,11 @@ class RiskOfBiasMetric(models.Model):
     BREADCRUMB_PARENT = "domain"
 
     class Meta:
-        ordering = ("domain", "id")
+        ordering = ("domain", "sort_order")
+
+    def clean(self):
+        if self.sort_order is None:
+            self.sort_order = len(self.domain.metrics.all()) + 1
 
     def __str__(self):
         return self.name
@@ -182,12 +195,12 @@ class RiskOfBias(models.Model):
         # add any scores that are required and not currently created
         for metric in metrics:
             if not (metric.scores.all() & scores):
-                logging.info(f"Creating score: {self.study}->{metric}")
+                logger.info(f"Creating score: {self.study}->{metric}")
                 RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
         # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
-                logging.info(f"Deleting score: {self.study}->{score.metric}")
+                logger.info(f"Deleting score: {self.study}->{score.metric}")
                 score.delete()
 
     def build_scores(self, assessment, study):

@@ -38,6 +38,8 @@ from ..common.views import (
 from ..materialized.models import refresh_all_mvs
 from . import forms, models, serializers, tasks
 
+logger = logging.getLogger(__name__)
+
 
 def percentage(numerator, denominator):
     # Checking for denominator counts that are zero when dividing
@@ -185,7 +187,7 @@ class About(TemplateView):
             )
             cache_duration = 60 * 60 * 24  # one day
             cache.set(key, counts, cache_duration)  # cache for one day
-            logging.info("Setting about-page cache")
+            logger.info("Setting about-page cache")
         return counts
 
     def get_rob_name(self):

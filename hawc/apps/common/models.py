@@ -22,6 +22,7 @@ from .flavors import help_text as help_text_flavors
 from .helper import HAWCDjangoJSONEncoder
 
 _private_storage = FileSystemStorage(location=str(settings.PRIVATE_DATA_ROOT))
+logger = logging.getLogger(__name__)
 
 
 def get_private_data_storage() -> FileSystemStorage:
@@ -235,18 +236,18 @@ class AssessmentRootMixin:
         key = cls.cache_template_tagtree.format(assessment_id)
         tags = cache.get(key)
         if tags:
-            logging.info(f"cache used: {key}")
+            logger.info(f"cache used: {key}")
         else:
             root = cls.get_assessment_root(assessment_id)
             try:
                 tags = cls.dump_bulk(root)
             except KeyError as e:
-                logging.exception(e)
+                logger.error(e)
                 cls.clean_orphans()
                 tags = cls.dump_bulk(root)
-                logging.info("ReferenceFilterTag cleanup successful.")
+                logger.info("ReferenceFilterTag cleanup successful.")
             cache.set(key, tags)
-            logging.info(f"cache set: {key}")
+            logger.info(f"cache set: {key}")
 
         if json_encode:
             return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
@@ -260,17 +261,17 @@ class AssessmentRootMixin:
         remove all orphans from the tree.
         """
         name = cls.__name__
-        logging.warning(f"{name}: attempting to recover...")
+        logger.warning(f"{name}: attempting to recover...")
         problems = cls.find_problems()
         cls.fix_tree()
         problems = cls.find_problems()
-        logging.warning(f"{name}: problems identified: {problems}")
+        logger.warning(f"{name}: problems identified: {problems}")
         orphan_ids = problems[2]
         if len(orphan_ids) > 0:
             cursor = connection.cursor()
             for orphan_id in orphan_ids:
                 orphan = cls.objects.get(id=orphan_id)
-                logging.warning(
+                logger.warning(
                     f'{name} "{orphan.name}" {orphan.id} is orphaned [path={orphan.path}]. Deleting.'
                 )
                 cursor.execute(
@@ -284,12 +285,12 @@ class AssessmentRootMixin:
         key = cls.cache_template_taglist.format(assessment_id)
         descendants = cache.get(key)
         if descendants:
-            logging.info(f"cache used: {key}")
+            logger.info(f"cache used: {key}")
         else:
             root = cls.get_assessment_root(assessment_id)
             descendants = list(root.get_descendants().values_list("pk", flat=True))
             cache.set(key, descendants)
-            logging.info(f"cache set: {key}")
+            logger.info(f"cache set: {key}")
         return descendants
 
     @classmethod
@@ -298,7 +299,7 @@ class AssessmentRootMixin:
             cls.cache_template_taglist.format(assessment_id),
             cls.cache_template_tagtree.format(assessment_id),
         )
-        logging.info(f"removing cache: {', '.join(keys)}")
+        logger.info(f"removing cache: {', '.join(keys)}")
         cache.delete_many(keys)
 
     @classmethod

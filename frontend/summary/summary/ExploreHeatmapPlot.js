@@ -200,7 +200,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${x_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -365,7 +365,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${x_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -499,7 +499,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${y_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -870,20 +870,23 @@ class ExploreHeatmapPlot {
                 .appendTo(this.plot_div);
 
         // set correct aspect ratio to get proper height/widths set on parent elements
+        const currentWidth = Math.ceil(div.width()),
+            scaledHeight = currentWidth * (nativeSize.height / nativeSize.width),
+            currentHeight = Math.ceil(Math.min(nativeSize.height, scaledHeight)),
+            zoomable = nativeSize.width > currentWidth,
+            yOffset = settings.x_axis_bottom ? 0 : -this.y_axis_label_padding;
+
         d3.select(this.svg)
-            .attr("preserveAspectRatio", "xMidYMid meet")
-            .attr(
-                "viewBox",
-                `0 ${settings.x_axis_bottom ? 0 : -this.y_axis_label_padding} ${nativeSize.width} ${
-                    nativeSize.height
-                }`
-            );
+            .attr("width", currentWidth)
+            .attr("height", currentHeight)
+            .attr("preserveAspectRatio", "xMidYMin meet")
+            .attr("viewBox", `0 ${yOffset} ${nativeSize.width} ${nativeSize.height}`);
 
         ReactDOM.render(
             <VisualToolbar
                 svg={this.svg}
                 parentContainer={parentContainer}
-                nativeSize={nativeSize}
+                nativeSize={zoomable ? nativeSize : null}
             />,
             div[0]
         );

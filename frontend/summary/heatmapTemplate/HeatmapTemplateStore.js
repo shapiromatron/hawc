@@ -102,7 +102,7 @@ class HeatmapTemplateStore {
             filtersLogic: DATA_FILTER_LOGIC_AND,
             table_fields: this.selectedTableFields.map(d => d.settings),
             title: {text: this.selectedDashboard.label, x: 0, y: 0, rotate: 0},
-            x_axis_bottom: false,
+            x_axis_bottom: true,
             x_fields: this.selectedXAxis.settings,
             x_label: {text: this.selectedXAxis.label, x: 0, y: 0, rotate: 0},
             x_tick_rotate: 0,

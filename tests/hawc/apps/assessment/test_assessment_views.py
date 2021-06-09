@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 
 import pytest
+from django.core.cache import cache
 from django.test.client import Client
 from django.urls import reverse
 
@@ -25,20 +26,19 @@ class TestAssessmentClearCache:
         for client in ["pm@hawcproject.org", "team@hawcproject.org"]:
             c = Client()
             assert c.login(username=client, password="pw") is True
-
-            # this is "success" using a non-redis cache
-            with pytest.raises(NotImplementedError) as err:
-                c.get(url)
-            assert "Cannot wipe assessment cache using this cache backend" in str(err)
+            response = c.get(url)
+            assert response.status_code == 302
 
     @pytest.mark.django_db
     def test_functionality(self, db_keys):
+        cache.set("test", "exists")
+        assert cache.get("test") == "exists"
         url = Assessment.objects.get(id=db_keys.assessment_working).get_clear_cache_url()
         c = Client()
         assert c.login(username="pm@hawcproject.org", password="pw") is True
-        # this is success behavior in test environment w/o redis - TODO improve?
-        with pytest.raises(NotImplementedError):
-            c.get(url)
+        response = c.get(url)
+        assert response.status_code == 302
+        assert cache.get("test") is None
 
 
 @pytest.mark.django_db

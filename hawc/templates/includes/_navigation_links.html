@@ -1,6 +1,7 @@
 <li class="nav-item">
     <a class="nav-link" href="{{ CONTACT_US }}">Contact Us</a>
 </li>
+{% if not contact_only %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'about' %}">About</a>
 </li>
@@ -33,4 +34,5 @@
 <li class="nav-item">
     <a class="nav-link" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
 </li>
+{% endif %}
 {% endif %}

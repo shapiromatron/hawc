@@ -1,0 +1,29 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+    <div class="btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <span class="dropdown-header">{{assessment.get_rob_name_display}} changes</span>
+            <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.pk %}">Update instructions</a>
+            <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-header">Domain changes</span>
+            <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
+        </div>
+    </div>
+    <h1>Study evaluation requirements</h1>
+    {{assessment.rob_settings.help_text|safe}}
+    <div id='robTable'></div>
+{% endblock %}
+
+{% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">{{config|safe}}</script>
+<script type="text/javascript">
+$(document).ready(function(){
+        window.app.riskofbiasStartup(function(riskofbias){
+            riskofbias.RobSortFormStartup(document.getElementById('robTable'));
+    });
+});
+</script>
+{% endblock extrajs %}
