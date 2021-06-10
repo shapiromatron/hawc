@@ -278,8 +278,8 @@ class HAWCUtils {
     static onSelectChangeShowDetail(selectEl, insertEl, insertItems) {
         /*
         Generic helper function to listen when a user changes the item in a select element, and if
-        an item is changed, then modify some content in a different location. Used for showing
-        making django template more interactive.
+        an item is changed, then modify some content in a different location. Used for making
+        django templates more interactive.
         */
         const $selectEl = $(selectEl),
             $insertEl = $(insertEl),
