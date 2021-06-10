@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import connection, models
 
+from ..riskofbias.constants import NA_SCORES, SCORE_CHOICES_MAP
 from . import managers, sql
 
 
@@ -131,7 +132,6 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
             header_map[metric.id] = text
 
         # return data
-        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
         metric_ids = list(header_map.keys())
         default_value = '{"sortValue": -1, "display": "N/A"}'
 
@@ -141,15 +141,10 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
                 if key in scores_map:
                     # convert values in our map to a str-based JSON
                     score = scores_map[key]["score_score"]
-                    content = json.dumps(
-                        {
-                            "sortValue": score,
-                            "display": RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES_MAP[score],
-                        }
-                    )
+                    content = json.dumps({"sortValue": score, "display": SCORE_CHOICES_MAP[score]})
 
                     # special case for N/A
-                    if score in RiskOfBiasScore.NA_SCORES:
+                    if score in NA_SCORES:
                         content = default_value
 
                     scores_map[key] = content

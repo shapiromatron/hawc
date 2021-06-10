@@ -6,6 +6,8 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
+from ..riskofbias.constants import SCORE_CHOICES_MAP, SCORE_SYMBOLS
+
 
 class MetricScore(NamedTuple):
     metric_id: int
@@ -131,10 +133,6 @@ class FinalRiskOfBiasScoreManager(models.Manager):
         endpoint_ids = qs.values_list("study__experiments__animal_groups__endpoints", flat=True)
         endpoint_scores = qs.endpoint_scores(endpoint_ids)
 
-        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
-        SCORE_CHOICES_MAP = RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES_MAP
-        SCORE_SYMBOLS = RiskOfBiasScore.SCORE_SYMBOLS
-
         rows = []
         for (endpoint_id, _), score in endpoint_scores.items():
             overall_evaluation = (
@@ -153,10 +151,6 @@ class FinalRiskOfBiasScoreManager(models.Manager):
 
         result_ids = qs.values_list("study__study_populations__outcomes__results", flat=True)
         result_scores = qs.result_scores(result_ids)
-
-        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
-        SCORE_CHOICES_MAP = RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES_MAP
-        SCORE_SYMBOLS = RiskOfBiasScore.SCORE_SYMBOLS
 
         rows = []
         for (result_id, _), score in result_scores.items():

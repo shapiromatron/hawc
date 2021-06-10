@@ -1,14 +1,21 @@
 from django.conf import settings
 from django.db import migrations, models
 
+from ..constants import RiskOfBiasResponses
+
 
 def set_default_responses(apps, schema_editor):
+    # update metric settings
     RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
     if settings.HAWC_FLAVOR == "PRIME":
-        RiskOfBiasMetric.objects.update(responses=1)
+        RiskOfBiasMetric.objects.update(responses=RiskOfBiasResponses.HIGH_LOW_BIAS)
     elif settings.HAWC_FLAVOR == "EPA":
-        RiskOfBiasMetric.objects.filter(domain__is_overall_confidence=False).update(responses=2)
-        RiskOfBiasMetric.objects.filter(domain__is_overall_confidence=True).update(responses=3)
+        RiskOfBiasMetric.objects.filter(domain__is_overall_confidence=False).update(
+            responses=RiskOfBiasResponses.GOOD_DEFICIENT
+        )
+        RiskOfBiasMetric.objects.filter(domain__is_overall_confidence=True).update(
+            responses=RiskOfBiasResponses.HIGH_LOW_CONFIDENCE
+        )
     else:
         raise ValueError("Unknown HAWC flavor")
 
@@ -26,7 +33,14 @@ class Migration(migrations.Migration):
             model_name="riskofbiasmetric",
             name="responses",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "None"), (1, "NTP/OHAT"), (2, "EPA")], default=999
+                choices=[
+                    (0, "None"),
+                    (1, "High/Low risk of bias"),
+                    (2, "Good/deficient"),
+                    (3, "High/low confidence"),
+                    (4, "Yes/No"),
+                ],
+                default=999,
             ),
             preserve_default=False,
         ),
