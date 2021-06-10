@@ -19,7 +19,6 @@ from treebeard.mp_tree import MP_Node
 
 from . import forms, validators
 from .flavors import help_text as help_text_flavors
-from .flavors.text import text_mapping
 from .helper import HAWCDjangoJSONEncoder
 
 _private_storage = FileSystemStorage(location=str(settings.PRIVATE_DATA_ROOT))
@@ -488,15 +487,6 @@ def apply_flavored_help_text(app_name: str):
         model = app_config.get_model(model_name)
         for field_name, help_text in help_texts.items():
             model._meta.get_field(field_name).help_text = help_text
-
-
-def get_flavored_text(key: str) -> str:
-    """
-    Get flavored text for cases where text should differ depending on environment. This doesn't
-    update the django models but is used in other situations where text is needed.
-    """
-    flavor = settings.HAWC_FLAVOR.lower()
-    return getattr(text_mapping[key], flavor)
 
 
 def get_model_copy_name(instance: models.Model) -> str:

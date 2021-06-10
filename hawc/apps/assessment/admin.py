@@ -9,6 +9,7 @@ from django.utils.html import format_html
 from reversion.admin import VersionAdmin
 
 from ..animal.models import Endpoint
+from ..common.admin import ReadOnlyAdmin
 from . import models
 
 
@@ -222,16 +223,17 @@ class JobAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Log)
-class LogAdmin(admin.ModelAdmin):
-    list_display = ("assessment", "message", "created", "last_updated")
+class LogAdmin(ReadOnlyAdmin):
+    list_display = ("id", "created", "message", "assessment", "user")
+    list_select_related = ("user", "assessment")
     search_fields = ("assessment__name", "message")
     actions = ("delete_gt_year",)
+    readonly_fields = ("created", "last_updated")
 
     def delete_gt_year(self, request, queryset):
         # delete where "last_updated" > 1 year old
         year_old = timezone.now() - timedelta(days=365)
         deleted, _ = queryset.filter(last_updated__lte=year_old).delete()
-        # send a message with number deleted
         self.message_user(request, f"{deleted} of {queryset.count()} selected logs deleted.")
 
     delete_gt_year.short_description = "Delete 1 year or older"
