@@ -1,8 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
-    <h1 id="animal-group-header" class="d-inline-block">{{object}}</h1>
     {% if obj_perms.edit %}
       <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -24,6 +22,7 @@
         </div>
       </div>
     {% endif %}
+    <h1 id="animal-group-header" class="d-inline-block">{{object}}</h1>
 
   {% if crud == "Read" %}
   <div id="endpointsDivParent" class="hidden">

@@ -12,7 +12,7 @@ from django.urls import reverse
 from ..assessment.lookups import DssToxIdLookup, EffectTagLookup, SpeciesLookup, StrainLookup
 from ..assessment.models import DoseUnits
 from ..common import selectable
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
+from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
 from ..study.lookups import AnimalStudyLookup
 from ..vocab.models import VocabularyNamespace
 from . import lookups, models
@@ -843,7 +843,7 @@ class EndpointFilterForm(forms.Form):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")

@@ -27,11 +27,16 @@ from ..study.models import Study
 from . import forms, models
 
 
-def get_breadcrumb_rob_setting(assessment) -> Breadcrumb:
-    return Breadcrumb(
-        name=f"{assessment.get_rob_name_display()} requirements",
-        url=reverse("riskofbias:arob_detail", args=(assessment.id,)),
-    )
+def get_breadcrumb_rob_setting(assessment, update: bool = False) -> Breadcrumb:
+    if update:
+        return Breadcrumb(
+            name=f"Update", url=reverse("riskofbias:arob_update", args=(assessment.id,)),
+        )
+    else:
+        return Breadcrumb(
+            name=f"{assessment.get_rob_name_display()} requirements",
+            url=reverse("riskofbias:arob_detail", args=(assessment.id,)),
+        )
 
 
 def get_breadcrumb_rob_reviews(assessment) -> Breadcrumb:
@@ -124,7 +129,11 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
             self.request.user, self.assessment
         )
         context["breadcrumbs"].extend(
-            [get_breadcrumb_rob_setting(self.assessment), Breadcrumb(name="Copy")]
+            [
+                get_breadcrumb_rob_setting(self.assessment),
+                get_breadcrumb_rob_setting(self.assessment, update=True),
+                Breadcrumb(name="Copy"),
+            ]
         )
         return context
 

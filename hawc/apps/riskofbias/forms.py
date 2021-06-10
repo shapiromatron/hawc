@@ -1,5 +1,6 @@
 from crispy_forms import layout as cfl
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
@@ -278,12 +279,13 @@ class RiskOfBiasCopyForm(forms.Form):
     @property
     def helper(self):
         rob_name = self.assessment.get_rob_name_display().lower()
-        inputs = {
-            "legend_text": f"Copy {rob_name} approach from another assessment",  # noqa
-            "help_text": f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
-            "cancel_url": reverse("riskofbias:arob_update", args=(self.assessment.id,)),
-        }
-        helper = BaseFormHelper(self, **inputs)
+        helper = BaseFormHelper(
+            self,
+            legend_text=f"Copy {rob_name} approach from another assessment",  # noqa
+            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
+            cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
+            submit_text="Copy from assessment",
+        )
         helper.layout.insert(3, cfl.Div(css_id="approach"))
         helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
         return helper
@@ -301,18 +303,19 @@ class RiskOfBiasLoadApproachForm(forms.Form):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
+        if settings.HAWC_FLAVOR == "EPA":
+            self.fields["rob_type"].initial = RobApproach.EPA_IRIS
 
     @property
     def helper(self):
         rob_name = self.assessment.get_rob_name_display().lower()
-        inputs = {
-            "legend_text": f"Load a predefined {rob_name} approach",
-            "help_text": f"Select a standardized and predefined approach to use in this assessment.",
-            "cancel_url": reverse("riskofbias:arob_update", args=(self.assessment.id,)),
-        }
-        helper = BaseFormHelper(self, **inputs)
-        helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
-        return helper
+        return BaseFormHelper(
+            self,
+            legend_text=f"Load a predefined {rob_name} approach",
+            help_text=f"Select a standardized and predefined approach to use in this assessment.",
+            cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
+            submit_text="Load approach",
+        )
 
     def evaluate(self):
         rob_type = RobApproach(self.cleaned_data["rob_type"])

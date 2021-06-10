@@ -12,8 +12,8 @@ from ..models import RiskOfBias, RiskOfBiasAssessment, RiskOfBiasDomain, RiskOfB
 
 
 class RobApproach(IntegerChoices):
-    NTP_OHAT = 1, "NTP OHAT"
-    EPA_IRIS = 2, "USEPA IRIS"
+    NTP_OHAT = 1, "US NTP OHAT"
+    EPA_IRIS = 2, "US EPA IRIS"
 
     def load_fixture_data(self) -> Dict[str, Any]:
         """Return fixture data as generated from data files."""
