@@ -8,7 +8,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils.html import strip_tags
 from reversion import revisions as reversion
@@ -79,6 +79,7 @@ class RiskOfBiasMetric(models.Model):
     description = models.TextField(
         blank=True, help_text="HTML text describing scoring of this field."
     )
+    responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses.choices)
     required_animal = models.BooleanField(
         default=True,
         verbose_name="Required for bioassay?",
@@ -104,7 +105,6 @@ class RiskOfBiasMetric(models.Model):
         verbose_name="Use the short name?",
         help_text="Use the short name in visualizations?",
     )
-    responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses.choices)
     sort_order = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -130,6 +130,13 @@ class RiskOfBiasMetric(models.Model):
 
     def get_response_values(self):
         return constants.RESPONSES_VALUES[self.responses]
+
+    def build_score(self, riskofbias):
+        return RiskOfBiasScore(
+            riskofbias=riskofbias,
+            metric=self,
+            score=constants.RESPONSES_VALUES_DEFAULT[self.responses],
+        )
 
     def copy_across_assessments(self, cw):
         old_id = self.id
@@ -184,6 +191,7 @@ class RiskOfBias(models.Model):
         else:
             return robs
 
+    @transaction.atomic
     def update_scores(self, assessment):
         """Sync RiskOfBiasScore for this study based on assessment requirements.
 
@@ -196,11 +204,16 @@ class RiskOfBias(models.Model):
             assessment, self.study
         ).prefetch_related("scores")
         scores = self.scores.all()
+
         # add any scores that are required and not currently created
+        created = []
         for metric in metrics:
             if not (metric.scores.all() & scores):
                 logger.info(f"Creating score: {self.study}->{metric}")
-                RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
+                created.append(metric.build_score(riskofbias=self))
+        if created:
+            RiskOfBiasScore.objects.bulk_create(created)
+
         # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
@@ -209,7 +222,7 @@ class RiskOfBias(models.Model):
 
     def build_scores(self, assessment, study):
         scores = [
-            RiskOfBiasScore(riskofbias=self, metric=metric)
+            metric.build_score(riskofbias=self)
             for metric in RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
         ]
         RiskOfBiasScore.objects.bulk_create(scores)
@@ -365,9 +378,8 @@ class RiskOfBiasScore(models.Model):
 
     def clean(self):
         if self.score not in self.metric.get_response_values():
-            raise ValidationError(
-                f"'{self.get_score_display()}' is not a valid score for this metric."
-            )
+            err = f"'{self.get_score_display()}' is not a valid score for this metric."
+            raise ValidationError(err)
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -534,10 +546,6 @@ class RiskOfBiasAssessment(models.Model):
                 <p>The following questions are required for this assessment:</p>"""
             ),
         )
-
-    def get_rob_response_values(self):
-        # TODO - remove this; no longer relevent
-        return [0]
 
     def copy_across_assessments(self, cw):
         old_id = self.id

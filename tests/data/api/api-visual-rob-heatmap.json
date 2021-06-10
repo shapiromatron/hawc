@@ -89,12 +89,12 @@
                 "name": "metric 1",
                 "short_name": "metric 1 short",
                 "description": "<p>description</p>",
+                "responses": 1,
                 "required_animal": true,
                 "required_epi": true,
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
-                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00",
@@ -147,12 +147,12 @@
                 "name": "overall",
                 "short_name": "overall short",
                 "description": "<p>overall description</p>",
+                "responses": 1,
                 "required_animal": true,
                 "required_epi": true,
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
-                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
                 "last_updated": "2020-05-08T12:06:55.509353-05:00",
@@ -178,14 +178,6 @@
                 "bioassay"
               ]
             }
-          ],
-          "rob_response_values": [
-            17,
-            16,
-            15,
-            12,
-            14,
-            10
           ]
         },
         {
@@ -227,12 +219,12 @@
                 "name": "metric 1",
                 "short_name": "metric 1 short",
                 "description": "<p>description</p>",
+                "responses": 1,
                 "required_animal": true,
                 "required_epi": true,
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
-                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00",
@@ -285,12 +277,12 @@
                 "name": "overall",
                 "short_name": "overall short",
                 "description": "<p>overall description</p>",
+                "responses": 1,
                 "required_animal": true,
                 "required_epi": true,
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
-                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
                 "last_updated": "2020-05-08T12:06:55.509353-05:00",
@@ -316,14 +308,6 @@
                 "bioassay"
               ]
             }
-          ],
-          "rob_response_values": [
-            17,
-            16,
-            15,
-            12,
-            14,
-            10
           ]
         },
         {
@@ -365,12 +349,12 @@
                 "name": "metric 1",
                 "short_name": "metric 1 short",
                 "description": "<p>description</p>",
+                "responses": 1,
                 "required_animal": true,
                 "required_epi": true,
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
-                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00",
@@ -423,12 +407,12 @@
                 "name": "metric 1",
                 "short_name": "metric 1 short",
                 "description": "<p>description</p>",
+                "responses": 1,
                 "required_animal": true,
                 "required_epi": true,
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
-                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:18.057471-05:00",
                 "last_updated": "2020-05-08T12:06:18.057493-05:00",
@@ -498,12 +482,12 @@
                 "name": "overall",
                 "short_name": "overall short",
                 "description": "<p>overall description</p>",
+                "responses": 1,
                 "required_animal": true,
                 "required_epi": true,
                 "required_invitro": true,
                 "hide_description": false,
                 "use_short_name": false,
-                "responses": 0,
                 "sort_order": 1,
                 "created": "2020-05-08T12:06:55.509303-05:00",
                 "last_updated": "2020-05-08T12:06:55.509353-05:00",
@@ -529,14 +513,6 @@
                 "bioassay"
               ]
             }
-          ],
-          "rob_response_values": [
-            17,
-            16,
-            15,
-            12,
-            14,
-            10
           ]
         }
       ],
@@ -580,15 +556,7 @@
       "published": true,
       "summary": "<p>Adapted from <a href=\"https://hawcproject.org/study/173483/\" rel=\"noopener noreferrer\" target=\"_blank\">https://hawcproject.org/study/173483/</a></p>",
       "editable": true,
-      "url": "/study/7/",
-      "rob_response_values": [
-        17,
-        16,
-        15,
-        12,
-        14,
-        10
-      ]
+      "url": "/study/7/"
     }
   ],
   "assessment_rob_name": "Risk of bias"

@@ -236,9 +236,8 @@ class AssessmentScoreViewset(AssessmentEditViewset):
 
     @action(detail=False)
     def choices(self, request):
-        assessment_id = self.get_assessment(request)
-        rob_assessment = models.RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
-        return Response(rob_assessment.get_rob_response_values())
+        # TODO - fix ROB June 2021
+        return Response(list(range(10)))
 
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one
