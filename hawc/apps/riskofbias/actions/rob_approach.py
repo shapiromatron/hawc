@@ -57,10 +57,12 @@ def load_approach(assessment_id: int, approach: RobApproach, user_id: int = None
     metrics: List[RiskOfBiasMetric] = []
     for sort_order, domain_data in enumerate(data["domains"], start=1):
         metrics_data = domain_data.pop("metrics")
-        domain = RiskOfBiasDomain.objects.create(assessment_id=assessment_id, **domain_data)
+        domain = RiskOfBiasDomain.objects.create(
+            assessment_id=assessment_id, sort_order=sort_order, **domain_data
+        )
         metrics.extend(
             [
-                RiskOfBiasMetric(domain_id=domain.id, **metric_data)
+                RiskOfBiasMetric(domain_id=domain.id, sort_order=sort_order, **metric_data)
                 for sort_order, metric_data in enumerate(metrics_data, start=1)
             ]
         )
