@@ -4,7 +4,6 @@ from textwrap import dedent
 from typing import Dict
 
 from django.apps import apps
-from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -73,20 +72,26 @@ class RiskOfBiasDomain(models.Model):
 
 class RiskOfBiasResponses(models.IntegerChoices):
     NONE = 0, "None"
-    OHAT = 1, "NTP/OHAT"
-    EPA = 2, "EPA"
+    HIGH_LOW_BIAS = 1, "High/Low risk of bias"
+    GOOD_DEFICIENT = 2, "Good/deficient"
+    HIGH_LOW_CONFIDENCE = 3, "High/low confidence"
+    YES_NO = 4, "Yes/No"
 
 
 RESPONSES_VALUES = {
     RiskOfBiasResponses.NONE: [0],
-    RiskOfBiasResponses.OHAT: [17, 16, 15, 12, 14, 10],
-    RiskOfBiasResponses.EPA: [27, 26, 25, 24, 37, 36, 35, 34, 22, 20],
+    RiskOfBiasResponses.HIGH_LOW_BIAS: [17, 16, 15, 12, 14, 10],
+    RiskOfBiasResponses.GOOD_DEFICIENT: [27, 26, 25, 24, 22, 20],
+    RiskOfBiasResponses.HIGH_LOW_CONFIDENCE: [37, 36, 35, 34, 22, 20],
+    RiskOfBiasResponses.YES_NO: [40, 41, 22, 20],
 }
 
 RESPONSES_VALUES_DEFAULT = {
     RiskOfBiasResponses.NONE: 0,
-    RiskOfBiasResponses.OHAT: 12,
-    RiskOfBiasResponses.EPA: 22,
+    RiskOfBiasResponses.HIGH_LOW_BIAS: 12,
+    RiskOfBiasResponses.GOOD_DEFICIENT: 22,
+    RiskOfBiasResponses.HIGH_LOW_CONFIDENCE: 22,
+    RiskOfBiasResponses.YES_NO: 22,
 }
 
 

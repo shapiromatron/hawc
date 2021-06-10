@@ -7,8 +7,8 @@ def set_default_responses(apps, schema_editor):
     if settings.HAWC_FLAVOR == "PRIME":
         RiskOfBiasMetric.objects.update(responses=1)
     elif settings.HAWC_FLAVOR == "EPA":
-        RiskOfBiasMetric.objects.filter(domain__is_overall_confidence=True).update(responses=2)
         RiskOfBiasMetric.objects.filter(domain__is_overall_confidence=False).update(responses=2)
+        RiskOfBiasMetric.objects.filter(domain__is_overall_confidence=True).update(responses=3)
     else:
         raise ValueError("Unknown HAWC flavor")
 
