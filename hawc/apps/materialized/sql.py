@@ -8,8 +8,8 @@ class SQL(NamedTuple):
 
 FinalRiskOfBiasScore = SQL(
     """
-    create materialized view if not exists materialized_finalriskofbiasscore as
-    select
+    CREATE MATERIALIZED VIEW IF NOT EXISTS materialized_finalriskofbiasscore AS
+    SELECT
         ROW_NUMBER() OVER (ORDER BY score_id, ovr.content_type_id, ovr.object_id) as id,
         scr.id as "score_id",
         scr.score as "score_score",
@@ -19,17 +19,18 @@ FinalRiskOfBiasScore = SQL(
         scr.riskofbias_id,
         ovr.content_type_id,
         ovr.object_id
-    from riskofbias_riskofbiasscore scr
-    left join riskofbias_riskofbias rob
-    on scr.riskofbias_id = rob.id
-    left join riskofbias_riskofbiasscoreoverrideobject ovr
-    on scr.id = ovr.score_id
-    where rob.final and rob.active;
-    create unique index on materialized_finalriskofbiasscore (id);
-    create index on materialized_finalriskofbiasscore (score_id);
-    create index on materialized_finalriskofbiasscore (study_id);
+    FROM riskofbias_riskofbiasscore scr
+    LEFT join riskofbias_riskofbias rob
+    ON scr.riskofbias_id = rob.id
+    LEFT JOIN riskofbias_riskofbiasscoreoverrideobject ovr
+    ON scr.id = ovr.score_id
+    WHERE rob.final AND rob.active;
+
+    CREATE UNIQUE INDEX ON materialized_finalriskofbiasscore (id);
+    CREATE INDEX ON materialized_finalriskofbiasscore (score_id);
+    CREATE INDEX ON materialized_finalriskofbiasscore (study_id);
     """,
     """
-    drop materialized view if exists materialized_finalriskofbiasscore;
+    DROP MATERIALIZED VIEW IF EXISTS materialized_finalriskofbiasscore;
     """,
 )

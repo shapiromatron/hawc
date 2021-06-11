@@ -77,7 +77,7 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
     )
 
     content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
-    object_id = models.IntegerField()
+    object_id = models.IntegerField(null=True)
     content_object = GenericForeignKey("content_type", "object_id")
 
     @classmethod
