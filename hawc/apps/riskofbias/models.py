@@ -127,7 +127,7 @@ class RiskOfBiasMetric(models.Model):
 
     def get_absolute_url(self):
         return reverse("riskofbias:arob_detail", args=(self.domain.assessment_id,))
-    
+
     def get_response_values(self):
         return constants.RESPONSES_VALUES[self.responses]
 
