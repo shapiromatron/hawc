@@ -8,7 +8,12 @@ from django.urls import reverse
 
 from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
 from ..common import selectable
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
+from ..common.forms import (
+    BaseFormHelper,
+    CopyAsNewSelectorForm,
+    form_actions_apply_filters,
+    form_actions_create_or_close,
+)
 from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
 from . import lookups, models
@@ -56,20 +61,12 @@ class CriteriaForm(forms.ModelForm):
 
     @property
     def helper(self):
-        inputs = {
-            "legend_text": self.CREATE_LEGEND,
-            "help_text": self.CREATE_HELP_TEXT,
-            "form_actions": [
-                cfl.Submit("save", "Save"),
-                cfl.HTML(
-                    """<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""
-                ),
-            ],
-        }
-
-        helper = BaseFormHelper(self, **inputs)
-
-        return helper
+        return BaseFormHelper(
+            self,
+            legend_text=self.CREATE_LEGEND,
+            help_text=self.CREATE_HELP_TEXT,
+            form_actions=form_actions_create_or_close(),
+        )
 
 
 class StudyPopulationForm(forms.ModelForm):
@@ -249,18 +246,12 @@ class AdjustmentFactorForm(forms.ModelForm):
 
     @property
     def helper(self):
-        inputs = {
-            "legend_text": self.CREATE_LEGEND,
-            "help_text": self.CREATE_HELP_TEXT,
-            "form_actions": [
-                cfl.Submit("save", "Save"),
-                cfl.HTML(
-                    """<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""
-                ),
-            ],
-        }
-        helper = BaseFormHelper(self, **inputs)
-        return helper
+        return BaseFormHelper(
+            self,
+            legend_text=self.CREATE_LEGEND,
+            help_text=self.CREATE_HELP_TEXT,
+            form_actions=form_actions_create_or_close(),
+        )
 
 
 class ExposureForm(forms.ModelForm):
@@ -530,7 +521,7 @@ class OutcomeFilterForm(forms.Form):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
 
         helper.form_method = "GET"
 
