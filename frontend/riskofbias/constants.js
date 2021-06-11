@@ -3,6 +3,8 @@ import _ from "lodash";
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
     SCORE_TEXT = {
+        0: "None",
+
         10: "N/A",
         12: "NR",
         14: "--",
@@ -26,6 +28,8 @@ const NA_KEYS = [10, 20],
         41: "N",
     },
     SCORE_SHADES = {
+        0: "#FFFFFF",
+
         10: "#E8E8E8",
         12: "#FFCC00",
         14: "#CC3333",
@@ -49,6 +53,8 @@ const NA_KEYS = [10, 20],
         41: "#CC3333",
     },
     SCORE_BAR_WIDTH_PERCENTAGE = {
+        0: 50,
+
         10: 50,
         12: 50,
         14: 25,
@@ -72,6 +78,8 @@ const NA_KEYS = [10, 20],
         41: 25,
     },
     SCORE_TEXT_DESCRIPTION = {
+        0: "None",
+
         10: "Not applicable",
         12: "Not reported",
         14: "Definitely high risk of bias",
@@ -95,6 +103,8 @@ const NA_KEYS = [10, 20],
         41: "No",
     },
     SCORE_TEXT_DESCRIPTION_LEGEND = {
+        0: "None",
+
         10: "Not applicable",
         12: "Not reported",
         14: "Definitely high risk of bias",
