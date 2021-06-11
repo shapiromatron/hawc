@@ -1,5 +1,6 @@
 import json
 import logging
+from textwrap import dedent
 from typing import Dict
 
 from django.apps import apps
@@ -14,7 +15,6 @@ from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
-from ..common.models import get_flavored_text
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import managers
@@ -58,31 +58,6 @@ class RiskOfBiasDomain(models.Model):
 
     def get_absolute_url(self):
         return reverse("riskofbias:arob_detail", args=(self.assessment_id,))
-
-    @classmethod
-    def build_default(cls, assessment):
-        """
-        Construct default risk of bias domains/metrics for an assessment.
-        The risk of bias domains and metrics are those defined by NTP/OHAT
-        protocols for risk of bias
-        """
-        if settings.HAWC_FLAVOR == "PRIME":
-            fixture = "ohat_study_quality_defaults.json"
-        elif settings.HAWC_FLAVOR == "EPA":
-            fixture = "iris_study_quality_defaults.json"
-        else:
-            raise ValueError("Unknown HAWC flavor")
-
-        fn = settings.PROJECT_PATH / f"apps/riskofbias/fixtures/{fixture}"
-        objects = json.loads(fn.read_text())
-        for sort_order, domain in enumerate(objects["domains"], start=1):
-            d = RiskOfBiasDomain.objects.create(
-                assessment=assessment,
-                sort_order=sort_order,
-                name=domain["name"],
-                description=domain["description"],
-            )
-            RiskOfBiasMetric.build_metrics_for_one_domain(d, domain["metrics"])
 
     def copy_across_assessments(self, cw):
         children = list(self.metrics.all().order_by("id"))
@@ -151,19 +126,6 @@ class RiskOfBiasMetric(models.Model):
 
     def get_absolute_url(self):
         return reverse("riskofbias:arob_detail", args=(self.domain.assessment_id,))
-
-    @classmethod
-    def build_metrics_for_one_domain(cls, domain, metrics):
-        """
-        Build multiple risk of bias metrics given a domain django object and a
-        list of python dictionaries for each metric.
-        """
-        objs = []
-        for sort_order, metric in enumerate(metrics, start=1):
-            obj = RiskOfBiasMetric(sort_order=sort_order, **metric)
-            obj.domain = domain
-            objs.append(obj)
-        RiskOfBiasMetric.objects.bulk_create(objs)
 
     def copy_across_assessments(self, cw):
         old_id = self.id
@@ -273,22 +235,6 @@ class RiskOfBias(models.Model):
     @property
     def study_reviews_complete(self):
         return all([rob.is_complete for rob in self.study.get_active_robs(with_final=False)])
-
-    @staticmethod
-    def copy_riskofbias(copy_to_assessment, copy_from_assessment):
-        # delete existing study quality metrics and domains
-        copy_to_assessment.rob_domains.all().delete()
-
-        # copy domains and metrics to assessment
-        for domain in copy_from_assessment.rob_domains.all():
-            metrics = list(domain.metrics.all())  # force evaluation
-            domain.id = None
-            domain.assessment = copy_to_assessment
-            domain.save()
-            for metric in metrics:
-                metric.id = None
-                metric.domain = domain
-                metric.save()
 
     @classmethod
     def delete_caches(cls, ids):
@@ -690,7 +636,15 @@ class RiskOfBiasAssessment(models.Model):
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(
             assessment=assessment,
-            help_text=get_flavored_text("riskofbias__riskofbiasassessment_help_text_default"),
+            help_text=dedent(
+                """\
+                <p>Study evaluation and/or risk of bias can be conducted on studies in HAWC.
+                Metrics are organized into different domains. Depending on the study type for
+                the study entered in HAWC, different metrics may be required (e.g., some metrics
+                may be required for epidemiological studies, while others are required for animal
+                bioassay studies). There may also be an overall judgment on the the study.</p>
+                <p>The following questions are required for this assessment:</p>"""
+            ),
         )
 
     def get_rob_response_values(self):

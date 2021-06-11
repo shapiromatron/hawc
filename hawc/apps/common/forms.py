@@ -10,11 +10,17 @@ from django.template.loader import render_to_string
 from . import selectable, validators
 
 
-def build_form_actions(cancel_url: str, save_text: str = "Save", cancel_text: str = "Cancel"):
+def form_actions_create_or_close():
+    """Add form actions to create or close the window (for popups)"""
     return [
-        cfl.Submit("save", save_text),
-        cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">{cancel_text}</a>'),
+        cfl.Submit("save", "Create"),
+        cfl.HTML("""<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""),
     ]
+
+
+def form_actions_apply_filters():
+    """Add form_actions to apply filters"""
+    return [cfl.Submit("submit", "Apply filters")]
 
 
 class BaseFormHelper(cf.FormHelper):
@@ -43,8 +49,14 @@ class BaseFormHelper(cf.FormHelper):
             )
 
         form_actions = self.kwargs.get("form_actions")
-        if "cancel_url" in self.kwargs:
-            form_actions = build_form_actions(self.kwargs["cancel_url"])
+
+        cancel_url = self.kwargs.get("cancel_url")
+        if form_actions is None and cancel_url:
+            form_actions = [
+                cfl.Submit("save", self.kwargs.get("submit_text", "Save")),
+                cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
+            ]
+
         if form_actions:
             layout.append(cfb.FormActions(*form_actions, css_class="form-actions"))
 

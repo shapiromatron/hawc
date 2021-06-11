@@ -9,7 +9,6 @@
         {% if obj_perms.edit_assessment %}
         <span class="dropdown-header">{{assessment.get_rob_name_display}} settings</span>
         <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
-        <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
         <div class="dropdown-divider"></div>
         {% endif %}
 
@@ -63,5 +62,7 @@
         </tr>
       {% endfor %}
     </table>
+  {% empty %}
+  {% include 'riskofbias/_arob_none_alert.html' %}
   {% endfor %}
 {% endblock %}
