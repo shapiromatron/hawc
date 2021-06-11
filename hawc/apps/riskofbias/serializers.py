@@ -408,6 +408,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+class SimpleRiskOfBiasSerializer(RiskOfBiasSerializer):
+    scores = AssessmentScoreSerializer(many=True)
+
+
 class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
     scores = serializers.SerializerMethodField("get_final_score")
 

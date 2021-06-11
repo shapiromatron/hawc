@@ -54,6 +54,12 @@ class Study(
         study_types = self.model.STUDY_TYPE_FIELDS
         return Response(study_types)
 
+    @action(detail=True)
+    def v2(self, request, pk):
+        study = self.model.objects.get(id=pk)
+        ser = serializers.NewStudySerializer(study)
+        return Response(ser.data)
+
     def create(self, request):
         # permissions check not here; see serializer validation
         return super().create(request)

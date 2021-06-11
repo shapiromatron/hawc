@@ -1,44 +1,13 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {NR_KEYS} from "riskofbias/constants";
+import {NR_KEYS, BIAS_DIRECTION_SIMPLE} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
-const updateRobScore = function(score, riskofbias, overrideOptions) {
-    let overrideDataTypeValue;
-    if (score.is_default) {
-        overrideDataTypeValue = null;
-    } else if (score.overridden_objects.length > 0) {
-        overrideDataTypeValue = score.overridden_objects[0].content_type_name;
-    } else {
-        overrideDataTypeValue = _.keys(overrideOptions)[0] || null;
-    }
-    return Object.assign({}, score, {
-        overrideDataTypeValue,
-        author: riskofbias.author,
-        final: riskofbias.final,
-        domain_name: score.metric.domain.name,
-        domain_id: score.metric.domain.id,
-    });
-};
-
-class RobFormStore {
-    // content
-    @observable data = null;
-
+class StudyRobStore {
     @observable settings = null;
     @observable study = null;
 
-    @observable error = null;
-    @observable config = null;
-    @observable overrideOptions = null;
-    scores = observable.array();
-    editableScores = observable.map();
-    nonEditableScores = observable.array();
-    domainIds = observable.array();
-
-    // overallScores
-    // nonOverallScores
     @computed get final() {
         return _.find(this.study.riskofbiases, {
             final: true,
@@ -72,6 +41,78 @@ class RobFormStore {
         }, {});
     }
 
+    getMultiScoreDisplaySettings(scores) {
+        // Return visualization/color settings for situations where multiple scores may exist for
+        // a given metric (eg, study-level override settings).
+        // By default, if multiple scores exist and show he defaults score label if one exists.
+        // If the default score does not exist, present the value of the first score (random).
+        let sortedScores = _.orderBy(scores, "score", "desc"),
+            defaultScore = _.find(scores, {is_default: true}) || sortedScores[0],
+            shades = _.chain(sortedScores)
+                .map(score => this.settings.score_metadata.colors[score.score])
+                .uniq()
+                .value(),
+            symbols = _.chain(sortedScores)
+                .map(score => this.settings.score_metadata.symbols[score.score])
+                .uniq()
+                .value(),
+            symbolText = symbols.join(" / "),
+            symbolShortText =
+                symbols.length === 1
+                    ? symbols[0]
+                    : `${this.settings.score_metadata.symbols[defaultScore.score]}✱`,
+            directions = _.chain(sortedScores)
+                .map(score => score.bias_direction)
+                .uniq()
+                .value(),
+            directionText = _.chain(directions)
+                .map(d => BIAS_DIRECTION_SIMPLE[d])
+                .value()
+                .join(""),
+            reactStyle,
+            svgStyle,
+            cssStyle;
+
+        if (shades.length == 1) {
+            reactStyle = {backgroundColor: shades[0]};
+            cssStyle = {"background-color": shades[0]};
+            svgStyle = {fill: shades[0]};
+        } else if (shades.length >= 2) {
+            let dim = Math.ceil(50 / shades.length),
+                reactGradients = shades
+                    .map((shade, idx) => `${shade} ${idx * dim}px, ${shade} ${(idx + 1) * dim}px`)
+                    .join(", "),
+                svgShades = shades
+                    .map((shade, idx) => {
+                        const offset1 = Math.ceil((idx / shades.length) * 100),
+                            offset2 = Math.ceil(((idx + 1) / shades.length) * 100);
+                        return `<stop offset="${offset1}%" stop-color="${shade}" stop-opacity="1" />
+                                <stop offset="${offset2}%" stop-color="${shade}" stop-opacity="1" />`;
+                    })
+                    .join(""),
+                gradientId = `gradient${scores[0].id}`,
+                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="25%" y2="25%" spreadMethod="repeat">${svgShades}</linearGradient>`;
+
+            reactStyle = {background: `repeating-linear-gradient(-45deg, ${reactGradients})`};
+            cssStyle = reactStyle;
+            svgStyle = {
+                gradient,
+                fill: `url(#${gradientId})`,
+            };
+        }
+
+        return {
+            reactStyle,
+            cssStyle,
+            symbols,
+            symbolText,
+            symbolShortText,
+            directions,
+            directionText,
+            svgStyle,
+        };
+    }
+
     // computed props
     @action.bound fetchSettings(assessment_id) {
         const url = `/rob/api/assessment/${assessment_id}/settings/`;
@@ -83,195 +124,18 @@ class RobFormStore {
             .catch(ex => console.error("Endpoint parsing failed", ex));
     }
 
-    @computed get dataLoaded() {
-        return this.study !== null && this.overrideOptions !== null;
-    }
-    @computed get activeRiskOfBias() {
-        return _.find(this.study.riskofbiases, {id: this.config.riskofbias.id});
-    }
-    @computed get numIncompleteScores() {
-        return [...this.editableScores.values()].filter(score => {
-            return (
-                _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
-            );
-        }).length;
-    }
-
-    getScoresForDomain(domainId) {
-        return this.scores.filter(score => score.metric.domain.id == domainId);
-    }
-    getEditableScoresForMetric(metricId) {
-        return [...this.editableScores.values()].filter(score => score.metric.id == metricId);
-    }
-    getNonEditableScoresForMetric(metricId) {
-        return this.nonEditableScores.filter(score => score.metric.id == metricId);
-    }
-    metricHasOverrides(metricId) {
-        return _.chain(this.scores)
-            .filter(score => score.metric.id == metricId)
-            .map(score => score.is_default === false)
-            .some()
-            .value();
-    }
-    editableMetricHasOverride(metricId) {
-        return _.chain(this.getEditableScoresForMetric(metricId))
-            .map(score => score.is_default === false)
-            .some()
-            .value();
-    }
-    getEditableScore(scoreId) {
-        if (!this.editableScores.has(scoreId)) {
-            throw `Score ${scoreId} does not exist.`;
-        }
-        return this.editableScores.get(scoreId);
-    }
-
-    // actions
-    @action.bound setConfig(elementId) {
-        this.config = JSON.parse(document.getElementById(elementId).textContent);
-    }
-
-    @action.bound fetchFormData() {
-        let override_options_url = this.config.riskofbias.override_options_url,
-            study_url = this.config.study.api_url;
-
-        Promise.all([
-            fetch(override_options_url, h.fetchGet).then(response => response.json()),
-            fetch(study_url, h.fetchGet).then(response => response.json()),
-        ])
-            .then(data => {
-                // only set options which have data
-                let overrideOptions = {};
-                _.each(data[0], (value, key) => {
-                    if (value.length > 0) {
-                        overrideOptions[key] = value;
-                    }
-                });
-                this.overrideOptions = overrideOptions;
-
-                this.study = data[1];
-
-                const editableRiskOfBiasId = this.config.riskofbias.id,
-                    scores = _.flatten(
-                        data[1].riskofbiases
-                            .filter(riskofbias => riskofbias.active === true)
-                            .map(riskofbias =>
-                                riskofbias.scores.map(score =>
-                                    updateRobScore(score, riskofbias, overrideOptions)
-                                )
-                            )
-                    );
-
-                this.scores.replace(scores);
-
-                scores
-                    .filter(score => score.riskofbias_id === editableRiskOfBiasId)
-                    .forEach(score => {
-                        this.editableScores.set(score.id, score);
-                    });
-
-                this.nonEditableScores.replace(
-                    _.chain(scores)
-                        .filter(score => score.riskofbias_id !== editableRiskOfBiasId)
-                        .sortBy("id")
-                        .value()
-                );
-
-                this.domainIds.replace(
-                    _.chain(scores)
-                        .flatMapDeep("metric.domain.id")
-                        .uniq()
-                        .value()
-                );
-            })
-            .catch(exception => {
-                this.error = exception;
-            });
-    }
-
-    @action.bound updateFormState(scoreId, key, value) {
-        this.getEditableScore(scoreId)[key] = value;
-    }
-
-    // CRUD actions
-    @action.bound cancelSubmitScores() {
-        window.location.href = this.config.cancelUrl;
-    }
-    @action.bound submitScores() {
-        const payload = {
-                id: this.config.riskofbias.id,
-                scores: [...this.editableScores.values()].map(score => {
-                    return {
-                        id: score.id,
-                        score: score.score,
-                        bias_direction: score.bias_direction,
-                        label: score.label,
-                        notes: score.notes,
-                        overridden_objects: score.overridden_objects.map(obj => {
-                            return {
-                                object_id: obj.object_id,
-                                content_type_name: obj.content_type_name,
-                            };
-                        }),
-                    };
-                }),
-            },
-            opts = h.fetchPost(this.config.csrf, payload, "PATCH"),
-            url = `${h.getObjectUrl(
-                this.config.host,
-                this.config.riskofbias.url,
-                this.config.riskofbias.id
-            )}`;
-
-        this.error = null;
-        return fetch(url, opts)
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = this.config.cancelUrl;
-                } else {
-                    response.text().then(text => {
-                        this.error = text;
-                    });
-                }
-            })
-            .catch(error => {
-                this.error = error;
-            });
-    }
-    @action.bound createScoreOverride(payload) {
-        let url = `${this.config.riskofbias.scores_url}?assessment_id=${this.config.assessment_id}`,
-            csrf = this.config.csrf,
-            activeRiskOfBias = this.activeRiskOfBias;
-
-        return fetch(url, h.fetchPost(csrf, payload, "POST"))
+    @action.bound fetchStudy(study_id) {
+        const url = `/study/api/study/${study_id}/v2/`;
+        return fetch(url, h.fetchGet)
             .then(response => response.json())
-            .then(json => {
-                this.editableScores.set(
-                    json.id,
-                    updateRobScore(json, activeRiskOfBias, this.overrideOptions)
-                );
+            .then(data => {
+                this.study = data;
             })
-            .catch(error => {
-                this.error = error;
-            });
-    }
-    @action.bound deleteScoreOverride(scoreId) {
-        let url = `${this.config.riskofbias.scores_url}${scoreId}/?assessment_id=${this.config.assessment_id}&ids=${scoreId}`,
-            csrf = this.config.csrf;
-
-        return fetch(url, h.fetchDelete(csrf))
-            .then(response => {
-                if (response.status === 204) {
-                    this.editableScores.delete(scoreId);
-                }
-            })
-            .catch(error => {
-                this.error = error;
-            });
+            .catch(ex => console.error("Endpoint parsing failed", ex));
     }
 }
 
-const store = new RobFormStore();
+const store = new StudyRobStore();
 
 // singleton pattern
 export default store;

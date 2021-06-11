@@ -265,10 +265,6 @@ class Study {
         );
         return RiskOfBiasScore.format_for_react(scores);
     }
-
-    createDonutVisualization(element) {
-        new Donut(this.data, this, element);
-    }
 }
 
 Study.typeNames = {
