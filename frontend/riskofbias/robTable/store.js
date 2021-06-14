@@ -53,8 +53,7 @@ class RobTableStore {
             .then(response => response.json())
             .then(data => {
                 this.settings = data;
-            })
-            .catch(ex => console.error("Endpoint parsing failed", ex));
+            });
     }
 
     @action.bound fetchStudy(study_id) {
@@ -63,8 +62,7 @@ class RobTableStore {
             .then(response => response.json())
             .then(data => {
                 this.study = data;
-            })
-            .catch(ex => console.error("Endpoint parsing failed", ex));
+            });
     }
 
     @action.bound fetchFullStudyIfNeeded() {

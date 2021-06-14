@@ -121,7 +121,7 @@ class StudyRobStore {
             .then(data => {
                 this.settings = data;
             })
-            .catch(ex => console.error("Endpoint parsing failed", ex));
+            .catch(ex => console.error("Assessment parsing failed", ex));
     }
 
     @action.bound fetchStudy(study_id) {
@@ -131,7 +131,7 @@ class StudyRobStore {
             .then(data => {
                 this.study = data;
             })
-            .catch(ex => console.error("Endpoint parsing failed", ex));
+            .catch(ex => console.error("Study parsing failed", ex));
     }
 }
 
