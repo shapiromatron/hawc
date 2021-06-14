@@ -1,4 +1,5 @@
 {
+    "help_text": "<p>Study evaluations are performed on an endpoint/outcome-specific basis. For each evaluation domain, core and prompting questions are provided to guide the reviewer in assessing different aspects of study design and conduct related to reporting, risk of bias and study sensitivity. For some domains (see below), additional outcome- or chemical-specific refinements to the criteria used to answer the questions should be developed <em>a priori</em> by reviewers. Each domain receives a judgment of <em>Good</em>, <em>Adequate</em>, <em>Deficient</em>, <em>Not Reported</em> or <em>Critically Deficient</em> accompanied by the rationale and primary study-specific information supporting the judgment.&nbsp;Once all domains are evaluated, a confidence rating of <em>High</em>, <em>Medium</em>, or <em>Low</em> confidence or <em>Uninformative</em> is assigned for each endpoint/outcome from the study.&nbsp;The overall confidence rating should, to the extent possible, reflect interpretations of the potential influence on the results (including the direction and/or magnitude of influence) across all domains.&nbsp;The rationale supporting the overall confidence rating should be documented clearly and consistently, including a brief description of any important strengths and/or limitations that were identified and their potential impact on the overall confidence.</p><p>Domain judgments and overall ratings for all individual endpoints/outcomes can be captured by a single (default) response, or you can create override responses assigned to individual endpoints, outcomes, or results; provide a descriptive label to describe which components the score refers to. Each response must have a single default score; when selecting the default representative rating for the domains and overall rating (i.e., the drop-down selection with the associated color code), it is typically most appropriate to select the judgment that best represents the study overall.</p><ul><li>Follow <a href='https://hawcprd.epa.gov/assessment/100000039/' target='_blank'><strong>this link</strong></a> to see attachments that contain example answers to the animal study evaluation domains.</li><li>Follow <a href='https://hawcprd.epa.gov/assessment/100000039/' target='_blank'><strong>this link</strong></a> to see attachments that contain example prompting and follow-up questions for epidemiological studies.</li></ul><p><em>It may be helpful to have these documents open when conducting reviews.</em></p>",
     "domains": [
         {
             "name": "Reporting Quality",
@@ -13,7 +14,8 @@
                     "required_invitro": false,
                     "short_name": "Reporting",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -30,7 +32,8 @@
                     "required_invitro": false,
                     "short_name": "Allocation",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Observational bias/blinding",
@@ -41,7 +44,8 @@
                     "required_invitro": false,
                     "short_name": "Blinding",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Participant selection",
@@ -52,7 +56,8 @@
                     "required_invitro": false,
                     "short_name": "Participant",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -69,7 +74,8 @@
                     "required_invitro": false,
                     "short_name": "Confounding/Variable Control",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -86,7 +92,8 @@
                     "required_invitro": false,
                     "short_name": "Selective Reporting/Attrition",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -103,7 +110,8 @@
                     "required_invitro": false,
                     "short_name": "Exposure Characterization",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Exposure timing, frequency and duration",
@@ -114,7 +122,8 @@
                     "required_invitro": false,
                     "short_name": "Study Design Applicability",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Exposure measures",
@@ -125,7 +134,8 @@
                     "required_invitro": false,
                     "short_name": "Measures",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -142,7 +152,8 @@
                     "required_invitro": false,
                     "short_name": "Outcome Assessment",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Results presentation",
@@ -153,7 +164,8 @@
                     "required_invitro": false,
                     "short_name": "Results Presentation",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Outcome measures",
@@ -164,7 +176,8 @@
                     "required_invitro": false,
                     "short_name": "Outcome",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -181,7 +194,8 @@
                     "required_invitro": false,
                     "short_name": "Confounding",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -199,7 +213,8 @@
                     "required_invitro": false,
                     "short_name": "Analysis",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -216,7 +231,8 @@
                     "required_invitro": false,
                     "short_name": "Selective",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -233,7 +249,8 @@
                     "required_invitro": false,
                     "short_name": "Study sensitivity",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -251,7 +268,8 @@
                     "required_invitro": false,
                     "short_name": "Overall confidence",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 3
                 },
                 {
                     "name": "Overall confidence (epi)",
@@ -262,7 +280,8 @@
                     "required_invitro": false,
                     "short_name": "Overall confidence",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 3
                 }
             ]
         }

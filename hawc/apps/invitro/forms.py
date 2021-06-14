@@ -1,6 +1,5 @@
 import json
 
-from crispy_forms import layout as cfl
 from django import forms
 from django.db.models import Q
 from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
@@ -10,7 +9,7 @@ from django.urls import reverse
 from ..assessment.lookups import DssToxIdLookup, EffectTagLookup
 from ..assessment.models import DoseUnits
 from ..common import selectable
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, form_actions_apply_filters
 from ..study.lookups import InvitroStudyLookup
 from . import lookups, models
 
@@ -295,12 +294,12 @@ class IVEndpointForm(forms.ModelForm):
         )
 
         self.fields["category"].queryset = self.fields["category"].queryset.model.get_assessment_qs(
-            self.instance.assessment.id
+            self.instance.assessment_id
         )
 
         for field in ("assay_type", "response_units", "effect"):
             self.fields[field].widget.update_query_parameters(
-                {"related": self.instance.assessment.id}
+                {"related": self.instance.assessment_id}
             )
 
     def clean_additional_fields(self):
@@ -437,7 +436,7 @@ class IVEndpointFilterForm(forms.Form):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")

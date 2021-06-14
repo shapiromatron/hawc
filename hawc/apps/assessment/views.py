@@ -1,6 +1,8 @@
 import json
 import logging
+from pathlib import Path
 
+import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -33,7 +35,10 @@ from ..common.views import (
     beta_tester_required,
     get_referrer,
 )
+from ..materialized.models import refresh_all_mvs
 from . import forms, models, serializers, tasks
+
+logger = logging.getLogger(__name__)
 
 
 def percentage(numerator, denominator):
@@ -182,7 +187,7 @@ class About(TemplateView):
             )
             cache_duration = 60 * 60 * 24  # one day
             cache.set(key, counts, cache_duration)  # cache for one day
-            logging.info("Setting about-page cache")
+            logger.info("Setting about-page cache")
         return counts
 
     def get_rob_name(self):
@@ -264,12 +269,9 @@ class AssessmentList(LoginRequiredMixin, ListView):
         return context
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class AssessmentFullList(LoginRequiredMixin, ListView):
     model = models.Assessment
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -387,6 +389,8 @@ class AssessmentClearCache(MessageMixin, View):
             raise PermissionDenied()
 
         assessment.bust_cache()
+        refresh_all_mvs(force=True)
+
         self.send_message()
         return HttpResponseRedirect(url)
 
@@ -595,15 +599,12 @@ class UpdateSession(View):
         return HttpResponse(True)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class DownloadPlot(FormView):
 
     http_method_names = [
         "post",
     ]
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
     EXPORT_CROSSWALK = {
         "svg": {"fn": tasks.convert_to_svg, "ct": "image/svg+xml"},
@@ -647,32 +648,60 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
         return get_object_or_404(self.model, pk=kwargs["pk"])
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class AdminDashboard(TemplateView):
     template_name = "admin/dashboard.html"
 
-    @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
-
+@method_decorator(staff_member_required, name="dispatch")
 class AdminAssessmentSize(TemplateView):
     template_name = "admin/assessment-size.html"
 
-    @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+
+@method_decorator(staff_member_required, name="dispatch")
+class AdminMediaPreview(TemplateView):
+    template_name = "admin/media-preview.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        Suffix-specific values were obtained by querying media file extensions:
+
+        ```bash
+        find {settings.MEDIA_ROOT} -type f | grep -o ".[^.]\\+$" | sort | uniq -c
+        ```
+        """
+        context = super().get_context_data(**kwargs)
+        obj = self.request.GET.get("item", "")
+        media = Path(settings.MEDIA_ROOT)
+        context["has_object"] = False
+        resolved = media / obj
+        context["object_name"] = str(Path(obj))
+        if obj and resolved.exists() and media in resolved.parents:
+            root_uri = self.request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
+            uri = resolved.as_uri().replace(media.as_uri(), root_uri)
+            context["has_object"] = True
+            context["object_uri"] = uri
+            context["suffix"] = resolved.suffix.lower()
+            if context["suffix"] in [".csv", ".json", ".ris", ".txt"]:
+                context["object_text"] = resolved.read_text()
+            if context["suffix"] in [".xls", ".xlsx"]:
+                df = pd.read_excel(str(resolved))
+                context["object_html"] = df.to_html(index=False)
+            if context["suffix"] in [".jpg", ".jpeg", ".png", ".tif", ".tiff"]:
+                context["object_image"] = True
+            if context["suffix"] in [".pdf"]:
+                context["object_pdf"] = True
+
+        return context
 
 
 # log / blog
+@method_decorator(beta_tester_required, name="dispatch")
 class BlogList(ListView):
     model = models.Blog
 
     def get_queryset(self):
         return self.model.objects.filter(published=True)
-
-    @method_decorator(beta_tester_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

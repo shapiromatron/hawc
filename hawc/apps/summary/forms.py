@@ -2,7 +2,6 @@ import json
 from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
-from crispy_forms import layout as cfl
 from django import forms
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
@@ -492,10 +491,8 @@ class SummaryTableSelectorForm(forms.Form):
             HAWC has a number of predefined table formats which are designed for different applications
             of the tool. Please select the table type you wish to create.
             """,
-            form_actions=[
-                cfl.Submit("save", "Create table"),
-                cfl.HTML(f'<a href="{url}" class="btn btn-light">Cancel</a>'),
-            ],
+            submit_text="Create table",
+            cancel_url=url,
         )
 
 
@@ -545,7 +542,7 @@ class VisualForm(forms.ModelForm):
                     "Settings" tab. To view a preview of the visual at any time,
                     select the "Preview" tab.
                 """,
-                "cancel_url": self.instance.get_list_url(self.instance.assessment.id),
+                "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -872,7 +869,7 @@ class DataPivotForm(forms.ModelForm):
                     Generally, you will select a subset of available data, then
                     customize the visualization the next-page.
                 """,
-                "cancel_url": self.instance.get_list_url(self.instance.assessment.id),
+                "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -994,33 +991,29 @@ class DataPivotSelectorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user")
-        cancel_url = kwargs.pop("cancel_url")
+        self.cancel_url = kwargs.pop("cancel_url")
         super().__init__(*args, **kwargs)
         self.fields["dp"].queryset = models.DataPivot.objects.clonable_queryset(user)
-        self.helper = self.setHelper(cancel_url)
 
-    def setHelper(self, cancel_url: str):
+    @property
+    def helper(self):
+
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "col-md-12"
 
-        inputs = {
-            "legend_text": "Copy data pivot",
-            "help_text": """
+        return BaseFormHelper(
+            self,
+            legend_text="Copy data pivot",
+            help_text="""
                 Select an existing data pivot and copy as a new data pivot. This includes all
                 model-settings, and the selected dataset. You will be taken to a new view to
                 create a new data pivot, but the form will be pre-populated using the values from
                 the currently-selected data pivot.""",
-            "form_actions": [
-                cfl.Submit("save", "Copy selected as new"),
-                cfl.HTML(f'<a href="{cancel_url}" class="btn btn-light">Cancel</a>'),
-            ],
-        }
-
-        helper = BaseFormHelper(self, **inputs)
-
-        return helper
+            submit_text="Copy selected as new",
+            cancel_url=self.cancel_url,
+        )
 
 
 class SmartTagForm(forms.Form):

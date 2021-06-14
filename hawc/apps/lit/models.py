@@ -35,6 +35,8 @@ from ..common.models import (
 )
 from . import constants, managers, tasks
 
+logger = logging.getLogger(__name__)
+
 
 class TooManyPubMedResults(Exception):
     """
@@ -321,10 +323,10 @@ class Search(models.Model):
         ids_count = ref_ids.count()
 
         if ids_count > 0:
-            logging.debug("Starting bulk creation of existing search-through values")
+            logger.debug("Starting bulk creation of existing search-through values")
             ref_searches = [RefSearchM2M(reference_id=ref, search_id=self.pk) for ref in ref_ids]
             RefSearchM2M.objects.bulk_create(ref_searches)
-            logging.debug(f"Completed bulk creation of {len(ref_searches)} search-through values")
+            logger.debug(f"Completed bulk creation of {len(ref_searches)} search-through values")
 
         # For the cases where the search resulted in new ids which may or may
         # not already be imported as a reference for this assessment, find the
@@ -343,9 +345,9 @@ class Search(models.Model):
             refs = [i.create_reference(self.assessment, block_id) for i in ids]
             id_pks = [i.pk for i in ids]
 
-            logging.debug(f"Starting  bulk creation of {len(refs)} references")
+            logger.debug(f"Starting  bulk creation of {len(refs)} references")
             Reference.objects.bulk_create(refs)
-            logging.debug(f"Completed bulk creation of {len(refs)} references")
+            logger.debug(f"Completed bulk creation of {len(refs)} references")
 
             # re-query to get the objects back with PKs
             refs = Reference.objects.filter(assessment=self.assessment, block_id=block_id).order_by(
@@ -355,16 +357,16 @@ class Search(models.Model):
             # associate identifiers with each
             ref_searches = []
             ref_ids = []
-            logging.debug(f"Starting  bulk creation of {refs.count()} reference-through values")
+            logger.debug(f"Starting  bulk creation of {refs.count()} reference-through values")
             for i, ref in enumerate(refs):
                 ref_searches.append(RefSearchM2M(reference_id=ref.pk, search_id=self.pk))
                 ref_ids.append(RefIdM2M(reference_id=ref.pk, identifiers_id=id_pks[i]))
             RefSearchM2M.objects.bulk_create(ref_searches)
             RefIdM2M.objects.bulk_create(ref_ids)
-            logging.debug(f"Completed bulk creation of {refs.count()} reference-through values")
+            logger.debug(f"Completed bulk creation of {refs.count()} reference-through values")
 
             # finally, remove temporary identifier used for re-query after bulk_create
-            logging.debug("Removing block-id from created references")
+            logger.debug("Removing block-id from created references")
             refs.update(block_id=None)
 
     @property
@@ -509,11 +511,11 @@ class PubMedQuery(models.Model):
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
-        logging.debug(f"{ids_to_add_len} IDs to be added")
+        logger.debug(f"{ids_to_add_len} IDs to be added")
         for i in range(int(ceil(ids_to_add_len / block_size))):
             start_index = int(i * block_size)
             end_index = min(int(i * block_size + block_size), ids_to_add_len)
-            logging.debug(f"Building from {start_index} to {end_index}")
+            logger.debug(f"Building from {start_index} to {end_index}")
             fetch = pubmed.PubMedFetch(
                 id_list=ids_to_add[start_index:end_index], retmax=int(block_size)
             )
@@ -632,7 +634,9 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     @classmethod
     def get_tag_in_assessment(cls, assessment_pk, tag_id):
         tag = cls.objects.get(id=tag_id)
-        assert tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
+        same_assessment = tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
+        if not same_assessment:
+            raise ValueError(f"Tag {tag_id} not in  assessment {assessment_pk} tag tree")
         return tag
 
     @classmethod
@@ -752,7 +756,6 @@ class Reference(models.Model):
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
 
         d["tags"] = [tag.id for tag in self.tags.all()]
-        d["tags_text"] = [tag.name for tag in self.tags.all()]
         return d
 
     def to_json(self):

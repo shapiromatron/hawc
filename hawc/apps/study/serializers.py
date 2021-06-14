@@ -78,11 +78,6 @@ class VerboseStudySerializer(StudySerializer):
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["rob_response_values"] = instance.assessment.rob_settings.get_rob_response_values()
-        return ret
-
     class Meta:
         model = models.Study
         fields = "__all__"

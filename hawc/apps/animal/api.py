@@ -44,7 +44,7 @@ class AnimalAssessmentViewset(
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
-    @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
+    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         """
         Retrieve complete animal data
@@ -58,9 +58,7 @@ class AnimalAssessmentViewset(
         )
         return Response(exporter.build_export())
 
-    @action(
-        detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers
-    )
+    @action(detail=True, url_path="endpoint-export", renderer_classes=PandasRenderers)
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data
@@ -273,6 +271,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
         # update endpoint terms (all other validation done in manager)
         updated_endpoints = self.model.objects.update_terms(request.data, assessment)
         serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
+        assessment.bust_cache()
         return Response(serializer.data)
 
 

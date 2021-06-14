@@ -1,9 +1,9 @@
 from django import forms
-from django.forms.fields import TextInput
+from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, build_form_actions
+from ..common.forms import BaseFormHelper
 from ..lit.models import Reference
 from . import models
 
@@ -121,7 +121,7 @@ class ReferenceStudyForm(BaseStudyForm):
         inputs = {
             "legend_text": "Create a new study",
             "help_text": "",
-            "cancel_url": reverse("study:list", args=[self.instance.assessment.id]),
+            "cancel_url": reverse("study:list", args=[self.instance.assessment_id]),
         }
         return super().setHelper(inputs)
 
@@ -143,9 +143,8 @@ class AttachmentForm(forms.ModelForm):
             self,
             legend_text="Add an attachment to a study",
             help_text="Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.",
-            form_actions=build_form_actions(
-                cancel_url=self.instance.study.get_absolute_url(), save_text="Create attachment"
-            ),
+            cancel_url=self.instance.study.get_absolute_url(),
+            submit_text="Create attachment",
         )
 
 

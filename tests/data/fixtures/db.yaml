@@ -3584,6 +3584,7 @@
     name: example domain
     description: <p>This is an <strong>example</strong> domain description.</p>
     is_overall_confidence: false
+    sort_order: 1
     created: 2020-02-27 19:30:52.454609+00:00
     last_updated: 2020-02-27 19:30:52.454638+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3593,6 +3594,7 @@
     name: final domain
     description: <p>it's the final one.</p>
     is_overall_confidence: true
+    sort_order: 2
     created: 2020-02-27 20:04:23.718503+00:00
     last_updated: 2020-02-27 20:04:23.718531+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3602,6 +3604,7 @@
     name: Selection
     description: ''
     is_overall_confidence: false
+    sort_order: 1
     created: 2020-04-10 17:45:42.806867+00:00
     last_updated: 2020-04-10 17:45:42.806867+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3611,6 +3614,7 @@
     name: Confounding
     description: ''
     is_overall_confidence: false
+    sort_order: 2
     created: 2020-04-10 17:45:43.247952+00:00
     last_updated: 2020-04-10 17:45:43.247952+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3620,6 +3624,7 @@
     name: Performance
     description: ''
     is_overall_confidence: false
+    sort_order: 3
     created: 2020-04-10 17:45:43.580016+00:00
     last_updated: 2020-04-10 17:45:43.580016+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3629,6 +3634,7 @@
     name: Attrition
     description: ''
     is_overall_confidence: false
+    sort_order: 4
     created: 2020-04-10 17:45:43.875578+00:00
     last_updated: 2020-04-10 17:45:43.875578+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3638,6 +3644,7 @@
     name: Detection
     description: ''
     is_overall_confidence: false
+    sort_order: 5
     created: 2020-04-10 17:45:44.153727+00:00
     last_updated: 2020-04-10 17:45:44.153727+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3647,6 +3654,7 @@
     name: Selective Reporting
     description: ''
     is_overall_confidence: false
+    sort_order: 6
     created: 2020-04-10 17:45:44.482110+00:00
     last_updated: 2020-04-10 17:45:44.482110+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3656,6 +3664,7 @@
     name: Other
     description: ''
     is_overall_confidence: false
+    sort_order: 7
     created: 2020-04-10 17:45:44.768158+00:00
     last_updated: 2020-04-10 17:45:44.768158+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3665,6 +3674,7 @@
     name: domain 1
     description: <p>description</p>
     is_overall_confidence: false
+    sort_order: 1
     created: 2020-05-08 17:05:55.142679+00:00
     last_updated: 2020-05-08 17:05:55.142703+00:00
 - model: riskofbias.riskofbiasdomain
@@ -3674,6 +3684,7 @@
     name: overall
     description: <p>description</p>
     is_overall_confidence: true
+    sort_order: 2
     created: 2020-05-08 17:06:37.006374+00:00
     last_updated: 2020-05-08 17:06:37.006406+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3688,6 +3699,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: true
+    responses: 1
+    sort_order: 1
     created: 2020-02-27 19:31:21.953998+00:00
     last_updated: 2020-02-27 19:31:21.954027+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3702,6 +3715,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-02-27 20:04:35.816069+00:00
     last_updated: 2020-02-27 20:04:35.816096+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3718,6 +3733,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3738,6 +3755,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 2
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3754,6 +3773,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 3
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3769,6 +3790,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-04-10 17:45:43.537996+00:00
     last_updated: 2020-04-10 17:45:43.537996+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3783,6 +3806,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3800,6 +3825,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 2
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3815,6 +3842,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-04-10 17:45:44.116719+00:00
     last_updated: 2020-04-10 17:45:44.116719+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3830,6 +3859,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3845,6 +3876,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 2
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3859,6 +3892,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-04-10 17:45:44.732154+00:00
     last_updated: 2020-04-10 17:45:44.732154+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3876,6 +3911,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-04-10 17:45:44.981198+00:00
     last_updated: 2020-04-10 17:45:44.981198+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3890,6 +3927,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-05-08 17:06:18.057471+00:00
     last_updated: 2020-05-08 17:06:18.057493+00:00
 - model: riskofbias.riskofbiasmetric
@@ -3904,6 +3943,8 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
+    sort_order: 1
     created: 2020-05-08 17:06:55.509303+00:00
     last_updated: 2020-05-08 17:06:55.509353+00:00
 - model: riskofbias.riskofbias
@@ -4146,16 +4187,12 @@
     assessment: 1
     number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 3
   fields:
     assessment: 2
     number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 4
   fields:
@@ -4165,8 +4202,6 @@
       risk of bias metrics can be entered for a metric of bias for each study. Risk
       of Bias metrics are organized by domain. The following questions are required
       for evaluation for this assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: epi.criteria
   pk: 1
   fields:

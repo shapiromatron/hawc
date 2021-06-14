@@ -6,6 +6,8 @@ from django.dispatch import receiver
 
 from . import models
 
+logger = logging.getLogger(__name__)
+
 
 @receiver(post_save, sender=models.RiskOfBiasDomain)
 @receiver(pre_delete, sender=models.RiskOfBiasDomain)
@@ -42,13 +44,10 @@ def create_rob_scores(sender, instance, created, **kwargs):
 
     robs_without_met = set(all_robs) - set(robs_with_met)
 
-    objs = [
-        models.RiskOfBiasScore(riskofbias_id=rob_id, metric_id=instance.id,)
-        for rob_id in robs_without_met
-    ]
+    objs = [instance.build_score(rob_id) for rob_id in robs_without_met]
 
     if len(objs) > 0:
-        logging.info(
+        logger.info(
             "Assessment %s -> RiskOfBiasMetric %s (post_save creation signal) "
             "-> %s RiskOfBiasScore(s) created." % (assessment_id, instance.id, len(objs))
         )

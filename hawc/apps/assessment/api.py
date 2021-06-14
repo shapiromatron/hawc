@@ -25,6 +25,14 @@ from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
 from . import models, serializers
+from .actions import media_metadata_report
+
+
+class DisabledPagination(PageNumberPagination):
+    page_size = None
+
+
+logger = logging.getLogger(__name__)
 
 
 class RequiresAssessmentID(APIException):
@@ -35,10 +43,6 @@ class RequiresAssessmentID(APIException):
 class InvalidAssessmentID(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "Assessment does not exist for given `assessment_id`."
-
-
-class DisabledPagination(PageNumberPagination):
-    page_size = None
 
 
 def get_assessment_id_param(request) -> int:
@@ -108,7 +112,7 @@ class AssessmentLevelPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         list_actions = getattr(view, "list_actions", self.default_list_actions)
         if view.action in list_actions:
-            logging.info("Permission checked")
+            logger.debug("Permission checked")
 
             if not hasattr(view, "assessment"):
                 view.assessment = get_assessment_from_query(request)
@@ -230,14 +234,14 @@ class Assessment(AssessmentViewset):
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
 
-    @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
+    @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
         queryset = self.model.objects.get_public_assessments()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @method_decorator(cache_page(60 * 60 * 24))
-    @action(detail=False, methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=False, renderer_classes=PandasRenderers)
     def bioassay_ml_dataset(self, request):
         Endpoint = apps.get_model("animal", "Endpoint")
         # map of django field names to friendlier column names
@@ -532,6 +536,13 @@ class AdminDashboardViewset(viewsets.ViewSet):
     def assessment_size(self, request):
         df = models.Assessment.size_df()
         export = FlatExport(df=df, filename="assessment-size")
+        return Response(export)
+
+    @action(detail=False, renderer_classes=PandasRenderers)
+    def media(self, request):
+        uri = request.build_absolute_uri(location="/")[:-1]
+        df = media_metadata_report(uri)
+        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
         return Response(export)
 
 

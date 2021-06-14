@@ -6,6 +6,7 @@ import Loading from "shared/components/Loading";
 import GenericError from "shared/components/GenericError";
 import ReferenceTable from "lit/components/ReferenceTable";
 import Reference from "./Reference";
+import PaginatedReferenceList from "./components/PaginatedReferenceList";
 
 class NestedTag {
     constructor(item, depth, tree, parent, assessment_id, search_id) {
@@ -52,6 +53,16 @@ class NestedTag {
         } else {
             return this.data.name;
         }
+    }
+
+    renderPaginatedReferenceList(el) {
+        const settings = {
+            assessment_id: this.assessment_id,
+            tag_id: this.data.pk,
+            search_id: this.search_id,
+            tag: this,
+        };
+        ReactDOM.render(<PaginatedReferenceList settings={settings} />, el);
     }
 
     renderReferenceList(el) {

@@ -81,10 +81,8 @@ class HAWCSetPasswordForm(SetPasswordForm):
             self,
             legend_text="Password reset",
             help_text="Enter a new password for your account.",
-            form_actions=[
-                cfl.Submit("submit", "Change password"),
-                cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
-            ],
+            cancel_url=cancel_url,
+            submit_text="Change password",
         )
         helper.form_class = "loginForm"
 
@@ -144,10 +142,8 @@ class RegisterForm(PasswordForm):
         helper = BaseFormHelper(
             self,
             legend_text="Create an account",
-            form_actions=[
-                cfl.Submit("login", "Create account"),
-                cfl.HTML(f'<a role="button" class="btn btn-light" href="{login_url}">Cancel</a>'),
-            ],
+            cancel_url=login_url,
+            submit_text="Create account",
         )
         helper.form_class = "loginForm"
         helper.add_row("first_name", 2, "col-6")
@@ -292,12 +288,8 @@ class HAWCPasswordResetForm(PasswordResetForm):
             self,
             legend_text="Password reset",
             help_text="Enter your email address below, and we'll email instructions for setting a new password.",
-            form_actions=[
-                cfl.Submit("submit", "Send email confirmation"),
-                cfl.HTML(
-                    f'<a role="button" class="btn btn-secondary" href="{reverse("user:login")}">Cancel</a>'
-                ),
-            ],
+            cancel_url=reverse("user:login"),
+            submit_text="Send email confirmation",
         )
         helper.form_class = "loginForm"
 

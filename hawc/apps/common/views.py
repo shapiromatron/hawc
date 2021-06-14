@@ -20,6 +20,8 @@ from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
 from .helper import tryParseInt
 
+logger = logging.getLogger(__name__)
+
 
 def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
     """
@@ -78,7 +80,7 @@ class MessageMixin:
     """
 
     def send_message(self):
-        logging.debug("MessagingMixin called")
+        logger.debug("MessagingMixin called")
         if self.success_message is not None:
             messages.success(self.request, self.success_message, extra_tags="alert alert-success")
 
@@ -158,12 +160,12 @@ class AssessmentPermissionsMixin:
             return None
 
     def permission_check_user_can_view(self):
-        logging.debug("Permissions checked")
+        logger.debug("Permissions checked")
         if not self.assessment.user_can_view_object(self.request.user):
             raise PermissionDenied
 
     def permission_check_user_can_edit(self):
-        logging.debug("Permissions checked")
+        logger.debug("Permissions checked")
         if self.model == Assessment:
             canEdit = self.assessment.user_can_edit_assessment(self.request.user)
         else:
@@ -196,7 +198,7 @@ class AssessmentPermissionsMixin:
                 self.deny_for_locked_study(self.request.user, self.assessment, obj)
                 perms = self.assessment.user_can_edit_object(self.request.user)
 
-        logging.debug("Permissions checked")
+        logger.debug("Permissions checked")
         if perms:
             return obj
         else:
@@ -234,7 +236,7 @@ class AssessmentPermissionsMixin:
                         )
                     self.deny_for_locked_study(self.request.user, self.assessment, obj)
                     perms = self.assessment.user_can_edit_object(self.request.user)
-            logging.debug("Permissions checked")
+            logger.debug("Permissions checked")
             if perms:
                 return queryset
             else:
@@ -242,10 +244,10 @@ class AssessmentPermissionsMixin:
 
     def get_obj_perms(self):
         if not hasattr(self, "assessment"):
-            logging.error("unable to determine object permissions")
+            logger.error("unable to determine object permissions")
             return {"view": False, "edit": False, "edit_assessment": False}
 
-        logging.debug("Permissions added")
+        logger.debug("Permissions added")
         user_perms = self.assessment.user_permissions(self.request.user)
 
         contextual_obj = self.get_contextual_object_for_study_editability_check()
@@ -285,7 +287,7 @@ class ProjectManagerOrHigherMixin:
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
-        logging.debug("Permissions checked")
+        logger.debug("Permissions checked")
         if not self.assessment.user_can_edit_assessment(request.user):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
@@ -308,7 +310,7 @@ class TeamMemberOrHigherMixin:
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
-        logging.debug("Permissions checked")
+        logger.debug("Permissions checked")
         if not self.assessment.user_can_edit_object(request.user):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
@@ -331,7 +333,7 @@ class CanCreateMixin:
         If person is superuser or assessment is editable and user is a project
         manager or team member.
         """
-        logging.debug("Permissions checked")
+        logger.debug("Permissions checked")
         if self.request.user.is_superuser:
             return True
         elif self.request.user.is_anonymous:

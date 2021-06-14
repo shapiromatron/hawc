@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
@@ -80,6 +80,11 @@ class RiskOfBiasDomainSerializer(serializers.ModelSerializer):
 
 class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
     domain = RiskOfBiasDomainSerializer(read_only=True)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["response_values"] = instance.get_response_values()
+        return ret
 
     class Meta:
         model = models.RiskOfBiasMetric
@@ -175,13 +180,6 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
 class RiskOfBiasSerializer(serializers.ModelSerializer):
     scores = RiskOfBiasScoreSerializer(many=True)
     author = HAWCUserSerializer(read_only=True)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret[
-            "rob_response_values"
-        ] = instance.study.assessment.rob_settings.get_rob_response_values()
-        return ret
 
     class Meta:
         model = models.RiskOfBias
@@ -298,16 +296,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
             override_options = self.instance.get_override_options()
 
-        # check to make sure submitted score values are valid
-        rob_assessment = models.RiskOfBiasAssessment()
-        valid_score_values = rob_assessment.get_rob_response_values()
-
-        scores = self.initial_data["scores"]
-        for score in scores:
-            score_value = score["score"]
-            if score_value not in valid_score_values:
-                raise serializers.ValidationError(f"score {score_value} is not valid")
-
         # check overrides
         for key, values in override_options.items():
             override_options[key] = set(el[0] for el in values)
@@ -361,14 +349,17 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
         scores_to_create = validated_data["scores"]
         for score_to_create in scores_to_create:
-            score = models.RiskOfBiasScore.objects.create(
-                riskofbias=rob,
-                metric=score_to_create["metric"],
-                is_default=score_to_create["is_default"],
-                label=score_to_create["label"],
-                score=score_to_create["score"],
-                notes=score_to_create["notes"],
-            )
+            try:
+                score = models.RiskOfBiasScore.objects.create(
+                    riskofbias=rob,
+                    metric=score_to_create["metric"],
+                    is_default=score_to_create["is_default"],
+                    label=score_to_create["label"],
+                    score=score_to_create["score"],
+                    notes=score_to_create["notes"],
+                )
+            except ValidationError as err:
+                raise serializers.ValidationError(err.message)
 
             overridden_objects = score_to_create["overridden_objects"]
             for overridden_object in overridden_objects:
@@ -397,7 +388,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             score = scores[update_score["id"]]
             for key in ["score", "label", "bias_direction", "notes"]:
                 setattr(score, key, update_score[key])
-            score.save()
+            try:
+                score.save()
+            except ValidationError as err:
+                raise serializers.ValidationError(err.message)
 
         # update overrides
         new_overrides = []

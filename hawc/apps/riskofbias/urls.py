@@ -18,6 +18,11 @@ urlpatterns = [
     # modify assessment rob settings
     path("assessment/<int:pk>/", views.ARoBDetail.as_view(), name="arob_detail"),
     path("assessment/<int:pk>/copy/", views.ARoBCopy.as_view(), name="arob_copy"),
+    path(
+        "assessment/<int:pk>/load-approach/",
+        views.ARoBLoadApproach.as_view(),
+        name="arob_load_approach",
+    ),
     path("assessment/<int:pk>/update/", views.ARoBEdit.as_view(), name="arob_update"),
     path(
         "assessment/<int:pk>/text-update/", views.ARoBTextEdit.as_view(), name="arob_text_update",

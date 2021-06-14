@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 from hawc.apps.myuser.models import HAWCUser
 
 
+@pytest.mark.filterwarnings("ignore")
 @pytest.mark.django_db
 def test_openapi():
     # staff user and non staff user

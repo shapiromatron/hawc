@@ -9,6 +9,8 @@ from ..assessment.models import Assessment
 from ..common.models import BaseManager
 from ..study.models import Study
 
+logger = logging.getLogger(__name__)
+
 
 class TaskManager(BaseManager):
     assessment_relation = "study__assessment"
@@ -29,7 +31,7 @@ class TaskManager(BaseManager):
         tasks = []
         for study in studies:
             tasks.extend(self._get_missing_tasks(study, assessment))
-        logging.info(f"Creating {len(tasks)} tasks for assessment {assessment.id}.")
+        logger.info(f"Creating {len(tasks)} tasks for assessment {assessment.id}.")
         self.bulk_create(tasks)
 
     def create_study_tasks(self, study):
@@ -42,7 +44,7 @@ class TaskManager(BaseManager):
         if not assessment.enable_project_management:
             return
         tasks = self._get_missing_tasks(study, assessment)
-        logging.info(f"Creating {len(tasks)} tasks for study {study.id}.")
+        logger.info(f"Creating {len(tasks)} tasks for study {study.id}.")
         self.bulk_create(tasks)
 
     def _get_missing_tasks(self, study, assessment):
