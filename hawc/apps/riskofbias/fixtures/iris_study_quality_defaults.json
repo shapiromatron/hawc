@@ -14,7 +14,8 @@
                     "required_invitro": false,
                     "short_name": "Reporting",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -31,7 +32,8 @@
                     "required_invitro": false,
                     "short_name": "Allocation",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Observational bias/blinding",
@@ -42,7 +44,8 @@
                     "required_invitro": false,
                     "short_name": "Blinding",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Participant selection",
@@ -53,7 +56,8 @@
                     "required_invitro": false,
                     "short_name": "Participant",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -70,7 +74,8 @@
                     "required_invitro": false,
                     "short_name": "Confounding/Variable Control",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -87,7 +92,8 @@
                     "required_invitro": false,
                     "short_name": "Selective Reporting/Attrition",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -104,7 +110,8 @@
                     "required_invitro": false,
                     "short_name": "Exposure Characterization",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Exposure timing, frequency and duration",
@@ -115,7 +122,8 @@
                     "required_invitro": false,
                     "short_name": "Study Design Applicability",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Exposure measures",
@@ -126,7 +134,8 @@
                     "required_invitro": false,
                     "short_name": "Measures",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -143,7 +152,8 @@
                     "required_invitro": false,
                     "short_name": "Outcome Assessment",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Results presentation",
@@ -154,7 +164,8 @@
                     "required_invitro": false,
                     "short_name": "Results Presentation",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 },
                 {
                     "name": "Outcome measures",
@@ -165,7 +176,8 @@
                     "required_invitro": false,
                     "short_name": "Outcome",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -182,7 +194,8 @@
                     "required_invitro": false,
                     "short_name": "Confounding",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -200,7 +213,8 @@
                     "required_invitro": false,
                     "short_name": "Analysis",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -217,7 +231,8 @@
                     "required_invitro": false,
                     "short_name": "Selective",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -234,7 +249,8 @@
                     "required_invitro": false,
                     "short_name": "Study sensitivity",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 2
                 }
             ]
         },
@@ -252,7 +268,8 @@
                     "required_invitro": false,
                     "short_name": "Overall confidence",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 3
                 },
                 {
                     "name": "Overall confidence (epi)",
@@ -263,7 +280,8 @@
                     "required_invitro": false,
                     "short_name": "Overall confidence",
                     "hide_description": false,
-                    "use_short_name": true
+                    "use_short_name": true,
+                    "responses": 3
                 }
             ]
         }

@@ -48,7 +48,6 @@ class RoBDomainForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        self.fields["description"].widget.attrs["rows"] = 3
 
     @property
     def helper(self):
@@ -105,12 +104,12 @@ class RoBMetricForm(forms.ModelForm):
         else:
             inputs["legend_text"] = f"Create new {rob_name} metric"
             inputs["help_text"] = f"Create a new {rob_name} metric."
-
+        self.fields["description"].widget.attrs.update({"class": "html5text"})
         helper = BaseFormHelper(self, **inputs)
         helper.add_row("name", 2, "col-md-6")
-        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
+        helper.add_row("description", 2, ["col-md-8", "col-md-4"])
         helper.add_row("required_animal", 3, "col-md-4")
-        helper.add_row("hide_description", 2, "col-md-6")
+        helper.add_row("hide_description", 2, ["col-md-4", "col-md-8"])
         return helper
 
 

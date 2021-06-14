@@ -14,16 +14,18 @@ class LogicFieldAdmin(AllListFieldAdmin):
     pass
 
 
+class ModelAdmin(admin.TabularInline):
+    model = models.Model
+    fk_name = "session"
+    extra = 0
+
+
 @admin.register(models.Session)
 class SessionAdmin(AllListFieldAdmin):
-    pass
-
-
-@admin.register(models.Model)
-class ModelAdmin(AllListFieldAdmin):
-    pass
+    raw_id_fields = ("endpoint",)
+    inlines = [ModelAdmin]
 
 
 @admin.register(models.SelectedModel)
 class SelectedModelAdmin(AllListFieldAdmin):
-    pass
+    raw_id_fields = ("endpoint", "model")

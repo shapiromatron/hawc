@@ -5,8 +5,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations, models
 
-from ..models import RiskOfBiasAssessment
-
 
 def migrate_scores(apps, schema_editor):
     RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
@@ -40,7 +38,7 @@ class Migration(migrations.Migration):
             name="default_questions",
             field=models.PositiveSmallIntegerField(
                 choices=[(1, "OHAT"), (2, "EPA")],
-                default=RiskOfBiasAssessment.get_default_default_questions,
+                default=999,
                 help_text="If no questions exist, which default questions should be used? If questions already exist, changing this will have no impact.",
                 verbose_name="Default questions",
             ),
@@ -50,7 +48,7 @@ class Migration(migrations.Migration):
             name="responses",
             field=models.PositiveSmallIntegerField(
                 choices=[(0, "OHAT"), (1, "EPA")],
-                default=RiskOfBiasAssessment.get_default_responses,
+                default=999,
                 help_text="Why responses should be used to answering questions:",
                 verbose_name="Question responses",
             ),
