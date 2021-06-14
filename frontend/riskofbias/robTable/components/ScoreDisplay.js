@@ -155,6 +155,7 @@ class ScoreDisplay extends Component {
 
 ScoreDisplay.propTypes = {
     score: PropTypes.shape({
+        assessment_id: PropTypes.number.isRequired,
         author: PropTypes.object.isRequired,
         is_default: PropTypes.bool.isRequired,
         label: PropTypes.string.isRequired,

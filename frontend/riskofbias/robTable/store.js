@@ -13,9 +13,6 @@ class RobTableStore {
     @observable riskofbiases = [];
     @observable active = [];
     @observable final = null;
-    @observable name = "";
-    @observable rob_response_values = [];
-    @observable current_score_state = {};
 
     constructor(config) {
         this.config = config;

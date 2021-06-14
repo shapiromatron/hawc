@@ -41,7 +41,9 @@ MetricCell.propTypes = {
             score_symbol: PropTypes.string.isRequired,
             score_shade: PropTypes.string.isRequired,
             bias_direction: PropTypes.number.isRequired,
+            assessment_id: PropTypes.number.isRequired,
             domain_name: PropTypes.string.isRequired,
+            metric_name: PropTypes.string.isRequired,
         })
     ).isRequired,
     handleClick: PropTypes.func.isRequired,

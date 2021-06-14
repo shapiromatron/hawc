@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {NR_KEYS, BIAS_DIRECTION_SIMPLE} from "riskofbias/constants";
+import {BIAS_DIRECTION_SIMPLE} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
 class StudyRobStore {
