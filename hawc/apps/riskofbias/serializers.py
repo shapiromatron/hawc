@@ -31,21 +31,6 @@ class AssessmentDomainSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class AssessmentScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RiskOfBiasScore
-        fields = (
-            "id",
-            "score",
-            "is_default",
-            "label",
-            "bias_direction",
-            "notes",
-            "metric_id",
-            "riskofbias_id",
-        )
-
-
 class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasDomain
@@ -118,6 +103,24 @@ class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
             "id",
             "score",
             "notes",
+        )
+
+
+class AssessmentScoreSerializer(serializers.ModelSerializer):
+    overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
+
+    class Meta:
+        model = models.RiskOfBiasScore
+        fields = (
+            "id",
+            "score",
+            "is_default",
+            "label",
+            "bias_direction",
+            "notes",
+            "metric_id",
+            "overridden_objects",
+            "riskofbias_id",
         )
 
 

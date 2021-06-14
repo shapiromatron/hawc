@@ -75,7 +75,7 @@ CopyScoresButton.propTypes = {
 class ScoreDisplay extends Component {
     render() {
         let {score, showAuthors, hasOverrides, editableScores} = this.props,
-            showRobScore = !h.hideRobScore(score.metric.domain.assessment.id),
+            showRobScore = !h.hideRobScore(score.assessment_id),
             showAuthorDisplay = showAuthors && score.is_default,
             labelText = score.label,
             displayClass =
@@ -156,13 +156,6 @@ class ScoreDisplay extends Component {
 ScoreDisplay.propTypes = {
     score: PropTypes.shape({
         author: PropTypes.object.isRequired,
-        metric: PropTypes.shape({
-            domain: PropTypes.shape({
-                assessment: PropTypes.shape({
-                    id: PropTypes.number.isRequired,
-                }),
-            }),
-        }),
         is_default: PropTypes.bool.isRequired,
         label: PropTypes.string.isRequired,
         overridden_objects: PropTypes.arrayOf(
