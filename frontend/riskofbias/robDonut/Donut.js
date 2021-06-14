@@ -2,34 +2,13 @@ import _ from "lodash";
 import $ from "$";
 import * as d3 from "d3";
 
-import store from "./store";
-
 import D3Plot from "utils/D3Plot";
 
-import {BIAS_DIRECTION_SIMPLE, BIAS_DIRECTION_VERBOSE} from "riskofbias/constants";
+import {BIAS_DIRECTION_SIMPLE, BIAS_DIRECTION_VERBOSE} from "../constants";
 
 class Donut extends D3Plot {
-    set_data(study, settings) {
-        if (study != null) {
-            store.study = study;
-        }
-        if (settings != null) {
-            store.settings = settings;
-        }
-    }
-
-    fetch_data(study_id, assessment_id) {
-        let promises = [];
-        if (study_id != null) {
-            promises.push(store.fetchStudy(study_id));
-        }
-        if (assessment_id != null) {
-            promises.push(store.fetchSettings(assessment_id));
-        }
-        return Promise.all(promises);
-    }
-
-    render(el) {
+    render(store, el) {
+        this.store = store;
         this.plot_div = $(el);
         this.set_defaults();
         this.data = this.get_dataset_info();
@@ -93,6 +72,8 @@ class Donut extends D3Plot {
     }
 
     get_dataset_info() {
+        const {store} = this;
+
         // exit early if we have no data
         if (!store.shouldUse) {
             return null;

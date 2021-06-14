@@ -4,9 +4,13 @@ import {observable, computed, action} from "mobx";
 import {BIAS_DIRECTION_SIMPLE} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
+const settingsUrl = assessment_id => `/rob/api/assessment/${assessment_id}/settings/`,
+    studyRobUrl = study_id => `/study/api/study/${study_id}/v2/`;
+
 class StudyRobStore {
     @observable settings = null;
     @observable study = null;
+    @observable isLoading = false;
 
     @computed get final() {
         return _.find(this.study.riskofbiases, {
@@ -113,9 +117,8 @@ class StudyRobStore {
         };
     }
 
-    // computed props
     @action.bound fetchSettings(assessment_id) {
-        const url = `/rob/api/assessment/${assessment_id}/settings/`;
+        const url = settingsUrl(assessment_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {
@@ -125,7 +128,7 @@ class StudyRobStore {
     }
 
     @action.bound fetchStudy(study_id) {
-        const url = `/study/api/study/${study_id}/v2/`;
+        const url = studyRobUrl(study_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {
@@ -133,9 +136,13 @@ class StudyRobStore {
             })
             .catch(ex => console.error("Study parsing failed", ex));
     }
+
+    @action.bound fetchStudyDataAndSettings(study_id, assessment_id) {
+        this.isLoading = true;
+        Promise.all([this.fetchStudy(study_id), this.fetchSettings(assessment_id)]).then(() => {
+            this.isLoading = false;
+        });
+    }
 }
 
-const store = new StudyRobStore();
-
-// singleton pattern
-export default store;
+export default StudyRobStore;
