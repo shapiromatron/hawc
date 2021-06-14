@@ -8,7 +8,7 @@ from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
 from ..study.models import Study
-from . import models
+from . import models, constants
 
 
 class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
@@ -63,10 +63,10 @@ class AssessmentRiskOfBiasSerializer(serializers.Serializer):
 
     def get_score_metadata(self, instance):
         return {
-            "choices": models.RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES_MAP,
-            "symbols": models.RiskOfBiasScore.SCORE_SYMBOLS,
-            "colors": models.RiskOfBiasScore.SCORE_SHADES,
-            "bias_direction": {k: v for k, v in models.RiskOfBiasScore.BIAS_DIRECTION_CHOICES},
+            "choices": constants.SCORE_CHOICES_MAP,
+            "symbols": constants.SCORE_SYMBOLS,
+            "colors": constants.SCORE_SHADES,
+            "bias_direction": {k: v for k, v in constants.BiasDirections.choices},
         }
 
 
