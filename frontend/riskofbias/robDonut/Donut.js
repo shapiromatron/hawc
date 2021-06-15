@@ -4,7 +4,11 @@ import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 
-import {BIAS_DIRECTION_SIMPLE, BIAS_DIRECTION_VERBOSE} from "../constants";
+import {
+    BIAS_DIRECTION_SIMPLE,
+    BIAS_DIRECTION_VERBOSE,
+    getMultiScoreDisplaySettings,
+} from "../constants";
 
 class Donut extends D3Plot {
     render(store, el) {
@@ -73,12 +77,6 @@ class Donut extends D3Plot {
 
     get_dataset_info() {
         const {store} = this;
-
-        // exit early if we have no data
-        if (!store.shouldUse) {
-            return null;
-        }
-
         var domain_donut_data = [],
             question_donut_data = [],
             scores = store.final.scores.filter(
@@ -92,8 +90,8 @@ class Donut extends D3Plot {
                 .values()
                 .value(),
             getDataForMetric = (numMetrics, scores) => {
-                let data = store.getMultiScoreDisplaySettings(scores),
-                    defaultScore = scores.filter(score => score.is_default)[0],
+                let data = getMultiScoreDisplaySettings(scores),
+                    defaultScore = scores.find(score => score.is_default) || scores[0],
                     notes = defaultScore.notes;
 
                 if (scores.length > 1) {

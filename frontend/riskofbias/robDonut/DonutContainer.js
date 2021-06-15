@@ -22,16 +22,20 @@ class DonutContainer extends Component {
     }
 
     componentDidUpdate() {
-        if (this.store.isLoading) {
-            return;
+        if (this.store.hasLoaded && this.store.hasFinalData) {
+            this.donut.render(this.store, this.ref.current);
         }
-        this.donut.render(this.store, this.ref.current);
     }
 
     render() {
-        if (this.store.isLoading) {
+        if (!this.store.hasLoaded) {
             return <Loading />;
         }
+
+        if (!this.store.hasFinalData) {
+            return <p>No data available.</p>;
+        }
+
         return <div ref={this.ref}></div>;
     }
 }
