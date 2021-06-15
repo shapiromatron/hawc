@@ -162,14 +162,18 @@ CACHE_10_MIN = 60 * 10
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[HAWC] ")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@hawcproject.org")
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "webmaster@hawcproject.org")
-EXTERNAL_CONTACT_US = ""
+
+# External page handlers
+EXTERNAL_CONTACT_US = os.getenv("HAWC_EXTERNAL_CONTACT_US", "")
+EXTERNAL_ABOUT = os.getenv("HAWC_EXTERNAL_ABOUT", "")
+EXTERNAL_HOME = os.getenv("HAWC_EXTERNAL_HOME", "")
+EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
 PASSWORD_RESET_TIMEOUT_DAYS = 3
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
-
 
 # Server URL settings
 ROOT_URLCONF = "hawc.main.urls"
