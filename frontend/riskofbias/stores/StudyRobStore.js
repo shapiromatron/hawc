@@ -1,11 +1,8 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {BIAS_DIRECTION_SIMPLE} from "riskofbias/constants";
+import {BIAS_DIRECTION_SIMPLE, robSettingsUrl, robStudyUrl} from "../constants";
 import h from "shared/utils/helpers";
-
-const settingsUrl = assessment_id => `/rob/api/assessment/${assessment_id}/settings/`,
-    studyRobUrl = study_id => `/study/api/study/${study_id}/v2/`;
 
 class StudyRobStore {
     @observable settings = null;
@@ -118,7 +115,7 @@ class StudyRobStore {
     }
 
     @action.bound fetchSettings(assessment_id) {
-        const url = settingsUrl(assessment_id);
+        const url = robSettingsUrl(assessment_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {
@@ -128,7 +125,7 @@ class StudyRobStore {
     }
 
     @action.bound fetchStudy(study_id) {
-        const url = studyRobUrl(study_id);
+        const url = robStudyUrl(study_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {
