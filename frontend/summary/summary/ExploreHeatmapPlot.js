@@ -256,7 +256,7 @@ class ExploreHeatmapPlot {
             let newYOffset = yOffset + box.height + label_padding * 2;
             let border = xAxis
                 .append("g")
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null)
                 .selectAll(".none")
                 .data(borderData)
@@ -284,7 +284,7 @@ class ExploreHeatmapPlot {
             xAxis
                 .append("polyline")
                 .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null);
         }
 
@@ -422,7 +422,7 @@ class ExploreHeatmapPlot {
             let newYOffset = yOffset - (box.height + label_padding * 2);
             let border = xAxis
                 .append("g")
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null)
                 .selectAll(".none")
                 .data(borderData)
@@ -450,7 +450,7 @@ class ExploreHeatmapPlot {
             xAxis
                 .append("polyline")
                 .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null);
         }
 
@@ -554,7 +554,7 @@ class ExploreHeatmapPlot {
             let border = yAxis
                 .append("g")
                 .attr("transform", `translate(${-xOffset},0)`)
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null)
                 .selectAll(".none")
                 .data(borderData)
@@ -581,7 +581,7 @@ class ExploreHeatmapPlot {
             yAxis
                 .append("polyline")
                 .attr("points", d => `${x1},${y1} ${x2},${y1} ${x2},${y2} ${x1},${y2}`)
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null);
         }
 
