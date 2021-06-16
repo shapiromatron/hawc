@@ -14,9 +14,8 @@ class Metric extends Component {
             nonEditableScores = store.getNonEditableScoresForMetric(metricId),
             metricHasOverrides = store.metricHasOverrides(metricId),
             anyEditableScore = editableScores[0],
-            name = anyEditableScore.metric.name,
-            hideDescription = anyEditableScore.metric.hide_description,
-            description = anyEditableScore.metric.description,
+            {name, description} = store.metrics[anyEditableScore.metric_id],
+            hideDescription = store.metrics[anyEditableScore.metric_id].hide_description,
             editingFinal = anyEditableScore.final;
 
         return (

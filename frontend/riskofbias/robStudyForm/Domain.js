@@ -12,10 +12,10 @@ class Domain extends Component {
         const {store, domainId} = this.props,
             scores = store.getScoresForDomain(domainId),
             metricIds = _.chain(scores)
-                .map(score => score.metric.id)
+                .map(score => score.metric_id)
                 .uniq()
                 .value(),
-            name = scores[0].metric.domain.name;
+            name = store.metricDomains[scores[0].metric_id].name;
 
         return (
             <div>

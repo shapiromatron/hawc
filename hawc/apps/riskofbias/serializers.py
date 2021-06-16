@@ -38,9 +38,11 @@ class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
 
 
 class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
+    response_values = serializers.ListField(source="get_response_values")
+
     class Meta:
         model = models.RiskOfBiasMetric
-        fields = ("id", "name", "description", "domain_id")
+        fields = ("id", "name", "description", "domain_id", "response_values")
 
 
 class RiskOfBiasAssessmentSerializer(serializers.ModelSerializer):

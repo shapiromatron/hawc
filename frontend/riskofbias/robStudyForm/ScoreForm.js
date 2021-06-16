@@ -10,21 +10,17 @@ import TextInput from "shared/components/TextInput";
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
-import {SCORE_TEXT_DESCRIPTION, BIAS_DIRECTION_CHOICES} from "riskofbias/constants";
 
 class ScoreInput extends Component {
     render() {
-        const {scoreId, choices, value, handleChange} = this.props,
-            scoreChoices = choices.map(d => {
-                return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
-            });
+        const {scoreId, choices, value, handleChange} = this.props;
 
         return (
             <>
                 <SelectInput
                     id={`${scoreId}-score`}
                     label="Score"
-                    choices={scoreChoices}
+                    choices={choices}
                     multiple={false}
                     value={value}
                     handleSelect={handleChange}
@@ -66,10 +62,15 @@ class ScoreForm extends Component {
     render() {
         let {scoreId, store} = this.props,
             score = store.getEditableScore(scoreId),
-            editableMetricHasOverride = store.editableMetricHasOverride(score.metric.id),
-            direction_choices = Object.entries(BIAS_DIRECTION_CHOICES).map(kv => {
-                return {id: kv[0], label: kv[1]};
+            scoreChoices = store.metrics[score.metric_id].response_values.map(c => {
+                return {id: c, label: store.settings.score_metadata.choices[c]};
             }),
+            editableMetricHasOverride = store.editableMetricHasOverride(score.metric_id),
+            direction_choices = Object.entries(store.settings.score_metadata.bias_direction).map(
+                kv => {
+                    return {id: kv[0], label: kv[1]};
+                }
+            ),
             showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
             showOverrideCreate = score.is_default === true,
             showDelete = score.is_default === false;
@@ -97,7 +98,7 @@ class ScoreForm extends Component {
                                 type="button"
                                 onClick={() => {
                                     store.createScoreOverride({
-                                        metric: score.metric.id,
+                                        metric: score.metric_id,
                                         riskofbias: score.riskofbias_id,
                                     });
                                 }}>
@@ -135,7 +136,7 @@ class ScoreForm extends Component {
                             <div>
                                 <ScoreInput
                                     scoreId={score.id}
-                                    choices={store.study.rob_response_values}
+                                    choices={scoreChoices}
                                     value={score.score}
                                     handleChange={value => {
                                         store.updateFormState(scoreId, "score", parseInt(value));

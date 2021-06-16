@@ -17,8 +17,6 @@ const updateRobScore = function(score, riskofbias, overrideOptions) {
         overrideDataTypeValue,
         author: riskofbias.author,
         final: riskofbias.final,
-        domain_name: score.metric.domain.name,
-        domain_id: score.metric.domain.id,
     });
 };
 
@@ -27,6 +25,7 @@ class RobFormStore {
     @observable error = null;
     @observable config = null;
     @observable study = null;
+    @observable settings = null;
     @observable overrideOptions = null;
     scores = observable.array();
     editableScores = observable.map();
@@ -48,18 +47,59 @@ class RobFormStore {
         }).length;
     }
 
+    @computed get domains() {
+        return this.settings.domains.reduce(function(obj, d) {
+            obj[d.id] = d;
+            return obj;
+        }, {});
+    }
+
+    @computed get metrics() {
+        return this.settings.metrics.reduce(function(obj, m) {
+            obj[m.id] = m;
+            return obj;
+        }, {});
+    }
+
+    @computed get metricDomains() {
+        let {domains, metrics} = this;
+        return this.settings.metrics.reduce(function(obj, m) {
+            obj[m.id] = domains[metrics[m.id].domain_id];
+            return obj;
+        }, {});
+    }
+
+    updateRobScore(score, riskofbias, overrideOptions) {
+        let overrideDataTypeValue;
+        if (score.is_default) {
+            overrideDataTypeValue = null;
+        } else if (score.overridden_objects.length > 0) {
+            overrideDataTypeValue = score.overridden_objects[0].content_type_name;
+        } else {
+            overrideDataTypeValue = _.keys(overrideOptions)[0] || null;
+        }
+        return Object.assign({}, score, {
+            overrideDataTypeValue,
+            author: riskofbias.author,
+            final: riskofbias.final,
+            score_symbol: this.settings.score_metadata.symbols[score.score],
+            score_shade: this.settings.score_metadata.colors[score.score],
+            score_description: this.settings.score_metadata.choices[score.score],
+        });
+    }
+
     getScoresForDomain(domainId) {
-        return this.scores.filter(score => score.metric.domain.id == domainId);
+        return this.scores.filter(score => this.metricDomains[score.metric_id].id == domainId);
     }
     getEditableScoresForMetric(metricId) {
-        return [...this.editableScores.values()].filter(score => score.metric.id == metricId);
+        return [...this.editableScores.values()].filter(score => score.metric_id == metricId);
     }
     getNonEditableScoresForMetric(metricId) {
-        return this.nonEditableScores.filter(score => score.metric.id == metricId);
+        return this.nonEditableScores.filter(score => score.metric_id == metricId);
     }
     metricHasOverrides(metricId) {
         return _.chain(this.scores)
-            .filter(score => score.metric.id == metricId)
+            .filter(score => score.metric_id == metricId)
             .map(score => score.is_default === false)
             .some()
             .value();
@@ -82,13 +122,32 @@ class RobFormStore {
         this.config = JSON.parse(document.getElementById(elementId).textContent);
     }
 
+    @action.bound fetchSettings(assessment_id) {
+        const url = `/rob/api/assessment/${assessment_id}/settings/`;
+        return fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(data => {
+                this.settings = data;
+            });
+    }
+
+    @action.bound fetchStudy(study_id) {
+        const url = `/study/api/study/${study_id}/v2/`;
+        return fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(data => {
+                this.study = data;
+            });
+    }
+
     @action.bound fetchFormData() {
         let override_options_url = this.config.riskofbias.override_options_url,
             study_url = this.config.study.api_url;
 
         Promise.all([
             fetch(override_options_url, h.fetchGet).then(response => response.json()),
-            fetch(study_url, h.fetchGet).then(response => response.json()),
+            this.fetchStudy(this.config.study.id),
+            this.fetchSettings(this.config.assessment_id),
         ])
             .then(data => {
                 // only set options which have data
@@ -100,15 +159,13 @@ class RobFormStore {
                 });
                 this.overrideOptions = overrideOptions;
 
-                this.study = data[1];
-
                 const editableRiskOfBiasId = this.config.riskofbias.id,
                     scores = _.flatten(
-                        data[1].riskofbiases
+                        this.study.riskofbiases
                             .filter(riskofbias => riskofbias.active === true)
                             .map(riskofbias =>
                                 riskofbias.scores.map(score =>
-                                    updateRobScore(score, riskofbias, overrideOptions)
+                                    this.updateRobScore(score, riskofbias, overrideOptions)
                                 )
                             )
                     );
@@ -128,12 +185,7 @@ class RobFormStore {
                         .value()
                 );
 
-                this.domainIds.replace(
-                    _.chain(scores)
-                        .flatMapDeep("metric.domain.id")
-                        .uniq()
-                        .value()
-                );
+                this.domainIds.replace(_.uniq(scores.map(s => this.metricDomains[s.metric_id].id)));
             })
             .catch(exception => {
                 this.error = exception;
@@ -199,7 +251,7 @@ class RobFormStore {
             .then(json => {
                 this.editableScores.set(
                     json.id,
-                    updateRobScore(json, activeRiskOfBias, this.overrideOptions)
+                    this.updateRobScore(json, activeRiskOfBias, this.overrideOptions)
                 );
             })
             .catch(error => {
