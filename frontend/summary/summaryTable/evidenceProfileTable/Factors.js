@@ -83,6 +83,10 @@ const increaseFactors = [
         );
     }),
     FactorsCell = observer(props => {
+        /* 
+        Users provide descriptive text, however, we have some fixed elements that need to be
+        injected into the text provided by the user. Here we 
+        */
         const {content} = props,
             _factors = increaseFactors.concat(decreaseFactors),
             injectText = (block, injectionText) => block.replace(/^<p>/gm, `<p>${injectionText}`),
@@ -113,12 +117,15 @@ const increaseFactors = [
                                 dashText = factor.short_description.length > 0 ? " - " : "",
                                 labelText = `<em>${factorType.label}</em>${dashText}`,
                                 html = factor.short_description;
+
                             // prefix label if it exists
                             if (factorType.displayLabel) {
                                 html = injectText(factor.short_description, labelText);
                             }
+
                             // inject popup if it exists
                             html = injectPopup(html, factorType, factor);
+
                             return <li key={index} dangerouslySetInnerHTML={{__html: html}}></li>;
                         })}
                     </ul>
