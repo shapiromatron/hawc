@@ -122,6 +122,7 @@ class D3Plot {
         this.svg = d3
             .select(this.plot_div[0])
             .append("svg")
+            .attr("alt", "A graphical image of health assessment data")
             .attr("width", w)
             .attr("height", h)
             .attr("class", "d3")

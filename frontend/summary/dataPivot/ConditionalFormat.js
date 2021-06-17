@@ -239,7 +239,9 @@ class _DataPivot_settings_conditional {
             max_color = $('<input class="form-control" name="max_color" type="color">').val(
                 values.max_color || defaults.max_color
             ),
-            svg = $('<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'),
+            svg = $(
+                '<svg alt="Color gradient" width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
+            ),
             gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
 
         // add event-handlers to change gradient color

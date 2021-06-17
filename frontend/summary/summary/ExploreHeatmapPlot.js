@@ -805,6 +805,7 @@ class ExploreHeatmapPlot {
         this.svg = d3
             .select(this.plot_div[0])
             .append("svg")
+            .attr("alt", "An exploratory heatmap plot")
             .attr("class", "d3")
             .node();
         this.vis = d3.select(this.svg).append("g");

@@ -119,6 +119,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
         let svg = d3
                 .select(el)
                 .append("svg")
+                .attr("alt", "A dose-response plot")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")

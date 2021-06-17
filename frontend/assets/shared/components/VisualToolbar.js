@@ -49,7 +49,7 @@ const getSvgObject = function(svgElement) {
             `<form style="display: none;" action="/assessment/download-plot/" method="post">
                 <input name="height" value="${svg_blob.height}">
                 <input name="width" value="${svg_blob.width}">
-                <input name="svg" value="${btoa(escape(svg_blob.source[0]))}">
+                <input name="svg" alt="Image download" value="${btoa(escape(svg_blob.source[0]))}">
                 <input name="output" value="${format}">
             </form>`
         )
