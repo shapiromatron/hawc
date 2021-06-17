@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import h from "shared/utils/helpers";
-import HelpTextPopup from "shared/components/HelpTextPopup";
 import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 
@@ -47,7 +46,7 @@ const increaseFactors = [
                             {selectedIndex >= 0 ? (
                                 <>
                                     <QuillTextInput
-                                        label="Short description"
+                                        label="Description"
                                         name={key}
                                         value={content.factors[selectedIndex].short_description}
                                         onChange={value =>
@@ -58,7 +57,7 @@ const increaseFactors = [
                                         }
                                     />
                                     <QuillTextInput
-                                        label="Detailed description"
+                                        label="Hover-over"
                                         value={
                                             content.factors[selectedIndex].long_description ||
                                             "<p></p>"
@@ -70,12 +69,15 @@ const increaseFactors = [
                                             )
                                         }
                                     />
+                                    <hr />
                                 </>
                             ) : null}
                         </div>
                     );
                 })}
+                <hr />
                 <QuillTextInput
+                    label="Additional free text"
                     value={content.text}
                     onChange={value => store.updateValue(`${updateKey}.text`, value)}
                 />
@@ -83,27 +85,26 @@ const increaseFactors = [
         );
     }),
     FactorsCell = observer(props => {
-        /* 
-        Users provide descriptive text, however, we have some fixed elements that need to be
-        injected into the text provided by the user. Here we 
+        /*
+        Users provide descriptive text in html using a wysiwyg editor. We update the text provided
+        to inject the header-text if available, as well as the help-text popup, if available. We
+        assume that the text starts and ends with <p> tags which are required for our regular
+        expressions for content insertion.
         */
         const {content} = props,
             _factors = increaseFactors.concat(decreaseFactors),
             injectText = (block, injectionText) => block.replace(/^<p>/gm, `<p>${injectionText}`),
             injectPopup = (block, factorType, factor) => {
                 if (h.hasInnerText(factor.long_description)) {
-                    // TODO - resume here?
-                    // - docs to explain why?
-                    // - cleanup, keep popop open if hovering?
-                    // - word export
-                    const popup = `<span
-                            class="fa fa-info-circle"
+                    // popup is designed to be the same as the HelpTextPopup component.
+                    const popup = `<i
+                            class="ml-1 fa fa-fw fa-info-circle"
                             aria-hidden="true"
                             data-html="true"
                             data-toggle="popover"
                             title="${factorType.label}"
-                            data-content="${factor.long_description}"></span>`;
-                    block = block.replace(/<\/p>$/gm, `&nbsp;${popup}</p>`);
+                            data-content="${_.escape(factor.long_description)}"></i>`;
+                    block = block.replace(/<\/p>$/gm, `${popup}</p>`);
                 }
                 return block;
             };
@@ -114,7 +115,8 @@ const increaseFactors = [
                     <ul>
                         {content.factors.map((factor, index) => {
                             let factorType = _factors.find(_factor => _factor.key == factor.key),
-                                dashText = factor.short_description.length > 0 ? " - " : "",
+                                dashText =
+                                    h.hasInnerText(factor.short_description) > 0 ? " - " : "",
                                 labelText = `<em>${factorType.label}</em>${dashText}`,
                                 html = factor.short_description;
 

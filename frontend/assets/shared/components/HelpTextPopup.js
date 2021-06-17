@@ -2,20 +2,27 @@ import $ from "$";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+const enablePopovers = $el => {
+        $el.popover({
+            placement: "auto",
+            trigger: "hover",
+            delay: {show: 100, hide: 1000},
+        });
+    },
+    disablePopovers = $el => {
+        $el.popover("dispose");
+    };
+
 class HelpTextPopover extends Component {
     constructor(props) {
         super(props);
         this.domNode = React.createRef();
     }
     componentDidMount() {
-        $(this.domNode.current).popover({
-            placement: "auto",
-            trigger: "hover focus",
-            delay: {show: 100, hide: 1000},
-        });
+        enablePopovers($(this.domNode.current));
     }
     componentWillUnmount() {
-        $(this.domNode.current).popover("dispose");
+        disablePopovers($(this.domNode.current));
     }
     render() {
         const {icon, title, content} = this.props;
@@ -42,4 +49,5 @@ HelpTextPopover.defaultProps = {
     title: "Help-text",
 };
 
+export {enablePopovers, disablePopovers};
 export default HelpTextPopover;

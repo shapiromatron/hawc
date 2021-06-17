@@ -5,6 +5,8 @@ import {Judgement} from "./Judgement";
 import {FactorsCell} from "./Factors";
 import h from "shared/utils/helpers";
 
+import {enablePopovers, disablePopovers} from "shared/components/HelpTextPopup";
+
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
     NoDataRow = function(no_content_text) {
         return (
@@ -219,14 +221,21 @@ class Table extends Component {
         this.domNode = React.createRef();
     }
     componentDidMount() {
+        /*
+        Enable tooltips within the Table using the twitter bootstrap jQuery API
+        after the  component has fully mounted. We can't use components for this since the
+        tooltips are being added in text instead of using React components.
+        */
         if (this.domNode.current) {
-            $(this.domNode.current)
-                .find('[data-toggle="popover"]')
-                .popover({
-                    placement: "auto",
-                    trigger: "hover focus",
-                    delay: {show: 100, hide: 1000},
-                });
+            const $el = $(this.domNode.current).find('[data-toggle="popover"]');
+            enablePopovers($el);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.domNode.current) {
+            const $el = $(this.domNode.current).find('[data-toggle="popover"]');
+            disablePopovers($el);
         }
     }
 

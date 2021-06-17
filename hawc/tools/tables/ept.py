@@ -158,6 +158,10 @@ class Factor(BaseModel):
     def to_html(self):
         label = FactorLabel[self.key.name].value
         if label:
+            if self.short_description.startswith("<p>"):
+                # same logic as in Factors.js; insert label into user-specified content
+                replacement_header = f"<p>{tag_wrapper(label, 'em')} - "
+                return self.short_description.replace("<p>", replacement_header, 1)
             return tag_wrapper(label, "em") + " - " + self.short_description
         else:
             return self.short_description
