@@ -116,15 +116,18 @@ const dodgeLogarithmic = (data, x, radius, options) => {
             xAxis = d3.axisBottom(x).ticks(numTicks + 1, ","),
             $tooltip = $("<div>").appendTo(el);
 
+        // TODO - replace alt with this approach for svgs https://css-tricks.com/accessible-svgs/
         let svg = d3
                 .select(el)
                 .append("svg")
-                .attr("alt", "A dose-response plot")
+                .attr("role", "image")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`),
             itemsGroup = svg.append("g").attr("class", "items");
+
+        svg.append("title", "A dose-response plot");
 
         // draw x-axis
         svg.append("g")
