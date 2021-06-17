@@ -59,10 +59,12 @@ DataStatusIndicator.propTypes = {
 };
 
 const HelpText = {
-    delimiter:
-        "If data are delimited in a cell, the delimiter character used. If unspecified, the data are not delimited",
-    header:
-        "By default the data column name is shown as the header; this can be overridden with custom text here.",
+    customItems: `By default, items are presented in alphabetical order.
+        If customized, users can customize the order of display.`,
+    delimiter: `If data are delimited in a cell, the delimiter character used.
+        If unspecified, the data are not delimited`,
+    header: `By default the data column name is shown as the header;
+        this can be overridden with custom text here.`,
     wrapText: "Wrap text at a specified length, else auto calculated",
 };
 

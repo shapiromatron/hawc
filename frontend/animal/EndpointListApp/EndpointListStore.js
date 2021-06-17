@@ -68,7 +68,7 @@ class EndpointListStore {
                 .value(),
             systemOptions = _.chain(dataset)
                 .map(d => {
-                    return {id: d.system, label: d.system || "<null>"};
+                    return {id: d.system, label: d.system || h.nullString};
                 })
                 .uniqBy(d => d.id)
                 .sortBy(d => d.id.toLowerCase())
