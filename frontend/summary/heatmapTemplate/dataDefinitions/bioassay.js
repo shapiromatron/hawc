@@ -217,6 +217,7 @@ const BE = {
         effect: defineProps("effect", "Effect", "effect"),
         effectSubtype: defineProps("effectSubtype", "Effect subtype", "effect subtype"),
         endpointName: defineProps("endpointName", "Endpoint name", "endpoint name"),
+        observationTime: defineProps("observationTime", "Observation time", "observation time"),
     },
     BESettings = {
         AXIS_OPTIONS: {
@@ -250,6 +251,7 @@ const BE = {
             effect: defineFilter(BE.effect),
             effectSubtype: defineFilter(BE.effectSubtype),
             endpointName: defineFilter(BE.endpointName),
+            observationTime: defineFilter(BE.observationTime),
         },
         TABLE_FIELDS: {
             studyCitation: defineTable(BE.studyCitation, {on_click_event: "study"}),
@@ -267,6 +269,7 @@ const BE = {
             effect: defineTable(BE.effect),
             effectSubtype: defineTable(BE.effectSubtype),
             endpointName: defineTable(BE.endpointName, {on_click_event: "endpoint_complete"}),
+            observationTime: defineTable(BE.observationTime),
         },
         DASHBOARDS: [],
     };
@@ -382,14 +385,15 @@ const BED = {
         effect: defineProps("effect", "Effect", "effect"),
         effectSubtype: defineProps("effectSubtype", "Effect subtype", "effect subtype"),
         endpointName: defineProps("endpointName", "Endpoint name", "endpoint name"),
-        doseUnitsId: defineProps("doseUnitsId", "dose units id", "dose units id"),
-        doseUnitsName: defineProps("doseUnitsName", "dose units name", "dose units name"),
-        doses: defineProps("doses", "doses", "doses"),
-        noel: defineProps("noel", "noel", "noel"),
-        loel: defineProps("loel", "loel", "loel"),
-        fel: defineProps("fel", "fel", "fel"),
-        bmd: defineProps("bmd", "bmd", "bmd"),
-        bmdl: defineProps("bmdl", "bmdl", "bmdl"),
+        observationTime: defineProps("observationTime", "Observation time", "observation time"),
+        doseUnitsId: defineProps("doseUnitsId", "Dose units ID", "dose units id"),
+        doseUnitsName: defineProps("doseUnitsName", "Dose units name", "dose units name"),
+        doses: defineProps("doses", "Doses", "doses"),
+        noel: defineProps("noel", "NOEL", "noel"),
+        loel: defineProps("loel", "LOEL", "loel"),
+        fel: defineProps("fel", "FEL", "fel"),
+        bmd: defineProps("bmd", "BMD", "bmd"),
+        bmdl: defineProps("bmdl", "BMDL", "bmdl"),
     },
     BEDSettings = {
         AXIS_OPTIONS: {
@@ -420,6 +424,7 @@ const BED = {
             effect: defineFilter(BED.effect, {on_click_event: "endpoint_complete"}),
             effectSubtype: defineFilter(BED.effectSubtype, {on_click_event: "endpoint_complete"}),
             endpointName: defineFilter(BED.endpointName),
+            observationTime: defineFilter(BED.observationTime),
         },
         TABLE_FIELDS: {
             studyCitation: defineTable(BED.studyCitation, {on_click_event: "study"}),
@@ -437,6 +442,7 @@ const BED = {
             effect: defineTable(BED.effect),
             effectSubtype: defineTable(BED.effectSubtype),
             endpointName: defineTable(BED.endpointName, {on_click_event: "endpoint_complete"}),
+            observationTime: defineTable(BED.observationTime),
             doses: defineTable(BED.doses),
             doseUnitsName: defineTable(BED.doseUnitsName),
             noel: defineTable(BED.noel),
