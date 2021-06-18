@@ -4,22 +4,6 @@ import {observable, computed, action} from "mobx";
 import {NR_KEYS} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
-const updateRobScore = function(score, riskofbias, overrideOptions) {
-    let overrideDataTypeValue;
-    if (score.is_default) {
-        overrideDataTypeValue = null;
-    } else if (score.overridden_objects.length > 0) {
-        overrideDataTypeValue = score.overridden_objects[0].content_type_name;
-    } else {
-        overrideDataTypeValue = _.keys(overrideOptions)[0] || null;
-    }
-    return Object.assign({}, score, {
-        overrideDataTypeValue,
-        author: riskofbias.author,
-        final: riskofbias.final,
-    });
-};
-
 class RobFormStore {
     // content
     @observable error = null;
@@ -27,7 +11,6 @@ class RobFormStore {
     @observable study = null;
     @observable settings = null;
     @observable overrideOptions = null;
-    scores = observable.array();
     editableScores = observable.map();
     nonEditableScores = observable.array();
     domainIds = observable.array();
@@ -88,23 +71,31 @@ class RobFormStore {
         });
     }
 
-    getScoresForDomain(domainId) {
-        return this.scores.filter(score => this.metricDomains[score.metric_id].id == domainId);
+    getMetricIds(domainId) {
+        return _.uniq(
+            [...store.editableScores.values()].reduce(function(array, score) {
+                store.metricDomains[score.metric_id].id == domainId
+                    ? array.push(score.metric_id)
+                    : null;
+                return array;
+            }, [])
+        );
     }
+
     getEditableScoresForMetric(metricId) {
         return [...this.editableScores.values()].filter(score => score.metric_id == metricId);
     }
     getNonEditableScoresForMetric(metricId) {
         return this.nonEditableScores.filter(score => score.metric_id == metricId);
     }
-    metricHasOverrides(metricId) {
-        return _.chain(this.scores)
-            .filter(score => score.metric_id == metricId)
+
+    nonEditableMetricHasOverrides(metricId) {
+        return _.chain(this.getNonEditableScoresForMetric(metricId))
             .map(score => score.is_default === false)
             .some()
             .value();
     }
-    editableMetricHasOverride(metricId) {
+    editableMetricHasOverrides(metricId) {
         return _.chain(this.getEditableScoresForMetric(metricId))
             .map(score => score.is_default === false)
             .some()
@@ -141,8 +132,7 @@ class RobFormStore {
     }
 
     @action.bound fetchFormData() {
-        let override_options_url = this.config.riskofbias.override_options_url,
-            study_url = this.config.study.api_url;
+        let override_options_url = this.config.riskofbias.override_options_url;
 
         Promise.all([
             fetch(override_options_url, h.fetchGet).then(response => response.json()),
@@ -169,8 +159,6 @@ class RobFormStore {
                                 )
                             )
                     );
-
-                this.scores.replace(scores);
 
                 scores
                     .filter(score => score.riskofbias_id === editableRiskOfBiasId)
@@ -225,6 +213,13 @@ class RobFormStore {
                 this.config.riskofbias.url,
                 this.config.riskofbias.id
             )}`;
+        // catch errors that are not reported cleanly on the backend
+        // missing scores
+        const missingScores = payload.scores.filter(score => isNaN(score.score));
+        if (missingScores.length > 0) {
+            this.error = `Missing ${missingScores.length} score(s).`;
+            return;
+        }
 
         this.error = null;
         return fetch(url, opts)

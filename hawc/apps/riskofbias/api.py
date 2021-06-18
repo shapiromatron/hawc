@@ -258,7 +258,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        new_serializer = serializers.RiskOfBiasScoreSerializer(serializer.instance)
+        new_serializer = serializers.AssessmentScoreSerializer(serializer.instance)
         headers = self.get_success_headers(new_serializer.data)
         return Response(new_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

@@ -12,7 +12,7 @@ class Metric extends Component {
         const {store, metricId} = this.props,
             editableScores = store.getEditableScoresForMetric(metricId),
             nonEditableScores = store.getNonEditableScoresForMetric(metricId),
-            metricHasOverrides = store.metricHasOverrides(metricId),
+            metricHasOverrides = store.nonEditableMetricHasOverrides(metricId),
             anyEditableScore = editableScores[0],
             {name, description} = store.metrics[anyEditableScore.metric_id],
             hideDescription = store.metrics[anyEditableScore.metric_id].hide_description,

@@ -10,12 +10,8 @@ import Metric from "./Metric";
 class Domain extends Component {
     render() {
         const {store, domainId} = this.props,
-            scores = store.getScoresForDomain(domainId),
-            metricIds = _.chain(scores)
-                .map(score => score.metric_id)
-                .uniq()
-                .value(),
-            name = store.metricDomains[scores[0].metric_id].name;
+            metricIds = store.getMetricIds(domainId),
+            name = store.domains[domainId].name;
 
         return (
             <div>

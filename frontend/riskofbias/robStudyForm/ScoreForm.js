@@ -7,11 +7,14 @@ import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
-import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
 
 class ScoreInput extends Component {
+    componentDidMount() {
+        const {choices, value, handleChange} = this.props;
+        choices.map(c => c.id).includes(value) ? null : handleChange(NaN);
+    }
     render() {
         const {scoreId, choices, value, handleChange} = this.props;
 
@@ -25,7 +28,7 @@ class ScoreInput extends Component {
                     value={value}
                     handleSelect={handleChange}
                 />
-                <ScoreIcon score={value} />
+                {isNaN(value) ? null : <ScoreIcon score={value} />}
             </>
         );
     }
@@ -65,21 +68,22 @@ class ScoreForm extends Component {
             scoreChoices = store.metrics[score.metric_id].response_values.map(c => {
                 return {id: c, label: store.settings.score_metadata.choices[c]};
             }),
-            editableMetricHasOverride = store.editableMetricHasOverride(score.metric_id),
+            editableMetricHasOverrides = store.editableMetricHasOverrides(score.metric_id),
             direction_choices = Object.entries(store.settings.score_metadata.bias_direction).map(
                 kv => {
                     return {id: kv[0], label: kv[1]};
                 }
             ),
-            showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
             showOverrideCreate = score.is_default === true,
             showDelete = score.is_default === false;
+
+        scoreChoices.unshift({id: "", label: "---"});
 
         return (
             <div className="score-form container-fluid ">
                 <div className="row">
                     <div className="col-md-3">
-                        {editableMetricHasOverride ? (
+                        {editableMetricHasOverrides ? (
                             <TextInput
                                 id={`${score.id}-label`}
                                 label="Label"
@@ -115,7 +119,7 @@ class ScoreForm extends Component {
                             </button>
                         ) : null}
 
-                        {editableMetricHasOverride ? (
+                        {editableMetricHasOverrides ? (
                             score.is_default ? (
                                 <b title="Unless otherwise specified, all content will use this value">
                                     <i className="fa fa-check-square-o" />
@@ -132,32 +136,30 @@ class ScoreForm extends Component {
                 </div>
                 <div className="row">
                     <div className="col-md-3">
-                        {showScoreInput ? (
-                            <div>
-                                <ScoreInput
-                                    scoreId={score.id}
-                                    choices={scoreChoices}
-                                    value={score.score}
-                                    handleChange={value => {
-                                        store.updateFormState(scoreId, "score", parseInt(value));
-                                    }}
-                                />
-                                <SelectInput
-                                    id={`${score.id}-direction`}
-                                    label="Bias direction"
-                                    choices={direction_choices}
-                                    multiple={false}
-                                    value={score.bias_direction}
-                                    handleSelect={value => {
-                                        store.updateFormState(
-                                            scoreId,
-                                            "bias_direction",
-                                            parseInt(value)
-                                        );
-                                    }}
-                                />
-                            </div>
-                        ) : null}
+                        <div>
+                            <ScoreInput
+                                scoreId={score.id}
+                                choices={scoreChoices}
+                                value={score.score}
+                                handleChange={value => {
+                                    store.updateFormState(scoreId, "score", parseInt(value));
+                                }}
+                            />
+                            <SelectInput
+                                id={`${score.id}-direction`}
+                                label="Bias direction"
+                                choices={direction_choices}
+                                multiple={false}
+                                value={score.bias_direction}
+                                handleSelect={value => {
+                                    store.updateFormState(
+                                        scoreId,
+                                        "bias_direction",
+                                        parseInt(value)
+                                    );
+                                }}
+                            />
+                        </div>
                     </div>
                     <div className="col-md-9">
                         <ScoreNotesInput

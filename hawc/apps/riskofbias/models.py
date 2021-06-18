@@ -360,7 +360,7 @@ class RiskOfBiasScore(models.Model):
     metric = models.ForeignKey(RiskOfBiasMetric, on_delete=models.CASCADE, related_name="scores")
     is_default = models.BooleanField(default=True)
     label = models.CharField(max_length=128, blank=True)
-    score = models.PositiveSmallIntegerField(choices=constants.SCORE_CHOICES, default=0)
+    score = models.PositiveSmallIntegerField(choices=constants.SCORE_CHOICES)
     bias_direction = models.PositiveSmallIntegerField(
         choices=constants.BiasDirections.choices,
         default=constants.BiasDirections.BIAS_DIRECTION_UNKNOWN,
@@ -377,6 +377,10 @@ class RiskOfBiasScore(models.Model):
         return f"{self.riskofbias} {self.metric}"
 
     def clean(self):
+        # if score is none, set default
+        if self.score is None:
+            self.score = self.metric.get_response_values()[0]
+        # if score not in accepted metric scores, raise error
         if self.score not in self.metric.get_response_values():
             err = f"'{self.get_score_display()}' is not a valid score for this metric."
             raise ValidationError(err)
