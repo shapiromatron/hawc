@@ -5,6 +5,8 @@ import {Judgement} from "./Judgement";
 import {FactorsCell} from "./Factors";
 import h from "shared/utils/helpers";
 
+import {enablePopovers, disablePopovers} from "shared/components/HelpTextPopup";
+
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
     NoDataRow = function(no_content_text) {
         return (
@@ -214,13 +216,36 @@ MechanisticEvidenceRows.propTypes = {
 
 @observer
 class Table extends Component {
+    constructor(props) {
+        super(props);
+        this.domNode = React.createRef();
+    }
+    componentDidMount() {
+        /*
+        Enable tooltips within the Table using the twitter bootstrap jQuery API
+        after the  component has fully mounted. We can't use components for this since the
+        tooltips are being added in text instead of using React components.
+        */
+        if (this.domNode.current) {
+            const $el = $(this.domNode.current).find('[data-toggle="popover"]');
+            enablePopovers($el);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.domNode.current) {
+            const $el = $(this.domNode.current).find('[data-toggle="popover"]');
+            disablePopovers($el);
+        }
+    }
+
     render() {
         const {store} = this.props,
             {exposed_human, animal, mechanistic, summary_judgement} = store.settings,
             hide_evidence =
                 exposed_human.hide_content && animal.hide_content && mechanistic.hide_content;
         return hide_evidence && summary_judgement.hide_content ? null : (
-            <table className="summaryTable table table-bordered table-sm">
+            <table ref={this.domNode} className="summaryTable table table-bordered table-sm">
                 {hide_evidence ? null : (
                     <colgroup>
                         <col style={{width: "15%"}}></col>
