@@ -19,7 +19,7 @@ class JudgementTexts(Enum):
 
 class SummaryJudgementTexts(Enum):
     Confident = ("⊕⊕⊕", "Evidence demonstrates")
-    Likely = ("⊕⊕⊙", "Evidence likely indicates")
+    Likely = ("⊕⊕⊙", "Evidence indicates (likely)")
     Suggests = ("⊕⊙⊙", "Evidence suggests")
     Inadequate = ("⊙⊙⊙", "Evidence inadequate")
     NoEffect = ("⊝⊝⊝", "Strong evidence supports no effect")
@@ -128,6 +128,7 @@ class FactorLabel(Enum):
     DownCoherence = "Lack of expected coherence"
     DownImplausible = "Evidence demonstrating implausibility"
     DownConfidence = "Low confidence studies"
+    DownInterpretation = "Interpretation limitations"
     DownOther = ""
 
 
@@ -145,6 +146,7 @@ class FactorType(IntEnum):
     DownCoherence = -40
     DownImplausible = -50
     DownConfidence = -60
+    DownInterpretation = -70
     DownOther = -100
 
 
@@ -156,6 +158,10 @@ class Factor(BaseModel):
     def to_html(self):
         label = FactorLabel[self.key.name].value
         if label:
+            if self.short_description.startswith("<p>"):
+                # same logic as in Factors.js; insert label into user-specified content
+                replacement_header = f"<p>{tag_wrapper(label, 'em')} - "
+                return self.short_description.replace("<p>", replacement_header, 1)
             return tag_wrapper(label, "em") + " - " + self.short_description
         else:
             return self.short_description
@@ -424,17 +430,43 @@ class EvidenceProfileTable(BaseTable):
         return {
             "exposed_human": {
                 "title": "Evidence from studies of exposed humans",
-                "rows": [],
+                "rows": [
+                    {
+                        "summary": {"findings": "<p></p>"},
+                        "evidence": {"description": "<p><em>No evidence available</em></p>"},
+                        "judgement": {
+                            "judgement": JudgementChoices.Indeterminate,
+                            "description": "<p></p>",
+                            "custom_judgement_icon": "",
+                            "custom_judgement_label": "",
+                        },
+                        "certain_factors": {"text": "<p></p>", "factors": []},
+                        "uncertain_factors": {"text": "<p></p>", "factors": []},
+                    }
+                ],
                 "merge_judgement": True,
                 "hide_content": False,
-                "no_content_text": "No data available",
+                "no_content_text": "No evidence available",
             },
             "animal": {
                 "title": "Evidence from animal studies",
-                "rows": [],
+                "rows": [
+                    {
+                        "summary": {"findings": "<p></p>"},
+                        "evidence": {"description": "<p><em>No evidence available</em></p>"},
+                        "judgement": {
+                            "judgement": JudgementChoices.Indeterminate,
+                            "description": "<p></p>",
+                            "custom_judgement_icon": "",
+                            "custom_judgement_label": "",
+                        },
+                        "certain_factors": {"text": "<p></p>", "factors": []},
+                        "uncertain_factors": {"text": "<p></p>", "factors": []},
+                    }
+                ],
                 "merge_judgement": True,
                 "hide_content": False,
-                "no_content_text": "No data available",
+                "no_content_text": "No evidence available",
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
@@ -442,7 +474,7 @@ class EvidenceProfileTable(BaseTable):
                 "rows": [],
                 "merge_judgement": True,
                 "hide_content": False,
-                "no_content_text": "No data available",
+                "no_content_text": "No evidence available",
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
