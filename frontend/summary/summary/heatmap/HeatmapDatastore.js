@@ -42,8 +42,27 @@ class HeatmapDatastore {
 
     setIntersection() {
         /*
-        here, we have "red" in the color column with element index 1, 2, and 3
-        intersection["color"]["red"] = Set([1,2,3])
+        An intersection is an object:
+
+        - each key is a column
+        - each value is a object
+            - each key is a column value
+            - each value is a set of row indexes
+
+        As an example, assume with have two columns and six rows:
+        color  shape
+        red    circle
+        blue   circle
+
+        {
+            color: {
+                red: Set([1]),
+                blue: Set([2])
+            },
+            shape: {
+                circle: Set([1, 2])
+            }
+        }
         */
         let intersection = {},
             allRows = [...this.usableRows],
@@ -61,7 +80,7 @@ class HeatmapDatastore {
                         text = d[columnName] || "";
 
                     let raw_values = delimiter ? text.split(delimiter) : [text];
-                    const values = raw_values.map(e => e.trim());
+                    const values = raw_values.map(e => e.toString().trim());
 
                     for (let value of values) {
                         if (!this.settings.show_null && !value) {
@@ -100,9 +119,25 @@ class HeatmapDatastore {
 
     setScales() {
         const setScales = (fields, intersection) => {
-            const columns = fields.map(field => field.column),
-                items = columns.map(column => _.keys(intersection[column]).sort()),
+            const getSpecifiedAxisOrder = function(field) {
+                    /*
+                    If an order is not specified, sort tokens.
+                    If an order is specified, use the specified order, and append additional tokens to the end.
+                    */
+                    let items = _.keys(intersection[field.column]).sort();
+                    if (!_.isArray(field.items)) {
+                        return items.sort();
+                    }
+                    let itemsSet = new Set(items);
+                    items = field.items.map(item => item.id);
+                    items.forEach(item => itemsSet.delete(item));
+                    items.push([...itemsSet].sort());
+                    return _.flatten(items);
+                },
+                columns = fields.map(field => field.column),
+                items = fields.map(getSpecifiedAxisOrder),
                 permutations = h.cartesian(items);
+
             if (columns.length == 0) {
                 return [];
             } else if (columns.length == 1) {
@@ -139,9 +174,7 @@ class HeatmapDatastore {
                         });
                         return rows;
                     })
-                    .map(d => {
-                        return d.size;
-                    });
+                    .map(d => (d ? d.size : 0));
             },
             x = setGrandTotals(toJS(this.intersection), this.scales.x),
             y = setGrandTotals(toJS(this.intersection), this.scales.y);
@@ -250,7 +283,7 @@ class HeatmapDatastore {
             index = -1,
             removedRows = this.rowsRemovedByFilters,
             getIntersection = function(arr, set2) {
-                return arr.filter(x => set2.has(x));
+                return set2 ? arr.filter(x => set2.has(x)) : [];
             },
             getRows = filters => {
                 let rows;

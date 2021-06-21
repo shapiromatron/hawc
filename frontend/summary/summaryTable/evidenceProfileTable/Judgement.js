@@ -17,7 +17,7 @@ const judgementChoices = [
     ],
     summaryJudgementChoices = [
         {value: 30, icon: "⊕⊕⊕", text: "Evidence demonstrates"},
-        {value: 20, icon: "⊕⊕⊙", text: "Evidence indicates"},
+        {value: 20, icon: "⊕⊕⊙", text: "Evidence indicates (likely)"},
         {value: 10, icon: "⊕⊙⊙", text: "Evidence suggests"},
         {value: 1, icon: "⊙⊙⊙", text: "Evidence inadequate"},
         {value: -10, icon: "⊝⊝⊝", text: "Strong evidence supports no effect"},

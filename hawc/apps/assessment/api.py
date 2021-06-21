@@ -32,6 +32,9 @@ class DisabledPagination(PageNumberPagination):
     page_size = None
 
 
+logger = logging.getLogger(__name__)
+
+
 class RequiresAssessmentID(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "Please provide an `assessment_id` argument to your GET request."
@@ -109,7 +112,7 @@ class AssessmentLevelPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         list_actions = getattr(view, "list_actions", self.default_list_actions)
         if view.action in list_actions:
-            logging.info("Permission checked")
+            logger.debug("Permission checked")
 
             if not hasattr(view, "assessment"):
                 view.assessment = get_assessment_from_query(request)

@@ -181,10 +181,9 @@ class ExploreHeatmapPlot {
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
-                wrap_text =
-                    settings.x_fields[i].wrap_text || autorotate_tick_labels
-                        ? AUTOROTATE_TEXT_WRAP_X
-                        : 0;
+                wrap_text = settings.x_fields[i].wrap_text
+                    ? settings.x_fields[i].wrap_text
+                    : AUTOROTATE_TEXT_WRAP_X;
 
             for (let j = 0; j <= xs.length; j++) {
                 thisItem = j < xs.length ? xs[j] : null;
@@ -200,7 +199,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${x_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -256,6 +255,9 @@ class ExploreHeatmapPlot {
 
             let newYOffset = yOffset + box.height + label_padding * 2;
             let border = xAxis
+                .append("g")
+                .attr("fill-opacity", 0)
+                .attr("stroke", show_axis_border ? "black" : null)
                 .selectAll(".none")
                 .data(borderData)
                 .enter()
@@ -266,8 +268,6 @@ class ExploreHeatmapPlot {
                         `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
                             d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                 )
-                .attr("fill", "transparent")
-                .attr("stroke", show_axis_border ? "black" : null)
                 .on("click", d => {
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
@@ -284,7 +284,7 @@ class ExploreHeatmapPlot {
             xAxis
                 .append("polyline")
                 .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null);
         }
 
@@ -365,7 +365,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${x_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -421,6 +421,9 @@ class ExploreHeatmapPlot {
 
             let newYOffset = yOffset - (box.height + label_padding * 2);
             let border = xAxis
+                .append("g")
+                .attr("fill-opacity", 0)
+                .attr("stroke", show_axis_border ? "black" : null)
                 .selectAll(".none")
                 .data(borderData)
                 .enter()
@@ -431,8 +434,6 @@ class ExploreHeatmapPlot {
                         `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
                             d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                 )
-                .attr("fill", "transparent")
-                .attr("stroke", show_axis_border ? "black" : null)
                 .on("click", d => {
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
@@ -449,7 +450,7 @@ class ExploreHeatmapPlot {
             xAxis
                 .append("polyline")
                 .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null);
         }
 
@@ -476,15 +477,17 @@ class ExploreHeatmapPlot {
             numYAxes = ys.length == 0 ? 0 : ys[0].length,
             {show_axis_border} = settings;
         for (let i = numYAxes - 1; i >= 0; i--) {
-            let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
+            let axis = yAxis
+                    .append("g")
+                    .attr("transform", `translate(${-xOffset - label_padding},0)`)
+                    .attr("text-anchor", y_tick_rotate === 0 ? "end" : "start"),
                 lastItem = ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
-                wrap_text =
-                    settings.y_fields[i].wrap_text || autorotate_tick_labels
-                        ? AUTOROTATE_TEXT_WRAP_Y
-                        : 0;
+                wrap_text = settings.y_fields[i].wrap_text
+                    ? settings.y_fields[i].wrap_text
+                    : AUTOROTATE_TEXT_WRAP_Y;
 
             for (let j = 0; j <= ys.length; j++) {
                 thisItem = j < ys.length ? ys[j] : null;
@@ -499,7 +502,7 @@ class ExploreHeatmapPlot {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${y_tick_rotate})`)
-                        .text(lastItem[i].value || "<null>")
+                        .text(lastItem[i].value || h.nullString)
                         .each(function() {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
@@ -510,10 +513,7 @@ class ExploreHeatmapPlot {
                             itemStartIndex * this.cellDimensions.height +
                             (numItems * this.cellDimensions.height) / 2 -
                             box.height / 2;
-                    label.attr(
-                        "transform",
-                        `translate(${-box.x - box.width - label_padding},${-box.y + label_offset})`
-                    );
+                    label.attr("transform", `translate(0,${-box.y + label_offset})`);
 
                     borderData.push({
                         filters: _.slice(lastItem, 0, i + 1),
@@ -550,8 +550,12 @@ class ExploreHeatmapPlot {
             }
 
             let box = axis.node().getBBox(),
-                newXOffset = xOffset + box.width + label_padding * 2;
+                width = box.width + label_padding * 2;
             let border = yAxis
+                .append("g")
+                .attr("transform", `translate(${-xOffset},0)`)
+                .attr("fill-opacity", 0)
+                .attr("stroke", show_axis_border ? "black" : null)
                 .selectAll(".none")
                 .data(borderData)
                 .enter()
@@ -559,17 +563,15 @@ class ExploreHeatmapPlot {
                 .attr(
                     "points",
                     d =>
-                        `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
-                            d.height} ${-newXOffset},${d.y1 + d.height}`
+                        `${-width},${d.y1} 0,${d.y1} 0,${d.y1 + d.height} ${-width},${d.y1 +
+                            d.height}`
                 )
-                .attr("fill", "transparent")
-                .attr("stroke", show_axis_border ? "black" : null)
                 .on("click", d => {
                     const cells = this.get_matching_cells(d.filters, "y");
                     this.store.setTableDataFilters(new Set(cells));
                 });
             this.bind_tooltip(border, "axis");
-            xOffset = newXOffset;
+            xOffset = xOffset + width;
         }
         if (settings.show_totals) {
             const x1 = -yAxis.node().getBBox().width,
@@ -579,7 +581,7 @@ class ExploreHeatmapPlot {
             yAxis
                 .append("polyline")
                 .attr("points", d => `${x1},${y1} ${x2},${y1} ${x2},${y2} ${x1},${y2}`)
-                .attr("fill", "transparent")
+                .attr("fill-opacity", 0)
                 .attr("stroke", show_axis_border ? "black" : null);
         }
 
@@ -870,20 +872,23 @@ class ExploreHeatmapPlot {
                 .appendTo(this.plot_div);
 
         // set correct aspect ratio to get proper height/widths set on parent elements
+        const currentWidth = Math.ceil(div.width()),
+            scaledHeight = currentWidth * (nativeSize.height / nativeSize.width),
+            currentHeight = Math.ceil(Math.min(nativeSize.height, scaledHeight)),
+            zoomable = nativeSize.width > currentWidth,
+            yOffset = settings.x_axis_bottom ? 0 : -this.y_axis_label_padding;
+
         d3.select(this.svg)
-            .attr("preserveAspectRatio", "xMidYMid meet")
-            .attr(
-                "viewBox",
-                `0 ${settings.x_axis_bottom ? 0 : -this.y_axis_label_padding} ${nativeSize.width} ${
-                    nativeSize.height
-                }`
-            );
+            .attr("width", currentWidth)
+            .attr("height", currentHeight)
+            .attr("preserveAspectRatio", "xMidYMin meet")
+            .attr("viewBox", `0 ${yOffset} ${nativeSize.width} ${nativeSize.height}`);
 
         ReactDOM.render(
             <VisualToolbar
                 svg={this.svg}
                 parentContainer={parentContainer}
-                nativeSize={nativeSize}
+                nativeSize={zoomable ? nativeSize : null}
             />,
             div[0]
         );

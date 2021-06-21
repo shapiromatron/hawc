@@ -25,7 +25,8 @@
     "organ": "brain",
     "effect": "learning and memory",
     "effect subtype": "errors (forward)",
-    "endpoint name": "Water T maze (learning error)"
+    "endpoint name": "Water T maze (learning error)",
+    "observation time": ""
   },
   {
     "study id": 7,
@@ -53,7 +54,8 @@
     "organ": "",
     "effect": "",
     "effect subtype": "",
-    "endpoint name": "Incomplete dose response values"
+    "endpoint name": "Incomplete dose response values",
+    "observation time": ""
   },
   {
     "study id": 7,
@@ -81,6 +83,7 @@
     "organ": "Serum",
     "effect": "Fatty Acids",
     "effect subtype": "Clinical Chemistry",
-    "endpoint name": "Fatty Acid Balance"
+    "endpoint name": "Fatty Acid Balance",
+    "observation time": ""
   }
 ]

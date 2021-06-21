@@ -21,6 +21,8 @@ from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
 from . import constants
 
+logger = logging.getLogger(__name__)
+
 
 class ReferenceFilterTagManager(TaggableManager):
     def __get__(self, instance, model):
@@ -221,14 +223,14 @@ class ReferenceManager(BaseManager):
 
     def build_ref_ident_m2m(self, objs):
         # Bulk-create reference-search relationships
-        logging.debug("Starting bulk creation of reference-identifer values")
+        logger.debug("Starting bulk creation of reference-identifer values")
         m2m = self.model.identifiers.through
         objects = [m2m(reference_id=ref_id, identifiers_id=ident_id) for ref_id, ident_id in objs]
         m2m.objects.bulk_create(objects)
 
     def build_ref_search_m2m(self, refs, search):
         # Bulk-create reference-search relationships
-        logging.debug("Starting bulk creation of reference-search values")
+        logger.debug("Starting bulk creation of reference-search values")
         m2m = self.model.searches.through
         objects = [m2m(reference_id=ref.id, search_id=search.id) for ref in refs]
         m2m.objects.bulk_create(objects)
@@ -249,7 +251,7 @@ class ReferenceManager(BaseManager):
             .annotate(searches_count=models.Count("searches"))
             .filter(searches_count=0)
         )
-        logging.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
+        logger.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
         orphans.delete()
 
     def get_full_assessment_json(self, assessment, json_encode=True):
@@ -464,7 +466,7 @@ class ReferenceManager(BaseManager):
         captured = {None, constants.HERO, constants.PUBMED}
         diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
         if diff:
-            logging.warning(f"Missing some identifier IDs from id export: {diff}")
+            logger.warning(f"Missing some identifier IDs from id export: {diff}")
 
         data = defaultdict(dict)
 
