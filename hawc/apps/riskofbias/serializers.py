@@ -127,6 +127,8 @@ class AssessmentScoreSerializer(serializers.ModelSerializer):
             "notes",
             "metric_id",
             "overridden_objects",
+            "score_symbol",
+            "score_shade",
             "riskofbias_id",
         )
 

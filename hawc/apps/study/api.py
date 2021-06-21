@@ -56,8 +56,9 @@ class Study(
 
     @action(detail=True)
     def v2(self, request, pk):
-        study = self.model.objects.get(id=pk)
-        ser = serializers.NewStudySerializer(study)
+        # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
+        instance = self.get_object()
+        ser = serializers.NewStudySerializer(instance)
         return Response(ser.data)
 
     def create(self, request):

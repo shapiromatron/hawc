@@ -249,6 +249,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
 
     @action(detail=False)
     def v2(self, request):
+        # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
         qs = self.get_queryset().filter(metric__domain__assessment=self.assessment)
         ser = serializers.AssessmentScoreSerializer(qs, many=True)
         return Response(ser.data)

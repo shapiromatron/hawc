@@ -118,8 +118,11 @@ window.app.studyStartup(function(study){
   {% if not assessment.hide_rob_scores %}
   if (thisStudy.has_riskofbias()){
     window.app.riskofbiasStartup(function (riskofbias) {
-      var donut = new riskofbias.Donut();
-      donut.fetch_data(data.studyContent.id, data.studyContent.assessment.id).then(d => donut.render(document.getElementById('rob_plot')));
+      riskofbias.robDonutStartup({
+        studyId: data.studyContent.id,
+        assessmentId: data.studyContent.assessment.id,
+        el: document.getElementById('rob_plot')
+      });
     });
   }
   {% endif %}

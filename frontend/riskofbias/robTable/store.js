@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
+import {robSettingsUrl, robStudyUrl} from "../constants";
 import h from "shared/utils/helpers";
 
 class RobTableStore {
@@ -48,7 +49,7 @@ class RobTableStore {
     }
 
     @action.bound fetchSettings(assessment_id) {
-        const url = `/rob/api/assessment/${assessment_id}/settings/`;
+        const url = robSettingsUrl(assessment_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {
@@ -57,7 +58,7 @@ class RobTableStore {
     }
 
     @action.bound fetchStudy(study_id) {
-        const url = `/study/api/study/${study_id}/v2/`;
+        const url = robStudyUrl(study_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {

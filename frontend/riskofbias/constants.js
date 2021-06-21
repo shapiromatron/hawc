@@ -228,7 +228,9 @@ const NA_KEYS = [10, 20],
         "epi.outcome": "Epidemiological outcomes",
         "epi.exposure": "Epidemiological exposures",
         "epi.result": "Epidemiological results",
-    };
+    },
+    robSettingsUrl = assessmentId => `/rob/api/assessment/${assessmentId}/settings/`,
+    robStudyUrl = studyId => `/study/api/study/${studyId}/v2/`;
 
 export {
     NA_KEYS,
@@ -249,4 +251,6 @@ export {
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,
     OVERRIDE_SCORE_LABEL_MAPPING,
+    robSettingsUrl,
+    robStudyUrl,
 };
