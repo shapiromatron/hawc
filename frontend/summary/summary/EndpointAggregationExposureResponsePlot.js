@@ -49,7 +49,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
     render($div) {
         this.plot_div = $div;
         this.processData();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "An exposure response array");
         this.add_title();
         this.add_axes();
         this.build_x_label();

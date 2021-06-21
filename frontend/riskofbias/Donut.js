@@ -45,7 +45,7 @@ class Donut extends D3Plot {
 
     build_plot() {
         this.plot_div.html("");
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "A pie-chart of risk of bias/study evaluation metrics");
         this.customize_menu();
         this.draw_visualizations();
         this.trigger_resize();

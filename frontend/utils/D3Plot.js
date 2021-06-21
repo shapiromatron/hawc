@@ -110,7 +110,7 @@ class D3Plot {
         }
     }
 
-    build_plot_skeleton(background) {
+    build_plot_skeleton(background, ariaLabel) {
         //Basic plot setup to set size and positions
         var self = this,
             w = this.w + this.padding.left + this.padding.right,
@@ -122,7 +122,8 @@ class D3Plot {
         this.svg = d3
             .select(this.plot_div[0])
             .append("svg")
-            .attr("alt", "A graphical image of health assessment data")
+            .attr("role", "image")
+            .attr("aria-label", ariaLabel || "A data visualization")
             .attr("width", w)
             .attr("height", h)
             .attr("class", "d3")

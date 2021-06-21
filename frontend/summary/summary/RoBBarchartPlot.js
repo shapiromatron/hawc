@@ -23,7 +23,7 @@ class RoBBarchartPlot extends D3Visualization {
             );
         }
         this.get_plot_sizes();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "A risk of bias/study evaluation stacked barchart");
         this.add_axes();
         this.draw_visualizations();
         this.resize_plot_dimensions();

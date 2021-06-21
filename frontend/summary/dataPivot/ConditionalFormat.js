@@ -240,7 +240,7 @@ class _DataPivot_settings_conditional {
                 values.max_color || defaults.max_color
             ),
             svg = $(
-                '<svg alt="Color gradient" width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
+                '<svg role="image" aria-label="Color gradient" width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
             ),
             gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
 

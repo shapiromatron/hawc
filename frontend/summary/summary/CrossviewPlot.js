@@ -73,7 +73,7 @@ class CrossviewPlot extends D3Visualization {
                 "<p>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>"
             );
         }
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "A dose-response visualization of multiple endpoints");
         this.add_axes();
         this.draw_visualization();
         this.draw_text();

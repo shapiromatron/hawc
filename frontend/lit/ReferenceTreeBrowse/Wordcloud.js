@@ -65,7 +65,8 @@ const padding = 0,
 
         const svg = d3
             .create("svg")
-            .attr("alt", "A wordcloud of frequent words in the literature")
+            .attr("role", "image")
+            .attr("aria-label", "A wordcloud of frequent words in the selected literature")
             .attr("viewBox", [0, 0, width, height])
             .attr("font-family", "sans-serif")
             .attr("text-anchor", "middle");

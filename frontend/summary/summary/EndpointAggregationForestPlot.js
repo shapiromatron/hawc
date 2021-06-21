@@ -19,7 +19,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
     render($div) {
         this.plot_div = $div;
         this.processData();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "An exposure response forest plot");
         this.add_title();
         this.add_axes();
         this.add_endpoint_lines();
