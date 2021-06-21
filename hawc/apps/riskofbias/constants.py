@@ -54,6 +54,8 @@ SCORE_CHOICES_MAP: Dict[int, str] = {k: v for k, v in SCORE_CHOICES}
 
 NA_SCORES: Tuple[int, ...] = (10, 20)
 
+DEFAULT_SCORES: Tuple[int, ...] = (0, 12, 22)
+
 SCORE_SYMBOLS: Dict[int, str] = {
     0: "",
     10: "N/A",

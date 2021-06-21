@@ -12,8 +12,8 @@ import ScoreOverrideForm from "./ScoreOverrideForm";
 
 class ScoreInput extends Component {
     componentDidMount() {
-        const {choices, value, handleChange} = this.props;
-        choices.map(c => c.id).includes(value) ? null : handleChange(NaN);
+        const {choices, value, defaultValue, handleChange} = this.props;
+        choices.map(c => c.id).includes(value) ? null : handleChange(defaultValue);
     }
     render() {
         const {scoreId, choices, value, handleChange} = this.props;
@@ -28,7 +28,7 @@ class ScoreInput extends Component {
                     value={value}
                     handleSelect={handleChange}
                 />
-                {isNaN(value) ? null : <ScoreIcon score={value} />}
+                <ScoreIcon score={value} />
             </>
         );
     }
@@ -37,6 +37,7 @@ ScoreInput.propTypes = {
     scoreId: PropTypes.number.isRequired,
     choices: PropTypes.arrayOf(PropTypes.number),
     value: PropTypes.number.isRequired,
+    defaultValue: PropTypes.number.isRequired,
     handleChange: PropTypes.func.isRequired,
 };
 
@@ -68,6 +69,7 @@ class ScoreForm extends Component {
             scoreChoices = store.metrics[score.metric_id].response_values.map(c => {
                 return {id: c, label: store.settings.score_metadata.choices[c]};
             }),
+            defaultScoreChoice = store.metrics[score.metric_id].default_response,
             editableMetricHasOverrides = store.editableMetricHasOverrides(score.metric_id),
             direction_choices = Object.entries(store.settings.score_metadata.bias_direction).map(
                 kv => {
@@ -76,8 +78,6 @@ class ScoreForm extends Component {
             ),
             showOverrideCreate = score.is_default === true,
             showDelete = score.is_default === false;
-
-        scoreChoices.unshift({id: "", label: "---"});
 
         return (
             <div className="score-form container-fluid ">
@@ -141,6 +141,7 @@ class ScoreForm extends Component {
                                 scoreId={score.id}
                                 choices={scoreChoices}
                                 value={score.score}
+                                defaultValue={defaultScoreChoice}
                                 handleChange={value => {
                                     store.updateFormState(scoreId, "score", parseInt(value));
                                 }}

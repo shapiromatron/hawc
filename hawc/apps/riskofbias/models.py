@@ -131,6 +131,11 @@ class RiskOfBiasMetric(models.Model):
     def get_response_values(self):
         return constants.RESPONSES_VALUES[self.responses]
 
+    def get_default_response(self):
+        return next(
+            value for value in constants.DEFAULT_SCORES if value in self.get_response_values()
+        )
+
     def build_score(self, riskofbias):
         return RiskOfBiasScore(
             riskofbias=riskofbias,
