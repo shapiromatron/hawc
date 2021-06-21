@@ -102,6 +102,7 @@ class ScoreForm extends Component {
                                 type="button"
                                 onClick={() => {
                                     store.createScoreOverride({
+                                        score: store.metrics[score.metric_id].default_response,
                                         metric: score.metric_id,
                                         riskofbias: score.riskofbias_id,
                                     });

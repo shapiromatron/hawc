@@ -213,13 +213,6 @@ class RobFormStore {
                 this.config.riskofbias.url,
                 this.config.riskofbias.id
             )}`;
-        // catch errors that are not reported cleanly on the backend
-        // missing scores
-        const missingScores = payload.scores.filter(score => isNaN(score.score));
-        if (missingScores.length > 0) {
-            this.error = `Missing ${missingScores.length} score(s).`;
-            return;
-        }
 
         this.error = null;
         return fetch(url, opts)
