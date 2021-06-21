@@ -517,6 +517,16 @@ class EpiClient(BaseClient):
     Client class for epidemiology requests.
     """
 
+    def metadata(self, assessment_id: int) -> Dict:
+        """
+        Retrieves field choices for all epi models.
+
+        Returns:
+            Dict: Model metadata
+        """
+        url = f"{self.session.root_url}/epi/api/metadata/{assessment_id}"
+        return self.session.get(url).json()
+
     def data(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves epidemiology data for the given assessment.
@@ -568,7 +578,7 @@ class EpiClient(BaseClient):
             study_population_id (int): Study Population ID
 
         Returns:
-            pd.DataFrame: study population data
+           Dict: study population data
         """
         url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
         return self.session.get(url).json()
@@ -629,7 +639,7 @@ class EpiClient(BaseClient):
             criteria_id (int): criteria ID
 
         Returns:
-            pd.DataFrame: criteria data
+            Dict: criteria data
         """
         url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
         return self.session.get(url).json()
@@ -687,7 +697,7 @@ class EpiClient(BaseClient):
             comparison_set_id (int): comparison set ID
 
         Returns:
-            pd.DataFrame: comparison set data
+            Dict: comparison set data
         """
         url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
         return self.session.get(url).json()
@@ -747,7 +757,7 @@ class EpiClient(BaseClient):
             group_id (int): group ID
 
         Returns:
-            pd.DataFrame: group data
+            Dict: group data
         """
         url = f"{self.session.root_url}/epi/api/group/{group_id}/"
         return self.session.get(url).json()
@@ -807,7 +817,7 @@ class EpiClient(BaseClient):
             numerical_description_id (int): numerical_description ID
 
         Returns:
-            pd.DataFrame: numerical_description data
+            Dict: numerical_description data
         """
         url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
         return self.session.get(url).json()
@@ -868,7 +878,7 @@ class EpiClient(BaseClient):
             outcome_id (int): outcome ID
 
         Returns:
-            pd.DataFrame: outcome data
+            Dict: outcome data
         """
         url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
         return self.session.get(url).json()
@@ -929,7 +939,7 @@ class EpiClient(BaseClient):
             result_id (int): result ID
 
         Returns:
-            pd.DataFrame: result data
+            Dict: result data
         """
         url = f"{self.session.root_url}/epi/api/result/{result_id}/"
         return self.session.get(url).json()
@@ -991,7 +1001,7 @@ class EpiClient(BaseClient):
             group_result_id (int): group result ID
 
         Returns:
-            pd.DataFrame: group result data
+            Dict: group result data
         """
         url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
         return self.session.get(url).json()
@@ -1051,7 +1061,7 @@ class EpiClient(BaseClient):
             exposure_id (int): exposure ID
 
         Returns:
-            pd.DataFrame: exposure data
+            Dict: exposure data
         """
         url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
         return self.session.get(url).json()
@@ -1103,16 +1113,6 @@ class EpiClient(BaseClient):
         """
         url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
         return self.session.delete(url)
-
-    def metadata(self, assessment_id: int) -> Dict:
-        """
-        Retrieves field choices for all epi models.
-
-        Returns:
-            Dict: Model metadata
-        """
-        url = f"{self.session.root_url}/epi/api/metadata/{assessment_id}"
-        return self.session.get(url).json()
 
 
 class AnimalClient(BaseClient):
