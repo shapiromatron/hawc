@@ -12,7 +12,6 @@ import {getReferenceTagListUrl} from "shared/utils/urls";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
 import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
-import Donut from "riskofbias/Donut";
 
 class Study {
     constructor(data) {
@@ -264,10 +263,6 @@ class Study {
             })
         );
         return RiskOfBiasScore.format_for_react(scores);
-    }
-
-    createDonutVisualization(element) {
-        new Donut(this, element);
     }
 }
 

@@ -81,6 +81,13 @@ class RiskOfBiasAssessmentViewset(
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
+    @action(detail=True, methods=("get",), url_path="settings")
+    def rob_settings(self, request, pk):
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
+        return Response(ser.data)
+
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
@@ -229,6 +236,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
+    list_actions = ["list", "v2"]
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = get_assessment_id_param(request)
@@ -238,6 +246,13 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     def choices(self, request):
         # TODO - fix ROB June 2021
         return Response(list(range(10)))
+
+    @action(detail=False)
+    def v2(self, request):
+        # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
+        qs = self.get_queryset().filter(metric__domain__assessment=self.assessment)
+        ser = serializers.AssessmentScoreSerializer(qs, many=True)
+        return Response(ser.data)
 
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one

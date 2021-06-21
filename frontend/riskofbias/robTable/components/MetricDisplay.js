@@ -38,11 +38,6 @@ MetricDisplay.propTypes = {
         key: PropTypes.string.isRequired,
         values: PropTypes.arrayOf(
             PropTypes.shape({
-                metric: PropTypes.shape({
-                    description: PropTypes.string.isRequired,
-                    name: PropTypes.string.isRequired,
-                    hide_description: PropTypes.bool.isRequired,
-                }).isRequired,
                 notes: PropTypes.string.isRequired,
                 score_description: PropTypes.string.isRequired,
                 score_symbol: PropTypes.string.isRequired,
