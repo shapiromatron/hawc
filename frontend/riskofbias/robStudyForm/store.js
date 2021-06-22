@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {NR_KEYS} from "riskofbias/constants";
+import {NR_KEYS, robSettingsUrl, robStudyUrl} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
 class RobFormStore {
@@ -31,25 +31,19 @@ class RobFormStore {
     }
 
     @computed get domains() {
-        return this.settings.domains.reduce(function(obj, d) {
-            obj[d.id] = d;
-            return obj;
-        }, {});
+        return _.keyBy(this.settings.domains, domain => domain.id);
     }
 
     @computed get metrics() {
-        return this.settings.metrics.reduce(function(obj, m) {
-            obj[m.id] = m;
-            return obj;
-        }, {});
+        return _.keyBy(this.settings.metrics, metric => metric.id);
     }
 
     @computed get metricDomains() {
-        let {domains, metrics} = this;
-        return this.settings.metrics.reduce(function(obj, m) {
-            obj[m.id] = domains[metrics[m.id].domain_id];
-            return obj;
-        }, {});
+        let {domains} = this;
+        return _.chain(this.settings.metrics)
+            .map(metric => [metric.id, domains[metric.domain_id]])
+            .fromPairs()
+            .value();
     }
 
     updateRobScore(score, riskofbias, overrideOptions) {
@@ -108,7 +102,7 @@ class RobFormStore {
     }
 
     @action.bound fetchSettings(assessment_id) {
-        const url = `/rob/api/assessment/${assessment_id}/settings/`;
+        const url = robSettingsUrl(assessment_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {
@@ -117,7 +111,7 @@ class RobFormStore {
     }
 
     @action.bound fetchStudy(study_id) {
-        const url = `/study/api/study/${study_id}/v2/`;
+        const url = robStudyUrl(study_id);
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(data => {

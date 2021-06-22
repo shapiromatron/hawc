@@ -167,7 +167,7 @@ class ScoreForm extends Component {
                             scoreId={score.id}
                             value={score.notes}
                             handleChange={htmlContent => {
-                                store.updateScoreState(score.id, "notes", htmlContent);
+                                store.updateScoreState(score, "notes", htmlContent);
                             }}
                         />
                     </div>
