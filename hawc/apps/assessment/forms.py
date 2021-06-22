@@ -19,6 +19,7 @@ from . import lookups, models
 class AssessmentForm(forms.ModelForm):
     class Meta:
         exclude = (
+            "creator",
             "enable_literature_review",
             "enable_project_management",
             "enable_data_extraction",
@@ -29,7 +30,11 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+        if self.instance.id is None:
+            self.instance.creator = self.user
+            self.fields["project_manager"].initial = [self.user]
 
         self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=lookups.DssToxIdLookup
@@ -75,13 +80,12 @@ class AssessmentForm(forms.ModelForm):
 
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("cas", 2, "col-md-6")
+        helper.add_row("assessment_objective", 2, "col-md-6")
         helper.add_row("project_manager", 3, "col-md-4")
         helper.add_row("editable", 4, "col-md-3")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
-        helper.add_row("noel_name", 2, "col-md-6")
-        helper.add_row("vocabulary", 2, "col-md-6")
+        helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
-        helper.attrs["novalidate"] = ""
         return helper
 
 

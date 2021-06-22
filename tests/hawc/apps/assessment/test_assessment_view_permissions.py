@@ -10,6 +10,8 @@ _successful_post = {
     "name": "testing",
     "year": "2013",
     "version": "1",
+    "assessment_objective": "<p>Test.</p>",
+    "authors": "<p>Test.</p>",
     "public": "off",
     "noel_name": 0,
     "rob_name": 0,

@@ -49,7 +49,7 @@ class TestAboutPage:
         response = client.get(url)
         assert "counts" in response.context
         assert response.context["counts"]["assessments"] == 3
-        assert response.context["counts"]["users"] == 5
+        assert response.context["counts"]["users"] == 4
 
 
 @pytest.mark.django_db
