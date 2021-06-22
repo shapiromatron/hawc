@@ -101,6 +101,13 @@
       </tr>
       {% endif %}
 
+      {% if object.assessment_objective %}
+      <tr>
+        <th>Assessment authors</th>
+        <td>{{object.authors|safe}}</td>
+      </tr>
+      {% endif %}
+
       {% if obj_perms.edit %}
         <tr>
           <th>Project manager(s)</th>

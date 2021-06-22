@@ -24,11 +24,12 @@ bust_cache.short_description = "Clear cache for selected assessments"
 
 @admin.register(models.Assessment)
 class AssessmentAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "get_managers", "get_team_members", "get_reviewers")
+    list_display = ("__str__", "creator", "get_managers", "get_team_members", "get_reviewers")
     list_per_page = 10
     list_filter = (
         "editable",
         "public",
+        ("creator", admin.RelatedOnlyFieldListFilter),
     )
 
     search_fields = (

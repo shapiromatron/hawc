@@ -403,7 +403,6 @@
     app_label: eco
     model: quantitative
 - model: myuser.hawcuser
-  pk: 1
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
     last_login: 2020-11-25 20:21:43.412531+00:00
@@ -419,7 +418,6 @@
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
-  pk: 2
   fields:
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
     last_login: 2020-07-06 19:37:38.352592+00:00
@@ -435,7 +433,6 @@
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
-  pk: 3
   fields:
     password: md5$oqL3kGUEvBCo$540b7af58759b8faeef79275b327a4e8
     last_login: 2020-05-08 21:06:40.664469+00:00
@@ -451,7 +448,6 @@
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
-  pk: 4
   fields:
     password: md5$xp4A7HztQgax$744b942a9c35520e8a1a8c0b92a6ee27
     last_login: 2020-01-25 14:23:16.173584+00:00
@@ -624,6 +620,8 @@
     cas: ''
     assessment_objective: ''
     authors: ''
+    creator:
+    - pm@hawcproject.org
     editable: true
     public: false
     hide_from_public_page: false
@@ -643,7 +641,6 @@
     created: 2020-01-25 14:23:16.176620+00:00
     last_updated: 2020-02-27 20:12:29.233982+00:00
     dtxsids: []
-    creator: 2
     project_manager:
     - - pm@hawcproject.org
     team_members:
@@ -662,6 +659,8 @@
       for all data types, and you should be able to create example visualizations
       for all visuals.</p>
     authors: '<p>The ABC team.</p>'
+    creator:
+    - pm@hawcproject.org
     editable: false
     public: true
     hide_from_public_page: false
@@ -682,7 +681,6 @@
     last_updated: 2020-08-12 19:46:37.393988+00:00
     dtxsids:
     - DTXSID6026296
-    creator: 2
     project_manager:
     - - pm@hawcproject.org
     team_members:
@@ -696,8 +694,10 @@
     year: 2020
     version: draft
     cas: 58-08-2
-    assessment_objective: '<p>Example the health effects of Chemical C.</p>'
     authors: '<p>The ABC team.</p>'
+    assessment_objective: <p>Example the health effects of Chemical Y.</p>
+    creator:
+    - pm@hawcproject.org
     editable: true
     public: true
     hide_from_public_page: true
@@ -717,7 +717,6 @@
     created: 2020-04-10 17:45:39.555285+00:00
     last_updated: 2020-04-10 17:45:39.555285+00:00
     dtxsids: []
-    creator: 2
     project_manager:
     - - pm@hawcproject.org
     team_members:
