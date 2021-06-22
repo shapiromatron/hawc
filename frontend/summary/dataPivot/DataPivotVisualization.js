@@ -236,7 +236,7 @@ class DataPivotVisualization extends D3Plot {
                 this.plot_div
             );
         }
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "A forest-plot of data in this assessment");
         this.set_font_style();
         this.layout_text();
         this.layout_plot();

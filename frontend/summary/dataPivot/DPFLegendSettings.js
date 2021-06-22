@@ -120,6 +120,8 @@ class LegendSettings {
         const vis = d3
             .select(this.plot_div[0])
             .append("svg")
+            .attr("role", "image")
+            .attr("aria-label", "A chart legend")
             .attr("width", "95%")
             .attr("height", "300px")
             .attr("class", "d3")
