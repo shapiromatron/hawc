@@ -31,7 +31,7 @@ class Metric extends Component {
                     />
                 ) : null}
                 {editableScores.map(score => {
-                    return <ScoreForm key={score.id} scoreId={score.id} />;
+                    return <ScoreForm key={score.id} score={score} />;
                 })}
             </div>
         );

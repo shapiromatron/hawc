@@ -11,7 +11,7 @@ class RobFormStore {
     @observable study = null;
     @observable settings = null;
     @observable overrideOptions = null;
-    editableScores = observable.map();
+    editableScores = observable.array();
     nonEditableScores = observable.array();
     domainIds = observable.array();
 
@@ -23,7 +23,7 @@ class RobFormStore {
         return _.find(this.study.riskofbiases, {id: this.config.riskofbias.id});
     }
     @computed get numIncompleteScores() {
-        return [...this.editableScores.values()].filter(score => {
+        return this.editableScores.filter(score => {
             return (
                 _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
             );
@@ -73,7 +73,7 @@ class RobFormStore {
 
     getMetricIds(domainId) {
         return _.uniq(
-            [...store.editableScores.values()].reduce(function(array, score) {
+            store.editableScores.reduce(function(array, score) {
                 store.metricDomains[score.metric_id].id == domainId
                     ? array.push(score.metric_id)
                     : null;
@@ -83,7 +83,7 @@ class RobFormStore {
     }
 
     getEditableScoresForMetric(metricId) {
-        return [...this.editableScores.values()].filter(score => score.metric_id == metricId);
+        return this.editableScores.filter(score => score.metric_id == metricId);
     }
     getNonEditableScoresForMetric(metricId) {
         return this.nonEditableScores.filter(score => score.metric_id == metricId);
@@ -100,12 +100,6 @@ class RobFormStore {
             .map(score => score.is_default === false)
             .some()
             .value();
-    }
-    getEditableScore(scoreId) {
-        if (!this.editableScores.has(scoreId)) {
-            throw `Score ${scoreId} does not exist.`;
-        }
-        return this.editableScores.get(scoreId);
     }
 
     // actions
@@ -160,11 +154,11 @@ class RobFormStore {
                             )
                     );
 
-                scores
-                    .filter(score => score.riskofbias_id === editableRiskOfBiasId)
-                    .forEach(score => {
-                        this.editableScores.set(score.id, score);
-                    });
+                this.editableScores.replace(
+                    _.chain(scores)
+                        .filter(score => score.riskofbias_id === editableRiskOfBiasId)
+                        .value()
+                );
 
                 this.nonEditableScores.replace(
                     _.chain(scores)
@@ -180,8 +174,8 @@ class RobFormStore {
             });
     }
 
-    @action.bound updateFormState(scoreId, key, value) {
-        this.getEditableScore(scoreId)[key] = value;
+    @action.bound updateScoreState(score, key, value) {
+        score[key] = value;
     }
 
     // CRUD actions
@@ -191,7 +185,7 @@ class RobFormStore {
     @action.bound submitScores() {
         const payload = {
                 id: this.config.riskofbias.id,
-                scores: [...this.editableScores.values()].map(score => {
+                scores: this.editableScores.map(score => {
                     return {
                         id: score.id,
                         score: score.score,
@@ -237,8 +231,7 @@ class RobFormStore {
         return fetch(url, h.fetchPost(csrf, payload, "POST"))
             .then(response => response.json())
             .then(json => {
-                this.editableScores.set(
-                    json.id,
+                this.editableScores.push(
                     this.updateRobScore(json, activeRiskOfBias, this.overrideOptions)
                 );
             })
@@ -253,7 +246,7 @@ class RobFormStore {
         return fetch(url, h.fetchDelete(csrf))
             .then(response => {
                 if (response.status === 204) {
-                    this.editableScores.delete(scoreId);
+                    _.remove(this.editableScores, {id: scoreId});
                 }
             })
             .catch(error => {

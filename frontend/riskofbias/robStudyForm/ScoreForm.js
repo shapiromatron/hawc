@@ -35,7 +35,7 @@ class ScoreInput extends Component {
 }
 ScoreInput.propTypes = {
     scoreId: PropTypes.number.isRequired,
-    choices: PropTypes.arrayOf(PropTypes.number),
+    choices: PropTypes.arrayOf(PropTypes.object),
     value: PropTypes.number.isRequired,
     defaultValue: PropTypes.number.isRequired,
     handleChange: PropTypes.func.isRequired,
@@ -64,8 +64,7 @@ ScoreNotesInput.propTypes = {
 @observer
 class ScoreForm extends Component {
     render() {
-        let {scoreId, store} = this.props,
-            score = store.getEditableScore(scoreId),
+        let {score, store} = this.props,
             scoreChoices = store.metrics[score.metric_id].response_values.map(c => {
                 return {id: c, label: store.settings.score_metadata.choices[c]};
             }),
@@ -89,7 +88,7 @@ class ScoreForm extends Component {
                                 label="Label"
                                 name={`label-id-${score.id}`}
                                 onChange={e => {
-                                    store.updateFormState(scoreId, "label", e.target.value);
+                                    store.updateScoreState(score, "label", e.target.value);
                                 }}
                                 value={score.label}
                             />
@@ -115,7 +114,7 @@ class ScoreForm extends Component {
                             <button
                                 className="btn btn-danger float-right"
                                 type="button"
-                                onClick={() => store.deleteScoreOverride(scoreId)}>
+                                onClick={() => store.deleteScoreOverride(score.id)}>
                                 <i className="fa fa-trash"></i>&nbsp;Delete override
                             </button>
                         ) : null}
@@ -144,7 +143,7 @@ class ScoreForm extends Component {
                                 value={score.score}
                                 defaultValue={defaultScoreChoice}
                                 handleChange={value => {
-                                    store.updateFormState(scoreId, "score", parseInt(value));
+                                    store.updateScoreState(score, "score", parseInt(value));
                                 }}
                             />
                             <SelectInput
@@ -154,8 +153,8 @@ class ScoreForm extends Component {
                                 multiple={false}
                                 value={score.bias_direction}
                                 handleSelect={value => {
-                                    store.updateFormState(
-                                        scoreId,
+                                    store.updateScoreState(
+                                        score,
                                         "bias_direction",
                                         parseInt(value)
                                     );
@@ -168,7 +167,7 @@ class ScoreForm extends Component {
                             scoreId={score.id}
                             value={score.notes}
                             handleChange={htmlContent => {
-                                store.updateFormState(scoreId, "notes", htmlContent);
+                                store.updateScoreState(score.id, "notes", htmlContent);
                             }}
                         />
                     </div>
@@ -181,7 +180,7 @@ class ScoreForm extends Component {
 }
 
 ScoreForm.propTypes = {
-    scoreId: PropTypes.number.isRequired,
+    score: PropTypes.object.isRequired,
     store: PropTypes.object,
 };
 
