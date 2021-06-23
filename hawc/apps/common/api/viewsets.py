@@ -62,7 +62,7 @@ class PermCheckerMixin:
     the source for the checks, via looking them up in the validated_data of the associated serializer.
     """
 
-    def generate_things_to_check(self, serializer, append_self_obj):
+    def generate_things_to_check(self, serializer, check_self: bool = True):
         """
         Internal helper function that generates a list of model objects to check permissions against.
 
@@ -92,7 +92,7 @@ class PermCheckerMixin:
                 if checker_key in serializer.validated_data:
                     things_to_check.append(serializer.validated_data.get(checker_key))
 
-            if append_self_obj:
+            if check_self:
                 things_to_check.append(self.get_object())
 
         # Can't guard & must raise this at the end; a class might have perm_checker_key defined but
@@ -110,9 +110,9 @@ class PermCheckerMixin:
         super().perform_create(serializer)
 
     def perform_update(self, serializer):
-        for thing_to_check in self.generate_things_to_check(serializer, True):
+        for thing_to_check in self.generate_things_to_check(serializer):
+            print(thing_to_check, thing_to_check.id)
             user_can_edit_object(thing_to_check, self.request.user, raise_exception=True)
-
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
