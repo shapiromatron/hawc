@@ -63,7 +63,7 @@ class DRPlot extends D3Plot {
         }
         this.plot_div.html("");
         this.get_plot_sizes();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "A dose-response scatterplot");
         this.add_axes();
         this.add_dr_error_bars();
         this.add_dose_response();
