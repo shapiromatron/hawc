@@ -87,6 +87,9 @@ const helpers = {
                 }
             });
     },
+    parseJsonFromElement(element) {
+        return JSON.parse(element.textContent);
+    },
     goBack(e) {
         if (e && e.preventDefault) e.preventDefault();
         window.history.back();
@@ -146,6 +149,11 @@ const helpers = {
                     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                 })
         );
+    },
+    pluralize(word, length) {
+        // word: str
+        // items: int
+        return `${length} ${word}${length === 1 ? "" : "s"}`;
     },
     titleCase(string) {
         // convert lower case "reference id " -> "Reference ID"

@@ -13,20 +13,10 @@
         "assessment": "{% url 'assessment:api:assessment-endpoints' assessment.id %}",
         "items": {
             "url": "{% url 'riskofbias:api:metric_scores-list' %}",
-            "patchUrl": "{% url 'riskofbias:api:score-cleanup-list' %}",
-            "title": "Metric Scores"
-        },
-        "metrics": {
-            "url": "{% url 'riskofbias:api:metrics-list' %}",
-            "title": "Metric Choices"
-        },
-        "scores": {
-            "url": "{% url 'riskofbias:api:scores-choices' %}",
-            "title": "Score Choices"
+            "patchUrl": "{% url 'riskofbias:api:score-cleanup-list' %}"
         },
         "studyTypes": {
-            "url": "{% url 'study:api:study-types' %}",
-            "title": "Study Types"
+            "url": "{% url 'study:api:study-types' %}"
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"
@@ -35,7 +25,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
     window.app.riskofbiasStartup(function(riskofbias){
-        riskofbias.ScoreCleanupStartup(document.getElementById('root'));
+        riskofbias.ScoreCleanupStartup(document.getElementById('root'), document.getElementById('config'));
     });
 });
 </script>
