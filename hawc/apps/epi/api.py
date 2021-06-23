@@ -16,7 +16,7 @@ from ..common.api import (
     LegacyAssessmentAdapterMixin,
     ReadWriteSerializerMixin,
 )
-from ..common.api.viewsets import PermCheckerMixin
+from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -97,15 +97,15 @@ class EpiAssessmentViewset(
         return Response(export)
 
 
-class Criteria(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "assessment"
+class Criteria(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Criteria
     serializer_class = serializers.CriteriaSerializer
 
 
-class StudyPopulation(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "study"
+class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["study"]
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
     serializer_class = serializers.StudyPopulationSerializer
@@ -246,8 +246,8 @@ class StudyPopulation(PermCheckerMixin, AssessmentEditViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "study_population"
+class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["study_population"]
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
     read_serializer_class = serializers.ExposureSerializer
@@ -333,22 +333,22 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
         self.process_ct_creation(serializer.instance, False)
 
 
-class Outcome(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = ["assessment", "study_population"]
+class Outcome(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["assessment", "study_population"]
     assessment_filter_args = "assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
 
-class GroupResult(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "group"
+class GroupResult(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["group"]
     assessment_filter_args = "result__outcome__assessment"
     model = models.GroupResult
     serializer_class = serializers.GroupResultSerializer
 
 
-class Result(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = ["outcome", "comparison_set"]
+class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["outcome", "comparison_set"]
     assessment_filter_args = "outcome__assessment"
     model = models.Result
     serializer_class = serializers.ResultSerializer
@@ -477,22 +477,22 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
         self.process_adjustment_factor_association(serializer, serializer.instance.id, False)
 
 
-class ComparisonSet(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "study_population"
+class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["study_population"]
     assessment_filter_args = "assessment"  # todo: fix
     model = models.ComparisonSet
     serializer_class = serializers.ComparisonSetSerializer
 
 
-class GroupNumericalDescriptions(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "group"
+class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["group"]
     # assessment_filter_args = "group__assessment"
     model = models.GroupNumericalDescriptions
     serializer_class = serializers.GroupNumericalDescriptionsSerializer
 
 
-class Group(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "comparison_set"
+class Group(EditPermissionsCheckMixin, AssessmentEditViewset):
+    perm_checker_keys = ["comparison_set"]
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
     serializer_class = serializers.GroupSerializer
