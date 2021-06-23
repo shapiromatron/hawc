@@ -104,7 +104,7 @@ class Criteria(PermCheckerMixin, AssessmentEditViewset):
     serializer_class = serializers.CriteriaSerializer
 
 
-class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
+class StudyPopulation(PermCheckerMixin, AssessmentEditViewset):
     perm_checker_key = "study"
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
