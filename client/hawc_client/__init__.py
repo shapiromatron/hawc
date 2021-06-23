@@ -524,7 +524,7 @@ class EpiClient(BaseClient):
         Returns:
             Dict: Model metadata
         """
-        url = f"{self.session.root_url}/epi/api/metadata/{assessment_id}"
+        url = f"{self.session.root_url}/epi/api/metadata/{assessment_id}/"
         return self.session.get(url).json()
 
     def data(self, assessment_id: int) -> pd.DataFrame:
