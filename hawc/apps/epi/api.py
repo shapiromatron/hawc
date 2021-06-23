@@ -98,14 +98,14 @@ class EpiAssessmentViewset(
 
 
 class Criteria(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["assessment"]
+    edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Criteria
     serializer_class = serializers.CriteriaSerializer
 
 
 class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["study"]
+    edit_check_keys = ["study"]
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
     serializer_class = serializers.StudyPopulationSerializer
@@ -247,7 +247,7 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
 
 
 class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["study_population"]
+    edit_check_keys = ["study_population"]
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
     read_serializer_class = serializers.ExposureSerializer
@@ -334,21 +334,21 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
 
 
 class Outcome(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["assessment", "study_population"]
+    edit_check_keys = ["assessment", "study_population"]
     assessment_filter_args = "assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
 
 class GroupResult(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["group"]
+    edit_check_keys = ["group"]
     assessment_filter_args = "result__outcome__assessment"
     model = models.GroupResult
     serializer_class = serializers.GroupResultSerializer
 
 
 class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["outcome", "comparison_set"]
+    edit_check_keys = ["outcome", "comparison_set"]
     assessment_filter_args = "outcome__assessment"
     model = models.Result
     serializer_class = serializers.ResultSerializer
@@ -478,21 +478,21 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
 
 
 class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["study_population"]
+    edit_check_keys = ["study_population"]
     assessment_filter_args = "assessment"  # todo: fix
     model = models.ComparisonSet
     serializer_class = serializers.ComparisonSetSerializer
 
 
 class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["group"]
+    edit_check_keys = ["group"]
     # assessment_filter_args = "group__assessment"
     model = models.GroupNumericalDescriptions
     serializer_class = serializers.GroupNumericalDescriptionsSerializer
 
 
 class Group(EditPermissionsCheckMixin, AssessmentEditViewset):
-    perm_checker_keys = ["comparison_set"]
+    edit_check_keys = ["comparison_set"]
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
     serializer_class = serializers.GroupSerializer

@@ -60,9 +60,8 @@ class EditPermissionsCheckMixin:
     API Viewset mixin which provides permission checking during create/update/destroy operations.
 
     Fires "user_can_edit_object" checks during requests to create/update/destroy. Viewsets mixing
-    this in should define a variable "perm_checker_keys" which can be either a string or a list
-    of strings that should be used as the source for the checks, via looking them up in the
-    validated_data of the associated serializer.
+    this in can define a variable "edit_check_keys", which is a list of serializer attribute
+    keys that should be used as the source for the checks.
     """
 
     def get_object_checks(self, serializer):
@@ -83,7 +82,7 @@ class EditPermissionsCheckMixin:
             objects.append(serializer.instance)
 
         # additional checks on other attributes
-        for checker_key in self.perm_checker_keys:
+        for checker_key in getattr(self, "edit_check_keys", []):
             if checker_key in serializer.validated_data:
                 objects.append(serializer.validated_data.get(checker_key))
 
