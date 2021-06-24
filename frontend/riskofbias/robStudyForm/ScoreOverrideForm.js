@@ -52,7 +52,7 @@ OverrideObjectsSelector.propTypes = {
 class ScoreOverrideForm extends Component {
     render() {
         const {store, score} = this.props,
-            {id, overrideDataTypeValue} = score,
+            {overrideDataTypeValue} = score,
             overrideDataTypeChoices = _.chain(store.overrideOptions)
                 .keys()
                 .map(key => {
@@ -80,8 +80,8 @@ class ScoreOverrideForm extends Component {
                         choices={overrideDataTypeChoices}
                         value={overrideDataTypeValue}
                         onChange={value => {
-                            store.updateFormState(id, "overridden_objects", []);
-                            store.updateFormState(id, "overrideDataTypeValue", value);
+                            store.updateScoreState(score, "overridden_objects", []);
+                            store.updateScoreState(score, "overrideDataTypeValue", value);
                         }}
                     />
                 </div>
@@ -96,7 +96,7 @@ class ScoreOverrideForm extends Component {
                                     object_id: parseInt(value),
                                 };
                             });
-                            store.updateFormState(id, "overridden_objects", selected);
+                            store.updateScoreState(score, "overridden_objects", selected);
                         }}
                     />
                 </div>

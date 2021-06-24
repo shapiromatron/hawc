@@ -19,8 +19,8 @@ class CopyScoresButton extends Component {
                     className="btn btn-outline-dark"
                     type="button"
                     onClick={() => {
-                        store.updateFormState(
-                            editableScores[0].id,
+                        store.updateScoreState(
+                            editableScores[0],
                             "notes",
                             editableScores[0].notes + score.notes
                         );
@@ -46,8 +46,8 @@ class CopyScoresButton extends Component {
                                     className="dropdown-item"
                                     onClick={e => {
                                         e.preventDefault();
-                                        store.updateFormState(
-                                            editableScore.id,
+                                        store.updateScoreState(
+                                            editableScore,
                                             "notes",
                                             editableScore.notes + score.notes
                                         );
