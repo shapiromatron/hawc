@@ -2,12 +2,10 @@ import * as d3 from "d3";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
-import {fetchRobSettings, fetchRobStudy} from "../constants";
+import StudyRobStore from "../stores/StudyRobStore";
 
-class RobTableStore {
+class RobTableStore extends StudyRobStore {
     @observable error = null;
-    @observable settings = null;
-    @observable study = null;
     @observable isFetching = false;
     @observable itemsLoaded = false;
     @observable riskofbiases = [];
@@ -15,6 +13,7 @@ class RobTableStore {
     @observable final = null;
 
     constructor(config) {
+        super();
         this.config = config;
     }
 
@@ -23,40 +22,6 @@ class RobTableStore {
     }
     @action.bound resetError() {
         this.error = null;
-    }
-
-    @computed get domains() {
-        return this.settings.domains.reduce(function(obj, d) {
-            obj[d.id] = d;
-            return obj;
-        }, {});
-    }
-
-    @computed get metrics() {
-        return this.settings.metrics.reduce(function(obj, m) {
-            obj[m.id] = m;
-            return obj;
-        }, {});
-    }
-
-    @computed get metricDomains() {
-        let {domains, metrics} = this;
-        return this.settings.metrics.reduce(function(obj, m) {
-            obj[m.id] = domains[metrics[m.id].domain_id];
-            return obj;
-        }, {});
-    }
-
-    @action.bound fetchSettings(assessment_id) {
-        return fetchRobSettings(assessment_id, data => {
-            this.settings = data;
-        });
-    }
-
-    @action.bound fetchStudy(study_id) {
-        return fetchRobStudy(study_id, data => {
-            this.study = data;
-        });
     }
 
     @action.bound fetchFullStudyIfNeeded() {
