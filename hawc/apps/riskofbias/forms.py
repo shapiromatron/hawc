@@ -89,6 +89,7 @@ class RoBMetricForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if domain:
             self.instance.domain = domain
+        self.fields["responses"].label = "Judgement choices"
 
     @property
     def helper(self):
