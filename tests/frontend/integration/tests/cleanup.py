@@ -32,12 +32,12 @@ def cleanup(driver, root_url):
     h.wait_until(h.Text("met your criteria:").exists)
     assert len(h.find_all(h.S(".checkbox-score-display-row"))) == 1
     h.click(h.S("@checkbox-score-select", below="Foo et al."))
-    h.select(h.ComboBox(below="Score"), "Not reported")
+    h.select(h.ComboBox(below="Judgment"), "Not reported")
     h.click(h.S('.bulkEditForm button[type="button"].btn-primary'))
     h.wait_until(lambda: len(h.find_all(h.S(".bulkEditForm"))) == 0)
     assert "Not reported" in driver.find_elements_by_css_selector(".score-bar i")[0].text
     h.click(h.S("@checkbox-score-select", below="Foo et al."))
-    h.select(h.ComboBox(below="Score"), "Probably low risk of bias")
+    h.select(h.ComboBox(below="Judgment"), "Probably low risk of bias")
     h.click(h.S('.bulkEditForm button[type="button"].btn-primary'))
     h.wait_until(lambda: len(h.find_all(h.S(".bulkEditForm"))) == 0)
     assert (
