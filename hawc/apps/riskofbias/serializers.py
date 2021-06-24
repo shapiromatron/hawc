@@ -10,14 +10,14 @@ from ..study.models import Study
 from . import constants, models
 
 
-class AssessmentMetricSerializer(serializers.ModelSerializer):
+class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasMetric
         fields = "__all__"
 
 
-class AssessmentDomainSerializer(serializers.ModelSerializer):
-    metrics = AssessmentMetricSerializer(many=True)
+class NestedDomainSerializer(serializers.ModelSerializer):
+    metrics = RiskOfBiasMetricSerializer(many=True)
 
     class Meta:
         model = models.RiskOfBiasDomain
@@ -86,27 +86,15 @@ class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
         )
 
 
-class AssessmentScoreSerializer(serializers.ModelSerializer):
+class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
     overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
 
     class Meta:
         model = models.RiskOfBiasScore
-        fields = (
-            "id",
-            "score",
-            "is_default",
-            "label",
-            "bias_direction",
-            "notes",
-            "metric_id",
-            "overridden_objects",
-            "score_symbol",
-            "score_shade",
-            "riskofbias_id",
-        )
+        fields = "__all__"
 
 
-class StudyScoreSerializer(AssessmentScoreSerializer):
+class StudyScoreSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret["url_edit"] = instance.riskofbias.get_edit_url()
@@ -114,6 +102,10 @@ class StudyScoreSerializer(AssessmentScoreSerializer):
         ret["study_id"] = instance.riskofbias.study.id
         ret["study_types"] = instance.riskofbias.study.get_study_type()
         return ret
+
+    class Meta:
+        model = models.RiskOfBiasScore
+        fields = "__all__"
 
 
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
@@ -128,7 +120,7 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
 
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):
-    scores = AssessmentScoreSerializer(many=True)
+    scores = RiskOfBiasScoreSerializer(many=True)
     author = HAWCUserSerializer(read_only=True)
 
     class Meta:
@@ -355,7 +347,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
+class MetricFinalScoresSerializer(serializers.ModelSerializer):
     scores = serializers.SerializerMethodField("get_final_score")
 
     class Meta:

@@ -95,7 +95,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
-    serializer_class = serializers.AssessmentDomainSerializer
+    serializer_class = serializers.NestedDomainSerializer
     lookup_value_regex = re_digits
 
     def get_queryset(self):
@@ -213,7 +213,7 @@ class RiskOfBias(viewsets.ModelViewSet):
 
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricSerializer
+    serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -223,7 +223,7 @@ class AssessmentMetricViewset(AssessmentViewset):
 
 class AssessmentMetricScoreViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricScoreSerializer
+    serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -235,7 +235,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
-    serializer_class = serializers.AssessmentScoreSerializer
+    serializer_class = serializers.RiskOfBiasScoreSerializer
     list_actions = ["list", "v2"]
 
     def get_assessment(self, request, *args, **kwargs):
@@ -247,7 +247,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        new_serializer = serializers.AssessmentScoreSerializer(serializer.instance)
+        new_serializer = serializers.RiskOfBiasScoreSerializer(serializer.instance)
         headers = self.get_success_headers(new_serializer.data)
         return Response(new_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
