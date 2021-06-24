@@ -36,6 +36,6 @@ class TestIVAssessmentViewset:
         data = resp.json()
 
         if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2))
+            Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
 
         assert data == json.loads(fn.read_text())
