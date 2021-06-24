@@ -1,8 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import h from "shared/utils/helpers";
-
 import {getMultiScoreDisplaySettings} from "../../constants";
 import "./MetricCell.css";
 
