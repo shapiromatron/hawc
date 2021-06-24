@@ -1,5 +1,130 @@
 {
   "id": 7,
+  "rob_settings": {
+    "assessment_id": 2,
+    "domains": [
+      {
+        "id": 10,
+        "name": "domain 1",
+        "description": "<p>description</p>",
+        "is_overall_confidence": false
+      },
+      {
+        "id": 11,
+        "name": "overall",
+        "description": "<p>description</p>",
+        "is_overall_confidence": true
+      }
+    ],
+    "metrics": [
+      {
+        "id": 14,
+        "name": "metric 1",
+        "description": "<p>description</p>",
+        "domain_id": 10,
+        "response_values": [
+          17,
+          16,
+          15,
+          12,
+          14,
+          10
+        ],
+        "default_response": 12
+      },
+      {
+        "id": 15,
+        "name": "overall",
+        "description": "<p>overall description</p>",
+        "domain_id": 11,
+        "response_values": [
+          17,
+          16,
+          15,
+          12,
+          14,
+          10
+        ],
+        "default_response": 12
+      }
+    ],
+    "rob_settings": {
+      "id": 3,
+      "number_of_reviewers": 2,
+      "help_text": "<p>These are instructions for how to do risk of bias for an assessment.</p>",
+      "assessment": 2
+    },
+    "score_metadata": {
+      "choices": {
+        "0": "None",
+        "10": "Not applicable",
+        "12": "Not reported",
+        "14": "Definitely high risk of bias",
+        "15": "Probably high risk of bias",
+        "16": "Probably low risk of bias",
+        "17": "Definitely low risk of bias",
+        "20": "Not applicable",
+        "22": "Not reported",
+        "24": "Critically deficient",
+        "25": "Deficient",
+        "26": "Adequate",
+        "27": "Good",
+        "34": "Uninformative",
+        "35": "Low confidence",
+        "36": "Medium confidence",
+        "37": "High confidence",
+        "40": "Yes",
+        "41": "No"
+      },
+      "symbols": {
+        "0": "\u2501",
+        "10": "N/A",
+        "12": "NR",
+        "14": "--",
+        "15": "-",
+        "16": "+",
+        "17": "++",
+        "20": "N/A",
+        "22": "NR",
+        "24": "--",
+        "25": "-",
+        "26": "+",
+        "27": "++",
+        "34": "--",
+        "35": "-",
+        "36": "+",
+        "37": "++",
+        "40": "Y",
+        "41": "N"
+      },
+      "colors": {
+        "0": "#DFDFDF",
+        "10": "#E8E8E8",
+        "12": "#FFCC00",
+        "14": "#CC3333",
+        "15": "#FFCC00",
+        "16": "#6FFF00",
+        "17": "#00CC00",
+        "20": "#E8E8E8",
+        "22": "#FFCC00",
+        "24": "#CC3333",
+        "25": "#FFCC00",
+        "26": "#6FFF00",
+        "27": "#00CC00",
+        "34": "#CC3333",
+        "35": "#FFCC00",
+        "36": "#6FFF00",
+        "37": "#00CC00",
+        "40": "#00CC00",
+        "41": "#CC3333"
+      },
+      "bias_direction": {
+        "0": "not entered/unknown",
+        "1": "\u2b06 (away from null)",
+        "2": "\u2b07 (towards null)"
+      }
+    }
+  },
   "title": "embedded-tableau",
   "slug": "embedded-tableau",
   "visual_type": "embedded external website",

@@ -440,10 +440,17 @@ class TestBulkRobCleanupApis:
         url = reverse("riskofbias:api:metrics-list") + assessment_query
         resp = c.get(url, format="json")
         assert resp.status_code == 200
-        assert resp.json() == [
-            {"id": 1, "name": "example metric", "description": "<p>Is this a good study?</p>"},
-            {"id": 2, "name": "final domain", "description": ""},
-        ]
+        assert (
+            resp.json()[0].items()
+            >= {
+                "id": 1,
+                "name": "example metric",
+                "description": "<p>Is this a good study?</p>",
+            }.items()
+        )
+        assert (
+            resp.json()[1].items() >= {"id": 2, "name": "final domain", "description": ""}.items()
+        )
 
     def test_rob_scores(self, db_keys):
         c = APIClient()
@@ -462,7 +469,6 @@ class TestBulkRobCleanupApis:
         assert resp.status_code == 200
 
         data = resp.json()
-        data.pop("metric")
         assert data == {
             "id": 1,
             "score": 17,
@@ -472,14 +478,8 @@ class TestBulkRobCleanupApis:
             "notes": "<p>Content here.</p>",
             "overridden_objects": [],
             "riskofbias_id": 1,
+            "metric_id": 1,
             "score_description": "Definitely low risk of bias",
-            "score_symbol": "++",
-            "score_shade": "#00CC00",
-            "bias_direction_description": "not entered/unknown",
-            "url_edit": "/rob/1/update/",
-            "study_name": "Foo et al.",
-            "study_id": 1,
-            "study_types": ["bioassay"],
         }
 
         # TODO: evaluate how to correctly add header

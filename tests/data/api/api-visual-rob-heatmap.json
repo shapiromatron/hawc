@@ -1,5 +1,130 @@
 {
   "id": 3,
+  "rob_settings": {
+    "assessment_id": 2,
+    "domains": [
+      {
+        "id": 10,
+        "name": "domain 1",
+        "description": "<p>description</p>",
+        "is_overall_confidence": false
+      },
+      {
+        "id": 11,
+        "name": "overall",
+        "description": "<p>description</p>",
+        "is_overall_confidence": true
+      }
+    ],
+    "metrics": [
+      {
+        "id": 14,
+        "name": "metric 1",
+        "description": "<p>description</p>",
+        "domain_id": 10,
+        "response_values": [
+          17,
+          16,
+          15,
+          12,
+          14,
+          10
+        ],
+        "default_response": 12
+      },
+      {
+        "id": 15,
+        "name": "overall",
+        "description": "<p>overall description</p>",
+        "domain_id": 11,
+        "response_values": [
+          17,
+          16,
+          15,
+          12,
+          14,
+          10
+        ],
+        "default_response": 12
+      }
+    ],
+    "rob_settings": {
+      "id": 3,
+      "number_of_reviewers": 2,
+      "help_text": "<p>These are instructions for how to do risk of bias for an assessment.</p>",
+      "assessment": 2
+    },
+    "score_metadata": {
+      "choices": {
+        "0": "None",
+        "10": "Not applicable",
+        "12": "Not reported",
+        "14": "Definitely high risk of bias",
+        "15": "Probably high risk of bias",
+        "16": "Probably low risk of bias",
+        "17": "Definitely low risk of bias",
+        "20": "Not applicable",
+        "22": "Not reported",
+        "24": "Critically deficient",
+        "25": "Deficient",
+        "26": "Adequate",
+        "27": "Good",
+        "34": "Uninformative",
+        "35": "Low confidence",
+        "36": "Medium confidence",
+        "37": "High confidence",
+        "40": "Yes",
+        "41": "No"
+      },
+      "symbols": {
+        "0": "\u2501",
+        "10": "N/A",
+        "12": "NR",
+        "14": "--",
+        "15": "-",
+        "16": "+",
+        "17": "++",
+        "20": "N/A",
+        "22": "NR",
+        "24": "--",
+        "25": "-",
+        "26": "+",
+        "27": "++",
+        "34": "--",
+        "35": "-",
+        "36": "+",
+        "37": "++",
+        "40": "Y",
+        "41": "N"
+      },
+      "colors": {
+        "0": "#DFDFDF",
+        "10": "#E8E8E8",
+        "12": "#FFCC00",
+        "14": "#CC3333",
+        "15": "#FFCC00",
+        "16": "#6FFF00",
+        "17": "#00CC00",
+        "20": "#E8E8E8",
+        "22": "#FFCC00",
+        "24": "#CC3333",
+        "25": "#FFCC00",
+        "26": "#6FFF00",
+        "27": "#00CC00",
+        "34": "#CC3333",
+        "35": "#FFCC00",
+        "36": "#6FFF00",
+        "37": "#00CC00",
+        "40": "#00CC00",
+        "41": "#CC3333"
+      },
+      "bias_direction": {
+        "0": "not entered/unknown",
+        "1": "\u2b06 (away from null)",
+        "2": "\u2b07 (towards null)"
+      }
+    }
+  },
   "title": "rob-heatmap",
   "slug": "rob-heatmap",
   "visual_type": "risk of bias heatmap",
@@ -69,56 +194,10 @@
               "label": "",
               "bias_direction": 0,
               "notes": "<p>test</p>",
-              "metric": {
-                "id": 14,
-                "domain": {
-                  "id": 10,
-                  "assessment": {
-                    "id": 2,
-                    "url": "/assessment/2/",
-                    "enable_risk_of_bias": true,
-                    "name": "Chemical X"
-                  },
-                  "name": "domain 1",
-                  "description": "<p>description</p>",
-                  "is_overall_confidence": false,
-                  "sort_order": 1,
-                  "created": "2020-05-08T12:05:55.142679-05:00",
-                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
-                },
-                "name": "metric 1",
-                "short_name": "metric 1 short",
-                "description": "<p>description</p>",
-                "responses": 1,
-                "required_animal": true,
-                "required_epi": true,
-                "required_invitro": true,
-                "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
-                "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00",
-                "response_values": [
-                  17,
-                  16,
-                  15,
-                  12,
-                  14,
-                  10
-                ]
-              },
+              "metric_id": 14,
               "overridden_objects": [],
               "riskofbias_id": 4,
-              "score_description": "Definitely low risk of bias",
-              "score_symbol": "++",
-              "score_shade": "#00CC00",
-              "bias_direction_description": "not entered/unknown",
-              "url_edit": "/rob/4/update/",
-              "study_name": "Biesemeier JA et al. 2011",
-              "study_id": 7,
-              "study_types": [
-                "bioassay"
-              ]
+              "score_description": "Definitely low risk of bias"
             },
             {
               "id": 11,
@@ -127,56 +206,10 @@
               "label": "",
               "bias_direction": 1,
               "notes": "<p>test2</p>",
-              "metric": {
-                "id": 15,
-                "domain": {
-                  "id": 11,
-                  "assessment": {
-                    "id": 2,
-                    "url": "/assessment/2/",
-                    "enable_risk_of_bias": true,
-                    "name": "Chemical X"
-                  },
-                  "name": "overall",
-                  "description": "<p>description</p>",
-                  "is_overall_confidence": true,
-                  "sort_order": 2,
-                  "created": "2020-05-08T12:06:37.006374-05:00",
-                  "last_updated": "2020-05-08T12:06:37.006406-05:00"
-                },
-                "name": "overall",
-                "short_name": "overall short",
-                "description": "<p>overall description</p>",
-                "responses": 1,
-                "required_animal": true,
-                "required_epi": true,
-                "required_invitro": true,
-                "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
-                "created": "2020-05-08T12:06:55.509303-05:00",
-                "last_updated": "2020-05-08T12:06:55.509353-05:00",
-                "response_values": [
-                  17,
-                  16,
-                  15,
-                  12,
-                  14,
-                  10
-                ]
-              },
+              "metric_id": 15,
               "overridden_objects": [],
               "riskofbias_id": 4,
-              "score_description": "Definitely high risk of bias",
-              "score_symbol": "--",
-              "score_shade": "#CC3333",
-              "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/4/update/",
-              "study_name": "Biesemeier JA et al. 2011",
-              "study_id": 7,
-              "study_types": [
-                "bioassay"
-              ]
+              "score_description": "Definitely high risk of bias"
             }
           ]
         },
@@ -199,56 +232,10 @@
               "label": "",
               "bias_direction": 0,
               "notes": "<p>test</p>",
-              "metric": {
-                "id": 14,
-                "domain": {
-                  "id": 10,
-                  "assessment": {
-                    "id": 2,
-                    "url": "/assessment/2/",
-                    "enable_risk_of_bias": true,
-                    "name": "Chemical X"
-                  },
-                  "name": "domain 1",
-                  "description": "<p>description</p>",
-                  "is_overall_confidence": false,
-                  "sort_order": 1,
-                  "created": "2020-05-08T12:05:55.142679-05:00",
-                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
-                },
-                "name": "metric 1",
-                "short_name": "metric 1 short",
-                "description": "<p>description</p>",
-                "responses": 1,
-                "required_animal": true,
-                "required_epi": true,
-                "required_invitro": true,
-                "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
-                "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00",
-                "response_values": [
-                  17,
-                  16,
-                  15,
-                  12,
-                  14,
-                  10
-                ]
-              },
+              "metric_id": 14,
               "overridden_objects": [],
               "riskofbias_id": 5,
-              "score_description": "Probably low risk of bias",
-              "score_symbol": "+",
-              "score_shade": "#6FFF00",
-              "bias_direction_description": "not entered/unknown",
-              "url_edit": "/rob/5/update/",
-              "study_name": "Biesemeier JA et al. 2011",
-              "study_id": 7,
-              "study_types": [
-                "bioassay"
-              ]
+              "score_description": "Probably low risk of bias"
             },
             {
               "id": 13,
@@ -257,56 +244,10 @@
               "label": "",
               "bias_direction": 0,
               "notes": "<p>test</p>",
-              "metric": {
-                "id": 15,
-                "domain": {
-                  "id": 11,
-                  "assessment": {
-                    "id": 2,
-                    "url": "/assessment/2/",
-                    "enable_risk_of_bias": true,
-                    "name": "Chemical X"
-                  },
-                  "name": "overall",
-                  "description": "<p>description</p>",
-                  "is_overall_confidence": true,
-                  "sort_order": 2,
-                  "created": "2020-05-08T12:06:37.006374-05:00",
-                  "last_updated": "2020-05-08T12:06:37.006406-05:00"
-                },
-                "name": "overall",
-                "short_name": "overall short",
-                "description": "<p>overall description</p>",
-                "responses": 1,
-                "required_animal": true,
-                "required_epi": true,
-                "required_invitro": true,
-                "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
-                "created": "2020-05-08T12:06:55.509303-05:00",
-                "last_updated": "2020-05-08T12:06:55.509353-05:00",
-                "response_values": [
-                  17,
-                  16,
-                  15,
-                  12,
-                  14,
-                  10
-                ]
-              },
+              "metric_id": 15,
               "overridden_objects": [],
               "riskofbias_id": 5,
-              "score_description": "Definitely low risk of bias",
-              "score_symbol": "++",
-              "score_shade": "#00CC00",
-              "bias_direction_description": "not entered/unknown",
-              "url_edit": "/rob/5/update/",
-              "study_name": "Biesemeier JA et al. 2011",
-              "study_id": 7,
-              "study_types": [
-                "bioassay"
-              ]
+              "score_description": "Definitely low risk of bias"
             }
           ]
         },
@@ -329,56 +270,10 @@
               "label": "test1",
               "bias_direction": 1,
               "notes": "<p>test</p>",
-              "metric": {
-                "id": 14,
-                "domain": {
-                  "id": 10,
-                  "assessment": {
-                    "id": 2,
-                    "url": "/assessment/2/",
-                    "enable_risk_of_bias": true,
-                    "name": "Chemical X"
-                  },
-                  "name": "domain 1",
-                  "description": "<p>description</p>",
-                  "is_overall_confidence": false,
-                  "sort_order": 1,
-                  "created": "2020-05-08T12:05:55.142679-05:00",
-                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
-                },
-                "name": "metric 1",
-                "short_name": "metric 1 short",
-                "description": "<p>description</p>",
-                "responses": 1,
-                "required_animal": true,
-                "required_epi": true,
-                "required_invitro": true,
-                "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
-                "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00",
-                "response_values": [
-                  17,
-                  16,
-                  15,
-                  12,
-                  14,
-                  10
-                ]
-              },
+              "metric_id": 14,
               "overridden_objects": [],
               "riskofbias_id": 6,
-              "score_description": "Probably low risk of bias",
-              "score_symbol": "+",
-              "score_shade": "#6FFF00",
-              "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/6/update/",
-              "study_name": "Biesemeier JA et al. 2011",
-              "study_id": 7,
-              "study_types": [
-                "bioassay"
-              ]
+              "score_description": "Probably low risk of bias"
             },
             {
               "id": 16,
@@ -387,44 +282,7 @@
               "label": "test2",
               "bias_direction": 1,
               "notes": "<p>beep</p>",
-              "metric": {
-                "id": 14,
-                "domain": {
-                  "id": 10,
-                  "assessment": {
-                    "id": 2,
-                    "url": "/assessment/2/",
-                    "enable_risk_of_bias": true,
-                    "name": "Chemical X"
-                  },
-                  "name": "domain 1",
-                  "description": "<p>description</p>",
-                  "is_overall_confidence": false,
-                  "sort_order": 1,
-                  "created": "2020-05-08T12:05:55.142679-05:00",
-                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
-                },
-                "name": "metric 1",
-                "short_name": "metric 1 short",
-                "description": "<p>description</p>",
-                "responses": 1,
-                "required_animal": true,
-                "required_epi": true,
-                "required_invitro": true,
-                "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
-                "created": "2020-05-08T12:06:18.057471-05:00",
-                "last_updated": "2020-05-08T12:06:18.057493-05:00",
-                "response_values": [
-                  17,
-                  16,
-                  15,
-                  12,
-                  14,
-                  10
-                ]
-              },
+              "metric_id": 14,
               "overridden_objects": [
                 {
                   "id": 2,
@@ -444,16 +302,7 @@
                 }
               ],
               "riskofbias_id": 6,
-              "score_description": "Definitely high risk of bias",
-              "score_symbol": "--",
-              "score_shade": "#CC3333",
-              "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/6/update/",
-              "study_name": "Biesemeier JA et al. 2011",
-              "study_id": 7,
-              "study_types": [
-                "bioassay"
-              ]
+              "score_description": "Definitely high risk of bias"
             },
             {
               "id": 15,
@@ -462,60 +311,139 @@
               "label": "",
               "bias_direction": 1,
               "notes": "<p>test</p>",
-              "metric": {
-                "id": 15,
-                "domain": {
-                  "id": 11,
-                  "assessment": {
-                    "id": 2,
-                    "url": "/assessment/2/",
-                    "enable_risk_of_bias": true,
-                    "name": "Chemical X"
-                  },
-                  "name": "overall",
-                  "description": "<p>description</p>",
-                  "is_overall_confidence": true,
-                  "sort_order": 2,
-                  "created": "2020-05-08T12:06:37.006374-05:00",
-                  "last_updated": "2020-05-08T12:06:37.006406-05:00"
-                },
-                "name": "overall",
-                "short_name": "overall short",
-                "description": "<p>overall description</p>",
-                "responses": 1,
-                "required_animal": true,
-                "required_epi": true,
-                "required_invitro": true,
-                "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
-                "created": "2020-05-08T12:06:55.509303-05:00",
-                "last_updated": "2020-05-08T12:06:55.509353-05:00",
-                "response_values": [
-                  17,
-                  16,
-                  15,
-                  12,
-                  14,
-                  10
-                ]
-              },
+              "metric_id": 15,
               "overridden_objects": [],
               "riskofbias_id": 6,
-              "score_description": "Probably low risk of bias",
-              "score_symbol": "+",
-              "score_shade": "#6FFF00",
-              "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/6/update/",
-              "study_name": "Biesemeier JA et al. 2011",
-              "study_id": 7,
-              "study_types": [
-                "bioassay"
-              ]
+              "score_description": "Probably low risk of bias"
             }
           ]
         }
       ],
+      "rob_settings": {
+        "assessment_id": 2,
+        "domains": [
+          {
+            "id": 10,
+            "name": "domain 1",
+            "description": "<p>description</p>",
+            "is_overall_confidence": false
+          },
+          {
+            "id": 11,
+            "name": "overall",
+            "description": "<p>description</p>",
+            "is_overall_confidence": true
+          }
+        ],
+        "metrics": [
+          {
+            "id": 14,
+            "name": "metric 1",
+            "description": "<p>description</p>",
+            "domain_id": 10,
+            "response_values": [
+              17,
+              16,
+              15,
+              12,
+              14,
+              10
+            ],
+            "default_response": 12
+          },
+          {
+            "id": 15,
+            "name": "overall",
+            "description": "<p>overall description</p>",
+            "domain_id": 11,
+            "response_values": [
+              17,
+              16,
+              15,
+              12,
+              14,
+              10
+            ],
+            "default_response": 12
+          }
+        ],
+        "rob_settings": {
+          "id": 3,
+          "number_of_reviewers": 2,
+          "help_text": "<p>These are instructions for how to do risk of bias for an assessment.</p>",
+          "assessment": 2
+        },
+        "score_metadata": {
+          "choices": {
+            "0": "None",
+            "10": "Not applicable",
+            "12": "Not reported",
+            "14": "Definitely high risk of bias",
+            "15": "Probably high risk of bias",
+            "16": "Probably low risk of bias",
+            "17": "Definitely low risk of bias",
+            "20": "Not applicable",
+            "22": "Not reported",
+            "24": "Critically deficient",
+            "25": "Deficient",
+            "26": "Adequate",
+            "27": "Good",
+            "34": "Uninformative",
+            "35": "Low confidence",
+            "36": "Medium confidence",
+            "37": "High confidence",
+            "40": "Yes",
+            "41": "No"
+          },
+          "symbols": {
+            "0": "\u2501",
+            "10": "N/A",
+            "12": "NR",
+            "14": "--",
+            "15": "-",
+            "16": "+",
+            "17": "++",
+            "20": "N/A",
+            "22": "NR",
+            "24": "--",
+            "25": "-",
+            "26": "+",
+            "27": "++",
+            "34": "--",
+            "35": "-",
+            "36": "+",
+            "37": "++",
+            "40": "Y",
+            "41": "N"
+          },
+          "colors": {
+            "0": "#DFDFDF",
+            "10": "#E8E8E8",
+            "12": "#FFCC00",
+            "14": "#CC3333",
+            "15": "#FFCC00",
+            "16": "#6FFF00",
+            "17": "#00CC00",
+            "20": "#E8E8E8",
+            "22": "#FFCC00",
+            "24": "#CC3333",
+            "25": "#FFCC00",
+            "26": "#6FFF00",
+            "27": "#00CC00",
+            "34": "#CC3333",
+            "35": "#FFCC00",
+            "36": "#6FFF00",
+            "37": "#00CC00",
+            "40": "#00CC00",
+            "41": "#CC3333"
+          },
+          "bias_direction": {
+            "0": "not entered/unknown",
+            "1": "\u2b06 (away from null)",
+            "2": "\u2b07 (towards null)"
+          }
+        }
+      },
       "identifiers": [
         {
           "id": 5,
