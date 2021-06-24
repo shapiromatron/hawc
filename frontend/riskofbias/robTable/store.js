@@ -3,7 +3,6 @@ import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
 import {fetchRobSettings, fetchRobStudy} from "../constants";
-import h from "shared/utils/helpers";
 
 class RobTableStore {
     @observable error = null;

@@ -234,7 +234,7 @@ class RobFormStore {
         return fetch(url, h.fetchDelete(csrf))
             .then(response => {
                 if (response.status === 204) {
-                    _.remove(this.editableScores, {id: scoreId});
+                    this.editableScores.replace(this.editableScores.filter(s => s.id !== scoreId));
                 }
             })
             .catch(error => {

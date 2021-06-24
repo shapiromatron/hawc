@@ -2,7 +2,6 @@ import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
 import {fetchRobSettings, fetchRobStudy} from "../constants";
-import h from "shared/utils/helpers";
 
 class StudyRobStore {
     @observable settings = null;
