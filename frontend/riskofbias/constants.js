@@ -2,8 +2,9 @@ import _ from "lodash";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
+    hideScore = score => score === 0,
     SCORE_TEXT = {
-        0: "None",
+        0: "━",
 
         10: "N/A",
         12: "NR",
@@ -28,7 +29,7 @@ const NA_KEYS = [10, 20],
         41: "N",
     },
     SCORE_SHADES = {
-        0: "#FFFFFF",
+        0: "#DFDFDF",
 
         10: "#E8E8E8",
         12: "#FFCC00",
@@ -235,6 +236,7 @@ const NA_KEYS = [10, 20],
 export {
     NA_KEYS,
     NR_KEYS,
+    hideScore,
     SCORE_TEXT,
     SCORE_SHADES,
     SCORE_TEXT_DESCRIPTION,

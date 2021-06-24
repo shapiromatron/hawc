@@ -17,7 +17,7 @@
     </li>
     {% endif %}
 
-    {% if assessment.enable_risk_of_bias and not assessment.hide_rob_scores %}
+    {% if assessment.enable_risk_of_bias %}
     <li>
         <b>{{assessment.get_rob_name_display}} report</b><br>
         <a class='btn btn-primary'

@@ -1,7 +1,7 @@
 import _ from "lodash";
-import {observable, computed, action} from "mobx";
+import {observable, computed, action, toJS} from "mobx";
 
-import {robSettingsUrl, robStudyUrl} from "../constants";
+import {robSettingsUrl, robStudyUrl, hideScore} from "../constants";
 import h from "shared/utils/helpers";
 
 class StudyRobStore {
@@ -29,6 +29,14 @@ class StudyRobStore {
 
     @computed get metrics() {
         return _.keyBy(this.settings.metrics, metric => metric.id);
+    }
+
+    @computed get canShowScoreVisualization() {
+        if (this.hasFinalData) {
+            // confusing booleans; if all scores should be hidden, hide, else dont hide
+            return !_.every(this.final.scores.map(d => hideScore(d.score)));
+        }
+        return true;
     }
 
     @computed get metricDomains() {

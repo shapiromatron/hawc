@@ -70,7 +70,7 @@ class ScoreForm extends Component {
             direction_choices = Object.entries(BIAS_DIRECTION_CHOICES).map(kv => {
                 return {id: kv[0], label: kv[1]};
             }),
-            showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
+            showScoreInput = false, // TODO - remove 100500031 hack; fix after merging form
             showOverrideCreate = score.is_default === true,
             showDelete = score.is_default === false;
 
