@@ -11,12 +11,6 @@ from ..study.models import Study
 from . import constants, models
 
 
-class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RiskOfBiasMetric
-        fields = ("id", "name", "description")
-
-
 class AssessmentMetricSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasMetric
@@ -73,27 +67,6 @@ class AssessmentRiskOfBiasSerializer(serializers.Serializer):
         }
 
 
-class RiskOfBiasDomainSerializer(serializers.ModelSerializer):
-    assessment = AssessmentMiniSerializer(read_only=True)
-
-    class Meta:
-        model = models.RiskOfBiasDomain
-        fields = "__all__"
-
-
-class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
-    domain = RiskOfBiasDomainSerializer(read_only=True)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["response_values"] = instance.get_response_values()
-        return ret
-
-    class Meta:
-        model = models.RiskOfBiasMetric
-        fields = "__all__"
-
-
 class RiskOfBiasScoreOverrideObjectSerializer(serializers.ModelSerializer):
     object_url = serializers.URLField(source="get_object_url", read_only=True)
     object_name = serializers.CharField(source="get_object_name", read_only=True)
@@ -132,39 +105,6 @@ class AssessmentScoreSerializer(serializers.ModelSerializer):
             "score_shade",
             "riskofbias_id",
         )
-
-
-class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
-    metric = RiskOfBiasMetricSerializer(read_only=True)
-    overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
-
-    class Meta:
-        model = models.RiskOfBiasScore
-        fields = (
-            "id",
-            "score",
-            "is_default",
-            "label",
-            "bias_direction",
-            "notes",
-            "metric",
-            "overridden_objects",
-            "riskofbias_id",
-        )
-
-
-class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["score_description"] = instance.get_score_display()
-        ret["score_symbol"] = instance.score_symbol
-        ret["score_shade"] = instance.score_shade
-        ret["bias_direction_description"] = instance.get_bias_direction_display()
-        ret["url_edit"] = instance.riskofbias.get_edit_url()
-        ret["study_name"] = instance.riskofbias.study.short_citation
-        ret["study_id"] = instance.riskofbias.study.id
-        ret["study_types"] = instance.riskofbias.study.get_study_type()
-        return ret
 
 
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
@@ -419,7 +359,7 @@ class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
 
     def get_final_score(self, instance):
         scores = instance.scores.filter(riskofbias__final=True, riskofbias__active=True)
-        serializer = RiskOfBiasScoreSerializer(scores, many=True)
+        serializer = AssessmentScoreSerializer(scores, many=True)
         return serializer.data
 
 

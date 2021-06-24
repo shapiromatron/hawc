@@ -213,7 +213,7 @@ class RiskOfBias(viewsets.ModelViewSet):
 
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricChoiceSerializer
+    serializer_class = serializers.AssessmentMetricSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
