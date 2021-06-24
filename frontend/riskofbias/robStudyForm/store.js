@@ -65,15 +65,12 @@ class RobFormStore {
         });
     }
 
-    getMetricIds(domainId) {
-        return _.uniq(
-            store.editableScores.reduce(function(array, score) {
-                store.metricDomains[score.metric_id].id == domainId
-                    ? array.push(score.metric_id)
-                    : null;
-                return array;
-            }, [])
-        );
+    @action.bound getMetricIds(domainId) {
+        return _.chain(this.editableScores)
+            .filter(score => this.metricDomains[score.metric_id].id == domainId)
+            .map(score => score.metric_id)
+            .uniq()
+            .value();
     }
 
     getEditableScoresForMetric(metricId) {
