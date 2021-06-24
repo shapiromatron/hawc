@@ -22,18 +22,24 @@ class DonutContainer extends Component {
     }
 
     componentDidUpdate() {
-        if (this.store.hasLoaded && this.store.hasFinalData) {
+        const {hasLoaded, hasFinalData, canShowScoreVisualization} = this.store;
+        if (hasLoaded && hasFinalData && canShowScoreVisualization) {
             this.donut.render(this.store, this.ref.current);
         }
     }
 
     render() {
-        if (!this.store.hasLoaded) {
+        const {hasLoaded, hasFinalData, canShowScoreVisualization} = this.store;
+        if (!hasLoaded) {
             return <Loading />;
         }
 
-        if (!this.store.hasFinalData) {
+        if (!hasFinalData) {
             return <p>No data available.</p>;
+        }
+
+        if (!canShowScoreVisualization) {
+            return <p>Click button on right to view study evaluation details.</p>;
         }
 
         return <div ref={this.ref}></div>;
