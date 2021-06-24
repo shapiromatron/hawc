@@ -32,7 +32,7 @@ class MetricForm extends React.Component {
                         Bulk modify {h.pluralize("item", numItems)}.
                     </button>
                     <p className="form-text text-muted">
-                        Submitting this request will change the selected score and notes for the
+                        Submitting this request will change the selected judgement and notes for the
                         selected items.
                     </p>
                 </div>
