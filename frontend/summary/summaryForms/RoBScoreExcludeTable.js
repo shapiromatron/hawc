@@ -9,7 +9,7 @@ class RoBScoreExcludeTable extends TableField {
     }
     renderHeader() {
         return $("<tr>")
-            .append("<th>Display</th><th>Metric</th><th>Study</th><th>Judgement</th>")
+            .append("<th>Display</th><th>Metric</th><th>Study</th><th>Judgment</th>")
             .appendTo(this.$thead);
     }
 
@@ -44,7 +44,7 @@ class RoBScoreExcludeTable extends TableField {
                             study: score.study_name,
                             metric,
                             score: `<span><b>Label:</b>&nbsp;${label} ${scoreType}</span><br/>
-                            <span><b>Judgement:</b>&nbsp;${score.score_description}&nbsp;(${score.score_symbol})</span>`,
+                            <span><b>Judgment:</b>&nbsp;${score.score_description}&nbsp;(${score.score_symbol})</span>`,
                         });
                     });
                 });

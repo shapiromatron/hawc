@@ -39,7 +39,7 @@ _.extend(RoBHeatmapForm, {
     tabs: [
         {name: "overall", label: "General settings"},
         {name: "metrics", label: "Included metrics"},
-        {name: "excluded_scores", label: "Included judgements"},
+        {name: "excluded_scores", label: "Included judgments"},
         {name: "legend", label: "Legend settings"},
     ],
     schema: [
@@ -134,7 +134,7 @@ _.extend(RoBHeatmapForm, {
         {
             type: RoBScoreExcludeTable,
             prependSpacer: false,
-            label: "Included judgements",
+            label: "Included judgments",
             name: "excluded_score_ids",
             colWidths: [10, 30, 30, 30],
             addBlankRowIfNone: false,

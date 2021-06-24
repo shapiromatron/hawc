@@ -53,7 +53,7 @@ class CopyScoresButton extends Component {
                                         );
                                     }}>
                                     Copy into&nbsp;
-                                    {editableScore.label || `Judgement #${editableScore.id}`}
+                                    {editableScore.label || `Judgment #${editableScore.id}`}
                                 </button>
                             );
                         })}

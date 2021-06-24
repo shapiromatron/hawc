@@ -31,7 +31,7 @@ class ScoreInput extends Component {
             <>
                 <SelectInput
                     id={this.scoreId}
-                    label="Judgement"
+                    label="Judgment"
                     choices={choices}
                     multiple={false}
                     value={value}
@@ -131,12 +131,12 @@ class ScoreForm extends Component {
                             score.is_default ? (
                                 <b title="Unless otherwise specified, all content will use this value">
                                     <i className="fa fa-check-square-o" />
-                                    &nbsp;Default judgement
+                                    &nbsp;Default judgment
                                 </b>
                             ) : (
                                 <b title="Only selected override content will use this value">
                                     <i className="fa fa-square-o" />
-                                    &nbsp;Override judgement
+                                    &nbsp;Override judgment
                                 </b>
                             )
                         ) : null}
