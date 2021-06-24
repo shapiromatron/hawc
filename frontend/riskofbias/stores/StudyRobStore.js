@@ -33,7 +33,7 @@ class StudyRobStore {
 
     @computed get canShowScoreVisualization() {
         if (this.hasFinalData) {
-            // confusing booleans; if all scores should be hidden, hide, else dont hide
+            // confusing; if all hidden -> don't show; if any not hidden -> show
             return !_.every(this.final.scores.map(d => hideScore(d.score)));
         }
         return true;
