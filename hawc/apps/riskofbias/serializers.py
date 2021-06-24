@@ -99,6 +99,13 @@ class RiskOfBiasScoreOverrideObjectSerializer(serializers.ModelSerializer):
     object_name = serializers.CharField(source="get_object_name", read_only=True)
     content_type_name = serializers.CharField(source="get_content_type_name")
 
+    def to_representation(self, instance):
+        # prefetching the underlying content_object can lead to content_type and object_id
+        # to be removed if the content_object has been deleted. In this case we refresh from db.
+        if not hasattr(instance, "content_type"):
+            instance.refresh_from_db()
+        return super().to_representation(instance)
+
     class Meta:
         model = models.RiskOfBiasScoreOverrideObject
         fields = ("id", "score_id", "content_type_name", "object_id", "object_name", "object_url")
