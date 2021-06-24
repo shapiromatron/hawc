@@ -42,8 +42,7 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
         tests.bioassay(self.driver, self.live_server_url)
 
     def test_rob(self):
-        # TODO - fix ROB June 2021
-        # tests.rob(self.driver, self.live_server_url)
+        tests.rob(self.driver, self.live_server_url)
         pass
 
     def test_epi(self):
