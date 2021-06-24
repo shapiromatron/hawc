@@ -1,5 +1,39 @@
 {
   "id": 5,
+  "title": "barchart",
+  "slug": "barchart",
+  "visual_type": "risk of bias barchart",
+  "prefilters": "{}",
+  "settings": {
+    "title": "Title",
+    "xAxisLabel": "Percent of studies",
+    "yAxisLabel": "",
+    "plot_width": 400,
+    "row_height": 30,
+    "padding_top": 40,
+    "padding_right": 300,
+    "padding_bottom": 40,
+    "padding_left": 70,
+    "show_values": true,
+    "included_metrics": [
+      14,
+      15
+    ],
+    "show_legend": true,
+    "show_na_legend": true,
+    "legend_x": 574,
+    "legend_y": 10
+  },
+  "caption": "<p>caption</p>",
+  "published": true,
+  "sort_order": "short_citation",
+  "created": "2020-05-08T14:37:44.283008-05:00",
+  "last_updated": "2020-05-08T14:38:48.445082-05:00",
+  "assessment": 2,
+  "dose_units": null,
+  "url": "/summary/visual/assessment/2/barchart/",
+  "url_update": "/summary/visual/assessment/2/barchart/update/",
+  "url_delete": "/summary/visual/assessment/2/barchart/delete/",
   "rob_settings": {
     "assessment_id": 2,
     "domains": [
@@ -22,6 +56,7 @@
         "name": "metric 1",
         "description": "<p>description</p>",
         "domain_id": 10,
+        "responses": 1,
         "response_values": [
           17,
           16,
@@ -30,13 +65,16 @@
           14,
           10
         ],
-        "default_response": 12
+        "default_response": 12,
+        "short_name": "metric 1 short",
+        "use_short_name": false
       },
       {
         "id": 15,
         "name": "overall",
         "description": "<p>overall description</p>",
         "domain_id": 11,
+        "responses": 1,
         "response_values": [
           17,
           16,
@@ -45,7 +83,9 @@
           14,
           10
         ],
-        "default_response": 12
+        "default_response": 12,
+        "short_name": "overall short",
+        "use_short_name": false
       }
     ],
     "rob_settings": {
@@ -125,40 +165,6 @@
       }
     }
   },
-  "title": "barchart",
-  "slug": "barchart",
-  "visual_type": "risk of bias barchart",
-  "prefilters": "{}",
-  "settings": {
-    "title": "Title",
-    "xAxisLabel": "Percent of studies",
-    "yAxisLabel": "",
-    "plot_width": 400,
-    "row_height": 30,
-    "padding_top": 40,
-    "padding_right": 300,
-    "padding_bottom": 40,
-    "padding_left": 70,
-    "show_values": true,
-    "included_metrics": [
-      14,
-      15
-    ],
-    "show_legend": true,
-    "show_na_legend": true,
-    "legend_x": 574,
-    "legend_y": 10
-  },
-  "caption": "<p>caption</p>",
-  "published": true,
-  "sort_order": "short_citation",
-  "created": "2020-05-08T14:37:44.283008-05:00",
-  "last_updated": "2020-05-08T14:38:48.445082-05:00",
-  "assessment": 2,
-  "dose_units": null,
-  "url": "/summary/visual/assessment/2/barchart/",
-  "url_update": "/summary/visual/assessment/2/barchart/update/",
-  "url_delete": "/summary/visual/assessment/2/barchart/delete/",
   "endpoints": [],
   "studies": [
     {
@@ -353,6 +359,7 @@
             "name": "metric 1",
             "description": "<p>description</p>",
             "domain_id": 10,
+            "responses": 1,
             "response_values": [
               17,
               16,
@@ -361,13 +368,16 @@
               14,
               10
             ],
-            "default_response": 12
+            "default_response": 12,
+            "short_name": "metric 1 short",
+            "use_short_name": false
           },
           {
             "id": 15,
             "name": "overall",
             "description": "<p>overall description</p>",
             "domain_id": 11,
+            "responses": 1,
             "response_values": [
               17,
               16,
@@ -376,7 +386,9 @@
               14,
               10
             ],
-            "default_response": 12
+            "default_response": 12,
+            "short_name": "overall short",
+            "use_short_name": false
           }
         ],
         "rob_settings": {

@@ -1,5 +1,41 @@
 {
   "id": 3,
+  "title": "rob-heatmap",
+  "slug": "rob-heatmap",
+  "visual_type": "risk of bias heatmap",
+  "prefilters": "{}",
+  "settings": {
+    "title": "",
+    "xAxisLabel": "",
+    "yAxisLabel": "",
+    "padding_top": 20,
+    "cell_size": 40,
+    "padding_right": 300,
+    "padding_bottom": 35,
+    "padding_left": 20,
+    "x_field": "study",
+    "study_label_field": "short_citation",
+    "included_metrics": [
+      14,
+      15
+    ],
+    "excluded_score_ids": [],
+    "show_legend": true,
+    "show_na_legend": true,
+    "show_nr_legend": true,
+    "legend_x": 231,
+    "legend_y": 30
+  },
+  "caption": "<p>caption</p>",
+  "published": true,
+  "sort_order": "short_citation",
+  "created": "2020-05-08T14:35:41.634588-05:00",
+  "last_updated": "2020-05-08T14:36:41.324440-05:00",
+  "assessment": 2,
+  "dose_units": null,
+  "url": "/summary/visual/assessment/2/rob-heatmap/",
+  "url_update": "/summary/visual/assessment/2/rob-heatmap/update/",
+  "url_delete": "/summary/visual/assessment/2/rob-heatmap/delete/",
   "rob_settings": {
     "assessment_id": 2,
     "domains": [
@@ -22,6 +58,7 @@
         "name": "metric 1",
         "description": "<p>description</p>",
         "domain_id": 10,
+        "responses": 1,
         "response_values": [
           17,
           16,
@@ -30,13 +67,16 @@
           14,
           10
         ],
-        "default_response": 12
+        "default_response": 12,
+        "short_name": "metric 1 short",
+        "use_short_name": false
       },
       {
         "id": 15,
         "name": "overall",
         "description": "<p>overall description</p>",
         "domain_id": 11,
+        "responses": 1,
         "response_values": [
           17,
           16,
@@ -45,7 +85,9 @@
           14,
           10
         ],
-        "default_response": 12
+        "default_response": 12,
+        "short_name": "overall short",
+        "use_short_name": false
       }
     ],
     "rob_settings": {
@@ -125,42 +167,6 @@
       }
     }
   },
-  "title": "rob-heatmap",
-  "slug": "rob-heatmap",
-  "visual_type": "risk of bias heatmap",
-  "prefilters": "{}",
-  "settings": {
-    "title": "",
-    "xAxisLabel": "",
-    "yAxisLabel": "",
-    "padding_top": 20,
-    "cell_size": 40,
-    "padding_right": 300,
-    "padding_bottom": 35,
-    "padding_left": 20,
-    "x_field": "study",
-    "study_label_field": "short_citation",
-    "included_metrics": [
-      14,
-      15
-    ],
-    "excluded_score_ids": [],
-    "show_legend": true,
-    "show_na_legend": true,
-    "show_nr_legend": true,
-    "legend_x": 231,
-    "legend_y": 30
-  },
-  "caption": "<p>caption</p>",
-  "published": true,
-  "sort_order": "short_citation",
-  "created": "2020-05-08T14:35:41.634588-05:00",
-  "last_updated": "2020-05-08T14:36:41.324440-05:00",
-  "assessment": 2,
-  "dose_units": null,
-  "url": "/summary/visual/assessment/2/rob-heatmap/",
-  "url_update": "/summary/visual/assessment/2/rob-heatmap/update/",
-  "url_delete": "/summary/visual/assessment/2/rob-heatmap/delete/",
   "endpoints": [],
   "studies": [
     {
@@ -355,6 +361,7 @@
             "name": "metric 1",
             "description": "<p>description</p>",
             "domain_id": 10,
+            "responses": 1,
             "response_values": [
               17,
               16,
@@ -363,13 +370,16 @@
               14,
               10
             ],
-            "default_response": 12
+            "default_response": 12,
+            "short_name": "metric 1 short",
+            "use_short_name": false
           },
           {
             "id": 15,
             "name": "overall",
             "description": "<p>overall description</p>",
             "domain_id": 11,
+            "responses": 1,
             "response_values": [
               17,
               16,
@@ -378,7 +388,9 @@
               14,
               10
             ],
-            "default_response": 12
+            "default_response": 12,
+            "short_name": "overall short",
+            "use_short_name": false
           }
         ],
         "rob_settings": {
