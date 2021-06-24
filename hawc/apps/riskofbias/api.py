@@ -235,7 +235,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
-    serializer_class = serializers.RiskOfBiasScoreSerializer
+    serializer_class = serializers.AssessmentScoreSerializer
     list_actions = ["list", "v2"]
 
     def get_assessment(self, request, *args, **kwargs):
@@ -246,13 +246,6 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     def choices(self, request):
         # TODO - fix ROB June 2021
         return Response(list(range(10)))
-
-    @action(detail=False)
-    def v2(self, request):
-        # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
-        qs = self.get_queryset().filter(metric__domain__assessment=self.assessment)
-        ser = serializers.AssessmentScoreSerializer(qs, many=True)
-        return Response(ser.data)
 
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one

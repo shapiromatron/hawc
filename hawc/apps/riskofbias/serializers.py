@@ -183,7 +183,7 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
 
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):
-    scores = RiskOfBiasScoreSerializer(many=True)
+    scores = AssessmentScoreSerializer(many=True)
     author = HAWCUserSerializer(read_only=True)
 
     class Meta:
@@ -408,10 +408,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         models.RiskOfBiasScoreOverrideObject.objects.bulk_create(new_overrides)
 
         return super().update(instance, validated_data)
-
-
-class SimpleRiskOfBiasSerializer(RiskOfBiasSerializer):
-    scores = AssessmentScoreSerializer(many=True)
 
 
 class AssessmentMetricScoreSerializer(serializers.ModelSerializer):

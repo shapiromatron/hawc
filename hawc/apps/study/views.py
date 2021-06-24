@@ -1,3 +1,5 @@
+import json
+
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -18,6 +20,7 @@ from ..common.views import (
 )
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import forms, models
 
 
@@ -92,6 +95,7 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["rob_settings"] = json.dumps(AssessmentRiskOfBiasSerializer(self.assessment).data)
         context["attachments_viewable"] = self.assessment.user_is_part_of_team(self.request.user)
         return context
 

@@ -237,7 +237,7 @@ const NA_KEYS = [10, 20],
             .then(data => callback(data));
     },
     fetchRobStudy = function(studyId, callback) {
-        return fetch(`/study/api/study/${studyId}/v2/`, h.fetchGet)
+        return fetch(`/study/api/study/${studyId}/`, h.fetchGet)
             .then(response => response.json())
             .then(data => (callback === undefined ? data : callback(data)));
     };

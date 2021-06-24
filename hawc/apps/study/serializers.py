@@ -7,7 +7,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import IdLookupMixin
 from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
-from ..riskofbias.serializers import RiskOfBiasSerializer, SimpleRiskOfBiasSerializer
+from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models
 
 
@@ -83,10 +83,6 @@ class VerboseStudySerializer(StudySerializer):
         fields = "__all__"
 
 
-class NewStudySerializer(VerboseStudySerializer):
-    riskofbiases = SimpleRiskOfBiasSerializer(many=True, read_only=True)
-
-
 class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Study
@@ -94,4 +90,4 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
         fields = ("id", "short_citation",) + cleanup_fields
 
 
-SerializerHelper.add_serializer(models.Study, NewStudySerializer)
+SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)

@@ -54,13 +54,6 @@ class Study(
         study_types = self.model.STUDY_TYPE_FIELDS
         return Response(study_types)
 
-    @action(detail=True)
-    def v2(self, request, pk):
-        # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
-        instance = self.get_object()
-        ser = serializers.NewStudySerializer(instance)
-        return Response(ser.data)
-
     def create(self, request):
         # permissions check not here; see serializer validation
         return super().create(request)
