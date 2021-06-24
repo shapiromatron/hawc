@@ -1,10 +1,9 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {inject, observer} from "mobx-react";
+import {observer} from "mobx-react";
 
 import SelectInput from "shared/components/SelectInput";
 
-@inject("store")
 @observer
 class ScoreSelect extends Component {
     render() {

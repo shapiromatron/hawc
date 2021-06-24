@@ -10,14 +10,10 @@ import StudyTypeSelect from "../components/StudyTypeSelect";
 
 @inject("store")
 @observer
-class Root extends Component {
-    componentDidMount() {
-        this.props.store.fetchRobSettings();
-        this.props.store.studyTypeStore.fetchStudyTypes();
-    }
+class ScoreFilterForm extends Component {
     render() {
         const {store} = this.props,
-            {isLoading, studyTypeStore} = store;
+            {isLoading} = store;
 
         if (isLoading) {
             return <Loading />;
@@ -44,7 +40,7 @@ class Root extends Component {
                             <ScoreSelect store={store} />
                         </div>
                         <div className="col-md-6">
-                            <StudyTypeSelect store={studyTypeStore} />
+                            <StudyTypeSelect store={store} />
                         </div>
                     </div>
                     <p className="form-text text-muted">
@@ -56,8 +52,8 @@ class Root extends Component {
         );
     }
 }
-Root.propTypes = {
+ScoreFilterForm.propTypes = {
     store: PropTypes.object,
 };
 
-export default Root;
+export default ScoreFilterForm;

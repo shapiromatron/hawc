@@ -7,12 +7,7 @@ import SelectInput from "shared/components/SelectInput";
 @observer
 class MetricSelect extends Component {
     render() {
-        const {isLoading, selectedMetric, changeSelectedMetric, metricChoices} = this.props.store;
-
-        if (isLoading) {
-            return null;
-        }
-
+        const {selectedMetric, changeSelectedMetric, metricChoices} = this.props.store;
         return (
             <SelectInput
                 id="selectMetric"

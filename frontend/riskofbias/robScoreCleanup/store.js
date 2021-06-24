@@ -2,69 +2,28 @@ import _ from "lodash";
 import {autorun, observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
-import {robSettingsUrl, SCORE_TEXT_DESCRIPTION} from "../constants";
-
-class StudyTypeStore {
-    @observable studyTypeOptions = null;
-    @observable selectedStudyTypes = observable.array();
-
-    constructor(root) {
-        this.root = root;
-    }
-
-    @action.bound fetchStudyTypes() {
-        const {host, studyTypes, assessment_id} = this.root.config,
-            url = h.getUrlWithAssessment(h.getListUrl(host, studyTypes.url), assessment_id);
-
-        this.root.resetError();
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
-                this.studyTypeOptions = json;
-            })
-            .catch(error => {
-                this.root.setError(error);
-            });
-    }
-
-    @action.bound changeSelectedStudyType(studyTypes) {
-        this.selectedStudyTypes = studyTypes;
-    }
-
-    @computed get hasStudyTypes() {
-        return this.studyTypeOptions !== null;
-    }
-
-    @computed get studyTypeChoices() {
-        return this.studyTypeOptions.map(d => {
-            return {id: d, label: h.caseToWords(d)};
-        });
-    }
-}
+import {fetchRobSettings, SCORE_TEXT_DESCRIPTION} from "../constants";
 
 class RobCleanupStore {
     constructor(config) {
         this.config = config;
-        this.studyTypeStore = new StudyTypeStore(this);
     }
 
     // content
     @observable error = null;
-    @observable settings = null;
+    @observable isFetchingStudyScores = false;
     @observable metrics = observable.array();
     @observable selectedMetric = null;
     @observable selectedScores = observable.array();
-    @observable studyScores = observable.array();
     @observable selectedStudyScores = observable.set();
+    @observable selectedStudyTypes = observable.array();
+    @observable settings = null;
+    @observable studyScores = observable.array();
     @observable studyScoresFetchTime = null;
-    @observable isFetchingStudyScores = false;
+    @observable studyTypeOptions = null;
     @observable visibleScoreHash = "";
 
-    @computed get isLoading() {
-        return !(this.hasMetrics && this.studyTypeStore.hasStudyTypes);
-    }
-
-    // actions: errors
+    // errors
     @action.bound resetError() {
         this.error = null;
     }
@@ -72,22 +31,50 @@ class RobCleanupStore {
         this.error = msg;
     }
 
-    // select metrics
-    @action.bound fetchRobSettings() {
-        const {assessment_id} = this.config,
-            url = robSettingsUrl(assessment_id);
-
+    // studyType
+    @action.bound fetchStudyTypes() {
+        const {host, studyTypes, assessment_id} = this.config,
+            url = h.getUrlWithAssessment(h.getListUrl(host, studyTypes.url), assessment_id);
         this.resetError();
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                this.settings = json;
-                this.metrics = json.metrics;
-                this.changeSelectedMetric(json.metrics[0].id);
+                this.studyTypeOptions = json;
             })
             .catch(error => {
                 this.setError(error);
             });
+    }
+    @action.bound changeSelectedStudyType(studyTypes) {
+        this.selectedStudyTypes = studyTypes;
+    }
+    @computed get hasStudyTypes() {
+        return this.studyTypeOptions !== null;
+    }
+    @computed get studyTypeChoices() {
+        return this.studyTypeOptions.map(d => {
+            return {id: d, label: h.caseToWords(d)};
+        });
+    }
+    @computed get isLoading() {
+        return !(this.hasMetrics && this.hasStudyTypes);
+    }
+
+    // metrics
+    @action.bound fetchRobSettings() {
+        const {assessment_id} = this.config;
+        this.resetError();
+        fetchRobSettings(
+            assessment_id,
+            json => {
+                this.settings = json;
+                this.metrics = json.metrics;
+                this.changeSelectedMetric(json.metrics[0].id);
+            },
+            error => {
+                this.setError(error);
+            }
+        );
     }
     @action.bound changeSelectedMetric(value) {
         this.selectedMetric = value;
@@ -173,8 +160,8 @@ class RobCleanupStore {
             scores = _.filter(scores, score => selectedScores.has(score.score));
         }
 
-        if (this.studyTypeStore.selectedStudyTypes.length > 0) {
-            const selectedStudyTypes = new Set(toJS(this.studyTypeStore.selectedStudyTypes));
+        if (this.selectedStudyTypes.length > 0) {
+            const selectedStudyTypes = new Set(toJS(this.selectedStudyTypes));
             scores = _.filter(scores, score =>
                 _.some(score.study_types, studyType => selectedStudyTypes.has(studyType))
             );

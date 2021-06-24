@@ -5,8 +5,8 @@ import {inject, observer} from "mobx-react";
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
-import ScoreSelectorForm from "./ScoreSelectorForm";
 import MetricForm from "./MetricForm";
+import ScoreFilterForm from "./ScoreFilterForm";
 import ScoreList from "./ScoreList";
 
 import "./Main.css";
@@ -16,7 +16,7 @@ import "./Main.css";
 class Root extends Component {
     componentDidMount() {
         this.props.store.fetchRobSettings();
-        this.props.store.studyTypeStore.fetchStudyTypes();
+        this.props.store.fetchStudyTypes();
     }
     render() {
         const {store} = this.props,
@@ -29,7 +29,7 @@ class Root extends Component {
         return (
             <>
                 <ScrollToErrorBox error={error} />
-                <ScoreSelectorForm />
+                <ScoreFilterForm />
                 <MetricForm />
                 <ScoreList />
             </>
