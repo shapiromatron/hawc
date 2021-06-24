@@ -23,7 +23,7 @@ class SelectInput extends Component {
     handleSelect(e) {
         let value = e.target.value;
         if (this.props.multiple) {
-            value = _.chain(event.target.options)
+            value = _.chain(e.target.options)
                 .filter(o => o.selected)
                 .map(o => o.value)
                 .value();

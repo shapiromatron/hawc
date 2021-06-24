@@ -134,11 +134,12 @@ class RiskOfBiasMetric(models.Model):
     def get_default_response(self):
         return constants.RESPONSES_VALUES_DEFAULT[self.responses]
 
-    def build_score(self, riskofbias):
+    def build_score(self, riskofbias, is_default: bool = False):
         return RiskOfBiasScore(
             riskofbias=riskofbias,
             metric=self,
             score=constants.RESPONSES_VALUES_DEFAULT[self.responses],
+            is_default=is_default,
         )
 
     def copy_across_assessments(self, cw):

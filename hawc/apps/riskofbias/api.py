@@ -243,11 +243,6 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False)
-    def choices(self, request):
-        # TODO - fix ROB June 2021
-        return Response(list(range(10)))
-
-    @action(detail=False)
     def v2(self, request):
         # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
         qs = (
