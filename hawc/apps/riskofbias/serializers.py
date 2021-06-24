@@ -91,10 +91,20 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBiasScore
-        fields = "__all__"
+        fields = (
+            "id",
+            "score",
+            "is_default",
+            "label",
+            "bias_direction",
+            "notes",
+            "metric_id",
+            "overridden_objects",
+            "riskofbias_id",
+        )
 
 
-class StudyScoreSerializer(serializers.ModelSerializer):
+class StudyScoreSerializer(RiskOfBiasScoreSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret["url_edit"] = instance.riskofbias.get_edit_url()
@@ -102,10 +112,6 @@ class StudyScoreSerializer(serializers.ModelSerializer):
         ret["study_id"] = instance.riskofbias.study.id
         ret["study_types"] = instance.riskofbias.study.get_study_type()
         return ret
-
-    class Meta:
-        model = models.RiskOfBiasScore
-        fields = "__all__"
 
 
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
