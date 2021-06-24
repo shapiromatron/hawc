@@ -94,4 +94,4 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
         fields = ("id", "short_citation",) + cleanup_fields
 
 
-SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
+SerializerHelper.add_serializer(models.Study, NewStudySerializer)
