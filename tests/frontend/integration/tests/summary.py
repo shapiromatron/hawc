@@ -163,6 +163,5 @@ def summary(driver, root_url):
     _check_browsing(driver, root_url)
     _check_visuals_working(driver, root_url)
     _check_tables_working(driver, root_url)
-    # TODO - fix ROB June 2021
     _check_modals_working(driver, root_url)
     shared.logout()
