@@ -195,7 +195,9 @@
               "metric_id": 14,
               "overridden_objects": [],
               "riskofbias_id": 4,
-              "score_description": "Definitely low risk of bias"
+              "score_description": "Definitely low risk of bias",
+              "score_symbol": "++",
+              "score_shade": "#00CC00"
             },
             {
               "id": 11,
@@ -207,7 +209,9 @@
               "metric_id": 15,
               "overridden_objects": [],
               "riskofbias_id": 4,
-              "score_description": "Definitely high risk of bias"
+              "score_description": "Definitely high risk of bias",
+              "score_symbol": "--",
+              "score_shade": "#CC3333"
             }
           ]
         },
@@ -233,7 +237,9 @@
               "metric_id": 14,
               "overridden_objects": [],
               "riskofbias_id": 5,
-              "score_description": "Probably low risk of bias"
+              "score_description": "Probably low risk of bias",
+              "score_symbol": "+",
+              "score_shade": "#6FFF00"
             },
             {
               "id": 13,
@@ -245,7 +251,9 @@
               "metric_id": 15,
               "overridden_objects": [],
               "riskofbias_id": 5,
-              "score_description": "Definitely low risk of bias"
+              "score_description": "Definitely low risk of bias",
+              "score_symbol": "++",
+              "score_shade": "#00CC00"
             }
           ]
         },
@@ -271,7 +279,9 @@
               "metric_id": 14,
               "overridden_objects": [],
               "riskofbias_id": 6,
-              "score_description": "Probably low risk of bias"
+              "score_description": "Probably low risk of bias",
+              "score_symbol": "+",
+              "score_shade": "#6FFF00"
             },
             {
               "id": 16,
@@ -300,7 +310,9 @@
                 }
               ],
               "riskofbias_id": 6,
-              "score_description": "Definitely high risk of bias"
+              "score_description": "Definitely high risk of bias",
+              "score_symbol": "--",
+              "score_shade": "#CC3333"
             },
             {
               "id": 15,
@@ -312,7 +324,9 @@
               "metric_id": 15,
               "overridden_objects": [],
               "riskofbias_id": 6,
-              "score_description": "Probably low risk of bias"
+              "score_description": "Probably low risk of bias",
+              "score_symbol": "+",
+              "score_shade": "#6FFF00"
             }
           ]
         }

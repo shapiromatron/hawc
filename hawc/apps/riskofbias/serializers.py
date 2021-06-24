@@ -103,6 +103,8 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
             "overridden_objects",
             "riskofbias_id",
             "score_description",
+            "score_symbol",
+            "score_shade",
         )
 
 
