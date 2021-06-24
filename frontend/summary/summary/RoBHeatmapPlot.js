@@ -97,7 +97,7 @@ class RoBHeatmapPlot extends D3Visualization {
         _.each(this.data.aggregation.metrics_dataset, function(metric) {
             _.chain(metric.rob_scores)
                 .filter(rob => _.includes(included_metrics, rob.data.metric.id))
-                .groupBy(rob => rob.data.study_id)
+                .groupBy(rob => rob.study.data.id)
                 .values()
                 .each(robArray => {
                     const displayedScores = robArray.filter(
