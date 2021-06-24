@@ -5,7 +5,6 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common.helper import SerializerHelper
-from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import models
 
 
@@ -54,8 +53,6 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
 
 class VisualSerializer(CollectionVisualSerializer):
-    rob_settings = AssessmentRiskOfBiasSerializer(source="assessment")
-
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 

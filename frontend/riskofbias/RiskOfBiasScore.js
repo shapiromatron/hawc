@@ -5,6 +5,8 @@ class RiskOfBiasScore {
     constructor(study, data) {
         this.study = study;
         this.data = data;
+        this.data.metric.created = new Date(this.data.metric.created);
+        this.data.metric.last_updated = new Date(this.data.metric.last_updated);
     }
 
     static format_for_react(robs, config) {

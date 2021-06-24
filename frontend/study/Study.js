@@ -14,15 +14,14 @@ import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
 import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
 
 class Study {
-    constructor(data, robSettings) {
+    constructor(data) {
         this.data = data;
-        this.robSettings = robSettings;
         this.riskofbias = [];
         this.final = _.find(this.data.riskofbiases, {
             final: true,
             active: true,
         });
-        if (this.robSettings && this.data.assessment.enable_risk_of_bias && this.final) {
+        if (this.data.assessment.enable_risk_of_bias && this.final) {
             this.unpack_riskofbias();
         }
     }
@@ -65,17 +64,14 @@ class Study {
     unpack_riskofbias() {
         // unpack rob information and nest by domain
         var self = this,
-            domains = _.keyBy(this.robSettings.domains, domain => domain.id),
-            metrics = _.keyBy(this.robSettings.metrics, metric => metric.id),
-            riskofbias = [];
+            riskofbias = [],
+            rob_response_values = this.data.rob_response_values;
 
         this.final.scores.forEach(function(v, i) {
-            v.metric = metrics[v.metric_id];
-            v.metric.domain = domains[v.metric.domain_id];
             v.score_color = SCORE_SHADES[v.score];
             v.score_text_color = String.contrasting_color(v.score_color);
             v.score_text = SCORE_TEXT[v.score];
-            riskofbias.push(new RiskOfBiasScore(self, v));
+            riskofbias.push(new RiskOfBiasScore(self, v, rob_response_values));
         });
 
         // group rob by domains
@@ -96,6 +92,15 @@ class Study {
                     : false;
             v.criteria = v.values;
         });
+
+        // try to put the 'other' domain at the end
+        var l = this.riskofbias.length;
+        for (var i = 0; i < l; i++) {
+            if (this.riskofbias[i].domain_text.toLowerCase() === "other") {
+                this.riskofbias.push(this.riskofbias.splice(i, 1)[0]);
+                break;
+            }
+        }
     }
 
     build_breadcrumbs() {
