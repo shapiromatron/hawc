@@ -1,3 +1,4 @@
+from django.db.models import prefetch_related_objects
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
@@ -58,6 +59,7 @@ class Study(
     def v2(self, request, pk):
         # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
         instance = self.get_object()
+        prefetch_related_objects([instance], "riskofbiases__scores__overridden_objects")
         ser = serializers.NewStudySerializer(instance)
         return Response(ser.data)
 
