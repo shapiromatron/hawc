@@ -101,7 +101,6 @@ class ScoreForm extends Component {
                                 type="button"
                                 onClick={() => {
                                     store.createScoreOverride({
-                                        score: store.metrics[score.metric_id].default_response,
                                         metric: score.metric_id,
                                         riskofbias: score.riskofbias_id,
                                     });
@@ -136,31 +135,25 @@ class ScoreForm extends Component {
                 </div>
                 <div className="row">
                     <div className="col-md-3">
-                        <div>
-                            <ScoreInput
-                                scoreId={score.id}
-                                choices={scoreChoices}
-                                value={score.score}
-                                defaultValue={defaultScoreChoice}
-                                handleChange={value => {
-                                    store.updateScoreState(score, "score", parseInt(value));
-                                }}
-                            />
-                            <SelectInput
-                                id={`${score.id}-direction`}
-                                label="Bias direction"
-                                choices={direction_choices}
-                                multiple={false}
-                                value={score.bias_direction}
-                                handleSelect={value => {
-                                    store.updateScoreState(
-                                        score,
-                                        "bias_direction",
-                                        parseInt(value)
-                                    );
-                                }}
-                            />
-                        </div>
+                        <ScoreInput
+                            scoreId={score.id}
+                            choices={scoreChoices}
+                            value={score.score}
+                            defaultValue={defaultScoreChoice}
+                            handleChange={value => {
+                                store.updateScoreState(score, "score", parseInt(value));
+                            }}
+                        />
+                        <SelectInput
+                            id={`${score.id}-direction`}
+                            label="Bias direction"
+                            choices={direction_choices}
+                            multiple={false}
+                            value={score.bias_direction}
+                            handleSelect={value => {
+                                store.updateScoreState(score, "bias_direction", parseInt(value));
+                            }}
+                        />
                     </div>
                     <div className="col-md-9">
                         <ScoreNotesInput

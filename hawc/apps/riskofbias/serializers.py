@@ -170,11 +170,10 @@ class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasScore
-        fields = ("id", "score", "riskofbias", "metric")
+        fields = ("id", "riskofbias", "metric")
 
     def create(self, validated_data):
         override = models.RiskOfBiasScore.objects.create(
-            score=validated_data["score"],
             riskofbias=validated_data["riskofbias"],
             metric=validated_data["metric"],
             is_default=False,

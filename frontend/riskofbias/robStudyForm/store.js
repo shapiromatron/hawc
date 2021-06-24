@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {NR_KEYS, robSettingsUrl, robStudyUrl} from "riskofbias/constants";
+import {NR_KEYS, fetchRobSettings, fetchRobStudy} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
 class RobFormStore {
@@ -102,21 +102,15 @@ class RobFormStore {
     }
 
     @action.bound fetchSettings(assessment_id) {
-        const url = robSettingsUrl(assessment_id);
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(data => {
-                this.settings = data;
-            });
+        return fetchRobSettings(assessment_id, data => {
+            this.settings = data;
+        });
     }
 
     @action.bound fetchStudy(study_id) {
-        const url = robStudyUrl(study_id);
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(data => {
-                this.study = data;
-            });
+        return fetchRobStudy(study_id, data => {
+            this.study = data;
+        });
     }
 
     @action.bound fetchFormData() {
