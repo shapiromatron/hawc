@@ -6,23 +6,24 @@ import {observer, inject} from "mobx-react";
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import h from "shared/utils/helpers";
 
 import {hideScore} from "../constants";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
 
 class ScoreInput extends Component {
-    componentDidMount() {
-        const {choices, value, defaultValue, handleChange} = this.props;
-        choices.map(c => c.id).includes(value) ? null : handleChange(defaultValue);
+    constructor(props) {
+        super(props);
+        this.scoreId = `${h.randomString()}-score`;
     }
     render() {
-        const {scoreId, choices, value, handleChange} = this.props;
+        const {choices, value, handleChange} = this.props;
 
         return (
             <>
                 <SelectInput
-                    id={`${scoreId}-score`}
+                    id={this.scoreId}
                     label="Score"
                     choices={choices}
                     multiple={false}
@@ -35,10 +36,8 @@ class ScoreInput extends Component {
     }
 }
 ScoreInput.propTypes = {
-    scoreId: PropTypes.number.isRequired,
     choices: PropTypes.arrayOf(PropTypes.object),
     value: PropTypes.number.isRequired,
-    defaultValue: PropTypes.number.isRequired,
     handleChange: PropTypes.func.isRequired,
 };
 
@@ -70,7 +69,6 @@ class ScoreForm extends Component {
                 return {id: c, label: store.settings.score_metadata.choices[c]};
             }),
             showScoreInput = !hideScore(score.score),
-            defaultScoreChoice = store.metrics[score.metric_id].default_response,
             editableMetricHasOverrides = store.editableMetricHasOverrides(score.metric_id),
             direction_choices = Object.entries(store.settings.score_metadata.bias_direction).map(
                 kv => {
@@ -139,10 +137,8 @@ class ScoreForm extends Component {
                     {showScoreInput ? (
                         <div className="col-md-3">
                             <ScoreInput
-                                scoreId={score.id}
                                 choices={scoreChoices}
                                 value={score.score}
-                                defaultValue={defaultScoreChoice}
                                 handleChange={value => {
                                     store.updateScoreState(score, "score", parseInt(value));
                                 }}

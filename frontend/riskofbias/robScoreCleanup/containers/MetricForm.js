@@ -20,8 +20,7 @@ class MetricForm extends React.Component {
             <div className="row bulkEditForm">
                 <div className="col-md-5">
                     <ScoreInput
-                        scoreId={-1}
-                        choices={store.scoreOptions.map(d => d.id)}
+                        choices={store.scoreOptions}
                         value={store.formScore}
                         handleChange={value => store.setFormScore(parseInt(value))}
                     />

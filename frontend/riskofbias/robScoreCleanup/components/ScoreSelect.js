@@ -12,7 +12,7 @@ class ScoreSelect extends Component {
             <SelectInput
                 id="score_filter"
                 name="score_filter"
-                label="Rating filter (optional)"
+                label="Judgment filter (optional)"
                 multiple={true}
                 style={{height: "120px"}}
                 handleSelect={values => changeSelectedScores(values.map(d => parseInt(d)))}
