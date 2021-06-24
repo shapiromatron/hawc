@@ -8,7 +8,7 @@ const DetailMetric = props => {
     return (
         <div className="row mr-1" style={{maxHeight: 300, overflowY: "auto"}}>
             <div className="col-md-4">
-                <ul>
+                <ul className="mb-0">
                     <li>
                         <b>Name:&nbsp;</b>
                         {object.name}

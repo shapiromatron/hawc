@@ -3,7 +3,6 @@
     "study id": 5,
     "study citation": "Kawana N, Ishimatsu S, and Kanda K 2001",
     "study identifier": "",
-    "overall study evaluation": "",
     "study design": "Case series",
     "study population source": "",
     "exposure name": "sarin poisoning",
@@ -12,6 +11,7 @@
     "exposure metric": "air",
     "system": "nervous system and special sense organs",
     "effect": "neurological: behavior",
-    "effect subtype": ""
+    "effect subtype": "",
+    "overall study evaluation": ""
   }
 ]

@@ -238,7 +238,7 @@ const NA_KEYS = [10, 20],
             .catch(error || _.noop);
     },
     fetchRobStudy = function(studyId, success, error) {
-        return fetch(`/study/api/study/${studyId}/v2/`, h.fetchGet)
+        return fetch(`/study/api/study/${studyId}/`, h.fetchGet)
             .then(response => response.json())
             .then(success)
             .catch(error || _.noop);

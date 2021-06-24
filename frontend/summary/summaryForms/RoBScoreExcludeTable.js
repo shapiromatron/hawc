@@ -9,7 +9,7 @@ class RoBScoreExcludeTable extends TableField {
     }
     renderHeader() {
         return $("<tr>")
-            .append("<th>Display</th><th>Score</th><th>Study</th><th>Metric</th>")
+            .append("<th>Display</th><th>Metric</th><th>Study</th><th>Score</th>")
             .appendTo(this.$thead);
     }
 
@@ -17,9 +17,9 @@ class RoBScoreExcludeTable extends TableField {
         return $("<tr>")
             .append(
                 this.addTdCheckbox("included", true),
-                this.addTdP("score", ""),
+                this.addTdP("metric", ""),
                 this.addTdP("study", ""),
-                this.addTdP("metric", "")
+                this.addTdP("score", "")
             )
             .appendTo(this.$tbody);
     }

@@ -17,6 +17,7 @@ def test_study_detail_api(db_keys):
 
     # handle this in other tests
     json.pop("riskofbiases")
+    json.pop("rob_settings")
 
     assert json == {
         "id": 1,

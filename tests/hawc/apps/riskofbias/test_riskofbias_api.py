@@ -7,12 +7,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.myuser.models import HAWCUser
-from hawc.apps.riskofbias.models import (
-    RiskOfBias,
-    RiskOfBiasAssessment,
-    RiskOfBiasMetric,
-    RiskOfBiasScore,
-)
+from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
 from hawc.apps.study.models import Study
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
@@ -295,7 +290,6 @@ def build_upload_payload(study, author, metrics, dummy_score):
 
 
 @pytest.mark.django_db
-@pytest.mark.skipif(True, reason="TODO - fix ROB June 2021")
 def test_riskofbias_create():
     # check upload version of RoB api
     client = APIClient()
@@ -308,7 +302,7 @@ def test_riskofbias_create():
     study = Study.objects.get(id=1)
 
     required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
-    first_valid_score = RiskOfBiasAssessment().get_rob_response_values()[0]
+    first_valid_score = required_metrics[0].get_default_response()
 
     # failed uploading for a study that already has an active & final RoB
     payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
@@ -421,17 +415,6 @@ class TestBulkRobCleanupApis:
         assert resp.status_code == 200
         assert set(resp.json()) == {"in_vitro", "bioassay", "epi_meta", "epi"}
 
-    @pytest.mark.skipif(True, reason="TODO - fix ROB June 2021")
-    def test_score_choices(self, db_keys):
-        c = APIClient()
-        assert c.login(username="team@hawcproject.org", password="pw") is True
-        assessment_query = f"?assessment_id={db_keys.assessment_working}"
-
-        url = reverse("riskofbias:api:scores-choices") + assessment_query
-        resp = c.get(url, format="json")
-        assert resp.status_code == 200
-        assert resp.json() == [17, 16, 15, 12, 14, 10]
-
     def test_metrics_list(self, db_keys):
         c = APIClient()
         assert c.login(username="team@hawcproject.org", password="pw") is True
@@ -440,10 +423,17 @@ class TestBulkRobCleanupApis:
         url = reverse("riskofbias:api:metrics-list") + assessment_query
         resp = c.get(url, format="json")
         assert resp.status_code == 200
-        assert resp.json() == [
-            {"id": 1, "name": "example metric", "description": "<p>Is this a good study?</p>"},
-            {"id": 2, "name": "final domain", "description": ""},
-        ]
+        assert (
+            resp.json()[0].items()
+            >= {
+                "id": 1,
+                "name": "example metric",
+                "description": "<p>Is this a good study?</p>",
+            }.items()
+        )
+        assert (
+            resp.json()[1].items() >= {"id": 2, "name": "final domain", "description": ""}.items()
+        )
 
     def test_rob_scores(self, db_keys):
         c = APIClient()
@@ -462,7 +452,6 @@ class TestBulkRobCleanupApis:
         assert resp.status_code == 200
 
         data = resp.json()
-        data.pop("metric")
         assert data == {
             "id": 1,
             "score": 17,
@@ -472,14 +461,10 @@ class TestBulkRobCleanupApis:
             "notes": "<p>Content here.</p>",
             "overridden_objects": [],
             "riskofbias_id": 1,
+            "metric_id": 1,
             "score_description": "Definitely low risk of bias",
-            "score_symbol": "++",
             "score_shade": "#00CC00",
-            "bias_direction_description": "not entered/unknown",
-            "url_edit": "/rob/1/update/",
-            "study_name": "Foo et al.",
-            "study_id": 1,
-            "study_types": ["bioassay"],
+            "score_symbol": "++",
         }
 
         # TODO: evaluate how to correctly add header

@@ -15,21 +15,23 @@
     </div>
     <h2>Update {{assessment.get_rob_name_display|lower}} requirements</h2>
     {{assessment.rob_settings.help_text|safe}}
-    <div id='robTable'></div>
+
     {% if no_data %}
     {% include 'riskofbias/_arob_none_alert.html' %}
+    {% else %}
+    <div id="robMain"></div>
     {% endif %}
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">{{config|safe}}</script>
+{% if not no_data %}
+{{config|json_script:"config"}}
 <script type="text/javascript">
 $(document).ready(function(){
-    {% if not no_data %}
-        window.app.riskofbiasStartup(function(riskofbias){
-            riskofbias.RobSortFormStartup(document.getElementById('robTable'));
-    });
-    {% endif %}
+window.app.riskofbiasStartup(function(riskofbias){
+    riskofbias.RobMetricsStartup(document.getElementById("robMain"));
+});
 });
 </script>
+{% endif %}
 {% endblock extrajs %}

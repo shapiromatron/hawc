@@ -15,20 +15,18 @@
     "compress_y": true,
     "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
     "hawc_interactivity": true,
-    "filters": [],
-    "filtersLogic": "and",
     "filter_widgets": [
       {
         "column": "species",
-        "header": "",
         "delimiter": "",
-        "on_click_event": "---"
+        "on_click_event": "---",
+        "header": ""
       },
       {
         "column": "strain",
-        "header": "",
         "delimiter": "",
-        "on_click_event": "---"
+        "on_click_event": "---",
+        "header": ""
       }
     ],
     "padding": {
@@ -47,33 +45,33 @@
     "table_fields": [
       {
         "column": "study citation",
-        "header": "",
         "delimiter": "",
-        "on_click_event": "study"
+        "on_click_event": "study",
+        "header": ""
       },
       {
         "column": "experiment name",
-        "header": "",
         "delimiter": "",
-        "on_click_event": "experiment"
+        "on_click_event": "experiment",
+        "header": ""
       },
       {
         "column": "animal group name",
-        "header": "",
         "delimiter": "",
-        "on_click_event": "animal_group"
+        "on_click_event": "animal_group",
+        "header": ""
       },
       {
         "column": "endpoint name",
-        "header": "",
         "delimiter": "",
-        "on_click_event": "endpoint_complete"
+        "on_click_event": "endpoint_complete",
+        "header": ""
       },
       {
         "column": "---",
-        "header": "",
         "delimiter": "",
-        "on_click_event": "---"
+        "on_click_event": "---",
+        "header": ""
       }
     ],
     "title": {
@@ -110,7 +108,9 @@
       "rotate": 0
     },
     "y_tick_rotate": -90,
-    "x_axis_bottom": false
+    "x_axis_bottom": false,
+    "filters": [],
+    "filtersLogic": "and"
   },
   "caption": "",
   "published": true,
