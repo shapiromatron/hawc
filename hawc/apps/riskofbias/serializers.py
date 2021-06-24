@@ -3,7 +3,6 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
-from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
@@ -105,6 +104,16 @@ class AssessmentScoreSerializer(serializers.ModelSerializer):
             "score_shade",
             "riskofbias_id",
         )
+
+
+class StudyScoreSerializer(AssessmentScoreSerializer):
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["url_edit"] = instance.riskofbias.get_edit_url()
+        ret["study_name"] = instance.riskofbias.study.short_citation
+        ret["study_id"] = instance.riskofbias.study.id
+        ret["study_types"] = instance.riskofbias.study.get_study_type()
+        return ret
 
 
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
@@ -355,7 +364,7 @@ class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
 
     def get_final_score(self, instance):
         scores = instance.scores.filter(riskofbias__final=True, riskofbias__active=True)
-        serializer = AssessmentScoreSerializer(scores, many=True)
+        serializer = StudyScoreSerializer(scores, many=True)
         return serializer.data
 
 
