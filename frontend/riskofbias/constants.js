@@ -231,15 +231,17 @@ const NA_KEYS = [10, 20],
         "epi.exposure": "Epidemiological exposures",
         "epi.result": "Epidemiological results",
     },
-    fetchRobSettings = function(assessmentId, callback) {
+    fetchRobSettings = function(assessmentId, success, error) {
         return fetch(`/rob/api/assessment/${assessmentId}/settings/`, h.fetchGet)
             .then(response => response.json())
-            .then(data => callback(data));
+            .then(success)
+            .catch(error || _.noop);
     },
-    fetchRobStudy = function(studyId, callback) {
+    fetchRobStudy = function(studyId, success, error) {
         return fetch(`/study/api/study/${studyId}/`, h.fetchGet)
             .then(response => response.json())
-            .then(data => (callback === undefined ? data : callback(data)));
+            .then(success)
+            .catch(error || _.noop);
     };
 
 export {

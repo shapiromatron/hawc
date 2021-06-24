@@ -242,11 +242,6 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
-    @action(detail=False)
-    def choices(self, request):
-        # TODO - fix ROB June 2021
-        return Response(list(range(10)))
-
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one
         serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
