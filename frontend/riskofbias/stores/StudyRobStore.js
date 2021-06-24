@@ -1,8 +1,7 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {robSettingsUrl, robStudyUrl} from "../constants";
-import h from "shared/utils/helpers";
+import {fetchRobSettings, fetchRobStudy} from "../constants";
 
 class StudyRobStore {
     @observable settings = null;
@@ -40,23 +39,15 @@ class StudyRobStore {
     }
 
     @action.bound fetchSettings(assessment_id) {
-        const url = robSettingsUrl(assessment_id);
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(data => {
-                this.settings = data;
-            })
-            .catch(ex => console.error("Assessment parsing failed", ex));
+        return fetchRobSettings(assessment_id, data => {
+            this.settings = data;
+        }).catch(ex => console.error("Assessment parsing failed", ex));
     }
 
     @action.bound fetchStudy(study_id) {
-        const url = robStudyUrl(study_id);
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(data => {
-                this.study = data;
-            })
-            .catch(ex => console.error("Study parsing failed", ex));
+        return fetchRobStudy(study_id, data => {
+            this.study = data;
+        }).catch(ex => console.error("Study parsing failed", ex));
     }
 
     @action.bound fetchStudyDataAndSettings(study_id, assessment_id) {

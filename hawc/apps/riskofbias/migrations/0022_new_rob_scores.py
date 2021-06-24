@@ -67,7 +67,6 @@ class Migration(migrations.Migration):
                     (40, "Yes"),
                     (41, "No"),
                 ],
-                default=0,
             ),
         ),
         migrations.RunPython(update_overall_confidence, reverse_code=rollback_changes),

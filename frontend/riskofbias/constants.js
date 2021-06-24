@@ -1,4 +1,5 @@
 import _ from "lodash";
+import h from "shared/utils/helpers";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
@@ -229,8 +230,16 @@ const NA_KEYS = [10, 20],
         "epi.exposure": "Epidemiological exposures",
         "epi.result": "Epidemiological results",
     },
-    robSettingsUrl = assessmentId => `/rob/api/assessment/${assessmentId}/settings/`,
-    robStudyUrl = studyId => `/study/api/study/${studyId}/v2/`;
+    fetchRobSettings = function(assessmentId, callback) {
+        return fetch(`/rob/api/assessment/${assessmentId}/settings/`, h.fetchGet)
+            .then(response => response.json())
+            .then(data => callback(data));
+    },
+    fetchRobStudy = function(studyId, callback) {
+        return fetch(`/study/api/study/${studyId}/v2/`, h.fetchGet)
+            .then(response => response.json())
+            .then(data => (callback === undefined ? data : callback(data)));
+    };
 
 export {
     NA_KEYS,
@@ -251,6 +260,6 @@ export {
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,
     OVERRIDE_SCORE_LABEL_MAPPING,
-    robSettingsUrl,
-    robStudyUrl,
+    fetchRobSettings,
+    fetchRobStudy,
 };
