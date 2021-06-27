@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {fetchRobSettings, fetchRobStudy} from "../constants";
+import {fetchRobSettings, fetchRobStudy, hideScore} from "../constants";
 
 class StudyRobStore {
     @observable settings = null;
@@ -28,6 +28,14 @@ class StudyRobStore {
 
     @computed get metrics() {
         return _.keyBy(this.settings.metrics, metric => metric.id);
+    }
+
+    @computed get canShowScoreVisualization() {
+        if (this.hasFinalData) {
+            // confusing; if all hidden -> don't show; if any not hidden -> show
+            return !_.every(this.final.scores.map(d => hideScore(d.score)));
+        }
+        return true;
     }
 
     @computed get metricDomains() {

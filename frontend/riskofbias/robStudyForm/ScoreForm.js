@@ -7,6 +7,7 @@ import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
+import {hideScore} from "../constants";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
 
@@ -68,6 +69,7 @@ class ScoreForm extends Component {
             scoreChoices = store.metrics[score.metric_id].response_values.map(c => {
                 return {id: c, label: store.settings.score_metadata.choices[c]};
             }),
+            showScoreInput = !hideScore(score.score),
             defaultScoreChoice = store.metrics[score.metric_id].default_response,
             editableMetricHasOverrides = store.editableMetricHasOverrides(score.metric_id),
             direction_choices = Object.entries(store.settings.score_metadata.bias_direction).map(
@@ -134,27 +136,33 @@ class ScoreForm extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-3">
-                        <ScoreInput
-                            scoreId={score.id}
-                            choices={scoreChoices}
-                            value={score.score}
-                            defaultValue={defaultScoreChoice}
-                            handleChange={value => {
-                                store.updateScoreState(score, "score", parseInt(value));
-                            }}
-                        />
-                        <SelectInput
-                            id={`${score.id}-direction`}
-                            label="Bias direction"
-                            choices={direction_choices}
-                            multiple={false}
-                            value={score.bias_direction}
-                            handleSelect={value => {
-                                store.updateScoreState(score, "bias_direction", parseInt(value));
-                            }}
-                        />
-                    </div>
+                    {showScoreInput ? (
+                        <div className="col-md-3">
+                            <ScoreInput
+                                scoreId={score.id}
+                                choices={scoreChoices}
+                                value={score.score}
+                                defaultValue={defaultScoreChoice}
+                                handleChange={value => {
+                                    store.updateScoreState(score, "score", parseInt(value));
+                                }}
+                            />
+                            <SelectInput
+                                id={`${score.id}-direction`}
+                                label="Bias direction"
+                                choices={direction_choices}
+                                multiple={false}
+                                value={score.bias_direction}
+                                handleSelect={value => {
+                                    store.updateScoreState(
+                                        score,
+                                        "bias_direction",
+                                        parseInt(value)
+                                    );
+                                }}
+                            />
+                        </div>
+                    ) : null}
                     <div className="col-md-9">
                         <ScoreNotesInput
                             scoreId={score.id}

@@ -55,7 +55,7 @@ SCORE_CHOICES_MAP: Dict[int, str] = {k: v for k, v in SCORE_CHOICES}
 NA_SCORES: Tuple[int, ...] = (10, 20)
 
 SCORE_SYMBOLS: Dict[int, str] = {
-    0: "",
+    0: "━",
     10: "N/A",
     12: "NR",
     14: "--",
@@ -77,7 +77,7 @@ SCORE_SYMBOLS: Dict[int, str] = {
 }
 
 SCORE_SHADES: Dict[int, str] = {
-    0: "#FFFFFF",
+    0: "#DFDFDF",
     10: "#E8E8E8",
     12: "#FFCC00",
     14: "#CC3333",

@@ -163,10 +163,6 @@ const helpers = {
                 match.toUpperCase()
             );
     },
-    hideRobScore(assessment_id) {
-        // TODO - remove 100500031 hack
-        return assessment_id === 100500031;
-    },
     getHawcContentSize() {
         // for the standard hawc page layout, get the width and height for the main `content` box
         const contentSize = document

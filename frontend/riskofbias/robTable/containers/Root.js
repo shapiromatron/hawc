@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 
-import Header from "./Header";
 import AggregateGraph from "./AggregateGraph";
 import RiskOfBiasDisplay from "./RiskOfBiasDisplay";
 import Loading from "shared/components/Loading";
@@ -17,8 +16,7 @@ class Root extends Component {
     render() {
         const {itemsLoaded} = this.props.store;
         return (
-            <div>
-                <Header />
+            <>
                 {itemsLoaded ? (
                     <>
                         <AggregateGraph />
@@ -28,7 +26,7 @@ class Root extends Component {
                 ) : (
                     <Loading />
                 )}
-            </div>
+            </>
         );
     }
 }
