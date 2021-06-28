@@ -6,6 +6,7 @@ DEBUG = True
 
 SERVER_ROLE = "dev"
 SERVER_BANNER_COLOR = "#707070"
+ADMIN_URL_PREFIX = ""
 
 INSTALLED_APPS += (
     "debug_toolbar",

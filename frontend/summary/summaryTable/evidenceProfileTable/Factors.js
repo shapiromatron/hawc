@@ -4,10 +4,8 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import h from "shared/utils/helpers";
-import HelpTextPopup from "shared/components/HelpTextPopup";
 import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
-import TextInput from "shared/components/TextInput";
 
 const increaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
@@ -26,6 +24,7 @@ const increaseFactors = [
         {key: -40, label: "Lack of expected coherence", displayLabel: true},
         {key: -50, label: "Evidence demonstrating implausibility", displayLabel: true},
         {key: -60, label: "Low confidence studies", displayLabel: true},
+        {key: -70, label: "Interpretation limitations", displayLabel: true},
         {key: -100, label: "Other", displayLabel: false},
     ],
     FactorsForm = observer(props => {
@@ -46,19 +45,19 @@ const increaseFactors = [
                             />
                             {selectedIndex >= 0 ? (
                                 <>
-                                    <TextInput
-                                        label="Short description"
+                                    <QuillTextInput
+                                        label="Description"
                                         name={key}
                                         value={content.factors[selectedIndex].short_description}
-                                        onChange={e =>
+                                        onChange={value =>
                                             store.updateValue(
                                                 `${updateKey}.factors[${selectedIndex}].short_description`,
-                                                e.target.value
+                                                value
                                             )
                                         }
                                     />
                                     <QuillTextInput
-                                        label="Detailed description"
+                                        label="Hover-over"
                                         value={
                                             content.factors[selectedIndex].long_description ||
                                             "<p></p>"
@@ -70,12 +69,15 @@ const increaseFactors = [
                                             )
                                         }
                                     />
+                                    <hr />
                                 </>
                             ) : null}
                         </div>
                     );
                 })}
+                <hr />
                 <QuillTextInput
+                    label="Additional free text"
                     value={content.text}
                     onChange={value => store.updateValue(`${updateKey}.text`, value)}
                 />
@@ -83,30 +85,50 @@ const increaseFactors = [
         );
     }),
     FactorsCell = observer(props => {
+        /*
+        Users provide descriptive text in html using a wysiwyg editor. We update the text provided
+        to inject the header-text if available, as well as the help-text popup, if available. We
+        assume that the text starts and ends with <p> tags which are required for our regular
+        expressions for content insertion.
+        */
         const {content} = props,
-            _factors = increaseFactors.concat(decreaseFactors);
+            _factors = increaseFactors.concat(decreaseFactors),
+            injectText = (block, injectionText) => block.replace(/^<p>/gm, `<p>${injectionText}`),
+            injectPopup = (block, factorType, factor) => {
+                if (h.hasInnerText(factor.long_description)) {
+                    // popup is designed to be the same as the HelpTextPopup component.
+                    const popup = `<i
+                            class="ml-1 fa fa-fw fa-info-circle"
+                            aria-hidden="true"
+                            data-html="true"
+                            data-toggle="popover"
+                            title="${factorType.label}"
+                            data-content="${_.escape(factor.long_description)}"></i>`;
+                    block = block.replace(/<\/p>$/gm, `${popup}</p>`);
+                }
+                return block;
+            };
+
         return (
             <td>
                 {content.factors.length > 0 ? (
                     <ul>
                         {content.factors.map((factor, index) => {
                             let factorType = _factors.find(_factor => _factor.key == factor.key),
-                                dashText = factor.short_description.length > 0 ? " - " : "",
-                                html = factorType.displayLabel
-                                    ? `<em>${factorType.label}</em>${dashText}${factor.short_description}`
-                                    : factor.short_description;
-                            return (
-                                <li key={index}>
-                                    <span dangerouslySetInnerHTML={{__html: html}}></span>
-                                    {h.hasInnerText(factor.long_description) ? (
-                                        <HelpTextPopup
-                                            icon={"fa-info-circle"}
-                                            title={factorType.label}
-                                            content={factor.long_description}
-                                        />
-                                    ) : null}
-                                </li>
-                            );
+                                dashText =
+                                    h.hasInnerText(factor.short_description) > 0 ? " - " : "",
+                                labelText = `<em>${factorType.label}</em>${dashText}`,
+                                html = factor.short_description;
+
+                            // prefix label if it exists
+                            if (factorType.displayLabel) {
+                                html = injectText(factor.short_description, labelText);
+                            }
+
+                            // inject popup if it exists
+                            html = injectPopup(html, factorType, factor);
+
+                            return <li key={index} dangerouslySetInnerHTML={{__html: html}}></li>;
                         })}
                     </ul>
                 ) : null}

@@ -19,6 +19,9 @@ import hawc.apps.summary.urls
 from hawc import __version__
 from hawc.apps.assessment import views
 
+admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
+
+
 open_api_patterns = [
     path("ani/api/", include(hawc.apps.animal.urls.router.urls)),
     path("assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
@@ -65,22 +68,18 @@ urlpatterns = [
     # Changelog
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
     # Admin
+    path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
     path(
-        f"admin/{settings.ADMIN_URL_PREFIX}/dashboard/",
-        views.AdminDashboard.as_view(),
-        name="admin_dashboard",
-    ),
-    path(
-        f"admin/{settings.ADMIN_URL_PREFIX}/assessment-size/",
+        f"{admin_url}/assessment-size/",
         views.AdminAssessmentSize.as_view(),
         name="admin_assessment_size",
     ),
     path(
-        f"admin/{settings.ADMIN_URL_PREFIX}/media-preview/",
+        f"{admin_url}/media-preview/",
         views.AdminMediaPreview.as_view(),
         name="admin_media_preview",
     ),
-    path(f"admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
+    path(f"{admin_url}/", admin.site.urls),
     path("selectable/", include("selectable.urls")),
     path(
         "openapi/",

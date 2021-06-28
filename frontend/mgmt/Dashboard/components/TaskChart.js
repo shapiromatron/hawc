@@ -119,6 +119,8 @@ class TaskChart extends PureComponent {
             <div>
                 <svg
                     className="task-chart"
+                    role="image"
+                    aria-label="A status barchart for selected tasks"
                     width={this.props.chartData.width}
                     height={this.props.chartData.height}>
                     {this.renderTitle()}
