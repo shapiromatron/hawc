@@ -86,8 +86,6 @@ class HAWCSetPasswordForm(SetPasswordForm):
                 cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
             ],
         )
-        helper.form_class = "loginForm"
-
         return helper
 
     def clean_new_password1(self):
@@ -149,7 +147,6 @@ class RegisterForm(PasswordForm):
                 cfl.HTML(f'<a role="button" class="btn btn-light" href="{login_url}">Cancel</a>'),
             ],
         )
-        helper.form_class = "loginForm"
         helper.add_row("first_name", 2, "col-6")
         helper.add_row("password1", 2, "col-6")
         return helper
@@ -244,7 +241,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(
+        return BaseFormHelper(
             self,
             legend_text="HAWC login",
             form_actions=[
@@ -262,8 +259,6 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 ),
             ],
         )
-        helper.form_class = "loginForm"
-        return helper
 
     def clean(self):
         username = self.cleaned_data.get("username")
@@ -288,7 +283,7 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(
+        return BaseFormHelper(
             self,
             legend_text="Password reset",
             help_text="Enter your email address below, and we'll email instructions for setting a new password.",
@@ -299,9 +294,6 @@ class HAWCPasswordResetForm(PasswordResetForm):
                 ),
             ],
         )
-        helper.form_class = "loginForm"
-
-        return helper
 
     def clean_email(self):
         email = self.cleaned_data.get("email")

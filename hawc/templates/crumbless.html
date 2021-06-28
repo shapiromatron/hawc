@@ -1,19 +1,21 @@
 {% extends 'base.html' %}
 
 {% block sidebar_outer %}
-{% if extra_branding and flavor == "EPA" %}
 <div id="sidebar-container" class="sidebar pl-1 {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
     data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
 
+    {% if user.is_authenticated %}
     <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
         <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
     </a>
+    {% endif %}
 
+    {% if extra_branding and flavor == "EPA" %}
     <nav class="nav flex-column pt-3">
-        <li class="nav-item bg-primary"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
-        <li class="nav-item bg-primary"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
-        <li class="nav-item bg-primary"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
-        <li class="nav-item bg-primary">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
+        <li class="nav-item">
             {% if user.is_authenticated %}
             <a class="nav-link" href="{% url 'portal' %}">Portal</a>
             {% else %}
@@ -22,19 +24,13 @@
         </li>
 
     </nav>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock sidebar_outer %}
 
 
 {% block content_outer %}
-<div
-    {% if extra_branding and flavor == "EPA" %}
-    class="col-xl-10 col-lg-12"
-    {% else %}
-    class="col-xl-10 offset-xl-2 col-lg-12"
-    {% endif %}
-    >
+<div class="col-xl-10 col-lg-12" >
     {% block content %}
     {% endblock content %}
 </div>
