@@ -4,10 +4,11 @@ from django.db import migrations, models
 def set_fake_default(apps, schema_editor):
     Term = apps.get_model("vocab", "Term")
     terms = []
-    for term in Term.objects.all():
+    for term in Term.objects.filter(uid__isnull=True):
         term.uid = term.id
         terms.append(term)
-    Term.objects.bulk_update(terms, ["uid"])
+    if terms:
+        Term.objects.bulk_update(terms, ["uid"])
 
 
 class Migration(migrations.Migration):
