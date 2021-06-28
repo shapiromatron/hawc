@@ -17,9 +17,16 @@ class ScoreInput extends Component {
         super(props);
         this.scoreId = `${h.randomString()}-score`;
     }
+    componentDidMount() {
+        // special-case if current value doesn't exist in list of valid values;
+        // change the value to default (edge-case where response choices change)
+        const {choices, value, defaultValue, handleChange} = this.props;
+        if (!choices.map(c => c.id).includes(value)) {
+            handleChange(defaultValue);
+        }
+    }
     render() {
         const {choices, value, handleChange} = this.props;
-
         return (
             <>
                 <SelectInput
@@ -39,6 +46,7 @@ ScoreInput.propTypes = {
     choices: PropTypes.arrayOf(PropTypes.object),
     value: PropTypes.number.isRequired,
     handleChange: PropTypes.func.isRequired,
+    defaultValue: PropTypes.number.isRequired,
 };
 
 class ScoreNotesInput extends Component {
@@ -69,6 +77,7 @@ class ScoreForm extends Component {
                 return {id: c, label: store.settings.score_metadata.choices[c]};
             }),
             showScoreInput = !hideScore(score.score),
+            defaultScoreChoice = store.metrics[score.metric_id].default_response,
             editableMetricHasOverrides = store.editableMetricHasOverrides(score.metric_id),
             direction_choices = Object.entries(store.settings.score_metadata.bias_direction).map(
                 kv => {
@@ -139,6 +148,7 @@ class ScoreForm extends Component {
                             <ScoreInput
                                 choices={scoreChoices}
                                 value={score.score}
+                                defaultValue={defaultScoreChoice}
                                 handleChange={value => {
                                     store.updateScoreState(score, "score", parseInt(value));
                                 }}

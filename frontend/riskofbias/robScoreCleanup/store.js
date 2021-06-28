@@ -88,6 +88,9 @@ class RobCleanupStore {
             return {id: d.id, label: d.name};
         });
     }
+    @computed get defaultResponse() {
+        return _.first(this.metrics, d => d.id === this.selectedMetric).default_response;
+    }
 
     // filter scores
     @computed get scoreOptions() {

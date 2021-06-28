@@ -23,6 +23,7 @@ class MetricForm extends React.Component {
                         choices={store.scoreOptions}
                         value={store.formScore}
                         handleChange={value => store.setFormScore(parseInt(value))}
+                        defaultValue={store.defaultResponse}
                     />
                     <button
                         className="btn btn-primary"
