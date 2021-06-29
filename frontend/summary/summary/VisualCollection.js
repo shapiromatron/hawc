@@ -22,6 +22,8 @@ class VisualCollection {
     static buildTable(url1, url2, $el, opts) {
         var visuals, obj;
 
+        $el.html(HAWCUtils.loading());
+
         $.when($.get(url1), $.get(url2))
             .done(function(d1, d2) {
                 d1[0].push.apply(d1[0], d2[0]);
@@ -36,6 +38,7 @@ class VisualCollection {
                 visuals = [];
             })
             .always(function() {
+                $el.empty();
                 obj = new VisualCollection(visuals, opts);
                 return obj.build_table($el);
             });
