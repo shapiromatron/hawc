@@ -65,15 +65,11 @@ class Study {
     }
 
     static displayAsModal(id) {
-        Study.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        Study.get_object(id, d => d.displayAsModal());
     }
 
     static render(id, $div, $shower) {
-        Study.get_object(id, function(d) {
-            d.render($div, $shower);
-        });
+        Study.get_object(id, d => d.render($div, $shower));
     }
 
     static displayInline(id, setTitle, setBody) {
@@ -105,15 +101,10 @@ class Study {
     }
 
     _get_data_types() {
-        var data = this.data;
         return _.chain(Study.typeNames)
             .keys()
-            .filter(function(d) {
-                return data[d];
-            })
-            .map(function(d) {
-                return Study.typeNames[d];
-            })
+            .filter(d => this.data[d])
+            .map(d => Study.typeNames[d])
             .value()
             .join(", ");
     }

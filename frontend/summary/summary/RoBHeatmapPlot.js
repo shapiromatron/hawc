@@ -43,7 +43,7 @@ class RoBHeatmapPlot extends D3Visualization {
         this.resize_plot_dimensions();
         this.add_menu();
         this.build_labels();
-        this.build_legend();
+        // this.build_legend();
         this.trigger_resize();
     }
 

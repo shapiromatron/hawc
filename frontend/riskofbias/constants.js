@@ -230,7 +230,7 @@ const NA_KEYS = [10, 20],
         "epi.result": "Epidemiological results",
     },
     robSettingsUrl = assessmentId => `/rob/api/assessment/${assessmentId}/settings/`,
-    robStudyUrl = studyId => `/study/api/study/${studyId}/v2/`;
+    robStudyUrl = studyId => `/study/api/study/${studyId}/`;
 
 export {
     NA_KEYS,

@@ -74,17 +74,13 @@ class StudyAssessmentSerializer(serializers.ModelSerializer):
 class VerboseStudySerializer(StudySerializer):
     assessment = AssessmentMiniSerializer(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
+    riskofbiases = SimpleRiskOfBiasSerializer(many=True, read_only=True)
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
     class Meta:
         model = models.Study
         fields = "__all__"
-
-
-class NewStudySerializer(VerboseStudySerializer):
-    riskofbiases = SimpleRiskOfBiasSerializer(many=True, read_only=True)
 
 
 class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -94,4 +90,4 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
         fields = ("id", "short_citation",) + cleanup_fields
 
 
-SerializerHelper.add_serializer(models.Study, NewStudySerializer)
+SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
