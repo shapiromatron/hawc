@@ -2,7 +2,7 @@ import json
 from typing import Dict
 
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, JsonResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView
