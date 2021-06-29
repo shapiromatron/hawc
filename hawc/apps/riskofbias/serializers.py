@@ -173,13 +173,9 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
         fields = ("id", "riskofbias", "metric")
 
     def create(self, validated_data):
-        override = models.RiskOfBiasScore.objects.create(
-            riskofbias=validated_data["riskofbias"],
-            metric=validated_data["metric"],
-            is_default=False,
-            label="",
-        )
-        return override
+        score = validated_data["metric"].build_score(validated_data["riskofbias"], is_default=False)
+        score.save()
+        return score
 
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):
