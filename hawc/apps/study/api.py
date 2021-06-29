@@ -26,12 +26,10 @@ class Study(
     lookup_value_regex = re_digits
 
     def get_serializer_class(self):
-        cls = serializers.VerboseStudySerializer
-        if self.action == "list":
-            cls = serializers.SimpleStudySerializer
-        elif self.action == "create":
-            cls = serializers.SimpleStudySerializer
-        return cls
+        if self.action in ["list", "create"]:
+            return serializers.SimpleStudySerializer
+        else:
+            return serializers.VerboseStudySerializer
 
     def get_queryset(self):
         if self.action == "list":

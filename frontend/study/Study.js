@@ -13,16 +13,46 @@ import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
 import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
 
+const setRobData = function(study, data, robSettings) {
+    // unpack rob information and nest by domain
+    let final = _.find(data.riskofbiases, {final: true, active: true}),
+        riskofbias = [];
+
+    if (final && final.scores) {
+        // build scores
+        riskofbias = final.scores.map(score => {
+            score.score_color = SCORE_SHADES[score.score];
+            score.score_text_color = String.contrasting_color(score.score_color);
+            score.score_text = SCORE_TEXT[score.score];
+            return new RiskOfBiasScore(study, score);
+        });
+
+        // group rob by domains
+        riskofbias = d3
+            .nest()
+            .key(d => d.data.metric.domain.name)
+            .entries(riskofbias);
+
+        // now generate a score for each domain (aggregating metrics)
+        riskofbias.forEach(rob => {
+            rob.domain = rob.values[0].data.metric.domain.id;
+            rob.domain_text = rob.values[0].data.metric.domain.name;
+            rob.domain_is_overall_confidence =
+                typeof rob.values[0].data.metric.domain.is_overall_confidence === "boolean"
+                    ? rob.values[0].data.metric.domain.is_overall_confidence
+                    : false;
+            rob.criteria = rob.values;
+        });
+    }
+
+    return {final, riskofbias};
+};
+
 class Study {
     constructor(data) {
         this.data = data;
-        this.riskofbias = [];
-        this.final = _.find(this.data.riskofbiases, {
-            final: true,
-            active: true,
-        });
-        if (this.data.assessment.enable_risk_of_bias && this.final) {
-            this.unpack_riskofbias();
+        if (this.data.assessment.enable_risk_of_bias) {
+            _.extend(this, setRobData(this, data));
         }
     }
 
@@ -59,36 +89,6 @@ class Study {
 
     has_riskofbias() {
         return this.riskofbias.length > 0;
-    }
-
-    unpack_riskofbias() {
-        // unpack rob information and nest by domain
-        var self = this,
-            riskofbias = [];
-
-        this.final.scores.forEach(function(v, i) {
-            v.score_color = SCORE_SHADES[v.score];
-            v.score_text_color = String.contrasting_color(v.score_color);
-            v.score_text = SCORE_TEXT[v.score];
-            riskofbias.push(new RiskOfBiasScore(self, v));
-        });
-
-        // group rob by domains
-        this.riskofbias = d3
-            .nest()
-            .key(d => d.data.metric.domain.name)
-            .entries(riskofbias);
-
-        // now generate a score for each domain (aggregating metrics)
-        this.riskofbias.forEach(function(v) {
-            v.domain = v.values[0].data.metric.domain.id;
-            v.domain_text = v.values[0].data.metric.domain.name;
-            v.domain_is_overall_confidence =
-                typeof v.values[0].data.metric.domain.is_overall_confidence === "boolean"
-                    ? v.values[0].data.metric.domain.is_overall_confidence
-                    : false;
-            v.criteria = v.values;
-        });
     }
 
     build_breadcrumbs() {
@@ -204,10 +204,7 @@ class Study {
         var self = this,
             $details = $("<div>").appendTo($div),
             displayRoB = () => {
-                var render_obj = {
-                    riskofbias: self.riskofbias,
-                    display: "final",
-                };
+                var render_obj = {riskofbias: self.riskofbias, display: "final"};
                 render_obj = self.format_for_react(self.riskofbias);
                 renderStudyDisplay(render_obj, $rob[0]);
             };

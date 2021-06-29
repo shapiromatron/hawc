@@ -9,34 +9,13 @@ import Aggregation from "riskofbias/Aggregation";
 import RoBHeatmapPlot from "./RoBHeatmapPlot";
 import BaseVisual from "./BaseVisual";
 
-const prepareRobScores = data => {
-    /*
-    Filter riskofbias scores to only show active/final ones. Nest domain and metrics into
-    risk of bias score objects.
-    */
-    const domains = _.keyBy(data.rob_settings.domains, d => d.id),
-        metrics = _.keyBy(data.rob_settings.metrics, d => d.id);
-
-    data.rob_settings.metrics.forEach(metric => {
-        metric.domain = domains[metric.domain_id];
-    });
-
-    data.studies.forEach(study => {
-        study.riskofbiases = study.riskofbiases.filter(d => d.final && d.active);
-        study.riskofbiases.forEach(robs => {
-            robs.scores.forEach(score => {
-                score.metric = metrics[score.metric_id];
-                score.score_description = data.rob_settings.score_metadata.choices[score.score];
-                score.assessment_id = data.rob_settings.assessment_id;
-            });
-        });
-    });
-};
+import {transformRobSettings, transformRobStudies} from "riskofbias/study";
 
 class RoBHeatmap extends BaseVisual {
     constructor(data) {
         super(data);
-        prepareRobScores(data);
+        transformRobSettings(data.rob_settings);
+        transformRobStudies(data.studies, data.rob_settings);
         var studies = _.map(data.studies, d => new Study(d));
         this.roba = new Aggregation(studies);
         delete this.data.studies;
