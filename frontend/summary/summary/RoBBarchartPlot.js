@@ -261,12 +261,11 @@ class RoBBarchartPlot extends D3Visualization {
 
     build_legend() {
         if (this.legend || !this.data.settings.show_legend) return;
-        let rob_response_values = this.data.aggregation.studies[0].data.rob_response_values,
-            options = {
-                dev: this.options.dev || false,
-                collapseNR: true,
-            };
-        this.legend = new RoBLegend(this.svg, this.data.settings, rob_response_values, [], options);
+        let options = {
+            dev: this.options.dev || false,
+            collapseNR: true,
+        };
+        this.legend = new RoBLegend(this.svg, this.data.settings, [], options);
     }
 }
 

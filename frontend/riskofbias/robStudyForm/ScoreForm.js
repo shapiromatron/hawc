@@ -133,6 +133,7 @@ class ScoreForm extends Component {
                     <div className="col-md-3">
                         {showScoreInput ? (
                             <div>
+                                {/* TODO - store.study.rob_response_values is now broken */}
                                 <ScoreInput
                                     scoreId={score.id}
                                     choices={store.study.rob_response_values}

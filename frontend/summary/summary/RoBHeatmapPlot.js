@@ -43,7 +43,7 @@ class RoBHeatmapPlot extends D3Visualization {
         this.resize_plot_dimensions();
         this.add_menu();
         this.build_labels();
-        // this.build_legend();
+        this.build_legend();
         this.trigger_resize();
     }
 
@@ -482,8 +482,7 @@ class RoBHeatmapPlot extends D3Visualization {
         if (this.legend || !this.data.settings.show_legend) {
             return;
         }
-        const rob_response_values = this.data.aggregation.studies[0].data.rob_response_values,
-            options = {
+        const options = {
                 dev: this.options.dev || false,
                 collapseNR: false,
             },
@@ -502,13 +501,9 @@ class RoBHeatmapPlot extends D3Visualization {
             },
             footnotes = getFootnoteOptions();
 
-        this.legend = new RoBLegend(
-            this.svg,
-            this.data.settings,
-            rob_response_values,
-            footnotes,
-            options
-        );
+        console.log(this.data);
+
+        this.legend = new RoBLegend(this.svg, this.data.settings, footnotes, options);
     }
 
     print_details($div, d) {

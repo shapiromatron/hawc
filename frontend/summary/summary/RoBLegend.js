@@ -13,10 +13,10 @@ import {
 } from "riskofbias/constants";
 
 class RoBLegend {
-    constructor(svg, settings, rob_response_values, footnotes, options) {
+    constructor(svg, settings, rob_settings, footnotes, options) {
         this.svg = svg;
         this.settings = settings;
-        this.rob_response_values = rob_response_values;
+        this.rob_settings = rob_settings;
         this.footnotes = footnotes;
         this.options = options;
         this.render();
@@ -39,6 +39,7 @@ class RoBLegend {
                 }
             });
         }
+
         if (!this.settings.show_nr_legend || collapseNR) {
             NR_KEYS.forEach(key => {
                 if (scores.includes(key)) {
@@ -46,20 +47,20 @@ class RoBLegend {
                 }
             });
         }
-        fields = _.map(scores, function(v) {
-            let desc = SCORE_TEXT_DESCRIPTION_LEGEND[v];
-            if (collapseNR && COLLAPSED_NR_FIELDS_DESCRIPTION[v]) {
-                desc = COLLAPSED_NR_FIELDS_DESCRIPTION[v];
+
+        fields = _.map(scores, score => {
+            let desc = SCORE_TEXT_DESCRIPTION_LEGEND[score];
+            if (collapseNR && COLLAPSED_NR_FIELDS_DESCRIPTION[score]) {
+                desc = COLLAPSED_NR_FIELDS_DESCRIPTION[score];
             }
             return {
-                value: v,
-                color: SCORE_SHADES[v],
-                text_color: String.contrasting_color(SCORE_SHADES[v]),
-                text: SCORE_TEXT[v],
+                value: score,
+                color: SCORE_SHADES[score],
+                text_color: String.contrasting_color(SCORE_SHADES[score]),
+                text: SCORE_TEXT[score],
                 description: desc,
             };
         });
-
         return fields;
     }
 
