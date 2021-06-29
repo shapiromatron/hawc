@@ -12,10 +12,7 @@ class CheckboxScoreDisplay extends Component {
         return (
             <div className="row checkbox-score-display-row">
                 <div className="score-display-checkbox col-md-3">
-                    <p
-                        onClick={() => {
-                            Study.displayAsModal(score.study_id);
-                        }}>
+                    <p onClick={() => Study.displayAsModal(score.study_id)}>
                         <b>{score.study_name}</b>
                     </p>
                     <input

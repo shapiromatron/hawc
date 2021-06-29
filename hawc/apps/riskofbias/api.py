@@ -243,11 +243,6 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False)
-    def choices(self, request):
-        # TODO - fix ROB June 2021
-        return Response(list(range(10)))
-
-    @action(detail=False)
     def v2(self, request):
         # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
         qs = self.get_queryset().filter(metric__domain__assessment=self.assessment)
@@ -259,7 +254,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        new_serializer = serializers.RiskOfBiasScoreSerializer(serializer.instance)
+        new_serializer = serializers.AssessmentScoreSerializer(serializer.instance)
         headers = self.get_success_headers(new_serializer.data)
         return Response(new_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

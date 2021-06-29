@@ -1,9 +1,11 @@
 import _ from "lodash";
+import h from "shared/utils/helpers";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
+    hideScore = score => score === 0,
     SCORE_TEXT = {
-        0: "None",
+        0: "━",
 
         10: "N/A",
         12: "NR",
@@ -28,7 +30,7 @@ const NA_KEYS = [10, 20],
         41: "N",
     },
     SCORE_SHADES = {
-        0: "#FFFFFF",
+        0: "#DFDFDF",
 
         10: "#E8E8E8",
         12: "#FFCC00",
@@ -229,12 +231,23 @@ const NA_KEYS = [10, 20],
         "epi.exposure": "Epidemiological exposures",
         "epi.result": "Epidemiological results",
     },
-    robSettingsUrl = assessmentId => `/rob/api/assessment/${assessmentId}/settings/`,
-    robStudyUrl = studyId => `/study/api/study/${studyId}/`;
+    fetchRobSettings = function(assessmentId, success, error) {
+        return fetch(`/rob/api/assessment/${assessmentId}/settings/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
+    },
+    fetchRobStudy = function(studyId, success, error) {
+        return fetch(`/study/api/study/${studyId}/v2/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
+    };
 
 export {
     NA_KEYS,
     NR_KEYS,
+    hideScore,
     SCORE_TEXT,
     SCORE_SHADES,
     SCORE_TEXT_DESCRIPTION,
@@ -251,6 +264,6 @@ export {
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,
     OVERRIDE_SCORE_LABEL_MAPPING,
-    robSettingsUrl,
-    robStudyUrl,
+    fetchRobSettings,
+    fetchRobStudy,
 };

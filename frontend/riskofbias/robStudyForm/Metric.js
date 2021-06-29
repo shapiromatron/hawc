@@ -12,11 +12,10 @@ class Metric extends Component {
         const {store, metricId} = this.props,
             editableScores = store.getEditableScoresForMetric(metricId),
             nonEditableScores = store.getNonEditableScoresForMetric(metricId),
-            metricHasOverrides = store.metricHasOverrides(metricId),
+            metricHasOverrides = store.nonEditableMetricHasOverrides(metricId),
             anyEditableScore = editableScores[0],
-            name = anyEditableScore.metric.name,
-            hideDescription = anyEditableScore.metric.hide_description,
-            description = anyEditableScore.metric.description,
+            {name, description} = store.metrics[anyEditableScore.metric_id],
+            hideDescription = store.metrics[anyEditableScore.metric_id].hide_description,
             editingFinal = anyEditableScore.final;
 
         return (
@@ -32,7 +31,7 @@ class Metric extends Component {
                     />
                 ) : null}
                 {editableScores.map(score => {
-                    return <ScoreForm key={score.id} scoreId={score.id} />;
+                    return <ScoreForm key={score.id} score={score} />;
                 })}
             </div>
         );

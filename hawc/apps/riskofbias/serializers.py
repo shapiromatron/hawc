@@ -38,9 +38,20 @@ class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
 
 
 class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
+    response_values = serializers.ListField(source="get_response_values")
+    default_response = serializers.IntegerField(source="get_default_response")
+
     class Meta:
         model = models.RiskOfBiasMetric
-        fields = ("id", "name", "responses", "description", "domain_id", "hide_description")
+        fields = (
+            "id",
+            "name",
+            "description",
+            "domain_id",
+            "responses",
+            "response_values",
+            "default_response",
+        )
 
 
 class RiskOfBiasAssessmentSerializer(serializers.ModelSerializer):
@@ -170,13 +181,9 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
         fields = ("id", "riskofbias", "metric")
 
     def create(self, validated_data):
-        override = models.RiskOfBiasScore.objects.create(
-            riskofbias=validated_data["riskofbias"],
-            metric=validated_data["metric"],
-            is_default=False,
-            label="",
-        )
-        return override
+        score = validated_data["metric"].build_score(validated_data["riskofbias"], is_default=False)
+        score.save()
+        return score
 
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):

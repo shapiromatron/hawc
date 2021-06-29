@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h1 class="d-inline-block">{{object}}</h1>
+  <h2 class="d-inline-block">{{object}}</h2>
   {% if obj_perms.edit %}
     <div class="dropdown btn-group float-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -59,36 +59,32 @@
   {% if crud == "Read" %}
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
-      <h3 class="d-inline-block">{{assessment.get_rob_name_display}} visualization</h3>
       <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
-      {% if assessment.hide_rob_scores %}
-      <div>Click button on right to view study evaluation details</div>
-      {% else %}
+      <h3 class="d-inline-block">{{assessment.get_rob_name_display}}</h3>
       <div id='rob_plot'></div>
-      {% endif %}
     {% endif %}
 
     {% if study.bioassay %}
-      <h2>Available animal bioassay experiments</h2>
+      <h3>Available animal bioassay experiments</h3>
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
     {% endif %}
 
     {% if study.in_vitro %}
-      <h2>Available <i>in vitro</i> experiments</h2>
+      <h3>Available <i>in vitro</i> experiments</h3>
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
-      <h2>Chemicals used in <i>in vitro</i> experiments</h2>
+      <h3>Chemicals used in <i>in vitro</i> experiments</h3>
       {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
-      <h2>Cell types used in <i>in vitro</i> experiments</h2>
+      <h3>Cell types used in <i>in vitro</i> experiments</h3>
       {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
     {% endif %}
 
     {% if study.epi %}
-      <h2>Available epidemiological study populations</h2>
+      <h3>Available epidemiological study populations</h3>
       {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
     {% endif %}
 
     {% if study.epi_meta %}
-      <h2>Available epidemiological meta-analyses</h2>
+      <h3>Available epidemiological meta-analyses</h3>
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}
 
@@ -116,7 +112,6 @@ window.app.studyStartup(function(study){
     thisStudy.add_attachments_row(detail_div, data.attachments);
   {% endif %}
 
-  {% if not assessment.hide_rob_scores %}
   if (thisStudy.has_riskofbias()){
     window.app.riskofbiasStartup(function (riskofbias) {
       riskofbias.robDonutStartup({
@@ -126,7 +121,6 @@ window.app.studyStartup(function(study){
       });
     });
   }
-  {% endif %}
 });
 </script>
 {% endblock extrajs %}

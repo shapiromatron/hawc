@@ -87,6 +87,9 @@ const helpers = {
                 }
             });
     },
+    parseJsonFromElement(element) {
+        return JSON.parse(element.textContent);
+    },
     goBack(e) {
         if (e && e.preventDefault) e.preventDefault();
         window.history.back();
@@ -147,6 +150,11 @@ const helpers = {
                 })
         );
     },
+    pluralize(word, length) {
+        // word: str
+        // items: int
+        return `${length} ${word}${length === 1 ? "" : "s"}`;
+    },
     titleCase(string) {
         // convert lower case "reference id " -> "Reference ID"
         // special case acronyms include:
@@ -162,10 +170,6 @@ const helpers = {
             .replace(/\b(?:id|hawc|hero|url|[nfl]o?a?el|bmd[lu]?)\b/gi, match =>
                 match.toUpperCase()
             );
-    },
-    hideRobScore(assessment_id) {
-        // TODO - remove 100500031 hack
-        return assessment_id === 100500031;
     },
     getHawcContentSize() {
         // for the standard hawc page layout, get the width and height for the main `content` box
