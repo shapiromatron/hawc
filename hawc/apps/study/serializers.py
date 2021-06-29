@@ -7,7 +7,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import IdLookupMixin
 from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
-from ..riskofbias.serializers import RiskOfBiasSerializer, SimpleRiskOfBiasSerializer
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer, SimpleRiskOfBiasSerializer
 from . import models
 
 
@@ -75,6 +75,7 @@ class VerboseStudySerializer(StudySerializer):
     assessment = AssessmentMiniSerializer(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     riskofbiases = SimpleRiskOfBiasSerializer(many=True, read_only=True)
+    rob_settings = AssessmentRiskOfBiasSerializer(source="assessment")
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 

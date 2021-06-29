@@ -1,6 +1,5 @@
 import $ from "$";
 import _ from "lodash";
-import * as d3 from "d3";
 
 import DescriptiveTable from "utils/DescriptiveTable";
 import HAWCModal from "utils/HAWCModal";
@@ -8,51 +7,15 @@ import HAWCUtils from "utils/HAWCUtils";
 import Hero from "utils/Hero";
 
 import {getReferenceTagListUrl} from "shared/utils/urls";
-
-import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
-import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
-
-const setRobData = function(study, data, robSettings) {
-    // unpack rob information and nest by domain
-    let final = _.find(data.riskofbiases, {final: true, active: true}),
-        riskofbias = [];
-
-    if (final && final.scores) {
-        // build scores
-        riskofbias = final.scores.map(score => {
-            score.score_color = SCORE_SHADES[score.score];
-            score.score_text_color = String.contrasting_color(score.score_color);
-            score.score_text = SCORE_TEXT[score.score];
-            return new RiskOfBiasScore(study, score);
-        });
-
-        // group rob by domains
-        riskofbias = d3
-            .nest()
-            .key(d => d.data.metric.domain.name)
-            .entries(riskofbias);
-
-        // now generate a score for each domain (aggregating metrics)
-        riskofbias.forEach(rob => {
-            rob.domain = rob.values[0].data.metric.domain.id;
-            rob.domain_text = rob.values[0].data.metric.domain.name;
-            rob.domain_is_overall_confidence =
-                typeof rob.values[0].data.metric.domain.is_overall_confidence === "boolean"
-                    ? rob.values[0].data.metric.domain.is_overall_confidence
-                    : false;
-            rob.criteria = rob.values;
-        });
-    }
-
-    return {final, riskofbias};
-};
+import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
+import {transformStudy} from "riskofbias/study";
 
 class Study {
     constructor(data) {
         this.data = data;
         if (this.data.assessment.enable_risk_of_bias) {
-            _.extend(this, setRobData(this, data));
+            _.extend(this, transformStudy(this, data));
         }
     }
 
@@ -233,11 +196,10 @@ class Study {
     }
 
     format_for_react(riskofbias) {
-        let scores = _.flattenDeep(
-            _.map(riskofbias, function(rob) {
-                return rob.values;
-            })
-        );
+        let scores = _.chain(riskofbias)
+            .map(rob => rob.values)
+            .flattenDeep()
+            .value();
         return RiskOfBiasScore.format_for_react(scores);
     }
 }

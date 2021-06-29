@@ -38,7 +38,7 @@ class Study(
             return self.model.objects.get_qs(self.assessment)
         else:
             return self.model.objects.prefetch_related(
-                "identifiers", "riskofbiases__scores__metric__domain",
+                "identifiers", "riskofbiases__author", "riskofbiases__scores__overridden_objects",
             ).select_related("assessment__rob_settings", "assessment")
 
     @action(detail=False)
