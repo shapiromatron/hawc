@@ -14,15 +14,14 @@ import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
 import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
 
 class Study {
-    constructor(data, robSettings) {
+    constructor(data) {
         this.data = data;
-        this.robSettings = robSettings;
         this.riskofbias = [];
         this.final = _.find(this.data.riskofbiases, {
             final: true,
             active: true,
         });
-        if (this.robSettings && this.data.assessment.enable_risk_of_bias && this.final) {
+        if (this.data.assessment.enable_risk_of_bias && this.final) {
             this.unpack_riskofbias();
         }
     }
@@ -65,13 +64,9 @@ class Study {
     unpack_riskofbias() {
         // unpack rob information and nest by domain
         var self = this,
-            domains = _.keyBy(this.robSettings.domains, domain => domain.id),
-            metrics = _.keyBy(this.robSettings.metrics, metric => metric.id),
             riskofbias = [];
 
         this.final.scores.forEach(function(v, i) {
-            v.metric = metrics[v.metric_id];
-            v.metric.domain = domains[v.metric.domain_id];
             v.score_color = SCORE_SHADES[v.score];
             v.score_text_color = String.contrasting_color(v.score_color);
             v.score_text = SCORE_TEXT[v.score];
@@ -81,9 +76,7 @@ class Study {
         // group rob by domains
         this.riskofbias = d3
             .nest()
-            .key(function(d) {
-                return d.data.metric.domain.name;
-            })
+            .key(d => d.data.metric.domain.name)
             .entries(riskofbias);
 
         // now generate a score for each domain (aggregating metrics)
