@@ -161,6 +161,7 @@ class RoBHeatmapPlot extends D3Visualization {
         _.extend(this, {
             cell_size: this.data.settings.cell_size,
             cells_data,
+            has_multiple_scores: cells_data.filter(d => d.symbols.length > 1).length > 0,
             cells_data_up: cells_data.filter(d => _.includes(d.directions, BIAS_DIRECTION_UP)),
             cells_data_down: cells_data.filter(d => _.includes(d.directions, BIAS_DIRECTION_DOWN)),
             gradients_data,
@@ -488,7 +489,7 @@ class RoBHeatmapPlot extends D3Visualization {
             },
             getFootnoteOptions = () => {
                 let footnotes = [];
-                if (this.cells_data.filter(d => d.symbols.length > 1).length > 0) {
+                if (this.has_multiple_scores) {
                     footnotes.push(FOOTNOTES.MULTIPLE_SCORES);
                 }
                 if (this.cells_data_up.length > 0) {
@@ -501,9 +502,7 @@ class RoBHeatmapPlot extends D3Visualization {
             },
             footnotes = getFootnoteOptions();
 
-        console.log(this.data);
-
-        this.legend = new RoBLegend(this.svg, this.data.settings, footnotes, options);
+        this.legend = new RoBLegend(this.svg, this.data, footnotes, options);
     }
 
     print_details($div, d) {

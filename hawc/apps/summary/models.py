@@ -39,6 +39,7 @@ from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epimeta.models import MetaResult
 from ..invitro import exports as ivexports
 from ..invitro.models import IVEndpoint
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import managers
 
@@ -532,7 +533,7 @@ class Visual(models.Model):
             # TypeError if dose_units is None; ValueError if dose_units is ""
             pass
 
-        data = {
+        return {
             "assessment": self.assessment_id,
             "title": request.POST.get("title"),
             "slug": request.POST.get("slug"),
@@ -540,17 +541,14 @@ class Visual(models.Model):
             "dose_units": dose_units,
             "created": timezone.now().isoformat(),
             "last_updated": timezone.now().isoformat(),
+            "rob_settings": AssessmentRiskOfBiasSerializer(self.assessment).data,
+            "endpoints": [
+                SerializerHelper.get_serialized(e, json=False) for e in self.get_endpoints(request)
+            ],
+            "studies": [
+                SerializerHelper.get_serialized(s, json=False) for s in self.get_studies(request)
+            ],
         }
-
-        data["endpoints"] = [
-            SerializerHelper.get_serialized(e, json=False) for e in self.get_endpoints(request)
-        ]
-
-        data["studies"] = [
-            SerializerHelper.get_serialized(s, json=False) for s in self.get_studies(request)
-        ]
-
-        return json.dumps(data)
 
     def copy_across_assessments(self, cw: Dict):
         old_id = self.id

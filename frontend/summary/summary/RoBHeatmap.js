@@ -12,10 +12,14 @@ import BaseVisual from "./BaseVisual";
 import {mutateRobSettings, mutateRobStudies} from "riskofbias/study";
 
 class RoBHeatmap extends BaseVisual {
-    constructor(data) {
-        super(data);
+    static transformData(data) {
         mutateRobSettings(data.rob_settings);
         mutateRobStudies(data.studies, data.rob_settings);
+    }
+
+    constructor(data) {
+        super(data);
+        RoBHeatmap.transformData(data);
         var studies = _.map(data.studies, d => new Study(d));
         this.roba = new Aggregation(studies);
         delete this.data.studies;
