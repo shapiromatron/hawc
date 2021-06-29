@@ -2,7 +2,7 @@ import {observable, computed, action} from "mobx";
 
 import h from "shared/utils/helpers";
 
-class RobFormStore {
+class RobMetricsStore {
     // content
     @observable error = null;
     @observable config = null;
@@ -85,4 +85,4 @@ class RobFormStore {
     }
 }
 
-export default RobFormStore;
+export default RobMetricsStore;
