@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block sidebar_outer %}
-<div id="sidebar-container" class="sidebar pl-1 {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
+<div id="sidebar-container" class="sidebar {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
     data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
 
     {% if user.is_authenticated %}
