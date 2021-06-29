@@ -13,6 +13,10 @@ class RobFormStore {
         return this.domains !== null;
     }
 
+    @computed get isEditing() {
+        return this.config.is_editing;
+    }
+
     // actions
     @action.bound setConfig(elementId) {
         this.config = JSON.parse(document.getElementById(elementId).textContent);

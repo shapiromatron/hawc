@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import DomainTable from "./DomainTable";
+import DomainReadOnlyTable from "./DomainReadOnlyTable";
 import Loading from "shared/components/Loading";
 
 @inject("store")
@@ -15,11 +16,16 @@ class Root extends Component {
 
     render() {
         let {store} = this.props;
+
         if (!store.dataLoaded) {
             return <Loading />;
         }
+
+        let {isEditing} = store,
+            Component = isEditing ? DomainTable : DomainReadOnlyTable;
+
         return store.domains.map((domain, domainIndex) => (
-            <DomainTable key={domain.id} domain={domain} domainIndex={domainIndex} />
+            <Component key={domain.id} domain={domain} domainIndex={domainIndex} />
         ));
     }
 }
