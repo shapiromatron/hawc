@@ -136,9 +136,7 @@ class BaseVisualForm {
         } catch (err) {
             // run anyways
         }
-        this.fields.forEach(function(d) {
-            d.fromSerialized();
-        });
+        this.fields.forEach(d => d.fromSerialized());
     }
 
     buildSettingsForm() {
