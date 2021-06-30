@@ -64,6 +64,9 @@ class DataPivotViewset(AssessmentViewset):
     pagination_class = DisabledPagination
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
 
+    def get_queryset(self):
+        return self.model.objects.select_related("datapivotquery", "datapivotupload").all()
+
     def get_serializer_class(self):
         cls = serializers.DataPivotSerializer
         if self.action == "list":

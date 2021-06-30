@@ -9,14 +9,16 @@ import RoBScoreExcludeTable from "./RoBScoreExcludeTable";
 import {TextField, IntegerField, CheckboxField, SelectField} from "./Fields";
 
 class RoBHeatmapForm extends BaseVisualForm {
+    afterGetDataHook(data) {
+        RoBHeatmap.transformData(data);
+    }
+
     buildPreview($parent, data) {
-        this.preview = new RoBHeatmap(data).displayAsPage($parent.empty(), {
-            dev: true,
-        });
+        this.preview = new RoBHeatmap(data).displayAsPage($parent.empty(), {dev: true});
     }
 
     initDataForm() {
-        _.each(["system", "organ", "effect", "effect_subtype"], function(d) {
+        ["system", "organ", "effect", "effect_subtype"].forEach(d => {
             $(`#id_prefilter_${d}`)
                 .on("change", function() {
                     var div = $(`#div_id_${d}s`);

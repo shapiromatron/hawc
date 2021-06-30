@@ -6,23 +6,31 @@ import {observer, inject} from "mobx-react";
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import h from "shared/utils/helpers";
 
 import {hideScore} from "../constants";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
 
 class ScoreInput extends Component {
+    constructor(props) {
+        super(props);
+        this.scoreId = `${h.randomString()}-score`;
+    }
     componentDidMount() {
+        // special-case if current value doesn't exist in list of valid values;
+        // change the value to default (edge-case where response choices change)
         const {choices, value, defaultValue, handleChange} = this.props;
-        choices.map(c => c.id).includes(value) ? null : handleChange(defaultValue);
+        if (!choices.map(c => c.id).includes(value)) {
+            handleChange(defaultValue);
+        }
     }
     render() {
-        const {scoreId, choices, value, handleChange} = this.props;
-
+        const {choices, value, handleChange} = this.props;
         return (
             <>
                 <SelectInput
-                    id={`${scoreId}-score`}
+                    id={this.scoreId}
                     label="Score"
                     choices={choices}
                     multiple={false}
@@ -35,11 +43,10 @@ class ScoreInput extends Component {
     }
 }
 ScoreInput.propTypes = {
-    scoreId: PropTypes.number.isRequired,
     choices: PropTypes.arrayOf(PropTypes.object),
     value: PropTypes.number.isRequired,
-    defaultValue: PropTypes.number.isRequired,
     handleChange: PropTypes.func.isRequired,
+    defaultValue: PropTypes.number.isRequired,
 };
 
 class ScoreNotesInput extends Component {
@@ -139,7 +146,6 @@ class ScoreForm extends Component {
                     {showScoreInput ? (
                         <div className="col-md-3">
                             <ScoreInput
-                                scoreId={score.id}
                                 choices={scoreChoices}
                                 value={score.score}
                                 defaultValue={defaultScoreChoice}
