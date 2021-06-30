@@ -40,6 +40,9 @@
 .sidebar li {
     border-top: 1px solid #5b616b;
 }
+.sidebar li:first-of-type {
+    border-top: 0;
+}
 .sidebar .bg-primary {
     background-color: white !important;
 }
