@@ -52,12 +52,16 @@ class ARoBDetail(BaseList):
     model = models.RiskOfBiasDomain
     template_name = "riskofbias/arob_detail.html"
 
-    def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment).prefetch_related("metrics")
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        context["config"] = {
+            "assessment_id": self.assessment.id,
+            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+            "is_editing": False,
+            "csrf": get_token(self.request),
+        }
         return context
 
 
@@ -79,15 +83,14 @@ class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Update"))
-        context["config"] = json.dumps(
-            {
-                "assessment_id": self.assessment.id,
-                "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-                "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
-                "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
-                "csrf": get_token(self.request),
-            }
-        )
+        context["config"] = {
+            "assessment_id": self.assessment.id,
+            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+            "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
+            "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
+            "is_editing": True,
+            "csrf": get_token(self.request),
+        }
         return context
 
 

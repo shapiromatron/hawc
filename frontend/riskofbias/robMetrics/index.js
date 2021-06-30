@@ -2,11 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "mobx-react";
 
-import RobFormStore from "./store";
+import RobMetricsStore from "./store";
 import Root from "./Root";
 
 export default function(el) {
-    const store = new RobFormStore();
+    const store = new RobMetricsStore();
     ReactDOM.render(
         <Provider store={store}>
             <Root />
