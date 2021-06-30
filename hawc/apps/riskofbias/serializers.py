@@ -51,6 +51,7 @@ class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
             "responses",
             "response_values",
             "default_response",
+            "short_name",
             "use_short_name",
         )
 

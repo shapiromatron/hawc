@@ -32,14 +32,16 @@ class RoBLegend {
             .flatten()
             .uniq()
             .filter(d => includedItems.has(d))
+            .sort()
+            .reverse()
             .value();
 
         if (show_na_legend == false) {
-            response_values = _.pull(NA_KEYS);
+            response_values = _.pull(response_values, ...NA_KEYS);
         }
 
         if (show_nr_legend == false || collapseNR) {
-            response_values = _.pull(NR_KEYS);
+            response_values = _.pull(response_values, ...NR_KEYS);
         }
 
         return response_values.map(score => {

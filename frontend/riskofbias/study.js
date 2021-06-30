@@ -32,6 +32,7 @@ export const mutateRobSettings = settings => {
             study.riskofbiases.forEach(robs => {
                 robs.scores.forEach(score => {
                     score.metric = rob_settings.metricsMap[score.metric_id];
+                    score.study_name = study.short_citation;
                     score.score_description = rob_settings.score_metadata.choices[score.score];
                     score.assessment_id = rob_settings.assessment_id;
                 });
