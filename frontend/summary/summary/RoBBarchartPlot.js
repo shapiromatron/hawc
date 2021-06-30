@@ -17,10 +17,7 @@ class RoBBarchartPlot extends D3Visualization {
         this.plot_div = $div.html("");
         this.processData();
         if (this.dataset.length === 0) {
-            let robName = this.data.assessment_rob_name.toLowerCase();
-            return this.plot_div.html(
-                `<p>Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
-            );
+            return this.plot_div.html(`<p>Error: no studies with evaluations selected.</p>`);
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
@@ -54,8 +51,11 @@ class RoBBarchartPlot extends D3Visualization {
     }
 
     setDefaults() {
-        let score_ids = _.chain(this.data.aggregation.studies[0].data.rob_response_values)
-            .filter(d => !NR_KEYS.includes(d))
+        let score_ids = _.chain(this.data.rob_settings.metrics)
+            .map(d => d.response_values)
+            .flatten()
+            .uniq()
+            .pull(...NR_KEYS)
             .reverse()
             .value();
 
@@ -115,13 +115,11 @@ class RoBBarchartPlot extends D3Visualization {
 
                 // TODO - remove hard-coding of these values and use lookup
                 if (_.has(weights, 15)) {
-                    weights[15] = (weights[15] || 0) + (weights[12] || 0);
+                    weights[15] = weights[15] + (weights[12] || 0);
                     delete weights[12];
                 } else if (_.has(weights, 25)) {
-                    weights[25] = (weights[25] || 0) + (weights[22] || 0);
+                    weights[25] = weights[25] + (weights[22] || 0);
                     delete weights[22];
-                } else {
-                    throw "Unknown `-` value";
                 }
 
                 return _.extend(weights, {label: metric_name});
