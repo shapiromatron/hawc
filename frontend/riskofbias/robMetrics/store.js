@@ -2,7 +2,7 @@ import {observable, computed, action} from "mobx";
 
 import h from "shared/utils/helpers";
 
-class RobFormStore {
+class RobMetricsStore {
     // content
     @observable error = null;
     @observable config = null;
@@ -11,6 +11,10 @@ class RobFormStore {
     // computed props
     @computed get dataLoaded() {
         return this.domains !== null;
+    }
+
+    @computed get isEditing() {
+        return this.config.is_editing;
     }
 
     // actions
@@ -81,4 +85,4 @@ class RobFormStore {
     }
 }
 
-export default RobFormStore;
+export default RobMetricsStore;
