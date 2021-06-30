@@ -5,14 +5,14 @@ import {observer} from "mobx-react";
 import Loading from "shared/components/Loading";
 
 import Donut from "./Donut";
-import StudyRobStore from "../stores/StudyRobStore";
+import RobDonutStore from "./store";
 
 @observer
 class DonutContainer extends Component {
     constructor(props) {
         super(props);
         this.ref = React.createRef();
-        this.store = new StudyRobStore();
+        this.store = new RobDonutStore();
         this.donut = new Donut();
     }
 

@@ -103,8 +103,9 @@
 const data = JSON.parse(document.getElementById('data').textContent);
 
 window.app.studyStartup(function(study){
-  var thisStudy = new study.Study(data.studyContent);
-  var detail_div = $('#study_details');
+  var thisStudy = new study.Study(data.studyContent),
+      detail_div = $('#study_details');
+
   thisStudy.build_details_table(detail_div);
 
   {% if attachments_viewable %}

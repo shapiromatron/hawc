@@ -1,15 +1,15 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {NR_KEYS, fetchRobSettings, fetchRobStudy} from "riskofbias/constants";
+import {NR_KEYS} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
-class RobFormStore {
+import StudyRobStore from "../stores/StudyRobStore";
+
+class RobFormStore extends StudyRobStore {
     // content
     @observable error = null;
     @observable config = null;
-    @observable study = null;
-    @observable settings = null;
     @observable overrideOptions = null;
     editableScores = observable.array();
     nonEditableScores = observable.array();
@@ -28,22 +28,6 @@ class RobFormStore {
                 _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
             );
         }).length;
-    }
-
-    @computed get domains() {
-        return _.keyBy(this.settings.domains, domain => domain.id);
-    }
-
-    @computed get metrics() {
-        return _.keyBy(this.settings.metrics, metric => metric.id);
-    }
-
-    @computed get metricDomains() {
-        let {domains} = this;
-        return _.chain(this.settings.metrics)
-            .map(metric => [metric.id, domains[metric.domain_id]])
-            .fromPairs()
-            .value();
     }
 
     updateRobScore(score, riskofbias, overrideOptions) {
@@ -96,18 +80,6 @@ class RobFormStore {
     // actions
     @action.bound setConfig(elementId) {
         this.config = JSON.parse(document.getElementById(elementId).textContent);
-    }
-
-    @action.bound fetchSettings(assessment_id) {
-        return fetchRobSettings(assessment_id, data => {
-            this.settings = data;
-        });
-    }
-
-    @action.bound fetchStudy(study_id) {
-        return fetchRobStudy(study_id, data => {
-            this.study = data;
-        });
     }
 
     @action.bound fetchFormData() {
