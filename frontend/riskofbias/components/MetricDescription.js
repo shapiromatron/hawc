@@ -21,7 +21,7 @@ class MetricToggle extends Component {
             <button
                 type="button"
                 title="Show/hide description"
-                className="pull-right btn btn-sm btn-light"
+                className="float-right btn btn-sm btn-light"
                 onClick={() => {
                     store.toggle();
                     h.maybeScrollIntoView(this, {yOffset: -50, animate: true});
@@ -55,10 +55,8 @@ class MetricHeader extends Component {
         const {metric} = this.props;
         return (
             <>
-                <h4>
-                    {metric.name}
-                    <MetricToggle />
-                </h4>
+                <MetricToggle />
+                <h4>{metric.name}</h4>
                 <MetricDescription html={metric.description} />
             </>
         );
