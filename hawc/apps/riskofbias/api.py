@@ -242,6 +242,9 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("overridden_objects__content_object")
+
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one
         serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
