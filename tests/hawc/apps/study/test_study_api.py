@@ -5,7 +5,6 @@ from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
-@pytest.mark.skipif(True, reason="TODO - fix ROB June 2021")
 def test_study_detail_api(db_keys):
     client = Client()
     assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -18,6 +17,7 @@ def test_study_detail_api(db_keys):
 
     # handle this in other tests
     json.pop("riskofbiases")
+    json.pop("rob_settings")
 
     assert json == {
         "id": 1,

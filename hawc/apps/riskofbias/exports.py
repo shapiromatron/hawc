@@ -23,6 +23,14 @@ class RiskOfBiasFlat(FlatFileExporter):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
 
+            domains = ser["rob_settings"]["domains"]
+            metrics = ser["rob_settings"]["metrics"]
+            domain_map = {domain["id"]: domain for domain in domains}
+            metric_map = {
+                metric["id"]: dict(metric, domain=domain_map[metric["domain_id"]])
+                for metric in metrics
+            }
+
             row1 = []
             row1.extend(Study.flat_complete_data_row(ser))
 
@@ -35,6 +43,7 @@ class RiskOfBiasFlat(FlatFileExporter):
                 row2.extend(models.RiskOfBias.flat_data_row(rob, final_only=self.final_only))
                 for score in rob["scores"]:
                     row3 = list(row2)
+                    score["metric"] = metric_map[score["metric_id"]]
                     row3.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
                     rows.append(row3)
 

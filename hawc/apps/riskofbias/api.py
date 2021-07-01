@@ -95,7 +95,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
-    serializer_class = serializers.AssessmentDomainSerializer
+    serializer_class = serializers.NestedDomainSerializer
     lookup_value_regex = re_digits
 
     def get_queryset(self):
@@ -213,7 +213,7 @@ class RiskOfBias(viewsets.ModelViewSet):
 
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricChoiceSerializer
+    serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -223,7 +223,7 @@ class AssessmentMetricViewset(AssessmentViewset):
 
 class AssessmentMetricScoreViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricScoreSerializer
+    serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -242,19 +242,12 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
-    @action(detail=False)
-    def v2(self, request):
-        # TODO - fix ROB June 2021  (replace StudySerializer->NewStudySerializer; switch api)
-        qs = self.get_queryset().filter(metric__domain__assessment=self.assessment)
-        ser = serializers.AssessmentScoreSerializer(qs, many=True)
-        return Response(ser.data)
-
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one
         serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        new_serializer = serializers.AssessmentScoreSerializer(serializer.instance)
+        new_serializer = serializers.RiskOfBiasScoreSerializer(serializer.instance)
         headers = self.get_success_headers(new_serializer.data)
         return Response(new_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

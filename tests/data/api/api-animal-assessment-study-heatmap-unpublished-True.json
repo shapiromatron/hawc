@@ -3,7 +3,6 @@
     "study id": 7,
     "study citation": "Biesemeier JA et al. 2011",
     "study identifier": "",
-    "overall study evaluation": "Probably low risk of bias (+)",
     "experiment type": "Developmental",
     "experiment chemical": "PBDE 209",
     "species": "rat",
@@ -13,6 +12,7 @@
     "system": "|Cardiovascular|developmental",
     "organ": "|Serum|brain",
     "effect": "|Fatty Acids|learning and memory",
+    "overall study evaluation": "Probably low risk of bias (+)",
     "dose units": "mg/kg/d"
   }
 ]
