@@ -92,7 +92,7 @@ class TestVisual:
         data = response.json()
 
         if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2))
+            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
 
         assert data == json.loads(fn.read_text())
 
@@ -133,7 +133,7 @@ class TestDataPivot:
         data = response.json()
 
         if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2))
+            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
 
         assert json.loads(fn.read_text()) == data
 
@@ -150,7 +150,7 @@ class TestDataPivot:
         data = response.json()
 
         if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2))
+            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
 
         assert json.loads(fn.read_text()) == data
 

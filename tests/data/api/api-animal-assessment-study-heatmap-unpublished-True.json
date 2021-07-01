@@ -1,18 +1,18 @@
 [
   {
-    "study id": 7,
-    "study citation": "Biesemeier JA et al. 2011",
-    "study identifier": "",
-    "experiment type": "Developmental",
-    "experiment chemical": "PBDE 209",
-    "species": "rat",
-    "sex": "Combined",
-    "strain": "sprague dawley",
-    "route of exposure": "Oral gavage",
-    "system": "|Cardiovascular|developmental",
-    "organ": "|Serum|brain",
+    "dose units": "mg/kg/d",
     "effect": "|Fatty Acids|learning and memory",
+    "experiment chemical": "PBDE 209",
+    "experiment type": "Developmental",
+    "organ": "|Serum|brain",
     "overall study evaluation": "Probably low risk of bias (+)",
-    "dose units": "mg/kg/d"
+    "route of exposure": "Oral gavage",
+    "sex": "Combined",
+    "species": "rat",
+    "strain": "sprague dawley",
+    "study citation": "Biesemeier JA et al. 2011",
+    "study id": 7,
+    "study identifier": "",
+    "system": "|Cardiovascular|developmental"
   }
 ]

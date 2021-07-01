@@ -24,7 +24,7 @@ class TestAssessmentViewset:
         data = resp.json()
 
         if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2))
+            path.write_text(json.dumps(data, indent=2, sort_keys=True))
 
         assert data == json.loads(path.read_text())
 
@@ -661,6 +661,6 @@ class TestMetadataApi:
         data = resp.json()
 
         if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2))
+            path.write_text(json.dumps(data, indent=2, sort_keys=True))
 
         assert data == json.loads(path.read_text())
