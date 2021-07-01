@@ -43,7 +43,6 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
 
     def test_rob(self):
         tests.rob(self.driver, self.live_server_url)
-        pass
 
     def test_epi(self):
         tests.epi(self.driver, self.live_server_url)
