@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 
 import MetricScores from "./MetricScores";
+import {MetricDescription, MetricToggle} from "../../components/MetricDescription";
 
 const CrossStudyDisplay = props => {
     let {scores} = props,
@@ -15,10 +16,10 @@ const CrossStudyDisplay = props => {
     return (
         <div className="cross-study-display">
             <h3>{domain.name}</h3>
-            <h4>{metric.name}</h4>
-            {metric.hide_description ? null : (
-                <div dangerouslySetInnerHTML={{__html: metric.description}} />
-            )}
+            <h4>
+                {metric.name} <MetricToggle />
+            </h4>
+            <MetricDescription html={metric.description} />
             {_.map(scoresByStudy, scores => {
                 const firstScore = scores[0];
 
@@ -50,7 +51,6 @@ CrossStudyDisplay.propTypes = {
             id: PropTypes.number.isRequired,
             metric: PropTypes.shape({
                 name: PropTypes.string.isRequired,
-                hide_description: PropTypes.bool.isRequired,
                 description: PropTypes.string.isRequired,
                 domain: PropTypes.shape({
                     name: PropTypes.string.isRequired,

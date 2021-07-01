@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 
 import {ScoreForm} from "./ScoreForm";
-import MetricScores from "riskofbias/robTable/components/MetricScores";
+import MetricScores from "../robTable/components/MetricScores";
+import {MetricToggle, MetricDescription} from "../components/MetricDescription";
 
 @inject("store")
 @observer
@@ -15,13 +16,15 @@ class Metric extends Component {
             metricHasOverrides = store.nonEditableMetricHasOverrides(metricId),
             anyEditableScore = editableScores[0],
             {name, description} = store.metrics[anyEditableScore.metric_id],
-            hideDescription = store.metrics[anyEditableScore.metric_id].hide_description,
             editingFinal = anyEditableScore.final;
 
         return (
             <div>
-                <h4>{name}</h4>
-                {hideDescription ? null : <div dangerouslySetInnerHTML={{__html: description}} />}
+                <h4>
+                    {name}
+                    <MetricToggle />
+                </h4>
+                <MetricDescription html={description} />
                 {editingFinal ? (
                     <MetricScores
                         scores={nonEditableScores}

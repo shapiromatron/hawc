@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import {MetricDescription, MetricToggle} from "../../components/MetricDescription";
 import MetricScores from "./MetricScores";
 import "./MetricDisplay.css";
 
@@ -19,10 +20,11 @@ class MetricDisplay extends Component {
 
         return (
             <div className="metric-display">
-                <h4>{scores[0].metric.name}</h4>
-                {scores[0].metric.hide_description ? null : (
-                    <div dangerouslySetInnerHTML={{__html: scores[0].metric.description}} />
-                )}
+                <h4>
+                    {scores[0].metric.name}
+                    <MetricToggle />
+                </h4>
+                <MetricDescription html={scores[0].metric.description} />
                 <MetricScores
                     scores={scores}
                     showAuthors={showAuthors}
