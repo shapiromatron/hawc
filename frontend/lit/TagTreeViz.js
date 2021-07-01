@@ -67,7 +67,7 @@ class TagTreeViz extends D3Plot {
     build_plot() {
         this.plot_div.html("");
         this.get_plot_sizes();
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "A dendrogram of reference counts for each tag");
         this.prepare_data();
         this.draw_visualization();
         this.add_menu();

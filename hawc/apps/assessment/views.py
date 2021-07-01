@@ -53,10 +53,12 @@ def percentage(numerator, denominator):
 class Home(TemplateView):
     template_name = "hawc/home.html"
 
-    def get(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("portal"))
-        return super().get(request, *args, **kwargs)
+        if settings.EXTERNAL_HOME:
+            return HttpResponseRedirect(settings.EXTERNAL_HOME)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,6 +71,11 @@ class Home(TemplateView):
 
 class About(TemplateView):
     template_name = "hawc/about.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.EXTERNAL_ABOUT:
+            return HttpResponseRedirect(settings.EXTERNAL_ABOUT)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_object_counts(self):
         key = "about-counts"
@@ -213,6 +220,11 @@ class About(TemplateView):
 
 class Resources(TemplateView):
     template_name = "hawc/resources.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.EXTERNAL_RESOURCES:
+            return HttpResponseRedirect(settings.EXTERNAL_RESOURCES)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

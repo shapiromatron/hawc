@@ -205,6 +205,7 @@ class OutcomeDataPivot(FlatFileExporter):
 
                 else:
                     row_copy.extend(["-"] * (6 + 10))  # exposure + exposure.central_tendencies
+                    self.addOutcomesAndGroupsToRowAndAppend(rows, res, ser, row_copy)
 
         return rows
 

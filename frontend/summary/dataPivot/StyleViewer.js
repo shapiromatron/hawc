@@ -36,7 +36,7 @@ class StyleViewer extends D3Plot {
     build_plot() {
         this.plot_div.html("");
         this.get_plot_sizes();
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "Style preview functionality");
         this.draw_visualizations();
     }
 

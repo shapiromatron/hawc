@@ -84,8 +84,6 @@ class HAWCSetPasswordForm(SetPasswordForm):
             cancel_url=cancel_url,
             submit_text="Change password",
         )
-        helper.form_class = "loginForm"
-
         return helper
 
     def clean_new_password1(self):
@@ -145,7 +143,6 @@ class RegisterForm(PasswordForm):
             cancel_url=login_url,
             submit_text="Create account",
         )
-        helper.form_class = "loginForm"
         helper.add_row("first_name", 2, "col-6")
         helper.add_row("password1", 2, "col-6")
         return helper
@@ -240,7 +237,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(
+        return BaseFormHelper(
             self,
             legend_text="HAWC login",
             form_actions=[
@@ -258,8 +255,6 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 ),
             ],
         )
-        helper.form_class = "loginForm"
-        return helper
 
     def clean(self):
         username = self.cleaned_data.get("username")
@@ -284,16 +279,13 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(
+        return BaseFormHelper(
             self,
             legend_text="Password reset",
             help_text="Enter your email address below, and we'll email instructions for setting a new password.",
             cancel_url=reverse("user:login"),
             submit_text="Send email confirmation",
         )
-        helper.form_class = "loginForm"
-
-        return helper
 
     def clean_email(self):
         email = self.cleaned_data.get("email")

@@ -80,7 +80,7 @@ class HeatmapDatastore {
                         text = d[columnName] || "";
 
                     let raw_values = delimiter ? text.split(delimiter) : [text];
-                    const values = raw_values.map(e => e.trim());
+                    const values = raw_values.map(e => e.toString().trim());
 
                     for (let value of values) {
                         if (!this.settings.show_null && !value) {

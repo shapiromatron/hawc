@@ -37,7 +37,7 @@ class RoBHeatmapPlot extends D3Visualization {
             );
         }
         this.get_plot_sizes();
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "A heatmap visualization of judgments for each study");
         this.add_axes();
         this.draw_visualization();
         this.resize_plot_dimensions();

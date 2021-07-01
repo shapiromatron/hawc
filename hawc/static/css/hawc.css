@@ -171,15 +171,6 @@ input[type='number'] {
     z-index: 1150;
 }
 
-/* Login form */
-.loginForm {
-    margin-top: 15px;
-    padding: 30px 15px 0px 15px;
-    border: 2px solid gray;
-    border-radius: 5px;
-    box-shadow: 0 0 2em #888888;
-}
-
 /* About-us page */
 .videoTab iframe {
     border: 2px black solid;

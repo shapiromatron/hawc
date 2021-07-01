@@ -22,7 +22,7 @@ class Barplot extends D3Plot {
     build_plot() {
         this.plot_div.html("");
         this.get_plot_sizes();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "A barchart of response with confidence intervals");
         this.add_title();
         this.add_axes();
         this.add_bars();
