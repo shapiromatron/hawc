@@ -18,6 +18,7 @@ class DssToxDetailTable extends Component {
                             <tr>
                                 <td rowSpan={5} style={{borderTop: "0px"}}>
                                     <img
+                                        alt="chemical structure image"
                                         style={{minWidth: 150, minHeight: 150}}
                                         src={data.svg_url}
                                     />

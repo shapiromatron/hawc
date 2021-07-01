@@ -24,7 +24,7 @@ class ResultForestPlot extends D3Plot {
         this.get_dataset();
         if (!this.isPlottable()) return;
         this.get_plot_sizes();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "A result forestplot");
         this.add_axes();
         this.build_x_label();
         this.draw_visualizations();

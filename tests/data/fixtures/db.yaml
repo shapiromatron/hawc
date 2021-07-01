@@ -4923,7 +4923,7 @@
         - summary:
             findings: <p></p>
           evidence:
-            description: <p><a href="Baz 2021" rel="noopener noreferrer" target="_blank">Baz
+            description: <p><a href="/study/1/" rel="noopener noreferrer" target="_blank">Baz
               2021</a></p>
           judgement:
             judgement: 20
@@ -4931,45 +4931,39 @@
             custom_judgement_icon: ''
             custom_judgement_label: ''
           certain_factors:
-            text: <p></p>
-            factors:
-            - key: 30
-              long_description: ''
-              short_description: ''
-            - key: 40
-              long_description: ''
-              short_description: ''
+            text: <p>Adding descriptive text here.</p>
+            factors: []
           uncertain_factors:
             text: <p></p>
             factors:
             - key: 0
-              long_description: ''
-              short_description: ''
+              long_description: <p></p>
+              short_description: <p></p>
         - summary:
             findings: <p></p>
           evidence:
-            description: <p><a href="Foo 2020 " rel="noopener noreferrer" target="_blank">Foo
+            description: <p><a href="/study/1/" rel="noopener noreferrer" target="_blank">Foo
               2020 </a></p>
           judgement:
             judgement: 1
             description: <p></p>
-            custom_judgement_icon: ''
-            custom_judgement_label: ''
+            custom_judgement_icon: <p></p>
+            custom_judgement_label: <p></p>
           certain_factors:
             text: <p></p>
             factors:
-            - key: 0
-              long_description: ''
-              short_description: ''
+            - key: 70
+              long_description: <p>Popup</p>
+              short_description: <p>Description</p>
           uncertain_factors:
             text: <p></p>
             factors:
             - key: -30
-              long_description: ''
-              short_description: ''
+              long_description: <p>Example with <strong>bolded</strong> text.</p>
+              short_description: <p>Example with <strong>bolded</strong> text.</p>
             - key: -20
-              long_description: ''
-              short_description: ''
+              long_description: <p>Example with <strong>bolded</strong> text.</p>
+              short_description: <p></p>
         hide_content: false
         no_content_text: No data available
         title: Evidence from animal studies
@@ -4992,9 +4986,9 @@
         - summary:
             findings: <p>Exposure orally. 8oz multiple times a day for 70 years.</p>
           evidence:
-            description: <ul><li><a href="Doe et al. 2015" rel="noopener noreferrer"
-              target="_blank">Doe et al. 2015</a></li><li><a href="Doe et al 2018."
-              rel="noopener noreferrer" target="_blank">Doe et al 2018.</a></li></ul>
+            description: <ul><li><a href="/study/1/" rel="noopener noreferrer"
+              target="_blank">Doe et al. 2015</a></li><li><a href="/study/1/"
+              rel="noopener noreferrer" target="_blank">Doe et al 2018</a></li></ul>
           judgement:
             judgement: 30
             description: <p>Robust findings.</p>
@@ -5003,9 +4997,6 @@
           certain_factors:
             text: <p></p>
             factors:
-            - key: 0
-              long_description: ''
-              short_description: ''
             - key: 30
               long_description: <p>notes</p>
               short_description: hydration response detected
@@ -5013,8 +5004,8 @@
             text: <p></p>
             factors:
             - key: 0
-              long_description: ''
-              short_description: ''
+              long_description: <p></p>
+              short_description: <p></p>
         hide_content: false
         no_content_text: No data available
         title: Evidence from studies of exposed humans

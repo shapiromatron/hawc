@@ -309,14 +309,12 @@ class ContactForm(forms.Form):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(
+        return BaseFormHelper(
             self,
             legend_text="Contact us",
             help_text="Have a question, comment, or need some help? Use this form to to let us know what's going on.",
             cancel_url=self.back_href,
         )
-        helper.form_class = "loginForm"
-        return helper
 
 
 class DatasetForm(forms.ModelForm):

@@ -1005,6 +1005,7 @@ class Endpoint(BaseEndpoint):
             "effect": "effect",
             "effect_subtype": "effect subtype",
             "name": "endpoint name",
+            "observation_time_text": "observation time",
         }
         qs = (
             cls.objects.select_related(
