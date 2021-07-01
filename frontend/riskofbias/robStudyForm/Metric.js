@@ -4,7 +4,7 @@ import {observer, inject} from "mobx-react";
 
 import {ScoreForm} from "./ScoreForm";
 import MetricScores from "../robTable/components/MetricScores";
-import {MetricToggle, MetricDescription} from "../components/MetricDescription";
+import MetricHeader from "../components/MetricDescription";
 
 @inject("store")
 @observer
@@ -15,16 +15,12 @@ class Metric extends Component {
             nonEditableScores = store.getNonEditableScoresForMetric(metricId),
             metricHasOverrides = store.nonEditableMetricHasOverrides(metricId),
             anyEditableScore = editableScores[0],
-            {name, description} = store.metrics[anyEditableScore.metric_id],
+            metric = store.metrics[anyEditableScore.metric_id],
             editingFinal = anyEditableScore.final;
 
         return (
             <div>
-                <h4>
-                    {name}
-                    <MetricToggle />
-                </h4>
-                <MetricDescription html={description} />
+                <MetricHeader metric={metric} />
                 {editingFinal ? (
                     <MetricScores
                         scores={nonEditableScores}

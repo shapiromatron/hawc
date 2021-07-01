@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 
+import Spacer from "shared/components/Spacer";
 import Metric from "./Metric";
 
 @inject("store")
@@ -13,12 +14,13 @@ class Domain extends Component {
             name = store.domains[domainId].name;
 
         return (
-            <div>
+            <>
                 <h3>{name}</h3>
                 {metricIds.map(metricId => {
                     return <Metric key={metricId} metricId={metricId} />;
                 })}
-            </div>
+                <Spacer />
+            </>
         );
     }
 }

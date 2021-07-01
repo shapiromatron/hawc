@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 
 import MetricScores from "./MetricScores";
-import {MetricDescription, MetricToggle} from "../../components/MetricDescription";
+import MetricHeader from "../../components/MetricDescription";
 
 const CrossStudyDisplay = props => {
     let {scores} = props,
@@ -16,10 +16,7 @@ const CrossStudyDisplay = props => {
     return (
         <div className="cross-study-display">
             <h3>{domain.name}</h3>
-            <h4>
-                {metric.name} <MetricToggle />
-            </h4>
-            <MetricDescription html={metric.description} />
+            <MetricHeader metric={metric} />
             {_.map(scoresByStudy, scores => {
                 const firstScore = scores[0];
 

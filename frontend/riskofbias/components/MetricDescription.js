@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer} from "mobx-react";
 import {observable, action} from "mobx";
@@ -6,21 +6,16 @@ import {observable, action} from "mobx";
 import h from "shared/utils/helpers";
 
 class DescriptionStore {
-    // Create a universal toggle to show/hide metric descriptions
+    // A global toggle to show/hide metric descriptions
     @observable show = false;
     @action.bound toggle = () => (this.show = !this.show);
 }
-const store = new DescriptionStore(); // singleton store; shared across all components
 
-const MetricDescription = observer(props => {
-    if (!store.show) {
-        return null;
-    }
-    return <div dangerouslySetInnerHTML={{__html: props.html}} />;
-});
+// singleton store; shared across all components
+const store = new DescriptionStore();
 
 @observer
-class MetricToggle extends React.Component {
+class MetricToggle extends Component {
     render() {
         return (
             <button
@@ -37,12 +32,40 @@ class MetricToggle extends React.Component {
         );
     }
 }
-
-MetricDescription.propTypes = {
-    html: PropTypes.string.isRequired,
-};
 MetricToggle.propTypes = {
     initiallyShow: PropTypes.bool,
 };
 
-export {MetricToggle, MetricDescription};
+@observer
+class MetricDescription extends Component {
+    render() {
+        if (!store.show) {
+            return null;
+        }
+        return <div dangerouslySetInnerHTML={{__html: this.props.html}} />;
+    }
+}
+MetricDescription.propTypes = {
+    html: PropTypes.string.isRequired,
+};
+
+@observer
+class MetricHeader extends Component {
+    render() {
+        const {metric} = this.props;
+        return (
+            <>
+                <h4>
+                    {metric.name}
+                    <MetricToggle />
+                </h4>
+                <MetricDescription html={metric.description} />
+            </>
+        );
+    }
+}
+MetricHeader.propTypes = {
+    metric: PropTypes.object.isRequired,
+};
+
+export default MetricHeader;
