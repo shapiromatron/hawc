@@ -49,7 +49,7 @@
         "description": "<p>overall description</p>",
         "domain_id": 11,
         "id": 15,
-        "name": "overall",
+        "name": "overall metric 1",
         "response_values": [
           17,
           16,
@@ -401,7 +401,7 @@
             "description": "<p>overall description</p>",
             "domain_id": 11,
             "id": 15,
-            "name": "overall",
+            "name": "overall metric 1",
             "response_values": [
               17,
               16,

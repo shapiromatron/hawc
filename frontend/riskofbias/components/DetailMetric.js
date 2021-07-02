@@ -30,10 +30,6 @@ const DetailMetric = props => {
                         {h.booleanCheckbox(object.required_invitro)}
                     </li>
                     <li>
-                        <b>Hide description:&nbsp;</b>
-                        {h.booleanCheckbox(object.hide_description)}
-                    </li>
-                    <li>
                         <b>Use short name:&nbsp;</b>
                         {h.booleanCheckbox(object.use_short_name)}
                     </li>
