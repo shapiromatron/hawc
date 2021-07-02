@@ -16,4 +16,5 @@ def diagnostic_celery_task(id_: str):
 @task
 def worker_healthcheck():
     from .diagnostics import worker_healthcheck
+
     worker_healthcheck.push()

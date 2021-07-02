@@ -1,15 +1,13 @@
 from datetime import datetime, timedelta
 
-import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import send_mail
-from django.utils import timezone
 from django_redis import get_redis_connection
 from matplotlib.axes import Axes
 
-from . import tasks
+from . import helper, tasks
 
 
 class IntentionalException(Exception):
@@ -64,7 +62,7 @@ class WorkerHealthcheck:
         """
         conn = get_redis_connection()
         pipeline = conn.pipeline()
-        pipeline.lpush(self.KEY, timezone.now().timestamp())
+        pipeline.lpush(self.KEY, datetime.utcnow().timestamp())
         pipeline.ltrim(self.KEY, 0, self.MAX_SIZE)
         pipeline.execute()
 
@@ -74,40 +72,19 @@ class WorkerHealthcheck:
         last_push = conn.lindex(self.KEY, 0)
         if last_push is None:
             return False
-        last_ping = timezone.make_aware(datetime.fromtimestamp(float(last_push)))
-        return last_ping + self.MAX_WAIT < timezone.now()
+        last_ping = datetime.utcfromtimestamp(float(last_push))
+        return datetime.utcnow() - last_ping < self.MAX_WAIT
 
     def series(self) -> pd.Series:
         """Return a pd.Series of last successful times"""
         conn = get_redis_connection()
         data = conn.lrange(self.KEY, 0, -1)
-        naive = pd.to_datetime(pd.Series(data, dtype=float), unit="s", utc=True)
-        tz = naive.dt.tz_convert(timezone.get_current_timezone())
-        return tz
+        return pd.to_datetime(pd.Series(data, dtype=float), unit="s", utc=True)
 
     def plot(self) -> Axes:
-        df = self.series().to_frame(name="timestamp")
-        df.loc[:, "valid"] = 1 + np.random.rand(df.size) / 5 - 0.5  # jitter
-        ax = df.plot.scatter(
-            x="timestamp",
-            y="valid",
-            c="None",
-            edgecolors="blue",
-            alpha=1,
-            s=40,
-            figsize=(15, 5),
-            legend=False,
-            grid=True,
-            title="Last successful runs",
-        )
-        # pd.Timestamp(now()).tz_convert(get_current_timezone_name())
-        ax.set_xlim(
-            df.timestamp.iloc[df.timestamp.size - 1],
-            pd.Timestamp(timezone.now()).tz_convert(timezone.get_current_timezone()),
-        )
-        ax.set_ylim(0, 1)
-        ax.axes.get_yaxis().set_visible(False)
-        return ax
+        """Plot the current array of available timestamps"""
+        series = self.series()
+        return helper.event_plot(series)
 
 
 worker_healthcheck = WorkerHealthcheck()

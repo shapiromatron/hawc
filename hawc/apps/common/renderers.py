@@ -2,8 +2,8 @@ import json
 from io import BytesIO, StringIO
 
 import pandas as pd
-from matplotlib.axes import Axes
 from django.utils.text import slugify
+from matplotlib.axes import Axes
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer
 from rest_framework.response import Response

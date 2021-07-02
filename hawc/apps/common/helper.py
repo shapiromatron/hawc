@@ -5,9 +5,12 @@ import re
 import uuid
 from collections import OrderedDict, defaultdict
 from dataclasses import dataclass
+from datetime import datetime
 from math import inf
 from typing import Any, Dict, List, Optional, Set
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
@@ -16,6 +19,8 @@ from django.db.models import QuerySet
 from django.utils import html
 from django.utils.encoding import force_str
 from docx.document import Document
+from matplotlib.axes import Axes
+from matplotlib.dates import DateFormatter
 from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
@@ -349,3 +354,46 @@ def get_id_from_choices(items, lookup_value):
         raise ValueError(f"Found multiple matches when searching {items} for {lookup_value}")
     else:
         return matching_vals[0]
+
+
+def empty_mpl_figure(title: str = "No data available.") -> Axes:
+    """Create a matplotlib figure with no data"""
+    plt.figure(figsize=(3, 1))
+    plt.axis("off")
+    plt.suptitle(title)
+    return plt.gca()
+
+
+def event_plot(series: pd.Series) -> Axes:
+    """Return matplotlib event plot"""
+    plt.style.use("bmh")
+
+    if series.empty:
+        return empty_mpl_figure()
+
+    df = series.to_frame(name="timestamp")
+    df.loc[:, "event"] = 1 + (np.random.rand(df.size) - 0.5) / 5  # jitter
+    ax = df.plot.scatter(
+        x="timestamp",
+        y="event",
+        c="None",
+        edgecolors="blue",
+        alpha=1,
+        s=80,
+        figsize=(15, 5),
+        legend=False,
+        grid=True,
+    )
+
+    # set x axis
+    now = pd.Timestamp(datetime.utcnow())
+    ax.xaxis.set_major_formatter(DateFormatter("%b %d %H:%M"))
+    ax.set_xlim(df.timestamp.iloc[df.timestamp.size - 1], now)
+    ax.set_xlabel("Timestamp (UTC)")
+
+    # set y axis
+    ax.set_ylim(0, 2)
+    ax.axes.get_yaxis().set_visible(False)
+
+    plt.tight_layout()
+    return ax
