@@ -1,7 +1,8 @@
 import json
-from io import BytesIO
+from io import BytesIO, StringIO
 
 import pandas as pd
+from matplotlib.axes import Axes
 from django.utils.text import slugify
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer
@@ -35,6 +36,17 @@ class DocxRenderer(BaseRenderer):
         response = renderer_context["response"]
         response["Content-Disposition"] = f"attachment; filename={data.filename}.docx"
         return file.getvalue()
+
+
+class SvgRenderer(BaseRenderer):
+    media_type = "image/svg+xml"
+    format = "svg"
+
+    def render(self, ax: Axes, accepted_media_type=None, renderer_context=None):
+        f = StringIO()
+        ax.figure.savefig(f, format="svg")
+        ax.figure.clf()
+        return f.getvalue()
 
 
 class PandasBaseRenderer(BaseRenderer):

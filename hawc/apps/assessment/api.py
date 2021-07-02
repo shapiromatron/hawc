@@ -21,8 +21,9 @@ from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
 
+from ..common.diagnostics import worker_healthcheck
 from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
-from ..common.renderers import PandasRenderers
+from ..common.renderers import PandasRenderers, SvgRenderer
 from ..lit import constants
 from . import models, serializers
 from .actions import media_metadata_report
@@ -585,5 +586,17 @@ class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
 
 
 class HealthcheckViewset(viewsets.ViewSet):
-    def list(self, request):
-        return Response({"status": "ok"})
+    @action(detail=False)
+    def web(self, request):
+        return Response({"healthy": True})
+
+    @action(detail=False)
+    def worker(self, request):
+        healthy = worker_healthcheck.check()
+        status_code = status.HTTP_200_OK if healthy else status.HTTP_408_REQUEST_TIMEOUT
+        return Response(dict(healthy=healthy), status=status_code)
+
+    @action(detail=False, url_path="worker-plot", renderer_classes=[SvgRenderer])
+    def worker_plot(self, request):
+        ax = worker_healthcheck.plot()
+        return Response(ax)

@@ -1,6 +1,13 @@
+from datetime import datetime, timedelta
+
+import numpy as np
+import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import send_mail
+from django.utils import timezone
+from django_redis import get_redis_connection
+from matplotlib.axes import Axes
 
 from . import tasks
 
@@ -42,9 +49,68 @@ def diagnostic_email(modeladmin, request, queryset):
     send_mail(
         "Test email", "Test message", settings.DEFAULT_FROM_EMAIL, [to_email], fail_silently=False,
     )
-
     message = f"Attempted to send email to {to_email}"
     modeladmin.message_user(request, message)
+
+
+class WorkerHealthcheck:
+    KEY = "worker-healthcheck"
+    MAX_SIZE = 60 * 24 // 5  # 1 day of data at a 5 minute-interval
+    MAX_WAIT = timedelta(minutes=15)  # check is a failure if no task has run in X minutes
+
+    def push(self):
+        """
+        Push the latest successful time and trim the size of the array to max size
+        """
+        conn = get_redis_connection()
+        pipeline = conn.pipeline()
+        pipeline.lpush(self.KEY, timezone.now().timestamp())
+        pipeline.ltrim(self.KEY, 0, self.MAX_SIZE)
+        pipeline.execute()
+
+    def check(self) -> bool:
+        """Check if an item in the array has executed with the MAX_WAIT time"""
+        conn = get_redis_connection()
+        last_push = conn.lindex(self.KEY, 0)
+        if last_push is None:
+            return False
+        last_ping = timezone.make_aware(datetime.fromtimestamp(float(last_push)))
+        return last_ping + self.MAX_WAIT < timezone.now()
+
+    def series(self) -> pd.Series:
+        """Return a pd.Series of last successful times"""
+        conn = get_redis_connection()
+        data = conn.lrange(self.KEY, 0, -1)
+        naive = pd.to_datetime(pd.Series(data, dtype=float), unit="s", utc=True)
+        tz = naive.dt.tz_convert(timezone.get_current_timezone())
+        return tz
+
+    def plot(self) -> Axes:
+        df = self.series().to_frame(name="timestamp")
+        df.loc[:, "valid"] = 1 + np.random.rand(df.size) / 5 - 0.5  # jitter
+        ax = df.plot.scatter(
+            x="timestamp",
+            y="valid",
+            c="None",
+            edgecolors="blue",
+            alpha=1,
+            s=40,
+            figsize=(15, 5),
+            legend=False,
+            grid=True,
+            title="Last successful runs",
+        )
+        # pd.Timestamp(now()).tz_convert(get_current_timezone_name())
+        ax.set_xlim(
+            df.timestamp.iloc[df.timestamp.size - 1],
+            pd.Timestamp(timezone.now()).tz_convert(timezone.get_current_timezone()),
+        )
+        ax.set_ylim(0, 1)
+        ax.axes.get_yaxis().set_visible(False)
+        return ax
+
+
+worker_healthcheck = WorkerHealthcheck()
 
 
 diagnostic_500.short_description = "Diagnostic server error (500)"
