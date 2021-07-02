@@ -12,7 +12,11 @@ class Completeness extends Component {
                         selected.
                     </p>
                 </div>
-            ) : null;
+            ) : (
+                <div className="alert alert-success">
+                    <p>All items complete! Ready to submit.</p>
+                </div>
+            );
         return display;
     }
 }

@@ -82,7 +82,7 @@ class RoBDomainForm(forms.ModelForm):
 class RoBMetricForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasMetric
-        exclude = ("domain", "sort_order")
+        exclude = ("domain", "hide_description", "sort_order")
 
     def __init__(self, *args, **kwargs):
         domain = kwargs.pop("parent", None)
@@ -110,7 +110,6 @@ class RoBMetricForm(forms.ModelForm):
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("description", 2, ["col-md-8", "col-md-4"])
         helper.add_row("required_animal", 3, "col-md-4")
-        helper.add_row("hide_description", 2, ["col-md-4", "col-md-8"])
         return helper
 
 

@@ -31,7 +31,7 @@ class OverrideObjectsSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                label="Override type"
+                label="Select objects"
                 choices={choices}
                 multiple={true}
                 value={value}
