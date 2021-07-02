@@ -1,6 +1,7 @@
 import json
 from io import BytesIO, StringIO
 
+import matplotlib.pyplot as plt
 import pandas as pd
 from django.utils.text import slugify
 from matplotlib.axes import Axes
@@ -45,7 +46,7 @@ class SvgRenderer(BaseRenderer):
     def render(self, ax: Axes, accepted_media_type=None, renderer_context=None):
         f = StringIO()
         ax.figure.savefig(f, format="svg")
-        ax.figure.clf()
+        plt.close(ax.figure)
         return f.getvalue()
 
 

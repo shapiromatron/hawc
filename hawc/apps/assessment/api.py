@@ -592,7 +592,7 @@ class HealthcheckViewset(viewsets.ViewSet):
 
     @action(detail=False)
     def worker(self, request):
-        healthy = worker_healthcheck.check()
+        healthy = worker_healthcheck.healthy()
         status_code = status.HTTP_200_OK if healthy else status.HTTP_503_SERVICE_UNAVAILABLE
         return Response(dict(healthy=healthy), status=status_code)
 

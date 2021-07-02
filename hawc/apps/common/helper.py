@@ -5,7 +5,7 @@ import re
 import uuid
 from collections import OrderedDict, defaultdict
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import timedelta
 from math import inf
 from typing import Any, Dict, List, Optional, Set
 
@@ -386,13 +386,13 @@ def event_plot(series: pd.Series) -> Axes:
     )
 
     # set x axis
-    now = pd.Timestamp(datetime.utcnow())
     ax.xaxis.set_major_formatter(DateFormatter("%b %d %H:%M"))
-    ax.set_xlim(df.timestamp.iloc[df.timestamp.size - 1], now)
+    buffer = ((series.max() - series.min()) / 30) + timedelta(seconds=1)
+    ax.set_xlim(left=series.min() - buffer, right=pd.Timestamp.utcnow() + buffer)
     ax.set_xlabel("Timestamp (UTC)")
 
     # set y axis
-    ax.set_ylim(0, 2)
+    ax.set_ybound(0, 2)
     ax.axes.get_yaxis().set_visible(False)
 
     plt.tight_layout()
