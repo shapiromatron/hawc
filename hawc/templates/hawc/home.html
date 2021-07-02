@@ -1,5 +1,7 @@
-{% extends "crumbless.html" %}
+{% extends 'base.html' %}
 
-{% block content %}
-{{ page|safe }}
-{% endblock content %}
+{% block content_outer %}
+<div class="col-xl-10 col-lg-12" >
+    {{page|safe}}
+</div>
+{% endblock content_outer %}
