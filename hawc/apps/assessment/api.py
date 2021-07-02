@@ -594,7 +594,13 @@ class HealthcheckViewset(viewsets.ViewSet):
     def worker(self, request):
         healthy = worker_healthcheck.healthy()
         status_code = status.HTTP_200_OK if healthy else status.HTTP_503_SERVICE_UNAVAILABLE
-        return Response(dict(healthy=healthy), status=status_code)
+        return Response(
+            dict(
+                healthy=healthy,
+                chart=request.build_absolute_uri(reverse("assessment:api:healthcheck-worker-plot")),
+            ),
+            status=status_code,
+        )
 
     @action(detail=False, url_path="worker-plot", renderer_classes=[SvgRenderer])
     def worker_plot(self, request):
