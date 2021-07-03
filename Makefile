@@ -63,7 +63,7 @@ lint-py:  ## Check for python formatting issues via black & flake8
 	@black . --check && flake8 .
 
 format-py:  ## Modify python code using black & show flake8 issues
-	@black . && isort -rc -y && flake8 .
+	@black . && isort . && flake8 .
 
 lint-js:  ## Check for javascript formatting issues
 	@npm --prefix ./frontend run lint

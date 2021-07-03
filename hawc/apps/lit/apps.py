@@ -7,8 +7,8 @@ class LitConfig(AppConfig):
     verbose_name = "Literature"
 
     def ready(self):
-        from . import signals  # noqa
         from ...services.nih import pubmed
+        from . import signals  # noqa
 
         if settings.PUBMED_API_KEY:
             pubmed.connect(settings.PUBMED_API_KEY)

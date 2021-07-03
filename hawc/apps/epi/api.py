@@ -318,7 +318,7 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
                     ct["exposure"] = exposure.id
 
         if missing_needed_cts:
-            raise ValidationError(f"At least one central tendency is required")
+            raise ValidationError("At least one central tendency is required")
         elif len(cts) > 0:
             ct_serializer = serializers.CentralTendencySerializer(data=cts, many=True)
             ct_serializer.is_valid(raise_exception=True)
