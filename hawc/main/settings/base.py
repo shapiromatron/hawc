@@ -132,7 +132,7 @@ DATABASES = {
         "CONN_MAX_AGE": 300,
     }
 }
-
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Celery settings
 CELERY_ACCEPT_CONTENT = ("json", "pickle")
@@ -181,7 +181,6 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
-
 
 # Static files
 STATIC_URL = "/static/"
