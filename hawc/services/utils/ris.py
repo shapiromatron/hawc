@@ -3,7 +3,6 @@ import re
 from copy import copy
 from typing import Optional
 
-import xlsxwriter
 from RISparser import readris
 from RISparser.config import TAG_KEY_MAPPING
 
@@ -55,28 +54,6 @@ class RisImporter:
             parser = ReferenceParser(content)
             formatted_content.append(parser.format())
         return formatted_content
-
-    def to_excel(self, fn):
-        header = ReferenceParser.EXTRACTED_FIELDS
-        data_rows = []
-        for ref in self.references:
-            data_rows.append([ref[fld] for fld in header])
-
-        wb = xlsxwriter.Workbook(fn)
-        ws = wb.add_worksheet()
-        bold = wb.add_format({"bold": True})
-
-        for c, txt in enumerate(header):
-            ws.write(0, c, txt, bold)
-
-        for r, row in enumerate(data_rows):
-            for c, txt in enumerate(row):
-                try:
-                    ws.write(r + 1, c, txt)
-                except AttributeError:
-                    ws.write(r + 1, c, txt)
-
-        wb.close()
 
 
 class ReferenceParser:
