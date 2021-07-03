@@ -6,7 +6,7 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - `Git`_
-- `Python`_ == 3.6 (recommended to stay on Python 3.6 for some packages)
+- `Python`_ == 3.9
 - `Node.js`_
 - `Yarn`_
 - `PostgreSQL`_ ≥ 9.6
@@ -68,7 +68,7 @@ Windows requires using anaconda, or miniconda to get requirements.
     :: create a conda environment with our hard to get dependencies
     conda create --name hawc
     conda activate hawc
-    conda install python=3.6 postgresql=9.6
+    conda install python=3.9 postgresql=9.6
     conda install -c conda-forge nodejs
     conda install -c conda-forge yarn
 

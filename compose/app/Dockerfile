@@ -1,4 +1,4 @@
-FROM python:3.6.13
+FROM python:3.9-slim
 
 ENV PYTHONUNBUFFERED 1
 
@@ -18,7 +18,7 @@ COPY ./vendor/phantomjs-2.1.1-linux-x86_64.tar.bz2 /phantomjs.tar.bz2
 COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 
 RUN apt-get update && \
-    apt-get install -y netcat fonts-liberation && \
+    apt-get install -y netcat fonts-liberation bzip2 fontconfig git && \
     rm -rf /var/lib/apt/lists/* && \
     fc-cache -fv && \
     su app -c "fc-cache -fvs" && \
