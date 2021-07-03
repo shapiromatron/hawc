@@ -5,7 +5,6 @@ black==19.10b0
 flake8==3.9.2
 isort==5.9.1
 flake8-isort==4.0.0
-mypy==0.770
 
 # django development
 django-debug-toolbar==3.2.1
@@ -22,11 +21,7 @@ pytest-vcr==1.0.2
 helium==3.0.7
 
 # docs
-watchdog==2.1.3
 Sphinx==4.0.2
-
-# django_extensions.graph_models
-pydot==1.4.2
 
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place
