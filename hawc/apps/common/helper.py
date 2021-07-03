@@ -4,7 +4,6 @@ import logging
 import re
 import uuid
 from collections import OrderedDict, defaultdict
-from dataclasses import dataclass
 from math import inf
 from typing import Any, Dict, List, Optional, Set
 
@@ -16,6 +15,7 @@ from django.db.models import QuerySet
 from django.utils import html
 from django.utils.encoding import force_str
 from docx.document import Document
+from pydantic import BaseModel
 from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
@@ -239,8 +239,7 @@ class SerializerHelper:
         cls.delete_caches(Model, ids)
 
 
-@dataclass(frozen=True)
-class ReportExport:
+class ReportExport(BaseModel):
     """
     Document export.
     """
@@ -249,8 +248,7 @@ class ReportExport:
     filename: str
 
 
-@dataclass(frozen=True)
-class FlatExport:
+class FlatExport(BaseModel):
     """
     Response class of an exporter method.
     """

@@ -18,7 +18,6 @@ celery==4.4.2
   kombu==4.6.8
 
 # utilities
-dataclasses==0.7
 jsonschema==3.2.0
 lxml==4.5.0
 psycopg2-binary==2.8.4
