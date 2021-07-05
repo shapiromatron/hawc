@@ -3,9 +3,9 @@ import React, {PureComponent} from "react";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
 
-import BarChart from "Graphing/BarChart";
-import XAxis from "Graphing/Axes/xAxis";
-import YAxis from "Graphing/Axes/yAxisLabeled";
+import BarChart from "shared/Graphing/BarChart";
+import XAxis from "shared/Graphing/Axes/xAxis";
+import YAxis from "shared/Graphing/Axes/yAxisLabeled";
 import "./TaskChart.css";
 
 import {STATUS} from "mgmt/TaskTable/constants";

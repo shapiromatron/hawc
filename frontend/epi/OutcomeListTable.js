@@ -1,5 +1,5 @@
 import $ from "$";
-import BaseTable from "utils/BaseTable";
+import BaseTable from "shared/utils/BaseTable";
 
 class OutcomeListTable {
     constructor(outcomes) {

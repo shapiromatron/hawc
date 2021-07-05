@@ -51,9 +51,8 @@ module.exports = {
     ],
 
     resolve: {
+        roots: [__dirname],
         alias: {
-            assets: path.join(__dirname, "assets"),
-            admin: path.join(__dirname, "admin"),
             animal: path.join(__dirname, "animal"),
             assessment: path.join(__dirname, "assessment"),
             bmd: path.join(__dirname, "bmd"),
@@ -63,10 +62,9 @@ module.exports = {
             lit: path.join(__dirname, "lit"),
             mgmt: path.join(__dirname, "mgmt"),
             riskofbias: path.join(__dirname, "riskofbias"),
+            shared: path.join(__dirname, "shared"),
             study: path.join(__dirname, "study"),
             summary: path.join(__dirname, "summary"),
-            utils: path.join(__dirname, "utils"),
         },
-        modules: [path.join(__dirname, "assets"), path.join(__dirname, "utils"), "node_modules"],
     },
 };

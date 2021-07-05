@@ -4,7 +4,7 @@ import * as d3 from "d3";
 
 import {filterFunction} from "./filters";
 import h from "shared/utils/helpers";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import D3Visualization from "./D3Visualization";
 

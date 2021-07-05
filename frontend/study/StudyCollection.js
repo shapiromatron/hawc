@@ -1,7 +1,7 @@
 import $ from "$";
 import _ from "lodash";
 
-import BaseTable from "utils/BaseTable";
+import BaseTable from "shared/utils/BaseTable";
 
 import Study from "./Study";
 

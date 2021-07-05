@@ -1,9 +1,8 @@
-import "./utils/startup";
+import "./shared/startup";
 
 import adminStartup from "./admin";
 import animalStartup from "./animal";
 import assessmentStartup from "./assessment";
-import {nestedTagEditorStartup, smartTagsStartup, textCleanupStartup} from "./assets";
 import {bmds2Startup, bmds3Startup} from "./bmd";
 import epiStartup from "./epi";
 import epimetaStartup from "./epimeta";
@@ -12,6 +11,13 @@ import mgmtStartup from "./mgmt";
 import litStartup from "./lit";
 import riskofbiasStartup from "./riskofbias";
 import studyStartup from "./study";
+import {
+    DynamicFormset,
+    HAWCUtils,
+    nestedTagEditorStartup,
+    smartTagsStartup,
+    textCleanupStartup,
+} from "./shared";
 import {
     summaryStartup,
     summaryFormsStartup,
@@ -22,7 +28,6 @@ import {
     summaryTableViewStartup,
     summaryTableEditStartup,
 } from "./summary";
-import utils from "./utils";
 
 window.app = {
     adminStartup,
@@ -48,5 +53,8 @@ window.app = {
     summaryTableEditStartup,
     summaryTextStartup,
     textCleanupStartup,
-    utils,
+    utils: {
+        DynamicFormset,
+        HAWCUtils,
+    },
 };

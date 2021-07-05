@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 
 import h from "shared/utils/helpers";
-import D3Plot from "utils/D3Plot";
+import D3Plot from "shared/utils/D3Plot";
 
 class Barplot extends D3Plot {
     constructor(endpoint, plot_id, options, parent) {
