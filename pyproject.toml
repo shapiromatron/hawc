@@ -1,3 +1,21 @@
+[build-system]
+requires = ["flit_core >=2,<4", "setuptools"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "hawc"
+author = "Andy Shapiro"
+author-email = "shapiromatron@gmail.com"
+home-page = "https://hawcproject.org"
+description-file = "README.rst"
+
+[tool.flit.scripts]
+"man.py" = "hawc:manage"
+
+[tool.flit.sdist]
+include = [".gitcommit", "hawc/", "setup.cfg", "setup.py", "webpack-stats.json"]
+exclude = ["__pycache__/", "DS_Store", "hawc/main/settings/local.py"]
+
 [tool.black]
 line-length = 100
 target-version = ['py36', 'py37', 'py38']

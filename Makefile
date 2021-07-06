@@ -27,7 +27,7 @@ build:  ## build python application
 	rm -rf build/ dist/
 	npm --prefix ./frontend run build
 	manage.py set_git_commit
-	manage.py build_hawc_bundle
+	flit build
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \

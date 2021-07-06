@@ -20,7 +20,7 @@ goto :help
 del /f /q .\build .\dist
 npm --prefix .\frontend run build
 manage.py set_git_commit
-manage.py build_hawc_bundle
+flit build
 goto :eof
 
 :help
