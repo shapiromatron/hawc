@@ -5,6 +5,7 @@ import {observer, inject} from "mobx-react";
 
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
 import SelectInput from "shared/components/SelectInput";
+import Spacer from "shared/components/Spacer";
 import TextInput from "shared/components/TextInput";
 import h from "shared/utils/helpers";
 
@@ -31,7 +32,7 @@ class ScoreInput extends Component {
             <>
                 <SelectInput
                     id={this.scoreId}
-                    label="Score"
+                    label="Judgment"
                     choices={choices}
                     multiple={false}
                     value={value}
@@ -85,10 +86,11 @@ class ScoreForm extends Component {
                 }
             ),
             showOverrideCreate = score.is_default === true,
-            showDelete = score.is_default === false;
+            isOverride = score.is_default === false;
 
         return (
             <div className="score-form container-fluid ">
+                {isOverride ? <Spacer borderStyle="4px dashed #323a45" /> : null}
                 <div className="row">
                     <div className="col-md-3">
                         {editableMetricHasOverrides ? (
@@ -118,7 +120,7 @@ class ScoreForm extends Component {
                             </button>
                         ) : null}
 
-                        {showDelete ? (
+                        {isOverride ? (
                             <button
                                 className="btn btn-danger float-right"
                                 type="button"
@@ -131,12 +133,12 @@ class ScoreForm extends Component {
                             score.is_default ? (
                                 <b title="Unless otherwise specified, all content will use this value">
                                     <i className="fa fa-check-square-o" />
-                                    &nbsp;Default score
+                                    &nbsp;Default judgment
                                 </b>
                             ) : (
                                 <b title="Only selected override content will use this value">
                                     <i className="fa fa-square-o" />
-                                    &nbsp;Override score
+                                    &nbsp;Override judgment
                                 </b>
                             )
                         ) : null}
@@ -180,7 +182,6 @@ class ScoreForm extends Component {
                     </div>
                 </div>
                 {score.is_default ? null : <ScoreOverrideForm score={score} />}
-                <hr />
             </div>
         );
     }

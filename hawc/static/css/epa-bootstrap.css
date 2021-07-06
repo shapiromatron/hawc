@@ -62,3 +62,6 @@ a.btn-warning:visited, a.badge-warning:visited {
 .breadcrumb-item a:visited{
   color: var(--epa-primary);
 }
+.hawc-header .nav-link {
+  padding: 0 0 0 1em;
+}

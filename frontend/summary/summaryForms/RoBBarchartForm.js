@@ -19,7 +19,7 @@ _.extend(RoBBarchartForm, {
     tabs: [
         {name: "overall", label: "General settings"},
         {name: "metrics", label: "Included metrics"},
-        {name: "excluded_scores", label: "Included scores"},
+        {name: "excluded_scores", label: "Included judgments"},
         {name: "legend", label: "Legend settings"},
     ],
     schema: [
@@ -105,7 +105,7 @@ _.extend(RoBBarchartForm, {
         {
             type: RoBScoreExcludeTable,
             prependSpacer: false,
-            label: "Included scores",
+            label: "Included judgments",
             name: "excluded_score_ids",
             colWidths: [10, 30, 30, 30],
             addBlankRowIfNone: false,

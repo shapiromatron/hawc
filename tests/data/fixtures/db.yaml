@@ -3935,7 +3935,7 @@
   pk: 15
   fields:
     domain: 11
-    name: overall
+    name: overall metric 1
     short_name: overall short
     description: <p>overall description</p>
     required_animal: true

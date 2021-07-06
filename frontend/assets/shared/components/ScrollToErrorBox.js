@@ -1,15 +1,12 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import ReactDOM from "react-dom";
 import _ from "lodash";
+
+import h from "shared/utils/helpers";
 
 class ScrollToErrorBox extends Component {
     componentDidUpdate() {
-        // eslint-disable-next-line react/no-find-dom-node
-        let node = ReactDOM.findDOMNode(this);
-        if (node) {
-            node.scrollIntoView(false);
-        }
+        h.maybeScrollIntoView(this);
     }
 
     render() {
