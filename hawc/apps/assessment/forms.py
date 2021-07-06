@@ -1,7 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
 
-from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
@@ -10,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, form_actions_create_or_close
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..myuser.lookups import HAWCUserLookup
 from . import lookups, models
@@ -169,7 +168,7 @@ class SpeciesForm(forms.ModelForm):
             self,
             legend_text="Create new species",
             help_text="""Create a new species. Note that the creation of a new species is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the species is indeed new and not pre-existing.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -193,7 +192,7 @@ class StrainForm(forms.ModelForm):
             self,
             legend_text="Create a new strain",
             help_text="""Create a new strain. Note that the creation of a new strain is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the strain is indeed new and not pre-existing.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -220,7 +219,7 @@ class DoseUnitsForm(forms.ModelForm):
             self,
             legend_text="Create new dose/exposure units",
             help_text="""Create a new set of dose/exposure units (for example μg/g). Note that the creation of new dose/exposure-units are all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the dose-units are indeed new and not pre-existing.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -246,7 +245,7 @@ class DSSToxForm(forms.ModelForm):
             self,
             legend_text="Import new DSSTox substance",
             help_text="""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the <a href="https://comptox.epa.gov/dashboard">Chemistry dashboard</a>.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -274,7 +273,7 @@ class EffectTagForm(forms.ModelForm):
             self,
             legend_text="Create new effect tag",
             help_text="""Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or in vitro endpoints. Please take care not to duplicate existing effect tags.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper

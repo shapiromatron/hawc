@@ -4,12 +4,67 @@
 
 {% block content %}
   {% crispy form %}
+  <div id="detail_display" class="hidden"></div>
+  <div id="detail_library" class="hidden">
+    <div id="detail-0" >
+      <p><i>The judgment field is not shown; only textual descriptions are recorded. If a custom judgment response is required, select "None" and then put the custom value in the description field.</i></p>
+    </div>
+    <div id="detail-1" >
+      <p><b>Available judgments:</b></p>
+      <ul>
+        <li>Definitely low risk of bias (++)</li>
+        <li>Probably low risk of bias (+)</li>
+        <li>Probably high risk of bias (-)</li>
+        <li>Not reported (NR)</li>
+        <li>Definitely high risk of bias (--)</li>
+        <li>Not applicable (N/A)</li>
+      </ul>
+    </div>
+    <div id="detail-2" >
+      <p><b>Available judgments:</b></p>
+      <ul>
+        <li>Good (++)</li>
+        <li>Adequate (+)</li>
+        <li>Deficient (-)</li>
+        <li>Critically deficient (--)</li>
+        <li>Not reported (NR)</li>
+        <li>Not applicable (N/A)</li>
+      </ul>
+    </div>
+    <div id="detail-3" >
+      <p><b>Available judgments:</b></p>
+      <ul>
+        <li>High confidence (++)</li>
+        <li>Medium confidence (+)</li>
+        <li>Low confidence (-)</li>
+        <li>Uninformative (--)</li>
+        <li>Not reported (NR)</li>
+        <li>Not applicable (N/A)</li>
+      </ul>
+    </div>
+    <div id="detail-4" >
+      <p><b>Available judgments:</b></p>
+      <ul>
+        <li>Yes (Y)</li>
+        <li>No (N)</li>
+        <li>Not reported (NR)</li>
+        <li>Not applicable (N/A)</li>
+      </ul>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
 <script type="text/javascript">
 $(document).ready(function() {
+    $('#detail_display').insertAfter($('#div_id_responses')).removeClass('hidden');
     $('.html5text').quillify();
+    // handle selector change
+    window.app.utils.HAWCUtils.onSelectChangeShowDetail(
+      document.getElementById("id_responses"),
+      document.getElementById("detail_display"),
+      document.getElementById("detail_library")
+    );
 });
 </script>
 {% endblock extrajs %}

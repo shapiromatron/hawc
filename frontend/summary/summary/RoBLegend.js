@@ -13,69 +13,67 @@ import {
 } from "riskofbias/constants";
 
 class RoBLegend {
-    constructor(svg, settings, rob_response_values, footnotes, options) {
+    constructor(svg, data, footnotes, options) {
         this.svg = svg;
-        this.settings = settings;
-        this.rob_response_values = rob_response_values;
+        this.settings = data.settings;
+        this.rob_settings = data.rob_settings;
         this.footnotes = footnotes;
         this.options = options;
         this.render();
     }
 
     get_data() {
-        let scores = _.intersectionBy(
-                this.rob_response_values,
-                _.keys(SCORE_TEXT_DESCRIPTION_LEGEND),
-                parseInt
-            ), // only display valid legend scores
-            fields,
-            collapseNR = this.options.collapseNR;
+        const {show_na_legend, show_nr_legend} = this.settings,
+            {collapseNR} = this.options,
+            includedItems = new Set(_.keys(SCORE_TEXT_DESCRIPTION_LEGEND).map(d => parseInt(d)));
 
-        // determine which scores to present in legend
-        if (!this.settings.show_na_legend) {
-            NA_KEYS.forEach(key => {
-                if (scores.includes(key)) {
-                    scores.splice(scores.indexOf(key), 1);
-                }
-            });
+        let response_values = _.chain(this.rob_settings.metrics)
+            .map(d => d.response_values)
+            .flatten()
+            .uniq()
+            .filter(d => includedItems.has(d))
+            .sort()
+            .reverse()
+            .value();
+
+        if (show_na_legend == false) {
+            response_values = _.pull(response_values, ...NA_KEYS);
         }
-        if (!this.settings.show_nr_legend || collapseNR) {
-            NR_KEYS.forEach(key => {
-                if (scores.includes(key)) {
-                    scores.splice(scores.indexOf(key), 1);
-                }
-            });
+
+        if (show_nr_legend == false || collapseNR) {
+            response_values = _.pull(response_values, ...NR_KEYS);
         }
-        fields = _.map(scores, function(v) {
-            let desc = SCORE_TEXT_DESCRIPTION_LEGEND[v];
-            if (collapseNR && COLLAPSED_NR_FIELDS_DESCRIPTION[v]) {
-                desc = COLLAPSED_NR_FIELDS_DESCRIPTION[v];
-            }
+
+        return response_values.map(score => {
             return {
-                value: v,
-                color: SCORE_SHADES[v],
-                text_color: String.contrasting_color(SCORE_SHADES[v]),
-                text: SCORE_TEXT[v],
-                description: desc,
+                value: score,
+                color: SCORE_SHADES[score],
+                text_color: String.contrasting_color(SCORE_SHADES[score]),
+                text: SCORE_TEXT[score],
+                description:
+                    collapseNR && COLLAPSED_NR_FIELDS_DESCRIPTION[score]
+                        ? COLLAPSED_NR_FIELDS_DESCRIPTION[score]
+                        : SCORE_TEXT_DESCRIPTION_LEGEND[score],
             };
         });
-
-        return fields;
     }
 
     render() {
+        const {legend_x, legend_y} = this.settings,
+            {dev} = this.options;
+
         let svg = d3.select(this.svg),
             svgW = parseInt(svg.attr("width"), 10),
             svgH = parseInt(svg.attr("height"), 10),
-            x = this.settings.legend_x,
-            y = this.settings.legend_y,
+            x = legend_x,
+            y = legend_y,
             width = 22,
             half_width = width / 2,
             buff = 5,
             title_offset = 8,
             dim = this.svg.getBBox(),
-            cursor = this.options.dev ? "pointer" : "auto",
-            drag = this.options.dev
+            cursor = dev ? "pointer" : "auto",
+            drag = dev
                 ? HAWCUtils.updateDragLocationTransform((x, y) => {
                       this.settings.legend_x = parseInt(x, 10);
                       this.settings.legend_y = parseInt(y, 10);

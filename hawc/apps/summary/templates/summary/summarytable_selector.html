@@ -5,9 +5,9 @@
 
 {% block content %}
   {% crispy form %}
-  <div id="tableDescriptor" class="row" style="display: none;">
-
-    <div id="table0" class="col-md-8 col-md-offset-2 tableType" style="display: none;">
+  <div id="detail_display" class="row"></div>
+  <div id="detail_library" class="hidden">
+    <div id="detail-0" class="col-md-8 col-md-offset-2 tableType">
       <img
         alt="Image of a generic table"
         class="img-fluid"
@@ -18,8 +18,7 @@
         of rows and columns and general structure you would like to use.
       </p>
     </div>
-
-    <div id="table1" class="col-md-8 col-md-offset-2 tableType" style="display: none;">
+    <div id="detail-1" class="col-md-8 col-md-offset-2 tableType">
       <img
         alt="Image of an evidence profile table"
         class="img-fluid"
@@ -28,23 +27,18 @@
         Evidence Profile Tables are summary tables used to support the evidence integration narrative for a given health effect(s). These tables provide a concise description and documentation of the evidence synthesized for the health effect(s) of interest, the primary judgments drawn regarding the different pieces of evidence and the evidence as a whole, and the rationale for each of these judgments.
       </p>
     </div>
-
   </div>
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      $("#tableDescriptor").insertAfter($('#div_id_table_type')).show();
-
-      $('#id_table_type').on('change', function(e){
-        let showId = '#table' + e.target.value.toString();
-        $('#tableDescriptor').fadeOut({done: function(){
-          $('.tableType').hide();
-          $(showId).show();
-          $('#tableDescriptor').fadeIn();
-        }});
-      }).trigger('change')
+      $("#detail_display").insertAfter($('#div_id_table_type')).show();
+      window.app.utils.HAWCUtils.onSelectChangeShowDetail(
+        document.getElementById("id_table_type"),
+        document.getElementById("detail_display"),
+        document.getElementById("detail_library")
+      );
     });
   </script>
 {% endblock extrajs %}

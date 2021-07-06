@@ -4,8 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
-from ..models import build_default_rob_score
-
 
 class Migration(migrations.Migration):
 
@@ -32,7 +30,7 @@ class Migration(migrations.Migration):
                     (26, "Adequate"),
                     (27, "Good"),
                 ],
-                default=build_default_rob_score,
+                default=999,
             ),
         ),
     ]

@@ -274,6 +274,23 @@ class HAWCUtils {
             Loading, please wait...&nbsp;<span class="fa fa-spin fa-spinner"></span>
         </p>`);
     }
+
+    static onSelectChangeShowDetail(selectEl, insertEl, insertItems) {
+        /*
+        Generic helper function to listen when a user changes the item in a select element, and if
+        an item is changed, then modify some content in a different location. Used for making
+        django templates more interactive.
+        */
+        const $selectEl = $(selectEl),
+            $insertEl = $(insertEl),
+            $insertItems = $(insertItems),
+            handleChange = () => {
+                const selector = `#detail-${$selectEl.val()}`,
+                    clone = $insertItems.find(selector).clone();
+                $insertEl.fadeOut(() => $insertEl.html(clone).fadeIn());
+            };
+        $selectEl.on("change", handleChange).trigger("change");
+    }
 }
 
 export default HAWCUtils;

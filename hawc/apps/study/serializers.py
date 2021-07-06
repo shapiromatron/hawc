@@ -7,7 +7,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import IdLookupMixin
 from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
-from ..riskofbias.serializers import RiskOfBiasSerializer
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer, RiskOfBiasSerializer
 from . import models
 
 
@@ -75,13 +75,9 @@ class VerboseStudySerializer(StudySerializer):
     assessment = AssessmentMiniSerializer(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
+    rob_settings = AssessmentRiskOfBiasSerializer(source="assessment")
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["rob_response_values"] = instance.assessment.rob_settings.get_rob_response_values()
-        return ret
 
     class Meta:
         model = models.Study

@@ -81,6 +81,13 @@ class RiskOfBiasAssessmentViewset(
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
+    @action(detail=True, methods=("get",), url_path="settings")
+    def rob_settings(self, request, pk):
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
+        return Response(ser.data)
+
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
@@ -88,7 +95,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
-    serializer_class = serializers.AssessmentDomainSerializer
+    serializer_class = serializers.NestedDomainSerializer
     lookup_value_regex = re_digits
 
     def get_queryset(self):
@@ -206,7 +213,7 @@ class RiskOfBias(viewsets.ModelViewSet):
 
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricChoiceSerializer
+    serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -216,7 +223,7 @@ class AssessmentMetricViewset(AssessmentViewset):
 
 class AssessmentMetricScoreViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricScoreSerializer
+    serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -229,16 +236,14 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
+    list_actions = ["list", "v2"]
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
-    @action(detail=False)
-    def choices(self, request):
-        assessment_id = self.get_assessment(request)
-        rob_assessment = models.RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
-        return Response(rob_assessment.get_rob_response_values())
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("overridden_objects__content_object")
 
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one

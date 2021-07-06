@@ -1,8 +1,12 @@
 import _ from "lodash";
+import h from "shared/utils/helpers";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
+    hideScore = score => score === 0,
     SCORE_TEXT = {
+        0: "━",
+
         10: "N/A",
         12: "NR",
         14: "--",
@@ -21,8 +25,13 @@ const NA_KEYS = [10, 20],
         35: "-",
         36: "+",
         37: "++",
+
+        40: "Y",
+        41: "N",
     },
     SCORE_SHADES = {
+        0: "#DFDFDF",
+
         10: "#E8E8E8",
         12: "#FFCC00",
         14: "#CC3333",
@@ -41,8 +50,13 @@ const NA_KEYS = [10, 20],
         35: "#FFCC00",
         36: "#6FFF00",
         37: "#00CC00",
+
+        40: "#00CC00",
+        41: "#CC3333",
     },
     SCORE_BAR_WIDTH_PERCENTAGE = {
+        0: 50,
+
         10: 50,
         12: 50,
         14: 25,
@@ -61,8 +75,13 @@ const NA_KEYS = [10, 20],
         35: 50,
         36: 75,
         37: 100,
+
+        40: 100,
+        41: 25,
     },
     SCORE_TEXT_DESCRIPTION = {
+        0: "None",
+
         10: "Not applicable",
         12: "Not reported",
         14: "Definitely high risk of bias",
@@ -81,8 +100,13 @@ const NA_KEYS = [10, 20],
         35: "Low confidence",
         36: "Medium confidence",
         37: "High confidence",
+
+        40: "Yes",
+        41: "No",
     },
     SCORE_TEXT_DESCRIPTION_LEGEND = {
+        0: "None",
+
         10: "Not applicable",
         12: "Not reported",
         14: "Definitely high risk of bias",
@@ -96,6 +120,9 @@ const NA_KEYS = [10, 20],
         25: "Deficient (metric) or Low confidence (overall)",
         26: "Adequate (metric) or Medium confidence (overall)",
         27: "Good (metric) or High confidence (overall)",
+
+        40: "Yes",
+        41: "No",
     },
     FOOTNOTES = {
         MULTIPLE_SCORES: ["✱", "Multiple judgments exist"],
@@ -203,11 +230,24 @@ const NA_KEYS = [10, 20],
         "epi.outcome": "Epidemiological outcomes",
         "epi.exposure": "Epidemiological exposures",
         "epi.result": "Epidemiological results",
+    },
+    fetchRobSettings = function(assessmentId, success, error) {
+        return fetch(`/rob/api/assessment/${assessmentId}/settings/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
+    },
+    fetchRobStudy = function(studyId, success, error) {
+        return fetch(`/study/api/study/${studyId}/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
     };
 
 export {
     NA_KEYS,
     NR_KEYS,
+    hideScore,
     SCORE_TEXT,
     SCORE_SHADES,
     SCORE_TEXT_DESCRIPTION,
@@ -224,4 +264,6 @@ export {
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,
     OVERRIDE_SCORE_LABEL_MAPPING,
+    fetchRobSettings,
+    fetchRobStudy,
 };

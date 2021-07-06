@@ -445,9 +445,8 @@ class RiskOfBiasClient(BaseClient):
                 * "score" (int): numeric score value. Actual legal values for this are dependent on the value
                                  of the HAWC_FLAVOR setting for this instance of HAWC and correspond to readable
                                  values like "Critically deficient" or "++". See also:
-                                    + hawc.apps.riskofbias.models.RiskOfBiasAssessment.get_rob_response_values
-                                    + hawc.apps.riskofbias.models.RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES
-                                    + hawc.apps.riskofbias.models.RiskOfBiasScore.SCORE_SYMBOLS
+                                    hawc.apps.riskofbias.constants.SCORE_CHOICES
+                                    + hawc.apps.riskofbias.constants.SCORE_SYMBOLS
                 * bias_direction (int, optional): bias direction
                 * "overridden_objects" (List[Dict], optional): a list of overrides for this particular score. Optional.
                                                      Each element of this List is a Dict containing the

@@ -2,9 +2,8 @@ import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import h from "shared/utils/helpers";
 import ScoreBar from "./ScoreBar";
-import {OVERRIDE_SCORE_LABEL_MAPPING} from "../../constants";
+import {OVERRIDE_SCORE_LABEL_MAPPING, hideScore} from "../../constants";
 import "./ScoreDisplay.css";
 
 @inject("store")
@@ -20,8 +19,8 @@ class CopyScoresButton extends Component {
                     className="btn btn-outline-dark"
                     type="button"
                     onClick={() => {
-                        store.updateFormState(
-                            editableScores[0].id,
+                        store.updateScoreState(
+                            editableScores[0],
                             "notes",
                             editableScores[0].notes + score.notes
                         );
@@ -47,14 +46,14 @@ class CopyScoresButton extends Component {
                                     className="dropdown-item"
                                     onClick={e => {
                                         e.preventDefault();
-                                        store.updateFormState(
-                                            editableScore.id,
+                                        store.updateScoreState(
+                                            editableScore,
                                             "notes",
                                             editableScore.notes + score.notes
                                         );
                                     }}>
                                     Copy into&nbsp;
-                                    {editableScore.label || `Score #${editableScore.id}`}
+                                    {editableScore.label || `Judgment #${editableScore.id}`}
                                 </button>
                             );
                         })}
@@ -75,7 +74,7 @@ CopyScoresButton.propTypes = {
 class ScoreDisplay extends Component {
     render() {
         let {score, showAuthors, hasOverrides, editableScores} = this.props,
-            showRobScore = !h.hideRobScore(score.metric.domain.assessment.id),
+            showRobScore = !hideScore(score.score),
             showAuthorDisplay = showAuthors && score.is_default,
             labelText = score.label,
             displayClass =
@@ -155,14 +154,8 @@ class ScoreDisplay extends Component {
 
 ScoreDisplay.propTypes = {
     score: PropTypes.shape({
-        author: PropTypes.object.isRequired,
-        metric: PropTypes.shape({
-            domain: PropTypes.shape({
-                assessment: PropTypes.shape({
-                    id: PropTypes.number.isRequired,
-                }),
-            }),
-        }),
+        assessment_id: PropTypes.number.isRequired,
+        author: PropTypes.object,
         is_default: PropTypes.bool.isRequired,
         label: PropTypes.string.isRequired,
         overridden_objects: PropTypes.arrayOf(

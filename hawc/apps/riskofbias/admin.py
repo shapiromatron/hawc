@@ -22,12 +22,14 @@ class RiskOfBiasMetricAdmin(admin.ModelAdmin):
         "id",
         "domain",
         "name",
+        "responses",
         "required_animal",
         "required_epi",
         "required_invitro",
         "created",
     )
     list_filter = (
+        "responses",
         "required_animal",
         "required_epi",
         "required_invitro",
@@ -43,10 +45,8 @@ class RiskOfBiasAssessmentAdmin(admin.ModelAdmin):
         "id",
         "assessment",
         "number_of_reviewers",
-        "default_questions",
-        "responses",
     )
-    list_filter = ("number_of_reviewers", "default_questions", "responses")
+    list_filter = ("number_of_reviewers",)
 
 
 @admin.register(models.RiskOfBias)

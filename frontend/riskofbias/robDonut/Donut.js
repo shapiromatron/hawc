@@ -5,17 +5,17 @@ import * as d3 from "d3";
 import D3Plot from "utils/D3Plot";
 
 import {
-    getMultiScoreDisplaySettings,
     BIAS_DIRECTION_SIMPLE,
     BIAS_DIRECTION_VERBOSE,
-} from "riskofbias/constants";
+    getMultiScoreDisplaySettings,
+} from "../constants";
 
 class Donut extends D3Plot {
-    constructor(study, el) {
-        super();
+    render(store, el) {
+        this.store = store;
         this.plot_div = $(el);
         this.set_defaults();
-        this.data = this.get_dataset_info(study);
+        this.data = this.get_dataset_info();
         if (this.data === null) {
             // stop here if we have no data
             return;
@@ -75,27 +75,23 @@ class Donut extends D3Plot {
         this.viewlock = !this.viewlock;
     }
 
-    get_dataset_info(study) {
-        // exit early if we have no data
-        if (study.final === undefined || study.final.length === 0) {
-            return null;
-        }
-
+    get_dataset_info() {
+        const {store} = this;
         var domain_donut_data = [],
             question_donut_data = [],
-            scores = study.final.scores.filter(
-                score => score.metric.domain.is_overall_confidence === false
+            scores = store.final.scores.filter(
+                score => store.metricDomains[score.metric_id].is_overall_confidence === false
             ),
-            overallScores = study.final.scores.filter(
-                score => score.metric.domain.is_overall_confidence
+            overallScores = store.final.scores.filter(
+                score => store.metricDomains[score.metric_id].is_overall_confidence
             ),
             scoresByDomain = _.chain(scores)
-                .groupBy("metric.domain.id")
+                .groupBy(s => store.metricDomains[s.metric_id].id)
                 .values()
                 .value(),
             getDataForMetric = (numMetrics, scores) => {
                 let data = getMultiScoreDisplaySettings(scores),
-                    defaultScore = scores.filter(score => score.is_default)[0],
+                    defaultScore = scores.find(score => score.is_default) || scores[0],
                     notes = defaultScore.notes;
 
                 if (scores.length > 1) {
@@ -106,28 +102,30 @@ class Donut extends D3Plot {
                 return {
                     weight: 1 / numMetrics,
                     score: defaultScore.score,
-                    score_text: defaultScore.score_text,
+                    score_text: store.settings.score_metadata.symbols[defaultScore.score],
                     direction_simple: BIAS_DIRECTION_SIMPLE[defaultScore.bias_direction],
                     direction_verbose: BIAS_DIRECTION_VERBOSE[defaultScore.bias_direction],
                     score_svg_style: data.svgStyle,
                     score_css_style: data.cssStyle,
-                    score_text_color: defaultScore.score_text_color,
-                    criterion: defaultScore.metric.name,
+                    score_text_color: String.contrasting_color(
+                        store.settings.score_metadata.colors[defaultScore.score]
+                    ),
+                    criterion: store.metrics[defaultScore.metric_id].name,
                     notes,
-                    parent_name: defaultScore.metric.domain.name,
+                    parent_name: store.metricDomains[defaultScore.metric_id].name,
                 };
             };
 
         scoresByDomain.forEach((domainScores, domainIndex) => {
             let firstScore = domainScores[0],
                 scoresByMetric = _.chain(domainScores)
-                    .groupBy("metric.id")
+                    .groupBy("metric_id")
                     .values()
                     .value();
 
             domain_donut_data.push({
                 weight: 1, // equally weighted
-                domain: firstScore.metric.domain.name,
+                domain: store.metricDomains[firstScore.metric_id].name,
                 idxOrder: domainIndex,
                 self: firstScore,
             });
@@ -138,7 +136,7 @@ class Donut extends D3Plot {
         });
 
         return {
-            title: study.data.short_citation,
+            title: store.study.short_citation,
             domain_donut_data,
             question_donut_data,
             overall_question_data:

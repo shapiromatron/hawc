@@ -1,5 +1,6 @@
 from crispy_forms import layout as cfl
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
@@ -10,6 +11,7 @@ from ..common.forms import BaseFormHelper
 from ..myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from ..study.models import Study
 from . import models
+from .actions import RobApproach, clone_approach, load_approach
 
 
 class RobTextForm(forms.ModelForm):
@@ -46,7 +48,6 @@ class RoBDomainForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        self.fields["description"].widget.attrs["rows"] = 3
 
     @property
     def helper(self):
@@ -81,13 +82,14 @@ class RoBDomainForm(forms.ModelForm):
 class RoBMetricForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasMetric
-        exclude = ("domain", "sort_order")
+        exclude = ("domain", "hide_description", "sort_order")
 
     def __init__(self, *args, **kwargs):
         domain = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if domain:
             self.instance.domain = domain
+        self.fields["responses"].label = "Judgment choices"
 
     @property
     def helper(self):
@@ -103,12 +105,11 @@ class RoBMetricForm(forms.ModelForm):
         else:
             inputs["legend_text"] = f"Create new {rob_name} metric"
             inputs["help_text"] = f"Create a new {rob_name} metric."
-
+        self.fields["description"].widget.attrs.update({"class": "html5text"})
         helper = BaseFormHelper(self, **inputs)
         helper.add_row("name", 2, "col-md-6")
-        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
+        helper.add_row("description", 2, ["col-md-8", "col-md-4"])
         helper.add_row("required_animal", 3, "col-md-4")
-        helper.add_row("hide_description", 2, "col-md-6")
         return helper
 
 
@@ -262,32 +263,62 @@ class RoBReviewersForm(forms.ModelForm):
 
 class RiskOfBiasCopyForm(forms.Form):
     assessment = forms.ModelChoiceField(
-        label="Existing assessment", queryset=Assessment.objects.all(), empty_label=None
+        label="Select an assessment", queryset=Assessment.objects.all(), empty_label=None
     )
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("assessment", None)
+        self.user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
-            user, exclusion_id=self.assessment.id
+            self.user, exclusion_id=self.assessment.id
         )
 
     @property
     def helper(self):
         rob_name = self.assessment.get_rob_name_display().lower()
-        inputs = {
-            "legend_text": f"Copy {rob_name} approach from existing assessments",  # noqa
-            "help_text": f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
-            "cancel_url": reverse("riskofbias:arob_detail", args=[self.assessment.id]),
-        }
-        helper = BaseFormHelper(self, **inputs)
-        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
+        helper = BaseFormHelper(
+            self,
+            legend_text=f"Copy {rob_name} approach from another assessment",  # noqa
+            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
+            cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
+            submit_text="Copy from assessment",
+        )
+        helper.layout.insert(3, cfl.Div(css_id="approach"))
+        helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
         return helper
 
-    def copy_riskofbias(self):
-        models.RiskOfBias.copy_riskofbias(self.assessment, self.cleaned_data["assessment"])
+    def evaluate(self):
+        clone_approach(self.assessment, self.cleaned_data["assessment"], self.user.id)
+
+
+class RiskOfBiasLoadApproachForm(forms.Form):
+    rob_type = forms.TypedChoiceField(
+        label="Select an approach", choices=RobApproach.choices, coerce=int,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        if settings.HAWC_FLAVOR == "EPA":
+            self.fields["rob_type"].initial = RobApproach.EPA_IRIS
+
+    @property
+    def helper(self):
+        rob_name = self.assessment.get_rob_name_display().lower()
+        return BaseFormHelper(
+            self,
+            legend_text=f"Load a predefined {rob_name} approach",
+            help_text=f"Select a standardized and predefined approach to use in this assessment.",
+            cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
+            submit_text="Load approach",
+        )
+
+    def evaluate(self):
+        rob_type = RobApproach(self.cleaned_data["rob_type"])
+        load_approach(self.assessment.id, rob_type, self.user.id)
 
 
 RoBFormSet = modelformset_factory(

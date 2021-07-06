@@ -27,11 +27,16 @@ from ..study.models import Study
 from . import forms, models
 
 
-def get_breadcrumb_rob_setting(assessment) -> Breadcrumb:
-    return Breadcrumb(
-        name=f"{assessment.get_rob_name_display()} requirements",
-        url=reverse("riskofbias:arob_detail", args=(assessment.id,)),
-    )
+def get_breadcrumb_rob_setting(assessment, update: bool = False) -> Breadcrumb:
+    if update:
+        return Breadcrumb(
+            name=f"Update", url=reverse("riskofbias:arob_update", args=(assessment.id,)),
+        )
+    else:
+        return Breadcrumb(
+            name=f"{assessment.get_rob_name_display()} requirements",
+            url=reverse("riskofbias:arob_detail", args=(assessment.id,)),
+        )
 
 
 def get_breadcrumb_rob_reviews(assessment) -> Breadcrumb:
@@ -47,12 +52,16 @@ class ARoBDetail(BaseList):
     model = models.RiskOfBiasDomain
     template_name = "riskofbias/arob_detail.html"
 
-    def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment).prefetch_related("metrics")
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        context["config"] = {
+            "assessment_id": self.assessment.id,
+            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+            "is_editing": False,
+            "csrf": get_token(self.request),
+        }
         return context
 
 
@@ -71,17 +80,17 @@ class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Update"))
-        context["config"] = json.dumps(
-            {
-                "assessment_id": self.assessment.id,
-                "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-                "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
-                "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
-                "csrf": get_token(self.request),
-            }
-        )
+        context["config"] = {
+            "assessment_id": self.assessment.id,
+            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+            "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
+            "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
+            "is_editing": True,
+            "csrf": get_token(self.request),
+        }
         return context
 
 
@@ -123,7 +132,11 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
             self.request.user, self.assessment
         )
         context["breadcrumbs"].extend(
-            [get_breadcrumb_rob_setting(self.assessment), Breadcrumb(name="Copy")]
+            [
+                get_breadcrumb_rob_setting(self.assessment),
+                get_breadcrumb_rob_setting(self.assessment, update=True),
+                Breadcrumb(name="Copy"),
+            ]
         )
         return context
 
@@ -134,11 +147,21 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        form.copy_riskofbias()
+        form.evaluate()
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("riskofbias:arob_detail", kwargs={"pk": self.assessment.pk})
+        return reverse("riskofbias:arob_update", args=(self.assessment.id,))
+
+
+class ARoBLoadApproach(ARoBCopy):
+    template_name = "riskofbias/arob_load_approach.html"
+    form_class = forms.RiskOfBiasLoadApproachForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][-1].name = "Load approach"
+        return context
 
 
 class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):

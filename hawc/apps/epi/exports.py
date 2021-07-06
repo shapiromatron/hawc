@@ -1,5 +1,5 @@
 from ..common.helper import FlatFileExporter
-from ..riskofbias.models import RiskOfBias
+from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
 from . import models
 
@@ -45,9 +45,9 @@ class OutcomeDataPivot(FlatFileExporter):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
-            study_ids = set(self.queryset.values_list("study_population__study_id", flat=True))
-            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id, study_ids, "epi",
+            outcome_ids = set(self.queryset.values_list("id", flat=True))
+            self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
+                self.queryset.first().assessment_id, outcome_ids, "epi",
             )
 
         headers = [
@@ -156,11 +156,10 @@ class OutcomeDataPivot(FlatFileExporter):
                 ser["age_of_measurement"],
                 self.get_flattened_tags(ser, "effects"),
             ]
-            study_id = ser["study_population"]["study"]["id"]
-            study_robs = [
-                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
+            outcome_robs = [
+                self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()
             ]
-            row.extend(study_robs)
+            row.extend(outcome_robs)
 
             for res in ser["results"]:
                 row_copy = list(row)

@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import MetricHeader from "../../components/MetricDescription";
 import MetricScores from "./MetricScores";
 import "./MetricDisplay.css";
 
@@ -19,10 +20,7 @@ class MetricDisplay extends Component {
 
         return (
             <div className="metric-display">
-                <h4>{scores[0].metric.name}</h4>
-                {scores[0].metric.hide_description ? null : (
-                    <div dangerouslySetInnerHTML={{__html: scores[0].metric.description}} />
-                )}
+                <MetricHeader metric={scores[0].metric} />
                 <MetricScores
                     scores={scores}
                     showAuthors={showAuthors}
@@ -38,11 +36,6 @@ MetricDisplay.propTypes = {
         key: PropTypes.string.isRequired,
         values: PropTypes.arrayOf(
             PropTypes.shape({
-                metric: PropTypes.shape({
-                    description: PropTypes.string.isRequired,
-                    name: PropTypes.string.isRequired,
-                    hide_description: PropTypes.bool.isRequired,
-                }).isRequired,
                 notes: PropTypes.string.isRequired,
                 score_description: PropTypes.string.isRequired,
                 score_symbol: PropTypes.string.isRequired,

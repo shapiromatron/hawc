@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
-import _ from "lodash";
 
+import Spacer from "shared/components/Spacer";
 import Metric from "./Metric";
 
 @inject("store")
@@ -10,20 +10,17 @@ import Metric from "./Metric";
 class Domain extends Component {
     render() {
         const {store, domainId} = this.props,
-            scores = store.getScoresForDomain(domainId),
-            metricIds = _.chain(scores)
-                .map(score => score.metric.id)
-                .uniq()
-                .value(),
-            name = scores[0].metric.domain.name;
+            metricIds = store.getMetricIds(domainId),
+            name = store.domains[domainId].name;
 
         return (
-            <div>
+            <>
                 <h3>{name}</h3>
                 {metricIds.map(metricId => {
                     return <Metric key={metricId} metricId={metricId} />;
                 })}
-            </div>
+                <Spacer />
+            </>
         );
     }
 }

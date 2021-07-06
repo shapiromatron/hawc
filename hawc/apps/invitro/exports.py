@@ -3,7 +3,7 @@ from copy import copy
 from django.apps import apps
 
 from ..common.helper import FlatFileExporter
-from ..riskofbias.models import RiskOfBias
+from ..materialized.models import FinalRiskOfBiasScore
 
 
 def getDose(ser, tag):
@@ -28,7 +28,7 @@ class DataPivotEndpoint(FlatFileExporter):
             self.rob_headers, self.rob_data = {}, {}
         else:
             study_ids = set(self.queryset.values_list("experiment__study_id", flat=True))
-            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
+            self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
                 self.queryset.first().assessment_id, study_ids, "invitro",
             )
 
@@ -207,7 +207,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
             self.rob_headers, self.rob_data = {}, {}
         else:
             study_ids = set(self.queryset.values_list("experiment__study_id", flat=True))
-            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
+            self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
                 self.queryset.first().assessment_id, study_ids, "invitro",
             )
 

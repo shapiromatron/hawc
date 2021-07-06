@@ -29,16 +29,16 @@ def cleanup(driver, root_url):
     h.wait_until(h.Text("Select the metric to edit").exists)
     assert len(h.find_all(h.S(".checkbox-score-display-row"))) == 0
     h.click("Load responses")
-    h.wait_until(h.Text("Responses which meet your filtered criteria above:").exists)
+    h.wait_until(h.Text("met your criteria:").exists)
     assert len(h.find_all(h.S(".checkbox-score-display-row"))) == 1
     h.click(h.S("@checkbox-score-select", below="Foo et al."))
-    h.select(h.ComboBox(below="Score"), "Not reported")
-    h.click(h.S('form.bulkEditForm button[type="submit"]'))
+    h.select(h.ComboBox(below="Judgment"), "Not reported")
+    h.click(h.S('.bulkEditForm button[type="button"].btn-primary'))
     h.wait_until(lambda: len(h.find_all(h.S(".bulkEditForm"))) == 0)
     assert "Not reported" in driver.find_elements_by_css_selector(".score-bar i")[0].text
     h.click(h.S("@checkbox-score-select", below="Foo et al."))
-    h.select(h.ComboBox(below="Score"), "Probably low risk of bias")
-    h.click(h.S('form.bulkEditForm button[type="submit"]'))
+    h.select(h.ComboBox(below="Judgment"), "Probably low risk of bias")
+    h.click(h.S('.bulkEditForm button[type="button"].btn-primary'))
     h.wait_until(lambda: len(h.find_all(h.S(".bulkEditForm"))) == 0)
     assert (
         "Probably low risk of bias" in driver.find_elements_by_css_selector(".score-bar i")[0].text

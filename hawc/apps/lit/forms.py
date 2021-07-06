@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, addPopupLink, build_form_actions
+from ..common.forms import BaseFormHelper, addPopupLink
 from ..common.helper import read_excel
 from . import constants, models
 
@@ -322,9 +322,8 @@ class SearchSelectorForm(forms.Form):
         this assessment. You will be taken to a new view to create a new
         search, but the form will be pre-populated using values from the
         selected search or import.""",
-            form_actions=build_form_actions(
-                reverse("lit:overview", args=(self.assessment.id,)), "Copy selected as new"
-            ),
+            cancel_url=reverse("lit:overview", args=(self.assessment.id,)),
+            submit_text="Copy selected as new",
         )
 
 

@@ -5,6 +5,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common.helper import SerializerHelper
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import models
 
 
@@ -59,6 +60,9 @@ class VisualSerializer(CollectionVisualSerializer):
         if instance.id != instance.FAKE_INITIAL_ID:
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
+
+        if instance.visual_type in [instance.ROB_HEATMAP, instance.ROB_BARCHART]:
+            ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()

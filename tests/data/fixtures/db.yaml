@@ -3699,6 +3699,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: true
+    responses: 1
     sort_order: 1
     created: 2020-02-27 19:31:21.953998+00:00
     last_updated: 2020-02-27 19:31:21.954027+00:00
@@ -3714,6 +3715,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-02-27 20:04:35.816069+00:00
     last_updated: 2020-02-27 20:04:35.816096+00:00
@@ -3731,6 +3733,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3752,6 +3755,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3769,6 +3773,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 3
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3785,6 +3790,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.537996+00:00
     last_updated: 2020-04-10 17:45:43.537996+00:00
@@ -3800,6 +3806,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
@@ -3818,6 +3825,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
@@ -3834,6 +3842,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.116719+00:00
     last_updated: 2020-04-10 17:45:44.116719+00:00
@@ -3850,6 +3859,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
@@ -3866,6 +3876,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
@@ -3881,6 +3892,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.732154+00:00
     last_updated: 2020-04-10 17:45:44.732154+00:00
@@ -3899,6 +3911,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.981198+00:00
     last_updated: 2020-04-10 17:45:44.981198+00:00
@@ -3914,6 +3927,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-05-08 17:06:18.057471+00:00
     last_updated: 2020-05-08 17:06:18.057493+00:00
@@ -3921,7 +3935,7 @@
   pk: 15
   fields:
     domain: 11
-    name: overall
+    name: overall metric 1
     short_name: overall short
     description: <p>overall description</p>
     required_animal: true
@@ -3929,6 +3943,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-05-08 17:06:55.509303+00:00
     last_updated: 2020-05-08 17:06:55.509353+00:00
@@ -4172,16 +4187,12 @@
     assessment: 1
     number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 3
   fields:
     assessment: 2
     number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 4
   fields:
@@ -4191,8 +4202,6 @@
       risk of bias metrics can be entered for a metric of bias for each study. Risk
       of Bias metrics are organized by domain. The following questions are required
       for evaluation for this assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: epi.criteria
   pk: 1
   fields:

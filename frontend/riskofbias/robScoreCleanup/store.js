@@ -2,38 +2,28 @@ import _ from "lodash";
 import {autorun, observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
-import {SCORE_TEXT_DESCRIPTION} from "../constants";
+import {fetchRobSettings, SCORE_TEXT_DESCRIPTION} from "../constants";
 
 class RobCleanupStore {
+    constructor(config) {
+        this.config = config;
+    }
+
     // content
-    @observable config = null;
     @observable error = null;
-    @observable metricOptions = null;
-    @observable scoreOptions = null;
-    @observable studyTypeOptions = null;
+    @observable isFetchingStudyScores = false;
+    @observable metrics = observable.array();
     @observable selectedMetric = null;
     @observable selectedScores = observable.array();
-    @observable selectedStudyTypes = observable.array();
-    @observable studyScores = observable.array();
     @observable selectedStudyScores = observable.set();
+    @observable selectedStudyTypes = observable.array();
+    @observable settings = null;
+    @observable studyScores = observable.array();
     @observable studyScoresFetchTime = null;
-    @observable isFetchingStudyScores = false;
+    @observable studyTypeOptions = null;
     @observable visibleScoreHash = "";
 
-    @computed get isLoading() {
-        return (
-            this.metricOptions === null ||
-            this.scoreOptions === null ||
-            this.studyTypeOptions === null
-        );
-    }
-
-    // actions: config
-    @action.bound setConfig(elementId) {
-        this.config = JSON.parse(document.getElementById(elementId).textContent);
-    }
-
-    // actions: errors
+    // errors
     @action.bound resetError() {
         this.error = null;
     }
@@ -41,56 +31,10 @@ class RobCleanupStore {
         this.error = msg;
     }
 
-    // actions: metrics
-    @action.bound fetchMetricOptions() {
-        const {host, metrics, assessment_id} = this.config,
-            url = h.getUrlWithAssessment(h.getListUrl(host, metrics.url), assessment_id);
-
-        this.resetError();
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
-                this.metricOptions = json;
-                this.selectedMetric = json[0].id;
-            })
-            .catch(error => {
-                this.setError(error);
-            });
-    }
-    @action.bound changeSelectedMetric(value) {
-        this.selectedMetric = value;
-    }
-
-    // actions: scores
-    @action.bound fetchScoreOptions() {
-        const {host, scores, assessment_id} = this.config,
-            url = h.getUrlWithAssessment(h.getListUrl(host, scores.url), assessment_id),
-            formatScoreOptions = function(choices) {
-                return choices.map(choice => {
-                    return {id: choice, value: SCORE_TEXT_DESCRIPTION[choice]};
-                });
-            };
-
-        this.resetError();
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => formatScoreOptions(json))
-            .then(json => {
-                this.scoreOptions = json;
-            })
-            .catch(error => {
-                this.error = this.setError(error);
-            });
-    }
-    @action.bound changeSelectedScores(values) {
-        this.selectedScores = values;
-    }
-
-    // actions: study types
-    @action.bound fetchStudyTypeOptions() {
+    // studyType
+    @action.bound fetchStudyTypes() {
         const {host, studyTypes, assessment_id} = this.config,
             url = h.getUrlWithAssessment(h.getListUrl(host, studyTypes.url), assessment_id);
-
         this.resetError();
         fetch(url, h.fetchGet)
             .then(response => response.json())
@@ -103,6 +47,60 @@ class RobCleanupStore {
     }
     @action.bound changeSelectedStudyType(studyTypes) {
         this.selectedStudyTypes = studyTypes;
+    }
+    @computed get hasStudyTypes() {
+        return this.studyTypeOptions !== null;
+    }
+    @computed get studyTypeChoices() {
+        return this.studyTypeOptions.map(d => {
+            return {id: d, label: h.caseToWords(d)};
+        });
+    }
+    @computed get isLoading() {
+        return !(this.hasMetrics && this.hasStudyTypes);
+    }
+
+    // metrics
+    @action.bound fetchRobSettings() {
+        const {assessment_id} = this.config;
+        this.resetError();
+        fetchRobSettings(
+            assessment_id,
+            json => {
+                this.settings = json;
+                this.metrics = json.metrics;
+                this.changeSelectedMetric(json.metrics[0].id);
+            },
+            error => {
+                this.setError(error);
+            }
+        );
+    }
+    @action.bound changeSelectedMetric(value) {
+        this.selectedMetric = value;
+        this.selectedScores = [];
+    }
+    @computed get hasMetrics() {
+        return this.selectedMetric !== null;
+    }
+    @computed get metricChoices() {
+        return this.metrics.map(d => {
+            return {id: d.id, label: d.name};
+        });
+    }
+    @computed get defaultResponse() {
+        return _.first(this.metrics, d => d.id === this.selectedMetric).default_response;
+    }
+
+    // filter scores
+    @computed get scoreOptions() {
+        const metric = _.find(this.metrics, d => d.id == this.selectedMetric);
+        return metric.response_values.map(d => {
+            return {id: d, label: SCORE_TEXT_DESCRIPTION[d]};
+        });
+    }
+    @action.bound changeSelectedScores(values) {
+        this.selectedScores = values;
     }
 
     // actions: study score responses
@@ -211,8 +209,8 @@ class RobCleanupStore {
     }
 }
 
-const createStore = function() {
-    const store = new RobCleanupStore();
+const createStore = function(config) {
+    const store = new RobCleanupStore(config);
 
     autorun(() => {
         // whenever visible scores change, reset selected items
@@ -223,7 +221,6 @@ const createStore = function() {
         }
     });
 
-    // singleton pattern
     return store;
 };
 

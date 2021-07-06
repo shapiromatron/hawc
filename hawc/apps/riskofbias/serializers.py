@@ -1,56 +1,92 @@
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
-from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
 from ..study.models import Study
-from . import models
-
-
-class AssessmentMetricChoiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RiskOfBiasMetric
-        fields = ("id", "name", "description")
-
-
-class AssessmentMetricSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RiskOfBiasMetric
-        fields = "__all__"
-
-
-class AssessmentDomainSerializer(serializers.ModelSerializer):
-    metrics = AssessmentMetricSerializer(many=True)
-
-    class Meta:
-        model = models.RiskOfBiasDomain
-        fields = "__all__"
-
-
-class RiskOfBiasDomainSerializer(serializers.ModelSerializer):
-    assessment = AssessmentMiniSerializer(read_only=True)
-
-    class Meta:
-        model = models.RiskOfBiasDomain
-        fields = "__all__"
+from . import constants, models
 
 
 class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
-    domain = RiskOfBiasDomainSerializer(read_only=True)
-
     class Meta:
         model = models.RiskOfBiasMetric
         fields = "__all__"
+
+
+class NestedDomainSerializer(serializers.ModelSerializer):
+    metrics = RiskOfBiasMetricSerializer(many=True)
+
+    class Meta:
+        model = models.RiskOfBiasDomain
+        fields = "__all__"
+
+
+class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasDomain
+        fields = ("id", "name", "description", "is_overall_confidence")
+
+
+class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
+    response_values = serializers.ListField(source="get_response_values")
+    default_response = serializers.IntegerField(source="get_default_response")
+
+    class Meta:
+        model = models.RiskOfBiasMetric
+        fields = (
+            "id",
+            "name",
+            "description",
+            "domain_id",
+            "responses",
+            "response_values",
+            "default_response",
+            "short_name",
+            "use_short_name",
+        )
+
+
+class RiskOfBiasAssessmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasAssessment
+        fields = "__all__"
+
+
+class AssessmentRiskOfBiasSerializer(serializers.Serializer):
+    assessment_id = serializers.IntegerField(source="id")
+    domains = SimpleRiskOfBiasDomainSerializer(source="rob_domains", many=True)
+    metrics = serializers.SerializerMethodField("get_metrics")
+    rob_settings = RiskOfBiasAssessmentSerializer()
+    score_metadata = serializers.SerializerMethodField("get_score_metadata")
+
+    def get_metrics(self, instance):
+        metrics = models.RiskOfBiasMetric.objects.filter(domain__assessment=instance)
+        serializer = SimpleRiskOfBiasMetricSerializer(metrics, many=True)
+        return serializer.data
+
+    def get_score_metadata(self, instance):
+        return {
+            "choices": constants.SCORE_CHOICES_MAP,
+            "symbols": constants.SCORE_SYMBOLS,
+            "colors": constants.SCORE_SHADES,
+            "bias_direction": {k: v for k, v in constants.BiasDirections.choices},
+        }
 
 
 class RiskOfBiasScoreOverrideObjectSerializer(serializers.ModelSerializer):
     object_url = serializers.URLField(source="get_object_url", read_only=True)
     object_name = serializers.CharField(source="get_object_name", read_only=True)
     content_type_name = serializers.CharField(source="get_content_type_name")
+
+    def to_representation(self, instance):
+        # prefetching the underlying content_object can lead to content_type and object_id
+        # to be removed if the content_object has been deleted. In this case we refresh from db.
+        if not hasattr(instance, "content_type"):
+            instance.refresh_from_db()
+        return super().to_representation(instance)
 
     class Meta:
         model = models.RiskOfBiasScoreOverrideObject
@@ -67,9 +103,9 @@ class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
         )
 
 
-class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
-    metric = RiskOfBiasMetricSerializer(read_only=True)
+class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
     overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
+    score_description = serializers.CharField(source="get_score_display", read_only=True)
 
     class Meta:
         model = models.RiskOfBiasScore
@@ -80,19 +116,18 @@ class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
             "label",
             "bias_direction",
             "notes",
-            "metric",
+            "metric_id",
             "overridden_objects",
             "riskofbias_id",
+            "score_description",
+            "score_symbol",
+            "score_shade",
         )
 
 
-class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
+class StudyScoreSerializer(RiskOfBiasScoreSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["score_description"] = instance.get_score_display()
-        ret["score_symbol"] = instance.score_symbol
-        ret["score_shade"] = instance.score_shade
-        ret["bias_direction_description"] = instance.get_bias_direction_display()
         ret["url_edit"] = instance.riskofbias.get_edit_url()
         ret["study_name"] = instance.riskofbias.study.short_citation
         ret["study_id"] = instance.riskofbias.study.id
@@ -106,25 +141,14 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
         fields = ("id", "riskofbias", "metric")
 
     def create(self, validated_data):
-        override = models.RiskOfBiasScore.objects.create(
-            riskofbias=validated_data["riskofbias"],
-            metric=validated_data["metric"],
-            is_default=False,
-            label="",
-        )
-        return override
+        score = validated_data["metric"].build_score(validated_data["riskofbias"], is_default=False)
+        score.save()
+        return score
 
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):
     scores = RiskOfBiasScoreSerializer(many=True)
     author = HAWCUserSerializer(read_only=True)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret[
-            "rob_response_values"
-        ] = instance.study.assessment.rob_settings.get_rob_response_values()
-        return ret
 
     class Meta:
         model = models.RiskOfBias
@@ -241,16 +265,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
             override_options = self.instance.get_override_options()
 
-        # check to make sure submitted score values are valid
-        rob_assessment = models.RiskOfBiasAssessment()
-        valid_score_values = rob_assessment.get_rob_response_values()
-
-        scores = self.initial_data["scores"]
-        for score in scores:
-            score_value = score["score"]
-            if score_value not in valid_score_values:
-                raise serializers.ValidationError(f"score {score_value} is not valid")
-
         # check overrides
         for key, values in override_options.items():
             override_options[key] = set(el[0] for el in values)
@@ -304,14 +318,17 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
         scores_to_create = validated_data["scores"]
         for score_to_create in scores_to_create:
-            score = models.RiskOfBiasScore.objects.create(
-                riskofbias=rob,
-                metric=score_to_create["metric"],
-                is_default=score_to_create["is_default"],
-                label=score_to_create["label"],
-                score=score_to_create["score"],
-                notes=score_to_create["notes"],
-            )
+            try:
+                score = models.RiskOfBiasScore.objects.create(
+                    riskofbias=rob,
+                    metric=score_to_create["metric"],
+                    is_default=score_to_create["is_default"],
+                    label=score_to_create["label"],
+                    score=score_to_create["score"],
+                    notes=score_to_create["notes"],
+                )
+            except ValidationError as err:
+                raise serializers.ValidationError(err.message)
 
             overridden_objects = score_to_create["overridden_objects"]
             for overridden_object in overridden_objects:
@@ -340,7 +357,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             score = scores[update_score["id"]]
             for key in ["score", "label", "bias_direction", "notes"]:
                 setattr(score, key, update_score[key])
-            score.save()
+            try:
+                score.save()
+            except ValidationError as err:
+                raise serializers.ValidationError(err.message)
 
         # update overrides
         new_overrides = []
@@ -354,7 +374,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
+class MetricFinalScoresSerializer(serializers.ModelSerializer):
     scores = serializers.SerializerMethodField("get_final_score")
 
     class Meta:
@@ -363,7 +383,7 @@ class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
 
     def get_final_score(self, instance):
         scores = instance.scores.filter(riskofbias__final=True, riskofbias__active=True)
-        serializer = RiskOfBiasScoreSerializer(scores, many=True)
+        serializer = StudyScoreSerializer(scores, many=True)
         return serializer.data
 
 

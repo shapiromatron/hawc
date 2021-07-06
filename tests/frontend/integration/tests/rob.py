@@ -9,8 +9,9 @@ def rob(driver, root_url):
 
     # /rob/assessment/:id/
     h.go_to(root_url + "/rob/assessment/1/")
-    assert h.Text("example domain Domain").exists() is True
-    assert h.Text("final domain Domain").exists() is True
+    h.wait_until(h.S("#robMain table").exists)
+    assert h.Text("example domain").exists() is True
+    assert h.Text("final domain").exists() is True
     assert h.Text("example metric").exists() is True
 
     # /rob/assessment/:id/study-assignments/
