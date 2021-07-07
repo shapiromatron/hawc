@@ -1,8 +1,8 @@
 from pathlib import Path
 
 import pytest
-from django.core.cache import cache
 from django.conf import settings
+from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.test import APIClient
 
