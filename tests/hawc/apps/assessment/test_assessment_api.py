@@ -1,11 +1,16 @@
 from pathlib import Path
 
 import pytest
+from django.core.cache import cache
 from django.conf import settings
 from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.common.diagnostics import worker_healthcheck
+
+
+def has_redis():
+    return "RedisCache" in settings.CACHES["default"]["BACKEND"]
 
 
 @pytest.fixture(scope="module")
@@ -103,6 +108,7 @@ class TestDatasetViewset:
 @pytest.mark.django_db
 class TestJobViewset:
     def test_permissions(self, db_keys):
+        cache.clear()
         client = APIClient()
 
         # only admin can view list of global jobs
@@ -305,11 +311,8 @@ class TestHealthcheckViewset:
         assert resp.status_code == 200
         assert resp.json() == {"healthy": True}
 
-    def test_worker(self, monkeypatch, mock_redis):
-
-        _conn = mock_redis()
-        monkeypatch.setattr("hawc.apps.common.diagnostics.get_redis_connection", lambda: _conn)
-
+    @pytest.mark.skipif(not has_redis(), reason="skip; redis cache required")
+    def test_worker(self):
         client = APIClient()
         url = reverse("assessment:api:healthcheck-worker")
         plot_url = reverse("assessment:api:healthcheck-worker-plot")

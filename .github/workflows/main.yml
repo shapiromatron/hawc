@@ -9,15 +9,19 @@ jobs:
 
     services:
       postgres:
-        image: postgres:9.6
+        image: postgres:9.6.16-alpine
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
           POSTGRES_DB: hawc-test
-        ports:
-        # will assign a random free host port
-        - 5432/tcp
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 5432/tcp  # assign a random free host port
+      redis:
+        image: redis:6-alpine
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v1
@@ -48,6 +52,7 @@ jobs:
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
+        DJANGO_CACHE_LOCATION: "redis://localhost:6379/0"
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
