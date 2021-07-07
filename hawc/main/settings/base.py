@@ -12,7 +12,7 @@ from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
-BUILT_DATA_ROOT = Path(os.environ.get("BUILT_DATA_ROOT", PROJECT_PATH / "built"))
+BUILT_DATA_ROOT = str(PROJECT_PATH / "built")
 PUBLIC_DATA_ROOT = Path(os.environ.get("PUBLIC_DATA_ROOT", PROJECT_ROOT / "public"))
 PRIVATE_DATA_ROOT = Path(os.environ.get("PRIVATE_DATA_ROOT", PROJECT_ROOT / "private"))
 LOGS_ROOT = Path(os.environ.get("LOGS_PATH", PROJECT_ROOT))
