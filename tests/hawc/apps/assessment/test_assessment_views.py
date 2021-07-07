@@ -1,12 +1,17 @@
 from urllib.parse import urlparse
 
 import pytest
+from django.conf import settings
 from django.core.cache import cache
 from django.test.client import Client
 from django.urls import reverse
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.myuser.models import HAWCUser
+
+
+def has_redis():
+    return "RedisCache" in settings.CACHES["default"]["BACKEND"]
 
 
 class TestAssessmentClearCache:
@@ -43,7 +48,11 @@ class TestAssessmentClearCache:
         response = c.get(url)
         assert response.status_code == 302
         assert cache.get(key1) is None
-        assert cache.get(key2) == "exists"
+        # special case; if using a redis cache we can keep other assessments
+        if has_redis():
+            assert cache.get(key2) == "exists"
+        else:
+            assert cache.get(key2) is None
 
 
 @pytest.mark.django_db
