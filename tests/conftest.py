@@ -13,6 +13,8 @@ from django.db import connections
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+from mocks.redis import RedisMock
+
 CI = os.environ.get("CI") == "true"
 SHOW_BROWSER = bool(os.environ.get("SHOW_BROWSER", None))
 
@@ -212,3 +214,8 @@ def set_chrome_driver(request, chrome_driver):
 @pytest.fixture
 def set_firefox_driver(request, firefox_driver):
     request.cls.driver = firefox_driver
+
+
+@pytest.fixture
+def mock_redis():
+    return RedisMock

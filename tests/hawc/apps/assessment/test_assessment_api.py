@@ -5,6 +5,8 @@ from django.conf import settings
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from hawc.apps.common.diagnostics import worker_healthcheck
+
 
 @pytest.fixture(scope="module")
 def media_file():
@@ -296,12 +298,36 @@ class TestDssToxViewset:
 
 @pytest.mark.django_db
 class TestHealthcheckViewset:
-    def test_healthcheck(self):
+    def test_web(self):
         client = APIClient()
-        url = reverse("assessment:api:healthcheck-list")
+        url = reverse("assessment:api:healthcheck-web")
         resp = client.get(url)
         assert resp.status_code == 200
-        assert resp.json() == {"status": "ok"}
+        assert resp.json() == {"healthy": True}
+
+    def test_worker(self, monkeypatch, mock_redis):
+
+        _conn = mock_redis()
+        monkeypatch.setattr("hawc.apps.common.diagnostics.get_redis_connection", lambda: _conn)
+
+        client = APIClient()
+        url = reverse("assessment:api:healthcheck-worker")
+        plot_url = reverse("assessment:api:healthcheck-worker-plot")
+
+        # no data; should be an error
+        resp = client.get(url)
+        assert resp.status_code == 503
+        assert resp.json()["healthy"] is False
+        assert worker_healthcheck.series().empty is True
+        assert client.get(plot_url).status_code == 200
+
+        # has recent data; should be healthy
+        worker_healthcheck.push()
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert resp.json()["healthy"] is True
+        assert worker_healthcheck.series().size == 1
+        assert client.get(plot_url).status_code == 200
 
 
 @pytest.mark.django_db
