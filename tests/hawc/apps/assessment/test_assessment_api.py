@@ -315,22 +315,17 @@ class TestHealthcheckViewset:
     def test_worker(self):
         client = APIClient()
         url = reverse("assessment:api:healthcheck-worker")
-        plot_url = reverse("assessment:api:healthcheck-worker-plot")
 
         # no data; should be an error
         resp = client.get(url)
         assert resp.status_code == 503
         assert resp.json()["healthy"] is False
-        assert worker_healthcheck.series().empty is True
-        assert client.get(plot_url).status_code == 200
 
         # has recent data; should be healthy
         worker_healthcheck.push()
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["healthy"] is True
-        assert worker_healthcheck.series().size == 1
-        assert client.get(plot_url).status_code == 200
 
 
 @pytest.mark.django_db
