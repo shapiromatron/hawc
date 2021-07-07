@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Dict
 
 import pandas as pd
 from django.conf import settings
@@ -7,6 +8,7 @@ from django.core.mail import send_mail
 from django_redis import get_redis_connection
 from matplotlib.axes import Axes
 
+from ...main.celery import app
 from . import helper, tasks
 
 
@@ -95,6 +97,13 @@ class WorkerHealthcheck:
         """Plot the current array of available timestamps"""
         series = self.series()
         return helper.event_plot(series)
+
+    def stats(self) -> Dict:
+        inspect = app.control.inspect()
+        stats = dict(ping=inspect.ping())
+        if stats["ping"]:
+            stats.update(active=inspect.active(), stats=inspect.stats())
+        return stats
 
 
 worker_healthcheck = WorkerHealthcheck()
