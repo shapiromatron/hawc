@@ -43,3 +43,6 @@ hawc/static/bundles/
 
 compose/app/fonts/*
 !compose/app/fonts/.gitkeep
+
+hawc/built/
+!hawc/built/.gitkeep
