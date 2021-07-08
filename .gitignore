@@ -11,13 +11,11 @@
 .coverage
 .env
 .eslintcache
-.gitcommit
 .pytest_cache
 bin/dev.local.sh
 celerybeat*
 hawc/main/settings/local.py
 package-lock.json
-webpack-stats.json
 
 # folders
 *.egg-info/
@@ -38,11 +36,15 @@ private/
 venv/
 
 # keep folders; not contents
-hawc/static/bundles/
+hawc/static/bundles/*
 !hawc/static/bundles/.gitkeep
 
 compose/app/fonts/*
 !compose/app/fonts/.gitkeep
 
-hawc/built/
+hawc/built/*
 !hawc/built/.gitkeep
+
+# TODO delete these, they are now in hawc built folder
+webpack-stats.json
+.gitcommit
