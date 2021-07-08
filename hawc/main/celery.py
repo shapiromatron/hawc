@@ -21,6 +21,10 @@ def debug_task(self):
 
 
 app.conf.beat_schedule = {
+    "worker-healthcheck": {
+        "task": "hawc.apps.common.tasks.worker_healthcheck",
+        "schedule": timedelta(minutes=5),
+    },
     "lit-schedule_topic_model_reruns-10-min": {
         "task": "hawc.apps.lit.tasks.schedule_topic_model_reruns",
         "schedule": timedelta(minutes=10),
