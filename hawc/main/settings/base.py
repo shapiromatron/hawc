@@ -12,7 +12,6 @@ from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
-BUILT_DATA_ROOT = str(PROJECT_PATH / "built")
 PUBLIC_DATA_ROOT = Path(os.environ.get("PUBLIC_DATA_ROOT", PROJECT_ROOT / "public"))
 PRIVATE_DATA_ROOT = Path(os.environ.get("PRIVATE_DATA_ROOT", PROJECT_ROOT / "private"))
 LOGS_ROOT = Path(os.environ.get("LOGS_PATH", PROJECT_ROOT))
@@ -264,7 +263,7 @@ def get_git_commit() -> Commit:
         return Commit(sha="<undefined>", dt=datetime.now())
 
 
-GIT_COMMIT_FILE = BUILT_DATA_ROOT / ".gitcommit"
+GIT_COMMIT_FILE = PROJECT_PATH / ".gitcommit"
 COMMIT = get_git_commit()
 
 
@@ -305,7 +304,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 WEBPACK_LOADER = {
     "DEFAULT": {
         "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": str(BUILT_DATA_ROOT / "webpack-stats.json"),
+        "STATS_FILE": str(PROJECT_PATH / "webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "IGNORE": [".+/.map"],
     }

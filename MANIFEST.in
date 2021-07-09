@@ -1,5 +1,3 @@
 include LICENSE
 include README.rst
-recursive-include hawc *.json *.html *css *.js
-recursive-include hawc/refml/nltk_data *
-recursive-include hawc/built *
+graft hawc

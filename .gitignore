@@ -4,6 +4,7 @@
 *.pid
 *.py[cod]
 *~
+*.pex
 
 # files
 .Rhistory
@@ -16,6 +17,8 @@ bin/dev.local.sh
 celerybeat*
 hawc/main/settings/local.py
 package-lock.json
+hawc/webpack-stats.json
+hawc/.gitcommit
 
 # folders
 *.egg-info/
@@ -41,9 +44,6 @@ hawc/static/bundles/*
 
 compose/app/fonts/*
 !compose/app/fonts/.gitkeep
-
-hawc/built/*
-!hawc/built/.gitkeep
 
 # TODO delete these, they are now in hawc built folder
 webpack-stats.json

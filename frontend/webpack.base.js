@@ -46,7 +46,7 @@ module.exports = {
 
     plugins: [
         new BundleTracker({
-            filename: "../hawc/built/webpack-stats.json",
+            filename: "../hawc/webpack-stats.json",
         }),
     ],
 
