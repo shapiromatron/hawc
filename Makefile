@@ -35,7 +35,7 @@ build-wheel: build-dependencies ## build wheel
 	python setup.py bdist_wheel
 
 build-pex: build-wheel ## build pex
-	cd requirements; pex ../dist/hawc-0.1-py3-none-any.whl -c manage.py -r dev.txt -o ../hawc.pex --ignore-errors
+	cd requirements; pex ../dist/hawc-0.1-py3-none-any.whl -c manage.py -r production.txt -o ../hawc.pex --ignore-errors
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \

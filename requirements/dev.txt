@@ -28,6 +28,9 @@ Sphinx==2.4.4
 # django_extensions.graph_models
 pydot==1.4.1
 
+# distribution tools
+pex==2.1.42; platform_system != "Windows"
+
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place
 -e .
