@@ -1,4 +1,4 @@
-.PHONY: build dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
+.PHONY: build-sdist build-wheel build-pex dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -23,11 +23,19 @@ endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
-build:  ## build python application
+build-dependencies:  ## build webpack and .gitcommit
 	rm -rf build/ dist/
 	npm --prefix ./frontend run build
 	manage.py set_git_commit
-	manage.py build_hawc_bundle
+
+build-sdist: build-dependencies ## build sdist
+	python setup.py sdist
+
+build-wheel: build-dependencies ## build wheel
+	python setup.py bdist_wheel
+
+build-pex: build-wheel ## build pex
+	cd requirements; pex ../dist/hawc-0.1-py3-none-any.whl -c manage.py -r dev.txt -o ../hawc.pex --ignore-errors
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \
