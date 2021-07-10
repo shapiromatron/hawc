@@ -4,7 +4,6 @@
 *.pid
 *.py[cod]
 *~
-*.pex
 
 # files
 .Rhistory
@@ -15,10 +14,10 @@
 .pytest_cache
 bin/dev.local.sh
 celerybeat*
-hawc/main/settings/local.py
-package-lock.json
-hawc/webpack-stats.json
 hawc/.gitcommit
+hawc/main/settings/local.py
+hawc/webpack-stats.json
+package-lock.json
 
 # folders
 *.egg-info/
@@ -26,16 +25,16 @@ hawc/.gitcommit
 .ipynb_checkpoints/
 .mypy_cache/
 .vscode/
-coverage_html/
 /data/
 __pycache__/
 _build/
 build/
+coverage_html/
 dist/
 node_modules/
+private/
 public/
 scripts/private
-private/
 venv/
 
 # keep folders; not contents
@@ -44,7 +43,3 @@ hawc/static/bundles/*
 
 compose/app/fonts/*
 !compose/app/fonts/.gitkeep
-
-# TODO delete these, they are now in hawc built folder
-webpack-stats.json
-.gitcommit

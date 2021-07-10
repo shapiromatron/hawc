@@ -2,8 +2,8 @@
 
 if "%~1" == "" goto :help
 if /I %1 == help goto :help
-if /I %1 == build-sdist goto :build-sdist
-if /I %1 == build-wheel goto :build-wheel
+if /I %1 == build goto :build
+if /I %1 == build-pex goto :build-pex
 if /I %1 == lint goto :lint
 if /I %1 == format goto :format
 if /I %1 == lint-py goto :lint-py
@@ -17,24 +17,21 @@ if /I %1 == coverage goto :coverage
 if /I %1 == loc goto :loc
 goto :help
 
-:build-sdist
-del /f /q .\build .\dist
-call npm --prefix .\frontend run build
-manage.py set_git_commit
-python setup.py sdist
-goto :eof
-
-:build-wheel
+:build
 del /f /q .\build .\dist
 call npm --prefix .\frontend run build
 manage.py set_git_commit
 python setup.py bdist_wheel
 goto :eof
 
+:build-pex
+echo.Pex is not compatibile with windows; linux or mac is required.
+goto :eof
+
 :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
-echo.  build-sdist       build python sdist
-echo.  build-wheel       build python wheel
+echo.  build             build python wheel
+echo.  build-pex         build pex bundle (mac/linux only)
 echo.  test              run python tests
 echo.  test-integration  run integration tests (requires npm run start)
 echo.  test-refresh      removes mock requests and runs python tests
