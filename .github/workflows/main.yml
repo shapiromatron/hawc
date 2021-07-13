@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     services:
       postgres:
@@ -60,7 +60,7 @@ jobs:
 
   frontend:
     name: frontend
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
@@ -87,7 +87,7 @@ jobs:
 
   integration:
     name: integration
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     container:
       image: nikolaik/python-nodejs:python3.9-nodejs16-slim
@@ -95,7 +95,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:9.6
+        image: postgres:12-alpine
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
