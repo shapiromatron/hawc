@@ -136,6 +136,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
+        apt-get update
+        apt-get install -y --no-install-recommends git
         pip install -r requirements/dev.txt
     - name: setup web server
       run: |
