@@ -28,8 +28,7 @@ RUN apt-get update && \
     rm -rf /phantomjs* && \
     \
     mkdir -p /app/logs && \
-    mkdir -p /app/public/media && \
-    mkdir -p /app/public/media/bmds_plot
+    mkdir -p /app/public/media
 
 COPY ./requirements /requirements
 RUN pip install -U pip && \
@@ -38,10 +37,9 @@ RUN pip install -U pip && \
 
 WORKDIR /app
 
-COPY ./dist/hawc.tar.gz /app/hawc.tar.gz
-RUN tar -xf /app/hawc.tar.gz -C /app && \
-    rm /app/hawc.tar.gz && \
-    pip install -e . && \
+COPY ./dist/hawc-0.1-py3-none-any.whl /app/hawc-0.1-py3-none-any.whl
+RUN pip install /app/hawc-0.1-py3-none-any.whl && \
+    rm /app/hawc-0.1-py3-none-any.whl && \
     chown -R app:app /app
 
 USER app
