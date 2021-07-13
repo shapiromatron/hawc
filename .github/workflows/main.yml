@@ -97,7 +97,7 @@ jobs:
 
   integration:
     name: integration
-    needs: frontend
+    needs: [backend, frontend]
     runs-on: ubuntu-20.04
 
     container:
@@ -145,15 +145,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: install hawc
-      run: |
-        apt-get update
-        apt-get install -y --no-install-recommends git
-        pip install -r requirements/dev.txt
+    - name: try to restore pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Download webpack build
       uses: actions/download-artifact@v2
       with:
         name: webpack-build
+    - name: install hawc
+      run: |
+        pip install -U pip
+        pip install -r requirements/dev.txt
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run selenium tests
       id: test
