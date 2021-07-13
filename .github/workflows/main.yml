@@ -86,7 +86,7 @@ jobs:
         make lint-js
     - name: build for integration tests
       run: |
-        npm run build
+        npm --prefix ./frontend run build
     - name: Upload webpack build
       uses: actions/upload-artifact@v2
       with:
