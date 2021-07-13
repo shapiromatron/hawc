@@ -84,13 +84,24 @@ jobs:
     - name: lint
       run: |
         make lint-js
+    - name: build for integration tests
+      run: |
+        npm run build
+    - name: Upload webpack build
+        uses: actions/upload-artifact@v2
+        with:
+          name: webpack-build
+          path: |
+            webpack-stats.json
+            hawc/static/bundles/
 
   integration:
     name: integration
+    needs: frontend
     runs-on: ubuntu-20.04
 
     container:
-      image: nikolaik/python-nodejs:python3.6-nodejs16
+      image: python:3.9-slim
       options: --network-alias container
 
     services:
@@ -139,11 +150,10 @@ jobs:
         apt-get update
         apt-get install -y --no-install-recommends git
         pip install -r requirements/dev.txt
-    - name: setup web server
-      run: |
-        mv ci-webpack-stats.json webpack-stats.json
-        yarn --cwd ./frontend install
-        npm run --prefix ./frontend start  &
+    - name: Download webpack build
+      uses: actions/download-artifact@v2
+      with:
+        name: webpack-build
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run selenium tests
       id: test
