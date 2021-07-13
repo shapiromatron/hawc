@@ -32,6 +32,7 @@ omit = [
 [tool.isort]
 atomic = true
 include_trailing_comma = true
+known_first_party = ["hawc", "hawc_client"]
 known_third_party = ["bmds"]
 line_length = 100
 multi_line_output = 3
