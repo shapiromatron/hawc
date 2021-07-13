@@ -39,7 +39,7 @@ jobs:
     - name: install
       run: |
         mv ci-webpack-stats.json webpack-stats.json
-        pip install -U pip wheel
+        pip install -U pip
         pip install -r requirements/dev.txt
     - name: lint
       run: |
@@ -89,10 +89,6 @@ jobs:
     name: integration
     runs-on: ubuntu-20.04
 
-    container:
-      image: nikolaik/python-nodejs:python3.9-nodejs16-slim
-      options: --network-alias container
-
     services:
       postgres:
         image: postgres:12-alpine
@@ -134,13 +130,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: install hawc
-      run: |
-        pip install -r requirements/dev.txt
-    - name: setup web server
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.9'
+        architecture: 'x64'
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: install python + node
       run: |
         mv ci-webpack-stats.json webpack-stats.json
+        pip install -U pip
+        pip install -r requirements/dev.txt
         yarn --cwd ./frontend install
+    - name: setup web server
+      run: |
         npm run --prefix ./frontend start  &
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run selenium tests
