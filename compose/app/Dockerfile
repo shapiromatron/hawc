@@ -17,8 +17,12 @@ COPY ./vendor/phantomjs-2.1.1-linux-x86_64.tar.bz2 /phantomjs.tar.bz2
 # used in some dev/staging environments
 COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 
+# security updates
+# https://pythonspeed.com/articles/system-packages-docker/
 RUN apt-get update && \
-    apt-get install -y netcat fonts-liberation && \
+    apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends netcat fonts-liberation && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     fc-cache -fv && \
     su app -c "fc-cache -fvs" && \
