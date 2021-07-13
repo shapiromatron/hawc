@@ -41,5 +41,5 @@ RISparser==0.4.3
 python-docx==0.8.11
 python-pptx==0.6.19
 
-# bmds
-git+https://github.com/shapiromatron/bmds.git@36c102cfc0340ad98efcb57686dfcd72a8a02895#egg=bmds
+# bmds; https://github.com/shapiromatron/bmds/commit/36c102cfc0340ad98efcb57686dfcd72a8a02895
+vendor/bmds-0.11.0.tar.gz

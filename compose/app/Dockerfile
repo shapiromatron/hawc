@@ -21,7 +21,7 @@ COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 # https://pythonspeed.com/articles/system-packages-docker/
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y netcat fonts-liberation bzip2 fontconfig git && \
+    apt-get install -y netcat fonts-liberation bzip2 fontconfig && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     fc-cache -fv && \
