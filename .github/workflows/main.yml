@@ -88,12 +88,12 @@ jobs:
       run: |
         npm run build
     - name: Upload webpack build
-        uses: actions/upload-artifact@v2
-        with:
-          name: webpack-build
-          path: |
-            webpack-stats.json
-            hawc/static/bundles/
+      uses: actions/upload-artifact@v2
+      with:
+        name: webpack-build
+        path: |
+          webpack-stats.json
+          hawc/static/bundles/
 
   integration:
     name: integration
