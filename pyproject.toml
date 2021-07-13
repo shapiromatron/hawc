@@ -14,6 +14,7 @@ exclude = '''
   | public
   | requirements
   | venv
+  | venv2
 )/
 '''
 
@@ -34,4 +35,4 @@ include_trailing_comma = true
 known_third_party = ["bmds"]
 line_length = 100
 multi_line_output = 3
-skip = ["frontend/", "venv/"]
+skip = ["frontend/", "venv/", "venv2/"]

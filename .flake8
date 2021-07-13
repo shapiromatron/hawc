@@ -15,4 +15,5 @@ exclude =
     frontend,
     public,
     requirements,
-    venv
+    venv,
+    venv2
