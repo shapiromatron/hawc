@@ -1,8 +1,8 @@
 import sys
 
 from django.core.management.base import BaseCommand
-from django.core.wsgi import get_wsgi_application
-from gunicorn.app.base import BaseApplication
+
+from .....main.wsgi import application
 
 
 class DjangoApplication(BaseApplication):
@@ -18,7 +18,7 @@ class DjangoApplication(BaseApplication):
             self.cfg.settings[key].add_option(parser)
 
     def load(self):
-        return get_wsgi_application()
+        return application
 
     def load_config_from_args(self, args):
         for key, value in args.items():
