@@ -2,6 +2,7 @@
 
 set -xe
 
-exec /usr/local/bin/celery worker \
+exec /usr/local/bin/celery \
     --app=hawc.main.celery \
+    worker \
     --loglevel=INFO

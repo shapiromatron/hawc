@@ -263,7 +263,7 @@ def get_git_commit() -> Commit:
         return Commit(sha="<undefined>", dt=datetime.now())
 
 
-GIT_COMMIT_FILE = PROJECT_PATH / ".gitcommit"
+GIT_COMMIT_FILE = PROJECT_PATH / "gitcommit.json"
 COMMIT = get_git_commit()
 
 

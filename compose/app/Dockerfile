@@ -34,16 +34,14 @@ RUN apt-get update && \
     mkdir -p /app/logs && \
     mkdir -p /app/public/media
 
-COPY ./requirements /requirements
+COPY ./requirements /app/build/requirements
+COPY ./dist /app/build/dist
+
+WORKDIR /app/build
 RUN pip install -U pip && \
-    pip install -r /requirements/production.txt --no-cache-dir && \
-    rm -rf /requirements
-
-WORKDIR /app
-
-COPY ./dist/hawc-0.1-py3-none-any.whl /app/hawc-0.1-py3-none-any.whl
-RUN pip install /app/hawc-0.1-py3-none-any.whl && \
-    rm /app/hawc-0.1-py3-none-any.whl && \
+    pip install -r /app/build/requirements/production.txt --no-cache-dir && \
+    rm -rf /app/build && \
     chown -R app:app /app
 
+WORKDIR /app
 USER app

@@ -27,7 +27,6 @@ build:  ## build hawc package
 	npm --prefix ./frontend run build
 	manage.py set_git_commit
 	rm -rf build/ dist/
-	python setup.py clean
 	python setup.py bdist_wheel
 
 build-pex: build ## build pex

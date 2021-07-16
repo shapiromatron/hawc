@@ -1,6 +1,5 @@
-include hawc/.gitcommit
 recursive-include hawc/ *css *.js *.json *.html *.py
 recursive-include hawc/refml/nltk_data/ *
 recursive-include hawc/static *
 recursive-include hawc/templates *
-global-exclude .DS_Store .gitkeep __pycache__ settings/local.py
+global-exclude .DS_Store .gitkeep __pycache__

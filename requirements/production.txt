@@ -2,3 +2,5 @@
 
 django-anymail==7.2
 gunicorn==20.0.4
+
+./dist/hawc-0.1-py3-none-any.whl

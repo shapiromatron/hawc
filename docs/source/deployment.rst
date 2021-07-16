@@ -91,8 +91,8 @@ The following commands are used to generate and run the pex artifact:
     ./dist/hawc.pex run_gunicorn --bind 0.0.0.0:5000
 
     # commands to run workers and beat for scheduled tasks
-    ./dist/hawc.pex run_celery beat --app=hawc.main.celery --loglevel=INFO
-    ./dist/hawc.pex run_celery worker --app=hawc.main.celery --loglevel=INFO
+    ./dist/hawc.pex run_celery --app=hawc.main.celery beat --loglevel=INFO
+    ./dist/hawc.pex run_celery --app=hawc.main.celery worker --loglevel=INFO
 
 Configuration
 -------------

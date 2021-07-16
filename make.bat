@@ -17,17 +17,6 @@ if /I %1 == coverage goto :coverage
 if /I %1 == loc goto :loc
 goto :help
 
-:build
-del /f /q .\build .\dist
-call npm --prefix .\frontend run build
-manage.py set_git_commit
-python setup.py bdist_wheel
-goto :eof
-
-:build-pex
-echo.Pex is not compatibile with windows; linux or mac is required.
-goto :eof
-
 :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  build             build python wheel
@@ -43,6 +32,17 @@ echo.  format-py         modify python code using black and show flake8 issues
 echo.  lint-js           check for javascript formatting issues
 echo.  format-js         modify javascript code if possible using linters and formatters
 echo.  loc               generate lines of code report
+goto :eof
+
+:build
+del /f /q .\build .\dist
+call npm --prefix .\frontend run build
+manage.py set_git_commit
+python setup.py bdist_wheel
+goto :eof
+
+:build-pex
+echo.Pex is not compatibile with windows; linux or mac is required.
 goto :eof
 
 :lint
