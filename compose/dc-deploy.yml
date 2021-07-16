@@ -71,6 +71,11 @@ services:
         volumes:
             - ./data/private:/app/private
             - ./data/public:/app/public
+        healthcheck:
+            test: celery --app=hawc.main.celery inspect ping -d celery@$$HOSTNAME --json
+            interval: 120s
+            timeout: 30s
+            retries: 3
 
     cron:
         restart: always

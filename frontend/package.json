@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "description": "HAWC frontend code",
     "scripts": {
-        "clean": "rimraf ../hawc/static/bundles/* && rimraf ../webpack-stats.json",
+        "clean": "rimraf ../hawc/static/bundles/* && rimraf ../hawc/webpack-stats.json",
         "build": "npm run clean && webpack --config webpack.config.prod.js",
         "start": "node devServer.js",
         "lint": "eslint --cache .",

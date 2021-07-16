@@ -11,6 +11,7 @@ django-webpack-loader==0.7.0
 djangorestframework==3.12.4
   uritemplate==3.0.1  # schema dependencies
   pyyaml==5.4.1       # schema dependencies
+gunicorn==20.0.4
 
 # tasks
 celery==4.4.2

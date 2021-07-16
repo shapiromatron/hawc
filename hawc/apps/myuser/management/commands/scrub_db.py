@@ -6,11 +6,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
 
-HELP_TEXT = """Anonymize user information."""
-
 
 class Command(BaseCommand):
-    help = HELP_TEXT
+    help = """Anonymize user information."""
 
     def add_arguments(self, parser):
         parser.add_argument(

@@ -5,11 +5,9 @@ from django.core.management.base import BaseCommand, CommandError
 
 from hawc.apps.common.signals import ignore_signals
 
-HELP_TEXT = """Load the test database from a fixture."""
-
 
 class Command(BaseCommand):
-    help = HELP_TEXT
+    help = """Load the test database from a fixture."""
 
     def add_arguments(self, parser) -> None:
         parser.add_argument(

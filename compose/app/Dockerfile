@@ -17,8 +17,12 @@ COPY ./vendor/phantomjs-2.1.1-linux-x86_64.tar.bz2 /phantomjs.tar.bz2
 # used in some dev/staging environments
 COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 
+# security updates
+# https://pythonspeed.com/articles/system-packages-docker/
 RUN apt-get update && \
-    apt-get install -y netcat fonts-liberation && \
+    apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends netcat fonts-liberation && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     fc-cache -fv && \
     su app -c "fc-cache -fvs" && \
@@ -28,20 +32,16 @@ RUN apt-get update && \
     rm -rf /phantomjs* && \
     \
     mkdir -p /app/logs && \
-    mkdir -p /app/public/media && \
-    mkdir -p /app/public/media/bmds_plot
+    mkdir -p /app/public/media
 
-COPY ./requirements /requirements
+COPY ./requirements /app/build/requirements
+COPY ./dist /app/build/dist
+
+WORKDIR /app/build
 RUN pip install -U pip && \
-    pip install -r /requirements/production.txt --no-cache-dir && \
-    rm -rf /requirements
-
-WORKDIR /app
-
-COPY ./dist/hawc.tar.gz /app/hawc.tar.gz
-RUN tar -xf /app/hawc.tar.gz -C /app && \
-    rm /app/hawc.tar.gz && \
-    pip install -e . && \
+    pip install -r /app/build/requirements/production.txt --no-cache-dir && \
+    rm -rf /app/build && \
     chown -R app:app /app
 
+WORKDIR /app
 USER app

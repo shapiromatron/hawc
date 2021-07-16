@@ -7,8 +7,10 @@ exclude = '''
     \.git
   | \.mypy_cache
   | bin
+  | build
   | compose
   | data
+  | dist
   | docs
   | frontend
   | public
