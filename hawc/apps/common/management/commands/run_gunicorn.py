@@ -1,6 +1,7 @@
 import sys
 
 from django.core.management.base import BaseCommand
+from gunicorn.app.base import BaseApplication
 
 from .....main.wsgi import application
 
