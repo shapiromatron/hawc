@@ -165,6 +165,8 @@ jobs:
       id: test
       continue-on-error: true
       run: |
+        ls hawc ls -laht
+        ls hawc/static/bundles
         py.test -sv tests/frontend/integration/
     - name: run selenium tests (retry)
       if: steps.test.outcome=='failure'
