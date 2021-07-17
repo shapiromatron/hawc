@@ -1,4 +1,5 @@
 -r base.txt
 
-django-anymail==8.4
-gunicorn==20.1.0
+django-anymail==7.2
+
+./dist/hawc-0.1-py3-none-any.whl

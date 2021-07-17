@@ -38,8 +38,8 @@ jobs:
           ${{ runner.os }}-pip-
     - name: install
       run: |
-        mv ci-webpack-stats.json webpack-stats.json
-        pip install -U pip
+        mv ci-webpack-stats.json hawc/webpack-stats.json
+        pip install -U pip wheel
         pip install -r requirements/dev.txt
     - name: lint
       run: |

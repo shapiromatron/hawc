@@ -23,6 +23,10 @@ helium==3.0.7
 # docs
 Sphinx==4.0.2
 
+# distribution tools
+wheel==0.36.2
+pex==2.1.42; platform_system != "Windows"
+
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place
 -e .

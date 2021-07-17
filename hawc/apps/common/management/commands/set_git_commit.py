@@ -3,11 +3,9 @@ from django.core.management.base import BaseCommand
 
 from hawc.services.utils.git import Commit
 
-HELP_TEXT = """Set the .gitcommit file used for versioning"""
-
 
 class Command(BaseCommand):
-    help = HELP_TEXT
+    help = """Set the gitcommit.json file used for versioning"""
 
     def handle(self, *args, **options):
         current = Commit.current(settings.PROJECT_ROOT)

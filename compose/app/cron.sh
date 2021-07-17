@@ -2,6 +2,7 @@
 
 set -xe
 
-exec /usr/local/bin/celery beat \
+exec /usr/local/bin/celery \
     --app=hawc.main.celery \
+    beat \
     --loglevel=INFO
