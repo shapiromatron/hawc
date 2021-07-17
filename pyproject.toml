@@ -16,7 +16,6 @@ exclude = '''
   | public
   | requirements
   | venv
-  | venv2
 )/
 '''
 
@@ -38,4 +37,4 @@ known_first_party = ["hawc", "hawc_client"]
 known_third_party = ["bmds"]
 line_length = 100
 multi_line_output = 3
-skip = ["frontend/", "venv/", "venv2/"]
+skip = ["build/", "frontend/", "venv/"]

@@ -38,7 +38,7 @@ jobs:
           ${{ runner.os }}-pip-
     - name: install
       run: |
-        mv ci-webpack-stats.json hawc/webpack-stats.json
+        mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         pip install -U pip wheel
         pip install -r requirements/dev.txt
     - name: lint
@@ -158,6 +158,8 @@ jobs:
         name: webpack-build
     - name: install hawc
       run: |
+        ls hawc -laht
+        ls hawc/static/bundles -laht
         pip install -U pip
         pip install -r requirements/dev.txt
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
@@ -165,8 +167,6 @@ jobs:
       id: test
       continue-on-error: true
       run: |
-        ls hawc ls -laht
-        ls hawc/static/bundles
         py.test -sv tests/frontend/integration/
     - name: run selenium tests (retry)
       if: steps.test.outcome=='failure'
