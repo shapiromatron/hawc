@@ -1,9 +1,10 @@
 import $ from "$";
 import BaseTable from "utils/BaseTable";
+import Outcome from "./Outcome";
 
 class OutcomeListTable {
-    constructor(outcomes) {
-        this.outcomes = outcomes;
+    constructor(data) {
+        this.outcomes = data.map(d => new Outcome(d));
         this.table = new BaseTable();
     }
 

@@ -56,7 +56,7 @@
   </script>
   <script type="text/javascript">
     window.app.summaryFormsStartup(function(summaryForms){
-      const config = JSON.parse(document.getElementById("config").textContent),
+      const config = window.app.getConfig(),
         djangoForm = $('#data form').get(0),
         mainElement = $("#main");
 

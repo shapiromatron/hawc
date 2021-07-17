@@ -17,8 +17,7 @@
 <script type="text/javascript">
     window.app.heatmapTemplateStartup(function (app) {
         var root = document.getElementById('main'),
-            config = JSON.parse(document.getElementById('config').textContent);
-
+            config = window.app.getConfig();
         app.func(root, config);
     });
 </script>

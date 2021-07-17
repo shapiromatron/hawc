@@ -34,7 +34,7 @@
       var dose_types = {{dose_types|safe}},
           dose_values = {{dose_groups_json|safe}};
 
-      window.app.animalStartup(function(animal){
+      window.app.startup("animalStartup", function(animal){
           new animal.DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
       })
   </script>

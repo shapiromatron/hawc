@@ -36,7 +36,8 @@
 
 {% block extrajs %}
 
-  <script type="text/javascript">
+{{ config|json_script:"config" }}
+<script type="text/javascript">
 
   function sortByOrganAsc(a, b) { return a.data.organ.localeCompare(b.data.organ); }
   function sortByOrganDesc(a, b) { return -1 * sortByOrganAsc(a, b); }
@@ -45,8 +46,10 @@
   function sortByObsTimeAsc(a, b) { return a.data.observation_time_text.localeCompare(b.data.observation_time_text); }
   function sortByObsTimeDesc(a, b) { return -1 * sortByObsTimeAsc(a, b); }
 
-  window.app.animalStartup(function(animal){
-      animal.AnimalGroup.get_object({{object.id}}, function(d){
+  window.app.startup("animalStartup", function(animal){
+      const data = window.app.getConfig();
+
+      animal.AnimalGroup.get_object(data.id, function(d){
           $('h1#animal-group-header')
             .after(
                 d.build_details_table(),
@@ -55,10 +58,9 @@
             );
       });
 
-      var endpoints = [];
-      {% for obj in endpoints %}
-        endpoints.push(new animal.Endpoint({{obj.get_json|safe}}));
-      {% endfor %}
+      var endpoints = data.endpoints.map(function(d){
+        return new animal.Endpoint(d)
+      });
 
   var lastEndpointSort = "";
   // calls the AnimalGroupTable render function, but wraps it inside some sorting and some DOM manipulation to build a simple sort UI

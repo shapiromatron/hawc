@@ -15,7 +15,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
   const el = document.getElementById('root'),
-    config = JSON.parse(document.getElementById('config').text);
+    config = window.app.getConfig();
   window.app.textCleanupStartup(el, config);
 });
 </script>

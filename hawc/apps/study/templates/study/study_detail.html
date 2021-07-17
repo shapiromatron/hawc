@@ -93,27 +93,28 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id='data' type='text/json'>
+<script id='config' type='text/json'>
 {
   "studyContent": {{study.get_json|safe}}
   {% if attachments_viewable %},"attachments": {{study.get_attachments_json|safe}} {% endif %}
 }
 </script>
 <script type="text/javascript">
-const data = JSON.parse(document.getElementById('data').textContent);
+const data = window.app.getConfig(),
+  attachments_viewable = {{attachments_viewable}};
 
-window.app.studyStartup(function(study){
-  var thisStudy = new study.Study(data.studyContent),
+window.app.startup("studyStartup", function(app){
+  var thisStudy = new app.Study(data.studyContent),
       detail_div = $('#study_details');
 
   thisStudy.build_details_table(detail_div);
 
-  {% if attachments_viewable %}
+  if(attachments_viewable){
     thisStudy.add_attachments_row(detail_div, data.attachments);
-  {% endif %}
+  }
 
   if (thisStudy.has_riskofbias()){
-    window.app.riskofbiasStartup(function (riskofbias) {
+    window.app.startup("riskofbiasStartup", function (riskofbias) {
       riskofbias.robDonutStartup({
         studyId: data.studyContent.id,
         assessmentId: data.studyContent.assessment.id,

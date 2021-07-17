@@ -1,8 +1,9 @@
 import BaseTable from "utils/BaseTable";
+import MetaResult from "./MetaResult";
 
 class MetaResultListTable {
-    constructor(endpoints) {
-        this.endpoints = endpoints;
+    constructor(endpoint_data) {
+        this.endpoints = endpoint_data.map(d => new MetaResult(d));
         this.table = new BaseTable();
     }
 

@@ -47,9 +47,9 @@
     let data = {
       rootUrl: "{% url 'lit:tags_list' %}",
     };
-    window.app.litStartup(function(lit){
+    window.app.startup("litStartup", function(lit){
       $('#id_assessment').on('change', function () {
-        $.get(data.rootUrl, { 'pk': $('#id_assessment').val() }, function (d) {
+        $.get(data.rootUrl, { pk: $('#id_assessment').val() }, function (d) {
           const tagtree = new lit.TagTree(JSON.parse(d)[0]);
           tagtree.render(document.getElementById('tags'));
         });

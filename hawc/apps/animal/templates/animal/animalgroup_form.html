@@ -140,7 +140,7 @@ $(document).ready(function() {
                 .change(onDosingRegimeChange)
                 .trigger('change');
 
-            window.app.animalStartup(function(animal){
+            window.app.startup("animalStartup", function(animal){
                 new animal.DosingRegimeForm(
                     $("#animal_group"), dose_types, dose_values);
             })

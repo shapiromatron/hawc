@@ -24,7 +24,7 @@
 </script>
 <script type="text/javascript">
 $(document).ready(function(){
-    window.app.riskofbiasStartup(function(riskofbias){
+    window.app.startup("riskofbiasStartup", function(riskofbias){
         riskofbias.ScoreCleanupStartup(document.getElementById('root'), document.getElementById('config'));
     });
 });
