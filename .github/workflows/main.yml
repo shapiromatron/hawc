@@ -92,7 +92,7 @@ jobs:
       with:
         name: webpack-build
         path: |
-          webpack-stats.json
+          hawc/webpack-stats.json
           hawc/static/bundles/
 
   integration:
