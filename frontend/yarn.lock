@@ -5855,11 +5855,6 @@ lodash.memoize@^4.1.2:
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
 
-lodash.merge@^4.6.2:
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
-  integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
-
 lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
@@ -9724,16 +9719,15 @@ webgl-context@^2.2.0:
   dependencies:
     get-canvas-context "^1.0.1"
 
-webpack-bundle-tracker@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/webpack-bundle-tracker/-/webpack-bundle-tracker-1.1.0.tgz#87c6f2cc89f09337bcc19127a0976a1a8682c5d2"
-  integrity sha512-cw8HSS/Pgim3wWoaYDbxHlYJ78W/tKJCJWxrWhJ7UsSOQLavzGSUlG5VJsdkbREzwmZcC9F2Gran492kSdkTDQ==
+webpack-bundle-tracker@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/webpack-bundle-tracker/-/webpack-bundle-tracker-1.2.0.tgz#929a0d0ad6e76c0d655acff29157574be245d399"
+  integrity sha512-FhbdCj3XmtFt+3JzmocFRbSrp+DZmTiK0BSqmIwd4FRMpVaR4KOa2lI1+lIE9/PNBcSfT+K/Zx0+Hhxci5KzWg==
   dependencies:
     lodash.assign "^4.2.0"
     lodash.defaults "^4.2.0"
     lodash.foreach "^4.5.0"
     lodash.get "^4.4.2"
-    lodash.merge "^4.6.2"
     strip-ansi "^6.0.0"
 
 webpack-cli@^3.3.10:

@@ -57,7 +57,6 @@ Instructions below have been written for bash, so should work out of the box for
     createdb -E UTF-8 -U hawc hawc
 
 
-
 Windows
 ~~~~~~~
 
