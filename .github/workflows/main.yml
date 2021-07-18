@@ -158,6 +158,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: webpack-build
+        path: hawc
     - name: install hawc
       run: |
         pwd
@@ -166,23 +167,23 @@ jobs:
         ls hawc/static/bundles -laht
         #pip install -U pip
         #pip install -r requirements/dev.txt
-    # # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
-    # - name: run selenium tests
-    #   id: test
-    #   continue-on-error: true
-    #   run: |
-    #     py.test -sv tests/frontend/integration/
-    # - name: run selenium tests (retry)
-    #   if: steps.test.outcome=='failure'
-    #   id: retry
-    #   continue-on-error: true
-    #   run: |
-    #     py.test -sv tests/frontend/integration/
-    # - name: set status
-    #   if: always()
-    #   run: |
-    #     if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
-    #       echo success!
-    #     else
-    #       exit 1
-    #     fi
+    # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
+    - name: run selenium tests
+      id: test
+      continue-on-error: true
+      run: |
+        py.test -sv tests/frontend/integration/
+    - name: run selenium tests (retry)
+      if: steps.test.outcome=='failure'
+      id: retry
+      continue-on-error: true
+      run: |
+        py.test -sv tests/frontend/integration/
+    - name: set status
+      if: always()
+      run: |
+        if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
+          echo success!
+        else
+          exit 1
+        fi
