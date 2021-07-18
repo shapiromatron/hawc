@@ -9,7 +9,7 @@ following applications installed on your local development system:
 - `Python`_ == 3.9
 - `Node.js`_
 - `Yarn`_
-- `PostgreSQL`_ ≥ 12.5
+- `PostgreSQL`_ == 12
 
 .. _`Git`: https://git-scm.com/
 .. _`Python`: https://www.python.org/
@@ -28,7 +28,7 @@ See the `Useful utilities`_ below for more details on how to automatically lint/
 Environment setup
 -----------------
 
-HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. However, instructions are provided below for both environments.
+HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. Instructions are provided below for both environments.
 
 Linux/Mac
 ~~~~~~~~~
@@ -67,7 +67,7 @@ Windows requires using anaconda, or miniconda to get requirements.
     :: create a conda environment with our hard to get dependencies
     conda create --name hawc
     conda activate hawc
-    conda install python=3.9 postgresql=9.6
+    conda install python=3.9 postgresql=12
     conda install -c conda-forge nodejs
     conda install -c conda-forge yarn
 
@@ -227,50 +227,49 @@ When using the recommended settings below, your python and javascript code shoul
 .. code-block:: json
 
     {
-        "restructuredtext.linter.disabled": true,
-        "[html]": {
+        "[dockerfile]": {
             "editor.formatOnSave": false
-        },
-        "[python]": {
-            "editor.formatOnPaste": false,
-            "editor.formatOnSave": true
         },
         "[javascript]": {
             "editor.formatOnSave": false,
-            "editor.codeActionsOnSave": {
-                "source.fixAll.eslint": true
-            }
         },
-        "editor.formatOnSave": true,
-        "eslint.workingDirectories": [
-            "./frontend"
+        "[markdown]": {
+            "editor.wordWrap": "bounded",
+            "editor.quickSuggestions": false
+        },
+        "[python]": {
+            "editor.formatOnPaste": false,
+        },
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        },
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": false,
+        "editor.rulers": [
+            100,
+            120
         ],
+        "editor.tabSize": 4,
+        "eslint.format.enable": true,
+        "files.eol": "\n",
+        "files.exclude": {
+            "**/*.pytest_cache": true,
+            "**/__pycache__": true
+        },
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true,
+        "python.analysis.diagnosticSeverityOverrides": {
+            "reportUnknownMemberType": "information",
+        },
+        "python.analysis.typeCheckingMode": "basic",
+        "python.autoUpdateLanguageServer": true,
         "python.formatting.provider": "black",
-        "python.jediEnabled": false,
-        "python.languageServer": "Microsoft",
-        "python.linting.flake8Args": [
-            "--config=.flake8"
-        ],
+        "python.languageServer": "Pylance",
         "python.linting.flake8Enabled": true,
-        "python.linting.mypyCategorySeverity.error": "Warning",
-        "python.linting.mypyEnabled": true,
-        "python.pythonPath": "./venv/bin/python",
-        "cSpell.words": [
-            "chemspider",
-            "epimeta",
-            "invitro",
-            "lel",
-            "loael",
-            "loel",
-            "mgmt",
-            "nel",
-            "noael",
-            "noel",
-            "noel",
-            "pmid",
-            "pmids",
-            "transfection",
-        ]
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/.git": true,
+        },
     }
 
 More settings
@@ -410,8 +409,8 @@ Then, create the example docker container and start a celery worker instance:
     redis-cli -h localhost -a default-password ping
 
     # start workers
-    celery worker --app=hawc.main.celery --loglevel=INFO
-    celery beat --app=hawc.main.celery --loglevel=INFO
+    celery --app=hawc.main.celery worker --loglevel=INFO
+    celery --app=hawc.main.celery beat --loglevel=INFO
 
     # stop redis when you're done
     docker-compose -f compose/dc-build.yml --project-directory . down

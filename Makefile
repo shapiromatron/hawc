@@ -1,4 +1,4 @@
-.PHONY: build build-pex dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
+.PHONY: build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -61,9 +61,6 @@ loc: ## Generate lines of code report
 		--vcs=git \
 		--counted loc-files.txt \
 		.
-
-servedocs: docs ## Compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 lint: lint-py lint-js  ## Check for javascript/python for linting issues
 
