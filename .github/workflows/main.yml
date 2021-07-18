@@ -24,13 +24,13 @@ jobs:
           - 6379/tcp
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.9'
         architecture: 'x64'
     - name: try to restore pip cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
@@ -62,8 +62,8 @@ jobs:
     name: frontend
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
       with:
         node-version: '16.x'
     - name: set yarn cache directory
@@ -71,7 +71,7 @@ jobs:
       run: |
         echo "::set-output name=dir::$(yarn cache dir)"
     - name: try to restore yarn cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -144,9 +144,9 @@ jobs:
       SELENIUM_PORT: 4444
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: try to restore pip cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
@@ -160,25 +160,26 @@ jobs:
       run: |
         ls hawc -laht
         ls hawc/static/bundles -laht
-        pip install -U pip
-        pip install -r requirements/dev.txt
-    # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
-    - name: run selenium tests
-      id: test
-      continue-on-error: true
-      run: |
-        py.test -sv tests/frontend/integration/
-    - name: run selenium tests (retry)
-      if: steps.test.outcome=='failure'
-      id: retry
-      continue-on-error: true
-      run: |
-        py.test -sv tests/frontend/integration/
-    - name: set status
-      if: always()
-      run: |
-        if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
-          echo success!
-        else
-          exit 1
-        fi
+        tree -d 2 .
+        #pip install -U pip
+        #pip install -r requirements/dev.txt
+    # # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
+    # - name: run selenium tests
+    #   id: test
+    #   continue-on-error: true
+    #   run: |
+    #     py.test -sv tests/frontend/integration/
+    # - name: run selenium tests (retry)
+    #   if: steps.test.outcome=='failure'
+    #   id: retry
+    #   continue-on-error: true
+    #   run: |
+    #     py.test -sv tests/frontend/integration/
+    # - name: set status
+    #   if: always()
+    #   run: |
+    #     if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
+    #       echo success!
+    #     else
+    #       exit 1
+    #     fi
