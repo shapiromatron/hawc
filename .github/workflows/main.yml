@@ -87,6 +87,8 @@ jobs:
     - name: build for integration tests
       run: |
         npm --prefix ./frontend run build
+        pwd
+        ls -laht
     - name: Upload webpack build
       uses: actions/upload-artifact@v2
       with:
@@ -158,9 +160,10 @@ jobs:
         name: webpack-build
     - name: install hawc
       run: |
+        pwd
+        ls -laht
         ls hawc -laht
         ls hawc/static/bundles -laht
-        tree -d 2 .
         #pip install -U pip
         #pip install -r requirements/dev.txt
     # # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
