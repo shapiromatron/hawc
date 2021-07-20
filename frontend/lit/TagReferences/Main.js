@@ -37,17 +37,9 @@ class TagReferencesMain extends Component {
                     <div id="references_lists">
                         <div className="card">
                             <div className="card-header p-1">
-                                <button
-                                    className="btn btn-link"
-                                    data-toggle="collapse"
-                                    data-target="#references_tagged">
-                                    Tagged
-                                </button>
+                                <button className="btn btn-link">Tagged</button>
                             </div>
-                            <div
-                                id="references_tagged"
-                                className="collapse"
-                                data-parent="#references_lists">
+                            <div id="references_tagged" data-parent="#references_lists">
                                 <div className="card-body ref-container p-1">
                                     {store.referencesTagged.map(ref => (
                                         <p
@@ -66,16 +58,11 @@ class TagReferencesMain extends Component {
                         </div>
                         <div className="card">
                             <div className="card-header p-1">
-                                <button
-                                    className="btn btn-link"
-                                    data-toggle="collapse"
-                                    data-target="#references_untagged">
-                                    Untagged
-                                </button>
+                                <button className="btn btn-link">Untagged</button>
                             </div>
                             <div
                                 id="references_untagged"
-                                className="collapse show p-1"
+                                className="p-1"
                                 data-parent="#references_lists">
                                 <div className="card-body ref-container">
                                     {store.referencesUntagged.map(ref => (

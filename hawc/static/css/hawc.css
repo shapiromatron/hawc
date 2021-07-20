@@ -312,6 +312,7 @@ div.smart-tag.active {
     cursor: pointer;
 }
 .ref-container {
+    min-height: 10vh;
     max-height: 40vh;
     overflow-y: auto;
 }

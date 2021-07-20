@@ -64,7 +64,7 @@ class TagTree extends Component {
     render() {
         const {tagtree, handleTagClick, showReferenceCount, selectedTag} = this.props;
         return (
-            <div>
+            <div style={{maxHeight: "80vh", overflowY: "scroll"}}>
                 {tagtree.rootNode.children.map((tag, i) => (
                     <TagNode
                         key={i}
