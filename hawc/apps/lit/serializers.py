@@ -276,7 +276,7 @@ class ReferenceSerializer(serializers.ModelSerializer):
             self.instance.assessment_id
         ).filter(id__in=value)
         if valid_tags.count() != len(value):
-            raise serializers.ValidationError(f"All tag ids are not from this assessment")
+            raise serializers.ValidationError("All tag ids are not from this assessment")
         return value
 
     @transaction.atomic()

@@ -16,7 +16,7 @@ import django
 from django.core import management
 from django.db import models, transaction
 
-from lit.models import Reference, Search  # noqa: E402
+from hawc.apps.lit.models import Reference, Search
 
 ROOT = str((Path(__file__).parents[1] / "hawc").resolve())
 sys.path.append(ROOT)

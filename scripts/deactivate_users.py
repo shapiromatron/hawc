@@ -11,7 +11,6 @@ from typing import List
 import django
 from django.core import management
 from django.db import transaction
-
 from myuser.models import HAWCUser  # noqa: E402
 
 ROOT = str(Path(__file__).parents[0].resolve())

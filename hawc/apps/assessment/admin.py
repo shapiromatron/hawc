@@ -49,7 +49,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
-                request, f"Select only one item to perform the action on.", level=messages.WARNING
+                request, "Select only one item to perform the action on.", level=messages.WARNING
             )
             return
         assessment = queryset.first()
@@ -95,7 +95,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
-                request, f"Select only one item to perform the action on.", level=messages.ERROR
+                request, "Select only one item to perform the action on.", level=messages.ERROR
             )
             return
 
@@ -103,7 +103,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         assessment = queryset.first()
         if assessment.vocabulary is None:
             self.message_user(
-                request, f"Assessment has no controlled vocabulary.", level=messages.ERROR
+                request, "Assessment has no controlled vocabulary.", level=messages.ERROR
             )
             return
 

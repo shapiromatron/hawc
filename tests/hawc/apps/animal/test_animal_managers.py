@@ -46,7 +46,7 @@ class TestEndpointManager:
             models.Endpoint.objects.update_terms(data, assessment)
         # missing name term
         data = [{"id": valid_endpoint_id}]
-        expected_error = f"Expected endpoint keys are id and name_term_id"
+        expected_error = "Expected endpoint keys are id and name_term_id"
         with pytest.raises(ValidationError, match=re.escape(expected_error)):
             models.Endpoint.objects.update_terms(data, assessment)
         # bad term id

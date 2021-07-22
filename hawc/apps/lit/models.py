@@ -614,7 +614,7 @@ class Identifiers(models.Model):
         }
 
     def get_content(self) -> Dict:
-        return json.loads(self.content, encoding="utf-8") if self.content else {}
+        return json.loads(self.content) if self.content else {}
 
     @staticmethod
     def update_pubmed_content(idents):
