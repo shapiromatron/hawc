@@ -60,7 +60,7 @@ Instructions below have been written for bash, so should work out of the box for
 Windows
 ~~~~~~~
 
-Windows requires using anaconda, or miniconda to get requirements.
+Windows requires using anaconda or miniconda to get requirements.
 
 .. code-block:: bat
 
@@ -71,36 +71,27 @@ Windows requires using anaconda, or miniconda to get requirements.
     conda install -c conda-forge nodejs
     conda install -c conda-forge yarn
 
-    :: now create a virtual python environment for our project
+    :: clone repository; we'll put in dev but you can put anywhere
     mkdir %HOMEPATH%\dev
     cd %HOMEPATH%\dev
     git clone https://github.com/shapiromatron/hawc.git
-    cd hawc
 
-    :: install the python requirements
-    conda activate hawc
-    python -m venv venv
-    venv\Scripts\activate.bat
+    :: install python requirements
+    cd %HOMEPATH%\dev\hawc
     python -m pip install --upgrade pip
     pip install -r requirements\dev.txt
 
-    :: install the javascript requirements
-    cd frontend
-    yarn
+    :: setup and start PostgreSQL; in this example we'll put it in dev
+    cd %HOMEPATH%\dev
+    mkdir pgdata
+    pg_ctl -D pgdata initdb
+    mkdir pgdata\logs
+    pg_ctl -D pgdata -l pgdata\logs\logfile start
 
-    :: setup our postgres database
-    mkdir %HOMEPATH%\dev\pgdata\
-    pg_ctl -D %HOMEPATH%\dev\pgdata initdb
-    mkdir %HOMEPATH%\dev\pgdata\logs
-    pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
+    :: create our superuser and main/test databases
     createuser --superuser --no-password hawc
-
-    :: create our main and test databases
     createdb -T template0 -E UTF8 hawc
     createdb -T template0 -E UTF8 test_hawc-fixture-test
-
-    :: sync the hawc code with the database
-    manage.py migrate
 
 Running the application
 -----------------------
@@ -149,14 +140,15 @@ In the first terminal, let's create our database and then run the python webserv
 .. code-block:: bat
 
     :: activate our environment
-    cd %HOMEPATH%\dev\hawc
     conda activate hawc
-    venv\Scripts\activate
 
     :: start the postgres database (if not already started)
     pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 
-    :: run the python webserver
+    :: sync db state with application state
+    manage.py migrate
+
+    :: run development webserver
     manage.py runserver
 
 In a second terminal, run the node development webserver for javascript:
@@ -164,12 +156,15 @@ In a second terminal, run the node development webserver for javascript:
 .. code-block:: bat
 
     :: activate our environment
-    cd %HOMEPATH%\dev\hawc
     conda activate hawc
-    venv\Scripts\activate
 
-    :: run the frontend build server
+    :: navigate to frontend folder
     cd %HOMEPATH%\dev\hawc\frontend
+
+    :: install javascript dependencies
+    yarn install
+
+    :: start node hot-reloading server
     npm start
 
 You can check `localhost`_ to see if everything is hosted correctly.
