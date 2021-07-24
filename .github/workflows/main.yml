@@ -5,11 +5,11 @@ on: [pull_request]
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     services:
       postgres:
-        image: postgres:9.6.16-alpine
+        image: postgres:12-alpine
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
@@ -24,13 +24,13 @@ jobs:
           - 6379/tcp
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
-        python-version: '3.6'
+        python-version: '3.9'
         architecture: 'x64'
     - name: try to restore pip cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
@@ -38,7 +38,7 @@ jobs:
           ${{ runner.os }}-pip-
     - name: install
       run: |
-        mv ci-webpack-stats.json hawc/webpack-stats.json
+        mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         pip install -U pip wheel
         pip install -r requirements/dev.txt
     - name: lint
@@ -60,18 +60,18 @@ jobs:
 
   frontend:
     name: frontend
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
       with:
-        node-version: '12.x'
+        node-version: '16.x'
     - name: set yarn cache directory
       id: yarn-cache-dir-path
       run: |
         echo "::set-output name=dir::$(yarn cache dir)"
     - name: try to restore yarn cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -84,18 +84,29 @@ jobs:
     - name: lint
       run: |
         make lint-js
+    - name: build for integration tests
+      run: |
+        npm --prefix ./frontend run build
+    - name: Upload webpack build
+      uses: actions/upload-artifact@v2
+      with:
+        name: webpack-build
+        path: |
+          hawc/webpack-stats.json
+          hawc/static/bundles/
 
   integration:
     name: integration
-    runs-on: ubuntu-18.04
+    needs: [backend, frontend]
+    runs-on: ubuntu-20.04
 
     container:
-      image: nikolaik/python-nodejs:python3.6-nodejs12
+      image: python:3.9-slim
       options: --network-alias container
 
     services:
       postgres:
-        image: postgres:9.6
+        image: postgres:12-alpine
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
@@ -133,15 +144,23 @@ jobs:
       SELENIUM_PORT: 4444
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+    - name: try to restore pip cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Download webpack build
+      uses: actions/download-artifact@v2
+      with:
+        name: webpack-build
+        path: hawc
     - name: install hawc
       run: |
+        pip install -U pip
         pip install -r requirements/dev.txt
-    - name: setup web server
-      run: |
-        mv ci-webpack-stats.json hawc/webpack-stats.json
-        yarn --cwd ./frontend install
-        npm run --prefix ./frontend start  &
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run selenium tests
       id: test

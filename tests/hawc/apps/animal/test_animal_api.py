@@ -49,7 +49,7 @@ class TestAssessmentViewset:
     def test_full_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-full-export.json"
         url = (
-            reverse(f"animal:api:assessment-full-export", args=(db_keys.assessment_final,))
+            reverse("animal:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
@@ -57,7 +57,7 @@ class TestAssessmentViewset:
     def test_endpoint_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-endpoint-export.json"
         url = (
-            reverse(f"animal:api:assessment-endpoint-export", args=(db_keys.assessment_final,))
+            reverse("animal:api:assessment-endpoint-export", args=(db_keys.assessment_final,))
             + "?format=json"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
@@ -65,7 +65,7 @@ class TestAssessmentViewset:
     def test_endpoints(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-endpoints.json"
         url = (
-            reverse(f"animal:api:assessment-endpoints", args=(db_keys.assessment_final,))
+            reverse("animal:api:assessment-endpoints", args=(db_keys.assessment_final,))
             + "?format=json"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
@@ -75,7 +75,7 @@ class TestAssessmentViewset:
         # published
         fn = "api-animal-assessment-study-heatmap-unpublished-False.json"
         url = (
-            reverse(f"animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
+            reverse("animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
             + "?format=json"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
@@ -83,7 +83,7 @@ class TestAssessmentViewset:
         # unpublished
         fn = "api-animal-assessment-study-heatmap-unpublished-True.json"
         url = (
-            reverse(f"animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
+            reverse("animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
@@ -92,7 +92,7 @@ class TestAssessmentViewset:
         # published
         fn = "api-animal-assessment-endpoint-heatmap-unpublished-False.json"
         url = (
-            reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
+            reverse("animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
             + "?format=json"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
@@ -100,7 +100,7 @@ class TestAssessmentViewset:
         # unpublished
         fn = "api-animal-assessment-endpoint-heatmap-unpublished-True.json"
         url = (
-            reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
+            reverse("animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
@@ -109,7 +109,7 @@ class TestAssessmentViewset:
         fn = "api-animal-assessment-endpoint-doses-heatmap.json"
         url = (
             reverse(
-                f"animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_final,)
+                "animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_final,)
             )
             + "?format=json"
         )
@@ -644,7 +644,7 @@ class TestEndpointApi:
 @pytest.mark.django_db
 class TestMetadataApi:
     def test_permissions(self):
-        url = reverse(f"animal:api:metadata-list")
+        url = reverse("animal:api:metadata-list")
         # public should have access to this metadata
         client = APIClient()
         resp = client.get(url)
@@ -652,7 +652,7 @@ class TestMetadataApi:
 
     def test_metadata(self, rewrite_data_files: bool):
         fn = "api-animal-metadata.json"
-        url = reverse(f"animal:api:metadata-list") + "?format=json"
+        url = reverse("animal:api:metadata-list") + "?format=json"
         client = APIClient()
         resp = client.get(url)
         assert resp.status_code == 200

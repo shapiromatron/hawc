@@ -732,7 +732,7 @@ class ExternalSiteForm(VisualForm):
 
     external_url = forms.URLField(
         label="External URL",
-        help_text=f"""
+        help_text="""
         <p class="form-text text-muted">
             Embed an external website. The following websites can be linked to:
         </p>

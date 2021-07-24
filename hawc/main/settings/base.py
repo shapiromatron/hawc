@@ -132,7 +132,7 @@ DATABASES = {
         "CONN_MAX_AGE": 300,
     }
 }
-
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Celery settings
 CELERY_ACCEPT_CONTENT = ("json", "pickle")
@@ -172,7 +172,7 @@ EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
-PASSWORD_RESET_TIMEOUT_DAYS = 3
+PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 
@@ -181,7 +181,6 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
-
 
 # Static files
 STATIC_URL = "/static/"
