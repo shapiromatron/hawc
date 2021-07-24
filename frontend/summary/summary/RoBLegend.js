@@ -1,7 +1,7 @@
 import _ from "lodash";
 import * as d3 from "d3";
 
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import {
     NA_KEYS,

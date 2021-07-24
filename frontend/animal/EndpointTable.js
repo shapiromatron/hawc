@@ -1,7 +1,7 @@
 import $ from "$";
 import _ from "lodash";
 
-import TableFootnotes from "utils/TableFootnotes";
+import TableFootnotes from "shared/utils/TableFootnotes";
 
 class EndpointTable {
     constructor(endpoint, tbl_id) {

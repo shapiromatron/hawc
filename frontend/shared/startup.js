@@ -2,8 +2,8 @@ import * as d3 from "d3";
 import $ from "$";
 import _ from "lodash";
 
-import sidebarStartup from "./sidebarStartup";
-import Quillify from "./Quillify";
+import sidebarStartup from "./utils/sidebarStartup";
+import Quillify from "./utils/Quillify";
 
 // Extend JS built-ins
 Object.defineProperty(Object.prototype, "rename_property", {

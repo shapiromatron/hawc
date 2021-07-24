@@ -1,7 +1,13 @@
-import "./utils/startup";
+import "./shared/startup";
 
 import assessmentStartup from "./assessment";
-import {nestedTagEditorStartup, smartTagsStartup, textCleanupStartup} from "./assets";
+import {
+    DynamicFormset,
+    HAWCUtils,
+    nestedTagEditorStartup,
+    smartTagsStartup,
+    textCleanupStartup,
+} from "./shared";
 import {
     summaryStartup,
     summaryFormsStartup,
@@ -12,7 +18,6 @@ import {
     summaryTableViewStartup,
     summaryTableEditStartup,
 } from "./summary";
-import utils from "./utils";
 import startup from "./splits";
 
 const getConfig = () => JSON.parse(document.getElementById("config").textContent);
@@ -32,5 +37,8 @@ window.app = {
     summaryTableEditStartup,
     summaryTextStartup,
     textCleanupStartup,
-    utils,
+    utils: {
+        DynamicFormset,
+        HAWCUtils,
+    },
 };

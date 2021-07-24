@@ -1,9 +1,9 @@
 import $ from "$";
 import * as d3 from "d3";
 
-import D3Plot from "utils/D3Plot";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import D3Plot from "shared/utils/D3Plot";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";

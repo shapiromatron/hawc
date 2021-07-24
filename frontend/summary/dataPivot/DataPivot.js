@@ -3,7 +3,7 @@ import * as d3 from "d3";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 import DataTable from "shared/components/DataTable";
 
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";

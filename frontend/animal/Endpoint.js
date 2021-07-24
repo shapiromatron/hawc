@@ -2,11 +2,11 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import BaseTable from "utils/BaseTable";
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
-import Observee from "utils/Observee";
+import BaseTable from "shared/utils/BaseTable";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
+import Observee from "shared/utils/Observee";
 
 import BmdLine from "bmd/common/BmdLine";
 import Study from "study/Study";

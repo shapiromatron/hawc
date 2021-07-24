@@ -3,7 +3,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 
 import h from "shared/utils/helpers";
-import D3Plot from "utils/D3Plot";
+import D3Plot from "shared/utils/D3Plot";
 
 class DRPlot extends D3Plot {
     constructor(endpoint, div, options, parent) {

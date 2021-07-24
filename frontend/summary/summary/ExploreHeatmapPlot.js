@@ -7,8 +7,8 @@ import ReactDOM from "react-dom";
 import VisualToolbar from "shared/components/VisualToolbar";
 import bindTooltip from "shared/components/Tooltip";
 import h from "shared/utils/helpers";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import {AxisTooltip, CellTooltip} from "./heatmap/Tooltip";
 

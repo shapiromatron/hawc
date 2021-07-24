@@ -1,12 +1,12 @@
 import $ from "$";
 
 import h from "shared/utils/helpers";
-import BaseTable from "utils/BaseTable";
-import HAWCModal from "utils/HAWCModal";
+import BaseTable from "shared/utils/BaseTable";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import Endpoint from "animal/Endpoint";
 import EndpointDetailRow from "animal/EndpointDetailRow";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
 import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";

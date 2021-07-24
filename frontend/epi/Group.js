@@ -1,9 +1,9 @@
 import $ from "$";
 import _ from "lodash";
 
-import BaseTable from "utils/BaseTable";
-import DescriptiveTable from "utils/DescriptiveTable";
-import HawcTooltip from "utils/HawcTooltip";
+import BaseTable from "shared/utils/BaseTable";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HawcTooltip from "shared/utils/HawcTooltip";
 
 import GroupDescription from "./GroupDescription";
 

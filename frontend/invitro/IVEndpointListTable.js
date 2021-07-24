@@ -1,4 +1,4 @@
-import BaseTable from "utils/BaseTable";
+import BaseTable from "shared/utils/BaseTable";
 
 import IVEndpoint from "./IVEndpoint";
 
