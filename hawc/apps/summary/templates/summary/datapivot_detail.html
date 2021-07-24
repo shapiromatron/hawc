@@ -32,7 +32,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $('#loading_div').html(window.app.utils.HAWCUtils.loading())
+    $('#loading_div').html(window.app.HAWCUtils.loading())
     window.app.dataPivotStartup(function(dataPivot){
       dataPivot.DataPivot.get_object({{object.id}}, function(dp){
         $('#loading_div').fadeOut(function(){

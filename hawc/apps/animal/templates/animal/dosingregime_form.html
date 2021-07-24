@@ -12,7 +12,7 @@
     <legend class='d-inline-block'>Dose-groups</legend>
     <span class='float-right'>
       <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-      <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+      <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
     </span>
 
     {% if dose_groups_errors %}<div class="alert alert-danger">{{dose_groups_errors|safe}}</div>{% endif %}

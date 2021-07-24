@@ -22,7 +22,7 @@ class HAWCUtils {
         win.focus();
 
         win.onbeforeunload = function(e) {
-            let event = new CustomEvent(window.app.utils.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, {
+            let event = new CustomEvent(window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, {
                 detail: {},
             });
             triggeringLink.dispatchEvent(event);

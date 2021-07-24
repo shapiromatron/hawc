@@ -81,7 +81,7 @@
 
         {% if crud == "Create" %}
         $('#id_title').on('keyup', function () {
-          $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val(), 50));
         });
         {% endif %}
       }

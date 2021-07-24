@@ -17,14 +17,14 @@
 
       {% if crud == "Create" %}
         $('#id_title').on('keyup', function(){
-          $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val(), 50));
         });
       {% endif %}
 
       var doseWidget = new window.app.assessmentStartup.DoseUnitsWidget($('form'), {
         api: "{% url 'animal:api:dose_units-list' %}",
         el: '#id_preferred_units',
-      }), printf = window.app.utils.HAWCUtils.printf;
+      }), printf = window.app.HAWCUtils.printf;
 
       window.app.smartTagsStartup(function(smartTags){
           new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});

@@ -23,22 +23,20 @@ import startup from "./splits";
 const getConfig = () => JSON.parse(document.getElementById("config").textContent);
 
 window.app = {
-    getConfig,
-    startup,
+    DynamicFormset,
+    HAWCUtils,
     assessmentStartup,
     dataPivotStartup,
+    getConfig,
     heatmapTemplateStartup,
     nestedTagEditorStartup,
     renderPlotlyFromApi,
     smartTagsStartup,
-    summaryStartup,
+    startup,
     summaryFormsStartup,
-    summaryTableViewStartup,
+    summaryStartup,
     summaryTableEditStartup,
+    summaryTableViewStartup,
     summaryTextStartup,
     textCleanupStartup,
-    utils: {
-        DynamicFormset,
-        HAWCUtils,
-    },
 };

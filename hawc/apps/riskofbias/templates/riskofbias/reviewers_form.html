@@ -21,7 +21,7 @@
     <script type="text/javascript">
       $(document).ready(function() {
         // insert reviewer formset into number_of_reviewers form
-        new window.app.utils.DynamicFormset($('#reviewersFormset'), 'form', {oneFormRequired: true});
+        new window.app.DynamicFormset($('#reviewersFormset'), 'form', {oneFormRequired: true});
         $('#reviewersFormset').insertBefore($('#numberForm .form-actions'));
 
         var reviewerFields = document.getElementsByClassName('autocompletewidget'),
