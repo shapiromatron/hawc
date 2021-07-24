@@ -262,7 +262,7 @@ def get_git_commit() -> Commit:
         return Commit(sha="<undefined>", dt=datetime.now())
 
 
-GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
+GIT_COMMIT_FILE = PROJECT_PATH / "gitcommit.json"
 COMMIT = get_git_commit()
 
 
@@ -303,7 +303,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 WEBPACK_LOADER = {
     "DEFAULT": {
         "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": str(PROJECT_ROOT / "webpack-stats.json"),
+        "STATS_FILE": str(PROJECT_PATH / "webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "IGNORE": [".+/.map"],
     }

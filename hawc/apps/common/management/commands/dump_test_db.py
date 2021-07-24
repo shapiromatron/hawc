@@ -5,11 +5,9 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
-HELP_TEXT = """Dump test database into a fixture."""
-
 
 class Command(BaseCommand):
-    help = HELP_TEXT
+    help = """Dump test database into a fixture."""
 
     def handle(self, *args, **options):
 

@@ -1,8 +1,15 @@
+from datetime import datetime, timedelta, timezone
+from typing import Dict
+
+import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import send_mail
+from django_redis import get_redis_connection
+from matplotlib.axes import Axes
 
-from . import tasks
+from ...main.celery import app
+from . import helper, tasks
 
 
 class IntentionalException(Exception):
@@ -42,9 +49,64 @@ def diagnostic_email(modeladmin, request, queryset):
     send_mail(
         "Test email", "Test message", settings.DEFAULT_FROM_EMAIL, [to_email], fail_silently=False,
     )
-
     message = f"Attempted to send email to {to_email}"
     modeladmin.message_user(request, message)
+
+
+class WorkerHealthcheck:
+    KEY = "worker-healthcheck"
+    MAX_SIZE = 60 * 24 // 5  # 1 day of data at a 5 minute-interval
+    MAX_WAIT = timedelta(minutes=15)  # check is a failure if no task has run in X minutes
+
+    def _get_conn(self):
+        return get_redis_connection()
+
+    def clear(self):
+        """
+        Clear worker healthcheck array
+        """
+        conn = self._get_conn()
+        conn.delete(self.KEY)
+
+    def push(self):
+        """
+        Push the latest successful time and trim the size of the array to max size
+        """
+        conn = self._get_conn()
+        pipeline = conn.pipeline()
+        pipeline.lpush(self.KEY, datetime.now(timezone.utc).timestamp())
+        pipeline.ltrim(self.KEY, 0, self.MAX_SIZE - 1)
+        pipeline.execute()
+
+    def healthy(self) -> bool:
+        """Check if an item in the array has executed with the MAX_WAIT time from now"""
+        conn = self._get_conn()
+        last_push = conn.lindex(self.KEY, 0)
+        if last_push is None:
+            return False
+        last_ping = datetime.fromtimestamp(float(last_push), timezone.utc)
+        return datetime.now(timezone.utc) - last_ping < self.MAX_WAIT
+
+    def series(self) -> pd.Series:
+        """Return a pd.Series of last successful times"""
+        conn = self._get_conn()
+        data = conn.lrange(self.KEY, 0, -1)
+        return pd.to_datetime(pd.Series(data, dtype=float), unit="s", utc=True)
+
+    def plot(self) -> Axes:
+        """Plot the current array of available timestamps"""
+        series = self.series()
+        return helper.event_plot(series)
+
+    def stats(self) -> Dict:
+        inspect = app.control.inspect()
+        stats = dict(ping=inspect.ping())
+        if stats["ping"]:
+            stats.update(active=inspect.active(), stats=inspect.stats())
+        return stats
+
+
+worker_healthcheck = WorkerHealthcheck()
 
 
 diagnostic_500.short_description = "Diagnostic server error (500)"

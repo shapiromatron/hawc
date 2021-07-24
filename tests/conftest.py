@@ -1,13 +1,10 @@
-import json
 import logging
 import os
-import time
 from pathlib import Path
 from typing import NamedTuple
 
 import helium
 import pytest
-from django.conf import settings
 from django.core.management import call_command
 from django.db import connections
 from selenium import webdriver
@@ -116,22 +113,6 @@ def rewrite_data_files():
     return False
 
 
-def _wait_until_webpack_ready(max_wait_sec: int = 60):
-    """Sleep until webpack is ready...
-
-    Raises:
-        EnvironmentError: If webpack fails to complete in designated time
-    """
-    stats = Path(settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"])
-    waited_for = 0
-    while waited_for < max_wait_sec:
-        if stats.exists() and json.loads(stats.read_text()).get("status") == "done":
-            return
-        time.sleep(1)
-        waited_for += 1
-    raise EnvironmentError("Timeout; webpack dev server not ready")
-
-
 def _get_driver(browser: str, CI: bool):
     """
     Returns the web-driver depending on the specified environment
@@ -185,7 +166,6 @@ def _get_driver(browser: str, CI: bool):
 @pytest.fixture(scope="session")
 def chrome_driver():
     driver = _get_driver("chrome", CI)
-    _wait_until_webpack_ready()
     try:
         yield driver
     finally:
@@ -197,7 +177,6 @@ def firefox_driver():
     driver = _get_driver("firefox", CI)
     # prevent navbar from collapsing
     driver.set_window_size(1920, 1080)
-    _wait_until_webpack_ready()
     try:
         yield driver
     finally:

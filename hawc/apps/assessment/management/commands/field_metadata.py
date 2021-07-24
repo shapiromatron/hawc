@@ -5,11 +5,9 @@ import pandas as pd
 from django.apps import apps
 from django.core.management.base import BaseCommand
 
-HELP_TEXT = """Print HAWC field-level metadata"""
-
 
 class Command(BaseCommand):
-    help = HELP_TEXT
+    help = """Print HAWC field-level metadata"""
 
     def add_arguments(self, parser):
         parser.add_argument("excel_fn", type=str)
