@@ -1134,7 +1134,7 @@ class DataPivotVisualization extends D3Plot {
                 var txt = v[desc.field_name];
                 if ($.isNumeric(txt)) {
                     if (txt % 1 === 0) txt = parseInt(txt, 10);
-                    txt = txt.toHawcString();
+                    txt = h.ff(txt);
                 } else {
                     txt = txt.toLocaleString();
                 }

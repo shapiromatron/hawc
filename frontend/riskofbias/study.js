@@ -1,6 +1,8 @@
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
+
 import RiskOfBiasScore from "./RiskOfBiasScore";
 import {SCORE_SHADES, SCORE_TEXT} from "./constants";
 
@@ -52,7 +54,7 @@ export const mutateRobSettings = settings => {
             // build scores
             riskofbias = final.scores.map(score => {
                 score.score_color = SCORE_SHADES[score.score];
-                score.score_text_color = String.contrasting_color(score.score_color);
+                score.score_text_color = h.contrastingColor(score.score_color);
                 score.score_text = SCORE_TEXT[score.score];
                 return new RiskOfBiasScore(study, score);
             });

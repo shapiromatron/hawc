@@ -3,6 +3,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
+
 const WrongUnitsRender = function(props) {
         return (
             <p>
@@ -13,20 +15,21 @@ const WrongUnitsRender = function(props) {
         );
     },
     ModelDetails = function(props) {
+        const {output} = props.bmd;
         return [
             <p key={0}>
-                <b>Selected model:</b> {props.bmd.output.model_name}
+                <b>Selected model:</b> {output.model_name}
                 &nbsp;(<a href={props.bmd.url}>View details</a>)
             </p>,
             <ul key={1}>
                 <li>
-                    <b>BMDL:</b> {props.bmd.output.BMDL.toHawcString()} {props.units}
+                    <b>BMDL:</b> {h.ff(output.BMDL)} {props.units}
                 </li>
                 <li>
-                    <b>BMD:</b> {props.bmd.output.BMD.toHawcString()} {props.units}
+                    <b>BMD:</b> {h.ff(output.BMD)} {props.units}
                 </li>
                 <li>
-                    <b>BMDU:</b> {props.bmd.output.BMDU.toHawcString()} {props.units}
+                    <b>BMDU:</b> {h.ff(output.BMDU)} {props.units}
                 </li>
             </ul>,
         ];

@@ -1,6 +1,7 @@
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
 import {
@@ -48,7 +49,7 @@ class RoBLegend {
             return {
                 value: score,
                 color: SCORE_SHADES[score],
-                text_color: String.contrasting_color(SCORE_SHADES[score]),
+                text_color: h.contrastingColor(SCORE_SHADES[score]),
                 text: SCORE_TEXT[score],
                 description:
                     collapseNR && COLLAPSED_NR_FIELDS_DESCRIPTION[score]

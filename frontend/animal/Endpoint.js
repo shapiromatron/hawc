@@ -2,6 +2,8 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
+
 import BaseTable from "shared/utils/BaseTable";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
@@ -155,7 +157,7 @@ class Endpoint extends Observee {
     get_special_dose_text(name) {
         // return the appropriate dose of interest
         try {
-            return this.data.groups[this.data[name]].dose.toHawcString();
+            return h.ff(this.data.groups[this.data[name]].dose);
         } catch (err) {
             return "-";
         }
@@ -253,7 +255,7 @@ class Endpoint extends Observee {
         // now build header row showing available doses
         for (var i = 0; i < nGroups; i++) {
             var doses = this.doses.map(function(v) {
-                return v.values[i].dose.toHawcString();
+                return h.ff(v.values[i].dose);
             });
             txt = doses[0];
             if (doses.length > 1) {
@@ -304,9 +306,9 @@ class Endpoint extends Observee {
                 footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                 if (data_type === "C") {
                     if (_.isNumber(v.response) && _.isNumber(v.stdev)) {
-                        response = `${v.response.toHawcString()} ± ${v.stdev.toHawcString()}`;
+                        response = `${h.ff(v.response)} ± ${h.ff(v.stdev)}`;
                     } else if (_.isNumber(v.response)) {
-                        response = v.response.toHawcString();
+                        response = h.ff(v.response);
                     } else {
                         response = "-";
                     }

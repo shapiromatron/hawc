@@ -102,7 +102,7 @@ class _DataPivot_settings_conditionalFormat {
     }
 
     delete_condition(conditional) {
-        this.conditionals.splice_object(conditional);
+        _.remove(this.conditionals, d => d === conditional);
         this._set_empty_message();
     }
 
