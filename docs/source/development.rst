@@ -421,7 +421,7 @@ Then, create the example docker container and start a celery worker instance:
     # stop redis when you're done
     docker-compose -f compose/dc-build.yml --project-directory . down
 
-Asynchronous tasks will no be executed by celery workers instead of the main thread.
+Asynchronous tasks will not be executed by celery workers instead of the main thread.
 
 Integration tests
 ~~~~~~~~~~~~~~~~~
