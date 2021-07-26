@@ -33,13 +33,13 @@
 {% block extrajs %}
   <script type="text/javascript">
     $('#loading_div').html(window.app.HAWCUtils.loading())
-    window.app.dataPivotStartup(function(dataPivot){
-      dataPivot.DataPivot.get_object({{object.id}}, function(dp){
+    window.app.startup("dataPivotStartup", function(app){
+      app.DataPivot.get_object({{object.id}}, function(dp){
         $('#loading_div').fadeOut(function(){
           dp.build_data_pivot_vis($('#dp_display'));
         });
       });
-      window.app.smartTagsStartup(function(smartTags){
+      window.app.startup("smartTagsStartup", function(smartTags){
           new smartTags.SmartTagContainer($('#caption'), {showOnStartup: true});
       })
     });

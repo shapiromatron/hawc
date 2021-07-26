@@ -33,7 +33,7 @@
 }
 </script>
 <script type="text/javascript">
-  window.app.summaryTableViewStartup(function (startup) {
+  window.app.startup("summaryTableViewStartup", function (startup) {
     const config = window.app.getConfig(),
       el = document.getElementById('main');
     startup(el, config);

@@ -15,7 +15,7 @@
 }
 </script>
 <script type="text/javascript">
-    window.app.heatmapTemplateStartup(function (app) {
+    window.app.startup("heatmapTemplateStartup", function (app) {
         var root = document.getElementById('main'),
             config = window.app.getConfig();
         app.func(root, config);

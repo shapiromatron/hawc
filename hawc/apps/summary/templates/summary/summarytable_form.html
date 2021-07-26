@@ -14,7 +14,7 @@
     "csrf": "{{csrf_token}}"
 }</script>
 <script type="text/javascript">
-    window.app.summaryTableEditStartup(function (startup) {
+    window.app.startup("summaryTableEditStartup", function (startup) {
         const config = window.app.getConfig(),
             el = document.getElementById('main');
         startup(el, config);

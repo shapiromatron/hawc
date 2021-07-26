@@ -3,8 +3,8 @@ import AnimalGroupTable from "./AnimalGroupTable";
 import DosingRegimeForm from "./DosingRegimeForm";
 import EditEndpoint from "./EditEndpoint";
 import Endpoint from "./Endpoint";
-import EndpointForm from "./EndpointForm";
-import EndpointListApp from "./EndpointListApp";
+import startupEndpointForm from "./EndpointForm";
+import startupEndpointListApp from "./EndpointListApp";
 import EndpointListTable from "./EndpointListTable";
 import Experiment from "./Experiment";
 import ehvBrowserStartup from "./EhvBrowser";
@@ -15,8 +15,8 @@ export default {
     DosingRegimeForm,
     EditEndpoint,
     Endpoint,
-    EndpointForm,
-    EndpointListApp,
+    startupEndpointForm,
+    startupEndpointListApp,
     EndpointListTable,
     Experiment,
     ehvBrowserStartup,

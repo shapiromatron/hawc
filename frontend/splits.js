@@ -4,6 +4,9 @@ const startup = (name, cb) => {
         case "assessmentSizeStartup":
             import("./admin/assessmentSize/index.js").then(app => cb(app.default));
             break;
+        case "assessmentStartup":
+            import("./assessment/index.js").then(app => cb(app.default));
+            break;
         case "adminGrowthStartup":
             import("./admin/growth/index.js").then(app => cb(app.default));
             break;
@@ -13,11 +16,17 @@ const startup = (name, cb) => {
         case "bmds2Startup":
             import("./bmd/bmds2/index.js").then(app => cb(app.default));
             break;
+        case "dataPivotStartup":
+            import("./summary/dataPivot/index.js").then(app => cb(app.default));
+            break;
         case "epiStartup":
             import("./epi/index.js").then(app => cb(app.default));
             break;
         case "epimetaStartup":
             import("./epimeta/index.js").then(app => cb(app.default));
+            break;
+        case "heatmapTemplateStartup":
+            import("./summary/heatmapTemplate/index.js").then(app => cb(app.default));
             break;
         case "invitroStartup":
             import("./invitro/index.js").then(app => cb(app.default));
@@ -28,11 +37,35 @@ const startup = (name, cb) => {
         case "mgmtStartup":
             import("./mgmt/index.js").then(app => cb(app.default));
             break;
+        case "nestedTagEditorStartup":
+            import("./shared/nestedTagEditor/index.js").then(app => cb(app.default));
+            break;
         case "riskofbiasStartup":
             import("./riskofbias/index.js").then(app => cb(app.default));
             break;
+        case "smartTagsStartup":
+            import("./shared/smartTags/index.js").then(app => cb(app.default));
+            break;
         case "studyStartup":
             import("./study/index.js").then(app => cb(app.default));
+            break;
+        case "summaryFormsStartup":
+            import("./summary/summaryForms/index.js").then(app => cb(app.default));
+            break;
+        case "summaryStartup":
+            import("./summary/summary/index.js").then(app => cb(app.default));
+            break;
+        case "summaryTableEditStartup":
+            import("./summary/summaryTable/editing/index.js").then(app => cb(app.default));
+            break;
+        case "summaryTableViewStartup":
+            import("./summary/summaryTable/viewing/index.js").then(app => cb(app.default));
+            break;
+        case "summaryTextStartup":
+            import("./summary/summaryText/index.js").then(app => cb(app.default));
+            break;
+        case "textCleanupStartup":
+            import("./shared/textCleanup/index.js").then(app => cb(app.default));
             break;
         default:
             throw "Unknown startup request";

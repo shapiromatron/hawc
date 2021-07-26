@@ -16,7 +16,9 @@
 $(document).ready(function(){
   const el = document.getElementById('root'),
     config = window.app.getConfig();
-  window.app.textCleanupStartup(el, config);
+  window.app.startup("textCleanupStartup", function(startup){
+    startup(el, config);
+  });
 });
 </script>
 {% endblock extrajs %}

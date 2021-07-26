@@ -38,7 +38,7 @@
 {% block extrajs %}
   <script type="text/javascript">
   $('#loading_div').html(window.app.HAWCUtils.loading())
-  window.app.dataPivotStartup(function(dataPivot){
+  window.app.startup("dataPivotStartup", function(app){
       var data_url = '{{object.get_data_url|safe}}',
           settings = {{object.settings|safe}},
           options = {
@@ -49,7 +49,7 @@
               submissionDiv: '#dp_settings_form',
               settingsField: '#id_settings',
           };
-      dataPivot.DataPivot.displayEditView(data_url, settings, options)
+      app.DataPivot.displayEditView(data_url, settings, options)
   });
   </script>
 {% endblock extrajs %}

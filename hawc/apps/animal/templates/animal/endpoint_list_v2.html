@@ -19,10 +19,7 @@
     window.app.startup("animalStartup", function (app) {
         var root = document.getElementById('main'),
             config = window.app.getConfig();
-
-        app.EndpointListApp(startup => {
-            startup.func(root, config)
-        });
+        app.startupEndpointListApp(root, config);
     });
 </script>
 {% endblock extrajs %}

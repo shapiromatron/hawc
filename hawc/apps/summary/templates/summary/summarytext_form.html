@@ -24,7 +24,7 @@
 }
 </script>
 <script type="text/javascript">
-  window.app.summaryTextStartup(function (startup) {
+  window.app.startup("summaryTextStartup", function (startup) {
     var root = document.getElementById('main'),
       config = window.app.getConfig();
     startup(root, config);
