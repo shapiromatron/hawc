@@ -93,7 +93,7 @@ Windows requires using anaconda or miniconda to get requirements.
     :: create our superuser and main/test databases
     createuser --superuser --no-password hawc
     createdb -T template0 -E UTF8 hawc
-    createdb -T template0 -E UTF8 test_hawc-fixture-test
+    createdb -T template0 -E UTF8 hawc-test
 
 Running the application
 -----------------------
@@ -349,7 +349,7 @@ Linux/Mac
     export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
 
     # load existing test
-    createdb hawc-fixture-test
+    createdb hawc-fixture
     manage.py load_test_db
 
     # now make edits to the database using the GUI or via command line
@@ -365,7 +365,7 @@ Windows
     set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
 
     :: load existing test
-    createdb -T template0 -E UTF8 hawc-fixture-test
+    createdb -T template0 -E UTF8 hawc-fixture
     manage.py load_test_db
 
     :: now make edits to the database using the GUI or via command line
@@ -373,7 +373,7 @@ Windows
     :: export database
     manage.py dump_test_db
 
-If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
+If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb hawc-test``.
 
 Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
 

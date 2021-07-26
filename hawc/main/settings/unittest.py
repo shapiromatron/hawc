@@ -13,7 +13,7 @@ MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in 
 HAWC_FLAVOR = "PRIME"
 ANYONE_CAN_CREATE_ASSESSMENTS = True
 
-DATABASES["default"]["NAME"] = "hawc-fixture-test"
+DATABASES["default"]["NAME"] = "hawc-fixture"
 
 IS_TESTING = True
 
