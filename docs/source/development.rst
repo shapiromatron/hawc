@@ -270,12 +270,21 @@ When using the recommended settings below, your python and javascript code shoul
 More settings
 -------------
 
+Local settings
+~~~~~~~~~~~~
+
+Additional settings or overrides can be set at ``hawc/main/settings/local.py``.
+
+This file is not available by default, but can be copied from ``hawc/main/settings/local.example.py`` as a starting point.
+The settings from ``local.py`` will be added automatically to the default settings (``hawc.main.settings.dev``), or can be
+used solely by setting the environment variable ``DJANGO_SETTINGS_MODULE`` to ``hawc.main.settings.local``.
+
 HAWC flavors
 ~~~~~~~~~~~~
 
 Currently HAWC has two possible application "flavors", where the application is slightly
 different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR``
-variable ``hawc/main/settings/local.py``. Possible values include:
+variable at ``hawc/main/settings/local.py``. Possible values include:
 
 - PRIME (default application; as hosted at https://hawcproject.org)
 - EPA (EPA application; as hosted at EPA)
