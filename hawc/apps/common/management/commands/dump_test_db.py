@@ -42,4 +42,4 @@ class Command(BaseCommand):
         call_command("dumpdata", "mgmt", **shared_kwargs)
 
         Path(settings.TEST_DB_FIXTURE).parent.mkdir(exist_ok=True, parents=True)
-        Path(settings.TEST_DB_FIXTURE).write_text(f.getvalue())
+        Path(settings.TEST_DB_FIXTURE).write_text(f.getvalue(), encoding="utf-8")
