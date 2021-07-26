@@ -394,6 +394,8 @@ To run tests without using the cassettes and making the network requests, use:
 Testing celery application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The following requires ``redis-cli`` and ``docker-compose``.
+
 To test asynchronous functionality in development, modify your ``hawc/main/settings/local.py``:
 
 .. code-block:: python
