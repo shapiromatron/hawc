@@ -93,23 +93,16 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id='config' type='text/json'>
-{
-  "studyContent": {{study.get_json|safe}}
-  {% if attachments_viewable %},"attachments": {{study.get_attachments_json|safe}} {% endif %}
-}
-</script>
+{{ config|json_script:"config" }}
 <script type="text/javascript">
-const data = window.app.getConfig(),
-  attachments_viewable = {{attachments_viewable}};
-
 window.app.startup("studyStartup", function(app){
-  var thisStudy = new app.Study(data.studyContent),
-      detail_div = $('#study_details');
+  const data = window.app.getConfig(),
+    thisStudy = new app.Study(data.studyContent),
+    detail_div = $('#study_details');
 
   thisStudy.build_details_table(detail_div);
 
-  if(attachments_viewable){
+  if(data.attachments_viewable){
     thisStudy.add_attachments_row(detail_div, data.attachments);
   }
 
