@@ -3,8 +3,7 @@ import re
 from copy import copy
 from typing import Optional
 
-from RISparser import readris
-from RISparser.config import TAG_KEY_MAPPING
+import rispy
 
 from .authors import get_author_short_text, normalize_authors
 
@@ -14,7 +13,7 @@ logger = logging.getLogger(__name__)
 class RisImporter:
     @classmethod
     def get_mapping(cls):
-        mapping = copy(TAG_KEY_MAPPING)
+        mapping = copy(rispy.TAG_KEY_MAPPING)
         mapping.update(
             {"AT": "accession_type", "PM": "pubmed_id", "N2": "abstract2", "SV": "serial_volume"}
         )
@@ -24,7 +23,7 @@ class RisImporter:
     def file_readable(cls, f):
         # ensure that file can be successfully parsed
         try:
-            reader = readris(f, mapping=cls.get_mapping())
+            reader = rispy.load(f, mapping=cls.get_mapping(), encoding="utf-8")
             [content for content in reader]
             f.seek(0)
             return True
@@ -34,10 +33,10 @@ class RisImporter:
 
     def __init__(self, f):
         if isinstance(f, str):
-            f = open(f, "r")
+            f = open(f, "r", encoding="utf-8")
         else:
             f = f
-        reader = readris(f, mapping=self.get_mapping())
+        reader = rispy.load(f, mapping=self.get_mapping(), encoding="utf-8")
         contents = [content for content in reader]
         f.close()
         self.raw_references = contents
