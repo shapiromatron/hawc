@@ -23,7 +23,7 @@ class RisImporter:
     def file_readable(cls, f):
         # ensure that file can be successfully parsed
         try:
-            reader = rispy.load(f, mapping=cls.get_mapping(), encoding="utf-8")
+            reader = rispy.load(f, mapping=cls.get_mapping())
             [content for content in reader]
             f.seek(0)
             return True
@@ -31,12 +31,12 @@ class RisImporter:
             logger.warning(err)
             return False
 
-    def __init__(self, f):
+    def __init__(self, f, encoding="utf-8"):
         if isinstance(f, str):
-            f = open(f, "r", encoding="utf-8")
+            f = open(f, "r", encoding=encoding)
         else:
             f = f
-        reader = rispy.load(f, mapping=self.get_mapping(), encoding="utf-8")
+        reader = rispy.load(f, mapping=self.get_mapping(), encoding=encoding)
         contents = [content for content in reader]
         f.close()
         self.raw_references = contents
