@@ -1,0 +1,51 @@
+[
+    {
+        "pk": 1,
+        "model": "eco.Climate",
+        "fields": {
+            "name": "Temperate"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "eco.Climate",
+        "fields": {
+            "name": "Tropical/subtropical"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "eco.Climate",
+        "fields": {
+            "name": "Dry"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "eco.Climate",
+        "fields": {
+            "name": "Arctic/subarctic"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "eco.Climate",
+        "fields": {
+            "name": "Alpine"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "eco.Climate",
+        "fields": {
+            "name": "Not specified"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "eco.Climate",
+        "fields": {
+            "name": "Other"
+        }
+    }
+]
