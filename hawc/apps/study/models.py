@@ -1,6 +1,5 @@
 import collections
 import itertools
-import json
 import logging
 import os
 
@@ -13,7 +12,7 @@ from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
 from ..assessment.serializers import AssessmentSerializer
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
+from ..common.helper import SerializerHelper, cleanHTML
 from ..lit.models import Reference, Search
 from . import managers
 
