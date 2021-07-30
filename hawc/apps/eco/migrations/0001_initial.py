@@ -103,7 +103,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name": "Cause/Treatment",},
+            options={"verbose_name": "Cause/Treatment"},
         ),
         migrations.CreateModel(
             name="Climate",
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(blank=True, max_length=100)),
             ],
-            options={"verbose_name": "Climate",},
+            options={"verbose_name": "Climate"},
         ),
         migrations.CreateModel(
             name="Country",
@@ -147,7 +147,7 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(blank=True, max_length=100, verbose_name="Ecoregion")),
             ],
-            options={"verbose_name": "Ecoregion",},
+            options={"verbose_name": "Ecoregion"},
         ),
         migrations.CreateModel(
             name="Effect",
@@ -268,7 +268,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name": "Effect/Response",},
+            options={"verbose_name": "Effect/Response"},
         ),
         migrations.CreateModel(
             name="Reference",
@@ -281,7 +281,7 @@ class Migration(migrations.Migration):
                 ),
                 ("reference", models.CharField(help_text="Enter a Reference ID!", max_length=100)),
             ],
-            options={"verbose_name": "Reference",},
+            options={"verbose_name": "Reference"},
         ),
         migrations.CreateModel(
             name="State",
@@ -295,7 +295,7 @@ class Migration(migrations.Migration):
                 ("code", models.CharField(blank=True, max_length=2)),
                 ("name", models.CharField(max_length=64, unique=True)),
             ],
-            options={"verbose_name": "State",},
+            options={"verbose_name": "State"},
         ),
         migrations.CreateModel(
             name="Quantitative",
@@ -514,7 +514,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="eco.effect"),
                 ),
             ],
-            options={"verbose_name": "Quantitative response information",},
+            options={"verbose_name": "Quantitative response information"},
         ),
         migrations.CreateModel(
             name="Metadata",
@@ -656,7 +656,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name": "Metadata",},
+            options={"verbose_name": "Metadata"},
         ),
         migrations.AddField(
             model_name="cause",
