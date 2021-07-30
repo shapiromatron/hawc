@@ -173,7 +173,7 @@ class State(models.Model):
 
 class Climate(models.Model):
 
-    name = models.CharField(max_length=100, blank=True,)
+    name = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
 
