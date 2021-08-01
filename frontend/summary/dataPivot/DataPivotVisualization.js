@@ -113,8 +113,8 @@ class DataPivotVisualization extends D3Plot {
             value,
             func,
             new_arr = [],
-            included = d3.map(),
-            filters_map = d3.map({
+            included = new Map(),
+            filters_map = new Map({
                 lt(v) {
                     return v[field_name] < value;
                 },
@@ -445,10 +445,8 @@ class DataPivotVisualization extends D3Plot {
             settings.barchart.conditional_formatting.forEach(function(cf) {
                 switch (cf.condition_type) {
                     case "discrete-style":
-                        var hash = d3.map();
-                        cf.discrete_styles.forEach(function(d) {
-                            hash.set(d.key, d.style);
-                        });
+                        var hash = new Map();
+                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
                         rows.forEach(function(d) {
                             if (hash.get(d[cf.field_name]) === NULL_CASE) {
                                 return;
@@ -468,7 +466,7 @@ class DataPivotVisualization extends D3Plot {
             this.dp_settings.dataline_settings.forEach(dl => {
                 dl.conditional_formatting.forEach(cf => {
                     const styles = "bars",
-                        hash = d3.map();
+                        hash = new Map();
                     switch (cf.condition_type) {
                         case "discrete-style":
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
@@ -529,7 +527,7 @@ class DataPivotVisualization extends D3Plot {
                             break;
 
                         case "discrete-style":
-                            var hash = d3.map();
+                            var hash = new Map();
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
                             rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {

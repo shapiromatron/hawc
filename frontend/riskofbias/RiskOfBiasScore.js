@@ -27,11 +27,11 @@ class RiskOfBiasScore {
         return {
             domain: robs[0].data.metric.domain.name,
             metric: robs[0].data.metric,
-            scores: d3
-                .nest()
-                .key(d => d.metric.domain.name)
-                .key(d => d.metric.name)
-                .entries(scores),
+            scores: d3.group(
+                scores,
+                d => d.metric.domain.name,
+                d => d.metric.name
+            ),
             config,
         };
     }

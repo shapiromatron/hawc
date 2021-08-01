@@ -59,11 +59,11 @@ class RobTableStore extends StudyRobStore {
                             });
                         })
                     ),
-                    robs = d3
-                        .nest()
-                        .key(d => this.metricDomains[d.metric_id].name)
-                        .key(d => this.metrics[d.metric_id].name)
-                        .entries(domains),
+                    robs = d3.group(
+                        domains,
+                        d => this.metricDomains[d.metric_id].name,
+                        d => this.metrics[d.metric_id].name
+                    ),
                     finalRobs = _.find(dirtyRoBs, {final: true});
 
                 this.riskofbiases = robs;
@@ -100,11 +100,11 @@ class RobTableStore extends StudyRobStore {
             })
         );
 
-        return d3
-            .nest()
-            .key(d => this.metricDomains[d.metric_id].name)
-            .key(d => this.metrics[d.metric_id].name)
-            .entries(domains);
+        return d3.group(
+            domains,
+            d => this.metricDomains[d.metric_id].name,
+            d => this.metrics[d.metric_id].name
+        );
     }
 
     @computed get allRobShown() {

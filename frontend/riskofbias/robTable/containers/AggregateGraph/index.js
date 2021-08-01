@@ -27,22 +27,16 @@ class AggregateGraph extends Component {
         let domains = _.flattenDeep(
             _.map(this.props.riskofbiases, domain => {
                 return _.map(domain.values, metric => {
-                    return _.filter(metric.values, score => {
-                        return score.final;
-                    });
+                    return _.filter(metric.values, score => score.final);
                 });
             })
         );
 
-        return d3
-            .nest()
-            .key(d => {
-                return d.metric.domain.name;
-            })
-            .key(d => {
-                return d.metric.name;
-            })
-            .entries(domains);
+        return d3.group(
+            domains,
+            d => d.metric.domain.name,
+            d => d.metric.name
+        );
     }
 
     render() {

@@ -108,13 +108,13 @@ class CrossviewPlot extends D3Visualization {
                   })
                 : function() {},
             dragY = this.options.dev
-                ? d3.drag().on("drag", function(d, i) {
+                ? d3.drag().on("drag", function(event, d, i) {
                       let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                           p = d3.select(this),
                           m = regexp.exec(p.attr("transform"));
                       if (m !== null && m.length === 3) {
-                          let x = parseInt(m[1]) + parseInt(d3.event.dx),
-                              y = parseInt(m[2]) + parseInt(d3.event.dy);
+                          let x = parseInt(m[1]) + parseInt(event.dx),
+                              y = parseInt(m[2]) + parseInt(event.dy);
                           p.attr(
                               "transform",
                               `translate(${x},${y}) rotate(270,${yAxisXDefault + x},${midY + y})`
@@ -517,19 +517,19 @@ class CrossviewPlot extends D3Visualization {
 
         // add labels
         if (this.options.dev) {
-            drag = d3.drag().on("drag", function(d, i) {
+            drag = d3.drag().on("drag", function(event, d, i) {
                 var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                     p = d3.select(this),
                     m = regexp.exec(p.attr("transform"));
                 if (m !== null && m.length === 3) {
-                    var x = parseFloat(m[1]) + d3.event.dx,
-                        y = parseFloat(m[2]) + d3.event.dy;
+                    var x = parseFloat(m[1]) + event.dx,
+                        y = parseFloat(m[2]) + event.dy;
                     p.attr("transform", `translate(${x},${y})`);
                     self.setLabelLocation(i, x, y);
                 }
             });
         } else {
-            drag = function() {};
+            drag = h.noop;
         }
 
         labels = this.vis

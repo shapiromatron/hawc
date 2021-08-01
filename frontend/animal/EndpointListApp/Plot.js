@@ -139,10 +139,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                                 .filter(d => _.includes(settings.doses, d.data["dose units id"]))
                                 .filter(d => _.includes(settings.systems, d.data.system))
                                 .filter(d => _.includes(settings.criticalValues, d.type)),
-                            grouped = d3
-                                .nest()
-                                .key(d => d.data.system)
-                                .map(filtered);
+                            grouped = d3.group(filtered, d => d.data.system);
 
                         return _.values(grouped);
                     },

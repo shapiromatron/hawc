@@ -162,8 +162,8 @@ class TagTreeViz extends D3Plot {
 
                 tag.renderPaginatedReferenceList(div.get(0));
             },
-            update = function(source) {
-                var duration = d3.event && d3.event.altKey ? 5000 : 500,
+            update = function(event, source) {
+                var duration = event && event.altKey ? 5000 : 500,
                     t = d3.transition().duration(duration);
 
                 // Compute the new tree layout.
@@ -184,8 +184,8 @@ class TagTreeViz extends D3Plot {
                     .append("svg:g")
                     .attr("class", "tagnode")
                     .attr("transform", () => `translate(${source.y0},${source.x0})`)
-                    .on("click", function(d) {
-                        if (d3.event.ctrlKey || d3.event.metaKey) {
+                    .on("click", function(event, d) {
+                        if (event.ctrlKey || event.metaKey) {
                             if (d.depth == 0) {
                                 alert("Cannot view details on root-node.");
                             } else {
@@ -193,7 +193,7 @@ class TagTreeViz extends D3Plot {
                             }
                         } else {
                             toggle(d);
-                            update(d);
+                            update(event, d);
                         }
                     });
 

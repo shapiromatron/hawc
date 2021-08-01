@@ -18,12 +18,7 @@ class Aggregation {
             });
         });
 
-        var ds = d3
-            .nest()
-            .key(function(d) {
-                return d.data.metric.id;
-            })
-            .entries(arr);
+        var ds = d3.group(arr, d => d.data.metric.id);
 
         var score_binning = function(d) {
             let bins = {};

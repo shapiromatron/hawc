@@ -162,7 +162,7 @@ class DataPivot {
     }
 
     static getRowDetails(values) {
-        var unique = d3.set(values),
+        var unique = new Set(values),
             numeric = values.filter(v => $.isNumeric(v)),
             range = numeric.length > 0 ? d3.extent(numeric) : undefined;
 

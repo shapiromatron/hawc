@@ -260,16 +260,10 @@ class ResultForestPlot extends D3Plot {
             .append("circle")
             .attr("class", "dose_points")
             .attr("r", 7)
-            .attr("cx", function(d) {
-                return x(d.estimate);
-            })
-            .attr("cy", function(d) {
-                return y(d.name) + mid;
-            })
+            .attr("cx", d => x(d.estimate))
+            .attr("cy", d => y(d.name) + mid)
             .style("cursor", "pointer")
-            .on("click", function(d) {
-                d.group.show_group_tooltip(d3.event);
-            })
+            .on("click", (e, d) => d.group.show_group_tooltip(e))
             .append("title")
             .text(d => `${d.estimate}: click to view exposure-group details`);
     }

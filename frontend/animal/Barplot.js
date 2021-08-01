@@ -201,9 +201,7 @@ class Barplot extends D3Plot {
             .value();
 
         sigs_data = _.chain(values)
-            .filter(function(v) {
-                return v.significance_level > 0;
-            })
+            .filter(v => v.significance_level > 0)
             .map(function(v) {
                 return {
                     x: v.dose,

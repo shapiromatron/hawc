@@ -68,11 +68,7 @@ class Endpoint extends Observee {
     }
 
     unpack_doses() {
-        this.doses = d3
-            .nest()
-            .key(d => d.dose_units.id)
-            .entries(this.data.animal_group.dosing_regime.doses);
-
+        this.doses = d3.group(this.data.animal_group.dosing_regime.doses, d => d.dose_units.id);
         this.doses.forEach(function(v) {
             v.name = v.values[0].dose_units.name;
         });
