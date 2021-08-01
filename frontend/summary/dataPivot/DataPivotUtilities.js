@@ -1,5 +1,4 @@
 import $ from "$";
-import * as d3 from "d3";
 
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";

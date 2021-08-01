@@ -23,10 +23,7 @@ module.exports = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        plugins: [
-                            "@babel/plugin-syntax-dynamic-import",
-                            ["@babel/plugin-proposal-class-properties", {loose: false}],
-                        ],
+                        plugins: [["@babel/plugin-proposal-class-properties", {loose: false}]],
                     },
                 },
             },

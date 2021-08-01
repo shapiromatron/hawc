@@ -1,9 +1,5 @@
 import React, {Component} from "react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-
-import "react-tabs/style/react-tabs.css";
-import "react-select/dist/react-select.css";
-
 import h from "shared/utils/helpers";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
