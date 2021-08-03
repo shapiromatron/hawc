@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
-from .parser import QuillParser, tag_wrapper, ul_wrapper
+from .parser import tag_wrapper, ul_wrapper
 
 
 class JudgementTexts(Enum):
@@ -72,7 +72,7 @@ class SummaryJudgementCell(BaseCell):
         label = SummaryJudgementTexts[self.judgement.name].value[1]
         return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
 
-    def to_docx(self, block):
+    def to_docx(self, parser, block):
         text = ""
         text += self.judgement_html()
         text += tag_wrapper("\nPrimary basis:", "p", "em")
@@ -83,7 +83,6 @@ class SummaryJudgementCell(BaseCell):
         text += self.cross_stream_coherence
         text += tag_wrapper("\nSusceptible populations and lifestages:", "p", "em")
         text += self.susceptibility
-        parser = QuillParser()
         parser.feed(text, block)
         if self.judgement != SummaryJudgementChoices.NoJudgement:
             for paragraph in block.paragraphs[0:2]:
@@ -98,9 +97,8 @@ class EvidenceCell(BaseCell):
 
     description: str
 
-    def to_docx(self, block):
+    def to_docx(self, parser, block):
         text = self.description
-        parser = QuillParser()
         return parser.feed(text, block)
 
 
@@ -109,8 +107,7 @@ class SummaryCell(BaseCell):
 
     findings: str
 
-    def to_docx(self, block):
-        parser = QuillParser()
+    def to_docx(self, parser, block):
         return parser.feed(self.findings, block)
 
 
@@ -171,13 +168,12 @@ class FactorsCell(BaseCell):
     factors: List[Factor]
     text: str
 
-    def to_docx(self, block):
+    def to_docx(self, parser, block):
         factors = [factor.to_html() for factor in self.factors]
         text = ""
         if len(factors):
             text = ul_wrapper(factors)
         text += self.text
-        parser = QuillParser()
         return parser.feed(text, block)
 
 
@@ -209,9 +205,8 @@ class JudgementCell(BaseCell):
         label = JudgementTexts[self.judgement.name].value[1]
         return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
 
-    def to_docx(self, block):
+    def to_docx(self, parser, block):
         text = self.judgement_html() + self.description
-        parser = QuillParser()
         parser.feed(text, block)
         if self.judgement != JudgementChoices.NoJudgement:
             for paragraph in block.paragraphs[0:2]:
@@ -226,8 +221,7 @@ class MechanisticEvidenceCell(BaseCell):
 
     description: str
 
-    def to_docx(self, block):
-        parser = QuillParser()
+    def to_docx(self, parser, block):
         return parser.feed(self.description, block)
 
 
@@ -237,8 +231,7 @@ class MechanisticSummaryCell(BaseCell):
 
     findings: str
 
-    def to_docx(self, block):
-        parser = QuillParser()
+    def to_docx(self, parser, block):
         return parser.feed(self.findings, block)
 
 
@@ -247,8 +240,7 @@ class MechanisticJudgementCell(BaseCell):
 
     description: str
 
-    def to_docx(self, block):
-        parser = QuillParser()
+    def to_docx(self, parser, block):
         return parser.feed(self.description, block)
 
 

@@ -1,14 +1,12 @@
 from typing import List
 
 from .base import BaseCell, BaseTable
-from .parser import QuillParser
 
 
 class GenericCell(BaseCell):
     quill_text: str = "<p></p>"
 
-    def to_docx(self, block):
-        parser = QuillParser()
+    def to_docx(self, parser, block):
         return parser.feed(self.quill_text, block)
 
 
