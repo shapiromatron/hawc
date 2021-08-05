@@ -345,5 +345,20 @@ const helpers = {
             }, 250);
         }
     },
+    groupNest(values, ...keys) {
+        // performs d3.group and transforms it into the old d3.nest structure
+        function groupToNest(group, depth) {
+            if (depth-- > 0) {
+                return Array.from(group, ([_key, _values]) => ({
+                    key: _key,
+                    values: groupToNest(_values, depth),
+                }));
+            }
+            return group;
+        }
+        let group = d3.group(values, ...keys),
+            depth = keys.length;
+        return groupToNest(group, depth);
+    },
 };
 export default helpers;

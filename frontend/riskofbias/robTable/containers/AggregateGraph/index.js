@@ -4,6 +4,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
+import h from "shared/utils/helpers";
 import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
 import DisplayComponent from "riskofbias/robTable/components/AggregateGraph";
 import Loading from "shared/components/Loading";
@@ -32,7 +33,7 @@ class AggregateGraph extends Component {
             })
         );
 
-        return d3.group(
+        return h.groupNest(
             domains,
             d => d.metric.domain.name,
             d => d.metric.name

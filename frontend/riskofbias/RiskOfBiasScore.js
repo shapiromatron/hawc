@@ -1,6 +1,8 @@
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
+
 class RiskOfBiasScore {
     constructor(study, data) {
         this.study = study;
@@ -27,7 +29,7 @@ class RiskOfBiasScore {
         return {
             domain: robs[0].data.metric.domain.name,
             metric: robs[0].data.metric,
-            scores: d3.group(
+            scores: h.groupNest(
                 scores,
                 d => d.metric.domain.name,
                 d => d.metric.name

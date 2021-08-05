@@ -60,7 +60,7 @@ export const mutateRobSettings = settings => {
             });
 
             // group rob by domains
-            riskofbias = d3.group(riskofbias, d => d.data.metric.domain.name);
+            riskofbias = h.groupNest(riskofbias, d => d.data.metric.domain.name);
 
             // now generate a score for each domain (aggregating metrics)
             riskofbias.forEach(rob => {

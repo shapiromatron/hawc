@@ -177,7 +177,7 @@ class Donut extends D3Plot {
                         .promise()
                         .done(() => self.show_subset(self.data.overall_question_data));
                 })
-                .on("mouseout", function(v) {
+                .on("mouseout", function(event, v) {
                     if (self.viewlock) return;
                     d3.select(this).classed("hovered", false);
                     metric_arcs.classed("hovered", false);
@@ -278,14 +278,14 @@ class Donut extends D3Plot {
             .style("fill", d => d.data.score_svg_style.fill)
             .attr("class", "donuts metric_arc")
             .attr("d", details_arc)
-            .on("mouseover", function(v1) {
+            .on("mouseover", function(event, v1) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", true);
                 $(":animated")
                     .promise()
                     .done(() => self.show_subset(v1.data));
             })
-            .on("mouseout", function(v) {
+            .on("mouseout", function(event, v) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);
@@ -300,14 +300,14 @@ class Donut extends D3Plot {
             .enter()
             .append("path")
             .attr("class", "donuts domain_arc")
-            .on("mouseover", function(domain) {
+            .on("mouseover", function(event, domain) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", true);
                 $(":animated")
                     .promise()
                     .done(() => self.show_domain_header(domain.data.domain));
             })
-            .on("mouseout", function(v) {
+            .on("mouseout", function(event, v) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);

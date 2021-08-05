@@ -166,8 +166,8 @@ class DataPivot {
             numeric = values.filter(v => $.isNumeric(v)),
             range = numeric.length > 0 ? d3.extent(numeric) : undefined;
 
-        unique.remove("");
-        unique.remove("undefined");
+        unique.delete("");
+        unique.delete("undefined");
 
         return {
             unique: unique.values(),

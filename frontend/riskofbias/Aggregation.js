@@ -18,7 +18,7 @@ class Aggregation {
             });
         });
 
-        var ds = d3.group(arr, d => d.data.metric.id);
+        var ds = h.groupNest(arr, d => d.data.metric.id);
 
         var score_binning = function(d) {
             let bins = {};

@@ -902,7 +902,7 @@ class DataPivotVisualization extends D3Plot {
             .attr("width", d => Math.abs(x(barXStart) - x(d[barchart.field_name])))
             .attr("height", barHeight)
             .style("cursor", d => (barchart._dpe_key ? "pointer" : "auto"))
-            .on("click", d => {
+            .on("click", (event, d) => {
                 if (barchart._dpe_key) {
                     this.dpe.render_plottip(barchart, d);
                 }
@@ -1030,7 +1030,7 @@ class DataPivotVisualization extends D3Plot {
                     }
                 })
                 .style("cursor", d => (datum._dpe_key ? "pointer" : "auto"))
-                .on("click", function(d) {
+                .on("click", function(event, d) {
                     if (datum._dpe_key) {
                         self.dpe.render_plottip(datum, d);
                     }
@@ -1179,7 +1179,7 @@ class DataPivotVisualization extends D3Plot {
                 return dObj !== null && dObj.display !== undefined ? dObj.display : d.text;
             })
             .style("cursor", d => d.cursor)
-            .on("click", d => d.onclick())
+            .on("click", (event, d) => d.onclick())
             .each(function(d) {
                 apply_text_styles(this, d.style);
             });

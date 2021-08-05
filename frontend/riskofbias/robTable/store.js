@@ -1,7 +1,7 @@
-import * as d3 from "d3";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
+import h from "shared/utils/helpers";
 import StudyRobStore from "../stores/StudyRobStore";
 
 class RobTableStore extends StudyRobStore {
@@ -59,7 +59,7 @@ class RobTableStore extends StudyRobStore {
                             });
                         })
                     ),
-                    robs = d3.group(
+                    robs = h.groupNest(
                         domains,
                         d => this.metricDomains[d.metric_id].name,
                         d => this.metrics[d.metric_id].name
@@ -100,7 +100,7 @@ class RobTableStore extends StudyRobStore {
             })
         );
 
-        return d3.group(
+        return h.groupNest(
             domains,
             d => this.metricDomains[d.metric_id].name,
             d => this.metrics[d.metric_id].name
