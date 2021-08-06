@@ -51,7 +51,6 @@ Instructions below have been written for bash, so should work out of the box for
 
     # install requirements
     ./venv/bin/pip install -r ./requirements/dev.txt
-    python -m nltk.downloader punkt
 
     # create a PostgreSQL database and superuser
     createuser --superuser --no-password hawc
@@ -81,7 +80,6 @@ Windows requires using anaconda or miniconda to get requirements.
     cd %HOMEPATH%\dev\hawc
     python -m pip install --upgrade pip
     pip install -r requirements\dev.txt
-    python -m nltk.downloader punkt
 
     :: setup and start PostgreSQL; in this example we'll put it in dev
     cd %HOMEPATH%\dev
