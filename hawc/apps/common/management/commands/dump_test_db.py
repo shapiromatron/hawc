@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        if not any(_ in settings.DATABASES["default"]["NAME"] for _ in ["fixture", "test"]):
+        if "fixture" not in settings.DATABASES["default"]["NAME"]:
             raise CommandError("Must be using a test database to execute.")
 
         f = StringIO()
