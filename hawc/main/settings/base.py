@@ -310,6 +310,7 @@ WEBPACK_LOADER = {
 }
 
 ANYONE_CAN_CREATE_ASSESSMENTS = True
+PM_CAN_MAKE_PUBLIC = os.getenv("PM_CAN_MAKE_PUBLIC", "True") == "True"
 EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv

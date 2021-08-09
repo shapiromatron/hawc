@@ -2,6 +2,7 @@ from pathlib import Path
 from textwrap import dedent
 
 from django import forms
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
@@ -42,6 +43,14 @@ class AssessmentForm(forms.ModelForm):
         self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
+        if not settings.PM_CAN_MAKE_PUBLIC:
+            if self.instance.public:
+                self.fields[
+                    "public"
+                ].help_text += " If made private, the HAWC team will need to be contacted to make public again."
+            else:
+                self.fields["public"].disabled = True
+                self.fields["public"].help_text = "Contact the HAWC team to make public."
 
     @property
     def helper(self):
