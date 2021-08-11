@@ -15,10 +15,10 @@
 }
 </script>
 <script type="text/javascript">
-    window.app.startup("heatmapTemplateStartup", function (app) {
+    window.app.startup("heatmapTemplateStartup", function (func) {
         var root = document.getElementById('main'),
             config = window.app.getConfig();
-        app.func(root, config);
+        func(root, config);
     });
 </script>
 {% endblock extrajs %}
