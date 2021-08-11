@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
