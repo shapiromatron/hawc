@@ -97,9 +97,9 @@ class ExploreHeatmapPlot {
         }
 
         if (type === "cell") {
-            bindTooltip(this.$tooltipDiv, selection, d => <CellTooltip data={d} />);
+            bindTooltip(this.$tooltipDiv, selection, (event, d) => <CellTooltip data={d} />);
         } else if (type === "axis") {
-            bindTooltip(this.$tooltipDiv, selection, d => <AxisTooltip data={d} />);
+            bindTooltip(this.$tooltipDiv, selection, (event, d) => <AxisTooltip data={d} />);
         } else {
             throw `Unknown type: ${type}`;
         }
