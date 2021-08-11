@@ -39,7 +39,7 @@ class D3Plot {
     build_legend(settings) {
         var plot = this,
             buffer = settings.box_padding, //shortcut reference
-            drag = d3.drag().on("drag", function(event, d, i) {
+            drag = d3.drag().on("drag", function(event, d) {
                 var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                     p = d3.select(this),
                     m = regexp.exec(p.attr("transform"));
@@ -495,7 +495,7 @@ class D3Plot {
             .append("xhtml:a")
             .attr("title", "Display plot menu")
             .attr("class", "hidden")
-            .on("click", function(v, i) {
+            .on("click", function() {
                 plot._toggle_menu_bar();
             });
         this.cog_button

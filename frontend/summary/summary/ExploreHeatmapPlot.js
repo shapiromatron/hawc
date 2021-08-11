@@ -268,7 +268,7 @@ class ExploreHeatmapPlot {
                         `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
                             d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                 )
-                .on("click", d => {
+                .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -434,7 +434,7 @@ class ExploreHeatmapPlot {
                         `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
                             d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                 )
-                .on("click", d => {
+                .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -566,7 +566,7 @@ class ExploreHeatmapPlot {
                         `${-width},${d.y1} 0,${d.y1} 0,${d.y1 + d.height} ${-width},${d.y1 +
                             d.height}`
                 )
-                .on("click", d => {
+                .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "y");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -748,7 +748,7 @@ class ExploreHeatmapPlot {
                     let g = enter
                         .append("g")
                         .attr("class", "exp_heatmap_cell")
-                        .on("click", d => {
+                        .on("click", (event, d) => {
                             if (d.rows.length > 0) {
                                 self.store.setTableDataFilters(d);
                             } else {

@@ -240,7 +240,9 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                                 .attr("cy", height)
                                 .attr("r", 0)
                                 .attr("fill", d => colorScale(d.type))
-                                .on("click", d => Endpoint.displayAsModal(d.data["endpoint id"])),
+                                .on("click", (event, d) =>
+                                    Endpoint.displayAsModal(d.data["endpoint id"])
+                                ),
                         update =>
                             update
                                 .transition(t)

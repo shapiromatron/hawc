@@ -11,7 +11,7 @@ class ReactDatePicker extends Component {
         this.getDatePickerProps = this.getDatePickerProps.bind(this);
         this.onChange = this.onChange.bind(this);
         this.state = {
-            date: props.date ? moment(props.date) : null,
+            date: props.date ? moment(props.date).toDate() : null,
         };
     }
 

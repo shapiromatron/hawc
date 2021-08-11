@@ -302,7 +302,7 @@ class TagTreeViz extends D3Plot {
             .range([this.minimum_radius, this.maximum_radius]);
 
         treeNode.children.forEach(toggleAll);
-        update(treeNode);
+        update(null, treeNode);
     }
 }
 

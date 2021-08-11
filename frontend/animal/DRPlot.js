@@ -76,10 +76,10 @@ class DRPlot extends D3Plot {
         this.customize_menu();
 
         var plot = this;
-        this.y_axis_label.on("click", function(v) {
+        this.y_axis_label.on("click", function() {
             plot.toggle_y_axis();
         });
-        this.x_axis_label.on("click", function(v) {
+        this.x_axis_label.on("click", function() {
             plot.toggle_x_axis();
         });
         this.trigger_resize();

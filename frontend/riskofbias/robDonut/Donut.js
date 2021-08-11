@@ -177,7 +177,7 @@ class Donut extends D3Plot {
                         .promise()
                         .done(() => self.show_subset(self.data.overall_question_data));
                 })
-                .on("mouseout", function(event, v) {
+                .on("mouseout", function() {
                     if (self.viewlock) return;
                     d3.select(this).classed("hovered", false);
                     metric_arcs.classed("hovered", false);
@@ -285,7 +285,7 @@ class Donut extends D3Plot {
                     .promise()
                     .done(() => self.show_subset(v1.data));
             })
-            .on("mouseout", function(event, v) {
+            .on("mouseout", function() {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);
@@ -307,7 +307,7 @@ class Donut extends D3Plot {
                     .promise()
                     .done(() => self.show_domain_header(domain.data.domain));
             })
-            .on("mouseout", function(event, v) {
+            .on("mouseout", function() {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);

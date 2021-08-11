@@ -108,7 +108,7 @@ class CrossviewPlot extends D3Visualization {
                   })
                 : function() {},
             dragY = this.options.dev
-                ? d3.drag().on("drag", function(event, d, i) {
+                ? d3.drag().on("drag", function(event) {
                       let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                           p = d3.select(this),
                           m = regexp.exec(p.attr("transform"));
@@ -517,12 +517,16 @@ class CrossviewPlot extends D3Visualization {
 
         // add labels
         if (this.options.dev) {
-            drag = d3.drag().on("drag", function(event, d, i) {
+            drag = d3.drag().on("drag", function(event) {
                 var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                     p = d3.select(this),
                     m = regexp.exec(p.attr("transform"));
                 if (m !== null && m.length === 3) {
-                    var x = parseFloat(m[1]) + event.dx,
+                    var i = d3
+                            .selectAll("g.labels")
+                            .nodes()
+                            .indexOf(this),
+                        x = parseFloat(m[1]) + event.dx,
                         y = parseFloat(m[2]) + event.dy;
                     p.attr("transform", `translate(${x},${y})`);
                     self.setLabelLocation(i, x, y);
@@ -621,14 +625,14 @@ class CrossviewPlot extends D3Visualization {
             .attr("y", (d, i) => (i + 1) * 15)
             .text(d => d.headerName)
             .style("fill", d => d.color)
-            .on("mouseover", function(d) {
+            .on("mouseover", function(event, d) {
                 d3.select(this).style("fill", self.plot_settings.colorHover);
                 self.vis
                     .selectAll("." + d.className)
                     .style("stroke", self.plot_settings.colorHover);
                 self._bringColorFilterToFront(d);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function(event, d) {
                 d3.select(this).style("fill", d.color);
                 self.vis.selectAll("." + d.className).style("stroke", d.color);
             });
@@ -703,8 +707,8 @@ class CrossviewPlot extends D3Visualization {
             .attr("class", d => `crossview_paths ${d[0].classes.join(" ")}`)
             .attr("d", line)
             .style("stroke", d => d[0].currentStroke)
-            .on("click", d => d[0].endpoint.displayAsModal())
-            .on("mouseover", function(d) {
+            .on("click", (event, d) => d[0].endpoint.displayAsModal())
+            .on("mouseover", function(event, d) {
                 if (
                     self.active_filters.length === 0 ||
                     d[0].currentStroke === self.plot_settings.colorSelected
@@ -713,7 +717,7 @@ class CrossviewPlot extends D3Visualization {
                 }
                 self.change_show_selected_fields(this, d, true);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function(event, d) {
                 d3.select(this).style("stroke", d[0].currentStroke);
                 self.change_show_selected_fields(this, d, false);
             })
@@ -781,14 +785,14 @@ class CrossviewPlot extends D3Visualization {
             .attr("text-anchor", "start")
             .attr("class", "crossview_fields")
             .text(v => v.text)
-            .on("click", function(v) {
+            .on("click", function(event, v) {
                 self.change_active_filters(v, this);
             })
-            .on("mouseover", function(d) {
+            .on("mouseover", function(event, d) {
                 d3.select(this).attr("fill", self.plot_settings.colorHover);
                 self._update_hover_filters(d);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function() {
                 d3.select(this).attr("fill", null);
                 self._update_hover_filters();
             });
