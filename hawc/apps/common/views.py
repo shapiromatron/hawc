@@ -449,6 +449,11 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
     def form_valid(self, form):
         self.object = form.save()
+        # Log the update
+        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+        )
         self.post_object_save(form)  # add hook for post-object save
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
@@ -511,6 +516,11 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
     def form_valid(self, form):
         self.object = form.save()
+        # Log the create
+        log_message = f"Created '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+        )
         self.post_object_save(form)  # add hook for post-object save
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
@@ -587,6 +597,11 @@ class BaseCreateWithFormset(BaseCreate):
 
     def form_valid(self, form, formset):
         self.object = form.save()
+        # Log the create
+        log_message = f"Created '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+        )
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
@@ -648,6 +663,11 @@ class BaseUpdateWithFormset(BaseUpdate):
 
     def form_valid(self, form, formset):
         self.object = form.save()
+        # Log the update
+        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+        )
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
