@@ -1,14 +1,6 @@
 from django.db import models
 from ..epi.models import Country
 
-
-study_type_choices = (
-    ("Observational/gradient", "Observational/gradient"),
-    ("Manipulation/experiment", "Manipulation/experiment"),
-    ("Simulation", "Simulation"),
-    ("Meta-analysis", "Meta-analysis"),
-    ("Review", "Review"),
-)
 study_setting_choices = (
     ("Field", "Field"),
     ("Mesocosm", "Mesocosm"),
@@ -198,13 +190,29 @@ class Metadata(models.Model):
 
     study_id = models.OneToOneField(Reference, on_delete=models.CASCADE)
 
+    class StudyType(models.IntegerChoices):
+
+        OBS = 0, "Observational/gradient"
+        MAN = 1, "Manipulation/experiment"
+        SIM = 2, "Simulation"
+        MET = 3, "Meta-analysis"
+        REV = 4, "Review"
+
     study_type = models.CharField(
-        max_length=100, choices=study_type_choices, help_text="Select the type of study"
+        max_length=100, choices=StudyType.choices, help_text="Select the type of study"
     )
+
+    class StudySetting(models.IntegerChoices):
+        FIELD = 0, "Field"
+        MESO = 1, "Mesocosm"
+        GREEN = 2, "Greenhouse"
+        LAB = 3, "Laboratory"
+        MOD = 4, "Model"
+        NA = 5, "Not Applicable"
 
     study_setting = models.CharField(
         max_length=100,
-        choices=study_setting_choices,
+        choices=StudySetting.choices,
         help_text="Select the setting in which evidence was generated",
     )
 
@@ -218,26 +226,48 @@ class Metadata(models.Model):
         Ecoregion, blank=True, help_text="Select one or more Level III Ecoregions, if known",
     )
 
+    class HabitatType(models.IntegerChoices):
+        TERR = 0, "Terrestrial"
+        RIP = 1, "Riparian"
+        FRESH = 2, "Freshwater aquatic"
+        ESTU = 3, "Estuarine"
+        MAR = 4, "Marine"
+
     habitat = models.CharField(
         verbose_name="Habitat",
         max_length=100,
-        choices=habitat_choices,
+        choices=HabitatType.choices,
         blank=True,
         help_text="Select the habitat to which the evidence applies",
     )
 
+    class TerrestrialHab(models.IntegerChoices):
+        FOR = 0, "Forest"
+        GRASS = 1, "Grassland"
+        DES = 2, "Desert"
+        HEATH = 3, "Heathland"
+        AG = 4, "Agricultural"
+        URB = 5, "Urban/suburban"
+        TUND = 6, "Tundra"
+
     habitat_terrestrial = models.CharField(
         verbose_name="Terrestrial habitat",
         max_length=100,
-        choices=habitat_terrestrial_choices,
+        choices=TerrestrialHab.choices,
         blank=True,
         help_text="If you selected terrestrial, pick the type of terrestrial habitat",
     )  # this field is dependent on selecting terrestrial habitat
 
+    class AquaticHab(models.IntegerChoices):
+        STREAM = 0, "Stream/river"
+        WETL = 1, "Wetland"
+        LAKE = 2, "Lake/reservoir"
+        ART = 3, "Artificial"
+
     habitat_aquatic_freshwater = models.CharField(
         verbose_name="Freshwater habitat",
         max_length=100,
-        choices=habitat_aquatic_freshwater_choices,
+        choices=AquaticHab.choices,
         blank=True,
         help_text="If you selected freshwater, pick the type of freshwater habitat",
     )  # this field is dependent on selecting aquatic habitat
@@ -267,12 +297,24 @@ class Cause(models.Model):
 
     study_id = models.ForeignKey(Reference, on_delete=models.CASCADE)
 
+    class CauseTerm(
+        models.IntegerChoices
+    ):  # does caroline have an updated list, or does this need to be a fixture??
+        TBD = 0, "TBD"
+        WAT = 1, "Water Quality"
+
     term = models.CharField(
-        verbose_name="Cause term", max_length=100, choices=cause_term_choices
+        verbose_name="Cause term", max_length=100, choices=CauseTerm.choices
     )  # autocomplete
 
+    class CauseMeasure(
+        models.IntegerChoices
+    ):  # does caroline have an updated list, or does this need to be a fixture??
+        TBD = 0, "TBD"
+        NUT = 1, "Nutrients"
+
     measure = models.CharField(
-        verbose_name="Cause measure", max_length=100, choices=cause_measure_choices
+        verbose_name="Cause measure", max_length=100, choices=CauseMeasure.choices,
     )  # autocomplete
 
     measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
