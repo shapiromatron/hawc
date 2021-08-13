@@ -1,4 +1,6 @@
 from django.db import models
+from ..epi.models import Country
+
 
 study_type_choices = (
     ("Observational/gradient", "Observational/gradient"),
@@ -142,20 +144,6 @@ statistical_sig_measure_type_choices = (
     ("Not applicable", "Not applicable"),
 )
 sort_choices = (("TBD", "TBD"),)
-
-
-class Country(models.Model):
-
-    code = models.CharField(blank=True, max_length=2)
-    name = models.CharField(unique=True, max_length=64)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Country"
-        verbose_name_plural = "Countries"
-        ordering = ("name",)
 
 
 class State(models.Model):
