@@ -1,6 +1,7 @@
 from django.db import models
 
 from ..epi.models import Country
+from ..study.models import Study
 
 
 class State(models.Model):
@@ -39,21 +40,9 @@ class Ecoregion(models.Model):
         verbose_name = "Ecoregion"
 
 
-class Reference(models.Model):
-
-    reference = models.CharField(max_length=100, help_text="Enter a Reference ID!")
-
-    def __str__(self):
-
-        return self.reference
-
-    class Meta:
-        verbose_name = "Reference"
-
-
 class Metadata(models.Model):
 
-    study_id = models.ForeignKey(Reference, on_delete=models.CASCADE)
+    study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
     class StudyType(models.IntegerChoices):
 
@@ -168,7 +157,7 @@ class BioOrg(models.IntegerChoices):  # to be used in both cause and effect tabl
 
 class Cause(models.Model):
 
-    study_id = models.ForeignKey(Reference, on_delete=models.CASCADE)
+    study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
     class CauseTerm(
         models.IntegerChoices
