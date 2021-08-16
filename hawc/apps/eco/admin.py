@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from . import models
 
-admin.site.register(models.Reference)
 admin.site.register(models.Metadata)
 admin.site.register(models.Cause)
 admin.site.register(models.Effect)
