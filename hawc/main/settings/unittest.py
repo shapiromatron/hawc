@@ -13,7 +13,10 @@ MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in 
 HAWC_FLAVOR = "PRIME"
 ANYONE_CAN_CREATE_ASSESSMENTS = True
 
+# default database name; this is used when managing fixtures
 DATABASES["default"]["NAME"] = "hawc-fixture"
+# default test database name; this is used when the test suite is ran
+DATABASES["default"]["TEST"] = {"NAME": "hawc-test"}
 
 IS_TESTING = True
 

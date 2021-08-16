@@ -130,7 +130,6 @@ DATABASES = {
         "HOST": os.getenv("DJANGO_DB_HOST", "localhost"),
         "PORT": os.getenv("DJANGO_DB_PORT", ""),
         "CONN_MAX_AGE": 300,
-        "TEST": {"NAME": "hawc-test"},
     }
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

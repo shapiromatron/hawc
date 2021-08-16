@@ -11,7 +11,6 @@ DATABASES = {
         "PASSWORD": "",
         "HOST": "localhost",
         "PORT": "",
-        "TEST": {"NAME": "hawc-test"},
     }
 }
 
