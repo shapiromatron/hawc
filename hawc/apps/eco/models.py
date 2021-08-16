@@ -293,6 +293,14 @@ class Metadata(models.Model):
         verbose_name = "Metadata"
 
 
+class BioOrg(models.IntegerChoices):  # to be used in both cause and effect tables
+    ECOS = 0, "Ecosystem"
+    COMM = 1, "Community"
+    POP = 2, "Population"
+    IND = 3, "Individual organism"
+    SUB = 4, "Sub-organismal"
+
+
 class Cause(models.Model):
 
     study_id = models.ForeignKey(Reference, on_delete=models.CASCADE)
@@ -330,7 +338,7 @@ class Cause(models.Model):
         max_length=100,
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
-        choices=cause_bio_org_choices,
+        choices=BioOrg.choices,
     )
 
     species = models.CharField(
@@ -340,10 +348,16 @@ class Cause(models.Model):
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
+    class CauseTrajectory(models.IntegerChoices):
+        INCR = 0, "Increase"
+        DECR = 1, "Decrease"
+        CHANGE = 2, "Change"
+        OTHER = 3, "Other"
+
     trajectory = models.CharField(
         verbose_name="Cause trajectory",
         max_length=100,
-        choices=cause_trajectory_choices,
+        choices=CauseTrajectory.choices,
         help_text="Select qualitative description of how the cause measure changes, if applicable",
     )  # autocomplete
 
@@ -368,10 +382,18 @@ class Effect(models.Model):
 
     cause = models.OneToOneField(Cause, on_delete=models.CASCADE)
 
-    term = models.CharField(verbose_name="Effect term", max_length=100, choices=effect_term_choices)
+    class EffectTerm(models.IntegerChoices):  # should this be a fixture?
+        TBD = 0, "TBD"
+        ALGAE = 1, "Algae"
+
+    term = models.CharField(verbose_name="Effect term", max_length=100, choices=EffectTerm.choices)
+
+    class EffectMeasure(models.IntegerChoices):
+        TBD = 0, "TBD"
+        ABUND = 1, "Abundance"
 
     measure = models.CharField(
-        verbose_name="Effect measure", max_length=100, choices=effect_measure_choices
+        verbose_name="Effect measure", max_length=100, choices=EffectMeasure.choices
     )  # autocomplete
 
     measure_detail = models.CharField(
@@ -389,7 +411,7 @@ class Effect(models.Model):
         max_length=100,
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
-        choices=effect_bio_org_choices,
+        choices=BioOrg.choices,
     )
 
     species = models.CharField(
@@ -399,10 +421,17 @@ class Effect(models.Model):
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
+    class EffectTrajectory(models.IntegerChoices):
+        INCR = 0, "Increase"
+        DECR = 1, "Decrease"
+        CHANGE = 2, "Change"
+        NOCHANGE = 3, "No change"
+        OTHER = 4, "Other"
+
     trajectory = models.CharField(
         verbose_name="Effect trajectory",
         max_length=100,
-        choices=effect_trajectory_choices,
+        choices=EffectTrajectory.choices,
         help_text="Select qualitative description of how the effect measure changes in response to the cause trajectory, if applicable",
     )
 
@@ -420,12 +449,15 @@ class Effect(models.Model):
         verbose_name="Modifying factors",
         max_length=100,
         help_text="Type one or more factors that affect the relationship between the cause and effect",
-    )  # autocomplete
+    )  # autocomplete - choices TBD
+
+    class Sort(models.IntegerChoices):
+        TBD = 0, "TBD"
 
     sort = models.CharField(
         verbose_name="Sort quantitative responses",
         max_length=100,
-        choices=sort_choices,
+        choices=Sort.choices,
         help_text="how do you want to sort multiple quantitative responses?",
         blank=True,
     )
@@ -469,27 +501,70 @@ class Quantitative(models.Model):
         null=True,
     )
 
+    class MeasureTypeFilter(models.IntegerChoices):
+        CORR = 0, "Correlation coefficient"
+        RSQ = 1, "R-squared"
+        MEANDIFF = 2, "Mean difference"
+        ANOVA = 3, "ANOVA/PERMANOVA"
+        RATIO = 4, "Ratio"
+        BETA = 5, "Slope coefficient (beta)"
+        ORD = 6, "Ordination"
+        THRESH = 7, "Threshold"
+
     measure_type_filter = models.CharField(
         verbose_name="Response measure type (filter)",
         max_length=100,
         blank=True,
-        choices=response_measure_type_choices,
+        choices=MeasureTypeFilter.choices,
         help_text="This drop down will filter the following field",
-    )
+    )  # should this be in the frontend? not 100% sure how to filer one field with another
+
+    class MeasureType(models.IntegerChoices):
+        # correlation coefficient:
+        PEARSON = 0, "Pearson"
+        SPEARMAN = 1, "Spearman"
+        # R-squared:
+        SIMPLE = 2, "Simple Linear"
+        PARTIAL = 3, "Partial"
+        MULTIPLE = 4, "Multiple"
+        QUANTILE = 5, "Quantile"
+        # Ratio:
+        RESPONSE = 6, "Response ratio"
+        ODDS = 7, "Odds ratio"
+        RISK = 8, "Risk ratio"
+        HAZARD = 9, "Hazard ratio"
+        # Meandiff:
+        NONSTAND = 10, "Non-standardized"
+        STAND = 11, "Standardized"
+        # Slope:
+        NONTRANSFORMED = 12, "Non-transformed data"
+        TRANSFORMED = 13, "Transformed data"
+        # Ordination choices
+        CCA = 14, "Canonical correspondence analysis (CCA)"
+        PCA = 15, "Principal components analysis (PCA)"
+        MDA = 16, "Multiple discriminant analysis (MDA)"
+        NMDS = 17, "Non-multidimensional scaling (NMDS)"
+        FACTOR = 18, "Factor analysis"
+        # Threshold choices
+        REGTREE = 19, "Regression tree"
+        RANDOMFOREST = 20, "Random forest"
+        BREAKPOINT = 21, "Breakpoint (piecewise) regression"
+        QUANTREG = 22, "Quantile regression"
+        CFD = 23, "Cumulative frequency distribution"
+        GFA = 24, "Gradient forest analysis"
+        NONLINEAR = 25, "Non-linear curve fitting"
+        ORDINATION = 26, "Ordination"
+        TITAN = 27, "TITAN"
+        # option for each category
+        NS = 28, "Not specified"
 
     measure_type = models.CharField(
         verbose_name="Response measure type",
         max_length=40,
-        choices=response_measure_type_correlation_choices
-        + response_measure_type_rsq_choices
-        + response_measure_type_ratio_choices
-        + response_measure_type_meandiff_choices
-        + response_measure_type_slope_choices
-        + response_measure_type_ord_choices
-        + response_measure_type_thresh_choices,
+        choices=MeasureType.choices,
         blank=True,
         help_text="Select one response measure type",
-    )  # dependent on selection in response measure type column
+    )  # dependent on selection in response measure type filter
 
     measure_value = models.FloatField(
         verbose_name="Response measure value",
@@ -504,11 +579,18 @@ class Quantitative(models.Model):
         help_text="Type any other useful information not captured in other fields",
     )
 
+    class Variability(models.IntegerChoices):
+        CI95 = 0, "95% CI"
+        CI90 = 1, "90% CI"
+        SD = 2, "Standard deviation"
+        SE = 3, "Standard error"
+        NA = 4, "Not applicable"
+
     variability = models.CharField(
         verbose_name="Response variability",
         blank=True,
         max_length=100,
-        choices=response_variability_choices,
+        choices=Variability.choices,
         help_text="Select how variability in the response measure was reported, if applicable",
     )
 
@@ -525,6 +607,12 @@ class Quantitative(models.Model):
         help_text="Type the upper numerical bound of the response variability",
         null=True,
     )
+
+    class StatisticalSigType(models.IntegerChoices):
+        PVAL = 0, "P-value"
+        FSTAT = 1, "F statistic"
+        CHISQ = 2, "Chi square"
+        NA = 3, "Not applicable"
 
     statistical_sig_type = models.CharField(
         verbose_name="Statistical significance measure type",
