@@ -1,141 +1,6 @@
 from django.db import models
-from ..epi.models import Country
 
-study_setting_choices = (
-    ("Field", "Field"),
-    ("Mesocosm", "Mesocosm"),
-    ("Greenhouse", "Greenhouse"),
-    ("Laboratory", "Laboratory"),
-    ("Model", "Model"),
-    ("Not applicable", "Not applicable"),
-)
-habitat_choices = (
-    ("Terrestrial", "Terrestrial"),
-    ("Riparian", "Riparian"),
-    ("Freshwater aquatic", "Freshwater aquatic"),
-    ("Estuarine", "Estuarine"),
-    ("Marine", "Marine"),
-)
-habitat_terrestrial_choices = (
-    ("Forest", "Forest"),
-    ("Grassland", "Grassland"),
-    ("Desert", "Desert"),
-    ("Heathland", "Heathland"),
-    ("Agricultural", "Agricultural"),
-    ("Urban/suburban", "Urban/suburban"),
-    ("Tundra", "Tundra"),
-)
-habitat_aquatic_freshwater_choices = (
-    ("Stream/river", "Stream/river"),
-    ("Wetland", "Wetland"),
-    ("Lake/reservoir", "Lake/reservoir"),
-    ("Artificial", "Artificial"),
-)
-cause_term_choices = (("TBD", "TBD"), ("Water quality", "Water quality"))
-cause_measure_choices = (("TBD", "TBD"), ("Nutrients", "Nutrients"))
-cause_bio_org_choices = (
-    ("Ecosystem", "Ecosystem"),
-    ("Community", "Community"),
-    ("Population", "Population"),
-    ("Individual organism", "Individual organism"),
-    ("Sub-organismal", "Sub-organismal"),
-)
-cause_trajectory_choices = (
-    ("Increase", "Increase"),
-    ("Decrease", "Decrease"),
-    ("Change", "Change"),
-    ("Other", "Other"),
-)
-effect_term_choices = (("TBD", "TBD"), ("Algae", "Algae"))
-effect_measure_choices = (("TBD", "TBD"), ("Abundance", "Abundance"))
-effect_bio_org_choices = (
-    ("Ecosystem", "Ecosystem"),
-    ("Community", "Community"),
-    ("Population", "Population"),
-    ("Individual organism", "Individual organism"),
-    ("Sub-organismal", "Sub-organismal"),
-)
-effect_trajectory_choices = (
-    ("Increase", "Increase"),
-    ("Decrease", "Decrease"),
-    ("Change", "Change"),
-    ("No change", "No change"),
-    ("Other", "Other"),
-)
-modifying_factors_choices = (("TBD", "TBD"),)
-response_measure_type_choices = (
-    ("Correlation coefficient", "Correlation coefficient"),
-    ("R-squared", "R-squared"),
-    ("Mean difference", "Mean difference"),
-    ("ANOVA/PERMANOVA", "ANOVA/PERMANOVA"),
-    ("Ratio", "Ratio"),
-    ("Slope coefficient (beta)", "Slope coefficient (beta)"),
-    ("Ordination", "Ordination"),
-    ("Threshold", "Threshold"),
-)
-response_measure_type_correlation_choices = (
-    ("Pearson", "Pearson"),
-    ("Spearman", "Spearman"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_rsq_choices = (
-    ("Simple linear", "Simple linear"),
-    ("Partial", "Partial"),
-    ("Multiple", "Multiple"),
-    ("Quantile", "Quantile"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_ratio_choices = (
-    ("Response ratio", "Response ratio"),
-    ("Odds ratio", "Odds ratio"),
-    ("Risk ratio", "Risk ratio"),
-    ("Hazard ratio", "Hazard ratio"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_meandiff_choices = (
-    ("Non-standardized", "Non-standardized"),
-    ("Standardized", "Standardized"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_slope_choices = (
-    ("Non-transformed data", "Non-transformed data"),
-    ("Transformed data", "Transformed data"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_ord_choices = (
-    ("Canonical correspondence analysis (CCA)", "Canonical correspondence analysis (CCA)"),
-    ("Principal components analysis (PCA)", "Principal components analysis (PCA)"),
-    ("Multiple discriminant analysis (MDA)", "Multiple discriminant analysis (MDA)"),
-    ("Non-multidimensional scaling (NMDS)", "Non-multidimensional scaling (NMDS)"),
-    ("Factor analysis", "Factor analysis"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_thresh_choices = (
-    ("Regression tree", "Regression tree"),
-    ("Random forest", "Random forest"),
-    ("Breakpoint (piecewise) regression", "Breakpoint (piecewise) regression"),
-    ("Quantile regression", "Quantile regression"),
-    ("Cumulative frequency distribution", "Cumulative frequency distribution"),
-    ("Gradient forest analysis", "Gradient forest analysis"),
-    ("Non-linear curve fitting", "Non-linear curve fitting"),
-    ("Ordination", "Ordination"),
-    ("TITAN", "TITAN"),
-    ("Not specified", "Not specified"),
-)
-response_variability_choices = (
-    ("95% CI", "95% CI"),
-    ("90% CI", "90% CI"),
-    ("Standard deviation", "Standard deviation"),
-    ("Standard error", "Standard error"),
-    ("Not applicable", "Not applicable"),
-)
-statistical_sig_measure_type_choices = (
-    ("P-value", "P-value"),
-    ("F statistic", "F statistic"),
-    ("Chi square", "Chi square"),
-    ("Not applicable", "Not applicable"),
-)
-sort_choices = (("TBD", "TBD"),)
+from ..epi.models import Country
 
 
 class State(models.Model):
@@ -188,7 +53,7 @@ class Reference(models.Model):
 
 class Metadata(models.Model):
 
-    study_id = models.OneToOneField(Reference, on_delete=models.CASCADE)
+    study_id = models.ForeignKey(Reference, on_delete=models.CASCADE)
 
     class StudyType(models.IntegerChoices):
 
@@ -618,7 +483,7 @@ class Quantitative(models.Model):
         verbose_name="Statistical significance measure type",
         blank=True,
         max_length=100,
-        choices=statistical_sig_measure_type_choices,
+        choices=StatisticalSigType.choices,
         help_text="Select the type of statistical significance measure reported",
     )
 
