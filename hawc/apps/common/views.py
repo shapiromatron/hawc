@@ -3,6 +3,8 @@ import logging
 from typing import List, Optional
 from urllib.parse import urlparse
 
+import dictdiffer
+import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -17,8 +19,8 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
+from . import helper
 from .crumbs import Breadcrumb
-from .helper import tryParseInt
 
 logger = logging.getLogger(__name__)
 
@@ -447,13 +449,21 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
 class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = "Update"
 
+    def _diff_message(self, original_data, updated_data):
+        return str(list(dictdiffer.diff(original_data, updated_data)))
+
     def form_valid(self, form):
+        original = form._meta.model.objects.get(pk=form.instance.pk)
+        original_data = helper.model_to_dict(original)
         self.object = form.save()
+        updated_data = helper.model_to_dict(self.object)
         # Log the update
-        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
-        Log.objects.create(
+        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id}) {self._diff_message(original_data,updated_data)}"
+        log = Log.objects.create(
             assessment_id=self.assessment.pk, user=self.request.user, message=log_message
         )
+        reversion.set_comment(f"Log {log.id}")
+
         self.post_object_save(form)  # add hook for post-object save
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
@@ -493,7 +503,7 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         kwargs["parent"] = self.parent
 
         # check if we have an object-template to be used
-        pk = tryParseInt(self.request.GET.get("initial"), -1)
+        pk = helper.tryParseInt(self.request.GET.get("initial"), -1)
 
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
@@ -662,9 +672,13 @@ class BaseUpdateWithFormset(BaseUpdate):
         return {}
 
     def form_valid(self, form, formset):
+
+        original = form._meta.model.objects.get(pk=form.instance.pk)
+        original_data = helper.model_to_dict(original)
         self.object = form.save()
+        updated_data = helper.model_to_dict(self.object)
         # Log the update
-        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id}) {self._diff_message(original_data,updated_data)}"
         Log.objects.create(
             assessment_id=self.assessment.pk, user=self.request.user, message=log_message
         )
