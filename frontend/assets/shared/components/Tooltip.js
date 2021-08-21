@@ -35,7 +35,7 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
     const xOffset = 10,
         yOffset = 10,
         opts = options || {},
-        hawcPageOffsets = h.getHawcOffsets();
+        parentOffsets = h.getAbsoluteOffsets($el[0].offsetParent);
 
     $el.css("position", "absolute");
 
@@ -60,19 +60,19 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
         .on("mousemove", () => {
             const box = $el[0].getBoundingClientRect(),
                 {pageX, pageY} = d3.event,
-                hawcPageX = pageX - hawcPageOffsets.x,
-                hawcPageY = pageY - hawcPageOffsets.y;
+                relativeX = pageX - parentOffsets.left,
+                relativeY = pageY - parentOffsets.top;
 
             $el.css({
                 left: `${
-                    hawcPageX + xOffset + box.width < window.pageXOffset + window.innerWidth
-                        ? hawcPageX + xOffset
-                        : hawcPageX - xOffset - box.width
+                    pageX + xOffset + box.width < window.pageXOffset + window.innerWidth
+                        ? relativeX + xOffset
+                        : relativeX - xOffset - box.width
                 }px`,
                 top: `${
-                    hawcPageY + yOffset + box.height * 0.5 < window.pageYOffset + window.innerHeight
-                        ? hawcPageY + yOffset - box.height * 0.5
-                        : window.pageYOffset + window.innerHeight - yOffset - box.height
+                    pageY + yOffset + box.height < window.pageYOffset + window.innerHeight
+                        ? relativeY + yOffset
+                        : relativeY - yOffset - box.height
                 }px`,
             });
         })
