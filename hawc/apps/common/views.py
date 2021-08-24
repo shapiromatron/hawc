@@ -421,15 +421,23 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.permission_check_user_can_edit()
         success_url = self.get_success_url()
         self.object.delete()
-        # Log the deletion
-        log_message = f"Deleted '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
-        log = Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
-        )
-        # Associate the log with reversion
-        reversion.set_comment(f"Log {log.id}")
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(success_url)
+
+    def create_log(self, obj):
+        # Log the delete
+        log_message = f"Deleted '{obj}' ({obj.__class__.__name__} {obj.id})"
+        log = Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message,
+        )
+        # Associate the log with reversion
+        comment = (
+            f"{reversion.get_comment()}, Log {log.id}"
+            if reversion.get_comment()
+            else f"Log {log.id}"
+        )
+        reversion.set_comment(comment)
 
     def get_cancel_url(self) -> str:
         return self.object.get_absolute_url()
@@ -459,22 +467,35 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return HttpResponseRedirect(self.get_success_url())
 
     def object_save(self, form):
-        original = form._meta.model.objects.get(pk=form.instance.pk)
+        self.object = form.save(commit=False)
+        diff = self.generate_diff(self.object)
+        self.object.save()
+        self.create_log(self.object, diff)
+
+    def generate_diff(self, obj):
+        # Generates a diff of the object's current state compared
+        # to the state in the db
+        original = obj.__class__.objects.get(pk=obj.pk)
         original_data = json.loads(helper.model_to_json(original))
-        self.object = form.save()
-        updated_data = json.loads(helper.model_to_json(self.object))
-        # Get the updated diff
-        updated_diff = list(dictdiffer.diff(original_data, updated_data))
+        updated_data = json.loads(helper.model_to_json(obj))
+        return list(dictdiffer.diff(original_data, updated_data))
+
+    def create_log(self, obj, diff):
         # Log the update
-        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        log_message = f"Updated '{obj}' ({obj.__class__.__name__} {obj.id})"
         log = Log.objects.create(
             assessment_id=self.assessment.pk,
             user=self.request.user,
             message=log_message,
-            content=updated_diff,
+            content=diff,
         )
         # Associate the log with reversion
-        reversion.set_comment(f"Log {log.id}")
+        comment = (
+            f"{reversion.get_comment()}, Log {log.id}"
+            if reversion.get_comment()
+            else f"Log {log.id}"
+        )
+        reversion.set_comment(comment)
 
     def post_object_save(self, form):
         pass
@@ -540,13 +561,21 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
     def object_save(self, form):
         self.object = form.save()
+        self.create_log(self.object)
+
+    def create_log(self, obj):
         # Log the create
-        log_message = f"Created '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        log_message = f"Created '{obj}' ({obj.__class__.__name__} {obj.id})"
         log = Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message,
         )
         # Associate the log with reversion
-        reversion.set_comment(f"Log {log.id}")
+        comment = (
+            f"{reversion.get_comment()}, Log {log.id}"
+            if reversion.get_comment()
+            else f"Log {log.id}"
+        )
+        reversion.set_comment(comment)
 
     def post_object_save(self, form):
         pass
