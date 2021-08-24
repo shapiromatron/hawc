@@ -16,6 +16,7 @@ from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.api import DynamicFieldsMixin
 from . import constants, forms, models, tasks
 
@@ -49,9 +50,7 @@ class SearchSerializer(serializers.ModelSerializer):
         # (assessment+title is checked w/ built-in serializer)
         data["slug"] = slugify(data["title"])
         if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
-            raise serializers.ValidationError(
-                {"slug": "slug (generated from title) must be unique for assessment"}
-            )
+            raise serializers.ValidationError({"slug": ASSESSMENT_UNIQUE_MESSAGE})
 
         if data["search_type"] != "i":
             raise serializers.ValidationError("API currently only supports imports")

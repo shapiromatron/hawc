@@ -14,6 +14,7 @@ from ..common.forms import (
     form_actions_apply_filters,
     form_actions_create_or_close,
 )
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
 from . import lookups, models
@@ -55,7 +56,7 @@ class CriteriaForm(forms.ModelForm):
         ).exclude(pk=pk)
 
         if crits.count() > 0:
-            self.add_error("description", "Must be unique for assessment")
+            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
 
         return self.cleaned_data
 
@@ -240,7 +241,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         ).exclude(pk=pk)
 
         if crits.count() > 0:
-            self.add_error("description", "Must be unique for assessment")
+            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
 
         return self.cleaned_data
 

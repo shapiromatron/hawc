@@ -5,6 +5,8 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertFormError, assertRedirects, assertTemplateUsed
 
+from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
+
 
 @pytest.mark.django_db
 def test_study_forms(db_keys):
@@ -27,9 +29,7 @@ def test_study_forms(db_keys):
 
     # can't create a new study citation field that already exists
     response = c.post(new_study_url, study_dict)
-    assertFormError(
-        response, "form", None, "Error- short-citation name must be unique for assessment.",
-    )
+    assertFormError(response, "form", "short_citation", ASSESSMENT_UNIQUE_MESSAGE)
 
     # can change an existing study citation field to a different type
     with assertTemplateUsed("study/study_detail.html"):
