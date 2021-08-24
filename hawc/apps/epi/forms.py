@@ -9,12 +9,12 @@ from django.urls import reverse
 from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
 from ..common import selectable
 from ..common.forms import (
+    ASSESSMENT_UNIQUE_MESSAGE,
     BaseFormHelper,
     CopyAsNewSelectorForm,
     form_actions_apply_filters,
     form_actions_create_or_close,
 )
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
 from . import lookups, models

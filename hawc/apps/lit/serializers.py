@@ -16,8 +16,8 @@ from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.api import DynamicFieldsMixin
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
