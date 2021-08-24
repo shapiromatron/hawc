@@ -1,4 +1,5 @@
 import abc
+import json
 import logging
 from typing import List, Optional
 from urllib.parse import urlparse
@@ -422,9 +423,11 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.object.delete()
         # Log the deletion
         log_message = f"Deleted '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
-        Log.objects.create(
+        log = Log.objects.create(
             assessment_id=self.assessment.pk, user=self.request.user, message=log_message
         )
+        # Associate the log with reversion
+        reversion.set_comment(f"Log {log.id}")
         self.send_message()
         return HttpResponseRedirect(success_url)
 
@@ -449,24 +452,27 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
 class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = "Update"
 
+    def form_valid(self, form):
+        self.object_save(form)
+        self.post_object_save(form)  # add hook for post-object save
+        self.send_message()
+        return HttpResponseRedirect(self.get_success_url())
+
     def _diff_message(self, original_data, updated_data):
         return str(list(dictdiffer.diff(original_data, updated_data)))
 
-    def form_valid(self, form):
+    def object_save(self, form):
         original = form._meta.model.objects.get(pk=form.instance.pk)
-        original_data = helper.model_to_dict(original)
+        original_data = json.loads(helper.model_to_json(original))
         self.object = form.save()
-        updated_data = helper.model_to_dict(self.object)
+        updated_data = json.loads(helper.model_to_json(self.object))
         # Log the update
         log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id}) {self._diff_message(original_data,updated_data)}"
         log = Log.objects.create(
             assessment_id=self.assessment.pk, user=self.request.user, message=log_message
         )
+        # Associate the log with reversion
         reversion.set_comment(f"Log {log.id}")
-
-        self.post_object_save(form)  # add hook for post-object save
-        self.send_message()
-        return HttpResponseRedirect(self.get_success_url())
 
     def post_object_save(self, form):
         pass
@@ -525,15 +531,20 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return context
 
     def form_valid(self, form):
-        self.object = form.save()
-        # Log the create
-        log_message = f"Created '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
-        Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
-        )
+        self.object_save(form)
         self.post_object_save(form)  # add hook for post-object save
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
+
+    def object_save(self, form):
+        self.object = form.save()
+        # Log the create
+        log_message = f"Created '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        log = Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+        )
+        # Associate the log with reversion
+        reversion.set_comment(f"Log {log.id}")
 
     def post_object_save(self, form):
         pass
@@ -606,12 +617,7 @@ class BaseCreateWithFormset(BaseCreate):
         return {}
 
     def form_valid(self, form, formset):
-        self.object = form.save()
-        # Log the create
-        log_message = f"Created '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
-        Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
-        )
+        self.object_save(form)
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
@@ -672,16 +678,7 @@ class BaseUpdateWithFormset(BaseUpdate):
         return {}
 
     def form_valid(self, form, formset):
-
-        original = form._meta.model.objects.get(pk=form.instance.pk)
-        original_data = helper.model_to_dict(original)
-        self.object = form.save()
-        updated_data = helper.model_to_dict(self.object)
-        # Log the update
-        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id}) {self._diff_message(original_data,updated_data)}"
-        Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
-        )
+        self.object_save(form)
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)

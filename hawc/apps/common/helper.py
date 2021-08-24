@@ -1,5 +1,6 @@
 import decimal
 import hashlib
+import json
 import logging
 import re
 import uuid
@@ -9,7 +10,6 @@ from itertools import chain
 from math import inf
 from typing import Any, Dict, List, NamedTuple, Optional, Set
 
-import dictdiffer
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -398,15 +398,11 @@ def event_plot(series: pd.Series) -> Axes:
     return ax
 
 
-def model_to_dict(instance):
+def model_to_json(instance):
     opts = instance._meta
     data = {}
     for f in chain(opts.concrete_fields, opts.private_fields):
-        data[f.name] = str(f.value_from_object(instance))
+        data[f.name] = str(f.value_to_string(instance))
     for f in opts.many_to_many:
         data[f.name] = str([i.pk for i in f.value_from_object(instance)])
-    return data
-
-
-def model_diff(instance1, instance2):
-    return dictdiffer.diff(model_to_dict(instance1), model_to_dict(instance2))
+    return json.dumps(data, cls=DjangoJSONEncoder)
