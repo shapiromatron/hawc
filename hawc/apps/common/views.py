@@ -458,18 +458,20 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
-    def _diff_message(self, original_data, updated_data):
-        return str(list(dictdiffer.diff(original_data, updated_data)))
-
     def object_save(self, form):
         original = form._meta.model.objects.get(pk=form.instance.pk)
         original_data = json.loads(helper.model_to_json(original))
         self.object = form.save()
         updated_data = json.loads(helper.model_to_json(self.object))
+        # Get the updated diff
+        updated_diff = list(dictdiffer.diff(original_data, updated_data))
         # Log the update
-        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id}) {self._diff_message(original_data,updated_data)}"
+        log_message = f"Updated '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
         log = Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+            assessment_id=self.assessment.pk,
+            user=self.request.user,
+            message=log_message,
+            content=updated_diff,
         )
         # Associate the log with reversion
         reversion.set_comment(f"Log {log.id}")

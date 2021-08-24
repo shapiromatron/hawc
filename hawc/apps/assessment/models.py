@@ -910,6 +910,7 @@ class Log(models.Model):
         HAWCUser, blank=True, null=True, related_name="logs", on_delete=models.SET_NULL
     )
     message = models.TextField()
+    content = models.JSONField(default=dict)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

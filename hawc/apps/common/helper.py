@@ -402,7 +402,7 @@ def model_to_json(instance):
     opts = instance._meta
     data = {}
     for f in chain(opts.concrete_fields, opts.private_fields):
-        data[f.name] = str(f.value_to_string(instance))
+        data[f.name] = f.value_from_object(instance)
     for f in opts.many_to_many:
-        data[f.name] = str([i.pk for i in f.value_from_object(instance)])
+        data[f.name] = [i.pk for i in f.value_from_object(instance)]
     return json.dumps(data, cls=DjangoJSONEncoder)
