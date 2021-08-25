@@ -271,20 +271,39 @@ More settings
 -------------
 
 Local settings
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
-Additional settings or overrides can be set at ``hawc/main/settings/local.py``.
+Settings are defined using the django settings framework. Within the ``hawc/main/settings``, there are a number of settings files that inherit using the following pattern:
 
-This file is not available by default, but can be copied from ``hawc/main/settings/local.example.py`` as a starting point.
-The settings from ``local.py`` will be added automatically to the default settings (``hawc.main.settings.dev``), or can be
-used solely by setting the environment variable ``DJANGO_SETTINGS_MODULE`` to ``hawc.main.settings.local``.
+.. code-block:: text
+
+               -------------------
+               |  HAWC SETTINGS  |
+               -------------------
+                       |
+                       |
+                   -----------
+                   | base.py |
+                   -----------
+                    /        \
+                   /          \
+        --------------       ----------        ------------
+        | staging.py |       | dev.py |  <---  | local.py |
+        --------------       ----------        ------------
+              |                  |             (imported into dev.py, if file exists)
+              |                  |
+      -----------------    ---------------
+      | production.py |    | unittest.py |
+      -----------------    ---------------
+
+To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make any changes to this file to configure your local environment.
 
 HAWC flavors
 ~~~~~~~~~~~~
 
-Currently HAWC has two possible application "flavors", where the application is slightly
-different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR``
-variable at ``hawc/main/settings/local.py``. Possible values include:
+Currently HAWC has two possible application "flavors", where the application is slightly different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR`` variable at ``hawc/main/settings/local.py``.
+
+Possible values include:
 
 - PRIME (default application; as hosted at https://hawcproject.org)
 - EPA (EPA application; as hosted at EPA)
