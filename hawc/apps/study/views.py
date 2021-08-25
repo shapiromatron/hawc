@@ -64,6 +64,7 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
 
     def form_valid(self, form):
         self.object = self.model.save_new_from_reference(self.parent, form.cleaned_data)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -80,11 +81,9 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
     model = models.Study
     form_class = forms.ReferenceStudyForm
 
-    def form_valid(self, form):
-        self.object = form.save()
+    def post_object_save(self, form):
         search = apps.get_model("lit", "Search").objects.get_manually_added(self.assessment)
         self.object.searches.add(search)
-        return super().form_valid(form)
 
 
 class StudyRead(BaseDetail):

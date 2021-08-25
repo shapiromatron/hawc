@@ -461,24 +461,24 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     crud = "Update"
 
     def form_valid(self, form):
-        self.object_save(form)
+        self.object = form.save(commit=False)
+        self.save_and_log(form, self.object)
         self.post_object_save(form)  # add hook for post-object save
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
-    def object_save(self, form):
-        self.object = form.save(commit=False)
-        diff = self.generate_diff(self.object)
-        self.object.save()
-        self.create_log(self.object, diff)
-
-    def generate_diff(self, obj):
-        # Generates a diff of the object's current state compared
-        # to the state in the db
+    def save_and_log(self, form, obj):
+        # Get old object data
         original = obj.__class__.objects.get(pk=obj.pk)
         original_data = json.loads(helper.model_to_json(original))
+        # Save object and m2m / generic relations
+        obj.save()
+        form._save_m2m()
+        # Get newly saved object data
         updated_data = json.loads(helper.model_to_json(obj))
-        return list(dictdiffer.diff(original_data, updated_data))
+        diff = list(dictdiffer.diff(original_data, updated_data))
+        # Create log with changes
+        self.create_log(obj, diff)
 
     def create_log(self, obj, diff):
         # Log the update
@@ -554,14 +554,18 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return context
 
     def form_valid(self, form):
-        self.object_save(form)
+        self.object = form.save(commit=False)
+        self.save_and_log(form, self.object)
         self.post_object_save(form)  # add hook for post-object save
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
-    def object_save(self, form):
-        self.object = form.save()
-        self.create_log(self.object)
+    def save_and_log(self, form, obj):
+        # Save object and m2m / generic relations
+        obj.save()
+        form._save_m2m()
+        # Create log
+        self.create_log(obj)
 
     def create_log(self, obj):
         # Log the create
@@ -648,7 +652,8 @@ class BaseCreateWithFormset(BaseCreate):
         return {}
 
     def form_valid(self, form, formset):
-        self.object_save(form)
+        self.object = form.save(commit=False)
+        self.save_and_log(form, self.object)
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
@@ -709,7 +714,8 @@ class BaseUpdateWithFormset(BaseUpdate):
         return {}
 
     def form_valid(self, form, formset):
-        self.object_save(form)
+        self.object = form.save(commit=False)
+        self.save_and_log(form, self.object)
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
