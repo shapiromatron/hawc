@@ -20,8 +20,8 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
-from . import helper
 from .crumbs import Breadcrumb
+from .helper import model_to_json, tryParseInt
 
 logger = logging.getLogger(__name__)
 
@@ -469,11 +469,11 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     def save_and_log(self, form):
         # Get old object data
         original = form._meta.model.objects.get(pk=form.instance.pk)
-        original_data = json.loads(helper.model_to_json(original))
+        original_data = json.loads(model_to_json(original))
         # Save object to database
         self.object = form.save()
         # Get newly saved object data
-        updated_data = json.loads(helper.model_to_json(self.object))
+        updated_data = json.loads(model_to_json(self.object))
         diff = list(dictdiffer.diff(original_data, updated_data))
         # Create log with changes
         self.create_log(self.object, diff)
@@ -530,7 +530,7 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         kwargs["parent"] = self.parent
 
         # check if we have an object-template to be used
-        pk = helper.tryParseInt(self.request.GET.get("initial"), -1)
+        pk = tryParseInt(self.request.GET.get("initial"), -1)
 
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()

@@ -129,7 +129,8 @@ class AnimalGroupCreate(BaseCreate):
                 self.object.dosing_regime = dosing_regime
                 self.object.save()
                 dosing_regime.dosed_animals = self.object
-                self.save_and_log(self.form_dosing_regime, dosing_regime)
+                dosing_regime.save()
+                self.create_log(dosing_regime)
 
                 # now save dose-groups, one for each dosing regime
                 for dose in fs.forms:
@@ -339,8 +340,7 @@ class EndpointCreate(BaseCreateWithFormset):
             egform.endpoint_form = form
 
     def form_valid(self, form, formset):
-        self.object = form.save(commit=False)
-        self.save_and_log(form, self.object)
+        self.save_and_log(form)
         if self.object.dose_response_available:
             self.post_object_save(form, formset)
             for egform in formset.forms:
@@ -375,8 +375,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
             egform.endpoint_form = form
 
     def form_valid(self, form, formset):
-        self.object = form.save(commit=False)
-        self.save_and_log(form, self.object)
+        self.save_and_log(form)
         self.post_object_save(form, formset)
         for egform in formset.forms:
             # save all EGs, even if no data
