@@ -29,10 +29,10 @@
   <script type="text/javascript">
     $(document).on('ready', function(){
 
-      var printf = window.app.utils.HAWCUtils.printf,
+      var printf = window.app.HAWCUtils.printf,
           elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
           isNew = "{{crud|lower}}" == "create",
-          fs = new window.app.utils.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
+          fs = new window.app.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
           comparison_set_id = {{ form.comparison_set.value|default:"null" }},
           updateFormset = function(d){
             var n;

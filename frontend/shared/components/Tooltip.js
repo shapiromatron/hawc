@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -57,9 +56,9 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
                 opts.mouseEnterExtra(...arguments);
             }
         })
-        .on("mousemove", () => {
+        .on("mousemove", event => {
             const box = $el[0].getBoundingClientRect(),
-                {pageX, pageY} = d3.event,
+                {pageX, pageY} = event,
                 hawcPageX = pageX - hawcPageOffsets.x,
                 hawcPageY = pageY - hawcPageOffsets.y;
 

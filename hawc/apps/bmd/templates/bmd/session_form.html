@@ -35,8 +35,8 @@
 <script type="text/javascript">
 $(document).ready(function(){
   const el = document.getElementById('bmd'),
-    config = JSON.parse(document.getElementById('config').text);
-  window.app.bmds2Startup(el, config);
+    config = window.app.getConfig();
+  window.app.startup("bmds2Startup", function(cb){ cb(el, config) });
 });
 </script>
 {% endblock %}

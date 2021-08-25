@@ -1,9 +1,9 @@
 import $ from "$";
 import _ from "lodash";
 
-import BaseTable from "utils/BaseTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import BaseTable from "shared/utils/BaseTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import Exposure from "./Exposure";
 import Group from "./Group";

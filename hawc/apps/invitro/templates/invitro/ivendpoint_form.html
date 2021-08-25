@@ -54,7 +54,7 @@
     };
 
     $(document).on('ready', function(){
-        new window.app.utils.DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
+        new window.app.DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
         $('#egFormset').insertBefore($('#eForm .form-actions'));
         $('#egBenchmarkFormset').insertBefore($('#eForm .form-actions'));
         new OELwidget($('#id_NOEL'));

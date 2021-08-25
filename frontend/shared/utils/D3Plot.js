@@ -39,14 +39,14 @@ class D3Plot {
     build_legend(settings) {
         var plot = this,
             buffer = settings.box_padding, //shortcut reference
-            drag = d3.drag().on("drag", function(d, i) {
+            drag = d3.drag().on("drag", function(event, d) {
                 var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                     p = d3.select(this),
                     m = regexp.exec(p.attr("transform"));
 
                 if (m !== null && m.length === 3) {
-                    var x = parseFloat(m[1]) + d3.event.dx,
-                        y = parseFloat(m[2]) + d3.event.dy;
+                    var x = parseFloat(m[1]) + event.dx,
+                        y = parseFloat(m[2]) + event.dy;
                     p.attr("transform", `translate(${x},${y})`);
                     plot.set_legend_location(y, x);
                 }
@@ -474,7 +474,7 @@ class D3Plot {
 
     isWithinDomain(event) {
         // check that event is within plot domain
-        var v = d3.mouse(event);
+        var v = d3.pointer(event);
         return !(v[1] > this.h || v[1] < 0 || v[0] < 0 || v[0] > this.w);
     }
 
@@ -495,7 +495,7 @@ class D3Plot {
             .append("xhtml:a")
             .attr("title", "Display plot menu")
             .attr("class", "hidden")
-            .on("click", function(v, i) {
+            .on("click", function() {
                 plot._toggle_menu_bar();
             });
         this.cog_button

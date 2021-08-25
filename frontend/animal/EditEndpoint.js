@@ -1,6 +1,7 @@
 import $ from "$";
 import _ from "lodash";
 
+import {inv_tdist_05} from "shared/utils/math";
 import DRPlot from "./DRPlot";
 import Endpoint from "./Endpoint";
 
@@ -201,7 +202,7 @@ class EditEndpoint {
                         endpoint._calculate_stdev(v);
                     }
                     var se = v.stdev / Math.sqrt(v.n),
-                        z = Math.inv_tdist_05(v.n - 1) || 1.96;
+                        z = inv_tdist_05(v.n - 1) || 1.96;
 
                     v.lower_ci = v.response - se * z;
                     v.upper_ci = v.response + se * z;

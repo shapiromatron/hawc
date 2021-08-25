@@ -200,7 +200,9 @@
   $(document).on('ready', function () {
     const dtxsids = {{dtxsids|safe}},
       el = document.getElementById('dtxsid-app');
-    new window.app.assessmentStartup.renderDssToxTabs(el, dtxsids);
+    window.app.startup("assessmentStartup", function(app){
+      app.renderDssToxTabs(el, dtxsids);
+    });
   });
 </script>
 {% endif %}
