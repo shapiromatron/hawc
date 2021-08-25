@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 
-import "../../../node_modules/react-datepicker/dist/react-datepicker.css";
+import "../../node_modules/react-datepicker/dist/react-datepicker.css";
 
 class ReactDatePicker extends Component {
     constructor(props) {
@@ -11,7 +11,7 @@ class ReactDatePicker extends Component {
         this.getDatePickerProps = this.getDatePickerProps.bind(this);
         this.onChange = this.onChange.bind(this);
         this.state = {
-            date: props.date ? moment(props.date) : null,
+            date: props.date ? moment(props.date).toDate() : null,
         };
     }
 

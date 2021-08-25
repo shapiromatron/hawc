@@ -3,8 +3,8 @@ import _ from "lodash";
 import * as d3 from "d3";
 
 import h from "shared/utils/helpers";
-import D3Plot from "utils/D3Plot";
-import HAWCUtils from "utils/HAWCUtils";
+import D3Plot from "shared/utils/D3Plot";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
@@ -113,8 +113,8 @@ class DataPivotVisualization extends D3Plot {
             value,
             func,
             new_arr = [],
-            included = d3.map(),
-            filters_map = d3.map({
+            included = new Map(),
+            filters_map = new Map({
                 lt(v) {
                     return v[field_name] < value;
                 },
@@ -445,10 +445,8 @@ class DataPivotVisualization extends D3Plot {
             settings.barchart.conditional_formatting.forEach(function(cf) {
                 switch (cf.condition_type) {
                     case "discrete-style":
-                        var hash = d3.map();
-                        cf.discrete_styles.forEach(function(d) {
-                            hash.set(d.key, d.style);
-                        });
+                        var hash = new Map();
+                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
                         rows.forEach(function(d) {
                             if (hash.get(d[cf.field_name]) === NULL_CASE) {
                                 return;
@@ -468,7 +466,7 @@ class DataPivotVisualization extends D3Plot {
             this.dp_settings.dataline_settings.forEach(dl => {
                 dl.conditional_formatting.forEach(cf => {
                     const styles = "bars",
-                        hash = d3.map();
+                        hash = new Map();
                     switch (cf.condition_type) {
                         case "discrete-style":
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
@@ -529,7 +527,7 @@ class DataPivotVisualization extends D3Plot {
                             break;
 
                         case "discrete-style":
-                            var hash = d3.map();
+                            var hash = new Map();
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
                             rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
@@ -904,7 +902,7 @@ class DataPivotVisualization extends D3Plot {
             .attr("width", d => Math.abs(x(barXStart) - x(d[barchart.field_name])))
             .attr("height", barHeight)
             .style("cursor", d => (barchart._dpe_key ? "pointer" : "auto"))
-            .on("click", d => {
+            .on("click", (event, d) => {
                 if (barchart._dpe_key) {
                     this.dpe.render_plottip(barchart, d);
                 }
@@ -1032,7 +1030,7 @@ class DataPivotVisualization extends D3Plot {
                     }
                 })
                 .style("cursor", d => (datum._dpe_key ? "pointer" : "auto"))
-                .on("click", function(d) {
+                .on("click", function(event, d) {
                     if (datum._dpe_key) {
                         self.dpe.render_plottip(datum, d);
                     }
@@ -1134,7 +1132,7 @@ class DataPivotVisualization extends D3Plot {
                 var txt = v[desc.field_name];
                 if ($.isNumeric(txt)) {
                     if (txt % 1 === 0) txt = parseInt(txt, 10);
-                    txt = txt.toHawcString();
+                    txt = h.ff(txt);
                 } else {
                     txt = txt.toLocaleString();
                 }
@@ -1181,7 +1179,7 @@ class DataPivotVisualization extends D3Plot {
                 return dObj !== null && dObj.display !== undefined ? dObj.display : d.text;
             })
             .style("cursor", d => d.cursor)
-            .on("click", d => d.onclick())
+            .on("click", (event, d) => d.onclick())
             .each(function(d) {
                 apply_text_styles(this, d.style);
             });

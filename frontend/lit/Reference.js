@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import Hero from "utils/Hero";
+import Hero from "shared/utils/Hero";
 
 class Reference {
     constructor(data, tagtree) {

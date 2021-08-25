@@ -24,7 +24,7 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        window.app.animalStartup(function(animal){
+        window.app.startup("animalStartup", function(animal){
             var endpoints = [],
                 dose_units = {{dose_units|default_if_none:"undefined"}};
 
