@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import EmptyResultSet, PermissionDenied
+from django.db import transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -416,6 +417,10 @@ class BaseDetail(AssessmentPermissionsMixin, DetailView):
 class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
 
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.permission_check_user_can_edit()
@@ -459,6 +464,10 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
 
 class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = "Update"
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.save_and_log(form)
@@ -516,6 +525,10 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     parent_model = None  # required
     parent_template_name: str = None  # required
     crud = "Create"
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
