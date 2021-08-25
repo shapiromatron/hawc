@@ -15,7 +15,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.summaryStartup(function(summary){
+    window.app.startup("summaryStartup", function(summary){
       summary.VisualCollection.buildTable(
         "{% url 'summary:api:visual-list' %}?assessment_id={{assessment.id}}",
         "{% url 'summary:api:data_pivot-list' %}?assessment_id={{assessment.id}}",

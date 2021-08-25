@@ -29,8 +29,9 @@
 
 {% block extrajs %}
 <script type="text/javascript">
-window.app.studyStartup(function(study){
-    study.StudyCollection.render({{assessment.id}}, $('#studyTbl'));
+const id = {{assessment.id}};
+window.app.startup("studyStartup", function(app){
+  app.StudyCollection.render(id, $('#studyTbl'));
 })
 </script>
 {% endblock extrajs %}

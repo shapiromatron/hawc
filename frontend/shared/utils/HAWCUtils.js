@@ -22,7 +22,7 @@ class HAWCUtils {
         win.focus();
 
         win.onbeforeunload = function(e) {
-            let event = new CustomEvent(window.app.utils.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, {
+            let event = new CustomEvent(window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, {
                 detail: {},
             });
             triggeringLink.dispatchEvent(event);
@@ -105,7 +105,7 @@ class HAWCUtils {
                 return [...txt.matchAll(re_floats)].map(d => parseFloat(d[0]));
             };
 
-        return d3.drag().on("drag", function() {
+        return d3.drag().on("drag", function(event) {
             var x,
                 y,
                 p = d3.select(this),
@@ -115,16 +115,16 @@ class HAWCUtils {
             if (coords && coords.length >= 2) {
                 if (coords.length === 2) {
                     // no rotation
-                    x = parseInt(coords[0] + d3.event.dx);
-                    y = parseInt(coords[1] + d3.event.dy);
+                    x = parseInt(coords[0] + event.dx);
+                    y = parseInt(coords[1] + event.dy);
                     p.attr("transform", `translate(${x},${y})`);
                     if (setDragCB) {
                         setDragCB.bind(this)(x, y);
                     }
                 } else if (coords.length === 3) {
                     // has rotation
-                    x = parseInt(coords[0] + d3.event.dx);
-                    y = parseInt(coords[1] + d3.event.dy);
+                    x = parseInt(coords[0] + event.dx);
+                    y = parseInt(coords[1] + event.dy);
                     p.attr("transform", `translate(${x},${y}) rotate(${coords[2]})`);
                     if (setDragCB) {
                         setDragCB.bind(this)(x, y);
@@ -139,10 +139,10 @@ class HAWCUtils {
     static updateDragLocationXY(setDragCB) {
         // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
-        return d3.drag().on("drag", function() {
+        return d3.drag().on("drag", function(event) {
             var p = d3.select(this),
-                x = parseInt(parseInt(p.attr("x"), 10) + d3.event.dx, 10),
-                y = parseInt(parseInt(p.attr("y"), 10) + d3.event.dy, 10);
+                x = parseInt(parseInt(p.attr("x"), 10) + event.dx, 10),
+                y = parseInt(parseInt(p.attr("y"), 10) + event.dy, 10);
 
             p.attr("x", x);
             p.attr("y", y);

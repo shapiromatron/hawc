@@ -1,7 +1,7 @@
 import _ from "lodash";
 import * as d3 from "d3";
 
-import BaseTable from "utils/BaseTable";
+import BaseTable from "shared/utils/BaseTable";
 import h from "shared/utils/helpers";
 
 class ResultGroupTable {

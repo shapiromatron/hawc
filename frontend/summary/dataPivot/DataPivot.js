@@ -3,7 +3,7 @@ import * as d3 from "d3";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 import DataTable from "shared/components/DataTable";
 
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
@@ -162,12 +162,12 @@ class DataPivot {
     }
 
     static getRowDetails(values) {
-        var unique = d3.set(values),
+        var unique = new Set(values),
             numeric = values.filter(v => $.isNumeric(v)),
             range = numeric.length > 0 ? d3.extent(numeric) : undefined;
 
-        unique.remove("");
-        unique.remove("undefined");
+        unique.delete("");
+        unique.delete("undefined");
 
         return {
             unique: unique.values(),

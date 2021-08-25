@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {VelocityComponent} from "velocity-react";
+import h from "shared/utils/helpers";
 
 import {
     SCORE_BAR_WIDTH_PERCENTAGE,
@@ -18,7 +19,7 @@ class ScoreBar extends Component {
             <div
                 className="rob_score_bar mb-1"
                 style={{backgroundColor: shade, opacity: 0, width: 0}}>
-                <span style={{color: String.contrasting_color(shade)}} className="score-symbol">
+                <span style={{color: h.contrastingColor(shade)}} className="score-symbol">
                     {symbol} {BIAS_DIRECTION_SIMPLE[direction]}
                 </span>
             </div>

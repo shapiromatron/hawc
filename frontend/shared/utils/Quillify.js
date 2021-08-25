@@ -3,10 +3,10 @@ import Quill from "quill";
 
 import "quill/dist/quill.snow.css";
 
-import SmartTag from "smartTags/QuillSmartTag";
-import SmartInline from "smartTags/QuillSmartInline";
-import SmartTagModal from "smartTags/QuillSmartTagModal";
-import SmartTagContainer from "smartTags/SmartTagContainer";
+import SmartTag from "shared/smartTags/QuillSmartTag";
+import SmartInline from "shared/smartTags/QuillSmartInline";
+import SmartTagModal from "shared/smartTags/QuillSmartTagModal";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 Quill.register(SmartTag, true);
 Quill.register(SmartInline, true);
