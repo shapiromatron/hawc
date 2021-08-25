@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import {formulas} from "./constants";
+import {buildModelFormula} from "./constants";
 
 class BmdLine {
     /*
@@ -22,26 +22,11 @@ class BmdLine {
     }
 
     _getModel() {
-        // Construct BMD model-form
-        let params = {},
-            formula = formulas[this.model.name],
-            estimates = this.model.output.fit_estimated,
-            params_in_formula = formula.match(/\{[\w()]+\}/g);
-
-        // get parameter values for models
-        _.each(this.model.output.parameters, (v, k) => {
-            params[k] = v.estimate;
-        });
-        params["isIncreasing"] = estimates[0] < estimates[estimates.length - 1] ? 1 : -1;
-
-        _.each(params_in_formula, function(param) {
-            let unbracketed = param.slice(1, param.length - 1),
-                v = params[unbracketed] !== undefined ? params[unbracketed] : 0,
-                regex = param.replace("(", "\\(").replace(")", "\\)"), // escape ()
-                re = new RegExp(regex, "g");
-            formula = formula.replace(re, v);
-        });
-        return formula;
+        return buildModelFormula(
+            this.model.name,
+            this.model.output.fit_estimated,
+            this.model.output.parameters
+        );
     }
 
     _getPlotData() {

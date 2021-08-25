@@ -1,8 +1,8 @@
 import $ from "$";
 import _ from "lodash";
 
-import HAWCModal from "utils/HAWCModal";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import HAWCModal from "shared/utils/HAWCModal";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import Study from "study/Study";
 import Aggregation from "riskofbias/Aggregation";
 

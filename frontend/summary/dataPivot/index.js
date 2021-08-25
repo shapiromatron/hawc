@@ -1,7 +1,5 @@
-const dataPivotStartup = function(cb) {
-    import("./split.js").then(dataPivot => {
-        cb(dataPivot.default);
-    });
-};
+import DataPivot from "./DataPivot";
 
-export default dataPivotStartup;
+export default {
+    DataPivot,
+};

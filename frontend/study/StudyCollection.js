@@ -1,7 +1,7 @@
 import $ from "$";
 import _ from "lodash";
 
-import BaseTable from "utils/BaseTable";
+import BaseTable from "shared/utils/BaseTable";
 
 import Study from "./Study";
 
@@ -83,7 +83,7 @@ class StudyCollection {
     registerEvents($el) {
         var trs = _.map($el.find("table tbody tr"), $),
             vals;
-        $el.find("select").on("change", function(e) {
+        $el.find("select").on("change", function() {
             vals =
                 $(this).val() ||
                 $.map($el.find("option"), function(d) {

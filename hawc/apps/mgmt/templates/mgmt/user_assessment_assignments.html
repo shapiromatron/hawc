@@ -23,9 +23,9 @@
 }
 </script>
 <script type="text/javascript">
-window.app.mgmtStartup(function (mgmt) {
+window.app.startup("mgmtStartup", function (mgmt) {
     const el = document.getElementById('taskAssignments'),
-        config = JSON.parse(document.getElementById('config').text);
+        config = window.app.getConfig();
     mgmt.TaskAssignments(el, config);
 });
 </script>

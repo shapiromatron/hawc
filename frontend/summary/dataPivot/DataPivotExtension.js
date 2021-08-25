@@ -1,5 +1,4 @@
 import _ from "lodash";
-import * as d3 from "d3";
 
 import Reference from "lit/Reference";
 
@@ -53,7 +52,7 @@ class DataPivotExtension {
             headers;
 
         if (dp.data.length > 0) {
-            headers = d3.set(d3.map(dp.data[0]).keys());
+            headers = new Set(dp.data[0]).keys();
             _.each(DataPivotExtension.extByColumnKey(), function(vals, key) {
                 if (headers.has(key)) {
                     opts.push.apply(

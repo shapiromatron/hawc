@@ -17,8 +17,8 @@
 <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
 {% render_bundle "main" %}
 <script type="text/javascript">
-window.app.adminStartup(function (app) {
-    app.growthStartup(document.getElementById("main"));
+window.app.startup("adminGrowthStartup", function (startup) {
+    startup(document.getElementById("main"));
 });
 </script>
 {% endblock content %}

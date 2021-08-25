@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import {
     getMultiScoreDisplaySettings,
@@ -263,9 +263,9 @@ class RoBHeatmapPlot extends D3Visualization {
                     : "heatmap_selectable"
             )
             .style("fill", d => d.score_color)
-            .on("mouseover", v => this.draw_hovers(v, {draw: true, type: "cell"}))
-            .on("mouseout", v => this.draw_hovers(v, {draw: false}))
-            .on("click", v => {
+            .on("mouseover", (event, v) => this.draw_hovers(v, {draw: true, type: "cell"}))
+            .on("mouseout", (event, v) => this.draw_hovers(v, {draw: false}))
+            .on("click", (event, v) => {
                 this.print_details(this.modal.getBody(), {
                     type: "cell",
                     robs: v.robArray,

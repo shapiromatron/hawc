@@ -1,9 +1,9 @@
-import * as d3 from "d3";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
+import h from "shared/utils/helpers";
 import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
 import DisplayComponent from "riskofbias/robTable/components/AggregateGraph";
 import Loading from "shared/components/Loading";
@@ -27,22 +27,16 @@ class AggregateGraph extends Component {
         let domains = _.flattenDeep(
             _.map(this.props.riskofbiases, domain => {
                 return _.map(domain.values, metric => {
-                    return _.filter(metric.values, score => {
-                        return score.final;
-                    });
+                    return _.filter(metric.values, score => score.final);
                 });
             })
         );
 
-        return d3
-            .nest()
-            .key(d => {
-                return d.metric.domain.name;
-            })
-            .key(d => {
-                return d.metric.name;
-            })
-            .entries(domains);
+        return h.groupNest(
+            domains,
+            d => d.metric.domain.name,
+            d => d.metric.name
+        );
     }
 
     render() {

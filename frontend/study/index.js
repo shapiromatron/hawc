@@ -1,1 +1,7 @@
-export default cb => import("./split.js").then(app => cb(app.default));
+import Study from "./Study";
+import StudyCollection from "./StudyCollection";
+
+export default {
+    Study,
+    StudyCollection,
+};

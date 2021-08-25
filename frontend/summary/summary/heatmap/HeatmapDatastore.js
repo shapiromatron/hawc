@@ -4,7 +4,7 @@ import {observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import {NULL_VALUE} from "../../summary/constants";
 import {applyRowFilters} from "../../summary/filters";

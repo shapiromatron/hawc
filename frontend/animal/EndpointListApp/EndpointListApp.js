@@ -1,5 +1,4 @@
 import React from "react";
-import "react-tabs/style/react-tabs.css";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 
