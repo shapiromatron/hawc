@@ -425,8 +425,8 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.object = self.get_object()
         self.permission_check_user_can_edit()
         success_url = self.get_success_url()
-        self.object.delete()
         self.create_log(self.object)
+        self.object.delete()
         self.send_message()
         return HttpResponseRedirect(success_url)
 
@@ -434,7 +434,10 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         # Log the delete
         log_message = f"Deleted '{obj}' ({obj.__class__.__name__} {obj.id})"
         log = Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message,
+            assessment_id=self.assessment.pk,
+            user=self.request.user,
+            message=log_message,
+            content_object=obj,
         )
         # Associate the log with reversion
         comment = (
@@ -495,6 +498,7 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
             user=self.request.user,
             message=log_message,
             content=diff,
+            content_object=obj,
         )
         # Associate the log with reversion
         comment = (
@@ -580,7 +584,10 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         # Log the create
         log_message = f"Created '{obj}' ({obj.__class__.__name__} {obj.id})"
         log = Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message,
+            assessment_id=self.assessment.pk,
+            user=self.request.user,
+            message=log_message,
+            content_object=obj,
         )
         # Associate the log with reversion
         comment = (
