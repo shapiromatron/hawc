@@ -3,3 +3,6 @@
 hawc/static/vendor/* linguist-vendored
 vendor/* linguist-vendored
 scripts/* linguist-vendored
+
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
