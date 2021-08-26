@@ -44,13 +44,10 @@ class AssessmentForm(forms.ModelForm):
             lookup_class=HAWCUserLookup
         )
         if not settings.PM_CAN_MAKE_PUBLIC:
-            if self.instance.public:
-                self.fields[
-                    "public"
-                ].help_text += " If made private, the HAWC team will need to be contacted to make public again."
-            else:
-                self.fields["public"].disabled = True
-                self.fields["public"].help_text = "Contact the HAWC team to make public."
+            help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
+            for field in ("public", "hide_from_public_page"):
+                self.fields[field].disabled = True
+                self.fields[field].help_text += help_text
 
     @property
     def helper(self):

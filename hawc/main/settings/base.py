@@ -309,8 +309,13 @@ WEBPACK_LOADER = {
     }
 }
 
+# can anyone create a new assessment; or can only those in the group `can-create-assessments`
 ANYONE_CAN_CREATE_ASSESSMENTS = True
-PM_CAN_MAKE_PUBLIC = os.getenv("PM_CAN_MAKE_PUBLIC", "True") == "True"
+
+# can project-managers for an assessment make that assessments public, or only administrators?
+PM_CAN_MAKE_PUBLIC = True
+
+# add extra branding (EPA flavor only)
 EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv

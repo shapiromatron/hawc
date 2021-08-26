@@ -101,9 +101,11 @@ In general, for configurable parameters, we use environment variables and corres
 
 .. _`hawc.main.settings.staging`: https://github.com/shapiromatron/hawc/blob/main/hawc/main/settings/staging.py
 
-Assessment creation
-~~~~~~~~~~~~~~~~~~~
+Assessment creation & configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The django setting ``ANYONE_CAN_CREATE_ASSESSMENTS`` determines if anyone can create assessments, or if the ability to allow users to create assessments are controlled by system administrators. To change in staging/production, set the environment variable ``HAWC_ANYONE_CAN_CREATE_ASSESSMENTS`` to "True" or "False" (default "True").
 
 If anyone cannot create assessments, either superusers or users assigned to the group named ``can-create-assessments`` are the only allowed to create assessments; if that group access is removed then assessment creation is also revoked.
+
+The django setting `PM_CAN_MAKE_PUBLIC` determines if project managers for an assessment have the ability to make an assessment public on the HAWC website. The default behavior (True) allows this behavior. If set to False, only administrators make assessments public. To change in staging/production, set the environment variable ``HAWC_PM_CAN_MAKE_PUBLIC`` to "True" or "False" (default "True").
