@@ -51,7 +51,7 @@ const plotConfig = {
 @observer
 class TaskChart extends Component {
     render() {
-        const {label, tasks} = this.props,
+        const {label, tasks, className} = this.props,
             dataset = formatData(tasks),
             data = _.defaults(
                 {
@@ -63,12 +63,13 @@ class TaskChart extends Component {
                 dataBase
             ),
             layout = _.defaults({title: label}, layoutBase);
-        return <Plot data={[data]} layout={layout} config={plotConfig} />;
+        return <Plot data={[data]} layout={layout} config={plotConfig} className={className} />;
     }
 }
 TaskChart.propTypes = {
-    label: PropTypes.string.isRequired,
+    className: PropTypes.string.isRequired,
     tasks: PropTypes.array.isRequired,
+    label: PropTypes.string.isRequired,
 };
 
 export default TaskChart;

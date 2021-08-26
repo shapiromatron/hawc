@@ -43,18 +43,18 @@ class Root extends Component {
         return (
             <>
                 <h3>All task summary</h3>
-                <TaskChart tasks={tasks} label="" />
+                <TaskChart className="barAll" tasks={tasks} label="" />
                 <h3>Tasks by type</h3>
-                {types.map(type => {
+                {types.map((type, idx) => {
                     const data = tasks.filter(d => d.type === type),
                         label = data[0].type_display;
-                    return <TaskChart key={`type-${type}`} tasks={data} label={label} />;
+                    return <TaskChart key={idx} className="barTask" tasks={data} label={label} />;
                 })}
                 <h3>Tasks by user</h3>
-                {users.map(user => {
+                {users.map((user, idx) => {
                     const data = tasks.filter(d => d.owner && d.owner.full_name === user),
                         label = data[0].owner.full_name;
-                    return <TaskChart key={`user-${user}`} tasks={data} label={label} />;
+                    return <TaskChart key={idx} className="barUser" tasks={data} label={label} />;
                 })}
             </>
         );
