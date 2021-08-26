@@ -24,14 +24,9 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        window.app.epimetaStartup(function(epimeta){
-            var results = [];
-
-            {{list_json|safe}}.map(function(endpoint){
-                results.push(new epimeta.MetaResult(endpoint));
-            })
-
-            var tbl = new epimeta.MetaResultListTable(results);
+        const result_data = {{list_json|safe}};
+        window.app.startup("epimetaStartup", function(epimeta){
+            const tbl = new epimeta.MetaResultListTable(result_data);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

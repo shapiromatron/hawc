@@ -3,8 +3,8 @@ import _ from "lodash";
 
 import Tablesort from "tablesort";
 
-import BaseTable from "utils/BaseTable";
-import HAWCUtils from "utils/HAWCUtils";
+import BaseTable from "shared/utils/BaseTable";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import BaseVisual from "./BaseVisual";
 

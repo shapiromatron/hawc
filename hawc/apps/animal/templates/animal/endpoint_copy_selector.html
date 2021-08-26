@@ -99,7 +99,7 @@
     }
 
     $(document).ready(function(){
-      new window.app.utils.HAWCUtils.InitialForm({
+      new window.app.HAWCUtils.InitialForm({
         "form": $('form'),
         "base_url": "{% url 'animal:endpoint_new' object.pk %}"
       });

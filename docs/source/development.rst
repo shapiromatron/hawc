@@ -91,7 +91,7 @@ Windows requires using anaconda or miniconda to get requirements.
     :: create our superuser and main/test databases
     createuser --superuser --no-password hawc
     createdb -T template0 -E UTF8 hawc
-    createdb -T template0 -E UTF8 test_hawc-fixture-test
+    createdb -T template0 -E UTF8 hawc-test
 
 Running the application
 -----------------------
@@ -270,12 +270,40 @@ When using the recommended settings below, your python and javascript code shoul
 More settings
 -------------
 
+Local settings
+~~~~~~~~~~~~~~
+
+Settings are defined using the django settings framework. Within the ``hawc/main/settings``, there are a number of settings files that inherit using the following pattern:
+
+.. code-block:: text
+
+               -------------------
+               |  HAWC SETTINGS  |
+               -------------------
+                       |
+                       |
+                   -----------
+                   | base.py |
+                   -----------
+                    /        \
+                   /          \
+        --------------       ----------        ------------
+        | staging.py |       | dev.py |  <---  | local.py |
+        --------------       ----------        ------------
+              |                  |             (imported into dev.py, if file exists)
+              |                  |
+      -----------------    ---------------
+      | production.py |    | unittest.py |
+      -----------------    ---------------
+
+To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make any changes to this file to configure your local environment.
+
 HAWC flavors
 ~~~~~~~~~~~~
 
-Currently HAWC has two possible application "flavors", where the application is slightly
-different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR``
-variable ``hawc/main/settings/local.py``. Possible values include:
+Currently HAWC has two possible application "flavors", where the application is slightly different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR`` variable at ``hawc/main/settings/local.py``.
+
+Possible values include:
 
 - PRIME (default application; as hosted at https://hawcproject.org)
 - EPA (EPA application; as hosted at EPA)
@@ -338,7 +366,7 @@ Linux/Mac
     export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
 
     # load existing test
-    createdb hawc-fixture-test
+    createdb hawc-fixture
     manage.py load_test_db
 
     # now make edits to the database using the GUI or via command line
@@ -354,7 +382,7 @@ Windows
     set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
 
     :: load existing test
-    createdb -T template0 -E UTF8 hawc-fixture-test
+    createdb -T template0 -E UTF8 hawc-fixture
     manage.py load_test_db
 
     :: now make edits to the database using the GUI or via command line
@@ -362,7 +390,7 @@ Windows
     :: export database
     manage.py dump_test_db
 
-If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
+If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb hawc-test``.
 
 Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
 
@@ -382,6 +410,8 @@ To run tests without using the cassettes and making the network requests, use:
 
 Testing celery application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following requires ``redis-cli`` and ``docker-compose``.
 
 To test asynchronous functionality in development, modify your ``hawc/main/settings/local.py``:
 
@@ -410,7 +440,7 @@ Then, create the example docker container and start a celery worker instance:
     # stop redis when you're done
     docker-compose -f compose/dc-build.yml --project-directory . down
 
-Asynchronous tasks will no be executed by celery workers instead of the main thread.
+Asynchronous tasks will not be executed by celery workers instead of the main thread.
 
 Integration tests
 ~~~~~~~~~~~~~~~~~
@@ -419,9 +449,11 @@ Integration tests use selenium and Firefox or Chrome for for testing. By default
 
 .. code-block:: bash
 
+    # use 'set' instead of 'export' for Windows
     export HAWC_INTEGRATION_TESTS=1
     export SHOW_BROWSER=1            # or 0 for headless
     export BROWSER="firefox"         # or "chrome"
+
     py.test -sv tests/frontend/integration/ --pdb
 
 When writing these tests, it's often easiest to write the tests in an interactive scripting environment like ipython or jupyter. This allows you to interact with the DOM and the requests much easier than manually re-running tests as they're written. An example session:

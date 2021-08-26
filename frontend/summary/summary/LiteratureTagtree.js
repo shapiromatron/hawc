@@ -1,8 +1,8 @@
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import BaseVisual from "./BaseVisual";
 import TagTree from "lit/TagTree";
 import TagTreeViz from "lit/TagTreeViz";
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {
