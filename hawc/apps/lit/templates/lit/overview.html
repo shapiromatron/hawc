@@ -98,9 +98,9 @@
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">{{ config| safe}}</script>
 <script type="text/javascript">
-  const config = JSON.parse(document.getElementById('config').textContent);
+  const config = window.app.getConfig();
 
-  window.app.litStartup(function(lit){
+  window.app.startup("litStartup", function(lit){
     let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
     tagtree.render(document.getElementById('tags'))
   });

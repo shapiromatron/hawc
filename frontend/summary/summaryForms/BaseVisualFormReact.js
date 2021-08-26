@@ -1,11 +1,7 @@
 import React, {Component} from "react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-
-import "react-tabs/style/react-tabs.css";
-import "react-select/dist/react-select.css";
-
 import h from "shared/utils/helpers";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class BaseVisualForm extends Component {
     constructor(props) {

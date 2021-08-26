@@ -18,12 +18,11 @@
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/json" id="settings">{{config|safe}}</script>
+<script type="text/json" id="config">{{config|safe}}</script>
 <script type="text/javascript">
     const root = document.getElementById('ehv'),
-        config = JSON.parse(document.getElementById('settings').text);
-
-    window.app.animalStartup(function (cb) {
+        config = window.app.getConfig();
+    window.app.startup("animalStartup", function (cb) {
         cb.ehvBrowserStartup(root, config);
     });
 </script>

@@ -1,24 +1,27 @@
-const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin"),
-    getConfig = function(host, port) {
-        var config = require("./webpack.base.js");
-        config.devtool = "cheap-module-eval-source-map";
+const _ = require("lodash"),
+    express = require("express"),
+    middleware = require("webpack-dev-middleware"),
+    webpack = require("webpack"),
+    CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin"),
+    prodConfig = require("./webpack.config.js");
+
+let getConfig = function(host, port) {
+        let config = _.cloneDeep(prodConfig);
+        config.mode = "development";
+        config.devtool = "eval";
         config.output.publicPath = `http://${host}:${port}/dist/`;
         config.plugins.push(new CaseSensitivePathsPlugin());
         return config;
     },
-    express = require("express"),
-    middleware = require("webpack-dev-middleware"),
-    webpack = require("webpack"),
     host = process.env.CI ? process.env.LIVESERVER_HOST : "localhost",
     port = 8050,
-    config = getConfig(host, port),
+    devConfig = getConfig(host, port),
     app = express(),
-    compiler = webpack(config);
+    compiler = webpack(devConfig);
 
 app.use(
     middleware(compiler, {
-        noInfo: true,
-        publicPath: config.output.publicPath,
+        publicPath: devConfig.output.publicPath,
     })
 );
 

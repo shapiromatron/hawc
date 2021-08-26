@@ -1,7 +1,7 @@
 import $ from "$";
 
-import HAWCModal from "utils/HAWCModal";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import HAWCModal from "shared/utils/HAWCModal";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 import RoBBarchartPlot from "./RoBBarchartPlot";
 import RoBHeatmap from "./RoBHeatmap";

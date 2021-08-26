@@ -1,6 +1,5 @@
 import React from "react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-import "react-tabs/style/react-tabs.css";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import VisualTab from "./VisualTab";

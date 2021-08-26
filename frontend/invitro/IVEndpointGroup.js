@@ -1,5 +1,7 @@
 import $ from "$";
 
+import h from "shared/utils/helpers";
+
 class IVEndpointGroup {
     constructor(data) {
         this.data = data;
@@ -16,7 +18,7 @@ class IVEndpointGroup {
                 return txt;
             },
             getNumeric = function(val) {
-                return $.isNumeric(val) ? val.toHawcString() : "-";
+                return $.isNumeric(val) ? h.ff(val) : "-";
             };
 
         tr.append(`<td>${getDose(this.data.dose)}</td>`);

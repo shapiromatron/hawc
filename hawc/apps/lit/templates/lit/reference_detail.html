@@ -14,9 +14,9 @@
   }
 </script>
 <script type="text/javascript">
-  window.app.litStartup(function(lit){
+  window.app.startup("litStartup", function(lit){
     const el = document.getElementById("reference_detail_div"),
-      config = JSON.parse(document.getElementById('config').textContent)
+      config = window.app.getConfig();
     lit.startupReferenceDetail(el, config.tags, config.reference, config.canEdit);
   });
 </script>

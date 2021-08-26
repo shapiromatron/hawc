@@ -1,8 +1,8 @@
 import $ from "$";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 import CrossviewPlot from "./CrossviewPlot";
 import EndpointAggregation from "./EndpointAggregation";

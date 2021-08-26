@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-import "react-tabs/style/react-tabs.css";
 
 import DssTox from "assessment/DssTox";
 import DssToxDetailTable from "assessment/components/DssToxDetailTable";

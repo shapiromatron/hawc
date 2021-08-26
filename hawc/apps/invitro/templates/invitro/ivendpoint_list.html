@@ -24,14 +24,9 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        window.app.invitroStartup(function(invitro){
-            var endpoints = [];
-
-            {{list_json|safe}}.map(function(endpoint){
-                endpoints.push(new invitro.IVEndpoint(endpoint));
-            })
-
-            var tbl = new invitro.IVEndpointListTable(endpoints);
+        const data = {{list_json|safe}};
+        window.app.startup("invitroStartup", function(app){
+            var tbl = new app.IVEndpointListTable(data);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

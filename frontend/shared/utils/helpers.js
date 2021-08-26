@@ -7,9 +7,21 @@ import moment from "moment";
 
 const stopwords = new Set("the is at which of on".split(" ")),
     regexEscapeChars = /[-|\\{}()[\]^$+*?.]/g,
-    excelColumn = function(column) {
-        // column and row are 0-based; column 0 == A
-        return String.fromCharCode(65 + column);
+    excelColumn = column => String.fromCharCode(65 + column),
+    hexToRgb = hex => {
+        // http://stackoverflow.com/questions/5623838/
+        hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(m, r, g, b) {
+            return r + r + g + g + b + b;
+        });
+
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+            ? {
+                  r: parseInt(result[1], 16),
+                  g: parseInt(result[2], 16),
+                  b: parseInt(result[3], 16),
+              }
+            : null;
     };
 
 const helpers = {
@@ -90,6 +102,30 @@ const helpers = {
     },
     parseJsonFromElement(element) {
         return JSON.parse(element.textContent);
+    },
+    ff(number) {
+        // ff = float format
+        if (number === 0) {
+            return number.toString();
+        } else if (Math.abs(number) > 0.001 && Math.abs(number) < 1e9) {
+            // local print "0" for anything smaller than this
+            return number.toLocaleString();
+        } else {
+            // too many 0; use exponential notation
+            return number.toExponential(2);
+        }
+    },
+    dateToString(date) {
+        var pad = x => (x < 10 ? "0" : "") + x;
+        if (date.getTime()) {
+            var d = pad(date.getDate()),
+                m = pad(date.getMonth() + 1),
+                y = date.getFullYear(),
+                hr = pad(date.getHours()),
+                min = pad(date.getMinutes());
+            return [y, m, d].join("/") + " " + hr + ":" + min;
+        }
+        return "";
     },
     goBack(e) {
         if (e && e.preventDefault) e.preventDefault();
@@ -183,11 +219,13 @@ const helpers = {
             height: windowHeight - contentSize.top,
         };
     },
-    getHawcOffsets() {
-        // get offsets from header and sidebar in hawc for absolute positioning
+    getAbsoluteOffsets(el) {
+        // get offsets of element relative to document body
+        let bodyRect = document.body.getBoundingClientRect(),
+            elRect = el.getBoundingClientRect();
         return {
-            x: $("#sidebar-container")[0].offsetWidth,
-            y: d3.sum(_.map($(".hawc-header"), d => d.offsetHeight)),
+            left: elRect.left - bodyRect.left,
+            top: elRect.top - bodyRect.top,
         };
     },
     getTextContrastColor(hex) {
@@ -209,6 +247,10 @@ const helpers = {
         return "xxxxxxxxxxxxxxx".replace(/x/g, c =>
             String.fromCharCode(97 + parseInt(26 * Math.random()))
         );
+    },
+    renameProperty(obj, oldName, newName) {
+        obj[newName] = obj[oldName];
+        delete obj[oldName];
     },
     hashString(string) {
         let hash = 0,
@@ -260,6 +302,12 @@ const helpers = {
         );
     },
     numericAxisFormat: d3.format(",~g"),
+    contrastingColor(hex) {
+        // http://stackoverflow.com/questions/1855884/
+        var rgb = hexToRgb(hex),
+            a = 1 - (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+        return a < 0.5 ? "#404040" : "#ffffff";
+    },
     COLORS: {
         WHITE: "#ffffff",
         BLUE: "#003d7b",
@@ -298,6 +346,21 @@ const helpers = {
                 }
             }, 250);
         }
+    },
+    groupNest(values, ...keys) {
+        // performs d3.group and transforms it into the old d3.nest structure
+        function groupToNest(group, depth) {
+            if (depth-- > 0) {
+                return Array.from(group, ([_key, _values]) => ({
+                    key: _key,
+                    values: groupToNest(_values, depth),
+                }));
+            }
+            return group;
+        }
+        let group = d3.group(values, ...keys),
+            depth = keys.length;
+        return groupToNest(group, depth);
     },
 };
 export default helpers;

@@ -3,7 +3,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 
 import h from "shared/utils/helpers";
-import D3Plot from "utils/D3Plot";
+import D3Plot from "shared/utils/D3Plot";
 
 class DRPlot extends D3Plot {
     constructor(endpoint, div, options, parent) {
@@ -76,10 +76,10 @@ class DRPlot extends D3Plot {
         this.customize_menu();
 
         var plot = this;
-        this.y_axis_label.on("click", function(v) {
+        this.y_axis_label.on("click", function() {
             plot.toggle_y_axis();
         });
-        this.x_axis_label.on("click", function(v) {
+        this.x_axis_label.on("click", function() {
             plot.toggle_x_axis();
         });
         this.trigger_resize();

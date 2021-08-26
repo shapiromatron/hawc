@@ -5,6 +5,8 @@ from docx.document import Document
 from docx.shared import Inches
 from pydantic import BaseModel, conint
 
+from .parser import QuillParser
+
 
 class BaseCell(BaseModel):
     header: bool = False
@@ -28,7 +30,7 @@ class BaseCell(BaseModel):
             "html": self.to_html(),
         }
 
-    def to_docx(self, block):
+    def to_docx(self, parser: QuillParser, block):
         raise NotImplementedError("Need 'to_docx' method on cell")
 
     @classmethod
@@ -90,7 +92,9 @@ class BaseTable(BaseCellGroup):
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
 
-    def to_docx(self, docx: Document = None):
+    def to_docx(self, parser: QuillParser = None, docx: Document = None):
+        if parser is None:
+            parser = QuillParser()
         if docx is None:
             docx = create_document()
         table = docx.add_table(rows=self.rows, cols=self.columns)
@@ -106,7 +110,7 @@ class BaseTable(BaseCellGroup):
             # Remove default paragraph
             paragraph = table_cell.paragraphs[0]._element
             paragraph.getparent().remove(paragraph)
-            cell.to_docx(table_cell)
+            cell.to_docx(parser, table_cell)
         if len(self.column_widths):
             # Column width should be set on a per cell basis
             # https://github.com/python-openxml/python-docx/issues/360#issuecomment-277385644

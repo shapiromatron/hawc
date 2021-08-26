@@ -1,7 +1,7 @@
 import $ from "$";
 import * as d3 from "d3";
 
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import {StyleSymbol, StyleLine, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";

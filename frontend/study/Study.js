@@ -1,10 +1,10 @@
 import $ from "$";
 import _ from "lodash";
 
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
-import Hero from "utils/Hero";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
+import Hero from "shared/utils/Hero";
 
 import {getReferenceTagListUrl} from "shared/utils/urls";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
