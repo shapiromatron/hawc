@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
-from .parser import tag_wrapper, ul_wrapper, QuillParser
+from .parser import QuillParser, tag_wrapper, ul_wrapper
 
 
 class JudgementTexts(Enum):
