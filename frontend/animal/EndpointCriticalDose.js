@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
+
 const Renderer = function(props) {
     return (
         <p>
@@ -25,7 +27,7 @@ class EndpointCriticalDose {
     update() {
         let ep = this.endpoint,
             doses = ep.doses.filter(v => v.name === ep.dose_units),
-            dose = doses[0].values[this.critical_effect_idx].dose.toHawcString(),
+            dose = h.ff(doses[0].values[this.critical_effect_idx].dose),
             units = this.show_units ? ep.dose_units : "";
 
         ReactDOM.render(<Renderer dose={dose} units={units} />, this.span[0]);

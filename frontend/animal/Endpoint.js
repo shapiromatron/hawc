@@ -2,11 +2,13 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import BaseTable from "utils/BaseTable";
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
-import Observee from "utils/Observee";
+import h from "shared/utils/helpers";
+
+import BaseTable from "shared/utils/BaseTable";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
+import Observee from "shared/utils/Observee";
 
 import BmdLine from "bmd/common/BmdLine";
 import Study from "study/Study";
@@ -66,11 +68,7 @@ class Endpoint extends Observee {
     }
 
     unpack_doses() {
-        this.doses = d3
-            .nest()
-            .key(d => d.dose_units.id)
-            .entries(this.data.animal_group.dosing_regime.doses);
-
+        this.doses = h.groupNest(this.data.animal_group.dosing_regime.doses, d => d.dose_units.id);
         this.doses.forEach(function(v) {
             v.name = v.values[0].dose_units.name;
         });
@@ -86,7 +84,6 @@ class Endpoint extends Observee {
     }
 
     switch_dose_units(id_) {
-        id_ = id_.toString();
         for (var i = 0; i < this.doses.length; i++) {
             if (this.doses[i].key === id_) {
                 return this._switch_dose(i);
@@ -155,7 +152,7 @@ class Endpoint extends Observee {
     get_special_dose_text(name) {
         // return the appropriate dose of interest
         try {
-            return this.data.groups[this.data[name]].dose.toHawcString();
+            return h.ff(this.data.groups[this.data[name]].dose);
         } catch (err) {
             return "-";
         }
@@ -253,7 +250,7 @@ class Endpoint extends Observee {
         // now build header row showing available doses
         for (var i = 0; i < nGroups; i++) {
             var doses = this.doses.map(function(v) {
-                return v.values[i].dose.toHawcString();
+                return h.ff(v.values[i].dose);
             });
             txt = doses[0];
             if (doses.length > 1) {
@@ -304,9 +301,9 @@ class Endpoint extends Observee {
                 footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                 if (data_type === "C") {
                     if (_.isNumber(v.response) && _.isNumber(v.stdev)) {
-                        response = `${v.response.toHawcString()} ± ${v.stdev.toHawcString()}`;
+                        response = `${h.ff(v.response)} ± ${h.ff(v.stdev)}`;
                     } else if (_.isNumber(v.response)) {
-                        response = v.response.toHawcString();
+                        response = h.ff(v.response);
                     } else {
                         response = "-";
                     }

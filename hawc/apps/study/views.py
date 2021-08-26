@@ -92,7 +92,12 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["attachments_viewable"] = self.assessment.user_is_part_of_team(self.request.user)
+        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
+        context["config"] = {
+            "studyContent": self.object.get_json(json_encode=False),
+            "attachments_viewable": attachments_viewable,
+            "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
+        }
         return context
 
 

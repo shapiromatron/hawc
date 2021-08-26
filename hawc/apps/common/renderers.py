@@ -44,6 +44,8 @@ class SvgRenderer(BaseRenderer):
     format = "svg"
 
     def render(self, ax: Axes, accepted_media_type=None, renderer_context=None):
+        if isinstance(ax, dict):
+            return f'<svg xmlns="http://www.w3.org/2000/svg"><text y="15">{json.dumps(ax)}</text></svg>'
         f = StringIO()
         ax.figure.savefig(f, format="svg")
         plt.close(ax.figure)

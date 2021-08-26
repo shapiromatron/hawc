@@ -1,13 +1,8 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import ReactDOM from "react-dom";
 import Plot from "react-plotly.js";
 
 import Loading from "shared/components/Loading";
-
-export default function(el, url) {
-    ReactDOM.render(<PlotFromUrl url={url} />, el);
-}
 
 class PlotFromUrl extends Component {
     static propTypes = {
@@ -53,3 +48,5 @@ class PlotFromUrl extends Component {
         );
     }
 }
+
+export default PlotFromUrl;

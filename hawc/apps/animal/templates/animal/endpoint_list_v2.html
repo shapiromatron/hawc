@@ -16,13 +16,10 @@
 }
 </script>
 <script type="text/javascript">
-    window.app.animalStartup(function (app) {
+    window.app.startup("animalStartup", function (app) {
         var root = document.getElementById('main'),
-            config = JSON.parse(document.getElementById('config').textContent);
-
-        app.EndpointListApp(startup => {
-            startup.func(root, config)
-        });
+            config = window.app.getConfig();
+        app.startupEndpointListApp(root, config);
     });
 </script>
 {% endblock extrajs %}

@@ -1,7 +1,7 @@
-const startup = function(cb) {
-    import("./split.js").then(summary => {
-        cb(summary.default);
-    });
-};
+import Visual from "./Visual";
+import VisualCollection from "./VisualCollection";
 
-export default startup;
+export default {
+    Visual,
+    VisualCollection,
+};
