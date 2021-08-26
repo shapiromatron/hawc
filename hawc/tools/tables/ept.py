@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
-from .parser import tag_wrapper, ul_wrapper
+from .parser import tag_wrapper, ul_wrapper, QuillParser
 
 
 class JudgementTexts(Enum):
@@ -72,7 +72,7 @@ class SummaryJudgementCell(BaseCell):
         label = SummaryJudgementTexts[self.judgement.name].value[1]
         return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         text = ""
         text += self.judgement_html()
         text += tag_wrapper("\nPrimary basis:", "p", "em")
@@ -97,7 +97,7 @@ class EvidenceCell(BaseCell):
 
     description: str
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         text = self.description
         return parser.feed(text, block)
 
@@ -107,7 +107,7 @@ class SummaryCell(BaseCell):
 
     findings: str
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         return parser.feed(self.findings, block)
 
 
@@ -168,7 +168,7 @@ class FactorsCell(BaseCell):
     factors: List[Factor]
     text: str
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         factors = [factor.to_html() for factor in self.factors]
         text = ""
         if len(factors):
@@ -205,7 +205,7 @@ class JudgementCell(BaseCell):
         label = JudgementTexts[self.judgement.name].value[1]
         return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         text = self.judgement_html() + self.description
         parser.feed(text, block)
         if self.judgement != JudgementChoices.NoJudgement:
@@ -221,7 +221,7 @@ class MechanisticEvidenceCell(BaseCell):
 
     description: str
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         return parser.feed(self.description, block)
 
 
@@ -231,7 +231,7 @@ class MechanisticSummaryCell(BaseCell):
 
     findings: str
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         return parser.feed(self.findings, block)
 
 
@@ -240,7 +240,7 @@ class MechanisticJudgementCell(BaseCell):
 
     description: str
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         return parser.feed(self.description, block)
 
 

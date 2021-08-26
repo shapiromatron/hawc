@@ -50,7 +50,7 @@ class QuillParser(HTMLParser):
     }
 
     def __init__(self, *args, **kwargs):
-        self.base_url = kwargs.pop("base_url", None)
+        self.base_url = kwargs.pop("base_url", "")
         super().__init__(*args, **kwargs)
 
     def feed(self, data, block):
@@ -59,10 +59,10 @@ class QuillParser(HTMLParser):
         super().feed(data)
 
     def parse_url(self, url):
-        if self.base_url is not None:
-            _url = urllib.parse.urlparse(url)
-            if not (_url.scheme and _url.netloc):
-                return urllib.parse.urljoin(self.base_url, url)
+        # convert relative URL to absolute if a base URL is specified
+        _url = urllib.parse.urlparse(url)
+        if not (_url.scheme and _url.netloc) and self.base_url:
+            url = urllib.parse.urljoin(self.base_url, url)
         return url
 
     def add_hyperlink(self):

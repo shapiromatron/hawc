@@ -30,7 +30,7 @@ class BaseCell(BaseModel):
             "html": self.to_html(),
         }
 
-    def to_docx(self, parser, block):
+    def to_docx(self, parser: QuillParser, block):
         raise NotImplementedError("Need 'to_docx' method on cell")
 
     @classmethod
@@ -92,7 +92,9 @@ class BaseTable(BaseCellGroup):
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
 
-    def to_docx(self, parser=QuillParser(), docx: Document = None):
+    def to_docx(self, parser: QuillParser = None, docx: Document = None):
+        if parser is None:
+            parser = QuillParser()
         if docx is None:
             docx = create_document()
         table = docx.add_table(rows=self.rows, cols=self.columns)

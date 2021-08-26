@@ -241,7 +241,7 @@ class SummaryTable(models.Model):
         instance.content = schema.get_default_props()
         return instance
 
-    def to_docx(self, base_url=None):
+    def to_docx(self, base_url: str = ""):
         table = self.get_table()
         return ReportExport(
             docx=table.to_docx(parser=QuillParser(base_url=base_url)), filename=self.slug
