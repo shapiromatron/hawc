@@ -45,7 +45,7 @@ class AssessmentForm(forms.ModelForm):
         )
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
-            for field in ("public", "hide_from_public_page"):
+            for field in ("editable", "public", "hide_from_public_page"):
                 self.fields[field].disabled = True
                 self.fields[field].help_text += help_text
 
