@@ -76,6 +76,7 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
+    "hawc.apps.common.middleware.RequestLogMiddleware",
 )
 
 
@@ -210,7 +211,7 @@ LOGGING = {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
         },
-        "simple": {"format": "%(levelname)s %(name)s %(message)s"},
+        "simple": {"format": "%(levelname)s %(asctime)s %(name)s %(message)s"},
     },
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "handlers": {
@@ -238,6 +239,14 @@ LOGGING = {
             "maxBytes": 10 * 1024 * 1024,  # 10 MB
             "backupCount": 10,
         },
+        "hawc-request": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "simple",
+            "filename": str(LOGS_ROOT / "hawc-request.log"),
+            "maxBytes": 10 * 1024 * 1024,  # 10 MB
+            "backupCount": 10,
+        },
     },
     "loggers": {
         "": {"handlers": ["null"], "level": "INFO"},
@@ -248,6 +257,7 @@ LOGGING = {
             "propagate": False,
         },
         "hawc": {"handlers": ["null"], "propagate": False, "level": "INFO"},
+        "hawc.request": {"handlers": ["null"], "propagate": False, "level": "INFO"},
     },
 }
 
