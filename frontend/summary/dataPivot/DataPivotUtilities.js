@@ -1,5 +1,4 @@
 import $ from "$";
-import * as d3 from "d3";
 
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";
@@ -33,7 +32,7 @@ class _DataPivot_settings_refline {
             .append($("<td>").append(this.content.value_field))
             .append($("<td>").append(this.content.line_style))
             .append(movement_td)
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 self.data_push();
             });
 
@@ -84,7 +83,7 @@ class _DataPivot_settings_refrect {
             .append($("<td></td>").append(this.content.x2_field))
             .append($("<td></td>").append(this.content.rectangle_style))
             .append(movement_td)
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 self.data_push();
             });
 
@@ -126,7 +125,7 @@ class _DataPivot_settings_label {
             .append($("<td>").append(this.content.text))
             .append($("<td>").append(this.content.style))
             .append(movement_td)
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 self.data_push();
             });
 
@@ -180,7 +179,7 @@ class _DataPivot_settings_sorts {
             .append($("<td>").append(this.content.field_name))
             .append($("<td>").append(this.content.ascending))
             .append(movement_td)
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 self.data_push();
             });
 
@@ -245,20 +244,14 @@ class _DataPivot_settings_filters {
             .append($("<td>").append(this.content.quantifier))
             .append($("<td>").append(this.content.value))
             .append(movement_td)
-            .on("change autocompletechange autocompleteselect", "input,select", function(v) {
+            .on("change autocompletechange autocompleteselect", "input,select", function() {
                 self.data_push();
             });
 
         var content = this.content,
             enable_autocomplete = function(request, response) {
                 var field = content.field_name.find("option:selected").val(),
-                    values = d3
-                        .set(
-                            data_pivot.data.map(function(v) {
-                                return v[field];
-                            })
-                        )
-                        .values();
+                    values = new Set(data_pivot.data.map(v => v[field])).values();
                 content.value.autocomplete("option", {source: values});
             };
 
@@ -313,7 +306,7 @@ class _DataPivot_settings_spacers {
             .append($("<td>").append(this.content.line_style))
             .append($("<td>").append(this.content.extra_space))
             .append(movement_td)
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 self.data_push();
             });
 
@@ -378,7 +371,7 @@ class _DataPivot_settings_description {
             .append($("<td>").append(this.content.text_style))
             .append($("<td>").append(this.content.max_width))
             .append($("<td>").append(this.content.dpe))
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 self.data_push();
             });
 
@@ -465,7 +458,7 @@ class _DataPivot_settings_pointdata {
             .append($("<td>").append(this.content.marker_style))
             .append($("<td>").append(this.conditional_formatter.status))
             .append($("<td>").append(this.content.dpe))
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 //update self
                 self.data_push();
                 // update legend
@@ -575,7 +568,7 @@ class _DataPivot_settings_linedata {
             .append($("<td>").append(this.content.header_name))
             .append($("<td>").append(this.content.marker_style))
             .append($("<td>").append(this.conditional_formatter.status))
-            .on("change", "input,select", function(v) {
+            .on("change", "input,select", function() {
                 self.data_push();
 
                 // update legend
@@ -692,7 +685,7 @@ class _DataPivot_settings_general {
         var build_tr = function(name, content) {
             return $("<tr>")
                 .append($(`<th>${name}</th>`), $("<td>").append(content))
-                .on("change", "input,select", function(v) {
+                .on("change", "input,select", function() {
                     self.data_push();
                 });
         };

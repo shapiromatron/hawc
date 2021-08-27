@@ -7,7 +7,7 @@ import ExternalSiteVisual from "./ExternalSiteVisual";
 import RoBBarchart from "./RoBBarchart";
 import RoBHeatmap from "./RoBHeatmap";
 import LiteratureTagtree from "./LiteratureTagtree";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class Visual {
     static get_object(id, cb) {

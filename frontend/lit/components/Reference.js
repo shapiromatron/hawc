@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 import h from "shared/utils/helpers";
 import {getReferenceTagListUrl} from "shared/utils/urls";
-import Hero from "utils/Hero";
+import Hero from "shared/utils/Hero";
 
 import ReferenceButton from "./ReferenceButton";
 

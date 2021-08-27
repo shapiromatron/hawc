@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import DataPivot from "./DataPivot";
 import DataPivotVisualization from "./DataPivotVisualization";
@@ -102,7 +102,7 @@ class _DataPivot_settings_conditionalFormat {
     }
 
     delete_condition(conditional) {
-        this.conditionals.splice_object(conditional);
+        _.remove(this.conditionals, d => d === conditional);
         this._set_empty_message();
     }
 
@@ -286,10 +286,8 @@ class _DataPivot_settings_conditional {
 
             if (conditionType.val() === "discrete-style") {
                 // make map of current values
-                var hash = d3.map();
-                values.discrete_styles.forEach(function(v) {
-                    hash.set(v.key, v.style);
-                });
+                var hash = new Map();
+                values.discrete_styles.forEach(v => hash.set(v.key, v.style));
 
                 vals.unique.forEach(function(v) {
                     var style = dp.style_manager

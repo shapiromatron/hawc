@@ -175,9 +175,8 @@ class AnimalGroupRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["endpoints"] = (
-            context["object"]
-            .endpoints.all()
+        endpoints = (
+            self.object.endpoints.all()
             .select_related(
                 "bmd_model",
                 "assessment",
@@ -196,6 +195,10 @@ class AnimalGroupRead(BaseDetail):
                 "animal_group__experiment__study__searches",
                 "animal_group__experiment__study__identifiers",
             )
+        )
+        context["config"] = dict(
+            id=self.object.id,
+            endpoints=[endpoint.get_json(json_encode=False) for endpoint in endpoints],
         )
         return context
 

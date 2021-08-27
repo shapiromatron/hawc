@@ -1,5 +1,7 @@
 import $ from "$";
 
+import h from "shared/utils/helpers";
+
 // Method for creating a table for descriptive information
 class DescriptiveTable {
     constructor() {
@@ -15,7 +17,7 @@ class DescriptiveTable {
     add_tbody_tr(description, value, opts) {
         opts = opts || {};
         if (value) {
-            if (parseFloat(value, 10) === value) value = value.toHawcString();
+            if (parseFloat(value, 10) === value) value = h.ff(value);
             if (opts.calculated) {
                 value = `[${value}]`; // [] = estimated
             }

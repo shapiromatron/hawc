@@ -1,7 +1,8 @@
 import $ from "$";
 import _ from "lodash";
 
-import TableFootnotes from "utils/TableFootnotes";
+import h from "shared/utils/helpers";
+import TableFootnotes from "shared/utils/TableFootnotes";
 
 class EndpointTable {
     constructor(endpoint, tbl_id) {
@@ -94,7 +95,7 @@ class EndpointTable {
             if (!v.isReported) return;
 
             var tr = $("<tr>"),
-                dose = v.dose.toHawcString();
+                dose = h.ff(v.dose);
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 

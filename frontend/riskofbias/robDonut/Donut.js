@@ -2,7 +2,8 @@ import _ from "lodash";
 import $ from "$";
 import * as d3 from "d3";
 
-import D3Plot from "utils/D3Plot";
+import h from "shared/utils/helpers";
+import D3Plot from "shared/utils/D3Plot";
 
 import {
     BIAS_DIRECTION_SIMPLE,
@@ -107,7 +108,7 @@ class Donut extends D3Plot {
                     direction_verbose: BIAS_DIRECTION_VERBOSE[defaultScore.bias_direction],
                     score_svg_style: data.svgStyle,
                     score_css_style: data.cssStyle,
-                    score_text_color: String.contrasting_color(
+                    score_text_color: h.contrastingColor(
                         store.settings.score_metadata.colors[defaultScore.score]
                     ),
                     criterion: store.metrics[defaultScore.metric_id].name,
@@ -176,7 +177,7 @@ class Donut extends D3Plot {
                         .promise()
                         .done(() => self.show_subset(self.data.overall_question_data));
                 })
-                .on("mouseout", function(v) {
+                .on("mouseout", function() {
                     if (self.viewlock) return;
                     d3.select(this).classed("hovered", false);
                     metric_arcs.classed("hovered", false);
@@ -277,14 +278,14 @@ class Donut extends D3Plot {
             .style("fill", d => d.data.score_svg_style.fill)
             .attr("class", "donuts metric_arc")
             .attr("d", details_arc)
-            .on("mouseover", function(v1) {
+            .on("mouseover", function(event, v1) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", true);
                 $(":animated")
                     .promise()
                     .done(() => self.show_subset(v1.data));
             })
-            .on("mouseout", function(v) {
+            .on("mouseout", function() {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);
@@ -299,14 +300,14 @@ class Donut extends D3Plot {
             .enter()
             .append("path")
             .attr("class", "donuts domain_arc")
-            .on("mouseover", function(domain) {
+            .on("mouseover", function(event, domain) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", true);
                 $(":animated")
                     .promise()
                     .done(() => self.show_domain_header(domain.data.domain));
             })
-            .on("mouseout", function(v) {
+            .on("mouseout", function() {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);

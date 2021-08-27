@@ -1,11 +1,7 @@
 import $ from "$";
 import React from "react";
 import {render} from "react-dom";
-import {Async} from "react-select";
-
-import "react-tabs/style/react-tabs.css";
-import "react-select/dist/react-select.css";
-
+import Async from "react-select/async";
 import BaseVisualForm from "./BaseVisualFormReact";
 import EndpointAggregation from "summary/summary/EndpointAggregation";
 

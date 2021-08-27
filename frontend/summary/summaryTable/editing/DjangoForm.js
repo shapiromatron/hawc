@@ -2,7 +2,7 @@ import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import TextInput from "shared/components/TextInput";
 import TextAreaInput from "shared/components/TextAreaInput";
 import CheckboxInput from "shared/components/CheckboxInput";
