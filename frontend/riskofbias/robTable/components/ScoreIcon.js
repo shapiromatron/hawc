@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
 import {SCORE_SHADES, SCORE_TEXT} from "../../constants";
 
 import "./ScoreIcon.css";
@@ -8,7 +9,7 @@ import "./ScoreIcon.css";
 class ScoreIcon extends Component {
     render() {
         let {score} = this.props,
-            textColor = String.contrasting_color(SCORE_SHADES[score]);
+            textColor = h.contrastingColor(SCORE_SHADES[score]);
         return (
             <div
                 className="score-icon"

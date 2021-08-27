@@ -1,1 +1,9 @@
-export default cb => import("./split.js").then(app => cb(app.default));
+import MetaProtocol from "./MetaProtocol";
+import MetaResult from "./MetaResult";
+import MetaResultListTable from "./MetaResultListTable";
+
+export default {
+    MetaProtocol,
+    MetaResult,
+    MetaResultListTable,
+};

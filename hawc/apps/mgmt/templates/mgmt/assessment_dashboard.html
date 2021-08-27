@@ -20,9 +20,9 @@
 }
 </script>
 <script type="text/javascript">
-window.app.mgmtStartup(function(mgmt){
+window.app.startup("mgmtStartup", function(mgmt){
   const el = document.getElementById('taskDashboard'),
-    config = JSON.parse(document.getElementById('config').text);
+    config = window.app.getConfig();
   mgmt.Dashboard(el, config);
 });
 </script>

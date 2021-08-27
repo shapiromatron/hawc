@@ -55,13 +55,13 @@
       }
   </script>
   <script type="text/javascript">
-    window.app.summaryFormsStartup(function(summaryForms){
-      const config = JSON.parse(document.getElementById("config").textContent),
+    window.app.startup("summaryFormsStartup", function(summaryForms){
+      const config = window.app.getConfig(),
         djangoForm = $('#data form').get(0),
         mainElement = $("#main");
 
       if (config.visual_type === 6){
-        window.app.summaryFormsStartup(function (summaryForms) {
+        window.app.startup("summaryFormsStartup", function (summaryForms) {
           summaryForms.exploratoryHeatmapFormAppStartup(mainElement.get(0), config, djangoForm);
           mainElement.show();
         });
@@ -75,13 +75,13 @@
       }
 
       if (config.visual_type !== 6) {
-        window.app.smartTagsStartup(function (smartTags) {
+        window.app.startup("smartTagsStartup", function (smartTags) {
           new smartTags.SmartTagEditor($('#id_caption'), { submitEl: '#visualForm' });
         });
 
         {% if crud == "Create" %}
         $('#id_title').on('keyup', function () {
-          $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val(), 50));
         });
         {% endif %}
       }

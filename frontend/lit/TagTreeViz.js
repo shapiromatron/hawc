@@ -1,9 +1,9 @@
 import $ from "$";
 import * as d3 from "d3";
 
-import D3Plot from "utils/D3Plot";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import D3Plot from "shared/utils/D3Plot";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
@@ -162,8 +162,8 @@ class TagTreeViz extends D3Plot {
 
                 tag.renderPaginatedReferenceList(div.get(0));
             },
-            update = function(source) {
-                var duration = d3.event && d3.event.altKey ? 5000 : 500,
+            update = function(event, source) {
+                var duration = event && event.altKey ? 5000 : 500,
                     t = d3.transition().duration(duration);
 
                 // Compute the new tree layout.
@@ -184,8 +184,8 @@ class TagTreeViz extends D3Plot {
                     .append("svg:g")
                     .attr("class", "tagnode")
                     .attr("transform", () => `translate(${source.y0},${source.x0})`)
-                    .on("click", function(d) {
-                        if (d3.event.ctrlKey || d3.event.metaKey) {
+                    .on("click", function(event, d) {
+                        if (event.ctrlKey || event.metaKey) {
                             if (d.depth == 0) {
                                 alert("Cannot view details on root-node.");
                             } else {
@@ -193,7 +193,7 @@ class TagTreeViz extends D3Plot {
                             }
                         } else {
                             toggle(d);
-                            update(d);
+                            update(event, d);
                         }
                     });
 
@@ -302,7 +302,7 @@ class TagTreeViz extends D3Plot {
             .range([this.minimum_radius, this.maximum_radius]);
 
         treeNode.children.forEach(toggleAll);
-        update(treeNode);
+        update(null, treeNode);
     }
 }
 

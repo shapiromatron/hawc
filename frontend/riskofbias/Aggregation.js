@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import h from "shared/utils/helpers";
 
 class Aggregation {
     constructor(studies) {
@@ -16,12 +16,7 @@ class Aggregation {
             });
         });
 
-        var ds = d3
-            .nest()
-            .key(function(d) {
-                return d.data.metric.id;
-            })
-            .entries(arr);
+        var ds = h.groupNest(arr, d => d.data.metric.id);
 
         var score_binning = function(d) {
             let bins = {};
@@ -40,8 +35,8 @@ class Aggregation {
         };
 
         ds.forEach(function(v) {
-            v.rename_property("key", "domain");
-            v.rename_property("values", "rob_scores");
+            h.renameProperty(v, "key", "domain");
+            h.renameProperty(v, "values", "rob_scores");
             v.domain_text = v.rob_scores[0].data.metric.domain.name;
             v.domain_is_overall_confidence =
                 typeof v.rob_scores[0].data.metric.domain.is_overall_confidence === "boolean"

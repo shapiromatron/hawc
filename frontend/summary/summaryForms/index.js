@@ -1,7 +1,7 @@
-const startup = function(cb) {
-    import("./split.js").then(summaryForms => {
-        cb(summaryForms.default);
-    });
-};
+import VisualForm from "./VisualForm";
+import exploratoryHeatmapFormAppStartup from "./heatmap";
 
-export default startup;
+export default {
+    VisualForm,
+    exploratoryHeatmapFormAppStartup,
+};

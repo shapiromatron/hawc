@@ -24,14 +24,9 @@
 {% block extrajs %}
     {{ form.media }}
     <script type="text/javascript">
-        window.app.epiStartup(function(epi){
-            var outcomes = [];
-
-            {{list_json|safe}}.map(function(outcome){
-                outcomes.push(new epi.Outcome(outcome));
-            })
-
-            var tbl = new epi.OutcomeListTable(outcomes);
+        const data_outcomes = {{list_json|safe}};
+        window.app.startup("epiStartup", function(app){
+            const tbl = new app.OutcomeListTable(data_outcomes);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

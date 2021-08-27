@@ -114,22 +114,20 @@
   </script>
   <script type="text/javascript">
   $(document).ready(() => {
-    const settings = JSON.parse(document.getElementById("settings").text);
-    window.app.animalStartup(function (animal) {
-      animal.EndpointForm(startup => {
-        startup.func(document.getElementById("vocab"), settings.vocabulary);
-        $("#row_id_name_1").remove();
-        $("#row_id_system_4").remove();
-        $("#row_id_name_term_5").remove();
-        $("#endpoint")
-          .removeClass("hidden")
-          .hide()
-          .fadeIn({
-            complete: () => {
-              new animal.EditEndpoint(settings);
-            },
-          });
-      });
+    const settings = window.app.getConfig();
+    window.app.startup("animalStartup", function (animal) {
+      animal.startupEndpointForm(document.getElementById("vocab"), settings.vocabulary);
+      $("#row_id_name_1").remove();
+      $("#row_id_system_4").remove();
+      $("#row_id_name_term_5").remove();
+      $("#endpoint")
+        .removeClass("hidden")
+        .hide()
+        .fadeIn({
+          complete: () => {
+            new animal.EditEndpoint(settings);
+          },
+        });
     });
   });
   </script>
