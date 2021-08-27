@@ -26,7 +26,7 @@ class RequestLogMiddleware:
 
     def __call__(self, request: HttpRequest):
         response = self.get_response(request)
-        message = "{0} {1} {2} {3} ip-{4} user-{5} assess-{6}".format(
+        message = "{} {} {} {} ip-{} user-{} assess-{}".format(
             request.method,
             request.path,
             response.status_code,
