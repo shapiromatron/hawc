@@ -2,42 +2,40 @@ import logging
 import re
 from urllib.parse import urlparse
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils.http import is_same_domain
 
-request_logger = logging.getLogger("hawc.request")
+logger = logging.getLogger("hawc.request")
+
+
+def get_assessment_id(response: HttpResponse) -> int:
+    try:
+        # TODO  - refactor DRF viewset to add assessment id
+        return response.context_data["view"].assessment.id
+    except Exception:
+        return 0
+
+
+def get_user_id(user) -> int:
+    return 0 if user.is_anonymous else user.id
 
 
 class RequestLogMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def _get_assessment_id(self, response):
-        if context_data := getattr(response, "context_data", None):
-            if view := context_data.get("view"):
-                if assessment := getattr(view, "assessment", None):
-                    return assessment.id
-        return None
-
-    def __call__(self, request):
-
+    def __call__(self, request: HttpRequest):
         response = self.get_response(request)
-
-        log_data = {
-            "method": request.method,
-            "url": request.get_full_path(),
-            "status_code": response.status_code,
-            "remote_address": request.META["REMOTE_ADDR"],
-            "user_id": request.user.id,
-            "assessment_id": self._get_assessment_id(response),
-        }
-
-        message = "{method} {url} {status_code} ip-{remote_address} user-{user_id} assessment-{assessment_id}".format_map(
-            log_data
+        message = "{0} {1} {2} {3} ip-{4} user-{5} assess-{6}".format(
+            request.method,
+            request.path,
+            response.status_code,
+            len(response.content),
+            request.META["REMOTE_ADDR"],
+            get_user_id(request.user),
+            get_assessment_id(response),
         )
-
-        request_logger.info(message)
-
+        logger.info(message)
         return response
 
 
