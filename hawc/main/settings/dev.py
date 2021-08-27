@@ -33,7 +33,7 @@ if CACHES["default"]["LOCATION"] is None:
     del CACHES["default"]["OPTIONS"]
 
 LOGGING["loggers"][""]["handlers"] = ["console"]
-LOGGING["loggers"]["django"]["handlers"] = ["console"]
+LOGGING["loggers"]["hawc.request"]["handlers"] = ["console"]
 LOGGING["loggers"]["hawc"]["handlers"] = ["console"]
 
 COMPRESS_ENABLED = False
