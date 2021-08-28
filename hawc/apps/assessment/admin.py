@@ -226,9 +226,13 @@ class JobAdmin(admin.ModelAdmin):
 class LogAdmin(ReadOnlyAdmin):
     list_display = ("id", "created", "message", "assessment", "user")
     list_select_related = ("user", "assessment")
+    list_filter = (
+        ("assessment", admin.RelatedOnlyFieldListFilter),
+        ("user", admin.RelatedOnlyFieldListFilter),
+    )
     search_fields = ("assessment__name", "message")
     actions = ("delete_gt_year",)
-    readonly_fields = ("created", "last_updated")
+    readonly_fields = ("created",)
 
     def delete_gt_year(self, request, queryset):
         # delete where "last_updated" > 1 year old

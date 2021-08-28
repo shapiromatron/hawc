@@ -911,19 +911,30 @@ class Log(models.Model):
     )
     message = models.TextField()
     content = models.JSONField(default=dict)
-
     content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
     object_id = models.IntegerField(null=True)
     content_object = GenericForeignKey("content_type", "object_id")
-
     created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-created",)
 
+    def get_absolute_url(self):
+        return reverse("assessment:log_detail", args=(self.id,))
+
     def get_api_url(self):
+        # TODO delete api stuff?
         return reverse("assessment:api:logs-detail", args=(self.id,))
+
+    def get_assessment(self):
+        return self.assessment
+
+    def user_can_view(self, user) -> bool:
+        return (
+            self.assessment.user_is_team_member_or_higher(user)
+            if self.assessment
+            else user.is_staff
+        )
 
 
 class Blog(models.Model):
@@ -1003,6 +1014,5 @@ reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
-reversion.register(Log)
 reversion.register(Blog)
 reversion.register(Content)

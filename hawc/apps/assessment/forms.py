@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
+from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
@@ -450,3 +451,19 @@ class DatasetForm(forms.ModelForm):
     class Meta:
         model = models.Dataset
         fields = ("name", "description", "published")
+
+
+class LogFilterForm(forms.Form):
+    user = forms.IntegerField(min_value=1, initial=None, required=False)
+    content_type = forms.IntegerField(min_value=1, initial=None, required=False)
+    object_id = forms.IntegerField(min_value=1, initial=None, required=False)
+
+    def filters(self) -> Q:
+        query = Q()
+        if user := self.cleaned_data.get("user"):
+            query &= Q(user=user)
+        if content_type := self.cleaned_data.get("content_type"):
+            query &= Q(content_type=content_type)
+        if object_id := self.cleaned_data.get("object_id"):
+            query &= Q(object_id=object_id)
+        return query

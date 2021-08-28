@@ -1,0 +1,8 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<p>{{object.id}}</p>
+{% for log in object_list %}
+<p>{{log.id}}</p>
+{% endfor %}
+{% endblock content %}

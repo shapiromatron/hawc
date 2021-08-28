@@ -1,0 +1,56 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<table class="table table-condensed">
+    <colgroup>
+        <col width="5%" />
+        <col width="25%" />
+        <col width="40%" />
+        <col width="15%" />
+        <col width="15%" />
+    </colgroup>
+    <thread>
+        <tr>
+            <th>Details</th>
+            <th>Item</th>
+            <th>Message</th>
+            <th>User</th>
+            <th>Timestamp</th>
+        </tr>
+    </thread>
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>
+                <a class="btn btn-primary w-100" href="{{object.get_absolute_url}}">View</a>
+            </td>
+            <td>
+                {% if object.content_object %}
+                <a class="pull-right" title="View History"
+                    href="{% url 'assessment:assessment_logs' assessment.id %}?content_type={{object.content_type.id}}&object_id={{object.object_id}}">
+                    <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
+                </a>
+                <a href="{{object.content_object.get_absolute_url}}">{{ object.content_object }}</a>
+                {% else %}-{% endif %}
+            </td>
+            <td>{{object.message|truncatechars:100}}</td>
+            <td>
+                {% if object.user %}
+                <a class="pull-right" title="View History"
+                    href="{% url 'assessment:assessment_logs' assessment.id %}?user={{object.user.id}}">
+                    <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
+                </a>
+                {{object.user}}
+                {% else %}-{% endif %}
+            </td>
+            <td>{{object.created}}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5"><i>No logs available.</i></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% include "includes/paginator.html" %}
+{% endblock content %}
