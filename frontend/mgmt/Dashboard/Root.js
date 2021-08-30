@@ -26,7 +26,7 @@ class Root extends Component {
         }
 
         if (store.tasks === null || store.tasks.length === 0) {
-            return <p>To tasks have yet assigned.</p>;
+            return <p>No tasks have been assigned.</p>;
         }
 
         const {tasks} = store,
