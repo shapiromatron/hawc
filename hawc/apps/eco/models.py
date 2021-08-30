@@ -2,6 +2,7 @@ from django.db import models
 
 from ..epi.models import Country
 from ..study.models import Study
+from .constants import *
 
 
 class State(models.Model):
@@ -44,25 +45,9 @@ class Metadata(models.Model):
 
     study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
-    class StudyType(models.IntegerChoices):
-
-        OBS = 0, "Observational/gradient"
-        MAN = 1, "Manipulation/experiment"
-        SIM = 2, "Simulation"
-        MET = 3, "Meta-analysis"
-        REV = 4, "Review"
-
     study_type = models.CharField(
         max_length=100, choices=StudyType.choices, help_text="Select the type of study"
     )
-
-    class StudySetting(models.IntegerChoices):
-        FIELD = 0, "Field"
-        MESO = 1, "Mesocosm"
-        GREEN = 2, "Greenhouse"
-        LAB = 3, "Laboratory"
-        MOD = 4, "Model"
-        NA = 5, "Not Applicable"
 
     study_setting = models.CharField(
         max_length=100,
@@ -80,13 +65,6 @@ class Metadata(models.Model):
         Ecoregion, blank=True, help_text="Select one or more Level III Ecoregions, if known",
     )
 
-    class HabitatType(models.IntegerChoices):
-        TERR = 0, "Terrestrial"
-        RIP = 1, "Riparian"
-        FRESH = 2, "Freshwater aquatic"
-        ESTU = 3, "Estuarine"
-        MAR = 4, "Marine"
-
     habitat = models.CharField(
         verbose_name="Habitat",
         max_length=100,
@@ -95,15 +73,6 @@ class Metadata(models.Model):
         help_text="Select the habitat to which the evidence applies",
     )
 
-    class TerrestrialHab(models.IntegerChoices):
-        FOR = 0, "Forest"
-        GRASS = 1, "Grassland"
-        DES = 2, "Desert"
-        HEATH = 3, "Heathland"
-        AG = 4, "Agricultural"
-        URB = 5, "Urban/suburban"
-        TUND = 6, "Tundra"
-
     habitat_terrestrial = models.CharField(
         verbose_name="Terrestrial habitat",
         max_length=100,
@@ -111,12 +80,6 @@ class Metadata(models.Model):
         blank=True,
         help_text="If you selected terrestrial, pick the type of terrestrial habitat",
     )  # this field is dependent on selecting terrestrial habitat
-
-    class AquaticHab(models.IntegerChoices):
-        STREAM = 0, "Stream/river"
-        WETL = 1, "Wetland"
-        LAKE = 2, "Lake/reservoir"
-        ART = 3, "Artificial"
 
     habitat_aquatic_freshwater = models.CharField(
         verbose_name="Freshwater habitat",
@@ -147,33 +110,19 @@ class Metadata(models.Model):
         verbose_name = "Metadata"
 
 
-class BioOrg(models.IntegerChoices):  # to be used in both cause and effect tables
-    ECOS = 0, "Ecosystem"
-    COMM = 1, "Community"
-    POP = 2, "Population"
-    IND = 3, "Individual organism"
-    SUB = 4, "Sub-organismal"
+class EcoVocab(models.Model):
+    category = models.IntegerField(choices=EcoVocabCategories.choices)
+    value = models.CharField(max_length=30)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
 
 
 class Cause(models.Model):
 
     study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
-    class CauseTerm(
-        models.IntegerChoices
-    ):  # does caroline have an updated list, or does this need to be a fixture??
-        TBD = 0, "TBD"
-        WAT = 1, "Water Quality"
-
-    term = models.CharField(
-        verbose_name="Cause term", max_length=100, choices=CauseTerm.choices
-    )  # autocomplete
-
-    class CauseMeasure(
-        models.IntegerChoices
-    ):  # does caroline have an updated list, or does this need to be a fixture??
-        TBD = 0, "TBD"
-        NUT = 1, "Nutrients"
+    term = models.ForeignKey(
+        EcoVocab, on_delete=models.CASCADE, limit_choices_to={"category": 0},
+    )  # autocomplete field - make ForeignKey
 
     measure = models.CharField(
         verbose_name="Cause measure", max_length=100, choices=CauseMeasure.choices,
@@ -201,12 +150,6 @@ class Cause(models.Model):
         blank=True,
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
-
-    class CauseTrajectory(models.IntegerChoices):
-        INCR = 0, "Increase"
-        DECR = 1, "Decrease"
-        CHANGE = 2, "Change"
-        OTHER = 3, "Other"
 
     trajectory = models.CharField(
         verbose_name="Cause trajectory",
@@ -236,15 +179,7 @@ class Effect(models.Model):
 
     cause = models.OneToOneField(Cause, on_delete=models.CASCADE)
 
-    class EffectTerm(models.IntegerChoices):  # should this be a fixture?
-        TBD = 0, "TBD"
-        ALGAE = 1, "Algae"
-
     term = models.CharField(verbose_name="Effect term", max_length=100, choices=EffectTerm.choices)
-
-    class EffectMeasure(models.IntegerChoices):
-        TBD = 0, "TBD"
-        ABUND = 1, "Abundance"
 
     measure = models.CharField(
         verbose_name="Effect measure", max_length=100, choices=EffectMeasure.choices
@@ -275,13 +210,6 @@ class Effect(models.Model):
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
-    class EffectTrajectory(models.IntegerChoices):
-        INCR = 0, "Increase"
-        DECR = 1, "Decrease"
-        CHANGE = 2, "Change"
-        NOCHANGE = 3, "No change"
-        OTHER = 4, "Other"
-
     trajectory = models.CharField(
         verbose_name="Effect trajectory",
         max_length=100,
@@ -296,7 +224,7 @@ class Effect(models.Model):
     )
 
     as_reported = models.TextField(
-        verbose_name="Effect as reported", help_text="Copy and paste 1-2 sentences from article",
+        verbose_name="Effect as  reported", help_text="Copy and paste 1-2 sentences from article",
     )
 
     modifying_factors = models.CharField(
@@ -304,9 +232,6 @@ class Effect(models.Model):
         max_length=100,
         help_text="Type one or more factors that affect the relationship between the cause and effect",
     )  # autocomplete - choices TBD
-
-    class Sort(models.IntegerChoices):
-        TBD = 0, "TBD"
 
     sort = models.CharField(
         verbose_name="Sort quantitative responses",
@@ -355,16 +280,6 @@ class Quantitative(models.Model):
         null=True,
     )
 
-    class MeasureTypeFilter(models.IntegerChoices):
-        CORR = 0, "Correlation coefficient"
-        RSQ = 1, "R-squared"
-        MEANDIFF = 2, "Mean difference"
-        ANOVA = 3, "ANOVA/PERMANOVA"
-        RATIO = 4, "Ratio"
-        BETA = 5, "Slope coefficient (beta)"
-        ORD = 6, "Ordination"
-        THRESH = 7, "Threshold"
-
     measure_type_filter = models.CharField(
         verbose_name="Response measure type (filter)",
         max_length=100,
@@ -373,49 +288,10 @@ class Quantitative(models.Model):
         help_text="This drop down will filter the following field",
     )  # should this be in the frontend? not 100% sure how to filer one field with another
 
-    class MeasureType(models.IntegerChoices):
-        # correlation coefficient:
-        PEARSON = 0, "Pearson"
-        SPEARMAN = 1, "Spearman"
-        # R-squared:
-        SIMPLE = 2, "Simple Linear"
-        PARTIAL = 3, "Partial"
-        MULTIPLE = 4, "Multiple"
-        QUANTILE = 5, "Quantile"
-        # Ratio:
-        RESPONSE = 6, "Response ratio"
-        ODDS = 7, "Odds ratio"
-        RISK = 8, "Risk ratio"
-        HAZARD = 9, "Hazard ratio"
-        # Meandiff:
-        NONSTAND = 10, "Non-standardized"
-        STAND = 11, "Standardized"
-        # Slope:
-        NONTRANSFORMED = 12, "Non-transformed data"
-        TRANSFORMED = 13, "Transformed data"
-        # Ordination choices
-        CCA = 14, "Canonical correspondence analysis (CCA)"
-        PCA = 15, "Principal components analysis (PCA)"
-        MDA = 16, "Multiple discriminant analysis (MDA)"
-        NMDS = 17, "Non-multidimensional scaling (NMDS)"
-        FACTOR = 18, "Factor analysis"
-        # Threshold choices
-        REGTREE = 19, "Regression tree"
-        RANDOMFOREST = 20, "Random forest"
-        BREAKPOINT = 21, "Breakpoint (piecewise) regression"
-        QUANTREG = 22, "Quantile regression"
-        CFD = 23, "Cumulative frequency distribution"
-        GFA = 24, "Gradient forest analysis"
-        NONLINEAR = 25, "Non-linear curve fitting"
-        ORDINATION = 26, "Ordination"
-        TITAN = 27, "TITAN"
-        # option for each category
-        NS = 28, "Not specified"
-
     measure_type = models.CharField(
         verbose_name="Response measure type",
         max_length=40,
-        choices=MeasureType.choices,
+        choices=EcoVocabChoices.MeasureType.choices,
         blank=True,
         help_text="Select one response measure type",
     )  # dependent on selection in response measure type filter
@@ -432,13 +308,6 @@ class Quantitative(models.Model):
         blank=True,
         help_text="Type any other useful information not captured in other fields",
     )
-
-    class Variability(models.IntegerChoices):
-        CI95 = 0, "95% CI"
-        CI90 = 1, "90% CI"
-        SD = 2, "Standard deviation"
-        SE = 3, "Standard error"
-        NA = 4, "Not applicable"
 
     variability = models.CharField(
         verbose_name="Response variability",
@@ -461,12 +330,6 @@ class Quantitative(models.Model):
         help_text="Type the upper numerical bound of the response variability",
         null=True,
     )
-
-    class StatisticalSigType(models.IntegerChoices):
-        PVAL = 0, "P-value"
-        FSTAT = 1, "F statistic"
-        CHISQ = 2, "Chi square"
-        NA = 3, "Not applicable"
 
     statistical_sig_type = models.CharField(
         verbose_name="Statistical significance measure type",
