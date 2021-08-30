@@ -129,5 +129,5 @@ class SummaryTableViewset(AssessmentEditViewset):
     @action(detail=True, renderer_classes=(DocxRenderer,))
     def docx(self, request, pk):
         obj = self.get_object()
-        report = obj.to_docx()
+        report = obj.to_docx(base_url=request._current_scheme_host)
         return Response(report)

@@ -1,8 +1,42 @@
+import logging
 import re
 from urllib.parse import urlparse
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils.http import is_same_domain
+
+logger = logging.getLogger("hawc.request")
+
+
+def get_assessment_id(response: HttpResponse) -> int:
+    try:
+        # TODO  - refactor DRF viewset to add assessment id
+        return response.context_data["view"].assessment.id
+    except Exception:
+        return 0
+
+
+def get_user_id(user) -> int:
+    return 0 if user.is_anonymous else user.id
+
+
+class RequestLogMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest):
+        response = self.get_response(request)
+        message = "{} {} {} {} ip-{} user-{} assess-{}".format(
+            request.method,
+            request.path,
+            response.status_code,
+            len(response.content),
+            request.META["REMOTE_ADDR"],
+            get_user_id(request.user),
+            get_assessment_id(response),
+        )
+        logger.info(message)
+        return response
 
 
 class MicrosoftOfficeLinkMiddleware:
