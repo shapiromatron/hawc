@@ -219,11 +219,13 @@ const helpers = {
             height: windowHeight - contentSize.top,
         };
     },
-    getHawcOffsets() {
-        // get offsets from header and sidebar in hawc for absolute positioning
+    getAbsoluteOffsets(el) {
+        // get offsets of element relative to document body
+        let bodyRect = document.body.getBoundingClientRect(),
+            elRect = el.getBoundingClientRect();
         return {
-            x: $("#sidebar-container")[0].offsetWidth,
-            y: d3.sum(_.map($(".hawc-header"), d => d.offsetHeight)),
+            left: elRect.left - bodyRect.left,
+            top: elRect.top - bodyRect.top,
         };
     },
     getTextContrastColor(hex) {
