@@ -497,7 +497,7 @@ class RiskOfBiasScoreOverrideObject(models.Model):
             str: A log message of relations found and what as done.
         """
         message = ""
-        deletions = cls.objects.orphaned()
+        deletions = cls.objects.all().orphaned()
         if deletions:
             message = "\n".join([str(item) for item in deletions])
             ids_to_delete = [item.id for item in deletions]
