@@ -911,13 +911,10 @@ class Log(models.Model):
     )
     message = models.TextField()
     content = models.JSONField(default=dict)
-
     content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
     object_id = models.IntegerField(null=True)
     content_object = GenericForeignKey("content_type", "object_id")
-
     created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-created",)
@@ -1003,6 +1000,5 @@ reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
-reversion.register(Log)
 reversion.register(Blog)
 reversion.register(Content)
