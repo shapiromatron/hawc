@@ -1,10 +1,8 @@
-from datetime import timedelta
 from io import BytesIO
 
 from django.apps import apps
 from django.contrib import admin, messages
 from django.http import HttpResponse
-from django.utils import timezone
 from django.utils.html import format_html
 from reversion.admin import VersionAdmin
 
@@ -231,16 +229,7 @@ class LogAdmin(ReadOnlyAdmin):
         ("user", admin.RelatedOnlyFieldListFilter),
     )
     search_fields = ("assessment__name", "message")
-    actions = ("delete_gt_year",)
     readonly_fields = ("created",)
-
-    def delete_gt_year(self, request, queryset):
-        # delete where "last_updated" > 1 year old
-        year_old = timezone.now() - timedelta(days=365)
-        deleted, _ = queryset.filter(last_updated__lte=year_old).delete()
-        self.message_user(request, f"{deleted} of {queryset.count()} selected logs deleted.")
-
-    delete_gt_year.short_description = "Delete 1 year or older"
 
 
 @admin.register(models.Blog)
