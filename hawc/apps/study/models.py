@@ -12,6 +12,7 @@ from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
 from ..assessment.serializers import AssessmentSerializer
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper, cleanHTML
 from ..lit.models import Reference, Search
 from . import managers
@@ -243,6 +244,7 @@ class Study(Reference):
 
     def clean(self):
         pk_exclusion = {}
+        errors = {}
         if self.pk:
             pk_exclusion["pk"] = self.pk
         if (
@@ -251,7 +253,9 @@ class Study(Reference):
             .count()
             > 0
         ):
-            raise ValidationError("Error- short-citation name must be unique for assessment.")
+            errors["short_citation"] = ASSESSMENT_UNIQUE_MESSAGE
+        if errors:
+            raise ValidationError(errors)
 
     def __str__(self):
         return self.short_citation
