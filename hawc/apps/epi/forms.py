@@ -9,6 +9,7 @@ from django.urls import reverse
 from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
 from ..common import selectable
 from ..common.forms import (
+    ASSESSMENT_UNIQUE_MESSAGE,
     BaseFormHelper,
     CopyAsNewSelectorForm,
     form_actions_apply_filters,
@@ -55,7 +56,7 @@ class CriteriaForm(forms.ModelForm):
         ).exclude(pk=pk)
 
         if crits.count() > 0:
-            self.add_error("description", "Must be unique for assessment")
+            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
 
         return self.cleaned_data
 
@@ -240,7 +241,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         ).exclude(pk=pk)
 
         if crits.count() > 0:
-            self.add_error("description", "Must be unique for assessment")
+            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
 
         return self.cleaned_data
 
