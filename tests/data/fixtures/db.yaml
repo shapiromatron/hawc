@@ -729,6 +729,17 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+- model: assessment.attachment
+  pk: 3
+  fields:
+    content_type:
+    - assessment
+    - assessment
+    object_id: 3
+    title: demo attachment
+    attachment: attachment/nothing.txt
+    publicly_available: false
+    description: <p>Example missing attachment</p>
 - model: assessment.doseunits
   pk: 1
   fields:
