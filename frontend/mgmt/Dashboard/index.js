@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import {Provider} from "mobx-react";
 
 import MgmtDashboardStore from "./store";
-import Root from "./containers/Root";
+import Root from "./Root";
 
 export default function(el, config) {
     const store = new MgmtDashboardStore(config);

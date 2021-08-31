@@ -9,6 +9,8 @@ from django.template.loader import render_to_string
 
 from . import selectable, validators
 
+ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
+
 
 def form_actions_create_or_close():
     """Add form actions to create or close the window (for popups)"""
