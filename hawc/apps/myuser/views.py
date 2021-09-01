@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from django.contrib.auth.views import (
@@ -7,12 +9,12 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import CreateView, DetailView, TemplateView
+from django.views.generic import CreateView, DetailView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView, UpdateView
 
@@ -169,3 +171,19 @@ class PasswordChanged(MessageMixin, RedirectView):
     def get_redirect_url(self):
         self.send_message()
         return reverse_lazy("user:login")
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ExternalAuth(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(
+            dict(body=self.request.body.decode("utf-8"), header=self.request.headers._store)
+        )
+
+    def post(self, request, *args, **kwargs):
+        return JsonResponse(
+            dict(body=self.request.body.decode("utf-8"), header=self.request.headers._store)
+        )

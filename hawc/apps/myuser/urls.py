@@ -5,6 +5,7 @@ from . import api, views
 app_name = "user"
 urlpatterns = [
     path("login/", views.HawcLoginView.as_view(), name="login"),
+    path("login/external-auth/", views.ExternalAuth.as_view(), name="external_auth"),
     path("logout/", views.HawcLogoutView.as_view(), name="logout"),
     path("new/", views.HawcUserCreate.as_view(), name="register"),
     path("profile/", views.ProfileDetail.as_view(), name="settings"),
