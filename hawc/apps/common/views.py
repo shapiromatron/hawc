@@ -1,10 +1,8 @@
 import abc
-import json
 import logging
 from typing import List, Optional
 from urllib.parse import urlparse
 
-import dictdiffer
 import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -22,7 +20,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
-from .helper import model_to_json, tryParseInt
+from .helper import tryParseInt
 
 logger = logging.getLogger(__name__)
 
@@ -479,25 +477,18 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return HttpResponseRedirect(self.get_success_url())
 
     def save_and_log(self, form):
-        # Get old object data
-        original = form._meta.model.objects.get(pk=form.instance.pk)
-        original_data = json.loads(model_to_json(original))
         # Save object to database
         self.object = form.save()
-        # Get newly saved object data
-        updated_data = json.loads(model_to_json(self.object))
-        diff = list(dictdiffer.diff(original_data, updated_data))
         # Create log with changes
-        self.create_log(self.object, diff)
+        self.create_log(self.object)
 
-    def create_log(self, obj, diff):
+    def create_log(self, obj):
         # Log the update
         log_message = f"Updated '{obj}' ({obj.__class__.__name__} {obj.id})"
         log = Log.objects.create(
             assessment_id=self.assessment.pk,
             user=self.request.user,
             message=log_message,
-            content=diff,
             content_object=obj,
         )
         # Associate the log with reversion
