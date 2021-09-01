@@ -24,32 +24,39 @@ app.conf.beat_schedule = {
     "worker-healthcheck": {
         "task": "hawc.apps.common.tasks.worker_healthcheck",
         "schedule": timedelta(minutes=5),
+        "options": {"expires": timedelta(minutes=5) / 2},
     },
     "lit-schedule_topic_model_reruns-10-min": {
         "task": "hawc.apps.lit.tasks.schedule_topic_model_reruns",
         "schedule": timedelta(minutes=10),
+        "options": {"expires": timedelta(minutes=10) / 2},
     },
     "lit-update_pubmed_content-1-day": {
         "task": "hawc.apps.lit.tasks.update_pubmed_content",
         "schedule": timedelta(days=1),
+        "options": {"expires": timedelta(days=1) / 2},
     },
     "assessment-delete_old_jobs-1-day": {
         "task": "hawc.apps.assessment.tasks.delete_old_jobs",
         "schedule": timedelta(days=1),
+        "options": {"expires": timedelta(days=1) / 2},
     },
     "delete-orphan-relations": {
         "task": "hawc.apps.assessment.tasks.delete_orphan_relations",
         "schedule": timedelta(hours=6),
         "kwargs": dict(delete=False),
+        "options": {"expires": timedelta(hours=6) / 2},
     },
     "check-refresh-mvs": {
         "task": "hawc.apps.materialized.tasks.refresh_all_mvs",
         "schedule": timedelta(minutes=5),
+        "options": {"expires": timedelta(minutes=5) / 2},
     },
     "refresh-mvs": {
         "task": "hawc.apps.materialized.tasks.refresh_all_mvs",
         "schedule": timedelta(days=1),
         "kwargs": dict(force=True),
+        "options": {"expires": timedelta(days=1) / 2},
     },
 }
 
@@ -59,4 +66,5 @@ if has_bmds_service_url:
     app.conf.beat_schedule["bmds2-healthcheck"] = {
         "task": "hawc.apps.bmd.tasks.bmds2_healthcheck",
         "schedule": timedelta(hours=12),
+        "options": {"expires": timedelta(hours=12) / 2},
     }
