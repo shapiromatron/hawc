@@ -479,7 +479,7 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     def save_and_log(self, form):
         # Save object to database
         self.object = form.save()
-        # Create log with changes
+        # Create log
         self.create_log(self.object)
 
     def create_log(self, obj):
