@@ -225,7 +225,7 @@ class RiskOfBias(models.Model):
 
     def build_scores(self, assessment, study):
         scores = [
-            metric.build_score(riskofbias=self)
+            metric.build_score(riskofbias=self, is_default=True)
             for metric in RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
         ]
         RiskOfBiasScore.objects.bulk_create(scores)
