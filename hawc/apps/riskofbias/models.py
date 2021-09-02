@@ -171,18 +171,19 @@ class RiskOfBiasMetric(models.Model):
         if delete_ids:
             RiskOfBiasScore.objects.filter(metric=self, riskofbias_id__in=delete_ids).delete()
 
-    @transaction.atomic
     @classmethod
+    @transaction.atomic
     def sync_scores_for_study(cls, study: Study):
         """Create/delete scores based on current study requirements."""
         robs = study.riskofbiases.all().in_bulk()
         rob_ids = robs.keys()
         metrics = cls.objects.get_required_metrics(study).in_bulk()
+
         expected_ids = set(product(metrics.keys(), rob_ids))
         actual_ids = set(
-            RiskOfBiasScore.objects.filter(
-                riskofbias__in=rob_ids, metric__in=metrics.keys()
-            ).values_list("metric_id", "riskofbias_id")
+            RiskOfBiasScore.objects.filter(riskofbias__in=rob_ids).values_list(
+                "metric_id", "riskofbias_id"
+            )
         )
 
         create_ids = expected_ids - actual_ids
