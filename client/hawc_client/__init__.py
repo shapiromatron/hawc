@@ -244,7 +244,7 @@ class LiteratureClient(BaseClient):
         return pd.DataFrame(response_json)
 
     def import_reference_tags(
-        self, assessment_id: int, csv: str, operation: str = "append"
+        self, assessment_id: int, csv: str, operation: str = "append", dry_run: bool = False
     ) -> pd.DataFrame:
         """
         Imports a CSV of reference IDs with corresponding tag IDs to the given assessment.
@@ -253,11 +253,12 @@ class LiteratureClient(BaseClient):
             assessment_id (int): Assessment ID
             csv (str): Reference IDs to tag ID mapping. The header of this CSV string should be "reference_id,tag_id".
             operation (str, optional): Either add new references tags to existing (`append`), or replace current tag mappings (`replace`). Defaults to "append".
+            dry_run (bool, optional): If set to True, runs validation checks but does not execute
 
         Returns:
             pd.DataFrame: All tag mappings for the selected `assessment_id`, after the requested changes
         """
-        payload = {"csv": csv, "operation": operation}
+        payload = {"csv": csv, "operation": operation, "dry_run": dry_run}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self.session.post(url, payload).json()
         return pd.DataFrame(response_json)
