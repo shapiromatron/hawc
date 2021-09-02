@@ -1,7 +1,6 @@
 import logging
 
 from django.apps import apps
-from django.db import transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
@@ -28,16 +27,7 @@ def invalidate_caches_rob_metrics(sender, instance, **kwargs):
 
 @receiver(post_save, sender=models.RiskOfBiasMetric)
 def update_study_type_metrics(sender, instance, created, **kwargs):
-    # Create or delete RiskOfBiasScores when RiskOfBiasMetric are updated
-    assessment = instance.get_assessment()
-    robs = (
-        models.RiskOfBias.objects.filter(study__assessment=assessment)
-        .select_related("study", "study__assessment")
-        .prefetch_related("scores")
-    )
-    with transaction.atomic():
-        for rob in robs:
-            rob.create_or_delete_scores(assessment)
+    instance.sync_score_existence()
 
 
 @receiver(post_save, sender=models.RiskOfBias)

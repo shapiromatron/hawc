@@ -1,5 +1,4 @@
 from django.apps import apps
-from django.db import transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
@@ -9,15 +8,8 @@ from . import models
 
 @receiver(post_save, sender=models.Study)
 def update_study_rob_scores(sender, instance, created, **kwargs):
-    # update RiskOfBiasScores when a Study's type is changed.
-    robs = (
-        instance.riskofbiases.all()
-        .select_related("study", "study__assessment")
-        .prefetch_related("scores")
-    )
-    with transaction.atomic():
-        for rob in robs:
-            rob.create_or_delete_scores(instance.assessment)
+    RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
+    RiskOfBiasMetric.sync_scores_for_study(instance)
 
 
 @receiver(post_save, sender=models.Study)

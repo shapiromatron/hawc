@@ -1,5 +1,6 @@
 import json
 import logging
+from itertools import product
 from textwrap import dedent
 from typing import Dict
 
@@ -8,7 +9,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils.html import strip_tags
 from reversion import revisions as reversion
@@ -149,6 +150,55 @@ class RiskOfBiasMetric(models.Model):
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
+    @transaction.atomic
+    def sync_score_existence(self):
+        """Create/delete scores based on current metric requirements."""
+        robs = RiskOfBias.objects.get_required_robs(self)
+        # TODO check and remove
+        print(robs.query)
+        expected = robs.in_bulk()
+        expected_ids = set(expected.keys())
+        actual_ids = set(self.scores.all().values_list("riskofbias_id", flat=True))
+
+        create_ids = expected_ids - actual_ids
+        if create_ids:
+            scores = [self.build_score(expected[rob_id], True) for rob_id in create_ids]
+            RiskOfBiasScore.objects.bulk_create(scores)
+
+        delete_ids = actual_ids - expected_ids
+        if delete_ids:
+            RiskOfBiasScore.objects.filter(metric=self, riskofbias_id__in=delete_ids).delete()
+
+    @transaction.atomic
+    @classmethod
+    def sync_scores_for_study(cls, study: Study):
+        """Create/delete scores based on current study requirements."""
+        robs = study.riskofbiases.all().in_bulk()
+        rob_ids = robs.keys()
+        # TODO check and remove
+        print(cls.objects.get_required_metrics(study).query)
+        metrics = cls.objects.get_required_metrics(study).in_bulk()
+        expected_ids = set(product(metrics.keys(), rob_ids))
+        actual_ids = set(
+            RiskOfBiasScore.objects.filter(
+                riskofbias__in=rob_ids, metric__in=metrics.keys()
+            ).values_list("metric_id", "riskofbias_id")
+        )
+
+        create_ids = expected_ids - actual_ids
+        if create_ids:
+            scores = [
+                metrics[metric_id].build_score(robs[rob_id], True)
+                for metric_id, rob_id in create_ids
+            ]
+            RiskOfBiasScore.objects.bulk_create(scores)
+
+        delete_ids = actual_ids - expected_ids
+        if delete_ids:
+            for metric_id, rob_id in delete_ids:
+                score = RiskOfBiasScore.objects.get(metric=metric_id, riskofbias=rob_id)
+                score.delete()
+
 
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
@@ -195,38 +245,10 @@ class RiskOfBias(models.Model):
         else:
             return robs
 
-    def create_or_delete_scores(self, assessment):
-        """Sync RiskOfBiasScore for this study based on assessment requirements.
-
-        Metrics may change based on study type and metric requirements by study
-        type. This method is called via signals when the study type changes,
-        or when a metric is altered.  RiskOfBiasScore are created/deleted as
-        needed.
-        """
-        metrics = RiskOfBiasMetric.objects.get_required_metrics(
-            assessment, self.study
-        ).prefetch_related("scores")
-        scores = self.scores.all()
-
-        # add any scores that are required and not currently created
-        created = []
-        for metric in metrics:
-            if not (metric.scores.all() & scores):
-                logger.info(f"Creating score: {self.study}->{metric}")
-                created.append(metric.build_score(riskofbias=self))
-        if created:
-            RiskOfBiasScore.objects.bulk_create(created)
-
-        # delete any scores that are no longer required
-        for score in scores:
-            if score.metric not in metrics:
-                logger.info(f"Deleting score: {self.study}->{score.metric}")
-                score.delete()
-
     def build_scores(self, assessment, study):
         scores = [
             metric.build_score(riskofbias=self, is_default=True)
-            for metric in RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
+            for metric in RiskOfBiasMetric.objects.get_required_metrics(study)
         ]
         RiskOfBiasScore.objects.bulk_create(scores)
 

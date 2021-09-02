@@ -291,7 +291,7 @@ class ReferenceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"All tag ids are not from this assessment")
         return value
 
-    @transaction.atomic()
+    @transaction.atomic
     def update(self, instance, validated_data):
 
         # updates the reference tags
