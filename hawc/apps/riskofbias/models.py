@@ -8,7 +8,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models, transaction
+from django.db import models
 from django.urls import reverse
 from django.utils.html import strip_tags
 from reversion import revisions as reversion
@@ -195,8 +195,7 @@ class RiskOfBias(models.Model):
         else:
             return robs
 
-    @transaction.atomic
-    def update_scores(self, assessment):
+    def create_or_delete_scores(self, assessment):
         """Sync RiskOfBiasScore for this study based on assessment requirements.
 
         Metrics may change based on study type and metric requirements by study
