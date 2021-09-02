@@ -39,6 +39,12 @@ def test_BulkReferenceTagSerializer(db_keys):
     assert serializer.is_valid() is False
     assert serializer.errors["csv"][0] == "All reference ids are not from assessment 1"
 
+    # missing reference
+    data = {"operation": "append", "csv": "reference_id,tag_id\n1,2\n-1,2"}
+    serializer = BulkReferenceTagSerializer(data=data, context=context)
+    assert serializer.is_valid() is False
+    assert serializer.errors["csv"][0] == "Reference(s) not found: {-1}"
+
     # check success
     reference = Reference.objects.get(id=db_keys.study_working)
     assert reference.tags.count() == 0
@@ -51,8 +57,16 @@ def test_BulkReferenceTagSerializer(db_keys):
     reference.refresh_from_db()
     assert reference.tags.count() == 1
 
+    # check dry run
+    data = {"operation": "append", "csv": "reference_id,tag_id\n1,3", "dry_run": True}
+    serializer = BulkReferenceTagSerializer(data=data, context=context)
+    assert serializer.is_valid() is True
+    serializer.bulk_create_tags()
+    reference.refresh_from_db()
+    assert reference.tags.count() == 1
+
     # check append
-    data = {"operation": "append", "csv": "reference_id,tag_id\n1,3"}
+    data.pop("dry_run")
     serializer = BulkReferenceTagSerializer(data=data, context=context)
     assert serializer.is_valid() is True
     serializer.bulk_create_tags()
