@@ -483,6 +483,8 @@ class RiskOfBiasScore(models.Model):
 
 
 class RiskOfBiasScoreOverrideObject(models.Model):
+    objects = managers.RiskOfBiasScoreOverrideObjectManager()
+
     score = models.ForeignKey(
         RiskOfBiasScore, on_delete=models.CASCADE, related_name="overridden_objects"
     )
@@ -516,22 +518,8 @@ class RiskOfBiasScoreOverrideObject(models.Model):
         Returns:
             str: A log message of relations found and what as done.
         """
-        cts = RiskOfBiasScoreOverrideObject.objects.values_list(
-            "content_type", flat=True
-        ).distinct()
-
-        deletions = []
-        for ct in cts:
-            RelatedClass = ContentType.objects.get_for_id(ct).model_class()
-            all_ids = cls.objects.filter(content_type=ct).values_list("object_id", flat=True)
-            matched_ids = RelatedClass.objects.filter(id__in=all_ids).values_list("id", flat=True)
-            deleted_ids = list(set(all_ids) - set(matched_ids))
-            if deleted_ids:
-                deletions.extend(
-                    list(cls.objects.filter(content_type=ct, object_id__in=deleted_ids))
-                )
-
         message = ""
+        deletions = cls.objects.all().orphaned()
         if deletions:
             message = "\n".join([str(item) for item in deletions])
             ids_to_delete = [item.id for item in deletions]

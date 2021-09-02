@@ -3,6 +3,7 @@ from io import BytesIO
 
 from django.apps import apps
 from django.contrib import admin, messages
+from django.contrib.admin.models import LogEntry
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
@@ -49,7 +50,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
-                request, f"Select only one item to perform the action on.", level=messages.WARNING
+                request, "Select only one item to perform the action on.", level=messages.WARNING
             )
             return
         assessment = queryset.first()
@@ -95,7 +96,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
-                request, f"Select only one item to perform the action on.", level=messages.ERROR
+                request, "Select only one item to perform the action on.", level=messages.ERROR
             )
             return
 
@@ -103,7 +104,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         assessment = queryset.first()
         if assessment.vocabulary is None:
             self.message_user(
-                request, f"Assessment has no controlled vocabulary.", level=messages.ERROR
+                request, "Assessment has no controlled vocabulary.", level=messages.ERROR
             )
             return
 
@@ -237,6 +238,13 @@ class LogAdmin(ReadOnlyAdmin):
         self.message_user(request, f"{deleted} of {queryset.count()} selected logs deleted.")
 
     delete_gt_year.short_description = "Delete 1 year or older"
+
+
+@admin.register(LogEntry)
+class LogEntryAdmin(ReadOnlyAdmin):
+    list_display = ("id", "action_time", "user", "content_type", "object_id", "action_flag")
+    list_filter = ("user", "content_type")
+    search_fields = ("object_id",)
 
 
 @admin.register(models.Blog)

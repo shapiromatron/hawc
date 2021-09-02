@@ -52,9 +52,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-      window.app.animalStartup(function(animal){
-          var endpoint = new animal.Endpoint({{object.get_json|safe}});
-
+      const data = {{object.get_json|safe}};
+      window.app.startup("animalStartup", function(app){
+          var endpoint = new app.Endpoint(data);
           endpoint.build_details_table($('#endpoint-details-table'));
           endpoint.build_endpoint_table($('#dr-tbl'));
           endpoint.renderPlot($('#bmd_ds_plot'));

@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from ..common.admin import YesNoFilter
 from . import models
 
 
@@ -124,8 +125,23 @@ class RiskOfBiasScoreAdmin(admin.ModelAdmin):
     inlines = [RiskOfBiasScoreOverrideObjectInline]
 
 
+class IsOrphanedFilter(YesNoFilter):
+    title = "Orphaned"
+    parameter_name = "orphaned"
+    query = -1
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == "Yes":
+            return queryset.orphaned()
+        elif value == "No":
+            return queryset.not_orphaned()
+        return queryset
+
+
 @admin.register(models.RiskOfBiasScoreOverrideObject)
 class RiskOfBiasScoreOverrideObjectAdmin(admin.ModelAdmin):
     list_display = ("id", "content_type", "object_id")
-    list_filter = (("content_type", admin.RelatedOnlyFieldListFilter),)
+    list_filter = (("content_type", admin.RelatedOnlyFieldListFilter), IsOrphanedFilter)
     raw_id_fields = ("score",)
+    search_fields = ("object_id",)

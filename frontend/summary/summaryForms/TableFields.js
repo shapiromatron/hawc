@@ -1,7 +1,7 @@
 import _ from "lodash";
 import $ from "$";
 
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import D3Visualization from "summary/summary/D3Visualization";
 
 import {InputField, SpacerNullField, HeaderNullField, HelpTextNullField} from "./Fields";

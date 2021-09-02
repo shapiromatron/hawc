@@ -365,7 +365,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                 return y(d.y) + halfway;
             })
             .style("cursor", "pointer")
-            .on("click", function(v) {
+            .on("click", function(event, v) {
                 v.endpoint.displayAsModal();
             });
 

@@ -6,7 +6,7 @@ from .dev import *  # noqa
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "hawc-fixture-test",
+        "NAME": "hawc-fixture",
         "USER": "hawc",
         "PASSWORD": "",
         "HOST": "localhost",

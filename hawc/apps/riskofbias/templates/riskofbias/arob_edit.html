@@ -28,7 +28,7 @@
 {{config|json_script:"config"}}
 <script type="text/javascript">
 $(document).ready(function(){
-window.app.riskofbiasStartup(function(riskofbias){
+window.app.startup("riskofbiasStartup", function(riskofbias){
     riskofbias.RobMetricsStartup(document.getElementById("robMain"));
 });
 });

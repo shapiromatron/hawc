@@ -16,7 +16,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      new window.app.utils.HAWCUtils.InitialForm({
+      new window.app.HAWCUtils.InitialForm({
         "form": $('form'),
         "base_url": "{% url 'meta:result_create' object.pk %}"
       });

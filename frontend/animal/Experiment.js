@@ -1,9 +1,9 @@
 import $ from "$";
 
-import DescriptiveTable from "utils/DescriptiveTable";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
 import DssTox from "assessment/DssTox";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class Experiment {
     constructor(data) {

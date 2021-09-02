@@ -17,6 +17,7 @@ from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
@@ -49,9 +50,7 @@ class SearchSerializer(serializers.ModelSerializer):
         # (assessment+title is checked w/ built-in serializer)
         data["slug"] = slugify(data["title"])
         if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
-            raise serializers.ValidationError(
-                {"slug": "slug (generated from title) must be unique for assessment"}
-            )
+            raise serializers.ValidationError({"slug": ASSESSMENT_UNIQUE_MESSAGE})
 
         if data["search_type"] != "i":
             raise serializers.ValidationError("API currently only supports imports")
@@ -288,7 +287,7 @@ class ReferenceSerializer(serializers.ModelSerializer):
             self.instance.assessment_id
         ).filter(id__in=value)
         if valid_tags.count() != len(value):
-            raise serializers.ValidationError(f"All tag ids are not from this assessment")
+            raise serializers.ValidationError("All tag ids are not from this assessment")
         return value
 
     @transaction.atomic

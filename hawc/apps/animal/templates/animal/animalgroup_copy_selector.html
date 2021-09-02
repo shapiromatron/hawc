@@ -19,7 +19,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-      new window.app.utils.HAWCUtils.InitialForm({
+      new window.app.HAWCUtils.InitialForm({
         "form": $('form'),
         "base_url": "{% url 'animal:animal_group_new' object.pk %}",
       });

@@ -66,7 +66,7 @@ def topic_model_tsne(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     topic-specific information.
     """
     if "text" not in df.columns:
-        raise ValueError(f'Data frame must contain a "text" column')
+        raise ValueError('Data frame must contain a "text" column')
 
     if stopwords_ is None or stemmer is None:
         _load_nltk_data()

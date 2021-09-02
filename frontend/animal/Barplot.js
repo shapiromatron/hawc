@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 
 import h from "shared/utils/helpers";
-import D3Plot from "utils/D3Plot";
+import D3Plot from "shared/utils/D3Plot";
 
 class Barplot extends D3Plot {
     constructor(endpoint, plot_id, options, parent) {
@@ -34,7 +34,7 @@ class Barplot extends D3Plot {
         this.customize_menu();
 
         var plot = this;
-        this.y_axis_label.on("click", function(v) {
+        this.y_axis_label.on("click", function() {
             plot.toggle_y_axis();
         });
         this.trigger_resize();
@@ -201,9 +201,7 @@ class Barplot extends D3Plot {
             .value();
 
         sigs_data = _.chain(values)
-            .filter(function(v) {
-                return v.significance_level > 0;
-            })
+            .filter(v => v.significance_level > 0)
             .map(function(v) {
                 return {
                     x: v.dose,

@@ -7,7 +7,7 @@ Python HAWC client
 ------------------
 
 A `HAWC client`_ has been developed and is the recommended approach to programmatically add or fetch content
-from a HAWC instance. To install the client (requires Python ≥ 3.6):
+from a HAWC instance. To install the client (requires Python ≥ 3.9):
 
 .. _`HAWC client`: https://pypi.org/project/hawc-client/
 
