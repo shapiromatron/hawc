@@ -12,14 +12,16 @@ class RiskOfBiasMetricManager(BaseManager):
     assessment_relation = "domain__assessment"
 
     def get_required_metrics(self, study):
-        requireds = models.Q()
+        filters = models.Q()
         if study.bioassay:
-            requireds |= models.Q(required_animal=True)
+            filters |= models.Q(required_animal=True)
         if study.epi or study.epi_meta:
-            requireds |= models.Q(required_epi=True)
+            filters |= models.Q(required_epi=True)
         if study.in_vitro:
-            requireds |= models.Q(required_invitro=True)
-        return self.get_qs(study.assessment_id).filter(requireds)
+            filters |= models.Q(required_invitro=True)
+        if not filters:
+            return self.get_qs(study.assessment_id).none()
+        return self.get_qs(study.assessment_id).filter(filters)
 
     def get_metrics_for_visuals(self, assessment_id):
         return self.get_qs(assessment_id).values("id", "name")
@@ -54,7 +56,7 @@ class RiskOfBiasManager(BaseManager):
     def active(self, assessment=None):
         return self.get_qs(assessment).filter(active=True, final=False)
 
-    def get_required_robs(self, metric):
+    def get_required_robs_for_metric(self, metric):
         assessment = metric.get_assessment()
         filters = models.Q()
         if metric.required_animal:
@@ -64,6 +66,8 @@ class RiskOfBiasManager(BaseManager):
             filters |= models.Q(study__epi_meta=True)
         if metric.required_invitro:
             filters |= models.Q(study__in_vitro=True)
+        if not filters:
+            return self.get_qs(assessment.id).none()
         return self.get_qs(assessment.id).filter(filters)
 
 

@@ -153,12 +153,14 @@ class RiskOfBiasMetric(models.Model):
     @transaction.atomic
     def sync_score_existence(self):
         """Create/delete scores based on current metric requirements."""
-        robs = RiskOfBias.objects.get_required_robs(self)
-        # TODO check and remove
-        print(robs.query)
-        expected = robs.in_bulk()
-        expected_ids = set(expected.keys())
         actual_ids = set(self.scores.all().values_list("riskofbias_id", flat=True))
+
+        expected = {}
+        expected_ids = set()
+        robs = RiskOfBias.objects.get_required_robs_for_metric(self)
+        if robs:
+            expected = robs.in_bulk()
+            expected_ids = set(expected.keys())
 
         create_ids = expected_ids - actual_ids
         if create_ids:
@@ -175,8 +177,6 @@ class RiskOfBiasMetric(models.Model):
         """Create/delete scores based on current study requirements."""
         robs = study.riskofbiases.all().in_bulk()
         rob_ids = robs.keys()
-        # TODO check and remove
-        print(cls.objects.get_required_metrics(study).query)
         metrics = cls.objects.get_required_metrics(study).in_bulk()
         expected_ids = set(product(metrics.keys(), rob_ids))
         actual_ids = set(
