@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from django.contrib.auth.views import (
@@ -9,10 +7,11 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import CreateView, DetailView, TemplateView, View
 from django.views.generic.base import RedirectView
@@ -173,17 +172,21 @@ class PasswordChanged(MessageMixin, RedirectView):
         return reverse_lazy("user:login")
 
 
-from django.views.decorators.csrf import csrf_exempt
-
-
 @method_decorator(csrf_exempt, name="dispatch")
 class ExternalAuth(View):
     def get(self, request, *args, **kwargs):
-        return JsonResponse(
-            dict(body=self.request.body.decode("utf-8"), header=self.request.headers._store)
-        )
-
-    def post(self, request, *args, **kwargs):
-        return JsonResponse(
-            dict(body=self.request.body.decode("utf-8"), header=self.request.headers._store)
-        )
+        # If already authenticated => 400/403 error?
+        email = request.headers.get("email")
+        external_id = request.headers.get("lan_id")
+        if not (email and external_id):
+            # TODO return error view
+            raise Exception("Missing email or external id from IdP")
+        try:
+            # Get user
+            user = models.HAWCUser.objects.get(email=email)
+        except models.HAWCUser.DoesNotExist:
+            # Create user
+            user = models.HAWCUser.objects.create_external_user(email, external_id)
+        # Log user in
+        login(request, user)
+        return HttpResponseRedirect(reverse_lazy("portal"))

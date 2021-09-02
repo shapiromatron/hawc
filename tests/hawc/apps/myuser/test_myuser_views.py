@@ -90,3 +90,20 @@ class UserCreationTests(TestCase):
             },
         )
         self.assertTrue(models.HAWCUser.objects.filter(email=email).exists())
+
+
+class ExternalAuthTests(TestCase):
+    def test_valid_auth(self):
+        # If email is associated with user then user is logged in
+        # External id is also set on the user
+        assert True
+
+    def test_create_user(self):
+        # If user doesn't exist, it should be created and logged in
+        assert True
+
+    def test_invalid_auth(self):
+        # Fails if user is already authenticated
+        # Fails if no email in header
+        # Fails if no external id in header
+        assert True

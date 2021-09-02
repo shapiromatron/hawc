@@ -39,6 +39,28 @@ class HAWCMgr(BaseUserManager):
         user.save()
         return user
 
+    def create_external_user(self, email, external_id, **extra_fields):
+        if not email:
+            raise ValueError("External users must have an email address")
+        if not external_id:
+            raise ValueError("External users must have an IdP id")
+
+        now = timezone.now()
+        user = self.model(
+            email=self.normalize_email(email),
+            external_id=external_id,
+            is_staff=False,
+            is_active=True,
+            is_superuser=False,
+            last_login=now,
+            date_joined=now,
+            **extra_fields,
+        )
+
+        user.set_unusable_password()
+        user.save()
+        return user
+
     def create_superuser(self, email, password=None, **extra_fields):
         u = self.create_user(email, password, **extra_fields)
         u.is_staff = True
