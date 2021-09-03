@@ -1,0 +1,20 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+    <div id="main"></div>
+    {% include "includes/paginator.html" %}
+{% endblock %}
+
+{% block extrajs %}
+{{data|json_script:"config"}}
+<script type="text/javascript">
+$(document).ready(function (){
+    const el = document.getElementById('main'),
+        config = JSON.parse(document.getElementById('config').text);
+
+    window.app.riskofbiasStartup(function (riskofbias) {
+        riskofbias.robAssignmentStartup(el, config);
+    });
+});
+</script>
+{% endblock extrajs %}

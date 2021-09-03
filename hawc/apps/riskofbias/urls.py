@@ -48,6 +48,11 @@ urlpatterns = [
         views.ARoBReviewersUpdate.as_view(),
         name="arob_reviewers_update",
     ),
+    path(
+        "assessment/<int:pk>/study-assignments-v2/update/",
+        views.RobAssignmentUpdate.as_view(),
+        name="rob_assignments",
+    ),
     # rob at study-level
     path("study/<int:pk>/", views.RoBDetail.as_view(), name="rob_detail"),
     path("study/<int:pk>/all/", views.RoBsDetailAll.as_view(), name="rob_detail_all",),

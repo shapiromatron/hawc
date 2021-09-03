@@ -3,6 +3,7 @@ import json
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
+from django.http import Http404
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -273,6 +274,51 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
 
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_reviewers", args=(self.assessment.id,))
+
+
+class RobAssignmentUpdate(BaseList):
+    parent_model = Assessment
+    model = Study
+    template_name = "riskofbias/rob_assignment.html"
+    paginate_by = 25
+
+    def get_queryset(self):
+        qs = super().get_queryset().prefetch_related("riskofbiases__author")
+        qs = qs.filter(assessment=self.assessment)  # todo why need this?
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied()
+        return qs
+
+    def get_custom_data(self, studies):
+        return {
+            "studies": [
+                {
+                    "id": study.id,
+                    "short_citation": study.short_citation,
+                    "published": study.published,
+                    "url": study.get_absolute_url(),
+                    "robs": [
+                        {
+                            "id": rob.id,
+                            "active": rob.active,
+                            "final": rob.final,
+                            "author_id": rob.author_id,
+                            "author_name": str(rob.author),
+                        }
+                        for rob in study.riskofbiases.all()
+                    ],
+                }
+                for study in studies
+            ],
+            "users": [
+                {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
+            ],
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["data"] = self.get_custom_data(context["object_list"])
+        return context
 
 
 # Risk of bias domain views
