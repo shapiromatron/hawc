@@ -303,7 +303,7 @@ class RobAssignmentUpdate(BaseList):
                             "id": rob.id,
                             "active": rob.active,
                             "final": rob.final,
-                            "author_id": rob.author_id,
+                            "author": rob.author_id,
                             "author_name": str(rob.author),
                         }
                         for rob in study.riskofbiases.all()
@@ -314,6 +314,7 @@ class RobAssignmentUpdate(BaseList):
             "users": [
                 {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
             ],
+            "csrf": get_token(self.request),
         }
 
     def get_context_data(self, **kwargs):

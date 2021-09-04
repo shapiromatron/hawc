@@ -1,17 +1,43 @@
+import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
+import h from "shared/utils/helpers";
 
-const RobItem = props => {
-    const {rob} = props;
-    return (
-        <p key={rob.id}>
-            {rob.author_name}
-            <button className="btn btn-primary">{rob.active ? "Inactivate" : "Activate"}</button>
-            <button className="btn btn-primary">Reassign</button>
-        </p>
+const handleClick = (csrf, rob) => {
+    const url = `/rob/api/review/${rob.id}/update_v2/`,
+        payload = _.clone(rob);
+
+    payload.active = !payload.active;
+    h.handleSubmit(
+        url,
+        "PATCH",
+        csrf,
+        payload,
+        d => console.log("success", d),
+        d => console.log("failure", d),
+        d => console.log("error", d)
     );
 };
+
+@inject("store")
+@observer
+class RobItem extends Component {
+    render() {
+        const {rob} = this.props,
+            {csrf} = this.props.store.config;
+
+        return (
+            <p key={rob.id}>
+                {rob.author_name}
+                <button onClick={() => handleClick(csrf, rob)} className="btn btn-primary">
+                    {rob.active ? "Inactivate" : "Activate"}
+                </button>
+                <button className="btn btn-primary">Reassign</button>
+            </p>
+        );
+    }
+}
 
 const StudyRow = observer(props => {
     const {study} = props;
