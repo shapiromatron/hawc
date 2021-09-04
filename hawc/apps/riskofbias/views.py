@@ -291,6 +291,7 @@ class RobAssignmentUpdate(BaseList):
 
     def get_custom_data(self, studies):
         return {
+            "assessment_id": self.assessment.id,
             "studies": [
                 {
                     "id": study.id,

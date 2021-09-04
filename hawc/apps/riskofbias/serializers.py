@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
@@ -372,6 +372,43 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         models.RiskOfBiasScoreOverrideObject.objects.bulk_create(new_overrides)
 
         return super().update(instance, validated_data)
+
+
+class RiskOfBiasAssignmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBias
+        fields = ("id", "author", "active", "final", "study", "created", "last_updated")
+        read_only_fields = ("id", "created", "last_updated")
+
+    def validate(self, data):
+        assessment = self.instance.study.assessment if self.instance else data["study"].assessment
+        if not assessment.user_can_edit_assessment(self.context["request"].user):
+            raise PermissionDenied()
+        if "author" in data and not assessment.user_can_edit_object(data["author"]):
+            raise serializers.ValidationError({"author": "Author cannot be assigned"})
+        return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        # there can be one and only one final active
+        if validated_data["final"] and validated_data["active"]:
+            models.RiskOfBias.objects.filter(study=validated_data["study"], final=True).update(
+                active=False
+            )
+        rob = super().create(validated_data)
+        rob.build_scores(rob.study.assessment, rob.study)
+        return rob
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        # there can be one and only one final active
+        if instance.final and validated_data["active"]:
+            models.RiskOfBias.objects.filter(study=instance.study, final=True).update(active=False)
+        # only set some keys
+        for key in ("active", "author"):
+            setattr(instance, key, validated_data[key])
+        instance.save()
+        return instance
 
 
 class MetricFinalScoresSerializer(serializers.ModelSerializer):

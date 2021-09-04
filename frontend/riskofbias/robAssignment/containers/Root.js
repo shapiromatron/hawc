@@ -7,8 +7,8 @@ const RobItem = props => {
     return (
         <p key={rob.id}>
             {rob.author_name}
-            <button>{rob.active ? "Inactivate" : "Activate"}</button>
-            <button>Reassign</button>
+            <button className="btn btn-primary">{rob.active ? "Inactivate" : "Activate"}</button>
+            <button className="btn btn-primary">Reassign</button>
         </p>
     );
 };
@@ -22,7 +22,9 @@ const StudyRow = observer(props => {
     return (
         <tr>
             <td>
-                <a href={study.url}>{study.short_citation}</a>
+                <a href={study.url} target="_blank" rel="noreferrer">
+                    {study.short_citation}
+                </a>
             </td>
             <td>
                 {individuals.length > 0 ? (
@@ -31,7 +33,7 @@ const StudyRow = observer(props => {
                     <p>No individual reviews created.</p>
                 )}
                 <p>
-                    <button>Create new</button>
+                    <button className="btn btn-primary">Create new</button>
                 </p>
             </td>
             <td>
@@ -41,7 +43,7 @@ const StudyRow = observer(props => {
                     <p>No final reviews created.</p>
                 )}
                 <p>
-                    <button>Create new</button>
+                    <button className="btn btn-primary">Create new</button>
                 </p>
             </td>
         </tr>
@@ -56,9 +58,9 @@ class Root extends Component {
         return (
             <table className="table table-condensed table-striped">
                 <colgroup>
-                    <col width="30%" />
-                    <col width="35%" />
-                    <col width="35%" />
+                    <col width="20%" />
+                    <col width="40%" />
+                    <col width="40%" />
                 </colgroup>
                 <thead>
                     <tr>
