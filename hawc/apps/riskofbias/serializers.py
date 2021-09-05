@@ -380,6 +380,11 @@ class RiskOfBiasAssignmentSerializer(serializers.ModelSerializer):
         fields = ("id", "author", "active", "final", "study", "created", "last_updated")
         read_only_fields = ("id", "created", "last_updated")
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["author_name"] = str(instance.author)
+        return ret
+
     def validate(self, data):
         assessment = self.instance.study.assessment if self.instance else data["study"].assessment
         if not assessment.user_can_edit_assessment(self.context["request"].user):

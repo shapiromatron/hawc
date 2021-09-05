@@ -290,6 +290,7 @@ class RobAssignmentUpdate(BaseList):
         return qs
 
     def get_custom_data(self, studies):
+        # custom data; the `robs` must match response in RiskOfBiasAssignmentSerializer
         return {
             "assessment_id": self.assessment.id,
             "studies": [
@@ -305,6 +306,7 @@ class RobAssignmentUpdate(BaseList):
                             "final": rob.final,
                             "author": rob.author_id,
                             "author_name": str(rob.author),
+                            "study": rob.study_id,
                         }
                         for rob in study.riskofbiases.all()
                     ],
