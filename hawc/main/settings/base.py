@@ -182,6 +182,7 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
+LOGOUT_REDIRECT_URL = reverse_lazy("home")
 
 # Static files
 STATIC_URL = "/static/"

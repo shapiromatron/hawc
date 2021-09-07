@@ -46,7 +46,7 @@ class HawcLoginView(LoginView):
 
 
 class HawcLogoutView(LogoutView):
-    next_page = reverse_lazy("home")
+    pass
 
 
 class HawcPasswordResetView(PasswordResetView):
@@ -175,15 +175,30 @@ class PasswordChanged(MessageMixin, RedirectView):
 @method_decorator(csrf_exempt, name="dispatch")
 class ExternalAuth(View):
     def get(self, request, *args, **kwargs):
-        # If already authenticated => 400/403 error?
-        email = request.headers.get("email")
-        external_id = request.headers.get("lan_id")
-        if not (email and external_id):
-            # TODO return error view
+        # If already authenticated raise exception
+        if request.user.is_authenticated:
+            raise Exception("User already authenticated")
+        # Attempt to parse email and external id from headers
+        try:
+            email_header = request.headers["mail"]
+            external_id_header = request.headers["uid"]
+            # Email and external id header should be lists
+            if not (isinstance(email_header, list) and isinstance(external_id_header, list)):
+                raise Exception("Missing email or external id from IdP")
+            email = email_header[1]
+            external_id = external_id_header[1]
+        except (KeyError, IndexError):
             raise Exception("Missing email or external id from IdP")
         try:
             # Get user
             user = models.HAWCUser.objects.get(email=email)
+            # If this is the first time user has used external auth..
+            if not user.external_id:
+                # Set external id
+                user.external_id = external_id
+                # Make external auth the preferred method
+                user.set_unusable_password()
+                user.save()
         except models.HAWCUser.DoesNotExist:
             # Create user
             user = models.HAWCUser.objects.create_external_user(email, external_id)

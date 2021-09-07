@@ -1,3 +1,4 @@
+import pytest
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import reverse
@@ -93,17 +94,43 @@ class UserCreationTests(TestCase):
 
 
 class ExternalAuthTests(TestCase):
+    def _login(self, email_header, external_id_header):
+        view = "user:external_auth"
+        headers = {"HTTP_MAIL": email_header, "HTTP_UID": external_id_header}
+        return self.client.get(reverse(view), **headers)
+
     def test_valid_auth(self):
+        email_header = ["Mail", "pm@hawcproject.org"]
+        external_id_header = ["Uid", "pm"]
         # If email is associated with user then user is logged in
+        response = self._login(email_header, external_id_header)
+        assert response.status_code == 302
+        user = models.HAWCUser.objects.get(email=email_header[1])
+        assert user.is_authenticated
         # External id is also set on the user
-        assert True
+        assert user.external_id == external_id_header[1]
 
     def test_create_user(self):
+        email_header = ["Mail", "new_user@hawcproject.org"]
+        external_id_header = ["Uid", "nu"]
         # If user doesn't exist, it should be created and logged in
-        assert True
+        response = self._login(email_header, external_id_header)
+        assert response.status_code == 302
+        user = models.HAWCUser.objects.get(email=email_header[1])
+        assert user.is_authenticated and user.external_id == external_id_header[1]
 
     def test_invalid_auth(self):
+        valid_email_header = ["Mail", "pm@hawcproject.org"]
+        valid_external_id_header = ["Uid", "pm"]
+        invalid_header = "invalid header"
         # Fails if user is already authenticated
-        # Fails if no email in header
-        # Fails if no external id in header
-        assert True
+        self.client.login(email=valid_email_header[1], password="pw")
+        with pytest.raises(Exception, match="User already authenticated"):
+            self._login(valid_email_header, valid_external_id_header)
+        self.client.logout()
+        # Fails if email header is invalid
+        with pytest.raises(Exception, match="Missing email or external id"):
+            self._login(invalid_header, valid_external_id_header)
+        # Fails if external id header is invalid
+        with pytest.raises(Exception, match="Missing email or external id"):
+            self._login(valid_email_header, invalid_header)
