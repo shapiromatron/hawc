@@ -75,6 +75,28 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
+def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
+    """
+    Create an object log for a given object and associate a reversion instance if it exists.
+
+    Args:
+        verb (str): the action being performed
+        obj (Any): the object
+        assessment_id: the assessment being modified
+        user_id: the user id
+    """
+    # Log the delete
+    log_message = f'{verb} ({obj.__class__.__name__} {obj.id}) "{obj}"'
+    log = Log.objects.create(
+        assessment_id=assessment_id, user_id=user_id, message=log_message, content_object=obj,
+    )
+    # Associate the log with reversion
+    comment = (
+        f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
+    )
+    reversion.set_comment(comment)
+
+
 class MessageMixin:
     """
     Make it easy to display notification messages when using Class Based Views.
@@ -426,21 +448,7 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return HttpResponseRedirect(success_url)
 
     def create_log(self, obj):
-        # Log the delete
-        log_message = f"Deleted '{obj}' ({obj.__class__.__name__} {obj.id})"
-        log = Log.objects.create(
-            assessment_id=self.assessment.pk,
-            user=self.request.user,
-            message=log_message,
-            content_object=obj,
-        )
-        # Associate the log with reversion
-        comment = (
-            f"{reversion.get_comment()}, Log {log.id}"
-            if reversion.get_comment()
-            else f"Log {log.id}"
-        )
-        reversion.set_comment(comment)
+        create_object_log("Deleted", obj, self.assessment.id, self.request.user.id)
 
     def get_cancel_url(self) -> str:
         return self.object.get_absolute_url()
@@ -472,21 +480,7 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return HttpResponseRedirect(self.get_success_url())
 
     def create_log(self, obj):
-        # Log the update
-        log_message = f"Updated '{obj}' ({obj.__class__.__name__} {obj.id})"
-        log = Log.objects.create(
-            assessment_id=self.assessment.pk,
-            user=self.request.user,
-            message=log_message,
-            content_object=obj,
-        )
-        # Associate the log with reversion
-        comment = (
-            f"{reversion.get_comment()}, Log {log.id}"
-            if reversion.get_comment()
-            else f"Log {log.id}"
-        )
-        reversion.set_comment(comment)
+        create_object_log("Updated", obj, self.assessment.id, self.request.user.id)
 
     def post_object_save(self, form):
         pass
@@ -553,21 +547,7 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return HttpResponseRedirect(self.get_success_url())
 
     def create_log(self, obj):
-        # Log the create
-        log_message = f"Created '{obj}' ({obj.__class__.__name__} {obj.id})"
-        log = Log.objects.create(
-            assessment_id=self.assessment.pk,
-            user=self.request.user,
-            message=log_message,
-            content_object=obj,
-        )
-        # Associate the log with reversion
-        comment = (
-            f"{reversion.get_comment()}, Log {log.id}"
-            if reversion.get_comment()
-            else f"Log {log.id}"
-        )
-        reversion.set_comment(comment)
+        create_object_log("Created", obj, self.assessment.id, self.request.user.id)
 
     def post_object_save(self, form):
         pass
@@ -704,10 +684,11 @@ class BaseUpdateWithFormset(BaseUpdate):
 
     @transaction.atomic
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 

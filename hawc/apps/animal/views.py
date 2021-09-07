@@ -343,13 +343,14 @@ class EndpointCreate(BaseCreateWithFormset):
             egform.endpoint_form = form
 
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         if self.object.dose_response_available:
             self.post_object_save(form, formset)
             for egform in formset.forms:
                 # save all EGs, even if no data
                 egform.save()
             self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -378,12 +379,13 @@ class EndpointUpdate(BaseUpdateWithFormset):
             egform.endpoint_form = form
 
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form, formset)
         for egform in formset.forms:
             # save all EGs, even if no data
             egform.save()
         self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
