@@ -416,9 +416,6 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
 
     @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.permission_check_user_can_edit()
@@ -467,20 +464,12 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     crud = "Update"
 
     @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     def form_valid(self, form):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form)  # add hook for post-object save
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
-
-    def save_and_log(self, form):
-        # Save object to database
-        self.object = form.save()
-        # Create log
-        self.create_log(self.object)
 
     def create_log(self, obj):
         # Log the update
@@ -521,10 +510,6 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     parent_template_name: str = None  # required
     crud = "Create"
 
-    @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
         self.assessment = self.parent.get_assessment()
@@ -559,17 +544,13 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         context[self.parent_template_name] = self.parent
         return context
 
+    @transaction.atomic
     def form_valid(self, form):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form)  # add hook for post-object save
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
-
-    def save_and_log(self, form):
-        # Save object to database
-        self.object = form.save()
-        # Create log
-        self.create_log(self.object)
 
     def create_log(self, obj):
         # Log the create
@@ -658,11 +639,13 @@ class BaseCreateWithFormset(BaseCreate):
     def get_formset_kwargs(self):
         return {}
 
+    @transaction.atomic
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -719,6 +702,7 @@ class BaseUpdateWithFormset(BaseUpdate):
     def get_formset_kwargs(self):
         return {}
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.save_and_log(form)
         self.post_object_save(form, formset)
