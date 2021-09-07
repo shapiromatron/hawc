@@ -6,11 +6,13 @@
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
         <div class="dropdown-menu dropdown-menu-right">
             <a class="dropdown-item" href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update</a>
+            <a class="dropdown-item" href="{% url 'riskofbias:rob_num_reviewers' assessment.pk %}">Update # of reviewers</a>
+            <a class="dropdown-item" href="{% url 'riskofbias:rob_assignments' assessment.pk %}">Update assignments</a>
         </div>
     </div>
     {% endif %}
 
-    <h2>{{assessment.get_rob_name_display}} reviewer settings and assignment</h2>
+    <h2>{{assessment.get_rob_name_display}} assignments</h2>
 
     <p>
         <b>Independent reviews: </b>{{assessment.rob_settings.number_of_reviewers}}

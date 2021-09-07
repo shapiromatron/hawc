@@ -3,7 +3,6 @@ import json
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
-from django.http import Http404
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -293,6 +292,7 @@ class RobAssignmentUpdate(BaseList):
         # custom data; the `robs` must match response in RiskOfBiasAssignmentSerializer
         return {
             "assessment_id": self.assessment.id,
+            "number_of_reviewers": self.assessment.rob_settings.number_of_reviewers,
             "studies": [
                 {
                     "id": study.id,
@@ -322,6 +322,33 @@ class RobAssignmentUpdate(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["data"] = self.get_custom_data(context["object_list"])
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update")
+        return context
+
+
+class RobReviewerUpdate(BaseUpdate):
+    model = models.RiskOfBiasAssessment
+    form_class = forms.NumberOfReviewersFormV2
+    success_message = "Reviewers updated."
+    template_name = "riskofbias/reviewers_form_v2.html"
+
+    def get_object(self, **kwargs):
+        obj = get_object_or_404(self.model, assessment=self.kwargs.get("pk"),)
+        obj = super().get_object(object=obj)
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied()
+        return obj
+
+    def get_success_url(self):
+        return reverse_lazy("riskofbias:arob_reviewers", args=(self.assessment.id,))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update")
         return context
 
 

@@ -44,6 +44,11 @@ urlpatterns = [
         name="arob_reviewers",
     ),
     path(
+        "assessment/<int:pk>/study-assignments-v2/reviewers/",
+        views.RobReviewerUpdate.as_view(),
+        name="rob_num_reviewers",
+    ),
+    path(
         "assessment/<int:pk>/study-assignments/update/",
         views.ARoBReviewersUpdate.as_view(),
         name="arob_reviewers_update",

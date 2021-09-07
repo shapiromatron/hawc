@@ -15,6 +15,10 @@ class RobAssignmentStore extends StudyRobStore {
         _.unset(config, "studies");
     }
 
+    @computed get individualReviewsRequired() {
+        return this.config.number_of_reviewers > 1;
+    }
+
     @computed get authorOptions() {
         return _.chain(this.config.users)
             .map(d => {

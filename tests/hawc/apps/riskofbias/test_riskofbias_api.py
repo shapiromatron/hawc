@@ -567,4 +567,3 @@ class TestRobAssignmentApi:
         # success
         resp = c.patch(url, dict(author=2, active=True))
         assert resp.status_code == 200
-

@@ -9,7 +9,8 @@ import RobItem from "./RobItem";
 @observer
 class StudyRow extends Component {
     render() {
-        const {study} = this.props;
+        const {study} = this.props,
+            {individualReviewsRequired} = this.props.store;
 
         const individuals = study.robs.filter(rob => !rob.final),
             finals = study.robs.filter(rob => rob.final);
@@ -21,16 +22,22 @@ class StudyRow extends Component {
                         {study.short_citation}
                     </a>
                 </td>
-                <td>
-                    {individuals.length > 0 ? (
-                        individuals.map(rob => <RobItem key={rob.id} rob={rob} />)
-                    ) : (
-                        <p>
-                            <i>No individual reviews exist.</i>
-                        </p>
-                    )}
-                    <CreateNewRob study={study} final={false} />
-                </td>
+                {individualReviewsRequired ? (
+                    <td>
+                        {individuals.length > 0 ? (
+                            individuals.map(rob => <RobItem key={rob.id} rob={rob} />)
+                        ) : (
+                            <p>
+                                <i>No individual reviews exist.</i>
+                            </p>
+                        )}
+                        <CreateNewRob study={study} final={false} />
+                    </td>
+                ) : (
+                    <td>
+                        <i>Individual reviews are not required.</i>
+                    </td>
+                )}
                 <td>
                     {finals.length > 0 ? (
                         finals.map(rob => <RobItem key={rob.id} rob={rob} />)

@@ -172,6 +172,27 @@ class NumberOfReviewersForm(forms.ModelForm):
         return instance
 
 
+class NumberOfReviewersFormV2(forms.ModelForm):
+    class Meta:
+        model = models.RiskOfBiasAssessment
+        fields = ("number_of_reviewers",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["number_of_reviewers"].help_text = (
+            "The number of independent reviewers required for each study. If "
+            "there is more than 1 reviewer, an additional final reviewer will "
+            "resolve any conflicts and make a final determination, so there "
+            "will be a total of N+1 reviews."
+        )
+
+    @property
+    def helper(self):
+        inputs = {"cancel_url": self.instance.get_absolute_url()}
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
+
 class RoBReviewersForm(forms.ModelForm):
     class Meta:
         model = Study

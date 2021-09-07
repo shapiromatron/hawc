@@ -538,7 +538,10 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.assessment_id])
+        return reverse("riskofbias:arob_reviewers", args=(self.assessment_id,))
+
+    def get_assessment(self):
+        return self.assessment
 
     @classmethod
     def build_default(cls, assessment):

@@ -9,10 +9,15 @@ import StudyRow from "./StudyRow";
 @observer
 class Root extends Component {
     render() {
-        const {studies, error} = this.props.store;
+        const {studies, error} = this.props.store,
+            {number_of_reviewers} = this.props.store.config;
         return (
             <>
                 {error ? <GenericError /> : null}
+                <p>
+                    <b>Independent reviews:</b>
+                    &nbsp;{number_of_reviewers}
+                </p>
                 <table className="table table-condensed table-striped">
                     <colgroup>
                         <col width="20%" />
