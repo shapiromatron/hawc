@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Case, Count, IntegerField, Sum, Value, When
 
@@ -41,6 +42,32 @@ class RiskOfBiasQuerySet(models.QuerySet):
         )
 
 
+class RiskOfBiasScoreOverrideObjectQuerySet(models.QuerySet):
+    def _get_orphan_ids(self) -> list[int]:
+        """
+        Return object IDs where the content-object no longer exists
+        """
+        cts = self.values_list("content_type", flat=True).distinct()
+        deletions: list[int] = []
+        for ct in cts:
+            all_ids = self.filter(content_type=ct).values_list("object_id", flat=True)
+            RelatedClass = ContentType.objects.get_for_id(ct).model_class()
+            matched_ids = RelatedClass.objects.filter(id__in=all_ids).values_list("id", flat=True)
+            deleted_ids = list(set(all_ids) - set(matched_ids))
+            if deleted_ids:
+                override_ids = self.filter(content_type=ct, object_id__in=deleted_ids).values_list(
+                    "id", flat=True
+                )
+                deletions.extend(list(override_ids))
+        return deletions
+
+    def orphaned(self):
+        return self.filter(id__in=self._get_orphan_ids())
+
+    def not_orphaned(self):
+        return self.exclude(id__in=self._get_orphan_ids())
+
+
 class RiskOfBiasManager(BaseManager):
 
     assessment_relation = "study__assessment"
@@ -57,6 +84,11 @@ class RiskOfBiasManager(BaseManager):
 
 class RiskOfBiasScoreManager(BaseManager):
     assessment_relation = "riskofbias__study__assessment"
+
+
+class RiskOfBiasScoreOverrideObjectManager(BaseManager):
+    def get_queryset(self):
+        return RiskOfBiasScoreOverrideObjectQuerySet(self.model, using=self._db)
 
 
 class RiskOfBiasAssessmentManager(BaseManager):
