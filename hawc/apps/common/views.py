@@ -82,15 +82,16 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
     Args:
         verb (str): the action being performed
         obj (Any): the object
-        assessment_id: the assessment being modified
-        user_id: the user id
+        assessment_id (int): the object assessment id
+        user_id (int): the user id
     """
-    # Log the delete
-    log_message = f'{verb} ({obj.__class__.__name__} {obj.id}) "{obj}"'
+    # Log action
+    meta = obj._meta
+    log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
     log = Log.objects.create(
         assessment_id=assessment_id, user_id=user_id, message=log_message, content_object=obj,
     )
-    # Associate the log with reversion
+    # Associate log with reversion
     comment = (
         f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
     )

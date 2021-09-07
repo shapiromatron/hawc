@@ -270,7 +270,6 @@ class DosingRegimeUpdate(BaseUpdate):
         fs = forms.dosegroup_formset_factory(fs_initial, self.object.num_dose_groups)
 
         if fs.is_valid():
-
             # instead of checking existing vs. new, just delete all old
             # dose-groups, and save new formset
             models.DoseGroup.objects.by_dose_regime(self.object).delete()
