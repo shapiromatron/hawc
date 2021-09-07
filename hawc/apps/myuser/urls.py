@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import path, re_path
 
 from . import api, views
@@ -5,7 +6,6 @@ from . import api, views
 app_name = "user"
 urlpatterns = [
     path("login/", views.HawcLoginView.as_view(), name="login"),
-    path("login/external-auth/", views.ExternalAuth.as_view(), name="external_auth"),
     path("logout/", views.HawcLogoutView.as_view(), name="logout"),
     path("new/", views.HawcUserCreate.as_view(), name="register"),
     path("profile/", views.ProfileDetail.as_view(), name="settings"),
@@ -31,3 +31,6 @@ urlpatterns = [
     path("<int:pk>/set-password/", views.SetUserPassword.as_view(), name="set_password",),
     path("api/token-auth/", api.hawc_obtain_auth_token, name="api_token_auth"),
 ]
+
+if settings.HAWC_FLAVOR == "EPA":
+    urlpatterns += [path("login/wam/", views.ExternalAuth.as_view(), name="external_auth")]

@@ -1,4 +1,5 @@
 import pytest
+from django.conf import settings
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import reverse
@@ -93,6 +94,7 @@ class UserCreationTests(TestCase):
         self.assertTrue(models.HAWCUser.objects.filter(email=email).exists())
 
 
+@pytest.mark.skipif(settings.HAWC_FLAVOR != "EPA", reason="external auth specific for epa")
 class ExternalAuthTests(TestCase):
     def _login(self, email_header, external_id_header):
         view = "user:external_auth"
