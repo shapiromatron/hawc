@@ -1,5 +1,6 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -62,6 +63,7 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
         form.instance.assessment = self.assessment
         return form
 
+    @transaction.atomic
     def form_valid(self, form):
         self.object = self.model.save_new_from_reference(self.parent, form.cleaned_data)
         self.create_log(self.object)
@@ -146,6 +148,7 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
         kwargs["assessment"] = self.assessment
         return kwargs
 
+    @transaction.atomic
     def form_valid(self, form):
         models.Study.copy_across_assessment(
             form.cleaned_data["studies"], form.cleaned_data["assessment"]

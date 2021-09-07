@@ -1,5 +1,6 @@
 import json
 
+from django.db import transaction
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
@@ -93,6 +94,7 @@ class AnimalGroupCreate(BaseCreate):
         self.is_generational = self.parent.is_generational()
         return forms.GenerationalAnimalGroupForm if self.is_generational else forms.AnimalGroupForm
 
+    @transaction.atomic
     def form_valid(self, form):
         """
         Save form, and perhaps dosing regime and dosing groups, if appropriate.
@@ -258,6 +260,7 @@ class DosingRegimeUpdate(BaseUpdate):
     form_class = forms.DosingRegimeForm
     success_message = "Dosing regime updated."
 
+    @transaction.atomic
     def form_valid(self, form):
         """
         If the dosing-regime is valid, then check if the formset is valid. If
@@ -341,6 +344,7 @@ class EndpointCreate(BaseCreateWithFormset):
         for egform in formset.forms:
             egform.endpoint_form = form
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.object = form.save()
         if self.object.dose_response_available:
@@ -377,6 +381,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
         for egform in formset.forms:
             egform.endpoint_form = form
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.object = form.save()
         self.post_object_save(form, formset)
