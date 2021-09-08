@@ -10,7 +10,7 @@ from ..animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLoo
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import selectable
-from ..common.forms import BaseFormHelper
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper
 from ..common.helper import read_excel
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
@@ -29,7 +29,7 @@ def clean_slug(form):
         .count()
         > 0
     ):
-        raise forms.ValidationError("URL name must be unique for this assessment.")
+        raise forms.ValidationError(ASSESSMENT_UNIQUE_MESSAGE)
     return slug
 
 

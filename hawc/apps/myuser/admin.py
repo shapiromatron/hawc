@@ -14,7 +14,7 @@ from . import forms, models
 
 @admin.register(models.HAWCUser)
 class HAWCUserAdmin(admin.ModelAdmin):
-    list_display = ("email", "is_active", "is_staff", "date_joined")
+    list_display = ("email", "is_active", "is_staff", "last_login", "date_joined")
     list_filter = (
         "is_superuser",
         "is_staff",
@@ -56,3 +56,9 @@ class HAWCUserAdmin(admin.ModelAdmin):
         diagnostic_email,
         diagnostic_bmds2_execution,
     )
+
+
+@admin.register(models.UserProfile)
+class UserProfile(admin.ModelAdmin):
+    list_display = ("id", "user", "HERO_access")
+    list_filter = ("HERO_access",)

@@ -24,4 +24,7 @@ PRIVATE_DATA_ROOT = PROJECT_ROOT / "tests/data/private-data"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
+ANYONE_CAN_CREATE_ASSESSMENTS = True
+PM_CAN_MAKE_PUBLIC = True
+
 logging.disable(logging.CRITICAL)

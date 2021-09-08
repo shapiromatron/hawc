@@ -93,7 +93,7 @@
 
 {% block extrajs %}
   {{ form.media }}
-  <script type="text/json" id="settings">
+  <script type="text/json" id="config">
     {
       "vocabulary": {{vocabulary|safe}},
       "litterEffectRequired": {{form.instance.litter_effect_required|lower}},
