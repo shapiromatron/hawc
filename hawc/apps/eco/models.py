@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from ..epi.models import Country
 from ..study.models import Study
@@ -41,13 +42,8 @@ class Ecoregion(models.Model):
 
 
 class Vocab(models.Model):
-    class VocabCategories(models.TextChoices):
-        TERM = "Term"
-        MEASURE = "Measure"
-        MTF = "Measure type filter"
-        MT = "Measure type"
 
-    category = models.CharField(max_length=100, blank=True)  # choices=VocabCategories.choices)
+    category = models.CharField(max_length=100, blank=True)
     value = models.CharField(max_length=100, blank=True)
     parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
 
@@ -62,29 +58,20 @@ class Metadata(models.Model):
 
     study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
-    class StudyType(models.IntegerChoices):
-
-        OBS = 0, "Observational/gradient"
-        MAN = 1, "Manipulation/experiment"
-        SIM = 2, "Simulation"
-        MET = 3, "Meta-analysis"
-        REV = 4, "Review"
-
-    study_type = models.IntegerField(
-        choices=StudyType.choices, help_text="Select the type of study"
+    study_type = models.ForeignKey(
+        Vocab,
+        limit_choices_to={"category": "Study type"},
+        on_delete=models.CASCADE,
+        help_text="Select the type of study",
+        related_name="+",
     )
 
-    class StudySetting(models.IntegerChoices):
-        FIELD = 0, "Field"
-        MESO = 1, "Mesocosm"
-        GREEN = 2, "Greenhouse"
-        LAB = 3, "Laboratory"
-        MOD = 4, "Model"
-        NA = 5, "Not Applicable"
-
-    study_setting = models.IntegerField(
-        choices=StudySetting.choices,
+    study_setting = models.ForeignKey(
+        Vocab,
+        limit_choices_to={"category": "Study setting"},
+        on_delete=models.CASCADE,
         help_text="Select the setting in which evidence was generated",
+        related_name="+",
     )
 
     country = models.ManyToManyField(Country, help_text="Select one or more countries")
@@ -97,48 +84,27 @@ class Metadata(models.Model):
         Ecoregion, blank=True, help_text="Select one or more Level III Ecoregions, if known",
     )
 
-    class HabitatType(models.IntegerChoices):
-        TERR = 0, "Terrestrial"
-        RIP = 1, "Riparian"
-        FRESH = 2, "Freshwater aquatic"
-        ESTU = 3, "Estuarine"
-        MAR = 4, "Marine"
-
-    habitat = models.IntegerField(
+    habitat_type = models.ForeignKey(
+        Vocab,
         verbose_name="Habitat",
-        choices=HabitatType.choices,
+        limit_choices_to=Q(category="Habitat")
+        & Q(parent__isnull=True),  # not sure if isnull is best approach here
+        on_delete=models.CASCADE,
         blank=True,
         help_text="Select the habitat to which the evidence applies",
+        related_name="+",
     )
 
-    class TerrestrialHab(models.IntegerChoices):
-        FOR = 0, "Forest"
-        GRASS = 1, "Grassland"
-        DES = 2, "Desert"
-        HEATH = 3, "Heathland"
-        AG = 4, "Agricultural"
-        URB = 5, "Urban/suburban"
-        TUND = 6, "Tundra"
-
-    habitat_terrestrial = models.IntegerField(
-        verbose_name="Terrestrial habitat",
-        choices=TerrestrialHab.choices,
+    habitat_specific = models.ForeignKey(
+        Vocab,
+        limit_choices_to=Q(
+            category="Habitat"
+        ),  # this should be all children of habitat/selected type - how to query???
+        on_delete=models.CASCADE,
         blank=True,
-        help_text="If you selected terrestrial, pick the type of terrestrial habitat",
-    )  # this field is dependent on selecting terrestrial habitat
-
-    class AquaticHab(models.IntegerChoices):
-        STREAM = 0, "Stream/river"
-        WETL = 1, "Wetland"
-        LAKE = 2, "Lake/reservoir"
-        ART = 3, "Artificial"
-
-    habitat_aquatic_freshwater = models.IntegerField(
-        verbose_name="Freshwater habitat",
-        choices=AquaticHab.choices,
-        blank=True,
-        help_text="If you selected freshwater, pick the type of freshwater habitat",
-    )  # this field is dependent on selecting aquatic habitat
+        help_text="Pick the specific habitat",
+        related_name="+",
+    )
 
     habitat_as_reported = models.TextField(
         verbose_name="Habitat as reported",
@@ -161,28 +127,22 @@ class Metadata(models.Model):
         verbose_name = "Metadata"
 
 
-class EcoVocab(models.Model):
-    category = models.IntegerField(choices=EcoVocabCategories.choices)
-    value = models.CharField(max_length=30)
-    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
-
-
 class Cause(models.Model):
 
     study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
     term = models.ForeignKey(
-        Vocab, limit_choices_to={"category": "cause term"}, on_delete=models.CASCADE
+        Vocab,
+        limit_choices_to={"category": "Cause term"},
+        on_delete=models.CASCADE,
+        related_name="+",
     )  # autocomplete
 
-    class CauseMeasure(
-        models.IntegerChoices
-    ):  # does caroline have an updated list, or does this need to be a fixture??
-        TBD = 0, "TBD"
-        NUT = 1, "Nutrients"
-
-    measure = models.IntegerField(
-        verbose_name="Cause measure", choices=CauseMeasure.choices,
+    measure = models.ForeignKey(
+        Vocab,
+        limit_choices_to={"category": "Cause measure"},
+        on_delete=models.CASCADE,
+        related_name="+",
     )  # autocomplete
 
     measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
@@ -198,7 +158,6 @@ class Cause(models.Model):
         max_length=100,
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
-        choices=BioOrg.choices,
     )
 
     species = models.CharField(
@@ -208,17 +167,14 @@ class Cause(models.Model):
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
-    class CauseTrajectory(models.IntegerChoices):
-        INCR = 0, "Increase"
-        DECR = 1, "Decrease"
-        CHANGE = 2, "Change"
-        OTHER = 3, "Other"
-
-    trajectory = models.IntegerField(
+    trajectory = models.ForeignKey(
+        Vocab,
+        limit_choices_to={"category": "Cause trajectory"},
+        on_delete=models.CASCADE,
+        related_name="+",
         verbose_name="Cause trajectory",
-        choices=CauseTrajectory.choices,
         help_text="Select qualitative description of how the cause measure changes, if applicable",
-    )  # autocomplete
+    )
 
     comment = models.TextField(
         verbose_name="Cause comment",
@@ -241,18 +197,20 @@ class Effect(models.Model):
 
     cause = models.OneToOneField(Cause, on_delete=models.CASCADE)
 
-    class EffectTerm(models.IntegerChoices):  # should this be a fixture?
-        TBD = 0, "TBD"
-        ALGAE = 1, "Algae"
+    term = models.ForeignKey(
+        Vocab,
+        verbose_name="Effect term",
+        limit_choices_to={"category": "Effect term"},
+        on_delete=models.CASCADE,
+        related_name="+",
+    )
 
-    term = models.IntegerField(verbose_name="Effect term", choices=EffectTerm.choices)
-
-    class EffectMeasure(models.IntegerChoices):
-        TBD = 0, "TBD"
-        ABUND = 1, "Abundance"
-
-    measure = models.IntegerField(
-        verbose_name="Effect measure", choices=EffectMeasure.choices
+    measure = models.ForeignKey(
+        Vocab,
+        verbose_name="Effect measure",
+        limit_choices_to={"category": "Effect measure"},
+        on_delete=models.CASCADE,
+        related_name="+",
     )  # autocomplete
 
     measure_detail = models.CharField(
@@ -270,7 +228,6 @@ class Effect(models.Model):
         max_length=100,
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
-        choices=BioOrg.choices,
     )
 
     species = models.CharField(
@@ -280,16 +237,12 @@ class Effect(models.Model):
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
-    class EffectTrajectory(models.IntegerChoices):
-        INCR = 0, "Increase"
-        DECR = 1, "Decrease"
-        CHANGE = 2, "Change"
-        NOCHANGE = 3, "No change"
-        OTHER = 4, "Other"
-
-    trajectory = models.IntegerField(
+    trajectory = models.ForeignKey(
+        Vocab,
         verbose_name="Effect trajectory",
-        choices=EffectTrajectory.choices,
+        limit_choices_to={"category": "Effect trajectory"},
+        on_delete=models.CASCADE,
+        related_name="+",
         help_text="Select qualitative description of how the effect measure changes in response to the cause trajectory, if applicable",
     )
 
@@ -309,12 +262,12 @@ class Effect(models.Model):
         help_text="Type one or more factors that affect the relationship between the cause and effect",
     )  # autocomplete - choices TBD
 
-    class Sort(models.IntegerChoices):
-        TBD = 0, "TBD"
-
-    sort = models.IntegerField(
+    sort = models.ForeignKey(
+        Vocab,
         verbose_name="Sort quantitative responses",
-        choices=Sort.choices,
+        limit_choices_to={"category": "Sort"},
+        on_delete=models.CASCADE,
+        related_name="+",
         help_text="how do you want to sort multiple quantitative responses?",
         blank=True,
     )
@@ -358,65 +311,22 @@ class Quantitative(models.Model):
         null=True,
     )
 
-    class MeasureTypeFilter(models.IntegerChoices):
-        CORR = 0, "Correlation coefficient"
-        RSQ = 1, "R-squared"
-        MEANDIFF = 2, "Mean difference"
-        ANOVA = 3, "ANOVA/PERMANOVA"
-        RATIO = 4, "Ratio"
-        BETA = 5, "Slope coefficient (beta)"
-        ORD = 6, "Ordination"
-        THRESH = 7, "Threshold"
-
-    measure_type_filter = models.IntegerField(
+    measure_type_filter = models.ForeignKey(
+        Vocab,
+        limit_choices_to={"category": "Response measure type"},
+        on_delete=models.CASCADE,
+        related_name="+",
         verbose_name="Response measure type (filter)",
         blank=True,
-        choices=MeasureTypeFilter.choices,
         help_text="This drop down will filter the following field",
-    )  # should this be in the frontend? not 100% sure how to filer one field with another
+    )
 
-    class MeasureType(models.IntegerChoices):
-        # correlation coefficient:
-        PEARSON = 0, "Pearson"
-        SPEARMAN = 1, "Spearman"
-        # R-squared:
-        SIMPLE = 2, "Simple Linear"
-        PARTIAL = 3, "Partial"
-        MULTIPLE = 4, "Multiple"
-        QUANTILE = 5, "Quantile"
-        # Ratio:
-        RESPONSE = 6, "Response ratio"
-        ODDS = 7, "Odds ratio"
-        RISK = 8, "Risk ratio"
-        HAZARD = 9, "Hazard ratio"
-        # Meandiff:
-        NONSTAND = 10, "Non-standardized"
-        STAND = 11, "Standardized"
-        # Slope:
-        NONTRANSFORMED = 12, "Non-transformed data"
-        TRANSFORMED = 13, "Transformed data"
-        # Ordination choices
-        CCA = 14, "Canonical correspondence analysis (CCA)"
-        PCA = 15, "Principal components analysis (PCA)"
-        MDA = 16, "Multiple discriminant analysis (MDA)"
-        NMDS = 17, "Non-multidimensional scaling (NMDS)"
-        FACTOR = 18, "Factor analysis"
-        # Threshold choices
-        REGTREE = 19, "Regression tree"
-        RANDOMFOREST = 20, "Random forest"
-        BREAKPOINT = 21, "Breakpoint (piecewise) regression"
-        QUANTREG = 22, "Quantile regression"
-        CFD = 23, "Cumulative frequency distribution"
-        GFA = 24, "Gradient forest analysis"
-        NONLINEAR = 25, "Non-linear curve fitting"
-        ORDINATION = 26, "Ordination"
-        TITAN = 27, "TITAN"
-        # option for each category
-        NS = 28, "Not specified"
-
-    measure_type = models.IntegerField(
+    measure_type = models.ForeignKey(
+        Vocab,
         verbose_name="Response measure type",
-        choices=MeasureType.choices,
+        limit_choices_to={"category": "Response measure type"},
+        on_delete=models.CASCADE,
+        related_name="+",  # set up query based on prior field
         blank=True,
         help_text="Select one response measure type",
     )  # dependent on selection in response measure type filter
@@ -434,17 +344,13 @@ class Quantitative(models.Model):
         help_text="Type any other useful information not captured in other fields",
     )
 
-    class Variability(models.IntegerChoices):
-        CI95 = 0, "95% CI"
-        CI90 = 1, "90% CI"
-        SD = 2, "Standard deviation"
-        SE = 3, "Standard error"
-        NA = 4, "Not applicable"
-
-    variability = models.IntegerField(
+    variability = models.ForeignKey(
+        Vocab,
         verbose_name="Response variability",
         blank=True,
-        choices=Variability.choices,
+        limit_choices_to={"category": "Response variability"},
+        on_delete=models.CASCADE,
+        related_name="+",
         help_text="Select how variability in the response measure was reported, if applicable",
     )
 
@@ -462,16 +368,13 @@ class Quantitative(models.Model):
         null=True,
     )
 
-    class StatisticalSigType(models.IntegerChoices):
-        PVAL = 0, "P-value"
-        FSTAT = 1, "F statistic"
-        CHISQ = 2, "Chi square"
-        NA = 3, "Not applicable"
-
-    statistical_sig_type = models.IntegerField(
+    statistical_sig_type = models.ForeignKey(
+        Vocab,
         verbose_name="Statistical significance measure type",
         blank=True,
-        choices=StatisticalSigType.choices,
+        limit_choices_to={"category": "Statistical significance measure"},
+        on_delete=models.CASCADE,
+        related_name="+",
         help_text="Select the type of statistical significance measure reported",
     )
 
