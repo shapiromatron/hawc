@@ -1,141 +1,7 @@
 from django.db import models
-from ..epi.models import Country
 
-study_setting_choices = (
-    ("Field", "Field"),
-    ("Mesocosm", "Mesocosm"),
-    ("Greenhouse", "Greenhouse"),
-    ("Laboratory", "Laboratory"),
-    ("Model", "Model"),
-    ("Not applicable", "Not applicable"),
-)
-habitat_choices = (
-    ("Terrestrial", "Terrestrial"),
-    ("Riparian", "Riparian"),
-    ("Freshwater aquatic", "Freshwater aquatic"),
-    ("Estuarine", "Estuarine"),
-    ("Marine", "Marine"),
-)
-habitat_terrestrial_choices = (
-    ("Forest", "Forest"),
-    ("Grassland", "Grassland"),
-    ("Desert", "Desert"),
-    ("Heathland", "Heathland"),
-    ("Agricultural", "Agricultural"),
-    ("Urban/suburban", "Urban/suburban"),
-    ("Tundra", "Tundra"),
-)
-habitat_aquatic_freshwater_choices = (
-    ("Stream/river", "Stream/river"),
-    ("Wetland", "Wetland"),
-    ("Lake/reservoir", "Lake/reservoir"),
-    ("Artificial", "Artificial"),
-)
-cause_term_choices = (("TBD", "TBD"), ("Water quality", "Water quality"))
-cause_measure_choices = (("TBD", "TBD"), ("Nutrients", "Nutrients"))
-cause_bio_org_choices = (
-    ("Ecosystem", "Ecosystem"),
-    ("Community", "Community"),
-    ("Population", "Population"),
-    ("Individual organism", "Individual organism"),
-    ("Sub-organismal", "Sub-organismal"),
-)
-cause_trajectory_choices = (
-    ("Increase", "Increase"),
-    ("Decrease", "Decrease"),
-    ("Change", "Change"),
-    ("Other", "Other"),
-)
-effect_term_choices = (("TBD", "TBD"), ("Algae", "Algae"))
-effect_measure_choices = (("TBD", "TBD"), ("Abundance", "Abundance"))
-effect_bio_org_choices = (
-    ("Ecosystem", "Ecosystem"),
-    ("Community", "Community"),
-    ("Population", "Population"),
-    ("Individual organism", "Individual organism"),
-    ("Sub-organismal", "Sub-organismal"),
-)
-effect_trajectory_choices = (
-    ("Increase", "Increase"),
-    ("Decrease", "Decrease"),
-    ("Change", "Change"),
-    ("No change", "No change"),
-    ("Other", "Other"),
-)
-modifying_factors_choices = (("TBD", "TBD"),)
-response_measure_type_choices = (
-    ("Correlation coefficient", "Correlation coefficient"),
-    ("R-squared", "R-squared"),
-    ("Mean difference", "Mean difference"),
-    ("ANOVA/PERMANOVA", "ANOVA/PERMANOVA"),
-    ("Ratio", "Ratio"),
-    ("Slope coefficient (beta)", "Slope coefficient (beta)"),
-    ("Ordination", "Ordination"),
-    ("Threshold", "Threshold"),
-)
-response_measure_type_correlation_choices = (
-    ("Pearson", "Pearson"),
-    ("Spearman", "Spearman"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_rsq_choices = (
-    ("Simple linear", "Simple linear"),
-    ("Partial", "Partial"),
-    ("Multiple", "Multiple"),
-    ("Quantile", "Quantile"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_ratio_choices = (
-    ("Response ratio", "Response ratio"),
-    ("Odds ratio", "Odds ratio"),
-    ("Risk ratio", "Risk ratio"),
-    ("Hazard ratio", "Hazard ratio"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_meandiff_choices = (
-    ("Non-standardized", "Non-standardized"),
-    ("Standardized", "Standardized"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_slope_choices = (
-    ("Non-transformed data", "Non-transformed data"),
-    ("Transformed data", "Transformed data"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_ord_choices = (
-    ("Canonical correspondence analysis (CCA)", "Canonical correspondence analysis (CCA)"),
-    ("Principal components analysis (PCA)", "Principal components analysis (PCA)"),
-    ("Multiple discriminant analysis (MDA)", "Multiple discriminant analysis (MDA)"),
-    ("Non-multidimensional scaling (NMDS)", "Non-multidimensional scaling (NMDS)"),
-    ("Factor analysis", "Factor analysis"),
-    ("Not specified", "Not specified"),
-)
-response_measure_type_thresh_choices = (
-    ("Regression tree", "Regression tree"),
-    ("Random forest", "Random forest"),
-    ("Breakpoint (piecewise) regression", "Breakpoint (piecewise) regression"),
-    ("Quantile regression", "Quantile regression"),
-    ("Cumulative frequency distribution", "Cumulative frequency distribution"),
-    ("Gradient forest analysis", "Gradient forest analysis"),
-    ("Non-linear curve fitting", "Non-linear curve fitting"),
-    ("Ordination", "Ordination"),
-    ("TITAN", "TITAN"),
-    ("Not specified", "Not specified"),
-)
-response_variability_choices = (
-    ("95% CI", "95% CI"),
-    ("90% CI", "90% CI"),
-    ("Standard deviation", "Standard deviation"),
-    ("Standard error", "Standard error"),
-    ("Not applicable", "Not applicable"),
-)
-statistical_sig_measure_type_choices = (
-    ("P-value", "P-value"),
-    ("F statistic", "F statistic"),
-    ("Chi square", "Chi square"),
-    ("Not applicable", "Not applicable"),
-)
-sort_choices = (("TBD", "TBD"),)
+from ..epi.models import Country
+from ..study.models import Study
 
 
 class State(models.Model):
@@ -174,21 +40,27 @@ class Ecoregion(models.Model):
         verbose_name = "Ecoregion"
 
 
-class Reference(models.Model):
+class Vocab(models.Model):
+    class VocabCategories(models.TextChoices):
+        TERM = "Term"
+        MEASURE = "Measure"
+        MTF = "Measure type filter"
+        MT = "Measure type"
 
-    reference = models.CharField(max_length=100, help_text="Enter a Reference ID!")
+    category = models.CharField(max_length=100, blank=True)  # choices=VocabCategories.choices)
+    value = models.CharField(max_length=100, blank=True)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
-
-        return self.reference
+        return self.category + " - " + self.value
 
     class Meta:
-        verbose_name = "Reference"
+        verbose_name = "Vocab"
 
 
 class Metadata(models.Model):
 
-    study_id = models.OneToOneField(Reference, on_delete=models.CASCADE)
+    study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
     class StudyType(models.IntegerChoices):
 
@@ -198,8 +70,8 @@ class Metadata(models.Model):
         MET = 3, "Meta-analysis"
         REV = 4, "Review"
 
-    study_type = models.CharField(
-        max_length=100, choices=StudyType.choices, help_text="Select the type of study"
+    study_type = models.IntegerField(
+        choices=StudyType.choices, help_text="Select the type of study"
     )
 
     class StudySetting(models.IntegerChoices):
@@ -210,8 +82,7 @@ class Metadata(models.Model):
         MOD = 4, "Model"
         NA = 5, "Not Applicable"
 
-    study_setting = models.CharField(
-        max_length=100,
+    study_setting = models.IntegerField(
         choices=StudySetting.choices,
         help_text="Select the setting in which evidence was generated",
     )
@@ -233,9 +104,8 @@ class Metadata(models.Model):
         ESTU = 3, "Estuarine"
         MAR = 4, "Marine"
 
-    habitat = models.CharField(
+    habitat = models.IntegerField(
         verbose_name="Habitat",
-        max_length=100,
         choices=HabitatType.choices,
         blank=True,
         help_text="Select the habitat to which the evidence applies",
@@ -250,9 +120,8 @@ class Metadata(models.Model):
         URB = 5, "Urban/suburban"
         TUND = 6, "Tundra"
 
-    habitat_terrestrial = models.CharField(
+    habitat_terrestrial = models.IntegerField(
         verbose_name="Terrestrial habitat",
-        max_length=100,
         choices=TerrestrialHab.choices,
         blank=True,
         help_text="If you selected terrestrial, pick the type of terrestrial habitat",
@@ -264,9 +133,8 @@ class Metadata(models.Model):
         LAKE = 2, "Lake/reservoir"
         ART = 3, "Artificial"
 
-    habitat_aquatic_freshwater = models.CharField(
+    habitat_aquatic_freshwater = models.IntegerField(
         verbose_name="Freshwater habitat",
-        max_length=100,
         choices=AquaticHab.choices,
         blank=True,
         help_text="If you selected freshwater, pick the type of freshwater habitat",
@@ -303,16 +171,10 @@ class BioOrg(models.IntegerChoices):  # to be used in both cause and effect tabl
 
 class Cause(models.Model):
 
-    study_id = models.ForeignKey(Reference, on_delete=models.CASCADE)
+    study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
-    class CauseTerm(
-        models.IntegerChoices
-    ):  # does caroline have an updated list, or does this need to be a fixture??
-        TBD = 0, "TBD"
-        WAT = 1, "Water Quality"
-
-    term = models.CharField(
-        verbose_name="Cause term", max_length=100, choices=CauseTerm.choices
+    term = models.ForeignKey(
+        Vocab, limit_choices_to={"category": "cause term"}, on_delete=models.CASCADE
     )  # autocomplete
 
     class CauseMeasure(
@@ -321,8 +183,8 @@ class Cause(models.Model):
         TBD = 0, "TBD"
         NUT = 1, "Nutrients"
 
-    measure = models.CharField(
-        verbose_name="Cause measure", max_length=100, choices=CauseMeasure.choices,
+    measure = models.IntegerField(
+        verbose_name="Cause measure", choices=CauseMeasure.choices,
     )  # autocomplete
 
     measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
@@ -354,9 +216,8 @@ class Cause(models.Model):
         CHANGE = 2, "Change"
         OTHER = 3, "Other"
 
-    trajectory = models.CharField(
+    trajectory = models.IntegerField(
         verbose_name="Cause trajectory",
-        max_length=100,
         choices=CauseTrajectory.choices,
         help_text="Select qualitative description of how the cause measure changes, if applicable",
     )  # autocomplete
@@ -386,14 +247,14 @@ class Effect(models.Model):
         TBD = 0, "TBD"
         ALGAE = 1, "Algae"
 
-    term = models.CharField(verbose_name="Effect term", max_length=100, choices=EffectTerm.choices)
+    term = models.IntegerField(verbose_name="Effect term", choices=EffectTerm.choices)
 
     class EffectMeasure(models.IntegerChoices):
         TBD = 0, "TBD"
         ABUND = 1, "Abundance"
 
-    measure = models.CharField(
-        verbose_name="Effect measure", max_length=100, choices=EffectMeasure.choices
+    measure = models.IntegerField(
+        verbose_name="Effect measure", choices=EffectMeasure.choices
     )  # autocomplete
 
     measure_detail = models.CharField(
@@ -428,9 +289,8 @@ class Effect(models.Model):
         NOCHANGE = 3, "No change"
         OTHER = 4, "Other"
 
-    trajectory = models.CharField(
+    trajectory = models.IntegerField(
         verbose_name="Effect trajectory",
-        max_length=100,
         choices=EffectTrajectory.choices,
         help_text="Select qualitative description of how the effect measure changes in response to the cause trajectory, if applicable",
     )
@@ -454,9 +314,8 @@ class Effect(models.Model):
     class Sort(models.IntegerChoices):
         TBD = 0, "TBD"
 
-    sort = models.CharField(
+    sort = models.IntegerField(
         verbose_name="Sort quantitative responses",
-        max_length=100,
         choices=Sort.choices,
         help_text="how do you want to sort multiple quantitative responses?",
         blank=True,
@@ -511,9 +370,8 @@ class Quantitative(models.Model):
         ORD = 6, "Ordination"
         THRESH = 7, "Threshold"
 
-    measure_type_filter = models.CharField(
+    measure_type_filter = models.IntegerField(
         verbose_name="Response measure type (filter)",
-        max_length=100,
         blank=True,
         choices=MeasureTypeFilter.choices,
         help_text="This drop down will filter the following field",
@@ -558,9 +416,8 @@ class Quantitative(models.Model):
         # option for each category
         NS = 28, "Not specified"
 
-    measure_type = models.CharField(
+    measure_type = models.IntegerField(
         verbose_name="Response measure type",
-        max_length=40,
         choices=MeasureType.choices,
         blank=True,
         help_text="Select one response measure type",
@@ -586,10 +443,9 @@ class Quantitative(models.Model):
         SE = 3, "Standard error"
         NA = 4, "Not applicable"
 
-    variability = models.CharField(
+    variability = models.IntegerField(
         verbose_name="Response variability",
         blank=True,
-        max_length=100,
         choices=Variability.choices,
         help_text="Select how variability in the response measure was reported, if applicable",
     )
@@ -614,11 +470,10 @@ class Quantitative(models.Model):
         CHISQ = 2, "Chi square"
         NA = 3, "Not applicable"
 
-    statistical_sig_type = models.CharField(
+    statistical_sig_type = models.IntegerField(
         verbose_name="Statistical significance measure type",
         blank=True,
-        max_length=100,
-        choices=statistical_sig_measure_type_choices,
+        choices=StatisticalSigType.choices,
         help_text="Select the type of statistical significance measure reported",
     )
 
