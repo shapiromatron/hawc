@@ -964,16 +964,20 @@
     assessment: 1
     user: null
     message: Assessment log
+    content: {}
+    content_type: null
+    object_id: null
     created: 2020-08-20 03:03:15.442430+00:00
-    last_updated: 2020-08-20 03:03:15.442430+00:00
 - model: assessment.log
   pk: 2
   fields:
     assessment: null
     user: null
     message: Global log
+    content: {}
+    content_type: null
+    object_id: null
     created: 2020-08-20 03:03:22.348931+00:00
-    last_updated: 2020-08-20 03:03:22.348931+00:00
 - model: assessment.blog
   pk: 1
   fields:
