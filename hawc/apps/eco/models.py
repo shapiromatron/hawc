@@ -302,7 +302,7 @@ class Effect(models.Model):
     )
 
     as_reported = models.TextField(
-        verbose_name="Effect as reported", help_text="Copy and paste 1-2 sentences from article",
+        verbose_name="Effect as  reported", help_text="Copy and paste 1-2 sentences from article",
     )
 
     modifying_factors = models.CharField(
