@@ -23,14 +23,20 @@ class Command(BaseCommand):
             raise CommandError("Must be using a test database to execute.")
 
         with ignore_signals():
+            self.stdout.write(self.style.HTTP_INFO("Migrating database schema..."))
             call_command("migrate", verbosity=0)
 
             if options["ifempty"] and get_user_model().objects.count() > 0:
                 message = "Migrations complete; fixture not loaded (db not empty)"
             else:
+                self.stdout.write(self.style.HTTP_INFO("Flushing data..."))
                 call_command("flush", verbosity=0, interactive=False)
+
+                self.stdout.write(self.style.HTTP_INFO("Loading database fixture..."))
                 call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=1)
+
+                self.stdout.write(self.style.HTTP_INFO("Loading database views..."))
                 call_command("create_views", verbosity=1)
                 message = "Migrations complete; fixture loaded"
 
-        self.stdout.write(self.style.SUCCESS(message))
+            self.stdout.write(self.style.SUCCESS(message))
