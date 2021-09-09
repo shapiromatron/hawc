@@ -417,6 +417,9 @@ class Endpoint extends Observee {
     }
 
     build_general_notes(div) {
+        if (!h.hasInnerText(this.data.endpoint_notes)) {
+            return;
+        }
         let tbl = new BaseTable();
         tbl.addHeaderRow(["Methodology"]);
         tbl.setColGroup([100]);
