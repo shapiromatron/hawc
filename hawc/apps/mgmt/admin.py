@@ -19,3 +19,4 @@ class TaskAdmin(admin.ModelAdmin):
         "started",
         "completed",
     )
+    list_select_related = ("study", "owner")

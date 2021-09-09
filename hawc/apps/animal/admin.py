@@ -52,6 +52,7 @@ class DosingRegimeAdmin(admin.ModelAdmin):
         "num_dose_groups",
         "dosed_animals__experiment__study__assessment_id",
     )
+    list_select_related = ("dosed_animals",)
     search_fields = ("dosed_animals__name",)
 
 
