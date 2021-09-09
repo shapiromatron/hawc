@@ -182,6 +182,7 @@ the same commands.
 
     # run unit tests
     make test
+    make test-js
 
     # lint code (show changes required) - all, javascript-only, or python-only
     make lint
