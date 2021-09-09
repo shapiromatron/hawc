@@ -1,6 +1,6 @@
 import pytest
 
-from hawc.apps.myuser.forms import RegisterForm
+from hawc.apps.myuser.forms import RegisterForm, _accept_license_error
 
 
 @pytest.mark.django_db
@@ -114,7 +114,4 @@ class TestRegisterForm:
             }
         )
         assert form.is_valid() is False
-        assert (
-            form.errors["license_v2_accepted"][0]
-            == "License must be accepted in order to create an account."
-        )
+        assert form.errors["license_v2_accepted"][0] == _accept_license_error

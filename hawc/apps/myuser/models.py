@@ -30,8 +30,8 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         help_text="Designates whether this user should be treated as "
         "active. Unselect this instead of deleting accounts.",
     )
-    license_v1_accepted = models.BooleanField(default=False)
-    license_v2_accepted = models.BooleanField(default=False)
+    license_v1_accepted = models.BooleanField(default=False, verbose_name="Accept license")
+    license_v2_accepted = models.BooleanField(default=False, verbose_name="Accept license")
     date_joined = models.DateTimeField("date joined", default=timezone.now)
 
     USERNAME_FIELD = "email"
