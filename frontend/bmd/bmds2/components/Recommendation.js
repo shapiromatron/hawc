@@ -67,64 +67,64 @@ class Recommendation extends React.Component {
         });
 
         return (
-            <>
-                <legend>Select BMD model</legend>
-                <form className="form">
-                    <div className="col-md-4">
-                        <label htmlFor="bmr">Selected BMR</label>
-                        <div className="form-group">
-                            <select
-                                className="form-control"
-                                value={this.state.bmr}
-                                name="bmr"
-                                onChange={this.handleFieldChange.bind(this)}>
-                                {this.props.bmrs.map((d, i) => {
-                                    return (
-                                        <option key={i} value={i}>
-                                            {bmdLabelText(d)}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </div>
-
-                        <label htmlFor="model">Selected model</label>
-
-                        <div className="form-group">
-                            <select
-                                className="form-control"
-                                value={selectedModel}
-                                name="model"
-                                onChange={this.handleFieldChange.bind(this)}>
-                                {models.map(d => {
-                                    return (
-                                        <option key={d.id} value={d.id}>
-                                            {d.name}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </div>
+            <form key={0} className="form">
+                <div className="col-md-12">
+                    <legend>Select BMD model</legend>
+                </div>
+                <div className="col-md-4">
+                    <label htmlFor="bmr">Selected BMR</label>
+                    <div className="form-group">
+                        <select
+                            className="form-control"
+                            value={this.state.bmr}
+                            name="bmr"
+                            onChange={this.handleFieldChange.bind(this)}>
+                            {this.props.bmrs.map((d, i) => {
+                                return (
+                                    <option key={i} value={i}>
+                                        {bmdLabelText(d)}
+                                    </option>
+                                );
+                            })}
+                        </select>
                     </div>
-                    <div className="col-md-8">
-                        <label htmlFor="notes">Notes</label>
-                        <div className="form-group">
-                            <textarea
-                                className="form-control"
-                                value={this.state.notes}
-                                onChange={this.handleFieldChange.bind(this)}
-                                name="notes"
-                                rows="5"
-                                cols="40"
-                            />
-                            <p className="form-text text-muted">
-                                Enter notes on why a model was selected as best fitting; if no model
-                                is selected, add notes on why no model was selected.
-                            </p>
-                        </div>
+
+                    <label htmlFor="model">Selected model</label>
+
+                    <div className="form-group">
+                        <select
+                            className="form-control"
+                            value={selectedModel}
+                            name="model"
+                            onChange={this.handleFieldChange.bind(this)}>
+                            {models.map(d => {
+                                return (
+                                    <option key={d.id} value={d.id}>
+                                        {d.name}
+                                    </option>
+                                );
+                            })}
+                        </select>
                     </div>
-                </form>
-            </>
+                </div>
+                <div className="col-md-8">
+                    <label htmlFor="notes">Notes</label>
+                    <div className="form-group">
+                        <textarea
+                            className="form-control"
+                            value={this.state.notes}
+                            onChange={this.handleFieldChange.bind(this)}
+                            name="notes"
+                            rows="5"
+                            cols="40"
+                        />
+                        <p className="form-text text-muted">
+                            Enter notes on why a model was selected as best fitting; if no model is
+                            selected, add notes on why no model was selected.
+                        </p>
+                    </div>
+                </div>
+            </form>
         );
     }
 
