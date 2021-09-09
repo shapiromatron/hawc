@@ -207,20 +207,6 @@ class Endpoint extends Observee {
         return txt;
     }
 
-    _calculate_stdev(eg) {
-        // stdev is required for plotting; calculate if SE is specified
-        var convert = this.data.data_type === "C" && parseInt(this.data.variance_type, 10) === 2;
-        if (convert) {
-            if ($.isNumeric(eg.n)) {
-                eg.stdev = eg.variance * Math.sqrt(eg.n);
-            } else {
-                eg.stdev = undefined;
-            }
-        } else {
-            eg.stdev = eg.variance;
-        }
-    }
-
     _build_ag_dose_rows(options) {
         var nGroups = this.doses[0].values.length,
             nCols = nGroups + 3,
