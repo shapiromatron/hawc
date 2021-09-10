@@ -11,13 +11,13 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import HttpResponseNotAllowed, HttpResponseRedirect, Http404
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import FormView, DetailView, ListView, TemplateView, View
+from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
