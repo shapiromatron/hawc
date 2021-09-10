@@ -194,7 +194,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"df-{instance.id}")
         return Response(export)
 
-    @transaction.atomic()
+    @transaction.atomic
     @action(
         detail=True,
         throttle_classes=(OncePerMinuteThrottle,),
@@ -215,7 +215,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         serializer.execute()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @transaction.atomic()
+    @transaction.atomic
     @action(
         detail=True,
         throttle_classes=(OncePerMinuteThrottle,),

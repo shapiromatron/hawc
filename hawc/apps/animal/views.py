@@ -1,5 +1,6 @@
 import json
 
+from django.db import transaction
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
@@ -93,6 +94,7 @@ class AnimalGroupCreate(BaseCreate):
         self.is_generational = self.parent.is_generational()
         return forms.GenerationalAnimalGroupForm if self.is_generational else forms.AnimalGroupForm
 
+    @transaction.atomic
     def form_valid(self, form):
         """
         Save form, and perhaps dosing regime and dosing groups, if appropriate.
@@ -258,6 +260,7 @@ class DosingRegimeUpdate(BaseUpdate):
     form_class = forms.DosingRegimeForm
     success_message = "Dosing regime updated."
 
+    @transaction.atomic
     def form_valid(self, form):
         """
         If the dosing-regime is valid, then check if the formset is valid. If
@@ -270,7 +273,6 @@ class DosingRegimeUpdate(BaseUpdate):
         fs = forms.dosegroup_formset_factory(fs_initial, self.object.num_dose_groups)
 
         if fs.is_valid():
-
             # instead of checking existing vs. new, just delete all old
             # dose-groups, and save new formset
             models.DoseGroup.objects.by_dose_regime(self.object).delete()
@@ -342,6 +344,7 @@ class EndpointCreate(BaseCreateWithFormset):
         for egform in formset.forms:
             egform.endpoint_form = form
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.save_and_log(form)
         if self.object.dose_response_available:
@@ -350,6 +353,7 @@ class EndpointCreate(BaseCreateWithFormset):
                 # save all EGs, even if no data
                 egform.save()
             self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -377,6 +381,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
         for egform in formset.forms:
             egform.endpoint_form = form
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.save_and_log(form)
         self.post_object_save(form, formset)
@@ -384,6 +389,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
             # save all EGs, even if no data
             egform.save()
         self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 

@@ -163,6 +163,7 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
 class BulkReferenceTagSerializer(serializers.Serializer):
     operation = serializers.ChoiceField(choices=["append", "replace"], required=True)
     csv = serializers.CharField(required=True)
+    dry_run = serializers.BooleanField(default=False)
 
     def validate_csv(self, value):
         try:
@@ -184,10 +185,11 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             raise serializers.ValidationError("CSV has no data")
 
         expected_assessment_id = self.context["assessment"].id
+        unique_refs = df.reference_id.unique()
 
         # ensure that all references are from this assessment
         assessments = (
-            models.Reference.objects.filter(id__in=df.reference_id.unique())
+            models.Reference.objects.filter(id__in=unique_refs)
             .values_list("assessment_id", flat=True)
             .distinct()
         )
@@ -203,6 +205,14 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"All tag ids are not from assessment {expected_assessment_id}"
             )
+
+        # ensure all references exist
+        founds_refs = set(
+            models.Reference.objects.filter(id__in=unique_refs).values_list("id", flat=True)
+        )
+        missing = set(unique_refs) - set(founds_refs)
+        if missing:
+            raise serializers.ValidationError(f"Reference(s) not found: {missing}")
 
         # check to make sure we have no duplicates
         df_nrows = df.shape[0]
@@ -220,6 +230,9 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
     @transaction.atomic
     def bulk_create_tags(self):
+        if self.validated_data["dry_run"]:
+            return
+
         assessment_id = self.assessment.id
         operation = self.validated_data["operation"]
 
@@ -245,7 +258,6 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if new_tags:
             logger.info(f"Creating {len(new_tags)} reference tags for {assessment_id}")
             models.ReferenceTags.objects.bulk_create(new_tags)
-
             models.Reference.delete_cache(assessment_id)
 
 
@@ -278,7 +290,7 @@ class ReferenceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("All tag ids are not from this assessment")
         return value
 
-    @transaction.atomic()
+    @transaction.atomic
     def update(self, instance, validated_data):
 
         # updates the reference tags

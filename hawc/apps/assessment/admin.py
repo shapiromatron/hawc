@@ -2,6 +2,7 @@ from io import BytesIO
 
 from django.apps import apps
 from django.contrib import admin, messages
+from django.contrib.admin.models import LogEntry
 from django.http import HttpResponse
 from django.utils.html import format_html
 from reversion.admin import VersionAdmin
@@ -230,6 +231,13 @@ class LogAdmin(ReadOnlyAdmin):
     )
     search_fields = ("assessment__name", "message")
     readonly_fields = ("created",)
+
+
+@admin.register(LogEntry)
+class LogEntryAdmin(ReadOnlyAdmin):
+    list_display = ("id", "action_time", "user", "content_type", "object_id", "action_flag")
+    list_filter = ("user", "content_type")
+    search_fields = ("object_id",)
 
 
 @admin.register(models.Blog)

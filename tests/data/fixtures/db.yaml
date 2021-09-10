@@ -4022,6 +4022,36 @@
     active: true
     created: 2020-05-08 17:56:46.183552+00:00
     last_updated: 2020-05-08 19:34:31.468702+00:00
+- model: riskofbias.riskofbias
+  pk: 7
+  fields:
+    study: 8
+    final: false
+    author:
+    - team@hawcproject.org
+    active: true
+    created: 2021-09-02 15:57:26.492990+00:00
+    last_updated: 2021-09-02 15:57:26.733132+00:00
+- model: riskofbias.riskofbias
+  pk: 8
+  fields:
+    study: 5
+    final: false
+    author:
+    - team@hawcproject.org
+    active: true
+    created: 2021-09-02 15:57:27.448945+00:00
+    last_updated: 2021-09-02 15:57:27.851056+00:00
+- model: riskofbias.riskofbias
+  pk: 9
+  fields:
+    study: 6
+    final: false
+    author:
+    - team@hawcproject.org
+    active: true
+    created: 2021-09-02 15:57:28.629575+00:00
+    last_updated: 2021-09-02 15:57:29.033255+00:00
 - model: riskofbias.riskofbiasscore
   pk: 1
   fields:
@@ -4172,6 +4202,66 @@
     score: 14
     bias_direction: 1
     notes: <p>beep</p>
+- model: riskofbias.riskofbiasscore
+  pk: 17
+  fields:
+    riskofbias: 7
+    metric: 14
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 18
+  fields:
+    riskofbias: 7
+    metric: 15
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 19
+  fields:
+    riskofbias: 8
+    metric: 14
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 20
+  fields:
+    riskofbias: 8
+    metric: 15
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 21
+  fields:
+    riskofbias: 9
+    metric: 14
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 22
+  fields:
+    riskofbias: 9
+    metric: 15
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
 - model: riskofbias.riskofbiasscoreoverrideobject
   pk: 1
   fields:

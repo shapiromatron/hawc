@@ -301,7 +301,7 @@ def test_riskofbias_create():
     pm_author = HAWCUser.objects.get(email="pm@hawcproject.org")
     study = Study.objects.get(id=1)
 
-    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
+    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study)
     first_valid_score = required_metrics[0].get_default_response()
 
     # failed uploading for a study that already has an active & final RoB
