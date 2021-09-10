@@ -1,5 +1,4 @@
 import abc
-import json
 import logging
 from typing import List, Optional
 from urllib.parse import urlparse
@@ -21,7 +20,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
-from .helper import model_to_json, tryParseInt
+from .helper import tryParseInt
 
 logger = logging.getLogger(__name__)
 
@@ -475,7 +474,7 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
     @transaction.atomic
     def form_valid(self, form):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form)  # add hook for post-object save
         self.create_log(self.object)
         self.send_message()
@@ -505,10 +504,6 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     parent_model = None  # required
     parent_template_name: str = None  # required
     crud = "Create"
-
-    @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -546,7 +541,7 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
     @transaction.atomic
     def form_valid(self, form):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form)  # add hook for post-object save
         self.create_log(self.object)
         self.send_message()
@@ -627,7 +622,7 @@ class BaseCreateWithFormset(BaseCreate):
 
     @transaction.atomic
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
@@ -690,7 +685,7 @@ class BaseUpdateWithFormset(BaseUpdate):
 
     @transaction.atomic
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)

@@ -1,12 +1,10 @@
 import decimal
 import hashlib
-import json
 import logging
 import re
 import uuid
 from collections import OrderedDict, defaultdict
 from datetime import timedelta
-from itertools import chain
 from math import inf
 from typing import Any, Dict, List, NamedTuple, Optional, Set
 
@@ -396,13 +394,3 @@ def event_plot(series: pd.Series) -> Axes:
 
     plt.tight_layout()
     return ax
-
-
-def model_to_json(instance):
-    opts = instance._meta
-    data = {}
-    for f in chain(opts.concrete_fields, opts.private_fields):
-        data[f.name] = f.value_from_object(instance)
-    for f in opts.many_to_many:
-        data[f.name] = [i.pk for i in f.value_from_object(instance)]
-    return json.dumps(data, cls=DjangoJSONEncoder)

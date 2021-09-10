@@ -346,7 +346,7 @@ class EndpointCreate(BaseCreateWithFormset):
 
     @transaction.atomic
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         if self.object.dose_response_available:
             self.post_object_save(form, formset)
             for egform in formset.forms:
@@ -383,7 +383,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
 
     @transaction.atomic
     def form_valid(self, form, formset):
-        self.save_and_log(form)
+        self.object = form.save()
         self.post_object_save(form, formset)
         for egform in formset.forms:
             # save all EGs, even if no data
