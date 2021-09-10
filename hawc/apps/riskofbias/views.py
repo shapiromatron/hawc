@@ -30,7 +30,7 @@ from . import forms, models
 def get_breadcrumb_rob_setting(assessment, update: bool = False) -> Breadcrumb:
     if update:
         return Breadcrumb(
-            name=f"Update", url=reverse("riskofbias:arob_update", args=(assessment.id,)),
+            name="Update", url=reverse("riskofbias:arob_update", args=(assessment.id,)),
         )
     else:
         return Breadcrumb(

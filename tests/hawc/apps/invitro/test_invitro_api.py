@@ -23,7 +23,7 @@ class TestIVAssessmentViewset:
             assert rev_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        fn = Path(DATA_ROOT / f"api-invitro-assessment-full-export.json")
+        fn = Path(DATA_ROOT / "api-invitro-assessment-full-export.json")
         url = (
             reverse("invitro:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"

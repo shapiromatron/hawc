@@ -1,6 +1,6 @@
 arrowParens: "avoid"
 bracketSpacing: false
-endOfLine: "lf"
+endOfLine: "auto"
 jsxBracketSameLine: true
 parser: "babel"
 printWidth: 100

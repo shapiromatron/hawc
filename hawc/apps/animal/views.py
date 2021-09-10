@@ -1,5 +1,6 @@
 import json
 
+from django.db import transaction
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
@@ -93,6 +94,7 @@ class AnimalGroupCreate(BaseCreate):
         self.is_generational = self.parent.is_generational()
         return forms.GenerationalAnimalGroupForm if self.is_generational else forms.AnimalGroupForm
 
+    @transaction.atomic
     def form_valid(self, form):
         """
         Save form, and perhaps dosing regime and dosing groups, if appropriate.
@@ -130,6 +132,7 @@ class AnimalGroupCreate(BaseCreate):
                 self.object.save()
                 dosing_regime.dosed_animals = self.object
                 dosing_regime.save()
+                self.create_log(dosing_regime)
 
                 # now save dose-groups, one for each dosing regime
                 for dose in fs.forms:
@@ -174,9 +177,8 @@ class AnimalGroupRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["endpoints"] = (
-            context["object"]
-            .endpoints.all()
+        endpoints = (
+            self.object.endpoints.all()
             .select_related(
                 "bmd_model",
                 "assessment",
@@ -195,6 +197,10 @@ class AnimalGroupRead(BaseDetail):
                 "animal_group__experiment__study__searches",
                 "animal_group__experiment__study__identifiers",
             )
+        )
+        context["config"] = dict(
+            id=self.object.id,
+            endpoints=[endpoint.get_json(json_encode=False) for endpoint in endpoints],
         )
         return context
 
@@ -254,6 +260,7 @@ class DosingRegimeUpdate(BaseUpdate):
     form_class = forms.DosingRegimeForm
     success_message = "Dosing regime updated."
 
+    @transaction.atomic
     def form_valid(self, form):
         """
         If the dosing-regime is valid, then check if the formset is valid. If
@@ -266,8 +273,6 @@ class DosingRegimeUpdate(BaseUpdate):
         fs = forms.dosegroup_formset_factory(fs_initial, self.object.num_dose_groups)
 
         if fs.is_valid():
-            self.object.save()
-
             # instead of checking existing vs. new, just delete all old
             # dose-groups, and save new formset
             models.DoseGroup.objects.by_dose_regime(self.object).delete()
@@ -339,6 +344,7 @@ class EndpointCreate(BaseCreateWithFormset):
         for egform in formset.forms:
             egform.endpoint_form = form
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.object = form.save()
         if self.object.dose_response_available:
@@ -347,6 +353,7 @@ class EndpointCreate(BaseCreateWithFormset):
                 # save all EGs, even if no data
                 egform.save()
             self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -374,6 +381,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
         for egform in formset.forms:
             egform.endpoint_form = form
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.object = form.save()
         self.post_object_save(form, formset)
@@ -381,6 +389,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
             # save all EGs, even if no data
             egform.save()
         self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 

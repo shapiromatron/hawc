@@ -206,9 +206,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             # and the study_type of the study, we need to make sure all necessary scores
             # have been submitted with a default=True
             scores = self.initial_data["scores"]
-            required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(
-                assessment, study
-            )
+            required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(study)
             problematic_scores = []
             for metric in required_metrics:
                 domain = metric.domain

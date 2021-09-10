@@ -332,7 +332,7 @@ class RiskOfBiasLoadApproachForm(forms.Form):
         return BaseFormHelper(
             self,
             legend_text=f"Load a predefined {rob_name} approach",
-            help_text=f"Select a standardized and predefined approach to use in this assessment.",
+            help_text="Select a standardized and predefined approach to use in this assessment.",
             cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
             submit_text="Load approach",
         )

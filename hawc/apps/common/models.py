@@ -14,7 +14,6 @@ from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
-from django.utils.translation import ugettext_lazy as _
 from treebeard.mp_tree import MP_Node
 
 from . import forms, validators
@@ -107,8 +106,8 @@ def NotImplementedAttribute(self):
 
 
 class NonUniqueTagBase(models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=100)
-    slug = models.SlugField(verbose_name=_("Slug"), max_length=100)
+    name = models.CharField(verbose_name="Name", max_length=100)
+    slug = models.SlugField(verbose_name="Slug", max_length=100)
 
     def __str__(self):
         return self.name

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
-from django.test.client import Client
+from django.test.client import Client, RequestFactory
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -279,7 +279,13 @@ class TestSummaryAssessmentViewset:
 
 
 @pytest.mark.django_db
-class TestSummaryViewset:
+class TestSummaryTextViewset:
+    def test_current_schema_host(self):
+        # undocumented API in django; test to ensure it exists
+        factory = RequestFactory()
+        request = factory.get("/test")
+        assert request._current_scheme_host == "http://testserver"
+
     def test_permissions(self, db_keys):
         assessment_id = db_keys.assessment_working
         root = models.SummaryText.get_assessment_root_node(assessment_id)

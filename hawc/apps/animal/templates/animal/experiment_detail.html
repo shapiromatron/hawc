@@ -28,8 +28,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.animalStartup(function(animal){
-      animal.Experiment.displayFullPager($("#objContainer"), {{ object.id }});
+    const id = {{object.id}};
+    window.app.startup("animalStartup", function(app){
+      app.Experiment.displayFullPager($("#objContainer"), id);
     });
   </script>
 

@@ -8,14 +8,8 @@ from . import models
 
 @receiver(post_save, sender=models.Study)
 def update_study_rob_scores(sender, instance, created, **kwargs):
-    # update RiskOfBiasScores when a Study's type is changed.
-    assessment = instance.get_assessment()
-    for rob in (
-        instance.riskofbiases.all()
-        .select_related("study", "study__assessment")
-        .prefetch_related("scores")
-    ):
-        rob.update_scores(assessment)
+    RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
+    RiskOfBiasMetric.sync_scores_for_study(instance)
 
 
 @receiver(post_save, sender=models.Study)

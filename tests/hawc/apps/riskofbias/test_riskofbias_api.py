@@ -30,7 +30,7 @@ class TestRiskOfBiasAssessmentViewset:
             assert rev_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        fn = Path(DATA_ROOT / f"api-rob-assessment-full-export.json")
+        fn = Path(DATA_ROOT / "api-rob-assessment-full-export.json")
         url = (
             reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -47,7 +47,7 @@ class TestRiskOfBiasAssessmentViewset:
         assert data == json.loads(fn.read_text())
 
     def test_export(self, rewrite_data_files: bool, db_keys):
-        fn = Path(DATA_ROOT / f"api-rob-assessment-export.json")
+        fn = Path(DATA_ROOT / "api-rob-assessment-export.json")
         url = (
             reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -302,7 +302,7 @@ def test_riskofbias_create():
     pm_author = HAWCUser.objects.get(email="pm@hawcproject.org")
     study = Study.objects.get(id=1)
 
-    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
+    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study)
     first_valid_score = required_metrics[0].get_default_response()
 
     # failed uploading for a study that already has an active & final RoB

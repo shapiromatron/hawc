@@ -28,8 +28,10 @@
 <script type="text/javascript">
   $(document).ready(function () {
     const el = document.getElementById('root'),
-      config = JSON.parse(document.getElementById('config').text);
-    window.app.nestedTagEditorStartup(el, config);
+      config = window.app.getConfig();
+    window.app.startup("nestedTagEditorStartup", function(startup){
+        startup(el, config);
+    });
   });
 </script>
 {% endblock extrajs %}

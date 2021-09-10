@@ -205,7 +205,7 @@ class GroupResultSerializer(serializers.ModelSerializer):
             group = attrs["group"]
             if result.get_assessment().id != group.get_assessment().id:
                 raise serializers.ValidationError(
-                    f"Supplied result and group are part of different assessments."
+                    "Supplied result and group are part of different assessments."
                 )
         else:
             # When updating, we will validate that the result and group (if either are present) are part
@@ -217,12 +217,12 @@ class GroupResultSerializer(serializers.ModelSerializer):
             if "group" in attrs:
                 group = attrs["group"]
                 if group.get_assessment().id != assessment_id:
-                    raise serializers.ValidationError(f"Supplied group is not in the assessment.")
+                    raise serializers.ValidationError("Supplied group is not in the assessment.")
 
             if "result" in attrs:
                 result = attrs["result"]
                 if result.get_assessment().id != assessment_id:
-                    raise serializers.ValidationError(f"Supplied result is not in the assessment.")
+                    raise serializers.ValidationError("Supplied result is not in the assessment.")
 
         return super().validate(attrs)
 
@@ -319,7 +319,7 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
             study_population = attrs["study_population"]
             if exposure.get_assessment().id != study_population.get_assessment().id:
                 raise serializers.ValidationError(
-                    f"Supplied exposure and study_population are part of different assessments."
+                    "Supplied exposure and study_population are part of different assessments."
                 )
         else:
             # When updating, we will validate that the exposure and study_population (if either are present) are part
@@ -332,15 +332,13 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
                 study_population = attrs["study_population"]
                 if study_population.get_assessment().id != assessment_id:
                     raise serializers.ValidationError(
-                        f"Supplied study_population is not in the assessment."
+                        "Supplied study_population is not in the assessment."
                     )
 
             if "exposure" in attrs:
                 exposure = attrs["exposure"]
                 if exposure.get_assessment().id != assessment_id:
-                    raise serializers.ValidationError(
-                        f"Supplied exposure is not in the assessment."
-                    )
+                    raise serializers.ValidationError("Supplied exposure is not in the assessment.")
 
         return super().validate(attrs)
 

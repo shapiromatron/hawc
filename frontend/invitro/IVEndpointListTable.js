@@ -1,8 +1,10 @@
-import BaseTable from "utils/BaseTable";
+import BaseTable from "shared/utils/BaseTable";
+
+import IVEndpoint from "./IVEndpoint";
 
 class IVEndpointListTable {
-    constructor(endpoints) {
-        this.endpoints = endpoints;
+    constructor(data) {
+        this.endpoints = data.map(d => IVEndpoint(d));
         this.table = new BaseTable();
     }
 
