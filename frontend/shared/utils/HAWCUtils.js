@@ -203,8 +203,17 @@ class HAWCUtils {
         return false;
     }
 
+    static randomString(length) {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return Array(length)
+            .fill()
+            .map(() => chars.charAt(Math.floor(Math.random() * chars.length)))
+            .join("");
+    }
+
     static urlify(str) {
-        return slugify(str, {remove: /[^\w\s-_]/g});
+        var slug = slugify(str, {remove: /[^\w\s-_]/g});
+        return slug ? slug.slice(0, 7) + "_" + this.randomString(4) : slug;
     }
 
     static parseJsonOrNull(el) {
