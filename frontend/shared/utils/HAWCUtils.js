@@ -211,7 +211,7 @@ class HAWCUtils {
             .join("");
     }
 
-    static urlify(str, maxLength = 128, suffixLength = 4) {
+    static urlify(str, maxLength = 50, suffixLength = 4) {
         // transforms a given string into a url friendly slug
         // if the slug is greater than maxLength, then it is truncated and appended
         // with a random string (to ensure uniqueness if uniqueness is truncated)
