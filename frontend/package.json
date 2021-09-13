@@ -9,7 +9,8 @@
         "start": "node devServer.js",
         "lint": "eslint --cache .",
         "format": "eslint --cache --fix .",
-        "test": "./node_modules/mochapack/bin/mochapack \"tests/**/*.js\""
+        "test": "./node_modules/mochapack/bin/mochapack \"tests/**/*.js\"",
+        "test-windows": "node_modules\\.bin\\mochapack \"tests/**/*.js\""
     },
     "repository": {
         "type": "git",

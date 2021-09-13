@@ -87,7 +87,7 @@ py.test
 goto :eof
 
 :test-js
-npm --prefix .\frontend run test
+npm --prefix .\frontend run test-windows
 goto :eof
 
 :coverage
