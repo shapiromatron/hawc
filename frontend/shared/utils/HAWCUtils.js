@@ -211,9 +211,14 @@ class HAWCUtils {
             .join("");
     }
 
-    static urlify(str) {
+    static urlify(str, maxLength = 128, suffixLength = 4) {
+        // transforms a given string into a url friendly slug
+        // if the slug is greater than maxLength, then it is truncated and appended
+        // with a random string (to ensure uniqueness if uniqueness is truncated)
         var slug = slugify(str, {remove: /[^\w\s-_]/g});
-        return slug ? slug.slice(0, 7) + "_" + this.randomString(4) : slug;
+        return slug.length > maxLength
+            ? slug.slice(0, maxLength - suffixLength) + this.randomString(suffixLength)
+            : slug;
     }
 
     static parseJsonOrNull(el) {
