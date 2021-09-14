@@ -1,4 +1,31 @@
+import $ from "$";
+
 import BaseTable from "shared/utils/BaseTable";
+
+const endpointRow = function(endpoint) {
+    const link = `<a href="${endpoint.data.url}" target="_blank">${endpoint.data.name}</a>`,
+        detail = $(
+            '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
+        ).click(() => endpoint.displayAsModal({complete: true})),
+        ep = $("<span>")
+            .append(link, detail)
+            .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail)),
+        study = endpoint.data.animal_group.experiment.study,
+        experiment = endpoint.data.animal_group.experiment,
+        animalGroup = endpoint.data.animal_group,
+        row = [
+            `<a href="${study.url}" target="_blank">${study.short_citation}</a>`,
+            `<a href="${experiment.url}" target="_blank">${experiment.name}</a>`,
+            `<a href="${animalGroup.url}" target="_blank">${animalGroup.name}</a>`,
+            ep,
+            endpoint.doseUnits.activeUnit.name,
+            endpoint.get_special_dose_text("NOEL"),
+            endpoint.get_special_dose_text("LOEL"),
+            endpoint.get_bmd_data("BMD"),
+            endpoint.get_bmd_data("BMDL"),
+        ];
+    return row;
+};
 
 class EndpointListTable {
     constructor(endpoints, dose_id) {
@@ -41,10 +68,8 @@ class EndpointListTable {
         headersToSortKeys.loael = "-LOEL";
         headersToSortKeys.loel = "-LOEL";
         headersToSortKeys.lel = "-LOEL";
-
         tbl.enableSortableHeaderLinks($("#initial_order_by").val(), headersToSortKeys);
-
-        this.endpoints.forEach(v => tbl.addRow(v.build_endpoint_list_row()));
+        this.endpoints.forEach(endpoint => tbl.addRow(endpointRow(endpoint)));
         return tbl.getTbl();
     }
 }

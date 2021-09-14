@@ -235,117 +235,6 @@ class Endpoint extends Observee {
         }
     }
 
-    _build_ag_dose_rows() {
-        const doseUnits = this.doseUnits.units.map(d => d.name),
-            nGroups = this.data.groups.length,
-            nCols = nGroups + 3,
-            percents = 100 / (nCols + 1),
-            tr1 = $("<tr>"),
-            tr2 = $("<tr>");
-
-        // build top-row
-        let doseUnitsHeader = `Dose groups ${doseUnits[0]}`;
-        if (doseUnits.length > 1) {
-            doseUnitsHeader += ` (${doseUnits.slice(1).join("; ")})`;
-        }
-
-        tr1.append(
-            `<th class="sortable" data-sortable-field="name" style="width: ${percents *
-                2}%" rowspan="2">Endpoint</th>`
-        )
-            .append(
-                `<th class="sortable" data-sortable-field="organ" style="width: ${percents}%" rowspan="2">Organ</th>`
-            )
-            .append(
-                `<th class="sortable" data-sortable-field="obs-time" style="width: ${percents}%" rowspan="2">Obs. time</th>`
-            )
-            .append(
-                `<th style="width: ${percents *
-                    nGroups}%" colspan="${nGroups}">${doseUnitsHeader}</th>`
-            );
-
-        // now build header row showing available doses
-        for (var i = 0; i < nGroups; i++) {
-            const doses = this.doseUnits.dosesByDoseIndex(i);
-            let dosesHeader = `${h.ff(doses[0].dose)}`;
-            if (doses.length > 1) {
-                dosesHeader += ` (${doses
-                    .slice(1)
-                    .map(d => h.ff(d.dose))
-                    .join("; ")})`;
-            }
-            tr2.append(`<th>${dosesHeader}</th>`);
-        }
-
-        return {html: [tr1, tr2], ncols: nCols};
-    }
-
-    build_ag_no_dr_li() {
-        return `<li><a href="${this.data.url}">${this.data.name}</a></li>`;
-    }
-
-    build_ag_n_key() {
-        return _.map(this.data.groups, function(v, i) {
-            return v.n || `NR-${i}`;
-        }).join("-");
-    }
-
-    _build_ag_n_row() {
-        const tds = this.data.groups.map(v => `<td>${v.n || "-"}</td>`);
-        return $(`<tr><td>Sample Size</td><td>-</td><td>-</td>${tds}</tr>`);
-    }
-
-    _build_ag_response_row(footnote_object) {
-        var self = this,
-            footnotes,
-            response,
-            td,
-            txt,
-            dr_control,
-            data_type = this.data.data_type,
-            tr = $("<tr>")
-                .append(`<td><a href="${this.data.url}">${this.data.name}</a></td>`)
-                .append(`<td>${this.data.organ || "-"}</td>`)
-                .append(`<td>${this.data.observation_time_text || "-"}</td>`);
-
-        this.data.groups.forEach(function(v, i) {
-            td = $("<td>");
-            if (i === 0) {
-                dr_control = v;
-            }
-            if (!v.isReported) {
-                td.text("-");
-            } else {
-                footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-                if (data_type === "C") {
-                    if (_.isNumber(v.response) && _.isNumber(v.stdev)) {
-                        response = `${h.ff(v.response)} ± ${h.ff(v.stdev)}`;
-                    } else if (_.isNumber(v.response)) {
-                        response = h.ff(v.response);
-                    } else {
-                        response = "-";
-                    }
-                    txt = "";
-                    if (i > 0 && _.isNumber(v.response) && dr_control.response > 0) {
-                        txt = self._continuous_percent_difference_from_control(v, dr_control);
-                        txt = txt === "NR" ? "" : ` (${txt}%)`;
-                    }
-                    td.html(`${response}${txt}${footnotes}`);
-                } else if (data_type === "P") {
-                    td.html(`${self.get_pd_string(v)}${footnotes}`);
-                } else if (["D", "DC"].indexOf(data_type) >= 0) {
-                    const percentChange = self._dichotomous_percent_change_incidence(v),
-                        footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
-                    td.html(`${v.incidence}/${v.n} (${percentChange}%)${footnotes}`);
-                } else {
-                    console.error("unknown data-type");
-                }
-            }
-            tr.append(td);
-        });
-        return tr;
-    }
-
     _endpoint_detail_td() {
         return `
             <a
@@ -471,10 +360,6 @@ class Endpoint extends Observee {
         return txt;
     }
 
-    _pd_percent_difference_from_control(eg) {
-        return eg.response;
-    }
-
     add_endpoint_group_footnotes(footnote_object, endpoint_group_index) {
         var footnotes = [],
             self = this;
@@ -494,34 +379,6 @@ class Endpoint extends Observee {
         return footnote_object.add_footnote(footnotes);
     }
 
-    build_endpoint_list_row() {
-        var self = this,
-            link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
-            detail = $(
-                '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
-            ).click(function() {
-                self.displayAsModal({complete: true});
-            }),
-            ep = $("<span>")
-                .append(link, detail)
-                .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail)),
-            study = this.data.animal_group.experiment.study,
-            experiment = this.data.animal_group.experiment,
-            animalGroup = this.data.animal_group;
-
-        return [
-            `<a href="${study.url}" target="_blank">${study.short_citation}</a>`,
-            `<a href="${experiment.url}" target="_blank">${experiment.name}</a>`,
-            `<a href="${animalGroup.url}" target="_blank">${animalGroup.name}</a>`,
-            ep,
-            this.doseUnits.activeUnit.name,
-            this.get_special_dose_text("NOEL"),
-            this.get_special_dose_text("LOEL"),
-            this.get_bmd_data("BMD"),
-            this.get_bmd_data("BMDL"),
-        ];
-    }
-
     _percent_change_control(index) {
         try {
             if (this.data.data_type == "C") {
@@ -530,8 +387,8 @@ class Endpoint extends Observee {
                     this.data.groups[0]
                 );
             } else if (this.data.data_type == "P") {
-                return this._pd_percent_difference_from_control(this.data.groups[index]);
-            } else {
+                return this.data.groups[index].response;
+            } else if (this.data.data_type == "D") {
                 return this._dichotomous_percent_change_incidence(this.data.groups[index]);
             }
         } catch (err) {
@@ -541,7 +398,6 @@ class Endpoint extends Observee {
 
     displayAsModal(opts) {
         var complete = opts ? opts.complete : true,
-            self = this,
             modal = new HAWCModal(),
             title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $details = $('<div class="col-md-12">'),
@@ -598,9 +454,7 @@ class Endpoint extends Observee {
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
         this.build_general_notes($notes);
-        modal.getModal().on("shown.bs.modal", function() {
-            self.renderPlot($plot, true);
-        });
+        modal.getModal().on("shown.bs.modal", () => this.renderPlot($plot, true));
 
         modal
             .addHeader(title)
@@ -616,9 +470,7 @@ class Endpoint extends Observee {
     defaultDoseAxis() {
         var doses = _.chain(this.data.groups)
             .map("dose")
-            .filter(function(d) {
-                return d > 0;
-            })
+            .filter(d => d > 0)
             .value();
         doses = d3.extent(doses);
         if (doses.length !== 2) return "linear";

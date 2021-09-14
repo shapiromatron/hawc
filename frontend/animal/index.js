@@ -1,5 +1,5 @@
 import AnimalGroup from "./AnimalGroup";
-import AnimalGroupTable from "./AnimalGroupTable";
+import startupAnimalGroupTable from "./AnimalGroupTable";
 import DosingRegimeForm from "./DosingRegimeForm";
 import EditEndpoint from "./EditEndpoint";
 import Endpoint from "./Endpoint";
@@ -11,7 +11,7 @@ import ehvBrowserStartup from "./EhvBrowser";
 
 export default {
     AnimalGroup,
-    AnimalGroupTable,
+    startupAnimalGroupTable,
     DosingRegimeForm,
     EditEndpoint,
     Endpoint,
