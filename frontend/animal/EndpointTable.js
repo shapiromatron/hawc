@@ -53,7 +53,7 @@ class EndpointTable {
             )
                 .on("click", function(e) {
                     e.preventDefault();
-                    self.endpoint.toggle_dose_units();
+                    self.endpoint.dose_units.next();
                 })
                 .appendTo(dose);
         }

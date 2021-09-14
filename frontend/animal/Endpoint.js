@@ -20,14 +20,63 @@ import EndpointPlotContainer from "./EndpointPlotContainer";
 import EndpointTable from "./EndpointTable";
 import Experiment from "./Experiment";
 
+class ActiveDoses {
+    constructor(data) {
+        this.data = data;
+        this.doses = [];
+        this.unpack();
+    }
+    unpack() {
+        this.doses = h.groupNest(this.data.animal_group.dosing_regime.doses, d => d.dose_units.id);
+        this.doses.forEach(function(v) {
+            v.name = v.values[0].dose_units.name;
+        });
+        this.dose_units_id = this.options.dose_units_id || this.doses[0].key;
+        this.switch_dose_units(this.dose_units_id);
+    }
+
+    toggle_dose_units() {
+        var units = _.map(this.doses, "key"),
+            idx = units.indexOf(this.dose_units_id),
+            new_idx = idx < units.length - 1 ? idx + 1 : 0;
+        this._switch_dose(new_idx);
+    }
+
+    switch_dose_units(id_) {
+        for (var i = 0; i < this.doses.length; i++) {
+            if (this.doses[i].key === id_) {
+                return this._switch_dose(i);
+            }
+        }
+        console.error("Error: dose units not found");
+    }
+
+    _switch_dose(idx) {
+        console.log(this.doses, idx);
+        // switch doses to the selected index
+        if (this.doses[idx] === undefined) {
+            console.error("error, dose index does not exist");
+            return;
+        }
+        var egs = this.data.groups,
+            doses = this.doses[idx];
+
+        this.dose_units_id = doses.key;
+        this.dose_units = doses.name;
+
+        egs.forEach((eg, i) => (eg.dose = doses.values[i].dose));
+
+        this.notifyObservers({status: "dose_changed"});
+    }
+}
+
 class Endpoint extends Observee {
     constructor(data, options) {
         super();
         if (!data) return; // added for edit_endpoint prototype extension
         this.options = options || {};
-        this.doses = [];
         this.data = data;
-        this.unpack_doses();
+        this.doses = new ActiveDoses(this.data.animal_group.dosing_regime.doses);
     }
 
     static get_detail_url(id) {
@@ -65,48 +114,6 @@ class Endpoint extends Observee {
             setBody(content);
             obj.renderPlot(plot_div);
         });
-    }
-
-    unpack_doses() {
-        this.doses = h.groupNest(this.data.animal_group.dosing_regime.doses, d => d.dose_units.id);
-        this.doses.forEach(function(v) {
-            v.name = v.values[0].dose_units.name;
-        });
-        this.dose_units_id = this.options.dose_units_id || this.doses[0].key;
-        this.switch_dose_units(this.dose_units_id);
-    }
-
-    toggle_dose_units() {
-        var units = _.map(this.doses, "key"),
-            idx = units.indexOf(this.dose_units_id),
-            new_idx = idx < units.length - 1 ? idx + 1 : 0;
-        this._switch_dose(new_idx);
-    }
-
-    switch_dose_units(id_) {
-        for (var i = 0; i < this.doses.length; i++) {
-            if (this.doses[i].key === id_) {
-                return this._switch_dose(i);
-            }
-        }
-        console.error("Error: dose units not found");
-    }
-
-    _switch_dose(idx) {
-        // switch doses to the selected index
-        if (this.doses[idx] === undefined) {
-            console.error("error, dose index does not exist");
-            return;
-        }
-        var egs = this.data.groups,
-            doses = this.doses[idx];
-
-        this.dose_units_id = doses.key;
-        this.dose_units = doses.name;
-
-        egs.forEach((eg, i) => (eg.dose = doses.values[i].dose));
-
-        this.notifyObservers({status: "dose_changed"});
     }
 
     get_name() {
