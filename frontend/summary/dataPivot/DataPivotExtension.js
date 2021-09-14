@@ -1,4 +1,6 @@
 import _ from "lodash";
+import React, {Component} from "react";
+import ReactDOM from "react-dom";
 
 import Reference from "lit/Reference";
 
@@ -220,4 +222,21 @@ _.extend(DataPivotExtension, {
     ],
 });
 
+class ExtensionList extends Component {
+    render() {
+        return (
+            <ul>
+                {Object.keys(DataPivotExtension.extByColumnKey()).map((c, i) => (
+                    <li key={i}>{c}</li>
+                ))}
+            </ul>
+        );
+    }
+}
+
+function renderExtensionList(el) {
+    ReactDOM.render(<ExtensionList />, el);
+}
+
 export default DataPivotExtension;
+export {ExtensionList, renderExtensionList};
