@@ -1,15 +1,39 @@
 import _ from "lodash";
-import {computed, toJS, observable} from "mobx";
+import {action, computed, toJS, observable} from "mobx";
 
 import TableFootnotes from "shared/utils/TableFootnotes";
 import Endpoint from "../Endpoint";
 
+const orderings = {0: undefined, 1: "asc", 2: "desc"},
+    sortings = {
+        name: d => d.data.name,
+        organ: d => d.data.organ,
+        time: d => d.data.observation_time,
+    };
+
 class AnimalGroupTableStore {
     @observable endpoints = [];
+    @observable sortKey = "name";
+    @observable sortValue = 1;
 
     constructor(data) {
         this.endpoints = data.endpoints.map(d => new Endpoint(d));
         this.footnotes = new TableFootnotes();
+    }
+
+    @action.bound cycleSort(key) {
+        if (key == this.sortKey) {
+            let nextSortValue = this.sortValue + 1;
+            if (nextSortValue === 3) {
+                this.sortKey = null;
+                this.sortValue = 0;
+            } else {
+                this.sortValue = nextSortValue;
+            }
+        } else {
+            this.sortKey = key;
+            this.sortValue = 1;
+        }
     }
 
     @computed get hasEndpoints() {
@@ -21,7 +45,18 @@ class AnimalGroupTableStore {
     }
 
     @computed get endpointsDr() {
-        return this.endpoints.filter(endpoint => endpoint.hasEGdata());
+        const orders = [],
+            directions = [];
+
+        if (this.sortKey) {
+            orders.push(sortings[this.sortKey]);
+            directions.push(orderings[this.sortValue]);
+        }
+
+        return _.chain(this.endpoints)
+            .filter(endpoint => endpoint.hasEGdata())
+            .orderBy(orders, directions)
+            .value();
     }
 
     @computed get firstEndpoint() {

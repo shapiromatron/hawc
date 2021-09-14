@@ -1,4 +1,3 @@
-import $ from "$";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -68,13 +67,28 @@ const nRow = (endpoint, index) => {
                 })}
             </tr>
         );
+    },
+    sortIcons = {0: "&nbsp;", 1: "↑", 2: "↓"},
+    renderIcon = function(current, key, value) {
+        if (current !== key) {
+            return null;
+        }
+        return sortIcons[value];
     };
 
 @inject("store")
 @observer
 class AnimalGroupTable extends Component {
     renderHeader() {
-        const {doses, units, firstEndpoint, numCols} = this.props.store,
+        const {
+                doses,
+                units,
+                firstEndpoint,
+                numCols,
+                cycleSort,
+                sortKey,
+                sortValue,
+            } = this.props.store,
             colWidth = Math.round(100 / (numCols + 1));
         let doseUnitsHeader = `Dose [${units[0].name}]`;
         if (units.length > 1) {
@@ -86,26 +100,14 @@ class AnimalGroupTable extends Component {
         return (
             <thead>
                 <tr>
-                    <th
-                        rowSpan={2}
-                        width={`${colWidth * 2}%`}
-                        className="sortable"
-                        data-sortable-field="name">
-                        Endpoint
+                    <th rowSpan={2} width={`${colWidth * 2}%`} onClick={() => cycleSort("name")}>
+                        <u>{renderIcon("name", sortKey, sortValue)}&nbsp;Endpoint</u>
                     </th>
-                    <th
-                        rowSpan={2}
-                        width={`${colWidth}%`}
-                        className="sortable"
-                        data-sortable-field="organ">
-                        Organ
+                    <th rowSpan={2} width={`${colWidth}%`} onClick={() => cycleSort("organ")}>
+                        <u>{renderIcon("organ", sortKey, sortValue)}&nbsp;Organ</u>
                     </th>
-                    <th
-                        rowSpan={2}
-                        width={`${colWidth}%`}
-                        className="sortable"
-                        data-sortable-field="obs-time">
-                        Obs. time.
+                    <th rowSpan={2} width={`${colWidth}%`} onClick={() => cycleSort("time")}>
+                        <u>{renderIcon("time", sortKey, sortValue)}&nbsp;Obs. Time</u>
                     </th>
                     <th colSpan={doses.length} width={`${colWidth * doses.length}%`}>
                         {doseUnitsHeader}
