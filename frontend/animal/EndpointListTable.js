@@ -3,7 +3,7 @@ import BaseTable from "shared/utils/BaseTable";
 class EndpointListTable {
     constructor(endpoints, dose_id) {
         if (dose_id) {
-            endpoints.forEach(e => e.switch_dose_units(dose_id));
+            endpoints.forEach(e => e.doseUnits.activate(dose_id));
         }
         this.endpoints = endpoints;
         this.tbl = new BaseTable();

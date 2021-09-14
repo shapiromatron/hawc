@@ -17,7 +17,7 @@ class EndpointAggregation extends BaseVisual {
         super(data);
         this.endpoints = data.endpoints.map(function(d) {
             var e = new Endpoint(d);
-            e.switch_dose_units(data.dose_units);
+            e.doseUnits.activate(data.dose_units);
             return e;
         });
         delete this.data.endpoints;
