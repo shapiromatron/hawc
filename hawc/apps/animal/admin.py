@@ -35,6 +35,7 @@ class AnimalGroupAdmin(admin.ModelAdmin):
     )
     list_filter = ("species", "strain", "sex", "experiment__study__assessment_id")
     search_fields = ("name",)
+    raw_id_fields = ("experiment", "species", "strain", "dosing_regime", "siblings")
 
 
 class DoseGroupInline(admin.TabularInline):

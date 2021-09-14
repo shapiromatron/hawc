@@ -100,7 +100,9 @@ class Bmd2Store {
         this.selectedModelNotes = "";
     }
     @action.bound applyRecommendationLogic() {
-        applyRecommendationLogic(this.logic, this.models, this.endpoint, this.doseUnits);
+        if (this.hasExecuted) {
+            applyRecommendationLogic(this.logic, this.models, this.endpoint, this.doseUnits);
+        }
         this.isReady = true;
     }
     autoApplyRecommendationLogic = autorun(() => {

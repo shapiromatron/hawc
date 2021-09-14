@@ -85,10 +85,6 @@ class ActiveDose {
         throw `Unknown doseUnitsId: ${doseUnitsId}`;
     }
 
-    doseValues(doseUnitsId) {
-        this.doseOptions[doseUnitsId].map(d => d.dose);
-    }
-
     doseChoices() {
         return this.units.map(d => {
             return {id: d.id, label: d.name};
