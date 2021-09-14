@@ -69,7 +69,14 @@ class ActiveDose {
             this.activeUnit = unit;
             this.activeDoses = this.doseOptions[doseUnitsId];
             this.endpoint.data.groups.forEach((eg, i) => {
-                eg.dose = this.activeDoses[i].dose;
+                // gracefully handle "broken" state where groups != doses; this should never
+                // occur but sometimes unfortunately does; log an error so we can investigate
+                // the issue.
+                const dose = this.activeDoses[i];
+                if (_.isUndefined(dose)) {
+                    console.error(`Invalid dose mapping: endpoint ${this.endpoint.data.id}`);
+                }
+                eg.dose = dose ? dose.dose : "<none>";
             });
             this.endpoint.notifyObservers({status: "dose_changed"});
             return;
