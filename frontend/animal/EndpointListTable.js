@@ -4,12 +4,10 @@ import BaseTable from "shared/utils/BaseTable";
 
 const endpointRow = function(endpoint) {
     const link = `<a href="${endpoint.data.url}" target="_blank">${endpoint.data.name}</a>`,
-        detail = $(
-            '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
-        ).click(() => endpoint.displayAsModal({complete: true})),
-        ep = $("<span>")
-            .append(link, detail)
-            .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail)),
+        detail = $('<i class="fa fa-eye previewModalIcon" title="preview in a modal">').click(() =>
+            endpoint.displayAsModal({complete: true})
+        ),
+        ep = $('<span class="previewModalParent">').append(link, detail),
         study = endpoint.data.animal_group.experiment.study,
         experiment = endpoint.data.animal_group.experiment,
         animalGroup = endpoint.data.animal_group,

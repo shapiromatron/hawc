@@ -22,8 +22,11 @@ const nRow = (endpoint, index) => {
             {id, url, name, groups, observation_time_text, organ, data_type} = endpoint.data;
         let dr_control, html, fn, response;
         return (
-            <tr key={`e-${id}`}>
+            <tr key={`e-${id}`} className="previewModalParent">
                 <td>
+                    <i
+                        className="float-right fa fa-fixed fa-eye previewModalIcon"
+                        onClick={() => endpoint.displayAsModal({complete: true})}></i>
                     <a href={url}>{name}</a>
                 </td>
                 <td>{organ}</td>
