@@ -169,6 +169,15 @@ class ExploreHeatmap extends BaseVisual {
         return HAWCUtils.pageActionsButton(opts);
     }
 
+    addErrorActionsMenu() {
+        let opts = [
+            "Visualization editing",
+            {url: this.data.url_update, text: '<i class="fa fa-edit"></i>&nbsp;Update'},
+            {url: this.data.url_delete, text: '<i class="fa fa-trash"></i>&nbsp;Delete'},
+        ];
+        return HAWCUtils.pageActionsButton(opts);
+    }
+
     displayAsPage($el, options) {
         options = options || {};
 
@@ -202,9 +211,12 @@ class ExploreHeatmap extends BaseVisual {
 
                     caption.renderAndEnable();
                 } else if (resp.error) {
-                    $el.empty()
-                        .prepend(title)
-                        .append(getErrorDiv());
+                    $el.empty();
+                    const actions = this.data.title ? this.addErrorActionsMenu() : null;
+                    if (!options.visualOnly) {
+                        $el.prepend([actions, title]);
+                    }
+                    $el.append(getErrorDiv());
                 } else {
                     throw "Unknown status.";
                 }
