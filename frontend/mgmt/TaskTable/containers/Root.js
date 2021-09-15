@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
+import FormActions from "shared/components/FormActions";
 
 import TaskTable from "./TaskTable";
 import StudyFilter from "./StudyFilter";
@@ -25,7 +26,7 @@ class Root extends Component {
         }
 
         const {store} = this.props,
-            {displayAsForm} = store.config,
+            {displayAsForm, cancelUrl} = store.config,
             taskList = store.taskListByStudy,
             noTasks = taskList.length === 0;
 
@@ -36,17 +37,11 @@ class Root extends Component {
                 {noTasks ? <h4>No studies match the given query.</h4> : <TaskTable />}
 
                 {displayAsForm && !noTasks ? (
-                    <div className="well form-actions">
-                        <button
-                            type="button"
-                            onClick={store.submitPatches}
-                            className="btn btn-primary">
-                            Submit changes
-                        </button>
-                        <button onClick={store.handleCancel} className="btn btn-light ml-2">
-                            Cancel
-                        </button>
-                    </div>
+                    <FormActions
+                        handleSubmit={store.submitPatches}
+                        submitText="Submit changes"
+                        cancelURL={cancelUrl}
+                    />
                 ) : null}
             </div>
         );

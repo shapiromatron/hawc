@@ -5,6 +5,7 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import {getEditTableComponent, getViewTableComponent} from "../lookups";
 import DjangoForm from "./DjangoForm";
+import FormActions from "shared/components/FormActions";
 
 @inject("store")
 @observer
@@ -33,14 +34,11 @@ class Root extends Component {
                         <Table store={tableStore} forceReadOnly={true} />
                     </TabPanel>
                 </Tabs>
-                <div className="form-actions">
-                    <button type="button" onClick={handleSubmit} className="btn btn-primary mr-1">
-                        {saveBtnText}
-                    </button>
-                    <a href={cancelUrl} className="btn btn-light">
-                        Cancel
-                    </a>
-                </div>
+                <FormActions
+                    handleSubmit={handleSubmit}
+                    submitText={saveBtnText}
+                    cancelURL={cancelUrl}
+                />
             </>
         );
     }

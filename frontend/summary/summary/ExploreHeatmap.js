@@ -140,10 +140,9 @@ class ExploreHeatmap extends BaseVisual {
                     this.dataset = json;
                     return {dataset: json};
                 })
-                .catch(error => {
+                .then(callback, error => {
                     callback({error});
-                })
-                .then(callback);
+                });
         }
     }
 
@@ -205,7 +204,7 @@ class ExploreHeatmap extends BaseVisual {
                 } else if (resp.error) {
                     $el.empty()
                         .prepend(title)
-                        .append(this.getErrorDiv());
+                        .append(getErrorDiv());
                 } else {
                     throw "Unknown status.";
                 }
