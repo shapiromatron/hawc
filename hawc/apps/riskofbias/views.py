@@ -172,14 +172,15 @@ class RobReviewersList(TeamMemberOrHigherMixin, BaseList):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_queryset(self):
+        individual = models.RiskOfBias.objects.filter(active=True, final=False).prefetch_related(
+            "author", "scores"
+        )
+        final = models.RiskOfBias.objects.filter(active=True, final=True).prefetch_related(
+            "author", "scores"
+        )
         return self.model.objects.get_qs(self.assessment).prefetch_related(
-            Prefetch(
-                "riskofbiases",
-                queryset=models.RiskOfBias.objects.all_active().prefetch_related(
-                    "author", "scores",
-                ),
-                to_attr="active_riskofbiases",
-            )
+            Prefetch("riskofbiases", queryset=individual, to_attr="rob_individual"),
+            Prefetch("riskofbiases", queryset=final, to_attr="rob_final"),
         )
 
     def get_context_data(self, **kwargs):
