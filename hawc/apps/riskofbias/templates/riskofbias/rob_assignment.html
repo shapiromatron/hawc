@@ -13,7 +13,7 @@ $(document).ready(function (){
     const el = document.getElementById('main'),
         config = JSON.parse(document.getElementById('config').text);
 
-    window.app.riskofbiasStartup(function (riskofbias) {
+    window.app.startup("riskofbiasStartup", function(riskofbias) {
         riskofbias.robAssignmentStartup(el, config);
     });
 });
