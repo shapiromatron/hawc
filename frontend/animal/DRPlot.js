@@ -290,7 +290,7 @@ class DRPlot extends D3Plot {
             self = this,
             values,
             sigs_data,
-            dose_units = this.endpoint.dose_units;
+            dose_units = this.endpoint.doseUnits.activeUnit.name;
 
         values = _.chain(ep.groups)
             .map(function(v, i) {

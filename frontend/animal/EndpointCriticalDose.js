@@ -26,8 +26,8 @@ class EndpointCriticalDose {
 
     update() {
         const ep = this.endpoint,
-            dose = h.ff(ep.doseUnits.activeDoses[this.critical_effect_idx].dose),
-            units = this.show_units ? ep.dose_units : "";
+            dose = h.ff(ep.data.groups[this.critical_effect_idx].dose),
+            units = this.show_units ? ep.doseUnits.activeUnit.name : "";
 
         ReactDOM.render(<Renderer dose={dose} units={units} />, this.span[0]);
     }

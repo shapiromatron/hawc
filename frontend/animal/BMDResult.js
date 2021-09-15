@@ -71,10 +71,9 @@ class BMDResult extends EndpointCriticalDose {
         }
 
         let currentUnits = this.endpoint.doseUnits.activeUnit.id,
+            units_string = this.endpoint.doseUnits.activeUnit.name,
             bmdUnits = this.endpoint.data.bmd.dose_units,
-            units_string = this.endpoint.dose_units;
-
-        let RenderComponent = currentUnits == bmdUnits ? Renderer : WrongUnitsRender;
+            RenderComponent = currentUnits == bmdUnits ? Renderer : WrongUnitsRender;
 
         ReactDOM.render(
             <RenderComponent bmd={bmd} bmd_notes={bmd_notes} units={units_string} />,
