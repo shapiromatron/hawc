@@ -492,44 +492,55 @@ class TestBulkRobCleanupApis:
 @pytest.mark.django_db
 class TestRobAssignmentApi:
     def test_create_individual(self):
-        Assessment.objects.filter(id=2).update(editable=True)
         c = APIClient()
         url = reverse("riskofbias:api:review-create-v2")
 
         # permissions check
         assert c.login(username="team@hawcproject.org", password="pw") is True
-        resp = c.post(url, dict(study=8, author=3, active=True, final=False))
+        resp = c.post(url, dict(study=1, author=3, active=True, final=False))
         assert resp.status_code == 403
 
         assert c.login(username="pm@hawcproject.org", password="pw") is True
 
         # validation errors
-        resp = c.post(url, dict(study=8, author=5, active=True, final=False))
+        resp = c.post(url, dict(study=1, author=5, active=True, final=False))
         assert resp.status_code == 400
         assert resp.json() == {"author": ["Author cannot be assigned"]}
 
         # success
-        resp = c.post(url, dict(study=8, author=3, active=True, final=False))
+        resp = c.post(url, dict(study=1, author=3, active=True, final=False))
         assert resp.status_code == 201
 
     def test_create_final(self):
-        Assessment.objects.filter(id=2).update(editable=True)
         c = APIClient()
         url = reverse("riskofbias:api:review-create-v2")
 
         assert c.login(username="pm@hawcproject.org", password="pw") is True
-        assert RiskOfBias.objects.get(id=6).active is True
-        resp = c.post(url, dict(study=7, author=3, active=False, final=True))
+        existing_final = RiskOfBias.objects.get(study=1, active=True, final=True)
+        assert existing_final.active is True
+
+        # creating inactive final shouldn't change
+        resp = c.post(url, dict(study=1, author=3, active=False, final=True))
         assert resp.status_code == 201
-        assert RiskOfBias.objects.get(id=6).active is True
-        resp = c.post(url, dict(study=7, author=3, active=True, final=True))
+        existing_final.refresh_from_db()
+        assert existing_final.active is True
+
+        # creating active non-final shouldn't change
+        resp = c.post(url, dict(study=1, author=3, active=True, final=False))
         assert resp.status_code == 201
-        assert RiskOfBias.objects.get(id=6).active is False
+        existing_final.refresh_from_db()
+        assert existing_final.active is True
+
+        # creating active final should change
+        resp = c.post(url, dict(study=1, author=3, active=True, final=True))
+        assert resp.status_code == 201
+        existing_final.refresh_from_db()
+        assert existing_final.active is False
 
     def test_update_individual(self):
-        Assessment.objects.filter(id=2).update(editable=True)
+        rob = RiskOfBias.objects.filter(study=1, active=True, final=False).first()
         c = APIClient()
-        url = reverse("riskofbias:api:review-update-v2", args=(4,))  # not; author 3
+        url = reverse("riskofbias:api:review-update-v2", args=(rob.id,))
 
         # permissions check
         assert c.login(username="team@hawcproject.org", password="pw") is True
@@ -548,9 +559,9 @@ class TestRobAssignmentApi:
         assert resp.status_code == 200
 
     def test_update_final(self):
-        Assessment.objects.filter(id=2).update(editable=True)
+        rob = RiskOfBias.objects.filter(study=1, active=True, final=True).first()
         c = APIClient()
-        url = reverse("riskofbias:api:review-update-v2", args=(6,))  # final; author 3
+        url = reverse("riskofbias:api:review-update-v2", args=(rob.id,))
 
         # permissions check
         assert c.login(username="team@hawcproject.org", password="pw") is True
