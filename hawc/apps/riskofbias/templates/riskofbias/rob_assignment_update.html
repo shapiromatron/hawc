@@ -1,7 +1,13 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h2>Update assignments</h2>
+    <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{% url 'riskofbias:rob_num_reviewers' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update number of reviewers</a>
+        </div>
+    </div>
+    <h2>Update {{assessment.get_rob_name_display|lower}} assignments</h2>
     <div id="main"></div>
     {% include "includes/paginator.html" %}
 {% endblock %}

@@ -15,8 +15,7 @@ class Root extends Component {
             <>
                 {error ? <GenericError /> : null}
                 <p>
-                    <b>Independent reviews:</b>
-                    &nbsp;{number_of_reviewers}
+                    <b>Individual reviews required:</b>&nbsp;{number_of_reviewers}
                 </p>
                 <table className="table table-condensed table-striped">
                     <colgroup>

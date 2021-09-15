@@ -6,7 +6,6 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from hawc.apps.assessment.models import Assessment
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
 from hawc.apps.study.models import Study
