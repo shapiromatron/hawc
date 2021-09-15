@@ -212,7 +212,8 @@ class ExploreHeatmap extends BaseVisual {
                     caption.renderAndEnable();
                 } else if (resp.error) {
                     $el.empty();
-                    const actions = this.data.title ? this.addErrorActionsMenu() : null;
+                    const actions =
+                        this.data.title && window.isEditable ? this.addErrorActionsMenu() : null;
                     if (!options.visualOnly) {
                         $el.prepend([actions, title]);
                     }
