@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import slugify from "slugify";
 
 import Hero from "./Hero";
+import h from "./helpers";
 
 class HAWCUtils {
     static Hero = Hero;
@@ -203,21 +204,13 @@ class HAWCUtils {
         return false;
     }
 
-    static randomString(length) {
-        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        return Array(length)
-            .fill()
-            .map(() => chars.charAt(Math.floor(Math.random() * chars.length)))
-            .join("");
-    }
-
     static urlify(str, maxLength = 50, suffixLength = 4) {
         // transforms a given string into a url friendly slug
         // if the slug is greater than maxLength, then it is truncated and appended
         // with a random string (to ensure uniqueness if uniqueness is truncated)
         var slug = slugify(str, {remove: /[^\w\s-_]/g});
         return slug.length > maxLength
-            ? slug.slice(0, maxLength - suffixLength) + this.randomString(suffixLength)
+            ? slug.slice(0, maxLength - suffixLength) + h.randomString(suffixLength)
             : slug;
     }
 
