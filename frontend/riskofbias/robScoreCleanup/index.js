@@ -7,9 +7,8 @@ import h from "shared/utils/helpers";
 import createStore from "./store";
 import Main from "./containers/Main";
 
-export default function(el, configEl) {
-    const config = h.parseJsonFromElement(configEl),
-        store = createStore(config);
+export default function(el, config) {
+    const store = createStore(config);
     ReactDOM.render(
         <Provider store={store}>
             <Main />

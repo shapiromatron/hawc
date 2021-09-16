@@ -100,9 +100,6 @@ const helpers = {
                 }
             });
     },
-    parseJsonFromElement(element) {
-        return JSON.parse(element.textContent);
-    },
     ff(number) {
         // ff = float format
         if (number === 0) {
