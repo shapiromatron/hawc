@@ -63,6 +63,11 @@ class RobAssignmentStore extends StudyRobStore {
     }
 
     @action.bound
+    syncActiveFinal() {
+        console.log("IMPLEMENT");
+    }
+
+    @action.bound
     create(study, authorId, final, cb) {
         const {csrf} = this.config,
             url = `/rob/api/review/create_v2/`,

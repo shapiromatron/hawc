@@ -223,8 +223,12 @@ class RobReviewersUpdate(BaseList):
     paginate_by = 25
 
     def get_queryset(self):
-        qs = super().get_queryset().prefetch_related("riskofbiases__author")
-        qs = qs.filter(assessment=self.assessment)  # todo why need this?
+        qs = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related("riskofbiases__author", "riskofbiases__scores")
+        )
         if not self.assessment.user_can_edit_assessment(self.request.user):
             raise PermissionDenied()
         return qs
@@ -244,6 +248,7 @@ class RobReviewersUpdate(BaseList):
                         {
                             "id": rob.id,
                             "active": rob.active,
+                            "is_complete": rob.is_complete,
                             "final": rob.final,
                             "author": rob.author_id,
                             "author_name": str(rob.author),

@@ -35,6 +35,17 @@ class Root extends Component {
                             <StudyRow key={study.id} study={study} />
                         ))}
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colSpan="3">
+                                <i className="fa fa-fw fa-times"></i> incomplete: a judgment and
+                                descriptive text are not completed for all metrics.
+                                <br />
+                                <i className="fa fa-fw fa-check"></i> complete: a judgment and
+                                descriptive text are filled for all metrics.
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </>
         );

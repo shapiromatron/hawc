@@ -63,11 +63,14 @@ class RobItem extends Component {
     renderRead() {
         const {rob} = this.props,
             activeIcon = rob.active ? "fa fa-fw fa-toggle-on mr-2" : "fa fa-fw fa-toggle-off mr-2",
-            activeTitle = rob.active ? "active" : "inactive";
+            activeTitle = rob.active ? "Active" : "Inactive",
+            completeIcon = rob.is_complete ? "fa fa-fw fa-check" : "fa fa-fw fa-times",
+            completeTitle = rob.is_complete ? "Complete" : "Incomplete";
         return (
             <div key={rob.id} className="clearfix">
                 <i className={activeIcon} title={activeTitle}></i>
                 {rob.author_name}
+                <i className={completeIcon} title={completeTitle}></i>
                 <button
                     onClick={() => this.setState({editForm: true})}
                     className="mb-1 pull-right btn btn-secondary">
