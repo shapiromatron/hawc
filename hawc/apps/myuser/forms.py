@@ -1,5 +1,6 @@
 from crispy_forms import layout as cfl
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_backends
 from django.contrib.auth.forms import (
     AuthenticationForm,
@@ -19,6 +20,12 @@ _PASSWORD_HELP = (
     "Password must be at least eight characters in length, "
     + "at least one special character, and at least one digit."
 )
+
+_accept_license_help_text = """
+<p>Please <a href="#" data-toggle="modal" data-target="#license_modal">review</a>
+and accept the HAWC license</p
+"""
+_accept_license_error = "License must be accepted to continue."
 
 
 def checkPasswordComplexity(pw):
@@ -114,8 +121,6 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
 
 
 class RegisterForm(PasswordForm):
-    _accept_license_help_text = "License must be accepted in order to create an account."
-
     class Meta:
         model = models.HAWCUser
         fields = (
@@ -129,19 +134,16 @@ class RegisterForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["license_v2_accepted"].label = "Accept license"
-        self.fields["license_v2_accepted"].help_text = self._accept_license_help_text
-        txt = '&nbsp;<a href="#" data-toggle="modal" data-target="#license_modal">View license</a>'
-        self.fields["license_v2_accepted"].help_text += txt
+        if settings.ACCEPT_LICENSE_REQUIRED:
+            self.fields["license_v2_accepted"].help_text = _accept_license_help_text
+        else:
+            self.fields.pop("license_v2_accepted")
 
     @property
     def helper(self):
         login_url = reverse("user:login")
         helper = BaseFormHelper(
-            self,
-            legend_text="Create an account",
-            cancel_url=login_url,
-            submit_text="Create account",
+            self, legend_text="Create an account", cancel_url=login_url, submit_text="Create",
         )
         helper.add_row("first_name", 2, "col-6")
         helper.add_row("password1", 2, "col-6")
@@ -150,7 +152,7 @@ class RegisterForm(PasswordForm):
     def clean_license_v2_accepted(self):
         license = self.cleaned_data.get("license_v2_accepted")
         if not license:
-            raise forms.ValidationError(self._accept_license_help_text)
+            raise forms.ValidationError(_accept_license_error)
         return license
 
     def clean_email(self):
@@ -207,6 +209,25 @@ class AcceptNewLicenseForm(ModelForm):
     class Meta:
         model = models.HAWCUser
         fields = ("license_v2_accepted",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["license_v2_accepted"].help_text = _accept_license_help_text
+
+    def clean_license_v2_accepted(self):
+        license = self.cleaned_data.get("license_v2_accepted")
+        if not license:
+            raise forms.ValidationError(_accept_license_error)
+        return license
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Please accept the terms of use",
+            cancel_url=reverse("portal"),
+            submit_text="Submit",
+        )
 
 
 def hawc_authenticate(email=None, password=None):
