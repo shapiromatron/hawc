@@ -26,5 +26,6 @@ PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
 ANYONE_CAN_CREATE_ASSESSMENTS = True
 PM_CAN_MAKE_PUBLIC = True
+ACCEPT_LICENSE_REQUIRED = True
 
 logging.disable(logging.CRITICAL)
