@@ -14,30 +14,9 @@
       </div>
   {% endif %}
   <h2 class="d-inline-block">{{object}}: {{assessment.get_rob_name_display}} review</h2>
-  <div id="robTable"></div>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-    {
-        "assessment_id": "{{ assessment.id }}",
-        "study": {
-            "id": "{{ object.study.pk }}",
-            "url": "{% url 'study:api:study-list' %}"
-        },
-        "csrf": "{{ csrf_token }}",
-        "host": "//{{request.get_host}}",
-        "display": "final",
-        "isForm": false
-    }
-</script>
-<script type="text/javascript">
-$(document).ready(function (){
-  window.app.startup("riskofbiasStartup", function (riskofbias) {
-    const el = document.getElementById('robTable'),
-      config = window.app.getConfig();
-    riskofbias.TableStartup(el, config);
-  });
-});
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

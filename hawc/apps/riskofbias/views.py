@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -389,9 +390,24 @@ class RoBDetail(BaseDetail):
     model = Study
     template_name = "riskofbias/rob_detail.html"
 
+    def get_webapp_config(self, display: str) -> Dict:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="TableStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                study=dict(id=self.object.study.id, url=reverse("study:api:study-list")),
+                csrf=get_token(self.request),
+                host=f"//{self.request.get_host()}",
+                display=display,
+                isForm=False,
+            ),
+        ).dict()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].append(Breadcrumb(name=self.assessment.get_rob_name_display()))
+        context["config"] = self.get_webapp_config("final")
         return context
 
 
@@ -411,6 +427,7 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
         context["breadcrumbs"][3] = Breadcrumb(
             name=f"{self.assessment.get_rob_name_display()} (all reviews)"
         )
+        context["config"] = self.get_webapp_config("all")
         return context
 
 
