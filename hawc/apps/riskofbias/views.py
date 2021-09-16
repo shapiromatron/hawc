@@ -10,6 +10,7 @@ from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -56,12 +57,16 @@ class ARoBDetail(BaseList):
         context = super().get_context_data(**kwargs)
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
-        context["config"] = {
-            "assessment_id": self.assessment.id,
-            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-            "is_editing": False,
-            "csrf": get_token(self.request),
-        }
+        context["config"] = WebappConfig(
+            app="riskofbiasStartup",
+            page="RobMetricsStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                api_url=f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+                is_editing=False,
+                csrf=get_token(self.request),
+            ),
+        ).dict()
         return context
 
 
@@ -83,14 +88,18 @@ class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Update"))
-        context["config"] = {
-            "assessment_id": self.assessment.id,
-            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-            "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
-            "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
-            "is_editing": True,
-            "csrf": get_token(self.request),
-        }
+        context["config"] = WebappConfig(
+            app="riskofbiasStartup",
+            page="RobMetricsStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                api_url=f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+                submit_url=f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
+                cancel_url=reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
+                is_editing=True,
+                csrf=get_token(self.request),
+            ),
+        ).dict()
         return context
 
 

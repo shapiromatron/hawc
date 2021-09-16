@@ -20,6 +20,7 @@ from django.utils.encoding import force_str
 from docx.document import Document
 from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter
+from pydantic import BaseModel as PydanticModel
 from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
@@ -290,6 +291,12 @@ class FlatFileExporter:
     def build_export(self) -> FlatExport:
         df = self.build_df()
         return FlatExport(df, self.filename)
+
+
+class WebappConfig(PydanticModel):
+    app: str
+    page: str
+    data: Dict
 
 
 re_digits = r"\d+"
