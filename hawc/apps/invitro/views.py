@@ -1,8 +1,11 @@
 from django.db.models import Q
+from django.middleware.csrf import get_token
+from django.urls import reverse
 from django.views.generic import DetailView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
@@ -109,11 +112,27 @@ class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = [
-            Breadcrumb.build_root(self.request.user),
-            Breadcrumb.from_object(self.assessment),
-            Breadcrumb(name="Update in-vitro endpoint categories"),
-        ]
+        list_url = reverse("invitro:api:category-list") + f"?assessment_id={self.assessment.id}"
+        context.update(
+            breadcrumbs=[
+                Breadcrumb.build_root(self.request.user),
+                Breadcrumb.from_object(self.assessment),
+                Breadcrumb(name="Update in-vitro endpoint categories"),
+            ],
+            config=WebappConfig(
+                app="nestedTagEditorStartup",
+                data=dict(
+                    assessment_id=self.assessment.id,
+                    base_url=reverse("invitro:api:category-list"),
+                    list_url=list_url,
+                    csrf=get_token(self.request),
+                    host=f"//{self.request.get_host()}",
+                    title="Modify in-vitro endpoint categories",
+                    extraHelpHtml="",
+                    btnLabel="Add new category",
+                ),
+            ).dict(),
+        )
         return context
 
 
