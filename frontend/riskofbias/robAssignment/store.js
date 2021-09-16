@@ -33,7 +33,7 @@ class RobAssignmentStore extends StudyRobStore {
     }
 
     @action.bound
-    update(rob, updates, cb) {
+    update(study, rob, updates, cb) {
         const {csrf} = this.config,
             url = `/rob/api/review/${rob.id}/update_v2/`;
 
@@ -47,6 +47,7 @@ class RobAssignmentStore extends StudyRobStore {
             updates,
             d => {
                 _.assign(rob, d);
+                this.syncActiveFinal(study, d);
                 if (cb) {
                     cb();
                 }
@@ -63,8 +64,16 @@ class RobAssignmentStore extends StudyRobStore {
     }
 
     @action.bound
-    syncActiveFinal() {
-        console.log("IMPLEMENT");
+    syncActiveFinal(study, d) {
+        // sync frontend w/ backend - only one final review can be active
+        if (d.final && d.active) {
+            study.robs
+                .filter(rob => rob.final)
+                .filter(rob => rob.id !== d.id)
+                .forEach(rob => {
+                    rob.active = false;
+                });
+        }
     }
 
     @action.bound
@@ -80,15 +89,8 @@ class RobAssignmentStore extends StudyRobStore {
             csrf,
             payload,
             d => {
-                if (final) {
-                    // sync frontend w/ backend - only one final review can be active
-                    study.robs
-                        .filter(rob => rob.final)
-                        .forEach(rob => {
-                            rob.active = false;
-                        });
-                }
                 study.robs.push(d);
+                this.syncActiveFinal(study, d);
                 if (cb) {
                     cb();
                 }

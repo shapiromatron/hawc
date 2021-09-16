@@ -163,7 +163,37 @@ class ARoBLoadApproach(ARoBCopy):
         return context
 
 
-class RobReviewersList(TeamMemberOrHigherMixin, BaseList):
+def get_rob_assignment_data(assessment, studies):
+    # custom data; the `robs` must match response in RiskOfBiasAssignmentSerializer
+    return {
+        "assessment_id": assessment.id,
+        "number_of_reviewers": assessment.rob_settings.number_of_reviewers,
+        "studies": [
+            {
+                "id": study.id,
+                "short_citation": study.short_citation,
+                "published": study.published,
+                "url": study.get_absolute_url(),
+                "robs": [
+                    {
+                        "id": rob.id,
+                        "edit_url": rob.get_edit_url(),
+                        "active": rob.active,
+                        "is_complete": rob.is_complete,
+                        "final": rob.final,
+                        "author": rob.author_id,
+                        "author_name": str(rob.author),
+                        "study": rob.study_id,
+                    }
+                    for rob in study.robs
+                ],
+            }
+            for study in studies
+        ],
+    }
+
+
+class RobAssignmentList(TeamMemberOrHigherMixin, BaseList):
     parent_model = Assessment
     model = Study
     template_name = "riskofbias/rob_assignment_list.html"
@@ -172,24 +202,74 @@ class RobReviewersList(TeamMemberOrHigherMixin, BaseList):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_queryset(self):
-        individual = models.RiskOfBias.objects.filter(active=True, final=False).prefetch_related(
-            "author", "scores"
+        robs = models.RiskOfBias.objects.filter(active=True).prefetch_related("author", "scores")
+        qs = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
         )
-        final = models.RiskOfBias.objects.filter(active=True, final=True).prefetch_related(
-            "author", "scores"
+        if not self.assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        return qs
+
+    def get_custom_data(self, context):
+        data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
+        data.update(
+            edit=False,
+            user_id=self.request.user.id,
+            can_edit_assessment=context["obj_perms"]["edit_assessment"],
         )
-        return self.model.objects.get_qs(self.assessment).prefetch_related(
-            Prefetch("riskofbiases", queryset=individual, to_attr="rob_individual"),
-            Prefetch("riskofbiases", queryset=final, to_attr="rob_final"),
-        )
+        return data
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["rob_count"] = self.assessment.rob_settings.number_of_reviewers + 1
+        context["config"] = self.get_custom_data(context)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(
             name=f"{self.assessment.get_rob_name_display()} assignments"
         )
+        return context
+
+
+class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
+    parent_model = Assessment
+    model = Study
+    template_name = "riskofbias/rob_assignment_update.html"
+    paginate_by = 25
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_queryset(self):
+        robs = models.RiskOfBias.objects.prefetch_related("author", "scores")
+        qs = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
+        )
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied()
+        return qs
+
+    def get_custom_data(self, context):
+        data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
+        data.update(
+            edit=True,
+            users=[
+                {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
+            ],
+            csrf=get_token(self.request),
+        )
+        return data
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["config"] = self.get_custom_data(context)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update")
         return context
 
 
@@ -213,64 +293,6 @@ class RobNumberReviewsUpdate(BaseUpdate):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
         context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
-        return context
-
-
-class RobReviewersUpdate(BaseList):
-    parent_model = Assessment
-    model = Study
-    template_name = "riskofbias/rob_assignment_update.html"
-    paginate_by = 25
-
-    def get_queryset(self):
-        qs = (
-            super()
-            .get_queryset()
-            .filter(assessment=self.assessment)
-            .prefetch_related("riskofbiases__author", "riskofbiases__scores")
-        )
-        if not self.assessment.user_can_edit_assessment(self.request.user):
-            raise PermissionDenied()
-        return qs
-
-    def get_custom_data(self, studies):
-        # custom data; the `robs` must match response in RiskOfBiasAssignmentSerializer
-        return {
-            "assessment_id": self.assessment.id,
-            "number_of_reviewers": self.assessment.rob_settings.number_of_reviewers,
-            "studies": [
-                {
-                    "id": study.id,
-                    "short_citation": study.short_citation,
-                    "published": study.published,
-                    "url": study.get_absolute_url(),
-                    "robs": [
-                        {
-                            "id": rob.id,
-                            "active": rob.active,
-                            "is_complete": rob.is_complete,
-                            "final": rob.final,
-                            "author": rob.author_id,
-                            "author_name": str(rob.author),
-                            "study": rob.study_id,
-                        }
-                        for rob in study.riskofbiases.all()
-                    ],
-                }
-                for study in studies
-            ],
-            "users": [
-                {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
-            ],
-            "csrf": get_token(self.request),
-        }
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["data"] = self.get_custom_data(context["object_list"])
-        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
-        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
-        context["breadcrumbs"][4] = Breadcrumb(name="Update")
         return context
 
 

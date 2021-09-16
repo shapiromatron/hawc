@@ -382,6 +382,7 @@ class RiskOfBiasAssignmentSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret["author_name"] = str(instance.author)
         ret["is_complete"] = instance.is_complete
+        ret["edit_url"] = instance.get_edit_url()
         return ret
 
     def validate(self, data):

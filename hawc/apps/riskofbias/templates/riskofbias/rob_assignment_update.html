@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block extrajs %}
-{{data|json_script:"config"}}
+{{config|json_script:"config"}}
 <script type="text/javascript">
 $(document).ready(function (){
     const el = document.getElementById('main'),

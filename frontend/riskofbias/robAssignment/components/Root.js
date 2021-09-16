@@ -10,18 +10,18 @@ import StudyRow from "./StudyRow";
 class Root extends Component {
     render() {
         const {studies, error} = this.props.store,
-            {number_of_reviewers} = this.props.store.config;
+            {number_of_reviewers, edit} = this.props.store.config;
         return (
             <>
                 {error ? <GenericError /> : null}
                 <p>
                     <b>Individual reviews required:</b>&nbsp;{number_of_reviewers}
                 </p>
-                <table className="table table-condensed table-striped">
+                <table className="table table-condensed table-sm table-striped">
                     <colgroup>
-                        <col width="20%" />
-                        <col width="40%" />
-                        <col width="40%" />
+                        <col width="33%" />
+                        <col width="33%" />
+                        <col width="33%" />
                     </colgroup>
                     <thead>
                         <tr>
@@ -38,11 +38,34 @@ class Root extends Component {
                     <tfoot>
                         <tr>
                             <td colSpan="3">
-                                <i className="fa fa-fw fa-times"></i> incomplete: a judgment and
-                                descriptive text are not completed for all metrics.
-                                <br />
-                                <i className="fa fa-fw fa-check"></i> complete: a judgment and
-                                descriptive text are filled for all metrics.
+                                <ul>
+                                    <li>
+                                        <i className="fa fa-fw fa-times"></i> incomplete: a judgment
+                                        and descriptive text are not completed for all metrics.
+                                    </li>
+                                    <li>
+                                        <i className="fa fa-fw fa-check"></i> complete: a judgment
+                                        and descriptive text are filled for all metrics.
+                                    </li>
+                                    {edit ? (
+                                        <>
+                                            <li>
+                                                <i className="fa fa-fw fa-toggle-on"></i> active:
+                                                the assigned user will need to complete the review.
+                                                For individual reviews, it must be completed before
+                                                a final review can be edited. For a final review, it
+                                                will be shown as the overall study review. Only one
+                                                final review can be active at at time.
+                                            </li>
+                                            <li>
+                                                <i className="fa fa-fw fa-toggle-off"></i> inactive:
+                                                the review is preserved, but visible to team
+                                                members. It does not need to be completed, and is
+                                                not shown when conducting a final review.
+                                            </li>
+                                        </>
+                                    ) : null}
+                                </ul>
                             </td>
                         </tr>
                     </tfoot>

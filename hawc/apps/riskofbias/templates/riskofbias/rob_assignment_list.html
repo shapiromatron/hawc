@@ -10,87 +10,19 @@
     </div>
     {% endif %}
     <h2>{{assessment.get_rob_name_display}} assignments</h2>
-
-    <p>
-        <b>Individual reviews required: </b>{{assessment.rob_settings.number_of_reviewers}}
-    </p>
-
-    <table class="table table-sm table-striped">
-        <colgroup>
-            <col width="33%" />
-            <col width="33%" />
-            <col width="33%" />
-        </colgroup>
-        <thead>
-            <th>Study</th>
-            <th>Individual review(s)</th>
-            <th>Final review(s)</th>
-        </thead>
-        <tbody>
-            {% for study in object_list %}
-            <tr>
-                <td>
-                    <a href="{{ study.get_absolute_url }}">{{study}}</a>
-                </td>
-                <td>
-                    <ul class="mb-0">
-                    {% for rob in study.rob_individual %}
-                        <li>
-                            <span>{{rob.author}}</span>
-                            {% if request.user == rob.author or obj_perms.edit_assessment %}
-                                <a href="{{rob.get_edit_url}}">
-                                    <i title="Edit"
-                                    class="fa fa-fw fa-pencil-square-o"
-                                    aria-hidden="true"></i></a>
-                            {% endif %}
-                            {% if rob.is_complete %}
-                                <i class="fa fa-fw fa-check"></i>
-                            {% else %}
-                                <i class="fa fa-fw fa-times"></i>
-                            {% endif %}
-                        </li>
-                    {% empty %}
-                        <li><i>No reviews.</i></li>
-                    {% endfor %}
-                    </ul>
-                </td>
-                <td>
-                    <ul class="mb-0">
-                    {% for rob in study.rob_final %}
-                        <li>
-                            <span>{{rob.author}}</span>
-                            {% if request.user == rob.author or obj_perms.edit_assessment %}
-                                <a href="{{rob.get_edit_url}}">
-                                    <i title="Edit"
-                                    class="fa fa-fw fa-pencil-square-o"
-                                    aria-hidden="true"></i></a>
-                            {% endif %}
-                            {% if rob.is_complete %}
-                                <i class="fa fa-fw fa-check"></i>
-                            {% else %}
-                                <i class="fa fa-fw fa-times"></i>
-                            {% endif %}
-                        </li>
-                    {% empty %}
-                        <li><i>No reviews.</i></li>
-                    {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                No studies exist.
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3">
-                    <i class="fa fa-fw fa-times"></i> incomplete: a judgment and descriptive text are not completed for all metrics.
-                    <br/>
-                    <i class="fa fa-fw fa-check"></i> complete: a judgment and descriptive text are filled for all metrics.
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+    <div id="main"></div>
 {% endblock %}
+
+{% block extrajs %}
+{{config|json_script:"config"}}
+<script type="text/javascript">
+    $(document).ready(function () {
+        const el = document.getElementById('main'),
+            config = JSON.parse(document.getElementById('config').text);
+
+        window.app.startup("riskofbiasStartup", function (riskofbias) {
+            riskofbias.robAssignmentStartup(el, config);
+        });
+    });
+</script>
+{% endblock extrajs %}

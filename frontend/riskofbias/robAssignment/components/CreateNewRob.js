@@ -53,7 +53,7 @@ class CreateNewRob extends Component {
             <div className="clearfix">
                 <button
                     onClick={() => this.setState({editForm: true})}
-                    className="mb-1 pull-right btn btn-primary">
+                    className="mb-1 pull-right btn btn-sm btn-primary">
                     <i className="fa fa-fw fa-plus"></i>Create
                 </button>
             </div>

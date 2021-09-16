@@ -40,12 +40,12 @@ urlpatterns = [
     # rob reviewers
     path(
         "assessment/<int:pk>/study-assignments/",
-        views.RobReviewersList.as_view(),
+        views.RobAssignmentList.as_view(),
         name="rob_assignments",
     ),
     path(
         "assessment/<int:pk>/study-assignments/update/",
-        views.RobReviewersUpdate.as_view(),
+        views.RobAssignmentUpdate.as_view(),
         name="rob_assignments_update",
     ),
     path(
