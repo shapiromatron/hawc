@@ -20,7 +20,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
-from .helper import tryParseInt, WebappConfig
+from .helper import WebappConfig, tryParseInt
 
 logger = logging.getLogger(__name__)
 
