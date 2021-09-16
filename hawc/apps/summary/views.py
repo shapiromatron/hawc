@@ -3,13 +3,14 @@ from typing import Dict
 
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.serializers import to_json
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -48,6 +49,13 @@ class SummaryTextList(BaseList):
         rt = self.model.get_assessment_root_node(self.assessment.id)
         return self.model.objects.filter(pk__in=[rt.pk])
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["config"] = WebappConfig(
+            app="summaryTextStartup", data=dict(assessment_id=self.assessment.id, editMode=False)
+        ).dict()
+        return context
+
 
 class SummaryTextModify(BaseCreate):
     # Base view for all Create, Update, Delete GET operations
@@ -65,6 +73,12 @@ class SummaryTextModify(BaseCreate):
             "Update text",
             [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
         )
+        context["config"] = WebappConfig(
+            app="summaryTextStartup",
+            data=dict(
+                assessment_id=self.assessment.id, editMode=True, csrf=get_token(self.request),
+            ),
+        ).dict()
         return context
 
 
@@ -101,6 +115,9 @@ class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
         )
+        context["config"] = WebappConfig(
+            app="summaryTableViewStartup", data=dict(table_id=self.object.id)
+        ).dict()
         return context
 
 
@@ -141,10 +158,17 @@ class SummaryTableCreate(BaseCreate):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            is_create=True,
-            initial=to_json(serializers.SummaryTableSerializer, context["form"].instance),
-            save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
-            cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
+            config=WebappConfig(
+                app="summaryTableEditStartup",
+                data=dict(
+                    assessment_id=self.assessment.id,
+                    is_create=True,
+                    initial=serializers.SummaryTableSerializer(context["form"].instance).data,
+                    save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
+                    cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
+                    csrf=get_token(self.request),
+                ),
+            ).dict()
         )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
@@ -159,14 +183,21 @@ class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            is_create=False,
-            initial=to_json(serializers.SummaryTableSerializer, self.object),
-            save_url=self.object.get_api_url(),
-            cancel_url=self.object.get_absolute_url(),
-        )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
+        )
+        context.update(
+            config=WebappConfig(
+                app="summaryTableEditStartup",
+                data=dict(
+                    assessment_id=self.assessment.id,
+                    is_create=False,
+                    initial=serializers.SummaryTableSerializer(self.object).data,
+                    save_url=self.object.get_api_url(),
+                    cancel_url=self.object.get_absolute_url(),
+                    csrf=get_token(self.request),
+                ),
+            ).dict()
         )
         return context
 

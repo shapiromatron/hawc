@@ -7,7 +7,11 @@ export default function tryWebAppStartup() {
     if (el && config) {
         const content = JSON.parse(config.textContent);
         window.app.startup(content.app, function(app) {
-            app[content.page](el, content.data);
+            if (content.page) {
+                app[content.page](el, content.data);
+            } else {
+                app(el, content.data);
+            }
         });
     }
 }

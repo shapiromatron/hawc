@@ -295,7 +295,7 @@ class FlatFileExporter:
 
 class WebappConfig(PydanticModel):
     app: str
-    page: str
+    page: Optional[str]
     data: Dict
 
 

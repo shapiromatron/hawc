@@ -5,26 +5,11 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.renderers import JSONRenderer
 from rest_framework.settings import api_settings
 from rest_framework.utils import html
 from rest_framework.validators import UniqueTogetherValidator
 
 from .helper import get_id_from_choices
-
-
-def to_json(Serializer: serializers.ModelSerializer, instance: models.Model) -> str:
-    """Return a JSON string from an instance just like a serializer would, outside of the drf view logic.
-
-    Args:
-        Serializer (serializers.ModelSerializer): a django model serializer class
-        instance (models.Model): a django model instance
-
-    Returns:
-        str: a JSON string representation
-    """
-    serializer = Serializer(instance=instance)
-    return JSONRenderer().render(serializer.data).decode("utf8")
 
 
 def validate_pydantic(

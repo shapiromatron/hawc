@@ -35,7 +35,7 @@
   {% endblock %}
 
 {% block extrajs %}
-{% if not no_data %}
-{{config|json_script:"config"}}
-{% endif %}
+  {% if not no_data %}
+    {{ config|json_script:"config" }}
+  {% endif %}
 {% endblock extrajs %}
