@@ -19,9 +19,9 @@ class Root extends Component {
                 </p>
                 <table className="table table-condensed table-sm table-striped">
                     <colgroup>
-                        <col width="33%" />
-                        <col width="33%" />
-                        <col width="33%" />
+                        <col width="25%" />
+                        <col width="37%" />
+                        <col width="37%" />
                     </colgroup>
                     <thead>
                         <tr>

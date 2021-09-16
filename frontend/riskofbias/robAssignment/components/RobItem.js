@@ -107,7 +107,7 @@ class RobItem extends Component {
                     <button
                         onClick={() => this.setState({editForm: true})}
                         className="mb-1 pull-right btn btn-sm btn-secondary">
-                        <i className="fa fa-fw fa-edit"></i>Change
+                        <i className="fa fa-fw fa-edit"></i>Update
                     </button>
                 ) : null}
             </div>
