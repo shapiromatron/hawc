@@ -38,7 +38,7 @@ class Root extends Component {
                     <tfoot>
                         <tr>
                             <td colSpan="3">
-                                <ul>
+                                <ul className="list-unstyled">
                                     <li>
                                         <i className="fa fa-fw fa-times"></i> incomplete: a judgment
                                         and descriptive text are not completed for all metrics.
@@ -59,7 +59,7 @@ class Root extends Component {
                                             </li>
                                             <li>
                                                 <i className="fa fa-fw fa-toggle-off"></i> inactive:
-                                                the review is preserved, but visible to team
+                                                the review is retained, but is not visible to team
                                                 members. It does not need to be completed, and is
                                                 not shown when conducting a final review.
                                             </li>
