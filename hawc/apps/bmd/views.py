@@ -1,8 +1,10 @@
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
 
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseDelete,
     BaseDetail,
@@ -62,8 +64,30 @@ class SessionList(BaseList):
         return self.model.objects.filter(endpoint=self.parent)
 
 
+def _get_session_config(view, editMode: bool) -> WebappConfig:
+    return WebappConfig(
+        app="bmds2Startup",
+        data=dict(
+            editMode=editMode,
+            assessment_id=view.assessment.id,
+            bmds_version=view.object.get_version_display(),
+            endpoint_id=view.object.endpoint_id,
+            session_url=view.object.get_api_url(),
+            execute_url=view.object.get_execute_url(),
+            execute_status_url=view.object.get_execute_status_url(),
+            selected_model_url=view.object.get_selected_model_url(),
+            csrf=get_token(view.request) if editMode else None,
+        ),
+    )
+
+
 class SessionDetail(BaseDetail):
     model = models.Session
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(config=_get_session_config(self, editMode=False).dict())
+        return context
 
 
 class SessionUpdate(BaseUpdate):
@@ -75,6 +99,11 @@ class SessionUpdate(BaseUpdate):
     def get_redirect_url(self, *args, **kwargs):
         obj = models.Session.create_new(self.object)
         return obj.get_update_url()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(config=_get_session_config(self, editMode=True).dict())
+        return context
 
 
 class SessionDelete(BaseDelete):
