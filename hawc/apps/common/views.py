@@ -20,7 +20,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
-from .helper import tryParseInt
+from .helper import tryParseInt, WebappConfig
 
 logger = logging.getLogger(__name__)
 
@@ -797,21 +797,27 @@ class HeatmapBase(BaseList):
             if self.request.GET.get("unpublished", "false").lower() == "true"
             else ""
         )
+        can_edit = context["obj_perms"]["edit"]
+        create_url = reverse("summary:visualization_create", args=(self.assessment.id, 6))
         context.update(
-            dict(
-                data_class=self.heatmap_data_class,
-                data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
-                heatmap_view_title=self.heatmap_view_title,
-                obj_perms=self.assessment.user_permissions(self.request.user),
-                breadcrumbs=[
-                    Breadcrumb.build_root(self.request.user),
-                    Breadcrumb.from_object(self.assessment),
-                    Breadcrumb(
-                        name="Endpoints",
-                        url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
-                    ),
-                    Breadcrumb(name=self.heatmap_view_title),
-                ],
-            )
+            config=WebappConfig(
+                app="heatmapTemplateStartup",
+                data=dict(
+                    assessment=str(self.assessment),
+                    data_class=self.heatmap_data_class,
+                    data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
+                    clear_cache_url=self.assessment.get_clear_cache_url() if can_edit else None,
+                    create_visual_url=create_url if can_edit else None,
+                ),
+            ).dict(),
+            breadcrumbs=[
+                Breadcrumb.build_root(self.request.user),
+                Breadcrumb.from_object(self.assessment),
+                Breadcrumb(
+                    name="Endpoints",
+                    url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
+                ),
+                Breadcrumb(name=self.heatmap_view_title),
+            ],
         )
         return context
