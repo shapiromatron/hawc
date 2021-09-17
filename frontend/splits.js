@@ -68,7 +68,7 @@ const startup = (name, cb) => {
             import("./shared/textCleanup/index.js").then(app => cb(app.default));
             break;
         default:
-            throw "Unknown startup request";
+            throw `Unknown startup request: ${name}`;
     }
 };
 

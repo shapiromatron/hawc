@@ -4,6 +4,7 @@ from typing import Dict, List
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -12,7 +13,7 @@ from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import listToUl, tryParseInt
+from ..common.helper import listToUl, tryParseInt, WebappConfig
 from ..common.views import (
     AssessmentPermissionsMixin,
     BaseCreate,
@@ -246,7 +247,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
 
     model = Assessment
     form_class = forms.TagReferenceForm
-    template_name = "lit/search_tags_edit.html"
+    template_name = "lit/reference_tag.html"
 
     def post(self, request, *args, **kwargs):
         if not self.request.is_ajax():
@@ -278,11 +279,20 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
             refs = refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
         refs = refs.prefetch_related("searches", "identifiers", "tags")
         context = super().get_context_data(**kwargs)
-        context["object"] = self.object
-        context["model"] = self.model.__name__
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["refs_json"] = json.dumps([ref.to_dict() for ref in refs])
-        context["breadcrumbs"] = lit_overview_crumbs(self.request.user, self.assessment, "CHANGE")
+        context.update(
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "CHANGE"),
+            config=WebappConfig(
+                app="litStartup",
+                page="startupTagReferences",
+                data=dict(
+                    tags=models.ReferenceFilterTag.get_all_tags(
+                        self.assessment.id, json_encode=False
+                    ),
+                    refs=[ref.to_dict() for ref in refs],
+                    csrf=get_token(self.request),
+                ),
+            ).dict(),
+        )
         return context
 
 
@@ -371,6 +381,25 @@ class TagByUntagged(TagReferences):
         return context
 
 
+def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
+    return WebappConfig(
+        app="litStartup",
+        page="startupReferenceList",
+        data=dict(
+            assessment_id=assessment.id,
+            search_id=search.id if search else None,
+            tags=models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False),
+            references=models.Reference.objects.get_full_assessment_json(
+                assessment, json_encode=False
+            ),
+            canEdit=permissions["edit"],
+            untaggedReferenceCount=models.Reference.objects.get_untagged_references(
+                assessment
+            ).count(),
+        ),
+    )
+
+
 class SearchRefList(BaseDetail):
     model = models.Search
     template_name = "lit/reference_list.html"
@@ -385,10 +414,9 @@ class SearchRefList(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["ref_objs"] = self.object.get_all_reference_tags()
-        context["object_type"] = "search"
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["untagged"] = self.object.references_untagged
+        context["config"] = _get_reference_list(
+            self.assessment, context["obj_perms"], self.object
+        ).dict()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="References"))
         return context
@@ -423,10 +451,7 @@ class RefList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["object_type"] = "reference"
-        context["ref_objs"] = models.Reference.objects.get_full_assessment_json(self.assessment)
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["untagged"] = models.Reference.objects.get_untagged_references(self.assessment)
+        context["config"] = _get_reference_list(self.assessment, context["obj_perms"]).dict()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
@@ -538,7 +563,16 @@ class RefSearch(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["config"] = WebappConfig(
+            app="litStartup",
+            page="startupSearchReference",
+            data=dict(
+                assessment_id=self.assessment.id,
+                canEdit=context["obj_perms"]["edit"],
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+                csrf=get_token(self.request),
+            ),
+        ).dict()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
@@ -642,10 +676,29 @@ class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
         return self.get_object()
 
     def get_context_data(self, **kwargs):
+        overview = reverse("lit:overview", args=(self.assessment.pk,))
+        api_root = reverse("lit:api:tags-list")
         context = super().get_context_data(**kwargs)
-        context["lit_assesment_update_url"] = self.assessment.literature_settings.get_update_url()
-        context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Update tags"
+        context.update(
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Update tags"),
+            lit_assesment_update_url=self.assessment.literature_settings.get_update_url(),
+            config=WebappConfig(
+                app="nestedTagEditorStartup",
+                data=dict(
+                    assessment_id=self.assessment.id,
+                    base_url=api_root,
+                    list_url=f"{api_root}?assessment_id={self.assessment.id}",
+                    csrf=get_token(self.request),
+                    host=self.request.get_host(),
+                    title=f"Reference tags for {self.assessment}",
+                    extraHelpHtml=f"""
+                        Edit tags which can be applied to literature for this assessment. If
+                        extracting data, all references marked with a tag in the "Inclusion"
+                        category will be labeled as ready for data-extraction on the assessment
+                        literature review page (<a href="{overview}">here</a>).<br/><br/>""",
+                    btnLabel="Add new tag",
+                ),
+            ).dict(),
         )
         return context
 
