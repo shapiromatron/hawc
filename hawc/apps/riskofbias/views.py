@@ -451,8 +451,10 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = json.dumps(
-            {
+        context["config"] = WebappConfig(
+            app="riskofbiasStartup",
+            page="RobStudyFormStartup",
+            data={
                 "assessment_id": self.assessment.id,
                 "cancelUrl": get_referrer(self.request, self.object.get_absolute_url()),
                 "csrf": get_token(self.request),
@@ -471,8 +473,8 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
                     ),
                     "scores_url": reverse("riskofbias:api:scores-list"),
                 },
-            }
-        )
+            },
+        ).dict()
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
         context["breadcrumbs"][4] = Breadcrumb(name="Update review")
         return context

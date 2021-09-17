@@ -7,9 +7,13 @@ import h from "shared/utils/helpers";
 import StudyRobStore from "../stores/StudyRobStore";
 
 class RobFormStore extends StudyRobStore {
+    constructor(config) {
+        super();
+        this.config = config;
+    }
+
     // content
     @observable error = null;
-    @observable config = null;
     @observable overrideOptions = null;
     editableScores = observable.array();
     nonEditableScores = observable.array();
@@ -78,10 +82,6 @@ class RobFormStore extends StudyRobStore {
     }
 
     // actions
-    @action.bound setConfig(elementId) {
-        this.config = JSON.parse(document.getElementById(elementId).textContent);
-    }
-
     @action.bound fetchFormData() {
         let override_options_url = this.config.riskofbias.override_options_url;
 
@@ -212,7 +212,4 @@ class RobFormStore extends StudyRobStore {
     }
 }
 
-const store = new RobFormStore();
-
-// singleton pattern
-export default store;
+export default RobFormStore;
