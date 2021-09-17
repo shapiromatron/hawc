@@ -11,8 +11,9 @@ const TABS = {
 };
 
 class BaseStore {
-    constructor(rootStore) {
+    constructor(rootStore, config) {
         this.root = rootStore;
+        this.config = config;
     }
 
     config = null;
@@ -27,7 +28,6 @@ class BaseStore {
     @observable djangoFormData = {};
 
     @action setConfig = config => {
-        this.config = config;
         this.setInitialData();
     };
     @action setInitialData() {
