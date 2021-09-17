@@ -1,7 +1,7 @@
 import DataPivot from "./DataPivot";
-import {renderExtensionList} from "./DataPivotExtension";
+import {renderExtensionTable} from "./DataPivotExtension";
 
 export default {
     DataPivot,
-    renderExtensionList,
+    renderExtensionTable,
 };

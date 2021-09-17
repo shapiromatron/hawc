@@ -1,5 +1,5 @@
 import _ from "lodash";
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 import ReactDOM from "react-dom";
 
 import Reference from "lit/Reference";
@@ -222,21 +222,40 @@ _.extend(DataPivotExtension, {
     ],
 });
 
-class ExtensionList extends Component {
+class ExtensionTable extends Component {
     render() {
+        const extByColumnKey = DataPivotExtension.extByColumnKey();
         return (
-            <ul>
-                {Object.keys(DataPivotExtension.extByColumnKey()).map((c, i) => (
-                    <li key={i}>{c}</li>
-                ))}
-            </ul>
+            <table className="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Column header</th>
+                        <th>Interactive action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.entries(extByColumnKey).map(([col, arr]) => (
+                        <Fragment key={col}>
+                            <tr>
+                                <td rowSpan={arr.length}>{col}</td>
+                                <td>{arr[0]._dpe_option_txt}</td>
+                            </tr>
+                            {arr.slice(1).map(obj => (
+                                <tr key={obj._dpe_option_txt}>
+                                    <td>{obj._dpe_option_txt}</td>
+                                </tr>
+                            ))}
+                        </Fragment>
+                    ))}
+                </tbody>
+            </table>
         );
     }
 }
 
-function renderExtensionList(el) {
-    ReactDOM.render(<ExtensionList />, el);
+function renderExtensionTable(el) {
+    ReactDOM.render(<ExtensionTable />, el);
 }
 
 export default DataPivotExtension;
-export {ExtensionList, renderExtensionList};
+export {ExtensionTable, renderExtensionTable};

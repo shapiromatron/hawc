@@ -1,0 +1,15 @@
+{% extends 'crumbless.html' %}
+
+{% block content %}
+<h1>HAWC Interactivity with Datasets</h1>
+<p>Some visuals allow deeper interactivity with HAWC by displaying modals or linking to HAWC content.
+This interactivity is also available with uploaded datasets as long as they have the correct column headings.
+The following table shows what column headings are needed in a dataset to allow access to the associated interactivity.</p>
+<div id="extension-table"></div>
+{% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    window.app.startup("dataPivotStartup", app => app.renderExtensionTable(document.getElementById("extension-table")));
+</script>
+{% endblock %}

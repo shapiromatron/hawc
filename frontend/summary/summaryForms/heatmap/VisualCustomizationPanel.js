@@ -7,6 +7,7 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import FloatInput from "shared/components/FloatInput";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import {MissingData, RefreshRequired} from "./common";
 import AxisLabelTable from "./AxisLabelTable";
@@ -31,7 +32,17 @@ class VisualCustomizationPanel extends Component {
             <div>
                 <legend>Visualization customization</legend>
                 <p className="form-text text-muted">
-                    Customize the look, feel, and layout of the current visual.
+                    Customize the look, feel, and layout of the current visual. For more information
+                    on HAWC interactivity with uploaded datasets, click&nbsp;
+                    <a
+                        href="/summary/dataset-interactivity/"
+                        onClick={e => {
+                            e.preventDefault();
+                            HAWCUtils.newWindowPopupLink(e.target);
+                        }}>
+                        here
+                    </a>
+                    .
                 </p>
                 {content}
             </div>
