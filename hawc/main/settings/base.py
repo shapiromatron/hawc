@@ -325,6 +325,9 @@ ANYONE_CAN_CREATE_ASSESSMENTS = True
 # can project-managers for an assessment make that assessments public, or only administrators?
 PM_CAN_MAKE_PUBLIC = True
 
+# are users required to accept a license
+ACCEPT_LICENSE_REQUIRED = True
+
 # add extra branding (EPA flavor only)
 EXTRA_BRANDING = True
 
