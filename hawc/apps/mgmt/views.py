@@ -1,11 +1,12 @@
 from django.apps import apps
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin
+from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin, WebappConfig
 from . import models
 
 
@@ -41,20 +42,47 @@ class RobTaskMixin:
     Add risk of bias tasks for a user to task views.
     """
 
+    def get_rob_queryset(self, RiskOfBias):
+        raise NotImplementedError("Abstract method; requires implementation")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
-        context["review_tasks"] = self.get_review_tasks()
+        context["config"] = self.get_app_config(context).dict()
         return context
 
     def get_review_tasks(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
         filtered_tasks = [rob for rob in rob_tasks if rob.is_complete is False]
-        return RiskOfBias.get_qs_json(filtered_tasks, json_encode=True)
+        return RiskOfBias.get_qs_json(filtered_tasks, json_encode=False)
 
-    def get_rob_queryset(self, RiskOfBias):
-        raise NotImplementedError("Abstract method; requires implementation")
+    def get_app_config(self, context) -> WebappConfig:
+        assessment_id = self.assessment.id if hasattr(self, "assessment") else None
+        task_url = (
+            reverse("mgmt:api:task-assessment-assignments", args=(assessment_id,))
+            if assessment_id
+            else reverse("mgmt:api:task-assignments")
+        )
+        return WebappConfig(
+            app="mgmtStartup",
+            page="TaskAssignments",
+            data={
+                "assessment_id": assessment_id,
+                "csrf": get_token(self.request),
+                "user": self.request.user.id,
+                "rob_tasks": self.get_review_tasks(),
+                "tasks": {
+                    "submit_url": reverse("mgmt:api:task-list"),
+                    "url": task_url,
+                    "list": self.model.get_qs_json(context["object_list"], json_encode=False),
+                },
+                "autocomplete": {
+                    "url": reverse(
+                        "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
+                    )
+                },
+            },
+        )
 
 
 class UserAssignments(RobTaskMixin, LoginRequiredMixin, ListView):
@@ -112,7 +140,33 @@ class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
+        context["config"] = self._dashboard_config().dict()
         return context
+
+    def _dashboard_config(self) -> WebappConfig:
+        return WebappConfig(
+            app="mgmtStartup", page="Dashboard", data=dict(assessment_id=self.assessment.id)
+        )
+
+    def _task_table_config(self, edit: bool) -> WebappConfig:
+        a_id = self.assessment.id
+        return WebappConfig(
+            app="mgmtStartup",
+            page="TaskTable",
+            data=dict(
+                assessment_id=a_id,
+                csrf=get_token(self.request),
+                displayAsForm=edit,
+                cancelUrl=reverse("mgmt:assessment_tasks", args=(a_id,)),
+                tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
+                taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
+                taskBulkPatchUrl=reverse("mgmt:api:task-bulk-patch") + f"?assessment_id={a_id}",
+                studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
+                userAutocompleteUrl=reverse(
+                    "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
+                ),
+            ),
+        )
 
 
 class TaskDetail(TaskDashboard):
@@ -122,6 +176,7 @@ class TaskDetail(TaskDashboard):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Assignments")
+        context["config"] = self._task_table_config(False).dict()
         return context
 
 
@@ -132,4 +187,5 @@ class TaskModify(TaskDashboard):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Update assignments")
+        context["config"] = self._task_table_config(True).dict()
         return context
