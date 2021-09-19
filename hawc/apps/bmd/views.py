@@ -64,11 +64,12 @@ class SessionList(BaseList):
         return self.model.objects.filter(endpoint=self.parent)
 
 
-def _get_session_config(view, editMode: bool) -> WebappConfig:
+def _get_session_config(view, context) -> WebappConfig:
+    edit_mode = view.crud == "Update"
     return WebappConfig(
         app="bmds2Startup",
         data=dict(
-            editMode=editMode,
+            editMode=edit_mode,
             assessment_id=view.assessment.id,
             bmds_version=view.object.get_version_display(),
             endpoint_id=view.object.endpoint_id,
@@ -76,18 +77,14 @@ def _get_session_config(view, editMode: bool) -> WebappConfig:
             execute_url=view.object.get_execute_url(),
             execute_status_url=view.object.get_execute_status_url(),
             selected_model_url=view.object.get_selected_model_url(),
-            csrf=get_token(view.request) if editMode else None,
+            csrf=get_token(view.request) if edit_mode else None,
         ),
     )
 
 
 class SessionDetail(BaseDetail):
     model = models.Session
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(config=_get_session_config(self, editMode=False).dict())
-        return context
+    get_app_config = _get_session_config
 
 
 class SessionUpdate(BaseUpdate):
@@ -95,20 +92,17 @@ class SessionUpdate(BaseUpdate):
     success_message = "BMD session updated."
     model = models.Session
     form_class = forms.SessionForm
+    get_app_config = _get_session_config
 
     def get_redirect_url(self, *args, **kwargs):
         obj = models.Session.create_new(self.object)
         return obj.get_update_url()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(config=_get_session_config(self, editMode=True).dict())
-        return context
-
 
 class SessionDelete(BaseDelete):
     success_message = "BMD session deleted."
     model = models.Session
+    get_app_config = _get_session_config
 
     def get_success_url(self):
         return self.object.endpoint.get_absolute_url()

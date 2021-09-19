@@ -9,10 +9,23 @@ from ..common.views import (
     BaseUpdate,
     BaseUpdateWithFormset,
     CopyAsNewSelectorMixin,
+    WebappConfig,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from . import forms, models
+
+
+def get_app_config_metaprotocol(view, context) -> WebappConfig:
+    return WebappConfig(
+        app="epiMetaStartup", page="startupMetaProtocolPage", data=dict(id=view.object.id)
+    )
+
+
+def get_app_config_metaresult(view, context) -> WebappConfig:
+    return WebappConfig(
+        app="epiMetaStartup", page="startupMetaResultPage", data=dict(id=view.object.id)
+    )
 
 
 # MetaProtocol
@@ -26,6 +39,7 @@ class MetaProtocolCreate(EnsureExtractionStartedMixin, BaseCreate):
 
 class MetaProtocolDetail(BaseDetail):
     model = models.MetaProtocol
+    get_app_config = get_app_config_metaprotocol
 
 
 class MetaProtocolUpdate(BaseUpdate):
@@ -37,6 +51,7 @@ class MetaProtocolUpdate(BaseUpdate):
 class MetaProtocolDelete(BaseDelete):
     success_message = "Meta-protocol deleted."
     model = models.MetaProtocol
+    get_app_config = get_app_config_metaprotocol
 
     def get_success_url(self):
         return self.object.study.get_absolute_url()
@@ -77,6 +92,7 @@ class MetaResultCopyAsNew(CopyAsNewSelectorMixin, MetaProtocolDetail):
 
 class MetaResultDetail(BaseDetail):
     model = models.MetaResult
+    get_app_config = get_app_config_metaresult
 
 
 class MetaResultUpdate(BaseUpdateWithFormset):
@@ -107,6 +123,7 @@ class MetaResultUpdate(BaseUpdateWithFormset):
 class MetaResultDelete(BaseDelete):
     success_message = "Meta-Result deleted."
     model = models.MetaResult
+    get_app_config = get_app_config_metaresult
 
     def get_success_url(self):
         return self.object.protocol.get_absolute_url()

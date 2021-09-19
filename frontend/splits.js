@@ -22,7 +22,7 @@ const startup = (name, cb) => {
         case "epiStartup":
             import("./epi/index.js").then(app => cb(app.default));
             break;
-        case "epimetaStartup":
+        case "epiMetaStartup":
             import("./epimeta/index.js").then(app => cb(app.default));
             break;
         case "heatmapTemplateStartup":
