@@ -471,7 +471,7 @@ class EndpointList(BaseEndpointFilterList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = self.form.get_dose_units_id()
+        context["config"]["dose_units"] = self.form.get_dose_units_id()
         return context
 
 

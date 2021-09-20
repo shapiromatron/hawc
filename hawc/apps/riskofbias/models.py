@@ -230,7 +230,7 @@ class RiskOfBias(models.Model):
         return reverse("riskofbias:rob_detail", args=[self.study_id])
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.study.assessment_id])
+        return reverse("riskofbias:rob_assignments", args=[self.study.assessment_id])
 
     def get_edit_url(self):
         return reverse("riskofbias:rob_update", args=[self.pk])
@@ -548,7 +548,10 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.assessment_id])
+        return reverse("riskofbias:rob_assignments", args=(self.assessment_id,))
+
+    def get_assessment(self):
+        return self.assessment
 
     @classmethod
     def build_default(cls, assessment):

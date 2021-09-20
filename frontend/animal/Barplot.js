@@ -62,15 +62,15 @@ class Barplot extends D3Plot {
         };
         plot.add_menu_button(options);
 
-        if (this.endpoint.doses.length > 1) {
+        if (this.endpoint.doseUnits.numUnits() > 1) {
             options = {
-                id: "toggle_dose_units",
+                id: "nextDoseUnits",
                 cls: "btn btn-sm",
                 title: "Change dose-units representation",
                 text: "",
                 icon: "fa fa-certificate",
                 on_click() {
-                    plot.endpoint.toggle_dose_units();
+                    plot.endpoint.doseUnits.next();
                 },
             };
             plot.add_menu_button(options);
@@ -224,7 +224,7 @@ class Barplot extends D3Plot {
 
         _.extend(this, {
             title_str: this.endpoint.data.name,
-            x_label_text: `Doses (${this.endpoint.dose_units})`,
+            x_label_text: `Doses (${this.endpoint.doseUnits.activeUnit.name})`,
             y_label_text: `Response (${this.endpoint.data.response_units})`,
             values,
             sigs_data,

@@ -16,7 +16,7 @@ class Commit(BaseModel):
             A Commit instance
         """
         cmd = "git log -1 --format=%H"
-        sha = subprocess.check_output(cmd.split(), cwd=cwd).decode().strip()[:12]
+        sha = subprocess.check_output(cmd.split(), cwd=cwd).decode().strip()[:8]
         cmd = "git show -s --format=%ct"
         dt = datetime.fromtimestamp(
             int(subprocess.check_output(cmd.split(), cwd=cwd).decode().strip())

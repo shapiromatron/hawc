@@ -8,7 +8,6 @@ from . import forms, models
 class LiteratureAssessmentAdmin(admin.ModelAdmin):
     form = forms.LiteratureAssessmentForm
     readonly_fields = ("assessment", "topic_tsne_refresh_requested", "topic_tsne_last_refresh")
-
     list_display = (
         "assessment",
         "extraction_tag",
@@ -16,6 +15,7 @@ class LiteratureAssessmentAdmin(admin.ModelAdmin):
         "topic_tsne_refresh_requested",
         "topic_tsne_last_refresh",
     )
+    list_select_related = ("assessment", "extraction_tag")
 
 
 @admin.register(models.ReferenceFilterTag)

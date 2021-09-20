@@ -77,12 +77,6 @@ class RiskOfBiasManager(BaseManager):
     def get_queryset(self):
         return RiskOfBiasQuerySet(self.model, using=self._db)
 
-    def all_active(self, assessment=None):
-        return self.get_qs(assessment).filter(active=True)
-
-    def active(self, assessment=None):
-        return self.get_qs(assessment).filter(active=True, final=False)
-
     def get_required_robs_for_metric(self, metric):
         assessment = metric.get_assessment()
         filters = models.Q()

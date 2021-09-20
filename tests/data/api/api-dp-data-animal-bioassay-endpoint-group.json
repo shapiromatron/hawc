@@ -683,7 +683,7 @@
     "lifestage assessed": "Adult",
     "lifestage exposed": "Adult",
     "low_dose": 1.0,
-    "lower_ci": 0.005,
+    "lower_ci": 0.0034898867,
     "maximum endpoint change": 0.0,
     "observation time": "None not reported",
     "observation time text": "",
@@ -694,8 +694,8 @@
     "percent control high": null,
     "percent control low": null,
     "percent control mean": null,
-    "percent lower ci": 0.5,
-    "percent upper ci": 34.2,
+    "percent lower ci": 0.3489886673,
+    "percent upper ci": 34.0805136551,
     "response": null,
     "response units": "incidence",
     "route": "oral gavage",
@@ -712,7 +712,7 @@
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null,
-    "upper_ci": 0.342
+    "upper_ci": 0.3408051366
   },
   {
     "FEL": null,
@@ -748,7 +748,7 @@
     "lifestage assessed": "Adult",
     "lifestage exposed": "Adult",
     "low_dose": 1.0,
-    "lower_ci": 0.005,
+    "lower_ci": 0.0034898867,
     "maximum endpoint change": 0.0,
     "observation time": "None not reported",
     "observation time text": "",
@@ -759,8 +759,8 @@
     "percent control high": null,
     "percent control low": null,
     "percent control mean": null,
-    "percent lower ci": 0.5,
-    "percent upper ci": 34.2,
+    "percent lower ci": 0.3489886673,
+    "percent upper ci": 34.0805136551,
     "response": null,
     "response units": "incidence",
     "route": "oral gavage",
@@ -777,7 +777,7 @@
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null,
-    "upper_ci": 0.342
+    "upper_ci": 0.3408051366
   },
   {
     "FEL": null,
@@ -813,7 +813,7 @@
     "lifestage assessed": "Adult",
     "lifestage exposed": "Adult",
     "low_dose": 1.0,
-    "lower_ci": 0.054,
+    "lower_ci": 0.0531454365,
     "maximum endpoint change": 0.0,
     "observation time": "None not reported",
     "observation time text": "",
@@ -824,8 +824,8 @@
     "percent control high": null,
     "percent control low": null,
     "percent control mean": null,
-    "percent lower ci": 5.4,
-    "percent upper ci": 48.8,
+    "percent lower ci": 5.3145436456,
+    "percent upper ci": 48.717434727,
     "response": null,
     "response units": "incidence",
     "route": "oral gavage",
@@ -842,7 +842,7 @@
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null,
-    "upper_ci": 0.488
+    "upper_ci": 0.4871743473
   },
   {
     "FEL": null,
@@ -878,7 +878,7 @@
     "lifestage assessed": "Adult",
     "lifestage exposed": "Adult",
     "low_dose": 1.0,
-    "lower_ci": 0.025,
+    "lower_ci": 0.0234380423,
     "maximum endpoint change": 0.0,
     "observation time": "None not reported",
     "observation time text": "",
@@ -889,8 +889,8 @@
     "percent control high": null,
     "percent control low": null,
     "percent control mean": null,
-    "percent lower ci": 2.5,
-    "percent upper ci": 41.8,
+    "percent lower ci": 2.343804233,
+    "percent upper ci": 41.71011516,
     "response": null,
     "response units": "incidence",
     "route": "oral gavage",
@@ -907,7 +907,7 @@
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null,
-    "upper_ci": 0.418
+    "upper_ci": 0.4171011516
   },
   {
     "FEL": null,
@@ -943,7 +943,7 @@
     "lifestage assessed": "Adult",
     "lifestage exposed": "Adult",
     "low_dose": 1.0,
-    "lower_ci": 0.223,
+    "lower_ci": 0.2227617167,
     "maximum endpoint change": 0.0,
     "observation time": "None not reported",
     "observation time text": "",
@@ -954,8 +954,8 @@
     "percent control high": null,
     "percent control low": null,
     "percent control mean": null,
-    "percent lower ci": 22.3,
-    "percent upper ci": 72.6,
+    "percent lower ci": 22.2761716665,
+    "percent upper ci": 72.6564615591,
     "response": null,
     "response units": "incidence",
     "route": "oral gavage",
@@ -972,6 +972,6 @@
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null,
-    "upper_ci": 0.726
+    "upper_ci": 0.7265646156
   }
 ]

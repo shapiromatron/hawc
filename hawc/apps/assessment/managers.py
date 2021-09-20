@@ -93,6 +93,20 @@ class DoseUnitManager(BaseManager):
         """
         return self.get_animal_units(assessment).values_list("name", flat=True)
 
+    def get_iv_units(self, assessment_id: int):
+        return (
+            self.filter(ivexperiments__study__assessment=assessment_id)
+            .order_by("id")
+            .distinct("id")
+        )
+
+    def get_epi_units(self, assessment_id: int):
+        return (
+            self.filter(exposure__study_population__study__assessment_id=assessment_id)
+            .order_by("pk")
+            .distinct("pk")
+        )
+
 
 class SpeciesManager(BaseManager):
     def assessment_qs(self, assessment_id):

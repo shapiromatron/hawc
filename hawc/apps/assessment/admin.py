@@ -3,6 +3,7 @@ from io import BytesIO
 from django.apps import apps
 from django.contrib import admin, messages
 from django.contrib.admin.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
 from django.utils.html import format_html
 from reversion.admin import VersionAdmin
@@ -24,24 +25,29 @@ bust_cache.short_description = "Clear cache for selected assessments"
 
 @admin.register(models.Assessment)
 class AssessmentAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "get_managers", "get_team_members", "get_reviewers")
-    list_per_page = 10
-    list_filter = (
+    list_display = (
+        "id",
+        "__str__",
         "editable",
         "public",
+        "hide_from_public_page",
+        "get_managers",
+        "get_team_members",
+        "get_reviewers",
+        "created",
+        "last_updated",
     )
-
+    list_filter = ("public", "hide_from_public_page", "editable")
     search_fields = (
         "name",
         "project_manager__last_name",
         "team_members__last_name",
         "reviewers__last_name",
     )
-
     actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
 
-    def queryset(self, request):
-        qs = super().queryset(request)
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
         return qs.prefetch_related("project_manager", "team_members", "reviewers")
 
     def delete_orphan_tags(self, request, queryset):
@@ -131,6 +137,10 @@ class AttachmentAdmin(admin.ModelAdmin):
     list_display_links = ("id",)
     list_filter = ("publicly_available",)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related("content_object")
+
 
 class DatasetRevisionInline(admin.StackedInline):
     model = models.DatasetRevision
@@ -187,24 +197,20 @@ class EffectTagAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.TimeSpentEditing)
-class TimeSpentEditingAdmin(admin.ModelAdmin):
+class TimeSpentEditingAdmin(ReadOnlyAdmin):
     list_display = (
         "id",
-        "seconds",
         "assessment",
         "content_type",
         "object_id",
-        "content_object",
+        "seconds",
         "created",
     )
-    search_fields = (
-        "assessment",
-        "content_type",
+    list_select_related = ("assessment", "content_type")
+    list_filter = (
+        ("content_type", admin.RelatedOnlyFieldListFilter),
+        ("assessment", admin.RelatedOnlyFieldListFilter),
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.list_display_links = []
 
 
 @admin.register(models.Job)
@@ -236,8 +242,19 @@ class LogAdmin(ReadOnlyAdmin):
 @admin.register(LogEntry)
 class LogEntryAdmin(ReadOnlyAdmin):
     list_display = ("id", "action_time", "user", "content_type", "object_id", "action_flag")
-    list_filter = ("user", "content_type")
+    list_filter = (
+        ("user", admin.RelatedOnlyFieldListFilter),
+        ("content_type", admin.RelatedOnlyFieldListFilter),
+    )
+    list_select_related = ("user", "content_type")
     search_fields = ("object_id",)
+
+
+@admin.register(ContentType)
+class ContentTypeAdmin(ReadOnlyAdmin):
+    list_display = ("id", "app_label", "model")
+    list_filter = ("app_label",)
+    search_fields = ("app_label", "model")
 
 
 @admin.register(models.Blog)
