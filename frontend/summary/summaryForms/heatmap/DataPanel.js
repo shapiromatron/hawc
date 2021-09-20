@@ -75,9 +75,9 @@ class DataPanel extends Component {
                 />
                 <ul className="text-muted">
                     <li>
-                        If you select a dataset that contains "unpublished HAWC data", then if this
-                        assessment is made public, users without team-level access will be unable to
-                        view the visual.
+                        If you select a dataset that contains &quot;unpublished HAWC data&quot;,
+                        then if this assessment is made public, users without team-level access will
+                        be unable to view the visual.
                     </li>
                     <li>
                         With uploaded datasets, if you&nbsp;

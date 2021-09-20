@@ -1,5 +1,5 @@
 import _ from "lodash";
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import ReactDOM from "react-dom";
 
 import Reference from "lit/Reference";
