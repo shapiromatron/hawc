@@ -23,10 +23,11 @@
 
 {% block extrajs %}
     {{ form.media }}
+    {{ config|json_script:"config" }}
     <script type="text/javascript">
-        const result_data = {{list_json|safe}};
-        window.app.startup("epimetaStartup", function(epimeta){
-            const tbl = new epimeta.MetaResultListTable(result_data);
+        window.app.startup("epimetaStartup", function(app){
+            const data = window.app.getConfig(),
+                tbl = new app.MetaResultListTable(data.items);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

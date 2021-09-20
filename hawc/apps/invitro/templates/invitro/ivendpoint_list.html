@@ -23,10 +23,11 @@
 
 {% block extrajs %}
     {{ form.media }}
+    {{ config|json_script:"config" }}
     <script type="text/javascript">
-        const data = {{list_json|safe}};
         window.app.startup("invitroStartup", function(app){
-            var tbl = new app.IVEndpointListTable(data);
+            const data = window.app.getConfig(),
+                tbl = new app.IVEndpointListTable(data.items);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>
