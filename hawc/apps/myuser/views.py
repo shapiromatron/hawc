@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from django.contrib.auth.views import (
@@ -8,13 +9,12 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import CreateView, DetailView, TemplateView
 from django.views.generic.base import RedirectView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import UpdateView
 
 from ..common.crumbs import Breadcrumb
 from ..common.views import LoginRequiredMixin, MessageMixin
@@ -92,23 +92,20 @@ class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
         return context
 
 
-class AcceptNewLicense(MessageMixin, FormView):
-    model = models.HAWCUser
+class AcceptNewLicense(LoginRequiredMixin, MessageMixin, UpdateView):
     form_class = forms.AcceptNewLicenseForm
+    model = models.HAWCUser
     success_message = "License acceptance updated."
     success_url = reverse_lazy("portal")
+    template_name = "myuser/accept_license.html"
+
+    def get_object(self, queryset=None):
+        return self.request.user
 
     def get(self, request, *args, **kwargs):
-        return redirect("portal")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["instance"] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+        if not settings.ACCEPT_LICENSE_REQUIRED or self.request.user.license_v2_accepted:
+            return HttpResponseRedirect(reverse("portal"))
+        return super().get(request, *args, **kwargs)
 
 
 class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):

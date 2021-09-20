@@ -3,6 +3,7 @@ from django.test.client import Client
 from django.urls import reverse
 
 from hawc.apps.myuser import models
+from hawc.apps.myuser.forms import _accept_license_error
 
 
 class UserCreationTests(TestCase):
@@ -23,10 +24,7 @@ class UserCreationTests(TestCase):
         )
         self.assertFormError(response, "form", "email", "Enter a valid email address.")
         self.assertFormError(
-            response,
-            "form",
-            "license_v2_accepted",
-            "License must be accepted in order to create an account.",
+            response, "form", "license_v2_accepted", _accept_license_error,
         )
         self.assertFormError(
             response,
