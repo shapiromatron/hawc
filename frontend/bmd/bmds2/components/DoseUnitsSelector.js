@@ -1,15 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import SelectInput from "shared/components/SelectInput";
+
 class DoseUnitsSelector extends React.Component {
     componentDidMount() {
         this.syncEndpoint(this.props.doseUnits);
-    }
-
-    handleUnitsChange(evt) {
-        let id = parseInt(evt.target.value);
-        this.syncEndpoint(id);
-        this.props.handleUnitsChange(id);
     }
 
     syncEndpoint(id) {
@@ -21,23 +17,24 @@ class DoseUnitsSelector extends React.Component {
         if (!this.props.editMode || units.length === 1) {
             return null;
         }
+
+        const choices = units.map(d => {
+                return {id: d.id, label: d.name};
+            }),
+            handleChange = id => {
+                const intId = parseInt(id);
+                this.syncEndpoint(intId);
+                this.props.handleUnitsChange(intId);
+            };
+
         return (
             <div className="col-md-3">
-                <div className="form-group">
-                    <label className="col-form-label">Dose units used in modeling:</label>
-                    <select
-                        name="dose_units"
-                        value={this.props.doseUnits}
-                        onChange={this.handleUnitsChange.bind(this)}>
-                        {units.map(d => {
-                            return (
-                                <option key={d.id} value={d.id}>
-                                    {d.name}
-                                </option>
-                            );
-                        })}
-                    </select>
-                </div>
+                <SelectInput
+                    choices={choices}
+                    handleSelect={handleChange}
+                    value={this.props.doseUnits}
+                    label="Dose units"
+                />
             </div>
         );
     }

@@ -110,6 +110,57 @@ def test_percent_control():
     assert 3 == pytest.approx(egs[0]["percentControlHigh"])
 
 
+class TestConfidenceIntervalsMixin:
+    def testGetConfidenceIntervals_continuous(self):
+        # test invalid data
+        data = [
+            {"n": None, "response": 10, "stdev": 1},
+            {"n": 0, "response": 10, "stdev": 1},
+            {"n": 30, "response": None, "stdev": 1},
+            {"n": 30, "response": 10, "stdev": None},
+        ]
+        models.ConfidenceIntervalsMixin.getConfidenceIntervals("C", data)
+        for item in data:
+            assert "lower_ci" not in item
+            assert "upper_ci" not in item
+
+        # test valid data
+        data = [
+            {"n": 30, "response": 10, "stdev": 1},
+            {"n": 10, "response": 10, "stdev": 1},
+        ]
+        models.ConfidenceIntervalsMixin.getConfidenceIntervals("C", data)
+        lowers = list(map(lambda d: d["lower_ci"], data))
+        uppers = list(map(lambda d: d["upper_ci"], data))
+        assert pytest.approx([9.62, 9.28], abs=0.1) == lowers
+        assert pytest.approx([10.37, 10.72], abs=0.1) == uppers
+
+    def testGetConfidenceIntervals_dichtomous(self):
+        # test invalid data
+        data = [
+            {"n": None, "incidence": 10},
+            {"n": 0, "incidence": 10},
+            {"n": 30, "incidence": None},
+        ]
+        models.ConfidenceIntervalsMixin.getConfidenceIntervals("D", data)
+        for item in data:
+            assert "lower_ci" not in item
+            assert "upper_ci" not in item
+
+        # test valid data
+        data = [
+            {"n": 10, "incidence": 0},
+            {"n": 10, "incidence": 10},
+            {"n": 100, "incidence": 0},
+            {"n": 100, "incidence": 100},
+        ]
+        models.ConfidenceIntervalsMixin.getConfidenceIntervals("D", data)
+        lowers = list(map(lambda d: d["lower_ci"], data))
+        uppers = list(map(lambda d: d["upper_ci"], data))
+        assert pytest.approx([0.0092, 0.6554, 0.0009, 0.9538], abs=0.001) == lowers
+        assert pytest.approx([0.3474, 0.9960, 0.0461, 0.9991], abs=0.001) == uppers
+
+
 @pytest.mark.django_db
 def test_heatmap_df(db_keys):
     df = models.Endpoint.heatmap_df(db_keys.assessment_final, True)

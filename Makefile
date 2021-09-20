@@ -1,4 +1,4 @@
-.PHONY: build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
+.PHONY: build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh test-js coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -87,6 +87,9 @@ test-integration:  ## Run integration tests (requires `npm run start`)
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes
 	@py.test
+
+test-js:  ## Run javascript tests
+	@npm --prefix ./frontend run test
 
 coverage:  ## Run coverage and create html report
 	coverage run -m pytest

@@ -8,7 +8,9 @@
         "build": "npm run clean && webpack --config webpack.config.js",
         "start": "node devServer.js",
         "lint": "eslint --cache .",
-        "format": "eslint --cache --fix ."
+        "format": "eslint --cache --fix .",
+        "test": "./node_modules/mochapack/bin/mochapack \"tests/**/*.js\"",
+        "test-windows": "node_modules\\.bin\\mochapack \"tests/**/*.js\""
     },
     "repository": {
         "type": "git",
@@ -25,6 +27,7 @@
         "@babel/preset-env": "^7.14.9",
         "@babel/preset-react": "^7.14.5",
         "@babel/runtime": "^7.14.8",
+        "assert": "^2.0.0",
         "babel-eslint": "^10.0.3",
         "babel-loader": "^8.0.6",
         "case-sensitive-paths-webpack-plugin": "^2.4.0",
@@ -35,6 +38,8 @@
         "eslint-plugin-prettier": "^3.1.2",
         "eslint-plugin-react": "^7.17.0",
         "express": "^4.17.1",
+        "mocha": "^8.4.0",
+        "mochapack": "^2.1.2",
         "prettier": "^1.19.1",
         "rimraf": "^3.0.2",
         "style-loader": "^3.2.1",

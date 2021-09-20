@@ -13,6 +13,7 @@ if /I %1 == format-js goto :format-js
 if /I %1 == test goto :test
 if /I %1 == test-integration goto :test-integration
 if /I %1 == test-refresh goto :test-refresh
+if /I %1 == test-js goto :test-js
 if /I %1 == coverage goto :coverage
 if /I %1 == loc goto :loc
 goto :help
@@ -24,6 +25,7 @@ echo.  build-pex         build pex bundle (mac/linux only)
 echo.  test              run python tests
 echo.  test-integration  run integration tests (requires npm run start)
 echo.  test-refresh      removes mock requests and runs python tests
+echo.  test-js           run javascript tests
 echo.  coverage          run coverage and create html report
 echo.  lint              perform both lint-py and lint-js
 echo.  format            perform both format-py and lint-js
@@ -82,6 +84,10 @@ goto :eof
 :test-refresh
 rmdir /s /q .\tests\data\cassettes
 py.test
+goto :eof
+
+:test-js
+npm --prefix .\frontend run test-windows
 goto :eof
 
 :coverage
