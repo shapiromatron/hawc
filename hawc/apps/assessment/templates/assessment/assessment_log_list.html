@@ -1,7 +1,29 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load url_replace %}
+
 {% block content %}
+
 <h2>TODO - make this better. better formatting of filters? add title</h2>
+
+{% if "content_type" in request.GET and "object_id" in request.GET or "user" in request.GET %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Filters</h5>
+        {% if "content_type" in request.GET and "object_id" in request.GET %}
+        {% url_replace page=None content_type=None object_id=None as params %}
+        <a class="btn btn-secondary" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> Object</a>
+        {% endif %}
+        {% if "user" in request.GET %}
+        {% url_replace page=None user=None as params %}
+        <a class="btn btn-secondary" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> User</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% url_replace page=None as params%}
+
 <table class="table table-condensed">
     <colgroup>
         <col width="5%" />
@@ -27,20 +49,30 @@
             </td>
             <td>
                 {% if object.content_object %}
-                <a class="pull-right" title="View History"
-                    href="{% url 'assessment:assessment_logs' assessment.id %}?content_type={{object.content_type.id}}&object_id={{object.object_id}}">
-                    <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
-                </a>
-                <a href="{{object.content_object.get_absolute_url}}">{{ object.content_object }}</a>
+                    {% if "content_type" not in request.GET or "object_id" not in request.GET %}
+                    {% url_replace page=None content_type=object.content_type.id object_id=object.object_id as params %}
+                    <a class="pull-right" title="View History"
+                        href="{{request.path}}{{params|yesno:'?,'}}{{params}}">
+                        <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                    {% if object.content_object.get_absolute_url %}
+                    <a href="{{object.content_object.get_absolute_url}}">{{object.content_object}}</a>
+                    {% else %}
+                    {{object.content_object}}
+                    {% endif %}
                 {% else %}-{% endif %}
             </td>
             <td>{{object.message|truncatechars:100}}</td>
             <td>
                 {% if object.user %}
-                <a class="pull-right" title="View History"
-                    href="{% url 'assessment:assessment_logs' assessment.id %}?user={{object.user.id}}">
-                    <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
-                </a>
+                    {% if "user" not in request.GET %}
+                    {% url_replace page=None user=object.user.id as params %}
+                    <a class="pull-right" title="View History"
+                        href="{{request.path}}{{params|yesno:'?,'}}{{params}}">
+                        <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
                 {{object.user}}
                 {% else %}-{% endif %}
             </td>
@@ -54,4 +86,5 @@
     </tbody>
 </table>
 {% include "includes/paginator.html" %}
+
 {% endblock content %}

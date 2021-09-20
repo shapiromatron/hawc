@@ -1,6 +1,53 @@
-{% extends 'crumbless.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2>TODO - make this better. add crumbs and a better detail view.</h2>
-<p>{{object.id}}</p>
+
+<div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{% url 'assessment:log_object_list' object.content_type.pk object.object_id %}">View all logs for object</a>
+    </div>
+</div>
+<h1 id="animal-group-header" class="d-inline-block">{{object}}</h1>
+
+<table class="table table-sm table-striped">
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+
+        <tr>
+            <th>Object</th>
+            <td>{{object.content_object}}</td>
+        </tr>
+
+        <tr>
+            <th>Object type</th>
+            <td>{{object.content_type}}</td>
+        </tr>
+
+        <tr>
+            <th>Assessment</th>
+            <td>{{object.assessment}}</td>
+        </tr>
+
+        <tr>
+            <th>Message</th>
+            <td>{{object.message}}</td>
+        </tr>
+
+        <tr>
+            <th>User</th>
+            <td>{{object.user}}</td>
+        </tr>
+
+        <tr>
+            <th>Timestamp</th>
+            <td>{{object.created}}</td>
+        </tr>
+
+    </tbody>
+</table>
+
 {% endblock content %}

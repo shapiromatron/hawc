@@ -919,6 +919,13 @@ class Log(models.Model):
     class Meta:
         ordering = ("-created",)
 
+    def __str__(self) -> str:
+        if self.content_object is not None:
+            return str(self.content_object) + " Log"
+        if self.assessment is not None:
+            return str(self.assessment) + " Log"
+        return "Custom Log"
+
     def get_absolute_url(self):
         return reverse("assessment:log_detail", args=(self.id,))
 

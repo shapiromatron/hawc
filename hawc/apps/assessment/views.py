@@ -735,32 +735,53 @@ class LogDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Log")
+        context["assessment"] = self.object.assessment
+        context["breadcrumbs"] = self.get_breadcrumbs()
         return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        extras = []
+        if self.object.assessment is not None:
+            extras.append(
+                Breadcrumb(
+                    name=str(self.object.assessment), url=self.object.assessment.get_absolute_url(),
+                )
+            )
+        if hasattr(self.object.content_object, "get_absolute_url"):
+            extras.append(
+                Breadcrumb(
+                    name=str(self.object.content_object),
+                    url=self.object.content_object.get_absolute_url(),
+                )
+            )
+        crumbs = Breadcrumb.build_crumbs(self.request.user, "Log", extras)
+        return crumbs
 
 
 class LogObjectList(ListView):
     template_name = "assessment/log_object_list.html"
     model = models.Log
+    paginate_by = 25
 
     def get_queryset(self):
         qs = self.model.objects.filter(**self.kwargs)
         if qs.count() == 0:
             raise Http404()
         self.object = qs[0].content_object
-        self.assessment = self.object.assessment
-        if not self.assessment.user_is_team_member_or_higher(self.request.user):
+        self.assessment = qs[0].assessment
+        if not qs[0].user_can_view(self.request.user):
             raise PermissionDenied()
         return qs
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.assessment)
-        crumbs.extend(
-            [
-                Breadcrumb(name=str(self.object), url=self.object.get_absolute_url()),
-                Breadcrumb(name="Logs", url=None),
-            ]
-        )
+        extras = []
+        if self.assessment is not None:
+            extras.append(
+                Breadcrumb(name=str(self.assessment), url=self.assessment.get_absolute_url(),)
+            )
+        if hasattr(self.object, "get_absolute_url"):
+            extras.append(Breadcrumb(name=str(self.object), url=self.object.get_absolute_url()))
+        crumbs = Breadcrumb.build_crumbs(self.request.user, "Logs", extras)
         return crumbs
 
     def get_context_data(self, **kwargs):

@@ -1,9 +1,63 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2>TODO - make this better. add crumbs and a better detail list view, maybe a table?</h2>
-<p>{{object.id}}</p>
-{% for log in object_list %}
-<p>{{log.id}}</p>
-{% endfor %}
+
+<h1>{{object}} Logs</h1>
+
+<h2>Object information</h2>
+
+<table class="table table-sm table-striped">
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+
+        <tr>
+            <th>Object</th>
+            <td>{{object}}</td>
+        </tr>
+
+        <tr>
+            <th>Object type</th>
+            {% with object_list|first as first_log %}
+            <td>{{first_log.content_type}}</td>
+            {% endwith %}
+        </tr>
+
+        <tr>
+            <th>Assessment</th>
+            <td>{{assessment}}</td>
+        </tr>
+
+    </tbody>
+</table>
+
+<h2>Logs</h2>
+
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Message</th>
+            <th>User</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for obj in page_obj %}
+        <tr>
+            <td><a href="{{obj.get_absolute_url}}">{{obj.pk}}</a></td>
+            <td>{{obj.message}}</td>
+            <td>{{obj.user}}</td>
+            <td>{{obj.created}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+{% include "includes/paginator.html" %}
+
 {% endblock content %}
