@@ -829,6 +829,7 @@ class EndpointFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         noel_names = assessment.get_noel_names()
 
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(assessment.id)
         for field in self.fields:
             if field not in ("sex", "data_extracted", "dose_units", "order_by", "paginate_by",):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
