@@ -210,7 +210,7 @@ class HAWCUtils {
         // with a random string (to ensure uniqueness if uniqueness is truncated)
         var slug = slugify(str, {remove: /[^\w\s-_]/g});
         return slug.length > maxLength
-            ? slug.slice(0, maxLength - suffixLength) + h.randomString(suffixLength)
+            ? slug.slice(0, maxLength - suffixLength - 1) + "-" + h.randomString(suffixLength)
             : slug;
     }
 
