@@ -13,7 +13,7 @@
 
   <p class="lead">Option #2 (Input-file)</p>
   <p class='form-text text-muted'>
-    Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the visualization will be constant, but will not use the latest information from the HAWC database. However, HAWC interactivity is available under certain conditions. Click <a href="{% url 'summary:dataset_interactivity' %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);">here</a> for more information.
+    Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the visualization will be constant, but will not use the latest information from the HAWC database. However, if you <a href="{% url 'summary:dataset_interactivity' %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);">design your dataset</a> appropriately, HAWC interactivity is available.
   </p>
   <a href="{% url 'summary:dp_new-file' assessment.pk %}" class="btn btn-primary">Select Option #2</a>
 
