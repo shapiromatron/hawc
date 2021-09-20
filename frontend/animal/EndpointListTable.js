@@ -1,6 +1,7 @@
 import $ from "$";
 
 import BaseTable from "shared/utils/BaseTable";
+import Endpoint from "./Endpoint";
 
 const endpointRow = function(endpoint) {
     const link = `<a href="${endpoint.data.url}" target="_blank">${endpoint.data.name}</a>`,
@@ -27,10 +28,10 @@ const endpointRow = function(endpoint) {
 
 class EndpointListTable {
     constructor(endpoints, dose_id) {
+        this.endpoints = endpoints.map(d => new Endpoint(d));
         if (dose_id) {
-            endpoints.forEach(e => e.doseUnits.activate(dose_id));
+            this.endpoints.forEach(e => e.doseUnits.activate(dose_id));
         }
-        this.endpoints = endpoints;
         this.tbl = new BaseTable();
     }
 

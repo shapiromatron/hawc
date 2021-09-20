@@ -29,8 +29,8 @@ const nRow = (endpoint, index) => {
                         onClick={() => endpoint.displayAsModal({complete: true})}></i>
                     <a href={url}>{name}</a>
                 </td>
-                <td>{organ}</td>
-                <td>{observation_time_text}</td>
+                <td>{organ || "-"}</td>
+                <td>{observation_time_text || "-"}</td>
                 {groups.map((v, i) => {
                     if (i === 0) {
                         dr_control = v;
@@ -166,7 +166,7 @@ class AnimalGroupTable extends Component {
             return <p>No endpoints are available with dose-response data.</p>;
         }
         return (
-            <table className="table table-condensed">
+            <table className="table table-condensed table-sm">
                 {this.renderHeader()}
                 {this.renderBody()}
                 {this.renderFooter()}

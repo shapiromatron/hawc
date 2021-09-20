@@ -16,7 +16,6 @@ from ..common.views import (
     BaseDetail,
     BaseList,
     BaseUpdate,
-    BaseUpdateWithFormset,
     MessageMixin,
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
@@ -42,7 +41,7 @@ def get_breadcrumb_rob_setting(assessment, update: bool = False) -> Breadcrumb:
 def get_breadcrumb_rob_reviews(assessment) -> Breadcrumb:
     return Breadcrumb(
         name=f"{assessment.get_rob_name_display()} assignments",
-        url=reverse("riskofbias:arob_reviewers", args=(assessment.id,)),
+        url=reverse("riskofbias:rob_assignments", args=(assessment.id,)),
     )
 
 
@@ -164,115 +163,137 @@ class ARoBLoadApproach(ARoBCopy):
         return context
 
 
-class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
-    """
-    List an assessment's studies with their active risk of bias reviewers.
-    """
+def get_rob_assignment_data(assessment, studies):
+    # custom data; the `robs` must match response in RiskOfBiasAssignmentSerializer
+    return {
+        "assessment_id": assessment.id,
+        "number_of_reviewers": assessment.rob_settings.number_of_reviewers,
+        "studies": [
+            {
+                "id": study.id,
+                "short_citation": study.short_citation,
+                "published": study.published,
+                "url": study.get_absolute_url(),
+                "robs": [
+                    {
+                        "id": rob.id,
+                        "edit_url": rob.get_edit_url(),
+                        "active": rob.active,
+                        "is_complete": rob.is_complete,
+                        "final": rob.final,
+                        "author": rob.author_id,
+                        "author_name": str(rob.author),
+                        "study": rob.study_id,
+                    }
+                    for rob in study.robs
+                ],
+            }
+            for study in studies
+        ],
+    }
 
+
+class RobAssignmentList(TeamMemberOrHigherMixin, BaseList):
     parent_model = Assessment
     model = Study
-    template_name = "riskofbias/reviewers_list.html"
+    template_name = "riskofbias/rob_assignment_list.html"
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment).prefetch_related(
-            Prefetch(
-                "riskofbiases",
-                queryset=models.RiskOfBias.objects.all_active().prefetch_related(
-                    "author", "scores",
-                ),
-                to_attr="active_riskofbiases",
-            )
+        robs = models.RiskOfBias.objects.filter(active=True).prefetch_related("author", "scores")
+        qs = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
         )
+        if not self.assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        return qs
+
+    def get_custom_data(self, context):
+        data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
+        data.update(
+            edit=False,
+            user_id=self.request.user.id,
+            can_edit_assessment=context["obj_perms"]["edit_assessment"],
+        )
+        return data
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["rob_count"] = self.assessment.rob_settings.number_of_reviewers + 1
+        context["config"] = self.get_custom_data(context)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
-        context["breadcrumbs"][3] = Breadcrumb(name="Reviewer assignment")
+        context["breadcrumbs"][3] = Breadcrumb(
+            name=f"{self.assessment.get_rob_name_display()} assignments"
+        )
         return context
 
 
-class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
-    """
-    Creates the specified number of RiskOfBiases, one for each reviewer in the
-    form. If the `number of reviewers` field is 1, then the only review is also
-    the final review. If the `number of reviewers` field is more than one, then
-    a final review is created in addition to the `number of reviewers`
-    """
-
-    model = Assessment
-    form_class = forms.NumberOfReviewersForm
-    formset_factory = forms.RoBReviewerFormset
-    success_message = "Reviewers updated."
-    template_name = "riskofbias/reviewers_form.html"
+class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
+    parent_model = Assessment
+    model = Study
+    template_name = "riskofbias/rob_assignment_update.html"
+    paginate_by = 25
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.model, pk=kwargs["pk"])
+        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_queryset(self):
+        robs = models.RiskOfBias.objects.prefetch_related("author", "scores")
+        qs = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
+        )
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied()
+        return qs
+
+    def get_custom_data(self, context):
+        data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
+        data.update(
+            edit=True,
+            users=[
+                {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
+            ],
+            csrf=get_token(self.request),
+        )
+        return data
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["config"] = self.get_custom_data(context)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
         context["breadcrumbs"][4] = Breadcrumb(name="Update")
         return context
 
-    def build_initial_formset_factory(self):
-        queryset = (
-            Study.objects.get_qs(self.assessment)
-            .prefetch_related("identifiers")
-            .prefetch_related("searches")
-            .prefetch_related("assessment__rob_settings")
-            .prefetch_related(
-                Prefetch(
-                    "riskofbiases",
-                    queryset=models.RiskOfBias.objects.active(),
-                    to_attr="active_riskofbiases",
-                )
-            )
-        )
 
-        return self.formset_factory(queryset=queryset)
+class RobNumberReviewsUpdate(BaseUpdate):
+    model = models.RiskOfBiasAssessment
+    form_class = forms.NumberOfReviewersForm
+    success_message = "Number of reviewers updated."
+    template_name = "riskofbias/reviewers_form.html"
 
-    def pre_validate(self, form, formset):
-        # if number_of_reviewers changes, change required on fields
-        if form.is_valid() and "number_of_reviewers" in form.changed_data:
-            n = form.cleaned_data["number_of_reviewers"]
-            required_fields = ["reference_ptr", "final_author"]
-            if n == 1:
-                n = 0
-            [required_fields.append(f"author-{i}") for i in range(n)]
-            for rob_form in formset.forms:
-                for field in rob_form.fields:
-                    if field not in required_fields:
-                        rob_form.fields[field].required = False
-
-    def post_object_save(self, form, formset):
-        if "number_of_reviewers" in form.changed_data:
-            n = form.cleaned_data["number_of_reviewers"]
-            old_n = form.fields["number_of_reviewers"].initial
-            n_diff = n - old_n
-            # deactivate robs if number_of_reviewers is lowered.
-            if n_diff < 0:
-                if n == 1:
-                    n = 0
-                for rob_form in formset.forms:
-                    deactivate_robs = rob_form.instance.get_active_robs(with_final=False)[n:]
-                    for rob in deactivate_robs:
-                        rob.deactivate()
-            # if n_of_r is increased, activate inactive robs with most recent last_updated
-            else:
-                for rob_form in formset.forms:
-                    activate_robs = rob_form.instance.riskofbiases.filter(
-                        active=False, final=False
-                    ).order_by("last_updated")[:n]
-                    for rob in activate_robs:
-                        rob.activate()
+    def get_object(self, **kwargs):
+        obj = get_object_or_404(self.model, assessment=self.kwargs.get("pk"),)
+        obj = super().get_object(object=obj)
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied()
+        return obj
 
     def get_success_url(self):
-        return reverse_lazy("riskofbias:arob_reviewers", args=(self.assessment.id,))
+        return reverse_lazy("riskofbias:rob_assignments_update", args=(self.assessment.id,))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        return context
 
 
 # Risk of bias domain views
