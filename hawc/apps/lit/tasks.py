@@ -137,11 +137,13 @@ def schedule_topic_model_reruns():
     )
     logger.info(f"Scheduling {qs1.count()} new assessments for topic modeling")
 
-    # if model execution datetime < max(reference.last_updated)
+    # if model execution datetime < max(reference.last_updated), and has minimum references
     qs2 = (
         LiteratureAssessment.objects.filter(topic_tsne_last_refresh__isnull=False)
         .annotate(ref_last_updated=Max("assessment__references__last_updated"))
         .filter(topic_tsne_last_refresh__lte=F("ref_last_updated"))
+        .annotate(num_refs=Count("assessment__references"))
+        .filter(num_refs__gte=LiteratureAssessment.TOPIC_MODEL_MIN_REFERENCES)
     )
     logger.info(f"Scheduling {qs2.count()} assessments for topic modeling refresh")
 

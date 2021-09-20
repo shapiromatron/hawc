@@ -29,3 +29,4 @@ class SessionAdmin(AllListFieldAdmin):
 @admin.register(models.SelectedModel)
 class SelectedModelAdmin(AllListFieldAdmin):
     raw_id_fields = ("endpoint", "model")
+    list_select_related = ("endpoint", "model")

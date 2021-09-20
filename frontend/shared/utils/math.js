@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 const gcf = function(X, A) {
         // Good for X>A+1
         var A0 = 0,
@@ -120,6 +122,7 @@ const gcf = function(X, A) {
             ];
             if (df > 350) {
                 console.warn("Extrapolating beyond inv_tdist_05 regression range (N>350).");
+                return NaN;
             }
         }
         return (
@@ -131,6 +134,77 @@ const gcf = function(X, A) {
             b[5] * Math.pow(df, 1) +
             b[6]
         );
+    },
+    addStdev = function(endpoint) {
+        const {data_type, variance_type, groups} = endpoint.data;
+        if (data_type !== "C") {
+            return;
+        }
+        switch (variance_type) {
+            case 1:
+                groups.forEach(d => {
+                    d.stdev = _.isFinite(d.variance) ? d.variance : undefined;
+                });
+                break;
+            case 2:
+                groups.forEach(d => {
+                    d.stdev =
+                        _.every([d.n, d.variance], _.isFinite) && d.n > 0
+                            ? d.variance * Math.sqrt(d.n)
+                            : undefined;
+                });
+                break;
+            default:
+                groups.forEach(d => {
+                    d.stdev = undefined;
+                });
+                break;
+        }
+    },
+    addContinuousConfidenceIntervals = function(endpoint) {
+        /*
+        Approximation; only used during forms; after save calculated more robustly on server
+        */
+        endpoint.data.groups.forEach(d => {
+            let lower_ci, upper_ci;
+            if (_.every([d.n, d.stdev, d.response], _.isFinite) && d.n > 0) {
+                var se = d.stdev / Math.sqrt(d.n),
+                    z = inv_tdist_05(d.n - 1) || 1.96;
+                lower_ci = d.response - se * z;
+                upper_ci = d.response + se * z;
+            }
+            d.lower_ci = lower_ci;
+            d.upper_ci = upper_ci;
+        });
+    },
+    addDichotomousConfidenceIntervals = function(endpoint) {
+        /*
+        Procedure adds confidence intervals to dichotomous datasets.
+        Add confidence intervals to dichotomous datasets. (pg 80)
+        https://www.epa.gov/sites/production/files/2020-09/documents/bmds_3.2_user_guide.pdf
+        */
+        endpoint.data.groups.forEach(d => {
+            let lower_ci, upper_ci;
+            if (_.every([d.n, d.incidence], _.isFinite) && d.n > 0 && d.n >= d.incidence) {
+                let p = d.incidence / d.n,
+                    q = 1 - p,
+                    z = 1.959963984540054,
+                    z2 = z * z,
+                    tmp1 = 2 * d.n * p + z2,
+                    tmp2 = 2 + 1 / d.n,
+                    tmp3 = 2 * (d.n + z2);
+                lower_ci = (tmp1 - 1 - z * Math.sqrt(z2 - tmp2 + 4 * p * (d.n * q + 1))) / tmp3;
+                upper_ci = (tmp1 + 1 + z * Math.sqrt(z2 + tmp2 + 4 * p * (d.n * q - 1))) / tmp3;
+            }
+            d.lower_ci = lower_ci;
+            d.upper_ci = upper_ci;
+        });
     };
-
-export {gammaCDF, normalCDF, inv_tdist_05};
+export {
+    gammaCDF,
+    normalCDF,
+    inv_tdist_05,
+    addStdev,
+    addContinuousConfidenceIntervals,
+    addDichotomousConfidenceIntervals,
+};

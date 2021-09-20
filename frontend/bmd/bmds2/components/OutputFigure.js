@@ -66,13 +66,7 @@ class OutputFigure extends React.Component {
     }
 
     render() {
-        return (
-            <div
-                className="col-md-4"
-                style={{height: "300px", width: "300px"}}
-                ref={this.epFigure}
-            />
-        );
+        return <div ref={this.epFigure} />;
     }
 }
 

@@ -2,15 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import SelectInput from "shared/components/SelectInput";
+
 class DoseUnitsSelector extends React.Component {
     componentDidMount() {
         this.syncEndpoint(this.props.doseUnits);
-    }
-
-    handleUnitsChange(evt) {
-        let id = parseInt(evt.target.value);
-        this.syncEndpoint(id);
-        this.props.handleUnitsChange(id);
     }
 
     syncEndpoint(id) {
