@@ -775,7 +775,9 @@ class BaseEndpointFilterList(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
-        context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
+        context["config"] = {
+            "items": self.model.get_qs_json(context["object_list"], json_encode=False)
+        }
         return context
 
 

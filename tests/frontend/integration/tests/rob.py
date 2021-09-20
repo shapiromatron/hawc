@@ -16,9 +16,17 @@ def rob(driver, root_url):
 
     # /rob/assessment/:id/study-assignments/
     h.go_to(root_url + "/rob/assessment/1/study-assignments/")
-    assert len(driver.find_elements_by_css_selector("tr")) > 0
-    assert len(driver.find_elements_by_css_selector("td")) > 4
+    assert len(driver.find_elements_by_css_selector("tr")) >= 3
+    assert len(driver.find_elements_by_css_selector("td")) >= 4
     assert h.Text("Foo et al.", to_left_of="Team Member").exists()
+
+    # /rob/assessment/1/study-assignments/update/
+    h.go_to(root_url + "/rob/assessment/1/study-assignments/update/")
+    assert len(driver.find_elements_by_css_selector("tr")) >= 3
+    assert len(driver.find_elements_by_css_selector("td")) >= 4
+    assert h.Text("Foo et al.", to_left_of="Team Member").exists()
+    assert h.Text("Update").exists()
+    assert h.Text("Create").exists()
 
     # /rob/:id/update/
     h.go_to(root_url + "/rob/3/update/")

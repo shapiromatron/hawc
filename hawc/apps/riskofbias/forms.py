@@ -1,15 +1,10 @@
 from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common import selectable
 from ..common.forms import BaseFormHelper
-from ..myuser.lookups import AssessmentTeamMemberOrHigherLookup
-from ..study.models import Study
 from . import models
 from .actions import RobApproach, clone_approach, load_approach
 
@@ -113,36 +108,6 @@ class RoBMetricForm(forms.ModelForm):
         return helper
 
 
-class RoBScoreForm(forms.ModelForm):
-    class Meta:
-        model = models.RiskOfBiasScore
-        fields = ("metric", "notes", "score")
-
-    def __init__(self, *args, **kwargs):
-        study = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-        self.fields["metric"].widget.attrs["class"] = "metrics"
-        self.fields["score"].widget.attrs["class"] = "score"
-        self.fields["notes"].widget.attrs["class"] = "html5text"
-        self.fields["notes"].widget.attrs["style"] = "width: 100%;"
-        self.fields["notes"].widget.attrs["rows"] = 4
-        if study:
-            self.instance.study = study
-
-
-class BaseRoBFormSet(BaseModelFormSet):
-    def clean(self):
-        """Checks that all metrics are unique."""
-        if any(self.errors):
-            return
-        metrics = []
-        for form in self.forms:
-            metric = form.cleaned_data["metric"]
-            if metric in metrics:
-                raise forms.ValidationError("Metrics must be unique for each study.")
-            metrics.append(metric)
-
-
 class NumberOfReviewersForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasAssessment
@@ -150,7 +115,6 @@ class NumberOfReviewersForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["number_of_reviewers"].initial = self.instance.rob_settings.number_of_reviewers
         self.fields["number_of_reviewers"].help_text = (
             "The number of independent reviewers required for each study. If "
             "there is more than 1 reviewer, an additional final reviewer will "
@@ -160,105 +124,9 @@ class NumberOfReviewersForm(forms.ModelForm):
 
     @property
     def helper(self):
-        inputs = {"cancel_url": self.instance.rob_settings.get_absolute_url()}
+        inputs = {"cancel_url": self.instance.get_absolute_url()}
         helper = BaseFormHelper(self, **inputs)
         return helper
-
-    def save(self, commit=True):
-        instance = super().save(commit)
-        if type(instance) is Assessment:
-            instance.rob_settings.number_of_reviewers = self.cleaned_data["number_of_reviewers"]
-            instance.rob_settings.save()
-        return instance
-
-
-class RoBReviewersForm(forms.ModelForm):
-    class Meta:
-        model = Study
-        fields = ()
-
-    def __init__(self, *args, **kwargs):
-        """
-        Adds author fields to form and fills field with assigned reviewer if
-        one exists.
-
-         - If the number_of_reviewers on study's assessment is 1, then no
-            author fields are generated, only the final_author.
-         - If the number_of_reviewers is 2 or more, then int(number_of_reviewers)
-            author fields are generated in addition to the final_author field.
-        """
-        super().__init__(*args, **kwargs)
-        self.instance_name = "Study"
-        assessment_id = self.instance.assessment_id
-        if hasattr(self.instance_name, "active_riskofbiases"):
-            robs = self.instance.active_riskofbiases
-        else:
-            robs = self.instance.get_active_robs(with_final=False)
-
-        try:
-            reviewers = self.instance.assessment.rob_settings.number_of_reviewers
-        except ObjectDoesNotExist:
-            reviewers = 0
-
-        if reviewers > 1:
-            for i in range(reviewers):
-                author_field = f"author-{i}"
-                self.fields[author_field] = selectable.AutoCompleteSelectField(
-                    lookup_class=AssessmentTeamMemberOrHigherLookup,
-                    label="Reviewer",
-                    required=False,
-                    widget=selectable.AutoCompleteSelectWidget,
-                )
-                self.fields[author_field].widget.update_query_parameters({"related": assessment_id})
-                try:
-                    self.fields[author_field].initial = robs[i].author.id
-                except IndexError:
-                    pass
-
-        self.fields["final_author"] = selectable.AutoCompleteSelectField(
-            lookup_class=AssessmentTeamMemberOrHigherLookup,
-            label="Final Reviewer",
-            required=False,
-            widget=selectable.AutoCompleteSelectWidget,
-        )
-        self.fields["final_author"].widget.update_query_parameters({"related": assessment_id})
-        try:
-            self.fields["final_author"].initial = self.instance.get_final_rob().author.id
-        except (ObjectDoesNotExist, AttributeError):
-            pass
-
-    def save(self, commit=True):
-        """
-        We don't delete any riskofbias reviewers, so when changing assigned
-        reviewers this will:
-
-         - deactivate the review belonging to the reviewer in the
-            initial form.
-         - get or create the review for the reviewer submitted in the form.
-           - if the review was created, also create and attach
-             RiskOfBiasScore instances for each RiskOfBiasMetric.
-         - activate the selected review.
-        """
-        study = super().save(commit)
-        changed_reviewer_fields = (field for field in self.changed_data if field != "reference_ptr")
-
-        for field in changed_reviewer_fields:
-            new_author = self.cleaned_data[field]
-            options = {"study": study, "final": bool(field == "final_author")}
-
-            if self.fields[field].initial:
-                deactivate_rob = models.RiskOfBias.objects.get(
-                    author_id=self.fields[field].initial, **options
-                )
-                deactivate_rob.deactivate()
-
-            if new_author:
-                activate_rob, created = models.RiskOfBias.objects.get_or_create(
-                    author_id=new_author.id, **options
-                )
-                if created:
-                    activate_rob.build_scores(study.assessment, study)
-                activate_rob.activate()
 
 
 class RiskOfBiasCopyForm(forms.Form):
@@ -319,15 +187,3 @@ class RiskOfBiasLoadApproachForm(forms.Form):
     def evaluate(self):
         rob_type = RobApproach(self.cleaned_data["rob_type"])
         load_approach(self.assessment.id, rob_type, self.user.id)
-
-
-RoBFormSet = modelformset_factory(
-    models.RiskOfBiasScore,
-    form=RoBScoreForm,
-    formset=BaseRoBFormSet,
-    fields=("metric", "score", "notes"),
-    extra=0,
-)
-
-
-RoBReviewerFormset = modelformset_factory(model=Study, form=RoBReviewersForm, fields=(), extra=0)

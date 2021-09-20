@@ -4,7 +4,7 @@ import IVEndpoint from "./IVEndpoint";
 
 class IVEndpointListTable {
     constructor(data) {
-        this.endpoints = data.map(d => IVEndpoint(d));
+        this.endpoints = data.map(d => new IVEndpoint(d));
         this.table = new BaseTable();
     }
 
