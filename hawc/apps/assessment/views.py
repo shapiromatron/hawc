@@ -274,10 +274,14 @@ class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
     template_name = "assessment/assessment_home.html"
 
+    def get(self, request, *args, **kwargs):
+        if settings.ACCEPT_LICENSE_REQUIRED and not self.request.user.license_v2_accepted:
+            return HttpResponseRedirect(reverse("user:accept-license"))
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
-        context["show_v2_license"] = not self.request.user.license_v2_accepted
         return context
 
 
