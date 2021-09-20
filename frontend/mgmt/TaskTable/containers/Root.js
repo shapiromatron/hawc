@@ -37,11 +37,7 @@ class Root extends Component {
                 {noTasks ? <h4>No studies match the given query.</h4> : <TaskTable />}
 
                 {displayAsForm && !noTasks ? (
-                    <FormActions
-                        handleSubmit={store.submitPatches}
-                        submitText="Submit changes"
-                        cancelURL={cancelUrl}
-                    />
+                    <FormActions handleSubmit={store.submitPatches} cancelURL={cancelUrl} />
                 ) : null}
             </div>
         );

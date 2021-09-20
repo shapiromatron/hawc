@@ -10,11 +10,12 @@ class FormActions extends Component {
                     type={isForm ? "submit" : "button"}
                     className="btn btn-primary"
                     onClick={handleSubmit}>
+                    <i className="fa fa-fw fa-save"></i>&nbsp;
                     {submitText}
                 </button>
-                &nbsp;
+                &ensp;
                 <a role="button" className="btn btn-secondary" href={cancelURL}>
-                    Cancel
+                    <i className="fa fa-fw fa-times"></i> Cancel
                 </a>
             </div>
         );
@@ -23,14 +24,13 @@ class FormActions extends Component {
 
 FormActions.propTypes = {
     isForm: PropTypes.bool,
-    handleSubmit: PropTypes.func,
+    handleSubmit: PropTypes.func.isRequired,
     submitText: PropTypes.string,
     cancelURL: PropTypes.string.isRequired,
 };
 
 FormActions.defaultProps = {
     isForm: false,
-    handleSubmit: () => {},
     submitText: "Save",
 };
 
