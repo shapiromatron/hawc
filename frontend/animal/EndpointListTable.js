@@ -1,8 +1,13 @@
+import _ from "lodash";
+
+import Endpoint from "./Endpoint";
+
 import BaseTable from "shared/utils/BaseTable";
 
 class EndpointListTable {
-    constructor(endpoints, dose_id) {
-        if (dose_id) {
+    constructor(data, dose_id) {
+        const endpoints = data.map(d => new Endpoint(d));
+        if (_.isFinite(dose_id)) {
             endpoints.forEach(e => e.switch_dose_units(dose_id));
         }
         this.endpoints = endpoints;

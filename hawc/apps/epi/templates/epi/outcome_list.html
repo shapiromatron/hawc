@@ -23,10 +23,11 @@
 
 {% block extrajs %}
     {{ form.media }}
+    {{ config|json_script:"config" }}
     <script type="text/javascript">
-        const data_outcomes = {{list_json|safe}};
         window.app.startup("epiStartup", function(app){
-            const tbl = new app.OutcomeListTable(data_outcomes);
+            const data = window.app.getConfig(),
+                tbl = new app.OutcomeListTable(data.items);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>
