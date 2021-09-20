@@ -1,16 +1,38 @@
 import _ from "lodash";
-
-import Endpoint from "./Endpoint";
+import $ from "$";
 
 import BaseTable from "shared/utils/BaseTable";
+import Endpoint from "./Endpoint";
+
+const endpointRow = function(endpoint) {
+    const link = `<a href="${endpoint.data.url}" target="_blank">${endpoint.data.name}</a>`,
+        detail = $('<i class="fa fa-eye previewModalIcon" title="preview in a modal">').click(() =>
+            endpoint.displayAsModal({complete: true})
+        ),
+        ep = $('<span class="previewModalParent">').append(link, detail),
+        study = endpoint.data.animal_group.experiment.study,
+        experiment = endpoint.data.animal_group.experiment,
+        animalGroup = endpoint.data.animal_group,
+        row = [
+            `<a href="${study.url}" target="_blank">${study.short_citation}</a>`,
+            `<a href="${experiment.url}" target="_blank">${experiment.name}</a>`,
+            `<a href="${animalGroup.url}" target="_blank">${animalGroup.name}</a>`,
+            ep,
+            endpoint.doseUnits.activeUnit.name,
+            endpoint.get_special_dose_text("NOEL"),
+            endpoint.get_special_dose_text("LOEL"),
+            endpoint.get_bmd_data("BMD"),
+            endpoint.get_bmd_data("BMDL"),
+        ];
+    return row;
+};
 
 class EndpointListTable {
-    constructor(data, dose_id) {
-        const endpoints = data.map(d => new Endpoint(d));
+    constructor(endpoints, dose_id) {
+        this.endpoints = endpoints.map(d => new Endpoint(d));
         if (_.isFinite(dose_id)) {
-            endpoints.forEach(e => e.switch_dose_units(dose_id));
+            this.endpoints.forEach(e => e.doseUnits.activate(dose_id));
         }
-        this.endpoints = endpoints;
         this.tbl = new BaseTable();
     }
 
@@ -46,10 +68,8 @@ class EndpointListTable {
         headersToSortKeys.loael = "-LOEL";
         headersToSortKeys.loel = "-LOEL";
         headersToSortKeys.lel = "-LOEL";
-
         tbl.enableSortableHeaderLinks($("#initial_order_by").val(), headersToSortKeys);
-
-        this.endpoints.forEach(v => tbl.addRow(v.build_endpoint_list_row()));
+        this.endpoints.forEach(endpoint => tbl.addRow(endpointRow(endpoint)));
         return tbl.getTbl();
     }
 }

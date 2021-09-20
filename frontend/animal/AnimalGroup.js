@@ -98,12 +98,8 @@ class AnimalGroup {
                 if (doses.length === 0) return undefined;
 
                 var grps = _.chain(doses)
-                        .sortBy(function(d) {
-                            return d.dose_group_id;
-                        })
-                        .groupBy(function(d) {
-                            return d.dose_units.name;
-                        })
+                        .sortBy(d => d.dose_group_id)
+                        .groupBy(d => d.dose_units.name)
                         .value(),
                     units = _.keys(grps),
                     tbl = new BaseTable();

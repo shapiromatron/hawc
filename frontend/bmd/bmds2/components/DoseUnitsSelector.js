@@ -9,18 +9,16 @@ class DoseUnitsSelector extends React.Component {
     }
 
     syncEndpoint(id) {
-        this.props.endpoint.switch_dose_units(id);
+        this.props.endpoint.doseUnits.activate(id);
     }
 
     renderDoseForm() {
-        let units = this.props.endpoint._get_doses_units();
-        if (!this.props.editMode || units.length === 1) {
+        const numUnits = this.props.endpoint.doseUnits.numUnits();
+        if (!this.props.editMode || numUnits === 1) {
             return null;
         }
 
-        const choices = units.map(d => {
-                return {id: d.id, label: d.name};
-            }),
+        const choices = this.props.endpoint.doseUnits.doseChoices(),
             handleChange = id => {
                 const intId = parseInt(id);
                 this.syncEndpoint(intId);
