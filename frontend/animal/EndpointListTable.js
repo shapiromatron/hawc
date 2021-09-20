@@ -1,3 +1,4 @@
+import _ from "lodash";
 import $ from "$";
 
 import BaseTable from "shared/utils/BaseTable";
@@ -29,7 +30,7 @@ const endpointRow = function(endpoint) {
 class EndpointListTable {
     constructor(endpoints, dose_id) {
         this.endpoints = endpoints.map(d => new Endpoint(d));
-        if (dose_id) {
+        if (_.isFinite(dose_id)) {
             this.endpoints.forEach(e => e.doseUnits.activate(dose_id));
         }
         this.tbl = new BaseTable();
