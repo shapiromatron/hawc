@@ -189,16 +189,18 @@ class ExploreHeatmap extends BaseVisual {
                         $el.prepend([actions, title]).append(captionDiv);
                     }
 
+                    // exit early if we got an error
                     if (resp.error) {
                         console.error(resp.error);
                         $plotDiv.append(getErrorDiv());
-                    } else if (resp.dataset) {
-                        try {
-                            startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
-                        } catch (err) {
-                            console.error(err);
-                            $plotDiv.append(getErrorDiv());
-                        }
+                        return;
+                    }
+
+                    try {
+                        startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
+                    } catch (err) {
+                        console.error(err);
+                        $plotDiv.append(getErrorDiv());
                     }
 
                     if (options.cb) {
