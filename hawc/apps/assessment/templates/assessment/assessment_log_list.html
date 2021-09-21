@@ -5,18 +5,17 @@
 {% block content %}
 
 <h1>{{assessment}} Logs</h1>
-
 {% if "content_type" in request.GET and "object_id" in request.GET or "user" in request.GET %}
 <div class="card">
+    <div class="card-header">Filters</div>
     <div class="card-body">
-        <h5 class="card-title">Filters</h5>
         {% if "content_type" in request.GET and "object_id" in request.GET %}
         {% url_replace page=None content_type=None object_id=None as params %}
-        <a class="btn btn-secondary" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> Object</a>
+        <a class="btn btn-secondary rounded-pill" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> {{object_list.0.content_object}}</a>
         {% endif %}
         {% if "user" in request.GET %}
         {% url_replace page=None user=None as params %}
-        <a class="btn btn-secondary" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> User</a>
+        <a class="btn btn-secondary rounded-pill" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> {{object_list.0.user}}</a>
         {% endif %}
     </div>
 </div>
@@ -24,7 +23,7 @@
 
 {% url_replace page=None as params%}
 
-<table class="table table-condensed">
+<table class="table table-striped">
     <colgroup>
         <col width="5%" />
         <col width="25%" />
@@ -32,7 +31,7 @@
         <col width="15%" />
         <col width="15%" />
     </colgroup>
-    <thread>
+    <thead>
         <tr>
             <th>Details</th>
             <th>Item</th>
@@ -40,7 +39,7 @@
             <th>User</th>
             <th>Timestamp</th>
         </tr>
-    </thread>
+    </thead>
     <tbody>
         {% for object in object_list %}
         <tr>
