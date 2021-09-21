@@ -352,8 +352,12 @@ div.smart-tag.active {
     background-color: #0044cc;
 }
 
-/* animal endpoint list */
-.eyeEndpointModal {
+/* preview modal icon */
+.previewModalParent:hover .previewModalIcon{
+    display: inherit;
+}
+.previewModalIcon {
+    display: none;
     padding-left: 1em;
     cursor: pointer;
 }

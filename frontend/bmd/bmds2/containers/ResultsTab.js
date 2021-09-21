@@ -15,9 +15,11 @@ class ResultsTab extends React.Component {
             selectedModel = _.find(store.models, {id: store.selectedModelId}) || null;
 
         return (
-            <>
-                <h3>BMDS output summary</h3>
-                <div className="row">
+            <div className="row">
+                <div className="col-md-12">
+                    <h3>BMDS output summary</h3>
+                </div>
+                <div className="col-md-8">
                     <OutputTable
                         models={store.models}
                         bmrs={store.bmrs}
@@ -26,14 +28,16 @@ class ResultsTab extends React.Component {
                         handleModelNoHover={() => store.setHoverModel(null)}
                         selectedModelId={store.selectedModelId}
                     />
+                    <RecommendationNotes notes={store.selectedModelNotes} />
+                </div>
+                <div className="col-md-4">
                     <OutputFigure
                         endpoint={store.endpoint}
                         hoverModel={store.hoverModel}
                         selectedModel={selectedModel}
                     />
                 </div>
-                <RecommendationNotes notes={store.selectedModelNotes} />
-            </>
+            </div>
         );
     }
 }

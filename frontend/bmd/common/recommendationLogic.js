@@ -291,12 +291,8 @@ const SUFFICIENTLY_CLOSE_BMDL = 3,
         },
     };
 
-const applyRecommendationLogic = function(logics, models, endpoint, doseUnits) {
-    let doses = endpoint._get_doses_by_dose_id(doseUnits),
-        groups = _.chain(endpoint.data.groups)
-            .map(d => h.deepCopy(d))
-            .each((d, i) => (d.dose = doses[i]))
-            .value();
+const applyRecommendationLogic = function(logics, models, endpoint, doseUnitsId) {
+    endpoint.doseUnits.activate(doseUnitsId);
 
     // get function associated with each test
     logics = _.chain(logics)
@@ -334,7 +330,7 @@ const applyRecommendationLogic = function(logics, models, endpoint, doseUnits) {
 
         // apply tests for each model
         logics.forEach(logic => {
-            let res = logic.func(logic, model, groups);
+            let res = logic.func(logic, model, endpoint.data.groups);
             if (res && res.bin) {
                 model.logic_bin = Math.max(res.bin, model.logic_bin);
             }

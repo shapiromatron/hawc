@@ -430,6 +430,7 @@ class IVEndpointFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_iv_units(assessment.id)
         for field in self.fields:
             if field not in ("dose_units", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})

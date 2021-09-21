@@ -100,13 +100,9 @@ class Outcome {
     buildListRow() {
         let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
             detail = $(
-                '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
-            ).click(() => {
-                this.displayAsModal({complete: true});
-            }),
-            outcome = $("<span>")
-                .append(link, detail)
-                .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+                '<i class="fa fa-eye previewModalIcon" title="preview in a modal">'
+            ).click(() => this.displayAsModal({complete: true})),
+            outcome = $('<span class="previewModalParent">').append(link, detail);
 
         return [
             `<a href=${this.data.study_population.study.url} target="_blank">${this.data.study_population.study.short_citation}</a>`,

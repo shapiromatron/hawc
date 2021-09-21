@@ -7,6 +7,7 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
 from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
+from ..assessment.models import DoseUnits
 from ..common import selectable
 from ..common.forms import (
     ASSESSMENT_UNIQUE_MESSAGE,
@@ -507,8 +508,8 @@ class OutcomeFilterForm(forms.Form):
         required=False,
     )
 
+    metric_units = forms.ModelChoiceField(queryset=DoseUnits.objects.all(), required=False)
     order_by = forms.ChoiceField(choices=ORDER_BY_CHOICES,)
-
     paginate_by = forms.IntegerField(
         label="Items per page", min_value=10, initial=25, max_value=500, required=False
     )
@@ -516,8 +517,9 @@ class OutcomeFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
+        self.fields["metric_units"].queryset = DoseUnits.objects.get_epi_units(assessment.id)
         for field in self.fields:
-            if field not in ("design", "diagnostic", "order_by", "paginate_by"):
+            if field not in ("design", "diagnostic", "metric_units", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
     @property
@@ -529,7 +531,7 @@ class OutcomeFilterForm(forms.Form):
         helper.add_row("studies", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
         helper.add_row("system", 4, "col-md-3")
-        helper.add_row("order_by", 2, "col-md-3")
+        helper.add_row("metric_units", 3, "col-md-3")
 
         return helper
 
@@ -547,6 +549,7 @@ class OutcomeFilterForm(forms.Form):
         effect = self.cleaned_data.get("effect")
         effect_subtype = self.cleaned_data.get("effect_subtype")
         diagnostic = self.cleaned_data.get("diagnostic")
+        metric_units = self.cleaned_data.get("metric_units")
 
         query = Q()
         if studies:
@@ -573,6 +576,8 @@ class OutcomeFilterForm(forms.Form):
             query &= Q(effect_subtype__icontains=effect_subtype)
         if diagnostic:
             query &= Q(diagnostic__in=diagnostic)
+        if metric_units:
+            query &= Q(study_population__exposures__metric_units=metric_units)
         return query
 
     def get_order_by(self):
