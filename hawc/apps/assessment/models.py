@@ -929,6 +929,9 @@ class Log(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:log_detail", args=(self.id,))
 
+    def get_api_url(self):
+        return reverse("assessment:api:logs-detail", args=(self.id,))
+
     def get_assessment(self):
         return self.assessment
 
