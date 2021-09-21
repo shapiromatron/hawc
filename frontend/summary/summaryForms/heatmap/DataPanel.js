@@ -4,6 +4,23 @@ import {inject, observer} from "mobx-react";
 import {DataStatusIndicator} from "./common";
 import DatasetPreview from "../../summary/heatmap/DatasetPreview";
 import SelectInput from "shared/components/SelectInput";
+import HAWCUtils from "shared/utils/HAWCUtils";
+
+const InteractivePopup = props => {
+    return (
+        <a
+            href="/summary/dataset-interactivity/"
+            onClick={e => {
+                e.preventDefault();
+                HAWCUtils.newWindowPopupLink(e.target);
+            }}>
+            {props.text}
+        </a>
+    );
+};
+InteractivePopup.propTypes = {
+    text: PropTypes.string.isRequired,
+};
 
 @inject("store")
 @observer
@@ -49,15 +66,25 @@ class DataPanel extends Component {
             <div>
                 <SelectInput
                     name="data_url"
-                    label="Data URL"
+                    label="Dataset"
                     choices={datasetOptions}
                     multiple={false}
                     handleSelect={value => changeDatasetUrl(value)}
-                    helpText={`Select the dataset you'd like to use. Note that if you select a
-                    dataset that contains "unpublished HAWC data", then if this assessment is
-                    made public, users without team-level access will be unable to view the visual.`}
+                    helpText="Select the dataset you'd like to use."
                     value={settings.data_url}
                 />
+                <ul className="text-muted">
+                    <li>
+                        If you select a dataset that contains &quot;unpublished HAWC data&quot;,
+                        then if this assessment is made public, users without team-level access will
+                        be unable to view the visual.
+                    </li>
+                    <li>
+                        With uploaded datasets, if you&nbsp;
+                        <InteractivePopup text="design your dataset" /> appropriately, HAWC
+                        interactivity is available.
+                    </li>
+                </ul>
             </div>
         );
     }
