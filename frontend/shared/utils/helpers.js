@@ -6,6 +6,7 @@ import _ from "lodash";
 import moment from "moment";
 
 const stopwords = new Set("the is at which of on".split(" ")),
+    hexChars = "abcdef0123456789",
     regexEscapeChars = /[-|\\{}()[\]^$+*?.]/g,
     excelColumn = column => String.fromCharCode(65 + column),
     hexToRgb = hex => {
@@ -243,10 +244,11 @@ const helpers = {
             luminance = 0.2126 * r_component + 0.7152 * g_component + 0.0722 * b_component;
         return luminance > Math.sqrt(1.05 * 0.05) - 0.05 ? "#000000" : "#ffffff";
     },
-    randomString() {
-        return "xxxxxxxxxxxxxxx".replace(/x/g, c =>
-            String.fromCharCode(97 + parseInt(26 * Math.random()))
-        );
+    randomString(length = 15) {
+        return Array(length)
+            .fill()
+            .map(() => hexChars.charAt(Math.floor(Math.random() * hexChars.length)))
+            .join("");
     },
     renameProperty(obj, oldName, newName) {
         obj[newName] = obj[oldName];
