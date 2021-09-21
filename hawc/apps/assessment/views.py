@@ -808,9 +808,8 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = (
-            qs.filter(assessment=self.assessment)
-            .select_related("assessment", "content_type", "user")
+        qs = qs.filter(assessment=self.assessment).select_related(
+            "assessment", "content_type", "user"
         )
         form = forms.LogFilterForm(self.request.GET)
         if form.is_valid():
