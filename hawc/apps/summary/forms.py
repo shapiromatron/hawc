@@ -6,7 +6,7 @@ from django import forms
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
-from ..animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
+from ..animal.lookups import EndpointByAssessmentLookup
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import selectable
@@ -512,6 +512,7 @@ class VisualForm(forms.ModelForm):
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
         if self.instance.visual_type not in [
+            models.Visual.BIOASSAY_AGGREGATION,
             models.Visual.ROB_HEATMAP,
             models.Visual.LITERATURE_TAGTREE,
             models.Visual.EXTERNAL_SITE,
@@ -554,40 +555,15 @@ class VisualForm(forms.ModelForm):
         return clean_slug(self)
 
 
-class EndpointAggregationSelectMultipleWidget(selectable.AutoCompleteSelectMultipleWidget):
-    """
-    Value in render is a queryset of type assessment.models.BaseEndpoint,
-    where the widget is expecting type animal.models.Endpoint. Therefore, the
-    value is written as a string instead of ID when using the standard widget.
-    We override to return the proper type for the queryset so the widget
-    properly returns IDs instead of strings.
-    """
-
-    def render(self, name, value, attrs=None, renderer=None):
-        if value:
-            value = [value.id for value in value]
-        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(
-            name, value, attrs, renderer
-        )
-
-
 class EndpointAggregationForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
-            lookup_class=EndpointByAssessmentLookupHtml,
-            label="Endpoints",
-            widget=EndpointAggregationSelectMultipleWidget,
-        )
-        self.fields["endpoints"].widget.update_query_parameters(
-            {"related": self.instance.assessment_id}
-        )
         self.helper = self.setHelper()
         self.helper.attrs["novalidate"] = ""
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "prefilters", "studies")
+        exclude = ("assessment", "visual_type", "prefilters", "studies", "sort_order")
 
 
 class CrossviewForm(PrefilterMixin, VisualForm):
