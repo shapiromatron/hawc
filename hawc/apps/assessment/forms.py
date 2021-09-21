@@ -457,6 +457,9 @@ class LogFilterForm(forms.Form):
     user = forms.IntegerField(min_value=1, initial=None, required=False)
     content_type = forms.IntegerField(min_value=1, initial=None, required=False)
     object_id = forms.IntegerField(min_value=1, initial=None, required=False)
+    before = forms.DateField(required=False)
+    after = forms.DateField(required=False)
+    on = forms.DateField(required=False)
 
     def filters(self) -> Q:
         query = Q()
@@ -466,4 +469,10 @@ class LogFilterForm(forms.Form):
             query &= Q(content_type=content_type)
         if object_id := self.cleaned_data.get("object_id"):
             query &= Q(object_id=object_id)
+        if before := self.cleaned_data.get("before"):
+            query &= Q(created__date__lt=before)
+        if after := self.cleaned_data.get("after"):
+            query &= Q(created__date__gt=after)
+        if on := self.cleaned_data.get("on"):
+            query &= Q(created__date=on)
         return query

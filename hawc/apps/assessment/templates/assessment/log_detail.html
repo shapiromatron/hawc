@@ -5,10 +5,10 @@
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{% url 'assessment:log_object_list' object.content_type.pk object.object_id %}">View all logs for object</a>
+        <a class="dropdown-item" href="{{object.get_object_list_url}}">View all logs for object</a>
     </div>
 </div>
-<h1 class="d-inline-block">{{object}}</h1>
+<h2>{{object}}</h2>
 
 <table class="table table-sm table-striped">
     <colgroup>

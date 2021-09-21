@@ -929,11 +929,23 @@ class Log(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:log_detail", args=(self.id,))
 
+    def get_object_list_url(self):
+        return reverse("assessment:log_object_list", args=(self.content_type_id, self.object_id))
+
+    def get_object_url(self):
+        # get list view if we can, else fall-back to the absolute view
+        if self.object_id and self.content_type_id:
+            return self.get_object_list_url()
+        return self.get_absolute_url()
+
     def get_api_url(self):
         return reverse("assessment:api:logs-detail", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment
+
+    def get_generic_object_name(self) -> str:
+        return f"{self.content_type.app_label}.{self.content_type.model} #{self.object_id}"
 
     def user_can_view(self, user) -> bool:
         return (

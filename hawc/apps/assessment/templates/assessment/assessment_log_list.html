@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1>{{assessment}} Logs</h1>
+<h2>{{assessment}} Logs</h2>
 {% if "content_type" in request.GET and "object_id" in request.GET or "user" in request.GET %}
 <div class="card">
     <div class="card-header">Filters</div>
@@ -23,59 +23,67 @@
 
 {% url_replace page=None as params%}
 
-<table class="table table-striped">
+<table class="table table-sm table-striped">
     <colgroup>
-        <col width="5%" />
         <col width="25%" />
+        <col width="5%" />
         <col width="40%" />
         <col width="15%" />
         <col width="15%" />
     </colgroup>
     <thead>
         <tr>
-            <th>Details</th>
             <th>Item</th>
+            <th>Log</th>
             <th>Message</th>
             <th>User</th>
             <th>Timestamp</th>
         </tr>
     </thead>
     <tbody>
-        {% for object in object_list %}
+        {% for log in object_list %}
         <tr>
             <td>
-                <a class="btn btn-primary w-100" href="{{object.get_absolute_url}}">View</a>
-            </td>
-            <td>
-                {% if object.content_object %}
+                {% if log.object_id %}
                     {% if "content_type" not in request.GET or "object_id" not in request.GET %}
-                    {% url_replace page=None content_type=object.content_type.id object_id=object.object_id as params %}
+                    {% url_replace page=None content_type=log.content_type.id object_id=log.object_id as params %}
                     <a class="pull-right" title="View History"
                         href="{{request.path}}{{params|yesno:'?,'}}{{params}}">
                         <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
                     </a>
                     {% endif %}
-                    {% if object.content_object.get_absolute_url %}
-                    <a href="{{object.content_object.get_absolute_url}}">{{object.content_object}}</a>
-                    {% else %}
-                    {{object.content_object}}
-                    {% endif %}
-                {% else %}-{% endif %}
+                {% endif %}
+                {% if log.content_object %}
+                    {% with log.content_object.get_absolute_url as absolute_url %}
+                        {% if absolute_url %}
+                            <a href="{{absolute_url}}">{{log.content_object}}</a>
+                        {% else %}
+                            {{log.content_object}}
+                        {% endif %}
+                    {% endwith %}
+                {% elif log.object_id %}
+                    {{log.get_generic_object_name}} &lt;deleted&gt;
+                {% else %}
+                    &mdash;
+                {% endif %}
             </td>
-            <td>{{object.message|truncatechars:100}}</td>
             <td>
-                {% if object.user %}
+                <a class="btn btn-outline-primary btn-sm w-100" href="{{log.get_object_url}}">View</a>
+            </td>
+            <td>{{log.message|truncatechars:100}}</td>
+            <td>
+                {% if log.user %}
                     {% if "user" not in request.GET %}
-                    {% url_replace page=None user=object.user.id as params %}
+                    {% url_replace page=None user=log.user_id as params %}
                     <a class="pull-right" title="View History"
                         href="{{request.path}}{{params|yesno:'?,'}}{{params}}">
                         <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
                     </a>
                     {% endif %}
-                {{object.user}}
+                {{log.user}}
                 {% else %}-{% endif %}
             </td>
-            <td>{{object.created}}</td>
+            <td>{{log.created}}</td>
         </tr>
         {% empty %}
         <tr>
