@@ -140,10 +140,9 @@ class ExploreHeatmap extends BaseVisual {
                     this.dataset = json;
                     return {dataset: json};
                 })
-                .catch(error => {
+                .then(callback, error => {
                     callback({error});
-                })
-                .then(callback);
+                });
         }
     }
 
@@ -178,7 +177,7 @@ class ExploreHeatmap extends BaseVisual {
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             callback = resp => {
-                if (resp.dataset) {
+                if (resp.dataset || resp.error) {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
@@ -190,11 +189,19 @@ class ExploreHeatmap extends BaseVisual {
                         $el.prepend([actions, title]).append(captionDiv);
                     }
 
+                    // exit early if we got an error
+                    if (resp.error) {
+                        console.error(resp.error);
+                        $plotDiv.append(getErrorDiv());
+                        return;
+                    }
+
                     try {
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                     } catch (err) {
                         console.error(err);
                         $plotDiv.append(getErrorDiv());
+                        return;
                     }
 
                     if (options.cb) {
@@ -202,10 +209,6 @@ class ExploreHeatmap extends BaseVisual {
                     }
 
                     caption.renderAndEnable();
-                } else if (resp.error) {
-                    $el.empty()
-                        .prepend(title)
-                        .append(this.getErrorDiv());
                 } else {
                     throw "Unknown status.";
                 }

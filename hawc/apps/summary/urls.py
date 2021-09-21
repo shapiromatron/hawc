@@ -132,4 +132,10 @@ urlpatterns = [
         views.DataPivotDelete.as_view(),
         name="dp_delete",
     ),
+    # HELP TEXT
+    path(
+        "dataset-interactivity/",
+        views.DatasetInteractivity.as_view(),
+        name="dataset_interactivity",
+    ),
 ]

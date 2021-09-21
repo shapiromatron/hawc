@@ -17,12 +17,9 @@ class DjangoForm extends Component {
                 isCreate,
                 updateContent,
                 updateTableContent,
-                handleSubmit,
-                cancelUrl,
             } = this.props.store,
             header = isCreate ? "Create new table" : `Update ${tableObject.title}`,
-            helpText = isCreate ? "..." : "Update an existing table",
-            saveBtnText = isCreate ? "Create" : "Update";
+            helpText = isCreate ? "..." : "Update an existing table";
 
         return (
             <div>
@@ -68,14 +65,6 @@ class DjangoForm extends Component {
                     errors={formErrors.published}
                     helpText="If published (and your assessment is public), the table can be viewed by the public"
                 />
-                <div className="form-actions">
-                    <button type="button" onClick={handleSubmit} className="btn btn-primary mr-1">
-                        {saveBtnText}
-                    </button>
-                    <a href={cancelUrl} className="btn btn-light">
-                        Cancel
-                    </a>
-                </div>
             </div>
         );
     }

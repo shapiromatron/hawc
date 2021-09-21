@@ -155,7 +155,7 @@ def form_error_lis_to_ul(lis):
 
 
 def addPopupLink(href, text):
-    return f'<a href="{href}" onclick="return HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
+    return f'<a href="{href}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
 
 
 class TdLayout(cfl.LayoutObject):
