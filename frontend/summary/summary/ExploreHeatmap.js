@@ -201,6 +201,7 @@ class ExploreHeatmap extends BaseVisual {
                     } catch (err) {
                         console.error(err);
                         $plotDiv.append(getErrorDiv());
+                        return;
                     }
 
                     if (options.cb) {
