@@ -26,5 +26,16 @@
         <a class="page-link" href="#">&gt;&gt;</a>
     </li>
     {% endif %}
+
+    <li class="ml-3 page-item">
+        <label class="page-link font-weight-normal text-muted" for="quickPageSelector">Go to page:&nbsp;</label>
+    </li>
+    <li class="page-item from-group">
+        <select id="quickPageSelector" class="form-control" onchange="location=this.value;">
+            {% for n in page_obj.paginator.page_range %}
+            <option {% ifequal page_obj.number n %}selected{% endifequal %} value="?{% url_replace request 'page' n %}">{{ n }}</option>
+            {% endfor %}
+        </select>
+    </li>
 </ul>
 {% endif %}
