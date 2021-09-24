@@ -555,7 +555,9 @@ class RefsByTagJSON(BaseDetail):
         tag_id = self.kwargs.get("tag_id", None)
         tag = None
         if tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tag_in_assessment(self.assessment.id, int(tag_id))
+            tag = models.ReferenceFilterTag.get_tags_in_assessment(self.assessment.id, int(tag_id))[
+                0
+            ]
 
         if search_id:
             search = models.Search.objects.get(id=search_id)

@@ -5,16 +5,17 @@ import {inject, observer} from "mobx-react";
 import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
 import FormActions from "shared/components/FormActions";
+import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
 @observer
 class SearchForm extends Component {
     render() {
-        const {changeSearchTerm, searchForm, submitSearch, resetForm} = this.props.store;
+        const {changeSearchTerm, searchForm, submitSearch, resetForm, tagtree} = this.props.store;
         return (
             <form>
                 <div className="row">
-                    <div className="form-group col-md-4">
+                    <div className="form-group col-lg-3">
                         <IntegerInput
                             minimum={1}
                             name="id_hawc"
@@ -26,19 +27,19 @@ class SearchForm extends Component {
                             }
                         />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="form-group col-lg-3">
                         <IntegerInput
                             minimum={1}
                             name="id_db"
-                            label="Database unique identifier"
-                            helpText="Identifiers may include Pubmed ID, HERO ID, etc."
+                            label="External identifier"
+                            helpText="Pubmed ID, HERO ID, etc."
                             value={searchForm.db_id}
                             onChange={e =>
                                 changeSearchTerm("db_id", parseInt(e.target.value) || undefined)
                             }
                         />
                     </div>
-                    <div className="form-group col-md-4">
+                    <div className="form-group col-lg-3">
                         <IntegerInput
                             minimum={1}
                             name="year"
@@ -50,27 +51,7 @@ class SearchForm extends Component {
                             }
                         />
                     </div>
-                </div>
-                <div className="row">
-                    <div className="form-group col-md-6">
-                        <TextInput
-                            name="title"
-                            label="Title"
-                            value={searchForm.title}
-                            onChange={e => changeSearchTerm("title", e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group col-md-6">
-                        <TextInput
-                            name="authors"
-                            label="Authors"
-                            value={searchForm.authors}
-                            onChange={e => changeSearchTerm("authors", e.target.value)}
-                        />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="form-group col-md-6">
+                    <div className="form-group col-lg-3">
                         <TextInput
                             name="id_journal"
                             label="Journal"
@@ -78,12 +59,40 @@ class SearchForm extends Component {
                             onChange={e => changeSearchTerm("journal", e.target.value)}
                         />
                     </div>
-                    <div className="form-group col-md-6">
+                </div>
+                <div className="row">
+                    <div className="form-group col-xl-5">
+                        <TextInput
+                            name="title"
+                            label="Title"
+                            value={searchForm.title}
+                            onChange={e => changeSearchTerm("title", e.target.value)}
+                        />
+                        <TextInput
+                            name="authors"
+                            label="Authors"
+                            value={searchForm.authors}
+                            onChange={e => changeSearchTerm("authors", e.target.value)}
+                        />
                         <TextInput
                             name="id_abstract"
                             label="Abstract"
                             value={searchForm.abstract}
                             onChange={e => changeSearchTerm("abstract", e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group col-xl-7">
+                        <SelectInput
+                            choices={tagtree.choices()}
+                            value={searchForm.tags}
+                            handleSelect={values => {
+                                const ints = values.map(d => parseInt(d));
+                                changeSearchTerm("tags", ints);
+                            }}
+                            label="Tags"
+                            helpText="Must include all selected tags or tag-children."
+                            multiple={true}
+                            selectSize={10}
                         />
                     </div>
                 </div>

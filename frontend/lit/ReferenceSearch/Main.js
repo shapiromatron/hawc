@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 
+import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 import ReferenceTable from "../components/ReferenceTable";
 import SearchForm from "./SearchForm";
@@ -21,7 +22,7 @@ class ReferenceSearchMain extends Component {
                             className="btn btn-link"
                             data-toggle="collapse"
                             data-target="#searchCollapser">
-                            Find references
+                            Search for references in this assessment
                         </button>
                     </div>
                     <div id="searchCollapser" className="collapse show">
@@ -33,7 +34,10 @@ class ReferenceSearchMain extends Component {
                 <div>
                     {isSearching ? <Loading /> : null}
                     {hasReferences && numReferences === 0 ? (
-                        <p>Search found no references; please change query parameters.</p>
+                        <Alert
+                            className="alert-info"
+                            message="Search found no references; please change query parameters."
+                        />
                     ) : null}
                     {numReferences > 0 ? (
                         numReferences === store.MAX_REFERENCES ? (

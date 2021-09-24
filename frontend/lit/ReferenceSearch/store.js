@@ -56,6 +56,7 @@ class Store {
             authors: "",
             journal: "",
             abstract: "",
+            tags: [],
         };
         this.references = null;
     }

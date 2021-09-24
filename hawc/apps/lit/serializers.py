@@ -104,9 +104,26 @@ class ReferenceQuerySerializer(serializers.Serializer):
     authors = serializers.CharField(required=False, allow_blank=True)
     journal = serializers.CharField(required=False, allow_blank=True)
     abstract = serializers.CharField(required=False, allow_blank=True)
+    tags = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=True,
+        required=False,
+        min_length=0,
+        max_length=10,
+    )
+
+    def validate_tags(self, values):
+        assessment = self.context["assessment"]
+        self._tags = (
+            models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, values)
+            if len(values) > 0
+            else values
+        )
+        return values
 
     def search(self):
-        query = Q(assessment=self.context["assessment"])
+        qs = models.Reference.objects.filter(assessment=self.context["assessment"])
+        query = Q()
         if "id" in self.data and self.data["id"] is not None:
             query &= Q(id=self.data["id"])
         if "db_id" in self.data and self.data["db_id"] is not None:
@@ -123,9 +140,11 @@ class ReferenceQuerySerializer(serializers.Serializer):
             query &= Q(journal__icontains=self.data["journal"])
         if "abstract" in self.data:
             query &= Q(abstract__icontains=self.data["abstract"])
-
+        for tag in self._tags:
+            tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
+            qs = qs.filter(tags__in=tag_ids)
         qs = (
-            models.Reference.objects.filter(query)
+            qs.filter(query)
             .select_related("study")
             .prefetch_related("searches", "identifiers")[:100]
         )
