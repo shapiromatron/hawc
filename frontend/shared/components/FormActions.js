@@ -19,11 +19,12 @@ class FormActions extends Component {
                     <a role="button" className="btn btn-secondary" href={cancel}>
                         <i className="fa fa-fw fa-times"></i> Cancel
                     </a>
-                ) : (
+                ) : null}
+                {_.isFunction(cancel) ? (
                     <button type="button" className="btn btn-secondary" onClick={cancel}>
                         <i className={`fa fa-fw ${cancelIcon}`}></i> Cancel
                     </button>
-                )}
+                ) : null}
             </div>
         );
     }
@@ -34,7 +35,7 @@ FormActions.propTypes = {
     handleSubmit: PropTypes.func,
     submitIcon: PropTypes.string,
     submitText: PropTypes.string,
-    cancel: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+    cancel: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     cancelIcon: PropTypes.string,
     cancelText: PropTypes.string,
 };
