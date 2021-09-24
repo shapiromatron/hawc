@@ -1,8 +1,8 @@
-{% extends 'assessment-rooted.html' %}
+{% extends assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
 
-<h2>{{object}} Logs</h2>
+<h2>{{first_log}}s</h2>
 
 <table class="table table-sm table-striped">
     <colgroup>
@@ -13,14 +13,12 @@
 
         <tr>
             <th>Object</th>
-            <td>{{object}}</td>
+            <td>{{first_log.get_object_name}}</td>
         </tr>
 
         <tr>
             <th>Object type</th>
-            {% with object_list|first as first_log %}
             <td>{{first_log.content_type}}</td>
-            {% endwith %}
         </tr>
 
         <tr>

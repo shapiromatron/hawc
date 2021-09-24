@@ -1,13 +1,16 @@
-{% extends 'assessment-rooted.html' %}
+{% extends object.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
 
+{% if object.get_object_name %}
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
         <a class="dropdown-item" href="{{object.get_object_list_url}}">View all logs for object</a>
     </div>
 </div>
+{% endif %}
+
 <h2>{{object}}</h2>
 
 <table class="table table-sm table-striped">
@@ -19,7 +22,15 @@
 
         <tr>
             <th>Object</th>
-            <td>{{object.content_object}}</td>
+            <td>
+                {% with object.content_object.get_absolute_url as absolute_url %}
+                    {% if absolute_url %}
+                    <a href="{{absolute_url}}">{{object.get_object_name}}</a>
+                    {% else %}
+                    {{object.get_object_name}}
+                    {% endif %}
+                {% endwith %}
+            </td>
         </tr>
 
         <tr>

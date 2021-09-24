@@ -920,8 +920,8 @@ class Log(models.Model):
         ordering = ("-created",)
 
     def __str__(self) -> str:
-        if self.content_object is not None:
-            return str(self.content_object) + " Log"
+        if self.object_id and self.content_type_id:
+            return self.get_object_name() + " Log"
         if self.assessment is not None:
             return str(self.assessment) + " Log"
         return "Custom Log"
@@ -946,6 +946,12 @@ class Log(models.Model):
 
     def get_generic_object_name(self) -> str:
         return f"{self.content_type.app_label}.{self.content_type.model} #{self.object_id}"
+
+    def get_object_name(self):
+        if self.content_object:
+            return str(self.content_object)
+        if self.object_id and self.content_type_id:
+            return self.get_generic_object_name()
 
     def user_can_view(self, user) -> bool:
         return (

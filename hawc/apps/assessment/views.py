@@ -748,14 +748,8 @@ class LogDetail(DetailView):
         if self.object.assessment is not None:
             extras.append(
                 Breadcrumb(
-                    name=str(self.object.assessment), url=self.object.assessment.get_absolute_url(),
-                )
-            )
-        if hasattr(self.object.content_object, "get_absolute_url"):
-            extras.append(
-                Breadcrumb(
-                    name=str(self.object.content_object),
-                    url=self.object.content_object.get_absolute_url(),
+                    name=f"{self.object.assessment} Logs",
+                    url=reverse("assessment:assessment_logs", args=(self.object.assessment.id,)),
                 )
             )
         crumbs = Breadcrumb.build_crumbs(self.request.user, "Log", extras)
@@ -771,7 +765,8 @@ class LogObjectList(ListView):
         qs = self.model.objects.filter(**self.kwargs)
         if qs.count() == 0:
             raise Http404()
-        self.object = qs[0].content_object
+        self.first_log = qs[0]
+        self.content_object = qs[0].content_object
         self.assessment = qs[0].assessment
         if not qs[0].user_can_view(self.request.user):
             raise PermissionDenied()
@@ -781,16 +776,18 @@ class LogObjectList(ListView):
         extras = []
         if self.assessment is not None:
             extras.append(
-                Breadcrumb(name=str(self.assessment), url=self.assessment.get_absolute_url(),)
+                Breadcrumb(
+                    name=f"{self.assessment} Logs",
+                    url=reverse("assessment:assessment_logs", args=(self.assessment.id,)),
+                )
             )
-        if hasattr(self.object, "get_absolute_url"):
-            extras.append(Breadcrumb(name=str(self.object), url=self.object.get_absolute_url()))
         crumbs = Breadcrumb.build_crumbs(self.request.user, "Logs", extras)
         return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["object"] = self.object
+        context["first_log"] = self.first_log
+        context["content_object"] = self.content_object
         context["assessment"] = self.assessment
         context["breadcrumbs"] = self.get_breadcrumbs()
         return context
