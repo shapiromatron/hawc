@@ -131,11 +131,7 @@ class BaseVisualForm extends Component {
                     <TabPanel forceRender>
                         <div ref={preview => (this.preview = preview)} />
                     </TabPanel>
-                    <FormActions
-                        isForm={true}
-                        handleSubmit={h.noop}
-                        cancelURL={this.config.cancel_url}
-                    />
+                    <FormActions isForm={true} cancel={this.config.cancel_url} />
                 </form>
             </Tabs>
         );
