@@ -4,7 +4,7 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def url_replace(context, **kwargs):
+def url_replace(context, *args, **kwargs):
     """
     Add new parameters to a get URL, or removes if None.
 
@@ -15,8 +15,16 @@ def url_replace(context, **kwargs):
 
     """
     dict_ = context["request"].GET.copy()
-    for key, value in kwargs.items():
+
+    def handle_replace(dict_, key, value):
         dict_[key] = value
         if value is None:
             dict_.pop(key)
+
+    for arg in args:
+        for key, value in arg.items():
+            handle_replace(dict_, key, value)
+    for key, value in kwargs.items():
+        handle_replace(dict_, key, value)
+
     return dict_.urlencode()

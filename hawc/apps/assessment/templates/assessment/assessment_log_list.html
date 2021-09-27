@@ -1,22 +1,30 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load url_replace %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
 <h2>{{assessment}} Logs</h2>
-{% if "content_type" in request.GET and "object_id" in request.GET or "user" in request.GET %}
+
 <div class="card">
-    <div class="card-header">Filters</div>
+    <div class="card-header">Filter logs</div>
     <div class="card-body">
-        {% if "content_type" in request.GET and "object_id" in request.GET %}
-        {% url_replace page=None content_type=None object_id=None as params %}
-        <a class="btn btn-secondary rounded-pill" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> {{object_list.0.content_object}}</a>
-        {% endif %}
-        {% if "user" in request.GET %}
-        {% url_replace page=None user=None as params %}
-        <a class="btn btn-secondary rounded-pill" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i class='fa fa-times-circle'></i> {{object_list.0.user}}</a>
-        {% endif %}
+        {% crispy form %}
+    </div>
+</div>
+
+{% if active_filters %}
+<div class="card">
+    <div class="card-header">Remove filters</div>
+    <div class="card-body">
+        <a class="btn btn-secondary rounded-pill" href="{{request.path}}"><i class='fa fa-times-circle'></i> Remove
+            all</a>
+        {% for filter in active_filters %}
+        {% url_replace filter.delete_params page=None as params %}
+        <a class="btn btn-secondary rounded-pill" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i
+                class='fa fa-times-circle'></i> {{filter.label}}</a>
+        {% endfor %}
     </div>
 </div>
 {% endif %}
@@ -45,7 +53,7 @@
         <tr>
             <td>
                 {% if log.object_id %}
-                    {% if "content_type" not in request.GET or "object_id" not in request.GET %}
+                    {% if not request.GET.content_type or not request.GET.object_id %}
                     {% url_replace page=None content_type=log.content_type.id object_id=log.object_id as params %}
                     <a class="pull-right" title="View History"
                         href="{{request.path}}{{params|yesno:'?,'}}{{params}}">
@@ -73,13 +81,6 @@
             <td>{{log.message|truncatechars:100}}</td>
             <td>
                 {% if log.user %}
-                    {% if "user" not in request.GET %}
-                    {% url_replace page=None user=log.user_id as params %}
-                    <a class="pull-right" title="View History"
-                        href="{{request.path}}{{params|yesno:'?,'}}{{params}}">
-                        <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
-                    </a>
-                    {% endif %}
                 {{log.user}}
                 {% else %}-{% endif %}
             </td>
@@ -95,3 +96,7 @@
 {% include "includes/paginator.html" %}
 
 {% endblock content %}
+
+{% block extrajs %}
+    {{ form.media }}
+{% endblock extrajs %}

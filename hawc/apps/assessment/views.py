@@ -21,6 +21,7 @@ from django.views.generic import DetailView, FormView, ListView, TemplateView, V
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
+from ..common.helper import get_content_object_name
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -812,3 +813,32 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
         if form.is_valid():
             qs = qs.filter(form.filters())
         return qs
+
+    def get_active_filters(self):
+        filters = []
+        for param in ["on", "before", "after"]:
+            if self.request.GET.get(param):
+                filters.append({"label": param.capitalize(), "delete_params": {param: None}})
+        if self.request.GET.get("user_1"):
+            filters.append(
+                {
+                    "label": self.request.GET.get("user_0", "User"),
+                    "delete_params": {"user_0": None, "user_1": None},
+                }
+            )
+        if self.request.GET.get("content_type") and self.request.GET.get("object_id"):
+            filters.append(
+                {
+                    "label": get_content_object_name(
+                        self.request.GET["content_type"], self.request.GET["object_id"]
+                    ),
+                    "delete_params": {"content_type": None, "object_id": None},
+                }
+            )
+        return filters
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = forms.LogFilterForm(self.request.GET)
+        context["active_filters"] = self.get_active_filters()
+        return context

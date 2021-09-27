@@ -11,9 +11,14 @@ from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.forms import BaseFormHelper, form_actions_create_or_close
-from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
+from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.selectable import (
+    AutoCompleteSelectMultipleWidget,
+    AutoCompleteSelectWidget,
+    AutoCompleteWidget,
+)
 from ..myuser.lookups import HAWCUserLookup
+from ..myuser.models import HAWCUser
 from . import lookups, models
 
 
@@ -454,12 +459,27 @@ class DatasetForm(forms.ModelForm):
 
 
 class LogFilterForm(forms.Form):
-    user = forms.IntegerField(min_value=1, initial=None, required=False)
-    content_type = forms.IntegerField(min_value=1, initial=None, required=False)
-    object_id = forms.IntegerField(min_value=1, initial=None, required=False)
-    before = forms.DateField(required=False)
-    after = forms.DateField(required=False)
-    on = forms.DateField(required=False)
+    user = forms.ModelChoiceField(
+        queryset=HAWCUser.objects.all(),
+        initial=None,
+        required=False,
+        widget=AutoCompleteSelectWidget(lookup_class=HAWCUserLookup),
+    )
+    content_type = forms.IntegerField(
+        min_value=1, initial=None, required=False, widget=forms.HiddenInput()
+    )
+    object_id = forms.IntegerField(
+        min_value=1, initial=None, required=False, widget=forms.HiddenInput()
+    )
+    before = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
+    after = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
+    on = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters(),)
+        helper.form_method = "get"
+        return helper
 
     def filters(self) -> Q:
         query = Q()
