@@ -9,6 +9,7 @@ class RiskOfBiasResponses(models.IntegerChoices):
     GOOD_DEFICIENT = 2, "Good/deficient"
     HIGH_LOW_CONFIDENCE = 3, "High/low confidence"
     YES_NO = 4, "Yes/No"
+    MINOR_CRITICAL = 5, "Minor/Critical concerns"
 
 
 RESPONSES_VALUES: Dict[models.IntegerChoices, List[int]] = {
