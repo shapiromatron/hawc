@@ -12,11 +12,7 @@ from django.urls import reverse, reverse_lazy
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
-from ..common.selectable import (
-    AutoCompleteSelectMultipleWidget,
-    AutoCompleteSelectWidget,
-    AutoCompleteWidget,
-)
+from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..myuser.lookups import HAWCUserLookup
 from ..myuser.models import HAWCUser
 from . import lookups, models
@@ -460,10 +456,7 @@ class DatasetForm(forms.ModelForm):
 
 class LogFilterForm(forms.Form):
     user = forms.ModelChoiceField(
-        queryset=HAWCUser.objects.all(),
-        initial=None,
-        required=False,
-        widget=AutoCompleteSelectWidget(lookup_class=HAWCUserLookup),
+        queryset=HAWCUser.objects.all(), initial=None, empty_label="", required=False,
     )
     content_type = forms.IntegerField(
         min_value=1, initial=None, required=False, widget=forms.HiddenInput()
@@ -474,6 +467,11 @@ class LogFilterForm(forms.Form):
     before = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
     after = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
     on = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        self.fields["user"].queryset = assessment.pms_and_team_users()
 
     @property
     def helper(self):
