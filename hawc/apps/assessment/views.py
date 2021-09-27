@@ -767,7 +767,6 @@ class LogObjectList(ListView):
         if qs.count() == 0:
             raise Http404()
         self.first_log = qs[0]
-        self.content_object = qs[0].content_object
         self.assessment = qs[0].assessment
         if not qs[0].user_can_view(self.request.user):
             raise PermissionDenied()
@@ -788,7 +787,6 @@ class LogObjectList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["first_log"] = self.first_log
-        context["content_object"] = self.content_object
         context["assessment"] = self.assessment
         context["breadcrumbs"] = self.get_breadcrumbs()
         return context

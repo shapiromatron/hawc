@@ -13,7 +13,15 @@
 
         <tr>
             <th>Object</th>
-            <td>{{first_log.get_object_name}}</td>
+            <td>
+                {% with first_log.content_object.get_absolute_url as absolute_url %}
+                    {% if absolute_url %}
+                    <a href="{{absolute_url}}">{{first_log.get_object_name}}</a>
+                    {% else %}
+                    {{first_log.get_object_name}}
+                    {% endif %}
+                {% endwith %}
+            </td>
         </tr>
 
         <tr>
