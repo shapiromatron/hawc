@@ -746,12 +746,12 @@ class LogDetail(DetailView):
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
         extras = []
-        if self.object.assessment is not None:
-            extras.append(
-                Breadcrumb(
-                    name=f"{self.object.assessment} Logs",
-                    url=reverse("assessment:assessment_logs", args=(self.object.assessment.id,)),
-                )
+        if assessment := self.object.assessment:
+            extras.extend(
+                [
+                    Breadcrumb.from_object(assessment),
+                    Breadcrumb(name="Logs", url=assessment.get_assessment_logs_url()),
+                ]
             )
         crumbs = Breadcrumb.build_crumbs(self.request.user, "Log", extras)
         return crumbs
@@ -773,15 +773,14 @@ class LogObjectList(ListView):
         return qs
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        extras = []
-        if self.assessment is not None:
-            extras.append(
-                Breadcrumb(
-                    name=f"{self.assessment} Logs",
-                    url=reverse("assessment:assessment_logs", args=(self.assessment.id,)),
-                )
-            )
-        crumbs = Breadcrumb.build_crumbs(self.request.user, "Logs", extras)
+        crumbs = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Logs",
+            [
+                Breadcrumb.from_object(self.assessment),
+                Breadcrumb(name="Logs", url=self.assessment.get_assessment_logs_url()),
+            ],
+        )
         return crumbs
 
     def get_context_data(self, **kwargs):
@@ -812,27 +811,7 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
             qs = qs.filter(self.form.filters())
         return qs
 
-    def get_active_filters(self):
-        active_filters = []
-        cleaned_data = self.form.cleaned_data
-        for field in ["on", "before", "after"]:
-            if cleaned_data[field]:
-                active_filters.append({"label": field.capitalize(), "delete_params": {field: None}})
-        if cleaned_data["user"]:
-            active_filters.append({"label": cleaned_data["user"], "delete_params": {"user": None}})
-        if cleaned_data["content_type"] and cleaned_data["object_id"]:
-            active_filters.append(
-                {
-                    "label": get_content_object_name(
-                        cleaned_data["content_type"], cleaned_data["object_id"]
-                    ),
-                    "delete_params": {"content_type": None, "object_id": None},
-                }
-            )
-        return active_filters
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
-        context["active_filters"] = self.get_active_filters()
         return context

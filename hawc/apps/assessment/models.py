@@ -305,6 +305,9 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.id,))
 
+    def get_assessment_logs_url(self):
+        return reverse("assessment:assessment_logs", args=(self.id,))
+
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
 

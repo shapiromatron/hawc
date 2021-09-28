@@ -14,35 +14,20 @@
     </div>
 </div>
 
-{% if active_filters %}
-<div class="card">
-    <div class="card-header">Remove filters</div>
-    <div class="card-body">
-        <a class="btn btn-secondary rounded-pill" href="{{request.path}}"><i class='fa fa-times-circle'></i> Remove
-            all</a>
-        {% for filter in active_filters %}
-        {% url_replace filter.delete_params page=None as params %}
-        <a class="btn btn-secondary rounded-pill" href="{{request.path}}{{params|yesno:'?,'}}{{params}}"><i
-                class='fa fa-times-circle'></i> {{filter.label}}</a>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
 {% url_replace page=None as params%}
 
 <table class="table table-sm table-striped">
     <colgroup>
-        <col width="25%" />
         <col width="5%" />
+        <col width="25%" />
         <col width="40%" />
         <col width="15%" />
         <col width="15%" />
     </colgroup>
     <thead>
         <tr>
-            <th>Item</th>
             <th>Log</th>
+            <th>Item</th>
             <th>Message</th>
             <th>User</th>
             <th>Timestamp</th>
@@ -51,6 +36,9 @@
     <tbody>
         {% for log in object_list %}
         <tr>
+            <td>
+                <a class="btn btn-outline-primary btn-sm w-100" href="{{log.get_object_url}}">View</a>
+            </td>
             <td>
                 {% if log.object_id %}
                     {% if not request.GET.content_type or not request.GET.object_id %}
@@ -74,9 +62,6 @@
                 {% else %}
                     &mdash;
                 {% endif %}
-            </td>
-            <td>
-                <a class="btn btn-outline-primary btn-sm w-100" href="{{log.get_object_url}}">View</a>
             </td>
             <td>{{log.message|truncatechars:100}}</td>
             <td>

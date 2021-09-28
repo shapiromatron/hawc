@@ -456,17 +456,38 @@ class DatasetForm(forms.ModelForm):
 
 class LogFilterForm(forms.Form):
     user = forms.ModelChoiceField(
-        queryset=HAWCUser.objects.all(), initial=None, empty_label="", required=False,
-    )
-    content_type = forms.IntegerField(
-        min_value=1, initial=None, required=False, widget=forms.HiddenInput()
+        queryset=HAWCUser.objects.all(),
+        initial=None,
+        required=False,
+        help_text="The user who made the change",
     )
     object_id = forms.IntegerField(
-        min_value=1, initial=None, required=False, widget=forms.HiddenInput()
+        min_value=1,
+        label="Object ID",
+        initial=None,
+        required=False,
+        help_text="The HAWC ID for the item which was modified; you can find in the URL",
     )
-    before = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
-    after = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
-    on = forms.DateField(required=False, widget=forms.widgets.DateInput(attrs={"type": "date"}))
+    content_type = forms.IntegerField(
+        min_value=1,
+        label="Content type",
+        initial=None,
+        required=False,
+        help_text="HAWC content type; use filters below to find content types; future updates will provide more documentation.",  # TODO - update
+    )
+    before = forms.DateField(
+        required=False,
+        label="Modified before",
+        widget=forms.widgets.DateInput(attrs={"type": "date"}),
+    )
+    after = forms.DateField(
+        required=False,
+        label="Modified After",
+        widget=forms.widgets.DateInput(attrs={"type": "date"}),
+    )
+    on = forms.DateField(
+        required=False, label="Modified On", widget=forms.widgets.DateInput(attrs={"type": "date"})
+    )
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment")
@@ -477,6 +498,8 @@ class LogFilterForm(forms.Form):
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters(),)
         helper.form_method = "get"
+        helper.add_row("user", 3, "col-md-4")
+        helper.add_row("before", 3, "col-md-4")
         return helper
 
     def filters(self) -> Q:
