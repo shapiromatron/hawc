@@ -8,6 +8,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
@@ -22,7 +23,6 @@ from django.views.generic import DetailView, FormView, ListView, TemplateView, V
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
-from ..common.helper import get_content_object_name
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -818,10 +818,7 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
         return context
 
 
-from django.contrib.contenttypes.models import ContentType
-
-
-# @method_decorator(cache_page(3600), name="dispatch")
+@method_decorator(cache_page(3600), name="dispatch")
 class AboutContentTypes(TemplateView):
     template_name = "assessment/content_types.html"
 

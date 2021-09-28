@@ -12,9 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.utils import html
@@ -396,16 +394,3 @@ def event_plot(series: pd.Series) -> Axes:
 
     plt.tight_layout()
     return ax
-
-
-def get_content_object(content_type: int, object_id: int):
-    return ContentType.objects.get_for_id(content_type).get_object_for_this_type(pk=object_id)
-
-
-def get_content_object_name(content_type: int, object_id: int) -> str:
-    ct = ContentType.objects.get_for_id(content_type)
-    try:
-        obj = ct.get_object_for_this_type(pk=object_id)
-        return str(obj)
-    except ObjectDoesNotExist:
-        return f"{ct.app_label}.{ct.model} #{object_id}"
