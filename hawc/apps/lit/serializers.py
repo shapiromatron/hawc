@@ -114,11 +114,11 @@ class ReferenceQuerySerializer(serializers.Serializer):
 
     def validate_tags(self, values):
         assessment = self.context["assessment"]
-        self._tags = (
-            models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, values)
-            if len(values) > 0
-            else values
-        )
+        if len(values) > 0:
+            try:
+                self._tags = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, values)
+            except ValueError:
+                raise serializers.ValidationError("Invalid tag IDs")
         return values
 
     def search(self):
@@ -140,9 +140,12 @@ class ReferenceQuerySerializer(serializers.Serializer):
             query &= Q(journal__icontains=self.data["journal"])
         if "abstract" in self.data:
             query &= Q(abstract__icontains=self.data["abstract"])
-        for tag in self._tags:
-            tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
-            qs = qs.filter(tags__in=tag_ids)
+        if tags := getattr(self, "_tags", None):
+            # don't use a Q for tags; Q creates a subquery with join instead; this approach
+            # appends additional where clauses which are much more performant
+            for tag in tags:
+                tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                qs = qs.filter(tags__in=tag_ids)
         qs = (
             qs.filter(query)
             .select_related("study")

@@ -13,33 +13,35 @@ class IntegerInput extends Component {
     }
 
     renderField(fieldClass, fieldId) {
-        const inputType = this.props.slider ? "range" : "number";
+        const inputType = this.props.slider ? "range" : "number",
+            {minimum, maximum, required} = this.props,
+            getStrValue = valueString => {
+                const valueInt = parseInt(valueString);
+                if (
+                    isNaN(valueInt) ||
+                    (minimum && valueInt < minimum) ||
+                    (maximum && valueInt > maximum)
+                ) {
+                    return required ? this.props.value.toString() : "";
+                }
+                return valueInt.toString();
+            };
         return (
             <div className="input-group">
                 <input
                     className={fieldClass}
-                    min={this.props.minimum}
-                    max={this.props.maximum}
+                    min={minimum}
+                    max={maximum}
                     id={fieldId}
                     name={this.props.name}
                     type={inputType}
                     required={this.props.required}
                     value={this.state.value}
-                    onBlur={e => {
-                        let valueString = e.target.value,
-                            valueInt = parseInt(valueString);
-                        if (
-                            isNaN(valueInt) ||
-                            (this.props.minimum && valueInt < this.props.minimum) ||
-                            (this.props.maximum && valueInt > this.props.maximum)
-                        ) {
-                            this.setState({value: this.props.value.toString()});
-                        } else {
-                            this.props.onChange(e);
-                            this.setState({value: valueInt.toString()});
-                        }
+                    onBlur={e => this.setState({value: getStrValue(e.target.value)})}
+                    onChange={e => {
+                        this.setState({value: getStrValue(e.target.value)});
+                        this.props.onChange(e);
                     }}
-                    onChange={e => this.setState({value: e.target.value})}
                     onInput={this.props.onInput}
                 />
                 {this.props.slider ? (

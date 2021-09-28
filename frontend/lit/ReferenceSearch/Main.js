@@ -13,7 +13,7 @@ import SearchForm from "./SearchForm";
 class ReferenceSearchMain extends Component {
     render() {
         const {store} = this.props,
-            {isSearching, references, hasReferences, numReferences} = store;
+            {isSearching, searchError, references, hasReferences, numReferences} = store;
         return (
             <div className="container-fluid">
                 <div className="card">
@@ -33,6 +33,7 @@ class ReferenceSearchMain extends Component {
                 </div>
                 <div>
                     {isSearching ? <Loading /> : null}
+                    {searchError ? <Alert /> : null}
                     {hasReferences && numReferences === 0 ? (
                         <Alert
                             className="alert-info"

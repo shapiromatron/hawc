@@ -13,6 +13,7 @@ class Store {
     @observable searchForm = null;
     @observable references = null;
     @observable isSearching = false;
+    @observable searchError = false;
 
     constructor(config) {
         this.config = config;
@@ -31,6 +32,7 @@ class Store {
 
         this.references = null;
         this.isSearching = true;
+        this.searchError = false;
 
         // remove blank items from query
         _.each(payload, (value, key) => {
@@ -44,7 +46,11 @@ class Store {
                 this.references = json.references.map(d => new Reference(d, tagtree));
                 this.isSearching = false;
             })
-            .catch(ex => console.error("Search failed", ex));
+            .catch(ex => {
+                console.error("Search failed", ex);
+                this.isSearching = false;
+                this.searchError = true;
+            });
     }
     @action.bound resetForm() {
         this.isSearching = false;

@@ -22,9 +22,7 @@ class SearchForm extends Component {
                             label="HAWC ID"
                             helpText="HAWC reference ID."
                             value={searchForm.id}
-                            onChange={e =>
-                                changeSearchTerm("id", parseInt(e.target.value) || undefined)
-                            }
+                            onChange={e => changeSearchTerm("id", parseInt(e.target.value) || "")}
                         />
                     </div>
                     <div className="form-group col-lg-3">
@@ -35,7 +33,7 @@ class SearchForm extends Component {
                             helpText="Pubmed ID, HERO ID, etc."
                             value={searchForm.db_id}
                             onChange={e =>
-                                changeSearchTerm("db_id", parseInt(e.target.value) || undefined)
+                                changeSearchTerm("db_id", parseInt(e.target.value) || "")
                             }
                         />
                     </div>
@@ -46,9 +44,7 @@ class SearchForm extends Component {
                             label="Year"
                             helpText="Year of publication"
                             value={searchForm.year}
-                            onChange={e =>
-                                changeSearchTerm("year", parseInt(e.target.value) || undefined)
-                            }
+                            onChange={e => changeSearchTerm("year", parseInt(e.target.value) || "")}
                         />
                     </div>
                     <div className="form-group col-lg-3">
@@ -90,7 +86,7 @@ class SearchForm extends Component {
                                 changeSearchTerm("tags", ints);
                             }}
                             label="Tags"
-                            helpText="Must include all selected tags or tag-children."
+                            helpText="Select one or more tags. If a parent tag is selected, tag children are also considered a match. If multiple tags are selected, references must include all selected tags (or their children)."
                             multiple={true}
                             selectSize={10}
                         />
