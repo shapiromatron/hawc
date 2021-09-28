@@ -6,13 +6,13 @@
 
 <table class="table table-sm table-striped">
     <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
+        <col width="30%">
+        <col width="70%">
     </colgroup>
     <tbody>
 
         <tr>
-            <th>Object</th>
+            <th>Item</th>
             <td>
                 {% with first_log.content_object.get_absolute_url as absolute_url %}
                     {% if absolute_url %}
@@ -25,7 +25,7 @@
         </tr>
 
         <tr>
-            <th>Object type</th>
+            <th>Data type</th>
             <td>{{first_log.content_type}}</td>
         </tr>
 
@@ -37,12 +37,11 @@
     </tbody>
 </table>
 
-<h2>Logs</h2>
+<h3>Logs</h3>
 
 <table class="table table-sm table-striped">
     <thead>
         <tr>
-            <th>ID</th>
             <th>Message</th>
             <th>User</th>
             <th>Timestamp</th>
@@ -52,7 +51,6 @@
 
         {% for obj in page_obj %}
         <tr>
-            <td><a href="{{obj.get_absolute_url}}">{{obj.pk}}</a></td>
             <td>{{obj.message}}</td>
             <td>{{obj.user}}</td>
             <td>{{obj.created}}</td>
@@ -63,5 +61,7 @@
 </table>
 
 {% include "includes/paginator.html" %}
+
+{% include 'assessment/_logs_note.html' %}
 
 {% endblock content %}

@@ -466,15 +466,9 @@ class LogFilterForm(forms.Form):
         label="Object ID",
         initial=None,
         required=False,
-        help_text="The HAWC ID for the item which was modified; you can find in the URL",
+        help_text="The HAWC ID for the item which was modified; can often be found in the URL or in data exports",
     )
-    content_type = forms.IntegerField(
-        min_value=1,
-        label="Content type",
-        initial=None,
-        required=False,
-        help_text="HAWC content type; use filters below to find content types; future updates will provide more documentation.",  # TODO - update
-    )
+    content_type = forms.IntegerField(min_value=1, label="Data type", initial=None, required=False,)
     before = forms.DateField(
         required=False,
         label="Modified before",
@@ -493,10 +487,14 @@ class LogFilterForm(forms.Form):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["user"].queryset = assessment.pms_and_team_users()
+        url = reverse("assessment:content_types")
+        self.fields[
+            "content_type"
+        ].help_text = f"""Data <a target="_blank" href="{url}">content type</a>; by filtering by data types below the content type can also be set."""
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters(),)
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "get"
         helper.add_row("user", 3, "col-md-4")
         helper.add_row("before", 3, "col-md-4")

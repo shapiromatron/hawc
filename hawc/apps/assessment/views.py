@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List
 
 import pandas as pd
 from django.apps import apps
@@ -16,6 +16,7 @@ from django.shortcuts import HttpResponse, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
@@ -814,4 +815,49 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
+        return context
+
+
+from django.contrib.contenttypes.models import ContentType
+
+
+# @method_decorator(cache_page(3600), name="dispatch")
+class AboutContentTypes(TemplateView):
+    template_name = "assessment/content_types.html"
+
+    def get_cts(self):
+        cts = {f"{ct.app_label}.{ct.model}": ct for ct in ContentType.objects.all()}
+        return [
+            cts["assessment.assessment"],
+            cts["assessment.attachment"],
+            cts["assessment.dataset"],
+            cts["lit.search"],
+            cts["lit.reference"],
+            cts["study.study"],
+            cts["study.attachment"],
+            cts["riskofbias.riskofbiasdomain"],
+            cts["riskofbias.riskofbiasmetric"],
+            cts["riskofbias.riskofbias"],
+            cts["animal.experiment"],
+            cts["animal.animalgroup"],
+            cts["animal.dosingregime"],
+            cts["animal.endpoint"],
+            cts["bmd.session"],
+            cts["epi.studypopulation"],
+            cts["epi.comparisonset"],
+            cts["epi.exposure"],
+            cts["epi.outcome"],
+            cts["epi.result"],
+            cts["epimeta.metaprotocol"],
+            cts["epimeta.metaresult"],
+            cts["summary.summarytable"],
+            cts["summary.visual"],
+            cts["summary.datapivot"],
+            cts["summary.datapivotupload"],
+            cts["summary.datapivotquery"],
+        ]
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["content_types"] = self.get_cts()
         return context

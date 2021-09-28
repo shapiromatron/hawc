@@ -8,9 +8,15 @@
 <h2>{{assessment}} Logs</h2>
 
 <div class="card">
-    <div class="card-header">Filter logs</div>
-    <div class="card-body">
-        {% crispy form %}
+    <div class="card-header">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#filterForm">
+            Filter logs
+        </button>
+    </div>
+    <div id="filterForm" class="show">
+        <div class="card-body container-fluid">
+            {% crispy form %}
+        </div>
     </div>
 </div>
 
@@ -79,7 +85,7 @@
     </tbody>
 </table>
 {% include "includes/paginator.html" %}
-
+{% include 'assessment/_logs_note.html' %}
 {% endblock content %}
 
 {% block extrajs %}
