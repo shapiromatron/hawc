@@ -207,6 +207,9 @@ class TestRisImportForm:
 @pytest.mark.vcr
 @pytest.mark.django_db
 class TestReferenceForm:
+    def test_update_doi(self, db_keys):
+        raise ValueError("TODO")
+
     def test_update_hero(self, db_keys):
         # test updates to reference
         ref = Reference.objects.get(id=1)
