@@ -20,11 +20,11 @@ def form_actions_create_or_close():
     ]
 
 
-def form_actions_apply_filters(reset: bool = False):
+def form_actions_apply_filters():
     """Add form_actions to apply filters"""
     return [
         cfl.Submit("submit", "Apply filters"),
-        cfl.HTML("""<a class="btn btn-light" href='.'>Reset</a>"""),
+        cfl.HTML('<a class="btn btn-light" href=".">Reset</a>'),
     ]
 
 

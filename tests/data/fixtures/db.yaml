@@ -1013,7 +1013,7 @@
     content_type:
     - assessment
     - assessment
-    object_id: 2
+    object_id: 1
     created: 2021-09-17 18:47:19.786686+00:00
 - model: assessment.blog
   pk: 1
