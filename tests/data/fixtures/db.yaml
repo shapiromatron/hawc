@@ -1,6 +1,6 @@
 - model: sites.site
   fields:
-    domain: 127.0.0.1
+    domain: 127.0.0.1:8000
     name: localhost
 - model: contenttypes.contenttype
   fields:
@@ -974,7 +974,7 @@
   fields:
     assessment: 1
     user: null
-    message: Assessment log
+    message: Global assessment log
     content: {}
     content_type: null
     object_id: null
@@ -989,6 +989,32 @@
     content_type: null
     object_id: null
     created: 2020-08-20 03:03:22.348931+00:00
+- model: assessment.log
+  pk: 3
+  fields:
+    assessment: 1
+    user:
+    - admin@hawcproject.org
+    message: Deleted object log
+    content: {}
+    content_type:
+    - summary
+    - summarytable
+    object_id: 999
+    created: 2021-09-16 01:36:18.132469+00:00
+- model: assessment.log
+  pk: 4
+  fields:
+    assessment: 1
+    user:
+    - pm@hawcproject.org
+    message: Update assessment object
+    content: {}
+    content_type:
+    - assessment
+    - assessment
+    object_id: 2
+    created: 2021-09-17 18:47:19.786686+00:00
 - model: assessment.blog
   pk: 1
   fields:
