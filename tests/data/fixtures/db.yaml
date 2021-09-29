@@ -1008,7 +1008,7 @@
     assessment: 1
     user:
     - pm@hawcproject.org
-    message: Update assessment object
+    message: Updated assessment object
     content: {}
     content_type:
     - assessment
