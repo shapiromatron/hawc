@@ -18,6 +18,7 @@ RESPONSES_VALUES: Dict[models.IntegerChoices, List[int]] = {
     RiskOfBiasResponses.GOOD_DEFICIENT: [27, 26, 25, 24, 22, 20],
     RiskOfBiasResponses.HIGH_LOW_CONFIDENCE: [37, 36, 35, 34, 22, 20],
     RiskOfBiasResponses.YES_NO: [40, 41, 22, 20],
+    RiskOfBiasResponses.MINOR_CRITICAL: [51, 50, 22, 20],
 }
 
 RESPONSES_VALUES_DEFAULT: Dict[models.IntegerChoices, int] = {
@@ -26,6 +27,7 @@ RESPONSES_VALUES_DEFAULT: Dict[models.IntegerChoices, int] = {
     RiskOfBiasResponses.GOOD_DEFICIENT: 22,
     RiskOfBiasResponses.HIGH_LOW_CONFIDENCE: 22,
     RiskOfBiasResponses.YES_NO: 22,
+    RiskOfBiasResponses.MINOR_CRITICAL: 22,
 }
 
 
@@ -49,6 +51,8 @@ SCORE_CHOICES: Tuple[Tuple[int, str], ...] = (
     (37, "High confidence"),
     (40, "Yes"),
     (41, "No"),
+    (50, "Critical concerns"),
+    (51, "No/minor concerns"),
 )
 
 SCORE_CHOICES_MAP: Dict[int, str] = {k: v for k, v in SCORE_CHOICES}
@@ -75,6 +79,8 @@ SCORE_SYMBOLS: Dict[int, str] = {
     37: "++",
     40: "Y",
     41: "N",
+    50: "-",
+    51: "+",
 }
 
 SCORE_SHADES: Dict[int, str] = {
@@ -97,6 +103,8 @@ SCORE_SHADES: Dict[int, str] = {
     37: "#00CC00",
     40: "#00CC00",
     41: "#CC3333",
+    50: "#CC3333",
+    51: "#6FFF00",
 }
 
 

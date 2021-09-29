@@ -66,6 +66,8 @@ class Migration(migrations.Migration):
                     (37, "High confidence"),
                     (40, "Yes"),
                     (41, "No"),
+                    (50, "Critical concerns"),
+                    (51, "No/minor concerns"),
                 ],
             ),
         ),
