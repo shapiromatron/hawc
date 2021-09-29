@@ -1,3 +1,5 @@
+import re
+
 EXTERNAL_LINK = 0
 PUBMED = 1
 HERO = 2
@@ -15,3 +17,8 @@ REFERENCE_DATABASES = (
     (SCOPUS, "Scopus"),
     (EMBASE, "Embase"),
 )
+
+
+# generalized/adapted from https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+DOI_EXACT = re.compile(r"^(10.\d{4,9}/[^\s]+)$")
+DOI_EXAMPLE = "10.1234/s123456"

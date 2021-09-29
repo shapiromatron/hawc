@@ -849,6 +849,12 @@ class Reference(models.Model):
                 return int(ident.unique_id)
         return None
 
+    def get_doi_id(self):
+        for ident in self.identifiers.all():
+            if ident.database == constants.DOI:
+                return ident.unique_id
+        return None
+
     def update_from_hero_content(self, content: Dict, save: bool = False):
         """
         Update reference in place given HERO content; optionally save reference

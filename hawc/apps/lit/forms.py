@@ -1,10 +1,11 @@
 import logging
 from io import StringIO
-from typing import List
+from typing import List, Union
 
 import numpy as np
 from django import forms
 from django.db import transaction
+from django.core.validators import RegexValidator
 from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
@@ -327,7 +328,9 @@ class SearchSelectorForm(forms.Form):
         )
 
 
-def check_external_id(assessment: Assessment, db_type: int, id_: int,) -> models.Identifiers:
+def check_external_id(
+    assessment: Assessment, db_type: int, id_: Union[str, int]
+) -> models.Identifiers:
     """Validate that the external ID can be used for a reference in this assessment.
 
     This method has a side effect which may create a new identifier; however this identifier object
@@ -367,6 +370,14 @@ def check_external_id(assessment: Assessment, db_type: int, id_: int,) -> models
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids([id_])
             models.Identifiers.objects.bulk_create_hero_ids(content)
             identifier = models.Identifiers.objects.get(database=db_type, unique_id=str(id_))
+        elif db_type == constants.DOI:
+            if not constants.DOI_EXACT.fullmatch(id_):
+                raise forms.ValidationError(
+                    f'Invalid DOI; should be in format "{constants.DOI_EXAMPLE}"'
+                )
+            identifier, _ = models.Identifiers.objects.get_or_create(
+                database=db_type, unique_id=str(id_)
+            )
 
         else:
             raise ValueError("Unknown database type.")
@@ -376,6 +387,12 @@ def check_external_id(assessment: Assessment, db_type: int, id_: int,) -> models
 
 class ReferenceForm(forms.ModelForm):
 
+    doi_id = forms.CharField(
+        max_length=64,
+        label="DOI",
+        required=False,
+        help_text=f'Add/update DOI. Should be in format: "{constants.DOI_EXAMPLE}"',
+    )
     pubmed_id = forms.IntegerField(
         label="PubMed ID", required=False, help_text="Add/update PubMed ID."
     )
@@ -391,12 +408,14 @@ class ReferenceForm(forms.ModelForm):
             "journal",
             "abstract",
             "full_text_url",
+            "doi_id",
             "pubmed_id",
             "hero_id",
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["doi_id"].initial = self.instance.get_doi_id()
         self.fields["pubmed_id"].initial = self.instance.get_pubmed_id()
         self.fields["hero_id"].initial = self.instance.get_hero_id()
 
@@ -417,9 +436,26 @@ class ReferenceForm(forms.ModelForm):
 
         helper.add_row("authors_short", 3, "col-md-4")
         helper.add_row("authors", 2, "col-md-6")
-        helper.add_row("pubmed_id", 2, "col-md-6")
+        helper.add_row("doi_id", 3, "col-md-4")
 
         return helper
+
+    def clean_doi_id(self):
+        """Check if a modifications are required to the DOI.
+
+        If added/changed, sets the `self._new_doi_identifier` to the new identifier. If removed,
+        sets `self._new_doi_identifier` to -1.
+        """
+        doi_id = self.cleaned_data["doi_id"]
+        if self.fields["doi_id"].initial != doi_id:
+            if doi_id is None:
+                logger.info(f"Removing DOI for reference {self.instance.id}")
+                self._new_doi_identifier = -1
+            else:
+                logger.info(f"Setting DOI {doi_id} for reference {self.instance.id}")
+                self._new_doi_identifier = check_external_id(
+                    self.instance.assessment, constants.DOI, doi_id
+                )
 
     def clean_pubmed_id(self):
         """Check if a modifications are required to the PMID.
@@ -458,6 +494,12 @@ class ReferenceForm(forms.ModelForm):
     @transaction.atomic
     def save(self, commit=True):
         instance = super().save(commit=commit)
+        if hasattr(self, "_new_doi_identifier"):
+            existing = list(instance.identifiers.filter(database=constants.DOI))
+            if existing:
+                instance.identifiers.remove(*existing)
+            if self._new_doi_identifier != -1:
+                instance.identifiers.add(self._new_doi_identifier)
         if hasattr(self, "_new_pubmed_identifier"):
             existing = list(instance.identifiers.filter(database=constants.PUBMED))
             if existing:
