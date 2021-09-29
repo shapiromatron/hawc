@@ -1,10 +1,10 @@
-from datetime import timedelta
 from io import BytesIO
 
 from django.apps import apps
 from django.contrib import admin, messages
+from django.contrib.admin.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
-from django.utils import timezone
 from django.utils.html import format_html
 from reversion.admin import VersionAdmin
 
@@ -25,31 +25,36 @@ bust_cache.short_description = "Clear cache for selected assessments"
 
 @admin.register(models.Assessment)
 class AssessmentAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "get_managers", "get_team_members", "get_reviewers")
-    list_per_page = 10
-    list_filter = (
+    list_display = (
+        "id",
+        "__str__",
         "editable",
         "public",
+        "hide_from_public_page",
+        "get_managers",
+        "get_team_members",
+        "get_reviewers",
+        "created",
+        "last_updated",
     )
-
+    list_filter = ("public", "hide_from_public_page", "editable")
     search_fields = (
         "name",
         "project_manager__last_name",
         "team_members__last_name",
         "reviewers__last_name",
     )
-
     actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
 
-    def queryset(self, request):
-        qs = super().queryset(request)
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
         return qs.prefetch_related("project_manager", "team_members", "reviewers")
 
     def delete_orphan_tags(self, request, queryset):
         # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
-                request, f"Select only one item to perform the action on.", level=messages.WARNING
+                request, "Select only one item to perform the action on.", level=messages.WARNING
             )
             return
         assessment = queryset.first()
@@ -95,7 +100,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
-                request, f"Select only one item to perform the action on.", level=messages.ERROR
+                request, "Select only one item to perform the action on.", level=messages.ERROR
             )
             return
 
@@ -103,7 +108,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         assessment = queryset.first()
         if assessment.vocabulary is None:
             self.message_user(
-                request, f"Assessment has no controlled vocabulary.", level=messages.ERROR
+                request, "Assessment has no controlled vocabulary.", level=messages.ERROR
             )
             return
 
@@ -131,6 +136,10 @@ class AttachmentAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "attachment", "content_object", "publicly_available")
     list_display_links = ("id",)
     list_filter = ("publicly_available",)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related("content_object")
 
 
 class DatasetRevisionInline(admin.StackedInline):
@@ -188,24 +197,20 @@ class EffectTagAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.TimeSpentEditing)
-class TimeSpentEditingAdmin(admin.ModelAdmin):
+class TimeSpentEditingAdmin(ReadOnlyAdmin):
     list_display = (
         "id",
-        "seconds",
         "assessment",
         "content_type",
         "object_id",
-        "content_object",
+        "seconds",
         "created",
     )
-    search_fields = (
-        "assessment",
-        "content_type",
+    list_select_related = ("assessment", "content_type")
+    list_filter = (
+        ("content_type", admin.RelatedOnlyFieldListFilter),
+        ("assessment", admin.RelatedOnlyFieldListFilter),
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.list_display_links = []
 
 
 @admin.register(models.Job)
@@ -226,17 +231,30 @@ class JobAdmin(admin.ModelAdmin):
 class LogAdmin(ReadOnlyAdmin):
     list_display = ("id", "created", "message", "assessment", "user")
     list_select_related = ("user", "assessment")
+    list_filter = (
+        ("assessment", admin.RelatedOnlyFieldListFilter),
+        ("user", admin.RelatedOnlyFieldListFilter),
+    )
     search_fields = ("assessment__name", "message")
-    actions = ("delete_gt_year",)
-    readonly_fields = ("created", "last_updated")
+    readonly_fields = ("created",)
 
-    def delete_gt_year(self, request, queryset):
-        # delete where "last_updated" > 1 year old
-        year_old = timezone.now() - timedelta(days=365)
-        deleted, _ = queryset.filter(last_updated__lte=year_old).delete()
-        self.message_user(request, f"{deleted} of {queryset.count()} selected logs deleted.")
 
-    delete_gt_year.short_description = "Delete 1 year or older"
+@admin.register(LogEntry)
+class LogEntryAdmin(ReadOnlyAdmin):
+    list_display = ("id", "action_time", "user", "content_type", "object_id", "action_flag")
+    list_filter = (
+        ("user", admin.RelatedOnlyFieldListFilter),
+        ("content_type", admin.RelatedOnlyFieldListFilter),
+    )
+    list_select_related = ("user", "content_type")
+    search_fields = ("object_id",)
+
+
+@admin.register(ContentType)
+class ContentTypeAdmin(ReadOnlyAdmin):
+    list_display = ("id", "app_label", "model")
+    list_filter = ("app_label",)
+    search_fields = ("app_label", "model")
 
 
 @admin.register(models.Blog)

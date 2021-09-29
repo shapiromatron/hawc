@@ -72,7 +72,7 @@ class CrossviewSelectorField extends TableField {
             .append('<label class="form-check-label" for="defaultCheck1">Use all values</label>')
             .prependTo(valuesTd);
 
-        name.on("change", function(d) {
+        name.on("change", function() {
             var val = $(this).val();
             setValues(val);
             setDefaultHeaderName(val);
@@ -156,7 +156,7 @@ class CrossviewColorFilterField extends TableField {
             };
 
         field
-            .on("change", function(d) {
+            .on("change", function() {
                 setValues();
                 setDefaultHeaderName();
             })
@@ -275,7 +275,7 @@ class CrossviewForm extends BaseVisualForm {
     afterGetDataHook(data) {
         this.endpoints = data.endpoints.map(function(d) {
             var e = new Endpoint(d);
-            e.switch_dose_units(data.dose_units);
+            e.doseUnits.activate(data.dose_units);
             return e;
         });
     }

@@ -1,8 +1,8 @@
 import $ from "$";
 
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class MetaProtocol {
     constructor(data) {

@@ -3,7 +3,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 
 import h from "shared/utils/helpers";
-import D3Plot from "utils/D3Plot";
+import D3Plot from "shared/utils/D3Plot";
 
 class DRPlot extends D3Plot {
     constructor(endpoint, div, options, parent) {
@@ -76,10 +76,10 @@ class DRPlot extends D3Plot {
         this.customize_menu();
 
         var plot = this;
-        this.y_axis_label.on("click", function(v) {
+        this.y_axis_label.on("click", function() {
             plot.toggle_y_axis();
         });
-        this.x_axis_label.on("click", function(v) {
+        this.x_axis_label.on("click", function() {
             plot.toggle_x_axis();
         });
         this.trigger_resize();
@@ -117,16 +117,14 @@ class DRPlot extends D3Plot {
             },
         };
         this.add_menu_button(options);
-        if (this.endpoint.doses.length > 1) {
+        if (this.endpoint.doseUnits.numUnits() > 1) {
             options = {
-                id: "toggle_dose_units",
+                id: "next_dose_units",
                 cls: "btn btn-sm",
                 title: "Change dose-units representation",
                 text: "",
                 icon: "fa fa-certificate",
-                on_click() {
-                    plot.endpoint.toggle_dose_units();
-                },
+                on_click: () => plot.endpoint.doseUnits.next(),
             };
             plot.add_menu_button(options);
         }
@@ -292,7 +290,7 @@ class DRPlot extends D3Plot {
             self = this,
             values,
             sigs_data,
-            dose_units = this.endpoint.dose_units;
+            dose_units = this.endpoint.doseUnits.activeUnit.name;
 
         values = _.chain(ep.groups)
             .map(function(v, i) {
@@ -351,7 +349,7 @@ class DRPlot extends D3Plot {
 
         _.extend(this, {
             title_str: this.endpoint.data.name,
-            x_label_text: `Dose (${this.endpoint.dose_units})`,
+            x_label_text: `Dose (${this.endpoint.doseUnits.activeUnit.name})`,
             y_label_text: `Response (${this.endpoint.data.response_units})`,
             values,
             sigs_data,
@@ -401,7 +399,7 @@ class DRPlot extends D3Plot {
         var self = this;
         if (
             this.endpoint.data.BMD &&
-            this.endpoint.data.BMD.dose_units_id == this.endpoint.dose_units_id
+            this.endpoint.data.BMD.dose_units_id == this.endpoint.doseUnits.activeUnit.id
         ) {
             var append = true;
             self.bmd.forEach(function(v, i) {
@@ -574,11 +572,9 @@ class DRPlot extends D3Plot {
                 color: undefined,
             });
         }
-        var doseUnits = parseInt(this.endpoint.dose_units_id);
+        var doseUnits = this.endpoint.doseUnits.activeUnit.id;
         this.bmd
-            .filter(function(d) {
-                return d.dose_units_id === doseUnits;
-            })
+            .filter(d => d.dose_units_id === doseUnits)
             .forEach(function(d) {
                 legend_settings.items.push({
                     text: d.name,
@@ -633,7 +629,7 @@ class DRPlot extends D3Plot {
 
     render_bmd_lines() {
         this.remove_bmd_lines();
-        var doseUnits = parseInt(this.endpoint.dose_units_id),
+        var doseUnits = this.endpoint.doseUnits.activeUnit.id,
             lines = this.bmd.filter(d => d.dose_units_id === doseUnits),
             x = this.x_scale,
             xs = this.x_scale.ticks(100),

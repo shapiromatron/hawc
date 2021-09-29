@@ -150,19 +150,17 @@ class OutputTable extends React.Component {
         let binnedModels = binModels(this.props.models);
 
         return (
-            <div className="col-md-8">
-                <table className="table table-sm">
-                    <thead>{this.renderHeader.bind(this)()}</thead>
-                    <tfoot>
-                        <tr>
-                            <td colSpan="100">Selected model (if any) highlighted in yellow</td>
-                        </tr>
-                    </tfoot>
-                    <tbody style={{cursor: "pointer"}}>
-                        {binnedModels.map(this.renderRow.bind(this))}
-                    </tbody>
-                </table>
-            </div>
+            <table className="table table-sm">
+                <thead>{this.renderHeader.bind(this)()}</thead>
+                <tfoot>
+                    <tr>
+                        <td colSpan="100">Selected model (if any) highlighted in yellow</td>
+                    </tr>
+                </tfoot>
+                <tbody style={{cursor: "pointer"}}>
+                    {binnedModels.map(this.renderRow.bind(this))}
+                </tbody>
+            </table>
         );
     }
 }

@@ -9,6 +9,8 @@ from django.template.loader import render_to_string
 
 from . import selectable, validators
 
+ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
+
 
 def form_actions_create_or_close():
     """Add form actions to create or close the window (for popups)"""
@@ -153,7 +155,7 @@ def form_error_lis_to_ul(lis):
 
 
 def addPopupLink(href, text):
-    return f'<a href="{href}" onclick="return HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
+    return f'<a href="{href}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
 
 
 class TdLayout(cfl.LayoutObject):

@@ -4,7 +4,7 @@ import DataPivotLegend from "./DataPivotLegend";
 import {NULL_CASE} from "./shared";
 import StyleViewer from "./StyleViewer";
 import DataPivot from "./DataPivot";
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 const build_tr = function(label, input) {
         return $("<tr>")

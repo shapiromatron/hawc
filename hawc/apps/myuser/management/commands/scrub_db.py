@@ -47,7 +47,12 @@ class Command(BaseCommand):
             user.save()
 
         # save superuser
-        superuser = get_user_model().objects.filter(is_superuser=True).first()
+        superuser = (
+            get_user_model()
+            .objects.filter(is_superuser=True, is_active=True)
+            .order_by("id")
+            .first()
+        )
         superuser.first_name = "Super"
         superuser.last_name = "Duper"
         superuser.email = "webmaster@hawcproject.org"

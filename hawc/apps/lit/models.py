@@ -26,6 +26,7 @@ from treebeard.mp_tree import MP_Node
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -231,6 +232,7 @@ class Search(models.Model):
         # unique_together constraint checked above;
         # not done in form because assessment is excluded
         pk_exclusion = {}
+        errors = {}
         if self.pk:
             pk_exclusion["pk"] = self.pk
         if (
@@ -239,14 +241,16 @@ class Search(models.Model):
             .count()
             > 0
         ):
-            raise ValidationError("Error- title must be unique for assessment.")
+            errors["title"] = ASSESSMENT_UNIQUE_MESSAGE
         if (
             Search.objects.filter(assessment=self.assessment, slug=self.slug)
             .exclude(**pk_exclusion)
             .count()
             > 0
         ):
-            raise ValidationError("Error- slug name must be unique for assessment.")
+            errors["slug"] = ASSESSMENT_UNIQUE_MESSAGE
+        if errors:
+            raise ValidationError(errors)
 
     def get_absolute_url(self):
         return reverse("lit:search_detail", args=(self.assessment_id, self.slug))
@@ -614,7 +618,7 @@ class Identifiers(models.Model):
         }
 
     def get_content(self) -> Dict:
-        return json.loads(self.content, encoding="utf-8") if self.content else {}
+        return json.loads(self.content) if self.content else {}
 
     @staticmethod
     def update_pubmed_content(idents):

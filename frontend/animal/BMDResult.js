@@ -3,6 +3,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
+
 const WrongUnitsRender = function(props) {
         return (
             <p>
@@ -13,20 +15,21 @@ const WrongUnitsRender = function(props) {
         );
     },
     ModelDetails = function(props) {
+        const {output} = props.bmd;
         return [
             <p key={0}>
-                <b>Selected model:</b> {props.bmd.output.model_name}
+                <b>Selected model:</b> {output.model_name}
                 &nbsp;(<a href={props.bmd.url}>View details</a>)
             </p>,
             <ul key={1}>
                 <li>
-                    <b>BMDL:</b> {props.bmd.output.BMDL.toHawcString()} {props.units}
+                    <b>BMDL:</b> {h.ff(output.BMDL)} {props.units}
                 </li>
                 <li>
-                    <b>BMD:</b> {props.bmd.output.BMD.toHawcString()} {props.units}
+                    <b>BMD:</b> {h.ff(output.BMD)} {props.units}
                 </li>
                 <li>
-                    <b>BMDU:</b> {props.bmd.output.BMDU.toHawcString()} {props.units}
+                    <b>BMDU:</b> {h.ff(output.BMDU)} {props.units}
                 </li>
             </ul>,
         ];
@@ -67,11 +70,10 @@ class BMDResult extends EndpointCriticalDose {
             return ReactDOM.render(<NoneSelected bmd_notes={bmd_notes} url={url} />, this.span[0]);
         }
 
-        let currentUnits = this.endpoint.dose_units_id,
+        let currentUnits = this.endpoint.doseUnits.activeUnit.id,
+            units_string = this.endpoint.doseUnits.activeUnit.name,
             bmdUnits = this.endpoint.data.bmd.dose_units,
-            units_string = this.endpoint.dose_units;
-
-        let RenderComponent = currentUnits == bmdUnits ? Renderer : WrongUnitsRender;
+            RenderComponent = currentUnits == bmdUnits ? Renderer : WrongUnitsRender;
 
         ReactDOM.render(
             <RenderComponent bmd={bmd} bmd_notes={bmd_notes} units={units_string} />,

@@ -290,7 +290,7 @@ class ReferenceManager(BaseManager):
         for identifier in identifiers:
             # check if any identifiers have a pubmed ID that already exists
             # in database. If not, save a new reference.
-            content = json.loads(identifier.content, encoding="utf-8")
+            content = json.loads(identifier.content)
             pmid = content.get("PMID", None)
 
             if pmid:
@@ -553,7 +553,7 @@ class ReferenceManager(BaseManager):
             )
             .str.replace(r"-999", "", regex=True)  # remove flag number
             .str.replace(r"^\|+|\|+$", "", regex=True)  # remove pipes at beginning/end
-            .str.replace("|", ". ")  # change pipes to periods
+            .str.replace("|", ". ", regex=False)  # change pipes to periods
         )
 
         tree = ReferenceFilterTag.get_all_tags(assessment_id, json_encode=False)

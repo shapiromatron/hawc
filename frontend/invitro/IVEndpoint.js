@@ -1,10 +1,10 @@
 import $ from "$";
 import _ from "lodash";
 
-import BaseTable from "utils/BaseTable";
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import BaseTable from "shared/utils/BaseTable";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import IVChemical from "./IVChemical";
 import IVEndpointGroup from "./IVEndpointGroup";
@@ -175,13 +175,9 @@ class IVEndpoint {
     buildListRow() {
         let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
             detail = $(
-                '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
-            ).click(() => {
-                this.displayAsModal({complete: true});
-            }),
-            endpoint = $("<span>")
-                .append(link, detail)
-                .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+                '<i class="fa fa-eye previewModalIcon" title="preview in a modal">'
+            ).click(() => this.displayAsModal({complete: true})),
+            endpoint = $('<span class="previewModalParent">').append(link, detail);
 
         return [
             `<a href=${this.data.experiment.study.url} target="_blank">${this.data.experiment.study.short_citation}</a>`,

@@ -1,5 +1,6 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -62,8 +63,10 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
         form.instance.assessment = self.assessment
         return form
 
+    @transaction.atomic
     def form_valid(self, form):
         self.object = self.model.save_new_from_reference(self.parent, form.cleaned_data)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -80,11 +83,9 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
     model = models.Study
     form_class = forms.ReferenceStudyForm
 
-    def form_valid(self, form):
-        self.object = form.save()
+    def post_object_save(self, form):
         search = apps.get_model("lit", "Search").objects.get_manually_added(self.assessment)
         self.object.searches.add(search)
-        return super().form_valid(form)
 
 
 class StudyRead(BaseDetail):
@@ -92,7 +93,12 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["attachments_viewable"] = self.assessment.user_is_part_of_team(self.request.user)
+        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
+        context["config"] = {
+            "studyContent": self.object.get_json(json_encode=False),
+            "attachments_viewable": attachments_viewable,
+            "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
+        }
         return context
 
 
@@ -142,6 +148,7 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
         kwargs["assessment"] = self.assessment
         return kwargs
 
+    @transaction.atomic
     def form_valid(self, form):
         models.Study.copy_across_assessment(
             form.cleaned_data["studies"], form.cleaned_data["assessment"]

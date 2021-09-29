@@ -1,4 +1,4 @@
-.PHONY: build build-pex dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
+.PHONY: build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh test-js coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -62,9 +62,6 @@ loc: ## Generate lines of code report
 		--counted loc-files.txt \
 		.
 
-servedocs: docs ## Compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
-
 lint: lint-py lint-js  ## Check for javascript/python for linting issues
 
 format: format-py format-js  ## Modify javascript/python code
@@ -73,7 +70,7 @@ lint-py:  ## Check for python formatting issues via black & flake8
 	@black . --check && flake8 .
 
 format-py:  ## Modify python code using black & show flake8 issues
-	@black . && isort -rc -y && flake8 .
+	@black . && isort . && flake8 .
 
 lint-js:  ## Check for javascript formatting issues
 	@npm --prefix ./frontend run lint
@@ -90,6 +87,9 @@ test-integration:  ## Run integration tests (requires `npm run start`)
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes
 	@py.test
+
+test-js:  ## Run javascript tests
+	@npm --prefix ./frontend run test
 
 coverage:  ## Run coverage and create html report
 	coverage run -m pytest

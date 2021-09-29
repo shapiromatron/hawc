@@ -27,7 +27,14 @@ valid_html_tags_re = {
     "u",
 }
 valid_scheme = {"", "http", "https"}
-valid_netloc_endings = {".gov", ".edu", ".who.int", "sciencedirect.com", "elsevier.com"}
+valid_netloc_endings = {
+    ".gov",
+    ".edu",
+    ".who.int",
+    "sciencedirect.com",
+    "elsevier.com",
+    "public.tableau.com",
+}
 
 
 def validate_html_tags(text: str) -> str:

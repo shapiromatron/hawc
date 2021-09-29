@@ -7,8 +7,8 @@ import ReactDOM from "react-dom";
 import VisualToolbar from "shared/components/VisualToolbar";
 import bindTooltip from "shared/components/Tooltip";
 import h from "shared/utils/helpers";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import {AxisTooltip, CellTooltip} from "./heatmap/Tooltip";
 
@@ -97,9 +97,9 @@ class ExploreHeatmapPlot {
         }
 
         if (type === "cell") {
-            bindTooltip(this.$tooltipDiv, selection, d => <CellTooltip data={d} />);
+            bindTooltip(this.$tooltipDiv, selection, (event, d) => <CellTooltip data={d} />);
         } else if (type === "axis") {
-            bindTooltip(this.$tooltipDiv, selection, d => <AxisTooltip data={d} />);
+            bindTooltip(this.$tooltipDiv, selection, (event, d) => <AxisTooltip data={d} />);
         } else {
             throw `Unknown type: ${type}`;
         }
@@ -268,7 +268,7 @@ class ExploreHeatmapPlot {
                         `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
                             d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                 )
-                .on("click", d => {
+                .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -434,7 +434,7 @@ class ExploreHeatmapPlot {
                         `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
                             d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                 )
-                .on("click", d => {
+                .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -566,7 +566,7 @@ class ExploreHeatmapPlot {
                         `${-width},${d.y1} 0,${d.y1} 0,${d.y1 + d.height} ${-width},${d.y1 +
                             d.height}`
                 )
-                .on("click", d => {
+                .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "y");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -748,7 +748,7 @@ class ExploreHeatmapPlot {
                     let g = enter
                         .append("g")
                         .attr("class", "exp_heatmap_cell")
-                        .on("click", d => {
+                        .on("click", (event, d) => {
                             if (d.rows.length > 0) {
                                 self.store.setTableDataFilters(d);
                             } else {

@@ -23,16 +23,11 @@
 
 {% block extrajs %}
     {{ form.media }}
+    {{ config|json_script:"config" }}
     <script type="text/javascript">
-        window.app.animalStartup(function(animal){
-            var endpoints = [],
-                dose_units = {{dose_units|default_if_none:"undefined"}};
-
-            {{list_json|safe}}.map(function(datum){
-                endpoints.push(new animal.Endpoint(datum));
-            });
-
-            var tbl = new animal.EndpointListTable(endpoints, dose_units);
+        window.app.startup("animalStartup", function(animal){
+            const data = window.app.getConfig(),
+                tbl = new animal.EndpointListTable(data.items, data.dose_units);
             $("#endpointTable").html(tbl.build_table());
         });
     </script>

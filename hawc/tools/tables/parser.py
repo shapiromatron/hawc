@@ -1,3 +1,4 @@
+import urllib.parse
 from html.parser import HTMLParser
 
 import docx
@@ -48,16 +49,29 @@ class QuillParser(HTMLParser):
         "ul": "List Bullet",
     }
 
+    def __init__(self, *args, **kwargs):
+        self.base_url = kwargs.pop("base_url", "")
+        super().__init__(*args, **kwargs)
+
     def feed(self, data, block):
         # block is either a _Body or _Cell object
         self._block = block
         super().feed(data)
 
+    def parse_url(self, url):
+        # convert relative URL to absolute if a base URL is specified
+        _url = urllib.parse.urlparse(url)
+        if not (_url.scheme and _url.netloc) and self.base_url:
+            url = urllib.parse.urljoin(self.base_url, url)
+        return url
+
     def add_hyperlink(self):
         # This gets access to the document.xml.rels file and gets a new relation id value
         part = self._paragraph.part
         r_id = part.relate_to(
-            self._href, docx.opc.constants.RELATIONSHIP_TYPE.HYPERLINK, is_external=True
+            self.parse_url(self._href),
+            docx.opc.constants.RELATIONSHIP_TYPE.HYPERLINK,
+            is_external=True,
         )
 
         # Create the w:hyperlink tag and add needed values

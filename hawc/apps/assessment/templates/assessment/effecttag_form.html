@@ -16,7 +16,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
       $('#id_name').on('keyup', function(){
-        $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+        $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val(),128));
       });
     });
   </script>

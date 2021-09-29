@@ -3,9 +3,7 @@ import re
 from copy import copy
 from typing import Optional
 
-import xlsxwriter
-from RISparser import readris
-from RISparser.config import TAG_KEY_MAPPING
+import rispy
 
 from .authors import get_author_short_text, normalize_authors
 
@@ -15,7 +13,7 @@ logger = logging.getLogger(__name__)
 class RisImporter:
     @classmethod
     def get_mapping(cls):
-        mapping = copy(TAG_KEY_MAPPING)
+        mapping = copy(rispy.TAG_KEY_MAPPING)
         mapping.update(
             {"AT": "accession_type", "PM": "pubmed_id", "N2": "abstract2", "SV": "serial_volume"}
         )
@@ -25,7 +23,7 @@ class RisImporter:
     def file_readable(cls, f):
         # ensure that file can be successfully parsed
         try:
-            reader = readris(f, mapping=cls.get_mapping())
+            reader = rispy.load(f, mapping=cls.get_mapping())
             [content for content in reader]
             f.seek(0)
             return True
@@ -33,12 +31,12 @@ class RisImporter:
             logger.warning(err)
             return False
 
-    def __init__(self, f):
+    def __init__(self, f, encoding="utf-8"):
         if isinstance(f, str):
-            f = open(f, "r")
+            f = open(f, "r", encoding=encoding)
         else:
             f = f
-        reader = readris(f, mapping=self.get_mapping())
+        reader = rispy.load(f, mapping=self.get_mapping(), encoding=encoding)
         contents = [content for content in reader]
         f.close()
         self.raw_references = contents
@@ -55,28 +53,6 @@ class RisImporter:
             parser = ReferenceParser(content)
             formatted_content.append(parser.format())
         return formatted_content
-
-    def to_excel(self, fn):
-        header = ReferenceParser.EXTRACTED_FIELDS
-        data_rows = []
-        for ref in self.references:
-            data_rows.append([ref[fld] for fld in header])
-
-        wb = xlsxwriter.Workbook(fn)
-        ws = wb.add_worksheet()
-        bold = wb.add_format({"bold": True})
-
-        for c, txt in enumerate(header):
-            ws.write(0, c, txt, bold)
-
-        for r, row in enumerate(data_rows):
-            for c, txt in enumerate(row):
-                try:
-                    ws.write(r + 1, c, txt)
-                except AttributeError:
-                    ws.write(r + 1, c, txt)
-
-        wb.close()
 
 
 class ReferenceParser:

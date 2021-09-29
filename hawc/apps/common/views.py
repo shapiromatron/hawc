@@ -3,10 +3,12 @@ import logging
 from typing import List, Optional
 from urllib.parse import urlparse
 
+import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import EmptyResultSet, PermissionDenied
+from django.db import transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -71,6 +73,29 @@ def get_referrer(request: HttpRequest, default: str) -> str:
         return default_url
 
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+
+
+def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
+    """
+    Create an object log for a given object and associate a reversion instance if it exists.
+
+    Args:
+        verb (str): the action being performed
+        obj (Any): the object
+        assessment_id (int): the object assessment id
+        user_id (int): the user id
+    """
+    # Log action
+    meta = obj._meta
+    log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
+    log = Log.objects.create(
+        assessment_id=assessment_id, user_id=user_id, message=log_message, content_object=obj,
+    )
+    # Associate log with reversion
+    comment = (
+        f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
+    )
+    reversion.set_comment(comment)
 
 
 class MessageMixin:
@@ -413,18 +438,18 @@ class BaseDetail(AssessmentPermissionsMixin, DetailView):
 class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
 
+    @transaction.atomic
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.permission_check_user_can_edit()
         success_url = self.get_success_url()
+        self.create_log(self.object)
         self.object.delete()
-        # Log the deletion
-        log_message = f"Deleted '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
-        Log.objects.create(
-            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
-        )
         self.send_message()
         return HttpResponseRedirect(success_url)
+
+    def create_log(self, obj):
+        create_object_log("Deleted", obj, self.assessment.id, self.request.user.id)
 
     def get_cancel_url(self) -> str:
         return self.object.get_absolute_url()
@@ -447,11 +472,16 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
 class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = "Update"
 
+    @transaction.atomic
     def form_valid(self, form):
         self.object = form.save()
         self.post_object_save(form)  # add hook for post-object save
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
+
+    def create_log(self, obj):
+        create_object_log("Updated", obj, self.assessment.id, self.request.user.id)
 
     def post_object_save(self, form):
         pass
@@ -509,11 +539,16 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         context[self.parent_template_name] = self.parent
         return context
 
+    @transaction.atomic
     def form_valid(self, form):
         self.object = form.save()
         self.post_object_save(form)  # add hook for post-object save
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
+
+    def create_log(self, obj):
+        create_object_log("Created", obj, self.assessment.id, self.request.user.id)
 
     def post_object_save(self, form):
         pass
@@ -585,11 +620,13 @@ class BaseCreateWithFormset(BaseCreate):
     def get_formset_kwargs(self):
         return {}
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.object = form.save()
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -646,11 +683,13 @@ class BaseUpdateWithFormset(BaseUpdate):
     def get_formset_kwargs(self):
         return {}
 
+    @transaction.atomic
     def form_valid(self, form, formset):
         self.object = form.save()
         self.post_object_save(form, formset)
         formset.save()
         self.post_formset_save(form, formset)
+        self.create_log(self.object)
         self.send_message()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -736,7 +775,9 @@ class BaseEndpointFilterList(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
-        context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
+        context["config"] = {
+            "items": self.model.get_qs_json(context["object_list"], json_encode=False)
+        }
         return context
 
 

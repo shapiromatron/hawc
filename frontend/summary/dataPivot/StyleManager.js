@@ -3,7 +3,7 @@ import $ from "$";
 import StyleViewer from "./StyleViewer";
 import {StyleSymbol, StyleLine, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 const _build_options = function(styles) {
         return styles.map(v =>

@@ -35,6 +35,13 @@ class AnimalGroupAdmin(admin.ModelAdmin):
     )
     list_filter = ("species", "strain", "sex", "experiment__study__assessment_id")
     search_fields = ("name",)
+    raw_id_fields = ("experiment", "species", "strain", "dosing_regime", "siblings")
+
+
+class DoseGroupInline(admin.TabularInline):
+    model = models.DoseGroup
+    raw_id_fields = ("dose_units",)
+    extra = 0
 
 
 @admin.register(models.DosingRegime)
@@ -52,7 +59,14 @@ class DosingRegimeAdmin(admin.ModelAdmin):
         "num_dose_groups",
         "dosed_animals__experiment__study__assessment_id",
     )
+    list_select_related = ("dosed_animals",)
     search_fields = ("dosed_animals__name",)
+    inlines = (DoseGroupInline,)
+
+
+class EndpointGroupInline(admin.TabularInline):
+    model = models.EndpointGroup
+    extra = 0
 
 
 @admin.register(models.Endpoint)
@@ -70,3 +84,13 @@ class EndpointAdmin(admin.ModelAdmin):
     )
     list_filter = ("system", "organ", "data_extracted", "assessment_id")
     search_fields = ("name",)
+    raw_id_fields = (
+        "assessment",
+        "animal_group",
+        "system_term",
+        "organ_term",
+        "effect_term",
+        "effect_subtype_term",
+        "name_term",
+    )
+    inlines = (EndpointGroupInline,)

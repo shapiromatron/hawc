@@ -29,7 +29,7 @@ class TestRiskOfBiasAssessmentViewset:
             assert rev_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        fn = Path(DATA_ROOT / f"api-rob-assessment-full-export.json")
+        fn = Path(DATA_ROOT / "api-rob-assessment-full-export.json")
         url = (
             reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -46,7 +46,7 @@ class TestRiskOfBiasAssessmentViewset:
         assert data == json.loads(fn.read_text())
 
     def test_export(self, rewrite_data_files: bool, db_keys):
-        fn = Path(DATA_ROOT / f"api-rob-assessment-export.json")
+        fn = Path(DATA_ROOT / "api-rob-assessment-export.json")
         url = (
             reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -301,7 +301,7 @@ def test_riskofbias_create():
     pm_author = HAWCUser.objects.get(email="pm@hawcproject.org")
     study = Study.objects.get(id=1)
 
-    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
+    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study)
     first_valid_score = required_metrics[0].get_default_response()
 
     # failed uploading for a study that already has an active & final RoB
@@ -486,3 +486,94 @@ class TestBulkRobCleanupApis:
         # assert data["id"] == 1
         # assert data["score"] == 16
         # assert data["notes"] == "<p>More content here.</p>"
+
+
+@pytest.mark.django_db
+class TestRobAssignmentApi:
+    def test_create_individual(self):
+        c = APIClient()
+        url = reverse("riskofbias:api:review-create-v2")
+
+        # permissions check
+        assert c.login(username="team@hawcproject.org", password="pw") is True
+        resp = c.post(url, dict(study=1, author=3, active=True, final=False))
+        assert resp.status_code == 403
+
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+
+        # validation errors
+        resp = c.post(url, dict(study=1, author=5, active=True, final=False))
+        assert resp.status_code == 400
+        assert resp.json() == {"author": ["Author cannot be assigned"]}
+
+        # success
+        resp = c.post(url, dict(study=1, author=3, active=True, final=False))
+        assert resp.status_code == 201
+
+    def test_create_final(self):
+        c = APIClient()
+        url = reverse("riskofbias:api:review-create-v2")
+
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+        existing_final = RiskOfBias.objects.get(study=1, active=True, final=True)
+        assert existing_final.active is True
+
+        # creating inactive final shouldn't change
+        resp = c.post(url, dict(study=1, author=3, active=False, final=True))
+        assert resp.status_code == 201
+        existing_final.refresh_from_db()
+        assert existing_final.active is True
+
+        # creating active non-final shouldn't change
+        resp = c.post(url, dict(study=1, author=3, active=True, final=False))
+        assert resp.status_code == 201
+        existing_final.refresh_from_db()
+        assert existing_final.active is True
+
+        # creating active final should change
+        resp = c.post(url, dict(study=1, author=3, active=True, final=True))
+        assert resp.status_code == 201
+        existing_final.refresh_from_db()
+        assert existing_final.active is False
+
+    def test_update_individual(self):
+        rob = RiskOfBias.objects.filter(study=1, active=True, final=False).first()
+        c = APIClient()
+        url = reverse("riskofbias:api:review-update-v2", args=(rob.id,))
+
+        # permissions check
+        assert c.login(username="team@hawcproject.org", password="pw") is True
+        resp = c.patch(url, dict(active=False, author=3))
+        assert resp.status_code == 403
+
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+
+        # validation errors
+        resp = c.patch(url, dict(active=False, author=5))
+        assert resp.status_code == 400
+        assert resp.json() == {"author": ["Author cannot be assigned"]}
+
+        # success
+        resp = c.patch(url, dict(active=False, author=2))
+        assert resp.status_code == 200
+
+    def test_update_final(self):
+        rob = RiskOfBias.objects.filter(study=1, active=True, final=True).first()
+        c = APIClient()
+        url = reverse("riskofbias:api:review-update-v2", args=(rob.id,))
+
+        # permissions check
+        assert c.login(username="team@hawcproject.org", password="pw") is True
+        resp = c.patch(url, dict(active=False, author=3))
+        assert resp.status_code == 403
+
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+
+        # validation errors
+        resp = c.patch(url, dict(active=False, author=5))
+        assert resp.status_code == 400
+        assert resp.json() == {"author": ["Author cannot be assigned"]}
+
+        # success
+        resp = c.patch(url, dict(author=2, active=True))
+        assert resp.status_code == 200

@@ -8,17 +8,16 @@ from pathlib import Path
 from typing import Dict, List
 
 import django
-from django.core import management
-from django.db import transaction
-from django.db.models import Model
-from django.db.models.signals import post_save
-
 from animal import models as ani_models
 from animal import signals as ani_signals
 from assessment import signals as assess_signals
 from assessment.models import Assessment
 from bmd import models as bmd_models
 from bmd import signals as bmd_signals
+from django.core import management
+from django.db import transaction
+from django.db.models import Model
+from django.db.models.signals import post_save
 from epi import models as epi_models
 from epi import signals as epi_signals
 from invitro import models as iv_models

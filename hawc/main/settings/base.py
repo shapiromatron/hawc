@@ -76,6 +76,7 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
+    "hawc.apps.common.middleware.RequestLogMiddleware",
 )
 
 
@@ -132,7 +133,7 @@ DATABASES = {
         "CONN_MAX_AGE": 300,
     }
 }
-
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Celery settings
 CELERY_ACCEPT_CONTENT = ("json", "pickle")
@@ -172,7 +173,7 @@ EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
-PASSWORD_RESET_TIMEOUT_DAYS = 3
+PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 
@@ -181,7 +182,6 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
-
 
 # Static files
 STATIC_URL = "/static/"
@@ -211,7 +211,7 @@ LOGGING = {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
         },
-        "simple": {"format": "%(levelname)s %(name)s %(message)s"},
+        "simple": {"format": "%(levelname)s %(asctime)s %(name)s %(message)s"},
     },
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "handlers": {
@@ -239,6 +239,14 @@ LOGGING = {
             "maxBytes": 10 * 1024 * 1024,  # 10 MB
             "backupCount": 10,
         },
+        "hawc-request": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "simple",
+            "filename": str(LOGS_ROOT / "hawc-request.log"),
+            "maxBytes": 10 * 1024 * 1024,  # 10 MB
+            "backupCount": 10,
+        },
     },
     "loggers": {
         "": {"handlers": ["null"], "level": "INFO"},
@@ -249,6 +257,7 @@ LOGGING = {
             "propagate": False,
         },
         "hawc": {"handlers": ["null"], "propagate": False, "level": "INFO"},
+        "hawc.request": {"handlers": ["null"], "propagate": False, "level": "INFO"},
     },
 }
 
@@ -310,7 +319,16 @@ WEBPACK_LOADER = {
     }
 }
 
+# can anyone create a new assessment; or can only those in the group `can-create-assessments`
 ANYONE_CAN_CREATE_ASSESSMENTS = True
+
+# can project-managers for an assessment make that assessments public, or only administrators?
+PM_CAN_MAKE_PUBLIC = True
+
+# are users required to accept a license
+ACCEPT_LICENSE_REQUIRED = True
+
+# add extra branding (EPA flavor only)
 EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv

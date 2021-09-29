@@ -1,5 +1,6 @@
 import json
 import logging
+from itertools import product
 from textwrap import dedent
 from typing import Dict
 
@@ -134,7 +135,7 @@ class RiskOfBiasMetric(models.Model):
     def get_default_response(self):
         return constants.RESPONSES_VALUES_DEFAULT[self.responses]
 
-    def build_score(self, riskofbias, is_default: bool = False):
+    def build_score(self, riskofbias: "RiskOfBias", is_default: bool):
         return RiskOfBiasScore(
             riskofbias=riskofbias,
             metric=self,
@@ -148,6 +149,56 @@ class RiskOfBiasMetric(models.Model):
         self.domain_id = cw[RiskOfBiasDomain.COPY_NAME][self.domain_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+    @transaction.atomic
+    def sync_score_existence(self):
+        """Create/delete scores based on current metric requirements."""
+        actual_ids = set(self.scores.all().values_list("riskofbias_id", flat=True))
+
+        expected = {}
+        expected_ids = set()
+        robs = RiskOfBias.objects.get_required_robs_for_metric(self)
+        if robs:
+            expected = robs.in_bulk()
+            expected_ids = set(expected.keys())
+
+        create_ids = expected_ids - actual_ids
+        if create_ids:
+            scores = [self.build_score(expected[rob_id], True) for rob_id in create_ids]
+            RiskOfBiasScore.objects.bulk_create(scores)
+
+        delete_ids = actual_ids - expected_ids
+        if delete_ids:
+            RiskOfBiasScore.objects.filter(metric=self, riskofbias_id__in=delete_ids).delete()
+
+    @classmethod
+    @transaction.atomic
+    def sync_scores_for_study(cls, study: Study):
+        """Create/delete scores based on current study requirements."""
+        robs = study.riskofbiases.all().in_bulk()
+        rob_ids = robs.keys()
+        metrics = cls.objects.get_required_metrics(study).in_bulk()
+
+        expected_ids = set(product(metrics.keys(), rob_ids))
+        actual_ids = set(
+            RiskOfBiasScore.objects.filter(riskofbias__in=rob_ids).values_list(
+                "metric_id", "riskofbias_id"
+            )
+        )
+
+        create_ids = expected_ids - actual_ids
+        if create_ids:
+            scores = [
+                metrics[metric_id].build_score(robs[rob_id], True)
+                for metric_id, rob_id in create_ids
+            ]
+            RiskOfBiasScore.objects.bulk_create(scores)
+
+        delete_ids = actual_ids - expected_ids
+        if delete_ids:
+            for metric_id, rob_id in delete_ids:
+                score = RiskOfBiasScore.objects.get(metric=metric_id, riskofbias=rob_id)
+                score.delete()
 
 
 class RiskOfBias(models.Model):
@@ -179,7 +230,7 @@ class RiskOfBias(models.Model):
         return reverse("riskofbias:rob_detail", args=[self.study_id])
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.study.assessment_id])
+        return reverse("riskofbias:rob_assignments", args=[self.study.assessment_id])
 
     def get_edit_url(self):
         return reverse("riskofbias:rob_update", args=[self.pk])
@@ -195,39 +246,10 @@ class RiskOfBias(models.Model):
         else:
             return robs
 
-    @transaction.atomic
-    def update_scores(self, assessment):
-        """Sync RiskOfBiasScore for this study based on assessment requirements.
-
-        Metrics may change based on study type and metric requirements by study
-        type. This method is called via signals when the study type changes,
-        or when a metric is altered.  RiskOfBiasScore are created/deleted as
-        needed.
-        """
-        metrics = RiskOfBiasMetric.objects.get_required_metrics(
-            assessment, self.study
-        ).prefetch_related("scores")
-        scores = self.scores.all()
-
-        # add any scores that are required and not currently created
-        created = []
-        for metric in metrics:
-            if not (metric.scores.all() & scores):
-                logger.info(f"Creating score: {self.study}->{metric}")
-                created.append(metric.build_score(riskofbias=self))
-        if created:
-            RiskOfBiasScore.objects.bulk_create(created)
-
-        # delete any scores that are no longer required
-        for score in scores:
-            if score.metric not in metrics:
-                logger.info(f"Deleting score: {self.study}->{score.metric}")
-                score.delete()
-
     def build_scores(self, assessment, study):
         scores = [
-            metric.build_score(riskofbias=self)
-            for metric in RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
+            metric.build_score(riskofbias=self, is_default=True)
+            for metric in RiskOfBiasMetric.objects.get_required_metrics(study)
         ]
         RiskOfBiasScore.objects.bulk_create(scores)
 
@@ -461,6 +483,8 @@ class RiskOfBiasScore(models.Model):
 
 
 class RiskOfBiasScoreOverrideObject(models.Model):
+    objects = managers.RiskOfBiasScoreOverrideObjectManager()
+
     score = models.ForeignKey(
         RiskOfBiasScore, on_delete=models.CASCADE, related_name="overridden_objects"
     )
@@ -494,22 +518,8 @@ class RiskOfBiasScoreOverrideObject(models.Model):
         Returns:
             str: A log message of relations found and what as done.
         """
-        cts = RiskOfBiasScoreOverrideObject.objects.values_list(
-            "content_type", flat=True
-        ).distinct()
-
-        deletions = []
-        for ct in cts:
-            RelatedClass = ContentType.objects.get_for_id(ct).model_class()
-            all_ids = cls.objects.filter(content_type=ct).values_list("object_id", flat=True)
-            matched_ids = RelatedClass.objects.filter(id__in=all_ids).values_list("id", flat=True)
-            deleted_ids = list(set(all_ids) - set(matched_ids))
-            if deleted_ids:
-                deletions.extend(
-                    list(cls.objects.filter(content_type=ct, object_id__in=deleted_ids))
-                )
-
         message = ""
+        deletions = cls.objects.all().orphaned()
         if deletions:
             message = "\n".join([str(item) for item in deletions])
             ids_to_delete = [item.id for item in deletions]
@@ -538,7 +548,10 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.assessment_id])
+        return reverse("riskofbias:rob_assignments", args=(self.assessment_id,))
+
+    def get_assessment(self):
+        return self.assessment
 
     @classmethod
     def build_default(cls, assessment):

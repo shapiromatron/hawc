@@ -6,6 +6,7 @@ from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
@@ -198,7 +199,7 @@ class TestSearchViewset:
         new_payload = {**payload, **{"title": "MANUAL IMPORT"}}
         resp = c.post(url, new_payload, format="json")
         assert resp.status_code == 400
-        assert resp.data == {"slug": ["slug (generated from title) must be unique for assessment"]}
+        assert resp.data == {"slug": [ASSESSMENT_UNIQUE_MESSAGE]}
 
         # check type
         new_payload = {**payload, **{"search_type": "s"}}

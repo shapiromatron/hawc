@@ -1,11 +1,10 @@
 Database
 ========
 
-The HAWC database is a `PostgreSQL`_ database; it utilizes some PostgreSQL-specific feature such as `JSON fields`_ and `Array fields`_. Therefore, it may be possible to migrate the data to other database formats, but it wouldn't be a trivial exercise. The overall database schema is as follows (sections below break down the schema into more digestible components):
+The HAWC database is a `PostgreSQL`_ database; it utilizes some PostgreSQL-specific feature such as `JSON fields`_`. Therefore, it may be possible to migrate the data to other database formats, but it wouldn't be a trivial exercise. The overall database schema is as follows (sections below break down the schema into more digestible components):
 
 .. _`PostgreSQL`: https://www.postgresql.org/
 .. _`JSON fields`: https://www.postgresql.org/docs/current/static/datatype-json.html
-.. _`Array fields`: https://www.postgresql.org/docs/current/static/arrays.html
 
 .. figure:: _static/hawc-schema.png
    :width: 1000

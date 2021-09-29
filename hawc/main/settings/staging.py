@@ -44,8 +44,12 @@ else:
     raise ValueError(f"Unknown email backend: {email_backend}")
 
 LOGGING["loggers"]["django"]["handlers"] = ["file"]
+LOGGING["loggers"]["hawc"]["handlers"] = ["file"]
+LOGGING["loggers"]["hawc.request"]["handlers"] = ["hawc-request"]
 
 ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", "True") == "True"
+PM_CAN_MAKE_PUBLIC = os.getenv("HAWC_PM_CAN_MAKE_PUBLIC", "True") == "True"
+ACCEPT_LICENSE_REQUIRED = os.getenv("HAWC_ACCEPT_LICENSE_REQUIRED", "True") == "True"
 
 HAWC_LOAD_TEST_DB = bool(os.environ.get("HAWC_LOAD_TEST_DB") == "True")
 if HAWC_LOAD_TEST_DB:

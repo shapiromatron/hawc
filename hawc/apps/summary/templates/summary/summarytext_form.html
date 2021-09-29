@@ -24,9 +24,9 @@
 }
 </script>
 <script type="text/javascript">
-  window.app.summaryTextStartup(function (startup) {
+  window.app.startup("summaryTextStartup", function (startup) {
     var root = document.getElementById('main'),
-      config = JSON.parse(document.getElementById('config').textContent);
+      config = window.app.getConfig();
     startup(root, config);
   })
 </script>

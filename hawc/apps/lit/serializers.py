@@ -17,6 +17,7 @@ from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
@@ -49,9 +50,7 @@ class SearchSerializer(serializers.ModelSerializer):
         # (assessment+title is checked w/ built-in serializer)
         data["slug"] = slugify(data["title"])
         if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
-            raise serializers.ValidationError(
-                {"slug": "slug (generated from title) must be unique for assessment"}
-            )
+            raise serializers.ValidationError({"slug": ASSESSMENT_UNIQUE_MESSAGE})
 
         if data["search_type"] != "i":
             raise serializers.ValidationError("API currently only supports imports")
@@ -164,6 +163,7 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
 class BulkReferenceTagSerializer(serializers.Serializer):
     operation = serializers.ChoiceField(choices=["append", "replace"], required=True)
     csv = serializers.CharField(required=True)
+    dry_run = serializers.BooleanField(default=False)
 
     def validate_csv(self, value):
         try:
@@ -185,10 +185,11 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             raise serializers.ValidationError("CSV has no data")
 
         expected_assessment_id = self.context["assessment"].id
+        unique_refs = df.reference_id.unique()
 
         # ensure that all references are from this assessment
         assessments = (
-            models.Reference.objects.filter(id__in=df.reference_id.unique())
+            models.Reference.objects.filter(id__in=unique_refs)
             .values_list("assessment_id", flat=True)
             .distinct()
         )
@@ -204,6 +205,14 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"All tag ids are not from assessment {expected_assessment_id}"
             )
+
+        # ensure all references exist
+        founds_refs = set(
+            models.Reference.objects.filter(id__in=unique_refs).values_list("id", flat=True)
+        )
+        missing = set(unique_refs) - set(founds_refs)
+        if missing:
+            raise serializers.ValidationError(f"Reference(s) not found: {missing}")
 
         # check to make sure we have no duplicates
         df_nrows = df.shape[0]
@@ -221,6 +230,9 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
     @transaction.atomic
     def bulk_create_tags(self):
+        if self.validated_data["dry_run"]:
+            return
+
         assessment_id = self.assessment.id
         operation = self.validated_data["operation"]
 
@@ -246,7 +258,6 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if new_tags:
             logger.info(f"Creating {len(new_tags)} reference tags for {assessment_id}")
             models.ReferenceTags.objects.bulk_create(new_tags)
-
             models.Reference.delete_cache(assessment_id)
 
 
@@ -276,10 +287,10 @@ class ReferenceSerializer(serializers.ModelSerializer):
             self.instance.assessment_id
         ).filter(id__in=value)
         if valid_tags.count() != len(value):
-            raise serializers.ValidationError(f"All tag ids are not from this assessment")
+            raise serializers.ValidationError("All tag ids are not from this assessment")
         return value
 
-    @transaction.atomic()
+    @transaction.atomic
     def update(self, instance, validated_data):
 
         # updates the reference tags

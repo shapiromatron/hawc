@@ -34,7 +34,7 @@ class SimpleStudySerializer(StudySerializer):
             except ValueError:
                 raise serializers.ValidationError("Reference ID must be a number.")
             except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Reference ID does not exist.")
+                raise serializers.ValidationError("Reference ID does not exist.")
 
         return super().validate(data)
 
