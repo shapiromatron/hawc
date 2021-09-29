@@ -34,51 +34,56 @@ class TagReferencesMain extends Component {
             <div className="row">
                 <div className="col-md-3">
                     <h4>References</h4>
-                    <div id="references_lists">
-                        <div className="card">
-                            <div className="card-header p-1">
-                                <button className="btn btn-link">Tagged</button>
-                            </div>
-                            <div id="references_tagged" data-parent="#references_lists">
-                                <div className="card-body ref-container p-1">
-                                    {store.referencesTagged.map(ref => (
-                                        <p
-                                            key={ref.data.pk}
-                                            className={
-                                                ref.data.pk === selectedReferencePk
-                                                    ? "reference selected"
-                                                    : "reference"
-                                            }
-                                            onClick={() => store.changeSelectedReference(ref)}>
-                                            {ref.shortCitation()}
-                                        </p>
-                                    ))}
-                                </div>
-                            </div>
+                    <div className="card">
+                        <div className="card-header p-2">
+                            <button
+                                className="btn btn-link"
+                                data-toggle="collapse"
+                                data-target="#taggedRefList">
+                                Tagged
+                            </button>
                         </div>
-                        <div className="card">
-                            <div className="card-header p-1">
-                                <button className="btn btn-link">Untagged</button>
-                            </div>
-                            <div
-                                id="references_untagged"
-                                className="p-1"
-                                data-parent="#references_lists">
-                                <div className="card-body ref-container">
-                                    {store.referencesUntagged.map(ref => (
-                                        <p
-                                            key={ref.data.pk}
-                                            className={
-                                                ref.data.pk === selectedReferencePk
-                                                    ? "reference selected"
-                                                    : "reference"
-                                            }
-                                            onClick={() => store.changeSelectedReference(ref)}>
-                                            {ref.shortCitation()}
-                                        </p>
-                                    ))}
-                                </div>
-                            </div>
+                        <div
+                            id="taggedRefList"
+                            className="show card-body ref-container px-1 resize-y">
+                            {store.referencesTagged.map(ref => (
+                                <p
+                                    key={ref.data.pk}
+                                    className={
+                                        ref.data.pk === selectedReferencePk
+                                            ? "reference selected"
+                                            : "reference"
+                                    }
+                                    onClick={() => store.changeSelectedReference(ref)}>
+                                    {ref.shortCitation()}
+                                </p>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="card mt-3">
+                        <div className="card-header p-2">
+                            <button
+                                className="btn btn-link"
+                                data-toggle="collapse"
+                                data-target="#untaggedRefList">
+                                Untagged
+                            </button>
+                        </div>
+                        <div
+                            id="untaggedRefList"
+                            className="show card-body ref-container px-1 resize-y">
+                            {store.referencesUntagged.map(ref => (
+                                <p
+                                    key={ref.data.pk}
+                                    className={
+                                        ref.data.pk === selectedReferencePk
+                                            ? "reference selected"
+                                            : "reference"
+                                    }
+                                    onClick={() => store.changeSelectedReference(ref)}>
+                                    {ref.shortCitation()}
+                                </p>
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -61,6 +61,10 @@ code {
 .hidden {
     display: none;
 }
+.resize-y {
+    overflow-y: auto;
+    resize:vertical;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
@@ -313,8 +317,7 @@ div.smart-tag.active {
 }
 .ref-container {
     min-height: 10vh;
-    max-height: 40vh;
-    overflow-y: auto;
+    height: 40vh;
 }
 .abstract_label {
     font-weight: bold;
