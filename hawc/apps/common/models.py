@@ -340,6 +340,119 @@ class AssessmentRootMixin:
         return depth
 
     @classmethod
+    def validate_and_transform_tag_tree(
+        cls, tags_at_level: List[object], issues: List[str], breadcrumbs: List[int] = []
+    ):
+        """
+        Goes through the tags_at_level and for each tag:
+            * verifies that it has a name
+            * if a slug is present, checks that it's valid. If it's missing, generates one.
+            * deletes any keys other than name/slug/children
+
+        Issues found are appended in readable fashion to the issues list; an empty
+        issues list indicates that no problems were found. Note that things like a missing slug
+        or extraneous keys are NOT reported as issues; they are just corrected in the underlying
+        tags data structure.
+
+        This method modifies the supplied tag_tree by relocating the name/data attributes inside a "data" node.
+
+        Args:
+            tags_at_level (List[object]): any level of the tag tree
+            issues (List[str]): storage for reporting any issues encountered while validating the tree
+            breadcrumbs (List[int]): array of indices indicating where in the tree structure the code is at
+        """
+
+        def prettify_indices(list_of_indices: List[int]):
+            """
+            Given a list containing just numeric indices, returns a dot-delimited version with the
+            indices wrapped in square brackets.
+
+            For example,
+            [8, 6, 7] -> "[8].[6].[7]"
+
+            Args:
+                list_of_indices (List[int]): list of indices
+
+            Returns:
+                str: formatted string
+            """
+            return ".".join([f"[{x}]" for x in list_of_indices])
+
+        valid_keys = ["name", "slug", "children"]
+        idx = 0
+        for tag in tags_at_level:
+            tag_name = None
+            slug = None
+            if "name" in tag:
+                tag_name = tag["name"]
+                if "slug" in tag:
+                    # validate it
+                    slug = tag["slug"]
+                    recomputed_slug = default_slugify(slug)
+                    if recomputed_slug != slug:
+                        adjusted_crumbs = prettify_indices(breadcrumbs + [idx])
+                        issues.append(
+                            f"tag '{tag_name}' at index {adjusted_crumbs} has an invalid slug '{slug}'; should be something like '{default_slugify(tag_name)}' or '{recomputed_slug}'"
+                        )
+                else:
+                    # generate it
+                    slug = default_slugify(tag_name)
+                    tag["slug"] = slug
+            else:
+                adjusted_crumbs = prettify_indices(breadcrumbs + [idx])
+                issues.append(f"tag at index {adjusted_crumbs} is missing a name")
+
+            # recurse
+            if "children" in tag:
+                cls.validate_and_transform_tag_tree(tag["children"], issues, breadcrumbs + [idx])
+
+            # delete any extraneous keys that were passed in (could instead/also flag it as an issue?).
+            # why not flag an issue? Sometimes it's nice in JSON to change a key to "_oldname" or something,
+            # since JSON doesn't support comments. This way we don't break if the caller does something like that.
+            keys_to_delete = []
+            for key in tag:
+                if key not in valid_keys:
+                    # need to build up a list; we can't delete from the tag while we iterate through it
+                    keys_to_delete.append(key)
+
+            for key in keys_to_delete:
+                del tag[key]
+
+            # and now restructure the tag so that name/slug are keys inside a "data" object as Treebeard requires.
+            if "name" in tag:
+                del tag["name"]
+            if "slug" in tag:
+                del tag["slug"]
+            tag["data"] = {"name": tag_name, "slug": slug}
+
+            idx += 1
+
+    @classmethod
+    @transaction.atomic
+    def replace_tag_tree_in_assessment(cls, assessment, tag_tree: List[object]):
+        """
+        Replaces the tag tree for an assessment; this also removes reference/tag associations.
+
+        Args:
+            assessment (Assessment): assessment to operate on
+            tag_tree (List[object]): the user-supplied tags. This method will create the "assessment-<id>" top parent tag
+                                     and should NOT be included in the supplied argument.
+
+        Returns:
+            List[dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
+        """
+        root_node = cls.get_assessment_root(assessment.id)
+
+        root_name = cls.get_assessment_root_name(assessment.id)
+        complete_tree = [{"data": {"name": root_name, "slug": root_name}, "children": tag_tree}]
+
+        root_node.delete()
+        cls.load_bulk(complete_tree, parent=None, keep_ids=False)
+        cls.clear_cache(assessment.id)
+        return cls.get_all_tags(assessment.id, json_encode=False)
+
+    @classmethod
+    @transaction.atomic
     def copy_tags(cls, copy_to_assessment, copy_from_assessment) -> Dict[int, int]:
         # delete existing tags for this assessment
         old_root = cls.get_assessment_root(copy_to_assessment.pk)

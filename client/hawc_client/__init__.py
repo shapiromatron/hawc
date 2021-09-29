@@ -229,6 +229,51 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
+    def get_tag_tree(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves the nested tag tree for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            Dict: JSON representation of the tag tree
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/get_tag_tree/"
+        response_json = self.session.get(url).json()
+        return response_json
+
+    def clone_tag_tree(self, source_assessment_id: int, target_assessment_id: int) -> pd.DataFrame:
+        """
+        Copies the tag tree from one assessment to another.
+
+        Args:
+            source_assessment_id (int): Assessment ID to copy tag tree from
+            target_assessment_id (int): Assessment ID to copy tag tree to
+
+        Returns:
+            Dict: JSON representation of the new tag tree
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{target_assessment_id}/clone_tag_tree_from_assessment/?assessment_id={source_assessment_id}"
+        response_json = self.session.get(url).json()
+        return response_json
+
+    def update_tag_tree(self, assessment_id: int, tags: List[Dict]) -> pd.DataFrame:
+        """
+        Updates the tag tree.
+
+        Args:
+            assessment_id (int): Assessment ID to update
+            tags (List[Dict]): tag definitions. For each tag Dict element, "name" is required. "slug" is
+               optional. "children" is optional and should contain a recursive List containing valid tags.
+
+        Returns:
+            Dict: JSON representation of the new tag tree. If errors, a JSON list containing details.
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/update_tag_tree/"
+        response_json = self.session.post(url, tags).json()
+        return response_json
+
     def reference_tags(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves the literature references and their corresponding tags for a given assessment.

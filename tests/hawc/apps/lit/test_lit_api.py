@@ -33,9 +33,12 @@ class TestLiteratureAssessmentViewset:
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
+        pm_client = APIClient()
+        assert pm_client.login(username="pm@hawcproject.org", password="pw") is True
 
         urls = [
             reverse("lit:api:assessment-tags", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-get-tag-tree", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-reference-ids", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-reference-tags", args=(db_keys.assessment_working,)),
             reverse(
@@ -53,6 +56,19 @@ class TestLiteratureAssessmentViewset:
         assert anon_client.get(url).status_code == 403
         with pytest.raises(ValueError):
             assert rev_client.get(url).status_code == 200
+
+        # only assessment admins can hit the clone endpoint
+        admin_urls = [
+            reverse(
+                "lit:api:assessment-clone-tag-tree-from-assessment",
+                args=(db_keys.assessment_working,),
+            )
+            + f"?assessment_id={db_keys.assessment_client}",
+        ]
+        for url in admin_urls:
+            assert anon_client.get(url).status_code == 403
+            assert rev_client.get(url).status_code == 403
+            assert pm_client.get(url).status_code == 200
 
     def test_references_download(self, rewrite_data_files: bool, db_keys):
         url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
@@ -72,6 +88,113 @@ class TestLiteratureAssessmentViewset:
             "name": "c",
             "nested_name": "Exclusion|Tier III|c",
         }
+
+    def test_get_tag_tree(self, db_keys):
+        url = reverse("lit:api:assessment-get-tag-tree", kwargs=dict(pk=db_keys.assessment_working))
+        c = APIClient()
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+        resp = c.get(url).json()
+        assert len(resp) == 1
+        assert resp[0]["data"]["name"] == f"assessment-{db_keys.assessment_working}"
+        assert len(resp[0]["children"]) == 2
+        assert resp[0]["children"][1]["data"]["name"] == "Exclusion"
+
+    def test_clone_tag_tree(self, db_keys):
+        url = (
+            reverse(
+                "lit:api:assessment-clone-tag-tree-from-assessment",
+                args=(db_keys.assessment_working,),
+            )
+            + f"?assessment_id={db_keys.assessment_client}"
+        )
+
+        c = APIClient()
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+        resp = c.get(url).json()
+
+        assert len(resp) == 1
+        assert resp[0]["data"]["name"] == f"assessment-{db_keys.assessment_working}"
+        assert len(resp[0]["children"]) == 2
+        assert resp[0]["children"][1]["data"]["name"] == "Exclusion"
+        assert resp[0]["id"] != 1  # ensures we've actually replaced the tags
+
+        # can't clone from assessment X to assessment X
+        dupe_id_url = (
+            reverse(
+                "lit:api:assessment-clone-tag-tree-from-assessment",
+                args=(db_keys.assessment_working,),
+            )
+            + f"?assessment_id={db_keys.assessment_working}"
+        )
+
+        resp = c.get(dupe_id_url)
+        assert resp.status_code == 400
+
+    def test_update_tag_tree(self, db_keys):
+        url = reverse("lit:api:assessment-update-tag-tree", args=(db_keys.assessment_working,))
+
+        bad_payload_no_name = [
+            {"name": "x"},
+            {"name": "y", "children": [{"xname": "missing name node"}]},
+        ]
+        bad_payload_bad_slug = [{"name": "x", "slug": "this has spaces"}]
+
+        good_payload = [
+            {"name": "This is required"},
+            {"name": "Tag Name", "slug": "custom-slug"},
+            {
+                "name": "Grandparent Tag",
+                "children": [
+                    {"name": "nested"},
+                    {"name": "Parent Tag", "children": [{"name": "deeply nested"}]},
+                ],
+            },
+        ]
+
+        c = APIClient()
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+
+        # 1. bad input - no data supplied
+        response = c.post(url, None, format="json")
+        errors = response.json()
+        assert response.status_code == 400
+        assert any("invalid JSON" in s for s in errors)
+
+        # 2. bad input - it's JSON but not a list as we expect
+        response = c.post(url, {}, format="json")
+        errors = response.json()
+        assert response.status_code == 400
+        assert any("not a list" in s for s in errors)
+
+        # 3. bad input - what if the "name" attribute is missing from a node
+        response = c.post(url, bad_payload_no_name, format="json")
+        errors = response.json()
+        assert response.status_code == 400
+        assert any("missing a name" in s for s in errors)
+
+        # 4. bad input - a slug is supplied but it's not valid
+        response = c.post(url, bad_payload_bad_slug, format="json")
+        errors = response.json()
+        assert response.status_code == 400
+        assert any("invalid slug" in s for s in errors)
+
+        # 5. good payload
+        response = c.post(url, good_payload, format="json")
+        tag_map = response.json()
+        assert response.status_code == 200
+        real_children = tag_map[0]["children"]
+        assert real_children[0]["id"] > 0
+        assert real_children[0]["data"]["name"] == "This is required"
+        assert real_children[0]["data"]["slug"] == "this-is-required"
+        assert real_children[1]["data"]["name"] == "Tag Name"
+        assert real_children[1]["data"]["slug"] == "custom-slug"
+        assert real_children[2]["children"][0]["data"]["name"] == "nested"
+
+        # 6. non-managers cannot access this endpoint
+        reviewer_client = APIClient()
+        assert reviewer_client.login(email="reviewer@hawcproject.org", password="pw") is True
+        response = reviewer_client.post(url, good_payload, format="json")
+        assert response.status_code == 403
 
     def test_reference_ids(self, db_keys):
         url = reverse("lit:api:assessment-reference-ids", kwargs=dict(pk=db_keys.assessment_final))

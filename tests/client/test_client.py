@@ -495,6 +495,32 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.lit.tags(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_lit_tag_tree(self):
+        client = HawcClient(self.live_server_url)
+        response = client.lit.get_tag_tree(self.db_keys.assessment_client)
+        assert isinstance(response, list)
+
+    def test_clone_tag_tree(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.lit.clone_tag_tree(
+            self.db_keys.assessment_final, self.db_keys.assessment_client
+        )
+        assert isinstance(response, list)
+
+    def test_update_tag_tree(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+
+        updates = [
+            {"name": "set via client"},
+            {"name": "Client Slug", "slug": "sluggo"},
+            {"name": "tree", "children": [{"name": "child element"}]},
+        ]
+
+        response = client.lit.update_tag_tree(self.db_keys.assessment_client, updates)
+        assert isinstance(response, list)
+
     def test_lit_reference_tags(self):
         client = HawcClient(self.live_server_url)
         response = client.lit.reference_tags(self.db_keys.assessment_final)
