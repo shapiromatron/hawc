@@ -40,10 +40,7 @@ class Store {
         }
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            const references = Reference.sorted(
-                results.refs.map(datum => new Reference(datum, this.tagtree))
-            );
-            this.selectedReferences = references;
+            this.selectedReferences = Reference.sortedArray(results.refs, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
@@ -61,7 +58,7 @@ class Store {
         this.selectedReferences = null;
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            this.selectedReferences = results.refs.map(datum => new Reference(datum, this.tagtree));
+            this.selectedReferences = Reference.sortedArray(results.refs, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
