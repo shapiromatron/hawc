@@ -17,7 +17,7 @@ class TagNode extends Component {
         const {tag, showReferenceCount, handleOnClick, selectedTag} = this.props,
             tagClass = tag === selectedTag ? "d-flex nestedTag selected" : "d-flex nestedTag",
             hasChildren = tag.children.length > 0,
-            expanderIcon = hasChildren ? (this.state.expanded ? "fa-minus" : "fa-plus") : "",
+            expanderIcon = this.state.expanded ? "fa-minus" : "fa-plus",
             toggleExpander = e => {
                 const newValue = !this.state.expanded;
                 window.localStorage.setItem(this.localStorageKey, newValue);
@@ -31,7 +31,7 @@ class TagNode extends Component {
                         {hasChildren ? (
                             <button
                                 className="btn btn-sm pull-right p-0 px-2"
-                                onClick={hasChildren ? toggleExpander : h.noop}>
+                                onClick={toggleExpander}>
                                 <i className={`fa ${expanderIcon}`}></i>
                             </button>
                         ) : null}
