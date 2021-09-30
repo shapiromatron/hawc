@@ -1144,6 +1144,13 @@
     database: 2
     content: demo-content
     url: ''
+- model: lit.identifiers
+  pk: 8
+  fields:
+    unique_id: 10.1093/milmed/166.suppl_2.23
+    database: 4
+    content: ''
+    url: ''
 - model: lit.referencefiltertag
   pk: 1
   fields:
@@ -1483,6 +1490,7 @@
     - 5
     identifiers:
     - 4
+    - 8
 - model: lit.reference
   pk: 6
   fields:
