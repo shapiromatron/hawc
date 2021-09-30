@@ -3,7 +3,7 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
-from hawc.apps.assessment.models import Assessment
+from hawc.apps.assessment.models import Assessment, Log
 from hawc.apps.assessment.permissions import AssessmentPermissions
 
 _successful_post = {
@@ -208,3 +208,45 @@ class TestDeletePermissions:
             for pk in db_keys.assessment_keys:
                 response = c.post(reverse("assessment:delete", args=(pk,)))
                 assert response.status_code == 403
+
+
+@pytest.mark.django_db
+class TestLogViewPermissions:
+    def test_assessment_log_list(self):
+        url = reverse("assessment:assessment_logs", args=(1,))
+
+        c = Client()
+        response = c.get(url)
+        assert response.status_code == 403
+
+        assert c.login(email="team@hawcproject.org", password="pw") is True
+        with assertTemplateUsed("assessment/assessment_log_list.html"):
+            response = c.get(url)
+            assert response.status_code == 200
+
+    def test_log_object_list(self):
+        log = Log.objects.get(id=3)
+        url = log.get_object_url()
+
+        c = Client()
+        response = c.get(url)
+        assert response.status_code == 403
+
+        assert c.login(email="team@hawcproject.org", password="pw") is True
+        with assertTemplateUsed("assessment/log_object_list.html"):
+            response = c.get(url)
+            assert response.status_code == 200
+
+    def test_log_detail_page(self):
+        log = Log.objects.get(id=2)
+        url = log.get_absolute_url()
+
+        c = Client()
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+        response = c.get(url)
+        assert response.status_code == 403
+
+        assert c.login(email="admin@hawcproject.org", password="pw") is True
+        with assertTemplateUsed("assessment/log_detail.html"):
+            response = c.get(url)
+            assert response.status_code == 200
