@@ -75,11 +75,9 @@ class NestedTag {
         $.get(url, results => {
             if (results.status == "success") {
                 let expected_references = new Set(this.get_references_deep()),
-                    refs = results.refs
-                        .map(datum => new Reference(datum, this.tree))
-                        .filter(ref => expected_references.has(ref.data.pk));
-
-                refs = Reference.sorted(refs);
+                    refs = Reference.sortedArray(results.refs, this.tree).filter(ref =>
+                        expected_references.has(ref.data.pk)
+                    );
 
                 ReactDOM.render(<ReferenceTable references={refs} showActions={false} />, el);
             } else {
