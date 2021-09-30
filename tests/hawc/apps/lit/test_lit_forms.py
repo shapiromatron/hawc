@@ -207,6 +207,50 @@ class TestRisImportForm:
 @pytest.mark.vcr
 @pytest.mark.django_db
 class TestReferenceForm:
+    def test_update_doi(self, db_keys):
+        # test updates to reference
+        ref = Reference.objects.get(id=5)
+        doi = "10.1093/milmed/166.suppl_2.23"
+        assert ref.get_doi_id() == doi
+        data = {**model_to_dict(ref), "doi_id": doi}
+
+        # bad doi validation check
+        form = ReferenceForm(instance=ref, data={**data, "doi_id": "invalid"})
+        assert form.is_valid() is False
+        assert form.errors["doi_id"][0] == 'Invalid DOI; should be in format "10.1234/s123456"'
+
+        # make sure pubmed is unchanged by default
+        form = ReferenceForm(instance=ref, data=data)
+        assert form.fields["doi_id"].initial == doi
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_doi_id() == doi
+
+        # make sure pubmed can be removed
+        form = ReferenceForm(instance=ref, data={**data, "doi_id": None})
+        assert form.fields["doi_id"].initial == doi
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_doi_id() is None
+
+        # make sure pubmed can be added
+        form = ReferenceForm(instance=ref, data=data)
+        assert form.fields["doi_id"].initial is None
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_doi_id() == doi
+
+        # existing pubmed validation check
+        form = ReferenceForm(instance=Reference.objects.get(id=6), data=data)
+        assert form.is_valid() is False
+        assert (
+            form.errors["doi_id"][0]
+            == "Existing HAWC reference with this ID already exists in this assessment: 5"
+        )
+
     def test_update_hero(self, db_keys):
         # test updates to reference
         ref = Reference.objects.get(id=1)
