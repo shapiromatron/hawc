@@ -287,7 +287,7 @@ class TestClient(LiveServerTestCase, TestCase):
                 "metric_description": "my description here",
                 "metric": "my metric here",
                 "analytical_method": "my analytical method here",
-                "dtxsid": "DTXSID1020190",
+                "dtxsid": "DTXSID6026296",
                 "inhalation": True,
                 "measured": "this is measurement",
                 "sampling_period": "sample period here",
