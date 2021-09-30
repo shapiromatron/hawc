@@ -3,7 +3,7 @@ import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import GenericError from "shared/components/GenericError";
+import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 
 import TaskChart from "./TaskChart";
@@ -18,7 +18,7 @@ class Root extends Component {
         const {store} = this.props;
 
         if (store.error) {
-            return <GenericError />;
+            return <Alert />;
         }
 
         if (store.isFetching) {

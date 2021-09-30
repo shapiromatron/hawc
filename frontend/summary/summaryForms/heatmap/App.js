@@ -40,7 +40,7 @@ class App extends Component {
                         <PreviewPanel />
                     </TabPanel>
                 </Tabs>
-                <FormActions handleSubmit={handleSubmit} cancelURL={cancel_url} />
+                <FormActions handleSubmit={handleSubmit} cancel={cancel_url} />
             </div>
         );
     }
