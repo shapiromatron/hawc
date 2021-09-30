@@ -1,22 +1,25 @@
 import json
 import logging
 from pathlib import Path
+from typing import Any, Dict, List
 
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import FormView, ListView, TemplateView, View
+from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
@@ -711,7 +714,7 @@ class AdminMediaPreview(TemplateView):
         return context
 
 
-# log / blog
+# blog
 @method_decorator(beta_tester_required, name="dispatch")
 class BlogList(ListView):
     model = models.Blog
@@ -722,4 +725,136 @@ class BlogList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Blog")
+        return context
+
+
+# log
+class LogDetail(DetailView):
+    template_name = "assessment/log_detail.html"
+    model = models.Log
+
+    def get_object(self):
+        obj = super().get_object()
+        if not obj.user_can_view(self.request.user):
+            raise PermissionDenied()
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["assessment"] = self.object.assessment
+        context["breadcrumbs"] = self.get_breadcrumbs()
+        return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        extras = []
+        if assessment := self.object.assessment:
+            extras.extend(
+                [
+                    Breadcrumb.from_object(assessment),
+                    Breadcrumb(name="Logs", url=assessment.get_assessment_logs_url()),
+                ]
+            )
+        crumbs = Breadcrumb.build_crumbs(self.request.user, "Log", extras)
+        return crumbs
+
+
+class LogObjectList(ListView):
+    template_name = "assessment/log_object_list.html"
+    model = models.Log
+    paginate_by = 25
+
+    def get_queryset(self):
+        qs = self.model.objects.filter(**self.kwargs)
+        if qs.count() == 0:
+            raise Http404()
+        self.first_log = qs[0]
+        self.assessment = qs[0].assessment
+        if not qs[0].user_can_view(self.request.user):
+            raise PermissionDenied()
+        return qs
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Logs",
+            [
+                Breadcrumb.from_object(self.assessment),
+                Breadcrumb(name="Logs", url=self.assessment.get_assessment_logs_url()),
+            ],
+        )
+        return crumbs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["first_log"] = self.first_log
+        context["assessment"] = self.assessment
+        context["breadcrumbs"] = self.get_breadcrumbs()
+        return context
+
+
+class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
+    parent_model = models.Assessment
+    model = models.Log
+    breadcrumb_active_name = "Logs"
+    template_name = "assessment/assessment_log_list.html"
+    paginate_by = 25
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(models.Assessment, pk=kwargs["pk"])
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(assessment=self.assessment).select_related(
+            "assessment", "content_type", "user"
+        )
+        self.form = forms.LogFilterForm(self.request.GET, assessment=self.assessment)
+        if self.form.is_valid():
+            qs = qs.filter(self.form.filters())
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.form
+        return context
+
+
+@method_decorator(cache_page(3600), name="dispatch")
+class AboutContentTypes(TemplateView):
+    template_name = "assessment/content_types.html"
+
+    def get_cts(self):
+        cts = {f"{ct.app_label}.{ct.model}": ct for ct in ContentType.objects.all()}
+        return [
+            cts["assessment.assessment"],
+            cts["assessment.attachment"],
+            cts["assessment.dataset"],
+            cts["lit.search"],
+            cts["lit.reference"],
+            cts["study.study"],
+            cts["study.attachment"],
+            cts["riskofbias.riskofbiasdomain"],
+            cts["riskofbias.riskofbiasmetric"],
+            cts["riskofbias.riskofbias"],
+            cts["animal.experiment"],
+            cts["animal.animalgroup"],
+            cts["animal.dosingregime"],
+            cts["animal.endpoint"],
+            cts["bmd.session"],
+            cts["epi.studypopulation"],
+            cts["epi.comparisonset"],
+            cts["epi.exposure"],
+            cts["epi.outcome"],
+            cts["epi.result"],
+            cts["epimeta.metaprotocol"],
+            cts["epimeta.metaresult"],
+            cts["summary.summarytable"],
+            cts["summary.visual"],
+            cts["summary.datapivot"],
+            cts["summary.datapivotupload"],
+            cts["summary.datapivotquery"],
+        ]
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["content_types"] = self.get_cts()
         return context

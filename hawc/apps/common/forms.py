@@ -22,7 +22,10 @@ def form_actions_create_or_close():
 
 def form_actions_apply_filters():
     """Add form_actions to apply filters"""
-    return [cfl.Submit("submit", "Apply filters")]
+    return [
+        cfl.Submit("submit", "Apply filters"),
+        cfl.HTML('<a class="btn btn-light" href=".">Reset</a>'),
+    ]
 
 
 class BaseFormHelper(cf.FormHelper):

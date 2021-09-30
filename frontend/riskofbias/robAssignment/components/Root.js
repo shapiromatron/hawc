@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 
-import GenericError from "shared/components/GenericError";
+import Alert from "shared/components/Alert";
 import StudyRow from "./StudyRow";
 
 @inject("store")
@@ -13,7 +13,7 @@ class Root extends Component {
             {number_of_reviewers, edit} = this.props.store.config;
         return (
             <>
-                {error ? <GenericError /> : null}
+                {error ? <Alert /> : null}
                 <p>
                     <b>Individual reviews required:</b>&nbsp;{number_of_reviewers}
                 </p>
