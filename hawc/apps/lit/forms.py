@@ -5,7 +5,6 @@ from typing import List, Union
 import numpy as np
 from django import forms
 from django.db import transaction
-from django.core.validators import RegexValidator
 from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
@@ -350,7 +349,6 @@ def check_external_id(
     """
     identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(id_)).first()
     if identifier:
-
         # make sure ID doesn't already exist for this assessment
         existing_reference = identifier.references.filter(assessment=assessment).first()
         if existing_reference:
@@ -370,17 +368,16 @@ def check_external_id(
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids([id_])
             models.Identifiers.objects.bulk_create_hero_ids(content)
             identifier = models.Identifiers.objects.get(database=db_type, unique_id=str(id_))
+
         elif db_type == constants.DOI:
             if not constants.DOI_EXACT.fullmatch(id_):
                 raise forms.ValidationError(
                     f'Invalid DOI; should be in format "{constants.DOI_EXAMPLE}"'
                 )
-            identifier, _ = models.Identifiers.objects.get_or_create(
-                database=db_type, unique_id=str(id_)
-            )
+            identifier = models.Identifiers.objects.create(database=db_type, unique_id=str(id_))
 
         else:
-            raise ValueError("Unknown database type.")
+            raise ValueError(f"Unknown database type {db_type}.")
 
     return identifier
 
@@ -418,6 +415,8 @@ class ReferenceForm(forms.ModelForm):
         self.fields["doi_id"].initial = self.instance.get_doi_id()
         self.fields["pubmed_id"].initial = self.instance.get_pubmed_id()
         self.fields["hero_id"].initial = self.instance.get_hero_id()
+        self._ident_additions = []
+        self._ident_removals = []
 
     @property
     def helper(self):
@@ -440,78 +439,31 @@ class ReferenceForm(forms.ModelForm):
 
         return helper
 
-    def clean_doi_id(self):
-        """Check if a modifications are required to the DOI.
+    def _update_identifier(self, db_type: int, field: str):
+        value = self.cleaned_data[field]
+        if self.fields[field].initial != value:
+            if value:
+                ident = check_external_id(self.instance.assessment, db_type, value)
+                self._ident_additions.append(ident)
+            existing = self.instance.identifiers.filter(database=db_type)
+            self._ident_removals.extend(list(existing))
 
-        If added/changed, sets the `self._new_doi_identifier` to the new identifier. If removed,
-        sets `self._new_doi_identifier` to -1.
-        """
-        doi_id = self.cleaned_data["doi_id"]
-        if self.fields["doi_id"].initial != doi_id:
-            if doi_id is None:
-                logger.info(f"Removing DOI for reference {self.instance.id}")
-                self._new_doi_identifier = -1
-            else:
-                logger.info(f"Setting DOI {doi_id} for reference {self.instance.id}")
-                self._new_doi_identifier = check_external_id(
-                    self.instance.assessment, constants.DOI, doi_id
-                )
+    def clean_doi_id(self):
+        self._update_identifier(constants.DOI, "doi_id")
 
     def clean_pubmed_id(self):
-        """Check if a modifications are required to the PMID.
-
-        If added/changed, sets the `self._new_pubmed_identifier` to the new identifier. If removed,
-        sets `self._new_pubmed_identifier` to -1.
-        """
-        pubmed_id = self.cleaned_data["pubmed_id"]
-        if self.fields["pubmed_id"].initial != pubmed_id:
-            if pubmed_id is None:
-                logger.info(f"Removing PMID for reference {self.instance.id}")
-                self._new_pubmed_identifier = -1
-            else:
-                logger.info(f"Setting PMID {pubmed_id} for reference {self.instance.id}")
-                self._new_pubmed_identifier = check_external_id(
-                    self.instance.assessment, constants.PUBMED, pubmed_id
-                )
+        self._update_identifier(constants.PUBMED, "pubmed_id")
 
     def clean_hero_id(self):
-        """Check if a modifications are required to the HERO ID.
-
-        If added/changed, sets the `self._new_pubmed_identifier` to the new identifier. If removed,
-        sets `self._new_pubmed_identifier` to -1.
-        """
-        hero_id = self.cleaned_data["hero_id"]
-        if self.fields["hero_id"].initial != hero_id:
-            if hero_id is None:
-                logger.info(f"Removing HEROID for reference {self.instance.id}")
-                self._new_hero_identifier = -1
-            else:
-                logger.info(f"Setting HEROID {hero_id} for reference {self.instance.id}")
-                self._new_hero_identifier = check_external_id(
-                    self.instance.assessment, constants.HERO, hero_id
-                )
+        self._update_identifier(constants.HERO, "hero_id")
 
     @transaction.atomic
     def save(self, commit=True):
         instance = super().save(commit=commit)
-        if hasattr(self, "_new_doi_identifier"):
-            existing = list(instance.identifiers.filter(database=constants.DOI))
-            if existing:
-                instance.identifiers.remove(*existing)
-            if self._new_doi_identifier != -1:
-                instance.identifiers.add(self._new_doi_identifier)
-        if hasattr(self, "_new_pubmed_identifier"):
-            existing = list(instance.identifiers.filter(database=constants.PUBMED))
-            if existing:
-                instance.identifiers.remove(*existing)
-            if self._new_pubmed_identifier != -1:
-                instance.identifiers.add(self._new_pubmed_identifier)
-        if hasattr(self, "_new_hero_identifier"):
-            existing = list(instance.identifiers.filter(database=constants.HERO))
-            if existing:
-                instance.identifiers.remove(*existing)
-            if self._new_hero_identifier != -1:
-                instance.identifiers.add(self._new_hero_identifier)
+        if self._ident_additions:
+            instance.identifiers.add(*self._ident_additions)
+        if self._ident_removals:
+            instance.identifiers.remove(*self._ident_removals)
         return instance
 
 
