@@ -28,6 +28,11 @@ const NA_KEYS = [10, 20],
 
         40: "Y",
         41: "N",
+
+        50: "0",
+        51: "+",
+        52: "++",
+        53: "+++",
     },
     SCORE_SHADES = {
         0: "#DFDFDF",
@@ -53,6 +58,11 @@ const NA_KEYS = [10, 20],
 
         40: "#00CC00",
         41: "#CC3333",
+
+        50: "#f7fcf5",
+        51: "#addea7",
+        52: "#238d46",
+        53: "#00441b",
     },
     SCORE_BAR_WIDTH_PERCENTAGE = {
         0: 50,
@@ -78,6 +88,11 @@ const NA_KEYS = [10, 20],
 
         40: 100,
         41: 25,
+
+        50: 25,
+        51: 50,
+        52: 75,
+        53: 100,
     },
     SCORE_TEXT_DESCRIPTION = {
         0: "None",
@@ -103,6 +118,11 @@ const NA_KEYS = [10, 20],
 
         40: "Yes",
         41: "No",
+
+        50: "Critical concerns",
+        51: "Major concerns",
+        52: "Some concerns",
+        53: "Minor concerns",
     },
     SCORE_TEXT_DESCRIPTION_LEGEND = {
         0: "None",
@@ -123,6 +143,11 @@ const NA_KEYS = [10, 20],
 
         40: "Yes",
         41: "No",
+
+        50: "Critical concerns",
+        51: "Major concerns",
+        52: "Some concerns",
+        53: "Minor concerns",
     },
     FOOTNOTES = {
         MULTIPLE_SCORES: ["✱", "Multiple judgments exist"],
