@@ -43,7 +43,7 @@ class Store {
         return fetch(url, h.fetchPost(csrf, payload, "POST"))
             .then(resp => resp.json())
             .then(json => {
-                this.references = json.references.map(d => new Reference(d, tagtree));
+                this.references = Reference.sortedArray(json.references, tagtree);
                 this.isSearching = false;
             })
             .catch(ex => {

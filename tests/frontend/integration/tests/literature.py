@@ -15,7 +15,7 @@ def literature(driver, root_url):
     # /lit/assessment/:id/references/
     h.click("View By Tag")
     h.wait_until(h.Text("Available references").exists)
-    h.wait_until(h.S(".nestedTagCollapser").exists)
+    h.wait_until(h.S(".nestedTag").exists)
     assert "/lit/assessment/2/references/" in driver.current_url
     assert h.Text("Human Study (2)").exists() is True
     assert len(driver.find_elements_by_css_selector("#references_detail_div")) > 0
