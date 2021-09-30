@@ -21,10 +21,10 @@ class Reference {
         }
     }
 
-    static sorted(references) {
-        return _.chain(references)
-            .sortBy(d => d.data.year)
-            .reverse()
+    static sortedArray(data, tagtree) {
+        return _.chain(data)
+            .map(d => new Reference(d, tagtree))
+            .orderBy([d => d.data.year, d => d.data.authors_short], ["desc", "asc"])
             .value();
     }
 
