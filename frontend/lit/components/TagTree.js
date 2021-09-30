@@ -19,6 +19,7 @@ class TagNode extends Component {
             hasChildren = tag.children.length > 0,
             expanderIcon = this.state.expanded ? "fa-minus" : "fa-plus",
             toggleExpander = e => {
+                e.stopPropagation();
                 const newValue = !this.state.expanded;
                 window.localStorage.setItem(this.localStorageKey, newValue);
                 this.setState({expanded: newValue});
@@ -26,18 +27,16 @@ class TagNode extends Component {
 
         return (
             <>
-                <div className={tagClass}>
-                    <div style={{width: tag.depth * 20}}>
+                <div className={tagClass} onClick={() => handleOnClick(tag)}>
+                    <div style={{width: (tag.depth - 1) * 10 + 25}}>
                         {hasChildren ? (
-                            <button
-                                className="btn btn-sm pull-right p-0 px-2"
-                                onClick={toggleExpander}>
+                            <button className="btn btn-sm pull-right px-2" onClick={toggleExpander}>
                                 <i className={`fa ${expanderIcon}`}></i>
                             </button>
                         ) : null}
                     </div>
                     <div style={{flex: 1}}>
-                        <span onClick={() => handleOnClick(tag)}>
+                        <span>
                             {tag.data.name}
                             {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
                         </span>
@@ -70,7 +69,7 @@ class TagTree extends Component {
     render() {
         const {tagtree, handleTagClick, showReferenceCount, selectedTag} = this.props;
         return (
-            <div className="resize-y p-3" style={{maxHeight: "80vh"}}>
+            <div className="resize-y" style={{height: "80vh"}}>
                 {tagtree.rootNode.children.map((tag, i) => (
                     <TagNode
                         key={i}
