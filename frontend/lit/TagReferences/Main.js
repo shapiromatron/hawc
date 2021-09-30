@@ -29,7 +29,9 @@ class TagReferencesMain extends Component {
         const {store} = this.props,
             selectedReferencePk = store.selectedReference ? store.selectedReference.data.pk : null,
             selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
-            allTagged = store.referencesUntagged.length == 0;
+            allTagged = store.referencesUntagged.length == 0,
+            anyTagged = store.referencesTagged.length > 0,
+            anyUntagged = store.referencesUntagged.length > 0;
         return (
             <div className="row">
                 <div className="col-md-3">
@@ -45,7 +47,8 @@ class TagReferencesMain extends Component {
                         </div>
                         <div
                             id="taggedRefList"
-                            className="show card-body ref-container px-1 resize-y">
+                            className="show card-body ref-container px-1 resize-y"
+                            style={{minHeight: "10vh", height: anyTagged ? "40vh" : "10vh"}}>
                             {store.referencesTagged.map(ref => (
                                 <p
                                     key={ref.data.pk}
@@ -71,7 +74,8 @@ class TagReferencesMain extends Component {
                         </div>
                         <div
                             id="untaggedRefList"
-                            className="show card-body ref-container px-1 resize-y">
+                            className="show card-body px-1 resize-y"
+                            style={{minHeight: "10vh", height: anyUntagged ? "40vh" : "10vh"}}>
                             {store.referencesUntagged.map(ref => (
                                 <p
                                     key={ref.data.pk}

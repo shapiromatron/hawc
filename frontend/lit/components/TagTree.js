@@ -15,28 +15,34 @@ class TagNode extends Component {
     }
     render() {
         const {tag, showReferenceCount, handleOnClick, selectedTag} = this.props,
-            tagClass = tag === selectedTag ? "nestedTag selected" : "nestedTag";
+            tagClass = tag === selectedTag ? "d-flex nestedTag selected" : "d-flex nestedTag",
+            hasChildren = tag.children.length > 0,
+            expanderIcon = hasChildren ? (this.state.expanded ? "fa-minus" : "fa-plus") : "",
+            toggleExpander = e => {
+                const newValue = !this.state.expanded;
+                window.localStorage.setItem(this.localStorageKey, newValue);
+                this.setState({expanded: newValue});
+            };
 
         return (
-            <div>
-                {tag.children.length > 0 ? (
-                    <span
-                        className="nestedTagCollapser"
-                        onClick={() => {
-                            const newValue = !this.state.expanded;
-                            window.localStorage.setItem(this.localStorageKey, newValue);
-                            this.setState({expanded: newValue});
-                        }}>
-                        <span className={this.state.expanded ? "fa fa-minus" : "fa fa-plus"}></span>
-                    </span>
-                ) : null}
-                <p
-                    className={tagClass}
-                    style={{paddingLeft: 2 + tag.depth * 13}}
-                    onClick={() => handleOnClick(tag)}>
-                    {tag.data.name}
-                    {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
-                </p>
+            <>
+                <div className={tagClass}>
+                    <div style={{width: tag.depth * 20}}>
+                        {hasChildren ? (
+                            <button
+                                className="btn btn-sm pull-right p-0 px-2"
+                                onClick={hasChildren ? toggleExpander : h.noop}>
+                                <i className={`fa ${expanderIcon}`}></i>
+                            </button>
+                        ) : null}
+                    </div>
+                    <div style={{flex: 1}}>
+                        <span onClick={() => handleOnClick(tag)}>
+                            {tag.data.name}
+                            {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
+                        </span>
+                    </div>
+                </div>
                 {this.state.expanded
                     ? tag.children.map((tag, i) => (
                           <TagNode
@@ -48,7 +54,7 @@ class TagNode extends Component {
                           />
                       ))
                     : null}
-            </div>
+            </>
         );
     }
 }
@@ -64,7 +70,7 @@ class TagTree extends Component {
     render() {
         const {tagtree, handleTagClick, showReferenceCount, selectedTag} = this.props;
         return (
-            <div style={{maxHeight: "80vh", overflowY: "scroll"}}>
+            <div className="resize-y p-3" style={{maxHeight: "80vh"}}>
                 {tagtree.rootNode.children.map((tag, i) => (
                     <TagNode
                         key={i}

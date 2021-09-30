@@ -315,16 +315,11 @@ div.smart-tag.active {
 .refTagEditing {
     cursor: pointer;
 }
-.ref-container {
-    min-height: 10vh;
-    height: 40vh;
-}
 .abstract_label {
     font-weight: bold;
 }
 .nestedTag {
     border: 2px solid transparent;
-    margin: 0;
     cursor: pointer;
 }
 .nestedTag:hover {
@@ -336,10 +331,6 @@ div.smart-tag.active {
     font-weight: bold;
     border: 2px solid #ababab;
     background-color: gold;
-}
-.nestedTagCollapser {
-    position: absolute;
-    padding: 2px 0 0 2px;
 }
 .reference {
     padding-left: 0.5rem;
