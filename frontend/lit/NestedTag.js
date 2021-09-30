@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import React from "react";
 
 import Loading from "shared/components/Loading";
-import GenericError from "shared/components/GenericError";
+import Alert from "shared/components/Alert";
 import ReferenceTable from "lit/components/ReferenceTable";
 import Reference from "./Reference";
 import PaginatedReferenceList from "./components/PaginatedReferenceList";
@@ -83,7 +83,7 @@ class NestedTag {
 
                 ReactDOM.render(<ReferenceTable references={refs} showActions={false} />, el);
             } else {
-                ReactDOM.render(<GenericError />, el);
+                ReactDOM.render(<Alert />, el);
             }
         });
     }

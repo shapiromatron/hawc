@@ -37,7 +37,7 @@ class Root extends Component {
                 <FormActions
                     handleSubmit={handleSubmit}
                     submitText={saveBtnText}
-                    cancelURL={cancelUrl}
+                    cancel={cancelUrl}
                 />
             </>
         );
