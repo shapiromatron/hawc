@@ -5,6 +5,7 @@ from enum import IntEnum
 from typing import Dict, List, Set, Tuple
 
 import django
+import jsonschema
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
@@ -340,168 +341,80 @@ class AssessmentRootMixin:
         return depth
 
     @classmethod
-    def validate_and_transform_tag_tree(
-        cls, tags_at_level: List[object], issues: List[str], breadcrumbs: List[int] = []
-    ):
+    def validate_tagtree(cls, tagtree: [List[Dict]]):
         """
-        Goes through the tags_at_level and for each tag:
-            * verifies that it has a name
-            * if a slug is present, checks that it's valid. If it's missing, generates one.
-            * deletes any keys other than name/slug/children
-
-        Issues found are appended in readable fashion to the issues list; an empty
-        issues list indicates that no problems were found. Note that things like a missing slug
-        or extraneous keys are NOT reported as issues; they are just corrected in the underlying
-        tags data structure.
-
-        This method modifies the supplied tag_tree by relocating the name/data attributes inside a "data" node.
+        Validates a supplied tag tree.
 
         Args:
-            tags_at_level (List[object]): any level of the tag tree
-            issues (List[str]): storage for reporting any issues encountered while validating the tree
-            breadcrumbs (List[int]): array of indices indicating where in the tree structure the code is at
+            tagtree (List[Dict]): tag tree that needs validation
+
+        Raises:
+            jsonschema.exceptions.ValidationError: supplied tag tree does not match the schema
         """
+        schema = cls.schema
+        jsonschema.validate(instance=tagtree, schema=schema)
 
-        def prettify_indices(list_of_indices: List[int]):
-            """
-            Given a list containing just numeric indices, returns a dot-delimited version with the
-            indices wrapped in square brackets.
+    @classmethod
+    def add_slugs_to_tagtree(cls, tree):
+        """Recursively add slugs to a tree if one is missing at any level."""
 
-            For example,
-            [8, 6, 7] -> "[8].[6].[7]"
+        def _add_slugs(item):
+            if not item["data"].get("slug"):
+                item["data"]["slug"] = default_slugify(item["data"]["name"])
+            for child in item.get("children", []):
+                _add_slugs(child)
 
-            Args:
-                list_of_indices (List[int]): list of indices
-
-            Returns:
-                str: formatted string
-            """
-            return ".".join([f"[{x}]" for x in list_of_indices])
-
-        valid_keys = ["name", "slug", "children"]
-        idx = 0
-        for tag in tags_at_level:
-            tag_name = None
-            slug = None
-            if "name" in tag:
-                tag_name = tag["name"]
-                if "slug" in tag:
-                    # validate it
-                    slug = tag["slug"]
-                    recomputed_slug = default_slugify(slug)
-                    if recomputed_slug != slug:
-                        adjusted_crumbs = prettify_indices(breadcrumbs + [idx])
-                        issues.append(
-                            f"tag '{tag_name}' at index {adjusted_crumbs} has an invalid slug '{slug}'; should be something like '{default_slugify(tag_name)}' or '{recomputed_slug}'"
-                        )
-                else:
-                    # generate it
-                    slug = default_slugify(tag_name)
-                    tag["slug"] = slug
-            else:
-                adjusted_crumbs = prettify_indices(breadcrumbs + [idx])
-                issues.append(f"tag at index {adjusted_crumbs} is missing a name")
-
-            # recurse
-            if "children" in tag:
-                cls.validate_and_transform_tag_tree(tag["children"], issues, breadcrumbs + [idx])
-
-            # delete any extraneous keys that were passed in (could instead/also flag it as an issue?).
-            # why not flag an issue? Sometimes it's nice in JSON to change a key to "_oldname" or something,
-            # since JSON doesn't support comments. This way we don't break if the caller does something like that.
-            keys_to_delete = []
-            for key in tag:
-                if key not in valid_keys:
-                    # need to build up a list; we can't delete from the tag while we iterate through it
-                    keys_to_delete.append(key)
-
-            for key in keys_to_delete:
-                del tag[key]
-
-            # and now restructure the tag so that name/slug are keys inside a "data" object as Treebeard requires.
-            if "name" in tag:
-                del tag["name"]
-            if "slug" in tag:
-                del tag["slug"]
-            tag["data"] = {"name": tag_name, "slug": slug}
-
-            idx += 1
+        for item in tree:
+            _add_slugs(item)
 
     @classmethod
     @transaction.atomic
-    def replace_tag_tree_in_assessment(cls, assessment, tag_tree: List[object]):
+    def replace_tree(cls, assessment_id: int, tagtree: List[Dict]):
         """
         Replaces the tag tree for an assessment; this also removes reference/tag associations.
 
         Args:
-            assessment (Assessment): assessment to operate on
-            tag_tree (List[object]): the user-supplied tags. This method will create the "assessment-<id>" top parent tag
-                                     and should NOT be included in the supplied argument.
+            assessment_id (int): assessment id to operate on
+            tagtree (List[Dict]): the user-supplied tags. This method will create the "assessment-<id>"
+                                    top parent tag and should NOT be included in the supplied argument.
 
         Returns:
-            List[dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
+            List[Dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
         """
-        root_node = cls.get_assessment_root(assessment.id)
+        cls.add_slugs_to_tagtree(tagtree)
 
-        root_name = cls.get_assessment_root_name(assessment.id)
-        complete_tree = [{"data": {"name": root_name, "slug": root_name}, "children": tag_tree}]
+        root_node = cls.get_assessment_root(assessment_id)
+        root_name = cls.get_assessment_root_name(assessment_id)
+        complete_tree = [{"data": {"name": root_name, "slug": root_name}, "children": tagtree}]
 
         root_node.delete()
         cls.load_bulk(complete_tree, parent=None, keep_ids=False)
-        cls.clear_cache(assessment.id)
-        return cls.get_all_tags(assessment.id, json_encode=False)
+        cls.clear_cache(assessment_id)
+        return cls.get_all_tags(assessment_id, json_encode=False)
 
     @classmethod
     @transaction.atomic
     def copy_tags(cls, copy_to_assessment, copy_from_assessment) -> Dict[int, int]:
-        # delete existing tags for this assessment
-        old_root = cls.get_assessment_root(copy_to_assessment.pk)
-        old_root.delete()
+        rt = cls.get_assessment_root(copy_from_assessment.id)
+        tree = rt.dump_bulk(rt, keep_ids=True)
+        source_tags = tree[0].get("children")
+        updated_tree = cls.replace_tree(copy_to_assessment.id, source_tags)
 
-        # copy tags from alternative assessment, renaming root-tag
-        root = cls.get_assessment_root(copy_from_assessment.pk)
-        tags = cls.dump_bulk(root)
-        assert "name" in tags[0]["data"]
-        tags[0]["data"]["name"] = cls.get_assessment_root_name(copy_to_assessment.pk)
-        if "slug" in tags[0]["data"]:
-            tags[0]["data"]["slug"] = cls.get_assessment_root_name(copy_to_assessment.pk)
+        # now build the map - a dictionary where each key is a tagid (from the source assessment)
+        # and each val is the tagid from the corresponding newly created tag in the destination assessment.
+        def match_source_ids_to_destination_ids(source_tree, destination_tree, storage):
+            for idx, source_node in enumerate(source_tree):
+                target_node = destination_tree[idx]
+                storage[source_node.get("id")] = target_node.get("id")
 
-        # insert as new taglist
-        cls.load_bulk(tags, parent=None, keep_ids=False)
-        cls.clear_cache(copy_to_assessment.pk)
+                if "children" in source_node:
+                    source_children = source_node.get("children", [])
+                    target_children = target_node.get("children", [])
+                    match_source_ids_to_destination_ids(source_children, target_children, storage)
 
-        # return mapping of old to new
-        def get_tag_ids(taglist: List) -> Tuple[List[int], List[str]]:
-            """
-            Return a list of tag-ids and tag-names to map from old tag to new tag.
-            Args:
-                taglist (List): A `dump_bulk` ordered list of tags
-            Returns:
-                Tuple[List[int], List[str]]: A list of id and name for all tags
-            """
-            tag_ids = []
-            tag_names = []
-
-            def append_child(node):
-                # recursively append id and name to lists
-                tag_ids.append(node["id"])
-                tag_names.append(node["data"]["name"])
-                if "children" in node:
-                    for child in node["children"]:
-                        append_child(child)
-
-            append_child(taglist[0])
-
-            return tag_ids, tag_names
-
-        # return a mapping of old tag id to new tag id
-        old_taglist = cls.dump_bulk(cls.get_assessment_root(copy_from_assessment.pk))
-        new_taglist = cls.dump_bulk(cls.get_assessment_root(copy_to_assessment.pk))
-        old_ids, old_names = get_tag_ids(old_taglist)
-        new_ids, new_names = get_tag_ids(new_taglist)
-        assert old_names[0] != new_names[0]  # root id should change
-        assert old_names[1:] == new_names[1:]  # everything else should be the same
-        return {old_id: new_id for old_id, new_id in zip(old_ids, new_ids)}
+        id_map = {}
+        match_source_ids_to_destination_ids(tree, updated_tree, id_map)
+        return id_map
 
     def get_assessment_id(self) -> int:
         name = self.name if self.is_root() else self.get_ancestors()[0].name

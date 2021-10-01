@@ -1,5 +1,6 @@
 import json
 
+import jsonschema
 import pandas as pd
 import plotly.express as px
 from django.conf import settings
@@ -48,118 +49,41 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True)
-    def get_tag_tree(self, request, pk):
+    @action(detail=True, methods=("get", "post"))
+    def tagtree(self, request, pk, *args, **kargs):
         """
-        Shows the (nested, tree structure) literature tags for entire assessment.
-        """
-        assessment = self.get_object()
-
-        if not assessment.user_can_view_object(request.user):
-            raise exceptions.PermissionDenied()
-
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
-        return Response(tags, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=("get",))
-    def clone_tag_tree_from_assessment(self, request, pk, *args, **pkargs):
-        """
-        Copies the tag tree from one assessment to another. Removes existing reference/tag associations.
-
-        To be clear - the assessment_id in the URL pattern is the target; the ?assessment_id=X is the source and
-        will not be modified by this operation.
+        fetch or set the tag tree for an assessment
         """
         assessment = self.get_object()
+        if self.request.method == "GET":
+            # just return the tree
+            if not assessment.user_can_view_object(request.user):
+                raise exceptions.PermissionDenied()
 
-        # target assessment is only modifiable by assesssment admins / superusers
-        if not assessment.user_can_edit_object(request.user):
-            raise exceptions.PermissionDenied()
+            rt = models.ReferenceFilterTag.get_assessment_root(assessment.id)
+            tree = rt.dump_bulk(rt, keep_ids=True)
 
-        source_assessment_id = request.query_params.get("assessment_id")
-        source_assessment = Assessment.objects.get(id=source_assessment_id)
+            return Response(tree[0].get("children"), status=status.HTTP_200_OK)
+        elif self.request.method == "POST":
+            # update the tree
 
-        # source assessment must be viewable
-        if not assessment.user_can_view_object(request.user):
-            raise exceptions.PermissionDenied()
+            # only modifiable by assesssment admins / superusers
+            if not assessment.user_can_edit_object(request.user):
+                raise exceptions.PermissionDenied()
 
-        # don't let someone clone from the same assessment!
-        if assessment.id == source_assessment.id:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        # copy from one assessment to another
-        models.ReferenceFilterTag.copy_tags(assessment, source_assessment)
-
-        # and now fetch the updated tag tree and return it to the user
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
-        return Response(tags, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=("post",))
-    def update_tag_tree(self, request, pk, *args, **pkargs):
-        """
-        Accepts a list of tags and replaces the tag structure in the assessment. This removes all existing reference/tag
-        associations.
-
-        The tags should be POST'ed as a list of tags in JSON format. A tag must have a "name" and can
-        optionally supply a "slug"; if this is supplied it must be valid (lowercase, only
-        alphanumeric/underscore/hyphen, etc.). A tag can optionally have a "children" list; each child
-        must be a valid tag. For example, the following is valid data to POST to this method:
-
-        [
-            { "name": "This is required" },
-            { "name": "Tag Name", "slug": "custom-slug" },
-            {
-                "name": "Grandparent Tag", "children": [
-                    { "name": "nested" },
-                    {
-                        "name": "Parent Tag", "children": [
-                            { "name": "deeply nested" }
-                        ]
-                    }
-                ]
-            }
-        ]
-
-        Note that this differs slightly from the dump_bulk format actually stored with Treebeard; we expect an input
-        like:
-
-        { "name": "foo", "slug": "bar", "children": [...] }
-
-        but this will be converted to be:
-
-        { "data": { "name": "foo", "slug": "bar" }, "children": [...] }
-
-        The simpler format makes things easier for API users.
-        """
-
-        assessment = self.get_object()
-
-        # only modifiable by assesssment admins / superusers
-        if not assessment.user_can_edit_object(request.user):
-            raise exceptions.PermissionDenied()
-
-        try:
-            proposed_tag_tree = json.loads(request.body)
-        except json.decoder.JSONDecodeError:
-            return Response(["invalid JSON supplied"], status=status.HTTP_400_BAD_REQUEST)
-
-        if type(proposed_tag_tree) is not list:
-            return Response(["JSON supplied is not a list"], status=status.HTTP_400_BAD_REQUEST)
-
-        tag_issues = []
-        models.ReferenceFilterTag.validate_and_transform_tag_tree(proposed_tag_tree, tag_issues)
-
-        if len(tag_issues) == 0:
-            # supplied tag tree looks good and we've added slugs, etc. as needed. Can proceed with
-            # replacing the tag tree for the assessment, wiping out tag associations, etc.
-
-            updated_tag_tree = models.ReferenceFilterTag.replace_tag_tree_in_assessment(
-                assessment, proposed_tag_tree
-            )
-
-            return Response(updated_tag_tree, status=status.HTTP_200_OK)
-        else:
-            # bad input; stop here
-            return Response(tag_issues, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                proposed_tagtree = json.loads(request.body)
+                try:
+                    models.ReferenceFilterTag.validate_tagtree(proposed_tagtree)
+                    # if no exception raised, go ahead and replace the existing tree
+                    updated_tagtree = models.ReferenceFilterTag.replace_tree(
+                        assessment.id, proposed_tagtree
+                    )
+                    return Response(updated_tagtree[0].get("children"), status=status.HTTP_200_OK)
+                except jsonschema.exceptions.ValidationError as ve:
+                    return Response(ve.message, status=status.HTTP_400_BAD_REQUEST)
+            except json.decoder.JSONDecodeError:
+                return Response("invalid JSON supplied", status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, pagination_class=PaginationWithCount)
     def references(self, request, pk):

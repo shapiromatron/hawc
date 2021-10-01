@@ -229,7 +229,7 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def get_tag_tree(self, assessment_id: int) -> pd.DataFrame:
+    def get_tagtree(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves the nested tag tree for the given assessment.
 
@@ -239,11 +239,11 @@ class LiteratureClient(BaseClient):
         Returns:
             Dict: JSON representation of the tag tree
         """
-        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/get_tag_tree/"
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
         response_json = self.session.get(url).json()
         return response_json
 
-    def clone_tag_tree(self, source_assessment_id: int, target_assessment_id: int) -> pd.DataFrame:
+    def clone_tagtree(self, source_assessment_id: int, target_assessment_id: int) -> pd.DataFrame:
         """
         Copies the tag tree from one assessment to another.
 
@@ -254,11 +254,15 @@ class LiteratureClient(BaseClient):
         Returns:
             Dict: JSON representation of the new tag tree
         """
-        url = f"{self.session.root_url}/lit/api/assessment/{target_assessment_id}/clone_tag_tree_from_assessment/?assessment_id={source_assessment_id}"
-        response_json = self.session.get(url).json()
-        return response_json
+        fetch_url = f"{self.session.root_url}/lit/api/assessment/{source_assessment_id}/tagtree/"
+        fetch_response_json = self.session.get(fetch_url).json()
 
-    def update_tag_tree(self, assessment_id: int, tags: List[Dict]) -> pd.DataFrame:
+        update_url = f"{self.session.root_url}/lit/api/assessment/{target_assessment_id}/tagtree/"
+        update_response_json = self.session.post(update_url, fetch_response_json).json()
+
+        return update_response_json
+
+    def update_tagtree(self, assessment_id: int, tags: List[Dict]) -> pd.DataFrame:
         """
         Updates the tag tree.
 
@@ -270,7 +274,7 @@ class LiteratureClient(BaseClient):
         Returns:
             Dict: JSON representation of the new tag tree. If errors, a JSON list containing details.
         """
-        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/update_tag_tree/"
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
         response_json = self.session.post(url, tags).json()
         return response_json
 
