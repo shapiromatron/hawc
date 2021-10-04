@@ -23,7 +23,7 @@ _PASSWORD_HELP = (
 
 _accept_license_help_text = """
 <p>Please <a href="#" data-toggle="modal" data-target="#license_modal">review</a>
-and accept the HAWC license</p
+and accept the HAWC license</p>
 """
 _accept_license_error = "License must be accepted to continue."
 
