@@ -1,6 +1,3 @@
-import json
-
-import jsonschema
 import pandas as pd
 import plotly.express as px
 from django.conf import settings
@@ -50,40 +47,23 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(export)
 
     @action(detail=True, methods=("get", "post"))
-    def tagtree(self, request, pk, *args, **kargs):
+    def tagtree(self, request, pk, *args, **kwargs):
         """
-        fetch or set the tag tree for an assessment
+        Get/Update literature tags for an assessment in tree-based structure
         """
         assessment = self.get_object()
+        context = context = {"assessment": assessment}
         if self.request.method == "GET":
-            # just return the tree
             if not assessment.user_can_view_object(request.user):
                 raise exceptions.PermissionDenied()
-
-            rt = models.ReferenceFilterTag.get_assessment_root(assessment.id)
-            tree = rt.dump_bulk(rt, keep_ids=True)
-
-            return Response(tree[0].get("children"), status=status.HTTP_200_OK)
+            serializer = serializers.ReferenceTreeSerializer(instance={}, context=context)
         elif self.request.method == "POST":
-            # update the tree
-
-            # only modifiable by assesssment admins / superusers
             if not assessment.user_can_edit_object(request.user):
                 raise exceptions.PermissionDenied()
-
-            try:
-                proposed_tagtree = json.loads(request.body)
-                try:
-                    models.ReferenceFilterTag.validate_tagtree(proposed_tagtree)
-                    # if no exception raised, go ahead and replace the existing tree
-                    updated_tagtree = models.ReferenceFilterTag.replace_tree(
-                        assessment.id, proposed_tagtree
-                    )
-                    return Response(updated_tagtree[0].get("children"), status=status.HTTP_200_OK)
-                except jsonschema.exceptions.ValidationError as ve:
-                    return Response(ve.message, status=status.HTTP_400_BAD_REQUEST)
-            except json.decoder.JSONDecodeError:
-                return Response("invalid JSON supplied", status=status.HTTP_400_BAD_REQUEST)
+            serializer = serializers.ReferenceTreeSerializer(data=request.data, context=context)
+            serializer.is_valid(raise_exception=True)
+            serializer.update()
+        return Response(serializer.data)
 
     @action(detail=True, pagination_class=PaginationWithCount)
     def references(self, request, pk):

@@ -88,77 +88,77 @@ class TestLiteratureAssessmentViewset:
     def test_tagtree(self, db_keys):
         url = reverse("lit:api:assessment-tagtree", kwargs=dict(pk=db_keys.assessment_working))
         c = APIClient()
-        assert c.login(email="pm@hawcproject.org", password="pw") is True
-        resp = c.get(url).json()
+
+        # test some updates
+        bad_payload_no_name = {
+            "tree": [{"data": {"name": "x"}}, {"data": {"name": "y"}, "children": [{"data": {}}]}]
+        }
+        bad_payload_bad_slug = {"tree": [{"data": {"name": "x", "slug": "this has spaces"}}]}
+
+        good_payload = {
+            "tree": [
+                {"data": {"name": "This is required"}},
+                {"data": {"name": "Tag Name", "slug": "custom-slug"}},
+                {
+                    "data": {"name": "Grandparent Tag"},
+                    "children": [
+                        {"data": {"name": "nested"}},
+                        {
+                            "data": {"name": "Parent Tag"},
+                            "children": [{"data": {"name": "deeply nested"}}],
+                        },
+                    ],
+                },
+            ]
+        }
+
+        # permissions - GET/POST
+        assert c.login(email="reviewer@hawcproject.org", password="pw") is True
+        response = c.get(url)
+        assert response.status_code == 200
+        response = c.post(url, good_payload, format="json")
+        assert response.status_code == 403
 
         # test some basic fetching
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+        resp = c.get(url).json()["tree"]
         assert len(resp) == 2
         assert len(resp[0]["children"]) == 3
         assert resp[1]["data"]["name"] == "Exclusion"
         assert resp[0]["children"][2]["data"]["slug"] == "mechanistic-study"
 
-        # test some updates
-        bad_payload_no_name = [
-            {"data": {"name": "x"}},
-            {"data": {"name": "y"}, "children": [{"data": {}}]},
-        ]
-        bad_payload_bad_slug = [{"data": {"name": "x", "slug": "this has spaces"}}]
-
-        good_payload = [
-            {"data": {"name": "This is required"}},
-            {"data": {"name": "Tag Name", "slug": "custom-slug"}},
-            {
-                "data": {"name": "Grandparent Tag"},
-                "children": [
-                    {"data": {"name": "nested"}},
-                    {
-                        "data": {"name": "Parent Tag"},
-                        "children": [{"data": {"name": "deeply nested"}}],
-                    },
-                ],
-            },
-        ]
-
-        # 1. bad input - no data supplied
+        # bad input - no data supplied
         response = c.post(url, None, format="json")
-        error = response.json()
         assert response.status_code == 400
-        assert "invalid JSON" in error
+        assert response.json() == {"tree": ["This field is required."]}
 
-        # 2. bad input - it's JSON but not a list as we expect
+        # bad input - it's JSON but not a list as we expect
         response = c.post(url, {}, format="json")
-        error = response.json()
         assert response.status_code == 400
-        assert "not of type" in error
+        assert response.json() == {"tree": ["This field is required."]}
 
-        # 3. bad input - what if the "name" attribute is missing from a node
+        # bad input - what if the "name" attribute is missing from a node
         response = c.post(url, bad_payload_no_name, format="json")
         error = response.json()
         assert response.status_code == 400
-        assert "'name' is a required property" in error
+        assert "'name' is a required property" in error["tree"][0]
 
-        # 4. bad input - a slug is supplied but it's not valid
+        # bad input - a slug is supplied but it's not valid
         response = c.post(url, bad_payload_bad_slug, format="json")
         error = response.json()
         assert response.status_code == 400
-        assert "does not match" in error
+        assert "does not match" in error["tree"][0]
 
-        # 5. good payload
+        # good payload
         response = c.post(url, good_payload, format="json")
-        tag_map = response.json()
         assert response.status_code == 200
-        assert tag_map[0]["id"] > 0
-        assert tag_map[0]["data"]["name"] == "This is required"
-        assert tag_map[0]["data"]["slug"] == "this-is-required"
-        assert tag_map[1]["data"]["name"] == "Tag Name"
-        assert tag_map[1]["data"]["slug"] == "custom-slug"
-        assert tag_map[2]["children"][0]["data"]["name"] == "nested"
-
-        # 6. non-managers cannot access this endpoint
-        reviewer_client = APIClient()
-        assert reviewer_client.login(email="reviewer@hawcproject.org", password="pw") is True
-        response = reviewer_client.post(url, good_payload, format="json")
-        assert response.status_code == 403
+        data = response.json()["tree"]
+        assert data[0]["id"] > 0
+        assert data[0]["data"]["name"] == "This is required"
+        assert data[0]["data"]["slug"] == "this-is-required"
+        assert data[1]["data"]["name"] == "Tag Name"
+        assert data[1]["data"]["slug"] == "custom-slug"
+        assert data[2]["children"][0]["data"]["name"] == "nested"
 
     def test_reference_ids(self, db_keys):
         url = reverse("lit:api:assessment-reference-ids", kwargs=dict(pk=db_keys.assessment_final))

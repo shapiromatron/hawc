@@ -160,6 +160,24 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
         fields = cleanup_fields + ("id",)
 
 
+class ReferenceTreeSerializer(serializers.Serializer):
+    tree = serializers.JSONField()
+
+    def validate_tree(self, value):
+        models.ReferenceFilterTag.validate_tagtree(value)
+        return value
+
+    def update(self):
+        assessment_id = self.context["assessment"].id
+        models.ReferenceFilterTag.replace_tree(assessment_id, self.validated_data["tree"])
+
+    def to_representation(self, instance):
+        assessment_id = self.context["assessment"].id
+        root = models.ReferenceFilterTag.get_assessment_root(assessment_id)
+        tree = root.dump_bulk(root, keep_ids=True)
+        return {"tree": tree[0]["children"]}
+
+
 class BulkReferenceTagSerializer(serializers.Serializer):
     operation = serializers.ChoiceField(choices=["append", "replace"], required=True)
     csv = serializers.CharField(required=True)

@@ -629,10 +629,9 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"
     cache_template_tagtree = "reference-tagtree-assessment-{0}"
 
-    # use jsonschema.DraftXValidator.check_schema(schema) to validate changes.
     schema = {
         "$id": "tree",
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$schema": "https://json-schema.org/draft-07/schema",
         "$defs": {
             "tagNode": {
                 "type": "object",

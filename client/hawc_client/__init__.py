@@ -241,7 +241,7 @@ class LiteratureClient(BaseClient):
         """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
         response_json = self.session.get(url).json()
-        return response_json
+        return response_json["tree"]
 
     def clone_tagtree(self, source_assessment_id: int, target_assessment_id: int) -> pd.DataFrame:
         """
@@ -255,12 +255,12 @@ class LiteratureClient(BaseClient):
             Dict: JSON representation of the new tag tree
         """
         fetch_url = f"{self.session.root_url}/lit/api/assessment/{source_assessment_id}/tagtree/"
-        fetch_response_json = self.session.get(fetch_url).json()
+        tree = self.session.get(fetch_url).json()
 
         update_url = f"{self.session.root_url}/lit/api/assessment/{target_assessment_id}/tagtree/"
-        update_response_json = self.session.post(update_url, fetch_response_json).json()
+        update_response_json = self.session.post(update_url, tree).json()
 
-        return update_response_json
+        return update_response_json["tree"]
 
     def update_tagtree(self, assessment_id: int, tags: List[Dict]) -> pd.DataFrame:
         """
@@ -275,8 +275,8 @@ class LiteratureClient(BaseClient):
             Dict: JSON representation of the new tag tree. If errors, a JSON list containing details.
         """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
-        response_json = self.session.post(url, tags).json()
-        return response_json
+        response_json = self.session.post(url, {"tree": tags}).json()
+        return response_json["tree"]
 
     def reference_tags(self, assessment_id: int) -> pd.DataFrame:
         """

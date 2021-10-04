@@ -10,7 +10,7 @@ import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation, ValidationError
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
@@ -341,7 +341,7 @@ class AssessmentRootMixin:
         return depth
 
     @classmethod
-    def validate_tagtree(cls, tagtree: [List[Dict]]):
+    def validate_tagtree(cls, tagtree: List[Dict]):
         """
         Validates a supplied tag tree.
 
@@ -349,10 +349,12 @@ class AssessmentRootMixin:
             tagtree (List[Dict]): tag tree that needs validation
 
         Raises:
-            jsonschema.exceptions.ValidationError: supplied tag tree does not match the schema
+            ValidationError: supplied tag tree does not match the schema
         """
-        schema = cls.schema
-        jsonschema.validate(instance=tagtree, schema=schema)
+        try:
+            jsonschema.validate(instance=tagtree, schema=cls.schema)
+        except jsonschema.ValidationError as err:
+            raise ValidationError(err)
 
     @classmethod
     def add_slugs_to_tagtree(cls, tree):
@@ -369,7 +371,7 @@ class AssessmentRootMixin:
 
     @classmethod
     @transaction.atomic
-    def replace_tree(cls, assessment_id: int, tagtree: List[Dict]):
+    def replace_tree(cls, assessment_id: int, tagtree: List[Dict]) -> List[Dict]:
         """
         Replaces the tag tree for an assessment; this also removes reference/tag associations.
 
@@ -394,27 +396,35 @@ class AssessmentRootMixin:
 
     @classmethod
     @transaction.atomic
-    def copy_tags(cls, copy_to_assessment, copy_from_assessment) -> Dict[int, int]:
-        rt = cls.get_assessment_root(copy_from_assessment.id)
+    def copy_tags(cls, src_assessment: int, dest_assessment: int) -> Dict[int, int]:
+        rt = cls.get_assessment_root(src_assessment)
         tree = rt.dump_bulk(rt, keep_ids=True)
-        source_tags = tree[0].get("children")
-        updated_tree = cls.replace_tree(copy_to_assessment.id, source_tags)
+        source_tags = tree[0].get("children", [])
+        updated_tree = cls.replace_tree(dest_assessment, source_tags)
+        return cls.build_tree_mapping(tree, updated_tree)
 
-        # now build the map - a dictionary where each key is a tagid (from the source assessment)
-        # and each val is the tagid from the corresponding newly created tag in the destination assessment.
-        def match_source_ids_to_destination_ids(source_tree, destination_tree, storage):
-            for idx, source_node in enumerate(source_tree):
-                target_node = destination_tree[idx]
-                storage[source_node.get("id")] = target_node.get("id")
+    @classmethod
+    def build_tree_mapping(cls, src: List[Dict], dest: List[Dict]) -> Dict:
+        """Map tags IDs from a source tree to destination tree; assumes trees are equal
 
-                if "children" in source_node:
-                    source_children = source_node.get("children", [])
-                    target_children = target_node.get("children", [])
-                    match_source_ids_to_destination_ids(source_children, target_children, storage)
+        Args:
+            src (List[Dict]): A tree export from dump_bulk
+            dest (List[Dict]): A tree export from dump_bulk
 
-        id_map = {}
-        match_source_ids_to_destination_ids(tree, updated_tree, id_map)
-        return id_map
+        Returns:
+            Dict[int, int]: id key mapping from src to dest
+        """
+        mapping = {}
+
+        def _match_nodes(_src: List[Dict], _dest: List[Dict]):
+            for idx, src_node in enumerate(_src):
+                dest_node = _dest[idx]
+                mapping[src_node["id"]] = dest_node["id"]
+                if "children" in src_node:
+                    _match_nodes(src_node.get("children", []), dest_node.get("children", []))
+
+        _match_nodes(src, dest)
+        return mapping
 
     def get_assessment_id(self) -> int:
         name = self.name if self.is_root() else self.get_ancestors()[0].name
