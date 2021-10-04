@@ -704,3 +704,7 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
 
     def get_success_url(self):
         return reverse_lazy("lit:tags_update", kwargs={"pk": self.assessment.pk})
+
+
+class BulkTagReferences(TemplateView):
+    template_name = "lit/bulk_tag_references.html"
