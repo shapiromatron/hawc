@@ -5262,7 +5262,7 @@
     visual_type: 4
     dose_units: null
     prefilters: '{}'
-    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": []}'
+    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280}'
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
