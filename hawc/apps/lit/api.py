@@ -73,7 +73,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         tag_id = request.query_params.get("tag_id")
         tag = None
         if tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tag_in_assessment(assessment.id, int(tag_id))
+            tag = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, [int(tag_id)])[0]
 
         if search_id:
             search = models.Search.objects.get(id=search_id)

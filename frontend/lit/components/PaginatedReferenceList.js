@@ -29,11 +29,8 @@ class ReferenceListStore {
             .then(res => {
                 this.currentPage = res;
                 let expected_references = new Set(tag.get_references_deep()),
-                    refs = res.results
-                        .map(datum => new Reference(datum, tag.tree))
-                        .filter(ref => expected_references.has(ref.data.id));
-                refs = Reference.sorted(refs);
-                this.formattedReferences = refs;
+                    refs = Reference.sortedArray(res.results, tag.tree);
+                this.formattedReferences = refs.filter(ref => expected_references.has(ref.data.id));
             });
     }
 

@@ -180,8 +180,22 @@ class TestLiteratureAssessmentViewset:
         # unaccented query returns accented result
         data = {"authors": "fred"}
         response = client.post(url, data)
+        assert response.status_code == 200
         assert len(response.json()) == 1
         assert "Frédéric" in response.json()["references"][0]["authors_short"]
+
+        # invalid reference tag
+        data = {"year": 2001, "tags": [12]}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"tags": ["Invalid tag IDs"]}
+
+        # valid reference tag
+        url = reverse("lit:api:assessment-reference-search", args=(db_keys.assessment_final,))
+        response = client.post(url, data)
+        assert response.status_code == 200
+        assert len(response.json()) == 1
+        assert response.json()["references"][0]["pk"] == 5
 
     def test_reference_tags(self, db_keys):
         url = reverse("lit:api:assessment-reference-tags", kwargs=dict(pk=db_keys.assessment_final))
