@@ -48,10 +48,10 @@ class App extends Component {
         const {store} = this.props;
         return (
             <div>
-                <h2>
+                <h3>
                     Cleanup {h.titleCase(store.selectedModel.title)} →{" "}
                     {h.titleCase(store.selectedField)}
-                </h2>
+                </h3>
                 {store.isLoadingObjects ? <Loading /> : null}
                 {store.objects ? <GroupedObjectList /> : null}
             </div>
@@ -61,7 +61,7 @@ class App extends Component {
         const {store} = this.props;
         return (
             <div>
-                <h2>Cleanup {h.titleCase(store.selectedModel.title)}</h2>
+                <h3>Cleanup {h.titleCase(store.selectedModel.title)}</h3>
                 {store.modelCleanupFields ? (
                     <ul>
                         {store.modelCleanupFields.map(field => (

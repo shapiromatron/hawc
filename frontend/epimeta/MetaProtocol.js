@@ -77,7 +77,7 @@ class MetaProtocol {
         var $el = $("<div>"),
             liFunc = d => `<li><a href="${d.url}">${d.label}</a></li>`;
 
-        $el.append("<h2>Results</h2>");
+        $el.append("<h3>Results</h3>");
         if (this.data.results.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.results, liFunc));
         } else {

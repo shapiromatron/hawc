@@ -116,7 +116,7 @@ class MetaResult {
         var $singleResultsDiv = $("<div>");
         if (this.has_single_results()) {
             $singleResultsDiv
-                .append("<h2>Individual study results</h2>")
+                .append("<h3>Individual study results</h3>")
                 .append(this.build_single_results_table());
         }
         $content.append(this.build_details_table()).append($singleResultsDiv);
@@ -132,7 +132,7 @@ class MetaResult {
         var $singleResultsDiv = $("<div>");
         if (this.has_single_results()) {
             $singleResultsDiv
-                .append("<h2>Individual study results</h2>")
+                .append("<h3>Individual study results</h3>")
                 .append(this.build_single_results_table());
         }
         $el.hide()

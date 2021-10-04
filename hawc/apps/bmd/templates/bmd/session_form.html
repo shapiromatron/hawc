@@ -8,13 +8,9 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{object}}
-        <a class="btn btn-primary float-right"
-           href="{{object.get_absolute_url}}">Cancel</a>
-    </h1>
-
-    <div id="bmd"></div>
-
+  <a class="btn btn-primary float-right" href="{{object.get_absolute_url}}">Cancel</a>
+  <h2>{{object}}</h2>
+  <div id="bmd"></div>
 {% endblock %}
 
 
