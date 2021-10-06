@@ -10,8 +10,8 @@ services:
             - ./data/postgres/data:/var/lib/postgresql/data
             - ./data/postgres/backups:/app/data/backups
         healthcheck:
-            test: pg_isready -U "$POSTGRES_USER"
-            interval: 10s
+            test: pg_isready -U $$POSTGRES_USER
+            interval: 30s
             timeout: 5s
             retries: 3
 
@@ -20,8 +20,8 @@ services:
         image: hawc_redis
         env_file: .env
         healthcheck:
-            test: redis-cli -a "$REDIS_PASSWORD" ping
-            interval: 10s
+            test: redis-cli -a $$REDIS_PASSWORD ping
+            interval: 30s
             timeout: 5s
             retries: 3
 
