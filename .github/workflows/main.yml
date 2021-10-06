@@ -36,6 +36,9 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: loc
+      run: |
+        make loc
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
