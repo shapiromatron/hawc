@@ -10,8 +10,6 @@ import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
 import TagReferencesMain from "./TagReferences/Main";
 import TagReferencesMainStore from "./TagReferences/store";
-import BulkTagReferencesMain from "./BulkTagReferences/Main";
-import BulkTagReferencesMainStore from "./BulkTagReferences/store";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
 
@@ -48,14 +46,6 @@ export default {
         ReactDOM.render(
             <Provider store={new TagReferencesMainStore(config)}>
                 <TagReferencesMain />
-            </Provider>,
-            el
-        );
-    },
-    startupBulkTagReferences(el, config) {
-        ReactDOM.render(
-            <Provider store={new BulkTagReferencesMainStore(config)}>
-                <BulkTagReferencesMain />
             </Provider>,
             el
         );
