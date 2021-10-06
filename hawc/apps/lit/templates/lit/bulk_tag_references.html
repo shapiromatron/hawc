@@ -1,14 +1,14 @@
-{% extends 'crumbless.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <div id="main"></div>
-  <div id="reference_details"></div>
 {% endblock %}
 
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
 {
-  "csrf": "{{csrf_token}}"
+  "csrf": "{{csrf_token}}",
+  "assessment_id": {{assessment.id}}
 }
 </script>
 <script type="text/javascript">

@@ -6,9 +6,9 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
-from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentReadPermissions,
@@ -256,12 +256,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     @action(
         detail=True,
         methods=("post",),
-        permission_classes=(AllowAny,),
         parser_classes=(FileUploadParser,),
         url_path="excel-to-json",
     )
     def excel_to_json(self, request, pk):
-        return Response(pd.read_excel(request.data["file"]).to_json(orient="records"))
+        return Response(pd.read_excel(request.data["file"]).to_dict(orient="records"))
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):

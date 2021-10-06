@@ -706,5 +706,6 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
         return reverse_lazy("lit:tags_update", kwargs={"pk": self.assessment.pk})
 
 
-class BulkTagReferences(TemplateView):
+class BulkTagReferences(BaseDetail):
+    model = Assessment
     template_name = "lit/bulk_tag_references.html"
