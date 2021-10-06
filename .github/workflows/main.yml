@@ -38,6 +38,7 @@ jobs:
           ${{ runner.os }}-pip-
     - name: loc
       run: |
+        apt-get install -y cloc
         make loc
     - name: install
       run: |
