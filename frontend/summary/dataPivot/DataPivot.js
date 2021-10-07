@@ -168,9 +168,8 @@ class DataPivot {
 
         unique.delete("");
         unique.delete("undefined");
-
         return {
-            unique: unique.values(),
+            unique: Array.from(unique.values()),
             numeric,
             range,
         };

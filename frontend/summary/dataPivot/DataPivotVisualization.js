@@ -114,44 +114,30 @@ class DataPivotVisualization extends D3Plot {
             func,
             new_arr = [],
             included = new Map(),
-            filters_map = new Map({
-                lt(v) {
-                    return v[field_name] < value;
-                },
-                lte(v) {
-                    return v[field_name] <= value;
-                },
-                gt(v) {
-                    return v[field_name] > value;
-                },
-                gte(v) {
-                    return v[field_name] >= value;
-                },
-                contains(v) {
-                    return (
-                        v[field_name]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(value.toLowerCase()) >= 0
-                    );
-                },
-                not_contains(v) {
-                    return (
-                        v[field_name]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(value.toLowerCase()) < 0
-                    );
-                },
-                exact(v) {
-                    return v[field_name].toString().toLowerCase() === value.toLowerCase();
-                },
-            });
+            filters_map = {
+                lt: v => v[field_name] < value,
+                lte: v => v[field_name] <= value,
+                gt: v => v[field_name] > value,
+                gte: v => v[field_name] >= value,
+                contains: v =>
+                    v[field_name]
+                        .toString()
+                        .toLowerCase()
+                        .indexOf(value.toLowerCase()) >= 0,
+                not_contains: v =>
+                    v[field_name]
+                        .toString()
+                        .toLowerCase()
+                        .indexOf(value.toLowerCase()) < 0,
+                exact: v => v[field_name].toString().toLowerCase() === value.toLowerCase(),
+            };
 
-        if (filter_logic === "and") new_arr = arr;
+        if (filter_logic === "and") {
+            new_arr = arr;
+        }
 
         for (var i = 0; i < filters.length; i++) {
-            func = filters_map.get(filters[i].quantifier);
+            func = filters_map[filters[i].quantifier];
             field_name = filters[i].field_name;
             if (field_name === NULL_CASE) continue;
             value = filters[i].value;
@@ -159,17 +145,16 @@ class DataPivotVisualization extends D3Plot {
                 if (filter_logic === "and") {
                     new_arr = new_arr.filter(func);
                 } else {
-                    var vals = arr.filter(func);
-                    vals.forEach(function(v) {
-                        included.set(v._dp_pk, v);
-                    });
+                    arr.filter(func).forEach(v => included.set(v._dp_pk, v));
                 }
             } else {
                 console.error(`Unrecognized filter: ${filters[i].quantifier}`);
             }
         }
 
-        if (filter_logic === "or") new_arr = included.values();
+        if (filter_logic === "or") {
+            new_arr = Array.from(included.values());
+        }
 
         return new_arr;
     }
