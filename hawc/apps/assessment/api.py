@@ -593,7 +593,8 @@ class HealthcheckViewset(viewsets.ViewSet):
     @action(detail=False)
     def worker(self, request):
         is_healthy = worker_healthcheck.healthy()
-        status_code = status.HTTP_200_OK if is_healthy else status.HTTP_503_SERVICE_UNAVAILABLE
+        # don't use 5xx email; django logging catches and sends error emails
+        status_code = status.HTTP_200_OK if is_healthy else status.HTTP_400_BAD_REQUEST
         return Response({"healthy": is_healthy}, status=status_code)
 
     @action(
