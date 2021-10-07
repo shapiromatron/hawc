@@ -324,7 +324,7 @@ class TestHealthcheckViewset:
 
         # no data; should be an error
         resp = client.get(url)
-        assert resp.status_code == 503
+        assert resp.status_code == 400
         assert resp.json()["healthy"] is False
 
         # has recent data; should be healthy
