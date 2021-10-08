@@ -267,17 +267,17 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             )
 
         if operation == "replace":
-            tags_to_delete = models.ReferenceTags.objects.assessment_qs(assessment_id)
-            logger.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
-            tags_to_delete.delete()
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
 
         if operation == "remove":
             query = Q()
             for row in self.df.itertuples(index=False):
-                query |= Q(tag_id=row.tag_id) & Q(content_object_id=row.reference_id)
-            tags_to_delete = models.ReferenceTags.objects.assessment_qs(assessment_id).filter(query)
-            logger.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
-            tags_to_delete.delete()
+                query |= Q(tag_id=row.tag_id, content_object_id=row.reference_id)
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id).filter(query)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
             return
 
         new_tags = [
