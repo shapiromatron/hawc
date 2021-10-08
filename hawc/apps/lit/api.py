@@ -163,10 +163,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True,
-        methods=("get",),
-        url_path="references-download",
-        renderer_classes=PandasRenderers,
+        detail=True, url_path="references-download", renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """
@@ -264,6 +261,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         url_path="excel-to-json",
     )
     def excel_to_json(self, request, pk):
+        self.get_object()  # permissions check
+
         file_ = request.data["file"]
 
         if not file_.name.endswith(".xlsx"):

@@ -140,14 +140,21 @@ class TestLiteratureAssessmentViewset:
         self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_excel_to_json(self, db_keys):
-        url = reverse("lit:api:assessment-excel-to-json", kwargs=dict(pk=db_keys.assessment_final))
+        url = reverse("lit:api:assessment-excel-to-json", args=(db_keys.assessment_working,))
         data = [{"reference_id": 1, "tag_id": 1}, {"reference_id": 1, "tag_id": 2}]
         df = pd.DataFrame(data)
         excel = BytesIO()
         df.to_excel(excel, index=False)
         excel.seek(0)
-        csv = df.to_csv(index=False)
+        csv = BytesIO(df.to_csv(index=False).encode())
+        csv.seek(0)
         c = APIClient()
+
+        # permission error
+        disposition = "attachment; filename=test.xlsx"
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 403
+
         assert c.login(email="pm@hawcproject.org", password="pw") is True
 
         # valid; assert parses successfully
