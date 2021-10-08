@@ -70,26 +70,26 @@ class Store {
         return _.chain(this.dataset)
             .first()
             .keys()
-            .map(v => [v, v])
+            .map(v => ({id: v, label: v}))
             .value();
     }
 
     get referenceColumnChoices() {
         return [
-            ["reference_id", "HAWC ID"],
-            ["hero_id", "HERO ID"],
-            ["pubmed_id", "PUBMED ID"],
+            {id: "reference_id", label: "HAWC ID"},
+            {id: "hero_id", label: "HERO ID"},
+            {id: "pubmed_id", label: "PUBMED ID"},
         ];
     }
 
     @computed get datasetTagChoices() {
         let tags = _.map(this.dataset, v => v[this.datasetTagColumn]),
             uniqueTags = [...new Set(tags)];
-        return _.map(uniqueTags, v => [v, v]);
+        return _.map(uniqueTags, v => ({id: v, label: v}));
     }
 
     @computed get HAWCTagChoices() {
-        return _.map(this.tags, v => [v["id"], v["nested_name"]]);
+        return _.map(this.tags, v => ({id: v["id"], label: v["nested_name"]}));
     }
 
     @action.bound createDatasetTag() {
