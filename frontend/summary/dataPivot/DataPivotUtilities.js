@@ -251,7 +251,7 @@ class _DataPivot_settings_filters {
         var content = this.content,
             enable_autocomplete = function(request, response) {
                 var field = content.field_name.find("option:selected").val(),
-                    values = new Set(data_pivot.data.map(v => v[field])).values();
+                    values = Array.from(new Set(data_pivot.data.map(v => v[field])).values());
                 content.value.autocomplete("option", {source: values});
             };
 
