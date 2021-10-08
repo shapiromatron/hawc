@@ -23,7 +23,7 @@ _PASSWORD_HELP = (
 
 _accept_license_help_text = """
 <p>Please <a href="#" data-toggle="modal" data-target="#license_modal">review</a>
-and accept the HAWC license</p
+and accept the HAWC license</p>
 """
 _accept_license_error = "License must be accepted to continue."
 
@@ -36,6 +36,12 @@ def checkPasswordComplexity(pw):
         or (not any(char in special_characters for char in pw))
     ):
         raise forms.ValidationError(_PASSWORD_HELP)
+
+
+def add_disclaimer(helper: BaseFormHelper):
+    if settings.DISCLAIMER_TEXT:
+        disclaimer_text = f"""<p><b>Disclaimer:</b>&nbsp;{settings.DISCLAIMER_TEXT}</p>"""
+        helper.layout.insert(len(helper.layout) - 1, cfl.HTML(disclaimer_text))
 
 
 class PasswordForm(forms.ModelForm):
@@ -147,6 +153,7 @@ class RegisterForm(PasswordForm):
         )
         helper.add_row("first_name", 2, "col-6")
         helper.add_row("password1", 2, "col-6")
+        add_disclaimer(helper)
         return helper
 
     def clean_license_v2_accepted(self):
@@ -258,7 +265,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     @property
     def helper(self):
-        return BaseFormHelper(
+        helper = BaseFormHelper(
             self,
             legend_text="HAWC login",
             form_actions=[
@@ -276,6 +283,8 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 ),
             ],
         )
+        add_disclaimer(helper)
+        return helper
 
     def clean(self):
         username = self.cleaned_data.get("username")

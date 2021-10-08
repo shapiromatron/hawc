@@ -140,31 +140,49 @@ class TestLiteratureAssessmentViewset:
         self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_excel_to_json(self, db_keys):
-        url = reverse("lit:api:assessment-excel-to-json", kwargs=dict(pk=db_keys.assessment_final))
+        url = reverse("lit:api:assessment-excel-to-json", args=(db_keys.assessment_working,))
         data = [{"reference_id": 1, "tag_id": 1}, {"reference_id": 1, "tag_id": 2}]
         df = pd.DataFrame(data)
         excel = BytesIO()
         df.to_excel(excel, index=False)
         excel.seek(0)
-        csv = df.to_csv(index=False)
+        csv = BytesIO(df.to_csv(index=False).encode())
+        csv.seek(0)
         c = APIClient()
+
+        # permission error
+        disposition = "attachment; filename=test.xlsx"
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 403
+
         assert c.login(email="pm@hawcproject.org", password="pw") is True
 
-        # excel files are correctly parsed
-        resp = c.post(
-            url, {"file": excel}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.xlsx"
-        )
+        # valid; assert parses successfully
+        disposition = "attachment; filename=test.xlsx"
+        resp = c.post(url, {"file": excel}, HTTP_CONTENT_DISPOSITION=disposition)
         assert resp.status_code == 200 and resp.json() == data
 
-        # Content-Disposition header is needed, even if file is correct
+        # invalid; JSON with no file
+        resp = c.post(url, {"test": 123}, format="json")
+        assert resp.status_code == 400 and resp.json() == {
+            "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
+        }
+
+        # invalid; Content-Disposition header is required
         resp = c.post(url, {"file": excel})
         assert resp.status_code == 400 and resp.json() == {
             "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
         }
 
-        # non excel files return an error
+        # invalid; non excel files return an error
         resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.csv")
-        assert resp.status_code == 400 and resp.json() == {"detail": "Unable to parse excel file"}
+        assert resp.status_code == 400 and resp.json() == {"file": "File extension must be .xlsx"}
+
+        # invalid; cannot parse excel file
+        resp = c.post(url, {"file": BytesIO()}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
 
 
 @pytest.mark.django_db

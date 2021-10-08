@@ -81,7 +81,7 @@ class RiskOfBiasAssessmentViewset(
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
-    @action(detail=True, methods=("get",), url_path="settings")
+    @action(detail=True, url_path="settings")
     def rob_settings(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()

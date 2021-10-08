@@ -54,14 +54,12 @@ class DataPivotExtension {
             headers;
 
         if (dp.data.length > 0) {
-            headers = new Set(dp.data[0]).keys();
+            headers = new Set(_.keys(dp.data[0]));
             _.each(DataPivotExtension.extByColumnKey(), function(vals, key) {
                 if (headers.has(key)) {
                     opts.push.apply(
                         opts,
-                        vals.map(function(d) {
-                            return build_opt(d._dpe_name, d._dpe_option_txt);
-                        })
+                        vals.map(d => build_opt(d._dpe_name, d._dpe_option_txt))
                     );
                 }
             });

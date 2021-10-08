@@ -472,9 +472,7 @@ class Assessment(AssessmentViewset):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(
-        detail=True, methods=("get",),
-    )
+    @action(detail=True)
     def logs(self, request, pk: int = None):
         instance = self.get_object()
         queryset = instance.logs.all()
@@ -593,7 +591,8 @@ class HealthcheckViewset(viewsets.ViewSet):
     @action(detail=False)
     def worker(self, request):
         is_healthy = worker_healthcheck.healthy()
-        status_code = status.HTTP_200_OK if is_healthy else status.HTTP_503_SERVICE_UNAVAILABLE
+        # don't use 5xx email; django logging catches and sends error emails
+        status_code = status.HTTP_200_OK if is_healthy else status.HTTP_400_BAD_REQUEST
         return Response({"healthy": is_healthy}, status=status_code)
 
     @action(
