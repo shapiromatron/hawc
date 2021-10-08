@@ -150,21 +150,32 @@ class TestLiteratureAssessmentViewset:
         c = APIClient()
         assert c.login(email="pm@hawcproject.org", password="pw") is True
 
-        # excel files are correctly parsed
-        resp = c.post(
-            url, {"file": excel}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.xlsx"
-        )
+        # valid; assert parses successfully
+        disposition = "attachment; filename=test.xlsx"
+        resp = c.post(url, {"file": excel}, HTTP_CONTENT_DISPOSITION=disposition)
         assert resp.status_code == 200 and resp.json() == data
 
-        # Content-Disposition header is needed, even if file is correct
+        # invalid; JSON with no file
+        resp = c.post(url, {"test": 123}, format="json")
+        assert resp.status_code == 400 and resp.json() == {
+            "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
+        }
+
+        # invalid; Content-Disposition header is required
         resp = c.post(url, {"file": excel})
         assert resp.status_code == 400 and resp.json() == {
             "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
         }
 
-        # non excel files return an error
+        # invalid; non excel files return an error
         resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.csv")
-        assert resp.status_code == 400 and resp.json() == {"detail": "Unable to parse excel file"}
+        assert resp.status_code == 400 and resp.json() == {"file": "File extension must be .xlsx"}
+
+        # invalid; cannot parse excel file
+        resp = c.post(url, {"file": BytesIO()}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
 
 
 @pytest.mark.django_db
