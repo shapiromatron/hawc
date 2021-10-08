@@ -54,7 +54,7 @@ ACCEPT_LICENSE_REQUIRED = os.getenv("HAWC_ACCEPT_LICENSE_REQUIRED", "True") == "
 HAWC_LOAD_TEST_DB = bool(os.environ.get("HAWC_LOAD_TEST_DB") == "True")
 if HAWC_LOAD_TEST_DB:
     PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
-    TEST_DB_FIXTURE = PROJECT_ROOT / "test-db-fixture.yaml"
+    TEST_DB_FIXTURE = "/app/test-db-fixture.yaml"
 
 
 if email_backend == "SMTP" and EMAIL_MESSAGEID_FQDN is not None:
