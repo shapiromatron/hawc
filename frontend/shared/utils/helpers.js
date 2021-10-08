@@ -364,5 +364,18 @@ const helpers = {
             depth = keys.length;
         return groupToNest(group, depth);
     },
+    objArrayToCSV(objArray) {
+        // takes an object array and returns a csv string
+        // the first record is the name of the object attributes
+        // the subsequent records are each object's attributes
+        if (!objArray.length) {
+            return "";
+        }
+        let csv = "",
+            keys = _.keys(objArray[0]);
+        csv += keys.join(",") + "\r\n";
+        csv += _.map(objArray, obj => _.map(keys, key => obj[key]).join(",")).join("\r\n") + "\r\n";
+        return csv;
+    },
 };
 export default helpers;
