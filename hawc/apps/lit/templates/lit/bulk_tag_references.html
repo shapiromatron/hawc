@@ -5,17 +5,12 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-  "csrf": "{{csrf_token}}",
-  "assessment_id": {{assessment.id}}
-}
-</script>
+{{ config|json_script:"config" }}
 <script type="text/javascript">
-  window.app.startup("litStartup", function (lit) {
-    const el = document.getElementById('main'),
+  const el = document.getElementById('main'),
       data = window.app.getConfig();
-    lit.startupBulkTagReferences(el, data)
+  window.app.startup("litStartup", function (app) {
+    app.startupBulkTagReferences(el, data)
   });
 </script>
 {% endblock extrajs %}

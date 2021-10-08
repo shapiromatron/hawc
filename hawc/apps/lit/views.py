@@ -4,6 +4,7 @@ from typing import Dict, List
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -706,6 +707,17 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
         return reverse_lazy("lit:tags_update", kwargs={"pk": self.assessment.pk})
 
 
-class BulkTagReferences(BaseDetail):
+class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
     model = Assessment
     template_name = "lit/bulk_tag_references.html"
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["config"] = {
+            "assessment_id": self.assessment.id,
+            "csrf": get_token(self.request),
+        }
+        return context
