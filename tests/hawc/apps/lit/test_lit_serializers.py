@@ -73,6 +73,15 @@ def test_BulkReferenceTagSerializer(db_keys):
     reference.refresh_from_db()
     assert reference.tags.count() == 2
 
+    # check remove (non matches will be ignored)
+    data = {"operation": "remove", "csv": "reference_id,tag_id\n1,3\n1,4"}
+    serializer = BulkReferenceTagSerializer(data=data, context=context)
+    assert serializer.is_valid() is True
+    serializer.bulk_create_tags()
+    reference.refresh_from_db()
+    assert reference.tags.count() == 1
+    assert reference.tags.all()[0].id == 2
+
     # check replace
     data = {"operation": "replace", "csv": "reference_id,tag_id\n1,4"}
     serializer = BulkReferenceTagSerializer(data=data, context=context)
@@ -80,7 +89,7 @@ def test_BulkReferenceTagSerializer(db_keys):
     serializer.bulk_create_tags()
     reference.refresh_from_db()
     assert reference.tags.count() == 1
-    reference.tags.all()[0].id == 4
+    assert reference.tags.all()[0].id == 4
 
     # check duplicates
     data = {"operation": "replace", "csv": "reference_id,tag_id\n1,3\n1,3"}

@@ -472,9 +472,7 @@ class Assessment(AssessmentViewset):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(
-        detail=True, methods=("get",),
-    )
+    @action(detail=True)
     def logs(self, request, pk: int = None):
         instance = self.get_object()
         queryset = instance.logs.all()
