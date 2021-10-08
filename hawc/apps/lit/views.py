@@ -720,4 +720,7 @@ class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
             "assessment_id": self.assessment.id,
             "csrf": get_token(self.request),
         }
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Bulk tag references"
+        )
         return context
