@@ -1,156 +1,238 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, observable, toJS, autorun} from "mobx";
 
 import h from "shared/utils/helpers";
 
-import {deleteArrayElement} from "shared/components/EditableRowData";
-
+const NULL_VALUE = "---",
+    EMPTY = {id: NULL_VALUE, label: NULL_VALUE};
 class Store {
-    config = null;
-    @observable dataset = null;
-
-    @observable references = null;
-    @observable tags = null;
-
-    @observable datasetIdColumn = null;
-    @observable referenceIdColumn = null;
-    @observable datasetTagColumn = null;
-
-    @observable datasetTags = [];
-
     constructor(config) {
         this.config = config;
     }
 
-    @action.bound handleFileInput(e) {
-        fetch(`/lit/api/assessment/${this.config.assessment_id}/excel-to-json/`, {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-                "Content-Disposition": "attachment; filename=upload",
-                "X-CSRFToken": this.config.csrf,
-            },
-            body: e.target.files[0],
-        })
-            .then(response => response.json())
-            .then(json => (this.dataset = json));
-        return;
+    // 1. get assessment level metadata
+    @observable references = null;
+    @observable tags = null;
+    @computed get hasAssessmentData() {
+        // has input data been loaded?
+        return _.isArray(this.references) && _.isArray(this.tags);
     }
-
-    @action.bound getReferences() {
-        fetch(`/lit/api/assessment/${this.config.assessment_id}/reference-ids/`, h.fetchGet)
+    @action.bound fetchReferences() {
+        const url = `/lit/api/assessment/${this.config.assessment_id}/reference-ids/`;
+        fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => (this.references = json));
     }
-
-    @action.bound getTags() {
-        fetch(`/lit/api/assessment/${this.config.assessment_id}/tags/`, h.fetchGet)
+    @action.bound fetchTags() {
+        const url = `/lit/api/assessment/${this.config.assessment_id}/tags/`;
+        fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => (this.tags = json));
     }
 
-    @action.bound setDatasetIdColumn(col) {
-        // column name in provided dataset for ids
-        this.datasetIdColumn = col;
+    // 2. upload xlsx file
+    @observable dataset = NULL_VALUE;
+    @computed get hasValidXlsx() {
+        // do we have a parsable spreadsheet?
+        return this.hasAssessmentData && _.isArray(this.dataset);
     }
-
-    @action.bound setReferenceIdColumn(col) {
-        // column name in returned references for ids
-        // either reference_id, hero_id, or pubmed_id
-        this.referenceIdColumn = col;
+    @action.bound handleFileInput(file) {
+        const url = `/lit/api/assessment/${this.config.assessment_id}/excel-to-json/?format=json`,
+            payload = h.fetchPostFile(this.config.csrf, file);
+        fetch(url, payload)
+            .then(response => response.json())
+            .then(data => {
+                _.each(data, (row, index) => (row.__index__ = index + 2));
+                this.dataset = data;
+            });
     }
-
-    @action.bound setDatasetTagColumn(col) {
-        // column name in provided dataset for tags
-        this.datasetTagColumn = col;
-        this.datasetTags = [];
-    }
-
-    @computed get datasetColumnChoices() {
+    @computed get datasetColumns() {
         return _.chain(this.dataset)
             .first()
             .keys()
-            .map(v => ({id: v, label: v}))
+            .filter(v => !v.startsWith("__"))
             .value();
     }
-
-    get referenceColumnChoices() {
+    @computed get datasetColumnChoices() {
+        return _.chain(this.datasetColumns)
+            .map(v => ({id: v, label: v}))
+            .unshift(_.clone(EMPTY))
+            .value();
+    }
+    get referenceColumnTypeChoices() {
         return [
-            {id: "reference_id", label: "HAWC ID"},
-            {id: "hero_id", label: "HERO ID"},
-            {id: "pubmed_id", label: "PUBMED ID"},
+            _.clone(EMPTY),
+            {id: "reference_id", label: "HAWC"},
+            {id: "hero_id", label: "HERO"},
+            {id: "pubmed_id", label: "PubMed"},
         ];
     }
 
-    @computed get datasetTagChoices() {
-        let tags = _.map(this.dataset, v => v[this.datasetTagColumn]),
-            uniqueTags = [...new Set(tags)];
-        return _.map(uniqueTags, v => ({id: v, label: v}));
+    // 3. match hawc references to dataset
+    @observable referenceIdColumn = NULL_VALUE;
+    @observable referenceColumnType = NULL_VALUE;
+    @computed get hasMatchingReferences() {
+        // do we have at least one row where IDs match HAWC ids?
+        return this.hasValidXlsx && this.matchedDatasetRows.length > 0;
     }
-
-    @computed get HAWCTagChoices() {
-        return _.map(this.tags, v => ({id: v["id"], label: v["nested_name"]}));
+    @action.bound setReferenceIdColumn(col) {
+        // xlsx column name for ids
+        this.referenceIdColumn = col;
     }
-
-    @action.bound createDatasetTag() {
-        this.datasetTags.push({});
+    @action.bound setReferenceColumnType(col) {
+        // xlsx reference id column type
+        this.referenceColumnType = col;
     }
-
-    @action.bound deleteDatasetTag(index) {
-        deleteArrayElement(this.datasetTags, index);
+    @computed get numReferencesInHawc() {
+        return this.references.length;
     }
-
-    @action.bound setDatasetTagLabel(index, label) {
-        // set the dataset tag label
-        this.datasetTags[index].label = label;
-    }
-
-    @action.bound setDatasetTagId(index, id) {
-        // set the tag id
-        // since this is taken from user input, we have to parse the string to int
-        this.datasetTags[index].id = parseInt(id);
-    }
-
     @computed get referenceMap() {
-        let ids = _.map(this.dataset, v => v[this.datasetIdColumn]),
-            matchingReferences = _.chain(this.references)
-                .filter(v => _.includes(ids, v[this.referenceIdColumn]))
-                .map(v => [v[this.referenceIdColumn], v.reference_id])
-                .value();
-        return new Map(matchingReferences);
+        // map of all references in hawc and their matches
+        const colType = this.referenceColumnType,
+            mapping = colType
+                ? _.chain(this.references)
+                      .filter(row => row[colType])
+                      .map(row => [row[colType], row.reference_id])
+                      .value()
+                : [];
+        return new Map(mapping);
     }
-
-    @computed get tagMap() {
-        let tags = _.chain(this.datasetTags)
-            .filter(v => !_.isNil(v.label) && !_.isNil(v.id))
-            .map(v => [v.label, v.id])
+    @computed get matchedDatasetRows() {
+        // filtered list of dataset rows
+        const map = this.referenceMap,
+            keyColumn = this.referenceIdColumn;
+        return _.chain(this.dataset)
+            .filter(row => map.has(row[keyColumn]))
             .value();
-        return new Map(tags);
+    }
+    @computed get unmatchedDatasetRows() {
+        // filtered list of dataset rows
+        const map = this.referenceMap,
+            keyColumn = this.referenceIdColumn;
+        return _.chain(this.dataset)
+            .filter(row => !map.has(row[keyColumn]))
+            .value();
     }
 
-    @computed get datasetFinal() {
-        // creates a list of objects with reference_id and tag_id
-        // string casts are done since input is string on datasetTags and thus tagMap
-        let ids = [...this.referenceMap.keys()],
-            tags = [...this.tagMap.keys()],
-            foobar = _.chain(this.dataset)
-                .filter(v => _.includes(ids, v[this.datasetIdColumn]))
-                .filter(v => _.includes(tags, String(v[this.datasetTagColumn])))
-                .map(v => ({
-                    reference_id: this.referenceMap.get(v[this.datasetIdColumn]),
-                    tag_id: this.tagMap.get(String(v[this.datasetTagColumn])),
-                }))
-                .value();
-        return foobar;
+    // 4. match metadata to hawc tags
+    @observable datasetTagColumn = NULL_VALUE;
+    @action.bound setDatasetTagColumn(col) {
+        // column name in provided dataset for tags
+        this.datasetTagColumn = col;
     }
 
+    @observable datasetTagValue = NULL_VALUE;
+    @computed get datasetTagValueChoices() {
+        const datasetTagColumn = this.datasetTagColumn;
+        if (datasetTagColumn === NULL_VALUE) {
+            return [];
+        }
+        return _.chain(this.dataset)
+            .map(d => d[datasetTagColumn])
+            .uniq()
+            .map(v => ({id: v, label: v}))
+            .unshift(_.clone(EMPTY))
+            .value();
+    }
+    @computed get hasDatasetTagValue() {
+        return this.datasetTagValue !== NULL_VALUE;
+    }
+    @action.bound setDatasetTagValue(value) {
+        // column name in provided dataset for tags
+        this.datasetTagValue = value;
+    }
+
+    @computed get matchedRowsWithValue() {
+        // rows with matched ids and value
+        const column = this.datasetTagColumn,
+            value = this.datasetTagValue,
+            map = this.referenceMap,
+            keyColumn = this.referenceIdColumn;
+        if (column == NULL_VALUE || value == NULL_VALUE) {
+            return [];
+        }
+        return this.matchedDatasetRows
+            .filter(row => {
+                return row[column] == value;
+            })
+            .map(row => {
+                return {
+                    __index__: row.__index__,
+                    referenceKey: keyColumn,
+                    referenceValue: row[keyColumn],
+                    reference_id: map.get(row[keyColumn]),
+                };
+            });
+    }
+    @computed get unmatchedRowsWithValue() {
+        // rows with unmatched ids and value
+        const column = this.datasetTagColumn,
+            value = this.datasetTagValue,
+            keyColumn = this.referenceIdColumn;
+        if (column == NULL_VALUE || value == NULL_VALUE) {
+            return [];
+        }
+        return this.unmatchedDatasetRows
+            .filter(row => {
+                return row[column] == value;
+            })
+            .map(row => {
+                return {
+                    __index__: row.__index__,
+                    referenceKey: keyColumn,
+                    referenceValue: row[keyColumn],
+                };
+            });
+    }
+
+    @observable tag = NULL_VALUE;
+    @computed get tagChoices() {
+        return _.chain(this.tags)
+            .map(v => ({id: v["id"], label: v["nested_name"].replaceAll("|", " ➤ ")}))
+            .unshift(_.clone(EMPTY))
+            .value();
+    }
+    @action.bound setTag(value) {
+        // tag to apply
+        this.tag = value;
+    }
+
+    @observable tagVerb = "append";
+    get tagVerbChoices() {
+        return [
+            {id: "append", label: "Apply selected tag to these references"},
+            {id: "remove", label: "Remove selected tag from these references"},
+        ];
+    }
+    @action.bound setTagVerb(value) {
+        this.tagVerb = value;
+    }
+    @computed get submissionData() {
+        if (this.matchedRowsWithValue.length === 0) {
+            return "";
+        }
+        const tag = this.tag,
+            dataRows = this.matchedRowsWithValue
+                .map(row => `${row.reference_id},${tag}`)
+                .join("\n");
+        return `reference_id,tag_id\n${dataRows}\n`;
+    }
+    @computed get canBeSubmitted() {
+        return this.submissionData.length > 0 && this.tag !== NULL_VALUE;
+    }
+    @action.bound submitForm() {
+        this.bulkUpdateTags();
+    }
+    @action.bound resetForm() {
+        this.datasetTagColumn = NULL_VALUE;
+        this.datasetTagValue = NULL_VALUE;
+        this.tag = NULL_VALUE;
+        this.tagVerb = "append";
+    }
     @action.bound bulkUpdateTags() {
-        let csv = h.objArrayToCSV(this.datasetFinal),
-            payload = {operation: "append", csv};
-        fetch(
-            `/lit/api/assessment/${this.config.assessment_id}/reference-tags/`,
-            h.fetchPost(this.config.csrf, payload, "POST")
-        );
+        let url = `/lit/api/assessment/${this.config.assessment_id}/reference-tags/`,
+            payload = {operation: this.tagVerb, csv: this.submissionData};
+        fetch(url, h.fetchPost(this.config.csrf, payload, "POST"));
     }
 }
 
