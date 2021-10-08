@@ -1,6 +1,8 @@
 import json
+from io import BytesIO
 from pathlib import Path
 
+import pandas as pd
 import pytest
 from django.core.cache import cache
 from django.urls import reverse
@@ -136,6 +138,33 @@ class TestLiteratureAssessmentViewset:
         url = reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_final,))
         fn = "api-lit-assessment-tag-heatmap.json"
         self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_excel_to_json(self, db_keys):
+        url = reverse("lit:api:assessment-excel-to-json", kwargs=dict(pk=db_keys.assessment_final))
+        data = [{"reference_id": 1, "tag_id": 1}, {"reference_id": 1, "tag_id": 2}]
+        df = pd.DataFrame(data)
+        excel = BytesIO()
+        df.to_excel(excel, index=False)
+        excel.seek(0)
+        csv = df.to_csv(index=False)
+        c = APIClient()
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+
+        # excel files are correctly parsed
+        resp = c.post(
+            url, {"file": excel}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.xlsx"
+        )
+        assert resp.status_code == 200 and resp.json() == data
+
+        # Content-Disposition header is needed, even if file is correct
+        resp = c.post(url, {"file": excel})
+        assert resp.status_code == 400 and resp.json() == {
+            "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
+        }
+
+        # non excel files return an error
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.csv")
+        assert resp.status_code == 400 and resp.json() == {"detail": "Unable to parse excel file"}
 
 
 @pytest.mark.django_db

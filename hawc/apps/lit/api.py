@@ -6,6 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
@@ -260,7 +261,19 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         url_path="excel-to-json",
     )
     def excel_to_json(self, request, pk):
-        return Response(pd.read_excel(request.data["file"]).to_dict(orient="records"))
+        try:
+            # Try to have pandas determine which engine to use;
+            # this provides compatibility with other excel formats
+            excel = pd.ExcelFile(request.data["file"])
+        except ValueError:
+            try:
+                # If unable to determine engine dynamically, default to openpyxl
+                excel = pd.ExcelFile(request.data["file"], engine="openpyxl")
+            except Exception:
+                # If setting the engine doesn't work we have exhausted our parsing attempts
+                raise ParseError("Unable to parse excel file")
+
+        return Response(pd.read_excel(excel).to_dict(orient="records"))
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
