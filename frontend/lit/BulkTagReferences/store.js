@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS, autorun} from "mobx";
+import {action, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 
@@ -119,6 +119,7 @@ class Store {
     @action.bound setDatasetTagColumn(col) {
         // column name in provided dataset for tags
         this.datasetTagColumn = col;
+        this.resetSubmissionStatus();
     }
 
     @observable datasetTagValue = NULL_VALUE;
@@ -140,6 +141,7 @@ class Store {
     @action.bound setDatasetTagValue(value) {
         // column name in provided dataset for tags
         this.datasetTagValue = value;
+        this.resetSubmissionStatus();
     }
 
     @computed get matchedRowsWithValue() {
@@ -195,6 +197,7 @@ class Store {
     @action.bound setTag(value) {
         // tag to apply
         this.tag = value;
+        this.resetSubmissionStatus();
     }
 
     @observable tagVerb = "append";
@@ -206,6 +209,7 @@ class Store {
     }
     @action.bound setTagVerb(value) {
         this.tagVerb = value;
+        this.resetSubmissionStatus();
     }
     @computed get submissionData() {
         if (this.matchedRowsWithValue.length === 0) {
@@ -228,11 +232,41 @@ class Store {
         this.datasetTagValue = NULL_VALUE;
         this.tag = NULL_VALUE;
         this.tagVerb = "append";
+        this.isSubmitting = false;
+        this.submissionSuccessful = null;
     }
+
+    @observable isSubmitting = false;
+    @observable submissionSuccessful = null; // true/false/null
     @action.bound bulkUpdateTags() {
         let url = `/lit/api/assessment/${this.config.assessment_id}/reference-tags/`,
             payload = {operation: this.tagVerb, csv: this.submissionData};
-        fetch(url, h.fetchPost(this.config.csrf, payload, "POST"));
+        this.isSubmitting = true;
+        this.submissionSuccessful = null;
+        h.handleSubmit(
+            url,
+            "POST",
+            this.config.csrf,
+            payload,
+            () => {
+                this.submissionSuccessful = true;
+                this.isSubmitting = false;
+            },
+            err => {
+                this.submissionSuccessful = false;
+                this.isSubmitting = false;
+                console.error(err);
+            },
+            err => {
+                this.submissionSuccessful = false;
+                this.isSubmitting = false;
+                console.error(err);
+            }
+        );
+    }
+    @action.bound resetSubmissionStatus() {
+        this.isSubmitting = false;
+        this.submissionSuccessful = null;
     }
 }
 
