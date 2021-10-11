@@ -13,7 +13,14 @@ class ReferenceMappingCard extends Component {
             {referenceMap, referenceIdColumn} = store,
             nMatchedRows = store.matchedDatasetRows.length,
             nUnmatchedRows = store.unmatchedDatasetRows.length;
-        return store.hasValidXlsx ? (
+
+        if (!store.hasValidXlsx) {
+            return (
+                <p className="text-muted">Please complete the previous step before continuing</p>
+            );
+        }
+
+        return (
             <div className="row">
                 <div className="col-md-6">
                     <SelectInput
@@ -117,8 +124,6 @@ class ReferenceMappingCard extends Component {
                     )}
                 </div>
             </div>
-        ) : (
-            <p className="text-muted">Please complete the previous step before continuing</p>
         );
     }
 }
