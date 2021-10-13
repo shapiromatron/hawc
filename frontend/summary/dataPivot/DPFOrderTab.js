@@ -57,7 +57,11 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 <input class="form-check-input" type="radio" name="filter_logic" value="or">
                 <label class="form-check-label">OR</label>
             </div>`),
-            value = dp.settings.plot_settings.filter_logic || "and";
+            string = $(`<div class="form-group">
+                <input class="form-control" type="text" name="filter_string">
+            </div>`),
+            value = dp.settings.plot_settings.filter_logic || "and",
+            string_value = dp.settings.plot_settings.filter_string || "";
 
         // set initial value
         if (value === "and") {
@@ -65,10 +69,15 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         } else {
             or.find("input").prop("checked", true);
         }
+        string.find("input").val(string_value);
 
         // set event binding to change settings
         div.on("change", 'input[name="filter_logic"]', function() {
             dp.settings.plot_settings.filter_logic = $('input[name="filter_logic"]:checked').val();
+            handleTableChange();
+        });
+        div.on("change", 'input[name="filter_string"]', function() {
+            dp.settings.plot_settings.filter_string = $('input[name="filter_string"]').val();
             handleTableChange();
         });
 
@@ -76,7 +85,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             "<h4>Filter logic</h4>",
             '<p class="form-text text-muted">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
             and,
-            or
+            or,
+            string
         );
 
         tab.append(div, "<hr/>");
@@ -163,6 +173,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             sorts = dp.settings.sorts.filter(get_selected_fields),
             overrides = dp.settings.row_overrides,
             filter_logic = dp.settings.plot_settings.filter_logic,
+            filter_string = dp.settings.plot_settings.filter_string,
             dataline = dp.settings.dataline_settings[0],
             datapoints = dp.settings.datapoint_settings,
             barchart = dp.settings.barchart,

@@ -11,6 +11,7 @@ import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
+import Query from "./query";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -106,7 +107,7 @@ class DataPivotVisualization extends D3Plot {
         return sorted;
     }
 
-    static filter(arr, filters, filter_logic) {
+    static filter(arr, filters, filter_logic, filter_string) {
         if (filters.length === 0) return arr;
 
         var field_name,
@@ -131,6 +132,20 @@ class DataPivotVisualization extends D3Plot {
                         .indexOf(value.toLowerCase()) < 0,
                 exact: v => v[field_name].toString().toLowerCase() === value.toLowerCase(),
             };
+
+        if (filter_string) {
+            let getValue = i => {
+                    func = filters_map[filters[i].quantifier];
+                    field_name = filters[i].field_name;
+                    if (field_name === NULL_CASE) return arr;
+                    value = filters[i].value;
+                    return arr.filter(func);
+                },
+                negateValue = v => _.difference(arr, v),
+                andValues = (l, r) => _.intersection(l, r),
+                orValues = (l, r) => _.union(l, r);
+            return Query.parse(filter_string, {getValue, negateValue, andValues, orValues});
+        }
 
         if (filter_logic === "and") {
             new_arr = arr;
@@ -404,7 +419,8 @@ class DataPivotVisualization extends D3Plot {
         rows = DataPivotVisualization.filter(
             rows,
             settings.filters,
-            this.dp_settings.plot_settings.filter_logic
+            this.dp_settings.plot_settings.filter_logic,
+            this.dp_settings.plot_settings.filter_string
         );
 
         rows = DataPivotVisualization.sort_with_overrides(
