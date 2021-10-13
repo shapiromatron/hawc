@@ -28,14 +28,14 @@ class TagAssignmentCard extends Component {
                         handleSelect={store.setDatasetTagColumn}
                         value={store.datasetTagColumn}
                         label="Spreadsheet column"
-                        helpText="Column in the spreadsheet that can be used to apply tags."
+                        helpText="Column in the spreadsheet which can be used to apply tags"
                     />
                     <SelectInput
                         choices={store.datasetTagValueChoices}
                         handleSelect={store.setDatasetTagValue}
                         value={store.datasetTagValue}
                         label="Spreadsheet column value"
-                        helpText="The value in the selected column"
+                        helpText="The value in the selected column which should be used to assign tags"
                     />
                 </div>
                 <div className="col-md-6">
@@ -44,10 +44,10 @@ class TagAssignmentCard extends Component {
                         handleSelect={store.setTag}
                         value={store.tag}
                         label="Select HAWC tag"
-                        helpText="Select HAWC tag to apply or remove from matching references"
+                        helpText="The tag to apply selected to selected references"
                     />
                     <RadioInput
-                        label="Create or delete tags:"
+                        label="Apply or remove tags:"
                         name="tags"
                         onChange={store.setTagVerb}
                         value={store.tagVerb}
@@ -70,12 +70,14 @@ class TagAssignmentCard extends Component {
         const {referenceIdColumn} = store,
             nMatchedRows = store.matchedRowsWithValue.length,
             nUnmatchedRows = store.unmatchedRowsWithValue.length,
-            matchedMsg = `${nMatchedRows} rows where ${store.datasetTagColumn} equals "${store.datasetTagValue}" and a HAWC reference exists.`,
-            unmatchedMessage = `${nUnmatchedRows} rows where ${store.datasetTagColumn} equals "${store.datasetTagValue}" and a matching HAWC reference cannot be determined.`;
+            matchedMsg = `${nMatchedRows} rows where ${store.datasetTagColumn} equals "${store.datasetTagValue}" and a HAWC reference matched.`,
+            unmatchedMessage = `${nUnmatchedRows} rows where ${store.datasetTagColumn} equals "${store.datasetTagValue}" and a HAWC reference cannot be determined.`;
 
         return (
             <>
-                <div className="col-md-6 resize-y" style={{height: 400}}>
+                <div
+                    className={nUnmatchedRows > 0 ? "col-md-6 resize-y" : "col-md-12 resize-y"}
+                    style={{height: 400}}>
                     <p className="pull-right text-muted mb-2">{matchedMsg}</p>
                     {nMatchedRows > 0 ? (
                         <table className="table table-condensed table-sm">
@@ -107,9 +109,9 @@ class TagAssignmentCard extends Component {
                         </table>
                     ) : null}
                 </div>
-                <div className="col-md-6 resize-y" style={{height: 400}}>
-                    <p className="pull-right text-muted mb-2">{unmatchedMessage}</p>
-                    {nUnmatchedRows > 0 ? (
+                {nUnmatchedRows > 0 ? (
+                    <div className="col-md-6 resize-y" style={{height: 400}}>
+                        <p className="pull-right text-muted mb-2">{unmatchedMessage}</p>
                         <table className="table table-condensed table-sm">
                             <thead>
                                 <tr>
@@ -132,21 +134,21 @@ class TagAssignmentCard extends Component {
                                 })}
                             </tbody>
                         </table>
-                    ) : null}
-                </div>
+                    </div>
+                ) : null}
                 <div className="col-md-12 mt-3">
                     {nMatchedRows == 0 && nUnmatchedRows == 0 ? null : nMatchedRows > 0 &&
                       nUnmatchedRows > 0 ? (
                         <Alert
                             className="alert-warning"
                             icon="fa-question-circle"
-                            message="Some rows with this value are matched, but not all. Changes made in HAWC using this value will be inconsistent with the spreadsheet."
+                            message="Some rows with this value are matched to a HAWC reference, but not all. Changes made in HAWC using this value will be inconsistent with the spreadsheet."
                         />
                     ) : nMatchedRows > 0 ? (
                         <Alert
                             className="alert-success"
                             icon="fa-check-square"
-                            message="All references matched, and tag can successfully be applied!"
+                            message="All rows matched to a HAWC reference; tag can successfully be applied!"
                         />
                     ) : (
                         <Alert message="No rows with this value are matched in HAWC." />

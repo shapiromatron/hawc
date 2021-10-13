@@ -33,7 +33,7 @@ class SpreadsheetCard extends Component {
             <>
                 <FileInput
                     onChange={handleFileInput}
-                    helpText="Select an Excel file (.xlsx) to load and process. The first worksheet will be processed. The spreadsheet should contain data in a rectangular data format."
+                    helpText="Select an Excel file (.xlsx) to load and process. The first worksheet will be used. The spreadsheet should contain data in a rectangular data format."
                 />
                 {this.renderMetadata()}
             </>

@@ -32,7 +32,7 @@ class BulkTagReferencesMain extends Component {
                         <li>
                             References have been uploaded into HAWC with appropriate database IDs
                         </li>
-                        <li>The tag structure in HAWC is complete</li>
+                        <li>The tag structure in HAWC properly configured</li>
                     </ol>
                 </div>
                 {store.hasAssessmentData ? null : <Loading />}

@@ -203,8 +203,8 @@ class Store {
     @observable tagVerb = "append";
     get tagVerbChoices() {
         return [
-            {id: "append", label: "Apply selected tag to these references"},
-            {id: "remove", label: "Remove selected tag from these references"},
+            {id: "append", label: "Apply"},
+            {id: "remove", label: "Remove"},
         ];
     }
     @action.bound setTagVerb(value) {
