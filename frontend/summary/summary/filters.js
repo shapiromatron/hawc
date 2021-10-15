@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 import {NULL_VALUE} from "./constants";
+import Query from "shared/parsers/query";
 
 export const DATA_FILTER_CONTAINS = "contains",
     DATA_FILTER_OPTIONS = [
@@ -14,9 +15,11 @@ export const DATA_FILTER_CONTAINS = "contains",
     ],
     DATA_FILTER_LOGIC_AND = "and",
     DATA_FILTER_LOGIC_OR = "or",
+    DATA_FILTER_LOGIC_CUSTOM = "custom",
     DATA_FILTER_LOGIC_OPTIONS = [
         {id: DATA_FILTER_LOGIC_AND, label: "AND"},
         {id: DATA_FILTER_LOGIC_OR, label: "OR"},
+        {id: DATA_FILTER_LOGIC_CUSTOM, label: "CUSTOM"},
     ],
     filterFunction = function(filterType) {
         switch (filterType) {
@@ -64,7 +67,7 @@ export const DATA_FILTER_CONTAINS = "contains",
                 console.error(`Unrecognized filter: ${filter.type}`);
         }
     },
-    applyRowFilters = function(arr, filters, filter_logic) {
+    applyRowFilters = function(arr, filters, filter_logic, filter_string) {
         if (filters.length === 0 || arr.length == 0) {
             return arr;
         }
@@ -73,8 +76,28 @@ export const DATA_FILTER_CONTAINS = "contains",
             excludes = new Set();
         if (filter_logic === DATA_FILTER_LOGIC_AND) {
             includes = new Set(_.range(arr.length));
-        } else {
+        } else if (filter_logic === DATA_FILTER_LOGIC_OR) {
             excludes = new Set(_.range(arr.length));
+        } else if (filter_logic === DATA_FILTER_LOGIC_CUSTOM) {
+            let getValue = i => {
+                    let filter = filters[i];
+                    if (filter.column === NULL_VALUE) {
+                        return arr;
+                    }
+                    let target = normalizeTargetValue(filter),
+                        func = filterFunction(filter.type);
+                    if (func) {
+                        return arr.filter(e => func(e[filter.column], target));
+                    } else {
+                        console.error(`Unrecognized filter: ${filter.type}`);
+                    }
+                },
+                negateValue = v => _.difference(arr, v),
+                andValues = (l, r) => _.intersection(l, r),
+                orValues = (l, r) => _.union(l, r);
+            return Query.parse(filter_string, {getValue, negateValue, andValues, orValues});
+        } else {
+            console.error(`Unrecognized filter_logic: ${filter_logic}`);
         }
 
         filters
@@ -90,15 +113,13 @@ export const DATA_FILTER_CONTAINS = "contains",
                                 includes.delete(i);
                             }
                         });
-                    } else if (filter_logic === DATA_FILTER_LOGIC_OR) {
+                    } else {
                         excludes.forEach(i => {
                             if (func(arr[i][filter.column], target)) {
                                 excludes.delete(i);
                                 includes.add(i);
                             }
                         });
-                    } else {
-                        console.error(`Unrecognized filter_logic: ${filter_logic}`);
                     }
                 } else {
                     console.error(`Unrecognized filter: ${filter.type}`);

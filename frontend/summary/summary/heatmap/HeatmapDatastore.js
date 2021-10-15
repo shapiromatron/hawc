@@ -30,7 +30,12 @@ class HeatmapDatastore {
         this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.settings = settings;
-        this.dataset = applyRowFilters(dataset, settings.filters, settings.filtersLogic);
+        this.dataset = applyRowFilters(
+            dataset,
+            settings.filters,
+            settings.filtersLogic,
+            settings.filtersString
+        );
         this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
@@ -260,7 +265,7 @@ class HeatmapDatastore {
             let validRows = rows.filter(index => {
                 const d = this.dataset[index],
                     nonNull = _.map(fields, field => {
-                        const text = d[field.column] || "",
+                        const text = (d[field.column] || "").toString(),
                             values = field.delimiter ? text.split(field.delimiter) : [text];
                         return _.some(values, d => d.length > 0);
                     });

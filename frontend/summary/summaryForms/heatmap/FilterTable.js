@@ -6,7 +6,11 @@ import RadioInput from "shared/components/RadioInput";
 import SelectInput from "shared/components/SelectInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 
-import {DATA_FILTER_LOGIC_OPTIONS, DATA_FILTER_OPTIONS} from "../../summary/filters";
+import {
+    DATA_FILTER_LOGIC_OPTIONS,
+    DATA_FILTER_OPTIONS,
+    DATA_FILTER_LOGIC_CUSTOM,
+} from "../../summary/filters";
 
 const dataKey = "filters",
     FilterRow = observer(props => {
@@ -56,7 +60,7 @@ FilterRow.propTypes = {
 class FilterTable extends Component {
     render() {
         const store = this.props.store.subclass,
-            {filters, filtersLogic} = store.settings;
+            {filters, filtersLogic, filtersString} = store.settings;
         return (
             <>
                 <table className="table table-sm table-striped">
@@ -93,7 +97,14 @@ class FilterTable extends Component {
                         value={filtersLogic}
                         horizontal={true}
                         choices={DATA_FILTER_LOGIC_OPTIONS}
-                    />
+                    />{" "}
+                    {filtersLogic === DATA_FILTER_LOGIC_CUSTOM ? (
+                        <TextInput
+                            name="filtersString"
+                            value={filtersString || ""}
+                            onChange={e => store.changeSettings(e.target.name, e.target.value)}
+                        />
+                    ) : null}
                 </div>
             </>
         );
