@@ -5,6 +5,7 @@ import os
 
 import bmds
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
@@ -369,8 +370,11 @@ class Model(models.Model):
 class SelectedModel(models.Model):
     objects = managers.SelectedModelManager()
 
-    endpoint = models.OneToOneField(
-        "animal.Endpoint", on_delete=models.CASCADE, related_name="bmd_model"
+    endpoint = models.ForeignKey(
+        "animal.Endpoint", on_delete=models.CASCADE, related_name="bmd_models"
+    )
+    dose_units = models.ForeignKey(
+        "assessment.DoseUnits", on_delete=models.CASCADE, related_name="selected_models"
     )
     model = models.ForeignKey(Model, on_delete=models.CASCADE, null=True)
     notes = models.TextField(blank=True)
@@ -379,6 +383,7 @@ class SelectedModel(models.Model):
 
     class Meta:
         get_latest_by = "created"
+        unique_together = (("endpoint", "dose_units"),)
 
     @classmethod
     def save_new(cls, endpoint):

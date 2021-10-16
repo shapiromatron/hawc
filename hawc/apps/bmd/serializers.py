@@ -146,7 +146,7 @@ class SessionUpdateSerializer(serializers.Serializer):
 class SelectedModelUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SelectedModel
-        fields = ("id", "model", "notes")
+        fields = ("id", "model", "notes")  # add session? or units? validate that units match
 
     def save(self):
         session = self.instance
