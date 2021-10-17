@@ -57,23 +57,39 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 <input class="form-check-input" type="radio" name="filter_logic" value="or">
                 <label class="form-check-label">OR</label>
             </div>`),
+            custom = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="custom">
+                <label class="form-check-label">CUSTOM</label>
+            </div>`),
             string = $(`<div class="form-group">
                 <input class="form-control" type="text" name="filter_string">
-            </div>`),
+            </div>
+            <p class="form-text text-muted">Custom logic can be described using filter row numbers and logic operators. For example: 1 AND (2 OR NOT 3)</p>`),
             value = dp.settings.plot_settings.filter_logic || "and",
             string_value = dp.settings.plot_settings.filter_string || "";
 
         // set initial value
         if (value === "and") {
             and.find("input").prop("checked", true);
-        } else {
+            string.hide();
+        } else if (value === "or") {
             or.find("input").prop("checked", true);
+            string.hide();
+        } else {
+            custom.find("input").prop("checked", true);
+            string.show();
         }
         string.find("input").val(string_value);
 
         // set event binding to change settings
         div.on("change", 'input[name="filter_logic"]', function() {
-            dp.settings.plot_settings.filter_logic = $('input[name="filter_logic"]:checked').val();
+            let val = $('input[name="filter_logic"]:checked').val();
+            dp.settings.plot_settings.filter_logic = val;
+            if (_.includes(["and", "or"], val)) {
+                string.hide();
+            } else {
+                string.show();
+            }
             handleTableChange();
         });
         div.on("change", 'input[name="filter_string"]', function() {
@@ -83,9 +99,10 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         div.append(
             "<h4>Filter logic</h4>",
-            '<p class="form-text text-muted">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
             and,
             or,
+            custom,
+            '<p class="form-text text-muted">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
             string
         );
 
@@ -187,7 +204,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         // apply filters
-        data = DataPivotVisualization.filter(dp.data, filters, filter_logic);
+        data = DataPivotVisualization.filter(dp.data, filters, filter_logic, filter_string);
 
         data = _.filter(
             data,

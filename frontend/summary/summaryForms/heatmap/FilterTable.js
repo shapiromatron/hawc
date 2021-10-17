@@ -102,6 +102,7 @@ class FilterTable extends Component {
                         <TextInput
                             name="filtersString"
                             value={filtersString || ""}
+                            helpText="Custom logic can be described using filter row numbers and logic operators. For example: 1 AND (2 OR NOT 3)"
                             onChange={e => store.changeSettings(e.target.name, e.target.value)}
                         />
                     ) : null}

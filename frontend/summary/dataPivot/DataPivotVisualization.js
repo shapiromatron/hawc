@@ -133,7 +133,7 @@ class DataPivotVisualization extends D3Plot {
                 exact: v => v[field_name].toString().toLowerCase() === value.toLowerCase(),
             };
 
-        if (filter_string) {
+        if (filter_logic === "custom") {
             let getValue = i => {
                     func = filters_map[filters[i].quantifier];
                     field_name = filters[i].field_name;
