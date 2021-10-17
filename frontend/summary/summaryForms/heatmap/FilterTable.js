@@ -17,6 +17,7 @@ const dataKey = "filters",
         const {store, index, filter} = props;
         return (
             <tr key={index}>
+                <td>{index + 1}</td>
                 <td>
                     <SelectInput
                         choices={store.getColumnsOptionsWithNull}
@@ -65,13 +66,15 @@ class FilterTable extends Component {
             <>
                 <table className="table table-sm table-striped">
                     <colgroup>
-                        <col width="40%" />
+                        <col width="5%" />
+                        <col width="35%" />
                         <col width="25%" />
                         <col width="25%" />
                         <col width="10%" />
                     </colgroup>
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Data column</th>
                             <th>Filter type</th>
                             <th>Value</th>
