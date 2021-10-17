@@ -2,13 +2,13 @@ Query
   = Or
 
 Or
-  = left:And "OR" right:Or {return options.orValues(left, right);} / And
+  = left:And "OR"i right:Or {return options.orValues(left, right);} / And
 
 And
-  = left:Not "AND" right:And {return options.andValues(left, right);} / Not
+  = left:Not "AND"i right:And {return options.andValues(left, right);} / Not
 
 Not
-  = _ "NOT" _ value:Group {return options.negateValue(value);} / Group
+  = _ "NOT"i _ value:Not {return options.negateValue(value);} / Group
 
 Group
   = _ "(" _ query:Query _ ")" _ {return query;} / Integer

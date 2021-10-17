@@ -141,14 +141,14 @@ function peg$parse(input, options) {
       peg$startRuleFunctions = { Query: peg$parseQuery },
       peg$startRuleFunction  = peg$parseQuery,
 
-      peg$c0 = "OR",
-      peg$c1 = peg$literalExpectation("OR", false),
+      peg$c0 = "or",
+      peg$c1 = peg$literalExpectation("OR", true),
       peg$c2 = function(left, right) {return options.orValues(left, right);},
-      peg$c3 = "AND",
-      peg$c4 = peg$literalExpectation("AND", false),
+      peg$c3 = "and",
+      peg$c4 = peg$literalExpectation("AND", true),
       peg$c5 = function(left, right) {return options.andValues(left, right);},
-      peg$c6 = "NOT",
-      peg$c7 = peg$literalExpectation("NOT", false),
+      peg$c6 = "not",
+      peg$c7 = peg$literalExpectation("NOT", true),
       peg$c8 = function(value) {return options.negateValue(value);},
       peg$c9 = "(",
       peg$c10 = peg$literalExpectation("(", false),
@@ -311,8 +311,8 @@ function peg$parse(input, options) {
     s0 = peg$currPos;
     s1 = peg$parseAnd();
     if (s1 !== peg$FAILED) {
-      if (input.substr(peg$currPos, 2) === peg$c0) {
-        s2 = peg$c0;
+      if (input.substr(peg$currPos, 2).toLowerCase() === peg$c0) {
+        s2 = input.substr(peg$currPos, 2);
         peg$currPos += 2;
       } else {
         s2 = peg$FAILED;
@@ -349,8 +349,8 @@ function peg$parse(input, options) {
     s0 = peg$currPos;
     s1 = peg$parseNot();
     if (s1 !== peg$FAILED) {
-      if (input.substr(peg$currPos, 3) === peg$c3) {
-        s2 = peg$c3;
+      if (input.substr(peg$currPos, 3).toLowerCase() === peg$c3) {
+        s2 = input.substr(peg$currPos, 3);
         peg$currPos += 3;
       } else {
         s2 = peg$FAILED;
@@ -387,8 +387,8 @@ function peg$parse(input, options) {
     s0 = peg$currPos;
     s1 = peg$parse_();
     if (s1 !== peg$FAILED) {
-      if (input.substr(peg$currPos, 3) === peg$c6) {
-        s2 = peg$c6;
+      if (input.substr(peg$currPos, 3).toLowerCase() === peg$c6) {
+        s2 = input.substr(peg$currPos, 3);
         peg$currPos += 3;
       } else {
         s2 = peg$FAILED;
@@ -397,7 +397,7 @@ function peg$parse(input, options) {
       if (s2 !== peg$FAILED) {
         s3 = peg$parse_();
         if (s3 !== peg$FAILED) {
-          s4 = peg$parseGroup();
+          s4 = peg$parseNot();
           if (s4 !== peg$FAILED) {
             peg$savedPos = s0;
             s1 = peg$c8(s4);
