@@ -582,7 +582,16 @@ _.extend(CrossviewForm, {
             options: [
                 {label: "AND", value: "and"},
                 {label: "OR", value: "or"},
+                {label: "CUSTOM", value: "custom"},
             ],
+            tab: "endpointFilters",
+        },
+        {
+            type: TextField,
+            name: "endpointFilterString",
+            helpText:
+                "Custom logic can be described using filter row numbers and logic operators. For example: 1 AND (2 OR NOT 3)",
+            def: "",
             tab: "endpointFilters",
         },
     ],

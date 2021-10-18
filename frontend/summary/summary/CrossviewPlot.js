@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import {filterFunction} from "./filters";
 import h from "shared/utils/helpers";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import Query from "shared/parsers/query";
 
 import D3Visualization from "./D3Visualization";
 
@@ -250,10 +251,23 @@ class CrossviewPlot extends D3Visualization {
                     );
                 return settings.endpointFilterLogic === "and" ? _.every(res) : _.some(res);
             },
+            getValue = i => {
+                let filter = settings.endpointFilters[i];
+                return this.data.endpoints.filter(e =>
+                    filter.fn(CrossviewPlot._cw_filter_process[filter.field](e))
+                );
+            },
+            negateValue = v => _.difference(this.data.endpoints, v),
+            andValues = (l, r) => _.intersection(l, r),
+            orValues = (l, r) => _.union(l, r),
+            parserOptions = {getValue, negateValue, andValues, orValues},
+            partialDataset =
+                settings.endpointFilterLogic === "custom"
+                    ? Query.parse(settings.endpointFilterString, parserOptions)
+                    : this.data.endpoints.filter(applyEndpointFilters),
             numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
-            dataset = _.chain(this.data.endpoints)
+            dataset = _.chain(partialDataset)
                 .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
-                .filter(applyEndpointFilters)
                 .map(processEndpoint)
                 .filter(function(d) {
                     return d.plotting.length > 0;
