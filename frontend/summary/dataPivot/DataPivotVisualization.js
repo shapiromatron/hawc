@@ -135,6 +135,7 @@ class DataPivotVisualization extends D3Plot {
 
         if (filter_logic === "custom") {
             let getValue = i => {
+                    i -= 1; // i uses 1 based indexing
                     func = filters_map[filters[i].quantifier];
                     field_name = filters[i].field_name;
                     if (field_name === NULL_CASE) return arr;

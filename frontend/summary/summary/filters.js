@@ -80,6 +80,7 @@ export const DATA_FILTER_CONTAINS = "contains",
             excludes = new Set(_.range(arr.length));
         } else if (filter_logic === DATA_FILTER_LOGIC_CUSTOM) {
             let getValue = i => {
+                    i -= 1; // i uses 1 based indexing
                     let filter = filters[i];
                     if (filter.column === NULL_VALUE) {
                         return arr;

@@ -252,6 +252,7 @@ class CrossviewPlot extends D3Visualization {
                 return settings.endpointFilterLogic === "and" ? _.every(res) : _.some(res);
             },
             getValue = i => {
+                i -= 1; // i uses 1 based indexing
                 let filter = settings.endpointFilters[i];
                 return this.data.endpoints.filter(e =>
                     filter.fn(CrossviewPlot._cw_filter_process[filter.field](e))
