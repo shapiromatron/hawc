@@ -336,3 +336,5 @@ MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
 IS_TESTING = False
 
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
+
+DISCLAIMER_TEXT = ""

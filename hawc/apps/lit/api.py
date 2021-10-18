@@ -1,3 +1,5 @@
+from zipfile import BadZipFile
+
 import pandas as pd
 import plotly.express as px
 from django.conf import settings
@@ -6,6 +8,8 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -20,7 +24,7 @@ from ..common.api import (
     OncePerMinuteThrottle,
     PaginationWithCount,
 )
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport, re_digits, read_excel
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
@@ -178,10 +182,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True,
-        methods=("get",),
-        url_path="references-download",
-        renderer_classes=PandasRenderers,
+        detail=True, url_path="references-download", renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """
@@ -270,6 +271,29 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             resp = serializer.search()
 
         return Response(dict(references=resp))
+
+    @action(
+        detail=True,
+        methods=("post",),
+        parser_classes=(FileUploadParser,),
+        renderer_classes=PandasRenderers,
+        url_path="excel-to-json",
+    )
+    def excel_to_json(self, request, pk):
+        self.get_object()  # permissions check
+
+        file_ = request.data["file"]
+
+        if not file_.name.endswith(".xlsx"):
+            raise ValidationError({"file": "File extension must be .xlsx"})
+
+        try:
+            df = read_excel(file_)
+        except (BadZipFile, ValueError):
+            raise ParseError({"file": "Unable to parse excel file"})
+
+        export = FlatExport(df=df, filename=file_.name)
+        return Response(export)
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
