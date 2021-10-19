@@ -14,7 +14,7 @@
           <div class="dropdown-divider"></div>
           <span class="dropdown-header">BMD Modeling</span>
           {% if bmd_session %}
-            <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Selected session</a>
+            <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
             <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
           {% else %}
             <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
@@ -27,7 +27,7 @@
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
       <div class="dropdown-menu dropdown-menu-right">
         <span class="dropdown-header">BMD Modeling</span>
-        <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Selected session</a>
+        <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
         <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
       </div>
     </div>

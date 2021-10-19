@@ -24,7 +24,7 @@ class LogicFieldSerializer(serializers.ModelSerializer):
 class SelectedModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SelectedModel
-        fields = ("id", "model", "notes")
+        fields = ("id", "dose_units", "model", "notes")
 
 
 class ModelSerializer(serializers.ModelSerializer):
@@ -146,15 +146,15 @@ class SessionUpdateSerializer(serializers.Serializer):
 class SelectedModelUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SelectedModel
-        fields = ("id", "model", "notes")  # add session? or units? validate that units match
+        fields = ("id", "model", "notes")
 
     def save(self):
-        session = self.instance
-
-        instance = session.get_selected_model()
-        if not instance:
-            instance = models.SelectedModel(endpoint_id=session.endpoint_id)
-
-        instance.model = self.validated_data["model"]
-        instance.notes = self.validated_data["notes"]
-        instance.save()
+        session = self.context["session"]
+        data = self.validated_data
+        obj, _ = models.SelectedModel.objects.update_or_create(
+            endpoint_id=session.endpoint_id,
+            dose_units_id=session.dose_units_id,
+            defaults={"model": data["model"], "notes": data["notes"]},
+        )
+        self.instance = obj
+        return self.instance

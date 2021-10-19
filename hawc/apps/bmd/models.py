@@ -5,7 +5,6 @@ import os
 
 import bmds
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
@@ -284,7 +283,9 @@ class Session(models.Model):
         return self.get_session().get_bmr_options()
 
     def get_selected_model(self):
-        return SelectedModel.objects.filter(endpoint=self.endpoint_id).first()
+        return SelectedModel.objects.filter(
+            endpoint=self.endpoint_id, dose_units=self.dose_units_id
+        ).first()
 
     def get_logic(self):
         return LogicField.objects.filter(assessment=self.endpoint.assessment_id)

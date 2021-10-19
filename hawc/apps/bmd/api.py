@@ -33,10 +33,10 @@ class Session(AssessmentViewset):
         session = self.get_object()
         return Response({"finished": session.is_finished})
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=("post",))
     def selected_model(self, request, pk=None):
         session = self.get_object()
-        serializer = self.get_serializer(session, data=request.data)
+        serializer = self.get_serializer(data=request.data, context={"session": session})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"status": True})

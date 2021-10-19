@@ -288,22 +288,19 @@ class EndpointSerializer(serializers.ModelSerializer):
         bmds = []
         if selected_models.count() > 0:
             for sm in selected_models:
-                if sm.model_id is not None:
-                    bmds.append(
-                        {
-                            "bmd": ModelSerializer().to_representation(sm.model),
-                            "notes": sm.notes,
-                            "url": sm.model.session.get_absolute_url(),
-                        }
-                    )
-                else:
-                    bmds.append(
-                        {
-                            "bmd": None,
-                            "notes": sm.notes,
-                            "url": instance.bmd_sessions.latest().get_absolute_url(),
-                        }
-                    )
+                model_data = ModelSerializer().to_representation(sm.model) if sm.model_id else None
+                bmds.append(
+                    {
+                        "dose_units_id": sm.dose_units_id,
+                        "notes": sm.notes,
+                        "model": model_data,
+                        "session_url": model_data["url"]
+                        if model_data
+                        else instance.bmd_sessions.filter(dose_units_id=sm.dose_units_id)
+                        .latest()
+                        .get_absolute_url(),
+                    }
+                )
         ret["bmds"] = bmds
         return ret
 
