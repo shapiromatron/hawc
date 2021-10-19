@@ -629,33 +629,6 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"
     cache_template_tagtree = "reference-tagtree-assessment-{0}"
 
-    schema = {
-        "$id": "tree",
-        "$schema": "https://json-schema.org/draft-07/schema",
-        "$defs": {
-            "tagNode": {
-                "type": "object",
-                "additionalProperties": False,
-                "required": ["data"],
-                "properties": {
-                    "id": {"type": "integer"},
-                    "data": {
-                        "type": "object",
-                        "required": ["name"],
-                        "additionalProperties": False,
-                        "properties": {
-                            "name": {"type": "string", "minLength": 1, "maxLength": 128},
-                            "slug": {"type": "string", "pattern": r"^[-a-zA-Z0-9_]+$"},
-                        },
-                    },
-                    "children": {"type": "array", "items": {"$ref": "#/$defs/tagNode"}},
-                },
-            }
-        },
-        "type": "array",
-        "items": {"$ref": "#/$defs/tagNode"},
-    }
-
     def get_nested_name(self) -> str:
         if self.is_root():
             return "<root-node>"

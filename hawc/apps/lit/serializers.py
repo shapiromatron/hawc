@@ -18,6 +18,7 @@ from rest_framework.exceptions import ParseError
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
+from ..common.serializers import validate_jsonschema
 from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
@@ -185,9 +186,35 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
 class ReferenceTreeSerializer(serializers.Serializer):
     tree = serializers.JSONField()
 
+    tree_schema = {
+        "$id": "tree",
+        "$schema": "https://json-schema.org/draft-07/schema",
+        "$defs": {
+            "tagNode": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["data"],
+                "properties": {
+                    "id": {"type": "integer"},
+                    "data": {
+                        "type": "object",
+                        "required": ["name"],
+                        "additionalProperties": False,
+                        "properties": {
+                            "name": {"type": "string", "minLength": 1, "maxLength": 128},
+                            "slug": {"type": "string", "pattern": r"^[-a-zA-Z0-9_]+$"},
+                        },
+                    },
+                    "children": {"type": "array", "items": {"$ref": "#/$defs/tagNode"}},
+                },
+            }
+        },
+        "type": "array",
+        "items": {"$ref": "#/$defs/tagNode"},
+    }
+
     def validate_tree(self, value):
-        models.ReferenceFilterTag.validate_tagtree(value)
-        return value
+        return validate_jsonschema(value, self.tree_schema)
 
     def update(self):
         assessment_id = self.context["assessment"].id

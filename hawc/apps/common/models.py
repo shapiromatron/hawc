@@ -5,12 +5,11 @@ from enum import IntEnum
 from typing import Dict, List, Set, Tuple
 
 import django
-import jsonschema
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
@@ -339,22 +338,6 @@ class AssessmentRootMixin:
         if descendants:
             depth = max(descendants) - 1
         return depth
-
-    @classmethod
-    def validate_tagtree(cls, tagtree: List[Dict]):
-        """
-        Validates a supplied tag tree.
-
-        Args:
-            tagtree (List[Dict]): tag tree that needs validation
-
-        Raises:
-            ValidationError: supplied tag tree does not match the schema
-        """
-        try:
-            jsonschema.validate(instance=tagtree, schema=cls.schema)
-        except jsonschema.ValidationError as err:
-            raise ValidationError(err)
 
     @classmethod
     def add_slugs_to_tagtree(cls, tree):
