@@ -497,7 +497,7 @@ class TagsCopyForm(forms.Form):
         return BaseFormHelper(self)
 
     def copy_tags(self):
-        models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data["assessment"])
+        models.ReferenceFilterTag.copy_tags(self.cleaned_data["assessment"].id, self.assessment.id)
 
 
 class ReferenceExcelUploadForm(forms.Form):

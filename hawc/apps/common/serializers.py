@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Tuple, Type
 
+import jsonschema
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
@@ -47,6 +48,26 @@ def validate_pydantic(
         return pydantic_class.parse_obj(data)
     except pydantic.ValidationError as err:
         raise ValidationError({field: err.json()})
+
+
+def validate_jsonschema(data: Any, schema: Dict) -> Any:
+    """Validate data and return if appropriate; else raise django ValidationError.
+
+    Args:
+        data (Any): The data to validate
+        schema (Dict): The jsonschema to validate against
+
+    Raises:
+        serializers.ValidationError: If validation is unsuccessful
+
+    Returns:
+        Any: The unmodified, but validated dataset
+    """
+    try:
+        jsonschema.validate(data, schema)
+    except jsonschema.ValidationError as err:
+        raise serializers.ValidationError(err.message)
+    return data
 
 
 class UnusedSerializer(serializers.Serializer):
