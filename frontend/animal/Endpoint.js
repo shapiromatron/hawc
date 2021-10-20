@@ -141,7 +141,7 @@ class Endpoint extends Observee {
 
             setTitle(title);
             setBody(content);
-            obj.renderPlot(plot_div);
+            obj.renderPlot(plot_div, {showBmd: true});
         });
     }
 
@@ -151,8 +151,8 @@ class Endpoint extends Observee {
 
     get_pod() {
         // Get point-of-departure and point-of-departure type.
-        if (isFinite(this.get_bmd_special_values("BMDL"))) {
-            return {type: "BMDL", value: this.get_bmd_special_values("BMDL")};
+        if (isFinite(this.get_special_bmd_value("BMDL"))) {
+            return {type: "BMDL", value: this.get_special_bmd_value("BMDL")};
         }
         if (isFinite(this.get_special_dose_text("LOEL"))) {
             return {type: "LOEL", value: this.get_special_dose_text("LOEL")};
@@ -175,21 +175,18 @@ class Endpoint extends Observee {
         }
     }
 
-    get_bmd_data(name) {
-        try {
-            return this.data.bmd.output[name];
-        } catch (err) {
-            return "-";
-        }
+    get_active_selected_bmd() {
+        // get selected bmd given the active dose units or undefined
+        const activeDoseUnitId = this.doseUnits.activeUnit.id;
+        return _.find(
+            this.data.bmds,
+            d => d.dose_units_id === activeDoseUnitId && d.model && d.model.output
+        );
     }
 
-    get_bmd_special_values(name) {
-        // return the appropriate BMD output value
-        try {
-            return this.data.BMD.outputs[name];
-        } catch (err) {
-            return "none";
-        }
+    get_special_bmd_value(name) {
+        const selected = this.get_active_selected_bmd();
+        return selected ? h.ff(selected.model.output[name]) : "-";
     }
 
     build_endpoint_table(tbl_id) {
@@ -460,7 +457,7 @@ class Endpoint extends Observee {
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
         this.build_general_notes($notes);
-        modal.getModal().on("shown.bs.modal", () => this.renderPlot($plot, true));
+        modal.getModal().on("shown.bs.modal", () => this.renderPlot($plot, {showBmd: true}));
 
         modal
             .addHeader(title)
@@ -483,21 +480,16 @@ class Endpoint extends Observee {
         return Math.log10(doses[1]) - Math.log10(doses[0]) >= 3 ? "log" : "linear";
     }
 
-    renderPlot($div, withBMD) {
-        withBMD = withBMD === undefined ? true : withBMD;
-        var epc = new EndpointPlotContainer(this, $div);
-        if (withBMD && this.data.bmd) {
-            this._render_bmd_lines(epc);
+    renderPlot($div, options) {
+        const epc = new EndpointPlotContainer(this, $div);
+        if (options.showBmd) {
+            this.data.bmds
+                .filter(d => d.model !== null)
+                .forEach(d => {
+                    new BmdLine(d.model, epc.plot, "blue").render();
+                });
         }
         return epc;
-    }
-
-    _render_bmd_lines(epc) {
-        let model = this.data.bmd,
-            dr = epc.plot,
-            line = new BmdLine(model, dr, "blue");
-
-        line.render();
     }
 }
 
