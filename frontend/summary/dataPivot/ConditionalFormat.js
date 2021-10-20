@@ -278,7 +278,7 @@ class _DataPivot_settings_conditional {
                     dp.data,
                     dp.settings.filters,
                     dp.settings.plot_settings.filter_logic,
-                    dp.settings.plot_settings.filter_string
+                    dp.settings.plot_settings.filter_query
                 ),
                 arr = subset.map(function(v) {
                     return v[fieldName.val()];

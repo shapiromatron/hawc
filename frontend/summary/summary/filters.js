@@ -5,13 +5,13 @@ import Query from "shared/parsers/query";
 
 export const DATA_FILTER_CONTAINS = "contains",
     DATA_FILTER_OPTIONS = [
+        {id: DATA_FILTER_CONTAINS, label: "contains"},
+        {id: "not_contains", label: "does not contain"},
+        {id: "exact", label: "exact"},
         {id: "gt", label: ">"},
         {id: "gte", label: "≥"},
         {id: "lt", label: "<"},
         {id: "lte", label: "≤"},
-        {id: "exact", label: "exact"},
-        {id: DATA_FILTER_CONTAINS, label: "contains"},
-        {id: "not_contains", label: "does not contain"},
     ],
     DATA_FILTER_LOGIC_AND = "and",
     DATA_FILTER_LOGIC_OR = "or",
@@ -21,6 +21,10 @@ export const DATA_FILTER_CONTAINS = "contains",
         {id: DATA_FILTER_LOGIC_OR, label: "OR"},
         {id: DATA_FILTER_LOGIC_CUSTOM, label: "CUSTOM"},
     ],
+    filterLogicHelpText =
+        "Should multiple filter criteria be required for ALL rows (AND), ANY row (OR), or a custom query?",
+    filterQueryHelpText =
+        "Custom query using criteria row # and logic operators; e.g., 1 AND (2 OR 3) AND NOT 4",
     filterFunction = function(filterType) {
         switch (filterType) {
             case "lt":
@@ -31,7 +35,7 @@ export const DATA_FILTER_CONTAINS = "contains",
                 return (val, target) => val > target;
             case "gte":
                 return (val, target) => val >= target;
-            case "contains":
+            case DATA_FILTER_CONTAINS:
                 return (val, target) =>
                     val &&
                     val
@@ -67,40 +71,26 @@ export const DATA_FILTER_CONTAINS = "contains",
                 console.error(`Unrecognized filter: ${filter.type}`);
         }
     },
-    applyRowFilters = function(arr, filters, filter_logic, filter_string) {
-        if (filters.length === 0 || arr.length == 0) {
-            return arr;
-        }
-
-        let includes = new Set(),
-            excludes = new Set();
-        if (filter_logic === DATA_FILTER_LOGIC_AND) {
-            includes = new Set(_.range(arr.length));
-        } else if (filter_logic === DATA_FILTER_LOGIC_OR) {
-            excludes = new Set(_.range(arr.length));
-        } else if (filter_logic === DATA_FILTER_LOGIC_CUSTOM) {
-            let getValue = i => {
-                    i -= 1; // i uses 1 based indexing
-                    let filter = filters[i];
-                    if (filter.column === NULL_VALUE) {
-                        return arr;
-                    }
-                    let target = normalizeTargetValue(filter),
-                        func = filterFunction(filter.type);
-                    if (func) {
-                        return arr.filter(e => func(e[filter.column], target));
-                    } else {
-                        console.error(`Unrecognized filter: ${filter.type}`);
-                    }
-                },
-                negateValue = v => _.difference(arr, v),
-                andValues = (l, r) => _.intersection(l, r),
-                orValues = (l, r) => _.union(l, r);
-            return Query.parse(filter_string, {getValue, negateValue, andValues, orValues});
-        } else {
-            console.error(`Unrecognized filter_logic: ${filter_logic}`);
-        }
-
+    applyCustomQueryFilters = function(arr, filters, filter_query) {
+        let getValue = i => {
+                let filter = filters[i - 1]; // convert 1 to 0 indexing
+                if (filter.column === NULL_VALUE) {
+                    return arr;
+                }
+                let target = normalizeTargetValue(filter),
+                    func = filterFunction(filter.type);
+                if (func) {
+                    return arr.filter(e => func(e[filter.column], target));
+                } else {
+                    console.error(`Unrecognized filter: ${filter.type}`);
+                }
+            },
+            negateValue = v => _.difference(arr, v),
+            andValues = (l, r) => _.intersection(l, r),
+            orValues = (l, r) => _.union(l, r);
+        return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+    },
+    applyFilterLogic = function(arr, filters, filter_logic, includes, excludes) {
         filters
             .filter(d => d.column !== NULL_VALUE)
             .forEach(filter => {
@@ -114,7 +104,7 @@ export const DATA_FILTER_CONTAINS = "contains",
                                 includes.delete(i);
                             }
                         });
-                    } else {
+                    } else if (filter_logic === DATA_FILTER_LOGIC_OR) {
                         excludes.forEach(i => {
                             if (func(arr[i][filter.column], target)) {
                                 excludes.delete(i);
@@ -127,4 +117,32 @@ export const DATA_FILTER_CONTAINS = "contains",
                 }
             });
         return arr.filter((_, i) => includes.has(i));
+    },
+    applyRowFilters = function(arr, filters, filter_logic, filter_query) {
+        if (filters.length === 0 || arr.length == 0) {
+            return arr;
+        }
+        switch (filter_logic) {
+            case DATA_FILTER_LOGIC_CUSTOM:
+                return applyCustomQueryFilters(arr, filters, filter_query);
+            case DATA_FILTER_LOGIC_AND:
+                return applyFilterLogic(
+                    arr,
+                    filters,
+                    filter_logic,
+                    new Set(_.range(arr.length)),
+                    new Set()
+                );
+            case DATA_FILTER_LOGIC_OR:
+                return applyFilterLogic(
+                    arr,
+                    filters,
+                    filter_logic,
+                    new Set(),
+                    new Set(_.range(arr.length))
+                );
+            default:
+                console.error(`Unrecognized filter_logic: ${filter_logic}`);
+                return;
+        }
     };

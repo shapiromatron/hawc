@@ -252,8 +252,7 @@ class CrossviewPlot extends D3Visualization {
                 return settings.endpointFilterLogic === "and" ? _.every(res) : _.some(res);
             },
             getValue = i => {
-                i -= 1; // i uses 1 based indexing
-                let filter = settings.endpointFilters[i];
+                let filter = settings.endpointFilters[i - 1]; // convert 1 to 0 indexing
                 return this.data.endpoints.filter(e =>
                     filter.fn(CrossviewPlot._cw_filter_process[filter.field](e))
                 );
@@ -264,7 +263,7 @@ class CrossviewPlot extends D3Visualization {
             parserOptions = {getValue, negateValue, andValues, orValues},
             partialDataset =
                 settings.endpointFilterLogic === "custom"
-                    ? Query.parse(settings.endpointFilterString, parserOptions)
+                    ? Query.parse(settings.filtersQuery, parserOptions)
                     : this.data.endpoints.filter(applyEndpointFilters),
             numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
             dataset = _.chain(partialDataset)

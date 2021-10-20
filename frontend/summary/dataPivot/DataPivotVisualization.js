@@ -107,7 +107,7 @@ class DataPivotVisualization extends D3Plot {
         return sorted;
     }
 
-    static filter(arr, filters, filter_logic, filter_string) {
+    static filter(arr, filters, filter_logic, filter_query) {
         if (filters.length === 0) return arr;
 
         var field_name,
@@ -135,17 +135,17 @@ class DataPivotVisualization extends D3Plot {
 
         if (filter_logic === "custom") {
             let getValue = i => {
-                    i -= 1; // i uses 1 based indexing
-                    func = filters_map[filters[i].quantifier];
-                    field_name = filters[i].field_name;
+                    let idx = i - 1; // convert 1 to 0 indexing,
+                    func = filters_map[filters[idx].quantifier];
+                    field_name = filters[idx].field_name;
                     if (field_name === NULL_CASE) return arr;
-                    value = filters[i].value;
+                    value = filters[idx].value;
                     return arr.filter(func);
                 },
                 negateValue = v => _.difference(arr, v),
                 andValues = (l, r) => _.intersection(l, r),
                 orValues = (l, r) => _.union(l, r);
-            return Query.parse(filter_string, {getValue, negateValue, andValues, orValues});
+            return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
         }
 
         if (filter_logic === "and") {
@@ -421,7 +421,7 @@ class DataPivotVisualization extends D3Plot {
             rows,
             settings.filters,
             this.dp_settings.plot_settings.filter_logic,
-            this.dp_settings.plot_settings.filter_string
+            this.dp_settings.plot_settings.filter_query
         );
 
         rows = DataPivotVisualization.sort_with_overrides(

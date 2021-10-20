@@ -7,6 +7,8 @@ import SelectInput from "shared/components/SelectInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 
 import {
+    filterLogicHelpText,
+    filterQueryHelpText,
     DATA_FILTER_LOGIC_OPTIONS,
     DATA_FILTER_OPTIONS,
     DATA_FILTER_LOGIC_CUSTOM,
@@ -61,28 +63,24 @@ FilterRow.propTypes = {
 class FilterTable extends Component {
     render() {
         const store = this.props.store.subclass,
-            {filters, filtersLogic, filtersString} = store.settings;
+            {filters, filtersLogic, filtersQuery} = store.settings;
         return (
             <>
                 <table className="table table-sm table-striped">
                     <colgroup>
-                        <col width="5%" />
+                        <col width="10%" />
                         <col width="35%" />
-                        <col width="25%" />
+                        <col width="15%" />
                         <col width="25%" />
                         <col width="10%" />
                     </colgroup>
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Row #</th>
                             <th>Data column</th>
                             <th>Filter type</th>
                             <th>Value</th>
-                            <ActionsTh
-                                onClickNew={() => {
-                                    store.createNewFilter();
-                                }}
-                            />
+                            <ActionsTh onClickNew={store.createNewFilter} />
                         </tr>
                     </thead>
                     <tbody>
@@ -95,18 +93,17 @@ class FilterTable extends Component {
                     <RadioInput
                         label="Filter logic:"
                         name="filtersLogic"
-                        helpText="Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?"
+                        helpText={filterLogicHelpText}
                         onChange={value => store.changeSettings("filtersLogic", value)}
                         value={filtersLogic}
                         horizontal={true}
                         choices={DATA_FILTER_LOGIC_OPTIONS}
-                    />{" "}
+                    />
                     {filtersLogic === DATA_FILTER_LOGIC_CUSTOM ? (
                         <TextInput
-                            name="filtersString"
-                            value={filtersString || ""}
-                            helpText="Custom logic can be described using filter row numbers and logic operators. For example: 1 AND (2 OR NOT 3)"
-                            onChange={e => store.changeSettings(e.target.name, e.target.value)}
+                            value={filtersQuery}
+                            helpText={filterQueryHelpText}
+                            onChange={e => store.changeSettings("filtersQuery", e.target.value)}
                         />
                     ) : null}
                 </div>

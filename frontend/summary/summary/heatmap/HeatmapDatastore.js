@@ -34,7 +34,7 @@ class HeatmapDatastore {
             dataset,
             settings.filters,
             settings.filtersLogic,
-            settings.filtersString
+            settings.filtersQuery
         );
         this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();

@@ -10,12 +10,13 @@ import {
 } from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
+import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
 
 let buildFilterTable = function(tab, dp, handleTableChange) {
         var thead = $("<thead>").html(
                 buildHeaderTr(["Field name", "Filter type", "Value", "Ordering"])
             ),
-            colgroup = buildColGroup(["", "180px", "", "120px"]),
+            colgroup = buildColGroup(["30%", "20%", "35%", "15%"]),
             tbody = $("<tbody>").on("change autocompletechange", "input,select", handleTableChange),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.filters,
@@ -62,11 +63,11 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 <label class="form-check-label">CUSTOM</label>
             </div>`),
             string = $(`<div class="form-group">
-                <input class="form-control" type="text" name="filter_string">
+                <input class="form-control" type="text" name="filter_query">
             </div>
-            <p class="form-text text-muted">Custom logic can be described using filter row numbers and logic operators. For example: 1 AND (2 OR NOT 3)</p>`),
-            value = dp.settings.plot_settings.filter_logic || "and",
-            string_value = dp.settings.plot_settings.filter_string || "";
+            <p class="form-text text-muted">${filterQueryHelpText}. In the above table, the first row is 1, second row is 2, etc.</p>`),
+            value = dp.settings.plot_settings.filter_logic,
+            string_value = dp.settings.plot_settings.filter_query;
 
         // set initial value
         if (value === "and") {
@@ -92,8 +93,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             }
             handleTableChange();
         });
-        div.on("change", 'input[name="filter_string"]', function() {
-            dp.settings.plot_settings.filter_string = $('input[name="filter_string"]').val();
+        div.on("change", 'input[name="filter_query"]', function() {
+            dp.settings.plot_settings.filter_query = $('input[name="filter_query"]').val();
             handleTableChange();
         });
 
@@ -102,7 +103,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             and,
             or,
             custom,
-            '<p class="form-text text-muted">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
+            `<p class="form-text text-muted">${filterLogicHelpText}</p>`,
             string
         );
 
@@ -190,7 +191,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             sorts = dp.settings.sorts.filter(get_selected_fields),
             overrides = dp.settings.row_overrides,
             filter_logic = dp.settings.plot_settings.filter_logic,
-            filter_string = dp.settings.plot_settings.filter_string,
+            filter_query = dp.settings.plot_settings.filter_query,
             dataline = dp.settings.dataline_settings[0],
             datapoints = dp.settings.datapoint_settings,
             barchart = dp.settings.barchart,
@@ -204,7 +205,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         // apply filters
-        data = DataPivotVisualization.filter(dp.data, filters, filter_logic, filter_string);
+        data = DataPivotVisualization.filter(dp.data, filters, filter_logic, filter_query);
 
         data = _.filter(
             data,
