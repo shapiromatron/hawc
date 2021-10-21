@@ -145,7 +145,12 @@ class DataPivotVisualization extends D3Plot {
                 negateValue = v => _.difference(arr, v),
                 andValues = (l, r) => _.intersection(l, r),
                 orValues = (l, r) => _.union(l, r);
-            return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            try {
+                return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            } catch (err) {
+                console.error(err);
+                return [];
+            }
         }
 
         if (filter_logic === "and") {

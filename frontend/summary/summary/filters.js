@@ -88,7 +88,12 @@ export const DATA_FILTER_CONTAINS = "contains",
             negateValue = v => _.difference(arr, v),
             andValues = (l, r) => _.intersection(l, r),
             orValues = (l, r) => _.union(l, r);
-        return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+        try {
+            return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
     },
     applyFilterLogic = function(arr, filters, filter_logic, includes, excludes) {
         filters

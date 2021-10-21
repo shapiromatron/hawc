@@ -40,9 +40,8 @@ def add_query_string(apps, schema_editor):
             if "filter_logic" not in settings["plot_settings"]:
                 settings["plot_settings"]["filter_logic"] = "and"
             settings["plot_settings"]["filter_query"] = ""
-            dp.settings = json.dumps(settings)
+            DataPivot.objects.filter(id=dp.id).update(settings=json.dumps(settings))
             updates.append(dp.id)
-            dp.save()
         else:
             failures.append(dp.id)
     print(f"{len(updates)} DataPivots updated; {len(failures)} not updated: {failures}")
@@ -81,12 +80,10 @@ def undo_query_string(apps, schema_editor):
 
         if "plot_settings" in settings:
             settings["plot_settings"].pop("filter_query")
-            dp.settings = json.dumps(settings)
+            DataPivot.objects.filter(id=dp.id).update(settings=json.dumps(settings))
             updates.append(dp.id)
-            dp.save()
         else:
             failures.append(dp.id)
-    DataPivot.objects.bulk_update(updates, ["settings"])
     print(f"{len(updates)} DataPivot updated; {len(failures)} not updated: {failures}")
 
 

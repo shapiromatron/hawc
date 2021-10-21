@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import {filterFunction} from "./filters";
+import {filterFunction, DATA_FILTER_LOGIC_CUSTOM} from "./filters";
 import h from "shared/utils/helpers";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import Query from "shared/parsers/query";
@@ -261,20 +261,26 @@ class CrossviewPlot extends D3Visualization {
             andValues = (l, r) => _.intersection(l, r),
             orValues = (l, r) => _.union(l, r),
             parserOptions = {getValue, negateValue, andValues, orValues},
-            partialDataset =
-                settings.endpointFilterLogic === "custom"
-                    ? Query.parse(settings.filtersQuery, parserOptions)
-                    : this.data.endpoints.filter(applyEndpointFilters),
             numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
-            dataset = _.chain(partialDataset)
-                .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
-                .map(processEndpoint)
-                .filter(function(d) {
-                    return d.plotting.length > 0;
-                })
-                .value(),
             container_height = settings.height + 50, // menu-spacing
             dose_scale = settings.dose_isLog ? "log" : "linear";
+
+        // build and filter dataset
+        let dataset = [];
+        if (settings.endpointFilterLogic === DATA_FILTER_LOGIC_CUSTOM) {
+            try {
+                dataset = Query.parse(settings.filtersQuery, parserOptions);
+            } catch (err) {
+                console.error(err);
+            }
+        } else {
+            dataset = this.data.endpoints.filter(applyEndpointFilters);
+        }
+        dataset = _.chain(dataset)
+            .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
+            .map(processEndpoint)
+            .filter(d => d.plotting.length > 0)
+            .value();
 
         // build filters
         var filters = _.chain(settings.filters)
