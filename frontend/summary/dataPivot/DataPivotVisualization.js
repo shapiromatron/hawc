@@ -11,6 +11,7 @@ import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
+import Query from "shared/parsers/query";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -106,7 +107,7 @@ class DataPivotVisualization extends D3Plot {
         return sorted;
     }
 
-    static filter(arr, filters, filter_logic) {
+    static filter(arr, filters, filter_logic, filter_query) {
         if (filters.length === 0) return arr;
 
         var field_name,
@@ -131,6 +132,26 @@ class DataPivotVisualization extends D3Plot {
                         .indexOf(value.toLowerCase()) < 0,
                 exact: v => v[field_name].toString().toLowerCase() === value.toLowerCase(),
             };
+
+        if (filter_logic === "custom") {
+            let getValue = i => {
+                    let idx = i - 1; // convert 1 to 0 indexing,
+                    func = filters_map[filters[idx].quantifier];
+                    field_name = filters[idx].field_name;
+                    if (field_name === NULL_CASE) return arr;
+                    value = filters[idx].value;
+                    return arr.filter(func);
+                },
+                negateValue = v => _.difference(arr, v),
+                andValues = (l, r) => _.intersection(l, r),
+                orValues = (l, r) => _.union(l, r);
+            try {
+                return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            } catch (err) {
+                console.error(err);
+                return [];
+            }
+        }
 
         if (filter_logic === "and") {
             new_arr = arr;
@@ -404,7 +425,8 @@ class DataPivotVisualization extends D3Plot {
         rows = DataPivotVisualization.filter(
             rows,
             settings.filters,
-            this.dp_settings.plot_settings.filter_logic
+            this.dp_settings.plot_settings.filter_logic,
+            this.dp_settings.plot_settings.filter_query
         );
 
         rows = DataPivotVisualization.sort_with_overrides(

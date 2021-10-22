@@ -277,11 +277,10 @@ class _DataPivot_settings_conditional {
             var subset = DataPivotVisualization.filter(
                     dp.data,
                     dp.settings.filters,
-                    dp.settings.plot_settings.filter_logic
+                    dp.settings.plot_settings.filter_logic,
+                    dp.settings.plot_settings.filter_query
                 ),
-                arr = subset.map(function(v) {
-                    return v[fieldName.val()];
-                }),
+                arr = subset.map(v => v[fieldName.val()]),
                 vals = DataPivot.getRowDetails(arr);
 
             if (conditionType.val() === "discrete-style") {
