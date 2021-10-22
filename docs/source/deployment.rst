@@ -108,4 +108,6 @@ The django setting ``ANYONE_CAN_CREATE_ASSESSMENTS`` determines if anyone can cr
 
 If anyone cannot create assessments, either superusers or users assigned to the group named ``can-create-assessments`` are the only allowed to create assessments; if that group access is removed then assessment creation is also revoked.
 
+- ``HAWC_SESSION_DURATION`` [int, default 604800 seconds or 1 week]. The length of a HAWC user-session. After this duration is exceeded, the a user must login for a new session.
+
 The django setting `PM_CAN_MAKE_PUBLIC` determines if project managers for an assessment have the ability to make an assessment public (and editable) on the HAWC website. The default behavior (True) allows this behavior. If set to False, only administrators make assessments public. To change in staging/production, set the environment variable ``HAWC_PM_CAN_MAKE_PUBLIC`` to "True" or "False" (default "True").
