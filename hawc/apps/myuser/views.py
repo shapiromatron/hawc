@@ -72,6 +72,7 @@ class ProfileDetail(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "User profile")
+        context["token"] = self.request.user.get_api_token()
         return context
 
 
