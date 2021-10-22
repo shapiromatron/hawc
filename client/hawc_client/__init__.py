@@ -135,6 +135,15 @@ class HawcSession:
         token = response.json()["token"]
         self._session.headers.update(Authorization=f"Token {token}")
 
+    def set_authentication_token(self, token: str):
+        """
+        Set authentication token (browser session specific)
+
+        Args:
+            token (str): authentication token from your user profile
+        """
+        self._session.headers.update(Authorization=f"Token {token}")
+
     def iter_pages(self, url: str, params: Dict = None) -> Generator:
         """
         Generator that crawls paginated HAWC responses.
