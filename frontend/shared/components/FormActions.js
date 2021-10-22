@@ -4,7 +4,15 @@ import PropTypes from "prop-types";
 
 class FormActions extends Component {
     render() {
-        const {isForm, handleSubmit, submitIcon, submitText, cancel, cancelIcon} = this.props;
+        const {
+            isForm,
+            handleSubmit,
+            submitIcon,
+            submitText,
+            cancel,
+            cancelIcon,
+            cancelText,
+        } = this.props;
         return (
             <div className="form-actions">
                 <button
@@ -17,12 +25,12 @@ class FormActions extends Component {
                 &emsp;
                 {_.isString(cancel) ? (
                     <a role="button" className="btn btn-secondary" href={cancel}>
-                        <i className="fa fa-fw fa-times"></i> Cancel
+                        <i className="fa fa-fw fa-times"></i> {cancelText}
                     </a>
                 ) : null}
                 {_.isFunction(cancel) ? (
                     <button type="button" className="btn btn-secondary" onClick={cancel}>
-                        <i className={`fa fa-fw ${cancelIcon}`}></i> Cancel
+                        <i className={`fa fa-fw ${cancelIcon}`}></i> {cancelText}
                     </button>
                 ) : null}
             </div>

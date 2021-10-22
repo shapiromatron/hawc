@@ -47,6 +47,17 @@ const helpers = {
             body: JSON.stringify(obj),
         };
     },
+    fetchPostFile(csrf, file) {
+        return {
+            credentials: "same-origin",
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrf,
+                "Content-Disposition": "attachment; filename=upload.xlsx",
+            },
+            body: file,
+        };
+    },
     fetchForm(csrf, form, verb = "POST") {
         // form should be a <form> html element
         return {

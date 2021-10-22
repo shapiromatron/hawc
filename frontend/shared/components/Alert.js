@@ -5,8 +5,8 @@ class Alert extends React.Component {
     render() {
         const {className, icon, message} = this.props;
         return (
-            <div className={`alert ${className}`}>
-                {icon ? <i className={`fa fa-fw ${icon} mr-3`}></i> : null}
+            <div className={`alert ${className} mb-0`} role="alert">
+                {icon ? <i className={`fa fa-fw ${icon} mr-1`}></i> : null}
                 {message}
             </div>
         );
