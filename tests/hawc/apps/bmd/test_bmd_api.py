@@ -13,9 +13,9 @@ class TestSessionViewset:
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # setup - make assessment editable; fetch required metadata
-        sess_id = 2
-        Assessment.objects.filter(id=sess_id).update(editable=True)
-        session = Session.objects.get(id=sess_id)
+        assess_id = 2
+        Assessment.objects.filter(id=assess_id).update(editable=True)
+        session = Session.objects.filter(endpoint__assessment=assess_id).first()
         model = session.models.first()
         url = session.get_selected_model_url()
 
