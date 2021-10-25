@@ -259,7 +259,7 @@ class Endpoint extends Observee {
                 return span;
             },
             bmd_response = function(type, showURL) {
-                if (self.data.bmd === null && !self.data.bmd_url) {
+                if (self.data.bmds.length === 0) {
                     return;
                 }
                 var el = $("<div>");

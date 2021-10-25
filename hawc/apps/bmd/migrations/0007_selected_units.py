@@ -7,7 +7,7 @@ def set_dose_units(apps, schema_editor):
     updates = []
     for sm in SelectedModel.objects.all():
         if sm.model is None:
-            sess = sm.endpoint.get_latest_bmd_session()
+            sess = SelectedModel.objects.filter(endpoint_id=sm.endpoint_id).latest()
         else:
             sess = sm.model.session
         sm.dose_units_id = sess.dose_units_id
