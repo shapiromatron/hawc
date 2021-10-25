@@ -50,6 +50,25 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
+    @action(detail=True, methods=("get", "post"))
+    def tagtree(self, request, pk, *args, **kwargs):
+        """
+        Get/Update literature tags for an assessment in tree-based structure
+        """
+        assessment = self.get_object()
+        context = context = {"assessment": assessment}
+        if self.request.method == "GET":
+            if not assessment.user_can_view_object(request.user):
+                raise exceptions.PermissionDenied()
+            serializer = serializers.ReferenceTreeSerializer(instance={}, context=context)
+        elif self.request.method == "POST":
+            if not assessment.user_can_edit_object(request.user):
+                raise exceptions.PermissionDenied()
+            serializer = serializers.ReferenceTreeSerializer(data=request.data, context=context)
+            serializer.is_valid(raise_exception=True)
+            serializer.update()
+        return Response(serializer.data)
+
     @action(detail=True, pagination_class=PaginationWithCount)
     def references(self, request, pk):
         assessment = self.get_object()

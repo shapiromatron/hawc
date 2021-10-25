@@ -1,0 +1,18 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block title %}Bulk tag references |{{block.super}}{% endblock %}
+
+{% block content %}
+  <div id="main"></div>
+{% endblock %}
+
+{% block extrajs %}
+{{ config|json_script:"config" }}
+<script type="text/javascript">
+  const el = document.getElementById('main'),
+      data = window.app.getConfig();
+  window.app.startup("litStartup", function (app) {
+    app.startupBulkTagReferences(el, data)
+  });
+</script>
+{% endblock extrajs %}

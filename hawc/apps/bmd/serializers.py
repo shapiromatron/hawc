@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from jsonschema import ValidationError, validate
 from rest_framework import serializers
 
+from ..common.serializers import validate_jsonschema
 from . import models
 
 
@@ -106,18 +106,10 @@ class SessionUpdateSerializer(serializers.Serializer):
     }
 
     def validate_bmrs(self, value):
-        try:
-            validate(value, self.bmr_schema)
-        except ValidationError as err:
-            raise serializers.ValidationError(err.message)
-        return value
+        return validate_jsonschema(value, self.bmr_schema)
 
     def validate_modelSettings(self, value):
-        try:
-            validate(value, self.model_schema)
-        except ValidationError as err:
-            raise serializers.ValidationError(err.message)
-        return value
+        return validate_jsonschema(value, self.model_schema)
 
     def save(self):
         self.instance.bmrs = self.validated_data["bmrs"]

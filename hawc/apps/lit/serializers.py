@@ -18,6 +18,7 @@ from rest_framework.exceptions import ParseError
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
+from ..common.serializers import validate_jsonschema
 from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
@@ -180,6 +181,50 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
         model = models.Reference
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ("id",)
+
+
+class ReferenceTreeSerializer(serializers.Serializer):
+    tree = serializers.JSONField()
+
+    tree_schema = {
+        "$id": "tree",
+        "$schema": "https://json-schema.org/draft-07/schema",
+        "$defs": {
+            "tagNode": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["data"],
+                "properties": {
+                    "id": {"type": "integer"},
+                    "data": {
+                        "type": "object",
+                        "required": ["name"],
+                        "additionalProperties": False,
+                        "properties": {
+                            "name": {"type": "string", "minLength": 1, "maxLength": 128},
+                            "slug": {"type": "string", "pattern": r"^[-a-zA-Z0-9_]+$"},
+                        },
+                    },
+                    "children": {"type": "array", "items": {"$ref": "#/$defs/tagNode"}},
+                },
+            }
+        },
+        "type": "array",
+        "items": {"$ref": "#/$defs/tagNode"},
+    }
+
+    def validate_tree(self, value):
+        return validate_jsonschema(value, self.tree_schema)
+
+    def update(self):
+        assessment_id = self.context["assessment"].id
+        models.ReferenceFilterTag.replace_tree(assessment_id, self.validated_data["tree"])
+
+    def to_representation(self, instance):
+        assessment_id = self.context["assessment"].id
+        root = models.ReferenceFilterTag.get_assessment_root(assessment_id)
+        tree = root.dump_bulk(root, keep_ids=True)
+        return {"tree": tree[0]["children"]}
 
 
 class BulkReferenceTagSerializer(serializers.Serializer):

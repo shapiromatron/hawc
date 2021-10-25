@@ -38,4 +38,8 @@ def literature(driver, root_url):
     h.wait_until(h.Text("1 references found.").exists)
     assert len(driver.find_elements_by_css_selector(".referenceDetail")) == 1
 
+    # /lit/assessment/:id/tag/bulk/
+    h.go_to(root_url + "/lit/assessment/1/tag/bulk/")
+    h.wait_until(h.Text("Select an Excel file (.xlsx) to load and process.").exists)
+
     shared.logout()
