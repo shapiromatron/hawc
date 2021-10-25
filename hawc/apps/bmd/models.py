@@ -386,15 +386,6 @@ class SelectedModel(models.Model):
         get_latest_by = "created"
         unique_together = (("endpoint", "dose_units"),)
 
-    @classmethod
-    def save_new(cls, endpoint):
-        cls.objects.create(endpoint=endpoint)
-
-    def change_selection(self, endpoint=None, notes=""):
-        self.endpoint = endpoint
-        self.notes = notes
-        self.save()
-
     def get_assessment(self):
         return self.endpoint.get_assessment()
 
