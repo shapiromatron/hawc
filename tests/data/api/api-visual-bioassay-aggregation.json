@@ -177,9 +177,7 @@
         "url": "/ani/animal-group/3/"
       },
       "assessment": 2,
-      "bmd": null,
-      "bmd_notes": "",
-      "bmd_url": "",
+      "bmds": [],
       "confidence_interval": null,
       "created": "2020-05-08T12:47:49.464004-05:00",
       "data_extracted": true,

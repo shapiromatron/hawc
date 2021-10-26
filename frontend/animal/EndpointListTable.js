@@ -21,8 +21,8 @@ const endpointRow = function(endpoint) {
             endpoint.doseUnits.activeUnit.name,
             endpoint.get_special_dose_text("NOEL"),
             endpoint.get_special_dose_text("LOEL"),
-            endpoint.get_bmd_data("BMD"),
-            endpoint.get_bmd_data("BMDL"),
+            endpoint.get_special_bmd_value("BMD"),
+            endpoint.get_special_bmd_value("BMDL"),
         ];
     return row;
 };

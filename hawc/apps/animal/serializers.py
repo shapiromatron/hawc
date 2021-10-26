@@ -284,17 +284,24 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.get_incidence_summary(ret["data_type"], ret["groups"])
         models.Endpoint.setMaximumPercentControlChange(ret)
 
-        ret["bmd"] = None
-        ret["bmd_notes"] = ""
-        ret["bmd_url"] = ""
-        selected_model = instance.get_selected_bmd_model()
-        if selected_model:
-            ret["bmd_notes"] = selected_model.notes
-            if selected_model.model_id is not None:
-                ret["bmd"] = ModelSerializer().to_representation(selected_model.model)
-            else:
-                ret["bmd_url"] = instance.bmd_sessions.latest().get_absolute_url()
-
+        selected_models = instance.bmd_models.all()
+        bmds = []
+        if selected_models.count() > 0:
+            for sm in selected_models:
+                model_data = ModelSerializer().to_representation(sm.model) if sm.model_id else None
+                bmds.append(
+                    {
+                        "dose_units_id": sm.dose_units_id,
+                        "notes": sm.notes,
+                        "model": model_data,
+                        "session_url": model_data["url"]
+                        if model_data
+                        else instance.bmd_sessions.filter(dose_units_id=sm.dose_units_id)
+                        .latest()
+                        .get_absolute_url(),
+                    }
+                )
+        ret["bmds"] = bmds
         return ret
 
     def _validate_term_and_text(self, data, term_field: str, text_field: str, term_type_str: str):
