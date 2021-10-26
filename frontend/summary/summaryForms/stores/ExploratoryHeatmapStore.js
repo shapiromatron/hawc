@@ -49,6 +49,7 @@ class ExploratoryHeatmapStore {
             autorotate_tick_labels: true,
             filters: [],
             filtersLogic: DATA_FILTER_LOGIC_AND,
+            filtersQuery: "",
             table_fields: [
                 createTableRow(),
                 createTableRow(),

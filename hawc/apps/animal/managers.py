@@ -184,9 +184,9 @@ class EndpointManager(BaseManager):
         # get BMD values
         values = dict(
             endpoint_id="endpoint id",
+            dose_units_id="dose units id",
             model__output__BMD="BMD",
             model__output__BMDL="BMDL",
-            model__session__dose_units_id="dose units id",
         )
         qs = SelectedModel.objects.filter(endpoint__assessment=assessment).values_list(
             *values.keys()

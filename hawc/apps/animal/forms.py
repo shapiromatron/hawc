@@ -708,14 +708,8 @@ class EndpointFilterForm(forms.Form):
         ("effect", "effect"),
         ["-NOEL", "<NOEL-NAME>"],
         ["-LOEL", "<LOEL-NAME>"],
-        # BMD/BMDL is stored in output which is a JsonField on the bmd Model object. We want to sort on a sub-field of that.
-        # when/if HAWC upgrades to Django 2.1 (see yekta's comment on https://stackoverflow.com/questions/36641759/django-1-9-jsonfield-order-by)
-        # could possibly do something like this instead.
-        # for now we use a custom sort string and handle it in EndpointList class
-        # ('bmd_model__model__output__-BMD', 'BMD'),
-        # ('bmd_model__model__output__-BMDL', 'BMDLS'),
-        ("customBMD", "BMD"),
-        ("customBMDLS", "BMDLS"),
+        ("bmd", "BMD"),
+        ("bmdl", "BMDLS"),
         ("effect_subtype", "effect subtype"),
         ("animal_group__experiment__chemical", "chemical"),
     ]

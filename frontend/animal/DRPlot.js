@@ -396,20 +396,9 @@ class DRPlot extends D3Plot {
 
     add_selected_endpoint_BMD() {
         // Update BMD lines based on dose-changes
-        var self = this;
-        if (
-            this.endpoint.data.BMD &&
-            this.endpoint.data.BMD.dose_units_id == this.endpoint.doseUnits.activeUnit.id
-        ) {
-            var append = true;
-            self.bmd.forEach(function(v, i) {
-                if (v.BMD.id === self.endpoint.data.BMD.id) {
-                    append = false;
-                }
-            });
-            if (append) {
-                this.add_bmd_line(this.endpoint.data.BMD, "d3_bmd_selected");
-            }
+        const selected = this.endpoint.get_active_selected_bmd();
+        if (selected && this.bmd.filter(d => d.id === selected.model.id).length === 0) {
+            this.add_bmd_line(selected.model, "d3_bmd_selected");
         }
     }
 
@@ -588,7 +577,7 @@ class DRPlot extends D3Plot {
         legend_settings.box_h = legend_settings.items.length * legend_settings.item_height;
 
         legend_settings.box_padding = 5;
-        legend_settings.dot_r = 5;
+        legend_settings.dot_r = 6;
 
         if (this.legend_left) {
             legend_settings.box_l = this.legend_left;
