@@ -24,7 +24,7 @@ Using a notebook or python shell:
 
     client = HawcClient("https://hawcproject.org")
 
-    # Authentication is deployment specific. If the hawc deployment stores and managers user
+    # Authentication is deployment specific. If the hawc deployment stores and manages user
     # accounts directly, then you can login via the HAWC API to authenticate:
     client.authenticate(email="me@me.com", password=getpass())
 
