@@ -176,6 +176,7 @@ AUTH_USER_MODEL = "myuser.HAWCUser"
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
+INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
 
 # Server URL settings
 ROOT_URLCONF = "hawc.main.urls"
