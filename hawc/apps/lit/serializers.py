@@ -188,7 +188,7 @@ class ReferenceTreeSerializer(serializers.Serializer):
 
     tree_schema = {
         "$id": "tree",
-        "$schema": "https://json-schema.org/draft-07/schema",
+        "$schema": "http://json-schema.org/draft-07/schema#",
         "$defs": {
             "tagNode": {
                 "type": "object",

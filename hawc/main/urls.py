@@ -19,9 +19,6 @@ import hawc.apps.summary.urls
 from hawc import __version__
 from hawc.apps.assessment import views
 
-admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
-
-
 open_api_patterns = [
     path("ani/api/", include(hawc.apps.animal.urls.router.urls)),
     path("assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
@@ -65,21 +62,7 @@ urlpatterns = [
     path("403/", views.Error403.as_view(), name="403"),
     path("404/", views.Error404.as_view(), name="404"),
     path("500/", views.Error500.as_view(), name="500"),
-    # Changelog
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
-    # Admin
-    path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
-    path(
-        f"{admin_url}/assessment-size/",
-        views.AdminAssessmentSize.as_view(),
-        name="admin_assessment_size",
-    ),
-    path(
-        f"{admin_url}/media-preview/",
-        views.AdminMediaPreview.as_view(),
-        name="admin_media_preview",
-    ),
-    path(f"{admin_url}/", admin.site.urls),
     path("selectable/", include("selectable.urls")),
     path(
         "openapi/",
@@ -93,6 +76,26 @@ urlpatterns = [
     ),
 ]
 
+
+if settings.INCLUDE_ADMIN:
+    admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
+    urlpatterns += [
+        path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
+        path(
+            f"{admin_url}/assessment-size/",
+            views.AdminAssessmentSize.as_view(),
+            name="admin_assessment_size",
+        ),
+        path(
+            f"{admin_url}/media-preview/",
+            views.AdminMediaPreview.as_view(),
+            name="admin_media_preview",
+        ),
+        path(f"{admin_url}/", admin.site.urls),
+    ]
+    admin.autodiscover()
+
+
 # only for DEBUG, want to use static server otherwise
 if settings.DEBUG:
     import debug_toolbar
@@ -100,5 +103,3 @@ if settings.DEBUG:
 
     urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-admin.autodiscover()
