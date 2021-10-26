@@ -104,3 +104,4 @@ For configurable parameters, we use environment variables which are loaded in th
 - ``HAWC_ANYONE_CAN_CREATE_ASSESSMENTS`` [True/False; default True]. If true, anyone can create a new assessment. If false, only those who are added to the ``can-create-assessments`` group by system administrators can create a new assessment.
 - ``HAWC_PM_CAN_MAKE_PUBLIC`` [True/False; default True].  If true, assessment project managers have the ability to make an assessment public (and editable) on the HAWC website. If false, only administrators can make assessments public.
 - ``HAWC_INCLUDE_ADMIN`` [True/False, default True]. If true, the admin is included in the hawc deployment. If false, it's not included. In some deployments, the admin may be deployed separately with additional security.
+- ``HAWC_SESSION_DURATION`` [int, default 604800 seconds or 1 week]. The length of a HAWC user-session. After this duration is exceeded, the user must login for a new session.

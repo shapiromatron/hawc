@@ -38,6 +38,13 @@
       <th>Authenticated HERO Access</th>
       <td colspan="2">{{object.HERO_access}}</td>
     </tr>
+    <tr>
+      <th>API token</th>
+      <td colspan="2">
+        {{token.key}}
+        <p class="text-muted mb-0">Token is only valid during the current login session.</p>
+    </td>
+    </tr>
   </tbody>
 </table>
 {% endblock content %}
