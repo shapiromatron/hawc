@@ -40,9 +40,10 @@ class TextField extends InputField {
 
     render() {
         this._setInput();
-        var $div = $('<div class="form-group">')
-            .append(`<label class="col-form-label">${this.schema.label}</label>`)
-            .append(this.$inp);
+        var $div = $('<div class="form-group">').append(this.$inp);
+
+        if (this.schema.label)
+            $div.prepend(`<label class="col-form-label">${this.schema.label}</label>`);
 
         if (this.schema.helpText)
             $div.append(`<span class="form-text text-muted">${this.schema.helpText}</span>`);

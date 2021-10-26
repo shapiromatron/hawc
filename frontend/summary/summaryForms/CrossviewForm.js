@@ -4,9 +4,9 @@ import $ from "$";
 import Endpoint from "animal/Endpoint";
 import CrossviewPlot from "summary/summary/CrossviewPlot";
 import Crossview from "summary/summary/Crossview";
+import {DATA_FILTER_OPTIONS, filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
 
 import BaseVisualForm from "./BaseVisualForm";
-
 import {TextField, IntegerField, ColorField, CheckboxField, RadioField} from "./Fields";
 
 import {
@@ -208,23 +208,13 @@ class CrossviewEndpointFilterField extends TableField {
     }
 
     addRow() {
-        var self = this,
-            filterOpts = [
-                {label: ">", value: "gt"},
-                {label: "≥", value: "gte"},
-                {label: "<", value: "le"},
-                {label: "≤", value: "lte"},
-                {label: "exact", value: "exact"},
-                {label: "contains", value: "contains"},
-                {label: "does not contain", value: "not_contains"},
-            ],
-            fieldTd = this.addTdSelect("field", _.keys(CrossviewPlot._filters)),
+        var fieldTd = this.addTdSelect("field", _.keys(CrossviewPlot._filters)),
             field = fieldTd.find("select"),
             valueTd = this.addTdText("value"),
             value = valueTd.find("input"),
-            setAutocomplete = function() {
+            setAutocomplete = () => {
                 var isLog = $('input[name="dose_isLog"]').prop("checked"),
-                    opts = CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog);
+                    opts = CrossviewPlot.get_options(this.parent.endpoints, field.val(), isLog);
                 value.autocomplete({source: opts});
             };
 
@@ -233,7 +223,7 @@ class CrossviewEndpointFilterField extends TableField {
         return $("<tr>")
             .append(
                 fieldTd,
-                this.addTdSelectLabels("filterType", filterOpts),
+                this.addTdSelectLabels("filterType", DATA_FILTER_OPTIONS),
                 valueTd,
                 this.tdOrdering()
             )
@@ -575,14 +565,23 @@ _.extend(CrossviewForm, {
         {
             type: RadioField,
             label: "Filter logic",
-            helpText:
-                "Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?",
+            helpText: filterLogicHelpText,
             name: "endpointFilterLogic",
             def: "and",
             options: [
                 {label: "AND", value: "and"},
                 {label: "OR", value: "or"},
+                {label: "CUSTOM", value: "custom"},
             ],
+            tab: "endpointFilters",
+        },
+        {
+            type: TextField,
+            name: "filtersQuery",
+            helpText:
+                filterQueryHelpText +
+                ". In the above table, the first row is 1, second row is 2, etc.",
+            def: "",
             tab: "endpointFilters",
         },
     ],
