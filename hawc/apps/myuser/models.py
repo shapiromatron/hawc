@@ -7,6 +7,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from rest_framework.authtoken.models import Token
 
 from ..common.helper import SerializerHelper
 from . import managers
@@ -86,6 +87,13 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
             return (
                 self.is_superuser or self.groups.filter(name=self.CAN_CREATE_ASSESSMENTS).exists()
             )
+
+    def get_api_token(self) -> Token:
+        token, _ = Token.objects.get_or_create(user=self)
+        return token
+
+    def destroy_api_token(self):
+        Token.objects.filter(user=self).delete()
 
 
 class UserProfile(models.Model):

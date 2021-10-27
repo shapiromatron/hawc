@@ -97,15 +97,11 @@ The following commands are used to generate and run the pex artifact:
 Configuration
 -------------
 
-In general, for configurable parameters, we use environment variables and corresponding settings in the `hawc.main.settings.staging`_ module. If you need to configure something that's hard-coded, we're happy to modify the settings; feel free to contact us.
+For configurable parameters, we use environment variables which are loaded in the application configuration at runtime.  See the example `configuration file`_ for a complete example. Many variables directly map to settings which are commonly used in django; refer to django documentation for these settings. Additional details on HAWC-specific variables are described below:
 
-.. _`hawc.main.settings.staging`: https://github.com/shapiromatron/hawc/blob/main/hawc/main/settings/staging.py
+.. _`configuration file`: https://github.com/shapiromatron/hawc/blob/main/compose/example.env
 
-Assessment creation & configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The django setting ``ANYONE_CAN_CREATE_ASSESSMENTS`` determines if anyone can create assessments, or if the ability to allow users to create assessments are controlled by system administrators. To change in staging/production, set the environment variable ``HAWC_ANYONE_CAN_CREATE_ASSESSMENTS`` to "True" or "False" (default "True").
-
-If anyone cannot create assessments, either superusers or users assigned to the group named ``can-create-assessments`` are the only allowed to create assessments; if that group access is removed then assessment creation is also revoked.
-
-The django setting `PM_CAN_MAKE_PUBLIC` determines if project managers for an assessment have the ability to make an assessment public (and editable) on the HAWC website. The default behavior (True) allows this behavior. If set to False, only administrators make assessments public. To change in staging/production, set the environment variable ``HAWC_PM_CAN_MAKE_PUBLIC`` to "True" or "False" (default "True").
+- ``HAWC_ANYONE_CAN_CREATE_ASSESSMENTS`` [True/False; default True]. If true, anyone can create a new assessment. If false, only those who are added to the ``can-create-assessments`` group by system administrators can create a new assessment.
+- ``HAWC_PM_CAN_MAKE_PUBLIC`` [True/False; default True].  If true, assessment project managers have the ability to make an assessment public (and editable) on the HAWC website. If false, only administrators can make assessments public.
+- ``HAWC_INCLUDE_ADMIN`` [True/False, default True]. If true, the admin is included in the hawc deployment. If false, it's not included. In some deployments, the admin may be deployed separately with additional security.
+- ``HAWC_SESSION_DURATION`` [int, default 604800 seconds or 1 week]. The length of a HAWC user-session. After this duration is exceeded, the user must login for a new session.

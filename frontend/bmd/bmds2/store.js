@@ -262,10 +262,7 @@ class Bmd2Store {
     }
     @action.bound saveSelectedModel(model_id, notes) {
         const url = this.config.selected_model_url,
-            data = {
-                model: model_id,
-                notes,
-            };
+            data = {model: model_id, notes};
 
         fetch(url, h.fetchPost(this.config.csrf, data, "POST")).then(() => {
             this.selectedModelId = model_id;

@@ -283,7 +283,9 @@ class Session(models.Model):
         return self.get_session().get_bmr_options()
 
     def get_selected_model(self):
-        return SelectedModel.objects.filter(endpoint=self.endpoint_id).first()
+        return SelectedModel.objects.filter(
+            endpoint=self.endpoint_id, dose_units=self.dose_units_id
+        ).first()
 
     def get_logic(self):
         return LogicField.objects.filter(assessment=self.endpoint.assessment_id)
@@ -369,8 +371,11 @@ class Model(models.Model):
 class SelectedModel(models.Model):
     objects = managers.SelectedModelManager()
 
-    endpoint = models.OneToOneField(
-        "animal.Endpoint", on_delete=models.CASCADE, related_name="bmd_model"
+    endpoint = models.ForeignKey(
+        "animal.Endpoint", on_delete=models.CASCADE, related_name="bmd_models"
+    )
+    dose_units = models.ForeignKey(
+        "assessment.DoseUnits", on_delete=models.CASCADE, related_name="selected_models"
     )
     model = models.ForeignKey(Model, on_delete=models.CASCADE, null=True)
     notes = models.TextField(blank=True)
@@ -379,15 +384,7 @@ class SelectedModel(models.Model):
 
     class Meta:
         get_latest_by = "created"
-
-    @classmethod
-    def save_new(cls, endpoint):
-        cls.objects.create(endpoint=endpoint)
-
-    def change_selection(self, endpoint=None, notes=""):
-        self.endpoint = endpoint
-        self.notes = notes
-        self.save()
+        unique_together = (("endpoint", "dose_units"),)
 
     def get_assessment(self):
         return self.endpoint.get_assessment()
