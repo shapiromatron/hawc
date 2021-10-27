@@ -151,7 +151,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RiskOfBias(viewsets.ModelViewSet):
+class RiskOfBias(AssessmentEditViewset):
     assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination
