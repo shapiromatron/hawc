@@ -14,6 +14,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -270,6 +271,15 @@ class Error404(TemplateView):
 
 class Error500(TemplateView):
     template_name = "500.html"
+
+
+class Error401Response(TemplateResponse):
+    status_code = 401  # Unauthorized
+
+
+class Error401(TemplateView):
+    response_class = Error401Response
+    template_name = "401.html"
 
 
 # Assessment Object

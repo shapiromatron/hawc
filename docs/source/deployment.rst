@@ -105,3 +105,7 @@ For configurable parameters, we use environment variables which are loaded in th
 - ``HAWC_PM_CAN_MAKE_PUBLIC`` [True/False; default True].  If true, assessment project managers have the ability to make an assessment public (and editable) on the HAWC website. If false, only administrators can make assessments public.
 - ``HAWC_INCLUDE_ADMIN`` [True/False, default True]. If true, the admin is included in the hawc deployment. If false, it's not included. In some deployments, the admin may be deployed separately with additional security.
 - ``HAWC_SESSION_DURATION`` [int, default 604800 seconds or 1 week]. The length of a HAWC user-session. After this duration is exceeded, the user must login for a new session.
+- ``HAWC_AUTH_PROVIDERS`` [pipe-separated str of hawc.constants.AuthProvider, default "django"]. A list of providers which can be used for authentication. One or more providers can be used and pipe separated.
+    - The "django" authentication provider means accounts can be created in hawc and passwords are managed in hawc
+    - The "external" authentication provider assumes an upstream server handles authentication and returns appropriate user metadata for integration with HAWC via ``/user/login/wam/``.
+- ``HAWC_LOGOUT_REDIRECT`` [str, optional]. URL to redirect to after logout. Defaults to the homepage of hawc; this may need to be modified with some authentication providers.

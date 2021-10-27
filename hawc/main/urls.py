@@ -59,6 +59,7 @@ urlpatterns = [
     path("mgmt/", include("hawc.apps.mgmt.urls")),
     path("vocab/", include("hawc.apps.vocab.urls")),
     # Error-pages
+    path("401/", views.Error401.as_view(), name="401"),
     path("403/", views.Error403.as_view(), name="403"),
     path("404/", views.Error404.as_view(), name="404"),
     path("500/", views.Error500.as_view(), name="500"),

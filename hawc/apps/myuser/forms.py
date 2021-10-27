@@ -11,6 +11,7 @@ from django.contrib.auth.forms import (
 from django.forms import ModelForm
 from django.urls import reverse
 
+from ...constants import AuthProvider
 from ..assessment import lookups
 from ..common.forms import BaseFormHelper
 from ..common.selectable import AutoCompleteSelectMultipleField
@@ -178,7 +179,6 @@ class RegisterForm(PasswordForm):
 
 
 class UserProfileForm(ModelForm):
-
     first_name = forms.CharField(label="First name", required=True)
     last_name = forms.CharField(label="Last name", required=True)
 
@@ -190,6 +190,9 @@ class UserProfileForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["first_name"].initial = self.instance.user.first_name
         self.fields["last_name"].initial = self.instance.user.last_name
+        if self.instance.user.external_id:
+            self.fields["first_name"].disabled = True
+            self.fields["last_name"].disabled = True
 
     @property
     def helper(self):
@@ -199,6 +202,7 @@ class UserProfileForm(ModelForm):
             help_text="Change settings associated with your account",
             cancel_url=reverse("user:settings"),
         )
+        helper.add_row("first_name", 2, "col-md-6")
         return helper
 
     def save(self, commit=True):
@@ -265,6 +269,11 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     @property
     def helper(self):
+        external_auth_btn = (
+            f'<a role="button" class="btn btn-primary" href="{reverse("user:external_auth")}">External login</a>'
+            if AuthProvider.external in settings.AUTH_PROVIDERS
+            else ""
+        )
         helper = BaseFormHelper(
             self,
             legend_text="HAWC login",
@@ -272,6 +281,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 cfl.Submit("login", "Login"),
                 cfl.HTML(
                     f"""
+                {external_auth_btn}&nbsp;
                 <a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
                 <br>
                 <br>
