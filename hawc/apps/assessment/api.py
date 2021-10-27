@@ -177,11 +177,21 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     # just override them to add in the logging snippets.
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        create_object_log("Created", serializer.instance, serializer.instance.get_assessment().id, self.request.user.id)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        create_object_log("Updated", serializer.instance, serializer.instance.get_assessment().id, self.request.user.id)
+        create_object_log(
+            "Updated",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
 
     def perform_destroy(self, instance):
         create_object_log("Deleted", instance, instance.get_assessment().id, self.request.user.id)
