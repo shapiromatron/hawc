@@ -134,8 +134,7 @@ class HeatmapDatastore {
                         return items.sort();
                     }
                     let itemsSet = new Set(items);
-                    items = field.items.map(item => item.id);
-                    items.forEach(item => itemsSet.delete(item));
+                    items = field.items.map(item => item.id).filter(item => itemsSet.delete(item));
                     items.push([...itemsSet].sort());
                     return _.flatten(items);
                 },
