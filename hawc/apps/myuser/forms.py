@@ -270,7 +270,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
     @property
     def helper(self):
         external_auth_btn = (
-            f'<a role="button" class="btn btn-primary" href="{reverse("user:external_auth")}">External login</a>'
+            f'&nbsp;<a role="button" class="btn btn-primary" href="{reverse("user:external_auth")}">External login</a>'
             if AuthProvider.external in settings.AUTH_PROVIDERS
             else ""
         )
