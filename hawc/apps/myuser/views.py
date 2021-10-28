@@ -194,7 +194,7 @@ class ExternalAuth(View):
         Returns:
             Dict: user metadata; must include "email" and "external_id" keys
         """
-        raise NotImplementedError()
+        raise NotImplementedError("Deployment specific; requires implementation")
 
     def mail_bad_headers(self, request):
         """ Mail admins when headers don't return valid user metadata """
