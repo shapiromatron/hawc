@@ -20,6 +20,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=254, unique=True, db_index=True)
     first_name = models.CharField("first name", max_length=30, blank=True)
     last_name = models.CharField("last name", max_length=30, blank=True)
+    external_id = models.CharField(max_length=30, unique=True, blank=True, null=True, default=None)
     is_staff = models.BooleanField(
         "staff status",
         default=False,
