@@ -355,6 +355,7 @@ class AdminUserForm(PasswordForm):
             "email",
             "first_name",
             "last_name",
+            "external_id",
             "is_active",
             "is_staff",
             "password1",
@@ -364,8 +365,17 @@ class AdminUserForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.id:
+        if self.instance.external_id:
+            for field in (
+                "email",
+                "first_name",
+                "last_name",
+                "password1",
+                "password2",
+            ):
+                self.fields[field].disabled = True
 
+        if self.instance.id:
             self.fields["password1"].required = False
             self.fields["password2"].required = False
 
