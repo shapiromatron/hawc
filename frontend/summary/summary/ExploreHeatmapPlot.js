@@ -122,6 +122,29 @@ class ExploreHeatmapPlot {
         });
     }
 
+    get_max_tick_dimensions(scale, fields) {
+        let tempText = this.vis
+                .append("text")
+                .attr("x", 0)
+                .attr("y", 0),
+            maxWidth = 0,
+            maxHeight = 0;
+        _.each(scale, column =>
+            _.each(column, (filter, index) => {
+                let wrap_text = fields[index].wrap_text;
+                tempText.html("").text(filter.value);
+                if (wrap_text) {
+                    HAWCUtils.wrapText(tempText.node(), wrap_text);
+                }
+                const box = tempText.node().getBBox();
+                maxWidth = Math.max(box.width, maxWidth);
+                maxHeight = Math.max(box.height, maxHeight);
+            })
+        );
+        tempText.remove();
+        return {width: maxWidth, height: maxHeight};
+    }
+
     build_bottom_axis() {
         const {settings} = this.store;
 
@@ -134,32 +157,10 @@ class ExploreHeatmapPlot {
                 .attr("transform", `translate(0,${this.h})`),
             thisItem,
             label_padding = 6,
-            get_max_tick_dimensions = (scale, fields) => {
-                let tempText = this.vis
-                        .append("text")
-                        .attr("x", 0)
-                        .attr("y", 0),
-                    maxWidth = 0,
-                    maxHeight = 0;
-                _.each(scale, column =>
-                    _.each(column, (filter, index) => {
-                        let wrap_text = fields[index].wrap_text;
-                        tempText.html("").text(filter.value);
-                        if (wrap_text) {
-                            HAWCUtils.wrapText(tempText.node(), wrap_text);
-                        }
-                        const box = tempText.node().getBBox();
-                        maxWidth = Math.max(box.width, maxWidth);
-                        maxHeight = Math.max(box.height, maxHeight);
-                    })
-                );
-                tempText.remove();
-                return {width: maxWidth, height: maxHeight};
-            },
             {x_tick_rotate, autorotate_tick_labels} = settings;
 
         if (autorotate_tick_labels) {
-            const xMax = get_max_tick_dimensions(xs, settings.x_fields),
+            const xMax = this.get_max_tick_dimensions(xs, settings.x_fields),
                 {width} = this.cellDimensions;
             x_tick_rotate =
                 width > xMax.width
@@ -300,33 +301,11 @@ class ExploreHeatmapPlot {
             xAxis = this.vis.append("g").attr("class", "xAxis exp-heatmap-axis"),
             thisItem,
             label_padding = 6,
-            get_max_tick_dimensions = (scale, fields) => {
-                let tempText = this.vis
-                        .append("text")
-                        .attr("x", 0)
-                        .attr("y", 0),
-                    maxWidth = 0,
-                    maxHeight = 0;
-                _.each(scale, column =>
-                    _.each(column, (filter, index) => {
-                        let wrap_text = fields[index].wrap_text;
-                        tempText.html("").text(filter.value);
-                        if (wrap_text) {
-                            HAWCUtils.wrapText(tempText.node(), wrap_text);
-                        }
-                        const box = tempText.node().getBBox();
-                        maxWidth = Math.max(box.width, maxWidth);
-                        maxHeight = Math.max(box.height, maxHeight);
-                    })
-                );
-                tempText.remove();
-                return {width: maxWidth, height: maxHeight};
-            },
             {x_tick_rotate, autorotate_tick_labels} = settings,
             autorotate_wrap = 150;
 
         if (autorotate_tick_labels) {
-            const xMax = get_max_tick_dimensions(xs, settings.x_fields),
+            const xMax = this.get_max_tick_dimensions(xs, settings.x_fields),
                 {width} = this.cellDimensions;
             x_tick_rotate =
                 width > xMax.width
