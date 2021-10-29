@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
-import {action, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 
 /*
@@ -62,25 +62,24 @@ const getSvgObject = function(svgElement) {
 
 class ToolbarStore {
     @observable currentParentSize = null;
-    @observable isFullSize = false;
+    @observable isFitted = false;
 
     constructor(svg, parentContainer, nativeSize) {
-        this.svg = svg;
         this.d3svg = d3.select(svg);
         this.$parentContainer = $(parentContainer);
         this.setParentSize();
-        this.showZoomButton = _.isObject(nativeSize);
-        this.nativeSize = _.isObject(nativeSize) ? nativeSize : this.currentParentSize;
-        this.nativeAspectRatio = this.nativeSize.height / this.nativeSize.width;
-        this.isFullSize = !this.showZoomButton;
+        this.showResizeButton = _.isObject(nativeSize);
+        this.nativeSize = nativeSize;
+        this.isFitted = !_.isObject(nativeSize) || this.currentParentSize.width < nativeSize.width;
+        this.scaleSize();
     }
 
     @action.bound setParentSize() {
-        this.currentParentSize = getDomSize($(this.parentContainer));
+        this.currentParentSize = getDomSize(this.$parentContainer);
     }
 
     @action.bound handleResizeClick() {
-        this.isFullSize = !this.isFullSize;
+        this.isFitted = !this.isFitted;
         this.scaleSize();
     }
 
@@ -90,16 +89,27 @@ class ToolbarStore {
     }
 
     @action.bound scaleSize() {
-        this.$parentContainer
-            .attr("width", this.currentParentSize.width)
-            .attr("height", this.currentParentSize.height);
-        if (this.isFullSize) {
-            this.d3svg.attr("width", this.nativeSize.width).attr("height", this.nativeSize.height);
+        if (this.isFitted) {
+            // scale svg to parent container
+            this.d3svg.attr("width", "100%").attr("height", "100%");
         } else {
+            // scale svg to native size
             this.d3svg
-                .attr("width", this.currentParentSize.width)
-                .attr("height", this.currentParentSize.height);
+                .attr(
+                    "width",
+                    this.currentParentSize.width > this.nativeSize.width
+                        ? "100%"
+                        : this.nativeSize.width
+                )
+                .attr("height", this.nativeSize.height);
         }
+    }
+
+    @computed get showZoom() {
+        return (
+            (this.isFitted && this.nativeSize.width > this.currentParentSize.width) ||
+            (!this.isFitted && this.currentParentSize.width > this.nativeSize.width)
+        );
     }
 }
 
@@ -125,13 +135,16 @@ class VisualToolbar extends Component {
     }
 
     render() {
-        const {showZoomButton, isFullSize, handleResizeClick} = this.store,
+        const {showResizeButton, handleResizeClick} = this.store,
             {svg} = this.props;
         return (
             <div className="float-right">
-                {showZoomButton ? (
+                {showResizeButton ? (
                     <button className="btn btn-sm" title="Zoom in/out" onClick={handleResizeClick}>
-                        <i className={isFullSize ? "fa fa-search-minus" : "fa fa-search-plus"}></i>
+                        <i
+                            className={
+                                this.store.showZoom ? "fa fa-search-plus" : "fa fa-search-minus"
+                            }></i>
                     </button>
                 ) : null}
                 <div className="btn-group dropup" title="Download image">

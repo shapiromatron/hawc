@@ -890,7 +890,7 @@ class ExploreHeatmapPlot {
             <VisualToolbar
                 svg={this.svg}
                 parentContainer={parentContainer}
-                nativeSize={zoomable ? nativeSize : null}
+                nativeSize={nativeSize}
             />,
             div[0]
         );
