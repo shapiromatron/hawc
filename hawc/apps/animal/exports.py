@@ -440,10 +440,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return header
 
     @staticmethod
-    def _get_bmd_values(bmd, preferred_units):
+    def _get_bmd_values(bmds, preferred_units):
         # only return BMD values if they're in the preferred units
-        if bmd and bmd["dose_units"] in preferred_units:
-            return [bmd["output"]["BMD"], bmd["output"]["BMDL"]]
+        for bmd in bmds:
+            if bmd["dose_units_id"] in preferred_units:
+                return [bmd["model"]["output"]["BMD"], bmd["model"]["output"]["BMDL"]]
         return [None, None]
 
     @staticmethod
@@ -565,7 +566,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
 
             # bmd/bmdl information
-            row.extend(self._get_bmd_values(ser["bmd"], preferred_units))
+            row.extend(self._get_bmd_values(ser["bmds"], preferred_units))
 
             row.extend([ser["trend_value"], ser["trend_result"]])
 

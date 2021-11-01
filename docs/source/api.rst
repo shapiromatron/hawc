@@ -23,7 +23,14 @@ Using a notebook or python shell:
     from hawc_client import HawcClient
 
     client = HawcClient("https://hawcproject.org")
+
+    # Authentication is deployment specific. If the hawc deployment stores and manages user
+    # accounts directly, then you can login via the HAWC API to authenticate:
     client.authenticate(email="me@me.com", password=getpass())
+
+    # For other deployments which use external authentication, a user should login via the browser
+    # as a normal user, and then view the token on their user profile:
+    client.set_authentication_token(token=getpass())
 
     # get all references for an assessment
     client.lit.references(assessment_id=123)
