@@ -1,9 +1,11 @@
-from django.test import TestCase
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import RequestFactory, TestCase
 from django.test.client import Client
 from django.urls import reverse
 
 from hawc.apps.myuser import models
 from hawc.apps.myuser.forms import _accept_license_error
+from hawc.apps.myuser.views import ExternalAuth
 
 
 class UserCreationTests(TestCase):
@@ -88,3 +90,71 @@ class UserCreationTests(TestCase):
             },
         )
         self.assertTrue(models.HAWCUser.objects.filter(email=email).exists())
+
+
+class ExternalAuth(ExternalAuth):
+    # mock user metdata handler for test case
+    def get_user_metadata(self, request):
+        return {
+            "email": request.headers["Email"],
+            "external_id": request.headers["Id"],
+            "first_name": request.headers["Firstname"],
+            "last_name": request.headers["Lastname"],
+        }
+
+
+class ExternalAuthTests(TestCase):
+    request_factory = RequestFactory()
+    middleware = SessionMiddleware()
+
+    def _login(self, email, external_id):
+        headers = {
+            "HTTP_EMAIL": email,
+            "HTTP_ID": external_id,
+            "HTTP_FIRSTNAME": "John",
+            "HTTP_LASTNAME": "Doe",
+        }
+        request = self.request_factory.get("/", **headers)
+        self.middleware.process_request(request)
+        return ExternalAuth.as_view()(request)
+
+    def test_valid_auth(self):
+        email = "pm@hawcproject.org"
+        external_id = "pm"
+        # If email is associated with user then user is logged in
+        response = self._login(email, external_id)
+        assert response.status_code == 302
+        user = models.HAWCUser.objects.get(email=email)
+        assert user.is_authenticated
+        # External id is also set on the user
+        assert user.external_id == external_id
+
+    def test_create_user(self):
+        email = "new_user@hawcproject.org"
+        external_id = "nu"
+        # If user doesn't exist, it should be created and logged in
+        response = self._login(email, external_id)
+        assert response.status_code == 302
+        user = models.HAWCUser.objects.get(email=email)
+        assert user.is_authenticated and user.external_id == external_id
+        assert user.first_name == "John" and user.last_name == "Doe"
+
+    def test_invalid_auth(self):
+        # Fails if headers are invalid / missing
+        forbidden_url = reverse("401")
+        request = self.request_factory.get("/")
+        response = ExternalAuth.as_view()(request)
+        assert response.status_code == 302 and response.url == forbidden_url
+
+        # Fails if email/external_id doesn't match
+        email = "new_user@hawcproject.org"
+        external_id = "nu"
+        self._login(email, external_id)  # Creates the user
+        bad_external_id = "wrong_id"
+        response = self._login(email, bad_external_id)
+        assert response.status_code == 302 and response.url == forbidden_url
+
+        # Fails if email doesn't match external_id
+        bad_email = "another_user@hawcproject.org"
+        response = self._login(bad_email, external_id)
+        assert response.status_code == 302 and response.url == forbidden_url

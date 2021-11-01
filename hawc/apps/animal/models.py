@@ -1409,12 +1409,6 @@ class Endpoint(BaseEndpoint):
         except ObjectDoesNotExist:
             return None
 
-    def get_selected_bmd_model(self):
-        try:
-            return self.bmd_model
-        except ObjectDoesNotExist:
-            return None
-
     def copy_across_assessments(self, cw):
         children = chain(
             list(self.groups.all().order_by("id")), list(self.bmd_sessions.all().order_by("id")),

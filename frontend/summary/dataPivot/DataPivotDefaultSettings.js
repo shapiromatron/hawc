@@ -23,6 +23,7 @@ export default {
         xlabel_left: undefined,
         domain: "",
         filter_logic: "and",
+        filter_query: "",
         font_style: "Arial",
         merge_descriptions: false,
         merge_aggressive: true,

@@ -3622,6 +3622,7 @@
   pk: 3
   fields:
     endpoint: 8
+    dose_units: 1
     model: 8
     notes: Selected model notes.
     created: 2020-11-28 05:35:28.734847+00:00
