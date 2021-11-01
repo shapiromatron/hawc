@@ -145,31 +145,35 @@ class ExploreHeatmapPlot {
         return {width: maxWidth, height: maxHeight};
     }
 
-    build_bottom_axis() {
+    autorotate_x_tick(xs, x_fields) {
+        const xMax = this.get_max_tick_dimensions(xs, x_fields),
+            {width} = this.cellDimensions;
+        return width > xMax.width
+            ? 0
+            : width > xMax.height
+            ? -90
+            : xMax.width < xMax.height
+            ? 0
+            : -90;
+    }
+
+    build_x_axis() {
         const {settings} = this.store;
 
         let xs = this.store.scales.x.filter((d, i) =>
                 settings.compress_x ? this.store.totals.x[i] > 0 : true
             ),
-            xAxis = this.vis
-                .append("g")
-                .attr("class", "xAxis exp-heatmap-axis")
-                .attr("transform", `translate(0,${this.h})`),
+            xAxis = this.vis.append("g").attr("class", "xAxis exp-heatmap-axis"),
             thisItem,
             label_padding = 6,
             {x_tick_rotate, autorotate_tick_labels} = settings;
 
+        if (settings.x_axis_bottom) {
+            xAxis.attr("transform", `translate(0,${this.h})`);
+        }
+
         if (autorotate_tick_labels) {
-            const xMax = this.get_max_tick_dimensions(xs, settings.x_fields),
-                {width} = this.cellDimensions;
-            x_tick_rotate =
-                width > xMax.width
-                    ? 0
-                    : width > xMax.height
-                    ? -90
-                    : xMax.width < xMax.height
-                    ? 0
-                    : -90;
+            x_tick_rotate = this.autorotate_x_tick(xs, settings.x_fields);
         }
 
         // build x-axis
@@ -208,14 +212,17 @@ class ExploreHeatmapPlot {
                         });
 
                     let box = label.node().getBBox(),
-                        label_offset =
+                        label_x_offset =
                             itemStartIndex * this.cellDimensions.width +
                             (numItems * this.cellDimensions.width) / 2 -
-                            box.width / 2;
+                            box.width / 2,
+                        label_y_offset = settings.x_axis_bottom
+                            ? label_padding
+                            : -box.height - label_padding;
 
                     label.attr(
                         "transform",
-                        `translate(${-box.x + label_offset},${-box.y + label_padding})`
+                        `translate(${-box.x + label_x_offset},${-box.y + label_y_offset})`
                     );
 
                     borderData.push({
@@ -241,20 +248,26 @@ class ExploreHeatmapPlot {
                     .style("font-weight", "bold");
 
                 let box = label.node().getBBox(),
-                    label_offset =
+                    label_x_offset =
                         xs.length * this.cellDimensions.width +
                         this.cellDimensions.width / 2 -
-                        box.width / 2;
+                        box.width / 2,
+                    label_y_offset = settings.x_axis_bottom
+                        ? label_padding
+                        : -box.height - label_padding;
 
                 label.attr(
                     "transform",
-                    `translate(${-box.x + label_offset},${-box.y + label_padding})`
+                    `translate(${-box.x + label_x_offset},${-box.y + label_y_offset})`
                 );
             }
 
             let box = axis.node().getBBox();
 
-            let newYOffset = yOffset + box.height + label_padding * 2;
+            let yOffsetDiff = settings.x_axis_bottom
+                    ? box.height + label_padding * 2
+                    : -(box.height + label_padding * 2),
+                newYOffset = yOffset + yOffsetDiff;
             let border = xAxis
                 .append("g")
                 .attr("fill-opacity", 0)
@@ -280,7 +293,9 @@ class ExploreHeatmapPlot {
         if (settings.show_totals) {
             const x1 = xs.length * this.cellDimensions.width,
                 x2 = x1 + this.cellDimensions.width,
-                y1 = xAxis.node().getBBox().height,
+                y1 = settings.x_axis_bottom
+                    ? xAxis.node().getBBox().height
+                    : -xAxis.node().getBBox().height,
                 y2 = 0;
             xAxis
                 .append("polyline")
@@ -292,151 +307,7 @@ class ExploreHeatmapPlot {
         this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
     }
 
-    build_top_axis() {
-        const {settings} = this.store;
-
-        let xs = this.store.scales.x.filter((d, i) =>
-                settings.compress_x ? this.store.totals.x[i] > 0 : true
-            ),
-            xAxis = this.vis.append("g").attr("class", "xAxis exp-heatmap-axis"),
-            thisItem,
-            label_padding = 6,
-            {x_tick_rotate, autorotate_tick_labels} = settings,
-            autorotate_wrap = 150;
-
-        if (autorotate_tick_labels) {
-            const xMax = this.get_max_tick_dimensions(xs, settings.x_fields),
-                {width} = this.cellDimensions;
-            x_tick_rotate =
-                width > xMax.width
-                    ? 0
-                    : width > xMax.height
-                    ? -90
-                    : xMax.width < xMax.height
-                    ? 0
-                    : -90;
-        }
-
-        // build x-axis
-        let yOffset = 0,
-            numXAxes = xs.length == 0 ? 0 : xs[0].length,
-            {show_axis_border} = settings;
-        for (let i = numXAxes - 1; i >= 0; i--) {
-            let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
-                lastItem = xs[0],
-                itemStartIndex = 0,
-                numItems = 0,
-                borderData = [],
-                wrap_text =
-                    settings.x_fields[i].wrap_text || autorotate_tick_labels ? autorotate_wrap : 0;
-
-            for (let j = 0; j <= xs.length; j++) {
-                thisItem = j < xs.length ? xs[j] : null;
-                if (
-                    thisItem == null ||
-                    !_.isMatch(thisItem[i], lastItem[i]) ||
-                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
-                ) {
-                    let label = axis.append("g");
-
-                    label
-                        .append("text")
-                        .attr("x", 0)
-                        .attr("y", 0)
-                        .attr("transform", `rotate(${x_tick_rotate})`)
-                        .text(lastItem[i].value || h.nullString)
-                        .each(function() {
-                            if (wrap_text) {
-                                HAWCUtils.wrapText(this, wrap_text);
-                            }
-                        });
-
-                    let box = label.node().getBBox(),
-                        label_offset =
-                            itemStartIndex * this.cellDimensions.width +
-                            (numItems * this.cellDimensions.width) / 2 -
-                            box.width / 2;
-
-                    label.attr(
-                        "transform",
-                        `translate(${-box.x + label_offset},${-box.y - box.height - label_padding})`
-                    );
-
-                    borderData.push({
-                        filters: _.slice(lastItem, 0, i + 1),
-                        x1: itemStartIndex * this.cellDimensions.width,
-                        width: numItems * this.cellDimensions.width,
-                    });
-
-                    itemStartIndex = j;
-                    numItems = 0;
-                }
-                numItems += 1;
-                lastItem = thisItem;
-            }
-            if (settings.show_totals && i == numXAxes - 1) {
-                let label = axis.append("g");
-                label
-                    .append("text")
-                    .attr("x", 0)
-                    .attr("y", 0)
-                    .attr("transform", `rotate(${x_tick_rotate})`)
-                    .text("Grand Total")
-                    .style("font-weight", "bold");
-
-                let box = label.node().getBBox(),
-                    label_offset =
-                        xs.length * this.cellDimensions.width +
-                        this.cellDimensions.width / 2 -
-                        box.width / 2;
-
-                label.attr(
-                    "transform",
-                    `translate(${-box.x + label_offset},${-box.y - box.height - label_padding})`
-                );
-            }
-
-            let box = axis.node().getBBox();
-
-            let newYOffset = yOffset - (box.height + label_padding * 2);
-            let border = xAxis
-                .append("g")
-                .attr("fill-opacity", 0)
-                .attr("stroke", show_axis_border ? "black" : null)
-                .selectAll(".none")
-                .data(borderData)
-                .enter()
-                .append("polyline")
-                .attr(
-                    "points",
-                    d =>
-                        `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
-                            d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
-                )
-                .on("click", (event, d) => {
-                    const cells = this.get_matching_cells(d.filters, "x");
-                    this.store.setTableDataFilters(new Set(cells));
-                });
-            this.bind_tooltip(border, "axis");
-            yOffset = newYOffset;
-        }
-
-        if (settings.show_totals) {
-            const x1 = xs.length * this.cellDimensions.width,
-                x2 = x1 + this.cellDimensions.width,
-                y1 = -xAxis.node().getBBox().height,
-                y2 = 0;
-            xAxis
-                .append("polyline")
-                .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
-                .attr("fill-opacity", 0)
-                .attr("stroke", show_axis_border ? "black" : null);
-        }
-
-        this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
-    }
-
-    build_left_axis() {
+    build_y_axis() {
         const {settings} = this.store;
 
         let ys = this.store.scales.y.filter((d, i) =>
@@ -568,12 +439,8 @@ class ExploreHeatmapPlot {
     }
 
     build_axes() {
-        this.build_left_axis();
-        if (this.store.settings.x_axis_bottom) {
-            this.build_bottom_axis();
-        } else {
-            this.build_top_axis();
-        }
+        this.build_y_axis();
+        this.build_x_axis();
     }
 
     add_grid() {
