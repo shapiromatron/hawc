@@ -36,6 +36,13 @@ class ExploreHeatmapPlot {
         // `this.padding` required for D3Plot
         this.padding = settings.padding;
 
+        this.xs = this.store.scales.x.filter((d, i) =>
+            settings.compress_x ? this.store.totals.x[i] > 0 : true
+        );
+        this.ys = this.store.scales.y.filter((d, i) =>
+            settings.compress_y ? this.store.totals.y[i] > 0 : true
+        );
+
         this.x_steps = scales.x.filter((d, i) =>
             settings.compress_x ? totals.x[i] > 0 : true
         ).length;
@@ -45,10 +52,6 @@ class ExploreHeatmapPlot {
 
         this.x_steps = settings.show_totals ? this.x_steps + 1 : this.x_steps;
         this.y_steps = settings.show_totals ? this.y_steps + 1 : this.y_steps;
-
-        this.cellDimensions = this.get_cell_dimensions();
-        this.w = this.cellDimensions.width * this.x_steps;
-        this.h = this.cellDimensions.height * this.y_steps;
 
         // calculated padding based on labels
         this.x_axis_label_padding = 0;
@@ -66,9 +69,31 @@ class ExploreHeatmapPlot {
             padding. In addition, subtract AXIS_WIDTH_GUESS for each axis.  This could be improved
             in the future by laying-out the largest text label by text-size and getting the size.
             */
+
+            // minimum dimensions
             const minWidth = 50,
-                minHeight = 25,
-                plotWidth =
+                minHeight = 25;
+
+            // dimensions from labels
+            const xRotate = settings.autorotate_tick_labels ? -90 : settings.x_tick_rotate,
+                yRotate = settings.autorotate_tick_labels ? 0 : settings.y_tick_rotate,
+                xLabelDimensions = this.get_max_tick_dimensions(
+                    this.xs,
+                    settings.x_fields,
+                    AUTOROTATE_TEXT_WRAP_X,
+                    xRotate
+                ),
+                yLabelDimensions = this.get_max_tick_dimensions(
+                    this.ys,
+                    settings.y_fields,
+                    AUTOROTATE_TEXT_WRAP_Y,
+                    yRotate
+                ),
+                labelWidth = xLabelDimensions.width,
+                labelHeight = yLabelDimensions.height;
+
+            // dimensions from plot
+            const plotWidth =
                     this.plot_div.width() -
                     settings.padding.left -
                     settings.padding.right -
@@ -82,8 +107,8 @@ class ExploreHeatmapPlot {
                 cellHeight = this.y_steps == 0 ? 0 : plotHeight / this.y_steps;
 
             cellDimensions = {
-                width: Math.max(cellWidth, minWidth),
-                height: Math.max(cellHeight, minHeight),
+                width: Math.max(cellWidth, labelWidth, minWidth),
+                height: Math.max(cellHeight, labelHeight, minHeight),
             };
         } else {
             cellDimensions = {width: settings.cell_width, height: settings.cell_height};
@@ -122,31 +147,34 @@ class ExploreHeatmapPlot {
         });
     }
 
-    get_max_tick_dimensions(scale, fields) {
-        let tempText = this.vis
-                .append("text")
-                .attr("x", 0)
-                .attr("y", 0),
+    get_max_tick_dimensions(scale, fields, default_wrap, rotate) {
+        let tempGroup = this.vis.append("g"),
+            tempText = tempGroup.append("text"),
             maxWidth = 0,
             maxHeight = 0;
         _.each(scale, column =>
             _.each(column, (filter, index) => {
-                let wrap_text = fields[index].wrap_text;
-                tempText.html("").text(filter.value);
+                let wrap_text = fields[index].wrap_text ? fields[index].wrap_text : default_wrap;
+                tempText
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("transform", `rotate(${rotate ? rotate : 0})`)
+                    .html("")
+                    .text(filter.value);
                 if (wrap_text) {
                     HAWCUtils.wrapText(tempText.node(), wrap_text);
                 }
-                const box = tempText.node().getBBox();
+                const box = tempGroup.node().getBBox();
                 maxWidth = Math.max(box.width, maxWidth);
                 maxHeight = Math.max(box.height, maxHeight);
             })
         );
-        tempText.remove();
+        tempGroup.remove();
         return {width: maxWidth, height: maxHeight};
     }
 
     autorotate_x_tick(xs, x_fields) {
-        const xMax = this.get_max_tick_dimensions(xs, x_fields),
+        const xMax = this.get_max_tick_dimensions(xs, x_fields, AUTOROTATE_TEXT_WRAP_X),
             {width} = this.cellDimensions;
         return width > xMax.width
             ? 0
@@ -160,10 +188,7 @@ class ExploreHeatmapPlot {
     build_x_axis() {
         const {settings} = this.store;
 
-        let xs = this.store.scales.x.filter((d, i) =>
-                settings.compress_x ? this.store.totals.x[i] > 0 : true
-            ),
-            xAxis = this.vis.append("g").attr("class", "xAxis exp-heatmap-axis"),
+        let xAxis = this.vis.append("g").attr("class", "xAxis exp-heatmap-axis"),
             thisItem,
             label_padding = 6,
             {x_tick_rotate, autorotate_tick_labels} = settings;
@@ -173,16 +198,16 @@ class ExploreHeatmapPlot {
         }
 
         if (autorotate_tick_labels) {
-            x_tick_rotate = this.autorotate_x_tick(xs, settings.x_fields);
+            x_tick_rotate = this.autorotate_x_tick(this.xs, settings.x_fields);
         }
 
         // build x-axis
         let yOffset = 0,
-            numXAxes = xs.length == 0 ? 0 : xs[0].length,
+            numXAxes = this.xs.length == 0 ? 0 : this.xs[0].length,
             {show_axis_border} = settings;
         for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
-                lastItem = xs[0],
+                lastItem = this.xs[0],
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
@@ -190,8 +215,8 @@ class ExploreHeatmapPlot {
                     ? settings.x_fields[i].wrap_text
                     : AUTOROTATE_TEXT_WRAP_X;
 
-            for (let j = 0; j <= xs.length; j++) {
-                thisItem = j < xs.length ? xs[j] : null;
+            for (let j = 0; j <= this.xs.length; j++) {
+                thisItem = j < this.xs.length ? this.xs[j] : null;
                 if (
                     thisItem == null ||
                     !_.isMatch(thisItem[i], lastItem[i]) ||
@@ -249,7 +274,7 @@ class ExploreHeatmapPlot {
 
                 let box = label.node().getBBox(),
                     label_x_offset =
-                        xs.length * this.cellDimensions.width +
+                        this.xs.length * this.cellDimensions.width +
                         this.cellDimensions.width / 2 -
                         box.width / 2,
                     label_y_offset = settings.x_axis_bottom
@@ -291,7 +316,7 @@ class ExploreHeatmapPlot {
         }
 
         if (settings.show_totals) {
-            const x1 = xs.length * this.cellDimensions.width,
+            const x1 = this.xs.length * this.cellDimensions.width,
                 x2 = x1 + this.cellDimensions.width,
                 y1 = settings.x_axis_bottom
                     ? xAxis.node().getBBox().height
@@ -310,10 +335,7 @@ class ExploreHeatmapPlot {
     build_y_axis() {
         const {settings} = this.store;
 
-        let ys = this.store.scales.y.filter((d, i) =>
-                settings.compress_y ? this.store.totals.y[i] > 0 : true
-            ),
-            yAxis = this.vis.append("g").attr("class", "yAxis exp-heatmap-axis"),
+        let yAxis = this.vis.append("g").attr("class", "yAxis exp-heatmap-axis"),
             thisItem,
             label_padding = 6,
             {y_tick_rotate, autorotate_tick_labels} = settings;
@@ -324,14 +346,14 @@ class ExploreHeatmapPlot {
 
         // build y-axis
         let xOffset = 0,
-            numYAxes = ys.length == 0 ? 0 : ys[0].length,
+            numYAxes = this.ys.length == 0 ? 0 : this.ys[0].length,
             {show_axis_border} = settings;
         for (let i = numYAxes - 1; i >= 0; i--) {
             let axis = yAxis
                     .append("g")
                     .attr("transform", `translate(${-xOffset - label_padding},0)`)
                     .attr("text-anchor", y_tick_rotate === 0 ? "end" : "start"),
-                lastItem = ys[0],
+                lastItem = this.ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
@@ -339,8 +361,8 @@ class ExploreHeatmapPlot {
                     ? settings.y_fields[i].wrap_text
                     : AUTOROTATE_TEXT_WRAP_Y;
 
-            for (let j = 0; j <= ys.length; j++) {
-                thisItem = j < ys.length ? ys[j] : null;
+            for (let j = 0; j <= this.ys.length; j++) {
+                thisItem = j < this.ys.length ? this.ys[j] : null;
                 if (
                     thisItem == null ||
                     !_.isMatch(thisItem[i], lastItem[i]) ||
@@ -389,7 +411,7 @@ class ExploreHeatmapPlot {
 
                 let box = label.node().getBBox(),
                     label_offset =
-                        ys.length * this.cellDimensions.height +
+                        this.ys.length * this.cellDimensions.height +
                         this.cellDimensions.height / 2 -
                         box.height / 2;
 
@@ -426,7 +448,7 @@ class ExploreHeatmapPlot {
         if (settings.show_totals) {
             const x1 = -yAxis.node().getBBox().width,
                 x2 = 0,
-                y1 = ys.length * this.cellDimensions.height,
+                y1 = this.ys.length * this.cellDimensions.height,
                 y2 = y1 + this.cellDimensions.height;
             yAxis
                 .append("polyline")
@@ -658,6 +680,10 @@ class ExploreHeatmapPlot {
             .attr("class", "d3")
             .node();
         this.vis = d3.select(this.svg).append("g");
+
+        this.cellDimensions = this.get_cell_dimensions();
+        this.w = this.cellDimensions.width * this.x_steps;
+        this.h = this.cellDimensions.height * this.y_steps;
 
         // Scales for x axis and y axis
         this.x_scale = d3
