@@ -91,17 +91,16 @@ class ToolbarStore {
     @action.bound scaleSize() {
         if (this.isFitted) {
             // scale svg to parent container
-            this.d3svg.attr("width", "100%").attr("height", "100%");
+            this.d3svg
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .style("min-width", null);
         } else {
             // scale svg to native size
             this.d3svg
-                .attr(
-                    "width",
-                    this.currentParentSize.width > this.nativeSize.width
-                        ? "100%"
-                        : this.nativeSize.width
-                )
-                .attr("height", this.nativeSize.height);
+                .attr("width", "100%")
+                .attr("height", this.nativeSize.height)
+                .style("min-width", this.nativeSize.width);
         }
     }
 
