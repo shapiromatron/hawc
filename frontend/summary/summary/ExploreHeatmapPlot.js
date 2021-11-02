@@ -727,7 +727,6 @@ class ExploreHeatmapPlot {
 
     add_resize_and_toolbar() {
         const {settings} = this.store,
-            parentContainer = $(this.svg).parent()[0],
             nativeSize = {
                 width: Math.ceil(
                     settings.padding.left +
@@ -751,26 +750,12 @@ class ExploreHeatmapPlot {
                 })
                 .appendTo(this.plot_div);
 
-        // set correct aspect ratio to get proper height/widths set on parent elements
-        const currentWidth = Math.ceil(div.width()),
-            scaledHeight = currentWidth * (nativeSize.height / nativeSize.width),
-            currentHeight = Math.ceil(Math.min(nativeSize.height, scaledHeight)),
-            yOffset = settings.x_axis_bottom ? 0 : -this.y_axis_label_padding;
-
+        const yOffset = settings.x_axis_bottom ? 0 : -this.y_axis_label_padding;
         d3.select(this.svg)
-            .attr("width", currentWidth)
-            .attr("height", currentHeight)
             .attr("preserveAspectRatio", "xMidYMin meet")
             .attr("viewBox", `0 ${yOffset} ${nativeSize.width} ${nativeSize.height}`);
 
-        ReactDOM.render(
-            <VisualToolbar
-                svg={this.svg}
-                parentContainer={parentContainer}
-                nativeSize={nativeSize}
-            />,
-            div[0]
-        );
+        ReactDOM.render(<VisualToolbar svg={this.svg} nativeSize={nativeSize} />, div[0]);
     }
 }
 
