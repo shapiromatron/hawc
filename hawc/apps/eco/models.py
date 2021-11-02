@@ -43,7 +43,7 @@ class Ecoregion(models.Model):
 
 class Vocab(models.Model):
 
-    category = models.CharField(max_length=100, blank=True)
+    category = models.CharField(max_length=100, blank=True)  # maybe make this a choices field
     value = models.CharField(max_length=100, blank=True)
     parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
 
@@ -121,7 +121,7 @@ class Metadata(models.Model):
     )
 
     def __str__(self):
-        return self.study_type
+        return self.study_id.short_citation
 
     class Meta:
         verbose_name = "Metadata"
@@ -153,11 +153,14 @@ class Cause(models.Model):
         help_text="Type the unit associated with the cause term",
     )  # autocomplete?
 
-    bio_org = models.CharField(
+    bio_org = models.ForeignKey(
+        Vocab,
+        limit_choices_to={"category": "Cause biological organization"},
         verbose_name="Level of biological organization",
         max_length=100,
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
+        on_delete=models.CASCADE,
     )
 
     species = models.CharField(
