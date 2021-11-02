@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from ...constants import AuthProvider
 from ..bmd.diagnostics import diagnostic_bmds2_execution
 from ..common.diagnostics import (
     diagnostic_500,
@@ -21,6 +23,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "email",
+        "external_id",
         "first_name",
         "last_name",
         "is_active",
@@ -36,7 +39,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
         "last_login",
         "groups",
     )
-    search_fields = ("last_name", "first_name", "email")
+    search_fields = ("last_name", "first_name", "email", "external_id")
     ordering = ("-date_joined",)
     form = forms.AdminUserForm
     inlines = [UserProfileAdmin]
@@ -49,6 +52,10 @@ class HAWCUserAdmin(admin.ModelAdmin):
         modeladmin.message_user(request, "Welcome email(s) sent!")
 
     def set_password(modeladmin, request, queryset):
+        if settings.AUTH_PROVIDERS == {AuthProvider.external}:
+            return modeladmin.message_user(
+                request, "Password cannot be set when using external auth", level=messages.ERROR
+            )
         if queryset.count() != 1:
             return modeladmin.message_user(
                 request, "Please select only-one user", level=messages.ERROR
