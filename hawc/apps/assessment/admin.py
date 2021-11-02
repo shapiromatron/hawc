@@ -227,6 +227,13 @@ class JobAdmin(admin.ModelAdmin):
     readonly_fields = ("result",)
 
 
+@admin.register(models.Communication)
+class CommunicationAdmin(admin.ModelAdmin):
+    list_display = ("id", "created", "last_updated", "message", "assessment")
+    readonly_field = ("updated",)
+
+    search_fields = ("assessment__name", "message")
+
 @admin.register(models.Log)
 class LogAdmin(ReadOnlyAdmin):
     list_display = ("id", "created", "message", "assessment", "user")

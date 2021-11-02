@@ -21,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 
 from ..common.crumbs import Breadcrumb
 from ..common.views import (
@@ -826,6 +826,21 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
         return context
+
+# communications
+
+class CommunicationUpdate(UpdateView):
+    template_name = "assessment/communication_update.html"
+    model = models.Communication
+    form_class = forms.CommunicationForm
+
+    def get_object(self, queryset=None):
+        import pdb; pdb.set_trace()
+        obj, created = models.Communication.objects.get_or_create(
+            assessment=self.kwargs['pk'],
+            content_type=ContentType(models.Assessment),
+            object_id=self.kwargs['pk'])
+        return obj
 
 
 @method_decorator(cache_page(3600), name="dispatch")

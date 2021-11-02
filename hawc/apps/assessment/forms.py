@@ -324,6 +324,13 @@ class ContactForm(forms.Form):
             cancel_url=self.back_href,
         )
 
+class CommunicationForm(forms.ModelForm):
+    class Meta:
+        model = models.Communication
+        fields = "__all__"
+
+
+
 
 class DatasetForm(forms.ModelForm):
     revision_version = forms.IntegerField(

@@ -905,6 +905,20 @@ class Job(models.Model):
         return reverse("assessment:api:jobs-detail", args=(self.task_id,))
 
 
+class Communication(models.Model):
+    assessment = models.ForeignKey(
+        Assessment, blank=True, null=True, related_name="comms", on_delete=models.CASCADE
+    )
+    message = models.TextField()
+    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
+    object_id = models.IntegerField(null=True)
+    content_object = GenericForeignKey("content_type", "object_id")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    #def get_assessment(self):
+    #   return self.assessment
+
 class Log(models.Model):
     assessment = models.ForeignKey(
         Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
