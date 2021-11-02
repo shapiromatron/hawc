@@ -207,7 +207,13 @@ class ExploreHeatmapPlot {
             numXAxes = this.xs.length == 0 ? 0 : this.xs[0].length,
             {show_axis_border} = settings;
         for (let i = numXAxes - 1; i >= 0; i--) {
-            let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
+            let axis = xAxis
+                    .append("g")
+                    .attr(
+                        "transform",
+                        `translate(0,${yOffset +
+                            (settings.x_axis_bottom ? label_padding : -label_padding)})`
+                    ),
                 lastItem = this.xs[0],
                 itemStartIndex = 0,
                 numItems = 0,
@@ -242,9 +248,7 @@ class ExploreHeatmapPlot {
                             itemStartIndex * this.cellDimensions.width +
                             (numItems * this.cellDimensions.width) / 2 -
                             box.width / 2,
-                        label_y_offset = settings.x_axis_bottom
-                            ? label_padding
-                            : -box.height - label_padding;
+                        label_y_offset = settings.x_axis_bottom ? 0 : -box.height;
 
                     label.attr(
                         "transform",
@@ -278,9 +282,7 @@ class ExploreHeatmapPlot {
                         this.xs.length * this.cellDimensions.width +
                         this.cellDimensions.width / 2 -
                         box.width / 2,
-                    label_y_offset = settings.x_axis_bottom
-                        ? label_padding
-                        : -box.height - label_padding;
+                    label_y_offset = settings.x_axis_bottom ? 0 : -box.height;
 
                 label.attr(
                     "transform",
@@ -352,8 +354,7 @@ class ExploreHeatmapPlot {
         for (let i = numYAxes - 1; i >= 0; i--) {
             let axis = yAxis
                     .append("g")
-                    .attr("transform", `translate(${-xOffset - label_padding},0)`)
-                    .attr("text-anchor", y_tick_rotate === 0 ? "end" : "start"),
+                    .attr("transform", `translate(${-xOffset - label_padding},0)`),
                 lastItem = this.ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
@@ -382,11 +383,15 @@ class ExploreHeatmapPlot {
                             }
                         });
                     let box = label.node().getBBox(),
-                        label_offset =
+                        label_x_offset = -box.width,
+                        label_y_offset =
                             itemStartIndex * this.cellDimensions.height +
                             (numItems * this.cellDimensions.height) / 2 -
                             box.height / 2;
-                    label.attr("transform", `translate(0,${-box.y + label_offset})`);
+                    label.attr(
+                        "transform",
+                        `translate(${-box.x + label_x_offset},${-box.y + label_y_offset})`
+                    );
 
                     borderData.push({
                         filters: _.slice(lastItem, 0, i + 1),
@@ -411,14 +416,14 @@ class ExploreHeatmapPlot {
                     .style("font-weight", "bold");
 
                 let box = label.node().getBBox(),
-                    label_offset =
+                    label_y_offset =
                         this.ys.length * this.cellDimensions.height +
                         this.cellDimensions.height / 2 -
                         box.height / 2;
 
                 label.attr(
                     "transform",
-                    `translate(${-box.x - box.width - label_padding},${-box.y + label_offset})`
+                    `translate(${-box.x - box.width},${-box.y + label_y_offset})`
                 );
             }
 
