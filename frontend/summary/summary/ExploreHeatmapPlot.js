@@ -173,18 +173,6 @@ class ExploreHeatmapPlot {
         return {width: maxWidth, height: maxHeight};
     }
 
-    autorotate_x_tick(xs, x_fields) {
-        const xMax = this.get_max_tick_dimensions(xs, x_fields, AUTOROTATE_TEXT_WRAP_X),
-            {width} = this.cellDimensions;
-        return width > xMax.width
-            ? 0
-            : width > xMax.height
-            ? -90
-            : xMax.width < xMax.height
-            ? 0
-            : -90;
-    }
-
     build_x_axis() {
         const {settings} = this.store;
 
@@ -198,7 +186,20 @@ class ExploreHeatmapPlot {
         }
 
         if (autorotate_tick_labels) {
-            x_tick_rotate = this.autorotate_x_tick(this.xs, settings.x_fields);
+            const xMax = this.get_max_tick_dimensions(
+                    this.xs,
+                    settings.x_fields,
+                    AUTOROTATE_TEXT_WRAP_X
+                ),
+                {width} = this.cellDimensions;
+            x_tick_rotate =
+                width > xMax.width
+                    ? 0
+                    : width > xMax.height
+                    ? -90
+                    : xMax.width < xMax.height
+                    ? 0
+                    : -90;
         }
 
         // build x-axis
