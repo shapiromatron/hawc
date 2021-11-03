@@ -202,10 +202,19 @@ class ExploreHeatmapPlot {
                     : -90;
         }
 
+        x_tick_rotate = ((x_tick_rotate % 360) + 360) % 360; // make rotation between 0 and 360
+
         // build x-axis
         let yOffset = 0,
             numXAxes = this.xs.length == 0 ? 0 : this.xs[0].length,
-            {show_axis_border} = settings;
+            {show_axis_border} = settings,
+            textAnchor = settings.x_axis_bottom
+                ? x_tick_rotate >= 0 && x_tick_rotate <= 180
+                    ? "start"
+                    : "end"
+                : x_tick_rotate > 0 && x_tick_rotate < 180
+                ? "end"
+                : "start";
         for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis
                     .append("g")
@@ -213,7 +222,8 @@ class ExploreHeatmapPlot {
                         "transform",
                         `translate(0,${yOffset +
                             (settings.x_axis_bottom ? label_padding : -label_padding)})`
-                    ),
+                    )
+                    .attr("text-anchor", textAnchor),
                 lastItem = this.xs[0],
                 itemStartIndex = 0,
                 numItems = 0,
@@ -347,14 +357,18 @@ class ExploreHeatmapPlot {
             y_tick_rotate = 0;
         }
 
+        y_tick_rotate = ((y_tick_rotate % 360) + 360) % 360; // make rotation between 0 and 360
+
         // build y-axis
         let xOffset = 0,
             numYAxes = this.ys.length == 0 ? 0 : this.ys[0].length,
-            {show_axis_border} = settings;
+            {show_axis_border} = settings,
+            textAnchor = y_tick_rotate >= 90 && y_tick_rotate <= 270 ? "start" : "end";
         for (let i = numYAxes - 1; i >= 0; i--) {
             let axis = yAxis
                     .append("g")
-                    .attr("transform", `translate(${-xOffset - label_padding},0)`),
+                    .attr("transform", `translate(${-xOffset - label_padding},0)`)
+                    .attr("text-anchor", textAnchor),
                 lastItem = this.ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
