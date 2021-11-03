@@ -230,7 +230,7 @@ class JobAdmin(admin.ModelAdmin):
 @admin.register(models.Communication)
 class CommunicationAdmin(admin.ModelAdmin):
     list_display = ("id", "created", "last_updated", "message", "assessment")
-    readonly_field = ("updated",)
+    readonly_field = ("created",)
 
     search_fields = ("assessment__name", "message")
 

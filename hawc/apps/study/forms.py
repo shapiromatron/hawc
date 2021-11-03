@@ -189,3 +189,8 @@ class StudiesCopy(forms.Form):
         helper = BaseFormHelper(self, **inputs)
 
         return helper
+
+class CommunicationForm(forms.ModelForm):
+    class Meta:
+        model = models.Communication
+        exclude = ['content_type', 'object_id']

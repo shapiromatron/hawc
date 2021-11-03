@@ -380,6 +380,23 @@ class AssessmentRead(BaseDetail):
         context["dtxsids"] = json.dumps(
             serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
         )
+
+        user = self.request.user._wrapped
+
+        if (user.is_superuser):
+            context['user_is_project_manager_or_higher'] = True
+        elif (user.is_anonymous):
+            context['user_is_project_manager_or_higher'] = False
+        else:
+            context['user_is_project_manager_or_higher'] = user.id in self.object.project_manager
+
+        context['user_is_team_member_or_higher'] = self.object.user_is_team_member_or_higher(user)
+        communication = models.Communication.objects.get(object_id=self.object.id)
+        if (communication is not None):
+            communication_message = communication.message
+        else:
+            communication_message = ''
+        context['Communication'] = communication_message
         context["datasets"] = (
             context["object"].datasets.all()
             if context["obj_perms"]["edit"]
@@ -835,13 +852,23 @@ class CommunicationUpdate(UpdateView):
     form_class = forms.CommunicationForm
 
     def get_object(self, queryset=None):
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
+        content_type=ContentType.objects.get(app_label='assessment', model='assessment')
+        assessment = content_type.get_object_for_this_type(id=self.kwargs['pk'])
         obj, created = models.Communication.objects.get_or_create(
-            assessment=self.kwargs['pk'],
-            content_type=ContentType(models.Assessment),
+            assessment=assessment,
+            content_type = content_type,
             object_id=self.kwargs['pk'])
         return obj
 
+    def post(self, request, *args, **kwargs):
+        instance = models.Communication.objects.get(object_id=self.kwargs['pk'])
+        if (instance is not None):
+            form = forms.CommunicationForm(request.POST, instance=instance)
+        else:
+            form = forms.CommunicationForm(request.POST)
+        form.save()
+        return HttpResponseRedirect(reverse('assessment:detail', args=[kwargs['pk']]))
 
 @method_decorator(cache_page(3600), name="dispatch")
 class AboutContentTypes(TemplateView):

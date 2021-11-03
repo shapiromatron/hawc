@@ -1,10 +1,12 @@
 from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
+from django.views.generic.edit import UpdateView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -99,6 +101,13 @@ class StudyRead(BaseDetail):
             "attachments_viewable": attachments_viewable,
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
+        context['user_is_team_member_or_higher'] = self.assessment.user_is_team_member_or_higher(self.request.user._wrapped)
+        communication = models.Communication.objects.get(object_id=self.object.id)
+        if (communication is not None):
+            communication_message = communication.message
+        else:
+            communication_message = ''
+        context['Communication'] = communication_message
         return context
 
 
@@ -226,3 +235,30 @@ class EditabilityUpdate(BaseUpdate):
             return HttpResponseRedirect(self.object.get_absolute_url())
         else:
             raise PermissionDenied
+
+
+# Communication view
+class CommunicationUpdate(UpdateView):
+    template_name = "study/communication_update.html"
+    model = models.Communication
+    form_class = forms.CommunicationForm
+
+    def get_object(self, queryset=None):
+        #import pdb; pdb.set_trace()
+        content_type=ContentType.objects.get(app_label='study', model='study')
+        study = content_type.get_object_for_this_type(id=self.kwargs['pk'])
+        obj, created = models.Communication.objects.get_or_create(
+            study=study,
+            content_type = content_type,
+            object_id=self.kwargs['pk'])
+        return obj
+
+    def post(self, request, *args, **kwargs):
+        #import pdb; pdb.set_trace()
+        instance = models.Communication.objects.get(object_id=self.kwargs['pk'])
+        if (instance is not None):
+            form = forms.CommunicationForm(request.POST, instance=instance)
+        else:
+            form = forms.CommunicationForm(request.POST)
+        form.save()
+        return HttpResponseRedirect(reverse('study:detail', args=[kwargs['pk']]))
