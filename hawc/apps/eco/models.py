@@ -42,13 +42,33 @@ class Ecoregion(models.Model):
 
 
 class Vocab(models.Model):
+    class Categories(models.TextChoices):
+        TYPE = "Study type", "Study type"
+        SETTING = "Study setting", "Study setting"
+        HABITAT = "Habitat", "Habitat"
+        CAUSETERM = "Cause term", "Cause term"
+        CAUSEMEASURE = "Cause measure", "Cause measure"
+        CAUSEBIOORG = "Cause biological organization", "Cause biological organization"
+        CAUSETRAJECTORY = "Cause trajectory", "Cause trajectory"
+        EFFECTTERM = "Effect term", "Effect term"
+        EFFECTMEASURE = "Effect measure", "Effect measure"
+        EFFECTBIOORG = "Effect biological organization", "Effect biological organization"
+        EFFECTTRAJECTORY = "Effect trajectory", "Effect trajectory"
+        MODIFYING = "Modifying factors", "Modifying factors"
+        RESPONSEMEASURETYPE = "Response measure type", "Response measure type"
+        RESPONSEVARIABILITY = "Response variability", "Response variability"
+        STATISTICAL = "Statistical significance measure", "Statistical significance measure"
+        SORT = "Sort", "Sort"
 
-    category = models.CharField(max_length=100, blank=True)  # maybe make this a choices field
+    category = models.CharField(choices=Categories.choices, max_length=100, blank=True)
     value = models.CharField(max_length=100, blank=True)
     parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.category + " - " + self.value
+        if self.parent:
+            return self.parent.value + " | " + self.value
+        else:
+            return self.value
 
     class Meta:
         verbose_name = "Vocab"
@@ -86,23 +106,11 @@ class Metadata(models.Model):
 
     habitat_type = models.ForeignKey(
         Vocab,
-        verbose_name="Habitat",
-        limit_choices_to=Q(category="Habitat")
-        & Q(parent__isnull=True),  # not sure if isnull is best approach here
+        # verbose_name="Habitat",
+        limit_choices_to={"category": "Habitat"},  # not sure if isnull is best approach here
         on_delete=models.CASCADE,
         blank=True,
         help_text="Select the habitat to which the evidence applies",
-        related_name="+",
-    )
-
-    habitat_specific = models.ForeignKey(
-        Vocab,
-        limit_choices_to=Q(
-            category="Habitat"
-        ),  # this should be all children of habitat/selected type - how to query???
-        on_delete=models.CASCADE,
-        blank=True,
-        help_text="Pick the specific habitat",
         related_name="+",
     )
 
@@ -151,15 +159,15 @@ class Cause(models.Model):
         verbose_name="Cause units",
         max_length=100,
         help_text="Type the unit associated with the cause term",
-    )  # autocomplete?
+    )  # autocomplete? # maybe add vocab here?
 
     bio_org = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": "Cause biological organization"},
         verbose_name="Level of biological organization",
-        max_length=100,
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
+        null=True,
         on_delete=models.CASCADE,
     )
 
@@ -190,7 +198,7 @@ class Cause(models.Model):
     )
 
     def __str__(self):
-        return self.term
+        return self.study_id.short_citation + " | " + self.term.value
 
     class Meta:
         verbose_name = "Cause/Treatment"
@@ -226,11 +234,15 @@ class Effect(models.Model):
         help_text="Type the unit associated with the effect term",
     )  # autocomplete
 
-    bio_org = models.CharField(
+    bio_org = models.ForeignKey(
+        Vocab,
+        limit_choices_to={"category": "Effect biological organization"},
         verbose_name="Level of biological organization",
-        max_length=100,
-        help_text="Select the level of biological organization associated with the cause, if applicable",
+        help_text="Select the level of biological organization associated with the effect, if applicable",
         blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="+",
     )
 
     species = models.CharField(
@@ -276,7 +288,7 @@ class Effect(models.Model):
     )
 
     def __str__(self):
-        return self.term
+        return self.cause.study_id.short_citation + " | " + self.term.value
 
     class Meta:
         verbose_name = "Effect/Response"
@@ -314,16 +326,6 @@ class Quantitative(models.Model):
         null=True,
     )
 
-    measure_type_filter = models.ForeignKey(
-        Vocab,
-        limit_choices_to={"category": "Response measure type"},
-        on_delete=models.CASCADE,
-        related_name="+",
-        verbose_name="Response measure type (filter)",
-        blank=True,
-        help_text="This drop down will filter the following field",
-    )
-
     measure_type = models.ForeignKey(
         Vocab,
         verbose_name="Response measure type",
@@ -331,8 +333,9 @@ class Quantitative(models.Model):
         on_delete=models.CASCADE,
         related_name="+",  # set up query based on prior field
         blank=True,
+        null=True,
         help_text="Select one response measure type",
-    )  # dependent on selection in response measure type filter
+    )  # dependent on selection in response measure type filter - can this be added in front end?
 
     measure_value = models.FloatField(
         verbose_name="Response measure value",
@@ -351,6 +354,7 @@ class Quantitative(models.Model):
         Vocab,
         verbose_name="Response variability",
         blank=True,
+        null=True,
         limit_choices_to={"category": "Response variability"},
         on_delete=models.CASCADE,
         related_name="+",
@@ -375,6 +379,7 @@ class Quantitative(models.Model):
         Vocab,
         verbose_name="Statistical significance measure type",
         blank=True,
+        null=True,
         limit_choices_to={"category": "Statistical significance measure"},
         on_delete=models.CASCADE,
         related_name="+",
@@ -394,6 +399,18 @@ class Quantitative(models.Model):
         help_text="Calculation from 'response measure value' based on a formula linked to 'response measure type', if applicable",
         null=True,
     )
+
+    def __str__(self):
+        if self.measure_type:
+            return (
+                self.effect.cause.study_id.short_citation
+                + " | "
+                + self.effect.term.value
+                + " | "
+                + self.measure_type.value
+            )
+        else:
+            return self.effect.cause.study_id.short_citation + " | " + self.effect.term.value
 
     class Meta:
         verbose_name = "Quantitative response information"
