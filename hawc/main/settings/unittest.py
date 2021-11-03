@@ -2,6 +2,8 @@
 
 import logging
 
+from hawc.constants import AuthProvider
+
 from .dev import *  # noqa
 
 DEBUG = True
@@ -9,6 +11,8 @@ DEBUG = True
 # remove toolbar for selenium tests
 INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]
 MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in middleware]
+
+AUTH_PROVIDERS = {AuthProvider.django, AuthProvider.external}
 
 HAWC_FLAVOR = "PRIME"
 ANYONE_CAN_CREATE_ASSESSMENTS = True
