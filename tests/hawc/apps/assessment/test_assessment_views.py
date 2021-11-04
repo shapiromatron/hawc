@@ -169,3 +169,35 @@ class TestContactUsPage:
         # invalid referrer; use default
         resp = client.get(contact_url, HTTP_REFERER=about_url + '"onmouseover="alert(26)"')
         assert resp.context["form"].fields["previous_page"].initial == portal_url
+
+
+@pytest.mark.django_db
+class TestDownloadPlot:
+    def _get_valid_payload(self, svg_data):
+        return {"output": "svg", "svg": svg_data[0].decode(), "width": 240, "height": 240}
+
+    def test_invalid(self, svg_data):
+        client = Client()
+        url = reverse("assessment:download_plot")
+
+        # GET is invalid
+        assert client.get(url).status_code == 405
+
+        # empty POST is invalid
+        resp = client.post(url, {})
+        assert resp.status_code == 400
+        assert resp.json() == {"valid": False}
+
+        # incorrect POST is invalid
+        data = self._get_valid_payload(svg_data)
+        data["output"] = "invalid"
+        resp = client.post(url, data)
+        assert resp.status_code == 400
+        assert resp.json() == {"valid": False}
+
+    def test_valid(self, svg_data):
+        client = Client()
+        url = reverse("assessment:download_plot")
+        assert client.get(url).status_code == 405
+        resp = client.post(url, self._get_valid_payload(svg_data))
+        assert resp.status_code == 200

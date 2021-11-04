@@ -1,4 +1,3 @@
-import base64
 import xml.etree.ElementTree as ET
 from io import BytesIO
 from pathlib import Path
@@ -9,14 +8,6 @@ import pytest
 from hawc.apps.common.svg import SVGConverter
 
 DATA_PATH = Path(__file__).parent.absolute() / "data"
-
-
-@pytest.fixture
-def svg_data():
-    svg = """<svg width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="10" width="80" height="80" style="fill:red;stroke-width:3;stroke:blue" />
-        </svg>"""
-    return (base64.encodebytes(svg.encode()), "/test/", 240, 240)
 
 
 @pytest.mark.skipif(which("phantomjs") is None, reason="requires phantomjs on path to run")
