@@ -3,7 +3,7 @@
         "pk": 1,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study type",
+            "category": 0,
             "value": "Observational/gradient"
         }
     },
@@ -11,7 +11,7 @@
         "pk": 2,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study type",
+            "category": 0,
             "value": "Manipulation/experiment"
         }
     },
@@ -19,7 +19,7 @@
         "pk": 3,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study type",
+            "category": 0,
             "value": "Simulation"
         }
     },
@@ -27,7 +27,7 @@
         "pk": 4,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study type",
+            "category": 0,
             "value": "Meta-analysis"
         }
     },
@@ -35,7 +35,7 @@
         "pk": 5,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study type",
+            "category": 0,
             "value": "Review"
         }
     },
@@ -43,7 +43,7 @@
         "pk": 6,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study setting",
+            "category": 1,
             "value": "Field"
         }
     },
@@ -51,7 +51,7 @@
         "pk": 7,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study setting",
+            "category": 1,
             "value": "Mesocosm"
         }
     },
@@ -59,7 +59,7 @@
         "pk": 8,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study setting",
+            "category": 1,
             "value": "Greenhouse"
         }
     },
@@ -67,7 +67,7 @@
         "pk": 9,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study setting",
+            "category": 1,
             "value": "Laboratory"
         }
     },
@@ -75,7 +75,7 @@
         "pk": 10,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study setting",
+            "category": 1,
             "value": "Model"
         }
     },
@@ -83,7 +83,7 @@
         "pk": 11,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Study setting",
+            "category": 1,
             "value": "Not applicable"
         }
     },
@@ -91,7 +91,7 @@
         "pk": 12,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Terrestrial"
         }
     },
@@ -99,7 +99,7 @@
         "pk": 13,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Riparian"
         }
     },
@@ -107,7 +107,7 @@
         "pk": 14,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Freshwater aquatic"
         }
     },
@@ -115,7 +115,7 @@
         "pk": 15,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Estuarine"
         }
     },
@@ -123,7 +123,7 @@
         "pk": 16,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Marine"
         }
     },
@@ -131,7 +131,7 @@
         "pk": 17,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Forest",
             "parent": 12
         }
@@ -140,7 +140,7 @@
         "pk": 18,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Grassland",
             "parent": 12
         }
@@ -149,7 +149,7 @@
         "pk": 19,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Desert",
             "parent": 12
         }
@@ -158,7 +158,7 @@
         "pk": 20,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Heathland",
             "parent": 12
         }
@@ -167,7 +167,7 @@
         "pk": 21,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Agricultural",
             "parent": 12
         }
@@ -176,7 +176,7 @@
         "pk": 22,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Urban/suburban",
             "parent": 12
         }
@@ -185,7 +185,7 @@
         "pk": 23,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Tundra",
             "parent": 12
         }
@@ -194,7 +194,7 @@
         "pk": 24,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Stream/river",
             "parent": 14
         }
@@ -203,7 +203,7 @@
         "pk": 25,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Wetland",
             "parent": 14
         }
@@ -212,7 +212,7 @@
         "pk": 26,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Habitat",
+            "category": 2,
             "value": "Lake/reservoir",
             "parent": 14
         }
@@ -221,7 +221,7 @@
         "pk": 27,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Cause term",
+            "category": 3,
             "value": "TBD"
         }
     },
@@ -229,7 +229,7 @@
         "pk": 28,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Cause measure",
+            "category": 4,
             "value": "TBD"
         }
     },
@@ -237,7 +237,7 @@
         "pk": 29,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Cause biological organization",
+            "category": 5,
             "value": "Ecosystem"
         }
     },
@@ -245,7 +245,7 @@
         "pk": 30,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Cause biological organization",
+            "category": 5,
             "value": "Community"
         }
     },
@@ -253,7 +253,7 @@
         "pk": 31,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Cause biological organization",
+            "category": 5,
             "value": "Population"
         }
     },
@@ -261,7 +261,7 @@
         "pk": 32,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Cause biological organization",
+            "category": 5,
             "value": "Individual organism"
         }
     },
@@ -269,47 +269,15 @@
         "pk": 33,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Cause biological organization",
+            "category": 5,
             "value": "Sub-organismal"
-        }
-    },
-    {
-        "pk": 34,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Cause trajectory",
-            "value": "Increase"
-        }
-    },
-    {
-        "pk": 35,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Cause trajectory",
-            "value": "Decrease"
-        }
-    },
-    {
-        "pk": 36,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Cause trajectory",
-            "value": "Change"
-        }
-    },
-    {
-        "pk": 37,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Cause trajectory",
-            "value": "Other"
         }
     },
     {
         "pk": 38,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Effect term",
+            "category": 6,
             "value": "TBD"
         }
     },
@@ -317,95 +285,7 @@
         "pk": 39,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Effect measure",
-            "value": "TBD"
-        }
-    },
-    {
-        "pk": 40,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect biological organization",
-            "value": "Ecosystem"
-        }
-    },
-    {
-        "pk": 41,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect biological organization",
-            "value": "Community"
-        }
-    },
-    {
-        "pk": 42,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect biological organization",
-            "value": "Population"
-        }
-    },
-    {
-        "pk": 43,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect biological organization",
-            "value": "Individual organism"
-        }
-    },
-    {
-        "pk": 44,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect biological organization",
-            "value": "Sub-organismal"
-        }
-    },
-    {
-        "pk": 45,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect trajectory",
-            "value": "Increase"
-        }
-    },
-    {
-        "pk": 46,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect trajectory",
-            "value": "Decrease"
-        }
-    },
-    {
-        "pk": 47,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect trajectory",
-            "value": "Change"
-        }
-    },
-    {
-        "pk": 48,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect trajectory",
-            "value": "No change"
-        }
-    },
-    {
-        "pk": 49,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Effect trajectory",
-            "value": "Other"
-        }
-    },
-    {
-        "pk": 50,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Modifying factors",
+            "category": 7,
             "value": "TBD"
         }
     },
@@ -413,7 +293,7 @@
         "pk": 51,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Correlation coefficient"
         }
     },
@@ -421,7 +301,7 @@
         "pk": 52,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "R-squared"
         }
     },
@@ -429,7 +309,7 @@
         "pk": 53,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Mean difference"
         }
     },
@@ -437,7 +317,7 @@
         "pk": 54,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "ANOVA/PERMANOVA"
         }
     },
@@ -445,7 +325,7 @@
         "pk": 55,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Ratio"
         }
     },
@@ -453,7 +333,7 @@
         "pk": 56,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Slope coefficient (beta)"
         }
     },
@@ -461,7 +341,7 @@
         "pk": 57,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Ordination"
         }
     },
@@ -469,7 +349,7 @@
         "pk": 58,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Threshold"
         }
     },
@@ -477,7 +357,7 @@
         "pk": 59,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Pearson",
             "parent": 51
         }
@@ -486,7 +366,7 @@
         "pk": 60,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Spearman",
             "parent": 51
         }
@@ -495,7 +375,7 @@
         "pk": 61,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Not specified",
             "parent": 51
         }
@@ -504,7 +384,7 @@
         "pk": 62,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Simple linear",
             "parent": 52
         }
@@ -513,7 +393,7 @@
         "pk": 63,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Partial",
             "parent": 52
         }
@@ -522,7 +402,7 @@
         "pk": 64,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Multiple",
             "parent": 52
         }
@@ -531,7 +411,7 @@
         "pk": 65,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Quantile",
             "parent": 52
         }
@@ -540,7 +420,7 @@
         "pk": 66,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Not specified",
             "parent": 52
         }
@@ -549,7 +429,7 @@
         "pk": 67,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Response ratio",
             "parent": 55
         }
@@ -558,7 +438,7 @@
         "pk": 68,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Odds ratio",
             "parent": 55
         }
@@ -567,7 +447,7 @@
         "pk": 69,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Risk ratio",
             "parent": 55
         }
@@ -576,7 +456,7 @@
         "pk": 70,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Hazard ratio",
             "parent": 55
         }
@@ -585,7 +465,7 @@
         "pk": 71,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Not specified",
             "parent": 55
         }
@@ -594,7 +474,7 @@
         "pk": 72,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Non-standardized",
             "parent": 53
         }
@@ -603,7 +483,7 @@
         "pk": 73,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Standardized",
             "parent": 53
         }
@@ -612,7 +492,7 @@
         "pk": 74,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Not specified",
             "parent": 53
         }
@@ -621,7 +501,7 @@
         "pk": 75,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Non-transformed data",
             "parent": 56
         }
@@ -630,7 +510,7 @@
         "pk": 76,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Transformed data",
             "parent": 56
         }
@@ -639,7 +519,7 @@
         "pk": 77,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Not specified",
             "parent": 56
         }
@@ -648,7 +528,7 @@
         "pk": 78,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Canonical correspondence analysis (CCA)",
             "parent": 57
         }
@@ -657,7 +537,7 @@
         "pk": 79,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Principal components analysis (PCA)",
             "parent": 57
         }
@@ -666,7 +546,7 @@
         "pk": 80,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Multiple discriminant analysis (MDA)",
             "parent": 57
         }
@@ -675,7 +555,7 @@
         "pk": 81,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Non-multidimensional scaling (NMDS)",
             "parent": 57
         }
@@ -684,7 +564,7 @@
         "pk": 82,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Factor analysis",
             "parent": 57
         }
@@ -693,7 +573,7 @@
         "pk": 83,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Not specified",
             "parent": 57
         }
@@ -702,7 +582,7 @@
         "pk": 84,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Regression tree",
             "parent": 58
         }
@@ -711,7 +591,7 @@
         "pk": 85,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Random forest",
             "parent": 58
         }
@@ -720,7 +600,7 @@
         "pk": 86,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Breakpoint (piecewise) regression",
             "parent": 58
         }
@@ -729,7 +609,7 @@
         "pk": 87,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Quantile regression",
             "parent": 58
         }
@@ -738,7 +618,7 @@
         "pk": 88,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Cumulative frequency distribution",
             "parent": 58
         }
@@ -747,7 +627,7 @@
         "pk": 89,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Gradient forest analysis",
             "parent": 58
         }
@@ -756,7 +636,7 @@
         "pk": 90,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Non-linear curve fitting",
             "parent": 58
         }
@@ -765,7 +645,7 @@
         "pk": 91,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Ordination",
             "parent": 58
         }
@@ -774,7 +654,7 @@
         "pk": 92,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "TITAN",
             "parent": 58
         }
@@ -783,7 +663,7 @@
         "pk": 93,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response measure type",
+            "category": 8,
             "value": "Not specified",
             "parent": 58
         }
@@ -792,7 +672,7 @@
         "pk": 94,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response variability",
+            "category": 9,
             "value": "95% CI"
         }
     },
@@ -800,7 +680,7 @@
         "pk": 95,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response variability",
+            "category": 9,
             "value": "90% CI"
         }
     },
@@ -808,7 +688,7 @@
         "pk": 96,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response variability",
+            "category": 9,
             "value": "Standard deviation"
         }
     },
@@ -816,7 +696,7 @@
         "pk": 97,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response variability",
+            "category": 9,
             "value": "Standard error"
         }
     },
@@ -824,7 +704,7 @@
         "pk": 98,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Response variability",
+            "category": 9,
             "value": "Not applicable"
         }
     },
@@ -832,7 +712,7 @@
         "pk": 99,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Statistical significance measure",
+            "category": 10,
             "value": "P-value"
         }
     },
@@ -840,7 +720,7 @@
         "pk": 100,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Statistical significance measure",
+            "category": 10,
             "value": "F statistic"
         }
     },
@@ -848,7 +728,7 @@
         "pk": 101,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Statistical significance measure",
+            "category": 10,
             "value": "Chi square"
         }
     },
@@ -856,16 +736,8 @@
         "pk": 102,
         "model": "eco.Vocab",
         "fields": {
-            "category": "Statistical significance measure",
+            "category": 10,
             "value": "Not applicable"
-        }
-    },
-    {
-        "pk": 103,
-        "model": "eco.Vocab",
-        "fields": {
-            "category": "Sort",
-            "value": "TBD"
         }
     }
 ]

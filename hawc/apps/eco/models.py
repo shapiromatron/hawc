@@ -42,25 +42,20 @@ class Ecoregion(models.Model):
 
 
 class Vocab(models.Model):
-    class Categories(models.TextChoices):
-        TYPE = "Study type", "Study type"
-        SETTING = "Study setting", "Study setting"
-        HABITAT = "Habitat", "Habitat"
-        CAUSETERM = "Cause term", "Cause term"
-        CAUSEMEASURE = "Cause measure", "Cause measure"
-        CAUSEBIOORG = "Cause biological organization", "Cause biological organization"
-        CAUSETRAJECTORY = "Cause trajectory", "Cause trajectory"
-        EFFECTTERM = "Effect term", "Effect term"
-        EFFECTMEASURE = "Effect measure", "Effect measure"
-        EFFECTBIOORG = "Effect biological organization", "Effect biological organization"
-        EFFECTTRAJECTORY = "Effect trajectory", "Effect trajectory"
-        MODIFYING = "Modifying factors", "Modifying factors"
-        RESPONSEMEASURETYPE = "Response measure type", "Response measure type"
-        RESPONSEVARIABILITY = "Response variability", "Response variability"
-        STATISTICAL = "Statistical significance measure", "Statistical significance measure"
-        SORT = "Sort", "Sort"
+    class Categories(models.IntegerChoices):
+        TYPE = 0, "Study type"
+        SETTING = 1, "Study setting"
+        HABITAT = 2, "Habitat"
+        CAUSETERM = 3, "Cause term"
+        CAUSEMEASURE = 4, "Cause measure"
+        BIOORG = 5, "Biological organization"
+        EFFECTTERM = 6, "Effect term"
+        EFFECTMEASURE = 7, "Effect measure"
+        RESPONSEMEASURETYPE = 8, "Response measure type"
+        RESPONSEVARIABILITY = 9, "Response variability"
+        STATISTICAL = 10, "Statistical significance measure"
 
-    category = models.CharField(choices=Categories.choices, max_length=100, blank=True)
+    category = models.IntegerField(choices=Categories.choices)
     value = models.CharField(max_length=100, blank=True)
     parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
 
@@ -80,7 +75,7 @@ class Metadata(models.Model):
 
     study_type = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": "Study type"},
+        limit_choices_to={"category": 0},
         on_delete=models.CASCADE,
         help_text="Select the type of study",
         related_name="+",
@@ -88,7 +83,7 @@ class Metadata(models.Model):
 
     study_setting = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": "Study setting"},
+        limit_choices_to={"category": 1},
         on_delete=models.CASCADE,
         help_text="Select the setting in which evidence was generated",
         related_name="+",
@@ -104,10 +99,10 @@ class Metadata(models.Model):
         Ecoregion, blank=True, help_text="Select one or more Level III Ecoregions, if known",
     )
 
-    habitat_type = models.ForeignKey(
+    habitat = models.ForeignKey(
         Vocab,
-        # verbose_name="Habitat",
-        limit_choices_to={"category": "Habitat"},  # not sure if isnull is best approach here
+        verbose_name="Habitat",
+        limit_choices_to={"category": 2},  # not sure if isnull is best approach here
         on_delete=models.CASCADE,
         blank=True,
         help_text="Select the habitat to which the evidence applies",
@@ -140,17 +135,11 @@ class Cause(models.Model):
     study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
     term = models.ForeignKey(
-        Vocab,
-        limit_choices_to={"category": "Cause term"},
-        on_delete=models.CASCADE,
-        related_name="+",
+        Vocab, limit_choices_to={"category": 3}, on_delete=models.CASCADE, related_name="+",
     )  # autocomplete
 
     measure = models.ForeignKey(
-        Vocab,
-        limit_choices_to={"category": "Cause measure"},
-        on_delete=models.CASCADE,
-        related_name="+",
+        Vocab, limit_choices_to={"category": 4}, on_delete=models.CASCADE, related_name="+",
     )  # autocomplete
 
     measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
@@ -163,7 +152,7 @@ class Cause(models.Model):
 
     bio_org = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": "Cause biological organization"},
+        limit_choices_to={"category": 5},
         verbose_name="Level of biological organization",
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
@@ -178,11 +167,14 @@ class Cause(models.Model):
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
-    trajectory = models.ForeignKey(
-        Vocab,
-        limit_choices_to={"category": "Cause trajectory"},
-        on_delete=models.CASCADE,
-        related_name="+",
+    class Trajectory(models.IntegerChoices):
+        INCREASE = 0, "Increase"
+        DECREASE = 1, "Decrease"
+        CHANGE = 2, "Change"
+        OTHER = 3, "Other"
+
+    trajectory = models.IntegerField(
+        choices=Trajectory.choices,
         verbose_name="Cause trajectory",
         help_text="Select qualitative description of how the cause measure changes, if applicable",
     )
@@ -211,7 +203,7 @@ class Effect(models.Model):
     term = models.ForeignKey(
         Vocab,
         verbose_name="Effect term",
-        limit_choices_to={"category": "Effect term"},
+        limit_choices_to={"category": 6},
         on_delete=models.CASCADE,
         related_name="+",
     )
@@ -219,7 +211,7 @@ class Effect(models.Model):
     measure = models.ForeignKey(
         Vocab,
         verbose_name="Effect measure",
-        limit_choices_to={"category": "Effect measure"},
+        limit_choices_to={"category": 7},
         on_delete=models.CASCADE,
         related_name="+",
     )  # autocomplete
@@ -236,7 +228,7 @@ class Effect(models.Model):
 
     bio_org = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": "Effect biological organization"},
+        limit_choices_to={"category": 5},
         verbose_name="Level of biological organization",
         help_text="Select the level of biological organization associated with the effect, if applicable",
         blank=True,
@@ -252,12 +244,16 @@ class Effect(models.Model):
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
-    trajectory = models.ForeignKey(
-        Vocab,
+    class Trajectory(models.IntegerChoices):
+        INCREASE = 0, "Increase"
+        DECREASE = 1, "Decrease"
+        CHANGE = 2, "Change"
+        NOCHANGE = 3, "No change"
+        OTHER = 4, "Other"
+
+    trajectory = models.IntegerField(
+        choices=Trajectory.choices,
         verbose_name="Effect trajectory",
-        limit_choices_to={"category": "Effect trajectory"},
-        on_delete=models.CASCADE,
-        related_name="+",
         help_text="Select qualitative description of how the effect measure changes in response to the cause trajectory, if applicable",
     )
 
@@ -274,17 +270,19 @@ class Effect(models.Model):
     modifying_factors = models.CharField(
         verbose_name="Modifying factors",
         max_length=100,
+        blank=True,
         help_text="Type one or more factors that affect the relationship between the cause and effect",
     )  # autocomplete - choices TBD
 
-    sort = models.ForeignKey(
-        Vocab,
+    class Sort(models.IntegerChoices):
+        TBD = 0, "TBD"
+
+    sort = models.IntegerField(
+        choices=Sort.choices,
         verbose_name="Sort quantitative responses",
-        limit_choices_to={"category": "Sort"},
-        on_delete=models.CASCADE,
-        related_name="+",
-        help_text="how do you want to sort multiple quantitative responses?",
+        help_text="How do you want to sort multiple quantitative responses?",
         blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -329,7 +327,7 @@ class Quantitative(models.Model):
     measure_type = models.ForeignKey(
         Vocab,
         verbose_name="Response measure type",
-        limit_choices_to={"category": "Response measure type"},
+        limit_choices_to={"category": 8},
         on_delete=models.CASCADE,
         related_name="+",  # set up query based on prior field
         blank=True,
@@ -355,7 +353,7 @@ class Quantitative(models.Model):
         verbose_name="Response variability",
         blank=True,
         null=True,
-        limit_choices_to={"category": "Response variability"},
+        limit_choices_to={"category": 9},
         on_delete=models.CASCADE,
         related_name="+",
         help_text="Select how variability in the response measure was reported, if applicable",
@@ -380,7 +378,7 @@ class Quantitative(models.Model):
         verbose_name="Statistical significance measure type",
         blank=True,
         null=True,
-        limit_choices_to={"category": "Statistical significance measure"},
+        limit_choices_to={"category": 10},
         on_delete=models.CASCADE,
         related_name="+",
         help_text="Select the type of statistical significance measure reported",
