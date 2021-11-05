@@ -101,12 +101,16 @@ class StudyRead(BaseDetail):
             "attachments_viewable": attachments_viewable,
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
-        context['user_is_team_member_or_higher'] = self.assessment.user_is_team_member_or_higher(self.request.user._wrapped)
+        context["user_is_team_member_or_higher"] = self.assessment.user_is_team_member_or_higher(
+            self.request.user._wrapped
+        )
         try:
-            communication_message = models.Communication.objects.get(object_id=self.object.id).message
+            communication_message = models.Communication.objects.get(
+                object_id=self.object.id
+            ).message
         except:
-            communication_message = ''
-        context['Communication'] = communication_message
+            communication_message = ""
+        context["Communication"] = communication_message
         return context
 
 
@@ -250,25 +254,27 @@ class CommunicationUpdate(UpdateView):
             "Communication Update",
             extras=[
                 Breadcrumb.from_object(self.object.study.get_assessment()),
-                Breadcrumb(name="Studies", url=reverse("study:list", args=(self.object.study.get_assessment().id,))),
+                Breadcrumb(
+                    name="Studies",
+                    url=reverse("study:list", args=(self.object.study.get_assessment().id,)),
+                ),
             ],
         )
         return context
 
     def get_object(self, queryset=None):
-        content_type = ContentType.objects.get(app_label='study', model='study')
-        study = content_type.get_object_for_this_type(id=self.kwargs['pk'])
+        content_type = ContentType.objects.get(app_label="study", model="study")
+        study = content_type.get_object_for_this_type(id=self.kwargs["pk"])
         obj, created = models.Communication.objects.get_or_create(
-            study=study,
-            content_type=content_type,
-            object_id=self.kwargs['pk'])
+            study=study, content_type=content_type, object_id=self.kwargs["pk"]
+        )
         return obj
 
     def post(self, request, *args, **kwargs):
-        instance = models.Communication.objects.get(object_id=self.kwargs['pk'])
-        if (instance is not None):
+        instance = models.Communication.objects.get(object_id=self.kwargs["pk"])
+        if instance is not None:
             form = forms.CommunicationForm(request.POST, instance=instance)
         else:
             form = forms.CommunicationForm(request.POST)
         form.save()
-        return HttpResponseRedirect(reverse('study:detail', args=[self.kwargs['pk']]))
+        return HttpResponseRedirect(reverse("study:detail", args=[self.kwargs["pk"]]))

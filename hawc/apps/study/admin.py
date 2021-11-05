@@ -21,6 +21,7 @@ class StudyAdmin(admin.ModelAdmin):
     raw_id_fields = ("searches", "identifiers")
     search_fields = ("short_citation", "year", "title", "study_identifier")
 
+
 @admin.register(models.Communication)
 class CommunicationAdmin(admin.ModelAdmin):
     list_display = ("id", "created", "last_updated", "message", "study")

@@ -32,7 +32,11 @@ urlpatterns = [
     path("<int:pk>/logs/", views.AssessmentLogList.as_view(), name="assessment_logs",),
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
     # communication object
-    path("<int:pk>/communication-update/", views.CommunicationUpdate.as_view(), name="communication_update"),
+    path(
+        "<int:pk>/communication-update/",
+        views.CommunicationUpdate.as_view(),
+        name="communication_update",
+    ),
     # log object
     path(
         "<int:content_type>/<int:object_id>/log/",

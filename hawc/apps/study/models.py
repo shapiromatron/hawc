@@ -471,7 +471,9 @@ class Communication(models.Model):
         Study, blank=True, null=True, related_name="comms", on_delete=models.CASCADE
     )
     message = models.TextField()
-    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING, related_name='study_communication')
+    content_type = models.ForeignKey(
+        ContentType, null=True, on_delete=models.DO_NOTHING, related_name="study_communication"
+    )
     object_id = models.IntegerField(null=True)
     content_object = GenericForeignKey("content_type", "object_id")
     created = models.DateTimeField(auto_now_add=True)

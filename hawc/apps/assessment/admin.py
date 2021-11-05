@@ -234,6 +234,7 @@ class CommunicationAdmin(admin.ModelAdmin):
 
     search_fields = ("assessment__name", "message")
 
+
 @admin.register(models.Log)
 class LogAdmin(ReadOnlyAdmin):
     list_display = ("id", "created", "message", "assessment", "user")

@@ -328,7 +328,7 @@ class ContactForm(forms.Form):
 class CommunicationForm(forms.ModelForm):
     class Meta:
         model = models.Communication
-        exclude = ['content_type', 'object_id', 'assessment']
+        exclude = ["content_type", "object_id", "assessment"]
 
     @property
     def helper(self):

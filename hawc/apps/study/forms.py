@@ -194,7 +194,7 @@ class StudiesCopy(forms.Form):
 class CommunicationForm(forms.ModelForm):
     class Meta:
         model = models.Communication
-        exclude = ['content_type', 'object_id', 'study']
+        exclude = ["content_type", "object_id", "study"]
 
     @property
     def helper(self):

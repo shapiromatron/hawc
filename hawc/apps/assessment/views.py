@@ -383,19 +383,21 @@ class AssessmentRead(BaseDetail):
 
         user = self.request.user._wrapped
 
-        if (user.is_superuser):
-            context['user_is_project_manager_or_higher'] = True
-        elif (user.is_anonymous):
-            context['user_is_project_manager_or_higher'] = False
+        if user.is_superuser:
+            context["user_is_project_manager_or_higher"] = True
+        elif user.is_anonymous:
+            context["user_is_project_manager_or_higher"] = False
         else:
-            context['user_is_project_manager_or_higher'] = user.id in self.object.project_manager
+            context["user_is_project_manager_or_higher"] = user.id in self.object.project_manager
 
-        context['user_is_team_member_or_higher'] = self.object.user_is_team_member_or_higher(user)
+        context["user_is_team_member_or_higher"] = self.object.user_is_team_member_or_higher(user)
         try:
-            communication_message = models.Communication.objects.get(object_id=self.object.id).message
+            communication_message = models.Communication.objects.get(
+                object_id=self.object.id
+            ).message
         except:
-            communication_message = ''
-        context['Communication'] = communication_message
+            communication_message = ""
+        context["Communication"] = communication_message
         context["datasets"] = (
             context["object"].datasets.all()
             if context["obj_perms"]["edit"]
@@ -843,7 +845,9 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
         context["form"] = self.form
         return context
 
+
 # communications
+
 
 class CommunicationUpdate(UpdateView):
     template_name = "assessment/communication_update.html"
@@ -858,28 +862,31 @@ class CommunicationUpdate(UpdateView):
             "Communication Update",
             extras=[
                 Breadcrumb.from_object(self.object.assessment),
-                Breadcrumb(name="Assessment", url=reverse("assessment:detail", args=(self.object.assessment.id,))),
+                Breadcrumb(
+                    name="Assessment",
+                    url=reverse("assessment:detail", args=(self.object.assessment.id,)),
+                ),
             ],
         )
         return context
 
     def get_object(self, queryset=None):
-        content_type = ContentType.objects.get(app_label='assessment', model='assessment')
-        assessment = content_type.get_object_for_this_type(id=self.kwargs['pk'])
+        content_type = ContentType.objects.get(app_label="assessment", model="assessment")
+        assessment = content_type.get_object_for_this_type(id=self.kwargs["pk"])
         obj, created = models.Communication.objects.get_or_create(
-            assessment=assessment,
-            content_type = content_type,
-            object_id=self.kwargs['pk'])
+            assessment=assessment, content_type=content_type, object_id=self.kwargs["pk"]
+        )
         return obj
 
     def post(self, request, *args, **kwargs):
-        instance = models.Communication.objects.get(object_id=self.kwargs['pk'])
-        if (instance is not None):
+        instance = models.Communication.objects.get(object_id=self.kwargs["pk"])
+        if instance is not None:
             form = forms.CommunicationForm(request.POST, instance=instance)
         else:
             form = forms.CommunicationForm(request.POST)
         form.save()
-        return HttpResponseRedirect(reverse('assessment:detail', args=[kwargs['pk']]))
+        return HttpResponseRedirect(reverse("assessment:detail", args=[kwargs["pk"]]))
+
 
 @method_decorator(cache_page(3600), name="dispatch")
 class AboutContentTypes(TemplateView):
