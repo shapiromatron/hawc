@@ -195,6 +195,13 @@ class TestDownloadPlot:
         assert resp.status_code == 400
         assert resp.json() == {"valid": False}
 
+        # test incorrect svg encoding
+        data = self._get_valid_payload(svg_data)
+        data["svg"] = "💥"
+        resp = client.post(url, data)
+        assert resp.status_code == 400
+        assert resp.json() == {"valid": False}
+
     def test_valid(self, svg_data):
         client = Client()
         url = reverse("assessment:download_plot")

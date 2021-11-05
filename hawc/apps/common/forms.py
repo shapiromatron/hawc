@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 
 from . import selectable, tasks, validators
+from .svg import SVGConverter
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
@@ -225,6 +226,14 @@ class DownloadPlotForm(forms.Form):
     svg = forms.CharField()
     width = forms.FloatField()
     height = forms.FloatField()
+
+    def clean_svg(self):
+        data = self.cleaned_data["svg"]
+        try:
+            SVGConverter.decode_svg(data)
+        except ValueError as err:
+            raise forms.ValidationError(str(err))
+        return data
 
     def process(self, url: str) -> HttpResponse:
         extension = self.cleaned_data["output"]
