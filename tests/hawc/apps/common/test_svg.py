@@ -49,3 +49,13 @@ class TestSvgConverter:
         resp = conv.to_pptx()
         assert isinstance(resp, BytesIO)
         # can't compare file; timestamp metadata information pptx
+
+    def test_decode_svg(self, svg_data):
+        # success
+        data = SVGConverter.decode_svg(svg_data[0])
+        assert data.startswith("<svg")
+
+        # failures
+        for value in ["💥", "�", "/../../WEB-INF/web.xml"]:
+            with pytest.raises(ValueError):
+                SVGConverter.decode_svg(value)
