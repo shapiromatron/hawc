@@ -108,7 +108,7 @@ class StudyRead(BaseDetail):
             communication_message = models.Communication.objects.get(
                 object_id=self.object.id
             ).message
-        except:
+        except models.Communication.DoesNotExist:
             communication_message = ""
         context["Communication"] = communication_message
         return context
