@@ -102,10 +102,9 @@ class StudyRead(BaseDetail):
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
         context['user_is_team_member_or_higher'] = self.assessment.user_is_team_member_or_higher(self.request.user._wrapped)
-        communication = models.Communication.objects.get(object_id=self.object.id)
-        if (communication is not None):
-            communication_message = communication.message
-        else:
+        try:
+            communication_message = models.Communication.objects.get(object_id=self.object.id).message
+        except:
             communication_message = ''
         context['Communication'] = communication_message
         return context
