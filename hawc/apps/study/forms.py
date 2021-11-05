@@ -190,7 +190,18 @@ class StudiesCopy(forms.Form):
 
         return helper
 
+
 class CommunicationForm(forms.ModelForm):
     class Meta:
         model = models.Communication
-        exclude = ['content_type', 'object_id']
+        exclude = ['content_type', 'object_id', 'study']
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Update communications for study " + str(self.instance.study),
+            help_text="Add communications visible to team members.",
+            cancel_url=self.instance.study.get_absolute_url(),
+            submit_text="Update communications",
+        )

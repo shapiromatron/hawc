@@ -477,4 +477,5 @@ class Communication(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+
 reversion.register(Study)

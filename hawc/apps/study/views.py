@@ -243,22 +243,33 @@ class CommunicationUpdate(UpdateView):
     model = models.Communication
     form_class = forms.CommunicationForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["assessment"] = self.object.study.get_assessment()
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Communication Update",
+            extras=[
+                Breadcrumb.from_object(self.object.study.get_assessment()),
+                Breadcrumb(name="Studies", url=reverse("study:list", args=(self.object.study.get_assessment().id,))),
+            ],
+        )
+        return context
+
     def get_object(self, queryset=None):
-        #import pdb; pdb.set_trace()
-        content_type=ContentType.objects.get(app_label='study', model='study')
+        content_type = ContentType.objects.get(app_label='study', model='study')
         study = content_type.get_object_for_this_type(id=self.kwargs['pk'])
         obj, created = models.Communication.objects.get_or_create(
             study=study,
-            content_type = content_type,
+            content_type=content_type,
             object_id=self.kwargs['pk'])
         return obj
 
     def post(self, request, *args, **kwargs):
-        #import pdb; pdb.set_trace()
         instance = models.Communication.objects.get(object_id=self.kwargs['pk'])
         if (instance is not None):
             form = forms.CommunicationForm(request.POST, instance=instance)
         else:
             form = forms.CommunicationForm(request.POST)
         form.save()
-        return HttpResponseRedirect(reverse('study:detail', args=[kwargs['pk']]))
+        return HttpResponseRedirect(reverse('study:detail', args=[self.kwargs['pk']]))
