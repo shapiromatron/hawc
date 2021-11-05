@@ -388,7 +388,9 @@ class AssessmentRead(BaseDetail):
         elif user.is_anonymous:
             context["user_is_project_manager_or_higher"] = False
         else:
-            context["user_is_project_manager_or_higher"] = user.id in self.object.project_manager
+            context["user_is_project_manager_or_higher"] = (
+                user.id in self.object.project_manager.all()
+            )
 
         context["user_is_team_member_or_higher"] = self.object.user_is_team_member_or_higher(user)
         try:
