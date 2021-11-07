@@ -109,6 +109,9 @@ In the first terminal, let's create our database and then run the python webserv
     cd ~/dev/hawc
     source ./venv/bin/activate
 
+    # install latest packages and requirements from code
+    make sync-dev
+
     # sync db state with application state
     manage.py migrate
 
@@ -144,6 +147,9 @@ In the first terminal, let's create our database and then run the python webserv
 
     :: start the postgres database (if not already started)
     pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
+
+    # install latest packages and requirements from code
+    make sync-dev
 
     :: sync db state with application state
     manage.py migrate
