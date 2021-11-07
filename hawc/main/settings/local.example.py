@@ -14,8 +14,12 @@ DATABASES = {
     }
 }
 
-# disable cache (comment to use cache; uncomment to disable)
-CACHES["default"] = {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+# use fast hasher for fixture database
+if DATABASES["default"]["NAME"] ==  "hawc-fixture":
+    PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
+
+# # disable cache (comment to use cache; uncomment to disable)
+# CACHES["default"] = {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
 
 # to show lots of debugging:
 # LOGGING["loggers"]["hawc"]["level"] = "DEBUG"
