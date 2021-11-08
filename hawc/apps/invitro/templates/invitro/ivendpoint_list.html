@@ -23,15 +23,11 @@
 
 {% block extrajs %}
     {{ form.media }}
+    {{ config|json_script:"config" }}
     <script type="text/javascript">
-        window.app.invitroStartup(function(invitro){
-            var endpoints = [];
-
-            {{list_json|safe}}.map(function(endpoint){
-                endpoints.push(new invitro.IVEndpoint(endpoint));
-            })
-
-            var tbl = new invitro.IVEndpointListTable(endpoints);
+        window.app.startup("invitroStartup", function(app){
+            const data = window.app.getConfig(),
+                tbl = new app.IVEndpointListTable(data.items);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

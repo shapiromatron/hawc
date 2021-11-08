@@ -29,7 +29,15 @@ urlpatterns = [
     ),
     path("<int:pk>/delete/", views.AssessmentDelete.as_view(), name="delete"),
     path("<int:pk>/downloads/", views.AssessmentDownloads.as_view(), name="downloads",),
+    path("<int:pk>/logs/", views.AssessmentLogList.as_view(), name="assessment_logs",),
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
+    # log object
+    path(
+        "<int:content_type>/<int:object_id>/log/",
+        views.LogObjectList.as_view(),
+        name="log_object_list",
+    ),
+    path("log/<int:pk>/", views.LogDetail.as_view(), name="log_detail",),
     # attachment objects
     path(
         "<int:pk>/attachment/create/", views.AttachmentCreate.as_view(), name="attachment_create",
@@ -74,6 +82,7 @@ urlpatterns = [
         name="effect_tag_create",
     ),
     # helper functions
+    path("content-types/", views.AboutContentTypes.as_view(), name="content_types"),
     path("download-plot/", views.DownloadPlot.as_view(), name="download_plot"),
     path("close-window/", views.CloseWindow.as_view(), name="close_window"),
     # assessment level study

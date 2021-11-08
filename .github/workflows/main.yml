@@ -13,7 +13,7 @@ jobs:
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc-test
+          POSTGRES_DB: hawc
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
         - 5432/tcp
@@ -36,6 +36,10 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        make loc
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
@@ -48,7 +52,7 @@ jobs:
       env:
         # use localhost for the host here because we are running the job on the VM.
         # If we were running the job on in a container this would be postgres
-        DJANGO_DB_NAME: hawc-test
+        DJANGO_DB_NAME: hawc
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
@@ -84,6 +88,9 @@ jobs:
     - name: lint
       run: |
         make lint-js
+    - name: test
+      run: |
+        npm --prefix ./frontend run test
     - name: build for integration tests
       run: |
         npm --prefix ./frontend run build
@@ -110,7 +117,7 @@ jobs:
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc-test
+          POSTGRES_DB: hawc
         ports:
         - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -131,7 +138,7 @@ jobs:
 
     env:
       DJANGO_DB_HOST: postgres
-      DJANGO_DB_NAME: hawc-test
+      DJANGO_DB_NAME: hawc
       DJANGO_DB_PORT: 5432
       DJANGO_DB_PW: password
       DJANGO_DB_USER: hawc

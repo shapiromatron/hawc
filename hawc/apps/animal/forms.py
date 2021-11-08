@@ -708,14 +708,8 @@ class EndpointFilterForm(forms.Form):
         ("effect", "effect"),
         ["-NOEL", "<NOEL-NAME>"],
         ["-LOEL", "<LOEL-NAME>"],
-        # BMD/BMDL is stored in output which is a JsonField on the bmd Model object. We want to sort on a sub-field of that.
-        # when/if HAWC upgrades to Django 2.1 (see yekta's comment on https://stackoverflow.com/questions/36641759/django-1-9-jsonfield-order-by)
-        # could possibly do something like this instead.
-        # for now we use a custom sort string and handle it in EndpointList class
-        # ('bmd_model__model__output__-BMD', 'BMD'),
-        # ('bmd_model__model__output__-BMDL', 'BMDLS'),
-        ("customBMD", "BMD"),
-        ("customBMDLS", "BMDLS"),
+        ("bmd", "BMD"),
+        ("bmdl", "BMDLS"),
         ("effect_subtype", "effect subtype"),
         ("animal_group__experiment__chemical", "chemical"),
     ]
@@ -821,7 +815,7 @@ class EndpointFilterForm(forms.Form):
     order_by = forms.ChoiceField(choices=ORDER_BY_CHOICES,)
 
     paginate_by = forms.IntegerField(
-        label="Items per page", min_value=1, initial=25, max_value=10000, required=False
+        label="Items per page", min_value=10, initial=25, max_value=500, required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -829,6 +823,7 @@ class EndpointFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         noel_names = assessment.get_noel_names()
 
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(assessment.id)
         for field in self.fields:
             if field not in ("sex", "data_extracted", "dose_units", "order_by", "paginate_by",):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})

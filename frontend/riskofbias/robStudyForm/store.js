@@ -101,30 +101,32 @@ class RobFormStore extends StudyRobStore {
                 this.overrideOptions = overrideOptions;
 
                 const editableRiskOfBiasId = this.config.riskofbias.id,
-                    scores = _.flatten(
-                        this.study.riskofbiases
-                            .filter(riskofbias => riskofbias.active === true)
-                            .map(riskofbias =>
-                                riskofbias.scores.map(score =>
-                                    this.updateRobScore(score, riskofbias, overrideOptions)
-                                )
+                    editableScores = _.chain(this.study.riskofbiases)
+                        .filter(rob => rob.id === editableRiskOfBiasId)
+                        .map(riskofbias =>
+                            riskofbias.scores.map(score =>
+                                this.updateRobScore(score, riskofbias, overrideOptions)
                             )
-                    );
-
-                this.editableScores.replace(
-                    _.chain(scores)
-                        .filter(score => score.riskofbias_id === editableRiskOfBiasId)
-                        .value()
-                );
-
-                this.nonEditableScores.replace(
-                    _.chain(scores)
-                        .filter(score => score.riskofbias_id !== editableRiskOfBiasId)
+                        )
+                        .flatten()
+                        .value(),
+                    nonEditableScores = _.chain(this.study.riskofbiases)
+                        .filter(rob => rob.id !== editableRiskOfBiasId)
+                        .filter(rob => rob.active & !rob.final)
+                        .map(riskofbias =>
+                            riskofbias.scores.map(score =>
+                                this.updateRobScore(score, riskofbias, overrideOptions)
+                            )
+                        )
+                        .flatten()
                         .sortBy("id")
-                        .value()
-                );
+                        .value();
 
-                this.domainIds.replace(_.uniq(scores.map(s => this.metricDomains[s.metric_id].id)));
+                this.editableScores.replace(editableScores);
+                this.nonEditableScores.replace(nonEditableScores);
+                this.domainIds.replace(
+                    _.uniq(editableScores.map(s => this.metricDomains[s.metric_id].id))
+                );
             })
             .catch(exception => {
                 this.error = exception;

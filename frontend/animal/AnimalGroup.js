@@ -1,10 +1,10 @@
 import $ from "$";
 import _ from "lodash";
 
-import BaseTable from "utils/BaseTable";
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import BaseTable from "shared/utils/BaseTable";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class AnimalGroup {
     constructor(data) {
@@ -98,12 +98,8 @@ class AnimalGroup {
                 if (doses.length === 0) return undefined;
 
                 var grps = _.chain(doses)
-                        .sortBy(function(d) {
-                            return d.dose_group_id;
-                        })
-                        .groupBy(function(d) {
-                            return d.dose_units.name;
-                        })
+                        .sortBy(d => d.dose_group_id)
+                        .groupBy(d => d.dose_units.name)
                         .value(),
                     units = _.keys(grps),
                     tbl = new BaseTable();

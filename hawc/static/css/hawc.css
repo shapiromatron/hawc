@@ -61,6 +61,10 @@ code {
 .hidden {
     display: none;
 }
+.resize-y {
+    overflow-y: auto;
+    resize:vertical;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
@@ -311,16 +315,11 @@ div.smart-tag.active {
 .refTagEditing {
     cursor: pointer;
 }
-.ref-container {
-    max-height: 40vh;
-    overflow-y: auto;
-}
 .abstract_label {
     font-weight: bold;
 }
 .nestedTag {
     border: 2px solid transparent;
-    margin: 0;
     cursor: pointer;
 }
 .nestedTag:hover {
@@ -332,10 +331,6 @@ div.smart-tag.active {
     font-weight: bold;
     border: 2px solid #ababab;
     background-color: gold;
-}
-.nestedTagCollapser {
-    position: absolute;
-    padding: 2px 0 0 2px;
 }
 .reference {
     padding-left: 0.5rem;
@@ -352,8 +347,12 @@ div.smart-tag.active {
     background-color: #0044cc;
 }
 
-/* animal endpoint list */
-.eyeEndpointModal {
+/* preview modal icon */
+.previewModalParent:hover .previewModalIcon{
+    display: inherit;
+}
+.previewModalIcon {
+    display: none;
     padding-left: 1em;
     cursor: pointer;
 }

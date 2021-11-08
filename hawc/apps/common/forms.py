@@ -9,6 +9,8 @@ from django.template.loader import render_to_string
 
 from . import selectable, validators
 
+ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
+
 
 def form_actions_create_or_close():
     """Add form actions to create or close the window (for popups)"""
@@ -20,7 +22,10 @@ def form_actions_create_or_close():
 
 def form_actions_apply_filters():
     """Add form_actions to apply filters"""
-    return [cfl.Submit("submit", "Apply filters")]
+    return [
+        cfl.Submit("submit", "Apply filters"),
+        cfl.HTML('<a class="btn btn-light" href=".">Reset</a>'),
+    ]
 
 
 class BaseFormHelper(cf.FormHelper):
@@ -153,7 +158,7 @@ def form_error_lis_to_ul(lis):
 
 
 def addPopupLink(href, text):
-    return f'<a href="{href}" onclick="return HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
+    return f'<a href="{href}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
 
 
 class TdLayout(cfl.LayoutObject):

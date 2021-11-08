@@ -17,7 +17,8 @@ from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
 from hawc.tools.tables.ept import EvidenceProfileTable
-from hawc.tools.tables.generic import GenericTable
+from hawc.tools.tables.generic import BaseTable, GenericTable
+from hawc.tools.tables.parser import QuillParser
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -229,7 +230,7 @@ class SummaryTable(models.Model):
             raise NotImplementedError(f"Table type not found: {self.table_type}")
         return self.TABLE_SCHEMA_MAP[self.table_type]
 
-    def get_table(self):
+    def get_table(self) -> BaseTable:
         return self.get_content_schema_class().parse_obj(self.content)
 
     @classmethod
@@ -240,9 +241,10 @@ class SummaryTable(models.Model):
         instance.content = schema.get_default_props()
         return instance
 
-    def to_docx(self):
+    def to_docx(self, base_url: str = ""):
         table = self.get_table()
-        return ReportExport(docx=table.to_docx(), filename=self.slug)
+        docx = table.to_docx(parser=QuillParser(base_url=base_url))
+        return ReportExport(docx=docx, filename=self.slug)
 
     def clean(self):
         # make sure table can be built

@@ -81,7 +81,7 @@ class RiskOfBiasAssessmentViewset(
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
-    @action(detail=True, methods=("get",), url_path="settings")
+    @action(detail=True, url_path="settings")
     def rob_settings(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
@@ -209,6 +209,26 @@ class RiskOfBias(viewsets.ModelViewSet):
     def override_options(self, request, pk=None):
         object_ = self.get_object()
         return Response(object_.get_override_options())
+
+    @action(detail=False, methods=("post",))
+    def create_v2(self, request):
+        kw = {"context": self.get_serializer_context()}
+        serializer = serializers.RiskOfBiasAssignmentSerializer(data=request.data, **kw)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=("patch",))
+    def update_v2(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        kw = {"context": self.get_serializer_context()}
+        serializer = serializers.RiskOfBiasAssignmentSerializer(
+            instance, data=request.data, partial=partial, **kw
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 
 class AssessmentMetricViewset(AssessmentViewset):

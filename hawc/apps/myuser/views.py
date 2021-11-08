@@ -1,3 +1,8 @@
+from pprint import pformat
+from textwrap import dedent
+from typing import Dict
+
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from django.contrib.auth.views import (
@@ -7,15 +12,16 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
+from django.core.mail import mail_admins
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import CreateView, DetailView, TemplateView
+from django.views.generic import CreateView, DetailView, TemplateView, View
 from django.views.generic.base import RedirectView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import UpdateView
 
+from ...constants import AuthProvider
 from ..common.crumbs import Breadcrumb
 from ..common.views import LoginRequiredMixin, MessageMixin
 from . import forms, models
@@ -43,9 +49,14 @@ class HawcUserCreate(CreateView):
 class HawcLoginView(LoginView):
     form_class = forms.HAWCAuthenticationForm
 
+    def dispatch(self, request, *args, **kwargs):
+        if settings.AUTH_PROVIDERS == {AuthProvider.external}:
+            return HttpResponseRedirect(reverse_lazy("user:external_auth"))
+        return super().dispatch(request, *args, **kwargs)
+
 
 class HawcLogoutView(LogoutView):
-    next_page = reverse_lazy("home")
+    pass
 
 
 class HawcPasswordResetView(PasswordResetView):
@@ -72,6 +83,7 @@ class ProfileDetail(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "User profile")
+        context["token"] = self.request.user.get_api_token()
         return context
 
 
@@ -92,23 +104,20 @@ class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
         return context
 
 
-class AcceptNewLicense(MessageMixin, FormView):
-    model = models.HAWCUser
+class AcceptNewLicense(LoginRequiredMixin, MessageMixin, UpdateView):
     form_class = forms.AcceptNewLicenseForm
+    model = models.HAWCUser
     success_message = "License acceptance updated."
     success_url = reverse_lazy("portal")
+    template_name = "myuser/accept_license.html"
+
+    def get_object(self, queryset=None):
+        return self.request.user
 
     def get(self, request, *args, **kwargs):
-        return redirect("portal")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["instance"] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+        if not settings.ACCEPT_LICENSE_REQUIRED or self.request.user.license_v2_accepted:
+            return HttpResponseRedirect(reverse("portal"))
+        return super().get(request, *args, **kwargs)
 
 
 class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):
@@ -169,3 +178,72 @@ class PasswordChanged(MessageMixin, RedirectView):
     def get_redirect_url(self):
         self.send_message()
         return reverse_lazy("user:login")
+
+
+class ExternalAuth(View):
+    def get_user_metadata(self, request) -> Dict:
+        """
+        Retrieve user metadata from request to use for authentication.
+
+        Expected that this request is made from a protected upstream proxy which controls values
+        in the incoming request after successful upstream authentication.
+
+        Args:
+            request: incoming request
+
+        Returns:
+            Dict: user metadata; must include "email" and "external_id" keys
+        """
+        raise NotImplementedError("Deployment specific; requires implementation")
+
+    def mail_bad_headers(self, request):
+        """ Mail admins when headers don't return valid user metadata """
+        subject = "[External auth]: Bad headers"
+        body = f"External authentication failed with the following headers:\n{pformat(request.headers._store)}"
+        mail_admins(subject, body)
+
+    def mail_bad_auth(self, email, external_id):
+        """ Mail admins when the email / external id pair clashes with user in database """
+        subject = "[External auth]: Invalid credentials"
+        body = dedent(
+            f"""\
+            Credentials given in request only partially apply to a user. These credentials are as follows:
+            Email: {email}
+            External ID: {external_id}
+            """
+        )
+        mail_admins(subject, body)
+
+    def get(self, request, *args, **kwargs):
+        # Get user metadata from request
+        try:
+            metadata = self.get_user_metadata(request)
+        except Exception:
+            self.mail_bad_headers(request)
+            return HttpResponseRedirect(reverse("401"))
+        email = metadata.pop("email")
+        external_id = metadata.pop("external_id")
+        try:
+            user = models.HAWCUser.objects.get(email=email)
+            # Save external ID if this is our first access
+            if user.external_id is None:
+                user.external_id = external_id
+                # Set unusable password if only external auth is allowed
+                if settings.AUTH_PROVIDERS == {AuthProvider.external}:
+                    user.set_unusable_password()
+                user.save()
+            # Ensure external id in db matches that returned from service
+            elif user.external_id != external_id:
+                self.mail_bad_auth(email, external_id)
+                return HttpResponseRedirect(reverse("401"))
+        except models.HAWCUser.DoesNotExist:
+            # Ensure external ID is unique
+            if models.HAWCUser.objects.filter(external_id=external_id).exists():
+                self.mail_bad_auth(email, external_id)
+                return HttpResponseRedirect(reverse("401"))
+            # Create user
+            user = models.HAWCUser.objects.create_user(
+                email=email, external_id=external_id, **metadata
+            )
+        login(request, user)
+        return HttpResponseRedirect(reverse("portal"))

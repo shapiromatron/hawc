@@ -135,6 +135,15 @@ class HawcSession:
         token = response.json()["token"]
         self._session.headers.update(Authorization=f"Token {token}")
 
+    def set_authentication_token(self, token: str):
+        """
+        Set authentication token (browser session specific)
+
+        Args:
+            token (str): authentication token from your user profile
+        """
+        self._session.headers.update(Authorization=f"Token {token}")
+
     def iter_pages(self, url: str, params: Dict = None) -> Generator:
         """
         Generator that crawls paginated HAWC responses.
@@ -229,6 +238,55 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
+    def get_tagtree(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves the nested tag tree for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            Dict: JSON representation of the tag tree
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
+        response_json = self.session.get(url).json()
+        return response_json["tree"]
+
+    def clone_tagtree(self, source_assessment_id: int, target_assessment_id: int) -> pd.DataFrame:
+        """
+        Copies the tag tree from one assessment to another.
+
+        Args:
+            source_assessment_id (int): Assessment ID to copy tag tree from
+            target_assessment_id (int): Assessment ID to copy tag tree to
+
+        Returns:
+            Dict: JSON representation of the new tag tree
+        """
+        fetch_url = f"{self.session.root_url}/lit/api/assessment/{source_assessment_id}/tagtree/"
+        tree = self.session.get(fetch_url).json()
+
+        update_url = f"{self.session.root_url}/lit/api/assessment/{target_assessment_id}/tagtree/"
+        update_response_json = self.session.post(update_url, tree).json()
+
+        return update_response_json["tree"]
+
+    def update_tagtree(self, assessment_id: int, tags: List[Dict]) -> pd.DataFrame:
+        """
+        Updates the tag tree.
+
+        Args:
+            assessment_id (int): Assessment ID to update
+            tags (List[Dict]): tag definitions. For each tag Dict element, "name" is required. "slug" is
+               optional. "children" is optional and should contain a recursive List containing valid tags.
+
+        Returns:
+            Dict: JSON representation of the new tag tree. If errors, a JSON list containing details.
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
+        response_json = self.session.post(url, {"tree": tags}).json()
+        return response_json["tree"]
+
     def reference_tags(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves the literature references and their corresponding tags for a given assessment.
@@ -244,7 +302,7 @@ class LiteratureClient(BaseClient):
         return pd.DataFrame(response_json)
 
     def import_reference_tags(
-        self, assessment_id: int, csv: str, operation: str = "append"
+        self, assessment_id: int, csv: str, operation: str = "append", dry_run: bool = False
     ) -> pd.DataFrame:
         """
         Imports a CSV of reference IDs with corresponding tag IDs to the given assessment.
@@ -253,11 +311,12 @@ class LiteratureClient(BaseClient):
             assessment_id (int): Assessment ID
             csv (str): Reference IDs to tag ID mapping. The header of this CSV string should be "reference_id,tag_id".
             operation (str, optional): Either add new references tags to existing (`append`), or replace current tag mappings (`replace`). Defaults to "append".
+            dry_run (bool, optional): If set to True, runs validation checks but does not execute
 
         Returns:
             pd.DataFrame: All tag mappings for the selected `assessment_id`, after the requested changes
         """
-        payload = {"csv": csv, "operation": operation}
+        payload = {"csv": csv, "operation": operation, "dry_run": dry_run}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self.session.post(url, payload).json()
         return pd.DataFrame(response_json)

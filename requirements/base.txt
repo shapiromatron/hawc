@@ -1,5 +1,5 @@
 # web application
-Django==3.2.5
+Django==3.2.8
 django-crispy-forms==1.12.0
 django-filter==2.4.0
 django-redis==5.0.0
@@ -19,7 +19,7 @@ celery==5.1.2
   kombu==5.1.0
 
 # utilities
-jsonschema==3.2.0
+jsonschema==4.1.2
 lxml==4.6.3
 psycopg2-binary==2.9.1
 redis==3.5.3
@@ -38,7 +38,7 @@ nltk==3.6.2
 scikit-learn==0.24.2
 
 # exports
-RISparser==0.4.3
+rispy==0.7.1
 python-docx==0.8.11
 python-pptx==0.6.19
 

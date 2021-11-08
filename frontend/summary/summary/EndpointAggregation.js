@@ -1,12 +1,12 @@
 import $ from "$";
 
 import h from "shared/utils/helpers";
-import BaseTable from "utils/BaseTable";
-import HAWCModal from "utils/HAWCModal";
+import BaseTable from "shared/utils/BaseTable";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import Endpoint from "animal/Endpoint";
 import EndpointDetailRow from "animal/EndpointDetailRow";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
 import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";
@@ -17,7 +17,7 @@ class EndpointAggregation extends BaseVisual {
         super(data);
         this.endpoints = data.endpoints.map(function(d) {
             var e = new Endpoint(d);
-            e.switch_dose_units(data.dose_units);
+            e.doseUnits.activate(data.dose_units);
             return e;
         });
         delete this.data.endpoints;
@@ -135,8 +135,8 @@ class EndpointAggregation extends BaseVisual {
                 e._endpoint_detail_td(),
                 e.get_special_dose_text("NOEL"),
                 e.get_special_dose_text("LOEL"),
-                e.get_bmd_special_values("BMD"),
-                e.get_bmd_special_values("BMDL"),
+                e.get_special_bmd_value("BMD"),
+                e.get_special_bmd_value("BMDL"),
             ]).data("endpoint", e);
         });
 

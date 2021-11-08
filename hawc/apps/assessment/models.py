@@ -305,6 +305,9 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.id,))
 
+    def get_assessment_logs_url(self):
+        return reverse("assessment:assessment_logs", args=(self.id,))
+
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
 
@@ -910,15 +913,55 @@ class Log(models.Model):
         HAWCUser, blank=True, null=True, related_name="logs", on_delete=models.SET_NULL
     )
     message = models.TextField()
-
+    content = models.JSONField(default=dict)
+    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
+    object_id = models.IntegerField(null=True)
+    content_object = GenericForeignKey("content_type", "object_id")
     created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-created",)
 
+    def __str__(self) -> str:
+        if self.object_id and self.content_type_id:
+            return self.get_object_name() + " Log"
+        if self.assessment is not None:
+            return str(self.assessment) + " Log"
+        return "Custom Log"
+
+    def get_absolute_url(self):
+        return reverse("assessment:log_detail", args=(self.id,))
+
+    def get_object_list_url(self):
+        return reverse("assessment:log_object_list", args=(self.content_type_id, self.object_id))
+
+    def get_object_url(self):
+        # get list view if we can, else fall-back to the absolute view
+        if self.object_id and self.content_type_id:
+            return self.get_object_list_url()
+        return self.get_absolute_url()
+
     def get_api_url(self):
         return reverse("assessment:api:logs-detail", args=(self.id,))
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_generic_object_name(self) -> str:
+        return f"{self.content_type.app_label}.{self.content_type.model} #{self.object_id}"
+
+    def get_object_name(self):
+        if self.content_object:
+            return str(self.content_object)
+        if self.object_id and self.content_type_id:
+            return self.get_generic_object_name()
+
+    def user_can_view(self, user) -> bool:
+        return (
+            self.assessment.user_is_team_member_or_higher(user)
+            if self.assessment
+            else user.is_staff
+        )
 
 
 class Blog(models.Model):
@@ -998,6 +1041,5 @@ reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
-reversion.register(Log)
 reversion.register(Blog)
 reversion.register(Content)

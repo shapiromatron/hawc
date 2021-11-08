@@ -5,7 +5,7 @@
 
     {% if page_obj.has_previous %}
     <li class="page-item">
-        <a class="page-link" href="?{% url_replace request 'page' page_obj.previous_page_number %}">&lt;&lt;</a>
+        <a class="page-link" href="?{% url_replace page=page_obj.previous_page_number %}">&lt;&lt;</a>
     </li>
     {% else %}
     <li class="page-item disabled">
@@ -19,12 +19,23 @@
 
     {% if page_obj.has_next %}
     <li class="page-item">
-        <a class="page-link" href="?{% url_replace request 'page' page_obj.next_page_number %}">&gt;&gt;</a>
+        <a class="page-link" href="?{% url_replace page=page_obj.next_page_number %}">&gt;&gt;</a>
     </li>
     {% else %}
     <li class="page-item disabled">
         <a class="page-link" href="#">&gt;&gt;</a>
     </li>
     {% endif %}
+
+    <li class="ml-3 page-item">
+        <label class="page-link font-weight-normal text-muted" for="quickPageSelector">Go to page:&nbsp;</label>
+    </li>
+    <li class="page-item">
+        <select id="quickPageSelector" class="form-control" onchange="location=this.value;">
+            {% for n in page_obj.paginator.page_range %}
+            <option {% ifequal page_obj.number n %}selected{% endifequal %} value="?{% url_replace page=n %}">{{ n }}</option>
+            {% endfor %}
+        </select>
+    </li>
 </ul>
 {% endif %}

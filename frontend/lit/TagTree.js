@@ -84,6 +84,17 @@ class TagTree {
     render(el, options) {
         ReactDOM.render(<TagTreeComponent tagtree={this} {...options} />, el);
     }
+
+    choices() {
+        // get choices for a select input
+        const choices = [],
+            addTag = function(tag) {
+                choices.push({id: tag.data.pk, label: tag.get_full_name()});
+                tag.children.forEach(addTag);
+            };
+        this.rootNode.children.forEach(addTag);
+        return choices;
+    }
 }
 
 export default TagTree;

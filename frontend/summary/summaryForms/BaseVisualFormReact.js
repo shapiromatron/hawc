@@ -1,11 +1,8 @@
 import React, {Component} from "react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-
-import "react-tabs/style/react-tabs.css";
-import "react-select/dist/react-select.css";
-
 import h from "shared/utils/helpers";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
+import FormActions from "shared/components/FormActions";
 
 class BaseVisualForm extends Component {
     constructor(props) {
@@ -91,18 +88,14 @@ class BaseVisualForm extends Component {
     };
 
     getEndpointChoices(endpoint) {
-        return [];
+        return HAWCUtils.abstractMethod();
     }
 
     fetchEndpoints = (input, callback) => {
-        fetch(
-            `${this.config.endpoint_url}?related=${this.config.assessment}&term=${input}`,
-            h.fetchGet
-        )
+        const url = `${this.config.endpoint_url}?related=${this.config.assessment}&term=${input}`;
+        fetch(url, h.fetchGet)
             .then(response => response.json())
-            .then(json => {
-                callback(null, {options: json.data});
-            });
+            .then(json => callback(json.data));
     };
 
     renderForm() {
@@ -132,29 +125,13 @@ class BaseVisualForm extends Component {
                         <legend>
                             {this.config.crud} {this.state.title}
                         </legend>
-                        <p>{this.config.crud} a visualization</p>
-                        <br />
                         {this.renderForm()}
                     </TabPanel>
                     <TabPanel>{this.renderSettingsForm()}</TabPanel>
                     <TabPanel forceRender>
                         <div ref={preview => (this.preview = preview)} />
                     </TabPanel>
-                    <div className="form-actions">
-                        <input
-                            type="submit"
-                            name="save"
-                            value="Save"
-                            className="btn btn-primary"
-                            id="submit-id-save"
-                        />
-                        <a
-                            role="button"
-                            className="btn btn-secondary mx-2"
-                            href={this.config.cancel_url}>
-                            Cancel
-                        </a>
-                    </div>
+                    <FormActions isForm={true} cancel={this.config.cancel_url} />
                 </form>
             </Tabs>
         );

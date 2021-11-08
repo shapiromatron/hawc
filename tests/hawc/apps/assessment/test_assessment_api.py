@@ -286,9 +286,15 @@ class TestLogViewset:
         assert resp.status_code == 200
 
         # the response should be a list of all logs for this assessment
-        assert len(resp.json()) == 1
-        expected = {"message": "Assessment log", "assessment": db_keys.assessment_working}
-        assert expected.items() <= resp.json()[0].items()
+        assert len(resp.json()) == 3
+
+        data = {(log["message"], log["assessment"]) for log in resp.json()}
+        expected = {
+            ("Global assessment log", 1),
+            ("Updated assessment object", 1),
+            ("Deleted object log", 1),
+        }
+        assert data == expected
 
 
 @pytest.mark.django_db
@@ -318,7 +324,7 @@ class TestHealthcheckViewset:
 
         # no data; should be an error
         resp = client.get(url)
-        assert resp.status_code == 503
+        assert resp.status_code == 400
         assert resp.json()["healthy"] is False
 
         # has recent data; should be healthy
@@ -326,6 +332,23 @@ class TestHealthcheckViewset:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["healthy"] is True
+
+    @pytest.mark.skipif(not has_redis(), reason="skip; redis cache required")
+    def test_worker_plot(self):
+        client = APIClient()
+        url = reverse("assessment:api:healthcheck-worker-plot")
+
+        # failure - not admin
+        resp = client.get(url)
+        assert resp.status_code == 403
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+        # success - admin
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
 
 
 @pytest.mark.django_db

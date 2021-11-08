@@ -3,14 +3,15 @@ import _ from "lodash";
 import * as d3 from "d3";
 
 import h from "shared/utils/helpers";
-import D3Plot from "utils/D3Plot";
-import HAWCUtils from "utils/HAWCUtils";
+import D3Plot from "shared/utils/D3Plot";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
+import Query from "shared/parsers/query";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -106,52 +107,58 @@ class DataPivotVisualization extends D3Plot {
         return sorted;
     }
 
-    static filter(arr, filters, filter_logic) {
+    static filter(arr, filters, filter_logic, filter_query) {
         if (filters.length === 0) return arr;
 
         var field_name,
             value,
             func,
             new_arr = [],
-            included = d3.map(),
-            filters_map = d3.map({
-                lt(v) {
-                    return v[field_name] < value;
-                },
-                lte(v) {
-                    return v[field_name] <= value;
-                },
-                gt(v) {
-                    return v[field_name] > value;
-                },
-                gte(v) {
-                    return v[field_name] >= value;
-                },
-                contains(v) {
-                    return (
-                        v[field_name]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(value.toLowerCase()) >= 0
-                    );
-                },
-                not_contains(v) {
-                    return (
-                        v[field_name]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(value.toLowerCase()) < 0
-                    );
-                },
-                exact(v) {
-                    return v[field_name].toString().toLowerCase() === value.toLowerCase();
-                },
-            });
+            included = new Map(),
+            filters_map = {
+                lt: v => v[field_name] < value,
+                lte: v => v[field_name] <= value,
+                gt: v => v[field_name] > value,
+                gte: v => v[field_name] >= value,
+                contains: v =>
+                    v[field_name]
+                        .toString()
+                        .toLowerCase()
+                        .indexOf(value.toLowerCase()) >= 0,
+                not_contains: v =>
+                    v[field_name]
+                        .toString()
+                        .toLowerCase()
+                        .indexOf(value.toLowerCase()) < 0,
+                exact: v => v[field_name].toString().toLowerCase() === value.toLowerCase(),
+            };
 
-        if (filter_logic === "and") new_arr = arr;
+        if (filter_logic === "custom") {
+            let getValue = i => {
+                    let idx = i - 1; // convert 1 to 0 indexing,
+                    func = filters_map[filters[idx].quantifier];
+                    field_name = filters[idx].field_name;
+                    if (field_name === NULL_CASE) return arr;
+                    value = filters[idx].value;
+                    return arr.filter(func);
+                },
+                negateValue = v => _.difference(arr, v),
+                andValues = (l, r) => _.intersection(l, r),
+                orValues = (l, r) => _.union(l, r);
+            try {
+                return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            } catch (err) {
+                console.error(err);
+                return [];
+            }
+        }
+
+        if (filter_logic === "and") {
+            new_arr = arr;
+        }
 
         for (var i = 0; i < filters.length; i++) {
-            func = filters_map.get(filters[i].quantifier);
+            func = filters_map[filters[i].quantifier];
             field_name = filters[i].field_name;
             if (field_name === NULL_CASE) continue;
             value = filters[i].value;
@@ -159,17 +166,16 @@ class DataPivotVisualization extends D3Plot {
                 if (filter_logic === "and") {
                     new_arr = new_arr.filter(func);
                 } else {
-                    var vals = arr.filter(func);
-                    vals.forEach(function(v) {
-                        included.set(v._dp_pk, v);
-                    });
+                    arr.filter(func).forEach(v => included.set(v._dp_pk, v));
                 }
             } else {
                 console.error(`Unrecognized filter: ${filters[i].quantifier}`);
             }
         }
 
-        if (filter_logic === "or") new_arr = included.values();
+        if (filter_logic === "or") {
+            new_arr = Array.from(included.values());
+        }
 
         return new_arr;
     }
@@ -419,7 +425,8 @@ class DataPivotVisualization extends D3Plot {
         rows = DataPivotVisualization.filter(
             rows,
             settings.filters,
-            this.dp_settings.plot_settings.filter_logic
+            this.dp_settings.plot_settings.filter_logic,
+            this.dp_settings.plot_settings.filter_query
         );
 
         rows = DataPivotVisualization.sort_with_overrides(
@@ -445,10 +452,8 @@ class DataPivotVisualization extends D3Plot {
             settings.barchart.conditional_formatting.forEach(function(cf) {
                 switch (cf.condition_type) {
                     case "discrete-style":
-                        var hash = d3.map();
-                        cf.discrete_styles.forEach(function(d) {
-                            hash.set(d.key, d.style);
-                        });
+                        var hash = new Map();
+                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
                         rows.forEach(function(d) {
                             if (hash.get(d[cf.field_name]) === NULL_CASE) {
                                 return;
@@ -468,7 +473,7 @@ class DataPivotVisualization extends D3Plot {
             this.dp_settings.dataline_settings.forEach(dl => {
                 dl.conditional_formatting.forEach(cf => {
                     const styles = "bars",
-                        hash = d3.map();
+                        hash = new Map();
                     switch (cf.condition_type) {
                         case "discrete-style":
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
@@ -529,7 +534,7 @@ class DataPivotVisualization extends D3Plot {
                             break;
 
                         case "discrete-style":
-                            var hash = d3.map();
+                            var hash = new Map();
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
                             rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
@@ -904,7 +909,7 @@ class DataPivotVisualization extends D3Plot {
             .attr("width", d => Math.abs(x(barXStart) - x(d[barchart.field_name])))
             .attr("height", barHeight)
             .style("cursor", d => (barchart._dpe_key ? "pointer" : "auto"))
-            .on("click", d => {
+            .on("click", (event, d) => {
                 if (barchart._dpe_key) {
                     this.dpe.render_plottip(barchart, d);
                 }
@@ -1032,7 +1037,7 @@ class DataPivotVisualization extends D3Plot {
                     }
                 })
                 .style("cursor", d => (datum._dpe_key ? "pointer" : "auto"))
-                .on("click", function(d) {
+                .on("click", function(event, d) {
                     if (datum._dpe_key) {
                         self.dpe.render_plottip(datum, d);
                     }
@@ -1134,7 +1139,7 @@ class DataPivotVisualization extends D3Plot {
                 var txt = v[desc.field_name];
                 if ($.isNumeric(txt)) {
                     if (txt % 1 === 0) txt = parseInt(txt, 10);
-                    txt = txt.toHawcString();
+                    txt = h.ff(txt);
                 } else {
                     txt = txt.toLocaleString();
                 }
@@ -1181,7 +1186,7 @@ class DataPivotVisualization extends D3Plot {
                 return dObj !== null && dObj.display !== undefined ? dObj.display : d.text;
             })
             .style("cursor", d => d.cursor)
-            .on("click", d => d.onclick())
+            .on("click", (event, d) => d.onclick())
             .each(function(d) {
                 apply_text_styles(this, d.style);
             });

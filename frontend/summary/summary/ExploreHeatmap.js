@@ -5,11 +5,11 @@ import React, {Component} from "react";
 import {inject, observer, Provider} from "mobx-react";
 
 import h from "shared/utils/helpers";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import Loading from "shared/components/Loading";
 import BaseVisual from "./BaseVisual";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
@@ -114,6 +114,7 @@ class ExploreHeatmap extends BaseVisual {
             show_null: settings.show_null,
             filters: settings.filters,
             filtersLogic: settings.filtersLogic,
+            filtersQuery: settings.filtersQuery,
             autosize_cells: settings.autosize_cells,
             autorotate_tick_labels: settings.autorotate_tick_labels,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
@@ -140,10 +141,9 @@ class ExploreHeatmap extends BaseVisual {
                     this.dataset = json;
                     return {dataset: json};
                 })
-                .catch(error => {
+                .then(callback, error => {
                     callback({error});
-                })
-                .then(callback);
+                });
         }
     }
 
@@ -178,7 +178,7 @@ class ExploreHeatmap extends BaseVisual {
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             callback = resp => {
-                if (resp.dataset) {
+                if (resp.dataset || resp.error) {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
@@ -190,11 +190,19 @@ class ExploreHeatmap extends BaseVisual {
                         $el.prepend([actions, title]).append(captionDiv);
                     }
 
+                    // exit early if we got an error
+                    if (resp.error) {
+                        console.error(resp.error);
+                        $plotDiv.append(getErrorDiv());
+                        return;
+                    }
+
                     try {
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                     } catch (err) {
                         console.error(err);
                         $plotDiv.append(getErrorDiv());
+                        return;
                     }
 
                     if (options.cb) {
@@ -202,10 +210,6 @@ class ExploreHeatmap extends BaseVisual {
                     }
 
                     caption.renderAndEnable();
-                } else if (resp.error) {
-                    $el.empty()
-                        .prepend(title)
-                        .append(this.getErrorDiv());
                 } else {
                     throw "Unknown status.";
                 }

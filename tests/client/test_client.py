@@ -287,7 +287,7 @@ class TestClient(LiveServerTestCase, TestCase):
                 "metric_description": "my description here",
                 "metric": "my metric here",
                 "analytical_method": "my analytical method here",
-                "dtxsid": "DTXSID1020190",
+                "dtxsid": "DTXSID6026296",
                 "inhalation": True,
                 "measured": "this is measurement",
                 "sampling_period": "sample period here",
@@ -494,6 +494,32 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.lit.tags(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
+
+    def test_get_tagtree(self):
+        client = HawcClient(self.live_server_url)
+        response = client.lit.get_tagtree(self.db_keys.assessment_client)
+        assert isinstance(response, list)
+
+    def test_clone_tagtree(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.lit.clone_tagtree(
+            self.db_keys.assessment_final, self.db_keys.assessment_client
+        )
+        assert isinstance(response, list)
+
+    def test_update_tagtree(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+
+        updates = [
+            {"data": {"name": "set via client"}},
+            {"data": {"name": "Client Slug", "slug": "sluggo"}},
+            {"data": {"name": "tree"}, "children": [{"data": {"name": "child element"}}]},
+        ]
+
+        response = client.lit.update_tagtree(self.db_keys.assessment_client, updates)
+        assert isinstance(response, list)
 
     def test_lit_reference_tags(self):
         client = HawcClient(self.live_server_url)

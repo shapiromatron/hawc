@@ -6,7 +6,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.summaryStartup(function(summary){
+    window.app.startup("summaryStartup", function(summary){
       window.isEditable = {{obj_perms.edit|lower}};
       summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
     });

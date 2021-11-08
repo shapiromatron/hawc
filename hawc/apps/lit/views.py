@@ -4,6 +4,7 @@ from typing import Dict, List
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -555,7 +556,9 @@ class RefsByTagJSON(BaseDetail):
         tag_id = self.kwargs.get("tag_id", None)
         tag = None
         if tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tag_in_assessment(self.assessment.id, int(tag_id))
+            tag = models.ReferenceFilterTag.get_tags_in_assessment(
+                self.assessment.id, [int(tag_id)]
+            )[0]
 
         if search_id:
             search = models.Search.objects.get(id=search_id)
@@ -702,3 +705,22 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
 
     def get_success_url(self):
         return reverse_lazy("lit:tags_update", kwargs={"pk": self.assessment.pk})
+
+
+class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
+    model = Assessment
+    template_name = "lit/bulk_tag_references.html"
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["config"] = {
+            "assessment_id": self.assessment.id,
+            "csrf": get_token(self.request),
+        }
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Bulk tag references"
+        )
+        return context

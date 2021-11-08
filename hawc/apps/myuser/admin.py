@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from ...constants import AuthProvider
 from ..bmd.diagnostics import diagnostic_bmds2_execution
 from ..common.diagnostics import (
     diagnostic_500,
@@ -12,18 +14,36 @@ from ..common.diagnostics import (
 from . import forms, models
 
 
+class UserProfileAdmin(admin.StackedInline):
+    model = models.UserProfile
+
+
 @admin.register(models.HAWCUser)
 class HAWCUserAdmin(admin.ModelAdmin):
-    list_display = ("email", "is_active", "is_staff", "date_joined")
+    list_display = (
+        "id",
+        "email",
+        "external_id",
+        "first_name",
+        "last_name",
+        "is_active",
+        "is_staff",
+        "last_login",
+        "date_joined",
+    )
     list_filter = (
         "is_superuser",
         "is_staff",
+        "is_active",
         "date_joined",
+        "last_login",
         "groups",
     )
-    search_fields = ("last_name", "first_name", "email")
+    search_fields = ("last_name", "first_name", "email", "external_id")
     ordering = ("-date_joined",)
     form = forms.AdminUserForm
+    inlines = [UserProfileAdmin]
+    can_delete = False
 
     def send_welcome_emails(modeladmin, request, queryset):
         for user in queryset:
@@ -32,6 +52,10 @@ class HAWCUserAdmin(admin.ModelAdmin):
         modeladmin.message_user(request, "Welcome email(s) sent!")
 
     def set_password(modeladmin, request, queryset):
+        if settings.AUTH_PROVIDERS == {AuthProvider.external}:
+            return modeladmin.message_user(
+                request, "Password cannot be set when using external auth", level=messages.ERROR
+            )
         if queryset.count() != 1:
             return modeladmin.message_user(
                 request, "Please select only-one user", level=messages.ERROR

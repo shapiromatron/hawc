@@ -11,15 +11,15 @@
 {% block extrajs %}
 {{ smart_tag_form.media }}
 <script type="text/javascript">
-    window.app.summaryFormsStartup(function (summaryForms) {
+    window.app.startup("summaryFormsStartup", function (summaryForms) {
 
         {% if crud == "Create" %}
         $('#id_title').on('keyup', function () {
-            $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+            $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
         });
         {% endif %}
 
-        window.app.smartTagsStartup(function (smartTags) {
+        window.app.startup("smartTagsStartup", function (smartTags) {
             new smartTags.SmartTagEditor($('#id_caption'), { submitEl: '#visualForm' });
         })
     });

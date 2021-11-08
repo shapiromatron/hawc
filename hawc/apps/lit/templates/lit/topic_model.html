@@ -27,11 +27,11 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id="data" type="application/json">
+<script id="config" type="application/json">
   {{data|safe}}
 </script>
 <script type="text/javascript">
-  const data = JSON.parse(document.getElementById("data").textContent),
+  const data = window.app.getConfig(),
     refreshBtn = document.getElementById("refresh-topic-model"),
     viz = document.getElementById("viz");
 

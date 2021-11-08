@@ -18,8 +18,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.epiStartup(function(epi){
-      epi.ComparisonSet.displayFullPager($("#objContainer"), {{object.id}});
+    const id = {{object.id}};
+    window.app.startup("epiStartup", function(app){
+      app.ComparisonSet.displayFullPager($("#objContainer"), id);
     });
   </script>
 {% endblock %}
