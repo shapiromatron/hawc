@@ -8,7 +8,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 from django.views.generic.edit import UpdateView
 
-from ..assessment.models import Assessment
+from ..assessment.forms import CommunicationForm
+from ..assessment.models import Assessment, Communication
 from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
@@ -105,10 +106,8 @@ class StudyRead(BaseDetail):
             self.request.user._wrapped
         )
         try:
-            communication_message = models.Communication.objects.get(
-                object_id=self.object.id
-            ).message
-        except models.Communication.DoesNotExist:
+            communication_message = Communication.objects.get(object_id=self.object.id).message
+        except Communication.DoesNotExist:
             communication_message = ""
         context["Communication"] = communication_message
         return context
@@ -243,38 +242,41 @@ class EditabilityUpdate(BaseUpdate):
 # Communication view
 class CommunicationUpdate(UpdateView):
     template_name = "study/communication_update.html"
-    model = models.Communication
-    form_class = forms.CommunicationForm
+    model = Communication
+    form_class = CommunicationForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.object.study.get_assessment()
+        content_type = ContentType.objects.get(app_label="study", model="study")
+        study = content_type.get_object_for_this_type(id=(self.object.object_id))
+        context["assessment"] = study.get_assessment()
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user,
             "Communication Update",
             extras=[
-                Breadcrumb.from_object(self.object.study.get_assessment()),
+                Breadcrumb.from_object(context["assessment"]),
                 Breadcrumb(
-                    name="Studies",
-                    url=reverse("study:list", args=(self.object.study.get_assessment().id,)),
+                    name="Study " + str(study), url=reverse("study:detail", args=(study.id,))
                 ),
             ],
         )
         return context
 
     def get_object(self, queryset=None):
-        content_type = ContentType.objects.get(app_label="study", model="study")
-        study = content_type.get_object_for_this_type(id=self.kwargs["pk"])
-        obj, created = models.Communication.objects.get_or_create(
-            study=study, content_type=content_type, object_id=self.kwargs["pk"]
+        content_type = ContentType.objects.get(app_label="study", model="communication")
+        import pdb
+
+        pdb.set_trace()
+        obj, created = Communication.objects.get_or_create(
+            content_type=content_type, object_id=self.kwargs["pk"]
         )
         return obj
 
     def post(self, request, *args, **kwargs):
-        instance = models.Communication.objects.get(object_id=self.kwargs["pk"])
+        instance = Communication.objects.get(object_id=self.kwargs["pk"])
         if instance is not None:
-            form = forms.CommunicationForm(request.POST, instance=instance)
+            form = CommunicationForm(request.POST, instance=instance)
         else:
-            form = forms.CommunicationForm(request.POST)
+            form = CommunicationForm(request.POST)
         form.save()
         return HttpResponseRedirect(reverse("study:detail", args=[self.kwargs["pk"]]))

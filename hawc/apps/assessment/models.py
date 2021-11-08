@@ -906,9 +906,6 @@ class Job(models.Model):
 
 
 class Communication(models.Model):
-    assessment = models.ForeignKey(
-        Assessment, blank=True, null=True, related_name="comms", on_delete=models.CASCADE
-    )
     message = models.TextField()
     content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
     object_id = models.IntegerField(null=True)

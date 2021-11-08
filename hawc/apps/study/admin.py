@@ -20,11 +20,3 @@ class StudyAdmin(admin.ModelAdmin):
     list_filter = ("published", "assessment_id")
     raw_id_fields = ("searches", "identifiers")
     search_fields = ("short_citation", "year", "title", "study_identifier")
-
-
-@admin.register(models.Communication)
-class CommunicationAdmin(admin.ModelAdmin):
-    list_display = ("id", "created", "last_updated", "message", "study")
-    readonly_field = ("created",)
-
-    search_fields = ("study__name", "message")

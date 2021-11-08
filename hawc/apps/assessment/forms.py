@@ -328,15 +328,19 @@ class ContactForm(forms.Form):
 class CommunicationForm(forms.ModelForm):
     class Meta:
         model = models.Communication
-        exclude = ["content_type", "object_id", "assessment"]
+        exclude = ["content_type", "object_id"]
 
     @property
     def helper(self):
+        content_name = self.instance.content_type.app_label
+        content = ContentType(app_label=content_name, model=content_name).get_object_for_this_type(
+            id=(self.instance.object_id)
+        )
         return BaseFormHelper(
             self,
-            legend_text="Update communications for assessment " + str(self.instance.assessment),
+            legend_text="Update communications for " + str(content_name) + " " + str(content),
             help_text="Add communications visible to team members.",
-            cancel_url=self.instance.assessment.get_absolute_url(),
+            cancel_url=content.get_absolute_url(),
             submit_text="Update communications",
         )
 

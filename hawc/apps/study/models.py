@@ -4,8 +4,6 @@ import logging
 import os
 
 from django.apps import apps
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.http import Http404
@@ -463,20 +461,6 @@ class Attachment(models.Model):
 
     def get_study(self):
         return self.study
-
-
-class Communication(models.Model):
-    study = models.ForeignKey(
-        Study, blank=True, null=True, related_name="comms", on_delete=models.CASCADE
-    )
-    message = models.TextField()
-    content_type = models.ForeignKey(
-        ContentType, null=True, on_delete=models.DO_NOTHING, related_name="study_communication"
-    )
-    object_id = models.IntegerField(null=True)
-    content_object = GenericForeignKey("content_type", "object_id")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
 
 
 reversion.register(Study)

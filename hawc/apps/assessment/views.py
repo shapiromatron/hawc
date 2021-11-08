@@ -858,25 +858,18 @@ class CommunicationUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.object.assessment
+        content_type = ContentType.objects.get(app_label="assessment", model="assessment")
+        assessment = content_type.get_object_for_this_type(id=(self.object.object_id))
+        context["assessment"] = assessment
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Communication Update",
-            extras=[
-                Breadcrumb.from_object(self.object.assessment),
-                Breadcrumb(
-                    name="Assessment",
-                    url=reverse("assessment:detail", args=(self.object.assessment.id,)),
-                ),
-            ],
+            self.request.user, "Communication Update", extras=[Breadcrumb.from_object(assessment), ],
         )
         return context
 
     def get_object(self, queryset=None):
-        content_type = ContentType.objects.get(app_label="assessment", model="assessment")
-        assessment = content_type.get_object_for_this_type(id=self.kwargs["pk"])
+        content_type = ContentType.objects.get(app_label="assessment", model="communication")
         obj, created = models.Communication.objects.get_or_create(
-            assessment=assessment, content_type=content_type, object_id=self.kwargs["pk"]
+            content_type=content_type, object_id=self.kwargs["pk"]
         )
         return obj
 
