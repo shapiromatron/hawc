@@ -66,7 +66,8 @@ class Vocab(models.Model):
             return self.value
 
     class Meta:
-        verbose_name = "Vocab"
+        verbose_name = "Vocabulary"
+        verbose_name_plural = "Vocabulary"
 
 
 class Metadata(models.Model):
@@ -102,7 +103,7 @@ class Metadata(models.Model):
     habitat = models.ForeignKey(
         Vocab,
         verbose_name="Habitat",
-        limit_choices_to={"category": 2},  # not sure if isnull is best approach here
+        limit_choices_to={"category": 2},
         on_delete=models.CASCADE,
         blank=True,
         help_text="Select the habitat to which the evidence applies",
@@ -128,6 +129,7 @@ class Metadata(models.Model):
 
     class Meta:
         verbose_name = "Metadata"
+        verbose_name_plural = "Metadata"
 
 
 class Cause(models.Model):
@@ -327,13 +329,13 @@ class Quantitative(models.Model):
     measure_type = models.ForeignKey(
         Vocab,
         verbose_name="Response measure type",
-        limit_choices_to={"category": 8},
+        limit_choices_to=(Q(category=8) & Q(parent__isnull=False)),
         on_delete=models.CASCADE,
-        related_name="+",  # set up query based on prior field
+        related_name="+",
         blank=True,
         null=True,
         help_text="Select one response measure type",
-    )  # dependent on selection in response measure type filter - can this be added in front end?
+    )
 
     measure_value = models.FloatField(
         verbose_name="Response measure value",
@@ -412,3 +414,4 @@ class Quantitative(models.Model):
 
     class Meta:
         verbose_name = "Quantitative response information"
+        verbose_name_plural = "Quantitative response information"
