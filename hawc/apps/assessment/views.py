@@ -862,7 +862,7 @@ class CommunicationUpdate(UpdateView):
         assessment = content_type.get_object_for_this_type(id=(self.object.object_id))
         context["assessment"] = assessment
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user, "Communication Update", extras=[Breadcrumb.from_object(assessment),],
+            self.request.user, "Communication Update", extras=[Breadcrumb.from_object(assessment)],
         )
         return context
 
