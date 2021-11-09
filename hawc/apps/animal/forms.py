@@ -374,7 +374,7 @@ class EndpointForm(ModelForm):
             "effect",
             "effect_subtype",
             "effects",
-            "diagnostic",
+            "as_reported",
             "observation_time",
             "observation_time_units",
             "observation_time_text",
@@ -487,7 +487,7 @@ class EndpointForm(ModelForm):
 
         helper.form_id = "endpoint"
 
-        self.fields["diagnostic"].widget.attrs["rows"] = 2
+        self.fields["as_reported"].widget.attrs["rows"] = 2
         for fld in ("results_notes", "endpoint_notes", "power_notes"):
             self.fields[fld].widget.attrs["rows"] = 3
 

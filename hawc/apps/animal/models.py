@@ -721,7 +721,7 @@ class Endpoint(BaseEndpoint):
         "data_location",
         "response_units",
         "statistical_test",
-        "diagnostic",
+        "as_reported",
         "trend_value",
         "results_notes",
         "endpoint_notes",
@@ -925,9 +925,8 @@ class Endpoint(BaseEndpoint):
         null=True, blank=True, help_text="Numerical result for trend-test, if available"
     )
     trend_result = models.PositiveSmallIntegerField(default=3, choices=TREND_RESULT_CHOICES)
-    diagnostic = models.TextField(
+    as_reported = models.TextField(
         verbose_name="Endpoint Name in Study",
-        blank=True,
         help_text="List the endpoint/adverse outcome name as used in the study. "
         "This will help during QA/QC of the extraction to the original "
         "study in cases where the endpoint/adverse outcome name is "
@@ -1274,7 +1273,7 @@ class Endpoint(BaseEndpoint):
             "endpoint-statistical_test",
             "endpoint-trend_value",
             "endpoint-trend_result",
-            "endpoint-diagnostic",
+            "endpoint-as_reported",
             "endpoint-power_notes",
             "endpoint-results_notes",
             "endpoint-endpoint_notes",
@@ -1315,7 +1314,7 @@ class Endpoint(BaseEndpoint):
             ser["statistical_test"],
             ser["trend_value"],
             ser["trend_result"],
-            ser["diagnostic"],
+            ser["as_reported"],
             ser["power_notes"],
             cleanHTML(ser["results_notes"]),
             cleanHTML(ser["endpoint_notes"]),

@@ -2100,7 +2100,7 @@
     statistical_test: ''
     trend_value: null
     trend_result: 3
-    diagnostic: ''
+    as_reported: name as reported
     power_notes: ''
     results_notes: ''
     endpoint_notes: ''
@@ -2140,7 +2140,7 @@
     statistical_test: t-test
     trend_value: 0.04
     trend_result: 2
-    diagnostic: name as reported
+    as_reported: name as reported
     power_notes: N/A
     results_notes: <p>results notes</p>
     endpoint_notes: <p>methods</p>
@@ -2180,7 +2180,7 @@
     statistical_test: ''
     trend_value: null
     trend_result: 3
-    diagnostic: ''
+    as_reported: name as reported
     power_notes: ''
     results_notes: ''
     endpoint_notes: ''
@@ -2220,7 +2220,7 @@
     statistical_test: ''
     trend_value: null
     trend_result: 3
-    diagnostic: ''
+    as_reported: name as reported
     power_notes: ''
     results_notes: ''
     endpoint_notes: ''

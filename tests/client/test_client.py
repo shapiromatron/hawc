@@ -172,7 +172,7 @@ class TestClient(LiveServerTestCase, TestCase):
             statistical_test="ANOVA + Dunnett's test",
             trend_value=0.0123,
             trend_result=2,
-            diagnostic="...",
+            as_reported="...",
             power_notes="...",
             results_notes="...",
             endpoint_notes="...",
