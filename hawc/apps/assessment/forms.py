@@ -338,7 +338,7 @@ class CommunicationForm(forms.ModelForm):
         )
         return BaseFormHelper(
             self,
-            legend_text="Update communications for " + str(content_name) + " " + str(content),
+            legend_text=f"Update communications for {content_name} {content}",
             help_text="Add communications visible to team members.",
             cancel_url=content.get_absolute_url(),
             submit_text="Update communications",

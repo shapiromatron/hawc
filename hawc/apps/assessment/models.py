@@ -907,8 +907,8 @@ class Job(models.Model):
 
 class Communication(models.Model):
     message = models.TextField()
-    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
-    object_id = models.IntegerField(null=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.IntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -1050,5 +1050,6 @@ reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
+reversion.register(Communication)
 reversion.register(Blog)
 reversion.register(Content)

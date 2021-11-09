@@ -102,9 +102,6 @@ class StudyRead(BaseDetail):
             "attachments_viewable": attachments_viewable,
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
-        context["user_is_team_member_or_higher"] = self.assessment.user_is_team_member_or_higher(
-            self.request.user._wrapped
-        )
         try:
             communication_message = Communication.objects.get(object_id=self.object.id).message
         except Communication.DoesNotExist:
@@ -255,9 +252,7 @@ class CommunicationUpdate(UpdateView):
             "Communication Update",
             extras=[
                 Breadcrumb.from_object(context["assessment"]),
-                Breadcrumb(
-                    name="Study " + str(study), url=reverse("study:detail", args=(study.id,))
-                ),
+                Breadcrumb(name=f"Study {study}", url=reverse("study:detail", args=(study.id,))),
             ],
         )
         return context
@@ -269,11 +264,5 @@ class CommunicationUpdate(UpdateView):
         )
         return obj
 
-    def post(self, request, *args, **kwargs):
-        instance = Communication.objects.get(object_id=self.kwargs["pk"])
-        if instance is not None:
-            form = CommunicationForm(request.POST, instance=instance)
-        else:
-            form = CommunicationForm(request.POST)
-        form.save()
-        return HttpResponseRedirect(reverse("study:detail", args=[self.kwargs["pk"]]))
+    def get_success_url(self):
+        return reverse("study:detail", args=[self.kwargs["pk"]])

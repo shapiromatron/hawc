@@ -21,9 +21,7 @@
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
             <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
-            {% if user_is_team_member_or_higher %}
             <a class="dropdown-item" href="{% url 'study:communication_update' object.pk %}">Update communications</a>
-            {% endif %}
             {% if object.bioassay %}
               <div class="dropdown-divider"></div>
               <span class="dropdown-header">Animal bioassay editing</span>
@@ -64,7 +62,7 @@
       <col style="width: 70%;">
     </colgroup>
     <tbody>
-  <div>{% if user_is_team_member_or_higher %}
+  <div>{% if object.editable %}
     <tr>
       <th>Communications</th>
       <td>{{ Communication }}</td>
