@@ -176,6 +176,7 @@
         "strain": "sprague dawley",
         "url": "/ani/animal-group/3/"
       },
+      "as_reported": "name as reported",
       "assessment": 2,
       "bmds": [],
       "confidence_interval": null,
@@ -186,7 +187,6 @@
       "data_type": "C",
       "data_type_label": "Continuous",
       "dataset_increasing": false,
-      "diagnostic": "name as reported",
       "effect": "learning and memory",
       "effect_subtype": "errors (forward)",
       "effect_subtype_term": null,
@@ -522,6 +522,7 @@
         "strain": "sprague dawley",
         "url": "/ani/animal-group/3/"
       },
+      "as_reported": "name as reported",
       "assessment": 2,
       "bmds": [],
       "confidence_interval": null,
@@ -532,7 +533,6 @@
       "data_type": "C",
       "data_type_label": "Continuous",
       "dataset_increasing": true,
-      "diagnostic": "",
       "effect": "",
       "effect_subtype": "",
       "effect_subtype_term": null,
@@ -863,6 +863,7 @@
         "strain": "sprague dawley",
         "url": "/ani/animal-group/3/"
       },
+      "as_reported": "name as reported",
       "assessment": 2,
       "bmds": [
         {
@@ -971,7 +972,6 @@
       "data_type": "D",
       "data_type_label": "Dichotomous",
       "dataset_increasing": true,
-      "diagnostic": "",
       "effect": "Fatty Acids",
       "effect_subtype": "Clinical Chemistry",
       "effect_subtype_term": 4,

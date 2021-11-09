@@ -48,6 +48,7 @@ class TestEndpointForm:
         animal_group = models.AnimalGroup.objects.get(id=db_keys.animal_group_working)
         baseline_data = {
             "name": "foo",
+            "as_reported": "foo",
             "NOEL": -999,
             "LOEL": -999,
             "FEL": -999,

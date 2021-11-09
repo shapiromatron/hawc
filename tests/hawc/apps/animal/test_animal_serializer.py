@@ -136,6 +136,7 @@ class TestEndpointSerializer:
         # valid request with one term
         data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -149,6 +150,7 @@ class TestEndpointSerializer:
         # valid request with two terms
         data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -163,6 +165,7 @@ class TestEndpointSerializer:
 
         # valid request with name term
         data = {
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -180,6 +183,7 @@ class TestEndpointSerializer:
 
         # term_field or text_field is required
         data = {
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -192,6 +196,7 @@ class TestEndpointSerializer:
         # term_field and text_field are mutually exclusive
         data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -208,6 +213,7 @@ class TestEndpointSerializer:
         # term types must match field
         data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,

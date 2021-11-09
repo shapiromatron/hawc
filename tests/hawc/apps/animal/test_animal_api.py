@@ -433,7 +433,11 @@ class TestAnimalGroupCreateApi:
 class TestEndpointCreateApi:
     def test_permissions(self, db_keys):
         url = reverse("animal:api:endpoint-list")
-        data = {"name": "Endpoint name", "animal_group_id": 1}
+        data = {
+            "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
+            "animal_group_id": 1,
+        }
 
         # reviewers shouldn't be able to create
         client = APIClient()
@@ -455,16 +459,22 @@ class TestEndpointCreateApi:
         data = {}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name"}.issubset((response.data.keys()))
+        assert {"as_reported"}.issubset((response.data.keys()))
 
         # payload needs to include name
-        data = {"animal_group_id": 1}
+        data = {"as_reported": "Endpoint name as reported", "animal_group_id": 1}
         response = client.post(url, data)
         assert response.status_code == 400
         assert {"name"}.issubset((response.data.keys()))
 
+        # payload needs to include name as reported
+        data = {"name": "Endpoint name", "animal_group_id": 1}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"as_reported": ["This field is required."]}
+
         # payload needs animal group id
-        data = {"name": "Endpoint name"}
+        data = {"name": "Endpoint name", "as_reported": "Endpoint name as reported"}
         response = client.post(url, data)
         assert response.status_code == 400
         assert response.json() == {"animal_group_id": ["animal_group_id is required."]}
@@ -477,6 +487,7 @@ class TestEndpointCreateApi:
 
         data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -495,7 +506,13 @@ class TestEndpointCreateApi:
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
         url = reverse("animal:api:endpoint-list")
-        data = {"name": "Endpoint name", "animal_group_id": 1, "data_type": "C", "variance_type": 1}
+        data = {
+            "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+        }
 
         assert models.Endpoint.objects.filter(name=data["name"]).count() == 0
         response = client.post(url, data)
@@ -506,6 +523,7 @@ class TestEndpointCreateApi:
         url = reverse("animal:api:endpoint-list")
         data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -545,6 +563,7 @@ class TestEndpointCreateApi:
         client = APIClient()
         valid_data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "C",
             "variance_type": 1,
@@ -599,6 +618,7 @@ class TestEndpointCreateApi:
 
         data = {
             "name": "Endpoint name",
+            "as_reported": "Endpoint name as reported",
             "animal_group_id": 1,
             "data_type": "D",
             "variance_type": 0,
