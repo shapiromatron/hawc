@@ -241,7 +241,7 @@ class EditabilityUpdate(BaseUpdate):
 
 # Communication view
 class CommunicationUpdate(UpdateView):
-    template_name = "study/communication_update.html"
+    template_name = "assessment/communication_update.html"
     model = Communication
     form_class = CommunicationForm
 
@@ -264,9 +264,6 @@ class CommunicationUpdate(UpdateView):
 
     def get_object(self, queryset=None):
         content_type = ContentType.objects.get(app_label="study", model="communication")
-        import pdb
-
-        pdb.set_trace()
         obj, created = Communication.objects.get_or_create(
             content_type=content_type, object_id=self.kwargs["pk"]
         )
