@@ -5,7 +5,6 @@ from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.utils import timezone
 
-from ..common.svg import SVGConverter
 from . import models
 
 logger = get_task_logger(__name__)
@@ -37,34 +36,6 @@ def run_job(self):
     except Exception as exc:
         job.set_failure(exc)
     job.save()
-
-
-@shared_task
-def convert_to_svg(svg, url, width, height):
-    logger.info("Converting svg -> [css]+svg")
-    conv = SVGConverter(svg, url, width, height)
-    return conv.to_svg()
-
-
-@shared_task
-def convert_to_png(svg, url, width, height):
-    logger.info("Converting svg -> html -> png")
-    conv = SVGConverter(svg, url, width, height)
-    return conv.to_png()
-
-
-@shared_task
-def convert_to_pdf(svg, url, width, height):
-    logger.info("Converting svg -> html -> pdf")
-    conv = SVGConverter(svg, url, width, height)
-    return conv.to_pdf()
-
-
-@shared_task
-def convert_to_pptx(svg, url, width, height):
-    logger.info("Converting svg -> html -> png -> pptx")
-    conv = SVGConverter(svg, url, width, height)
-    return conv.to_pptx()
 
 
 @shared_task

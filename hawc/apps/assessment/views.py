@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
@@ -24,6 +24,7 @@ from django.views.generic import DetailView, FormView, ListView, TemplateView, V
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
+from ..common.forms import DownloadPlotForm
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -40,7 +41,7 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
-from . import forms, models, serializers, tasks
+from . import forms, models, serializers
 
 logger = logging.getLogger(__name__)
 
@@ -630,42 +631,16 @@ class UpdateSession(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class DownloadPlot(FormView):
+    form_class = DownloadPlotForm
+    http_method_names = ["post"]
 
-    http_method_names = [
-        "post",
-    ]
+    def form_invalid(self, form: DownloadPlotForm):
+        # intentionally don't provide helpful data
+        return JsonResponse({"valid": False}, status=400)
 
-    EXPORT_CROSSWALK = {
-        "svg": {"fn": tasks.convert_to_svg, "ct": "image/svg+xml"},
-        "png": {"fn": tasks.convert_to_png, "ct": "application/png"},
-        "pdf": {"fn": tasks.convert_to_pdf, "ct": "application/pdf"},
-        "pptx": {
-            "fn": tasks.convert_to_pptx,
-            "ct": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        },
-    }
-
-    def post(self, request, *args, **kwargs):
-
-        # default response
-        response = HttpResponse("<p>An error in processing occurred.</p>")
-
-        # grab input values and create converter object
-        extension = request.POST.get("output", None)
-        svg = request.POST["svg"]
-        url = get_referrer(request, "/<unknown>/")
-        width = int(float(request.POST["width"]) * 5)
-        height = int(float(request.POST["height"]) * 5)
-
-        handler = self.EXPORT_CROSSWALK.get(extension, None)
-        if handler:
-            task = handler["fn"].delay(svg, url, width, height)
-            output = task.get(timeout=90)
-            if output:
-                response = HttpResponse(output, content_type=handler["ct"])
-                response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
-
-        return response
+    def form_valid(self, form: DownloadPlotForm):
+        url = get_referrer(self.request, "/<unknown>/")
+        return form.process(url)
 
 
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
