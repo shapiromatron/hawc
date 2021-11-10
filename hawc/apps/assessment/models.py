@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, Dict, List, NamedTuple
+from typing import Any, Dict, List, Optional, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -444,6 +444,12 @@ class Assessment(models.Model):
             .order_by("id")
             .distinct("id")
         )
+
+    def get_communications(self) -> str:
+        return Communication.get_message(self)
+
+    def set_communications(self, text: str):
+        Communication.set_message(self, text)
 
 
 class Attachment(models.Model):
@@ -912,6 +918,25 @@ class Communication(models.Model):
     content_object = GenericForeignKey("content_type", "object_id")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("content_type_id", "object_id"),)
+
+    @classmethod
+    def get_message(cls, model) -> str:
+        instance = cls.objects.filter(
+            content_type=ContentType.objects.get_for_model(model), object_id=model.id
+        ).first()
+        return instance.message if instance else ""
+
+    @classmethod
+    def set_message(cls, model, text: str) -> "Communication":
+        instance, _ = cls.objects.update_or_create(
+            content_type=ContentType.objects.get_for_model(model),
+            object_id=model.id,
+            defaults={"message": text},
+        )
+        return instance
 
 
 class Log(models.Model):

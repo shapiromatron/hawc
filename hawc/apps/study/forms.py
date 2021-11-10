@@ -9,6 +9,12 @@ from . import models
 
 
 class BaseStudyForm(forms.ModelForm):
+
+    internal_communications = forms.CharField(
+        required=False,
+        help_text="Internal communications regarding this assessment; this field is not shown if the assessment is made public",
+    )
+
     class Meta:
         model = models.Study
         fields = (
@@ -37,6 +43,9 @@ class BaseStudyForm(forms.ModelForm):
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
 
+        if self.instance:
+            self.fields["internal_communications"].initial = self.instance.get_communications()
+
         self.helper = self.setHelper()
 
     def setHelper(self, inputs={}):
@@ -58,6 +67,12 @@ class BaseStudyForm(forms.ModelForm):
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
         return helper
+
+    def save(self, commit=True):
+        instance = super().save(commit=True)
+        if commit and "internal_communications" in self.changed_data:
+            instance.set_communications(self.cleaned_data["internal_communications"])
+        return instance
 
 
 class StudyForm(BaseStudyForm):
