@@ -69,7 +69,7 @@ class BaseStudyForm(forms.ModelForm):
         return helper
 
     def save(self, commit=True):
-        instance = super().save(commit=True)
+        instance = super().save(commit=commit)
         if commit and "internal_communications" in self.changed_data:
             instance.set_communications(self.cleaned_data["internal_communications"])
         return instance
