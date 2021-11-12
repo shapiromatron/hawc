@@ -21,6 +21,7 @@
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
             <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
+
             {% if object.bioassay %}
               <div class="dropdown-divider"></div>
               <span class="dropdown-header">Animal bioassay editing</span>

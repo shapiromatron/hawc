@@ -340,26 +340,6 @@ class ContactForm(forms.Form):
         )
 
 
-class CommunicationForm(forms.ModelForm):
-    class Meta:
-        model = models.Communication
-        exclude = ["content_type", "object_id"]
-
-    @property
-    def helper(self):
-        content_name = self.instance.content_type.app_label
-        content = ContentType(app_label=content_name, model=content_name).get_object_for_this_type(
-            id=(self.instance.object_id)
-        )
-        return BaseFormHelper(
-            self,
-            legend_text=f"Update communications for {content_name} {content}",
-            help_text="Add communications visible to team members.",
-            cancel_url=content.get_absolute_url(),
-            submit_text="Update communications",
-        )
-
-
 class DatasetForm(forms.ModelForm):
     revision_version = forms.IntegerField(
         disabled=True,
