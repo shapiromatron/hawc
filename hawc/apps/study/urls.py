@@ -19,12 +19,6 @@ urlpatterns = [
     path("<int:pk>/update/", views.StudyUpdate.as_view(), name="update"),
     path("<int:pk>/delete/", views.StudyDelete.as_view(), name="delete"),
     path("<int:pk>/risk-of-bias/", views.StudyRoBRedirect.as_view(), name="rob_redirect",),
-    # communication
-    path(
-        "<int:pk>/communication-update/",
-        views.CommunicationUpdate.as_view(),
-        name="communication_update",
-    ),
     # attachment
     path("attachment/<int:pk>/", views.AttachmentRead.as_view(), name="attachment_detail",),
     path("<int:pk>/attachment/add/", views.AttachmentCreate.as_view(), name="attachment_create",),

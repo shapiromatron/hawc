@@ -1,15 +1,12 @@
 from django.apps import apps
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
-from django.views.generic.edit import UpdateView
 
-from ..assessment.forms import CommunicationForm
-from ..assessment.models import Assessment, Communication
+from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
@@ -102,11 +99,7 @@ class StudyRead(BaseDetail):
             "attachments_viewable": attachments_viewable,
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
-        try:
-            communication_message = Communication.objects.get(object_id=self.object.id).message
-        except Communication.DoesNotExist:
-            communication_message = ""
-        context["Communication"] = communication_message
+        context["internal_communication"] = self.object.get_communications()
         return context
 
 
@@ -234,35 +227,3 @@ class EditabilityUpdate(BaseUpdate):
             return HttpResponseRedirect(self.object.get_absolute_url())
         else:
             raise PermissionDenied
-
-
-# Communication view
-class CommunicationUpdate(UpdateView):
-    template_name = "assessment/communication_update.html"
-    model = Communication
-    form_class = CommunicationForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        content_type = ContentType.objects.get(app_label="study", model="study")
-        study = content_type.get_object_for_this_type(id=(self.object.object_id))
-        context["assessment"] = study.get_assessment()
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Communication Update",
-            extras=[
-                Breadcrumb.from_object(context["assessment"]),
-                Breadcrumb(name=f"Study {study}", url=reverse("study:detail", args=(study.id,))),
-            ],
-        )
-        return context
-
-    def get_object(self, queryset=None):
-        content_type = ContentType.objects.get(app_label="study", model="communication")
-        obj, created = Communication.objects.get_or_create(
-            content_type=content_type, object_id=self.kwargs["pk"]
-        )
-        return obj
-
-    def get_success_url(self):
-        return reverse("study:detail", args=[self.kwargs["pk"]])

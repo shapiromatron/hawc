@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, Dict, List, Optional, NamedTuple
+from typing import Any, Dict, List, NamedTuple
 
 import pandas as pd
 from django.apps import apps

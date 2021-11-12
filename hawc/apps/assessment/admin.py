@@ -229,8 +229,8 @@ class JobAdmin(admin.ModelAdmin):
 
 @admin.register(models.Communication)
 class CommunicationAdmin(admin.ModelAdmin):
-    list_display = ("id", "created", "last_updated", "message", "object_id", "content_type")
-    readonly_field = ("created",)
+    list_display = ("id", "message", "object_id", "content_type", "created", "last_updated")
+    readonly_fields = ("id", "object_id", "content_type", "created", "last_updated")
     search_fields = ("object_id", "message")
 
 

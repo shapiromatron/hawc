@@ -21,7 +21,6 @@
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
             <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
-            <a class="dropdown-item" href="{% url 'study:communication_update' object.pk %}">Update communications</a>
             {% if object.bioassay %}
               <div class="dropdown-divider"></div>
               <span class="dropdown-header">Animal bioassay editing</span>
@@ -56,19 +55,20 @@
 
   <div id="study_details"></div>
 
-  <table id="assessment_table" class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 70%;">
-    </colgroup>
-    <tbody>
-  <div>{% if object.editable %}
-    <tr>
-      <th>Communications</th>
-      <td>{{ Communication }}</td>
-    </tr>
-    {% endif %}</div>
-  </tbody></table>
+  {% if obj_perms.edit %}
+  <table class="table table-sm table-striped">
+      <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Internal communications</th>
+          <td>{{ internal_communication }}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
 
   {% if crud == "Read" %}
 

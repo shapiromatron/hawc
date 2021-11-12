@@ -21,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
 from ..common.views import (
@@ -380,16 +380,7 @@ class AssessmentRead(BaseDetail):
         context["dtxsids"] = json.dumps(
             serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
         )
-        context["user_is_team_member_or_higher"] = self.object.user_is_team_member_or_higher(
-            self.request.user._wrapped
-        )
-        try:
-            communication_message = models.Communication.objects.get(
-                object_id=self.object.id
-            ).message
-        except models.Communication.DoesNotExist:
-            communication_message = ""
-        context["Communication"] = communication_message
+        context["internal_communications"] = self.object.get_communications()
         context["datasets"] = (
             context["object"].datasets.all()
             if context["obj_perms"]["edit"]
@@ -836,35 +827,6 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
         return context
-
-
-# communications
-
-
-class CommunicationUpdate(UpdateView):
-    template_name = "assessment/communication_update.html"
-    model = models.Communication
-    form_class = forms.CommunicationForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        content_type = ContentType.objects.get(app_label="assessment", model="assessment")
-        assessment = content_type.get_object_for_this_type(id=(self.object.object_id))
-        context["assessment"] = assessment
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user, "Communication Update", extras=[Breadcrumb.from_object(assessment)],
-        )
-        return context
-
-    def get_object(self, queryset=None):
-        content_type = ContentType.objects.get(app_label="assessment", model="communication")
-        obj, created = models.Communication.objects.get_or_create(
-            content_type=content_type, object_id=self.kwargs["pk"]
-        )
-        return obj
-
-    def get_success_url(self) -> str:
-        return reverse("assessment:detail", args=[self.kwargs["pk"]])
 
 
 @method_decorator(cache_page(3600), name="dispatch")
