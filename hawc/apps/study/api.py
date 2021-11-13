@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -55,13 +56,12 @@ class Study(
         # permissions check not here; see serializer validation
         return super().create(request)
 
-    @action(detail=True)
+    @action(detail=True, url_path="all-rob")
     def rob(self, request, pk: int):
         study = self.get_object()
-        if self.assessment.user_is_team_member_or_higher(self.request.user):
-            serializer = RiskOfBiasSerializer(study.get_active_robs(), many=True)
-        else:
-            serializer = FinalRiskOfBiasSerializer(study.get_final_qs(), many=True)
+        if not self.assessment.user_is_team_member_or_higher(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        serializer = RiskOfBiasSerializer(study.get_active_robs(), many=True)
         return Response(serializer.data)
 
 
