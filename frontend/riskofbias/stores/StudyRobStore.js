@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import { fetchRobSettings, fetchStudy, fetchRobStudy} from "../constants";
+import {fetchRobSettings, fetchStudy, fetchRobStudy} from "../constants";
 
 class StudyRobStore {
     @observable settings = null;
@@ -36,7 +36,7 @@ class StudyRobStore {
         }).catch(ex => console.error("Study parsing failed", ex));
     }
 
-    @action.bound fetchRobStudy(study_id){
+    @action.bound fetchRobStudy(study_id) {
         return fetchRobStudy(study_id, data => {
             this.activeRobs = data;
         }).catch(ex => console.error("Study parsing failed", ex));

@@ -32,7 +32,7 @@ class RobTableStore extends StudyRobStore {
             this.fetchStudy(this.config.study.id),
             this.fetchSettings(this.config.assessment_id),
         ];
-        if (this.config.display === "all"){
+        if (this.config.display === "all") {
             urls.push(this.fetchRobStudy(this.config.study.id));
         }
 
@@ -41,7 +41,8 @@ class RobTableStore extends StudyRobStore {
         this.resetError();
         Promise.all(urls)
             .then(d => {
-                const allRobs = this.config.display === "all"? this.activeRobs: this.study.riskofbiases,
+                const allRobs =
+                        this.config.display === "all" ? this.activeRobs : this.study.riskofbiases,
                     dirtyRoBs = _.filter(allRobs, rob => rob.active === true),
                     domains = _.flattenDeep(
                         _.map(dirtyRoBs, riskofbias => {

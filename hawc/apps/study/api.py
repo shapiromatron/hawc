@@ -12,7 +12,7 @@ from ..assessment.api import (
 )
 from ..common.api import CleanupFieldsBaseViewSet
 from ..common.helper import re_digits
-from ..riskofbias.serializers import FinalRiskOfBiasSerializer, RiskOfBiasSerializer
+from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models, serializers
 
 
