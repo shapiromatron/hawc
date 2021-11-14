@@ -1,11 +1,12 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
-import {fetchRobSettings, fetchRobStudy} from "../constants";
+import { fetchRobSettings, fetchStudy, fetchRobStudy} from "../constants";
 
 class StudyRobStore {
     @observable settings = null;
     @observable study = null;
+    @observable activeRobs = null;
 
     @computed get domains() {
         return _.keyBy(this.settings.domains, domain => domain.id);
@@ -30,8 +31,14 @@ class StudyRobStore {
     }
 
     @action.bound fetchStudy(study_id) {
-        return fetchRobStudy(study_id, data => {
+        return fetchStudy(study_id, data => {
             this.study = data;
+        }).catch(ex => console.error("Study parsing failed", ex));
+    }
+
+    @action.bound fetchRobStudy(study_id){
+        return fetchRobStudy(study_id, data => {
+            this.activeRobs = data;
         }).catch(ex => console.error("Study parsing failed", ex));
     }
 
