@@ -381,6 +381,7 @@ class AssessmentRead(BaseDetail):
         context["dtxsids"] = json.dumps(
             serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
         )
+        context["internal_communications"] = self.object.get_communications()
         context["datasets"] = (
             context["object"].datasets.all()
             if context["obj_perms"]["edit"]

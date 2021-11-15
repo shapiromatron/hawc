@@ -56,6 +56,21 @@
 
   <div id="study_details"></div>
 
+  {% if obj_perms.edit %}
+    <table class="table table-sm table-striped">
+      <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Internal communications</th>
+          <td>{{ internal_communication }}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+
   {% if crud == "Read" %}
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}

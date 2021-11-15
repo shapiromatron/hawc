@@ -445,6 +445,12 @@ class Assessment(models.Model):
             .distinct("id")
         )
 
+    def get_communications(self) -> str:
+        return Communication.get_message(self)
+
+    def set_communications(self, text: str):
+        Communication.set_message(self, text)
+
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
@@ -905,6 +911,34 @@ class Job(models.Model):
         return reverse("assessment:api:jobs-detail", args=(self.task_id,))
 
 
+class Communication(models.Model):
+    message = models.TextField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.IntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("content_type_id", "object_id"),)
+
+    @classmethod
+    def get_message(cls, model) -> str:
+        instance = cls.objects.filter(
+            content_type=ContentType.objects.get_for_model(model), object_id=model.id
+        ).first()
+        return instance.message if instance else ""
+
+    @classmethod
+    def set_message(cls, model, text: str) -> "Communication":
+        instance, _ = cls.objects.update_or_create(
+            content_type=ContentType.objects.get_for_model(model),
+            object_id=model.id,
+            defaults={"message": text},
+        )
+        return instance
+
+
 class Log(models.Model):
     assessment = models.ForeignKey(
         Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
@@ -1041,5 +1075,6 @@ reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
+reversion.register(Communication)
 reversion.register(Blog)
 reversion.register(Content)
