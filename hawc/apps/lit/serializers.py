@@ -224,7 +224,7 @@ class ReferenceTreeSerializer(serializers.Serializer):
         assessment_id = self.context["assessment"].id
         root = models.ReferenceFilterTag.get_assessment_root(assessment_id)
         tree = root.dump_bulk(root, keep_ids=True)
-        return {"tree": tree[0]["children"]}
+        return {"tree": tree[0].get("children", [])}
 
 
 class BulkReferenceTagSerializer(serializers.Serializer):
@@ -372,6 +372,9 @@ class ReferenceSerializer(serializers.ModelSerializer):
         # updates the reference tags
         if "tags" in validated_data:
             instance.tags.set(validated_data.pop("tags"))
+        # updates the searches
+        if "searches" in validated_data:
+            instance.searches.set(validated_data.pop("searches"))
         # updates the rest of the fields
         for attr, value in list(validated_data.items()):
             setattr(instance, attr, value)

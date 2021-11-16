@@ -104,7 +104,7 @@ class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
 
 
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
-    overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
+    overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True, read_only=True)
     score_description = serializers.CharField(source="get_score_display", read_only=True)
 
     class Meta:
