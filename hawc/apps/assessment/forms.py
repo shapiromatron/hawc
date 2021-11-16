@@ -22,7 +22,8 @@ class AssessmentForm(forms.ModelForm):
 
     internal_communications = forms.CharField(
         required=False,
-        help_text="Internal communications regarding this assessment; this field is not shown if the assessment is made public",
+        help_text="Internal communications regarding this assessment; this field is only displayed to assessment team members.",
+        widget=forms.Textarea,
     )
 
     class Meta:

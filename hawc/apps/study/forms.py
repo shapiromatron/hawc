@@ -11,8 +11,9 @@ from . import models
 class BaseStudyForm(forms.ModelForm):
 
     internal_communications = forms.CharField(
+        widget=forms.Textarea,
         required=False,
-        help_text="Internal communications regarding this assessment; this field is not shown if the assessment is made public",
+        help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
     )
 
     class Meta:
@@ -59,6 +60,9 @@ class BaseStudyForm(forms.ModelForm):
                 widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
+
+        for fld in ("summary", "internal_communications"):
+            self.fields[fld].widget.attrs["class"] += " html5text"
 
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
