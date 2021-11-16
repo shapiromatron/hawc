@@ -8,7 +8,7 @@ from requests import Response, Session
 from tqdm import tqdm
 
 __all__ = ["HawcClient"]
-__version__ = "2020.10"
+__version__ = "2021.11"
 
 
 class HawcException(Exception):
@@ -1245,20 +1245,31 @@ class AnimalClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def endpoints(self, assessment_id: int) -> List[Dict]:
+    def _invert_endpoints(self, data: List[Dict]) -> List[Dict]:
+        pass
+
+    def endpoints(self, assessment_id: int, invert: bool = False) -> List[Dict]:
         """
         Retrieves all bioassay endpoints for a given assessment.
 
         Args:
             assessment_id (int): Assessment ID
+            invert (bool, default False): Return a list of endpoints if False (default). This is
+                akin to data bottom up. If True, returns a list of studies instead, with related
+                data all the way down to endpoints nested within the list of studies. This is
+                akin to top-down.
 
         Returns:
-            List[Dict]: Endpoints
+            List[Dict]: A list of endpoints and related studies with each (or a list of studies with
+                a related endpoints if inverted)
         """
         payload = {"assessment_id": assessment_id}
         url = f"{self.session.root_url}/ani/api/endpoint/"
         generator = self.session.iter_pages(url, payload)
-        return [res for results in generator for res in results]
+        data = [res for results in generator for res in results]
+        if invert:
+            data = self._invert_endpoints(data)
+        return data
 
     def metadata(self) -> Dict:
         """
@@ -1269,6 +1280,9 @@ class AnimalClient(BaseClient):
         """
         url = f"{self.session.root_url}/ani/api/metadata/"
         return self.session.get(url).json()
+
+    def update_terms(self) -> List[Dict]:
+        pass
 
 
 class EpiMetaClient(BaseClient):
