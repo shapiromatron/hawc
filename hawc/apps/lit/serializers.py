@@ -224,7 +224,7 @@ class ReferenceTreeSerializer(serializers.Serializer):
         assessment_id = self.context["assessment"].id
         root = models.ReferenceFilterTag.get_assessment_root(assessment_id)
         tree = root.dump_bulk(root, keep_ids=True)
-        return {"tree": tree[0]["children"]}
+        return {"tree": tree[0].get("children")}
 
 
 class BulkReferenceTagSerializer(serializers.Serializer):
