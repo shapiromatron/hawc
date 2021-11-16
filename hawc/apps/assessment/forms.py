@@ -19,6 +19,12 @@ from . import lookups, models
 
 
 class AssessmentForm(forms.ModelForm):
+
+    internal_communications = forms.CharField(
+        required=False,
+        help_text="Internal communications regarding this assessment; this field is not shown if the assessment is made public",
+    )
+
     class Meta:
         exclude = (
             "enable_literature_review",
@@ -50,6 +56,15 @@ class AssessmentForm(forms.ModelForm):
             for field in ("editable", "public", "hide_from_public_page"):
                 self.fields[field].disabled = True
                 self.fields[field].help_text += help_text
+
+        if self.instance:
+            self.fields["internal_communications"].initial = self.instance.get_communications()
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if commit and "internal_communications" in self.changed_data:
+            instance.set_communications(self.cleaned_data["internal_communications"])
+        return instance
 
     @property
     def helper(self):

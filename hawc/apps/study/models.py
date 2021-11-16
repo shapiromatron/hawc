@@ -10,7 +10,7 @@ from django.http import Http404
 from django.urls import reverse
 from reversion import revisions as reversion
 
-from ..assessment.models import Assessment
+from ..assessment.models import Assessment, Communication
 from ..assessment.serializers import AssessmentSerializer
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper, cleanHTML
@@ -424,6 +424,12 @@ class Study(Reference):
     def user_can_edit_study(self, assessment, user) -> bool:
         perms = assessment.get_permissions()
         return perms.can_edit_study(self, user)
+
+    def get_communications(self) -> str:
+        return Communication.get_message(self)
+
+    def set_communications(self, text: str):
+        Communication.set_message(self, text)
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
