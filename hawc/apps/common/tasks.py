@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from rest_framework.authtoken.models import Token
 
+from .svg import SVGConverter
+
 logger = get_task_logger(__name__)
 
 
@@ -30,3 +32,31 @@ def destroy_old_api_tokens():
     qs = Token.objects.filter(created__lt=deletion_date)
     logger.info(f"Destroying {qs.count()} old tokens")
     qs.delete()
+
+
+@shared_task
+def convert_to_svg(svg, url, width, height):
+    logger.info("Converting svg -> [css]+svg")
+    conv = SVGConverter(svg, url, width, height)
+    return conv.to_svg()
+
+
+@shared_task
+def convert_to_png(svg, url, width, height):
+    logger.info("Converting svg -> html -> png")
+    conv = SVGConverter(svg, url, width, height)
+    return conv.to_png()
+
+
+@shared_task
+def convert_to_pdf(svg, url, width, height):
+    logger.info("Converting svg -> html -> pdf")
+    conv = SVGConverter(svg, url, width, height)
+    return conv.to_pdf()
+
+
+@shared_task
+def convert_to_pptx(svg, url, width, height):
+    logger.info("Converting svg -> html -> png -> pptx")
+    conv = SVGConverter(svg, url, width, height)
+    return conv.to_pptx()
