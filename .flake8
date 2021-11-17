@@ -17,4 +17,5 @@ exclude =
     frontend,
     public,
     requirements,
+    scripts\private,
     venv
