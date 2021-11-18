@@ -292,6 +292,7 @@ class ReferenceManager(BaseManager):
             # in database. If not, save a new reference.
             content = json.loads(identifier.content)
             pmid = content.get("PMID", None)
+            doi = content['json']['doi']
 
             if pmid:
                 ref = self.get_qs(search.assessment).filter(
@@ -307,6 +308,17 @@ class ReferenceManager(BaseManager):
             else:
                 ref = identifier.create_reference(search.assessment)
                 ref.save()
+
+            Identifiers = apps.get_model("lit", "Identifiers")
+            if (constants.DOI_EXTRACT.search(str(doi))):
+                doi = constants.DOI_EXTRACT.search(doi).group(0)
+                try:
+                    existingID = Identifiers.objects.get(unique_id=doi)
+                    ref.identifiers.add(existingID)
+                except (Identifiers.DoesNotExist):
+                    newID = Identifiers(unique_id=doi, database=4)
+                    newID.save()
+                    ref.identifiers.add(newID)
 
             ref.searches.add(search)
             ref.identifiers.add(identifier)
@@ -353,12 +365,23 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
+        Identifiers = apps.get_model("lit", "Identifiers")
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
+            doi = json.loads(identifier.content)['doi']
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
+            if (constants.DOI_EXTRACT.search(str(doi))):
+                doi = constants.DOI_EXTRACT.search(doi).group(0)
+                try:
+                    existingID = Identifiers.objects.get(unique_id=doi)
+                    ref.identifiers.add(existingID)
+                except (Identifiers.DoesNotExist):
+                    newID = Identifiers(unique_id=doi, database=4)
+                    newID.save()
+                    ref.identifiers.add(newID)
             refs.append(ref)
 
         return refs
