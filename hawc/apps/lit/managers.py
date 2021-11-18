@@ -292,7 +292,10 @@ class ReferenceManager(BaseManager):
             # in database. If not, save a new reference.
             content = json.loads(identifier.content)
             pmid = content.get("PMID", None)
-            doi = content["json"]["doi"]
+            try:
+                doi = content["json"]["doi"]
+            except(KeyError):
+                doi = None
 
             if pmid:
                 ref = self.get_qs(search.assessment).filter(
@@ -368,7 +371,10 @@ class ReferenceManager(BaseManager):
         Identifiers = apps.get_model("lit", "Identifiers")
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
-            doi = json.loads(identifier.content)["doi"]
+            try:
+                doi = json.loads(identifier.content)["doi"]
+            except (KeyError):
+                doi = None
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)

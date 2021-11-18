@@ -90,7 +90,7 @@ def test_pubmed_import(db_keys):
 
     # check new counts
     assert models.Search.objects.count() == initial_searches + 1
-    assert models.Identifiers.objects.count() == initial_identifiers + 20
+    assert models.Identifiers.objects.count() == initial_identifiers + 22
     assert models.Reference.objects.count() == initial_refs + 20
 
     # make sure all each reference has an identifier
@@ -238,7 +238,7 @@ def test_existing_pubmed_hero_add(db_keys):
 
     # assert that search & identifier created but not new reference
     assert models.Search.objects.count() == initial_searches + 2
-    assert models.Identifiers.objects.count() == initial_identifiers + 2
+    assert models.Identifiers.objects.count() == initial_identifiers + 3
     assert models.Reference.objects.count() == initial_refs + 1
 
     ref = models.Reference.objects.get(authors_short="Longstreth J et al.")
