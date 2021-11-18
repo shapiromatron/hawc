@@ -1,13 +1,7 @@
 from django import forms
-from django.contrib import admin
-from django.contrib.admin.widgets import AutocompleteSelect, AutocompleteSelectMultiple
 
+from ..common.admin import autocomplete
 from . import models
-
-
-def autocomplete(Model, field: str, multi: bool = False):
-    Widget = AutocompleteSelectMultiple if multi else AutocompleteSelect
-    return Widget(Model._meta.get_field(field), admin.site)
 
 
 class MetadataForm(forms.ModelForm):
@@ -20,3 +14,36 @@ class MetadataForm(forms.ModelForm):
             "state": autocomplete(models.Metadata, "state", multi=True),
             "ecoregion": autocomplete(models.Metadata, "ecoregion", multi=True),
         }
+
+
+class CauseForm(forms.ModelForm):
+    class Meta:
+        fields = "__all__"
+        model = models.Cause
+        widgets = {
+            "study": autocomplete(models.Cause, "study"),
+        }
+
+
+class EffectForm(forms.ModelForm):
+    class Meta:
+        fields = "__all__"
+        model = models.Effect
+        widgets = {
+            "cause": autocomplete(models.Effect, "cause"),
+        }
+
+
+class QuantitativeForm(forms.ModelForm):
+    class Meta:
+        fields = "__all__"
+        model = models.Quantitative
+        widgets = {
+            "effect": autocomplete(models.Quantitative, "effect"),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.id is None:
+            for field, value, in self.instance.default_related().items():
+                self.fields[field].initial = value

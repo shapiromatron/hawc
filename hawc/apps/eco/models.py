@@ -39,12 +39,11 @@ class Vocab(models.Model):
 
 class Metadata(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="eco_metadata")
-
-    study_type = models.ForeignKey(
+    design = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.TYPE},
         on_delete=models.CASCADE,
-        help_text="Select the type of study",
+        help_text="Select study design",
         related_name="+",
     )
     study_setting = models.ForeignKey(
@@ -98,26 +97,27 @@ class Metadata(models.Model):
 
 
 class Cause(models.Model):
-
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.CAUSE_TERM},
         on_delete=models.CASCADE,
         related_name="+",
-    )  # autocomplete
+        help_text="Add help text - autocomplete field?",
+    )
     measure = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.CAUSE_MEASURE},
         on_delete=models.CASCADE,
         related_name="+",
-    )  # autocomplete
+        help_text="Add help text - autocomplete field?",
+    )
     measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
     units = models.CharField(
         verbose_name="Cause units",
         max_length=100,
-        help_text="Type the unit associated with the cause term",
-    )  # autocomplete? # maybe add vocab here?
+        help_text="Type the unit associated with the cause term. autocomplete?",
+    )
     bio_org = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.BIO_ORG},
@@ -171,15 +171,19 @@ class Effect(models.Model):
         limit_choices_to={"category": VocabCategories.EFFECT_MEASURE},
         on_delete=models.CASCADE,
         related_name="+",
-    )  # autocomplete
+        help_text="Add help-text. autocomplete?",
+    )
     measure_detail = models.CharField(
-        verbose_name="Effect measure detail", max_length=100, blank=True
-    )  # autocomplete
+        verbose_name="Effect measure detail",
+        max_length=100,
+        blank=True,
+        help_text="Add help-text. autocomplete?",
+    )
     units = models.CharField(
         verbose_name="Effect units",
         max_length=100,
-        help_text="Type the unit associated with the effect term",
-    )  # autocomplete
+        help_text="Type the unit associated with the effect term. autocomplete?",
+    )
     bio_org = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.BIO_ORG},
@@ -213,8 +217,8 @@ class Effect(models.Model):
         verbose_name="Modifying factors",
         max_length=256,
         blank=True,
-        help_text="Comma-separated list of one or more factors that affect the relationship between the cause and effect",
-    )  # autocomplete - choices TBD
+        help_text="Comma-separated list of one or more factors that affect the relationship between the cause and effect. Autocomplete/tags?",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -227,22 +231,23 @@ class Effect(models.Model):
 
 class Quantitative(models.Model):
     effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
+    sort_order = models.PositiveSmallIntegerField(
+        verbose_name="Sort order", help_text="Sort order of a multiple responses", default=0,
+    )
     cause_level = models.CharField(
-        verbose_name="Cause treatment level",
-        max_length=100,
-        blank=True,
+        verbose_name="Treatment level",
+        max_length=128,
         help_text="Type the specific treatment/exposure/dose level of the cause measure",
     )
     cause_level_value = models.FloatField(
-        verbose_name="Cause treatment level value",
+        verbose_name="Treatment value",
         blank=True,
-        help_text="Type the numeric value of the specific treatment/exposure/dose level of the cause measure",
         null=True,
+        help_text="Type the numeric value of the specific treatment/exposure/dose level of the cause measure",
     )
     cause_level_units = models.CharField(
-        verbose_name="Cause treatment level units",
+        verbose_name="Treatment units",
         max_length=100,
-        blank=True,
         help_text="Enter the units of the specific treatment/exposure/dose level of the cause measure",
     )
     sample_size = models.IntegerField(
@@ -257,14 +262,12 @@ class Quantitative(models.Model):
         limit_choices_to=(Q(category=8) & Q(parent__isnull=False)),
         on_delete=models.CASCADE,
         related_name="+",
-        blank=True,
-        null=True,
         help_text="Select one response measure type",
     )
     measure_value = models.FloatField(
         verbose_name="Response measure value",
+        help_text="Numerical value of the response measure",
         blank=True,
-        help_text="Type the numerical value of the response measure",
         null=True,
     )
     description = models.TextField(
@@ -275,8 +278,6 @@ class Quantitative(models.Model):
     variability = models.ForeignKey(
         Vocab,
         verbose_name="Response variability",
-        blank=True,
-        null=True,
         limit_choices_to={"category": VocabCategories.RESPONSE_VARIABILITY},
         on_delete=models.CASCADE,
         related_name="+",
@@ -297,8 +298,6 @@ class Quantitative(models.Model):
     statistical_sig_type = models.ForeignKey(
         Vocab,
         verbose_name="Statistical significance measure type",
-        blank=True,
-        null=True,
         limit_choices_to={"category": VocabCategories.STATISTICAL},
         on_delete=models.CASCADE,
         related_name="+",
@@ -320,11 +319,25 @@ class Quantitative(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Quantitative response information"
-        verbose_name_plural = "Quantitative response information"
+        verbose_name = "Quantitative response"
+        verbose_name_plural = "Quantitative responses"
+        unique_together = (("effect", "sort_order"),)
+        ordering = ("effect", "sort_order")
 
     def __str__(self):
         if self.measure_type:
-            return f"{self.effect.cause.study_id.short_citation} | {self.effect.term.value} | {self.measure_type.value}"
+            return (
+                f"{self.effect.cause.study} | {self.effect.term.value} | {self.measure_type.value}"
+            )
         else:
-            return f"{self.effect.cause.study_id.short_citation} | {self.effect.term.value}"
+            return f"{self.effect.cause.study} | {self.effect.term.value}"
+
+    def default_related(self):
+        return {
+            "variability": Vocab.objects.get(
+                category=VocabCategories.RESPONSE_VARIABILITY, value="Not applicable"
+            ),
+            "statistical_sig_type": Vocab.objects.get(
+                category=VocabCategories.STATISTICAL, value="Not applicable"
+            ),
+        }

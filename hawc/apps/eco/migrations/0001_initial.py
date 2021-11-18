@@ -1,5 +1,5 @@
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 (
                     "units",
                     models.CharField(
-                        help_text="Type the unit associated with the cause term",
+                        help_text="Type the unit associated with the cause term. autocomplete?",
                         max_length=100,
                         verbose_name="Cause units",
                     ),
@@ -75,81 +75,6 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
             options={"verbose_name": "Cause/Treatment"},
-        ),
-        migrations.CreateModel(
-            name="Effect",
-            fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
-                (
-                    "measure_detail",
-                    models.CharField(
-                        blank=True, max_length=100, verbose_name="Effect measure detail"
-                    ),
-                ),
-                (
-                    "units",
-                    models.CharField(
-                        help_text="Type the unit associated with the effect term",
-                        max_length=100,
-                        verbose_name="Effect units",
-                    ),
-                ),
-                (
-                    "species",
-                    models.CharField(
-                        blank=True,
-                        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
-                        max_length=100,
-                        verbose_name="Effect species",
-                    ),
-                ),
-                (
-                    "trajectory",
-                    models.IntegerField(
-                        choices=[
-                            (0, "Increase"),
-                            (1, "Decrease"),
-                            (2, "Change"),
-                            (3, "No change"),
-                            (10, "Other"),
-                        ],
-                        help_text="Select qualitative description of how the effect measure changes in response to the cause trajectory, if applicable",
-                        verbose_name="Effect trajectory",
-                    ),
-                ),
-                (
-                    "comment",
-                    models.TextField(
-                        blank=True,
-                        help_text="Type any other useful information not captured in other fields",
-                        verbose_name="Effect comment",
-                    ),
-                ),
-                (
-                    "as_reported",
-                    models.TextField(
-                        help_text="Copy and paste 1-2 sentences from article",
-                        verbose_name="Effect as reported",
-                    ),
-                ),
-                (
-                    "modifying_factors",
-                    models.CharField(
-                        blank=True,
-                        help_text="Comma-separated list of one or more factors that affect the relationship between the cause and effect",
-                        max_length=256,
-                        verbose_name="Modifying factors",
-                    ),
-                ),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
-            ],
-            options={"verbose_name": "Effect/Response"},
         ),
         migrations.CreateModel(
             name="State",
@@ -212,6 +137,268 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name="Metadata",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "habitat_as_reported",
+                    models.TextField(
+                        blank=True,
+                        help_text="Copy and paste 1-2 sentences from article",
+                        verbose_name="Habitat as reported",
+                    ),
+                ),
+                (
+                    "climate_as_reported",
+                    models.TextField(
+                        blank=True,
+                        help_text="Copy and paste from article",
+                        verbose_name="Climate as reported",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "climate",
+                    models.ManyToManyField(
+                        help_text="Select one or more climates to which the evidence applies",
+                        limit_choices_to={"category": 11},
+                        related_name="_eco_metadata_climate_+",
+                        to="eco.Vocab",
+                    ),
+                ),
+                (
+                    "country",
+                    models.ManyToManyField(
+                        help_text="Select one or more countries", to="epi.Country"
+                    ),
+                ),
+                (
+                    "design",
+                    models.ForeignKey(
+                        help_text="Select study design",
+                        limit_choices_to={"category": 0},
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="eco.vocab",
+                    ),
+                ),
+                (
+                    "ecoregion",
+                    models.ManyToManyField(
+                        help_text="Select one or more Level III Ecoregions, if known",
+                        limit_choices_to={"category": 12},
+                        related_name="_eco_metadata_ecoregion_+",
+                        to="eco.Vocab",
+                    ),
+                ),
+                (
+                    "habitat",
+                    models.ForeignKey(
+                        help_text="Select the habitat to which the evidence applies",
+                        limit_choices_to={"category": 2},
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="eco.vocab",
+                        verbose_name="Habitat",
+                    ),
+                ),
+                (
+                    "state",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Select one or more states, if applicable.",
+                        to="eco.State",
+                    ),
+                ),
+                (
+                    "study",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="eco_metadata",
+                        to="study.study",
+                    ),
+                ),
+                (
+                    "study_setting",
+                    models.ForeignKey(
+                        help_text="Select the setting in which evidence was generated",
+                        limit_choices_to={"category": 1},
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="eco.vocab",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Ecological metadata",
+                "verbose_name_plural": "Ecological metadata",
+            },
+        ),
+        migrations.CreateModel(
+            name="Effect",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "measure_detail",
+                    models.CharField(
+                        blank=True,
+                        help_text="Add help-text. autocomplete?",
+                        max_length=100,
+                        verbose_name="Effect measure detail",
+                    ),
+                ),
+                (
+                    "units",
+                    models.CharField(
+                        help_text="Type the unit associated with the effect term. autocomplete?",
+                        max_length=100,
+                        verbose_name="Effect units",
+                    ),
+                ),
+                (
+                    "species",
+                    models.CharField(
+                        blank=True,
+                        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
+                        max_length=100,
+                        verbose_name="Effect species",
+                    ),
+                ),
+                (
+                    "trajectory",
+                    models.IntegerField(
+                        choices=[
+                            (0, "Increase"),
+                            (1, "Decrease"),
+                            (2, "Change"),
+                            (3, "No change"),
+                            (10, "Other"),
+                        ],
+                        help_text="Select qualitative description of how the effect measure changes in response to the cause trajectory, if applicable",
+                        verbose_name="Effect trajectory",
+                    ),
+                ),
+                (
+                    "comment",
+                    models.TextField(
+                        blank=True,
+                        help_text="Type any other useful information not captured in other fields",
+                        verbose_name="Effect comment",
+                    ),
+                ),
+                (
+                    "as_reported",
+                    models.TextField(
+                        help_text="Copy and paste 1-2 sentences from article",
+                        verbose_name="Effect as reported",
+                    ),
+                ),
+                (
+                    "modifying_factors",
+                    models.CharField(
+                        blank=True,
+                        help_text="Comma-separated list of one or more factors that affect the relationship between the cause and effect. Autocomplete/tags?",
+                        max_length=256,
+                        verbose_name="Modifying factors",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "bio_org",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="Select the level of biological organization associated with the effect, if applicable",
+                        limit_choices_to={"category": 5},
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="eco.vocab",
+                        verbose_name="Level of biological organization",
+                    ),
+                ),
+                (
+                    "cause",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="eco.cause"
+                    ),
+                ),
+                (
+                    "measure",
+                    models.ForeignKey(
+                        help_text="Add help-text. autocomplete?",
+                        limit_choices_to={"category": 7},
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="eco.vocab",
+                        verbose_name="Effect measure",
+                    ),
+                ),
+                (
+                    "term",
+                    models.ForeignKey(
+                        limit_choices_to={"category": 6},
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="eco.vocab",
+                        verbose_name="Effect term",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Effect/Response"},
+        ),
+        migrations.AddField(
+            model_name="cause",
+            name="bio_org",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Select the level of biological organization associated with the cause, if applicable",
+                limit_choices_to={"category": 5},
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="eco.vocab",
+                verbose_name="Level of biological organization",
+            ),
+        ),
+        migrations.AddField(
+            model_name="cause",
+            name="measure",
+            field=models.ForeignKey(
+                help_text="Add help text - autocomplete field?",
+                limit_choices_to={"category": 4},
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="eco.vocab",
+            ),
+        ),
+        migrations.AddField(
+            model_name="cause",
+            name="study",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="study.study"),
+        ),
+        migrations.AddField(
+            model_name="cause",
+            name="term",
+            field=models.ForeignKey(
+                help_text="Add help text - autocomplete field?",
+                limit_choices_to={"category": 3},
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="eco.vocab",
+            ),
+        ),
+        migrations.CreateModel(
             name="Quantitative",
             fields=[
                 (
@@ -221,12 +408,19 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
+                    "sort_order",
+                    models.PositiveSmallIntegerField(
+                        default=0,
+                        help_text="Sort order of a multiple responses",
+                        verbose_name="Sort order",
+                    ),
+                ),
+                (
                     "cause_level",
                     models.CharField(
-                        blank=True,
                         help_text="Type the specific treatment/exposure/dose level of the cause measure",
-                        max_length=100,
-                        verbose_name="Cause treatment level",
+                        max_length=128,
+                        verbose_name="Treatment level",
                     ),
                 ),
                 (
@@ -235,16 +429,15 @@ class Migration(migrations.Migration):
                         blank=True,
                         help_text="Type the numeric value of the specific treatment/exposure/dose level of the cause measure",
                         null=True,
-                        verbose_name="Cause treatment level value",
+                        verbose_name="Treatment value",
                     ),
                 ),
                 (
                     "cause_level_units",
                     models.CharField(
-                        blank=True,
                         help_text="Enter the units of the specific treatment/exposure/dose level of the cause measure",
                         max_length=100,
-                        verbose_name="Cause treatment level units",
+                        verbose_name="Treatment units",
                     ),
                 ),
                 (
@@ -260,7 +453,7 @@ class Migration(migrations.Migration):
                     "measure_value",
                     models.FloatField(
                         blank=True,
-                        help_text="Type the numerical value of the response measure",
+                        help_text="Numerical value of the response measure",
                         null=True,
                         verbose_name="Response measure value",
                     ),
@@ -318,10 +511,8 @@ class Migration(migrations.Migration):
                 (
                     "measure_type",
                     models.ForeignKey(
-                        blank=True,
                         help_text="Select one response measure type",
                         limit_choices_to=models.Q(("category", 8), ("parent__isnull", False)),
-                        null=True,
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="+",
                         to="eco.vocab",
@@ -331,10 +522,8 @@ class Migration(migrations.Migration):
                 (
                     "statistical_sig_type",
                     models.ForeignKey(
-                        blank=True,
                         help_text="Select the type of statistical significance measure reported",
                         limit_choices_to={"category": 10},
-                        null=True,
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="+",
                         to="eco.vocab",
@@ -344,10 +533,8 @@ class Migration(migrations.Migration):
                 (
                     "variability",
                     models.ForeignKey(
-                        blank=True,
                         help_text="Select how variability in the response measure was reported, if applicable",
                         limit_choices_to={"category": 9},
-                        null=True,
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="+",
                         to="eco.vocab",
@@ -356,188 +543,10 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "Quantitative response information",
-                "verbose_name_plural": "Quantitative response information",
+                "verbose_name": "Quantitative response",
+                "verbose_name_plural": "Quantitative responses",
+                "ordering": ("effect", "sort_order"),
+                "unique_together": {("effect", "sort_order")},
             },
-        ),
-        migrations.AddField(
-            model_name="effect",
-            name="bio_org",
-            field=models.ForeignKey(
-                blank=True,
-                help_text="Select the level of biological organization associated with the effect, if applicable",
-                limit_choices_to={"category": 5},
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="+",
-                to="eco.vocab",
-                verbose_name="Level of biological organization",
-            ),
-        ),
-        migrations.AddField(
-            model_name="effect",
-            name="cause",
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to="eco.cause"),
-        ),
-        migrations.AddField(
-            model_name="effect",
-            name="measure",
-            field=models.ForeignKey(
-                limit_choices_to={"category": 7},
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="+",
-                to="eco.vocab",
-                verbose_name="Effect measure",
-            ),
-        ),
-        migrations.AddField(
-            model_name="effect",
-            name="term",
-            field=models.ForeignKey(
-                limit_choices_to={"category": 6},
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="+",
-                to="eco.vocab",
-                verbose_name="Effect term",
-            ),
-        ),
-        migrations.CreateModel(
-            name="Metadata",
-            fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
-                (
-                    "habitat_as_reported",
-                    models.TextField(
-                        blank=True,
-                        help_text="Copy and paste 1-2 sentences from article",
-                        verbose_name="Habitat as reported",
-                    ),
-                ),
-                (
-                    "climate_as_reported",
-                    models.TextField(
-                        blank=True,
-                        help_text="Copy and paste from article",
-                        verbose_name="Climate as reported",
-                    ),
-                ),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
-                (
-                    "climate",
-                    models.ManyToManyField(
-                        help_text="Select one or more climates to which the evidence applies",
-                        limit_choices_to={"category": 11},
-                        related_name="_eco_metadata_climate_+",
-                        to="eco.Vocab",
-                    ),
-                ),
-                (
-                    "country",
-                    models.ManyToManyField(
-                        help_text="Select one or more countries", to="epi.Country"
-                    ),
-                ),
-                (
-                    "ecoregion",
-                    models.ManyToManyField(
-                        help_text="Select one or more Level III Ecoregions, if known",
-                        limit_choices_to={"category": 12},
-                        related_name="_eco_metadata_ecoregion_+",
-                        to="eco.Vocab",
-                    ),
-                ),
-                (
-                    "habitat",
-                    models.ForeignKey(
-                        help_text="Select the habitat to which the evidence applies",
-                        limit_choices_to={"category": 2},
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="+",
-                        to="eco.vocab",
-                        verbose_name="Habitat",
-                    ),
-                ),
-                (
-                    "state",
-                    models.ManyToManyField(
-                        blank=True,
-                        help_text="Select one or more states, if applicable.",
-                        to="eco.State",
-                    ),
-                ),
-                (
-                    "study",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="eco_metadata",
-                        to="study.study",
-                    ),
-                ),
-                (
-                    "study_setting",
-                    models.ForeignKey(
-                        help_text="Select the setting in which evidence was generated",
-                        limit_choices_to={"category": 1},
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="+",
-                        to="eco.vocab",
-                    ),
-                ),
-                (
-                    "study_type",
-                    models.ForeignKey(
-                        help_text="Select the type of study",
-                        limit_choices_to={"category": 0},
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="+",
-                        to="eco.vocab",
-                    ),
-                ),
-            ],
-            options={"verbose_name": "Metadata", "verbose_name_plural": "Metadata"},
-        ),
-        migrations.AddField(
-            model_name="cause",
-            name="bio_org",
-            field=models.ForeignKey(
-                blank=True,
-                help_text="Select the level of biological organization associated with the cause, if applicable",
-                limit_choices_to={"category": 5},
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                to="eco.vocab",
-                verbose_name="Level of biological organization",
-            ),
-        ),
-        migrations.AddField(
-            model_name="cause",
-            name="measure",
-            field=models.ForeignKey(
-                limit_choices_to={"category": 4},
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="+",
-                to="eco.vocab",
-            ),
-        ),
-        migrations.AddField(
-            model_name="cause",
-            name="study",
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="study.study"),
-        ),
-        migrations.AddField(
-            model_name="cause",
-            name="term",
-            field=models.ForeignKey(
-                limit_choices_to={"category": 3},
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="+",
-                to="eco.vocab",
-            ),
         ),
     ]
