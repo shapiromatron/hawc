@@ -3,6 +3,7 @@ from rest_framework import serializers
 from ..common.helper import SerializerHelper
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
+from ..study.models import Study
 from ..study.serializers import StudyAssessmentSerializer
 from . import models
 
@@ -10,6 +11,9 @@ from . import models
 class TaskSerializer(serializers.ModelSerializer):
     owner = HAWCUserSerializer(read_only=True)
     study = StudyAssessmentSerializer(read_only=True)
+    study_id = serializers.PrimaryKeyRelatedField(
+        queryset=Study.objects.all(), source="study", write_only=True
+    )
     type_display = serializers.CharField(source="get_type_display", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
 
@@ -18,7 +22,6 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = (
             "id",
-            "study",
             "open",
             "started",
             "completed",
