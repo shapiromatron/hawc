@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"verbose_name": "Cause/Treatment",},
+            options={"verbose_name": "Cause/Treatment"},
         ),
         migrations.CreateModel(
             name="Effect",
@@ -149,7 +149,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"verbose_name": "Effect/Response",},
+            options={"verbose_name": "Effect/Response"},
         ),
         migrations.CreateModel(
             name="State",
@@ -500,7 +500,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name": "Metadata", "verbose_name_plural": "Metadata",},
+            options={"verbose_name": "Metadata", "verbose_name_plural": "Metadata"},
         ),
         migrations.AddField(
             model_name="cause",
