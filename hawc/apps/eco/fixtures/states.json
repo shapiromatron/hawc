@@ -1,474 +1,61 @@
 [
-    {
-        "pk": 1,
-        "model": "eco.State",
-        "fields": {
-            "name": "Alabama",
-            "code": "AL"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "eco.State",
-        "fields": {
-            "name": "Alaska",
-            "code": "AK"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "eco.State",
-        "fields": {
-            "name": "American Samoa",
-            "code": "AS"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "eco.State",
-        "fields": {
-            "name": "Arizona",
-            "code": "AZ"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "eco.State",
-        "fields": {
-            "name": "Arkansas",
-            "code": "AR"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "eco.State",
-        "fields": {
-            "name": "California",
-            "code": "CA"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "eco.State",
-        "fields": {
-            "name": "Colorado",
-            "code": "CO"
-        }
-    },
-    {
-        "pk": 8,
-        "model": "eco.State",
-        "fields": {
-            "name": "Connecticut",
-            "code": "CT"
-        }
-    },
-    {
-        "pk": 9,
-        "model": "eco.State",
-        "fields": {
-            "name": "Delaware",
-            "code": "DE"
-        }
-    },
-    {
-        "pk": 10,
-        "model": "eco.State",
-        "fields": {
-            "name": "District Of Columbia",
-            "code": "DC"
-        }
-    },
-    {
-        "pk": 11,
-        "model": "eco.State",
-        "fields": {
-            "name": "Federated States Of Micronesia",
-            "code": "FM"
-        }
-    },
-    {
-        "pk": 12,
-        "model": "eco.State",
-        "fields": {
-            "name": "Florida",
-            "code": "FL"
-        }
-    },
-    {
-        "pk": 13,
-        "model": "eco.State",
-        "fields": {
-            "name": "Georgia",
-            "code": "GA"
-        }
-    },
-    {
-        "pk": 14,
-        "model": "eco.State",
-        "fields": {
-            "name": "Guam",
-            "code": "GU"
-        }
-    },
-    {
-        "pk": 15,
-        "model": "eco.State",
-        "fields": {
-            "name": "Hawaii",
-            "code": "HI"
-        }
-    },
-    {
-        "pk": 16,
-        "model": "eco.State",
-        "fields": {
-            "name": "Idaho",
-            "code": "ID"
-        }
-    },
-    {
-        "pk": 17,
-        "model": "eco.State",
-        "fields": {
-            "name": "Illinois",
-            "code": "IL"
-        }
-    },
-    {
-        "pk": 18,
-        "model": "eco.State",
-        "fields": {
-            "name": "Indiana",
-            "code": "IN"
-        }
-    },
-    {
-        "pk": 19,
-        "model": "eco.State",
-        "fields": {
-            "name": "Iowa",
-            "code": "IA"
-        }
-    },
-    {
-        "pk": 20,
-        "model": "eco.State",
-        "fields": {
-            "name": "Kansas",
-            "code": "KS"
-        }
-    },
-    {
-        "pk": 21,
-        "model": "eco.State",
-        "fields": {
-            "name": "Kentucky",
-            "code": "KY"
-        }
-    },
-    {
-        "pk": 22,
-        "model": "eco.State",
-        "fields": {
-            "name": "Louisiana",
-            "code": "LA"
-        }
-    },
-    {
-        "pk": 23,
-        "model": "eco.State",
-        "fields": {
-            "name": "Maine",
-            "code": "ME"
-        }
-    },
-    {
-        "pk": 24,
-        "model": "eco.State",
-        "fields": {
-            "name": "Marshall Islands",
-            "code": "MH"
-        }
-    },
-    {
-        "pk": 25,
-        "model": "eco.State",
-        "fields": {
-            "name": "Maryland",
-            "code": "MD"
-        }
-    },
-    {
-        "pk": 26,
-        "model": "eco.State",
-        "fields": {
-            "name": "Massachusetts",
-            "code": "MA"
-        }
-    },
-    {
-        "pk": 27,
-        "model": "eco.State",
-        "fields": {
-            "name": "Michigan",
-            "code": "MI"
-        }
-    },
-    {
-        "pk": 28,
-        "model": "eco.State",
-        "fields": {
-            "name": "Minnesota",
-            "code": "MN"
-        }
-    },
-    {
-        "pk": 29,
-        "model": "eco.State",
-        "fields": {
-            "name": "Mississippi",
-            "code": "MS"
-        }
-    },
-    {
-        "pk": 30,
-        "model": "eco.State",
-        "fields": {
-            "name": "Missouri",
-            "code": "MO"
-        }
-    },
-    {
-        "pk": 31,
-        "model": "eco.State",
-        "fields": {
-            "name": "Montana",
-            "code": "MT"
-        }
-    },
-    {
-        "pk": 32,
-        "model": "eco.State",
-        "fields": {
-            "name": "Nebraska",
-            "code": "NE"
-        }
-    },
-    {
-        "pk": 33,
-        "model": "eco.State",
-        "fields": {
-            "name": "Nevada",
-            "code": "NV"
-        }
-    },
-    {
-        "pk": 34,
-        "model": "eco.State",
-        "fields": {
-            "name": "New Hampshire",
-            "code": "NH"
-        }
-    },
-    {
-        "pk": 35,
-        "model": "eco.State",
-        "fields": {
-            "name": "New Jersey",
-            "code": "NJ"
-        }
-    },
-    {
-        "pk": 36,
-        "model": "eco.State",
-        "fields": {
-            "name": "New Mexico",
-            "code": "NM"
-        }
-    },
-    {
-        "pk": 37,
-        "model": "eco.State",
-        "fields": {
-            "name": "New York",
-            "code": "NY"
-        }
-    },
-    {
-        "pk": 38,
-        "model": "eco.State",
-        "fields": {
-            "name": "North Carolina",
-            "code": "NC"
-        }
-    },
-    {
-        "pk": 39,
-        "model": "eco.State",
-        "fields": {
-            "name": "North Dakota",
-            "code": "ND"
-        }
-    },
-    {
-        "pk": 40,
-        "model": "eco.State",
-        "fields": {
-            "name": "Northern Mariana Islands",
-            "code": "MP"
-        }
-    },
-    {
-        "pk": 41,
-        "model": "eco.State",
-        "fields": {
-            "name": "Ohio",
-            "code": "OH"
-        }
-    },
-    {
-        "pk": 42,
-        "model": "eco.State",
-        "fields": {
-            "name": "Oklahoma",
-            "code": "OK"
-        }
-    },
-    {
-        "pk": 43,
-        "model": "eco.State",
-        "fields": {
-            "name": "Oregon",
-            "code": "OR"
-        }
-    },
-    {
-        "pk": 44,
-        "model": "eco.State",
-        "fields": {
-            "name": "Palau",
-            "code": "PW"
-        }
-    },
-    {
-        "pk": 45,
-        "model": "eco.State",
-        "fields": {
-            "name": "Pennsylvania",
-            "code": "PA"
-        }
-    },
-    {
-        "pk": 46,
-        "model": "eco.State",
-        "fields": {
-            "name": "Puerto Rico",
-            "code": "PR"
-        }
-    },
-    {
-        "pk": 47,
-        "model": "eco.State",
-        "fields": {
-            "name": "Rhode Island",
-            "code": "RI"
-        }
-    },
-    {
-        "pk": 48,
-        "model": "eco.State",
-        "fields": {
-            "name": "South Carolina",
-            "code": "SC"
-        }
-    },
-    {
-        "pk": 49,
-        "model": "eco.State",
-        "fields": {
-            "name": "South Dakota",
-            "code": "SD"
-        }
-    },
-    {
-        "pk": 50,
-        "model": "eco.State",
-        "fields": {
-            "name": "Tennessee",
-            "code": "TN"
-        }
-    },
-    {
-        "pk": 51,
-        "model": "eco.State",
-        "fields": {
-            "name": "Texas",
-            "code": "TX"
-        }
-    },
-    {
-        "pk": 52,
-        "model": "eco.State",
-        "fields": {
-            "name": "Utah",
-            "code": "UT"
-        }
-    },
-    {
-        "pk": 53,
-        "model": "eco.State",
-        "fields": {
-            "name": "Vermont",
-            "code": "VT"
-        }
-    },
-    {
-        "pk": 54,
-        "model": "eco.State",
-        "fields": {
-            "name": "Virgin Islands",
-            "code": "VI"
-        }
-    },
-    {
-        "pk": 55,
-        "model": "eco.State",
-        "fields": {
-            "name": "Virginia",
-            "code": "VA"
-        }
-    },
-    {
-        "pk": 56,
-        "model": "eco.State",
-        "fields": {
-            "name": "Washington",
-            "code": "WA"
-        }
-    },
-    {
-        "pk": 57,
-        "model": "eco.State",
-        "fields": {
-            "name": "West Virginia",
-            "code": "WV"
-        }
-    },
-    {
-        "pk": 58,
-        "model": "eco.State",
-        "fields": {
-            "name": "Wisconsin",
-            "code": "WI"
-        }
-    },
-    {
-        "pk": 59,
-        "model": "eco.State",
-        "fields": {
-            "name": "Wyoming",
-            "code": "WY"
-        }
-    }
+{"pk": 1,"model": "eco.State","fields": {"name": "Alabama","code": "AL"}},
+{"pk": 2,"model": "eco.State","fields": {"name": "Alaska","code": "AK"}},
+{"pk": 3,"model": "eco.State","fields": {"name": "American Samoa","code": "AS"}},
+{"pk": 4,"model": "eco.State","fields": {"name": "Arizona","code": "AZ"}},
+{"pk": 5,"model": "eco.State","fields": {"name": "Arkansas","code": "AR"}},
+{"pk": 6,"model": "eco.State","fields": {"name": "California","code": "CA"}},
+{"pk": 7,"model": "eco.State","fields": {"name": "Colorado","code": "CO"}},
+{"pk": 8,"model": "eco.State","fields": {"name": "Connecticut","code": "CT"}},
+{"pk": 9,"model": "eco.State","fields": {"name": "Delaware","code": "DE"}},
+{"pk": 10,"model": "eco.State","fields": {"name": "District Of Columbia","code": "DC"}},
+{"pk": 11,"model": "eco.State","fields": {"name": "Federated States Of Micronesia","code": "FM"}},
+{"pk": 12,"model": "eco.State","fields": {"name": "Florida","code": "FL"}},
+{"pk": 13,"model": "eco.State","fields": {"name": "Georgia","code": "GA"}},
+{"pk": 14,"model": "eco.State","fields": {"name": "Guam","code": "GU"}},
+{"pk": 15,"model": "eco.State","fields": {"name": "Hawaii","code": "HI"}},
+{"pk": 16,"model": "eco.State","fields": {"name": "Idaho","code": "ID"}},
+{"pk": 17,"model": "eco.State","fields": {"name": "Illinois","code": "IL"}},
+{"pk": 18,"model": "eco.State","fields": {"name": "Indiana","code": "IN"}},
+{"pk": 19,"model": "eco.State","fields": {"name": "Iowa","code": "IA"}},
+{"pk": 20,"model": "eco.State","fields": {"name": "Kansas","code": "KS"}},
+{"pk": 21,"model": "eco.State","fields": {"name": "Kentucky","code": "KY"}},
+{"pk": 22,"model": "eco.State","fields": {"name": "Louisiana","code": "LA"}},
+{"pk": 23,"model": "eco.State","fields": {"name": "Maine","code": "ME"}},
+{"pk": 24,"model": "eco.State","fields": {"name": "Marshall Islands","code": "MH"}},
+{"pk": 25,"model": "eco.State","fields": {"name": "Maryland","code": "MD"}},
+{"pk": 26,"model": "eco.State","fields": {"name": "Massachusetts","code": "MA"}},
+{"pk": 27,"model": "eco.State","fields": {"name": "Michigan","code": "MI"}},
+{"pk": 28,"model": "eco.State","fields": {"name": "Minnesota","code": "MN"}},
+{"pk": 29,"model": "eco.State","fields": {"name": "Mississippi","code": "MS"}},
+{"pk": 30,"model": "eco.State","fields": {"name": "Missouri","code": "MO"}},
+{"pk": 31,"model": "eco.State","fields": {"name": "Montana","code": "MT"}},
+{"pk": 32,"model": "eco.State","fields": {"name": "Nebraska","code": "NE"}},
+{"pk": 33,"model": "eco.State","fields": {"name": "Nevada","code": "NV"}},
+{"pk": 34,"model": "eco.State","fields": {"name": "New Hampshire","code": "NH"}},
+{"pk": 35,"model": "eco.State","fields": {"name": "New Jersey","code": "NJ"}},
+{"pk": 36,"model": "eco.State","fields": {"name": "New Mexico","code": "NM"}},
+{"pk": 37,"model": "eco.State","fields": {"name": "New York","code": "NY"}},
+{"pk": 38,"model": "eco.State","fields": {"name": "North Carolina","code": "NC"}},
+{"pk": 39,"model": "eco.State","fields": {"name": "North Dakota","code": "ND"}},
+{"pk": 40,"model": "eco.State","fields": {"name": "Northern Mariana Islands","code": "MP"}},
+{"pk": 41,"model": "eco.State","fields": {"name": "Ohio","code": "OH"}},
+{"pk": 42,"model": "eco.State","fields": {"name": "Oklahoma","code": "OK"}},
+{"pk": 43,"model": "eco.State","fields": {"name": "Oregon","code": "OR"}},
+{"pk": 44,"model": "eco.State","fields": {"name": "Palau","code": "PW"}},
+{"pk": 45,"model": "eco.State","fields": {"name": "Pennsylvania","code": "PA"}},
+{"pk": 46,"model": "eco.State","fields": {"name": "Puerto Rico","code": "PR"}},
+{"pk": 47,"model": "eco.State","fields": {"name": "Rhode Island","code": "RI"}},
+{"pk": 48,"model": "eco.State","fields": {"name": "South Carolina","code": "SC"}},
+{"pk": 49,"model": "eco.State","fields": {"name": "South Dakota","code": "SD"}},
+{"pk": 50,"model": "eco.State","fields": {"name": "Tennessee","code": "TN"}},
+{"pk": 51,"model": "eco.State","fields": {"name": "Texas","code": "TX"}},
+{"pk": 52,"model": "eco.State","fields": {"name": "Utah","code": "UT"}},
+{"pk": 53,"model": "eco.State","fields": {"name": "Vermont","code": "VT"}},
+{"pk": 54,"model": "eco.State","fields": {"name": "Virgin Islands","code": "VI"}},
+{"pk": 55,"model": "eco.State","fields": {"name": "Virginia","code": "VA"}},
+{"pk": 56,"model": "eco.State","fields": {"name": "Washington","code": "WA"}},
+{"pk": 57,"model": "eco.State","fields": {"name": "West Virginia","code": "WV"}},
+{"pk": 58,"model": "eco.State","fields": {"name": "Wisconsin","code": "WI"}},
+{"pk": 59,"model": "eco.State","fields": {"name": "Wyoming","code": "WY"}}
 ]
