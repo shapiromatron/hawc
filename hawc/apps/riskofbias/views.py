@@ -404,6 +404,13 @@ class RoBDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].append(Breadcrumb(name=self.assessment.get_rob_name_display()))
+        context["config"] = {
+            "assessment_id": self.assessment.id,
+            "study": {"id": self.object.id, "url": reverse("study:api:study-list")},
+            "csrf": get_token(self.request),
+            "display": "final",
+            "isForm": False,
+        }
         return context
 
 
@@ -423,6 +430,7 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
         context["breadcrumbs"][3] = Breadcrumb(
             name=f"{self.assessment.get_rob_name_display()} (all reviews)"
         )
+        context["config"]["display"] = "all"
         return context
 
 
