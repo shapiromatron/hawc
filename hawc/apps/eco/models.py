@@ -9,6 +9,8 @@ from .constants import ChangeTrajectory, VocabCategories
 class State(models.Model):
     code = models.CharField(unique=True, max_length=2)
     name = models.CharField(unique=True, max_length=64)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -25,6 +27,12 @@ class Vocab(models.Model):
         related_name="children",
         related_query_name="children",
     )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Controlled vocabulary"
+        verbose_name_plural = "Vocabularies"
 
     def __str__(self):
         if self.parent:
@@ -32,13 +40,10 @@ class Vocab(models.Model):
         else:
             return self.value
 
-    class Meta:
-        verbose_name = "Vocabulary"
-        verbose_name_plural = "Vocabulary"
 
-
-class Metadata(models.Model):
+class EcoMetadata(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="eco_metadata")
+
     study_type = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.TYPE},
@@ -68,7 +73,6 @@ class Metadata(models.Model):
         verbose_name="Habitat",
         limit_choices_to={"category": VocabCategories.HABITAT},
         on_delete=models.CASCADE,
-        blank=True,
         help_text="Select the habitat to which the evidence applies",
         related_name="+",
     )
@@ -86,13 +90,15 @@ class Metadata(models.Model):
     climate_as_reported = models.TextField(
         verbose_name="Climate as reported", blank=True, help_text="Copy and paste from article",
     )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Metadata"
         verbose_name_plural = "Metadata"
 
     def __str__(self):
-        return "f{self.study.short_citation} - eco metadata"
+        return f"{self.study} - eco metadata"
 
 
 class Cause(models.Model):
@@ -144,6 +150,8 @@ class Cause(models.Model):
     as_reported = models.TextField(
         verbose_name="Cause as reported", help_text="Copy and paste 1-2 sentences from article",
     )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Cause/Treatment"
@@ -211,6 +219,8 @@ class Effect(models.Model):
         blank=True,
         help_text="Comma-separated list of one or more factors that affect the relationship between the cause and effect",
     )  # autocomplete - choices TBD
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Effect/Response"
@@ -310,6 +320,8 @@ class Quantitative(models.Model):
         help_text="Calculation from 'response measure value' based on a formula linked to 'response measure type', if applicable",
         null=True,
     )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Quantitative response information"
