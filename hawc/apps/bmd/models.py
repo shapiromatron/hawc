@@ -1,7 +1,5 @@
-import base64
 import collections
 import json
-import os
 
 import bmds
 from django.conf import settings
@@ -311,8 +309,6 @@ class Session(models.Model):
 class Model(models.Model):
     objects = managers.ModelManager()
 
-    IMAGE_UPLOAD_TO = "bmds_plot"
-
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="models")
     model_id = models.PositiveSmallIntegerField()
     bmr_id = models.PositiveSmallIntegerField()
@@ -323,7 +319,6 @@ class Model(models.Model):
     dfile = models.TextField(blank=True)
     outfile = models.TextField(blank=True)
     output = models.JSONField(default=dict)
-    plot = models.ImageField(upload_to=IMAGE_UPLOAD_TO, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -345,12 +340,6 @@ class Model(models.Model):
             self.outfile = model.outfile
             self.output = model.output
             self.date_executed = now()
-
-        if hasattr(model, "plot_base64"):
-            fn = os.path.join(self.IMAGE_UPLOAD_TO, str(self.id) + ".emf")
-            with open(os.path.join(self.plot.storage.location, fn), "wb") as f:
-                f.write(base64.b64decode(model.plot_base64))
-            self.plot = fn
 
         self.save()
 
