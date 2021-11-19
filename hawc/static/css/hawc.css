@@ -9,11 +9,6 @@
     margin: 0 40%;
 }
 
-/* main  */
-#main-container {
-    padding-left: 1em;
-}
-
 /* adjust links w/ a .sticky-header offset */
 .sticky-offset-anchor {
     /* height of sticky header plus some padding */

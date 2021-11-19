@@ -127,7 +127,6 @@
   color: #fff;
 }
 .rss.multi.box > .pane-title:before {
-  background: no-repeat center/100% url(../img/svg/rss-white.svg);
   content: '';
   display: inline-block;
   height: 1em;
@@ -148,13 +147,11 @@
   color: #fff;
 }
 .twitter.multi.box > .pane-title {
-  background-image: url(../img/svg/box-seal.svg);
   background-position: .75em 50%;
   background-repeat: no-repeat;
   padding: 1.5em 1em 1.5em 4.5em;
 }
 .twitter.multi.box > .pane-content > .footer {
-  background-image: url(../img/svg/box-twitter.svg);
   background-position: 1em 50%;
   background-repeat: no-repeat;
   padding-left: 2em;
@@ -173,7 +170,6 @@
   color: #212121;
 }
 .blog.multi.box > .pane-title:before {
-  background: no-repeat center/100% url(../img/svg/box-blog.svg);
   content: '';
   display: inline-block;
   height: 1.7647em;
@@ -185,7 +181,6 @@
     color: #212121;
 }
 .blog.multi.box > .pane-content > .footer > a:before {
-  background: no-repeat center/100% url(../img/svg/rss.svg);
   content: '';
   display: inline-block;
   height: .8824em;
@@ -205,7 +200,6 @@
   color: #fff;
 }
 .alert.multi.box > .pane-title:before {
-  background: no-repeat center/100% url(../img/svg/warning-white.svg);
   content: '';
   display: inline-block;
   height: 1em;

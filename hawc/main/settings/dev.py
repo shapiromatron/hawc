@@ -8,10 +8,10 @@ SERVER_ROLE = "dev"
 SERVER_BANNER_COLOR = "#707070"
 ADMIN_URL_PREFIX = ""
 
-INSTALLED_APPS += (
-    "debug_toolbar",
-    "django_extensions",
+INSTALLED_APPS.insert(
+    INSTALLED_APPS.index("django.contrib.staticfiles"), "whitenoise.runserver_nostatic"
 )
+INSTALLED_APPS.extend(["debug_toolbar", "django_extensions"])
 
 MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
 

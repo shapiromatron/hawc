@@ -12,6 +12,7 @@ djangorestframework==3.12.4
   uritemplate==3.0.1  # schema dependencies
   pyyaml==5.4.1       # schema dependencies
 gunicorn==20.1.0
+whitenoise==5.3.0
 
 # tasks
 celery==5.1.2

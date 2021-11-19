@@ -67,22 +67,23 @@ TEMPLATES = [
 
 # Middleware
 MIDDLEWARE = (
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "hawc.apps.common.middleware.CsrfRefererCheckMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
+    "reversion.middleware.RevisionMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
 )
 
 
 # Install applications
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     # Django apps
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -119,7 +120,7 @@ INSTALLED_APPS = (
     "hawc.apps.mgmt",
     "hawc.apps.eco",
     "hawc.apps.materialized",
-)
+]
 
 
 # DB settings
@@ -195,6 +196,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # Media files
