@@ -100,9 +100,11 @@ class IdentifiersManager(BaseManager):
             ids.append(ident)
 
             # create DOI identifier
-            if ref["doi"] is not None:
+            if constants.DOI_EXTRACT.search(str(ref["doi"])):
                 ident, _ = self.get_or_create(
-                    database=constants.DOI, unique_id=ref["doi"], content=""
+                    database=constants.DOI,
+                    unique_id=constants.DOI_EXTRACT.search(str(ref["doi"])).group(0),
+                    content="",
                 )
                 ids.append(ident)
 
@@ -315,14 +317,9 @@ class ReferenceManager(BaseManager):
             Identifiers = apps.get_model("lit", "Identifiers")
             if constants.DOI_EXTRACT.search(str(doi)):
                 doi = constants.DOI_EXTRACT.search(doi).group(0)
-                try:
-                    existingID = Identifiers.objects.get(unique_id=doi)
-                    ref.identifiers.add(existingID)
-                except (Identifiers.DoesNotExist):
-                    newID = Identifiers(unique_id=doi, database=4)
-                    newID.save()
-                    ref.identifiers.add(newID)
-
+                doi_id = Identifiers.objects.get_or_create(unique_id=doi)
+                ref.identifiers.add(doi_id[0])
+                ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             refs.append(ref)
@@ -381,13 +378,9 @@ class ReferenceManager(BaseManager):
             ref.identifiers.add(identifier)
             if constants.DOI_EXTRACT.search(str(doi)):
                 doi = constants.DOI_EXTRACT.search(doi).group(0)
-                try:
-                    existingID = Identifiers.objects.get(unique_id=doi)
-                    ref.identifiers.add(existingID)
-                except (Identifiers.DoesNotExist):
-                    newID = Identifiers(unique_id=doi, database=4)
-                    newID.save()
-                    ref.identifiers.add(newID)
+                doiIdentifier = Identifiers.objects.get_or_create(unique_id=doi)
+                ref.identifiers.add(doiIdentifier[0])
+                ref.save()
             refs.append(ref)
 
         return refs

@@ -78,6 +78,8 @@ def test_pubmed_import(db_keys):
     initial_searches = models.Search.objects.count()
     initial_identifiers = models.Identifiers.objects.count()
     initial_refs = models.Reference.objects.count()
+    initial_pubmed_ids = models.Identifiers.objects.filter(database=constants.PUBMED).count()
+    initial_doi_ids = models.Identifiers.objects.filter(database=constants.DOI).count()
 
     data[
         "search_string"
@@ -90,8 +92,15 @@ def test_pubmed_import(db_keys):
 
     # check new counts
     assert models.Search.objects.count() == initial_searches + 1
-    assert models.Identifiers.objects.count() == initial_identifiers + 22
+    assert (
+        models.Identifiers.objects.count() == initial_identifiers + 22
+    )  # 20 data points = 20 new IDs; plus two extra because two of these imports create valid DOI ids as well
     assert models.Reference.objects.count() == initial_refs + 20
+    assert (
+        models.Identifiers.objects.filter(database=constants.PUBMED).count()
+        == initial_pubmed_ids + 20
+    )
+    assert models.Identifiers.objects.filter(database=constants.DOI).count() == initial_doi_ids + 2
 
     # make sure all each reference has an identifier
     i_pks = models.Identifiers.objects.values_list("pk", flat=True)
