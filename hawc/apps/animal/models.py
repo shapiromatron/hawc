@@ -26,30 +26,11 @@ from ..common.helper import (
 )
 from ..study.models import Study
 from ..vocab.models import Term
-from . import managers
+from . import constants, managers
 
 
 class Experiment(models.Model):
     objects = managers.ExperimentManager()
-
-    EXPERIMENT_TYPE_CHOICES = (
-        ("Ac", "Acute (<24 hr)"),
-        ("St", "Short-term (1-30 days)"),
-        ("Sb", "Subchronic (30-90 days)"),
-        ("Ch", "Chronic (>90 days)"),
-        ("Ca", "Cancer"),
-        ("Me", "Mechanistic"),
-        ("Rp", "Reproductive"),
-        ("1r", "1-generation reproductive"),
-        ("2r", "2-generation reproductive"),
-        ("Dv", "Developmental"),
-        ("Ot", "Other"),
-        ("NR", "Not-reported"),
-    )
-
-    EXPERIMENT_TYPE_DICT = {el[0]: el[1] for el in EXPERIMENT_TYPE_CHOICES}
-
-    PURITY_QUALIFIER_CHOICES = ((">", ">"), ("≥", "≥"), ("=", "="), ("", ""))
 
     TEXT_CLEANUP_FIELDS = (
         "name",
@@ -71,7 +52,7 @@ class Experiment(models.Model):
     )
     type = models.CharField(
         max_length=2,
-        choices=EXPERIMENT_TYPE_CHOICES,
+        choices=constants.ExperimentType.choices,
         help_text="Type of study being performed; be as specific as possible",
     )
     has_multiple_generations = models.BooleanField(default=False)
@@ -110,7 +91,10 @@ class Experiment(models.Model):
     )
     purity_available = models.BooleanField(default=True, verbose_name="Chemical purity available?")
     purity_qualifier = models.CharField(
-        max_length=1, choices=PURITY_QUALIFIER_CHOICES, blank=True, default=""
+        max_length=1,
+        choices=constants.PurityQualifier.choices,
+        blank=True,
+        default=constants.PurityQualifier.NA,
     )
     purity = models.FloatField(
         blank=True,
@@ -233,39 +217,6 @@ class AnimalGroup(models.Model):
 
     SEX_SYMBOLS = {"M": "♂", "F": "♀", "C": "♂♀", "R": "NR"}
 
-    SEX_CHOICES = (
-        ("M", "Male"),
-        ("F", "Female"),
-        ("C", "Combined"),
-        ("R", "Not reported"),
-    )
-
-    SEX_DICT = {el[0]: el[1] for el in SEX_CHOICES}
-
-    GENERATION_CHOICES = (
-        ("", "N/A (not generational-study)"),
-        ("P0", "Parent-generation (P0)"),
-        ("F1", "First-generation (F1)"),
-        ("F2", "Second-generation (F2)"),
-        ("F3", "Third-generation (F3)"),
-        ("F4", "Fourth-generation (F4)"),
-        ("Ot", "Other"),
-    )
-
-    GENERATION_DICT = {el[0]: el[1] for el in GENERATION_CHOICES}
-
-    # these choices for lifesage expose/assessed were added ~Sept 2018. B/c there
-    # are existing values in the database, we are not going to enforce these choices on
-    # the model as we do for say sex/SEX_CHOICES. Instead we'll leave the model as is,
-    # and start using this to drive a Select widget on the form. For old/existing data,
-    # we'll add the previously saved value to the dropdown at runtime so we don't lose data.
-    LIFESTAGE_CHOICES = (
-        ("Developmental", "Developmental"),
-        ("Adult", "Adult"),
-        ("Adult (gestation)", "Adult (gestation)"),
-        ("Multi-lifestage", "Multi-lifestage"),
-    )
-
     TEXT_CLEANUP_FIELDS = (
         "name",
         "animal_source",
@@ -294,7 +245,7 @@ class AnimalGroup(models.Model):
         help_text="When adding a new strain, put the stock in parenthesis, e.g., "
         + '"Sprague-Dawley (Harlan)."',
     )
-    sex = models.CharField(max_length=1, choices=SEX_CHOICES)
+    sex = models.CharField(max_length=1, choices=constants.Sex.choices)
     animal_source = models.CharField(
         max_length=128, help_text="Source from where animals were acquired", blank=True
     )
@@ -323,7 +274,9 @@ class AnimalGroup(models.Model):
         + "before sexual maturity and continue to adulthood)",
     )
     siblings = models.ForeignKey("self", blank=True, null=True, on_delete=models.SET_NULL)
-    generation = models.CharField(blank=True, default="", max_length=2, choices=GENERATION_CHOICES)
+    generation = models.CharField(
+        blank=True, default="", max_length=2, choices=constants.Generation.choices
+    )
     parents = models.ManyToManyField("self", related_name="children", symmetrical=False, blank=True)
     dosing_regime = models.ForeignKey(
         "DosingRegime",
@@ -476,37 +429,11 @@ class DosingRegime(models.Model):
 
     objects = managers.DosingRegimeManager()
 
-    ROUTE_EXPOSURE_CHOICES = (
-        ("OR", "Oral"),
-        ("OC", "Oral capsule"),
-        ("OD", "Oral diet"),
-        ("OG", "Oral gavage"),
-        ("OW", "Oral drinking water"),
-        ("I", "Inhalation"),
-        ("IG", "Inhalation - gas"),
-        ("IR", "Inhalation - particle"),
-        ("IA", "Inhalation - vapor"),
-        ("D", "Dermal"),
-        ("SI", "Subcutaneous injection"),
-        ("IP", "Intraperitoneal injection"),
-        ("IV", "Intravenous injection"),
-        ("IO", "in ovo"),
-        ("P", "Parental"),
-        ("W", "Whole body"),
-        ("M", "Multiple"),
-        ("U", "Unknown"),
-        ("O", "Other"),
-    )
-    ROUTE_EXPOSURE_CHOICES_DICT = {el[0]: el[1] for el in ROUTE_EXPOSURE_CHOICES}
-
-    POSITIVE_CONTROL_CHOICES = ((True, "Yes"), (False, "No"), (None, "Unknown"))
-
-    NEGATIVE_CONTROL_CHOICES = (
-        ("NR", "Not-reported"),
-        ("UN", "Untreated"),
-        ("VT", "Vehicle-treated"),
-        ("B", "Untreated + Vehicle-treated"),
-        ("N", "No"),
+    # TODO tried Class PositiveControl(int,models.Choices), but can't subclass bool?
+    POSITIVE_CONTROL_CHOICES = (
+        (True, "Yes"),
+        (False, "No"),
+        (None, "Unknown"),
     )
 
     TEXT_CLEANUP_FIELDS = (
@@ -519,7 +446,7 @@ class DosingRegime(models.Model):
     )
     route_of_exposure = models.CharField(
         max_length=2,
-        choices=ROUTE_EXPOSURE_CHOICES,
+        choices=constants.RouteExposure.choices,
         help_text="Primary route of exposure. If multiple primary-exposures, describe in notes-field below",
     )
     duration_exposure = models.FloatField(
@@ -567,7 +494,7 @@ class DosingRegime(models.Model):
     negative_control = models.CharField(
         max_length=2,
         default="VT",
-        choices=NEGATIVE_CONTROL_CHOICES,
+        choices=constants.NegativeControl.choices,
         help_text="Description of negative-controls used",
     )
     description = models.TextField(
@@ -735,75 +662,12 @@ class Endpoint(BaseEndpoint):
         "effect_subtype": "effect_subtype_term_id",
     }
 
-    DATA_TYPE_CONTINUOUS = "C"
-    DATA_TYPE_DICHOTOMOUS = "D"
-    DATA_TYPE_PERCENT_DIFFERENCE = "P"
-    DATA_TYPE_DICHOTOMOUS_CANCER = "DC"
-    DATA_TYPE_NOT_REPORTED = "NR"
-
-    DATA_TYPE_CHOICES = (
-        (DATA_TYPE_CONTINUOUS, "Continuous"),
-        (DATA_TYPE_DICHOTOMOUS, "Dichotomous"),
-        (DATA_TYPE_PERCENT_DIFFERENCE, "Percent Difference"),
-        (DATA_TYPE_DICHOTOMOUS_CANCER, "Dichotomous Cancer"),
-        (DATA_TYPE_NOT_REPORTED, "Not reported"),
-    )
-
-    MONOTONICITY_CHOICES = (
-        (8, "--"),
-        (0, "N/A, single dose level study"),
-        (1, "N/A, no effects detected"),
-        (2, "visual appearance of monotonicity"),
-        (3, "monotonic and significant trend"),
-        (4, "visual appearance of non-monotonicity"),
-        (6, "no pattern/unclear"),
-    )
-
-    VARIANCE_TYPE_CHOICES = ((0, "NA"), (1, "SD"), (2, "SE"), (3, "NR"))
-
     VARIANCE_NAME = {
         0: "N/A",
         1: "Standard Deviation",
         2: "Standard Error",
         3: "Not Reported",
     }
-
-    OBSERVATION_TIME_UNITS = (
-        (0, "not reported"),
-        (1, "seconds"),
-        (2, "minutes"),
-        (3, "hours"),
-        (4, "days"),
-        (5, "weeks"),
-        (6, "months"),
-        (9, "years"),
-        (7, "post-natal day (PND)"),
-        (8, "gestational day (GD)"),
-    )
-
-    TREND_RESULT_CHOICES = (
-        (0, "not applicable"),
-        (1, "not significant"),
-        (2, "significant"),
-        (3, "not reported"),
-    )
-
-    ADVERSE_DIRECTION_CHOICES = (
-        (3, "increase from reference/control group"),
-        (2, "decrease from reference/control group"),
-        (1, "any change from reference/control group"),
-        (0, "unclear"),
-        (4, "---"),
-    )
-
-    LITTER_EFFECT_CHOICES = (
-        ("NA", "Not applicable"),
-        ("NR", "Not reported"),
-        ("YS", "Yes, statistical control"),
-        ("YD", "Yes, study-design"),
-        ("N", "No"),
-        ("O", "Other"),
-    )
 
     animal_group = models.ForeignKey(
         AnimalGroup, on_delete=models.CASCADE, related_name="endpoints"
@@ -842,8 +706,8 @@ class Endpoint(BaseEndpoint):
     )
     litter_effects = models.CharField(
         max_length=2,
-        choices=LITTER_EFFECT_CHOICES,
-        default="NA",
+        choices=constants.LitterEffect.choices,
+        default=constants.LitterEffect.NA,
         help_text='Type of controls used for litter-effects. The "No" response '
         + "will be infrequently used. More typically the information will be "
         + '"Not reported" and assumed not considered. Only use "No" if it '
@@ -861,7 +725,7 @@ class Endpoint(BaseEndpoint):
         "optional, should be recorded if the same effect was measured multiple times.",
     )
     observation_time_units = models.PositiveSmallIntegerField(
-        default=0, choices=OBSERVATION_TIME_UNITS
+        default=constants.ObservationTimeUnits.NR, choices=constants.ObservationTimeUnits.choices
     )
     observation_time_text = models.CharField(
         max_length=64, blank=True, help_text='Text for reported observation time (ex: "60-90 PND")',
@@ -874,8 +738,8 @@ class Endpoint(BaseEndpoint):
         '1 and Text, p.24")',
     )
     expected_adversity_direction = models.PositiveSmallIntegerField(
-        choices=ADVERSE_DIRECTION_CHOICES,
-        default=4,
+        choices=constants.AdverseDirection.choices,
+        default=constants.AdverseDirection.NR,
         verbose_name="Expected response adversity direction",
         help_text="Response direction which would be considered adverse",
     )
@@ -886,9 +750,14 @@ class Endpoint(BaseEndpoint):
         help_text="Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)",
     )
     data_type = models.CharField(
-        max_length=2, choices=DATA_TYPE_CHOICES, default="C", verbose_name="Dataset type",
+        max_length=2,
+        choices=constants.DataType.choices,
+        default=constants.DataType.C,
+        verbose_name="Dataset type",
     )
-    variance_type = models.PositiveSmallIntegerField(default=1, choices=VARIANCE_TYPE_CHOICES)
+    variance_type = models.PositiveSmallIntegerField(
+        default=constants.VarianceType.SD, choices=constants.VarianceType.choices
+    )
     confidence_interval = models.FloatField(
         blank=True,
         null=True,
@@ -914,7 +783,9 @@ class Endpoint(BaseEndpoint):
         default=False,
         help_text="Response values were estimated using a digital ruler or other methods",
     )
-    monotonicity = models.PositiveSmallIntegerField(default=8, choices=MONOTONICITY_CHOICES)
+    monotonicity = models.PositiveSmallIntegerField(
+        default=constants.Monotonicity.NR, choices=constants.Monotonicity.choices
+    )
     statistical_test = models.CharField(
         max_length=256,
         blank=True,
@@ -924,7 +795,9 @@ class Endpoint(BaseEndpoint):
     trend_value = models.FloatField(
         null=True, blank=True, help_text="Numerical result for trend-test, if available"
     )
-    trend_result = models.PositiveSmallIntegerField(default=3, choices=TREND_RESULT_CHOICES)
+    trend_result = models.PositiveSmallIntegerField(
+        default=constants.TrendResult.NR, choices=constants.TrendResult.choices
+    )
     diagnostic = models.TextField(
         verbose_name="Endpoint Name in Study",
         blank=True,
@@ -1023,11 +896,13 @@ class Endpoint(BaseEndpoint):
         )
         df = pd.DataFrame(data=list(qs), columns=columns.values())
         df["route of exposure"] = df["route of exposure"].map(
-            DosingRegime.ROUTE_EXPOSURE_CHOICES_DICT
+            lambda e: constants.RouteExposure(e).label
         )
-        df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
-        df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
-        df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
+        df["sex"] = df["sex"].map(lambda e: constants.Sex(e).label)
+        df["generation"] = df["generation"].map(lambda e: constants.Generation(e).label)
+        df["experiment type"] = df["experiment type"].map(
+            lambda e: constants.ExperimentType(e).label
+        )
 
         # get animal-group values
         df = (

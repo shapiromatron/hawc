@@ -15,7 +15,7 @@ from ..common import selectable
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
 from ..study.lookups import AnimalStudyLookup
 from ..vocab.models import VocabularyNamespace
-from . import lookups, models
+from . import constants, lookups, models
 
 
 class ExperimentForm(ModelForm):
@@ -144,23 +144,23 @@ class AnimalGroupForm(ModelForm):
             self.instance.experiment = parent
 
         # for lifestage assessed/exposed, use a select widget. Manually add in
-        # previously saved values that don't conform to the LIFESTAGE_CHOICES tuple
-        lifestage_dict = dict(models.AnimalGroup.LIFESTAGE_CHOICES)
+        # previously saved values that don't conform to the lifestage choices
+        lifestage_dict = dict(constants.Lifestage.choices)
 
         if self.instance.lifestage_exposed in lifestage_dict:
-            le_choices = models.AnimalGroup.LIFESTAGE_CHOICES
+            le_choices = constants.Lifestage.choices
         else:
             le_choices = (
                 (self.instance.lifestage_exposed, self.instance.lifestage_exposed),
-            ) + models.AnimalGroup.LIFESTAGE_CHOICES
+            ) + constants.Lifestage.choices
         self.fields["lifestage_exposed"].widget = forms.Select(choices=le_choices)
 
         if self.instance.lifestage_assessed in lifestage_dict:
-            la_choices = models.AnimalGroup.LIFESTAGE_CHOICES
+            la_choices = constants.Lifestage.choices
         else:
             la_choices = (
                 (self.instance.lifestage_assessed, self.instance.lifestage_assessed),
-            ) + models.AnimalGroup.LIFESTAGE_CHOICES
+            ) + constants.Lifestage.choices
         self.fields["lifestage_assessed"].widget = forms.Select(choices=la_choices)
 
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
@@ -758,9 +758,9 @@ class EndpointFilterForm(forms.Form):
     )
 
     sex = forms.MultipleChoiceField(
-        choices=models.AnimalGroup.SEX_CHOICES,
+        choices=constants.Sex.choices,
         widget=forms.CheckboxSelectMultiple,
-        initial=[c[0] for c in models.AnimalGroup.SEX_CHOICES],
+        initial=[c[0] for c in constants.Sex.choices],
         required=False,
     )
 

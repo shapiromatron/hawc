@@ -10,6 +10,7 @@ from rest_framework.serializers import ValidationError
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
 from ..vocab.models import Term, VocabularyTermType
+from . import constants
 
 
 class ExperimentManager(BaseManager):
@@ -31,7 +32,6 @@ class AnimalGroupManager(BaseManager):
         Returns:
             pandas Dataframe of data
         """
-        Experiment = apps.get_model("animal", "Experiment")
         qs = (
             self.filter(experiment__study__assessment_id=assessment_id)
             .annotate(min_n=Min("endpoints__groups__n"), max_n=Max("endpoints__groups__n"),)
@@ -62,7 +62,7 @@ class AnimalGroupManager(BaseManager):
             if min_n or max_n:
                 ns = f"N={min_n}" if min_n == max_n else f"N={min_n}-{max_n}"
 
-            treatment_text = Experiment.EXPERIMENT_TYPE_DICT[exp_type]
+            treatment_text = constants.ExperimentType(exp_type).label
             if "(" in treatment_text:
                 treatment_text = treatment_text[: treatment_text.find("(")]
 

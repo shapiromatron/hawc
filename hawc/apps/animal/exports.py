@@ -5,7 +5,7 @@ from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
-from . import models
+from . import constants, models
 
 
 def get_gen_species_strain_sex(e, withN=False):
@@ -50,19 +50,19 @@ def get_significance_and_direction(data_type, groups):
         return significance_list
 
     if data_type in {
-        models.Endpoint.DATA_TYPE_CONTINUOUS,
-        models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS,
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+        constants.DataType.C,
+        constants.DataType.P,
+        constants.DataType.D,
+        constants.DataType.DC,
     }:
         if data_type in {
-            models.Endpoint.DATA_TYPE_CONTINUOUS,
-            models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
+            constants.DataType.C,
+            constants.DataType.P,
         }:
             field = "response"
         elif data_type in {
-            models.Endpoint.DATA_TYPE_DICHOTOMOUS,
-            models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+            constants.DataType.D,
+            constants.DataType.DC,
         }:
             field = "percent_affected"
         else:
@@ -79,7 +79,7 @@ def get_significance_and_direction(data_type, groups):
                     significance_list.append("Yes - ↓")
             else:
                 significance_list.append("No")
-    elif data_type == models.Endpoint.DATA_TYPE_NOT_REPORTED:
+    elif data_type == constants.DataType.NR:
         for group in groups:
             significance_list.append("?")
     else:
