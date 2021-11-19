@@ -294,7 +294,7 @@ class ReferenceManager(BaseManager):
             pmid = content.get("PMID", None)
             try:
                 doi = content["json"]["doi"]
-            except(KeyError):
+            except (KeyError):
                 doi = None
 
             if pmid:

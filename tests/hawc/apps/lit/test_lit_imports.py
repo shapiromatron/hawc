@@ -95,9 +95,9 @@ def test_pubmed_import(db_keys):
 
     # make sure all each reference has an identifier
     i_pks = models.Identifiers.objects.values_list("pk", flat=True)
-    assert i_pks.count() == initial_identifiers + 20
+    assert i_pks.count() == initial_identifiers + 22
     assert (
-        models.Reference.objects.filter(identifiers__in=i_pks).count() == initial_identifiers + 20
+        models.Reference.objects.filter(identifiers__in=i_pks).count() == initial_identifiers + 22
     )
 
 
@@ -243,7 +243,7 @@ def test_existing_pubmed_hero_add(db_keys):
 
     ref = models.Reference.objects.get(authors_short="Longstreth J et al.")
     assert ref.searches.count() == 2
-    assert ref.identifiers.count() == 2
+    assert ref.identifiers.count() == 3
 
 
 class RisFile:
