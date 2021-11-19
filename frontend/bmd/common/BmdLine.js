@@ -1,5 +1,6 @@
 import _ from "lodash";
 
+import {normalCDF, gammaCDF} from "shared/utils/math";  // eslint-disable-line
 import {buildModelFormula} from "./constants";
 
 class BmdLine {
@@ -21,40 +22,21 @@ class BmdLine {
         this.plot.remove_bmd_line(this.model.id);
     }
 
-    _getModel() {
-        return buildModelFormula(
-            this.model.name,
-            this.model.output.fit_estimated,
-            this.model.output.parameters
-        );
-    }
-
     _getPlotData() {
-        let model = this._getModel(),
-            bmd = this.model.output.BMD,
+        let bmd = this.model.output.BMD,
             bmdl = this.model.output.BMDL,
             bmd_line,
             bmdl_line,
             bmd_y;
 
-        // x must be defined since we're calling "eval" in the javascript models
-        // eslint-disable-next-line no-unused-vars
-        var x;
-
         if (bmd && bmd > 0) {
             x = bmd;
             bmd_y = eval(model);
-            bmd_line = {
-                x: bmd,
-                y: bmd_y,
-            };
+            bmd_line = {x: bmd, y: bmd_y};
         }
 
         if (bmdl && bmdl > 0) {
-            bmdl_line = {
-                x: bmdl,
-                y: bmd_y,
-            };
+            bmdl_line = {x: bmdl, y: bmd_y};
         }
 
         return {
@@ -67,10 +49,7 @@ class BmdLine {
                     .filter(d => d >= 0)
                     .map(d => (d === 0 ? 1e-8 : d))
                     .map(x => {
-                        return {
-                            x,
-                            y: eval(model),
-                        };
+                        return {x, y: eval(model)};
                     })
                     .value();
             },
