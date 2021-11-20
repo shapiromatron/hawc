@@ -378,18 +378,23 @@ class Study(Reference):
         except MultipleObjectsReturned:
             raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one')
 
+    def get_final_qs(self):
+        return self.riskofbiases.filter(active=True, final=True).prefetch_related(
+            "scores__overridden_objects__content_object"
+        )
+
     def get_active_robs(self, with_final=True):
         if with_final:
             return (
                 self.riskofbiases.filter(active=True)
                 .order_by("final", "last_updated")
-                .prefetch_related("author")
+                .prefetch_related("author", "scores__overridden_objects__content_object")
             )
         else:
             return (
                 self.riskofbiases.filter(active=True, final=False)
                 .order_by("last_updated")
-                .prefetch_related("author")
+                .prefetch_related("author", "scores__overridden_objects__content_object")
             )
 
     def get_overall_confidence(self):

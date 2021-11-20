@@ -63,6 +63,14 @@ def test_df_move_column():
     assert df.columns.tolist() == ["a", "b", "c"]
 
 
+def test_url_query():
+    assert helper.url_query("/", {}) == "/"
+    assert helper.url_query("/path/", {"test": 123, "here": 456}) == "/path/?test=123&here=456"
+    assert (
+        helper.url_query("/path/", {"?=&/\\": "?=&/\\"}) == "/path/?%3F%3D%26%2F%5C=%3F%3D%26%2F%5C"
+    )
+
+
 def test_tryParseInt():
     assert helper.tryParseInt(None) is None
     assert helper.tryParseInt("") is None
