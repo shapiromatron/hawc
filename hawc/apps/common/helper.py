@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
+from django.http import QueryDict
 from django.utils import html
 from django.utils.encoding import force_str
 from docx.document import Document
@@ -154,6 +155,23 @@ def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -
     insert_index = cols.index(after) + 1 if after else 0
     cols.insert(insert_index, target_name)
     return df[cols]
+
+
+def url_query(path: str, query: Dict) -> str:
+    """Generate a URL with appropriate query string parameters
+
+    Args:
+        path (str): The url path
+        query (Dict): A dictionary of parameters to add
+
+    Returns:
+        str: A url-encoded string with query values
+    """
+    if not query:
+        return path
+    q = QueryDict("", mutable=True)
+    q.update(query)
+    return f"{path}?{q.urlencode()}"
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
