@@ -5,71 +5,84 @@ from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
-def test_study_detail_api(db_keys):
-    client = Client()
-    assert client.login(username="team@hawcproject.org", password="pw") is True
+class TestStudyViewset:
+    def test_detail(self, db_keys):
+        client = Client()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
-    url = reverse("study:api:study-detail", kwargs={"pk": db_keys.study_working})
-    response = client.get(url)
-    assert response.status_code == 200
+        url = reverse("study:api:study-detail", args=(db_keys.study_working,))
+        response = client.get(url)
+        assert response.status_code == 200
 
-    json = response.json()
+        json = response.json()
 
-    # handle this in other tests
-    json.pop("riskofbiases")
-    json.pop("rob_settings")
+        # handle this in other tests
+        json.pop("rob_settings")
 
-    assert json == {
-        "id": 1,
-        "assessment": {
+        assert len(json.pop("riskofbiases")) == 1
+        assert json == {
             "id": 1,
-            "url": "/assessment/1/",
-            "enable_risk_of_bias": True,
-            "name": "Chemical Z",
-        },
-        "searches": [],
-        "identifiers": [
-            {
-                "content": "demo-content",
-                "database": "HERO",
-                "id": 6,
-                "unique_id": "2",
-                "url": "http://hero.epa.gov/index.cfm?action=reference.details&reference_id=2",
-            }
-        ],
-        "tags": [],
-        "title": "",
-        "authors_short": "Frédéric Chopin",
-        "authors": "Frédéric Chopin",
-        "year": 2010,
-        "journal": "",
-        "abstract": "",
-        "full_text_url": "",
-        "created": "2020-01-25T08:23:16.370427-06:00",
-        "last_updated": "2020-02-27T14:14:41.479008-06:00",
-        "block_id": None,
-        "bioassay": True,
-        "epi": False,
-        "epi_meta": False,
-        "in_vitro": False,
-        "short_citation": "Foo et al.",
-        "full_citation": "Foo et al. 2010",
-        "coi_reported": "---",
-        "coi_details": "",
-        "funding_source": "",
-        "study_identifier": "",
-        "contact_author": False,
-        "ask_author": "",
-        "published": False,
-        "summary": "",
-        "editable": True,
-        "url": "/study/1/",
-    }
+            "assessment": {
+                "id": 1,
+                "url": "/assessment/1/",
+                "enable_risk_of_bias": True,
+                "name": "Chemical Z",
+            },
+            "searches": [],
+            "identifiers": [
+                {
+                    "content": "demo-content",
+                    "database": "HERO",
+                    "id": 6,
+                    "unique_id": "2",
+                    "url": "http://hero.epa.gov/index.cfm?action=reference.details&reference_id=2",
+                }
+            ],
+            "tags": [],
+            "title": "",
+            "authors_short": "Frédéric Chopin",
+            "authors": "Frédéric Chopin",
+            "year": 2010,
+            "journal": "",
+            "abstract": "",
+            "full_text_url": "",
+            "created": "2020-01-25T08:23:16.370427-06:00",
+            "last_updated": "2020-02-27T14:14:41.479008-06:00",
+            "block_id": None,
+            "bioassay": True,
+            "epi": False,
+            "epi_meta": False,
+            "in_vitro": False,
+            "short_citation": "Foo et al.",
+            "full_citation": "Foo et al. 2010",
+            "coi_reported": "---",
+            "coi_details": "",
+            "funding_source": "",
+            "study_identifier": "",
+            "contact_author": False,
+            "ask_author": "",
+            "published": False,
+            "summary": "",
+            "editable": True,
+            "url": "/study/1/",
+        }
 
+    def test_detail_robs(self, db_keys):
+        client = Client()
+        url = reverse("study:api:study-rob", args=(db_keys.study_final_bioassay,))
 
-@pytest.mark.django_db
-class TestStudyCreateApi:
-    def test_permissions(self, db_keys):
+        response = client.get(url)
+        assert response.status_code == 403
+
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) == 3
+        assert all(d["active"] is True for d in data)
+        assert set(d["final"] for d in data) == {True, False}
+
+    def test_create_permissions(self, db_keys):
         url = reverse("study:api:study-list")
         data = {
             "reference_id": db_keys.reference_unlinked,
@@ -88,7 +101,7 @@ class TestStudyCreateApi:
         response = client.post(url, data)
         assert response.status_code == 403
 
-    def test_bad_requests(self, db_keys):
+    def test_create_bad_requests(self, db_keys):
         # payload needs to include the required short_citation and full_citation
         url = reverse("study:api:study-list")
         client = APIClient()
@@ -109,7 +122,7 @@ class TestStudyCreateApi:
             == f"Reference ID {db_keys.reference_linked} already linked with a study."
         )
 
-    def test_valid_requests(self, db_keys):
+    def test_create_valid_requests(self, db_keys):
         # this is a correct request
         url = reverse("study:api:study-list")
         data = {
