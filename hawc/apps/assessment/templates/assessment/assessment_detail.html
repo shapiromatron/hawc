@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load hastext %}
+
 {% block content %}
   <h1 class="d-inline-block">{{object}}</h1>
   {% if crud == "Read" %}
@@ -185,14 +187,14 @@
       </tr>
       {% endif %}
 
-      {% if obj_perms.edit and internal_communications %}
+      {% if obj_perms.edit and internal_communications|hastext %}
       <tr>
         <th>Internal communications*</th>
         <td>{{ internal_communications|safe }}</td>
       </tr>
       {% endif %}
     </tbody>
-    {% if obj_perms.edit and internal_communications %}
+    {% if obj_perms.edit %}
     <tfoot>
       <tr>
         <td colspan="2" class="text-muted">

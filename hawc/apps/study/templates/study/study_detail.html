@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load hastext %}
+
 {% block content %}
   <h2 class="d-inline-block">{{object}}</h2>
   {% if obj_perms.edit %}
@@ -56,7 +58,7 @@
 
   <div id="study_details"></div>
 
-  {% if obj_perms.edit and internal_communication %}
+  {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
       <colgroup>
         <col style="width: 30%;">
@@ -65,7 +67,7 @@
       <tbody>
         <tr>
           <th>Internal communications*</th>
-          <td>{{ internal_communication|safe }}</td>
+          <td>{{ internal_communications|safe }}</td>
         </tr>
       </tbody>
       <tfoot>
