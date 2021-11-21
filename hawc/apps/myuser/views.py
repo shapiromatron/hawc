@@ -4,18 +4,20 @@ from typing import Dict
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth import login
+from django.contrib.auth import REDIRECT_FIELD_NAME, login
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,
     PasswordResetConfirmView,
     PasswordResetDoneView,
     PasswordResetView,
+    SuccessURLAllowedHostsMixin,
 )
 from django.core.mail import mail_admins
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import CreateView, DetailView, TemplateView, View
 from django.views.generic.base import RedirectView
@@ -23,6 +25,7 @@ from django.views.generic.edit import UpdateView
 
 from ...constants import AuthProvider
 from ..common.crumbs import Breadcrumb
+from ..common.helper import url_query
 from ..common.views import LoginRequiredMixin, MessageMixin
 from . import forms, models
 
@@ -49,9 +52,18 @@ class HawcUserCreate(CreateView):
 class HawcLoginView(LoginView):
     form_class = forms.HAWCAuthenticationForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["next_url"] = self.get_redirect_url()
+        return kwargs
+
     def dispatch(self, request, *args, **kwargs):
         if settings.AUTH_PROVIDERS == {AuthProvider.external}:
-            return HttpResponseRedirect(reverse_lazy("user:external_auth"))
+            url = reverse("user:external_auth")
+            next_url = self.get_redirect_url()
+            if next_url:
+                url = url_query(url, {REDIRECT_FIELD_NAME: next_url})
+            return HttpResponseRedirect(url)
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -180,7 +192,7 @@ class PasswordChanged(MessageMixin, RedirectView):
         return reverse_lazy("user:login")
 
 
-class ExternalAuth(View):
+class ExternalAuth(SuccessURLAllowedHostsMixin, View):
     def get_user_metadata(self, request) -> Dict:
         """
         Retrieve user metadata from request to use for authentication.
@@ -214,6 +226,15 @@ class ExternalAuth(View):
         )
         mail_admins(subject, body)
 
+    def get_redirect_url(self) -> str:
+        redirect_to = self.request.GET.get(REDIRECT_FIELD_NAME, "")
+        url_is_safe = url_has_allowed_host_and_scheme(
+            url=redirect_to,
+            allowed_hosts=self.get_success_url_allowed_hosts(),
+            require_https=self.request.is_secure(),
+        )
+        return redirect_to if url_is_safe else settings.LOGIN_REDIRECT_URL
+
     def get(self, request, *args, **kwargs):
         # Get user metadata from request
         try:
@@ -246,4 +267,4 @@ class ExternalAuth(View):
                 email=email, external_id=external_id, **metadata
             )
         login(request, user)
-        return HttpResponseRedirect(reverse("portal"))
+        return HttpResponseRedirect(self.get_redirect_url())
