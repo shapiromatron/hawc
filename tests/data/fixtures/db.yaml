@@ -4543,6 +4543,20 @@
     lower_range: null
     upper_range: null
     description: (made-up)
+- model: epi.groupnumericaldescriptions
+  pk: 1
+  fields:
+    group: 1
+    description: Description
+    mean: null
+    mean_type: 1
+    is_calculated: false
+    variance: null
+    variance_type: 0
+    lower: null
+    lower_type: 0
+    upper: null
+    upper_type: 0
 - model: epi.resultmetric
   pk: 1
   fields:

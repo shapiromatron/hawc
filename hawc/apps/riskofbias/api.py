@@ -59,7 +59,9 @@ class RiskOfBiasAssessmentViewset(
         self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}"
+            self.get_queryset().none(),
+            filename=f"{self.assessment}-{rob_name}",
+            assessment_id=self.assessment.id,
         )
 
         return Response(exporter.build_export())
@@ -70,7 +72,9 @@ class RiskOfBiasAssessmentViewset(
         self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}-complete"
+            self.get_queryset().none(),
+            filename=f"{self.assessment}-{rob_name}-complete",
+            assessment_id=self.assessment.id,
         )
         return Response(exporter.build_export())
 
