@@ -12,14 +12,15 @@ const BmrHeaderMap = {
     },
     formulas = {
         Polynomial: (x, p) =>
-            p.beta_0 + p.beta_1 * x + p.beta_2 ||
-            0 * Math.pow(x, 2) + p.beta_3 ||
-            0 * Math.pow(x, 3) + p.beta_4 ||
-            0 * Math.pow(x, 4) + p.beta_5 ||
-            0 * Math.pow(x, 5) + p.beta_6 ||
-            0 * Math.pow(x, 6) + p.beta_7 ||
-            0 * Math.pow(x, 7) + p.beta_8 ||
-            0 * Math.pow(x, 8),
+            p.beta_0 +
+            p.beta_1 * x +
+            (p.beta_2 || 0 * Math.pow(x, 2)) +
+            (p.beta_3 || 0 * Math.pow(x, 3)) +
+            (p.beta_4 || 0 * Math.pow(x, 4)) +
+            (p.beta_5 || 0 * Math.pow(x, 5)) +
+            (p.beta_6 || 0 * Math.pow(x, 6)) +
+            (p.beta_7 || 0 * Math.pow(x, 7)) +
+            (p.beta_8 || 0 * Math.pow(x, 8)),
         Linear: (x, p) => p.beta_0 + p.beta_1 * x,
         "Exponential-M2": (x, p) => p.a * Math.exp(p.isIncreasing * p.b * x),
         "Exponential-M3": (x, p) => p.a * Math.exp(p.isIncreasing * Math.pow(p.b * x, p.d)),
@@ -33,28 +34,28 @@ const BmrHeaderMap = {
             (1 - p.background) *
                 (1 -
                     Math.exp(
-                        -1 * p.beta_1 * x - p.beta_2 ||
-                            0 * Math.pow(x, 2) - p.beta_3 ||
-                            0 * Math.pow(x, 3) - p.beta_4 ||
-                            0 * Math.pow(x, 4) - p.beta_5 ||
-                            0 * Math.pow(x, 5) - p.beta_6 ||
-                            0 * Math.pow(x, 6) - p.beta_7 ||
-                            0 * Math.pow(x, 7) - p.beta_8 ||
-                            0 * Math.pow(x, 8)
+                        -1 * p.beta_1 * x -
+                            (p.beta_2 || 0 * Math.pow(x, 2)) -
+                            (p.beta_3 || 0 * Math.pow(x, 3)) -
+                            (p.beta_4 || 0 * Math.pow(x, 4)) -
+                            (p.beta_5 || 0 * Math.pow(x, 5)) -
+                            (p.beta_6 || 0 * Math.pow(x, 6)) -
+                            (p.beta_7 || 0 * Math.pow(x, 7)) -
+                            (p.beta_8 || 0 * Math.pow(x, 8))
                     )),
         "Multistage-Cancer": (x, p) =>
             p.background +
             (1 - p.background) *
                 (1 -
                     Math.exp(
-                        -1 * p.beta_1 * x - p.beta_2 ||
-                            0 * Math.pow(x, 2) - p.beta_3 ||
-                            0 * Math.pow(x, 3) - p.beta_4 ||
-                            0 * Math.pow(x, 4) - p.beta_5 ||
-                            0 * Math.pow(x, 5) - p.beta_6 ||
-                            0 * Math.pow(x, 6) - p.beta_7 ||
-                            0 * Math.pow(x, 7) - p.beta_8 ||
-                            0 * Math.pow(x, 8)
+                        -1 * p.beta_1 * x -
+                            (p.beta_2 || 0 * Math.pow(x, 2)) -
+                            (p.beta_3 || 0 * Math.pow(x, 3)) -
+                            (p.beta_4 || 0 * Math.pow(x, 4)) -
+                            (p.beta_5 || 0 * Math.pow(x, 5)) -
+                            (p.beta_6 || 0 * Math.pow(x, 6)) -
+                            (p.beta_7 || 0 * Math.pow(x, 7)) -
+                            (p.beta_8 || 0 * Math.pow(x, 8))
                     )),
         Weibull: (x, p) =>
             p.background + (1 - p.background) * (1 - Math.exp(-1 * p.slope * Math.pow(x, p.power))),
