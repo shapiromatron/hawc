@@ -317,7 +317,7 @@ class ReferenceManager(BaseManager):
             Identifiers = apps.get_model("lit", "Identifiers")
             if constants.DOI_EXTRACT.search(str(doi)):
                 doi = constants.DOI_EXTRACT.search(doi).group(0)
-                doi_id = Identifiers.objects.get_or_create(unique_id=doi)
+                doi_id = Identifiers.objects.get_or_create(unique_id=doi, database=constants.DOI)
                 ref.identifiers.add(doi_id[0])
                 ref.save()
             ref.searches.add(search)
@@ -378,7 +378,9 @@ class ReferenceManager(BaseManager):
             ref.identifiers.add(identifier)
             if constants.DOI_EXTRACT.search(str(doi)):
                 doi = constants.DOI_EXTRACT.search(doi).group(0)
-                doiIdentifier = Identifiers.objects.get_or_create(unique_id=doi)
+                doiIdentifier = Identifiers.objects.get_or_create(
+                    unique_id=doi, database=constants.DOI
+                )
                 ref.identifiers.add(doiIdentifier[0])
                 ref.save()
             refs.append(ref)
