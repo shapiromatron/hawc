@@ -1,6 +1,7 @@
 from ..common.helper import FlatFileExporter
 from ..study.models import Study
-from . import models
+from ..study.serializers import VerboseStudySerializer
+from . import models, serializers
 
 
 class RiskOfBiasFlat(FlatFileExporter):
@@ -11,6 +12,29 @@ class RiskOfBiasFlat(FlatFileExporter):
 
     final_only = True  # only return final data
 
+    def get_serialized_data(self):
+        assessment_id = self.kwargs["assessment_id"]
+        qs = (
+            Study.objects.filter(assessment_id=assessment_id)
+            .prefetch_related("identifiers", "riskofbiases__scores__overridden_objects")
+            .select_related("assessment")
+        )
+        ser = VerboseStudySerializer(qs, many=True)
+        study_data = ser.data
+
+        if not self.final_only:
+            qs = (
+                models.RiskOfBias.objects.filter(study__assessment_id=assessment_id, active=True)
+                .select_related("author")
+                .prefetch_related("scores__overridden_objects")
+            )
+            ser = serializers.RiskOfBiasSerializer(qs, many=True)
+            rob_data = ser.data
+            for study in study_data:
+                study["riskofbiases"] = [rob for rob in rob_data if rob["study"] == study["id"]]
+
+        return study_data
+
     def _get_header_row(self):
         header = []
         header.extend(Study.flat_complete_header_row())
@@ -20,9 +44,7 @@ class RiskOfBiasFlat(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
-        for obj in self.queryset:
-            ser = obj.get_json(json_encode=False)
-
+        for ser in self.get_serialized_data():
             domains = ser["rob_settings"]["domains"]
             metrics = ser["rob_settings"]["metrics"]
             domain_map = {domain["id"]: domain for domain in domains}

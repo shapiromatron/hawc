@@ -1,7 +1,7 @@
 from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
-from django.contrib.auth import get_backends
+from django.contrib.auth import REDIRECT_FIELD_NAME, get_backends
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
@@ -14,6 +14,7 @@ from django.urls import reverse
 from ...constants import AuthProvider
 from ..assessment import lookups
 from ..common.forms import BaseFormHelper
+from ..common.helper import url_query
 from ..common.selectable import AutoCompleteSelectMultipleField
 from . import models
 
@@ -265,15 +266,19 @@ class HAWCAuthenticationForm(AuthenticationForm):
     """
 
     def __init__(self, *args, **kwargs):
+        self.next_url = kwargs.pop("next_url")
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
-        external_auth_btn = (
-            f'&nbsp;<a role="button" class="btn btn-primary" href="{reverse("user:external_auth")}">External login</a>'
-            if AuthProvider.external in settings.AUTH_PROVIDERS
-            else ""
-        )
+        external_auth_btn = ""
+        if AuthProvider.external in settings.AUTH_PROVIDERS:
+            url = reverse("user:external_auth")
+            if self.next_url:
+                url = url_query(url, {REDIRECT_FIELD_NAME: self.next_url})
+            external_auth_btn = (
+                f'&nbsp;<a role="button" class="btn btn-primary" href="{url}">External login</a>'
+            )
         helper = BaseFormHelper(
             self,
             legend_text="HAWC login",

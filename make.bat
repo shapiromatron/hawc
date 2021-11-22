@@ -2,6 +2,7 @@
 
 if "%~1" == "" goto :help
 if /I %1 == help goto :help
+if /I %1 == sync-dev goto :sync-dev
 if /I %1 == build goto :build
 if /I %1 == build-pex goto :build-pex
 if /I %1 == lint goto :lint
@@ -20,6 +21,7 @@ goto :help
 
 :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
+echo.  sync-dev          sync dev environment after code checkout
 echo.  build             build python wheel
 echo.  build-pex         build pex bundle (mac/linux only)
 echo.  test              run python tests
@@ -34,6 +36,13 @@ echo.  format-py         modify python code using black and show flake8 issues
 echo.  lint-js           check for javascript formatting issues
 echo.  format-js         modify javascript code if possible using linters and formatters
 echo.  loc               generate lines of code report
+goto :eof
+
+:sync-dev
+python -m pip install -U pip
+pip install -r requirements/dev.txt
+yarn --cwd frontend
+manage.py migrate
 goto :eof
 
 :build

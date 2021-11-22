@@ -262,8 +262,14 @@ const NA_KEYS = [10, 20],
             .then(success)
             .catch(error || _.noop);
     },
-    fetchRobStudy = function(studyId, success, error) {
+    fetchStudy = function(studyId, success, error) {
         return fetch(`/study/api/study/${studyId}/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
+    },
+    fetchRobStudy = function(studyId, success, error) {
+        return fetch(`/study/api/study/${studyId}/all-rob/`, h.fetchGet)
             .then(response => response.json())
             .then(success)
             .catch(error || _.noop);
@@ -291,4 +297,5 @@ export {
     OVERRIDE_SCORE_LABEL_MAPPING,
     fetchRobSettings,
     fetchRobStudy,
+    fetchStudy,
 };
