@@ -27,6 +27,8 @@
 {"pk": 24, "model": "eco.Vocab", "fields": {"category": 2, "value": "Stream/river", "parent": 14}},
 {"pk": 25, "model": "eco.Vocab", "fields": {"category": 2, "value": "Wetland", "parent": 14}},
 {"pk": 26, "model": "eco.Vocab", "fields": {"category": 2, "value": "Lake/reservoir", "parent": 14}},
+{"pk": 197,"model": "eco.Vocab","fields": {"category": 2, "value": "Not applicable"}},
+{"pk": 198,"model": "eco.Vocab","fields": {"category": 2, "value": "Not reported"}},
 
 {"pk": 27, "model": "eco.Vocab", "fields": {"category": 3, "value": "TBD"}},
 
@@ -37,6 +39,8 @@
 {"pk": 31, "model": "eco.Vocab", "fields": {"category": 5, "value": "Population"}},
 {"pk": 32, "model": "eco.Vocab", "fields": {"category": 5, "value": "Individual organism"}},
 {"pk": 33, "model": "eco.Vocab", "fields": {"category": 5, "value": "Sub-organismal"}},
+{"pk": 199,"model": "eco.Vocab","fields": {"category": 5, "value": "Not applicable"}},
+{"pk": 200,"model": "eco.Vocab","fields": {"category": 5, "value": "Not reported"}},
 
 {"pk": 38, "model": "eco.Vocab", "fields": {"category": 6, "value": "TBD"}},
 
@@ -189,5 +193,8 @@
 {"pk": 191,"model": "eco.Vocab","fields": {"category": 12, "value": "Acadian Plains and Hills"}},
 {"pk": 192,"model": "eco.Vocab","fields": {"category": 12, "value": "Eastern Great Lakes Lowlands"}},
 {"pk": 193,"model": "eco.Vocab","fields": {"category": 12, "value": "Atlantic Coastal Pine Barrens"}},
-{"pk": 194,"model": "eco.Vocab","fields": {"category": 12, "value": "Southern California/Northern Baja Coast"}}
+{"pk": 194,"model": "eco.Vocab","fields": {"category": 12, "value": "Southern California/Northern Baja Coast"}},
+{"pk": 195,"model": "eco.Vocab","fields": {"category": 12, "value": "Not applicable"}},
+{"pk": 196,"model": "eco.Vocab","fields": {"category": 12, "value": "Not reported"}}
+
 ]
