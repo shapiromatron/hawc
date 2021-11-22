@@ -3,6 +3,8 @@ from textwrap import dedent
 
 from django import forms
 from django.conf import settings
+from django.contrib import admin
+from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
@@ -105,6 +107,26 @@ class AssessmentForm(forms.ModelForm):
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
+
+
+class AssessmentAdminForm(forms.ModelForm):
+    class Meta:
+        fields = "__all__"
+        model = models.Assessment
+        widgets = {
+            "dtxsids": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("dtxsids"), admin.site
+            ),
+            "project_manager": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("project_manager"), admin.site
+            ),
+            "team_members": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("team_members"), admin.site
+            ),
+            "reviewers": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("reviewers"), admin.site
+            ),
+        }
 
 
 class AssessmentModulesForm(forms.ModelForm):

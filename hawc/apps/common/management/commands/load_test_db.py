@@ -37,6 +37,7 @@ class Command(BaseCommand):
 
                 self.stdout.write(self.style.HTTP_INFO("Loading database views..."))
                 call_command("create_views", verbosity=1)
-                message = "Migrations complete; fixture loaded"
+
+                message = "Migrations complete; fixture (re)applied"
 
             self.stdout.write(self.style.SUCCESS(message))
