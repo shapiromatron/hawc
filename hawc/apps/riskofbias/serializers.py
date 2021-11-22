@@ -104,7 +104,7 @@ class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
 
 
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
-    overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
+    overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True, read_only=True)
     score_description = serializers.CharField(source="get_score_display", read_only=True)
 
     class Meta:
@@ -146,22 +146,21 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
         return score
 
 
+class FinalRiskOfBiasSerializer(serializers.ModelSerializer):
+    scores = RiskOfBiasScoreSerializer(many=True)
+
+    class Meta:
+        model = models.RiskOfBias
+        fields = ("id", "active", "final", "study", "created", "last_updated", "scores")
+
+
 class RiskOfBiasSerializer(serializers.ModelSerializer):
     scores = RiskOfBiasScoreSerializer(many=True)
     author = HAWCUserSerializer(read_only=True)
 
     class Meta:
         model = models.RiskOfBias
-        fields = (
-            "id",
-            "author",
-            "active",
-            "final",
-            "study",
-            "created",
-            "last_updated",
-            "scores",
-        )
+        fields = ("id", "author", "active", "final", "study", "created", "last_updated", "scores")
         read_only_fields = ("id", "study")
 
     def validate(self, data):

@@ -185,6 +185,12 @@
       </tr>
       {% endif %}
 
+      {% if obj_perms.edit %}
+      <tr>
+        <th>Internal communications</th>
+        <td>{{ internal_communications }}</td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 

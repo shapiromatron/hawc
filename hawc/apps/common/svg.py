@@ -1,4 +1,5 @@
 import base64
+import binascii
 import logging
 import os
 import re
@@ -69,20 +70,34 @@ Styles = HawcStyles()
 
 
 class SVGConverter:
-    def __init__(self, svg, url, width, height):
+    def __init__(self, svg, url: str, width: int, height: int):
         self.url = url
         self.width = width
         self.height = height
         self.tempfns = []
-
-        svg = (
-            base64.b64decode(svg)
-            .decode("utf8")
-            .replace("%u", "\\u")
-            .encode()
-            .decode("unicode-escape")
-        )
+        svg = self.decode_svg(svg)
         self.svg = parse.unquote(svg, encoding="ISO-8859-1")
+
+    @classmethod
+    def decode_svg(cls, svg) -> str:
+        """Decode base64 encoded svg data
+
+        Args:
+            svg: base64 encoded svg
+
+        Raises:
+            ValueError: If data cannot be decoded
+        """
+        try:
+            return (
+                base64.b64decode(svg)
+                .decode("utf8")
+                .replace("%u", "\\u")
+                .encode()
+                .decode("unicode-escape")
+            )
+        except (binascii.Error, ValueError, UnicodeDecodeError):
+            raise ValueError("Invalid base64 encoded SVG")
 
     def to_svg(self):
         svg = self.svg

@@ -64,7 +64,7 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
     NO_PARENT = -1
 
     def get_parent(self, assessment_id, validated_data, canSelectRoot):
-        parent_id = validated_data.pop("parent")
+        parent_id = validated_data.pop("parent", self.NO_PARENT)
 
         parent = None
         if parent_id == self.NO_PARENT and canSelectRoot:

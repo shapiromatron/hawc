@@ -99,6 +99,7 @@ class StudyRead(BaseDetail):
             "attachments_viewable": attachments_viewable,
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
+        context["internal_communication"] = self.object.get_communications()
         return context
 
 

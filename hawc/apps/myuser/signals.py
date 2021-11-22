@@ -10,4 +10,5 @@ logger = logging.getLogger(__name__)
 
 @receiver(user_logged_out)
 def invalidate_tokens(sender, request, user: HAWCUser, **kw):
-    user.destroy_api_token()
+    if user and user.is_authenticated:
+        user.destroy_api_token()
