@@ -20,7 +20,7 @@ class RobFormStore extends StudyRobStore {
         return this.study !== null && this.overrideOptions !== null;
     }
     @computed get activeRiskOfBias() {
-        return _.find(this.study.riskofbiases, {id: this.config.riskofbias.id});
+        return _.find(this.activeRobs, {id: this.config.riskofbias.id});
     }
     @computed get numIncompleteScores() {
         return this.editableScores.filter(score => {
@@ -89,6 +89,7 @@ class RobFormStore extends StudyRobStore {
             fetch(override_options_url, h.fetchGet).then(response => response.json()),
             this.fetchStudy(this.config.study.id),
             this.fetchSettings(this.config.assessment_id),
+            this.fetchRobStudy(this.config.study.id),
         ])
             .then(data => {
                 // only set options which have data
@@ -101,7 +102,7 @@ class RobFormStore extends StudyRobStore {
                 this.overrideOptions = overrideOptions;
 
                 const editableRiskOfBiasId = this.config.riskofbias.id,
-                    editableScores = _.chain(this.study.riskofbiases)
+                    editableScores = _.chain(this.activeRobs)
                         .filter(rob => rob.id === editableRiskOfBiasId)
                         .map(riskofbias =>
                             riskofbias.scores.map(score =>
@@ -110,7 +111,7 @@ class RobFormStore extends StudyRobStore {
                         )
                         .flatten()
                         .value(),
-                    nonEditableScores = _.chain(this.study.riskofbiases)
+                    nonEditableScores = _.chain(this.activeRobs)
                         .filter(rob => rob.id !== editableRiskOfBiasId)
                         .filter(rob => rob.active & !rob.final)
                         .map(riskofbias =>

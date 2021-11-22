@@ -64,9 +64,11 @@ class SearchForm(forms.ModelForm):
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice
         self.fields["description"].widget.attrs["rows"] = 3
+        self.fields["description"].widget.attrs["class"] = "html5text"
         if "search_string" in self.fields:
             self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
+            self.fields["search_string"].widget.attrs["class"] = "html5text"
 
     @property
     def helper(self):
@@ -101,6 +103,7 @@ class ImportForm(SearchForm):
                 "search_string"
             ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
             self.fields["search_string"].label = "ID List"
+            self.fields["search_string"].widget.attrs.pop("class")
         else:
             self.fields.pop("search_string")
 

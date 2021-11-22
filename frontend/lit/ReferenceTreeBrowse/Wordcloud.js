@@ -101,10 +101,7 @@ const padding = 0,
             .append(svg.node())
             .append(toolbarNode);
 
-        ReactDOM.render(
-            <VisualToolbar svg={svg.node()} parentContainer={el} />,
-            toolbarNode.get(0)
-        );
+        ReactDOM.render(<VisualToolbar svg={svg.node()} />, toolbarNode.get(0));
     };
 
 @observer

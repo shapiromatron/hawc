@@ -134,12 +134,22 @@ def test_riskofbias_detail(db_keys):
     client = APIClient()
     assert client.login(username="team@hawcproject.org", password="pw") is True
 
+    # study detail
     url = reverse("study:api:study-detail", kwargs={"pk": db_keys.study_working})
     response = client.get(url)
     assert response.status_code == 200
-
     rob = response.json()["riskofbiases"]
+    assert len(rob) == 1
+    assert "author" not in rob[0]
+
+    # study detail; all rob
+    url = reverse("study:api:study-rob", args=(db_keys.study_working,))
+    response = client.get(url)
+    assert response.status_code == 200
+
+    rob = response.json()
     assert len(rob) == 3
+    assert "author" in rob[0]
     assert rob[2]["scores"][1]["is_default"] is True
     assert rob[2]["scores"][2]["is_default"] is False
     assert rob[2]["scores"][2]["overridden_objects"] == [
