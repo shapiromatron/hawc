@@ -72,7 +72,7 @@ if settings.INCLUDE_ADMIN:
     admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
     urlpatterns += [
         path(
-            "api/openapi/",
+            f"{admin_url}/api/openapi/",
             get_schema_view(
                 title="HAWC",
                 version=__version__,
@@ -81,7 +81,7 @@ if settings.INCLUDE_ADMIN:
             ),
             name="openapi",
         ),
-        path("api/swagger/", views.Swagger.as_view(), name="swagger"),
+        path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
         path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
         path(
             f"{admin_url}/assessment-size/",
