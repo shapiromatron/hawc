@@ -173,8 +173,6 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.model.objects.all()
 
-    # we use create/perform_create, etc. from the CreateModelMixin that ModelViewSet inherits...
-    # just override them to add in the logging snippets.
     def perform_create(self, serializer):
         super().perform_create(serializer)
         create_object_log(

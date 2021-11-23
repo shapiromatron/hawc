@@ -14,7 +14,7 @@ from hawc.apps.study.models import Study
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
-def check_details_of_last_log_entry(obj_id, start_of_msg):
+def check_details_of_last_log_entry(obj_id: int, start_of_msg: str):
     log_entry = Log.objects.latest("id")
     assert log_entry.object_id == int(obj_id) and log_entry.message.startswith(start_of_msg)
 

@@ -13,7 +13,7 @@ from hawc.apps.epi import models
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
-def check_details_of_last_log_entry(obj_id, start_of_msg):
+def check_details_of_last_log_entry(obj_id: int, start_of_msg: str):
     """
     retrieve the latest log entry and check that the object_id/message look right.
     """
