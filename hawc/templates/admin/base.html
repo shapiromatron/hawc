@@ -11,7 +11,6 @@
     {% if site_url %}
         <a href="{{ site_url }}">{% trans 'View site' %}</a> /
     {% endif %}
-    <a href="{% url 'swagger' %}">{% translate 'Swagger UI' %}</a> /
     {% if user.is_active and user.is_staff %}
         {% url 'django-admindocs-docroot' as docsroot %}
         {% if docsroot %}
