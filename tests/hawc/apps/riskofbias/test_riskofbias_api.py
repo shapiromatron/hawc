@@ -6,11 +6,17 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from hawc.apps.assessment.models import Log
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
 from hawc.apps.study.models import Study
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
+
+
+def check_details_of_last_log_entry(obj_id: int, start_of_msg: str):
+    log_entry = Log.objects.latest("id")
+    assert log_entry.object_id == int(obj_id) and log_entry.message.startswith(start_of_msg)
 
 
 @pytest.mark.django_db
@@ -352,6 +358,7 @@ def test_riskofbias_create():
     assert resp.status_code == 201
     assert "created" in resp.data
     assert "scores" in resp.data and len(resp.data["scores"]) == 2
+    check_details_of_last_log_entry(resp.data["id"], "Created")
 
     # no scores submitted for a metric
     RiskOfBias.objects.all().delete()
@@ -406,6 +413,7 @@ def test_riskofbias_create():
     assert resp.status_code == 201
     assert "created" in resp.data
     assert "scores" in resp.data and len(resp.data["scores"]) == 2
+    check_details_of_last_log_entry(resp.data["id"], "Created")
 
 
 @pytest.mark.django_db
