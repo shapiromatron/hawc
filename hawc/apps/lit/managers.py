@@ -103,11 +103,9 @@ class IdentifiersManager(BaseManager):
             doi = constants.DOI_EXTRACT.search(str(ref["doi"]))
             if doi:
                 doi = doi.group(0)
-                if (doi.endswith(".")):
+                if doi.endswith("."):
                     doi = doi[:-1]
-                ident, _ = self.get_or_create(
-                    database=constants.DOI, unique_id=doi, content="",
-                )
+                ident, _ = self.get_or_create(database=constants.DOI, unique_id=doi, content="",)
                 ids.append(ident)
 
             # create PMID identifier
@@ -320,7 +318,7 @@ class ReferenceManager(BaseManager):
             doi = constants.DOI_EXTRACT.search(str(doi))
             if doi:
                 doi = doi.group(0)
-                if (doi.endswith(".")):
+                if doi.endswith("."):
                     doi = doi[:-1]
                 doi_id = Identifiers.objects.get_or_create(unique_id=doi, database=constants.DOI)
                 ref.identifiers.add(doi_id[0])
@@ -384,7 +382,7 @@ class ReferenceManager(BaseManager):
             doi = constants.DOI_EXTRACT.search(str(doi))
             if doi:
                 doi = doi.group(0)
-                if (doi.endswith(".")):
+                if doi.endswith("."):
                     doi = doi[:-1]
                 doiIdentifier = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI
