@@ -40,61 +40,65 @@ class Command(BaseCommand):
 
 def validate_dois(doi_identifiers):
     print(f"Validating {doi_identifiers.count()} doi IDs...")
-    clean_count = 0
-    doi_id_saved = []
+    doi_id_saved = {}
+    doi_id_updated = []
     for doi_id in doi_identifiers:
         if constants.DOI_EXACT.fullmatch(doi_id.unique_id):
-            doi_id_saved.append(doi_id.unique_id)
+            doi_id_saved[doi_id.unique_id] = doi_id
+            # doi_id_saved.append(doi_id.unique_id)
 
     duplicate_doi_ids = {}  # stores unclean DOIs that have a clean duplicate for updating later
     tarnished_doi_ids = []  # tarnished DOI IDs cannot be cleaned/validated (ex: '10')
     for doi_id in doi_identifiers:
-        new_doi = html.unescape(
-            doi_id.unique_id
-        )  # converts html character references to actual Unicode characters (ex: &gt; to >)
-        if (
-            constants.DOI_EXACT.fullmatch(new_doi) and new_doi not in doi_id_saved
-        ):  # html conversion made a difference; update
-            doi_id.unique_id = new_doi
-            doi_id.save()
-            doi_id_saved.append(new_doi)
-            clean_count = clean_count + 1
-        elif (
-            constants.DOI_EXACT.fullmatch(new_doi) and new_doi != doi_id.unique_id
-        ):  # html conversion made a difference but theres an existing duplicate
-            duplicate_doi_ids[new_doi] = doi_id
-        elif not constants.DOI_EXACT.fullmatch(
-            new_doi
-        ):  # doi needs to be further cleaned/validated
+        # converts html character references to actual Unicode characters (ex: &gt; to >)
+        new_doi = html.unescape(doi_id.unique_id)
+        if constants.DOI_EXACT.fullmatch(new_doi):
+            if new_doi not in doi_id_saved.keys():
+                # html conversion made a difference; update
+                doi_id.unique_id = new_doi
+                doi_id_updated.append(doi_id)
+                doi_id_saved[new_doi] = doi_id
+            elif new_doi != doi_id.unique_id:
+                # html conversion made a difference but theres an existing duplicate
+                other_dupes = duplicate_doi_ids.get(new_doi, [])
+                other_dupes.append(doi_id)
+                duplicate_doi_ids[new_doi] = other_dupes
+
+        else:
+            # doi needs to be further cleaned/validated
             new_doi = constants.DOI_EXTRACT.search(new_doi)
             if new_doi:
                 new_doi = new_doi.group(0)
             if new_doi and new_doi.endswith("."):  # remove period at end of doi if it exists
-                new_doi = new_doi[: len(new_doi) - 1]
-            if new_doi is None or not constants.DOI_EXACT.fullmatch(
-                new_doi
-            ):  # extraction failed; doi is tarnished
+                new_doi = new_doi[:-1]
+            if new_doi is None or not constants.DOI_EXACT.fullmatch(new_doi):
+                # extraction failed; doi is tarnished
                 tarnished_doi_ids.append(doi_id)
             else:
-                if new_doi in doi_id_saved:
-                    duplicate_doi_ids[
-                        new_doi
-                    ] = doi_id  # new doi exists already; save to duplicates for updating
+                if new_doi in doi_id_saved.keys():
+                    other_dupes = duplicate_doi_ids.get(new_doi, [])
+                    other_dupes.append(doi_id)
+                    duplicate_doi_ids[new_doi] = other_dupes
+                    # new doi exists already; save to duplicates for updating
                 else:
                     doi_id.unique_id = new_doi  # update doi ID with validated doi
-                    doi_id.save()
-                    doi_id_saved.append(doi_id.unique_id)
-                    clean_count = clean_count + 1
-    print(f"\tCleaned and updated {clean_count} existing doi IDs")
+                    doi_id_updated.append(doi_id)
+                    doi_id_saved[doi_id.unique_id] = doi_id
+    Identifiers.objects.bulk_update(doi_id_updated, ["unique_id"])
+    print(f"\tCleaned and updated {len(doi_id_updated)} existing doi IDs")
 
     # pull references with incorrect DOI id and replace that ID with the correct duplicate doi ID
     print(f"Merging {len(duplicate_doi_ids)} duplicate doi ID(s)")
-    for dupe, old_doi in duplicate_doi_ids.items():
-        print(f"\t Merging doi:'{old_doi.unique_id}' into doi:'{dupe}'")
-        for reference in Reference.objects.filter(identifiers__id=old_doi.id):
-            reference.identifiers.remove(old_doi)
-            reference.identifiers.add(Identifiers.objects.filter(unique_id=dupe)[0])
-        old_doi.delete()
+    for dupe, old_dois in duplicate_doi_ids.items():
+        import pdb
+
+        pdb.set_trace()
+        for old_doi in old_dois:
+            print(f"\t Merging doi:'{old_doi.unique_id}' into doi:'{dupe}'")
+            for reference in Reference.objects.filter(identifiers__id=old_doi.id):
+                reference.identifiers.remove(old_doi)
+                reference.identifiers.add(doi_id_saved[dupe])
+            old_doi.delete()
 
     # delete doi IDs that cannot be cleaned
     print(f"Deleting {len(tarnished_doi_ids)} tarnished doi ID(s)")
@@ -143,11 +147,11 @@ def create_dois_extensive(refs):
             if doi:
                 doi = doi.group(0)
                 if doi.endswith(","):
-                    doi = doi[: len(doi) - 1]
+                    doi = doi[:-1]
                 if doi.endswith('"'):
-                    doi = doi[: len(doi) - 1]
+                    doi = doi[:-1]
                 if doi.endswith("."):
-                    doi = doi[: len(doi) - 1]
+                    doi = doi[:-1]
                 doi_identifier = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI
                 )
