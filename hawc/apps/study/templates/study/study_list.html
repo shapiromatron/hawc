@@ -1,5 +1,8 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load add_class %}
+{% load crispy_forms_tags %}
+
 {% block content %}
 
   <h2 class="d-inline-block">Available studies</h2>
@@ -22,16 +25,61 @@
     </div>
   {% endif %}
 
-  <div id="studyTbl"></div>
-
+    {% crispy form %}
+    <table class="table table-sm table-striped">
+      <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 50%;">
+        <col style="width: 6.25%;">
+        <col style="width: 6.25%;">
+        <col style="width: 6.25%;">
+        <col style="width: 6.25%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Short citation</th>
+          <th>Full citation</th>
+          <th>Bioassay</th>
+          <th>Epidemiology</th>
+          <th>Epidemiology meta-analysis</th>
+          <th>In vitro</th>
+        </tr>
+        {% for study in study_list %}
+        <tr>
+          <td>{{study.short_citation}}</td>
+          <td>{{study.full_citation}}</td>
+          <td>
+            {% if study.bioassay %}
+            <i class="fa fa-check"></i>
+            {% else %}
+            <i class="fa fa-minus"></i>
+            {% endif %}
+          </td>
+          <td>
+            {% if study.epi %}
+            <i class="fa fa-check"></i>
+            {% else %}
+            <i class="fa fa-minus"></i>
+            {% endif %}
+          </td>
+          <td>
+            {% if study.epi_meta %}
+            <i class="fa fa-check"></i>
+            {% else %}
+            <i class="fa fa-minus"></i>
+            {% endif %}
+          </td>
+          <td>
+            {% if study.in_vitro %}
+            <i class="fa fa-check"></i>
+            {% else %}
+            <i class="fa fa-minus"></i>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 {% endblock %}
 
 
-{% block extrajs %}
-<script type="text/javascript">
-const id = {{assessment.id}};
-window.app.startup("studyStartup", function(app){
-  app.StudyCollection.render(id, $('#studyTbl'));
-})
-</script>
-{% endblock extrajs %}

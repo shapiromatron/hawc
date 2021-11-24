@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -25,12 +26,46 @@ from . import forms, models
 class StudyList(BaseList):
     parent_model = Assessment
     model = models.Study
+    form_class = forms.StudyFilterForm
+    # template_name = 'study/study_list.html'
+
+    def get_query(self, perms):
+        query = Q(assessment=self.assessment)
+        # if not perms["edit"]:
+        #    query &= Q(animal_group__experiment__study__published=True)
+        return query
+
+    # def get(self, request, *args, **kwargs):
+    #    if len(self.request.GET) > 0:
+    #        self.form = self.form_class(self.request.GET, assessment=self.assessment)
+    #    else:
+    #        self.form = self.form_class(assessment=self.assessment)
+    #    return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment.id)
+        # TODO - revisit after upgrading to 2.1 to see if this can be handled outside of
+        # RawSQL query
+        perms = super().get_obj_perms()
+        self.form = self.form_class(self.request.GET)
+        query = self.get_query(perms)
+
+        if self.form.is_valid():
+            query &= self.form.get_query()
+
+        qs = self.model.objects.filter(query).distinct()
+
+        return qs.select_related("assessment",)
+        # .prefetch_related(
+        #   ""
+        # )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.form_class()
+        if self.request.GET:
+            context["form"] = self.form_class(self.request.GET)
+        context["study_list"] = self.get_queryset()
+        return context
 
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):

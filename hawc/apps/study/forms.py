@@ -1,9 +1,10 @@
 from django import forms
+from django.db.models import Q
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, form_actions_apply_filters
 from ..lit.models import Reference
 from . import models
 
@@ -208,3 +209,37 @@ class StudiesCopy(forms.Form):
         helper = BaseFormHelper(self, **inputs)
 
         return helper
+
+
+class StudyFilterForm(forms.Form):
+    name = forms.CharField(required=False)
+
+    data_choices = [
+        ("bioassay", "Bioassay"),
+        ("epi", "Epidemiology"),
+        ("epi_meta", "Epidemiology meta-analysis"),
+        ("in_vitro", "In vitro"),
+    ]
+    data_type = forms.ChoiceField(required=False, choices=data_choices, widget=forms.RadioSelect)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        return helper
+
+    def get_query(self):
+
+        name = self.cleaned_data.get("name")
+        data_type = self.cleaned_data.get("data_type")
+
+        query = Q()
+        if name:
+            query &= Q(short_citation__icontains=name)
+            query |= Q(full_citation__icontains=name)
+        if data_type:
+            query &= Q(**{data_type: True})
+        return query
