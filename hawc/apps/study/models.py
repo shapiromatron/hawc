@@ -114,9 +114,7 @@ class Study(Reference):
     summary = models.TextField(
         blank=True,
         verbose_name="Summary/extraction comments",
-        help_text="This field is often left blank, but used to add comments on data extraction, "
-        "e.g., reference to full study reports or indicating which outcomes/endpoints "
-        "in a study were not extracted.",
+        help_text="This field is often left blank, but used to add comments on data extraction or other general comments. This field is displayed if an assessment is made public.",
     )
     editable = models.BooleanField(
         default=True, help_text="Project-managers and team-members are allowed to edit this study.",

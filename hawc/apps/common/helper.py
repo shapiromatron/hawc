@@ -16,8 +16,8 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.http import QueryDict
-from django.utils import html
 from django.utils.encoding import force_str
+from django.utils.html import strip_tags
 from docx.document import Document
 from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter
@@ -77,20 +77,6 @@ def strip_entities(value):
     """Return the given HTML with all entities (&something;) stripped."""
     # Note: Originally in Django but removed in v1.10
     return re.sub(r"&(?:\w+|#\d+);", "", force_str(value))
-
-
-def strip_tags(value):
-    """Return the given HTML with all tags stripped."""
-    # Note: in typical case this loop executes _strip_once once. Loop condition
-    # is redundant, but helps to reduce number of executions of _strip_once.
-    # Note: Originally in Django but removed in v1.10
-    while "<" in value and ">" in value:
-        new_value = html._strip_once(value)
-        if new_value == value:
-            # _strip_once was not able to detect more tags
-            break
-        value = new_value
-    return value
 
 
 def listToUl(list_):
