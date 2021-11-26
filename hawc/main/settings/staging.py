@@ -38,6 +38,12 @@ elif email_backend == "MAILGUN":
         MAILGUN_API_KEY=os.environ["MAILGUN_ACCESS_KEY"],
         MAILGUN_SENDER_DOMAIN=os.environ["MAILGUN_SERVER_NAME"],
     )
+elif email_backend == "SENDGRID":
+    INSTALLED_APPS += ("anymail",)
+    EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
+    ANYMAIL = dict(
+        SENDGRID_API_KEY=os.environ["SENDGRID_API_KEY"],
+   )
 elif email_backend == "CONSOLE":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
