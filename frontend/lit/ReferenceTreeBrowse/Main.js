@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
-import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 import Loading from "shared/components/Loading";
 import TextInput from "shared/components/TextInput";
 import TagTree from "../components/TagTree";
 import YearHistogram from "./YearHistogram";
 import ReferenceTableMain from "./ReferenceTableMain";
+import TagActions from "lit/components/TagActions";
 
 const referenceListItem = ref => {
     return (
@@ -54,20 +54,18 @@ class ReferenceTreeMain extends Component {
     }
     render() {
         const {store} = this.props,
-            actions = store.getActionLinks,
             {selectedReferences, selectedReferencesLoading, filteredReferences, yearFilter} = store,
             yearText = yearFilter ? ` (${yearFilter.min}-${yearFilter.max})` : "";
 
         return (
             <div className="row">
                 <div className="col-md-12 pb-2">
-                    {actions.length > 0 ? (
-                        <ActionsButton
-                            items={actions.map((action, index) => (
-                                <ActionLink key={index} label={action[1]} href={action[0]} />
-                            ))}
-                        />
-                    ) : null}
+                    <TagActions
+                        assessmentId={store.config.assessment_id}
+                        tagId={store.selectedTag ? store.selectedTag.data.pk : undefined}
+                        untagged={store.untaggedReferencesSelected}
+                        canEdit={store.config.canEdit}
+                    />
                     {store.untaggedReferencesSelected === true ? (
                         <h4>Untagged references</h4>
                     ) : store.selectedTag === null ? (

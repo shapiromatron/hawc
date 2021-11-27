@@ -152,7 +152,7 @@ class TagTreeViz extends D3Plot {
             },
             fetch_references = function(tag) {
                 var title = `<h4>${tag.data.name}</h4>`,
-                    div = $('<div id="references_div"></div');
+                    div = $("<div>");
 
                 self.modal
                     .addHeader(title)
