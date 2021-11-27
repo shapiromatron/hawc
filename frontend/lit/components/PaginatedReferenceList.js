@@ -56,11 +56,10 @@ class PaginatedReferenceList extends Component {
     }
     render() {
         const {hasPage, formattedReferences, currentPage, fetchPage} = this.store,
-            {settings} = this.props;
+            {settings, canEdit} = this.props;
         if (!hasPage) {
             return <Loading />;
         }
-
         return (
             <>
                 <div>
@@ -68,7 +67,7 @@ class PaginatedReferenceList extends Component {
                     <TagActions
                         assessmentId={settings.assessment_id}
                         tagId={settings.tag_id}
-                        canEdit={true} // FIX THIS
+                        canEdit={canEdit}
                     />
                 </div>
                 {formattedReferences ? (
@@ -87,6 +86,10 @@ PaginatedReferenceList.propTypes = {
         search_id: PropTypes.number,
         tag: PropTypes.object.isRequired,
     }),
+    canEdit: PropTypes.bool,
+};
+PaginatedReferenceList.defaultProps = {
+    canEdit: false,
 };
 
 export default PaginatedReferenceList;
