@@ -24,11 +24,12 @@ class RoBLegend {
     }
 
     get_data() {
-        const {show_na_legend, show_nr_legend} = this.settings,
+        const {included_metrics, show_na_legend, show_nr_legend} = this.settings,
             {collapseNR} = this.options,
             includedItems = new Set(_.keys(SCORE_TEXT_DESCRIPTION_LEGEND).map(d => parseInt(d)));
 
         let response_values = _.chain(this.rob_settings.metrics)
+            .filter(d => _.includes(included_metrics, d.id))
             .map(d => d.response_values)
             .flatten()
             .uniq()
