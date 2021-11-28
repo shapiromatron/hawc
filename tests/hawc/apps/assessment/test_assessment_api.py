@@ -286,9 +286,15 @@ class TestLogViewset:
         assert resp.status_code == 200
 
         # the response should be a list of all logs for this assessment
-        assert len(resp.json()) == 1
-        expected = {"message": "Assessment log", "assessment": db_keys.assessment_working}
-        assert expected.items() <= resp.json()[0].items()
+        assert len(resp.json()) == 3
+
+        data = {(log["message"], log["assessment"]) for log in resp.json()}
+        expected = {
+            ("Global assessment log", 1),
+            ("Updated assessment object", 1),
+            ("Deleted object log", 1),
+        }
+        assert data == expected
 
 
 @pytest.mark.django_db
@@ -318,7 +324,7 @@ class TestHealthcheckViewset:
 
         # no data; should be an error
         resp = client.get(url)
-        assert resp.status_code == 503
+        assert resp.status_code == 400
         assert resp.json()["healthy"] is False
 
         # has recent data; should be healthy

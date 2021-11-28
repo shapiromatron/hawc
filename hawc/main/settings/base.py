@@ -8,6 +8,7 @@ from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
+from hawc.constants import AuthProvider
 from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
@@ -116,9 +117,11 @@ INSTALLED_APPS = (
     "hawc.apps.bmd",
     "hawc.apps.summary",
     "hawc.apps.mgmt",
-    "hawc.apps.eco",
     "hawc.apps.materialized",
 )
+
+if os.getenv("HAWC_INCLUDE_ECO", "False") == "True":
+    INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
 
 
 # DB settings
@@ -173,15 +176,18 @@ EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
+AUTH_PROVIDERS = {AuthProvider(p) for p in os.getenv("HAWC_AUTH_PROVIDERS", "django").split("|")}
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
+SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
+INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
 
 # Server URL settings
 ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
-LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
+LOGOUT_REDIRECT_URL = os.getenv("HAWC_LOGOUT_REDIRECT", reverse_lazy("home"))
 
 # Static files
 STATIC_URL = "/static/"
@@ -325,6 +331,9 @@ ANYONE_CAN_CREATE_ASSESSMENTS = True
 # can project-managers for an assessment make that assessments public, or only administrators?
 PM_CAN_MAKE_PUBLIC = True
 
+# are users required to accept a license
+ACCEPT_LICENSE_REQUIRED = True
+
 # add extra branding (EPA flavor only)
 EXTRA_BRANDING = True
 
@@ -333,3 +342,5 @@ MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
 IS_TESTING = False
 
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
+
+DISCLAIMER_TEXT = ""

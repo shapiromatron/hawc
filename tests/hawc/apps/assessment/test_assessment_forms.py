@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from hawc.apps.assessment.forms import DatasetForm
+from hawc.apps.assessment.forms import DatasetForm, LogFilterForm
 from hawc.apps.assessment.models import Assessment, Dataset, DatasetRevision
 
 IRIS_DATA_CSV = (
@@ -154,3 +154,16 @@ class TestDatasetForm:
                 "Unable to read the submitted dataset file. Please validate that the uploaded file can be read.",
             ]
         }
+
+
+@pytest.mark.django_db
+class TestLogFilterForm:
+    def test_setup(self):
+        assess = Assessment.objects.get(id=1)
+        form = LogFilterForm(data={}, assessment=assess)
+        assert form.is_valid()
+        assert len(form.filters()) == 0
+
+        form = LogFilterForm(data=dict(object_id=999), assessment=assess)
+        assert form.is_valid()
+        assert len(form.filters()) == 1

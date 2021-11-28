@@ -11,7 +11,7 @@ class OutputFigure extends React.Component {
 
     componentDidMount() {
         let {endpoint} = this.props;
-        this.plt = endpoint.renderPlot($(this.epFigure.current), false).plot;
+        this.plt = endpoint.renderPlot($(this.epFigure.current), {showBmd: false}).plot;
         this.renderSelectedLine(this.props.selectedModel);
     }
 
@@ -66,13 +66,7 @@ class OutputFigure extends React.Component {
     }
 
     render() {
-        return (
-            <div
-                className="col-md-4"
-                style={{height: "300px", width: "300px"}}
-                ref={this.epFigure}
-            />
-        );
+        return <div ref={this.epFigure} />;
     }
 }
 

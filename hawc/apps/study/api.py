@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -11,6 +12,7 @@ from ..assessment.api import (
 )
 from ..common.api import CleanupFieldsBaseViewSet
 from ..common.helper import re_digits
+from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models, serializers
 
 
@@ -38,10 +40,8 @@ class Study(
             return self.model.objects.get_qs(self.assessment)
         else:
             return self.model.objects.prefetch_related(
-                "identifiers",
-                "riskofbiases__author",
-                "riskofbiases__scores__overridden_objects__content_object",
-            ).select_related("assessment__rob_settings", "assessment")
+                "identifiers", "riskofbiases__scores__overridden_objects__content_object",
+            ).select_related("assessment")
 
     @action(detail=False)
     def rob_scores(self, request):
@@ -57,6 +57,14 @@ class Study(
     def create(self, request):
         # permissions check not here; see serializer validation
         return super().create(request)
+
+    @action(detail=True, url_path="all-rob")
+    def rob(self, request, pk: int):
+        study = self.get_object()
+        if not self.assessment.user_is_team_member_or_higher(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        serializer = RiskOfBiasSerializer(study.get_active_robs(), many=True)
+        return Response(serializer.data)
 
 
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):

@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import EndpointCriticalDose from "./EndpointCriticalDose";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -5,95 +7,56 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 
-const WrongUnitsRender = function(props) {
-        return (
-            <p>
-                N/A
-                <br />
-                <span className="form-text text-muted">(BMD conducted using different units)</span>
-            </p>
-        );
-    },
-    ModelDetails = function(props) {
-        const {output} = props.bmd;
-        return [
-            <p key={0}>
-                <b>Selected model:</b> {output.model_name}
-                &nbsp;(<a href={props.bmd.url}>View details</a>)
-            </p>,
-            <ul key={1}>
-                <li>
-                    <b>BMDL:</b> {h.ff(output.BMDL)} {props.units}
-                </li>
-                <li>
-                    <b>BMD:</b> {h.ff(output.BMD)} {props.units}
-                </li>
-                <li>
-                    <b>BMDU:</b> {h.ff(output.BMDU)} {props.units}
-                </li>
-            </ul>,
-        ];
-    },
-    Renderer = function(props) {
-        return (
-            <div>
-                {ModelDetails(props)}
-                <p>{props.bmd_notes}</p>
-            </div>
-        );
-    },
-    NoneSelected = function(props) {
+class BmdResultComponent extends React.Component {
+    render() {
+        const {endpoint} = this.props,
+            dose_units_id = endpoint.doseUnits.activeUnit.id,
+            units = endpoint.doseUnits.activeUnit.name,
+            selected = _.find(endpoint.data.bmds, d => d.dose_units_id === dose_units_id),
+            hasSelectedModel = selected && selected.model !== null,
+            output = hasSelectedModel ? selected.model.output : null,
+            modelName = output ? output.model_name : <i>no model selected</i>;
+
+        if (!selected) {
+            return <p>Modeling not conducted, or results not available with these dose-units.</p>;
+        }
+
         return (
             <div>
                 <p>
-                    <i>BMD modeling conducted; no model selected</i> (
-                    <a href={props.url}>View details</a>).
+                    <b>Selected model:</b>&nbsp;{modelName}
+                    &nbsp;(<a href={selected.session_url}>View details</a>)
                 </p>
-                {props.bmd_notes ? (
+                {hasSelectedModel ? (
+                    <ul>
+                        <li>
+                            <b>BMDL:</b>&nbsp;{h.ff(output.BMDL)}&nbsp;{units}
+                        </li>
+                        <li>
+                            <b>BMD:</b>&nbsp;{h.ff(output.BMD)}&nbsp;{units}
+                        </li>
+                        <li>
+                            <b>BMDU:</b>&nbsp;{h.ff(output.BMDU)}&nbsp;{units}
+                        </li>
+                    </ul>
+                ) : null}
+                {selected.notes ? (
                     <p>
-                        <b>Modeling notes: </b>
-                        {props.bmd_notes}
+                        <b>Modeling notes:</b>&nbsp;{selected.notes}
                     </p>
                 ) : null}
             </div>
         );
-    };
+    }
+}
+BmdResultComponent.propTypes = {
+    endpoint: PropTypes.object.isRequired,
+};
 
 class BMDResult extends EndpointCriticalDose {
     update() {
-        let bmd = this.endpoint.data.bmd,
-            bmd_notes = this.endpoint.data.bmd_notes,
-            url = this.endpoint.data.bmd_url;
-
-        if (bmd === null) {
-            // eslint-disable-next-line react/no-render-return-value
-            return ReactDOM.render(<NoneSelected bmd_notes={bmd_notes} url={url} />, this.span[0]);
-        }
-
-        let currentUnits = this.endpoint.dose_units_id,
-            bmdUnits = this.endpoint.data.bmd.dose_units,
-            units_string = this.endpoint.dose_units;
-
-        let RenderComponent = currentUnits == bmdUnits ? Renderer : WrongUnitsRender;
-
-        ReactDOM.render(
-            <RenderComponent bmd={bmd} bmd_notes={bmd_notes} units={units_string} />,
-            this.span[0]
-        );
+        ReactDOM.render(<BmdResultComponent endpoint={this.endpoint} />, this.span[0]);
     }
 }
-
-Renderer.propTypes = {
-    bmd: PropTypes.shape({
-        output: PropTypes.object,
-        url: PropTypes.string,
-    }),
-    bmd_notes: PropTypes.string,
-    units: PropTypes.string,
-};
-NoneSelected.propTypes = {
-    bmd_notes: PropTypes.string,
-    url: PropTypes.string,
-};
 
 export default BMDResult;

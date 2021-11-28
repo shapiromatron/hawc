@@ -18,6 +18,7 @@ from rest_framework.exceptions import ParseError
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
+from ..common.serializers import validate_jsonschema
 from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
@@ -104,9 +105,26 @@ class ReferenceQuerySerializer(serializers.Serializer):
     authors = serializers.CharField(required=False, allow_blank=True)
     journal = serializers.CharField(required=False, allow_blank=True)
     abstract = serializers.CharField(required=False, allow_blank=True)
+    tags = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=True,
+        required=False,
+        min_length=0,
+        max_length=10,
+    )
+
+    def validate_tags(self, values):
+        assessment = self.context["assessment"]
+        if len(values) > 0:
+            try:
+                self._tags = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, values)
+            except ValueError:
+                raise serializers.ValidationError("Invalid tag IDs")
+        return values
 
     def search(self):
-        query = Q(assessment=self.context["assessment"])
+        qs = models.Reference.objects.filter(assessment=self.context["assessment"])
+        query = Q()
         if "id" in self.data and self.data["id"] is not None:
             query &= Q(id=self.data["id"])
         if "db_id" in self.data and self.data["db_id"] is not None:
@@ -123,9 +141,14 @@ class ReferenceQuerySerializer(serializers.Serializer):
             query &= Q(journal__icontains=self.data["journal"])
         if "abstract" in self.data:
             query &= Q(abstract__icontains=self.data["abstract"])
-
+        if tags := getattr(self, "_tags", None):
+            # don't use a Q for tags; Q creates a subquery with join instead; this approach
+            # appends additional where clauses which are much more performant
+            for tag in tags:
+                tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                qs = qs.filter(tags__in=tag_ids)
         qs = (
-            models.Reference.objects.filter(query)
+            qs.filter(query)
             .select_related("study")
             .prefetch_related("searches", "identifiers")[:100]
         )
@@ -160,8 +183,52 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
         fields = cleanup_fields + ("id",)
 
 
+class ReferenceTreeSerializer(serializers.Serializer):
+    tree = serializers.JSONField()
+
+    tree_schema = {
+        "$id": "tree",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$defs": {
+            "tagNode": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["data"],
+                "properties": {
+                    "id": {"type": "integer"},
+                    "data": {
+                        "type": "object",
+                        "required": ["name"],
+                        "additionalProperties": False,
+                        "properties": {
+                            "name": {"type": "string", "minLength": 1, "maxLength": 128},
+                            "slug": {"type": "string", "pattern": r"^[-a-zA-Z0-9_]+$"},
+                        },
+                    },
+                    "children": {"type": "array", "items": {"$ref": "#/$defs/tagNode"}},
+                },
+            }
+        },
+        "type": "array",
+        "items": {"$ref": "#/$defs/tagNode"},
+    }
+
+    def validate_tree(self, value):
+        return validate_jsonschema(value, self.tree_schema)
+
+    def update(self):
+        assessment_id = self.context["assessment"].id
+        models.ReferenceFilterTag.replace_tree(assessment_id, self.validated_data["tree"])
+
+    def to_representation(self, instance):
+        assessment_id = self.context["assessment"].id
+        root = models.ReferenceFilterTag.get_assessment_root(assessment_id)
+        tree = root.dump_bulk(root, keep_ids=True)
+        return {"tree": tree[0].get("children", [])}
+
+
 class BulkReferenceTagSerializer(serializers.Serializer):
-    operation = serializers.ChoiceField(choices=["append", "replace"], required=True)
+    operation = serializers.ChoiceField(choices=["append", "replace", "remove"], required=True)
     csv = serializers.CharField(required=True)
     dry_run = serializers.BooleanField(default=False)
 
@@ -245,9 +312,18 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             )
 
         if operation == "replace":
-            tags_to_delete = models.ReferenceTags.objects.assessment_qs(assessment_id)
-            logger.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
-            tags_to_delete.delete()
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
+
+        if operation == "remove":
+            query = Q()
+            for row in self.df.itertuples(index=False):
+                query |= Q(tag_id=row.tag_id, content_object_id=row.reference_id)
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id).filter(query)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
+            return
 
         new_tags = [
             models.ReferenceTags(tag_id=row.tag_id, content_object_id=row.reference_id)
@@ -296,6 +372,9 @@ class ReferenceSerializer(serializers.ModelSerializer):
         # updates the reference tags
         if "tags" in validated_data:
             instance.tags.set(validated_data.pop("tags"))
+        # updates the searches
+        if "searches" in validated_data:
+            instance.searches.set(validated_data.pop("searches"))
         # updates the rest of the fields
         for attr, value in list(validated_data.items()):
             setattr(instance, attr, value)

@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView
+from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -588,3 +588,7 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
         return context
+
+
+class DatasetInteractivity(TemplateView):
+    template_name = "summary/dataset_interactivity.html"

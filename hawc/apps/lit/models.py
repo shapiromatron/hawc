@@ -636,12 +636,23 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
             return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     @classmethod
-    def get_tag_in_assessment(cls, assessment_pk, tag_id):
-        tag = cls.objects.get(id=tag_id)
-        same_assessment = tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
-        if not same_assessment:
-            raise ValueError(f"Tag {tag_id} not in  assessment {assessment_pk} tag tree")
-        return tag
+    def get_tags_in_assessment(cls, assessment_pk: int, tag_ids: list[int]):
+        """Returns a queryset of matching tags which are in the assessment
+
+        Args:
+            assessment_pk (int): assessment id
+            tag_ids (list[int]): list of tag ids expected to be in assessment
+
+        Raises:
+            ValueError: if any tags are missing or are not in the assessment
+        """
+        tags = cls.objects.filter(id__in=tag_ids)
+        assessment_root = ReferenceFilterTag.get_assessment_root(assessment_pk)
+        if len(set(tag_ids)) != tags.count():
+            raise ValueError("Tags not found")
+        if any(not tag.is_descendant_of(assessment_root) for tag in tags):
+            raise ValueError("Tags are not descendants of root")
+        return tags
 
     @classmethod
     def build_default(cls, assessment):
@@ -847,6 +858,12 @@ class Reference(models.Model):
         for ident in self.identifiers.all():
             if ident.database == constants.HERO:
                 return int(ident.unique_id)
+        return None
+
+    def get_doi_id(self):
+        for ident in self.identifiers.all():
+            if ident.database == constants.DOI:
+                return ident.unique_id
         return None
 
     def update_from_hero_content(self, content: Dict, save: bool = False):

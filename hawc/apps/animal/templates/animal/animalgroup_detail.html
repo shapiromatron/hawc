@@ -22,13 +22,10 @@
         </div>
       </div>
     {% endif %}
-    <h1 id="animal-group-header" class="d-inline-block">{{object}}</h1>
+    <h2 id="animal-group-header" class="d-inline-block">{{object}}</h2>
 
   {% if crud == "Read" %}
-  <div id="endpointsDivParent" class="hidden">
-    <h2>Available endpoints</h2>
-    <div id="endpointsDiv"></div>
-  </div>
+  <div id="animalGroupTableMain"></div>
   {% endif %}
 
 {% endblock %}
@@ -38,68 +35,17 @@
 
 {{ config|json_script:"config" }}
 <script type="text/javascript">
-
-  function sortByOrganAsc(a, b) { return a.data.organ.localeCompare(b.data.organ); }
-  function sortByOrganDesc(a, b) { return -1 * sortByOrganAsc(a, b); }
-  function sortByNameAsc(a, b) { return a.data.name.localeCompare(b.data.name); }
-  function sortByNameDesc(a, b) { return -1 * sortByNameAsc(a, b); }
-  function sortByObsTimeAsc(a, b) { return a.data.observation_time_text.localeCompare(b.data.observation_time_text); }
-  function sortByObsTimeDesc(a, b) { return -1 * sortByObsTimeAsc(a, b); }
-
-  window.app.startup("animalStartup", function(animal){
-      const data = window.app.getConfig();
-
-      animal.AnimalGroup.get_object(data.id, function(d){
-          $('h1#animal-group-header')
-            .after(
-                d.build_details_table(),
-                $("<h2>Dosing regime</h2>"),
-                d.build_dr_details_table()
-            );
-      });
-
-      var endpoints = data.endpoints.map(function(d){
-        return new animal.Endpoint(d)
-      });
-
-  var lastEndpointSort = "";
-  // calls the AnimalGroupTable render function, but wraps it inside some sorting and some DOM manipulation to build a simple sort UI
-  var renderTableAsSortable = function (sortField) {
-    var reverseSort = false;
-    if (lastEndpointSort == sortField) {
-      reverseSort = true;
-      lastEndpointSort = "-" + sortField;
-    } else {
-      lastEndpointSort = sortField;
-    }
-    if (sortField == "organ") {
-      endpoints.sort(reverseSort ? sortByOrganDesc : sortByOrganAsc);
-    } else if (sortField == "name") {
-      endpoints.sort(reverseSort ? sortByNameDesc : sortByNameAsc);
-    } else if (sortField == "obs-time") {
-      endpoints.sort(reverseSort ? sortByObsTimeDesc : sortByObsTimeAsc);
-    }
-    $("#endpointsDiv").empty();
-    animal.AnimalGroupTable.render($("#endpointsDiv"), endpoints);
-    // make the headers clickable...
-    $("#endpointsDiv thead tr th.sortable").each(function () {
-      var th = $(this);
-      var sortKey = th.attr("data-sortable-field");
-      if (sortKey !== undefined) {
-        th.css({
-          cursor: "pointer",
-          "text-decoration": "underline"
-        });
-        th.click(function () {
-          renderTableAsSortable(sortKey);
-        });
-      }
+window.app.startup("animalStartup", function(animal){
+    const data = window.app.getConfig();
+    animal.AnimalGroup.get_object(data.id, function(d){
+        $('h2#animal-group-header')
+          .after(
+              d.build_details_table(),
+              $("<h3>Dosing regime</h3>"),
+              d.build_dr_details_table()
+          );
     });
-    var clickedHeader = $("th.sortable[data-sortable-field='" + sortField + "']");
-    clickedHeader.html((reverseSort ? "&darr; " : "&uarr; ") + clickedHeader.html());
-  };
-  renderTableAsSortable("name");
-  $('#endpointsDivParent').fadeIn();
+    animal.startupAnimalGroupTable(document.getElementById("animalGroupTableMain"), data);
   });
-  </script>
+</script>
 {% endblock %}

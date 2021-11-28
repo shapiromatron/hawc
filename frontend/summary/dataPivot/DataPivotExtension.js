@@ -1,4 +1,6 @@
 import _ from "lodash";
+import React, {Component} from "react";
+import ReactDOM from "react-dom";
 
 import Reference from "lit/Reference";
 
@@ -52,14 +54,12 @@ class DataPivotExtension {
             headers;
 
         if (dp.data.length > 0) {
-            headers = new Set(dp.data[0]).keys();
+            headers = new Set(_.keys(dp.data[0]));
             _.each(DataPivotExtension.extByColumnKey(), function(vals, key) {
                 if (headers.has(key)) {
                     opts.push.apply(
                         opts,
-                        vals.map(function(d) {
-                            return build_opt(d._dpe_name, d._dpe_option_txt);
-                        })
+                        vals.map(d => build_opt(d._dpe_name, d._dpe_option_txt))
                     );
                 }
             });
@@ -110,7 +110,7 @@ _.extend(DataPivotExtension, {
             _dpe_name: "experiment",
             _dpe_key: "experiment id",
             _dpe_cls: Experiment,
-            _dpe_option_txt: "Show experiment",
+            _dpe_option_txt: "Show animal experiment",
             hasModal: true,
         },
         {
@@ -124,7 +124,7 @@ _.extend(DataPivotExtension, {
             _dpe_name: "endpoint",
             _dpe_key: "endpoint id",
             _dpe_cls: Endpoint,
-            _dpe_option_txt: "Show endpoint (basic)",
+            _dpe_option_txt: "Show animal endpoint (basic)",
             _dpe_options: {
                 complete: false,
             },
@@ -134,7 +134,7 @@ _.extend(DataPivotExtension, {
             _dpe_name: "endpoint_complete",
             _dpe_key: "endpoint id",
             _dpe_cls: Endpoint,
-            _dpe_option_txt: "Show endpoint (complete)",
+            _dpe_option_txt: "Show animal endpoint (complete)",
             _dpe_options: {
                 complete: true,
             },
@@ -144,80 +144,124 @@ _.extend(DataPivotExtension, {
             _dpe_name: "study_population",
             _dpe_key: "study population id",
             _dpe_cls: StudyPopulation,
-            _dpe_option_txt: "Show study population",
+            _dpe_option_txt: "Show epi study population",
             hasModal: true,
         },
         {
             _dpe_name: "comparison_set",
             _dpe_key: "comparison set id",
             _dpe_cls: ComparisonSet,
-            _dpe_option_txt: "Show comparison set",
+            _dpe_option_txt: "Show epi comparison set",
             hasModal: true,
         },
         {
             _dpe_name: "exposure",
             _dpe_key: "exposure id",
             _dpe_cls: Exposure,
-            _dpe_option_txt: "Show exposure",
+            _dpe_option_txt: "Show epi exposure",
             hasModal: true,
         },
         {
             _dpe_name: "outcome",
             _dpe_key: "outcome id",
             _dpe_cls: Outcome,
-            _dpe_option_txt: "Show outcome",
+            _dpe_option_txt: "Show epi outcome",
             hasModal: true,
         },
         {
             _dpe_name: "result",
             _dpe_key: "result id",
             _dpe_cls: Result,
-            _dpe_option_txt: "Show result",
+            _dpe_option_txt: "Show epi result",
             hasModal: true,
         },
         {
             _dpe_name: "meta_protocol",
             _dpe_key: "protocol id",
             _dpe_cls: MetaProtocol,
-            _dpe_option_txt: "Show protocol",
+            _dpe_option_txt: "Show epi meta protocol",
             hasModal: true,
         },
         {
             _dpe_name: "meta_result",
             _dpe_key: "meta result id",
             _dpe_cls: MetaResult,
-            _dpe_option_txt: "Show meta result",
+            _dpe_option_txt: "Show epi meta result",
             hasModal: true,
         },
         {
             _dpe_name: "iv_chemical",
             _dpe_key: "chemical id",
             _dpe_cls: IVChemical,
-            _dpe_option_txt: "Show chemical",
+            _dpe_option_txt: "Show invitro chemical",
             hasModal: true,
         },
         {
             _dpe_name: "iv_experiment",
             _dpe_key: "IVExperiment id",
             _dpe_cls: IVExperiment,
-            _dpe_option_txt: "Show experiment",
+            _dpe_option_txt: "Show invitro experiment",
             hasModal: true,
         },
         {
             _dpe_name: "iv_celltype",
             _dpe_key: "IVCellType id",
             _dpe_cls: IVCellType,
-            _dpe_option_txt: "Show cell type",
+            _dpe_option_txt: "Show invitro cell type",
             hasModal: true,
         },
         {
             _dpe_name: "iv_endpoint",
             _dpe_key: "IVEndpoint id",
             _dpe_cls: IVEndpoint,
-            _dpe_option_txt: "Show endpoint",
+            _dpe_option_txt: "Show invitro endpoint",
             hasModal: true,
         },
     ],
 });
 
+class ExtensionTable extends Component {
+    render() {
+        const columns = DataPivotExtension.extByColumnKey();
+        return (
+            <table className="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Input column header*</th>
+                        <th>Available action(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {_.map(columns, (arr, col) => (
+                        <tr key={col}>
+                            <td>{col}</td>
+                            <td>
+                                <ul className={arr.length == 1 ? "list-unstyled mb-0" : "mb-0"}>
+                                    {arr.map((d, i) => (
+                                        <li key={i}>{d._dpe_option_txt}</li>
+                                    ))}
+                                </ul>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colSpan={2}>
+                            * Column header names are case sensitive. User permissions are checked
+                            whenever a user attempts to access any resource in HAWC, so you must use
+                            the correct HAWC IDs to enable these interactive features.
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        );
+    }
+}
+
+function renderExtensionTable(el) {
+    ReactDOM.render(<ExtensionTable />, el);
+}
+
 export default DataPivotExtension;
+export {ExtensionTable, renderExtensionTable};

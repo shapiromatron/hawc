@@ -4,6 +4,7 @@ import math
 from itertools import chain
 from typing import Any, Dict
 
+import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
@@ -1408,12 +1409,6 @@ class Endpoint(BaseEndpoint):
         except ObjectDoesNotExist:
             return None
 
-    def get_selected_bmd_model(self):
-        try:
-            return self.bmd_model
-        except ObjectDoesNotExist:
-            return None
-
     def copy_across_assessments(self, cw):
         children = chain(
             list(self.groups.all().order_by("id")), list(self.bmd_sessions.all().order_by("id")),
@@ -1558,43 +1553,24 @@ class ConfidenceIntervalsMixin:
                 update = True
             elif data_type in ["D", "DC"] and eg["incidence"] is not None:
                 """
-                Procedure adds confidence intervals to dichotomous datasets.
-                Taken from bmds231_manual.pdf, pg 124-5
-
-                LL = {(2np + z2 - 1) - z*sqrt[z2 - (2+1/n) + 4p(nq+1)]}/[2*(n+z2)]
-                UL = {(2np + z2 + 1) + z*sqrt[z2 + (2-1/n) + 4p(nq-1)]}/[2*(n+z2)]
-
-                - p = the observed proportion
-                - n = the total number in the group in question
-                - z = Z(1-alpha/2) is the inverse standard normal cumulative
-                      distribution function evaluated at 1-alpha/2
-                - q = 1-p.
+                Add confidence intervals to dichotomous datasets.
+                https://www.epa.gov/sites/production/files/2020-09/documents/bmds_3.2_user_guide.pdf
 
                 The error bars shown in BMDS plots use alpha = 0.05 and so
                 represent the 95% confidence intervals on the observed
                 proportions (independent of model).
                 """
                 p = eg["incidence"] / float(n)
-                z = stats.norm.ppf(0.975)
+                z = stats.norm.ppf(1 - 0.05 / 2)
+                z2 = z * z
                 q = 1.0 - p
-
-                lower_ci = round(
-                    (
-                        (2 * n * p + 2 * z - 1)
-                        - z * math.sqrt(2 * z - (2 + 1 / n) + 4 * p * (n * q + 1))
-                    )
-                    / (2 * (n + 2 * z)),
-                    3,
+                tmp1 = 2 * n * p + z2
+                lower_ci = ((tmp1 - 1) - z * np.sqrt(z2 - (2 + 1 / n) + 4 * p * (n * q + 1))) / (
+                    2 * (n + z2)
                 )
-                upper_ci = round(
-                    (
-                        (2 * n * p + 2 * z + 1)
-                        + z * math.sqrt(2 * z + (2 + 1 / n) + 4 * p * (n * q - 1))
-                    )
-                    / (2 * (n + 2 * z)),
-                    3,
+                upper_ci = ((tmp1 + 1) + z * np.sqrt(z2 + (2 + 1 / n) + 4 * p * (n * q - 1))) / (
+                    2 * (n + z2)
                 )
-
                 update = True
 
             if update:

@@ -109,8 +109,8 @@ In the first terminal, let's create our database and then run the python webserv
     cd ~/dev/hawc
     source ./venv/bin/activate
 
-    # sync db state with application state
-    manage.py migrate
+    # update python/js packages; sync app state with database
+    make sync-dev
 
     # run development webserver
     manage.py runserver
@@ -145,8 +145,8 @@ In the first terminal, let's create our database and then run the python webserv
     :: start the postgres database (if not already started)
     pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 
-    :: sync db state with application state
-    manage.py migrate
+    :: update python/js packages; sync app state with database
+    make sync-dev
 
     :: run development webserver
     manage.py runserver
@@ -182,6 +182,7 @@ the same commands.
 
     # run unit tests
     make test
+    make test-js
 
     # lint code (show changes required) - all, javascript-only, or python-only
     make lint
@@ -447,14 +448,26 @@ Integration tests
 
 Integration tests use selenium and Firefox or Chrome for for testing. By default, integration tests are skipped. Firefox appears to be more stable based on initial investigation for these tests To run, you'll need to set a few environment variables.
 
+On mac/linux:
+
 .. code-block:: bash
 
-    # use 'set' instead of 'export' for Windows
     export HAWC_INTEGRATION_TESTS=1
     export SHOW_BROWSER=1            # or 0 for headless
     export BROWSER="firefox"         # or "chrome"
 
     py.test -sv tests/frontend/integration/ --pdb
+
+On windows:
+
+.. code-block:: batch
+
+    set HAWC_INTEGRATION_TESTS=1
+    set SHOW_BROWSER=1            # or 0 for headless
+    set BROWSER=firefox           # or chrome
+
+    py.test -sv tests/frontend/integration/ --pdb
+
 
 When writing these tests, it's often easiest to write the tests in an interactive scripting environment like ipython or jupyter. This allows you to interact with the DOM and the requests much easier than manually re-running tests as they're written. An example session:
 

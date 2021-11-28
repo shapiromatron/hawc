@@ -1,4 +1,4 @@
-.PHONY: build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
+.PHONY: sync-dev build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh test-js coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -22,6 +22,12 @@ for line in sys.stdin:
 endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
+
+sync-dev:  ## Sync dev environment after code checkout
+	python -m pip install -U pip
+	pip install -r requirements/dev.txt
+	yarn --cwd frontend
+	manage.py migrate
 
 build:  ## build hawc package
 	npm --prefix ./frontend run build
@@ -87,6 +93,9 @@ test-integration:  ## Run integration tests (requires `npm run start`)
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes
 	@py.test
+
+test-js:  ## Run javascript tests
+	@npm --prefix ./frontend run test
 
 coverage:  ## Run coverage and create html report
 	coverage run -m pytest

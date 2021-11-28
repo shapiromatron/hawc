@@ -33,6 +33,7 @@ class MetaResultAdmin(admin.ModelAdmin):
 @admin.register(models.SingleResult)
 class SingleResultAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "meta_result",
         "study",
         "exposure_name",
@@ -42,3 +43,4 @@ class SingleResultAdmin(admin.ModelAdmin):
         "lower_ci",
         "upper_ci",
     )
+    list_select_related = ("meta_result", "study")

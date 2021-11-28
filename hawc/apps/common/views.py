@@ -748,13 +748,9 @@ class BaseUpdateWithFormset(BaseUpdate):
 class BaseEndpointFilterList(BaseList):
     parent_model = Assessment
 
-    def get_paginate_by(self, qs):
-        val = 25
-        try:
-            val = int(self.request.GET.get("paginate_by", val))
-        except ValueError:
-            pass
-        return val
+    def get_paginate_by(self, qs) -> int:
+        value = self.request.GET.get("paginate_by")
+        return tryParseInt(value, default=25, min_value=10, max_value=500)
 
     def get(self, request, *args, **kwargs):
         if len(self.request.GET) > 0:
@@ -799,7 +795,9 @@ class BaseEndpointFilterList(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
-        context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
+        context["config"] = {
+            "items": self.model.get_qs_json(context["object_list"], json_encode=False)
+        }
         return context
 
 

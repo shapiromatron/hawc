@@ -2,6 +2,7 @@
 
 if "%~1" == "" goto :help
 if /I %1 == help goto :help
+if /I %1 == sync-dev goto :sync-dev
 if /I %1 == build goto :build
 if /I %1 == build-pex goto :build-pex
 if /I %1 == lint goto :lint
@@ -13,17 +14,20 @@ if /I %1 == format-js goto :format-js
 if /I %1 == test goto :test
 if /I %1 == test-integration goto :test-integration
 if /I %1 == test-refresh goto :test-refresh
+if /I %1 == test-js goto :test-js
 if /I %1 == coverage goto :coverage
 if /I %1 == loc goto :loc
 goto :help
 
 :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
+echo.  sync-dev          sync dev environment after code checkout
 echo.  build             build python wheel
 echo.  build-pex         build pex bundle (mac/linux only)
 echo.  test              run python tests
 echo.  test-integration  run integration tests (requires npm run start)
 echo.  test-refresh      removes mock requests and runs python tests
+echo.  test-js           run javascript tests
 echo.  coverage          run coverage and create html report
 echo.  lint              perform both lint-py and lint-js
 echo.  format            perform both format-py and lint-js
@@ -32,6 +36,13 @@ echo.  format-py         modify python code using black and show flake8 issues
 echo.  lint-js           check for javascript formatting issues
 echo.  format-js         modify javascript code if possible using linters and formatters
 echo.  loc               generate lines of code report
+goto :eof
+
+:sync-dev
+python -m pip install -U pip
+pip install -r requirements/dev.txt
+yarn --cwd frontend
+manage.py migrate
 goto :eof
 
 :build
@@ -82,6 +93,10 @@ goto :eof
 :test-refresh
 rmdir /s /q .\tests\data\cassettes
 py.test
+goto :eof
+
+:test-js
+npm --prefix .\frontend run test-windows
 goto :eof
 
 :coverage

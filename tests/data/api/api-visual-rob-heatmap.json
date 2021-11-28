@@ -94,7 +94,11 @@
         "36": "Medium confidence",
         "37": "High confidence",
         "40": "Yes",
-        "41": "No"
+        "41": "No",
+        "50": "Critical concerns",
+        "51": "Major concerns",
+        "52": "Some concerns",
+        "53": "Minor concerns"
       },
       "colors": {
         "0": "#DFDFDF",
@@ -115,7 +119,11 @@
         "36": "#6FFF00",
         "37": "#00CC00",
         "40": "#00CC00",
-        "41": "#CC3333"
+        "41": "#CC3333",
+        "50": "#f7fcf5",
+        "51": "#addea7",
+        "52": "#238d46",
+        "53": "#00441b"
       },
       "symbols": {
         "0": "\u2501",
@@ -136,7 +144,11 @@
         "36": "+",
         "37": "++",
         "40": "Y",
-        "41": "N"
+        "41": "N",
+        "50": "0",
+        "51": "+",
+        "52": "++",
+        "53": "+++"
       }
     }
   },
@@ -205,94 +217,6 @@
       "riskofbiases": [
         {
           "active": true,
-          "author": {
-            "full_name": "Team Member",
-            "id": 3
-          },
-          "created": "2020-05-08T12:56:45.599914-05:00",
-          "final": false,
-          "id": 4,
-          "last_updated": "2020-05-08T14:33:23.187120-05:00",
-          "scores": [
-            {
-              "bias_direction": 0,
-              "id": 10,
-              "is_default": true,
-              "label": "",
-              "metric_id": 14,
-              "notes": "<p>test</p>",
-              "overridden_objects": [],
-              "riskofbias_id": 4,
-              "score": 17,
-              "score_description": "Definitely low risk of bias",
-              "score_shade": "#00CC00",
-              "score_symbol": "++"
-            },
-            {
-              "bias_direction": 1,
-              "id": 11,
-              "is_default": true,
-              "label": "",
-              "metric_id": 15,
-              "notes": "<p>test2</p>",
-              "overridden_objects": [],
-              "riskofbias_id": 4,
-              "score": 14,
-              "score_description": "Definitely high risk of bias",
-              "score_shade": "#CC3333",
-              "score_symbol": "--"
-            }
-          ],
-          "study": 7
-        },
-        {
-          "active": true,
-          "author": {
-            "full_name": "Project Manager",
-            "id": 2
-          },
-          "created": "2020-05-08T12:56:45.903109-05:00",
-          "final": false,
-          "id": 5,
-          "last_updated": "2020-05-08T14:33:43.045401-05:00",
-          "scores": [
-            {
-              "bias_direction": 0,
-              "id": 12,
-              "is_default": true,
-              "label": "",
-              "metric_id": 14,
-              "notes": "<p>test</p>",
-              "overridden_objects": [],
-              "riskofbias_id": 5,
-              "score": 16,
-              "score_description": "Probably low risk of bias",
-              "score_shade": "#6FFF00",
-              "score_symbol": "+"
-            },
-            {
-              "bias_direction": 0,
-              "id": 13,
-              "is_default": true,
-              "label": "",
-              "metric_id": 15,
-              "notes": "<p>test</p>",
-              "overridden_objects": [],
-              "riskofbias_id": 5,
-              "score": 17,
-              "score_description": "Definitely low risk of bias",
-              "score_shade": "#00CC00",
-              "score_symbol": "++"
-            }
-          ],
-          "study": 7
-        },
-        {
-          "active": true,
-          "author": {
-            "full_name": "Team Member",
-            "id": 3
-          },
           "created": "2020-05-08T12:56:46.183552-05:00",
           "final": true,
           "id": 6,
@@ -332,7 +256,7 @@
                   "content_type_name": "animal.animalgroup",
                   "id": 3,
                   "object_id": 99999,
-                  "object_name": "<deleted id=3;score=16;obj_ct=49;obj_id=99999>",
+                  "object_name": "<deleted id=3;score=16;obj_ct=50;obj_id=99999>",
                   "object_url": "/404/",
                   "score_id": 16
                 }
@@ -446,7 +370,11 @@
             "36": "Medium confidence",
             "37": "High confidence",
             "40": "Yes",
-            "41": "No"
+            "41": "No",
+            "50": "Critical concerns",
+            "51": "Major concerns",
+            "52": "Some concerns",
+            "53": "Minor concerns"
           },
           "colors": {
             "0": "#DFDFDF",
@@ -467,7 +395,11 @@
             "36": "#6FFF00",
             "37": "#00CC00",
             "40": "#00CC00",
-            "41": "#CC3333"
+            "41": "#CC3333",
+            "50": "#f7fcf5",
+            "51": "#addea7",
+            "52": "#238d46",
+            "53": "#00441b"
           },
           "symbols": {
             "0": "\u2501",
@@ -488,7 +420,11 @@
             "36": "+",
             "37": "++",
             "40": "Y",
-            "41": "N"
+            "41": "N",
+            "50": "0",
+            "51": "+",
+            "52": "++",
+            "53": "+++"
           }
         }
       },

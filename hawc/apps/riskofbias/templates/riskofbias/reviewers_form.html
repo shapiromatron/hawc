@@ -1,71 +1,8 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
 
-{% block extrastyle %}
-    {% include_ui_theme %}
-{% endblock %}
-
 {% block content %}
-    <div id='numberForm'>
-        {% crispy form %}
-    </div>
-    <div id='reviewersFormset'>
-        {% include "hawc/table_inline_formset.html" with form_show_errors=True %}
-    </div>
+    <h2>Update number of reviewers</h2>
+    {% crispy form %}
 {% endblock %}
-
-{% block extrajs %}
-    {{formset.form.media}}
-    <script type="text/javascript">
-      $(document).ready(function() {
-        // insert reviewer formset into number_of_reviewers form
-        new window.app.DynamicFormset($('#reviewersFormset'), 'form', {oneFormRequired: true});
-        $('#reviewersFormset').insertBefore($('#numberForm .form-actions'));
-
-        var reviewerFields = document.getElementsByClassName('autocompletewidget'),
-            formsetRows = document.getElementById('reviewersFormset')
-                                  .getElementsByClassName('formset-row');
-
-        /**
-         * Copy reviewer to autocomplete input
-         * @param {$.element} inputNode - div.form-group containing autocomplete widget
-         * @param {int} id - user id of reviewer to copy, used for assigning reviewer
-         * @param {string} value - display name of reviewer to copy, only used for display
-         */
-        var copyReviewerToInput = function(inputNode, id, value){
-            inputNode.children().children('.autocompletewidget').val(value);
-            inputNode.children().children('.hiddeninput').val(id);
-        };
-
-        /**
-         * Call copyReviewerToInput for all studies
-         * @param {int} cellIndex - cellIndex attribute of copied reviewer input,
-         *         used to copy reviewer to same place in each row of reviewers
-         * @param {int} id - user id of reviewer to copy, used for assigning reviewer
-         * @param {string} value - display name of reviewer to copy, only used for display
-         */
-        var copyReviewerToAllRows = function(index, id, value){
-            _.map(formsetRows, function(row){
-                var input = $(row.getElementsByTagName('th')[index]);
-                copyReviewerToInput(input, id, value);
-            });
-        };
-
-        // Create copy reviewers button and add click listener
-        _.map(reviewerFields, function(field){
-            var copyReviewerButton = document.createElement('i');
-            copyReviewerButton.className = 'btn fa fa-arrows-v rob-copy-reviewers';
-            copyReviewerButton.title = 'Use this reviewer for all studies in this reviewer-column';
-            copyReviewerButton.addEventListener('click', function(){
-                var fieldId = this.parentNode.getElementsByClassName('hiddeninput')[0].value,
-                    fieldEntry = this.parentNode.getElementsByClassName('autocompletewidget')[0].value,
-                    index = this.parentNode.parentNode.cellIndex;
-                copyReviewerToAllRows(index, fieldId, fieldEntry);
-            });
-            field.parentNode.appendChild(copyReviewerButton);
-        });
-      });
-    </script>
-{% endblock extrajs %}

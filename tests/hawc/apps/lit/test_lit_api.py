@@ -1,6 +1,8 @@
 import json
+from io import BytesIO
 from pathlib import Path
 
+import pandas as pd
 import pytest
 from django.core.cache import cache
 from django.urls import reverse
@@ -33,6 +35,8 @@ class TestLiteratureAssessmentViewset:
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
+        pm_client = APIClient()
+        assert pm_client.login(username="pm@hawcproject.org", password="pw") is True
 
         urls = [
             reverse("lit:api:assessment-tags", args=(db_keys.assessment_working,)),
@@ -54,6 +58,16 @@ class TestLiteratureAssessmentViewset:
         with pytest.raises(ValueError):
             assert rev_client.get(url).status_code == 200
 
+        tagtree_url = reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,))
+        # only reviewers and up can GET
+        assert anon_client.get(tagtree_url).status_code == 403
+        assert rev_client.get(tagtree_url).status_code == 200
+
+        # only admins and up can POST
+        assert anon_client.post(tagtree_url).status_code == 403
+        assert rev_client.post(tagtree_url).status_code == 403
+        assert pm_client.post(tagtree_url, None).status_code != 403
+
     def test_references_download(self, rewrite_data_files: bool, db_keys):
         url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
         fn = "api-lit-assessment-references-export.json"
@@ -72,6 +86,81 @@ class TestLiteratureAssessmentViewset:
             "name": "c",
             "nested_name": "Exclusion|Tier III|c",
         }
+
+    def test_tagtree(self, db_keys):
+        url = reverse("lit:api:assessment-tagtree", kwargs=dict(pk=db_keys.assessment_working))
+        c = APIClient()
+
+        # test some updates
+        bad_payload_no_name = {
+            "tree": [{"data": {"name": "x"}}, {"data": {"name": "y"}, "children": [{"data": {}}]}]
+        }
+        bad_payload_bad_slug = {"tree": [{"data": {"name": "x", "slug": "this has spaces"}}]}
+
+        good_payload = {
+            "tree": [
+                {"data": {"name": "This is required"}},
+                {"data": {"name": "Tag Name", "slug": "custom-slug"}},
+                {
+                    "data": {"name": "Grandparent Tag"},
+                    "children": [
+                        {"data": {"name": "nested"}},
+                        {
+                            "data": {"name": "Parent Tag"},
+                            "children": [{"data": {"name": "deeply nested"}}],
+                        },
+                    ],
+                },
+            ]
+        }
+
+        # permissions - GET/POST
+        assert c.login(email="reviewer@hawcproject.org", password="pw") is True
+        response = c.get(url)
+        assert response.status_code == 200
+        response = c.post(url, good_payload, format="json")
+        assert response.status_code == 403
+
+        # test some basic fetching
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+        resp = c.get(url).json()["tree"]
+        assert len(resp) == 2
+        assert len(resp[0]["children"]) == 3
+        assert resp[1]["data"]["name"] == "Exclusion"
+        assert resp[0]["children"][2]["data"]["slug"] == "mechanistic-study"
+
+        # bad input - no data supplied
+        response = c.post(url, None, format="json")
+        assert response.status_code == 400
+        assert response.json() == {"tree": ["This field is required."]}
+
+        # bad input - it's JSON but not a list as we expect
+        response = c.post(url, {}, format="json")
+        assert response.status_code == 400
+        assert response.json() == {"tree": ["This field is required."]}
+
+        # bad input - what if the "name" attribute is missing from a node
+        response = c.post(url, bad_payload_no_name, format="json")
+        error = response.json()
+        assert response.status_code == 400
+        assert "'name' is a required property" in error["tree"][0]
+
+        # bad input - a slug is supplied but it's not valid
+        response = c.post(url, bad_payload_bad_slug, format="json")
+        error = response.json()
+        assert response.status_code == 400
+        assert "does not match" in error["tree"][0]
+
+        # good payload
+        response = c.post(url, good_payload, format="json")
+        assert response.status_code == 200
+        data = response.json()["tree"]
+        assert data[0]["id"] > 0
+        assert data[0]["data"]["name"] == "This is required"
+        assert data[0]["data"]["slug"] == "this-is-required"
+        assert data[1]["data"]["name"] == "Tag Name"
+        assert data[1]["data"]["slug"] == "custom-slug"
+        assert data[2]["children"][0]["data"]["name"] == "nested"
 
     def test_reference_ids(self, db_keys):
         url = reverse("lit:api:assessment-reference-ids", kwargs=dict(pk=db_keys.assessment_final))
@@ -93,8 +182,22 @@ class TestLiteratureAssessmentViewset:
         # unaccented query returns accented result
         data = {"authors": "fred"}
         response = client.post(url, data)
+        assert response.status_code == 200
         assert len(response.json()) == 1
         assert "Frédéric" in response.json()["references"][0]["authors_short"]
+
+        # invalid reference tag
+        data = {"year": 2001, "tags": [12]}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"tags": ["Invalid tag IDs"]}
+
+        # valid reference tag
+        url = reverse("lit:api:assessment-reference-search", args=(db_keys.assessment_final,))
+        response = client.post(url, data)
+        assert response.status_code == 200
+        assert len(response.json()) == 1
+        assert response.json()["references"][0]["pk"] == 5
 
     def test_reference_tags(self, db_keys):
         url = reverse("lit:api:assessment-reference-tags", kwargs=dict(pk=db_keys.assessment_final))
@@ -122,6 +225,51 @@ class TestLiteratureAssessmentViewset:
         url = reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_final,))
         fn = "api-lit-assessment-tag-heatmap.json"
         self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_excel_to_json(self, db_keys):
+        url = reverse("lit:api:assessment-excel-to-json", args=(db_keys.assessment_working,))
+        data = [{"reference_id": 1, "tag_id": 1}, {"reference_id": 1, "tag_id": 2}]
+        df = pd.DataFrame(data)
+        excel = BytesIO()
+        df.to_excel(excel, index=False)
+        excel.seek(0)
+        csv = BytesIO(df.to_csv(index=False).encode())
+        csv.seek(0)
+        c = APIClient()
+
+        # permission error
+        disposition = "attachment; filename=test.xlsx"
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 403
+
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
+
+        # valid; assert parses successfully
+        disposition = "attachment; filename=test.xlsx"
+        resp = c.post(url, {"file": excel}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 200 and resp.json() == data
+
+        # invalid; JSON with no file
+        resp = c.post(url, {"test": 123}, format="json")
+        assert resp.status_code == 400 and resp.json() == {
+            "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
+        }
+
+        # invalid; Content-Disposition header is required
+        resp = c.post(url, {"file": excel})
+        assert resp.status_code == 400 and resp.json() == {
+            "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
+        }
+
+        # invalid; non excel files return an error
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.csv")
+        assert resp.status_code == 400 and resp.json() == {"file": "File extension must be .xlsx"}
+
+        # invalid; cannot parse excel file
+        resp = c.post(url, {"file": BytesIO()}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
+        resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
+        assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
 
 
 @pytest.mark.django_db

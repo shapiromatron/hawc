@@ -264,11 +264,13 @@ def clone_assessment(
     cw = defaultdict(dict)
     cw[Assessment.COPY_NAME][old_assessment_id] = new_assessment_id
 
-    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(new_assessment, old_assessment)
+    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(
+        old_assessment.id, new_assessment.id
+    )
     lit_models.Search.build_default(new_assessment)
 
     cw["iv-endpoint-categories"] = iv_models.IVEndpointCategory.copy_tags(
-        new_assessment, old_assessment
+        old_assessment.id, new_assessment.id,
     )
 
     # copy rob logic

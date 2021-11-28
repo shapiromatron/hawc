@@ -181,7 +181,6 @@ class AnimalGroupRead(BaseDetail):
         endpoints = (
             self.object.endpoints.all()
             .select_related(
-                "bmd_model",
                 "assessment",
                 "animal_group__experiment__dtxsid",
                 "animal_group__experiment__study",
@@ -189,6 +188,7 @@ class AnimalGroupRead(BaseDetail):
                 "animal_group__strain",
             )
             .prefetch_related(
+                "bmd_models",
                 "effects",
                 "groups",
                 "animal_group__parents",
@@ -444,26 +444,24 @@ class EndpointList(BaseEndpointFilterList):
             query &= self.form.get_query()
             order_by = self.form.get_order_by()
 
-        qs = self.model.objects.filter(query)
+        qs = self.model.objects.filter(query).distinct()
 
         if order_by:
-            if order_by == "customBMD":
-                # the second "order_by" is basically here to force the ORM to
-                # properly add the bmd_model table to the constructed query.
-                qs = qs.order_by(RawSQL("bmd_model.output->>'BMD'", ()), "bmd_model__model")
-            elif order_by == "customBMDLS":
-                qs = qs.order_by(RawSQL("bmd_model.output->>'BMDL'", ()), "bmd_model__model")
+            if order_by == "bmd":
+                qs = qs.order_by(RawSQL("bmd_model.output->>'BMD'", ()), "bmd_models__model")
+            elif order_by == "bmdl":
+                qs = qs.order_by(RawSQL("bmd_model.output->>'BMDL'", ()), "bmd_models__model")
             else:
                 qs = qs.order_by(order_by)
 
         return qs.select_related(
-            "bmd_model",
             "assessment",
             "animal_group__experiment__dtxsid",
             "animal_group__experiment__study",
             "animal_group__species",
             "animal_group__strain",
         ).prefetch_related(
+            "bmd_models",
             "effects",
             "groups",
             "animal_group__parents",
@@ -476,7 +474,7 @@ class EndpointList(BaseEndpointFilterList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = self.form.get_dose_units_id()
+        context["config"]["dose_units"] = self.form.get_dose_units_id()
         return context
 
 

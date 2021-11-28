@@ -14,8 +14,8 @@
           <div class="dropdown-divider"></div>
           <span class="dropdown-header">BMD Modeling</span>
           {% if bmd_session %}
-            <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">View session</a>
-            <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">Other options</a>
+            <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
+            <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
           {% else %}
             <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
           {% endif %}
@@ -27,8 +27,8 @@
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
       <div class="dropdown-menu dropdown-menu-right">
         <span class="dropdown-header">BMD Modeling</span>
-        <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">View session</a>
-        <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">Other options</a>
+        <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
+        <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
       </div>
     </div>
     {% endif %}
@@ -62,7 +62,7 @@
           var endpoint = new app.Endpoint(data);
           endpoint.build_details_table($('#endpoint-details-table'));
           endpoint.build_endpoint_table($('#dr-tbl'));
-          endpoint.renderPlot($('#bmd_ds_plot'));
+          endpoint.renderPlot($('#bmd_ds_plot'), {showBmd: true});
           endpoint.build_general_notes($('#endpoint-general-notes'));
       })
   </script>

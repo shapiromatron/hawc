@@ -36,6 +36,10 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        make loc
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
@@ -84,6 +88,9 @@ jobs:
     - name: lint
       run: |
         make lint-js
+    - name: test
+      run: |
+        npm --prefix ./frontend run test
     - name: build for integration tests
       run: |
         npm --prefix ./frontend run build
