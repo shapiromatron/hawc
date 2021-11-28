@@ -1,5 +1,6 @@
 from django.db.models import Q
 
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
@@ -9,22 +10,21 @@ from ..common.views import (
     BaseUpdate,
     BaseUpdateWithFormset,
     CopyAsNewSelectorMixin,
-    WebappConfig,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from . import forms, models
 
 
-def get_app_config_metaprotocol(view, context) -> WebappConfig:
+def get_app_config_metaprotocol(self, context) -> WebappConfig:
     return WebappConfig(
-        app="epiMetaStartup", page="startupMetaProtocolPage", data=dict(id=view.object.id)
+        app="epiMetaStartup", page="startupMetaProtocolPage", data=dict(id=self.object.id)
     )
 
 
-def get_app_config_metaresult(view, context) -> WebappConfig:
+def get_app_config_metaresult(self, context) -> WebappConfig:
     return WebappConfig(
-        app="epiMetaStartup", page="startupMetaResultPage", data=dict(id=view.object.id)
+        app="epiMetaStartup", page="startupMetaResultPage", data=dict(id=self.object.id)
     )
 
 

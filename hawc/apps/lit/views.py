@@ -13,7 +13,7 @@ from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import listToUl, tryParseInt, WebappConfig
+from ..common.helper import WebappConfig, listToUl, tryParseInt
 from ..common.views import (
     AssessmentPermissionsMixin,
     BaseCreate,
@@ -273,27 +273,27 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
         raise NotImplementedError("Subclass requires implementation")
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "CHANGE"),
+        )
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
         if hasattr(self, "qs_reference"):
             refs = self.qs_reference
         else:
             refs = refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
         refs = refs.prefetch_related("searches", "identifiers", "tags")
-        context = super().get_context_data(**kwargs)
-        context.update(
-            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "CHANGE"),
-            config=WebappConfig(
-                app="litStartup",
-                page="startupTagReferences",
-                data=dict(
-                    tags=models.ReferenceFilterTag.get_all_tags(
-                        self.assessment.id, json_encode=False
-                    ),
-                    refs=[ref.to_dict() for ref in refs],
-                    csrf=get_token(self.request),
-                ),
-            ).dict(),
+        return WebappConfig(
+            app="litStartup",
+            page="startupTagReferences",
+            data=dict(
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+                refs=[ref.to_dict() for ref in refs],
+                csrf=get_token(self.request),
+            ),
         )
-        return context
 
 
 class TagBySearch(TagReferences):
@@ -563,7 +563,11 @@ class RefSearch(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = WebappConfig(
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
             app="litStartup",
             page="startupSearchReference",
             data=dict(
@@ -572,9 +576,7 @@ class RefSearch(BaseDetail):
                 tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
                 csrf=get_token(self.request),
             ),
-        ).dict()
-        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
-        return context
+        )
 
 
 class RefsByTagJSON(BaseDetail):
@@ -678,31 +680,33 @@ class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
         return self.get_object()
 
     def get_context_data(self, **kwargs):
-        overview = reverse("lit:overview", args=(self.assessment.pk,))
-        api_root = reverse("lit:api:tags-list")
         context = super().get_context_data(**kwargs)
         context.update(
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Update tags"),
             lit_assesment_update_url=self.assessment.literature_settings.get_update_url(),
-            config=WebappConfig(
-                app="nestedTagEditorStartup",
-                data=dict(
-                    assessment_id=self.assessment.id,
-                    base_url=api_root,
-                    list_url=f"{api_root}?assessment_id={self.assessment.id}",
-                    csrf=get_token(self.request),
-                    host=self.request.get_host(),
-                    title=f"Reference tags for {self.assessment}",
-                    extraHelpHtml=f"""
+        )
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        overview = reverse("lit:overview", args=(self.assessment.pk,))
+        api_root = reverse("lit:api:tags-list")
+        return WebappConfig(
+            app="nestedTagEditorStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                base_url=api_root,
+                list_url=f"{api_root}?assessment_id={self.assessment.id}",
+                csrf=get_token(self.request),
+                host=self.request.get_host(),
+                title=f"Reference tags for {self.assessment}",
+                extraHelpHtml=f"""
                         Edit tags which can be applied to literature for this assessment. If
                         extracting data, all references marked with a tag in the "Inclusion"
                         category will be labeled as ready for data-extraction on the assessment
                         literature review page (<a href="{overview}">here</a>).<br/><br/>""",
-                    btnLabel="Add new tag",
-                ),
-            ).dict(),
+                btnLabel="Add new tag",
+            ),
         )
-        return context
 
 
 class LiteratureAssessmentUpdate(ProjectManagerOrHigherMixin, BaseUpdate):

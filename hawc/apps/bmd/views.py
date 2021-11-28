@@ -64,20 +64,20 @@ class SessionList(BaseList):
         return self.model.objects.filter(endpoint=self.parent)
 
 
-def _get_session_config(view, context) -> WebappConfig:
-    edit_mode = view.crud == "Update"
+def _get_session_config(self, context) -> WebappConfig:
+    edit_mode = self.crud == "Update"
     return WebappConfig(
         app="bmds2Startup",
         data=dict(
             editMode=edit_mode,
-            assessment_id=view.assessment.id,
-            bmds_version=view.object.get_version_display(),
-            endpoint_id=view.object.endpoint_id,
-            session_url=view.object.get_api_url(),
-            execute_url=view.object.get_execute_url(),
-            execute_status_url=view.object.get_execute_status_url(),
-            selected_model_url=view.object.get_selected_model_url(),
-            csrf=get_token(view.request) if edit_mode else None,
+            assessment_id=self.assessment.id,
+            bmds_version=self.object.get_version_display(),
+            endpoint_id=self.object.endpoint_id,
+            session_url=self.object.get_api_url(),
+            execute_url=self.object.get_execute_url(),
+            execute_status_url=self.object.get_execute_status_url(),
+            selected_model_url=self.object.get_selected_model_url(),
+            csrf=get_token(self.request) if edit_mode else None,
         ),
     )
 
@@ -88,7 +88,6 @@ class SessionDetail(BaseDetail):
 
 
 class SessionUpdate(BaseUpdate):
-
     success_message = "BMD session updated."
     model = models.Session
     form_class = forms.SessionForm

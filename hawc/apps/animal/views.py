@@ -407,17 +407,13 @@ class EndpointListV2(BaseList):
     model = models.Endpoint
     template_name = "animal/endpoint_list_v2.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_app_config(self, context) -> WebappConfig:
         url = reverse("animal:api:assessment-endpoints", args=(self.assessment.id,))
         if self.request.GET.get("unpublished", "false").lower() == "true":
             url += "?unpublished=true"
-        context.update(
-            config=WebappConfig(
-                app="animalStartup", page="startupEndpointListApp", data=dict(data_url=url)
-            ).dict()
+        return WebappConfig(
+            app="animalStartup", page="startupEndpointListApp", data=dict(data_url=url)
         )
-        return context
 
 
 class EndpointList(BaseEndpointFilterList):

@@ -25,8 +25,8 @@ from django.views.generic import DetailView, FormView, ListView, TemplateView, V
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
 from ..common.forms import DownloadPlotForm
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -611,21 +611,17 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            config=WebappConfig(
-                app="textCleanupStartup",
-                data=dict(
-                    assessment_id=self.assessment.id,
-                    assessment=reverse(
-                        "assessment:api:assessment-endpoints", args=(self.assessment.id,)
-                    ),
-                    csrf=get_token(self.request),
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="textCleanupStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
                 ),
-            ).dict()
+                csrf=get_token(self.request),
+            ),
         )
-        return context
 
 
 # Assorted functionality
@@ -670,28 +666,24 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            config=WebappConfig(
-                app="riskofbiasStartup",
-                page="ScoreCleanupStartup",
-                data=dict(
-                    assessment_id=self.assessment.id,
-                    assessment=reverse(
-                        "assessment:api:assessment-endpoints", args=(self.assessment.id,)
-                    ),
-                    items=dict(
-                        url=reverse("riskofbias:api:metric_scores-list"),
-                        patchUrl=reverse("riskofbias:api:score-cleanup-list"),
-                    ),
-                    studyTypes=dict(url=reverse("study:api:study-types")),
-                    csrf=get_token(self.request),
-                    host=f"//{self.request.get_host()}",
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="ScoreCleanupStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
                 ),
-            ).dict()
+                items=dict(
+                    url=reverse("riskofbias:api:metric_scores-list"),
+                    patchUrl=reverse("riskofbias:api:score-cleanup-list"),
+                ),
+                studyTypes=dict(url=reverse("study:api:study-types")),
+                csrf=get_token(self.request),
+                host=f"//{self.request.get_host()}",
+            ),
         )
-        return context
 
 
 @method_decorator(staff_member_required, name="dispatch")

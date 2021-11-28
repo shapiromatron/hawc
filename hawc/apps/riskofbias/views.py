@@ -1,6 +1,3 @@
-import json
-from typing import Dict
-
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
@@ -57,7 +54,10 @@ class ARoBDetail(BaseList):
         context = super().get_context_data(**kwargs)
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
-        context["config"] = WebappConfig(
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
             app="riskofbiasStartup",
             page="RobMetricsStartup",
             data=dict(
@@ -66,8 +66,7 @@ class ARoBDetail(BaseList):
                 is_editing=False,
                 csrf=get_token(self.request),
             ),
-        ).dict()
-        return context
+        )
 
 
 class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
@@ -88,7 +87,10 @@ class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Update"))
-        context["config"] = WebappConfig(
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
             app="riskofbiasStartup",
             page="RobMetricsStartup",
             data=dict(
@@ -99,8 +101,7 @@ class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
                 is_editing=True,
                 csrf=get_token(self.request),
             ),
-        ).dict()
-        return context
+        )
 
 
 class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
@@ -411,7 +412,7 @@ class RoBDetail(BaseDetail):
     model = Study
     template_name = "riskofbias/rob_detail.html"
 
-    def get_webapp_config(self, display: str) -> Dict:
+    def get_webapp_config(self, display: str) -> WebappConfig:
         return WebappConfig(
             app="riskofbiasStartup",
             page="TableStartup",
@@ -428,8 +429,10 @@ class RoBDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].append(Breadcrumb(name=self.assessment.get_rob_name_display()))
-        context["config"] = self.get_webapp_config("final")
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return self.get_webapp_config("final")
 
 
 class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
@@ -448,8 +451,10 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
         context["breadcrumbs"][3] = Breadcrumb(
             name=f"{self.assessment.get_rob_name_display()} (all reviews)"
         )
-        context["config"] = self.get_webapp_config("all")
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return self.get_webapp_config("all")
 
 
 class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
@@ -472,7 +477,12 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = WebappConfig(
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update review")
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
             app="riskofbiasStartup",
             page="RobStudyFormStartup",
             data={
@@ -495,7 +505,4 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
                     "scores_url": reverse("riskofbias:api:scores-list"),
                 },
             },
-        ).dict()
-        context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
-        context["breadcrumbs"][4] = Breadcrumb(name="Update review")
-        return context
+        )

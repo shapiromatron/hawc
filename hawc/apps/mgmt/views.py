@@ -6,7 +6,8 @@ from django.views.generic import ListView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin, WebappConfig
+from ..common.helper import WebappConfig
+from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin, WebappMixin
 from . import models
 
 
@@ -45,11 +46,6 @@ class RobTaskMixin:
     def get_rob_queryset(self, RiskOfBias):
         raise NotImplementedError("Abstract method; requires implementation")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"] = self.get_app_config(context).dict()
-        return context
-
     def get_review_tasks(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
@@ -85,7 +81,7 @@ class RobTaskMixin:
         )
 
 
-class UserAssignments(RobTaskMixin, LoginRequiredMixin, ListView):
+class UserAssignments(WebappMixin, RobTaskMixin, LoginRequiredMixin, ListView):
     model = models.Task
     template_name = "mgmt/user_assignments.html"
 
@@ -140,33 +136,33 @@ class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
-        context["config"] = self._dashboard_config().dict()
         return context
 
-    def _dashboard_config(self) -> WebappConfig:
+    def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
             app="mgmtStartup", page="Dashboard", data=dict(assessment_id=self.assessment.id)
         )
 
-    def _task_table_config(self, edit: bool) -> WebappConfig:
-        a_id = self.assessment.id
-        return WebappConfig(
-            app="mgmtStartup",
-            page="TaskTable",
-            data=dict(
-                assessment_id=a_id,
-                csrf=get_token(self.request),
-                displayAsForm=edit,
-                cancelUrl=reverse("mgmt:assessment_tasks", args=(a_id,)),
-                tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
-                taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
-                taskBulkPatchUrl=reverse("mgmt:api:task-bulk-patch") + f"?assessment_id={a_id}",
-                studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
-                userAutocompleteUrl=reverse(
-                    "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
-                ),
+
+def task_table_app_config(view, edit: bool) -> WebappConfig:
+    a_id = view.assessment.id
+    return WebappConfig(
+        app="mgmtStartup",
+        page="TaskTable",
+        data=dict(
+            assessment_id=a_id,
+            csrf=get_token(view.request),
+            displayAsForm=edit,
+            cancelUrl=reverse("mgmt:assessment_tasks", args=(a_id,)),
+            tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
+            taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
+            taskBulkPatchUrl=reverse("mgmt:api:task-bulk-patch") + f"?assessment_id={a_id}",
+            studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
+            userAutocompleteUrl=reverse(
+                "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
             ),
-        )
+        ),
+    )
 
 
 class TaskDetail(TaskDashboard):
@@ -176,8 +172,10 @@ class TaskDetail(TaskDashboard):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Assignments")
-        context["config"] = self._task_table_config(False).dict()
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return task_table_app_config(self, False)
 
 
 class TaskModify(TaskDashboard):
@@ -187,5 +185,7 @@ class TaskModify(TaskDashboard):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Update assignments")
-        context["config"] = self._task_table_config(True).dict()
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return task_table_app_config(self, True)
