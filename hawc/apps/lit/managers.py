@@ -14,6 +14,7 @@ from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
 from hawc.refml import tags as refmltags
+from hawc.services.utils.doi import get_doi_from_hero, get_doi_from_pubmed, get_doi_from_ris
 
 from ...services.epa import hero
 from ...services.nih import pubmed
@@ -100,11 +101,8 @@ class IdentifiersManager(BaseManager):
             ids.append(ident)
 
             # create DOI identifier
-            doi = constants.DOI_EXTRACT.search(str(ref["doi"]))
+            doi = get_doi_from_ris(ident)
             if doi:
-                doi = doi.group(0)
-                if doi.endswith("."):
-                    doi = doi[:-1]
                 ident, _ = self.get_or_create(database=constants.DOI, unique_id=doi, content="",)
                 ids.append(ident)
 
@@ -294,10 +292,6 @@ class ReferenceManager(BaseManager):
             # in database. If not, save a new reference.
             content = json.loads(identifier.content)
             pmid = content.get("PMID", None)
-            try:
-                doi = content["json"]["doi"]
-            except (KeyError):
-                doi = None
 
             if pmid:
                 ref = self.get_qs(search.assessment).filter(
@@ -315,13 +309,12 @@ class ReferenceManager(BaseManager):
                 ref.save()
 
             Identifiers = apps.get_model("lit", "Identifiers")
-            doi = constants.DOI_EXTRACT.search(str(doi))
+            doi = get_doi_from_hero(identifier)
             if doi:
-                doi = doi.group(0)
-                if doi.endswith("."):
-                    doi = doi[:-1]
-                doi_id = Identifiers.objects.get_or_create(unique_id=doi, database=constants.DOI)
-                ref.identifiers.add(doi_id[0])
+                doi_id, created = Identifiers.objects.get_or_create(
+                    unique_id=doi, database=constants.DOI
+                )
+                ref.identifiers.add(doi_id)
                 ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
@@ -371,19 +364,12 @@ class ReferenceManager(BaseManager):
         Identifiers = apps.get_model("lit", "Identifiers")
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
-            try:
-                doi = json.loads(identifier.content)["doi"]
-            except (KeyError):
-                doi = None
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
-            doi = constants.DOI_EXTRACT.search(str(doi))
+            doi = get_doi_from_pubmed(identifier)
             if doi:
-                doi = doi.group(0)
-                if doi.endswith("."):
-                    doi = doi[:-1]
                 doiIdentifier = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI
                 )
