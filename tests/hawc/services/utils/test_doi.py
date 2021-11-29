@@ -1,9 +1,4 @@
-from hawc.services.utils.doi import (
-    get_doi_from_hero,
-    get_doi_from_pubmed,
-    get_doi_from_ris,
-    get_doi_if_valid,
-)
+from hawc.services.utils.doi import get_doi_if_valid
 
 
 class TestGetDoiValid:
@@ -43,9 +38,9 @@ class TestGetDoiValid:
         )
 
     def test_invalid(self):
-        assert get_doi_if_valid("") == None
-        assert get_doi_if_valid("10.") == None
-        assert get_doi_if_valid("10") == None
-        assert get_doi_if_valid("1") == None
-        assert get_doi_if_valid("trust me, im a doi") == None
-        assert get_doi_if_valid("10.123/141414141") == None
+        assert get_doi_if_valid("") is None
+        assert get_doi_if_valid("10.") is None
+        assert get_doi_if_valid("10") is None
+        assert get_doi_if_valid("1") is None
+        assert get_doi_if_valid("trust me, im a doi") is None
+        assert get_doi_if_valid("10.123/141414141") is None
