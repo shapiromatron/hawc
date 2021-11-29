@@ -414,12 +414,12 @@ class SearchRefList(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = _get_reference_list(
-            self.assessment, context["obj_perms"], self.object
-        ).dict()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="References"))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_reference_list(self.assessment, context["obj_perms"], self.object)
 
 
 class SearchTagsVisualization(BaseDetail):
@@ -517,10 +517,21 @@ class RefDetail(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["object_json"] = self.object.to_json()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="litStartup",
+            page="startupReferenceDetail",
+            data={
+                "tags": models.ReferenceFilterTag.get_all_tags(
+                    self.assessment.id, json_encode=False
+                ),
+                "reference": self.object.to_dict(),
+                "canEdit": context["obj_perms"]["edit"],
+            },
+        )
 
 
 class RefEdit(BaseUpdate):
@@ -772,11 +783,14 @@ class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = {
-            "assessment_id": self.assessment.id,
-            "csrf": get_token(self.request),
-        }
         context["breadcrumbs"] = lit_overview_crumbs(
             self.request.user, self.assessment, "Bulk tag references"
         )
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="litStartup",
+            page="startupBulkTagReferences",
+            data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
+        )

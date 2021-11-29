@@ -430,9 +430,10 @@ class WebappMixin:
 
 
 # Base HAWC views
-class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
+class BaseDetail(AssessmentPermissionsMixin, DetailView):
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
+    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
         return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
@@ -447,11 +448,14 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
         )
         if self.breadcrumb_active_name:
             context["breadcrumbs"].append(Breadcrumb(name=self.breadcrumb_active_name))
+        if self.get_app_config:
+            context["config"] = self.get_app_config(context).dict()
         return context
 
 
-class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
+class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
+    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
@@ -478,6 +482,8 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
             cancel_url=self.get_cancel_url(),
             breadcrumbs=self.get_breadcrumbs(),
         )
+        if self.get_app_config:
+            context["config"] = self.get_app_config(context).dict()
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -486,10 +492,9 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
         return crumbs
 
 
-class BaseUpdate(
-    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView
-):
+class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = "Update"
+    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     @transaction.atomic
     def form_valid(self, form):
@@ -513,6 +518,8 @@ class BaseUpdate(
             obj_perms=super().get_obj_perms(),
             breadcrumbs=self.get_breadcrumbs(),
         )
+        if self.get_app_config:
+            context["config"] = self.get_app_config(context).dict()
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -521,12 +528,11 @@ class BaseUpdate(
         return crumbs
 
 
-class BaseCreate(
-    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
-):
+class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
     parent_model = None  # required
     parent_template_name: Optional[str] = None  # required
     crud = "Create"
+    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -561,6 +567,8 @@ class BaseCreate(
             breadcrumbs=self.get_breadcrumbs(),
         )
         context[self.parent_template_name] = self.parent
+        if self.get_app_config:
+            context["config"] = self.get_app_config(context).dict()
         return context
 
     @transaction.atomic
@@ -583,7 +591,7 @@ class BaseCreate(
         return crumbs
 
 
-class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
+class BaseList(AssessmentPermissionsMixin, ListView):
     """
     Basic view that shows a list of objects given
     """
@@ -592,6 +600,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     parent_template_name = None
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
+    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -609,6 +618,8 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
         )
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
+        if self.get_app_config:
+            context["config"] = self.get_app_config(context).dict()
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:

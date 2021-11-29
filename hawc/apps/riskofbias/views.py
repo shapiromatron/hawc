@@ -224,23 +224,22 @@ class RobAssignmentList(TeamMemberOrHigherMixin, BaseList):
             raise PermissionDenied()
         return qs
 
-    def get_custom_data(self, context):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"][3] = Breadcrumb(
+            name=f"{self.assessment.get_rob_name_display()} assignments"
+        )
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
         data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
         data.update(
             edit=False,
             user_id=self.request.user.id,
             can_edit_assessment=context["obj_perms"]["edit_assessment"],
         )
-        return data
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"] = self.get_custom_data(context)
-        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
-        context["breadcrumbs"][3] = Breadcrumb(
-            name=f"{self.assessment.get_rob_name_display()} assignments"
-        )
-        return context
+        return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
 
 
 class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
@@ -264,7 +263,14 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
             raise PermissionDenied()
         return qs
 
-    def get_custom_data(self, context):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update")
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
         data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
         data.update(
             edit=True,
@@ -273,15 +279,7 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
             ],
             csrf=get_token(self.request),
         )
-        return data
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"] = self.get_custom_data(context)
-        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
-        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
-        context["breadcrumbs"][4] = Breadcrumb(name="Update")
-        return context
+        return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
 
 
 class RobNumberReviewsUpdate(BaseUpdate):
@@ -424,7 +422,7 @@ class RoBDetail(BaseDetail):
                 display=display,
                 isForm=False,
             ),
-        ).dict()
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
