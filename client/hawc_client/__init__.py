@@ -1,5 +1,6 @@
 import json
 import math
+from copy import deepcopy
 from io import StringIO
 from typing import Any, Dict, Generator, List, Optional, Tuple
 
@@ -1245,8 +1246,42 @@ class AnimalClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def _invert_endpoints(self, data: List[Dict]) -> List[Dict]:
-        pass
+    def _invert_endpoints(self, endpoints: List[Dict]) -> List[Dict]:
+        studies = {}
+        for endpoint in deepcopy(endpoints):
+            study = endpoint["animal_group"]["experiment"]["study"]
+            if study["id"] not in studies:
+                study["experiments"] = {}
+                studies[study["id"]] = study
+            matched_study = studies[study["id"]]
+
+            experiment = endpoint["animal_group"]["experiment"]
+            if experiment["id"] not in matched_study["experiments"]:
+                experiment["animal_groups"] = {}
+                matched_study["experiments"][experiment["id"]] = experiment
+            matched_experiment = matched_study["experiments"][experiment["id"]]
+
+            animal_group = endpoint["animal_group"]
+            if animal_group["id"] not in matched_experiment["animal_groups"]:
+                animal_group["endpoints"] = []
+                matched_experiment["animal_groups"][animal_group["id"]] = animal_group
+            matched_animal_group = matched_experiment["animal_groups"][animal_group["id"]]
+
+            matched_animal_group["endpoints"].append(endpoint)
+
+        # cleanup
+        studies = list(studies.values())
+        for study in studies:
+            study["experiments"] = list(study["experiments"].values())
+            for experiment in study["experiments"]:
+                experiment.pop("study")
+                experiment["animal_groups"] = list(experiment["animal_groups"].values())
+                for animal_group in experiment["animal_groups"]:
+                    animal_group.pop("experiment")
+                    for endpoint in animal_group["endpoints"]:
+                        endpoint.pop("animal_group")
+
+        return studies
 
     def endpoints(self, assessment_id: int, invert: bool = False) -> List[Dict]:
         """
