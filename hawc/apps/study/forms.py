@@ -224,12 +224,10 @@ class StudyFilterForm(forms.Form):
     ]
     data_type = forms.ChoiceField(required=False, choices=data_choices, widget=forms.RadioSelect)
 
-    published_choices = [
-        (True, "Published only"),
-        (False, "Unpublished only"),
-        ('', "All studies")
-    ]
-    published = forms.ChoiceField(required=False, choices=published_choices, widget=forms.RadioSelect, initial='')
+    published_choices = [(True, "Published only"), (False, "Unpublished only"), ("", "All studies")]
+    published = forms.ChoiceField(
+        required=False, choices=published_choices, widget=forms.RadioSelect, initial=""
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -241,7 +239,6 @@ class StudyFilterForm(forms.Form):
         helper.add_row("name", 4, "col-md-3")
         return helper
 
-
     def get_query(self):
         query = Q()
         if name := self.cleaned_data.get("name"):
@@ -249,7 +246,7 @@ class StudyFilterForm(forms.Form):
             query |= Q(full_citation__icontains=name)
         if data_type := self.cleaned_data.get("data_type"):
             query &= Q(**{data_type: True})
-        if (published := self.cleaned_data.get("published")) != '':
+        if (published := self.cleaned_data.get("published")) != "":
             query &= Q(published=published)
         if identifier := self.cleaned_data.get("identifier"):
             query &= Q(identifiers__unique_id=identifier)
