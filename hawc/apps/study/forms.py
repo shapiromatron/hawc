@@ -214,6 +214,8 @@ class StudiesCopy(forms.Form):
 class StudyFilterForm(forms.Form):
     name = forms.CharField(required=False)
 
+    identifier = forms.CharField(required=False)
+
     data_choices = [
         ("bioassay", "Bioassay"),
         ("epi", "Epidemiology"),
@@ -224,16 +226,14 @@ class StudyFilterForm(forms.Form):
 
     published = forms.BooleanField(required=False)
 
-    identifier = forms.CharField(required=False)
-
     def __init__(self, *args, **kwargs):
-        # import pdb; pdb.set_trace()
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
+        helper.add_row("name", 4, "col-md-3")
         return helper
 
     def get_query(self):

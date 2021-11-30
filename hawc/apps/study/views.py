@@ -36,13 +36,6 @@ class StudyList(BaseList, FormMixin):
             query &= Q(published=True)
         return query
 
-    # def get(self, request, *args, **kwargs):
-    #    if len(self.request.GET) > 0:
-    #        self.form = self.form_class(self.request.GET, assessment=self.assessment)
-    #    else:
-    #        self.form = self.form_class(assessment=self.assessment)
-    #    return super().get(request, *args, **kwargs)
-
     def get_queryset(self):
         # TODO - revisit after upgrading to 2.1 to see if this can be handled outside of
         # RawSQL query
@@ -55,10 +48,10 @@ class StudyList(BaseList, FormMixin):
 
         qs = self.model.objects.filter(query).distinct()
 
-        return qs.select_related("assessment",)
-        # .prefetch_related(
-        #   ""
-        # )
+        return qs.select_related(
+            "assessment",
+        )
+        # prefetch related ??
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
