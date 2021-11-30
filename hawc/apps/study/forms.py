@@ -237,20 +237,15 @@ class StudyFilterForm(forms.Form):
         return helper
 
     def get_query(self):
-
-        name = self.cleaned_data.get("name")
-        data_type = self.cleaned_data.get("data_type")
-        published = self.cleaned_data.get("published")
-        identifier = self.cleaned_data.get("identifier")
-
         query = Q()
-        if name:
+        if name := self.cleaned_data.get("name"):
             query &= Q(short_citation__icontains=name)
             query |= Q(full_citation__icontains=name)
-        if data_type:
+        if data_type := self.cleaned_data.get("data_type"):
             query &= Q(**{data_type: True})
-        if published:
-            query &= Q(published=True)
-        if identifier:
+        if published := self.cleaned_data.get("published"):
+            query &= Q(published=published)
+        if identifier := self.cleaned_data.get("identifier"):
             query &= Q(identifiers__unique_id=identifier)
+
         return query
