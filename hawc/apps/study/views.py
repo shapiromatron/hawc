@@ -22,6 +22,7 @@ from ..common.views import (
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
+from ..lit import constants
 
 
 class StudyList(BaseList, FormMixin):
@@ -61,6 +62,9 @@ class StudyList(BaseList, FormMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["study_list"] = self.get_queryset()
+        context["doi_constant"] = constants.DOI
+        context["hero_constant"] = constants.HERO
+        context["pubmed_constant"] = constants.PUBMED
         return context
 
 
