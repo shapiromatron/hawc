@@ -222,7 +222,10 @@ class StudyFilterForm(forms.Form):
     ]
     data_type = forms.ChoiceField(required=False, choices=data_choices, widget=forms.RadioSelect)
 
+    published = forms.BooleanField(required=False)
+
     def __init__(self, *args, **kwargs):
+        # import pdb; pdb.set_trace()
         super().__init__(*args, **kwargs)
 
     @property
@@ -235,6 +238,7 @@ class StudyFilterForm(forms.Form):
 
         name = self.cleaned_data.get("name")
         data_type = self.cleaned_data.get("data_type")
+        published = self.cleaned_data.get("published")
 
         query = Q()
         if name:
@@ -242,4 +246,6 @@ class StudyFilterForm(forms.Form):
             query |= Q(full_citation__icontains=name)
         if data_type:
             query &= Q(**{data_type: True})
+        if published:
+            query &= Q(published=True)
         return query

@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
+from django.views.generic.edit import FormMixin
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -23,7 +24,7 @@ from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
 
 
-class StudyList(BaseList):
+class StudyList(BaseList, FormMixin):
     parent_model = Assessment
     model = models.Study
     form_class = forms.StudyFilterForm
@@ -31,8 +32,8 @@ class StudyList(BaseList):
 
     def get_query(self, perms):
         query = Q(assessment=self.assessment)
-        # if not perms["edit"]:
-        #    query &= Q(animal_group__experiment__study__published=True)
+        if not perms["edit"]:
+            query &= Q(published=True)
         return query
 
     # def get(self, request, *args, **kwargs):
@@ -59,11 +60,16 @@ class StudyList(BaseList):
         #   ""
         # )
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.request.GET:
+            form = self.form_class(self.request.GET)
+        if not self.assessment.user_is_team_member_or_higher(self.request.user):
+            form.fields.pop("published")
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = self.form_class()
-        if self.request.GET:
-            context["form"] = self.form_class(self.request.GET)
         context["study_list"] = self.get_queryset()
         return context
 
