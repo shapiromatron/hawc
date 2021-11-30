@@ -224,6 +224,8 @@ class StudyFilterForm(forms.Form):
 
     published = forms.BooleanField(required=False)
 
+    identifier = forms.CharField(required=False)
+
     def __init__(self, *args, **kwargs):
         # import pdb; pdb.set_trace()
         super().__init__(*args, **kwargs)
@@ -239,6 +241,7 @@ class StudyFilterForm(forms.Form):
         name = self.cleaned_data.get("name")
         data_type = self.cleaned_data.get("data_type")
         published = self.cleaned_data.get("published")
+        identifier = self.cleaned_data.get("identifier")
 
         query = Q()
         if name:
@@ -248,4 +251,6 @@ class StudyFilterForm(forms.Form):
             query &= Q(**{data_type: True})
         if published:
             query &= Q(published=True)
+        if identifier:
+            query &= Q(identifiers__unique_id=identifier)
         return query
