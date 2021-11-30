@@ -38,7 +38,7 @@ class EhvBrowse(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = self._get_config()
+        context["config"] = self._get_config()  # HERE
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user, "Environmental Health Vocabulary"
         )
