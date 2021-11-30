@@ -249,6 +249,6 @@ class StudyFilterForm(forms.Form):
         if (published := self.cleaned_data.get("published")) != "":
             query &= Q(published=published)
         if identifier := self.cleaned_data.get("identifier"):
-            query &= Q(identifiers__unique_id=identifier)
+            query &= Q(identifiers__unique_id__icontains=identifier)
 
         return query

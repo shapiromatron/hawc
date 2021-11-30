@@ -48,8 +48,7 @@ class StudyList(BaseList, FormMixin):
 
         qs = self.model.objects.filter(query).distinct()
 
-        return qs.select_related("assessment",)
-        # prefetch related ??
+        return qs.prefetch_related("identifiers")
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
