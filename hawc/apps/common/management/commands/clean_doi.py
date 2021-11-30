@@ -22,25 +22,31 @@ class Command(BaseCommand):
             action="store_true",
             help="Attempt to extract DOI ids from all content fields",
         )
+        parser.add_argument(
+            "--skip_create",
+            action="store_true",
+            help="Only validate existing DOIs; do not create new ones",
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
         doi_identifiers = Identifiers.objects.filter(database=constants.DOI)
         doi_id_initial = doi_identifiers.count()
         validate_dois(self, doi_identifiers)
-        refs = Reference.objects.exclude(identifiers__database=constants.DOI)
-        doi_ref_initial = Reference.objects.filter(identifiers__database=constants.DOI).count()
-        self.stdout.write(f"Attempting to create doi IDs for {refs.count()} references...")
-        # create_dois(refs, extensive=options["extensive"])
-        doi_id_final = Identifiers.objects.filter(database=constants.DOI).count()
-        doi_ref_final = Reference.objects.filter(identifiers__database=constants.DOI).count()
-        ref_total = Reference.objects.count()
-        self.stdout.write(
-            f"Began with {doi_id_initial} doi IDs; finished with {doi_id_final} doi IDs"
-        )
-        self.stdout.write(
-            f"Began with {doi_ref_initial} references with doi IDs; finished with {doi_ref_final} references with doi IDs, out of {ref_total} total references"
-        )
+        if not options["skip_create"]:
+            refs = Reference.objects.exclude(identifiers__database=constants.DOI)
+            doi_ref_initial = Reference.objects.filter(identifiers__database=constants.DOI).count()
+            self.stdout.write(f"Attempting to create doi IDs for {refs.count()} references...")
+            create_dois(refs, extensive=options["extensive"])
+            doi_id_final = Identifiers.objects.filter(database=constants.DOI).count()
+            doi_ref_final = Reference.objects.filter(identifiers__database=constants.DOI).count()
+            ref_total = Reference.objects.count()
+            self.stdout.write(
+                f"Began with {doi_id_initial} doi IDs; finished with {doi_id_final} doi IDs"
+            )
+            self.stdout.write(
+                f"Began with {doi_ref_initial} references with doi IDs; finished with {doi_ref_final} references with doi IDs, out of {ref_total} total references"
+            )
 
 
 def validate_dois(self, doi_identifiers):
