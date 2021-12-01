@@ -4,12 +4,17 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<div>
   <h1>Available Assessments</h1>
+  <p>
+  {% for data in metadata %}
+    <li style="margin-left: 1rem;">{{data}}</li>
+  {% endfor %}
+  </p>
   {% if desc %}
   <p>{{desc}}</p>
   {% endif %}
   {% crispy form %}
-  <div>
   {% include "assessment/_assessment_list_tbl.html" %}
 </div>
 

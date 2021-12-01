@@ -6,6 +6,8 @@ from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
+from django.db.models import Q
+from django.views.generic.edit import FormMixin
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -195,16 +197,42 @@ class GetVisualizationObjectMixin:
         return super().get_object(object=obj)
 
 
-class VisualizationList(BaseList):
+class VisualizationList(BaseList, FormMixin):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
+    form_class = forms.VisualFilterForm
+
+    def get_query(self, perms):
+        query = Q(assessment=self.assessment)
+        if not perms["edit"]:
+            query &= Q(published=True)
+        return query
 
     def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment)
+        perms = super().get_obj_perms()
+        self.form = self.form_class(self.request.GET)
+        query = self.get_query(perms)
+
+        if self.form.is_valid():
+            query &= self.form.get_query()
+
+        qs = self.model.objects.filter(query).distinct()
+
+        return qs
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.request.GET:
+            form = self.form_class(self.request.GET)
+        if not self.assessment.user_is_team_member_or_higher(self.request.user):
+            form.fields.pop("published")
+        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["visual_list"] = self.get_queryset()
+        context['visual_choices'] = models.Visual.VISUAL_CHOICES
         context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
         return context
 

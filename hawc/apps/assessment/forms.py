@@ -132,7 +132,9 @@ class AssessmentFilterForm(forms.Form):
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
-        helper.add_row("name", 2, "col-md-3")
+        # crunchy forced styling below..
+        helper.layout.fields[2].attrs['style'] = 'align-self: center; background-color: white; border-color: white; padding: 0rem !important; padding-top: 1rem !important;'
+        helper.add_row("name", 3, ["col-md-4", "col-md-2"])
         return helper
 
     def get_query(self):

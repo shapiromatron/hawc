@@ -3,6 +3,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
 from django import forms
+from django.db.models import Q
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
@@ -10,7 +11,7 @@ from ..animal.lookups import EndpointByAssessmentLookup
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import selectable
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
 from ..common.helper import read_excel
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
@@ -553,6 +554,48 @@ class VisualForm(forms.ModelForm):
 
     def clean_slug(self):
         return clean_slug(self)
+
+class VisualFilterForm(forms.Form):
+    text = forms.CharField(required=False)
+
+    type_choices = [
+        (0, "animal bioassay endpoint aggregation"),
+        (1, "animal bioassay endpoint crossview"),
+        (2, "risk of bias heatmap"),
+        (3, "risk of bias barchart"),
+        (4, "literature tagtree"),
+        (5, "embedded external website"),
+        (6, "exploratory heatmap"),
+    ]
+
+    type = forms.ChoiceField(required=False, choices=type_choices, widget=forms.RadioSelect)
+
+    published_choices = [(True, "Published only"), (False, "Unpublished only"), ("", "All visuals")]
+    published = forms.ChoiceField(
+        required=False, choices=published_choices, widget=forms.RadioSelect, initial=""
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        helper.add_row("text", 3, "col-md-3")
+        return helper
+
+    def get_query(self):
+        query = Q()
+        if text := self.cleaned_data.get("text"):
+            query &= Q(title__icontains=text)
+            query |= Q(caption__icontains=text)
+        if type := self.cleaned_data.get('type'):
+            query &= Q(visual_type=type)
+        if (published := self.cleaned_data.get("published")) != "":
+            query &= Q(published=published)
+        return query
+
 
 
 class EndpointAggregationForm(VisualForm):
