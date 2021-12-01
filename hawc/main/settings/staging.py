@@ -38,6 +38,10 @@ elif email_backend == "MAILGUN":
         MAILGUN_API_KEY=os.environ["MAILGUN_ACCESS_KEY"],
         MAILGUN_SENDER_DOMAIN=os.environ["MAILGUN_SERVER_NAME"],
     )
+elif email_backend == "SENDGRID":
+    INSTALLED_APPS += ("anymail",)
+    EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
+    ANYMAIL = dict(SENDGRID_API_KEY=os.environ["SENDGRID_API_KEY"],)
 elif email_backend == "CONSOLE":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
@@ -51,7 +55,7 @@ ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", 
 PM_CAN_MAKE_PUBLIC = os.getenv("HAWC_PM_CAN_MAKE_PUBLIC", "True") == "True"
 ACCEPT_LICENSE_REQUIRED = os.getenv("HAWC_ACCEPT_LICENSE_REQUIRED", "True") == "True"
 
-HAWC_LOAD_TEST_DB = bool(os.environ.get("HAWC_LOAD_TEST_DB") == "True")
+HAWC_LOAD_TEST_DB = int(os.environ.get("HAWC_LOAD_TEST_DB", 0))  # 0 = no; 1 = ifempty; 2 = always
 if HAWC_LOAD_TEST_DB:
     PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
     TEST_DB_FIXTURE = "/app/test-db-fixture.yaml"

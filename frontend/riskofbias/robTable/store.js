@@ -28,16 +28,22 @@ class RobTableStore extends StudyRobStore {
         if (this.isFetching || this.itemsLoaded) {
             return;
         }
+        const urls = [
+            this.fetchStudy(this.config.study.id),
+            this.fetchSettings(this.config.assessment_id),
+        ];
+        if (this.config.display === "all") {
+            urls.push(this.fetchRobStudy(this.config.study.id));
+        }
 
         this.isFetching = true;
         this.itemsLoaded = false;
         this.resetError();
-        Promise.all([
-            this.fetchStudy(this.config.study.id),
-            this.fetchSettings(this.config.assessment_id),
-        ])
+        Promise.all(urls)
             .then(d => {
-                const dirtyRoBs = _.filter(this.study.riskofbiases, rob => rob.active === true),
+                const allRobs =
+                        this.config.display === "all" ? this.activeRobs : this.study.riskofbiases,
+                    dirtyRoBs = _.filter(allRobs, rob => rob.active === true),
                     domains = _.flattenDeep(
                         _.map(dirtyRoBs, riskofbias => {
                             return _.map(riskofbias.scores, score => {

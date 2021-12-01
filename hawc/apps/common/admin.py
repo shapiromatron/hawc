@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.contrib.admin.widgets import AutocompleteSelect, AutocompleteSelectMultiple
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 
 class AllListFieldAdmin(admin.ModelAdmin):
@@ -49,3 +52,29 @@ class YesNoFilter(admin.SimpleListFilter):
         elif value == "No":
             return queryset.exclude(self.query)
         return queryset
+
+
+def autocomplete(Model, field: str, multi: bool = False):
+    """Build an autocomplete widget for the admin.
+
+    Args:
+        Model (django.models.Model): A django model class
+        field (str): The field name
+        multi (bool, optional): If true, a multiselect, defaults to a single select.
+    """
+    Widget = AutocompleteSelectMultiple if multi else AutocompleteSelect
+    return Widget(Model._meta.get_field(field), admin.site, attrs={"style": "min-width: 600px"})
+
+
+@admin.display(description="Detailed edit link")
+def admin_edit_link(instance):
+    """
+    Generate a read-only edit link in the admin for deatiled editing.
+    """
+    if instance.pk:
+        url = reverse(
+            f"admin:{instance._meta.app_label}_{instance._meta.model_name}_change",
+            args=(instance.pk,),
+        )
+        return mark_safe(f'<a href="{url}">edit</a>')
+    return mark_safe("<i>N/A - save current form first</i>")

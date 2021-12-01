@@ -10,7 +10,7 @@ from reversion.admin import VersionAdmin
 
 from ..animal.models import Endpoint
 from ..common.admin import ReadOnlyAdmin
-from . import models
+from . import forms, models
 
 
 def bust_cache(modeladmin, request, queryset):
@@ -45,6 +45,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "reviewers__last_name",
     )
     actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
+    form = forms.AssessmentAdminForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -225,6 +226,13 @@ class JobAdmin(admin.ModelAdmin):
     search_fields = ("task_id",)
     list_filter = ("status",)
     readonly_fields = ("result",)
+
+
+@admin.register(models.Communication)
+class CommunicationAdmin(admin.ModelAdmin):
+    list_display = ("id", "message", "object_id", "content_type", "created", "last_updated")
+    readonly_fields = ("id", "object_id", "content_type", "created", "last_updated")
+    search_fields = ("object_id", "message")
 
 
 @admin.register(models.Log)

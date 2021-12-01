@@ -10,7 +10,7 @@ from django.http import Http404
 from django.urls import reverse
 from reversion import revisions as reversion
 
-from ..assessment.models import Assessment
+from ..assessment.models import Assessment, Communication
 from ..assessment.serializers import AssessmentSerializer
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper, cleanHTML
@@ -114,9 +114,7 @@ class Study(Reference):
     summary = models.TextField(
         blank=True,
         verbose_name="Summary/extraction comments",
-        help_text="This field is often left blank, but used to add comments on data extraction, "
-        "e.g., reference to full study reports or indicating which outcomes/endpoints "
-        "in a study were not extracted.",
+        help_text="This field is often left blank, but used to add comments on data extraction or other general comments. This field is displayed if an assessment is made public.",
     )
     editable = models.BooleanField(
         default=True, help_text="Project-managers and team-members are allowed to edit this study.",
@@ -378,18 +376,23 @@ class Study(Reference):
         except MultipleObjectsReturned:
             raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one')
 
+    def get_final_qs(self):
+        return self.riskofbiases.filter(active=True, final=True).prefetch_related(
+            "scores__overridden_objects__content_object"
+        )
+
     def get_active_robs(self, with_final=True):
         if with_final:
             return (
                 self.riskofbiases.filter(active=True)
                 .order_by("final", "last_updated")
-                .prefetch_related("author")
+                .prefetch_related("author", "scores__overridden_objects__content_object")
             )
         else:
             return (
                 self.riskofbiases.filter(active=True, final=False)
                 .order_by("last_updated")
-                .prefetch_related("author")
+                .prefetch_related("author", "scores__overridden_objects__content_object")
             )
 
     def get_overall_confidence(self):
@@ -419,6 +422,12 @@ class Study(Reference):
     def user_can_edit_study(self, assessment, user) -> bool:
         perms = assessment.get_permissions()
         return perms.can_edit_study(self, user)
+
+    def get_communications(self) -> str:
+        return Communication.get_message(self)
+
+    def set_communications(self, text: str):
+        Communication.set_message(self, text)
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
