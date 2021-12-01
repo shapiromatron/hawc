@@ -19,6 +19,7 @@ from treebeard.mp_tree import MP_Node
 from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import BaseTable, GenericTable
 from hawc.tools.tables.parser import QuillParser
+from hawc.tools.tables.sot import StudyOutcomeTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -163,10 +164,12 @@ class SummaryTable(models.Model):
     class TableType(models.IntegerChoices):
         GENERIC = 0
         EVIDENCE_PROFILE = 1
+        STUDY_OUTCOME = 2
 
     TABLE_SCHEMA_MAP = {
         TableType.GENERIC: GenericTable,
         TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
+        TableType.STUDY_OUTCOME: StudyOutcomeTable,
     }
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
@@ -239,6 +242,8 @@ class SummaryTable(models.Model):
         instance = cls(assessment_id=assessment_id, table_type=table_type)
         schema = instance.get_content_schema_class()
         instance.content = schema.get_default_props()
+        if "assessment_id" in instance.content:
+            instance.content["assessment_id"] = instance.assessment_id
         return instance
 
     def to_docx(self, base_url: str = ""):
@@ -247,6 +252,10 @@ class SummaryTable(models.Model):
         return ReportExport(docx=docx, filename=self.slug)
 
     def clean(self):
+        # assessment id should match content
+        if self.content.get("assessment_id", self.assessment_id) != self.assessment_id:
+            raise ValidationError({"content": "Invalid assessment id"})
+
         # make sure table can be built
         try:
             self.get_table()

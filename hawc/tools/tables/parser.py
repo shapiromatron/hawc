@@ -29,6 +29,13 @@ def ol_wrapper(texts):
     return f"<ol>{''.join(list_items)}</ol>"
 
 
+def color_background(cell, color):
+    cell_properties = cell._element.tcPr
+    cell_shading = docx.oxml.shared.OxmlElement("w:shd")
+    cell_shading.set(docx.oxml.shared.qn("w:fill"), color)
+    cell_properties.append(cell_shading)
+
+
 class QuillParser(HTMLParser):
 
     # Inline tags
