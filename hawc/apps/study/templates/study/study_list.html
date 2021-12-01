@@ -40,22 +40,23 @@
     </div>
     <table class="table table-sm table-striped">
       <colgroup>
-        <col style="width: 25%;">
+        <col style="width: 20%;">
         <col style="width: 5%;">
         <col style="width: 50%;">
         <col style="width: 5%;">
         <col style="width: 5%;">
-        <col style="width: 5%;">
+        <col style="width: 10%;">
         <col style="width: 5%;">
       </colgroup>
       <tbody>
+        <tr></tr>
         <tr>
           <th>Short citation</th>
           <th>Links</th>
           <th>Full citation</th>
           <th>Bioassay</th>
           <th>Epidemiology</th>
-          <th>Epidemiology meta-analysis</th>
+          <th>Epi. meta-analysis</th>
           <th>In vitro</th>
         </tr>
         {% for study in study_list %}
@@ -67,48 +68,29 @@
           <td>
             {% for ident in study.identifiers.all %}
             {% if ident.database == doi_constant %}
-            <a style="margin:0.1rem;" class="btn btn-sm btn-success" href="https://doi.org/{{ident.unique_id}}">DOI</a>
+            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank" href="https://doi.org/{{ident.unique_id}}">DOI</a>
             {% endif %}
             {% if ident.database == hero_constant %}
-            <a style="margin:0.1rem;" class="btn btn-sm btn-success"
+            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank"
               href="http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id={{ident.unique_id}}">HERO</a>
             {% endif %}
             {% if ident.database == pubmed_constant %}
-            <a style="margin:0.1rem;" class="btn btn-sm btn-success" href="https://www.ncbi.nlm.nih.gov/pubmed/{{ident.unique_id}}">PubMed</a>
+            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank" href="https://www.ncbi.nlm.nih.gov/pubmed/{{ident.unique_id}}">PubMed</a>
             {% endif %}
             {% endfor %}
           </td>
           <td>
             {{study.full_citation}}
           </td>
-          <td>
-            {% if study.bioassay %}
-            <i class="fa fa-check"></i>
-            {% else %}
-            <i class="fa fa-minus"></i>
-            {% endif %}
-          </td>
-          <td>
-            {% if study.epi %}
-            <i class="fa fa-check"></i>
-            {% else %}
-            <i class="fa fa-minus"></i>
-            {% endif %}
-          </td>
-          <td>
-            {% if study.epi_meta %}
-            <i class="fa fa-check"></i>
-            {% else %}
-            <i class="fa fa-minus"></i>
-            {% endif %}
-          </td>
-          <td>
-            {% if study.in_vitro %}
-            <i class="fa fa-check"></i>
-            {% else %}
-            <i class="fa fa-minus"></i>
-            {% endif %}
-          </td>
+          {% for type in study.STUDY_TYPE_FIELDS %}
+              <td class="{% cycle study.bioassay study.epi study.epi_meta study.in_vitro as data_type %}">
+                {% if data_type %}
+                <i class="fa fa-check"></i>
+                {% else %}
+                <i class="fa fa-minus"></i>
+                {% endif %}
+              </td>
+          {% endfor %}
         </tr>
         {% endfor %}
       </tbody>
