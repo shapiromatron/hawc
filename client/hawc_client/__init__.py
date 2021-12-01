@@ -2,6 +2,7 @@ import json
 import math
 from copy import deepcopy
 from io import StringIO
+from operator import itemgetter
 from typing import Any, Dict, Generator, List, Optional, Tuple
 
 import pandas as pd
@@ -1270,16 +1271,21 @@ class AnimalClient(BaseClient):
             matched_animal_group["endpoints"].append(endpoint)
 
         # cleanup
-        studies = list(studies.values())
+        studies = sorted(list(studies.values()), key=itemgetter("id"))
         for study in studies:
-            study["experiments"] = list(study["experiments"].values())
+            study["experiments"] = sorted(list(study["experiments"].values()), key=itemgetter("id"))
             for experiment in study["experiments"]:
                 experiment.pop("study")
-                experiment["animal_groups"] = list(experiment["animal_groups"].values())
+                experiment["animal_groups"] = sorted(
+                    list(experiment["animal_groups"].values()), key=itemgetter("id")
+                )
                 for animal_group in experiment["animal_groups"]:
                     animal_group.pop("experiment")
                     for endpoint in animal_group["endpoints"]:
                         endpoint.pop("animal_group")
+                    animal_group["endpoints"] = sorted(
+                        animal_group["endpoints"], key=itemgetter("id")
+                    )
 
         return studies
 
