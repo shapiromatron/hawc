@@ -21,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormMixin
 
 from ..common.crumbs import Breadcrumb
 from ..common.forms import DownloadPlotForm
@@ -314,15 +314,33 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
         return context
 
 
-class AssessmentPublicList(ListView):
+class AssessmentPublicList(ListView, FormMixin):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
         dtxsid = self.request.GET.get("dtxsid")
+        order_by = None
+
         if dtxsid:
             qs = qs.filter(dtxsids=dtxsid)
+        self.form = self.form_class(self.request.GET)
+        if self.form.is_valid():
+            query = self.form.get_query()
+            qs = qs.filter(query).distinct()
+            order_by = self.form.get_order_by()
+
+        if order_by:
+            qs = qs.order_by(order_by)
+
         return qs
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.request.GET:
+            form = self.form_class(self.request.GET)
+        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

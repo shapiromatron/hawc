@@ -4,7 +4,6 @@
         <tr>
             <th>Name</th>
             <th>Year</th>
-            <th>Latest Version</th>
             <th>Date Created</th>
             <th>Date Updated</th>
         </tr>
@@ -14,7 +13,6 @@
             <tr>
                 <td><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a></td>
                 <td>{{object.year}}</td>
-                <td>{{object.version}}</td>
                 <td>{{object.created}}</td>
                 <td>{{object.last_updated}}</td>
             </tr>
