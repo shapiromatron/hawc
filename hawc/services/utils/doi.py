@@ -13,10 +13,10 @@ def get_doi_if_valid(text: str):
         doi = urllib.parse.unquote(doi)
         while doi.endswith((".", ",", '"')):
             doi = doi[:-1]
-        indicies = [doi.find("</ArticleId>"), doi.find("</ELocationID>")]
-        for index in indicies:
-            if index != -1:
-                doi = doi[:index]
+        if index := doi.find("</ArticleId>") != -1:
+            doi = doi[:index]
+        if index := doi.find("</ELocationID>") != -1:
+            doi = doi[:index]
     return doi
 
 
@@ -32,16 +32,7 @@ def get_doi_from_hero(ident):
     return doi
 
 
-def get_doi_from_pubmed(ident):
-    try:
-        doi = json.loads(ident.content)["doi"]
-    except (KeyError):
-        doi = None
-    doi = get_doi_if_valid(str(doi))
-    return doi
-
-
-def get_doi_from_ris(ident):
+def get_doi_from_pubmed_or_ris(ident):
     try:
         doi = json.loads(ident.content)["doi"]
     except (KeyError):

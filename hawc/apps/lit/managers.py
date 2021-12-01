@@ -14,7 +14,7 @@ from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
 from hawc.refml import tags as refmltags
-from hawc.services.utils.doi import get_doi_from_hero, get_doi_from_pubmed, get_doi_from_ris
+from hawc.services.utils.doi import get_doi_from_hero, get_doi_from_pubmed_or_ris
 
 from ...services.epa import hero
 from ...services.nih import pubmed
@@ -101,7 +101,7 @@ class IdentifiersManager(BaseManager):
             ids.append(ident)
 
             # create DOI identifier
-            doi = get_doi_from_ris(ident)
+            doi = get_doi_from_pubmed_or_ris(ident)
             if doi:
                 ident, _ = self.get_or_create(database=constants.DOI, unique_id=doi, content="",)
                 ids.append(ident)
@@ -368,7 +368,7 @@ class ReferenceManager(BaseManager):
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
-            doi = get_doi_from_pubmed(identifier)
+            doi = get_doi_from_pubmed_or_ris(identifier)
             if doi:
                 doiIdentifier = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI

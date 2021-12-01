@@ -5,12 +5,7 @@ from django.db import transaction
 
 from hawc.apps.lit import constants
 from hawc.apps.lit.models import Identifiers, Reference
-from hawc.services.utils.doi import (
-    get_doi_from_hero,
-    get_doi_from_pubmed,
-    get_doi_from_ris,
-    get_doi_if_valid,
-)
+from hawc.services.utils.doi import get_doi_from_hero, get_doi_from_pubmed_or_ris, get_doi_if_valid
 
 
 class Command(BaseCommand):
@@ -75,7 +70,6 @@ def validate_dois(self, doi_identifiers):
         if new_doi:
             if new_doi not in doi_id_saved:
                 # doi validation resulted in a new doi--save to be bulk updated
-                print(f"old: {ident.unique_id}\tnew: {new_doi}")
                 ident.unique_id = new_doi
                 doi_idents_updated.append(ident)
                 doi_id_saved[new_doi] = ident
@@ -125,10 +119,8 @@ def create_dois(refs, extensive: bool = False):
                 if ids.content != "":
                     if ids.database == constants.HERO:
                         doi = get_doi_from_hero(ids)
-                    if ids.database == constants.RIS:
-                        doi = get_doi_from_ris(ids)
-                    if ids.database == constants.PUBMED:
-                        doi = get_doi_from_pubmed(ids)
+                    if ids.database == constants.RIS or ids.database == constants.PUBMED:
+                        doi = get_doi_from_pubmed_or_ris(ids)
             if doi:
                 doi_identifier, created = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI
