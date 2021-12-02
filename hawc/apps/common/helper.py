@@ -14,7 +14,7 @@ import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Choices, QuerySet
+from django.db.models import QuerySet
 from django.utils import html
 from django.utils.encoding import force_str
 from docx.document import Document
@@ -394,7 +394,3 @@ def event_plot(series: pd.Series) -> Axes:
 
     plt.tight_layout()
     return ax
-
-
-def choices_to_dict(choices: Choices) -> Dict:
-    return {e.value: e.label for e in choices}
