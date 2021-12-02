@@ -166,6 +166,7 @@ class DatasetAdmin(admin.ModelAdmin):
 
 @admin.register(models.DoseUnits)
 class DoseUnitsAdmin(admin.ModelAdmin):
+    search_fields = ("name",)
     list_display = (
         "name",
         "animal_dose_group_count",
