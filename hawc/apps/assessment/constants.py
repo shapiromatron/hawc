@@ -20,28 +20,3 @@ class JobStatus(models.IntegerChoices):
 
 class JobType(models.IntegerChoices):
     TEST = 1, "TEST"
-
-
-### STOP HHHERE
-
-
-class ExperimentType(models.TextChoices):
-    AC = "Ac", "Acute (<24 hr)"
-    ST = "St", "Short-term (1-30 days)"
-    SB = "Sb", "Subchronic (30-90 days)"
-    CH = "Ch", "Chronic (>90 days)"
-    CA = "Ca", "Cancer"
-    ME = "Me", "Mechanistic"
-    RP = "Rp", "Reproductive"
-    R1 = "1r", "1-generation reproductive"
-    R2 = "2r", "2-generation reproductive"
-    DV = "Dv", "Developmental"
-    OT = "Ot", "Other"
-    NR = "NR", "Not-reported"
-
-
-class TrendResult(models.IntegerChoices):
-    NA = 0, "not applicable"
-    NS = 1, "not significant"
-    S = 2, "significant"
-    NR = 3, "not reported"
