@@ -13,10 +13,10 @@ def get_doi_if_valid(text: str):
         doi = urllib.parse.unquote(doi)
         while doi.endswith((".", ",", '"')):
             doi = doi[:-1]
-        if index := doi.find("</ArticleId>") != -1:
+        if (index := doi.find("</ArticleId>")) != -1:
             doi = doi[:index]
-        if index := doi.find("</ELocationID>") != -1:
-            doi = doi[:index]
+        if (index2 := doi.find("</ELocationID>")) != -1:
+            doi = doi[:index2]
     return doi
 
 
