@@ -56,17 +56,13 @@ class LitOverview(BaseList):
                 self.assessment
             ).count()
         context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
-        context["config"] = json.dumps(  # HERE
-            {
-                "tags": models.ReferenceFilterTag.get_all_tags(
-                    self.assessment.id, json_encode=False
-                ),
-                "assessment_id": self.assessment.id,
-                "referenceYearHistogramUrl": reverse(
-                    "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
-                ),
-            }
-        )
+        context["config"] = {
+            "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            "assessment_id": self.assessment.id,
+            "referenceYearHistogramUrl": reverse(
+                "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
+            ),
+        }
         return context
 
 
@@ -451,11 +447,11 @@ class RefList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = _get_reference_list(
-            self.assessment, context["obj_perms"]
-        ).dict()  # HERE
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_reference_list(self.assessment, context["obj_perms"])
 
 
 class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
