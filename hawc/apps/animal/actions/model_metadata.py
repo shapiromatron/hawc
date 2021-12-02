@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from hawc.apps.animal import constants, models
+from hawc.apps.animal import constants
 from hawc.apps.assessment.models import DoseUnits, Species, Strain
 from hawc.apps.common.actions import BaseApiAction
 from hawc.apps.study.models import Study
@@ -35,7 +35,7 @@ class AnimalMetadata(BaseApiAction):
     def dosing_regime_metadata(self):
         return dict(
             route_of_exposure=dict(constants.RouteExposure.choices),
-            positive_control=dict(models.DosingRegime.POSITIVE_CONTROL_CHOICES),
+            positive_control=dict(constants.POSITIVE_CONTROL_CHOICES),
             negative_control=dict(constants.NegativeControl.choices),
         )
 
