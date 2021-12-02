@@ -310,7 +310,6 @@ class EndpointSerializer(serializers.ModelSerializer):
         """
 
         term = data.get(term_field)
-        text = data.get(text_field)
         if term is None:
             return
 
