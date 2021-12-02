@@ -429,13 +429,6 @@ class DosingRegime(models.Model):
 
     objects = managers.DosingRegimeManager()
 
-    # TODO tried Class PositiveControl(int,models.Choices), but can't subclass bool?
-    POSITIVE_CONTROL_CHOICES = (
-        (True, "Yes"),
-        (False, "No"),
-        (None, "Unknown"),
-    )
-
     TEXT_CLEANUP_FIELDS = (
         "description",
         "duration_exposure_text",
@@ -485,7 +478,7 @@ class DosingRegime(models.Model):
         help_text="Number of dose groups, plus control",
     )
     positive_control = models.BooleanField(
-        choices=POSITIVE_CONTROL_CHOICES,
+        choices=constants.POSITIVE_CONTROL_CHOICES,
         default=False,
         help_text="Was a positive control used?",
         null=True,

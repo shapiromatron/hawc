@@ -40,12 +40,16 @@ class Generation(models.TextChoices):
     OT = "Ot", "Other"
 
 
-# these choices for lifesage expose/assessed were added ~Sept 2018. B/c there
-# are existing values in the database, we are not going to enforce these choices on
-# the model as we do for say sex. Instead we'll leave the model as is,
-# and start using this to drive a Select widget on the form. For old/existing data,
-# we'll add the previously saved value to the dropdown at runtime so we don't lose data.
 class Lifestage(models.TextChoices):
+    """
+    Notes
+    -----
+    these choices for lifesage expose/assessed were added ~Sept 2018. B/c there are existing values
+    in the database, we are not going to enforce these choices on the model as we do for say sex.
+    Instead we'll leave the model as is, and start using this to drive a Select widget on the form.
+    For old/existing data, we'll add the previously saved value to the dropdown at runtime so we don't lose data.
+    """
+
     D = "Developmental", "Developmental"
     A = "Adult", "Adult"
     AG = "Adult (gestation)", "Adult (gestation)"
@@ -142,3 +146,11 @@ class LitterEffect(models.TextChoices):
     YD = "YD", "Yes, study-design"
     N = "N", "No"
     O = "O", "Other"  # noqa: E741
+
+
+# bool can't be subclassed with models.Choices
+POSITIVE_CONTROL_CHOICES = (
+    (True, "Yes"),
+    (False, "No"),
+    (None, "Unknown"),
+)

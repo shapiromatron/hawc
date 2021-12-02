@@ -760,7 +760,7 @@ class EndpointFilterForm(forms.Form):
     sex = forms.MultipleChoiceField(
         choices=constants.Sex.choices,
         widget=forms.CheckboxSelectMultiple,
-        initial=[c[0] for c in constants.Sex.choices],
+        initial=constants.Sex.values,
         required=False,
     )
 
