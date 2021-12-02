@@ -2,11 +2,11 @@ import json
 from typing import Dict
 
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
-from django.db.models import Q
 from django.views.generic.edit import FormMixin
 
 from ..assessment.models import Assessment
@@ -232,7 +232,7 @@ class VisualizationList(BaseList, FormMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["visual_list"] = self.get_queryset()
-        context['visual_choices'] = models.Visual.VISUAL_CHOICES
+        context["visual_choices"] = models.Visual.VISUAL_CHOICES
         context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
         return context
 

@@ -344,7 +344,7 @@ class AssessmentPublicList(ListView, FormMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['metadata'] = [
+        context["metadata"] = [
             f"There are {models.Assessment.objects.count():,} assessments currently, both public and private",
             f"{apps.get_model('lit', 'Reference').objects.count():,} study references have been imported or found via searches",
             f"Extracted study data has been used to create {apps.get_model('summary', 'Visual').objects.count() + apps.get_model('summary', 'DataPivot').objects.count():,} custom visualizations",

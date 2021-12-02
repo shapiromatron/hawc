@@ -555,6 +555,7 @@ class VisualForm(forms.ModelForm):
     def clean_slug(self):
         return clean_slug(self)
 
+
 class VisualFilterForm(forms.Form):
     text = forms.CharField(required=False, help_text="Title or description text")
 
@@ -590,12 +591,11 @@ class VisualFilterForm(forms.Form):
         if text := self.cleaned_data.get("text"):
             query &= Q(title__icontains=text)
             query |= Q(caption__icontains=text)
-        if type := self.cleaned_data.get('type'):
+        if type := self.cleaned_data.get("type"):
             query &= Q(visual_type=type)
         if (published := self.cleaned_data.get("published")) != "":
             query &= Q(published=published)
         return query
-
 
 
 class EndpointAggregationForm(VisualForm):
