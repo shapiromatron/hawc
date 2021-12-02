@@ -62,10 +62,10 @@
         <p>{{ visual.caption|safe }}</p>
       </td>
       <td>
-        {{ visual.created }}
+        {{ visual.created|date:'SHORT_DATE_FORMAT' }}
       </td>
       <td>
-        {{ visual.last_updated }}
+        {{ visual.last_updated|date:'SHORT_DATE_FORMAT' }}
       </td>
     </tr>
     {% endfor %}

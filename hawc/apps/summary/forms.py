@@ -556,7 +556,7 @@ class VisualForm(forms.ModelForm):
         return clean_slug(self)
 
 class VisualFilterForm(forms.Form):
-    text = forms.CharField(required=False)
+    text = forms.CharField(required=False, help_text="Title or description text")
 
     type_choices = [
         (0, "animal bioassay endpoint aggregation"),

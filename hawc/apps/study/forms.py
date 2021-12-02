@@ -212,9 +212,9 @@ class StudiesCopy(forms.Form):
 
 
 class StudyFilterForm(forms.Form):
-    name = forms.CharField(required=False)
+    name = forms.CharField(required=False, help_text='Study citation text')
 
-    identifier = forms.CharField(required=False)
+    identifier = forms.CharField(required=False, help_text='HERO id, DOI id, etc')
 
     data_choices = [
         ("bioassay", "Bioassay"),
