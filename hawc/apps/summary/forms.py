@@ -567,9 +567,16 @@ class VisualFilterForm(forms.Form):
         (4, "literature tagtree"),
         (5, "embedded external website"),
         (6, "exploratory heatmap"),
+        ("Data pivot (animal bioassay)", "Data pivot (animal bioassay)"),
+        ("Data pivot (epidemiology)", "Data pivot (epidemiology)"),
+        (
+            "Data pivot (epidemiology meta-analysis/pooled-analysis)",
+            "Data pivot (epidemiology meta-analysis/pooled-analysis)",
+        ),
+        ("Data pivot (in vitro)", "Data pivot (in vitro)"),
     ]
 
-    type = forms.ChoiceField(required=False, choices=type_choices, widget=forms.RadioSelect)
+    type = forms.ChoiceField(required=False, choices=type_choices)
 
     published_choices = [(True, "Published only"), (False, "Unpublished only"), ("", "All visuals")]
     published = forms.ChoiceField(
@@ -591,8 +598,20 @@ class VisualFilterForm(forms.Form):
         if text := self.cleaned_data.get("text"):
             query &= Q(title__icontains=text)
             query |= Q(caption__icontains=text)
-        if type := self.cleaned_data.get("type"):
-            query &= Q(visual_type=type)
+        if visual_type := self.cleaned_data.get("type"):
+            if len(visual_type) == 1:
+                query &= Q(visual_type=visual_type)
+            else:
+                query &= Q(visual_type=-1)
+        if (published := self.cleaned_data.get("published")) != "":
+            query &= Q(published=published)
+        return query
+
+    def get_datapivot_query(self):
+        query = Q()
+        if text := self.cleaned_data.get("text"):
+            query &= Q(title__icontains=text)
+            query |= Q(caption__icontains=text)
         if (published := self.cleaned_data.get("published")) != "":
             query &= Q(published=published)
         return query

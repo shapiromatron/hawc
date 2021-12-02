@@ -221,6 +221,19 @@ class VisualizationList(BaseList, FormMixin):
 
         return qs
 
+    def get_datapivotset(self):
+        qs = models.DataPivot.objects.filter(assessment=self.assessment)
+        perms = super().get_obj_perms()
+        self.form = self.form_class(self.request.GET)
+        query = self.get_query(perms)
+        if self.form.is_valid():
+            query &= self.form.get_datapivot_query()
+            qs = qs.filter(query).distinct()
+            if visual_type := self.form.cleaned_data.get("type"):
+                return [dp for dp in qs if dp.visual_type == visual_type]
+        qs = qs.filter(query).distinct()
+        return qs
+
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         if self.request.GET:
@@ -232,6 +245,7 @@ class VisualizationList(BaseList, FormMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["visual_list"] = self.get_queryset()
+        context["datapivot_list"] = self.get_datapivotset()
         context["visual_choices"] = models.Visual.VISUAL_CHOICES
         context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
         return context

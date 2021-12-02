@@ -45,6 +45,26 @@
       <th style="vertical-align: bottom;">Created</th>
       <th style="vertical-align: bottom;">Modified</th>
     </tr>
+    {% for data in datapivot_list %}
+    <tr>
+      <td>
+        <a href="{% url 'summary:dp_detail' data.assessment.pk data.slug %}">{{data.title}}</a>
+
+      </td>
+      <td>
+        {{ data.visual_type }}
+      </td>
+      <td>
+        <p>{{ data.caption|safe }}</p>
+      </td>
+      <td>
+        {{ data.created|date:'SHORT_DATE_FORMAT' }}
+      </td>
+      <td>
+        {{ data.last_updated|date:'SHORT_DATE_FORMAT' }}
+      </td>
+    </tr>
+    {% endfor %}
     {% for visual in visual_list %}
     <tr>
       <td>
