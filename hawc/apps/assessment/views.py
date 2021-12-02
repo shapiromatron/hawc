@@ -41,7 +41,7 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
-from . import forms, models, serializers
+from . import constants, forms, models, serializers
 
 logger = logging.getLogger(__name__)
 
@@ -204,9 +204,9 @@ class About(TemplateView):
 
     def get_rob_name(self):
         if settings.HAWC_FLAVOR == "PRIME":
-            return models.ROB_NAME_CHOICES_ROB_TEXT
+            return constants.RobName.ROB.label
         elif settings.HAWC_FLAVOR == "EPA":
-            return models.ROB_NAME_CHOICES_SE_TEXT
+            return constants.RobName.SE.label
         else:
             raise ValueError("Unknown HAWC flavor")
 
