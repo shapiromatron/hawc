@@ -21,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
-from django.views.generic.edit import CreateView, FormMixin
+from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
 from ..common.forms import DownloadPlotForm
@@ -314,7 +314,7 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
         return context
 
 
-class AssessmentPublicList(ListView, FormMixin):
+class AssessmentPublicList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
 
@@ -336,12 +336,6 @@ class AssessmentPublicList(ListView, FormMixin):
 
         return qs
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        if self.request.GET:
-            form = self.form_class(self.request.GET)
-        return form
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["metadata"] = [
@@ -362,6 +356,9 @@ class AssessmentPublicList(ListView, FormMixin):
             team; details on the objectives and methodology applied are described in each assessment.
             Data can also be downloaded for each individual assessment.
         """
+        context["form"] = self.form_class
+        if self.request.GET:
+            context["form"] = self.form_class(self.request.GET)
         return context
 
 

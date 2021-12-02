@@ -6,7 +6,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
-from django.views.generic.edit import FormMixin
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -25,7 +24,7 @@ from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
 
 
-class StudyList(BaseList, FormMixin):
+class StudyList(BaseList):
     parent_model = Assessment
     model = models.Study
     form_class = forms.StudyFilterForm
@@ -51,20 +50,17 @@ class StudyList(BaseList, FormMixin):
 
         return qs.prefetch_related("identifiers")
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        if self.request.GET:
-            form = self.form_class(self.request.GET)
-        if not self.assessment.user_is_team_member_or_higher(self.request.user):
-            form.fields.pop("published")
-        return form
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["study_list"] = self.get_queryset()
         context["doi_constant"] = constants.DOI
         context["hero_constant"] = constants.HERO
         context["pubmed_constant"] = constants.PUBMED
+        context["form"] = self.form_class
+        if self.request.GET:
+            context["form"] = self.form_class(self.request.GET)
+        if not self.assessment.user_is_team_member_or_higher(self.request.user):
+            context["form"].fields.pop("published")
         return context
 
 

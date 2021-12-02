@@ -67,16 +67,15 @@
           </td>
           <td>
             {% for ident in study.identifiers.all %}
-            {% if ident.database == doi_constant %}
-            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank" href="https://doi.org/{{ident.unique_id}}">DOI</a>
-            {% endif %}
-            {% if ident.database == hero_constant %}
-            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank"
-              href="http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id={{ident.unique_id}}">HERO</a>
-            {% endif %}
-            {% if ident.database == pubmed_constant %}
-            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank" href="https://www.ncbi.nlm.nih.gov/pubmed/{{ident.unique_id}}">PubMed</a>
-            {% endif %}
+            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank" href="{{ident.get_url}}">
+              {% if ident.database == doi_constant %}
+                DOI
+              {% elif ident.database == hero_constant %}
+                HERO
+              {% elif ident.database == pubmed_constant %}
+                PubMed
+              {% endif %}
+            </a>
             {% endfor %}
           </td>
           <td>

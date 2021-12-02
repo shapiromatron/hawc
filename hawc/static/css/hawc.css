@@ -158,6 +158,12 @@ input[type='number'] {
     margin: 0.5rem 0 !important;
 }
 
+.pub-assess-button {
+    align-self: center;
+    padding-top: 1rem !important;
+    margin: 0.5rem 0 !important;
+}
+
 /* increase contrast more from bootstrap4 defaults */
 .btn-light {
     background-color: #e6e6e6
