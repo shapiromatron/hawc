@@ -169,8 +169,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     @action(detail=True, url_path="topic-model")
     def topic_model(self, request, pk):
         assessment = self.get_object()
-        fig_dict = assessment.literature_settings.get_topic_tsne_fig_dict()
-        return Response(fig_dict)
+        if assessment.literature_settings.has_topic_model:
+            data = assessment.literature_settings.get_topic_tsne_fig_dict()
+        else:
+            data = {"status": "No topic model available"}
+        return Response(data)
 
     @action(detail=True, methods=("post",), url_path="topic-model-request-refresh")
     def topic_model_request_refresh(self, request, pk):
