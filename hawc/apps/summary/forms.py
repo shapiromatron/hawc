@@ -560,6 +560,7 @@ class VisualFilterForm(forms.Form):
     text = forms.CharField(required=False, help_text="Title or description text")
 
     type_choices = [
+        ("", "all visual types"),
         (0, "animal bioassay endpoint aggregation"),
         (1, "animal bioassay endpoint crossview"),
         (2, "risk of bias heatmap"),
@@ -590,7 +591,10 @@ class VisualFilterForm(forms.Form):
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
-        helper.add_row("text", 3, "col-md-3")
+        if "published" in self.fields:
+            helper.add_row("text", 3, "col-md-3")
+        else:
+            helper.add_row("text", 2, "col-md-3")
         return helper
 
     def get_query(self):
