@@ -135,7 +135,13 @@ class MetaResultList(BaseEndpointFilterList):
 
     def get_query(self, perms):
         query = Q(protocol__study__assessment=self.assessment)
-
         if not perms["edit"]:
             query &= Q(protocol__study__published=True)
         return query
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="epiMetaStartup",
+            page="startupMetaResultListPage",
+            data={"items": self.model.get_qs_json(context["object_list"], json_encode=False)},
+        )

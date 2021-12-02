@@ -11,7 +11,7 @@ export default {
     startupMetaProtocolPage: (el, config) => MetaProtocol.displayFullPager($(el), config.id),
     startupMetaResultPage: (el, config) => MetaResult.displayFullPager($(el), config.id),
     startupMetaResultListPage: (el, config) => {
-        const tbl = new MetaResultListTable(config.results);
+        const tbl = new MetaResultListTable(config.items);
         $(el).html(tbl.buildTable());
     },
 };

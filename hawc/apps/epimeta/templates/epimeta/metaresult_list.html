@@ -23,11 +23,5 @@
 
 {% block extrajs %}
     {{ form.media }}
-    <script id="config" type="application/json">
-        {
-            "app": "epiMetaStartup",
-            "page": "startupMetaResultListPage",
-            "data": {"results": {{list_json|safe}}}
-        }
-    </script>
+    {{ config|json_script:"config" }}
 {% endblock %}
