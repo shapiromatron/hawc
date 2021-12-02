@@ -24,6 +24,7 @@ from .crumbs import Breadcrumb
 from .helper import WebappConfig, tryParseInt
 
 logger = logging.getLogger(__name__)
+audit_logger = logging.getLogger("hawc.audit.change")
 
 
 def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
@@ -96,6 +97,7 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
     comment = (
         f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
     )
+    audit_logger.info(f"[{log.id}] assessment-{assessment_id} user-{user_id} {log_message}")
     reversion.set_comment(comment)
 
 

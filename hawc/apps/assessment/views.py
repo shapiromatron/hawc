@@ -285,6 +285,11 @@ class Error401(TemplateView):
     template_name = "401.html"
 
 
+@method_decorator(staff_member_required, name="dispatch")
+class Swagger(TemplateView):
+    template_name = "swagger.html"
+
+
 # Assessment Object
 class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
