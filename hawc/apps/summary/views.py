@@ -244,8 +244,10 @@ class VisualizationList(BaseList, FormMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["visual_list"] = self.get_queryset()
-        context["datapivot_list"] = self.get_datapivotset()
+        context["visual_list"] = {
+            "visual": self.get_queryset(),
+            "datapivot": self.get_datapivotset(),
+        }
         context["visual_choices"] = models.Visual.VISUAL_CHOICES
         context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
         return context
