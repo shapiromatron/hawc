@@ -241,7 +241,7 @@ class VisualizationList(BaseList):
         }
         context["visual_choices"] = models.Visual.VISUAL_CHOICES
         context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
-        context["form"] = self.form_class
+        context["form"] = self.form_class()
         if self.request.GET:
             context["form"] = self.form_class(self.request.GET)
         if not self.assessment.user_is_team_member_or_higher(self.request.user):

@@ -56,7 +56,7 @@ class StudyList(BaseList):
         context["doi_constant"] = constants.DOI
         context["hero_constant"] = constants.HERO
         context["pubmed_constant"] = constants.PUBMED
-        context["form"] = self.form_class
+        context["form"] = self.form_class()
         if self.request.GET:
             context["form"] = self.form_class(self.request.GET)
         if not self.assessment.user_is_team_member_or_higher(self.request.user):

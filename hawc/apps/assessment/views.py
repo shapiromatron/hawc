@@ -356,7 +356,7 @@ class AssessmentPublicList(ListView):
             team; details on the objectives and methodology applied are described in each assessment.
             Data can also be downloaded for each individual assessment.
         """
-        context["form"] = self.form_class
+        context["form"] = self.form_class()
         if self.request.GET:
             context["form"] = self.form_class(self.request.GET)
         return context
