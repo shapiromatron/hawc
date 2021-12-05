@@ -15,7 +15,7 @@ from scipy.stats import t
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
 from ..study.models import Study
-from . import managers
+from . import constants, managers
 
 # version with no special formatting exists as sometimes it is used in a tag title attribute, e.g. for tooltips
 HAWC_VIS_NOTE_UNSTYLED = "This field is commonly used in HAWC visualizations"
@@ -112,12 +112,11 @@ class Ethnicity(models.Model):
 class StudyPopulationCriteria(models.Model):
     objects = managers.StudyPopulationCriteriaManager()
 
-    CRITERIA_TYPE = (("I", "Inclusion"), ("E", "Exclusion"), ("C", "Confounding"))
     criteria = models.ForeignKey("Criteria", on_delete=models.CASCADE, related_name="spcriteria")
     study_population = models.ForeignKey(
         "StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria"
     )
-    criteria_type = models.CharField(max_length=1, choices=CRITERIA_TYPE)
+    criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType.choices)
 
     COPY_NAME = "spcriterias"
 
@@ -147,21 +146,6 @@ class StudyPopulation(models.Model):
         "comments",
     )
 
-    DESIGN_CHOICES = (
-        ("CO", "Cohort"),
-        ("CX", "Cohort (Retrospective)"),
-        ("CY", "Cohort (Prospective)"),
-        ("CC", "Case-control"),
-        ("NC", "Nested case-control"),
-        ("CR", "Case report"),
-        ("SE", "Case series"),
-        ("RT", "Randomized controlled trial"),
-        ("NT", "Non-randomized controlled trial"),
-        ("CS", "Cross-sectional"),
-    )
-
-    DESIGN_CHOICES_DICT = {el[0]: el[1] for el in DESIGN_CHOICES}
-
     OUTCOME_GROUP_DESIGNS = ("CC", "NC")
 
     study = models.ForeignKey(
@@ -181,7 +165,7 @@ class StudyPopulation(models.Model):
     )
     design = models.CharField(
         max_length=2,
-        choices=DESIGN_CHOICES,
+        choices=constants.Design.choices,
         help_text="Choose the most specific description of study design." + HAWC_VIS_NOTE,
     )
     age_profile = models.CharField(
@@ -367,17 +351,6 @@ class Outcome(BaseEndpoint):
         "effect_subtype",
     )
 
-    DIAGNOSTIC_CHOICES = (
-        (0, "not reported"),
-        (1, "medical professional or test"),
-        (2, "medical records"),
-        (3, "self-reported"),
-        (4, "questionnaire"),
-        (5, "hospital admission"),
-        (7, "registry"),
-        (6, "other"),
-    )
-
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="outcomes"
     )
@@ -395,7 +368,7 @@ class Outcome(BaseEndpoint):
         help_text="Effect subtype, using common-vocabulary. Use title style (capitalize all words). Ex. Absolute"
         + formatHelpTextNotes("This field is not mandatory; often no effect subtype is necessary"),
     )
-    diagnostic = models.PositiveSmallIntegerField(choices=DIAGNOSTIC_CHOICES)
+    diagnostic = models.PositiveSmallIntegerField(choices=constants.Diagnostic.choices)
     diagnostic_description = models.TextField(
         help_text='Copy and paste diagnostic methods directly from study. Ex. "Birth weight (grams) was measured by trained midwives at delivery." '
         + formatHelpTextNotes("Use quotation marks around direct quotes from a study")
@@ -645,19 +618,6 @@ class ComparisonSet(models.Model):
 class Group(models.Model):
     objects = managers.GroupManager()
 
-    SEX_CHOICES = (
-        ("U", "Not reported"),
-        ("M", "Male"),
-        ("F", "Female"),
-        ("B", "Male and Female"),
-    )
-
-    IS_CONTROL_CHOICES = (
-        (True, "Yes"),
-        (False, "No"),
-        (None, "N/A"),
-    )
-
     comparison_set = models.ForeignKey(
         ComparisonSet, on_delete=models.CASCADE, related_name="groups"
     )
@@ -685,7 +645,7 @@ class Group(models.Model):
         + "typically the group with the lowest or no exposure",
         blank=True,
     )
-    sex = models.CharField(max_length=1, default="U", choices=SEX_CHOICES)
+    sex = models.CharField(max_length=1, default="U", choices=constants.Sex.choices)
     ethnicities = models.ManyToManyField(Ethnicity, blank=True, help_text="Optional")
     eligible_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Eligible N", help_text="Optional"
@@ -699,7 +659,7 @@ class Group(models.Model):
     isControl = models.BooleanField(
         verbose_name="Control?",
         default=None,
-        choices=IS_CONTROL_CHOICES,
+        choices=constants.IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group, if applicable",
         null=True,
         blank=True,
@@ -1002,23 +962,6 @@ class Exposure(models.Model):
 
 class CentralTendency(models.Model):
     # object = managers.CentralTendencyManager
-    ESTIMATE_TYPE_CHOICES = (
-        (0, None),
-        (1, "mean"),
-        (2, "geometric mean"),
-        (3, "median"),
-        (5, "point"),
-        (4, "other"),
-    )
-
-    VARIANCE_TYPE_CHOICES = (
-        (0, None),
-        (1, "SD"),
-        (2, "SE"),
-        (3, "SEM"),
-        (4, "GSD"),
-        (5, "other"),
-    )
 
     exposure = models.ForeignKey(
         Exposure, on_delete=models.CASCADE, related_name="central_tendencies"
@@ -1033,10 +976,12 @@ class CentralTendency(models.Model):
         + HAWC_VIS_NOTE,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=ESTIMATE_TYPE_CHOICES, verbose_name="Central estimate type", default=0
+        choices=constants.EstimateType.choices, verbose_name="Central estimate type", default=0
     )
     variance = models.FloatField(blank=True, null=True, verbose_name="Variance")
-    variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+    )
     lower_ci = models.FloatField(
         blank=True, null=True, verbose_name="Lower CI", help_text="Numerical value"
     )
@@ -1119,20 +1064,6 @@ class CentralTendency(models.Model):
 class GroupNumericalDescriptions(models.Model):
     objects = managers.GroupNumericalDescriptionsManager()
 
-    MEAN_TYPE_CHOICES = (
-        (0, None),
-        (1, "mean"),
-        (2, "geometric mean"),
-        (3, "median"),
-        (4, "other"),
-    )
-
-    VARIANCE_TYPE_CHOICES = ((0, None), (1, "SD"), (2, "SEM"), (3, "GSD"), (4, "other"))
-
-    LOWER_LIMIT_CHOICES = ((0, None), (1, "lower limit"), (2, "5% CI"), (3, "other"))
-
-    UPPER_LIMIT_CHOICES = ((0, None), (1, "upper limit"), (2, "95% CI"), (3, "other"))
-
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="descriptions")
     description = models.CharField(
         max_length=128,
@@ -1141,17 +1072,21 @@ class GroupNumericalDescriptions(models.Model):
     )
     mean = models.FloatField(blank=True, null=True, verbose_name="Central estimate")
     mean_type = models.PositiveSmallIntegerField(
-        choices=MEAN_TYPE_CHOICES, verbose_name="Central estimate type", default=0
+        choices=constants.GroupMeanType.choices,
+        verbose_name="Central estimate type",
+        default=constants.GroupMeanType.NONE,
     )
     is_calculated = models.BooleanField(
         default=False, help_text="Was value calculated/estimated from literature?"
     )
     variance = models.FloatField(blank=True, null=True)
-    variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.GroupVarianceType.choices, default=constants.GroupVarianceType.NONE
+    )
     lower = models.FloatField(blank=True, null=True)
-    lower_type = models.PositiveSmallIntegerField(choices=LOWER_LIMIT_CHOICES, default=0)
+    lower_type = models.PositiveSmallIntegerField(choices=constants.LowerLimit.choices, default=0)
     upper = models.FloatField(blank=True, null=True)
-    upper_type = models.PositiveSmallIntegerField(choices=UPPER_LIMIT_CHOICES, default=0)
+    upper_type = models.PositiveSmallIntegerField(choices=constants.UpperLimit.choices, default=0)
 
     COPY_NAME = "group_descriptions"
 
@@ -1225,40 +1160,6 @@ class ResultAdjustmentFactor(models.Model):
 class Result(models.Model):
     objects = managers.ResultManager()
 
-    DOSE_RESPONSE_CHOICES = (
-        (0, "not-applicable"),
-        (1, "monotonic"),
-        (2, "non-monotonic"),
-        (3, "no trend"),
-        (4, "not reported"),
-    )
-
-    STATISTICAL_POWER_CHOICES = (
-        (0, "not reported or calculated"),
-        (1, "appears to be adequately powered (sample size met)"),
-        (2, "somewhat underpowered (sample size is 75% to <100% of recommended)"),
-        (3, "underpowered (sample size is 50 to <75% required)"),
-        (4, "severely underpowered (sample size is <50% required)"),
-    )
-
-    ESTIMATE_TYPE_CHOICES = (
-        (0, None),
-        (1, "mean"),
-        (2, "geometric mean"),
-        (3, "median"),
-        (5, "point"),
-        (4, "other"),
-    )
-
-    VARIANCE_TYPE_CHOICES = (
-        (0, None),
-        (1, "SD"),
-        (2, "SE"),
-        (3, "SEM"),
-        (4, "GSD"),
-        (5, "other"),
-    )
-
     name = models.CharField(
         max_length=256,
         help_text="Name the result, following the format <b>Effect Exposure (If log-transformed) (continuous, quartiles, tertiles, etc.) "
@@ -1299,7 +1200,7 @@ class Result(models.Model):
         verbose_name="Dose Response Trend",
         help_text=OPTIONAL_NOTE,
         default=0,
-        choices=DOSE_RESPONSE_CHOICES,
+        choices=constants.DoseResponse.choices,
     )
     dose_response_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     prevalence_incidence = models.CharField(
@@ -1311,7 +1212,7 @@ class Result(models.Model):
     statistical_power = models.PositiveSmallIntegerField(
         help_text="Is the study sufficiently powered?" + OPTIONAL_NOTE,
         default=0,
-        choices=STATISTICAL_POWER_CHOICES,
+        choices=constants.StatisticalPower.choices,
     )
     statistical_power_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     statistical_test_results = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
@@ -1326,9 +1227,11 @@ class Result(models.Model):
         AdjustmentFactor, through=ResultAdjustmentFactor, related_name="outcomes", blank=True,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=ESTIMATE_TYPE_CHOICES, verbose_name="Central estimate type", default=0
+        choices=constants.EstimateType.choices, verbose_name="Central estimate type", default=0
     )
-    variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+    )
     ci_units = models.FloatField(
         blank=True,
         null=True,
@@ -1542,7 +1445,7 @@ class Result(models.Model):
         )
 
         df1 = pd.DataFrame(data=list(qs), columns=columns.values())
-        df1["study design"] = df1["study design"].map(StudyPopulation.DESIGN_CHOICES_DICT)
+        df1["study design"] = df1["study design"].map(dict(constants.Design.choices))
 
         # add exposure column
         exposure_cols = ["inhalation", "dermal", "oral", "in_utero", "iv", "unknown_route"]
@@ -1579,21 +1482,6 @@ class Result(models.Model):
 
 class GroupResult(models.Model):
     objects = managers.GroupResultManager()
-
-    P_VALUE_QUALIFIER_CHOICES = (
-        (" ", "-"),
-        ("-", "n.s."),
-        ("<", "<"),
-        ("=", "="),
-        (">", ">"),
-    )
-
-    MAIN_FINDING_CHOICES = (
-        (3, "not-reported"),
-        (2, "supportive"),
-        (1, "inconclusive"),
-        (0, "not-supportive"),
-    )
 
     result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name="results")
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="results")
@@ -1641,7 +1529,7 @@ class GroupResult(models.Model):
     )
     p_value_qualifier = models.CharField(
         max_length=1,
-        choices=P_VALUE_QUALIFIER_CHOICES,
+        choices=constants.PValueQualifier.choices,
         default="-",
         verbose_name="p-value qualifier",
         help_text="Select n.s. if results are not statistically significant; otherwise, choose the appropriate qualifier. "
@@ -1668,7 +1556,7 @@ class GroupResult(models.Model):
         + HAWC_VIS_NOTE_UNSTYLED,
     )
     main_finding_support = models.PositiveSmallIntegerField(
-        choices=MAIN_FINDING_CHOICES,
+        choices=constants.MainFinding.choices,
         help_text="Select appropriate level of support for the main finding."
         + 'See "Results" section of https://ehp.niehs.nih.gov/1205502/ for examples and further details. '
         + 'Choose between "inconclusive" vs. "not-supportive" based on chemical- and study-specific context. '

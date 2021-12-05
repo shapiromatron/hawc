@@ -8,7 +8,7 @@ from django.urls.exceptions import NoReverseMatch
 from rest_framework.test import APIClient
 
 from hawc.apps.assessment.models import Assessment, DoseUnits
-from hawc.apps.epi import models
+from hawc.apps.epi import constants, models
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
@@ -462,9 +462,9 @@ class TestOutcomeApi:
             study_pop = sp
             break
 
-        diagnostic = models.Outcome.DIAGNOSTIC_CHOICES[0]
-        diagnostic_code = diagnostic[0]
-        diagnostic_name = diagnostic[1]
+        diagnostic = constants.Diagnostic.NR
+        diagnostic_code = diagnostic.value
+        diagnostic_name = diagnostic.label
 
         base_data = {
             "name": "test outcome",
@@ -759,8 +759,8 @@ class TestGroupResultApi:
 
         data = {
             "n": 50,
-            "main_finding_support": models.GroupResult.MAIN_FINDING_CHOICES[2][0],
-            "p_value_qualifier": models.GroupResult.P_VALUE_QUALIFIER_CHOICES[1][0],
+            "main_finding_support": constants.MainFinding.I.value,
+            "p_value_qualifier": constants.PValueQualifier.NS.value,
             "p_value": 0.5,
             "group": group.id,
             "result": result.id,
@@ -865,7 +865,7 @@ class TestGroupResultApi:
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(
-                    {"main_finding_support": models.GroupResult.MAIN_FINDING_CHOICES[2][1]}
+                    {"main_finding_support": constants.MainFinding.I.label}
                 ),
                 "post_request_test": groupresult_lookup_test,
             },
@@ -1301,12 +1301,10 @@ class TestGroupNumericalDescriptionsApi:
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(
                     {
-                        "mean_type": models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES[1][0],
-                        "variance_type": models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES[1][
-                            0
-                        ],
-                        "lower_type": models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES[1][0],
-                        "upper_type": models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES[1][0],
+                        "mean_type": constants.GroupMeanType.MEAN.value,
+                        "variance_type": constants.GroupVarianceType.SD.value,
+                        "lower_type": constants.LowerLimit.LL.value,
+                        "upper_type": constants.UpperLimit.UL.value,
                     }
                 ),
                 "post_request_test": numdesc_lookup_test,
@@ -1317,18 +1315,10 @@ class TestGroupNumericalDescriptionsApi:
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(
                     {
-                        "mean_type": (
-                            models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES[1][1]
-                        ).upper(),
-                        "variance_type": (
-                            models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES[1][1]
-                        ).upper(),
-                        "lower_type": (
-                            models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES[1][1]
-                        ).upper(),
-                        "upper_type": (
-                            models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES[1][1]
-                        ).upper(),
+                        "mean_type": (constants.GroupMeanType.MEAN.label).upper(),
+                        "variance_type": (constants.GroupVarianceType.SD.label).upper(),
+                        "lower_type": (constants.LowerLimit.LL.label).upper(),
+                        "upper_type": (constants.UpperLimit.UL.label).upper(),
                     }
                 ),
                 "post_request_test": numdesc_lookup_test,
