@@ -1,8 +1,10 @@
 from django.db import models
 
+from ..common.constants import NO_LABEL
+
 
 class CoiReported(models.IntegerChoices):
-    NONE = 4, "---"
+    NONE = 4, NO_LABEL
     NO_COI = 0, "Authors report they have no COI"
     COI = 1, "Authors disclosed COI"
     NR_NO_COI = (

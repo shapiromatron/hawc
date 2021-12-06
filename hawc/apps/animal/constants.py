@@ -1,5 +1,7 @@
 from django.db import models
 
+from ..common.constants import NO_LABEL
+
 
 class ExperimentType(models.TextChoices):
     AC = "Ac", "Acute (<24 hr)"
@@ -136,7 +138,7 @@ class AdverseDirection(models.IntegerChoices):
     DEC = 2, "decrease from reference/control group"
     ANY = 1, "any change from reference/control group"
     U = 0, "unclear"
-    NR = 4, "---"
+    NR = 4, NO_LABEL
 
 
 class LitterEffect(models.TextChoices):

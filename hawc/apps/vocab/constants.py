@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from django.utils.functional import classproperty
 
-from ..common.models import IntChoiceEnum
+from ..common.constants import IntChoiceEnum
 
 
 class VocabularyNamespace(IntChoiceEnum):
