@@ -189,22 +189,6 @@ class TestEndpointSerializer:
         assert serializer.is_valid() is False
         assert serializer.errors == {"name": ["'name' or 'name_term' is required."]}
 
-        # term_field and text_field are mutually exclusive
-        data = {
-            "name": "Endpoint name",
-            "animal_group_id": 1,
-            "data_type": "C",
-            "variance_type": 1,
-            "response_units": "μg/dL",
-            "system": "Cardio",
-            "system_term": 1,
-        }
-        serializer = EndpointSerializer(data=data, context={"request": request})
-        assert serializer.is_valid() is False
-        assert serializer.errors == {
-            "system_term": ["'system' and 'system_term' are mutually exclusive."]
-        }
-
         # term types must match field
         data = {
             "name": "Endpoint name",

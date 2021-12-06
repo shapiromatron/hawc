@@ -140,7 +140,7 @@ class LiteratureAssessment(models.Model):
 
         data = dict(df=f1.getvalue(), topics=f2.getvalue())
 
-        if self.has_topic_model():
+        if self.has_topic_model:
             self.topic_tsne_data.delete(save=False)
         self.topic_tsne_refresh_requested = None
         self.topic_tsne_last_refresh = timezone.now()
@@ -148,7 +148,7 @@ class LiteratureAssessment(models.Model):
         cache.delete(self.topic_tsne_fig_dict_cache_key)
 
     def get_topic_tsne_data(self) -> Dict:
-        if not self.has_topic_model():
+        if not self.has_topic_model:
             raise ValueError("No data available.")
         data = pickle.load(self.topic_tsne_data.file.file)
         data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
@@ -164,8 +164,10 @@ class LiteratureAssessment(models.Model):
             cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
         return fig_dict
 
+    @property
     def has_topic_model(self) -> bool:
-        return self.topic_tsne_data.name is not None and self.topic_tsne_data.name != ""
+        name = self.topic_tsne_data.name
+        return name is not None and name != ""
 
     def can_topic_model(self) -> bool:
         return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES

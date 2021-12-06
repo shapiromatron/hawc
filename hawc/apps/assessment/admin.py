@@ -10,7 +10,7 @@ from reversion.admin import VersionAdmin
 
 from ..animal.models import Endpoint
 from ..common.admin import ReadOnlyAdmin
-from . import models
+from . import forms, models
 
 
 def bust_cache(modeladmin, request, queryset):
@@ -45,6 +45,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "reviewers__last_name",
     )
     actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
+    form = forms.AssessmentAdminForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -165,6 +166,7 @@ class DatasetAdmin(admin.ModelAdmin):
 
 @admin.register(models.DoseUnits)
 class DoseUnitsAdmin(admin.ModelAdmin):
+    search_fields = ("name",)
     list_display = (
         "name",
         "animal_dose_group_count",

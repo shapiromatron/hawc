@@ -293,7 +293,7 @@ class _DataPivot_settings_conditional {
                         .add_select(parent.settings.type, hash.get(v), true)
                         .data("key", v);
                     self.discrete_styles.push(style);
-                    add_input_row(discrete, `Style for <code>${v}</code>:`, style);
+                    add_input_row(discrete, `Style for <kbd>${v}</kbd>:`, style);
                 });
 
                 if (vals.unique.length === 0) {

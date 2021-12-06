@@ -10,4 +10,5 @@ set -xe
     --log-level info \
     --log-file - \
     --max-requests 750 \
-    --max-requests-jitter 250
+    --max-requests-jitter 250 \
+    --capture-output

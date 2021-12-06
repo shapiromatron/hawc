@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load hastext %}
+
 {% block content %}
   <h2 class="d-inline-block">{{object}}</h2>
   {% if obj_perms.edit %}
@@ -56,7 +58,7 @@
 
   <div id="study_details"></div>
 
-  {% if obj_perms.edit %}
+  {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
       <colgroup>
         <col style="width: 30%;">
@@ -64,10 +66,17 @@
       </colgroup>
       <tbody>
         <tr>
-          <th>Internal communications</th>
-          <td>{{ internal_communication }}</td>
+          <th>Internal communications*</th>
+          <td>{{ internal_communications|safe }}</td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" class="text-muted">
+            * These fields are only shown to assessment team members, even if the assessment is made public.
+          </td>
+        </tr>
+      </tfoot>
     </table>
   {% endif %}
 

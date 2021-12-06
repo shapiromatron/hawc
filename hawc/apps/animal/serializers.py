@@ -310,7 +310,6 @@ class EndpointSerializer(serializers.ModelSerializer):
         """
 
         term = data.get(term_field)
-        text = data.get(text_field)
         if term is None:
             return
 
@@ -327,12 +326,6 @@ class EndpointSerializer(serializers.ModelSerializer):
         if term.type != term_type:
             raise serializers.ValidationError(
                 {term_field: f"Got term type '{term.type}', expected type '{term_type}'."}
-            )
-
-        # Term overrides its non-term counterpart, so non-term cannot be set at the same time
-        if term and text:
-            raise serializers.ValidationError(
-                {term_field: f"'{text_field}' and '{text_field}_term' are mutually exclusive."}
             )
 
         # Save the non-term equivalent
