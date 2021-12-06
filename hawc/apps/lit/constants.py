@@ -1,22 +1,23 @@
 import re
 
+from django.db import models
+
 EXTERNAL_LINK = 0
-PUBMED = 1
-HERO = 2
-RIS = 3
-DOI = 4
-WOS = 5
-SCOPUS = 6
-EMBASE = 7
-REFERENCE_DATABASES = (
-    (PUBMED, "PubMed"),
-    (HERO, "HERO"),
-    (RIS, "RIS (EndNote/Reference Manager)"),
-    (DOI, "DOI"),
-    (WOS, "Web of Science"),
-    (SCOPUS, "Scopus"),
-    (EMBASE, "Embase"),
-)
+
+
+class ReferenceDatabase(models.IntegerChoices):
+    PUBMED = 1, "PubMed"
+    HERO = 2, "HERO"
+    RIS = 3, "RIS (EndNote/Reference Manager)"
+    DOI = 4, "DOI"
+    WOS = 5, "Web of Science"
+    SCOPUS = 6, "Scopus"
+    EMBASE = 7, "Embase"
+
+
+class SearchType(models.TextChoices):
+    S = "s", "Search"
+    I = "i", "Import"  # noqa: E741
 
 
 # generalized/adapted from https://www.crossref.org/blog/dois-and-matching-regular-expressions/

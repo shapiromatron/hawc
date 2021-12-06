@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 from django.db import migrations, models
 
-from hawc.apps.lit.constants import HERO, PUBMED, RIS
+from hawc.apps.lit.constants import ReferenceDatabase
 from hawc.services.epa import hero
 from hawc.services.nih import pubmed
 from hawc.services.utils import ris
@@ -36,7 +36,7 @@ def reparse_identifiers(apps, schema_editor):
     """
     Identifiers = apps.get_model("lit", "Identifiers")
 
-    qs = Identifiers.objects.filter(database=PUBMED)
+    qs = Identifiers.objects.filter(database=ReferenceDatabase.PUBMED.value)
     n_total = qs.count()
     updates = []
     for idx, identifier in enumerate(qs.iterator()):
@@ -51,7 +51,7 @@ def reparse_identifiers(apps, schema_editor):
     print(f"Updating {len(updates):,} PubMed identifiers of {n_total:,}")
     Identifiers.objects.bulk_update(updates, ["content"], batch_size=5000)
 
-    qs = Identifiers.objects.filter(database=HERO)
+    qs = Identifiers.objects.filter(database=ReferenceDatabase.HERO.value)
     n_total = qs.count()
     updates = []
     for idx, identifier in enumerate(qs.iterator()):
@@ -65,7 +65,7 @@ def reparse_identifiers(apps, schema_editor):
     print(f"Updating {len(updates):,} HERO identifiers of {n_total:,}")
     Identifiers.objects.bulk_update(updates, ["content"], batch_size=5000)
 
-    qs = Identifiers.objects.filter(database=RIS)
+    qs = Identifiers.objects.filter(database=ReferenceDatabase.RIS.value)
     n_total = qs.count()
     updates = []
     for idx, identifier in enumerate(qs.iterator()):
@@ -94,9 +94,9 @@ def update_reference_authors(apps, schema_editor):
 
         # get pubmed, or hero, or ris, if they exist, in that order
         identifier = (
-            reference.identifiers.filter(database=PUBMED).first()
-            or reference.identifiers.filter(database=HERO).first()
-            or reference.identifiers.filter(database=RIS).first()
+            reference.identifiers.filter(database=ReferenceDatabase.PUBMED.value).first()
+            or reference.identifiers.filter(database=ReferenceDatabase.HERO.value).first()
+            or reference.identifiers.filter(database=ReferenceDatabase.RIS.value).first()
         )
         if identifier and identifier.content:
             content = json.loads(identifier.content)
