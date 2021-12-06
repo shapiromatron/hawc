@@ -1,5 +1,4 @@
-from typing import DefaultDict
-
+from collections import defaultdict
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -56,7 +55,7 @@ def validate_dois(self, doi_identifiers):
     doi_id_saved = {}
     doi_idents_updated = []
     # duplicate_doi_ids: stores unclean DOIs that have a clean duplicate for updating later
-    duplicate_doi_ids = DefaultDict(list)
+    duplicate_doi_ids = defaultdict(list)
     # invalid DOI IDs cannot be cleaned/validated (ex: '10')
     invalid_doi_idents = []
 
