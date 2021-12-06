@@ -3,7 +3,7 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import hawc.apps.vocab.models
+import hawc.apps.vocab.constants
 
 
 class Migration(migrations.Migration):
@@ -42,7 +42,8 @@ class Migration(migrations.Migration):
                 (
                     "namespace",
                     models.PositiveSmallIntegerField(
-                        choices=[(1, "EHV")], default=hawc.apps.vocab.models.VocabularyNamespace(1)
+                        choices=[(1, "EHV")],
+                        default=hawc.apps.vocab.constants.VocabularyNamespace(1),
                     ),
                 ),
                 (

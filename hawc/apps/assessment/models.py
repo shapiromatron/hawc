@@ -26,7 +26,7 @@ from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
 from ..common.models import get_private_data_storage
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
-from ..vocab.models import VocabularyNamespace
+from ..vocab.constants import VocabularyNamespace
 from . import constants, jobs, managers
 from .permissions import AssessmentPermissions
 from .tasks import add_time_spent

@@ -9,7 +9,8 @@ from rest_framework.serializers import ValidationError
 
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
-from ..vocab.models import Term, VocabularyTermType
+from ..vocab.constants import VocabularyTermType
+from ..vocab.models import Term
 from . import constants
 
 

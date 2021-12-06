@@ -14,7 +14,7 @@ from ..assessment.models import DoseUnits
 from ..common import selectable
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
 from ..study.lookups import AnimalStudyLookup
-from ..vocab.models import VocabularyNamespace
+from ..vocab.constants import VocabularyNamespace
 from . import constants, lookups, models
 
 

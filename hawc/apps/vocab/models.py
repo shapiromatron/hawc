@@ -1,67 +1,12 @@
-from typing import Dict, List
+from typing import Dict
 
 import pandas as pd
 from django.db import models
 from django.urls import reverse
-from django.utils.functional import classproperty
 from reversion import revisions as reversion
 
-from ..common.models import IntChoiceEnum
 from ..myuser.models import HAWCUser
-from . import managers
-
-
-class VocabularyNamespace(IntChoiceEnum):
-    """
-    A namespace for a vocabulary. HAWC will not enforce a single vocabulary, this can be controlled
-    at the assessment level.
-    """
-
-    EHV = 1  # environmental health vocabulary
-
-    @classproperty
-    def display_dict(cls) -> Dict:
-        return {1: "EPA Environmental health vocabulary"}
-
-    @classmethod
-    def display_choices(cls) -> List:
-        return [(key, value) for key, value in cls.display_dict.items()]
-
-    @property
-    def display_name(self) -> str:
-        return self.display_dict[self.value]
-
-
-class VocabularyTermType(IntChoiceEnum):
-    """
-    Vocabulary will be associated with certain fields in HAWC. This enum allows us to map the vocab.
-    """
-
-    system = 1
-    organ = 2
-    effect = 3
-    effect_subtype = 4
-    endpoint_name = 5
-
-    @classmethod
-    def value_to_text_field(cls) -> Dict:
-        return {
-            cls.system.value: "system",
-            cls.organ.value: "organ",
-            cls.effect.value: "effect",
-            cls.effect_subtype.value: "effect_subtype",
-            cls.endpoint_name.value: "name",
-        }
-
-    @classmethod
-    def value_to_term_field(cls) -> Dict:
-        return {
-            cls.system.value: "system_term_id",
-            cls.organ.value: "organ_term_id",
-            cls.effect.value: "effect_term_id",
-            cls.effect_subtype.value: "effect_subtype_term_id",
-            cls.endpoint_name.value: "name_term_id",
-        }
+from . import constants, managers
 
 
 class Term(models.Model):
@@ -69,10 +14,10 @@ class Term(models.Model):
 
     uid = models.PositiveIntegerField(unique=True)
     namespace = models.PositiveSmallIntegerField(
-        choices=VocabularyNamespace.choices(), default=VocabularyNamespace.EHV
+        choices=constants.VocabularyNamespace.choices(), default=constants.VocabularyNamespace.EHV
     )
     parent = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
-    type = models.PositiveIntegerField(choices=VocabularyTermType.choices())
+    type = models.PositiveIntegerField(choices=constants.VocabularyTermType.choices())
     name = models.CharField(max_length=256)
     notes = models.TextField(blank=True)
     deprecated_on = models.DateTimeField(blank=True, null=True)
@@ -101,7 +46,7 @@ class Term(models.Model):
             ),
             columns=cols,
         )
-        all_df.loc[:, "type"] = all_df["type"].map(VocabularyTermType.as_dict())
+        all_df.loc[:, "type"] = all_df["type"].map(constants.VocabularyTermType.as_dict())
 
         system_df = (
             all_df.query('type=="system"')
@@ -167,17 +112,9 @@ class Term(models.Model):
         }
 
 
-class Ontology(IntChoiceEnum):
-    """
-    Ontology for for UID
-    """
-
-    umls = 1
-
-
 class Entity(models.Model):
     # mapping of controlled vocabulary to ontology
-    ontology = models.PositiveSmallIntegerField(choices=Ontology.choices())
+    ontology = models.PositiveSmallIntegerField(choices=constants.Ontology.choices())
     uid = models.CharField(max_length=128, verbose_name="UID")
     terms = models.ManyToManyField(
         Term,
@@ -198,7 +135,7 @@ class Entity(models.Model):
         return self.uid
 
     def get_external_url(self) -> str:
-        if self.ontology == Ontology.umls:
+        if self.ontology == constants.Ontology.umls:
             return f"https://ncim.nci.nih.gov/ncimbrowser/pages/concept_details.jsf?dictionary=NCI%20Metathesaurus&code={self.uid}"
         else:
             raise ValueError("Unknown ontology type")

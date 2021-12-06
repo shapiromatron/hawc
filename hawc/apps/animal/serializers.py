@@ -12,7 +12,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
 from ..study.serializers import StudySerializer
-from ..vocab.models import VocabularyTermType
+from ..vocab.constants import VocabularyTermType
 from . import forms, models
 
 
