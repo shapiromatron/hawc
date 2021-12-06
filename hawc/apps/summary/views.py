@@ -236,6 +236,7 @@ class VisualizationCreateSelector(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["create_or_copy"] = {"Create": "summary:visualization_create"}
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
@@ -307,11 +308,12 @@ class VisualizationCreateTester(VisualizationCreate):
 
 class VisualizationCopySelector(BaseDetail):
     model = Assessment
-    template_name = "summary/visual_copy_selector.html"
+    template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["create_or_copy"] = {"Copy": "summary:visualization_copy"}
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
