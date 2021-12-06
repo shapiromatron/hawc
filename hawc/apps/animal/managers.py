@@ -404,7 +404,7 @@ class EndpointManager(BaseManager):
                 f"Term id(s) {excluded_terms_str} are not in the assessment vocabulary"
             )
         # terms must be the correct type
-        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name.value)
+        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name)
         if excluded_terms.exists():
             excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
             raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")

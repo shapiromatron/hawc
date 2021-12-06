@@ -36,7 +36,7 @@ def reparse_identifiers(apps, schema_editor):
     """
     Identifiers = apps.get_model("lit", "Identifiers")
 
-    qs = Identifiers.objects.filter(database=ReferenceDatabase.PUBMED.value)
+    qs = Identifiers.objects.filter(database=ReferenceDatabase.PUBMED)
     n_total = qs.count()
     updates = []
     for idx, identifier in enumerate(qs.iterator()):
@@ -51,7 +51,7 @@ def reparse_identifiers(apps, schema_editor):
     print(f"Updating {len(updates):,} PubMed identifiers of {n_total:,}")
     Identifiers.objects.bulk_update(updates, ["content"], batch_size=5000)
 
-    qs = Identifiers.objects.filter(database=ReferenceDatabase.HERO.value)
+    qs = Identifiers.objects.filter(database=ReferenceDatabase.HERO)
     n_total = qs.count()
     updates = []
     for idx, identifier in enumerate(qs.iterator()):
@@ -65,7 +65,7 @@ def reparse_identifiers(apps, schema_editor):
     print(f"Updating {len(updates):,} HERO identifiers of {n_total:,}")
     Identifiers.objects.bulk_update(updates, ["content"], batch_size=5000)
 
-    qs = Identifiers.objects.filter(database=ReferenceDatabase.RIS.value)
+    qs = Identifiers.objects.filter(database=ReferenceDatabase.RIS)
     n_total = qs.count()
     updates = []
     for idx, identifier in enumerate(qs.iterator()):
@@ -94,9 +94,9 @@ def update_reference_authors(apps, schema_editor):
 
         # get pubmed, or hero, or ris, if they exist, in that order
         identifier = (
-            reference.identifiers.filter(database=ReferenceDatabase.PUBMED.value).first()
-            or reference.identifiers.filter(database=ReferenceDatabase.HERO.value).first()
-            or reference.identifiers.filter(database=ReferenceDatabase.RIS.value).first()
+            reference.identifiers.filter(database=ReferenceDatabase.PUBMED).first()
+            or reference.identifiers.filter(database=ReferenceDatabase.HERO).first()
+            or reference.identifiers.filter(database=ReferenceDatabase.RIS).first()
         )
         if identifier and identifier.content:
             content = json.loads(identifier.content)

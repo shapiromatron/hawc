@@ -506,7 +506,7 @@ class PubMedQuery(models.Model):
         existing_pmids = [
             int(id_)
             for id_ in Identifiers.objects.filter(
-                database=constants.ReferenceDatabase.PUBMED.value, unique_id__in=new_ids
+                database=constants.ReferenceDatabase.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
         ]
         ids_to_add = list(set(new_ids) - set(existing_pmids))
@@ -526,7 +526,7 @@ class PubMedQuery(models.Model):
                 identifiers.append(
                     Identifiers(
                         unique_id=item["PMID"],
-                        database=constants.ReferenceDatabase.PUBMED.value,
+                        database=constants.ReferenceDatabase.PUBMED,
                         content=json.dumps(item),
                     )
                 )
@@ -567,11 +567,11 @@ class Identifiers(models.Model):
         return f"{self.database}: {self.unique_id}"
 
     URL_TEMPLATES = {
-        constants.ReferenceDatabase.PUBMED.value: r"https://www.ncbi.nlm.nih.gov/pubmed/{0}",
-        constants.ReferenceDatabase.HERO.value: r"http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}",
-        constants.ReferenceDatabase.DOI.value: r"https://doi.org/{0}",
-        constants.ReferenceDatabase.WOS.value: r"http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord",
-        constants.ReferenceDatabase.SCOPUS.value: r"http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist",
+        constants.ReferenceDatabase.PUBMED: r"https://www.ncbi.nlm.nih.gov/pubmed/{0}",
+        constants.ReferenceDatabase.HERO: r"http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}",
+        constants.ReferenceDatabase.DOI: r"https://doi.org/{0}",
+        constants.ReferenceDatabase.WOS: r"http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord",
+        constants.ReferenceDatabase.SCOPUS: r"http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist",
     }
 
     def get_url(self):
@@ -798,7 +798,7 @@ class Reference(models.Model):
         reference_ids = cls.objects.hero_references(assessment_id).values_list("id", flat=True)
         reference_ids = list(reference_ids)  # queryset to list for JSON serializability
         identifiers = Identifiers.objects.filter(
-            references__in=reference_ids, database=constants.ReferenceDatabase.HERO.value
+            references__in=reference_ids, database=constants.ReferenceDatabase.HERO
         )
         hero_ids = identifiers.values_list("unique_id", flat=True)
         hero_ids = list(hero_ids)  # queryset to list for JSON serializability

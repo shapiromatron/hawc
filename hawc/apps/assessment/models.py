@@ -92,17 +92,17 @@ class Assessment(models.Model):
 
     def get_noel_name_default():
         if settings.HAWC_FLAVOR == "PRIME":
-            return constants.NoelName.NOEL.value
+            return constants.NoelName.NOEL
         elif settings.HAWC_FLAVOR == "EPA":
-            return constants.NoelName.NOAEL.value
+            return constants.NoelName.NOAEL
         else:
             raise ValueError("Unknown HAWC flavor")
 
     def get_rob_name_default():
         if settings.HAWC_FLAVOR == "PRIME":
-            return constants.RobName.ROB.value
+            return constants.RobName.ROB
         elif settings.HAWC_FLAVOR == "EPA":
-            return constants.RobName.SE.value
+            return constants.RobName.SE
         else:
             raise ValueError("Unknown HAWC flavor")
 
@@ -239,7 +239,7 @@ class Assessment(models.Model):
     )
     vocabulary = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.display_choices(),
-        default=VocabularyNamespace.EHV.value,
+        default=VocabularyNamespace.EHV,
         blank=True,
         null=True,
         verbose_name="Controlled vocabulary",
@@ -856,7 +856,7 @@ class Job(models.Model):
             {"data" : <data>} MUST be JSON serializable.
         """
         self.result = {"data": data}
-        self.status = constants.JobStatus.SUCCESS.value
+        self.status = constants.JobStatus.SUCCESS
 
     def set_failure(self, exception: Exception):
         """
@@ -869,7 +869,7 @@ class Job(models.Model):
             MUST have a built in string representation.
         """
         self.result = {"error": str(exception)}
-        self.status = constants.JobStatus.FAILURE.value
+        self.status = constants.JobStatus.FAILURE
 
     def get_detail_url(self):
         return reverse("assessment:api:jobs-detail", args=(self.task_id,))

@@ -92,21 +92,19 @@ class IdentifiersManager(BaseManager):
             # create id based on search_id and id from RIS file.
             id_ = f"s{search_id}-id{ref['id']}"
             content = json.dumps(ref)
-            ident = self.filter(
-                database=constants.ReferenceDatabase.RIS.value, unique_id=id_
-            ).first()
+            ident = self.filter(database=constants.ReferenceDatabase.RIS, unique_id=id_).first()
             if ident:
                 ident.update(content=content)
             else:
                 ident = self.create(
-                    database=constants.ReferenceDatabase.RIS.value, unique_id=id_, content=content
+                    database=constants.ReferenceDatabase.RIS, unique_id=id_, content=content
                 )
             ids.append(ident)
 
             # create DOI identifier
             if ref["doi"] is not None:
                 ident, _ = self.get_or_create(
-                    database=constants.ReferenceDatabase.DOI.value, unique_id=ref["doi"], content=""
+                    database=constants.ReferenceDatabase.DOI, unique_id=ref["doi"], content=""
                 )
                 ids.append(ident)
 
@@ -116,11 +114,11 @@ class IdentifiersManager(BaseManager):
                 id_ = ref["PMID"] or ref["accession_number"]
                 if id_ is not None:
                     ident = self.filter(
-                        database=constants.ReferenceDatabase.PUBMED.value, unique_id=str(id_)
+                        database=constants.ReferenceDatabase.PUBMED, unique_id=str(id_)
                     ).first()
                     if not ident:
                         ident = self.create(
-                            database=constants.ReferenceDatabase.PUBMED.value,
+                            database=constants.ReferenceDatabase.PUBMED,
                             unique_id=str(id_),
                             content="",
                         )
@@ -135,11 +133,11 @@ class IdentifiersManager(BaseManager):
             ):
                 db_id = None
                 if db == "wos":
-                    db_id = constants.ReferenceDatabase.WOS.value
+                    db_id = constants.ReferenceDatabase.WOS
                 elif db == "scopus":
-                    db_id = constants.ReferenceDatabase.SCOPUS.value
+                    db_id = constants.ReferenceDatabase.SCOPUS
                 elif db == "emb":
-                    db_id = constants.ReferenceDatabase.EMBASE.value
+                    db_id = constants.ReferenceDatabase.EMBASE
 
                 if db_id:
                     id_ = ref["accession_number"]
@@ -170,7 +168,7 @@ class IdentifiersManager(BaseManager):
         self.bulk_create(
             [
                 apps.get_model("lit", "Identifiers")(
-                    database=constants.ReferenceDatabase.HERO.value,
+                    database=constants.ReferenceDatabase.HERO,
                     unique_id=str(content["HEROID"]),
                     content=json.dumps(content),
                 )
@@ -179,7 +177,7 @@ class IdentifiersManager(BaseManager):
         )
 
     def hero(self, hero_ids: List[int], allow_missing=False):
-        qs = self.filter(database=constants.ReferenceDatabase.HERO.value, unique_id__in=hero_ids)
+        qs = self.filter(database=constants.ReferenceDatabase.HERO, unique_id__in=hero_ids)
 
         if allow_missing is False and qs.count() != len(hero_ids):
             raise ValueError(
@@ -202,7 +200,7 @@ class IdentifiersManager(BaseManager):
         pmids_str = [str(id) for id in pmids]
         existing = list(
             self.filter(
-                database=constants.ReferenceDatabase.PUBMED.value, unique_id__in=pmids_str
+                database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str
             ).values_list("unique_id", flat=True)
         )
         need_import = [int(id) for id in set(pmids_str) - set(existing)]
@@ -215,16 +213,14 @@ class IdentifiersManager(BaseManager):
             [
                 Identifiers(
                     unique_id=str(item["PMID"]),
-                    database=constants.ReferenceDatabase.PUBMED.value,
+                    database=constants.ReferenceDatabase.PUBMED,
                     content=json.dumps(item),
                 )
                 for item in fetch.get_content()
             ]
         )
 
-        return self.filter(
-            database=constants.ReferenceDatabase.PUBMED.value, unique_id__in=pmids_str
-        )
+        return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str)
 
 
 class ReferenceManager(BaseManager):
@@ -306,7 +302,7 @@ class ReferenceManager(BaseManager):
             if pmid:
                 ref = self.get_qs(search.assessment).filter(
                     identifiers__unique_id=str(pmid),
-                    identifiers__database=constants.ReferenceDatabase.PUBMED.value,
+                    identifiers__database=constants.ReferenceDatabase.PUBMED,
                 )
             else:
                 ref = self.none()
@@ -476,8 +472,8 @@ class ReferenceManager(BaseManager):
 
         captured = {
             None,
-            constants.ReferenceDatabase.HERO.value,
-            constants.ReferenceDatabase.PUBMED.value,
+            constants.ReferenceDatabase.HERO,
+            constants.ReferenceDatabase.PUBMED,
         }
         diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
         if diff:
@@ -486,16 +482,16 @@ class ReferenceManager(BaseManager):
         data = defaultdict(dict)
 
         # capture HERO ids
-        heros = qs.filter(identifiers__database=constants.ReferenceDatabase.HERO.value).values_list(
+        heros = qs.filter(identifiers__database=constants.ReferenceDatabase.HERO).values_list(
             "id", "identifiers__unique_id"
         )
         for hawc_id, hero_id in heros:
             data[hawc_id]["hero_id"] = int(hero_id)
 
         # capture PUBMED ids
-        pubmeds = qs.filter(
-            identifiers__database=constants.ReferenceDatabase.PUBMED.value
-        ).values_list("id", "identifiers__unique_id")
+        pubmeds = qs.filter(identifiers__database=constants.ReferenceDatabase.PUBMED).values_list(
+            "id", "identifiers__unique_id"
+        )
         for hawc_id, pubmed_id in pubmeds:
             data[hawc_id]["pubmed_id"] = int(pubmed_id)
 
@@ -531,17 +527,17 @@ class ReferenceManager(BaseManager):
         )
         pubmed_qs = models.Subquery(
             Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.PUBMED.value
+                references=models.OuterRef("id"), database=constants.ReferenceDatabase.PUBMED
             ).values("unique_id")[:1]
         )
         hero_qs = models.Subquery(
             Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.HERO.value
+                references=models.OuterRef("id"), database=constants.ReferenceDatabase.HERO
             ).values("unique_id")[:1]
         )
         doi_qs = models.Subquery(
             Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.DOI.value
+                references=models.OuterRef("id"), database=constants.ReferenceDatabase.DOI
             ).values("unique_id")[:1]
         )
         qs = (
@@ -584,7 +580,7 @@ class ReferenceManager(BaseManager):
 
     def hero_references(self, assessment_id: int) -> QuerySet:
         return self.assessment_qs(assessment_id).filter(
-            identifiers__database=constants.ReferenceDatabase.HERO.value
+            identifiers__database=constants.ReferenceDatabase.HERO
         )
 
 

@@ -61,60 +61,56 @@ class TaskManager(BaseManager):
             return None
 
         # create prep task
-        task = task_by_type(existing_tasks, constants.TaskType.TYPE_PREPARATION.value)
+        task = task_by_type(existing_tasks, constants.TaskType.TYPE_PREPARATION)
         if task is None:
-            new_tasks.append(
-                self.model(study=study, type=constants.TaskType.TYPE_PREPARATION.value)
-            )
+            new_tasks.append(self.model(study=study, type=constants.TaskType.TYPE_PREPARATION))
 
         # create extraction tasks
         if assessment.enable_data_extraction:
 
-            task = task_by_type(existing_tasks, constants.TaskType.TYPE_EXTRACTION.value)
+            task = task_by_type(existing_tasks, constants.TaskType.TYPE_EXTRACTION)
             if task is None:
-                new_tasks.append(
-                    self.model(study=study, type=constants.TaskType.TYPE_EXTRACTION.value)
-                )
+                new_tasks.append(self.model(study=study, type=constants.TaskType.TYPE_EXTRACTION))
 
-            task = task_by_type(existing_tasks, constants.TaskType.TYPE_QA.value)
+            task = task_by_type(existing_tasks, constants.TaskType.TYPE_QA)
             if task is None:
-                new_tasks.append(self.model(study=study, type=constants.TaskType.TYPE_QA.value))
+                new_tasks.append(self.model(study=study, type=constants.TaskType.TYPE_QA))
 
         # create rob tasks
         if assessment.enable_risk_of_bias:
-            task = task_by_type(existing_tasks, constants.TaskType.TYPE_ROB.value)
+            task = task_by_type(existing_tasks, constants.TaskType.TYPE_ROB)
             if task is None:
-                new_tasks.append(self.model(study=study, type=constants.TaskType.TYPE_ROB.value))
+                new_tasks.append(self.model(study=study, type=constants.TaskType.TYPE_ROB))
 
         return new_tasks
 
     def ensure_preparation_started(self, study, user):
         """Start preparation task if not started."""
-        task = self.filter(study=study, type=constants.TaskType.TYPE_PREPARATION.value).first()
+        task = self.filter(study=study, type=constants.TaskType.TYPE_PREPARATION).first()
         if task:
             task.start_if_unstarted(user)
 
     def ensure_preparation_stopped(self, study):
         """Stop preparation task if started."""
-        task = self.filter(study=study, type=constants.TaskType.TYPE_PREPARATION.value).first()
+        task = self.filter(study=study, type=constants.TaskType.TYPE_PREPARATION).first()
         if task:
             task.stop_if_started()
 
     def ensure_extraction_started(self, study, user):
         """Start extraction task if not started."""
-        task = self.filter(study=study, type=constants.TaskType.TYPE_EXTRACTION.value).first()
+        task = self.filter(study=study, type=constants.TaskType.TYPE_EXTRACTION).first()
         if task:
             task.start_if_unstarted(user)
 
     def ensure_rob_started(self, study, user):
         """Start RoB task if not started."""
-        task = self.filter(study=study, type=constants.TaskType.TYPE_ROB.value).first()
+        task = self.filter(study=study, type=constants.TaskType.TYPE_ROB).first()
         if task:
             task.start_if_unstarted(user)
 
     def ensure_rob_stopped(self, study):
         """Stop RoB task if started."""
-        task = self.filter(study=study, type=constants.TaskType.TYPE_ROB.value).first()
+        task = self.filter(study=study, type=constants.TaskType.TYPE_ROB).first()
         if task:
             task.stop_if_started()
 

@@ -767,8 +767,8 @@ class TestGroupResultApi:
 
         data = {
             "n": 50,
-            "main_finding_support": constants.MainFinding.I.value,
-            "p_value_qualifier": constants.PValueQualifier.NS.value,
+            "main_finding_support": constants.MainFinding.I,
+            "p_value_qualifier": constants.PValueQualifier.NS,
             "p_value": 0.5,
             "group": group.id,
             "result": result.id,
@@ -1309,10 +1309,10 @@ class TestGroupNumericalDescriptionsApi:
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(
                     {
-                        "mean_type": constants.GroupMeanType.MEAN.value,
-                        "variance_type": constants.GroupVarianceType.SD.value,
-                        "lower_type": constants.LowerLimit.LL.value,
-                        "upper_type": constants.UpperLimit.UL.value,
+                        "mean_type": constants.GroupMeanType.MEAN,
+                        "variance_type": constants.GroupVarianceType.SD,
+                        "lower_type": constants.LowerLimit.LL,
+                        "upper_type": constants.UpperLimit.UL,
                     }
                 ),
                 "post_request_test": numdesc_lookup_test,

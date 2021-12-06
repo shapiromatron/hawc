@@ -26,7 +26,7 @@ class Task(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="tasks")
     type = models.PositiveSmallIntegerField(choices=constants.TaskType.choices)
     status = models.PositiveSmallIntegerField(
-        default=constants.TaskStatus.STATUS_NOT_STARTED.value, choices=constants.TaskStatus.choices
+        default=constants.TaskStatus.STATUS_NOT_STARTED, choices=constants.TaskStatus.choices
     )
     open = models.BooleanField(default=False)
     due_date = models.DateTimeField(blank=True, null=True)
@@ -68,8 +68,8 @@ class Task(models.Model):
             self.completed = None
             self.open = True
         elif self.status in [
-            constants.TaskStatus.STATUS_COMPLETED.value,
-            constants.TaskStatus.STATUS_ABANDONED.value,
+            constants.TaskStatus.STATUS_COMPLETED,
+            constants.TaskStatus.STATUS_ABANDONED,
         ]:
             self.completed = timezone.now()
             self.open = False
@@ -81,12 +81,12 @@ class Task(models.Model):
         if self.status == constants.TaskStatus.STATUS_NOT_STARTED:
             logger.info(f'Starting "{self.get_type_display()}" task {self.id}')
             self.owner = user
-            self.status = constants.TaskStatus.STATUS_STARTED.value
+            self.status = constants.TaskStatus.STATUS_STARTED
             self.save()
 
     def stop_if_started(self):
         """Stop task if currently started."""
         if self.status == constants.TaskStatus.STATUS_STARTED:
             logger.info(f'Stopping "{self.get_type_display()}" task {self.id}')
-            self.status = constants.TaskStatus.STATUS_COMPLETED.value
+            self.status = constants.TaskStatus.STATUS_COMPLETED
             self.save()

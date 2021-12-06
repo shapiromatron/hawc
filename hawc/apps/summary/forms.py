@@ -801,13 +801,13 @@ class ExploreHeatmapForm(VisualForm):
 def get_visual_form(visual_type):
     try:
         return {
-            constants.VisualType.BIOASSAY_AGGREGATION.value: EndpointAggregationForm,
-            constants.VisualType.BIOASSAY_CROSSVIEW.value: CrossviewForm,
-            constants.VisualType.ROB_HEATMAP.value: RoBForm,
-            constants.VisualType.ROB_BARCHART.value: RoBForm,
-            constants.VisualType.LITERATURE_TAGTREE.value: TagtreeForm,
-            constants.VisualType.EXTERNAL_SITE.value: ExternalSiteForm,
-            constants.VisualType.EXPLORE_HEATMAP.value: ExploreHeatmapForm,
+            constants.VisualType.BIOASSAY_AGGREGATION: EndpointAggregationForm,
+            constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm,
+            constants.VisualType.ROB_HEATMAP: RoBForm,
+            constants.VisualType.ROB_BARCHART: RoBForm,
+            constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
+            constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
+            constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
         }[visual_type]
     except Exception:
         raise ValueError()

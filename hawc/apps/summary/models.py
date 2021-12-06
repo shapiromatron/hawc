@@ -934,7 +934,7 @@ class Prefilter:
         evidence_type = d.get("evidence_type")
 
         if visual_type == Visual.BIOASSAY_CROSSVIEW:
-            evidence_type = constants.StudyType.BIOASSAY.value
+            evidence_type = constants.StudyType.BIOASSAY
 
         if d.get("prefilter_system"):
             filters["system__in"] = d.getlist("systems")

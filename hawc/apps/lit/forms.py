@@ -452,13 +452,13 @@ class ReferenceForm(forms.ModelForm):
             self._ident_removals.extend(list(existing))
 
     def clean_doi_id(self):
-        self._update_identifier(constants.ReferenceDatabase.DOI.value, "doi_id")
+        self._update_identifier(constants.ReferenceDatabase.DOI, "doi_id")
 
     def clean_pubmed_id(self):
-        self._update_identifier(constants.ReferenceDatabase.PUBMED.value, "pubmed_id")
+        self._update_identifier(constants.ReferenceDatabase.PUBMED, "pubmed_id")
 
     def clean_hero_id(self):
-        self._update_identifier(constants.ReferenceDatabase.HERO.value, "hero_id")
+        self._update_identifier(constants.ReferenceDatabase.HERO, "hero_id")
 
     @transaction.atomic
     def save(self, commit=True):
