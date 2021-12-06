@@ -174,7 +174,7 @@ class SearchUpdate(BaseUpdate):
         if self.object.search_type == "s":
             return forms.SearchForm
         elif self.object.search_type == "i":
-            if self.object.source == constants.RIS:
+            if self.object.source == constants.ReferenceDatabase.RIS:
                 return forms.RisImportForm
             else:
                 return forms.ImportForm

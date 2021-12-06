@@ -46,7 +46,7 @@ IS_CONTROL_CHOICES = (
 
 
 class EstimateType(models.IntegerChoices):
-    NONE = 0, None
+    NONE = 0, "---"
     MEAN = 1, "mean"
     GMEAN = 2, "geometric mean"
     MEDIAN = 3, "median"
@@ -55,7 +55,7 @@ class EstimateType(models.IntegerChoices):
 
 
 class VarianceType(models.IntegerChoices):
-    NONE = 0, None
+    NONE = 0, "---"
     SD = 1, "SD"
     SE = 2, "SE"
     SEM = 3, "SEM"
@@ -64,7 +64,7 @@ class VarianceType(models.IntegerChoices):
 
 
 class GroupMeanType(models.IntegerChoices):
-    NONE = 0, None
+    NONE = 0, "---"
     MEAN = 1, "mean"
     GMEAN = 2, "geometric mean"
     MEDIAN = 3, "median"
@@ -72,7 +72,7 @@ class GroupMeanType(models.IntegerChoices):
 
 
 class GroupVarianceType(models.IntegerChoices):
-    NONE = 0, None
+    NONE = 0, "---"
     SD = 1, "SD"
     SEM = 2, "SEM"
     GSD = 3, "GSD"
@@ -80,14 +80,14 @@ class GroupVarianceType(models.IntegerChoices):
 
 
 class LowerLimit(models.IntegerChoices):
-    NONE = 0, None
+    NONE = 0, "---"
     LL = 1, "lower limit"
     CI = 2, "5% CI"
     OT = 3, "other"
 
 
 class UpperLimit(models.IntegerChoices):
-    NONE = 0, None
+    NONE = 0, "---"
     UL = 1, "upper limit"
     CI = 2, "95% CI"
     OT = 3, "other"
