@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from hawc.apps.animal import constants
 from hawc.apps.assessment.models import DoseUnits, Species, Strain
 from hawc.apps.common.actions import BaseApiAction
-from hawc.apps.study.models import Study
+from hawc.apps.study.constants import CoiReported
 
 
 class NoInput(BaseModel):
@@ -18,7 +18,7 @@ class AnimalMetadata(BaseApiAction):
     input_model = NoInput
 
     def study_metadata(self):
-        return dict(coi_reported=dict(Study.COI_REPORTED_CHOICES))
+        return dict(coi_reported=dict(CoiReported.choices))
 
     def experiment_metadata(self):
         return dict(type=dict(constants.ExperimentType.choices))
