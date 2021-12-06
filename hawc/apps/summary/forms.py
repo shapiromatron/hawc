@@ -555,6 +555,47 @@ class VisualForm(forms.ModelForm):
         return clean_slug(self)
 
 
+class VisualModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.assessment}: {obj}"
+
+
+class VisualSelectorForm(forms.Form):
+
+    vs = VisualModelChoiceField(
+        label="Visualization", queryset=models.Visual.objects.all(), empty_label=None
+    )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user")
+        self.cancel_url = kwargs.pop("cancel_url")
+        self.visual_type = kwargs.pop("visual_type")
+        super().__init__(*args, **kwargs)
+        self.fields["vs"].queryset = models.Visual.objects.clonable_queryset(user).filter(
+            visual_type=self.visual_type
+        )
+
+    @property
+    def helper(self):
+
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "col-md-12"
+
+        return BaseFormHelper(
+            self,
+            legend_text="Copy visualization",
+            help_text="""
+                Select an existing visualization and copy as a new visualization. This includes all
+                model-settings, and the selected dataset. You will be taken to a new view to
+                create a new visualization, but the form will be pre-populated using the values from
+                the currently-selected visualization.""",
+            submit_text="Copy selected as new",
+            cancel_url=self.cancel_url,
+        )
+
+
 class EndpointAggregationForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

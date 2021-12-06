@@ -7,6 +7,7 @@
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
         <div class="dropdown-menu dropdown-menu-right">
             <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">Create new visualization</a>
+            <a class="dropdown-item" href="{% url 'summary:visualization_copy_selector' assessment.pk %}">Clone visualization from existing</a>
         </div>
       </div>
   {% endif %}

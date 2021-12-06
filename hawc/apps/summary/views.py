@@ -305,6 +305,55 @@ class VisualizationCreateTester(VisualizationCreate):
         return JsonResponse(response)
 
 
+class VisualizationCopySelector(BaseDetail):
+    model = Assessment
+    template_name = "summary/visual_copy_selector.html"
+    breadcrumb_active_name = "Visualization selector"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
+
+
+class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
+    template_name = "summary/datapivot_copy_selector.html"
+    model = Assessment
+    form_class = forms.VisualSelectorForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # import pdb; pdb.set_trace()
+        kwargs["visual_type"] = self.kwargs.get("visual_type")
+        kwargs["user"] = self.request.user
+        kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
+        return kwargs
+
+    def form_valid(self, form):
+        vs = form.cleaned_data["vs"]
+        url = reverse_lazy(
+            "summary:visualization_create",
+            kwargs={"pk": self.assessment.id, "visual_type": self.kwargs.get("visual_type")},
+        )
+        url += f"?initial={vs.pk}"
+
+        return HttpResponseRedirect(url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Copy existing",
+            [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
+        )
+        return context
+
+
 class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     success_message = "Visualization updated."
     model = models.Visual
