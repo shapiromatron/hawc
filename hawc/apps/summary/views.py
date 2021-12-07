@@ -2,10 +2,12 @@ import json
 from typing import Dict
 
 from django.core.exceptions import PermissionDenied
+from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
+from hawc.apps.common.helper import tryParseInt
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -136,9 +138,14 @@ class SummaryTableCreate(BaseCreate):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["table_type"] = int(self.kwargs.get("table_type"))
+        pk = tryParseInt(self.request.GET.get("initial"), -1)
+        if pk > 0:
+            initial = self.model.objects.filter(pk=pk).first()
+            kwargs["initial"] = model_to_dict(initial)
         return kwargs
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
         context.update(
             is_create=True,

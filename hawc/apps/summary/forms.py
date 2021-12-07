@@ -468,7 +468,18 @@ class SummaryTableForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.instance.id:
             self.instance = models.SummaryTable.build_default(self.assessment.id, table_type)
-        self.fields["content"].initial = self.instance.content
+        #import pdb; pdb.set_trace()
+
+        if self.initial:
+            self.instance.content = self.initial["content"]
+            self.instance.title = self.initial["title"]
+            self.instance.published = self.initial["published"]
+            self.instance.slug = self.initial["slug"]
+            #self.fields["title"].initial = self.initial["title"]
+            #self.fields["content"].initial = self.initial["content"]
+            #self.fields["published"].initial = self.initial["published"]
+        #self.fields["content"].initial = self.instance.content
+        #self.fields["content"].initial = self.initial["content"]
 
 
 class SummaryTableSelectorForm(forms.Form):

@@ -19,13 +19,18 @@ class AssessmentManager(BaseManager):
         optionally excluding assessment exclusion_id,
         not including public assessments
         """
-        filters = (
-            Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user)
-            if user.is_authenticated
-            else Q(pk__in=[])
-        )
+        #import pdb; pdb.set_trace()
+        if user.is_superuser:
+            filters = Q()
+        else:
+            filters = (
+                Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user)
+                if user.is_authenticated
+                else Q(pk__in=[])
+            )
         if public:
             filters |= Q(public=True) & Q(hide_from_public_page=False)
+
         return self.filter(filters).exclude(id=exclusion_id).distinct()
 
     def get_editable_assessments(self, user, exclusion_id=None):
