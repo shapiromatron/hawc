@@ -28,39 +28,27 @@ class StudyList(BaseList):
     parent_model = Assessment
     model = models.Study
     form_class = forms.StudyFilterForm
-    # template_name = 'study/study_list.html'
 
-    def get_query(self, perms):
+    def get_query(self, qs, perms):
         query = Q(assessment=self.assessment)
         if not perms["edit"]:
             query &= Q(published=True)
-        return query
+        return qs.filter(query)
 
     def get_queryset(self):
-        # TODO - revisit after upgrading to 2.1 to see if this can be handled outside of
-        # RawSQL query
         perms = super().get_obj_perms()
-        self.form = self.form_class(self.request.GET)
-        query = self.get_query(perms)
-
+        qs = super().get_queryset()
+        qs = self.get_query(qs, perms)
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial, can_edit=perms["edit"])
         if self.form.is_valid():
-            query &= self.form.get_query()
-
-        qs = self.model.objects.filter(query).distinct()
-
-        return qs.prefetch_related("identifiers")
+            qs = qs.filter(self.form.get_query())
+        return qs.distinct().prefetch_related("identifiers")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["study_list"] = self.get_queryset()
-        context["doi_constant"] = constants.DOI
-        context["hero_constant"] = constants.HERO
-        context["pubmed_constant"] = constants.PUBMED
-        context["form"] = self.form_class()
-        if self.request.GET:
-            context["form"] = self.form_class(self.request.GET)
-        if not self.assessment.user_is_team_member_or_higher(self.request.user):
-            context["form"].fields.pop("published")
+        context["form"] = self.form
         return context
 
 

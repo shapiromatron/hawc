@@ -196,56 +196,48 @@ class GetVisualizationObjectMixin:
         return super().get_object(object=obj)
 
 
+import operator
+import itertools
+
+
 class VisualizationList(BaseList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
     form_class = forms.VisualFilterForm
 
-    def get_query(self, perms):
-        query = Q(assessment=self.assessment)
+    def get_filters(self, perms):
+        query = Q(assessment=self.assessment.id)
         if not perms["edit"]:
             query &= Q(published=True)
         return query
 
     def get_queryset(self):
-        perms = super().get_obj_perms()
-        self.form = self.form_class(self.request.GET)
-        query = self.get_query(perms)
-
+        qs = super().get_queryset()
+        self.perms = super().get_obj_perms()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial, can_edit=self.perms["edit"])
+        filters = self.get_filters(self.perms)
         if self.form.is_valid():
-            query &= self.form.get_query()
-
-        qs = self.model.objects.filter(query).distinct()
-
-        return qs
+            filters &= self.form.get_visual_filters()
+        return qs.filter(filters).distinct()
 
     def get_datapivotset(self):
-        qs = models.DataPivot.objects.filter(assessment=self.assessment)
-        perms = super().get_obj_perms()
-        self.form = self.form_class(self.request.GET)
-        query = self.get_query(perms)
+        qs = models.DataPivot.objects.all()
+        filters = self.get_filters(self.perms)
         if self.form.is_valid():
-            query &= self.form.get_datapivot_query()
-            qs = qs.filter(query).distinct()
-            if visual_type := self.form.cleaned_data.get("type"):
-                return [dp for dp in qs if dp.visual_type == visual_type]
-        qs = qs.filter(query).distinct()
-        return qs
+            filters &= self.form.get_datapivot_filters()
+        return qs.filter(filters).distinct().select_related("datapivotquery", "datapivotupload")
+
+    def get_item_list(self):
+        items = list(itertools.chain(self.object_list, self.get_datapivotset()))
+        return sorted(items, key=lambda d: d.title.lower())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["visual_list"] = {
-            "visual": self.get_queryset(),
-            "datapivot": self.get_datapivotset(),
-        }
-        context["visual_choices"] = models.Visual.VISUAL_CHOICES
-        context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
-        context["form"] = self.form_class()
-        if self.request.GET:
-            context["form"] = self.form_class(self.request.GET)
-        if not self.assessment.user_is_team_member_or_higher(self.request.user):
-            context["form"].fields.pop("published")
+        context["objects"] = self.get_item_list()
+        context["n_objects"] = len(context["objects"])
+        context["form"] = self.form
         return context
 
 

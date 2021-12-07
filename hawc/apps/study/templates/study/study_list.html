@@ -24,76 +24,73 @@
       </div>
     </div>
   {% endif %}
-
-
-    <div class="card">
-      <div class="card-header">
-        <button class="btn btn-link" data-toggle="collapse" data-target="#StudyForm">
-          Filter studies
-        </button>
-      </div>
-      <div id="StudyForm" class="collapse">
-        <div class="card-body container-fluid">
-          {% crispy form %}
-        </div>
-      </div>
+  <div class="card">
+    <div class="card-body container-fluid pb-1">
+      {% crispy form %}
     </div>
-    <table class="table table-sm table-striped">
-      <colgroup>
-        <col style="width: 20%;">
-        <col style="width: 5%;">
-        <col style="width: 50%;">
-        <col style="width: 5%;">
-        <col style="width: 7.5%;">
-        <col style="width: 7.5%;">
-        <col style="width: 5%;">
-      </colgroup>
-      <tbody>
-        <tr></tr>
-        <tr>
-          <th style="vertical-align: bottom;">Short citation</th>
-          <th style="vertical-align: bottom;">Links</th>
-          <th style="vertical-align: bottom;">Full citation</th>
-          <th style="vertical-align: bottom;">Bioassay</th>
-          <th style="vertical-align: bottom;">Epidemiology</th>
-          <th style="vertical-align: bottom;">Epi. meta-analysis</th>
-          <th style="vertical-align: bottom;">In vitro</th>
-        </tr>
-        {% for study in study_list %}
-        <tr>
-          <td>
-            <a href="{% url 'study:detail' study.pk %}">{{ study.short_citation }}</a>
-            </td>
-          </td>
-          <td>
-            {% for ident in study.identifiers.all %}
-            <a style="margin:0.1rem;" class="btn btn-sm btn-success" target="_blank" href="{{ident.get_url}}">
-              {% if ident.database == doi_constant %}
-                DOI
-              {% elif ident.database == hero_constant %}
-                HERO
-              {% elif ident.database == pubmed_constant %}
-                PubMed
-              {% endif %}
+  </div>
+  {% if study_list %}
+  <table id="mainTbl" class="table table-sm table-striped">
+    <colgroup>
+      <col style="width: 25%;">
+      <col style="width: 45%;">
+      <col style="width: 7%;">
+      <col style="width: 8%;">
+      <col style="width: 8%;">
+      <col style="width: 7%;">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Short citation</th>
+        <th>Full citation</th>
+        <th>Bioassay</th>
+        <th>Epidemiology</th>
+        <th>Epi. meta-analysis</th>
+        <th>In vitro</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for study in study_list %}
+      <tr>
+        <td>
+          <a href="{% url 'study:detail' study.pk %}">{{ study.short_citation }}</a>
+          {% if not study.published %}
+          <i title="Unpublished (not be visible to the public and in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>
+          {% endif %}
+        </td>
+        <td>
+          {{study.full_citation}}
+          {% for ident in study.identifiers.all %}
+          {% with url=ident.get_url %}
+          {% if url %}
+            <a class="badge badge-secondary" target="_blank" href="{{url}}">
+              {{ident.get_database_display}}
             </a>
-            {% endfor %}
-          </td>
-          <td>
-            {{study.full_citation}}
-          </td>
-          {% for type in study.STUDY_TYPE_FIELDS %}
-              <td class="{% cycle study.bioassay study.epi study.epi_meta study.in_vitro as data_type %}">
-                {% if data_type %}
-                <i class="fa fa-check"></i>
-                {% else %}
-                <i class="fa fa-minus"></i>
-                {% endif %}
-              </td>
+          {% endif %}
+          {% endwith %}
           {% endfor %}
-        </tr>
+        </td>
+        {% for type in study.STUDY_TYPE_FIELDS %}
+            <td class="{% cycle study.bioassay study.epi study.epi_meta study.in_vitro as data_type %}">
+              {% if data_type %}
+              <i class="fa fa-check"></i>
+              {% else %}
+              <i class="fa fa-minus"></i>
+              {% endif %}
+            </td>
         {% endfor %}
-      </tbody>
-    </table>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  <p><b>{{study_list.count}}</b> studies found.</p>
 {% endblock %}
 
-
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+  });
+</script>
+{% endblock extrajs %}

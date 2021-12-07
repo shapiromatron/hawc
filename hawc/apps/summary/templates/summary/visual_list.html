@@ -2,6 +2,7 @@
 
 {% load add_class %}
 {% load crispy_forms_tags %}
+
 {% block content %}
   <h1 class="d-inline-block">Available visualizations</h1>
   {% if obj_perms.edit %}
@@ -12,73 +13,57 @@
         </div>
       </div>
   {% endif %}
-  <div class="visualizationsList"></div>
 
-
-<div class="card">
-  <div class="card-header">
-    <button class="btn btn-link" data-toggle="collapse" data-target="#VisualForm">
-      Filter visuals
-    </button>
-  </div>
-  <div id="VisualForm" class="collapse">
-    <div class="card-body container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <b>Filter visuals</b>
+    </div>
+    <div class="card-body container-fluid pb-1">
       {% crispy form %}
     </div>
   </div>
-</div>
 
-<table class="table table-sm table-striped">
-  <colgroup>
-    <col style="width: 20%;">
-    <col style="width: 20%;">
-    <col style="width: 40%;">
-    <col style="width: 10%;">
-    <col style="width: 10%;">
-  </colgroup>
-  <tbody>
-    <tr></tr>
-    <tr>
-      <th style="vertical-align: bottom;">Title</th>
-      <th style="vertical-align: bottom;">Visual Type</th>
-      <th style="vertical-align: bottom;">Description</th>
-      <th style="vertical-align: bottom;">Created</th>
-      <th style="vertical-align: bottom;">Modified</th>
-    </tr>
+  <table id="mainTbl" class="table table-sm table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 20%;">
+      <col style="width: 30%;">
+      <col style="width: 10%;">
+      <col style="width: 10%;">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Visual Type</th>
+        <th>Description</th>
+        <th>Created</th>
+        <th>Modified</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for visual in objects %}
+      <tr>
+        <td>
+          <a href="{{visual.get_absolute_url}}">{{visual.title}}</a>
+          {% if not visual.published %}
+          <i title="Unpublished (not be visible to the public)" class="fa fa-eye-slash" aria-hidden="true"></i>
+          {% endif %}
+        </td>
+        <td>{{visual.get_visual_type_display}}</td>
+        <td><p>{{ visual.caption|truncatewords_html:40|safe }}</p></td>
+        <td>{{ visual.created|date:'SHORT_DATE_FORMAT' }}</td>
+        <td>{{ visual.last_updated|date:'SHORT_DATE_FORMAT' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><b>{{n_objects}}</b> visuals found.</p>
+{% endblock content %}
 
-    {% for datatype, list in visual_list.items %}
-    {% for visual in list %}
-    <tr>
-      <td>
-        {% if datatype == 'visual' %}
-          <a href="{% url 'summary:visualization_detail' visual.assessment.pk visual.slug %}">{{visual.title}}</a>
-        {% else %}
-          <a href="{% url 'summary:dp_detail' visual.assessment.pk visual.slug %}">{{visual.title}}</a>
-        {% endif %}
-      </td>
-      <td>
-        {% if datatype == 'visual' %}
-          {% for choice, type in visual_choices %}
-            {% if visual.visual_type == choice %}
-              {{ type }}
-            {% endif %}
-          {% endfor %}
-        {% else %}
-          {{ visual.visual_type }}
-        {% endif %}
-      </td>
-      <td>
-        <p>{{ visual.caption|safe }}</p>
-      </td>
-      <td>
-        {{ visual.created|date:'SHORT_DATE_FORMAT' }}
-      </td>
-      <td>
-        {{ visual.last_updated|date:'SHORT_DATE_FORMAT' }}
-      </td>
-    </tr>
-    {% endfor %}
-    {% endfor %}
-  </tbody>
-</table>
-{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+  });
+</script>
+{% endblock extrajs %}

@@ -305,8 +305,16 @@ class AssessmentList(LoginRequiredMixin, ListView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class AssessmentFullList(LoginRequiredMixin, ListView):
+class AssessmentFullList(ListView):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -316,6 +324,7 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
             )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context["form"] = self.form
         return context
 
 
@@ -325,29 +334,14 @@ class AssessmentPublicList(ListView):
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
-        dtxsid = self.request.GET.get("dtxsid")
-        order_by = None
-
-        if dtxsid:
-            qs = qs.filter(dtxsids=dtxsid)
-        self.form = self.form_class(self.request.GET)
-        if self.form.is_valid():
-            query = self.form.get_query()
-            qs = qs.filter(query).distinct()
-            order_by = self.form.get_order_by()
-
-        if order_by:
-            qs = qs.order_by(order_by)
-
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        qs = qs.distinct().order_by(self.form.get_order_by())
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["metadata"] = [
-            f"There are {models.Assessment.objects.count():,} assessments currently, both public and private",
-            f"{apps.get_model('lit', 'Reference').objects.count():,} study references have been imported or found via searches",
-            f"Extracted study data has been used to create {apps.get_model('summary', 'Visual').objects.count() + apps.get_model('summary', 'DataPivot').objects.count():,} custom visualizations",
-        ]
         if self.request.user.is_authenticated:
             context["breadcrumbs"] = Breadcrumb.build_crumbs(
                 self.request.user, "Public assessments"
@@ -361,9 +355,7 @@ class AssessmentPublicList(ListView):
             team; details on the objectives and methodology applied are described in each assessment.
             Data can also be downloaded for each individual assessment.
         """
-        context["form"] = self.form_class()
-        if self.request.GET:
-            context["form"] = self.form_class(self.request.GET)
+        context["form"] = self.form
         return context
 
 

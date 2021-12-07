@@ -10,8 +10,7 @@ def study(driver, root_url):
     # /study/assessment/:id/
     h.go_to(root_url + "/study/assessment/2/")
     h.wait_until(h.Text("Short citation").exists)
-    # 4 (1 per study) + 1 (header row) + 1 (hidden row for correct table striping) == 6
-    assert len(driver.find_elements_by_css_selector("tbody tr")) == 6
+    assert len(driver.find_elements_by_css_selector("tbody tr")) == 4
 
     # /study/:id/
     h.go_to(root_url + "/study/7/")

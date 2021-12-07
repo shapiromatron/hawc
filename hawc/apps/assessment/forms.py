@@ -111,19 +111,16 @@ class AssessmentForm(forms.ModelForm):
 
 
 class AssessmentFilterForm(forms.Form):
-    name = forms.CharField(required=False)
+    search = forms.CharField(required=False)
 
     ORDER_BY_CHOICES = [
         ("name", "Name"),
         ("year", "Year, ascending"),
         ("-year", "Year, descending"),
-        ("created", "Date Created, ascending"),
-        ("-created", "Date Created, descending"),
         ("last_updated", "Date Updated, ascending"),
         ("-last_updated", "Date Updated, descending"),
     ]
-
-    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES)
+    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial="-last_updated")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -132,19 +129,24 @@ class AssessmentFilterForm(forms.Form):
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
-        helper.layout.fields[2].attrs["class"] = "pub-assess-button"
-        helper.add_row("name", 3, ["col-md-4", "col-md-2"])
+        helper.add_row("search", 2, ["col-md-8", "col-md-4"])
         return helper
 
-    def get_query(self):
+    def get_filters(self):
         query = Q()
-        if name := self.cleaned_data.get("name"):
-            query &= Q(name__icontains=name)
-
+        if name := self.cleaned_data.get("search"):
+            query &= Q(name__icontains=name) | Q(year__icontains=name)
         return query
 
+    def get_queryset(self, qs):
+        if self.is_valid():
+            qs = qs.filter(self.get_filters())
+        return qs.order_by(self.get_order_by())
+
     def get_order_by(self):
-        return self.cleaned_data.get("order_by", self.ORDER_BY_CHOICES[0][0])
+        if self.is_valid():
+            return self.cleaned_data.get("order_by", "-last_updated")
+        return "-last_updated"
 
 
 class AssessmentAdminForm(forms.ModelForm):

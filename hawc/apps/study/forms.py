@@ -212,46 +212,49 @@ class StudiesCopy(forms.Form):
 
 
 class StudyFilterForm(forms.Form):
-    name = forms.CharField(required=False, help_text="Study citation text")
-
-    identifier = forms.CharField(required=False, help_text="HERO id, DOI id, etc")
-
-    data_choices = [
-        ("bioassay", "Bioassay"),
-        ("epi", "Epidemiology"),
-        ("epi_meta", "Epidemiology meta-analysis"),
-        ("in_vitro", "In vitro"),
-    ]
-    data_type = forms.ChoiceField(required=False, choices=data_choices, widget=forms.RadioSelect)
-
-    published_choices = [(True, "Published only"), (False, "Unpublished only"), ("", "All studies")]
+    citation = forms.CharField(required=False, help_text="Authors, year, title, etc.")
+    identifier = forms.CharField(
+        required=False, help_text="Database identifier<br/>(PubMed ID, DOI, HERO ID, etc)"
+    )
+    data_type = forms.ChoiceField(
+        required=False,
+        choices=[
+            ("bioassay", "Bioassay"),
+            ("epi", "Epidemiology"),
+            ("epi_meta", "Epidemiology meta-analysis"),
+            ("in_vitro", "In vitro"),
+        ],
+        widget=forms.RadioSelect,
+    )
     published = forms.ChoiceField(
-        required=False, choices=published_choices, widget=forms.RadioSelect, initial=""
+        required=False,
+        choices=[(True, "Published only"), (False, "Unpublished only"), ("All", "All studies")],
+        widget=forms.RadioSelect,
+        initial="All",
     )
 
     def __init__(self, *args, **kwargs):
+        can_edit = kwargs.pop("can_edit", False)
         super().__init__(*args, **kwargs)
+        if not can_edit:
+            self.fields.pop("published")
 
     @property
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
-        if "published" in self.fields:
-            helper.add_row("name", 4, "col-md-3")
-        else:
-            helper.add_row("name", 3, "col-md-3")
+        helper.add_row("citation", len(self.fields), "col-md-3")
         return helper
 
     def get_query(self):
         query = Q()
-        if name := self.cleaned_data.get("name"):
-            query &= Q(short_citation__icontains=name)
-            query |= Q(full_citation__icontains=name)
+        if text := self.cleaned_data.get("citation"):
+            query &= Q(short_citation__icontains=text) | Q(full_citation__icontains=text)
         if data_type := self.cleaned_data.get("data_type"):
             query &= Q(**{data_type: True})
-        if (published := self.cleaned_data.get("published")) != "":
-            query &= Q(published=published)
+        if published := self.cleaned_data.get("published", "All"):
+            if published != "All":
+                query &= Q(published=published)
         if identifier := self.cleaned_data.get("identifier"):
             query &= Q(identifiers__unique_id__icontains=identifier)
-
         return query

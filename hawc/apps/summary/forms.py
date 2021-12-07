@@ -560,65 +560,85 @@ class VisualFilterForm(forms.Form):
     text = forms.CharField(required=False, help_text="Title or description text")
 
     type_choices = [
-        ("", "all visual types"),
-        (0, "animal bioassay endpoint aggregation"),
-        (1, "animal bioassay endpoint crossview"),
-        (2, "risk of bias heatmap"),
-        (3, "risk of bias barchart"),
-        (4, "literature tagtree"),
-        (5, "embedded external website"),
-        (6, "exploratory heatmap"),
-        ("Data pivot (animal bioassay)", "Data pivot (animal bioassay)"),
-        ("Data pivot (epidemiology)", "Data pivot (epidemiology)"),
-        (
-            "Data pivot (epidemiology meta-analysis/pooled-analysis)",
-            "Data pivot (epidemiology meta-analysis/pooled-analysis)",
-        ),
-        ("Data pivot (in vitro)", "Data pivot (in vitro)"),
+        ("", "<all>"),
+        ("v-0", "animal bioassay endpoint aggregation"),
+        ("v-1", "animal bioassay endpoint crossview"),
+        ("v-2", "risk of bias heatmap"),
+        ("v-3", "risk of bias barchart"),
+        ("v-4", "literature tagtree"),
+        ("v-5", "embedded external website"),
+        ("v-6", "exploratory heatmap"),
+        ("dp-ani", "Data pivot (animal bioassay)"),
+        ("dp-epi", "Data pivot (epidemiology)"),
+        ("dp-epimeta", "Data pivot (epidemiology meta-analysis/pooled-analysis)"),
+        ("dp-invitro", "Data pivot (in vitro)"),
     ]
+    visual_type_filter = {
+        "v-0": 0,
+        "v-1": 1,
+        "v-2": 2,
+        "v-3": 3,
+        "v-4": 4,
+        "v-5": 5,
+        "v-6": 6,
+    }
+    dp_type_filter = {
+        "dp-ani": models.BIOASSAY,
+        "dp-epi": models.EPI,
+        "dp-epimeta": models.EPI_META,
+        "dp-invitro": models.IN_VITRO,
+    }
+    type = forms.ChoiceField(label="Visualization type", required=False, choices=type_choices)
 
-    type = forms.ChoiceField(required=False, choices=type_choices)
-
-    published_choices = [(True, "Published only"), (False, "Unpublished only"), ("", "All visuals")]
+    published_choices = [
+        (True, "Published only"),
+        (False, "Unpublished only"),
+        ("All", "All visuals"),
+    ]
     published = forms.ChoiceField(
-        required=False, choices=published_choices, widget=forms.RadioSelect, initial=""
+        required=False, choices=published_choices, widget=forms.RadioSelect, initial="All"
     )
 
     def __init__(self, *args, **kwargs):
+        can_edit = kwargs.pop("can_edit", False)
         super().__init__(*args, **kwargs)
+        if not can_edit:
+            self.fields.pop("published")
 
     @property
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
-        if "published" in self.fields:
-            helper.add_row("text", 3, "col-md-3")
-        else:
-            helper.add_row("text", 2, "col-md-3")
+        helper.add_row("text", len(self.fields), "col-md-3")
         return helper
 
-    def get_query(self):
-        query = Q()
+    def get_visual_filters(self):
+        filters = Q()
         if text := self.cleaned_data.get("text"):
-            query &= Q(title__icontains=text)
-            query |= Q(caption__icontains=text)
+            filters &= Q(title__icontains=text) | Q(caption__icontains=text)
         if visual_type := self.cleaned_data.get("type"):
-            if len(visual_type) == 1:
-                query &= Q(visual_type=visual_type)
-            else:
-                query &= Q(visual_type=-1)
-        if (published := self.cleaned_data.get("published")) != "":
-            query &= Q(published=published)
-        return query
+            if visual_type.startswith("v-"):
+                filters &= Q(visual_type=self.visual_type_filter[visual_type])
+            if visual_type.startswith("dp-"):
+                filters &= Q(id=-1)
+        if published := self.cleaned_data.get("published", "All"):
+            if published != "All":
+                filters &= Q(published=published)
+        return filters
 
-    def get_datapivot_query(self):
-        query = Q()
+    def get_datapivot_filters(self):
+        filters = Q()
         if text := self.cleaned_data.get("text"):
-            query &= Q(title__icontains=text)
-            query |= Q(caption__icontains=text)
-        if (published := self.cleaned_data.get("published")) != "":
-            query &= Q(published=published)
-        return query
+            filters &= Q(title__icontains=text) | Q(caption__icontains=text)
+        if visual_type := self.cleaned_data.get("type"):
+            if visual_type.startswith("dp-"):
+                filters &= Q(datapivotquery__evidence_type=self.dp_type_filter[visual_type])
+            if visual_type.startswith("v-"):
+                filters &= Q(id=-1)
+        if published := self.cleaned_data.get("published", "All"):
+            if published != "All":
+                filters &= Q(published=published)
+        return filters
 
 
 class EndpointAggregationForm(VisualForm):
