@@ -1,3 +1,4 @@
+import itertools
 import json
 from typing import Dict
 
@@ -194,10 +195,6 @@ class GetVisualizationObjectMixin:
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
         return super().get_object(object=obj)
-
-
-import operator
-import itertools
 
 
 class VisualizationList(BaseList):

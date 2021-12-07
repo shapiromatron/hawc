@@ -18,7 +18,6 @@ from ..common.views import (
     MessageMixin,
     TeamMemberOrHigherMixin,
 )
-from ..lit import constants
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
