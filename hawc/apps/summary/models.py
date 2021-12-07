@@ -234,7 +234,11 @@ class SummaryTable(models.Model):
         return self.TABLE_SCHEMA_MAP[self.table_type]
 
     def get_table(self) -> BaseTable:
-        return self.get_content_schema_class().parse_obj(self.content)
+        schema_class = self.get_content_schema_class()
+        kwargs = {}
+        if "assessment_id" in schema_class.schema()["properties"]:
+            kwargs["assessment_id"] = self.assessment_id
+        return schema_class.parse_obj(dict(self.content, **kwargs))
 
     @classmethod
     def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
@@ -242,8 +246,6 @@ class SummaryTable(models.Model):
         instance = cls(assessment_id=assessment_id, table_type=table_type)
         schema = instance.get_content_schema_class()
         instance.content = schema.get_default_props()
-        if "assessment_id" in instance.content:
-            instance.content["assessment_id"] = instance.assessment_id
         return instance
 
     def to_docx(self, base_url: str = ""):
@@ -252,10 +254,6 @@ class SummaryTable(models.Model):
         return ReportExport(docx=docx, filename=self.slug)
 
     def clean(self):
-        # assessment id should match content
-        if self.content.get("assessment_id", self.assessment_id) != self.assessment_id:
-            raise ValidationError({"content": "Invalid assessment id"})
-
         # make sure table can be built
         try:
             self.get_table()
