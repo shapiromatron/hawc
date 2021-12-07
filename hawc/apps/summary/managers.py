@@ -25,10 +25,10 @@ class SummaryTableManager(BaseManager):
         assessment_ids = Assessment.objects.get_viewable_assessments(user).values_list(
             "id", flat=True
         )
-        #assessment_ids = Assessment.objects.all().values_list(
+        # assessment_ids = Assessment.objects.all().values_list(
         #    "id", flat=True
-        #)
-        #import pdb; pdb.set_trace()
+        # )
+        # import pdb; pdb.set_trace()
         return (
             self.filter(assessment__in=assessment_ids)
             .select_related("assessment")
@@ -44,7 +44,7 @@ class VisualManager(BaseManager):
         Return visuals which can cloned by a specific user
         """
         Assessment = apps.get_model("assessment", "Assessment")
-        assessment_ids = Assessment.objects.get_viewable_assessments(user, public=True).values_list(
+        assessment_ids = Assessment.objects.get_viewable_assessments(user).values_list(
             "id", flat=True
         )
         return (

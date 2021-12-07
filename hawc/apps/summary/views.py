@@ -2,12 +2,10 @@ import json
 from typing import Dict
 
 from django.core.exceptions import PermissionDenied
-from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
-from hawc.apps.common.helper import tryParseInt
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -138,10 +136,6 @@ class SummaryTableCreate(BaseCreate):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["table_type"] = int(self.kwargs.get("table_type"))
-        pk = tryParseInt(self.request.GET.get("initial"), -1)
-        if pk > 0:
-            initial = self.model.objects.filter(pk=pk).first()
-            kwargs["initial"] = model_to_dict(initial)
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -168,10 +162,10 @@ class SummaryTableCopySelector(BaseCreate):
     form_class = forms.SummaryTableSelectorForm
 
     def get_context_data(self, **kwargs):
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         context = super().get_context_data(**kwargs)
-        context["create_or_copy"] = {"Copy": "summary:visualization_copy"}
-        #context["form"] = self.form_class()
+        # context["create_or_copy"] = {"Copy": "summary:visualization_copy"}
+        # context["form"] = self.form_class()
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
         )
@@ -215,9 +209,10 @@ class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user,
             "Copy existing",
-            [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
+            [Breadcrumb.from_object(self.assessment), get_table_list_crumb(self.assessment)],
         )
         return context
+
 
 class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
     success_message = "Summary table updated."

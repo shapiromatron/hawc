@@ -525,7 +525,7 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
             if initial and initial.get_assessment() in Assessment.objects.get_viewable_assessments(
-                self.request.user, public=True
+                self.request.user
             ):
                 kwargs["initial"] = model_to_dict(initial)
 

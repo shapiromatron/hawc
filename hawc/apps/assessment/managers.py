@@ -19,7 +19,6 @@ class AssessmentManager(BaseManager):
         optionally excluding assessment exclusion_id,
         not including public assessments
         """
-        #import pdb; pdb.set_trace()
         if user.is_superuser:
             filters = Q()
         else:

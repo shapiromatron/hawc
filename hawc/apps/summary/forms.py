@@ -468,18 +468,18 @@ class SummaryTableForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.instance.id:
             self.instance = models.SummaryTable.build_default(self.assessment.id, table_type)
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
 
         if self.initial:
             self.instance.content = self.initial["content"]
             self.instance.title = self.initial["title"]
             self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
-            #self.fields["title"].initial = self.initial["title"]
-            #self.fields["content"].initial = self.initial["content"]
-            #self.fields["published"].initial = self.initial["published"]
-        #self.fields["content"].initial = self.instance.content
-        #self.fields["content"].initial = self.initial["content"]
+            # self.fields["title"].initial = self.initial["title"]
+            # self.fields["content"].initial = self.initial["content"]
+            # self.fields["published"].initial = self.initial["published"]
+        # self.fields["content"].initial = self.instance.content
+        # self.fields["content"].initial = self.initial["content"]
 
 
 class SummaryTableSelectorForm(forms.Form):
@@ -511,6 +511,7 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return f"{obj.assessment}: {obj}"
 
+
 class SummaryTableCopySelectorForm(forms.Form):
 
     st = SummaryTableModelChoiceField(
@@ -518,11 +519,11 @@ class SummaryTableCopySelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        #self.assessment = kwargs.pop("parent")
+        # self.assessment = kwargs.pop("parent")
         user = kwargs.pop("user")
         self.table_type = kwargs.pop("table_type")
         self.cancel_url = kwargs.pop("cancel_url")
-        #_ = kwargs.pop("instance")
+        # _ = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["st"].queryset = models.SummaryTable.objects.clonable_queryset(user).filter(
             table_type=self.table_type
@@ -536,7 +537,7 @@ class SummaryTableCopySelectorForm(forms.Form):
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "col-md-12"
 
-        #url = models.SummaryTable.get_list_url(self.assessment.id)
+        # url = models.SummaryTable.get_list_url(self.assessment.id)
         return BaseFormHelper(
             self,
             legend_text="Select table type",
