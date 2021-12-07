@@ -30,10 +30,8 @@ def _check_browsing(driver, root_url):
     - a risk of bias heatmap can be rendered
     """
 
-    assessment_url = "/assessment/2/"
-
     # go to website
-    helium.go_to(root_url + "/summary" + assessment_url + "visuals/")
+    helium.go_to(root_url + "/summary/assessment/2/visuals/")
     assert helium.Text("Available visualizations").exists() is True
     helium.wait_until(helium.Text("Title").exists)
     assert len(driver.find_elements_by_css_selector("tr")) > 10
@@ -50,7 +48,7 @@ def _check_browsing(driver, root_url):
     assert helium.Text("Download as a SVG").exists() is True
 
     # view browse again
-    helium.go_to(root_url + "/summary" + assessment_url + "visuals/")
+    helium.go_to(root_url + "/summary/assessment/2/visuals/")
     helium.wait_until(helium.Text("Title").exists)
 
     # click the rob heatmap example
@@ -78,45 +76,38 @@ def _check_visuals_working(driver, root_url):
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .crossview_path_group")) > 0
 
-    helium.scroll_down(600)
     helium.go_to(root_url + "/summary/data-pivot/assessment/2/animal-bioassay-data-pivot-endpoint/")
     helium.wait_until(helium.Text("study name").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .x_gridlines")) > 0
     assert len(driver.find_elements_by_css_selector("svg .y_gridlines")) > 0
 
-    helium.scroll_down(600)
     helium.go_to(root_url + "/summary/data-pivot/assessment/2/data-pivot-epi/")
     helium.wait_until(helium.Text("study name").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .x_gridlines")) > 0
     assert len(driver.find_elements_by_css_selector("svg .y_gridlines")) > 0
 
-    helium.scroll_down(600)
     helium.go_to(root_url + "/summary/visual/assessment/2/embedded-tableau/")
     helium.wait_until(helium.Text("embedded-tableau").exists)
     helium.wait_until(helium.S(".tableauPlaceholder iframe").exists, timeout_secs=20)
     assert len(driver.find_elements_by_tag_name("iframe")) > 0
 
-    helium.scroll_down(600)
     helium.go_to(root_url + "/summary/visual/assessment/2/rob-heatmap/")
     helium.wait_until(helium.Text("rob-heatmap").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .legend")) > 0
 
-    helium.scroll_down(600)
     helium.go_to(root_url + "/summary/visual/assessment/2/tagtree/")
     helium.wait_until(helium.Text("Human Study").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .tagnode")) == 4
 
-    helium.scroll_down(600)
     helium.go_to(root_url + "/summary/visual/assessment/2/exploratory-heatmap/")
     helium.wait_until(helium.Text("exploratory-heatmap").exists)
     assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
     assert len(driver.find_elements_by_css_selector("svg.d3 g rect")) > 5
 
-    helium.scroll_down(600)
     helium.go_to(root_url + "/summary/visual/assessment/2/bioassay-aggregation/")
     helium.wait_until(helium.Text("bioassay-aggregation").exists)
     assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
