@@ -152,6 +152,66 @@ class SummaryTableCreate(BaseCreate):
         return context
 
 
+class SummaryTableCopySelector(BaseCreate):
+    parent_model = Assessment
+    model = models.SummaryTable
+    parent_template_name = "assessment"
+    template_name = "summary/summarytable_selector.html"
+    breadcrumb_active_name = "Summary Table selector"
+    form_class = forms.SummaryTableSelectorForm
+
+    def get_context_data(self, **kwargs):
+        #import pdb; pdb.set_trace()
+        context = super().get_context_data(**kwargs)
+        context["create_or_copy"] = {"Copy": "summary:visualization_copy"}
+        #context["form"] = self.form_class()
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
+        )
+        return context
+
+    def form_valid(self, form):
+        url = reverse(
+            "summary:tables_copy", args=(form.assessment.id, form.cleaned_data["table_type"],)
+        )
+        return HttpResponseRedirect(url)
+
+
+class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
+    template_name = "summary/datapivot_copy_selector.html"
+    model = Assessment
+    form_class = forms.SummaryTableCopySelectorForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # import pdb; pdb.set_trace()
+        kwargs["table_type"] = self.kwargs.get("table_type")
+        kwargs["user"] = self.request.user
+        kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
+        return kwargs
+
+    def form_valid(self, form):
+        st = form.cleaned_data["st"]
+        url = reverse_lazy(
+            "summary:tables_create",
+            kwargs={"pk": self.assessment.id, "table_type": self.kwargs.get("table_type")},
+        )
+        url += f"?initial={st.pk}"
+
+        return HttpResponseRedirect(url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Copy existing",
+            [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
+        )
+        return context
+
 class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
     success_message = "Summary table updated."
     model = models.SummaryTable

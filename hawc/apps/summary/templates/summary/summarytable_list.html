@@ -8,6 +8,8 @@
   <div class="dropdown-menu dropdown-menu-right">
     <a class="dropdown-item" href="{% url 'summary:tables_create_selector' assessment.pk %}">
       <i class="fa fa-fw fa-edit"></i>&nbsp;Create new table
+      <a class="dropdown-item" href="{% url 'summary:tables_copy_selector' assessment.pk %}">
+        &nbsp;Clone new table from existing
     </a>
   </div>
 </div>

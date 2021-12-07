@@ -496,6 +496,48 @@ class SummaryTableSelectorForm(forms.Form):
         )
 
 
+class SummaryTableModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.assessment}: {obj}"
+
+class SummaryTableCopySelectorForm(forms.Form):
+
+    st = SummaryTableModelChoiceField(
+        label="Summary table", queryset=models.Visual.objects.all(), empty_label=None
+    )
+
+    def __init__(self, *args, **kwargs):
+        #self.assessment = kwargs.pop("parent")
+        user = kwargs.pop("user")
+        self.table_type = kwargs.pop("table_type")
+        self.cancel_url = kwargs.pop("cancel_url")
+        #_ = kwargs.pop("instance")
+        super().__init__(*args, **kwargs)
+        self.fields["st"].queryset = models.SummaryTable.objects.clonable_queryset(user).filter(
+            table_type=self.table_type
+        )
+
+    @property
+    def helper(self):
+
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "col-md-12"
+
+        #url = models.SummaryTable.get_list_url(self.assessment.id)
+        return BaseFormHelper(
+            self,
+            legend_text="Select table type",
+            help_text="""
+            HAWC has a number of predefined table formats which are designed for different applications
+            of the tool. Please select the table type you wish to copy.
+            """,
+            submit_text="Copy table",
+            cancel_url=self.cancel_url,
+        )
+
+
 class VisualForm(forms.ModelForm):
     class Meta:
         model = models.Visual
