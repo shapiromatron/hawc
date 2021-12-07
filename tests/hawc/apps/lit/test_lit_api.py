@@ -52,11 +52,10 @@ class TestLiteratureAssessmentViewset:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
 
-        # check permissions for this one; raises an error
+        # topic model permissions
         url = reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,))
         assert anon_client.get(url).status_code == 403
-        with pytest.raises(ValueError):
-            assert rev_client.get(url).status_code == 200
+        assert rev_client.get(url).status_code == 200
 
         tagtree_url = reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,))
         # only reviewers and up can GET

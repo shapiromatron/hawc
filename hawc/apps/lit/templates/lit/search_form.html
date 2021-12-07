@@ -9,10 +9,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-
-        {% if type == "Search" or object.search_type == "s" %}
-            $('#id_search_string').quillify();
-        {% endif %}
+        $('.html5text').quillify();
 
         $('#id_title').on('keyup', function () {
           $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));

@@ -9,10 +9,7 @@ import {observer} from "mobx-react";
 Utility toolbelt for visualizations. Adds a few key attributes:
 
 1) adds ability to download SVG
-2) adds resizing button and triggering (note that this has side-effects)
-
-Note that creating an instances registers an listener on window resize that is not currently
-cleaned up after being destroyed.
+2) adds resizing button and triggering
 
 */
 
@@ -55,50 +52,37 @@ const getSvgObject = function(svgElement) {
         )
             .appendTo("body")
             .submit();
-    },
-    getDomSize = $el => {
-        return {width: $el.width(), height: $el.height()};
     };
 
 class ToolbarStore {
-    @observable currentParentSize = null;
-    @observable isFullSize = false;
+    @observable isFitted = false;
 
-    constructor(svg, parentContainer, nativeSize) {
-        this.svg = svg;
+    constructor(svg, nativeSize) {
         this.d3svg = d3.select(svg);
-        this.$parentContainer = $(parentContainer);
-        this.setParentSize();
-        this.showZoomButton = _.isObject(nativeSize);
-        this.nativeSize = _.isObject(nativeSize) ? nativeSize : this.currentParentSize;
-        this.nativeAspectRatio = this.nativeSize.height / this.nativeSize.width;
-        this.isFullSize = !this.showZoomButton;
-    }
-
-    @action.bound setParentSize() {
-        this.currentParentSize = getDomSize($(this.parentContainer));
-    }
-
-    @action.bound handleResizeClick() {
-        this.isFullSize = !this.isFullSize;
+        this.showResizeButton = _.isObject(nativeSize);
+        this.nativeSize = nativeSize;
+        this.isFitted = !_.isObject(nativeSize) || $($(svg).parent()[0]).width() < nativeSize.width;
         this.scaleSize();
     }
 
-    @action.bound handlePageResize() {
-        this.setParentSize();
+    @action.bound handleResizeClick() {
+        this.isFitted = !this.isFitted;
         this.scaleSize();
     }
 
     @action.bound scaleSize() {
-        this.$parentContainer
-            .attr("width", this.currentParentSize.width)
-            .attr("height", this.currentParentSize.height);
-        if (this.isFullSize) {
-            this.d3svg.attr("width", this.nativeSize.width).attr("height", this.nativeSize.height);
-        } else {
+        if (this.isFitted) {
+            // scale svg to parent container
             this.d3svg
-                .attr("width", this.currentParentSize.width)
-                .attr("height", this.currentParentSize.height);
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .style("min-width", null);
+        } else {
+            // scale svg to native size
+            this.d3svg
+                .attr("width", "100%")
+                .attr("height", this.nativeSize.height)
+                .style("min-width", this.nativeSize.width);
         }
     }
 }
@@ -107,31 +91,17 @@ class ToolbarStore {
 class VisualToolbar extends Component {
     constructor(props) {
         super(props);
-        this.store = new ToolbarStore(props.svg, props.parentContainer, props.nativeSize);
-
-        let resizeTimer;
-        this.handleResizeEvent = () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(this.store.handlePageResize, 1000);
-        };
-    }
-
-    componentDidMount() {
-        window.addEventListener("resize", this.handleResizeEvent);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.handleResizeEvent);
+        this.store = new ToolbarStore(props.svg, props.nativeSize);
     }
 
     render() {
-        const {showZoomButton, isFullSize, handleResizeClick} = this.store,
+        const {showResizeButton, handleResizeClick} = this.store,
             {svg} = this.props;
         return (
             <div className="float-right">
-                {showZoomButton ? (
+                {showResizeButton ? (
                     <button className="btn btn-sm" title="Zoom in/out" onClick={handleResizeClick}>
-                        <i className={isFullSize ? "fa fa-search-minus" : "fa fa-search-plus"}></i>
+                        <i className={"fa fa-search-plus"}></i>
                     </button>
                 ) : null}
                 <div className="btn-group dropup" title="Download image">
@@ -172,7 +142,6 @@ class VisualToolbar extends Component {
 
 VisualToolbar.propTypes = {
     svg: PropTypes.object.isRequired,
-    parentContainer: PropTypes.object.isRequired,
     nativeSize: PropTypes.shape({
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,

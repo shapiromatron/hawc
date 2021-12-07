@@ -50,8 +50,9 @@ def media_metadata_report(root_uri: str) -> pd.DataFrame:
         df.size_mb = df.size_mb / (1024 * 1024)
         df.created = pd.to_datetime(df.created, unit="s")
         df.modified = pd.to_datetime(df.modified, unit="s")
+        df.full_path = df.full_path.astype(str)
 
         # sort in descending order
-        df = df.sort_values("created", ascending=False)
+        df = df.convert_dtypes().sort_values("created", ascending=False)
 
     return df
