@@ -31,16 +31,7 @@ urlpatterns = [
         views.SummaryTableCreate.as_view(),
         name="tables_create",
     ),
-    path(
-        "assessment/<int:pk>/tables/copy/",
-        views.SummaryTableCopySelector.as_view(),
-        name="tables_copy_selector",
-    ),
-    path(
-        "assessment/<int:pk>/tables/<int:table_type>/copy/",
-        views.SummaryTableCopy.as_view(),
-        name="tables_copy",
-    ),
+    path("assessment/<int:pk>/tables/copy/", views.SummaryTableCopy.as_view(), name="tables_copy",),
     path(
         "assessment/<int:pk>/tables/<slug:slug>/",
         views.SummaryTableDetail.as_view(),

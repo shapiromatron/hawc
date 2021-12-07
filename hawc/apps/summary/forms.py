@@ -519,15 +519,10 @@ class SummaryTableCopySelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        # self.assessment = kwargs.pop("parent")
         user = kwargs.pop("user")
-        self.table_type = kwargs.pop("table_type")
         self.cancel_url = kwargs.pop("cancel_url")
-        # _ = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
-        self.fields["st"].queryset = models.SummaryTable.objects.clonable_queryset(user).filter(
-            table_type=self.table_type
-        )
+        self.fields["st"].queryset = models.SummaryTable.objects.clonable_queryset(user)
 
     @property
     def helper(self):
@@ -537,13 +532,13 @@ class SummaryTableCopySelectorForm(forms.Form):
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "col-md-12"
 
-        # url = models.SummaryTable.get_list_url(self.assessment.id)
         return BaseFormHelper(
             self,
-            legend_text="Select table type",
+            legend_text="Select summary table",
             help_text="""
-            HAWC has a number of predefined table formats which are designed for different applications
-            of the tool. Please select the table type you wish to copy.
+                Select an existing summary table and copy as a new summary table. You will be taken to a new view to
+                create a new table, but the form will be pre-populated using the values from
+                the currently-selected table.
             """,
             submit_text="Copy table",
             cancel_url=self.cancel_url,
