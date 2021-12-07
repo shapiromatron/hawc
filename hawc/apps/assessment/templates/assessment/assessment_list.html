@@ -4,17 +4,22 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div>
-  <h1>Available Assessments</h1>
-  {% if desc %}
-  <p>{{desc}}</p>
-  {% endif %}
-  <div class="card mb-2">
-    <div class="card-body container-fluid pb-1">
-      {% crispy form %}
-    </div>
+<h1>Available Assessments</h1>
+{% if desc %}
+<p>{{desc}}</p>
+{% endif %}
+<div class="card mb-2">
+  <div class="card-body container-fluid pb-1">
+    {% crispy form %}
   </div>
-  {% include "assessment/_assessment_list_tbl.html" %}
 </div>
-
+{% include "assessment/_assessment_list_tbl.html" %}
 {% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+  });
+</script>
+{% endblock extrajs %}
