@@ -38,14 +38,18 @@ elif email_backend == "MAILGUN":
         MAILGUN_API_KEY=os.environ["MAILGUN_ACCESS_KEY"],
         MAILGUN_SENDER_DOMAIN=os.environ["MAILGUN_SERVER_NAME"],
     )
+elif email_backend == "SENDGRID":
+    INSTALLED_APPS += ("anymail",)
+    EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
+    ANYMAIL = dict(SENDGRID_API_KEY=os.environ["SENDGRID_API_KEY"],)
 elif email_backend == "CONSOLE":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
     raise ValueError(f"Unknown email backend: {email_backend}")
 
-LOGGING["loggers"]["django"]["handlers"] = ["file"]
-LOGGING["loggers"]["hawc"]["handlers"] = ["file"]
-LOGGING["loggers"]["hawc.request"]["handlers"] = ["hawc-request"]
+LOGGING["loggers"]["django"]["handlers"] = ["console", "file"]
+LOGGING["loggers"]["hawc"]["handlers"] = ["console", "file"]
+LOGGING["loggers"]["hawc.request"]["handlers"] = ["console", "hawc-request"]
 
 ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", "True") == "True"
 PM_CAN_MAKE_PUBLIC = os.getenv("HAWC_PM_CAN_MAKE_PUBLIC", "True") == "True"

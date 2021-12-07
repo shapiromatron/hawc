@@ -49,15 +49,6 @@ tfoot > tr > td {
     font-size: 80%;
     border-top: none;
 }
-code {
-    margin: 0 2px;
-    padding: 0px 5px;
-    border: 1px solid #ddd;
-    background-color: #f8f8f8;
-    border-radius: 2px;
-    font-size: 0.95em;
-    color: #444;
-}
 .hidden {
     display: none;
 }
