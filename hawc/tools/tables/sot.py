@@ -20,6 +20,37 @@ class AttributeChoices(Enum):
     Doses = "doses"
     FreeHtml = "free_html"
 
+    def get_rob_score(self, selection: pd.DataFrame) -> BaseCell:
+        values = selection["score_score"].values
+
+        judgment = 0 if values.size == 0 else values[0]
+        return JudgmentCell(judgment=judgment)
+
+    def get_study_name(self, selection: pd.DataFrame) -> BaseCell:
+        values = selection["study citation"].dropna().unique()
+
+        text = "; ".join(values)
+        return GenericCell(quill_text=tag_wrapper(text, "p"))
+
+    def get_species_strain_sex(self, selection: pd.DataFrame) -> BaseCell:
+        values = selection["animal description"].dropna().unique()
+
+        text = "; ".join(values)
+        return GenericCell(quill_text=tag_wrapper(text, "p"))
+
+    def get_doses(self, selection: pd.DataFrame) -> BaseCell:
+        values = selection["doses"].dropna().unique()
+
+        text = "; ".join(values)
+        return GenericCell(quill_text=tag_wrapper(text, "p"))
+
+    def get_free_html(self, selection: pd.DataFrame) -> BaseCell:
+        # this will be overridden by 'customized' html
+        return GenericCell()
+
+    def get_cell(self, selection: pd.DataFrame) -> BaseCell:
+        return getattr(self, f"get_{self.value}")(selection)
+
 
 class Subheader(BaseModel):
     label: str
@@ -40,12 +71,12 @@ class Row(BaseModel):
     customized: List
 
 
-class JudgementCell(BaseCell):
-    judgement: int
+class JudgmentCell(BaseCell):
+    judgment: int
 
     def to_docx(self, parser: QuillParser, block):
-        text = SCORE_SYMBOLS[self.judgement]
-        color = SCORE_SHADES[self.judgement].strip("#")
+        text = SCORE_SYMBOLS[self.judgment]
+        color = SCORE_SHADES[self.judgment].strip("#")
         color_background(block, color)
         return parser.feed(tag_wrapper(text, "p"), block)
 
@@ -55,20 +86,6 @@ class StudyOutcomeTable(BaseTable):
     subheaders: List[Subheader]
     cell_columns: List[Column] = Field([], alias="columns")
     cell_rows: List[Row] = Field([], alias="rows")
-
-    def get_html(self, data, row, attribute):
-        selection = data.loc[data["study id"] == row.id]
-        if attribute == "study_name":
-            text = selection["study citation"].values[0]
-            return tag_wrapper(text, "p")
-        elif attribute == "species_strain_sex":
-            text = selection["species"].values[0]
-            return tag_wrapper(text, "p")
-        elif attribute == "doses":
-            text = selection["dose units"].values[0]
-            return tag_wrapper(text, "p")
-        elif attribute == "free_html":
-            return tag_wrapper("", "p")
 
     def _subheaders_group(self):
         cells = []
@@ -86,6 +103,31 @@ class StudyOutcomeTable(BaseTable):
             cells.append(GenericCell.parse_args(True, 0, i, 1, 1, html))
         return BaseCellGroup.construct(cells=cells)
 
+    def _set_override(self, final_scores: pd.DataFrame, cell: BaseCell, row: Row, column: Column):
+        for custom in [custom for custom in row.customized if custom["key"] == column.key]:
+            if "html" in custom:
+                cell.quill_text = custom["html"]
+            elif "score_id" in custom:
+                values = final_scores.loc[final_scores["score_id"] == custom["score_id"]][
+                    "score_score"
+                ].values
+                cell.judgment = 0 if values.size == 0 else values[0]
+
+    def _get_selection(
+        self, bioassay_data: pd.DataFrame, final_scores: pd.DataFrame, row: Row, column: Column
+    ) -> pd.DataFrame:
+        if column.attribute.value == "rob_score":
+            return final_scores.loc[
+                (final_scores["study_id"] == row.id)
+                & (final_scores["metric_id"] == column.metric)
+                & (final_scores["content_type_id"].isnull())
+            ]
+        else:
+            return bioassay_data.loc[bioassay_data["study id"] == row.id]
+
+    def _filter_rows(self, bioassay_data: pd.DataFrame) -> List[Row]:
+        return [row for row in self.cell_rows if row.id in bioassay_data["study id"].values]
+
     def _rows_group(self):
         cells = []
 
@@ -93,27 +135,19 @@ class StudyOutcomeTable(BaseTable):
         final_scores = pd.DataFrame.from_records(
             FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
         )
-        bioassay_data = Endpoint.heatmap_study_df(
+        bioassay_data = Endpoint.heatmap_doses_df(
             assessment_id=self.assessment_id, published_only=False
         )
 
-        for i, row in enumerate(self.cell_rows):
+        rows = self._filter_rows(bioassay_data)
+
+        for i, row in enumerate(rows):
             for j, col in enumerate(self.cell_columns):
-                if col.attribute.value == "rob_score":
-                    judgement = final_scores.loc[
-                        (final_scores["study_id"] == row.id)
-                        & (final_scores["metric_id"] == col.metric)
-                        & (final_scores["content_type_id"].isnull())
-                    ]["score_score"]
-                    cell = JudgementCell(row=i, column=j, judgement=judgement)
-                else:
-                    html = self.get_html(bioassay_data, row, col.attribute.value)
-                    cell = GenericCell(row=i, column=j, quill_text=html)
-                for custom in [custom for custom in row.customized if custom["key"] == col.key]:
-                    if "quill_text" in custom:
-                        cell.quill_text = custom["quill_text"]
-                    elif "judgement" in custom:
-                        cell.judgement = custom["judgement"]
+                selection = self._get_selection(bioassay_data, final_scores, row, col)
+                cell = col.attribute.get_cell(selection)
+                self._set_override(final_scores, cell, row, col)
+                cell.row = i
+                cell.column = j
                 cells.append(cell)
         return BaseCellGroup.construct(cells=cells)
 
