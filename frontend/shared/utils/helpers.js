@@ -307,9 +307,18 @@ const helpers = {
         // column and row are 0-based
         return `${excelColumn(column)}${row + 1}`;
     },
+    addOuterTag(html, tag) {
+        // if the html's outermost tag is not the given tag, add it
+        // otherwise return the original html
+        let regex = /^\s*<(.*)>.*<\/\1>\s*$/,
+            match = html.match(regex);
+        return match == null || match[1] != tag ? `<${tag}>${html}</${tag}>` : html;
+    },
     hasInnerText(text) {
+        // wrap text with html tag to ensure it is a valid jQuery selector expression
+        // then return whether there is text content
         return (
-            $(text)
+            $(`<p>${text}</p>`)
                 .text()
                 .trim().length > 0
         );
