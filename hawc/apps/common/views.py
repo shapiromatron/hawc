@@ -537,7 +537,6 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         context["assessment"] = self.assessment
         context["obj_perms"] = super().get_obj_perms()
         context["breadcrumbs"] = self.get_breadcrumbs()
-        context["crud"] = self.crud
         context[self.parent_template_name] = self.parent
         return context
 
