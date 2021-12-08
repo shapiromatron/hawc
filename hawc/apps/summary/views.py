@@ -318,6 +318,12 @@ class VisualizationCreate(BaseCreate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
+        if context["form"].initial:
+            initial = self.model.objects.filter(pk=context["form"].initial["id"]).first()
+            initial.id = initial.FAKE_INITIAL_ID
+            context["initial_data"] = json.dumps(
+                serializers.VisualSerializer().to_representation(initial)
+            )
         return context
 
     def get_initial_visual(self, context) -> Dict:
