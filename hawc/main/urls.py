@@ -65,22 +65,23 @@ urlpatterns = [
     path("500/", views.Error500.as_view(), name="500"),
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
     path("selectable/", include("selectable.urls")),
-    path(
-        "openapi/",
-        get_schema_view(
-            title="HAWC",
-            version=__version__,
-            patterns=open_api_patterns,
-            permission_classes=(permissions.IsAdminUser,),
-        ),
-        name="openapi",
-    ),
 ]
 
 
 if settings.INCLUDE_ADMIN:
     admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
     urlpatterns += [
+        path(
+            f"{admin_url}/api/openapi/",
+            get_schema_view(
+                title="HAWC",
+                version=__version__,
+                patterns=open_api_patterns,
+                permission_classes=(permissions.IsAdminUser,),
+            ),
+            name="openapi",
+        ),
+        path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
         path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
         path(
             f"{admin_url}/assessment-size/",

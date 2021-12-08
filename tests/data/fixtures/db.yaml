@@ -477,6 +477,12 @@
     date_joined: 2020-01-25 14:23:16.175169+00:00
     groups: []
     user_permissions: []
+- model: authtoken.token
+  pk: cef32b9abcbe1a6e9c8460099403e9cd77e12c79
+  fields:
+    user:
+    - admin@hawcproject.org
+    created: 2045-01-01 12:00:00.123456+00:00
 - model: myuser.userprofile
   pk: 1
   fields:
