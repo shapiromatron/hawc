@@ -6,6 +6,7 @@ from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
+from django.forms.models import model_to_dict
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -293,6 +294,8 @@ class VisualizationCreate(BaseCreate):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["visual_type"] = int(self.kwargs.get("visual_type"))
+        #kwargs["initial"] = model_to_dict(self.object)
+        #kwargs["instance"].id = None
         return kwargs
 
     def get_template_names(self):
@@ -307,6 +310,7 @@ class VisualizationCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        import pdb; pdb.set_trace()
         context["dose_units"] = models.Visual.get_dose_units()
         context["instance"] = {}
         context["visual_type"] = int(self.kwargs.get("visual_type"))
@@ -318,19 +322,17 @@ class VisualizationCreate(BaseCreate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
-        if context["form"].initial:
-            initial = self.model.objects.filter(pk=context["form"].initial["id"]).first()
-            initial.id = initial.FAKE_INITIAL_ID
-            context["initial_data"] = json.dumps(
-                serializers.VisualSerializer().to_representation(initial)
-            )
         return context
 
     def get_initial_visual(self, context) -> Dict:
-        instance = self.model()
-        instance.id = instance.FAKE_INITIAL_ID
-        instance.assessment = self.assessment
-        instance.visual_type = context["visual_type"]
+        if context["form"].initial:
+            instance = self.model.objects.filter(pk=context["form"].initial["id"]).first()
+            instance.id = instance.FAKE_INITIAL_ID
+        else:
+            instance = self.model()
+            instance.id = instance.FAKE_INITIAL_ID
+            instance.assessment = self.assessment
+            instance.visual_type = context["visual_type"]
         return serializers.VisualSerializer().to_representation(instance)
 
 
@@ -370,7 +372,6 @@ class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        # import pdb; pdb.set_trace()
         kwargs["visual_type"] = self.kwargs.get("visual_type")
         kwargs["user"] = self.request.user
         kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
@@ -379,10 +380,14 @@ class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
     def form_valid(self, form):
         vs = form.cleaned_data["vs"]
         url = reverse_lazy(
-            "summary:visualization_create",
-            kwargs={"pk": self.assessment.id, "visual_type": self.kwargs.get("visual_type")},
+            "summary:visualization_copy_instance",
+            kwargs={"pk": self.assessment.id, "slug": vs.slug},
         )
-        url += f"?initial={vs.pk}"
+        #url = reverse_lazy(
+        #    "summary:visualization_create",
+        #    kwargs={"pk": self.assessment.id, "visual_type": self.kwargs.get("visual_type")},
+        #)
+        #url += f"?initial={vs.pk}"
 
         return HttpResponseRedirect(url)
 
@@ -393,6 +398,59 @@ class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
             "Copy existing",
             [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
         )
+        return context
+
+
+class VisualizationCopyInstance(GetVisualizationObjectMixin, BaseCreate):
+    success_message = "Visualization copied."
+    model = models.Visual
+    parent_model = Assessment
+    parent_template_name = "assessment"
+
+    def get_form_class(self):
+        self.object = super().get_object()
+        self.original_id = self.object.id
+        try:
+            return forms.get_visual_form(self.object.visual_type)
+        except ValueError:
+            raise Http404
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["visual_type"] = self.object.visual_type
+        kwargs["initial"] = model_to_dict(self.object)
+        kwargs["instance"].id = None
+        return kwargs
+
+    def get_template_names(self):
+        visual_type = self.object.visual_type
+        if visual_type in {
+            models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+        }:
+            return "summary/visual_form_django.html"
+        else:
+            return super().get_template_names()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["dose_units"] = models.Visual.get_dose_units()
+        context["instance"] = {}
+        context["visual_type"] = self.object.visual_type
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["rob_metrics"] = json.dumps(
+            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        )
+        self.object.id = self.original_id
+        initial_data = serializers.VisualSerializer().to_representation(self.object)
+        self.object.id = self.object.FAKE_INITIAL_ID
+        initial_data["id"] = self.object.FAKE_INITIAL_ID
+        context["initial_data"] = json.dumps(initial_data)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        #context.pop('object')
         return context
 
 
@@ -425,6 +483,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
+        import pdb; pdb.set_trace()
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)
         )

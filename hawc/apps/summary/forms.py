@@ -468,7 +468,6 @@ class SummaryTableForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.instance.id:
             self.instance = models.SummaryTable.build_default(self.assessment.id, table_type)
-        # import pdb; pdb.set_trace()
 
         if self.initial:
             self.instance.content = self.initial["content"]
@@ -570,7 +569,6 @@ class VisualForm(forms.ModelForm):
             self.fields["sort_order"].widget = forms.HiddenInput()
 
     def setHelper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
