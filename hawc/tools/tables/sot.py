@@ -99,7 +99,7 @@ class StudyOutcomeTable(BaseTable):
         study_ids = {row.id for row in self.cell_rows if row.type == "study"}
         self._final_scores = pd.DataFrame.from_records(
             FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
-        )
+        ).set_index(["study_id", "metric_id"])
         self._bioassay_data = Endpoint.heatmap_doses_df(
             assessment_id=self.assessment_id, published_only=False
         )
@@ -132,11 +132,15 @@ class StudyOutcomeTable(BaseTable):
 
     def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:
         if column.attribute.value == "rob_score":
-            return self._final_scores.loc[
-                (self._final_scores["study_id"] == row.id)
-                & (self._final_scores["metric_id"] == column.metric)
-                & (self._final_scores["content_type_id"].isnull())
-            ]
+            try:
+                selection = self._final_scores.loc[(row.id, column.metric)]
+            except KeyError:
+                return pd.DataFrame(columns=self._final_scores.columns)
+            # if there are duplicate indices, selection is a dataframe
+            if isinstance(selection, pd.DataFrame):
+                return selection.loc[selection["content_type_id"].isnull()]
+            # if there are no duplicate indices, selection is a series
+            return pd.DataFrame([selection])
         else:
             return self._bioassay_data.loc[self._bioassay_data["study id"] == row.id]
 
