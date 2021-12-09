@@ -41,9 +41,17 @@ class BaseCell(BaseModel):
 class BaseCellGroup(BaseModel):
     cells: List[BaseCell] = []
 
+    class Config:
+        underscore_attrs_are_private = True
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._setup()
         self._set_cells()
+
+    def _setup(self):
+        # additional setup after pydantic validation goes here
+        pass
 
     def add_offset(self, row=0, column=0):
         for cell in self.cells:
