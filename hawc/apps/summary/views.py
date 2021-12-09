@@ -310,7 +310,6 @@ class VisualizationCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        import pdb; pdb.set_trace()
         context["dose_units"] = models.Visual.get_dose_units()
         context["instance"] = {}
         context["visual_type"] = int(self.kwargs.get("visual_type"))
@@ -483,7 +482,6 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
-        import pdb; pdb.set_trace()
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)
         )
