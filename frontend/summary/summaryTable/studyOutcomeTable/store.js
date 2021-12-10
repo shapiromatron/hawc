@@ -1,12 +1,17 @@
+import _ from "lodash";
 import {action, autorun, computed, observable} from "mobx";
 
-const dataUrl = id => `/ani/api/assessment/${id}/endpoint-doses-heatmap/`;
+import * as constants from "./constants";
 
 class StudyOutcomeTableStore {
     @observable editMode = false;
     @observable settings = null;
     @observable isFetchingData = false;
     @observable dataset = null;
+    @observable showRowCreateForm = false;
+    @observable showColumnCreateForm = false;
+    @observable editColumnIndex = null;
+    @observable editRowIndex = null;
 
     constructor(editMode, table, editRootStore) {
         this.editMode = editMode;
@@ -27,37 +32,73 @@ class StudyOutcomeTableStore {
         return this.settings.columns.length;
     }
     @computed get hasData() {
-        return this.dataset !== null;
+        return this.dataset !== null && this.dataset.length > 0;
+    }
+
+    // row attributes
+    @computed get rowTypeChoices() {
+        return constants.rowTypeChoices;
+    }
+    @computed get rowIdChoices() {
+        return _.chain(this.dataset)
+            .uniqBy("study id")
+            .map(d => {
+                return {id: d["study id"], label: d["study citation"]};
+            })
+            .value();
+    }
+
+    @action.bound setEditColumnIndex(idx) {
+        this.editColumnIndex = idx;
+    }
+    @action.bound setEditRowIndex(idx) {
+        this.editRowIndex = idx;
     }
 
     @action.bound fetchData() {
-        if (this.isFetchingData === true) {
+        if (this.hasData || this.isFetchingData) {
             return;
         }
+        const url = constants.dataUrl(this.table.assessment);
         this.isFetchingData = true;
-        const url = dataUrl(this.table.assessment);
         fetch(url)
             .then(d => d.json())
             .then(d => {
                 this.dataset = d;
+                this.isFetchingData = false;
             });
     }
-    @action.bound addRow() {
-        console.log("addRow");
+    @action.bound toggleShowCreateRowForm() {
+        this.showRowCreateForm = !this.showRowCreateForm;
     }
-    @action.bound moveRow(row, offset) {
-        console.log("moveRow");
+    @action.bound toggleColumnCreateRowForm() {
+        this.showColumnCreateForm = !this.showColumnCreateForm;
     }
-    @action.bound moveColumn(column, offset) {
+    @action.bound createRow() {
+        const rows = this.rowIdChoices;
+        if (rows.length > 0) {
+            const item = constants.createNewRow(rows[0].id);
+            this.settings.rows.push(item);
+        }
+    }
+    @action.bound createColumn() {
+        this.settings.columns.push(constants.createNewColumn());
+    }
+    @action.bound moveRow(rowIdx, offset) {
+        if (rowIdx + offset >= 0 && rowIdx + offset <= this.numRows) {
+            const r1 = this.rows[rowIdx],
+                r2 = this.rows[rowIdx + offset];
+            this.settings.rows[rowIdx] = r2;
+            this.settings.rows[rowIdx + offset] = r1;
+        }
+    }
+    @action.bound moveColumn(columnIdx, offset) {
         console.log("moveColumn");
     }
-    @action.bound addColumn() {
-        console.log("addColumn");
-    }
-    @action.bound deleteRow(row) {
+    @action.bound deleteRow(rowIdx) {
         console.log("deleteRow");
     }
-    @action.bound deleteColumn(column) {
+    @action.bound deleteColumn(columnIdx) {
         console.log("deleteColumn");
     }
 
