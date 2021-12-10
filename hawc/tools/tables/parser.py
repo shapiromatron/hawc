@@ -29,10 +29,11 @@ def ol_wrapper(texts):
     return f"<ol>{''.join(list_items)}</ol>"
 
 
-def color_background(cell, color):
+def color_background(cell, color: str):
+    # Colors a table cell with the given hex color
     cell_properties = cell._element.tcPr
     cell_shading = docx.oxml.shared.OxmlElement("w:shd")
-    cell_shading.set(docx.oxml.shared.qn("w:fill"), color)
+    cell_shading.set(docx.oxml.shared.qn("w:fill"), color.lstrip("#"))
     cell_properties.append(cell_shading)
 
 

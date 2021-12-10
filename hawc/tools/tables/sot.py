@@ -12,6 +12,9 @@ from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
 from .parser import QuillParser, color_background, tag_wrapper
 
+NM_SYMBOL = "NM"
+NM_SHADE = "#DFDFDF"
+
 
 class AttributeChoices(Enum):
     RobScore = "rob_score"
@@ -23,8 +26,8 @@ class AttributeChoices(Enum):
     def get_rob_score(self, selection: pd.DataFrame) -> BaseCell:
         values = selection["score_score"].values
 
-        judgment = 0 if values.size == 0 else values[0]
-        return JudgmentCell(judgment=judgment)
+        judgment = -1 if values.size == 0 else values[0]
+        return JudgmentColorCell(judgment=judgment)
 
     def get_study_name(self, selection: pd.DataFrame) -> BaseCell:
         values = selection["study citation"].dropna().unique()
@@ -61,6 +64,7 @@ class Subheader(BaseModel):
 class Column(BaseModel):
     label: str
     attribute: AttributeChoices
+    width: int = 1
     metric: Optional[int]
     key: str
 
@@ -71,12 +75,12 @@ class Row(BaseModel):
     customized: List
 
 
-class JudgmentCell(BaseCell):
+class JudgmentColorCell(BaseCell):
     judgment: int
 
     def to_docx(self, parser: QuillParser, block):
-        text = SCORE_SYMBOLS[self.judgment]
-        color = SCORE_SHADES[self.judgment].strip("#")
+        text = SCORE_SYMBOLS.get(self.judgment, NM_SYMBOL)
+        color = SCORE_SHADES.get(self.judgment, NM_SHADE)
         color_background(block, color)
         return parser.feed(tag_wrapper(text, "p"), block)
 
@@ -86,6 +90,19 @@ class StudyOutcomeTable(BaseTable):
     subheaders: List[Subheader]
     cell_columns: List[Column] = Field([], alias="columns")
     cell_rows: List[Row] = Field([], alias="rows")
+
+    _bioassay_data: pd.DataFrame
+    _final_scores: pd.DataFrame
+
+    def _setup(self):
+        self.column_widths = [col.width for col in self.cell_columns]
+        study_ids = {row.id for row in self.cell_rows if row.type == "study"}
+        self._final_scores = pd.DataFrame.from_records(
+            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
+        ).set_index(["study_id", "metric_id"])
+        self._bioassay_data = Endpoint.heatmap_doses_df(
+            assessment_id=self.assessment_id, published_only=False
+        )
 
     def _subheaders_group(self):
         cells = []
@@ -103,49 +120,43 @@ class StudyOutcomeTable(BaseTable):
             cells.append(GenericCell.parse_args(True, 0, i, 1, 1, html))
         return BaseCellGroup.construct(cells=cells)
 
-    def _set_override(self, final_scores: pd.DataFrame, cell: BaseCell, row: Row, column: Column):
+    def _set_override(self, cell: BaseCell, row: Row, column: Column):
         for custom in [custom for custom in row.customized if custom["key"] == column.key]:
             if "html" in custom:
                 cell.quill_text = custom["html"]
             elif "score_id" in custom:
-                values = final_scores.loc[final_scores["score_id"] == custom["score_id"]][
-                    "score_score"
-                ].values
-                cell.judgment = 0 if values.size == 0 else values[0]
+                values = self._final_scores.loc[
+                    self._final_scores["score_id"] == custom["score_id"]
+                ]["score_score"].values
+                cell.judgment = -1 if values.size == 0 else values[0]
 
-    def _get_selection(
-        self, bioassay_data: pd.DataFrame, final_scores: pd.DataFrame, row: Row, column: Column
-    ) -> pd.DataFrame:
+    def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:
         if column.attribute.value == "rob_score":
-            return final_scores.loc[
-                (final_scores["study_id"] == row.id)
-                & (final_scores["metric_id"] == column.metric)
-                & (final_scores["content_type_id"].isnull())
-            ]
+            try:
+                selection = self._final_scores.loc[(row.id, column.metric)]
+            except KeyError:
+                return pd.DataFrame(columns=self._final_scores.columns)
+            # if there are duplicate indices, selection is a dataframe
+            if isinstance(selection, pd.DataFrame):
+                return selection.loc[selection["content_type_id"].isnull()]
+            # if there are no duplicate indices, selection is a series
+            return pd.DataFrame([selection])
         else:
-            return bioassay_data.loc[bioassay_data["study id"] == row.id]
-
-    def _filter_rows(self, bioassay_data: pd.DataFrame) -> List[Row]:
-        return [row for row in self.cell_rows if row.id in bioassay_data["study id"].values]
+            return self._bioassay_data.loc[self._bioassay_data["study id"] == row.id]
 
     def _rows_group(self):
         cells = []
 
-        study_ids = {row.id for row in self.cell_rows if row.type == "study"}
-        final_scores = pd.DataFrame.from_records(
-            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
-        )
-        bioassay_data = Endpoint.heatmap_doses_df(
-            assessment_id=self.assessment_id, published_only=False
-        )
-
-        rows = self._filter_rows(bioassay_data)
-
-        for i, row in enumerate(rows):
+        for i, row in enumerate(self.cell_rows):
+            if row.id not in self._bioassay_data["study id"].values and self.cell_columns:
+                html = tag_wrapper(f"{row.type} {row.id} not found", "p")
+                col_span = len(self.cell_columns)
+                cells.append(GenericCell.parse_args(False, i, 0, 1, col_span, html))
+                continue
             for j, col in enumerate(self.cell_columns):
-                selection = self._get_selection(bioassay_data, final_scores, row, col)
+                selection = self._get_selection(row, col)
                 cell = col.attribute.get_cell(selection)
-                self._set_override(final_scores, cell, row, col)
+                self._set_override(cell, row, col)
                 cell.row = i
                 cell.column = j
                 cells.append(cell)

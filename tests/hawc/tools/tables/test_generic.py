@@ -7,15 +7,18 @@ from hawc.tools.tables.generic import GenericTable
 
 from . import documents_equal
 
-DATA_PATH = Path(__file__).parent.absolute() / "data"
+FILE_PATH = Path(__file__).parent.absolute() / "data" / "generic_report.docx"
 
 
 class TestGenericTable:
-    def test_docx(self):
+    def test_docx(self, rewrite_data_files: bool):
         document = Document()
         table = GenericTable.build_default()
         document = table.to_docx()
-        saved_document = Document(DATA_PATH / "generic_report.docx")
+        if rewrite_data_files:
+            document.save(FILE_PATH)
+        saved_document = Document(FILE_PATH)
+
         assert documents_equal(document, saved_document)
 
     def test_good_parse(self):
