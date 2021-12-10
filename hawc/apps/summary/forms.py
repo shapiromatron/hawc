@@ -275,8 +275,7 @@ class PrefilterMixin:
             self.fields[k] = v
 
     def setInitialValues(self):
-
-        is_new = self.instance.id is None
+        is_new = self.initial == {}
         try:
             prefilters = json.loads(self.initial.get("prefilters", "{}"))
         except ValueError:
@@ -331,6 +330,9 @@ class PrefilterMixin:
                 "protocol__study__in",
             ]:
                 self.fields["prefilter_study"].initial = True
+                import pdb
+
+                pdb.set_trace()
                 self.fields["studies"].initial = v
 
         if self.__class__.__name__ == "CrossviewForm":
@@ -474,11 +476,6 @@ class SummaryTableForm(forms.ModelForm):
             self.instance.title = self.initial["title"]
             self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
-            # self.fields["title"].initial = self.initial["title"]
-            # self.fields["content"].initial = self.initial["content"]
-            # self.fields["published"].initial = self.initial["published"]
-        # self.fields["content"].initial = self.instance.content
-        # self.fields["content"].initial = self.initial["content"]
 
 
 class SummaryTableSelectorForm(forms.Form):
@@ -520,8 +517,11 @@ class SummaryTableCopySelectorForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user")
         self.cancel_url = kwargs.pop("cancel_url")
+        self.assessment_id = kwargs.pop("assessment_id")
         super().__init__(*args, **kwargs)
-        self.fields["st"].queryset = models.SummaryTable.objects.clonable_queryset(user)
+        self.fields["st"].queryset = models.SummaryTable.objects.clonable_queryset(user).filter(
+            assessment__pk=self.assessment_id
+        )
 
     @property
     def helper(self):

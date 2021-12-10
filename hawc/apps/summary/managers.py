@@ -19,16 +19,12 @@ class SummaryTableManager(BaseManager):
 
     def clonable_queryset(self, user):
         """
-        Return visuals which can cloned by a specific user
+        Return summary tables which can cloned by a specific user
         """
         Assessment = apps.get_model("assessment", "Assessment")
         assessment_ids = Assessment.objects.get_viewable_assessments(user).values_list(
             "id", flat=True
         )
-        # assessment_ids = Assessment.objects.all().values_list(
-        #    "id", flat=True
-        # )
-        # import pdb; pdb.set_trace()
         return (
             self.filter(assessment__in=assessment_ids)
             .select_related("assessment")

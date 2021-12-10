@@ -154,7 +154,7 @@ class SummaryTableCreate(BaseCreate):
 
 
 class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
-    template_name = "summary/datapivot_copy_selector.html"
+    template_name = "summary/summary_copy_selector.html"
     model = Assessment
     form_class = forms.SummaryTableCopySelectorForm
 
@@ -165,6 +165,7 @@ class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
+        kwargs["assessment_id"] = self.assessment.id
         return kwargs
 
     def form_valid(self, form):
@@ -362,7 +363,7 @@ class VisualizationCopySelector(BaseDetail):
 
 
 class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
-    template_name = "summary/datapivot_copy_selector.html"
+    template_name = "summary/summary_copy_selector.html"
     model = Assessment
     form_class = forms.VisualSelectorForm
 
@@ -519,7 +520,7 @@ class DataPivotFileNew(DataPivotNew):
 class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     # Select an existing assessed outcome as a template for a new one
     model = Assessment
-    template_name = "summary/datapivot_copy_selector.html"
+    template_name = "summary/summary_copy_selector.html"
     form_class = forms.DataPivotSelectorForm
 
     def get_assessment(self, request, *args, **kwargs):
