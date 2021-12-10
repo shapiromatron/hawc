@@ -330,9 +330,6 @@ class PrefilterMixin:
                 "protocol__study__in",
             ]:
                 self.fields["prefilter_study"].initial = True
-                import pdb
-
-                pdb.set_trace()
                 self.fields["studies"].initial = v
 
         if self.__class__.__name__ == "CrossviewForm":

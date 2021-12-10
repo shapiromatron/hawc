@@ -325,14 +325,10 @@ class VisualizationCreate(BaseCreate):
         return context
 
     def get_initial_visual(self, context) -> Dict:
-        if context["form"].initial:
-            instance = self.model.objects.filter(pk=context["form"].initial["id"]).first()
-            instance.id = instance.FAKE_INITIAL_ID
-        else:
-            instance = self.model()
-            instance.id = instance.FAKE_INITIAL_ID
-            instance.assessment = self.assessment
-            instance.visual_type = context["visual_type"]
+        instance = self.model()
+        instance.id = instance.FAKE_INITIAL_ID
+        instance.assessment = self.assessment
+        instance.visual_type = context["visual_type"]
         return serializers.VisualSerializer().to_representation(instance)
 
 
