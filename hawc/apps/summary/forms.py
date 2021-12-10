@@ -553,6 +553,7 @@ class VisualForm(forms.ModelForm):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
         super().__init__(*args, **kwargs)
+
         if "settings" in self.fields:
             self.fields["settings"].widget.attrs["rows"] = 2
         if assessment:
@@ -617,9 +618,10 @@ class VisualSelectorForm(forms.Form):
         user = kwargs.pop("user")
         self.cancel_url = kwargs.pop("cancel_url")
         self.visual_type = kwargs.pop("visual_type")
+        self.assessment_id = kwargs.pop("assessment_id")
         super().__init__(*args, **kwargs)
         self.fields["vs"].queryset = models.Visual.objects.clonable_queryset(user).filter(
-            visual_type=self.visual_type
+            visual_type=self.visual_type, assessment__pk=self.assessment_id
         )
 
     @property
@@ -634,7 +636,7 @@ class VisualSelectorForm(forms.Form):
             self,
             legend_text="Copy visualization",
             help_text="""
-                Select an existing visualization and copy as a new visualization. This includes all
+                Select an existing visualization from this assessment and copy as a new visualization. This includes all
                 model-settings, and the selected dataset. You will be taken to a new view to
                 create a new visualization, but the form will be pre-populated using the values from
                 the currently-selected visualization.""",

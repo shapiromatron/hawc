@@ -74,11 +74,6 @@ urlpatterns = [
         name="visualization_copy",
     ),
     path(
-        "assessment/<int:pk>/visuals/<slug:slug>/copy-instance/",
-        views.VisualizationCopyInstance.as_view(),
-        name="visualization_copy_instance",
-    ),
-    path(
         "assessment/<int:pk>/type/<int:visual_type>/data/",
         views.VisualizationCreateTester.as_view(),
         name="visualization_create_tester",
