@@ -2,7 +2,7 @@ import h from "shared/utils/helpers";
 
 export const dataUrl = id => `/ani/api/assessment/${id}/endpoint-doses-heatmap/`,
     rowTypeChoices = [{id: "study", label: "Study"}],
-    columnChoices = [
+    robAttributeChoices = [
         {id: "rob_score", label: "rob_score"},
         {id: "study_name", label: "study_name"},
         {id: "species_strain_sex", label: "species_strain_sex"},

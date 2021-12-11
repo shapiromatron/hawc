@@ -74,6 +74,8 @@ class StudyOutcomeTableStore {
     @action.bound toggleColumnCreateRowForm() {
         this.showColumnCreateForm = !this.showColumnCreateForm;
     }
+
+    // row updates
     @action.bound createRow() {
         const rows = this.rowIdChoices;
         if (rows.length > 0) {
@@ -81,9 +83,7 @@ class StudyOutcomeTableStore {
             this.settings.rows.push(item);
         }
     }
-    @action.bound createColumn() {
-        this.settings.columns.push(constants.createNewColumn());
-    }
+    @action.bound updateRow(rowIdx, values) {}
     @action.bound moveRow(rowIdx, offset) {
         if (rowIdx + offset >= 0 && rowIdx + offset < this.numRows) {
             const r1 = this.settings.rows[rowIdx],
@@ -93,6 +93,26 @@ class StudyOutcomeTableStore {
             this.setEditRowIndex(rowIdx + offset);
         }
     }
+    @action.bound deleteRow(rowIdx) {
+        this.settings.rows.splice(rowIdx, 1);
+        this.setEditRowIndex(null);
+    }
+
+    // column updates
+    @action.bound createColumn() {
+        this.settings.columns.push(constants.createNewColumn());
+    }
+    @action.bound updateColumn(columnIdx, values) {
+        const column = this.settings.columns[columnIdx];
+        // if attribute change; revert all columns back to default
+        if (column.attribute !== values.attribute) {
+            this.settings.rows.forEach(row => {
+                row.customized = _.without(row.customized, d => d.key === column.key);
+            });
+        }
+        _.extend(column, values);
+        this.setEditColumnIndex(null);
+    }
     @action.bound moveColumn(colIdx, offset) {
         if (colIdx + offset >= 0 && colIdx + offset < this.numColumns) {
             const c1 = this.settings.columns[colIdx],
@@ -101,10 +121,6 @@ class StudyOutcomeTableStore {
             this.settings.columns[colIdx + offset] = c1;
             this.setEditColumnIndex(colIdx + offset);
         }
-    }
-    @action.bound deleteRow(rowIdx) {
-        this.settings.rows.splice(rowIdx, 1);
-        this.setEditRowIndex(null);
     }
     @action.bound deleteColumn(columnIdx) {
         this.settings.columns.splice(columnIdx, 1);

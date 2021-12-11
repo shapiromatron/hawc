@@ -1,4 +1,5 @@
 import _ from "lodash";
+import {toJS} from "mobx";
 import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -6,6 +7,9 @@ import PropTypes from "prop-types";
 import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
+
+import {robAttributeChoices} from "./constants";
 
 class EditButton extends Component {
     render() {
@@ -95,17 +99,38 @@ EditCellForm.propTypes = {
     colIdx: PropTypes.number.isRequired,
 };
 
+@observer
 class EditColumnForm extends Component {
+    constructor(props) {
+        super(props);
+        const {store, colIdx} = this.props;
+        this.state = toJS(store.settings.columns[colIdx]);
+    }
     render() {
         const {store, colIdx} = this.props;
         return (
             <td>
-                <div className="col-md-12">{colIdx}</div>
+                <div className="col-md-12">
+                    <TextInput
+                        onChange={e => this.setState({label: e.target.value})}
+                        name="label"
+                        value={this.state.label}
+                        label="Label"
+                    />
+                </div>
+                <div className="col-md-12">
+                    <SelectInput
+                        choices={robAttributeChoices}
+                        handleSelect={value => this.setState({attribute: value})}
+                        value={this.state.attribute}
+                        label="Attribute"
+                    />
+                </div>
                 <div className="col-md-12 text-center">
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
-                            onClick={() => store.setEditColumnIndex(null)}>
+                            onClick={() => store.updateColumn(colIdx, this.state)}>
                             Update
                         </button>
                         <button
