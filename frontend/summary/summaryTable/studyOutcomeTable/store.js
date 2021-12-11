@@ -85,21 +85,30 @@ class StudyOutcomeTableStore {
         this.settings.columns.push(constants.createNewColumn());
     }
     @action.bound moveRow(rowIdx, offset) {
-        if (rowIdx + offset >= 0 && rowIdx + offset <= this.numRows) {
-            const r1 = this.rows[rowIdx],
-                r2 = this.rows[rowIdx + offset];
+        if (rowIdx + offset >= 0 && rowIdx + offset < this.numRows) {
+            const r1 = this.settings.rows[rowIdx],
+                r2 = this.settings.rows[rowIdx + offset];
             this.settings.rows[rowIdx] = r2;
             this.settings.rows[rowIdx + offset] = r1;
+            this.setEditRowIndex(rowIdx + offset);
         }
     }
-    @action.bound moveColumn(columnIdx, offset) {
-        console.log("moveColumn");
+    @action.bound moveColumn(colIdx, offset) {
+        if (colIdx + offset >= 0 && colIdx + offset < this.numColumns) {
+            const c1 = this.settings.columns[colIdx],
+                c2 = this.settings.columns[colIdx + offset];
+            this.settings.columns[colIdx] = c2;
+            this.settings.columns[colIdx + offset] = c1;
+            this.setEditColumnIndex(colIdx + offset);
+        }
     }
     @action.bound deleteRow(rowIdx) {
-        console.log("deleteRow");
+        this.settings.rows.splice(rowIdx, 1);
+        this.setEditRowIndex(null);
     }
     @action.bound deleteColumn(columnIdx) {
-        console.log("deleteColumn");
+        this.settings.columns.splice(columnIdx, 1);
+        this.setEditColumnIndex(null);
     }
 
     // inject new settings from parent object

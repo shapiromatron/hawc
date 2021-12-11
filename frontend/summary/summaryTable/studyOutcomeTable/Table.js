@@ -31,6 +31,7 @@ class EditCellForm extends Component {
             idChoices = store.rowIdChoices;
         return (
             <td>
+                -{rowIdx}-{colIdx}
                 {colIdx === 0 ? (
                     <>
                         <div className="col-md-12">
@@ -49,32 +50,38 @@ class EditCellForm extends Component {
                                 label="Item"
                             />
                         </div>
-                        <div className="col-md-12">
-                            <button
-                                className="btn btn-sm btn-primary"
-                                onClick={() => store.updateRow(rowIdx)}>
-                                Update
-                            </button>
-                            <button
-                                className="btn btn-sm btn-light"
-                                onClick={() => store.setEditRowIndex(null)}>
-                                Cancel
-                            </button>
-                            <button
-                                className="btn btn-sm btn-danger"
-                                onClick={() => store.deleteRow(rowIdx)}>
-                                Delete
-                            </button>
-                            <button
-                                className="btn btn-sm btn-light"
-                                onClick={() => store.moveRow(rowIdx, 1)}>
-                                <i className="fa fa-arrow-up"></i>
-                            </button>
-                            <button
-                                className="btn btn-sm btn-light"
-                                onClick={() => store.moveRow(rowIdx, -1)}>
-                                <i className="fa fa-arrow-down"></i>
-                            </button>
+                        <div className="col-md-12 text-center">
+                            <div className="btn-group">
+                                <button
+                                    className="btn btn-sm btn-primary"
+                                    onClick={() => store.updateRow(rowIdx)}>
+                                    Update
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-light"
+                                    onClick={() => store.setEditRowIndex(null)}>
+                                    Cancel
+                                </button>
+                            </div>
+                            <div className="btn-group mx-2">
+                                <button
+                                    className="btn btn-sm btn-light"
+                                    onClick={() => store.moveRow(rowIdx, -1)}>
+                                    <i className="fa fa-arrow-up"></i>
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-light"
+                                    onClick={() => store.moveRow(rowIdx, 1)}>
+                                    <i className="fa fa-arrow-down"></i>
+                                </button>
+                            </div>
+                            <div className="btn-group">
+                                <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => store.deleteRow(rowIdx)}>
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </>
                 ) : null}
@@ -85,6 +92,54 @@ class EditCellForm extends Component {
 EditCellForm.propTypes = {
     store: PropTypes.object.isRequired,
     rowIdx: PropTypes.number.isRequired,
+    colIdx: PropTypes.number.isRequired,
+};
+
+class EditColumnForm extends Component {
+    render() {
+        const {store, colIdx} = this.props;
+        return (
+            <td>
+                <div className="col-md-12">{colIdx}</div>
+                <div className="col-md-12 text-center">
+                    <div className="btn-group">
+                        <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => store.setEditColumnIndex(null)}>
+                            Update
+                        </button>
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => store.setEditColumnIndex(null)}>
+                            Cancel
+                        </button>
+                    </div>
+                    <div className="btn-group mx-2">
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => store.moveColumn(colIdx, -1)}>
+                            <i className="fa fa-arrow-left"></i>
+                        </button>
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => store.moveColumn(colIdx, 1)}>
+                            <i className="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div className="btn-group">
+                        <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => store.deleteColumn(colIdx)}>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </td>
+        );
+    }
+}
+EditColumnForm.propTypes = {
+    store: PropTypes.object.isRequired,
     colIdx: PropTypes.number.isRequired,
 };
 
@@ -113,7 +168,7 @@ class Table extends Component {
                     <tr>
                         {settings.columns.map((col, idx) => {
                             return editColumnIndex === idx ? (
-                                <th key={col.key}>EDIT</th>
+                                <EditColumnForm key={col.key} store={store} colIdx={idx} />
                             ) : (
                                 <th key={col.key} className="position-relative">
                                     {editable ? (
