@@ -30,65 +30,12 @@ EditButton.propTypes = {
 
 class EditCellForm extends Component {
     render() {
-        const {store, rowIdx, colIdx} = this.props,
-            typeChoices = store.rowTypeChoices,
-            idChoices = store.rowIdChoices;
+        const {rowIdx, colIdx} = this.props;
         return (
             <td>
-                -{rowIdx}-{colIdx}
-                {colIdx === 0 ? (
-                    <>
-                        <div className="col-md-12">
-                            <SelectInput
-                                choices={typeChoices}
-                                value={typeChoices[0].id}
-                                handleSelect={value => console.log(value)}
-                                label="Data type"
-                            />
-                        </div>
-                        <div className="col-md-12">
-                            <SelectInput
-                                choices={idChoices}
-                                value={idChoices[0].id}
-                                handleSelect={value => console.log(value)}
-                                label="Item"
-                            />
-                        </div>
-                        <div className="col-md-12 text-center">
-                            <div className="btn-group">
-                                <button
-                                    className="btn btn-sm btn-primary"
-                                    onClick={() => store.updateRow(rowIdx)}>
-                                    Update
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-light"
-                                    onClick={() => store.setEditRowIndex(null)}>
-                                    Cancel
-                                </button>
-                            </div>
-                            <div className="btn-group mx-2">
-                                <button
-                                    className="btn btn-sm btn-light"
-                                    onClick={() => store.moveRow(rowIdx, -1)}>
-                                    <i className="fa fa-arrow-up"></i>
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-light"
-                                    onClick={() => store.moveRow(rowIdx, 1)}>
-                                    <i className="fa fa-arrow-down"></i>
-                                </button>
-                            </div>
-                            <div className="btn-group">
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => store.deleteRow(rowIdx)}>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </>
-                ) : null}
+                <span>
+                    CELL-{rowIdx}-{colIdx}
+                </span>
             </td>
         );
     }
@@ -97,6 +44,76 @@ EditCellForm.propTypes = {
     store: PropTypes.object.isRequired,
     rowIdx: PropTypes.number.isRequired,
     colIdx: PropTypes.number.isRequired,
+};
+
+class EditRowForm extends Component {
+    constructor(props) {
+        super(props);
+        const {store, rowIdx} = this.props;
+        this.state = toJS(store.settings.rows[rowIdx]);
+    }
+    render() {
+        const {store, rowIdx} = this.props,
+            typeChoices = store.rowTypeChoices,
+            idChoices = store.rowIdChoices;
+        return (
+            <td>
+                <div className="col-md-12">
+                    <SelectInput
+                        choices={typeChoices}
+                        value={this.state.type}
+                        handleSelect={value => this.setState({type: value})}
+                        label="Data type"
+                    />
+                </div>
+                <div className="col-md-12">
+                    <SelectInput
+                        choices={idChoices}
+                        value={this.state.id}
+                        handleSelect={value => this.setState({id: parseInt(value)})}
+                        label="Item"
+                    />
+                </div>
+                <div className="col-md-12 text-center">
+                    <div className="btn-group">
+                        <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => store.updateRow(rowIdx, this.state)}>
+                            Update
+                        </button>
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => store.setEditRowIndex(null)}>
+                            Cancel
+                        </button>
+                    </div>
+                    <div className="btn-group mx-2">
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => store.moveRow(rowIdx, -1)}>
+                            <i className="fa fa-arrow-up"></i>
+                        </button>
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => store.moveRow(rowIdx, 1)}>
+                            <i className="fa fa-arrow-down"></i>
+                        </button>
+                    </div>
+                    <div className="btn-group">
+                        <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => store.deleteRow(rowIdx)}>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </td>
+        );
+    }
+}
+EditRowForm.propTypes = {
+    store: PropTypes.object.isRequired,
+    rowIdx: PropTypes.number.isRequired,
 };
 
 @observer
@@ -212,9 +229,18 @@ class Table extends Component {
                         return (
                             <tr key={rowIdx}>
                                 {_.range(0, numColumns).map(colIdx => {
-                                    if (colIdx === editColumnIndex) {
-                                        return <td key={colIdx}>EDIT COLUMN</td>;
-                                    } else if (rowIdx === editRowIndex) {
+                                    if (colIdx == 0 && rowIdx === editRowIndex) {
+                                        return (
+                                            <EditRowForm
+                                                key={colIdx}
+                                                store={store}
+                                                rowIdx={rowIdx}
+                                            />
+                                        );
+                                    } else if (
+                                        colIdx === editColumnIndex ||
+                                        rowIdx === editRowIndex
+                                    ) {
                                         return (
                                             <EditCellForm
                                                 key={colIdx}
@@ -248,7 +274,6 @@ class Table extends Component {
         );
     }
 }
-
 Table.defaultProps = {
     forceReadOnly: false,
 };

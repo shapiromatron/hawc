@@ -83,7 +83,15 @@ class StudyOutcomeTableStore {
             this.settings.rows.push(item);
         }
     }
-    @action.bound updateRow(rowIdx, values) {}
+    @action.bound updateRow(rowIdx, values) {
+        const row = this.settings.rows[rowIdx];
+        // if attribute change; revert all columns back to default
+        if (row.type !== values.type || row.id !== values.id) {
+            row.customed = [];
+        }
+        _.extend(row, values);
+        this.setEditRowIndex(null);
+    }
     @action.bound moveRow(rowIdx, offset) {
         if (rowIdx + offset >= 0 && rowIdx + offset < this.numRows) {
             const r1 = this.settings.rows[rowIdx],

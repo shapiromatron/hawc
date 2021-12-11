@@ -3,9 +3,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 
 import Alert from "shared/components/Alert";
-import ColumnForm from "./components/ColumnForm";
 import Loading from "shared/components/Loading";
-import RowForm from "./components/RowForm";
 import Table from "./Table";
 
 @observer
@@ -38,8 +36,6 @@ class TableForm extends Component {
                     </button>
                 </div>
                 <p className="text-muted">Help text... </p>
-                {store.showRowCreateForm ? <RowForm store={store} /> : null}
-                {store.showColumnCreateForm ? <ColumnForm store={store} /> : null}
                 <Table store={store} />
             </>
         );
