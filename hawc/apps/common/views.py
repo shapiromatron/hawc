@@ -432,32 +432,28 @@ class WebappMixin:
 
 
 # Base HAWC views
-class BaseDetail(AssessmentPermissionsMixin, DetailView):
+class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
         return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            assessment=self.assessment,
-            crud=self.crud,
-            obj_perms=super().get_obj_perms(),
-            breadcrumbs=self.get_breadcrumbs(),
-        )
+        context = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        context = super().get_context_data(**kwargs, **context)
         if self.breadcrumb_active_name:
             context["breadcrumbs"].append(Breadcrumb(name=self.breadcrumb_active_name))
-        if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
         return context
 
 
-class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
+class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
@@ -476,16 +472,14 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return self.object.get_absolute_url()
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            assessment=self.assessment,
-            crud=self.crud,
-            obj_perms=super().get_obj_perms(),
-            cancel_url=self.get_cancel_url(),
-            breadcrumbs=self.get_breadcrumbs(),
-        )
-        if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
+        context = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "cancel_url": self.get_cancel_url(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        context = super().get_context_data(**kwargs, **context)
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -494,9 +488,10 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return crumbs
 
 
-class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class BaseUpdate(
+    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView
+):
     crud = "Update"
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     @transaction.atomic
     def form_valid(self, form):
@@ -513,15 +508,13 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         pass
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            assessment=self.assessment,
-            crud=self.crud,
-            obj_perms=super().get_obj_perms(),
-            breadcrumbs=self.get_breadcrumbs(),
-        )
-        if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
+        context = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        context = super().get_context_data(**kwargs, **context)
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -530,11 +523,12 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return crumbs
 
 
-class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
+class BaseCreate(
+    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
+):
     parent_model = None  # required
     parent_template_name: Optional[str] = None  # required
     crud = "Create"
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -561,16 +555,14 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            assessment=self.assessment,
-            crud=self.crud,
-            obj_perms=super().get_obj_perms(),
-            breadcrumbs=self.get_breadcrumbs(),
-        )
+        context = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        context = super().get_context_data(**kwargs, **context)
         context[self.parent_template_name] = self.parent
-        if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
         return context
 
     @transaction.atomic
@@ -593,7 +585,7 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return crumbs
 
 
-class BaseList(AssessmentPermissionsMixin, ListView):
+class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     """
     Basic view that shows a list of objects given
     """
@@ -602,7 +594,6 @@ class BaseList(AssessmentPermissionsMixin, ListView):
     parent_template_name = None
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -611,17 +602,15 @@ class BaseList(AssessmentPermissionsMixin, ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            assessment=self.assessment,
-            crud=self.crud,
-            obj_perms=super().get_obj_perms(),
-            breadcrumbs=self.get_breadcrumbs(),
-        )
+        context = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        context = super().get_context_data(**kwargs, **context)
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
-        if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
