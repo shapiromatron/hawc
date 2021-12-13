@@ -285,7 +285,6 @@ class PrefilterMixin:
             evidence_type = models.BIOASSAY
         else:
             evidence_type = self.initial.get("evidence_type") or self.instance.evidence_type
-
         for k, v in prefilters.items():
             if k == "system__in":
                 if evidence_type == models.BIOASSAY:

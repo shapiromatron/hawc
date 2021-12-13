@@ -297,6 +297,9 @@ class VisualizationCreate(BaseCreate):
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
             kwargs["instance"].pk = None
+            self.instance = kwargs["instance"]
+        #    #kwargs["data"] = kwargs["initial"]
+        #    import pdb; pdb.set_trace()
         return kwargs
 
     def get_template_names(self):
@@ -322,13 +325,20 @@ class VisualizationCreate(BaseCreate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
+        if context["form"].initial["visual_type"] == models.Visual.BIOASSAY_CROSSVIEW:
+            context["form"].initial["studies"] = context["form"].fields["studies"].initial
+
         return context
 
     def get_initial_visual(self, context) -> Dict:
-        instance = self.model()
-        instance.id = instance.FAKE_INITIAL_ID
-        instance.assessment = self.assessment
-        instance.visual_type = context["visual_type"]
+        if context["form"].initial:
+            instance = self.instance
+            instance.id = instance.FAKE_INITIAL_ID
+        else:
+            instance = self.model()
+            instance.id = instance.FAKE_INITIAL_ID
+            instance.assessment = self.assessment
+            instance.visual_type = context["visual_type"]
         return serializers.VisualSerializer().to_representation(instance)
 
 
