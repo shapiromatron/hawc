@@ -65,6 +65,7 @@ class Store {
             {id: "reference_id", label: "HAWC"},
             {id: "hero_id", label: "HERO"},
             {id: "pubmed_id", label: "PubMed"},
+            {id: "doi_id", label: "DOI" },
         ];
     }
 
