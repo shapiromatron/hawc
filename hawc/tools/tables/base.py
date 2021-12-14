@@ -128,6 +128,11 @@ class BaseTable(BaseCellGroup):
         return docx
 
     @classmethod
+    def get_data(cls, assessment_id: int, data_source: str) -> Dict:
+        # return any queried data needed to build the table
+        return {}
+
+    @classmethod
     def get_default_props(cls) -> Dict:
         """Return the default required properties for a table.
 

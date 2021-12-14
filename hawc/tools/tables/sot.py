@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import pandas as pd
 from pydantic import BaseModel, Field, conint
@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, conint
 from hawc.apps.animal.models import Endpoint
 from hawc.apps.materialized.models import FinalRiskOfBiasScore
 from hawc.apps.riskofbias.constants import SCORE_SHADES, SCORE_SYMBOLS
+from hawc.apps.study.models import Study
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
@@ -14,6 +15,27 @@ from .parser import QuillParser, color_background, tag_wrapper
 
 NM_SYMBOL = "NM"
 NM_SHADE = "#DFDFDF"
+
+
+class DataSourceChoices(Enum):
+    Animal = "ani"
+
+    def get_ani_data(self, assessment_id: int) -> Dict:
+        ani_data = (
+            Endpoint.heatmap_doses_df(assessment_id=assessment_id, published_only=False)
+            .fillna("")
+            .to_dict(orient="records")
+        )
+
+        study_ids = Study.objects.filter(assessment_id=assessment_id, bioassay=True).values_list(
+            "id", flat=True
+        )
+        rob_data = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
+
+        return {"data": ani_data, "rob": rob_data}
+
+    def get_data(self, assessment_id: int) -> Dict:
+        return getattr(self, f"get_{self.value}_data")(assessment_id)
 
 
 class AttributeChoices(Enum):
@@ -87,22 +109,20 @@ class JudgmentColorCell(BaseCell):
 
 class StudyOutcomeTable(BaseTable):
     assessment_id: int
+    data_source: DataSourceChoices
     subheaders: List[Subheader]
     cell_columns: List[Column] = Field([], alias="columns")
     cell_rows: List[Row] = Field([], alias="rows")
 
-    _bioassay_data: pd.DataFrame
-    _final_scores: pd.DataFrame
+    _data: pd.DataFrame
+    _rob: pd.DataFrame
 
     def _setup(self):
         self.column_widths = [col.width for col in self.cell_columns]
-        study_ids = {row.id for row in self.cell_rows if row.type == "study"}
-        self._final_scores = pd.DataFrame.from_records(
-            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
-        ).set_index(["study_id", "metric_id"])
-        self._bioassay_data = Endpoint.heatmap_doses_df(
-            assessment_id=self.assessment_id, published_only=False
-        )
+
+        data_dict = self.get_data(self.assessment_id, self.data_source)
+        self._data = pd.DataFrame.from_records(data_dict["data"])
+        self._rob = pd.DataFrame.from_records(data_dict["rob"]).set_index(["study_id", "metric_id"])
 
     def _subheaders_group(self):
         cells = []
@@ -125,30 +145,30 @@ class StudyOutcomeTable(BaseTable):
             if "html" in custom:
                 cell.quill_text = custom["html"]
             elif "score_id" in custom:
-                values = self._final_scores.loc[
-                    self._final_scores["score_id"] == custom["score_id"]
-                ]["score_score"].values
+                values = self._rob.loc[self._rob["score_id"] == custom["score_id"]][
+                    "score_score"
+                ].values
                 cell.judgment = -1 if values.size == 0 else values[0]
 
     def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:
         if column.attribute.value == "rob_score":
             try:
-                selection = self._final_scores.loc[(row.id, column.metric)]
+                selection = self._rob.loc[(row.id, column.metric)]
             except KeyError:
-                return pd.DataFrame(columns=self._final_scores.columns)
+                return pd.DataFrame(columns=self._rob.columns)
             # if there are duplicate indices, selection is a dataframe
             if isinstance(selection, pd.DataFrame):
                 return selection.loc[selection["content_type_id"].isnull()]
             # if there are no duplicate indices, selection is a series
             return pd.DataFrame([selection])
         else:
-            return self._bioassay_data.loc[self._bioassay_data["study id"] == row.id]
+            return self._data.loc[self._data["study id"] == row.id]
 
     def _rows_group(self):
         cells = []
 
         for i, row in enumerate(self.cell_rows):
-            if row.id not in self._bioassay_data["study id"].values and self.cell_columns:
+            if row.id not in self._data["study id"].values and self.cell_columns:
                 html = tag_wrapper(f"{row.type} {row.id} not found", "p")
                 col_span = len(self.cell_columns)
                 cells.append(GenericCell.parse_args(False, i, 0, 1, col_span, html))
@@ -174,6 +194,10 @@ class StudyOutcomeTable(BaseTable):
 
         # combine cell groups
         self.cells = subheaders_group.cells + columns_group.cells + rows_group.cells
+
+    @classmethod
+    def get_data(cls, assessment_id: int, data_source: str) -> Dict:
+        return DataSourceChoices(data_source).get_data(assessment_id)
 
     @classmethod
     def get_default_props(cls):

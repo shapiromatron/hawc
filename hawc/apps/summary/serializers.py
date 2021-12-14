@@ -150,4 +150,22 @@ class SummaryTableSerializer(serializers.ModelSerializer):
         return data
 
 
+class SummaryTableDataSerializer(serializers.Serializer):
+    table_type = serializers.ChoiceField(models.SummaryTable.TableType.choices)
+    assessment_id = serializers.IntegerField()
+    data_source = serializers.CharField()
+
+    def validate(self, data):
+        try:
+            data["data"] = models.SummaryTable.get_data(
+                data["table_type"], data["assessment_id"], data["data_source"]
+            )
+            return data
+        except ValueError:
+            raise serializers.ValidationError("Invalid 'data_source'")
+
+    def get_data(self):
+        return self.validated_data["data"]
+
+
 SerializerHelper.add_serializer(models.Visual, VisualSerializer)
