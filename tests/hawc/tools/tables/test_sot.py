@@ -80,6 +80,7 @@ class TestStudyOutcomeTable:
     def test_docx(self, rewrite_data_files: bool):
         data = {
             "assessment_id": 1,
+            "data_source": "ani",
             "subheaders": [{"label": "This is a subheader", "start": 2, "length": 2}],
             "columns": [
                 {"label": "Study name", "attribute": "study_name", "key": "1", "width": 1},

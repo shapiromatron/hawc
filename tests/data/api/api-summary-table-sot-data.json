@@ -1,0 +1,76 @@
+{
+  "data": [
+    {
+      "animal description": "rat, sprague dawley (\u2640)",
+      "animal description, with n": "rat, sprague dawley (\u2640, N=10-12)",
+      "animal group id": 1,
+      "animal group name": "tester",
+      "bmd": "",
+      "bmdl": "",
+      "dose units id": 1,
+      "dose units name": "mg/kg/d",
+      "doses": "0, 10, 100",
+      "effect": "",
+      "effect subtype": "",
+      "endpoint id": 1,
+      "endpoint name": "my outcome",
+      "experiment cas": "",
+      "experiment chemical": "flubber",
+      "experiment dtxsid": "",
+      "experiment id": 1,
+      "experiment name": "2 year bioassay",
+      "experiment type": "Chronic (>90 days)",
+      "fel": "",
+      "generation": "N/A (not generational-study)",
+      "loel": 100.0,
+      "noel": "",
+      "observation time": "",
+      "organ": "",
+      "overall study evaluation": "Definitely high risk of bias (--)",
+      "route of exposure": "Oral diet",
+      "sex": "Female",
+      "species": "rat",
+      "strain": "sprague dawley",
+      "study citation": "Foo et al.",
+      "study id": 1,
+      "study identifier": "",
+      "system": "",
+      "treatment period": "Chronic "
+    }
+  ],
+  "rob": [
+    {
+      "content_type_id": 53,
+      "id": 1,
+      "is_default": false,
+      "metric_id": 2,
+      "object_id": 1,
+      "riskofbias_id": 3,
+      "score_id": 9,
+      "score_score": 14,
+      "study_id": 1
+    },
+    {
+      "content_type_id": null,
+      "id": 6,
+      "is_default": true,
+      "metric_id": 2,
+      "object_id": null,
+      "riskofbias_id": 3,
+      "score_id": 6,
+      "score_score": 16,
+      "study_id": 1
+    },
+    {
+      "content_type_id": null,
+      "id": 7,
+      "is_default": true,
+      "metric_id": 1,
+      "object_id": null,
+      "riskofbias_id": 3,
+      "score_id": 5,
+      "score_score": 16,
+      "study_id": 1
+    }
+  ]
+}

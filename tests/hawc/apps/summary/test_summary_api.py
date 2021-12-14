@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from django.test.client import Client, RequestFactory
 from django.urls import reverse
+from django.utils.http import urlencode
 from rest_framework.test import APIClient
 
 from hawc.apps.summary import models
@@ -339,3 +340,45 @@ class TestSummaryTextViewset:
             assert response.status_code == 403
         response = user_team.delete(url)
         assert response.status_code == 204
+
+
+@pytest.mark.django_db
+class TestSummaryTableViewset:
+    def _test_data_file(self, rewrite_data_files: bool, fn_key: str, data):
+        fn = Path(DATA_ROOT / f"api-summary-table-{fn_key}-data.json")
+        if rewrite_data_files:
+            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
+        assert json.loads(fn.read_text()) == data
+
+    def test_data(self, rewrite_data_files: bool):
+        data = {"assessment_id": 1, "table_type": 2, "data_source": "ani"}
+        missing_data = {"assessment_id": 1, "table_type": 2}
+        invalid_data = {"assessment_id": 1, "table_type": 2, "data_source": "not a data source"}
+
+        base_url = reverse("summary:api:summary-table-data")
+
+        anon_client = APIClient()
+        rev_client = APIClient()
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
+
+        # valid request for authorized user and correct query params
+        url = f"{base_url}?{urlencode(data)}"
+        resp = rev_client.get(url)
+        assert resp.status_code == 200
+        self._test_data_file(rewrite_data_files, "sot", resp.json())
+
+        # invalid request for unauthorized user
+        resp = anon_client.get(url)
+        assert resp.status_code == 403
+
+        # invalid request with missing query params
+        url = f"{base_url}?{urlencode(missing_data)}"
+        resp = rev_client.get(url)
+        assert resp.status_code == 400
+        assert resp.json() == {"data_source": ["This field is required."]}
+
+        # invalid request with invalid query params
+        url = f"{base_url}?{urlencode(invalid_data)}"
+        resp = rev_client.get(url)
+        assert resp.status_code == 400
+        assert resp.json() == {"data_source": ['"not a data source" is not a valid choice.']}

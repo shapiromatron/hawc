@@ -162,7 +162,9 @@ class SummaryTableDataSerializer(serializers.Serializer):
             )
             return data
         except ValueError:
-            raise serializers.ValidationError("Invalid 'data_source'")
+            raise serializers.ValidationError(
+                {"data_source": [f'"{data["data_source"]}" is not a valid choice.']}
+            )
 
     def get_data(self):
         return self.validated_data["data"]
