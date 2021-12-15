@@ -325,8 +325,6 @@ class VisualizationCreate(BaseCreate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
-        if context["form"].initial["visual_type"] == models.Visual.BIOASSAY_CROSSVIEW:
-            context["form"].initial["studies"] = context["form"].fields["studies"].initial
 
         return context
 
