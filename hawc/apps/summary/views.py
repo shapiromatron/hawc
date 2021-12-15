@@ -298,8 +298,6 @@ class VisualizationCreate(BaseCreate):
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
             kwargs["instance"].pk = None
             self.instance = kwargs["instance"]
-        #    #kwargs["data"] = kwargs["initial"]
-        #    import pdb; pdb.set_trace()
         return kwargs
 
     def get_template_names(self):

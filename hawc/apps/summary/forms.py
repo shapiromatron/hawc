@@ -507,7 +507,7 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
 class SummaryTableCopySelectorForm(forms.Form):
 
     st = SummaryTableModelChoiceField(
-        label="Summary table", queryset=models.Visual.objects.all(), empty_label=None
+        label="Summary table", queryset=models.Visual.objects.all(), empty_label=" --- "
     )
 
     def __init__(self, *args, **kwargs):
