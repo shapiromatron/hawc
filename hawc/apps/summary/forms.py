@@ -607,7 +607,7 @@ class VisualModelChoiceField(forms.ModelChoiceField):
 class VisualSelectorForm(forms.Form):
 
     vs = VisualModelChoiceField(
-        label="Visualization", queryset=models.Visual.objects.all(), empty_label=' --- '
+        label="Visualization", queryset=models.Visual.objects.all(), empty_label=" --- "
     )
 
     def __init__(self, *args, **kwargs):
