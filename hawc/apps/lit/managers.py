@@ -463,7 +463,7 @@ class ReferenceManager(BaseManager):
         """
         qs = qs.prefetch_related("identifiers")
 
-        captured = {None, constants.HERO, constants.PUBMED}
+        captured = {None, constants.HERO, constants.PUBMED, constants.DOI}
         diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
         if diff:
             logger.warning(f"Missing some identifier IDs from id export: {diff}")
