@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -24,10 +24,5 @@ urlpatterns = [
     path("<int:pk>/attachment/add/", views.AttachmentCreate.as_view(), name="attachment_create",),
     path(
         "attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete",
-    ),
-    re_path(
-        r"^(?P<pk>\d+)/editability-update/(?P<updated_value>.*)/$",
-        views.EditabilityUpdate.as_view(),
-        name="editability_update",
     ),
 ]

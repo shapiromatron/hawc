@@ -204,26 +204,3 @@ class AttachmentRead(BaseDetail):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
             raise PermissionDenied
-
-
-class EditabilityUpdate(BaseUpdate):
-    # TODO - change to DRF or add new option to standard StudyUpdate view
-
-    model = models.Study
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        if self.assessment.user_can_edit_assessment(self.request.user):
-            probe = kwargs["updated_value"]
-            if probe == "True":
-                self.object.editable = True
-            elif probe == "False":
-                self.object.editable = False
-            else:
-                raise Exception("invalid input value")
-
-            self.object.save()
-            return HttpResponseRedirect(self.object.get_absolute_url())
-        else:
-            raise PermissionDenied

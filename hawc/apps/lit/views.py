@@ -617,20 +617,6 @@ class RefTopicModel(BaseDetail):
         return context
 
 
-class TagsJSON(BaseDetail):
-    model = Assessment
-
-    def get_object(self, **kwargs):
-        pk = tryParseInt(self.request.GET.get("pk"), -1)
-        obj = get_object_or_404(self.model, pk=pk)
-        return super().get_object(object=obj)
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(self.object.id)
-        return HttpResponse(json.dumps(tags), content_type="application/json")
-
-
 class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
     """
     Update tags for an assessment. Note that right now, only project managers

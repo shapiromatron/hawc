@@ -17,7 +17,7 @@
 
           {% if obj_perms.edit_assessment %}
           <a class="dropdown-item"
-              href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
+              href="{% url 'study:api:study-update-editability' object.pk %}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
           {% endif %}
 
           {% if object.editable %}

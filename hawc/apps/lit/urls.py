@@ -15,7 +15,6 @@ urlpatterns = [
     # overview
     path("assessment/<int:pk>/", views.LitOverview.as_view(), name="overview"),
     # CRUD tags
-    path("assessment/tags/json/", views.TagsJSON.as_view(), name="tags_list"),
     path("assessment/<int:pk>/tags/update/", views.TagsUpdate.as_view(), name="tags_update",),
     path("assessment/<int:pk>/tags/update/copy/", views.TagsCopy.as_view(), name="tags_copy",),
     path(

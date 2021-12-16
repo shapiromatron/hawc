@@ -606,6 +606,20 @@ class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
         return self.model.objects.filter(assessment=None)
 
 
+class StrainViewset(viewsets.ViewSet):
+    model = models.Strain
+
+    @action(detail=False)
+    def get_strains(self, request):
+        strains = []
+        try:
+            sp = models.Species.objects.get(pk=request.GET.get("species"))
+            strains = list(self.model.objects.filter(species=sp).values("id", "name"))
+        except Exception:
+            pass
+        return Response(strains)
+
+
 class HealthcheckViewset(viewsets.ViewSet):
     @action(detail=False)
     def web(self, request):

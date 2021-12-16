@@ -1,3 +1,4 @@
+from django.http.response import HttpResponseRedirect
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
@@ -65,6 +66,19 @@ class Study(
             raise PermissionDenied("You must be part of the team to view unpublished data")
         serializer = RiskOfBiasSerializer(study.get_active_robs(), many=True)
         return Response(serializer.data)
+
+    @action(detail=True, url_name="update-editability")
+    def update_editability(self, request, pk: int):
+        study = self.get_object()
+        if self.assessment.user_can_edit_assessment(self.request.user):
+            if study.editable:
+                study.editable = False
+            else:
+                study.editable = True
+            study.save()
+            return HttpResponseRedirect(study.get_absolute_url())
+        else:
+            raise PermissionDenied
 
 
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
