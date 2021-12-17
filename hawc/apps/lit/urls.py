@@ -47,11 +47,6 @@ urlpatterns = [
         name="topic_model",
     ),
     path("assessment/<int:pk>/references/search/", views.RefSearch.as_view(), name="ref_search",),
-    re_path(
-        r"^assessment/(?P<pk>\d+)/references/(?P<tag_id>(\d+|untagged))/json/$",
-        views.RefsByTagJSON.as_view(),
-        name="refs_json",
-    ),
     path(
         "assessment/<int:pk>/references/upload/", views.RefUploadExcel.as_view(), name="ref_upload",
     ),

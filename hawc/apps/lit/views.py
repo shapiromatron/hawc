@@ -544,40 +544,6 @@ class RefSearch(BaseDetail):
         return context
 
 
-class RefsByTagJSON(BaseDetail):
-    model = Assessment
-
-    def get_context_data(self, **kwargs):
-        response = {"status": "success", "refs": []}
-        search_id = self.request.GET.get("search_id", None)
-        if search_id is not None:
-            search_id = int(search_id)
-
-        tag_id = self.kwargs.get("tag_id", None)
-        tag = None
-        if tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tags_in_assessment(
-                self.assessment.id, [int(tag_id)]
-            )[0]
-
-        if search_id:
-            search = models.Search.objects.get(id=search_id)
-            qs = search.get_references_with_tag(tag=tag, descendants=True)
-        elif tag:
-            qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
-        else:
-            qs = models.Reference.objects.get_untagged_references(self.assessment)
-
-        response["refs"] = [
-            ref.to_dict()
-            for ref in qs.select_related("study").prefetch_related("searches", "identifiers")
-        ]
-        self.response = response
-
-    def render_to_response(self, context, **response_kwargs):
-        return HttpResponse(json.dumps(self.response), content_type="application/json")
-
-
 class RefVisualization(BaseDetail):
     model = Assessment
     template_name = "lit/reference_visual.html"

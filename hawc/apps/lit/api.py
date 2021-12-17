@@ -79,10 +79,22 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
     @action(detail=True, pagination_class=PaginationWithCount)
     def references(self, request, pk):
+        """
+        Get references for an assessment
+
+        Args:
+            request:
+                - search_id: Search object id; if provided, gets references within a search
+                - tag_id: Tag object id; if provided, gets references with tag
+
+        Returns:
+            json: Serialized json reference data
+        """
         assessment = self.get_object()
 
         search_id = request.query_params.get("search_id")
         tag_id = request.query_params.get("tag_id")
+        #import pdb; pdb.set_trace()
         tag = None
         if tag_id != "untagged":
             tag = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, [int(tag_id)])[0]
@@ -101,6 +113,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             .order_by("id")
         )
         serializer = serializers.ReferenceSerializer(page, many=True)
+
+        return Response(serializer.data)
         return self.get_paginated_response(serializer.data)
 
     @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
