@@ -662,15 +662,9 @@ class BaseCreateWithFormset(BaseCreate):
         return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.method == "GET":
-            context["formset"] = self.build_initial_formset_factory()
-        else:
-            if kwargs.get("form"):
-                context["form"] = kwargs.get("form")
-            if kwargs.get("formset"):
-                context["formset"] = kwargs.get("formset")
-        return context
+        if "formset" not in kwargs:
+            kwargs["formset"] = self.build_initial_formset_factory()
+        return super().get_context_data(**kwargs)
 
     def pre_validate(self, form, formset):
         pass
@@ -738,15 +732,9 @@ class BaseUpdateWithFormset(BaseUpdate):
         raise NotImplementedError("Method should be overridden to return a formset factory")
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.method == "GET":
-            context["formset"] = self.build_initial_formset_factory()
-        else:
-            if kwargs.get("form"):
-                context["form"] = kwargs.get("form")
-            if kwargs.get("formset"):
-                context["formset"] = kwargs.get("formset")
-        return context
+        if "formset" not in kwargs:
+            kwargs["formset"] = self.build_initial_formset_factory()
+        return super().get_context_data(**kwargs)
 
 
 class BaseEndpointFilterList(BaseList):
