@@ -440,13 +440,16 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
         return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
-        context = {
+        extras = {
             "assessment": self.assessment,
             "crud": self.crud,
             "obj_perms": super().get_obj_perms(),
             "breadcrumbs": self.get_breadcrumbs(),
         }
-        context = super().get_context_data(**kwargs, **context)
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
+        context = super().get_context_data(**kwargs)
         if self.breadcrumb_active_name:
             context["breadcrumbs"].append(Breadcrumb(name=self.breadcrumb_active_name))
         return context
@@ -472,14 +475,17 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
         return self.object.get_absolute_url()
 
     def get_context_data(self, **kwargs):
-        context = {
+        extras = {
             "assessment": self.assessment,
             "crud": self.crud,
             "obj_perms": super().get_obj_perms(),
             "cancel_url": self.get_cancel_url(),
             "breadcrumbs": self.get_breadcrumbs(),
         }
-        context = super().get_context_data(**kwargs, **context)
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
+        context = super().get_context_data(**kwargs)
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -508,13 +514,16 @@ class BaseUpdate(
         pass
 
     def get_context_data(self, **kwargs):
-        context = {
+        extras = {
             "assessment": self.assessment,
             "crud": self.crud,
             "obj_perms": super().get_obj_perms(),
             "breadcrumbs": self.get_breadcrumbs(),
         }
-        context = super().get_context_data(**kwargs, **context)
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
+        context = super().get_context_data(**kwargs)
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -555,13 +564,16 @@ class BaseCreate(
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = {
+        extras = {
             "assessment": self.assessment,
             "crud": self.crud,
             "obj_perms": super().get_obj_perms(),
             "breadcrumbs": self.get_breadcrumbs(),
         }
-        context = super().get_context_data(**kwargs, **context)
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
+        context = super().get_context_data(**kwargs)
         context[self.parent_template_name] = self.parent
         return context
 
@@ -602,13 +614,16 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = {
+        extras = {
             "assessment": self.assessment,
             "crud": self.crud,
             "obj_perms": super().get_obj_perms(),
             "breadcrumbs": self.get_breadcrumbs(),
         }
-        context = super().get_context_data(**kwargs, **context)
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
+        context = super().get_context_data(**kwargs)
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
         return context
@@ -785,8 +800,8 @@ class BaseEndpointFilterList(BaseList):
         return qs
 
     def get_context_data(self, **kwargs):
+        kwargs["form"] = self.form
         context = super().get_context_data(**kwargs)
-        context["form"] = self.form
         if "config" not in context:  # TODO - remove this case; implement #507
             context["config"] = {
                 "items": self.model.get_qs_json(context["object_list"], json_encode=False)
