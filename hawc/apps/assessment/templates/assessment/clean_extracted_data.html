@@ -1,24 +1,9 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div id="root"></div>
+    <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-    {
-        "assessment_id": "{{ assessment.id }}",
-        "assessment": "{% url 'assessment:api:assessment-endpoints' assessment.id %}",
-        "csrf": "{{ csrf_token }}"
-    }
-</script>
-<script type="text/javascript">
-$(document).ready(function(){
-  const el = document.getElementById('root'),
-    config = window.app.getConfig();
-  window.app.startup("textCleanupStartup", function(startup){
-    startup(el, config);
-  });
-});
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}
