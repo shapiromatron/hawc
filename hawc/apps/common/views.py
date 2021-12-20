@@ -821,19 +821,16 @@ class HeatmapBase(BaseList):
         return [self.template_name]
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            breadcrumbs=[
-                Breadcrumb.build_root(self.request.user),
-                Breadcrumb.from_object(self.assessment),
-                Breadcrumb(
-                    name="Endpoints",
-                    url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
-                ),
-                Breadcrumb(name=self.heatmap_view_title),
-            ],
-        )
-        return context
+        kwargs["breadcrumbs"] = [
+            Breadcrumb.build_root(self.request.user),
+            Breadcrumb.from_object(self.assessment),
+            Breadcrumb(
+                name="Endpoints",
+                url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
+            ),
+            Breadcrumb(name=self.heatmap_view_title),
+        ]
+        return super().get_context_data(**kwargs)
 
     def get_app_config(self, context) -> WebappConfig:
         url_args = (
