@@ -13,6 +13,7 @@ from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.middleware.csrf import get_token
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
@@ -25,6 +26,7 @@ from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
 from ..common.forms import DownloadPlotForm
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -281,6 +283,11 @@ class Error401Response(TemplateResponse):
 class Error401(TemplateView):
     response_class = Error401Response
     template_name = "401.html"
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class Swagger(TemplateView):
+    template_name = "swagger.html"
 
 
 # Assessment Object
@@ -609,6 +616,18 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="textCleanupStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
+                ),
+                csrf=get_token(self.request),
+            ),
+        )
+
 
 # Assorted functionality
 class CloseWindow(TemplateView):
@@ -651,6 +670,25 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="ScoreCleanupStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
+                ),
+                items=dict(
+                    url=reverse("riskofbias:api:metric_scores-list"),
+                    patchUrl=reverse("riskofbias:api:score-cleanup-list"),
+                ),
+                studyTypes=dict(url=reverse("study:api:study-types")),
+                csrf=get_token(self.request),
+                host=f"//{self.request.get_host()}",
+            ),
+        )
 
 
 @method_decorator(staff_member_required, name="dispatch")

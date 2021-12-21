@@ -52,11 +52,10 @@ class TestLiteratureAssessmentViewset:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
 
-        # check permissions for this one; raises an error
+        # topic model permissions
         url = reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,))
         assert anon_client.get(url).status_code == 403
-        with pytest.raises(ValueError):
-            assert rev_client.get(url).status_code == 200
+        assert rev_client.get(url).status_code == 200
 
         tagtree_url = reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,))
         # only reviewers and up can GET
@@ -168,10 +167,15 @@ class TestLiteratureAssessmentViewset:
         assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert resp == [
-            {"reference_id": 5, "pubmed_id": 11778423, "hero_id": None},
-            {"reference_id": 6, "pubmed_id": 15907334, "hero_id": None},
-            {"reference_id": 7, "pubmed_id": 21284075, "hero_id": None},
-            {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None},
+            {
+                "reference_id": 5,
+                "pubmed_id": 11778423,
+                "doi_id": "10.1093/milmed/166.suppl_2.23",
+                "hero_id": None,
+            },
+            {"reference_id": 6, "pubmed_id": 15907334, "doi_id": None, "hero_id": None},
+            {"reference_id": 7, "pubmed_id": 21284075, "doi_id": None, "hero_id": None},
+            {"reference_id": 8, "pubmed_id": 24004895, "doi_id": None, "hero_id": None},
         ]
 
     def test_reference_search(self, db_keys):

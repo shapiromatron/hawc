@@ -2,14 +2,14 @@ import BaseStore from "./BaseStore";
 import ExploratoryHeatmapStore from "./ExploratoryHeatmapStore";
 
 class ExploratoryHeatmap {
-    constructor() {
-        this.base = new BaseStore(this);
+    constructor(config) {
+        this.base = new BaseStore(this, config);
         this.subclass = new ExploratoryHeatmapStore(this);
     }
 }
 
-const createExploratoryHeatmapStore = function() {
-    return new ExploratoryHeatmap();
+const createExploratoryHeatmapStore = function(config) {
+    return new ExploratoryHeatmap(config);
 };
 
 export {createExploratoryHeatmapStore};

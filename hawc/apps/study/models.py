@@ -145,7 +145,11 @@ class Study(Reference):
             attrs["full_citation"] = reference.ref_full_citation
         if "short_citation" not in attrs:
             attrs["short_citation"] = reference.ref_short_citation
-        return Study.objects.create(**attrs)
+        internal_communications = attrs.pop("internal_communications", None)
+        study = Study.objects.create(**attrs)
+        if internal_communications and len(internal_communications.strip()) > 0:
+            study.set_communications(internal_communications)
+        return study
 
     @classmethod
     @transaction.atomic
