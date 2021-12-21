@@ -11,17 +11,10 @@
             {{object.study}} must be complete in order to complete the final review.
         </h4>
     {% else %}
-        <div id='robTable'></div>
+        <div id='main'></div>
     {% endif %}
 {% endblock %}
 
 {% block extrajs %}
-  <script id="config" type="text/json" charset="utf-8">{{config|safe}}</script>
-  <script type="text/javascript">
-  $(document).ready(function(){
-      window.app.startup("riskofbiasStartup", function(riskofbias){
-          riskofbias.RobStudyFormStartup(document.getElementById('robTable'));
-      })
-  });
-  </script>
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

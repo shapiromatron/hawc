@@ -25,7 +25,7 @@ class MetaProtocol {
         MetaProtocol.get_object(id, d => d.displayFullPager($el));
     }
 
-    build_details_table(div) {
+    build_details_table() {
         return new DescriptiveTable()
             .add_tbody_tr("Description", this.data.name)
             .add_tbody_tr("Protocol type", this.data.protocol_type)

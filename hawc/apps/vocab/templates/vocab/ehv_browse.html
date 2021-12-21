@@ -1,7 +1,7 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-<h1>Environmental Health Vocabulary (EHV)</h1>
+<h2>Environmental Health Vocabulary (EHV)</h2>
 <div>
     <p>
         Experimental data extracted into HAWC is designed to enable filtering, sorting, and
@@ -12,18 +12,9 @@
         can also be mapped to external entities.
     </p>
 </div>
-<div id="ehv">
-
-</div>
+<div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
 <script type="text/json" id="config">{{config|safe}}</script>
-<script type="text/javascript">
-    const root = document.getElementById('ehv'),
-        config = window.app.getConfig();
-    window.app.startup("animalStartup", function (cb) {
-        cb.ehvBrowserStartup(root, config);
-    });
-</script>
 {% endblock %}

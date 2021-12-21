@@ -1,8 +1,10 @@
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
 
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseDelete,
     BaseDetail,
@@ -62,15 +64,34 @@ class SessionList(BaseList):
         return self.model.objects.filter(endpoint=self.parent)
 
 
+def _get_session_config(self, context) -> WebappConfig:
+    edit_mode = self.crud == "Update"
+    return WebappConfig(
+        app="bmds2Startup",
+        data=dict(
+            editMode=edit_mode,
+            assessment_id=self.assessment.id,
+            bmds_version=self.object.get_version_display(),
+            endpoint_id=self.object.endpoint_id,
+            session_url=self.object.get_api_url(),
+            execute_url=self.object.get_execute_url(),
+            execute_status_url=self.object.get_execute_status_url(),
+            selected_model_url=self.object.get_selected_model_url(),
+            csrf=get_token(self.request) if edit_mode else None,
+        ),
+    )
+
+
 class SessionDetail(BaseDetail):
     model = models.Session
+    get_app_config = _get_session_config
 
 
 class SessionUpdate(BaseUpdate):
-
     success_message = "BMD session updated."
     model = models.Session
     form_class = forms.SessionForm
+    get_app_config = _get_session_config
 
     def get_redirect_url(self, *args, **kwargs):
         obj = models.Session.create_new(self.object)
@@ -80,6 +101,7 @@ class SessionUpdate(BaseUpdate):
 class SessionDelete(BaseDelete):
     success_message = "BMD session deleted."
     model = models.Session
+    get_app_config = _get_session_config
 
     def get_success_url(self):
         return self.object.endpoint.get_absolute_url()

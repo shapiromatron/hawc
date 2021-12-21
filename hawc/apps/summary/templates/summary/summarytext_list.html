@@ -17,19 +17,6 @@
   </div>
 {% endblock %}
 
-
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-    "assessment_id": {{assessment.pk}},
-    "editMode": false
-}
-</script>
-<script type="text/javascript">
-  window.app.startup("summaryTextStartup", function (startup) {
-    var root = document.getElementById('main'),
-      config = window.app.getConfig();
-    startup(root, config);
-  })
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}
