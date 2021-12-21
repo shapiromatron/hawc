@@ -4,6 +4,9 @@ from .base import *
 
 DEBUG = True
 
+if DEBUG:
+    SITE_ID = 100500000
+
 SERVER_ROLE = "dev"
 SERVER_BANNER_COLOR = "#707070"
 ADMIN_URL_PREFIX = ""
