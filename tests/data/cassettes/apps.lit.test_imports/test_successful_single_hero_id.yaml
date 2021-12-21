@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.26.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/51001/recordsperpage/100.json
+  response:
+    body:
+      string: '{"results":[{"bookTitle":"Molecular Basis of Thyroid Hormone Action","REFERENCE_ID":51001,"ABSTRACT":"","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/51001","hasPDF":false,"YEAR":1983,"allAuthors":["Schwartz,
+        HL","Oppenheimer, J. H.; Samuels, H. H."],"HEROID":51001,"id":51001,"referencetype":["book/book
+        chapter"],"type":"reference","sortYear":1983,"tag_path_text":["IRIS|Perchlorate"],"PROJECTS":[{"PROJECT":"Perchlorate","PROJECT_ID":33,"USAGES":[]}],"tag_path_key":["2|33"],"firstAuthor":"Schwartz","AUTHORS":"Schwartz,
+        HL","noPDFAvailable":false,"tag_path_type":["category|project"],"isPeerReviewed":false,"code":"bk","isDeleted":false,"REDIRECT_DATA":{},"isPublic":false,"hasPublicDoc":false,"SOURCE":"","TITLE":"Effect
+        of thyroid hormone on growth and development","modified":"2018-04-18T18:27:01Z","PMID":"","_version_":1598109539563995139}],"isValid":true,"message":"Success","error":""} '
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Tue, 21 Dec 2021 22:48:36 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.51 (Win64) OpenSSL/1.1.1l mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=8725047; Expires=Wed, 22-Dec-2021 22:48:36 GMT; Path=/; HttpOnly
+      - CFTOKEN=92375808; Expires=Wed, 22-Dec-2021 22:48:36 GMT; Path=/; HttpOnly
+      - JSESSIONID=C29C56DAB25DC55021967F3E3046FCB9.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2021%2F12%2F21%2017%3A48%3A36; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

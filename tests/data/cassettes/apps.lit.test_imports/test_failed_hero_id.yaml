@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.26.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/9999999/recordsperpage/100.json
+  response:
+    body:
+      string: '{"results":[{"REFERENCE_ID":9999999,"ABSTRACT":"","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/9999999","hasPDF":false,"YEAR":1955,"allAuthors":["Todd,
+        WA; Green, RE"],"HEROID":9999999,"id":9999999,"project_key":[2721],"referencetype":["journal
+        article"],"type":"reference","sortYear":1955,"tag_path_text":["OSCP|EDSP Thyroid
+        Complete Pathway SR"],"category_key":[40],"PROJECTS":[{"PROJECT":"EDSP Thyroid
+        Complete Pathway SR","PROJECT_ID":2721,"USAGES":[]}],"tag_path_key":["40|2721"],"firstAuthor":"Todd","AUTHORS":"Todd,
+        WA; Green, RE","noPDFAvailable":false,"tag_path_type":["category|project"],"isPeerReviewed":false,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"","TITLE":"Primary
+        lymphosarcoma of the thyroid; report of a probable case","modified":"2021-12-16T02:58:20Z","PMID":14369189,"_version_":1719269851851128832}],"isValid":true,"message":"Success","error":""} '
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Tue, 21 Dec 2021 22:48:36 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.51 (Win64) OpenSSL/1.1.1l mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=8725048; Expires=Wed, 22-Dec-2021 22:48:36 GMT; Path=/; HttpOnly
+      - CFTOKEN=97794509; Expires=Wed, 22-Dec-2021 22:48:36 GMT; Path=/; HttpOnly
+      - JSESSIONID=0C8E2B31D460001D0790104E4309FCA1.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2021%2F12%2F21%2017%3A48%3A37; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1
