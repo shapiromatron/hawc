@@ -489,7 +489,7 @@ class ReferenceManager(BaseManager):
             "id", "identifiers__unique_id"
         )
         for hawc_id, doi_id in dois:
-            data[hawc_id]["doi_id"] = str(doi_id)
+            data[hawc_id]["doi_id"] = doi_id
 
         # create a dataframe
         df = (
