@@ -474,6 +474,7 @@ class ReferenceManager(BaseManager):
             None,
             constants.ReferenceDatabase.HERO,
             constants.ReferenceDatabase.PUBMED,
+            constants.ReferenceDatabase.DOI,
         }
         diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
         if diff:
@@ -495,6 +496,13 @@ class ReferenceManager(BaseManager):
         for hawc_id, pubmed_id in pubmeds:
             data[hawc_id]["pubmed_id"] = int(pubmed_id)
 
+        # capture DOI ids
+        dois = qs.filter(identifiers__database=constants.ReferenceDatabase.DOI).values_list(
+            "id", "identifiers__unique_id"
+        )
+        for hawc_id, doi_id in dois:
+            data[hawc_id]["doi_id"] = doi_id
+
         # create a dataframe
         df = (
             pd.DataFrame.from_dict(data, orient="index")
@@ -503,7 +511,7 @@ class ReferenceManager(BaseManager):
         )
 
         # set missing columns
-        for col in ["hero_id", "pubmed_id"]:
+        for col in ["hero_id", "pubmed_id", "doi_id"]:
             if col not in df.columns:
                 df[col] = None
 

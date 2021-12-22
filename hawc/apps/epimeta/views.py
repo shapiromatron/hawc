@@ -1,5 +1,6 @@
 from django.db.models import Q
 
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
@@ -15,6 +16,18 @@ from ..study.models import Study
 from . import forms, models
 
 
+def get_app_config_metaprotocol(self, context) -> WebappConfig:
+    return WebappConfig(
+        app="epiMetaStartup", page="startupMetaProtocolPage", data=dict(id=self.object.id)
+    )
+
+
+def get_app_config_metaresult(self, context) -> WebappConfig:
+    return WebappConfig(
+        app="epiMetaStartup", page="startupMetaResultPage", data=dict(id=self.object.id)
+    )
+
+
 # MetaProtocol
 class MetaProtocolCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Meta-protocol created."
@@ -26,6 +39,7 @@ class MetaProtocolCreate(EnsureExtractionStartedMixin, BaseCreate):
 
 class MetaProtocolDetail(BaseDetail):
     model = models.MetaProtocol
+    get_app_config = get_app_config_metaprotocol
 
 
 class MetaProtocolUpdate(BaseUpdate):
@@ -37,6 +51,7 @@ class MetaProtocolUpdate(BaseUpdate):
 class MetaProtocolDelete(BaseDelete):
     success_message = "Meta-protocol deleted."
     model = models.MetaProtocol
+    get_app_config = get_app_config_metaprotocol
 
     def get_success_url(self):
         return self.object.study.get_absolute_url()
@@ -77,6 +92,7 @@ class MetaResultCopyAsNew(CopyAsNewSelectorMixin, MetaProtocolDetail):
 
 class MetaResultDetail(BaseDetail):
     model = models.MetaResult
+    get_app_config = get_app_config_metaresult
 
 
 class MetaResultUpdate(BaseUpdateWithFormset):
@@ -107,6 +123,7 @@ class MetaResultUpdate(BaseUpdateWithFormset):
 class MetaResultDelete(BaseDelete):
     success_message = "Meta-Result deleted."
     model = models.MetaResult
+    get_app_config = get_app_config_metaresult
 
     def get_success_url(self):
         return self.object.protocol.get_absolute_url()
@@ -118,7 +135,13 @@ class MetaResultList(BaseEndpointFilterList):
 
     def get_query(self, perms):
         query = Q(protocol__study__assessment=self.assessment)
-
         if not perms["edit"]:
             query &= Q(protocol__study__published=True)
         return query
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="epiMetaStartup",
+            page="startupMetaResultListPage",
+            data={"items": self.model.get_qs_json(context["object_list"], json_encode=False)},
+        )

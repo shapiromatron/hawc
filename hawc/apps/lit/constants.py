@@ -16,8 +16,8 @@ class ReferenceDatabase(models.IntegerChoices):
 
 
 class SearchType(models.TextChoices):
-    S = "s", "Search"
-    I = "i", "Import"  # noqa: E741
+    SEARCH = "s", "Search"
+    IMPORT = "i", "Import"
 
 
 # generalized/adapted from https://www.crossref.org/blog/dois-and-matching-regular-expressions/
