@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.23.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1201/recordsperpage/100.json
   response:
@@ -63,29 +63,27 @@ interactions:
         2006\",\"USAGES\":[]},{\"USAGE_ID\":8557,\"USAGE\":\"ISA NOX (1853) 2008 Final
         (10)\",\"USAGES\":[{\"USAGE_ID\":8562,\"USAGE\":\"30% to end\",\"USAGES\":[]}]},{\"USAGE_ID\":8566,\"USAGE\":\"ISA
         Ozone\",\"USAGES\":[{\"USAGE_ID\":8574,\"USAGE\":\"30% to end\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"2|412\",\"2|299|1956\",\"2|299|1958\",\"2|1222\",\"1|1628|1051\",\"1|1779|5603|5634|5639\",\"1|14\",\"1|2196|2114|2119\",\"1|2196|2115|2126\",\"1|2253|3225|3227\",\"1|2253|3225|3228\",\"1|2253|3225|3233\",\"1|2253|3225|3234\",\"1|2253|4717|5971\",\"1|2253|4717|5972|5976|6121\",\"1|2253|4717|5972|5978|6131\",\"18|2516|8557|8562\",\"18|2516|8566|8574\",\"18|2516|8575\"],\"firstAuthor\":\"Farman\",\"AUTHORS\":\"Farman,
-        CA; Watkins, K; Van Hoozen, B; Last, JA; Witschi, H; Pinkerton, KE\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage\",\"category|project|usage\",\"category|project\",\"category|project|usage\",\"category|project|usage|usage|usage\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
+        CA; Watkins, K; Van Hoozen, B; Last, JA; Witschi, H; Pinkerton, KE\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage\",\"category|project|usage\",\"category|project\",\"category|project|usage\",\"category|project|usage|usage|usage\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
         Journal of Respiratory Cell and Molecular Biology 20:303-311.\",\"wosid\":\"WOS:000078591900015\",\"TITLE\":\"Centriacinar
         remodeling and sustained procollagen gene expression after exposure to ozone
-        and nitrogen dioxide\",\"modified\":\"2021-06-29T19:41:36Z\",\"PMID\":9922222,\"journalTitle\":\"American
-        Journal of Respiratory Cell and Molecular Biology\",\"_version_\":1703931487117639680}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+        and nitrogen dioxide\",\"modified\":\"2019-10-16T15:53:35Z\",\"PMID\":9922222,\"journalTitle\":\"American
+        Journal of Respiratory Cell and Molecular Biology\",\"_version_\":1647565879229022208}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 21 Dec 2021 22:50:21 GMT
+      - Tue, 15 Sep 2020 20:56:40 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.51 (Win64) OpenSSL/1.1.1l mod_jk/1.2.46
+      - Apache/2.4.43 (Win64) OpenSSL/1.1.1g mod_jk/1.2.46
       Set-Cookie:
-      - CFID=8725079; Expires=Wed, 22-Dec-2021 22:50:21 GMT; Path=/; HttpOnly
-      - CFTOKEN=61782685; Expires=Wed, 22-Dec-2021 22:50:21 GMT; Path=/; HttpOnly
-      - JSESSIONID=1DD8974903C6E913F43D302A343DE437.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2021%2F12%2F21%2017%3A50%3A21; Path=/
-      Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - CFID=41508627; Expires=Wed, 16-Sep-2020 20:56:40 GMT; Path=/; HttpOnly
+      - CFTOKEN=87435166; Expires=Wed, 16-Sep-2020 20:56:40 GMT; Path=/; HttpOnly
+      - JSESSIONID=837C33D9A29EFF457FE1907EE257A347.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2020%2F09%2F15%2016%3A56%3A40; Path=/
       Transfer-Encoding:
       - chunked
     status:

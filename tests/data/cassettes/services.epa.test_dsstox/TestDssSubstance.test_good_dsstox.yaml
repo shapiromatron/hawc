@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.23.0
     method: GET
     uri: https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=1836-75-5
   response:
@@ -41,12 +41,10 @@ interactions:
       - gzip
       Content-Language:
       - en-US
-      Content-Security-Policy:
-      - frame-ancestors 'self';
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Tue, 21 Dec 2021 22:50:20 GMT
+      - Mon, 14 Sep 2020 14:25:00 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Keep-Alive:
@@ -57,15 +55,12 @@ interactions:
       - Apache-Coyote/1.1
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
-      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-Content-Type-Options:
       - nosniff
-      - nosniff
       X-Frame-Options:
       - DENY
-      - SAMEORIGIN
     status:
       code: 200
       message: OK
@@ -79,7 +74,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.23.0
     method: GET
     uri: https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=DTXSID7020970
   response:
@@ -111,12 +106,10 @@ interactions:
       - gzip
       Content-Language:
       - en-US
-      Content-Security-Policy:
-      - frame-ancestors 'self';
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Tue, 21 Dec 2021 22:50:20 GMT
+      - Mon, 14 Sep 2020 14:25:00 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Keep-Alive:
@@ -127,15 +120,12 @@ interactions:
       - Apache-Coyote/1.1
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
-      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-Content-Type-Options:
       - nosniff
-      - nosniff
       X-Frame-Options:
       - DENY
-      - SAMEORIGIN
     status:
       code: 200
       message: OK

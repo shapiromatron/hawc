@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.23.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -26,8 +26,6 @@ interactions:
     headers:
       Access-Control-Allow-Origin:
       - '*'
-      Access-Control-Expose-Headers:
-      - X-RateLimit-Limit,X-RateLimit-Remaining
       Cache-Control:
       - private
       Connection:
@@ -37,20 +35,18 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 21 Dec 2021 22:48:38 GMT
+      - Wed, 01 Apr 2020 15:33:27 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C1B4A9E45D9D50000413A907899DC.1.1.m_1
+      - 939B76E1DE413DB5000033C6D1260CAE.1.1.m_1
       NCBI-SID:
-      - BA42CE2765BCEA28_57D9SID
-      Referrer-Policy:
-      - origin-when-cross-origin
+      - BB48D36571CD33BF_F30BSID
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=BA42CE2765BCEA28_57D9SID; domain=.nih.gov; path=/; expires=Wed, 21
-        Dec 2022 22:48:39 GMT
+      - ncbi_sid=BB48D36571CD33BF_F30BSID; domain=.nih.gov; path=/; expires=Thu, 01
+        Apr 2021 15:33:27 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -59,8 +55,6 @@ interactions:
       - '3'
       X-RateLimit-Remaining:
       - '2'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -84,7 +78,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.23.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -96,18 +90,16 @@ interactions:
         AP//dFDLCsIwEDzbrwg96SmKChZCoChFwSq0vYmHQBdaSBtJIohfbx4iqdUcltmZzM4mZJBt+q24
         95ouCPaAFKBz9rDEG1mm1ExqOnecxxE51MdWGTAxiCabZLVcG5PBka1eI5VkveJMm58pwUwPeors
         IZkUHW2Acd0Q7BrPV4LGno4vOZR7VIHs1BWdC/ThU85R1gKv1ZVgY3BGHGb8CxRP0QOq4cbBSqPk
-        L320wtTfGKyA0tMOxYEn0GZu79HU3w94AQAA//+8Vk2PgjAQve+v8LicoLSlNCG9bfZiRE324Nkl
-        u0azbEAT/feWIsLS4WPU9VSYCfTNmzcfYwLINvk2t2AXVpuu0tpEWlnzURDcnixqNay3ytyvLyy8
-        k+pFESnD1v8LcxlEYVK1U4diLMZ50SQJPCGuyjSet+PvLv1M1Cxyq8cSb305AGSa/nzl+yzZf98B
-        R/h4KPFcaVFErj5hZJDEbVy1E8DFPCYkA6GtUCx1lBWGI84ZEyy8had4eaVJH+/L+GPeNAzQaAkf
-        SSKhhFEPBo5k0ao2JId+KCkPbtJag8MOYFbB45BREnrPT25fM0bmmT+kUOzej2Uy4Iw+oLF1TBts
-        o+WCC5gYRHODEtsvyIFxiAlB+sE/67Ll/zsUzRCMFockOzUnZ3sAmg0BHkbG9YrZeJzLJ/fN/Oov
-        z194nMi1CHvRu2NrQT0DAAD//wMAsDLT9V4LAAA=
+        L320wtTfGKyA0tMOxYEn0GZu79HU3w94AQAA//+8Vj1vgzAQ3fsrMjYTHP5EQt6iLlVJInXo3KIm
+        SpVUkErtv68xcaHYQK5OOhnuBH5+93zvzjlAua12lQO7jrp0NdEuUhutzoIQjVRRq+F5p8z+esM6
+        O7MvCtJU9v5fh5tD1CHVJvVRTMQkT5oExgWTVpkms/h8fzu8FOohi+xjg7fd3APk/rB/rY5lcdwE
+        wOEiRUPJl0qLIov06kfmk7iLq016cBHGZRx7oT2hWBq4VhiOqIgZJH4wEzzl6x+a9HK3zh+X3cAE
+        jY7wkSQCSM6ov8BIFp3bhuQwYTFIAYEcDgBzLjwKGUkJhAL7Q3HHmjGyzpRfosRu70czCZRdoLEN
+        uA220VIiBQltbr7Cjgtywg4xR5CJuLIue/nfpmhMMFt9FOVX1zn7BmgmBL8ZmdQtZuKZnz4J83z7
+        l/8feOZZ5BB2o2fH3oD6DQAA//8DACDpPSBeCwAA
     headers:
       Access-Control-Allow-Origin:
       - '*'
-      Access-Control-Expose-Headers:
-      - X-RateLimit-Limit,X-RateLimit-Remaining
       Cache-Control:
       - private
       Connection:
@@ -117,20 +109,18 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 21 Dec 2021 22:48:38 GMT
+      - Wed, 01 Apr 2020 15:33:28 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C1B4A9E45D9D500002C3A90D5B5FE.1.1.m_1
+      - 322C0C39A01EC8B500003BC0B8EEE796.1.1.m_1
       NCBI-SID:
-      - 087DAF76EC8B6E52_3D09SID
-      Referrer-Policy:
-      - origin-when-cross-origin
+      - 1D215574F7BBBB14_89C1SID
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=087DAF76EC8B6E52_3D09SID; domain=.nih.gov; path=/; expires=Wed, 21
-        Dec 2022 22:48:39 GMT
+      - ncbi_sid=1D215574F7BBBB14_89C1SID; domain=.nih.gov; path=/; expires=Thu, 01
+        Apr 2021 15:33:28 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -139,8 +129,6 @@ interactions:
       - '3'
       X-RateLimit-Remaining:
       - '1'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -164,66 +152,68 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.23.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
       string: !!binary |
-        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
-        Nt5/AAAA//9C44Mm+gAAAAD//wMAduTQNKMcAAA=
+        H4sIAAAAAAAAAHyRX0/CMBTF3/kUtc+6uyIm1nQjuu4Bw2ARNOHJDNZIk60j2x3Kt7cbhH8ifbk3
+        99zm/Hoq+j95RtaqrHRhPMocl5K+3xE3chxMZ3FI4nqeq/S5RL3I1EQhid9fhoOA0DuA0TACkFPZ
+        LEX7pVvCKiSviamTckO6LuMA4YgSukRcVU8AKaaOyXLH6KXzVazBLOYaVq0PFDXu2k/GXeYyx25T
+        C3TOcT7yO8QeYTEybVSgMUH7IjKxta48GoVyOBiFlIy/jSo9atHp9kp7LY4GknzsU6A+f+S9+wcm
+        oFGOFmWCKijyVaZQpYd5q81UUvqMcy6gbU/VqDC49N2ugG13qspk43d7App6cIN/7FqMN7XW1WWI
+        JvRrEPwKBLsI8cdM7HJv/75IVebRuNQGj1L9BQAA//+EV9tu4zYQ/RU+xoAvCHZbFGgQYLNF0d2H
+        Jt2k+05RY4sNRaqkaMf9+p4ZSrbsKuhLYFDDuZw5Z4YRs68hR6/d5al8+fL8/Lv6kpJ/OXZ0uo2W
+        365uP3wEFmwwc2/wiJuZFBpNNZpuczufwOna9+ByS/cff7zbDD/n7cTv/e3qAxKQn/NmKJtxmf8q
+        FiMdfprrxIVl6cWj6WfbcjLbvBvzbjMFZeb7i+0hkcFIha3qmtAH01BrUw+Val+Xo8oGF3bHtXpY
+        qofy+25Tbs918PFTVUVQQ8R2/3Wtnka/w0/2d3K25p5eXrkky2aWLSPVShq/kXZ9o6JNrwkOL75d
+        XnvSO+tnwhTMy6B42nmoZfWBFXE+ucrqPUd3nyqgp00/43/89EJv/f1LQ6qZ5K10SsEAAqrVweI0
+        /BM8qZpY6Dy2DtY51YHOxnbauaOqSPVNSLAB6fug8CWShiJVdoizB7qYzQ/q5s/vq4eFirouAMMQ
+        F0mR39sYfEu+Xyq7pvVy4qLWrd6JWzE9UlrKL9u2GWmlY+qpXQpJ+Di9Wr9Wz6El5ekwVNRqsMil
+        wJlChTHU2YzVia9zwqgCDAQaFBnVPaUxtMCwGmDwO5UyUNTewOLm8ZfntFirP7L2vUz3PUloRam3
+        LaAEqpGU3mvrdIXBtA1RJU4Swdg5I7OaAE/bLZkepdJ6BziM7jU3TMrkEnGCyPFn1YQDYUMWTGqY
+        SSDrU95urbGAlPOvYeNCp5JtkUCcpMWJDMFQkWnQ/QJtSLnrIiXeOid0+/AGp/3xGqO1ejSZHQ/d
+        2sbQoiZFbx38wAtD7HKNH2OwUHpvQvSkl8qRR7UWoJVeTrHo0CdyFsOBv5jg/8reIC4OestDBfGZ
+        xW3AbjehbTljk3ugW7IqMTnpCdVwe0rPMytB028LZVMZOq8UcYw4a/WJKfTqw8EzSgk/Koiy9gCJ
+        qYy+YElzJ3AXWdZW3AnxgjE5ilVALVHhKVEHQB+Jmcd2mHUI8blBdtYwz88uknL2lSC0ibbmpTmg
+        fOLLUqW/s25DRkIE1RodjfWhBeADNC05XQ4EdbXX0VJpcGmN21wAfkXMDhw47rDgypSGLjKxY0hw
+        Qh84c8Hg9o3ui0ptL9SfUGRRuC1yBgBsqVVtWWIoA1JnO7CBry5G9SNAB3yKSC+SZyHuwCnVoFUV
+        kQdK4AXPPeYUGlGhE6rJrYaR1O4hCZfUGAgeWZVr9cXzGUXLrEkF+NEYxaAXI6cbDd1LsNQwS+Di
+        EGKikeqgAPEr0gzKlwlgPV+23COUy70t+RSFF2qzpJPixgeP+XFUuxAgjL2tCUbwDrREvf+Vbuf0
+        EQ5VBMu5bKl4JAIQomTT1RixeNNZowv1OM15zzw6irfZEpAzpgxIl71oRoB0dtf0K55gHhB3oQNX
+        JM7yRARGLQXmJnSodNfhfSL9lTUzqBwphsjUuFK0DN0tmI/cOL9Kp2FsvCOEAesMX8RfRz1gokXL
+        m5UXnO3VQWjkLFCqC9594IAawm65CB5Ukwo4d77zvxkPyVomKMTUWs/LpdSB80KwPreBqfCNDE90
+        4B1iW6YVoEWDdjuM9FQSCx4pv1NucSxcKjnzcpNCxuSlTUJXaSPaL0IpQF45Y+jOA4T37TSzy6zG
+        wSVDULJghvS25IAeI+nzuripCI6wMSvIRfFKuf1hgXGj+UXFg4unobw5HGFwAzFmDVMYrMu+wkuN
+        lcN7Dt94Hiif24onb1m4pnEhhq3L+IuCKp77n3/9vLhc/ZjuLAQaapBGFgeJXfCk4ikgundoRNk6
+        45YsM5XPkVyL/0N49uBaGfGj1fBaOXuTUAeuJJwp2MVQxhIzdprieebUMOlgIcsXQztZicitqMho
+        ftoMbJKuRM3/NLEhxgzPQIH6tOGR+gb8g7wzUzRHBrK2/KrA2rS8c0EUXj94bMg7aKkaqJsVwWOJ
+        OcVbr5MMJgQTWVy/MR1qGV8PPO2RubP/AgAA//+8WUtzgjAQ/isZztpiax8H65TREWmxB2md8Rgl
+        gwhCG0077a/vbgKUKtow0+GGYdnky76+XWUkoLEShrDgNEtFbuRiRtUUJEnGwh3c/k+UvJ1gY6Vb
+        U9So2CAvnHuFEfy+xLuwvm8WQMh9mZ6xBBSqc59RdpRQ5Hmxe4IIiInlr8V2J4tJBbNrqx0wXrLs
+        rvg2oxHZhH4boQnsiuATX/ED0FlIy4hF/dnOl/AlJx3TbJmmqaBIO9+U11uykGIKh7v4xMal3CDs
+        NRzVfUXPEhCP3IWCTfKhwPzpzphXtLyZLJnROPSPCUlBl253TxTaYTdNAtiW7Va982Kx+psR5A35
+        +qF3XjwfaacTuD8IORQtnqtFLXD8WBFEB3LciYa5JNl3kswrpXPZcboAW03RFafgNJBHV9B8MnRh
+        HxxtMiQX5m3npkVePOuMIIHh/H75uhTBWcoDuPqS6iNt+J/nBBF5+/9iFqCaNhfhOta3yohM9e0y
+        mp4yzL9CeeTha8T0cUyIq49j4jaGA8KTLSN9HJ4+Cq85EDxJY7+GU9VwqcZAeDGFHKsPYkwcfRhj
+        pzEcMxZDJdnqA7H1YdiNoXimUfhFP6g+jLk+jHljMN4pUhZOXCaSGqWQDGoUw0F9NPkq1v+9Ny5N
+        AgG0rs+SAE+c/dobh4pF3nLixP1QTZUUeXHujKHZue5e3BrFADkbusqJdFm6jr6rrtHHfxXYxx9q
+        Dl7/PnkxAi4tZaPcfCh+UKR7g1QAU/zse98AAAD//7xZyQ6CMBD9FcIPsEgKJk0Tt0SiQKJ48WYI
+        KkbFBS9+vVNKgZbqwQPXWcqbzpTMvIHO+A19MDRt2OBCaWXCzopHkOGa3W7IbW1cM8dgIrqG58vm
+        mt1fqT8lnmc6Q4Sw0RaK5nTfscyu0KAe5DUIF7ei/hUjnlSTjqJWuEqRq1V6KNcBYTnGEYTm7na7
+        sAchNiRV15dWfbRfc8KW59m0bKSTiHJoELpoI6e5i6yRSTnn+z16VloQPwBLUdQuhudxziZYxXW0
+        tIqopukzgaalyB8UexWUCQ2kp2vB7pQ/4vyWJfS3EupkxAgrbIhecphfv/gXFsd1XQWWWUOA9IsH
+        2chW4GFbm56heKalglLykb1CYc+gC6V6Fz0h+QAAAP//ArvEwtTcAItLwB0mx+Li1OJiuqcZQyML
+        M2xpOBhY5OF2CAAAAP//gpsZWAqs2tMyUxFGBgKzqKkRtiyKmIGAjifb6KNop60/TUzMMFIBsDkS
+        ijRFEpRYSV7SRBFGKy0hhbZ/WlBqWmoReATDztDMHFgeY4pzwcxCWUYBFYYsuHBJLElEMtwDaFc+
+        Rq0JWRECnbAGrRGALcSALO7ANmKBd/kEJMzBk+OGOGfJIQsYjNEWMEB8hOIgYh2bCwkGersWEq7A
+        it3OwEYfTGMxPTOvFOgRkPEQFjX8mwoaPqsaxN41ING7QPPQkydyixTib7uCApBQcQZKSxMqh9AH
+        bWZ6pmBpRcDlFDxTIMtZYOkcvpAIroSw1sxMYOEHbwFqWFpoGgALbmPQkhTiTUnJzwStptEDmmOm
+        X0y0aUiCCH+CAwae9WE8eLubCwAAAP//QhMBLc8CAAAA//8DAAgfJphZJgAA
     headers:
       Access-Control-Allow-Origin:
       - '*'
-      Access-Control-Expose-Headers:
-      - X-RateLimit-Limit,X-RateLimit-Remaining
       Cache-Control:
       - private
       Connection:
@@ -233,20 +223,18 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 21 Dec 2021 22:48:39 GMT
+      - Wed, 01 Apr 2020 15:33:28 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD4C0974E09B550000394595224F66.1.1.m_3
+      - 322C0C39A01EC8B500002EC0B9D8886B.1.1.m_3
       NCBI-SID:
-      - 3266A4B1AA9EC101_016ESID
-      Referrer-Policy:
-      - origin-when-cross-origin
+      - 05D82D4EAFF53753_429BSID
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=3266A4B1AA9EC101_016ESID; domain=.nih.gov; path=/; expires=Wed, 21
-        Dec 2022 22:48:39 GMT
+      - ncbi_sid=05D82D4EAFF53753_429BSID; domain=.nih.gov; path=/; expires=Thu, 01
+        Apr 2021 15:33:28 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -255,8 +243,6 @@ interactions:
       - '3'
       X-RateLimit-Remaining:
       - '0'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -276,12 +262,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.23.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1200/recordsperpage/100.json
   response:
     body:
-      string: '{"results":[{"REFERENCE_ID":1200,"usage_path_key":[33273,"32981|6403|6405"],"ABSTRACT":"The
+      string: '{"results":[{"REFERENCE_ID":1200,"usage_path_key":[2473,"2474|1491","1586|8050","9162|6403|6405"],"ABSTRACT":"The
         health risks associated with ozone depletion will principally be those due
         to increased ultraviolet B (UV-B) radiation in the environment, i.e., increased
         damage to the eyes, the immune system, and the skin. Some new risks may also
@@ -323,38 +309,33 @@ interactions:
         and skin-cancer incidence will peak mid-century at additional incidences of
         just under 3 per 100000 and about 7 per 100000, respectively.","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1200","hasPDF":false,"YEAR":1998,"allAuthors":["Longstreth,
         J; de Gruijl, FR; Kripke, ML; Abseck, S; Arnold, F; Slaper, HI; Velders, G;
-        Takizawa, Y; van der Leun, JC"],"HEROID":1200,"id":1200,"project_key":[14,1713,2241],"referencetype":["journal
-        article"],"type":"reference","doi":"10.1016/s1011-1344(98)00183-3","sortYear":1998,"tag_path_text":["NAAQS|LitSearch-O3","Other|LitCiter|Distiller
-        Import 09-Jun-2021 13:40:03","Other|LitCiter|Distiller Import 27-May-2021
-        09:16:49","PPRTV|1,1,1-Trifluoroethane|Search (01/2015)|Toxline"],"category_key":[1,18,21],"PROJECTS":[{"PROJECT":"LitSearch-O3","PROJECT_ID":14,"USAGES":[]},{"PROJECT":"1,1,1-Trifluoroethane","PROJECT_ID":2241,"USAGES":[{"USAGE_ID":6403,"USAGE":"Search
-        (01/2015)","USAGES":[{"USAGE_ID":6405,"USAGE":"Toxline","USAGES":[]}]}]},{"PROJECT":"LitCiter","PROJECT_ID":1713,"USAGES":[{"USAGE_ID":1586,"USAGE":"WW","USAGES":[]},{"USAGE_ID":32981,"USAGE":"Distiller
-        Import 27-May-2021 09:16:49","USAGES":[]},{"USAGE_ID":33273,"USAGE":"Distiller
-        Import 09-Jun-2021 13:40:03","USAGES":[]},{"USAGE_ID":1492,"USAGE":"SUPM","USAGES":[]},{"USAGE_ID":1491,"USAGE":"SPM","USAGES":[]}]}],"tag_path_key":["1|14","18|1713|33273","18|1713|32981","21|2241|6403|6405"],"firstAuthor":"Longstreth","AUTHORS":"Longstreth,
+        Takizawa, Y; van der Leun, JC"],"HEROID":1200,"id":1200,"project_key":[14,2220,1713,2241],"referencetype":["journal
+        article"],"type":"reference","doi":"10.1016/s1011-1344(98)00183-3","sortYear":1998,"tag_path_text":["NAAQS|LitSearch-O3","Other|HAWC|test2","Other|HAWC|test3","Other|LitCiter|SPM","Other|LitCiter|WW|Live_Test","Other|LitCiter|Dilithium","PPRTV|1,1,1-Trifluoroethane|Search
+        (01/2015)|Toxline"],"category_key":[1,18,21],"PROJECTS":[{"PROJECT":"LitSearch-O3","PROJECT_ID":14,"USAGES":[]},{"PROJECT":"HAWC","PROJECT_ID":2220,"USAGES":[{"USAGE_ID":2474,"USAGE":"test3","USAGES":[]},{"USAGE_ID":2473,"USAGE":"test2","USAGES":[]}]},{"PROJECT":"1,1,1-Trifluoroethane","PROJECT_ID":2241,"USAGES":[{"USAGE_ID":6403,"USAGE":"Search
+        (01/2015)","USAGES":[{"USAGE_ID":6405,"USAGE":"Toxline","USAGES":[]}]}]},{"PROJECT":"LitCiter","PROJECT_ID":1713,"USAGES":[{"USAGE_ID":1586,"USAGE":"WW","USAGES":[{"USAGE_ID":8050,"USAGE":"Live_Test","USAGES":[]}]},{"USAGE_ID":1491,"USAGE":"SPM","USAGES":[]},{"USAGE_ID":9162,"USAGE":"Dilithium","USAGES":[]}]}],"tag_path_key":["1|14","18|2220|2473","18|2220|2474","18|1713|1491","18|1713|1586|8050","18|1713|9162","21|2241|6403|6405"],"firstAuthor":"Longstreth","AUTHORS":"Longstreth,
         J; de Gruijl, FR; Kripke, ML; Abseck, S; Arnold, F; Slaper, HI; Velders, G;
-        Takizawa, Y; van der Leun, JC","noPDFAvailable":false,"tag_path_type":["category|project","category|project|usage","category|project|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
+        Takizawa, Y; van der Leun, JC","noPDFAvailable":false,"tag_path_type":["category|project","category|project|usage","category|project|usage","category|project|usage","category|project|usage|usage","category|project|usage","category|project|usage|usage"],"isPeerReviewed":false,"code":"pd","isDeleted":false,"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
         of Photochemistry and Photobiology B: Biology 46:20-39. [Review]","wosid":"WOS:000077997100004","TITLE":"Health
-        risks","modified":"2021-06-09T17:48:33Z","PMID":9894351,"keywords":["chlorofluorocarbons;
+        risks","modified":"2020-03-23T15:01:39Z","PMID":9894351,"keywords":["chlorofluorocarbons;
         health risks; ozone-depleting substances; ultraviolet-B radiation; skin cancer;
         cataract; photoaging;"],"journalTitle":"Journal of Photochemistry and Photobiology
-        B: Biology","_version_":1702112510179540992}],"isValid":true,"message":"Success","error":""} '
+        B: Biology","_version_":1661967479926161408}],"isValid":true,"message":"Success","error":""} '
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 21 Dec 2021 22:48:39 GMT
+      - Wed, 01 Apr 2020 15:33:28 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.51 (Win64) OpenSSL/1.1.1l mod_jk/1.2.46
+      - Apache/2.4.41 (Win64) OpenSSL/1.1.1c mod_jk/1.2.46
       Set-Cookie:
-      - CFID=8725050; Expires=Wed, 22-Dec-2021 22:48:39 GMT; Path=/; HttpOnly
-      - CFTOKEN=21118245; Expires=Wed, 22-Dec-2021 22:48:39 GMT; Path=/; HttpOnly
-      - JSESSIONID=EE71BFD64FEE06BFBF6EFEC9F1796C1E.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2021%2F12%2F21%2017%3A48%3A39; Path=/
-      Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - CFID=36407460; Expires=Thu, 02-Apr-2020 15:33:30 GMT; Path=/; HttpOnly
+      - CFTOKEN=60291234; Expires=Thu, 02-Apr-2020 15:33:30 GMT; Path=/; HttpOnly
+      - JSESSIONID=41E88700F20A8AD19DA054B8D97DE5BB.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2020%2F04%2F01%2011%3A33%3A30; Path=/
       Transfer-Encoding:
       - chunked
     status:
