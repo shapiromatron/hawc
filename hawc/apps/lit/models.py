@@ -224,7 +224,9 @@ class Search(models.Model):
     @property
     def is_manual_import(self):
         # special case- created when assessment is created
-        return self.search_type == "i" and self.slug == self.MANUAL_IMPORT_SLUG
+        return (
+            self.search_type == constants.SearchType.IMPORT and self.slug == self.MANUAL_IMPORT_SLUG
+        )
 
     def clean(self):
         # unique_together constraint checked above;
@@ -373,7 +375,10 @@ class Search(models.Model):
 
     @property
     def date_last_run(self):
-        if self.source == constants.ReferenceDatabase.PUBMED and self.search_type == "s":
+        if (
+            self.source == constants.ReferenceDatabase.PUBMED
+            and self.search_type == constants.SearchType.SEARCH
+        ):
             try:
                 return PubMedQuery.objects.filter(search=self).latest().query_date
             except Exception:

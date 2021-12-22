@@ -14,10 +14,10 @@ class Term(models.Model):
 
     uid = models.PositiveIntegerField(unique=True)
     namespace = models.PositiveSmallIntegerField(
-        choices=constants.VocabularyNamespace.choices(), default=constants.VocabularyNamespace.EHV
+        choices=constants.VocabularyNamespace.choices, default=constants.VocabularyNamespace.EHV
     )
     parent = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
-    type = models.PositiveIntegerField(choices=constants.VocabularyTermType.choices())
+    type = models.PositiveIntegerField(choices=constants.VocabularyTermType.choices)
     name = models.CharField(max_length=256)
     notes = models.TextField(blank=True)
     deprecated_on = models.DateTimeField(blank=True, null=True)
@@ -46,7 +46,8 @@ class Term(models.Model):
             ),
             columns=cols,
         )
-        all_df.loc[:, "type"] = all_df["type"].map(constants.VocabularyTermType.as_dict())
+        names = dict(constants.VocabularyTermType.choices)
+        all_df.loc[:, "type"] = all_df["type"].map(names)
 
         system_df = (
             all_df.query('type=="system"')
@@ -114,7 +115,7 @@ class Term(models.Model):
 
 class Entity(models.Model):
     # mapping of controlled vocabulary to ontology
-    ontology = models.PositiveSmallIntegerField(choices=constants.Ontology.choices())
+    ontology = models.PositiveSmallIntegerField(choices=constants.Ontology.choices)
     uid = models.CharField(max_length=128, verbose_name="UID")
     terms = models.ManyToManyField(
         Term,

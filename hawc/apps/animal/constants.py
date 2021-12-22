@@ -26,10 +26,10 @@ class PurityQualifier(models.TextChoices):
 
 
 class Sex(models.TextChoices):
-    M = "M", "Male"
-    F = "F", "Female"
-    C = "C", "Combined"
-    R = "R", "Not reported"
+    MALE = "M", "Male"
+    FEMALE = "F", "Female"
+    COMBINED = "C", "Combined"
+    NR = "R", "Not reported"
 
 
 class Generation(models.TextChoices):
@@ -52,8 +52,8 @@ class Lifestage(models.TextChoices):
     For old/existing data, we'll add the previously saved value to the dropdown at runtime so we don't lose data.
     """
 
-    D = "Developmental", "Developmental"
-    A = "Adult", "Adult"
+    DEV = "Developmental", "Developmental"
+    ADULT = "Adult", "Adult"
     AG = "Adult (gestation)", "Adult (gestation)"
     ML = "Multi-lifestage", "Multi-lifestage"
 
@@ -89,10 +89,10 @@ class NegativeControl(models.TextChoices):
 
 
 class DataType(models.TextChoices):
-    C = "C", "Continuous"
-    D = "D", "Dichotomous"
-    P = "P", "Percent Difference"
-    DC = "DC", "Dichotomous Cancer"
+    CONTINUOUS = "C", "Continuous"
+    DICHOTOMOUS = "D", "Dichotomous"
+    PERCENT_DIFFERENCE = "P", "Percent Difference"
+    DICHOTOMOUS_CANCER = "DC", "Dichotomous Cancer"
     NR = "NR", "Not reported"
 
 
@@ -115,13 +115,13 @@ class VarianceType(models.IntegerChoices):
 
 class ObservationTimeUnits(models.IntegerChoices):
     NR = 0, "not reported"
-    S = 1, "seconds"
+    SEC = 1, "seconds"
     MIN = 2, "minutes"
-    H = 3, "hours"
-    D = 4, "days"
-    W = 5, "weeks"
+    HR = 3, "hours"
+    DAY = 4, "days"
+    WK = 5, "weeks"
     MON = 6, "months"
-    Y = 9, "years"
+    YR = 9, "years"
     PND = 7, "post-natal day (PND)"
     GD = 8, "gestational day (GD)"
 

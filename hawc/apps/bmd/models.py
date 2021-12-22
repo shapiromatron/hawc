@@ -9,6 +9,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
 
+from ..animal.constants import DataType
 from ..common.models import get_model_copy_name
 from . import constants, managers
 
@@ -207,7 +208,7 @@ class Session(models.Model):
         # only get doses where data are reported
         doses = [d for d, grp in zip(doses, grps) if grp["isReported"]]
 
-        if self.endpoint.data_type == "C":
+        if self.endpoint.data_type == DataType.CONTINUOUS:
             Cls = bmds.ContinuousDataset
             kwargs = dict(
                 doses=doses,

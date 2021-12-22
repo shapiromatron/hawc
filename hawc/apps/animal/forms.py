@@ -544,7 +544,7 @@ class EndpointForm(ModelForm):
         obs_time = data.get("observation_time", None)
         observation_time_units = data.get("observation_time_units", 0)
 
-        if obs_time is not None and observation_time_units == 0:
+        if obs_time is not None and observation_time_units == constants.ObservationTimeUnits.NR:
             errors["observation_time_units"] = cls.OBS_TIME_UNITS_REQ
 
         if obs_time is None and observation_time_units > 0:
@@ -568,11 +568,14 @@ class EndpointForm(ModelForm):
 
         confidence_interval = data.get("confidence_interval", None)
         variance_type = data.get("variance_type", 0)
-        data_type = data.get("data_type", "C")
-        if data_type == "P" and confidence_interval is None:
+        data_type = data.get("data_type", constants.DataType.CONTINUOUS)
+        if data_type == constants.DataType.PERCENT_DIFFERENCE and confidence_interval is None:
             errors["confidence_interval"] = cls.CONF_INT_REQ
 
-        if data_type == "C" and variance_type == 0:
+        if (
+            data_type == constants.DataType.CONTINUOUS
+            and variance_type == constants.VarianceType.NA
+        ):
             errors["variance_type"] = cls.VAR_TYPE_REQ
 
         response_units = data.get("response_units", "")
@@ -635,11 +638,11 @@ class EndpointGroupForm(forms.ModelForm):
         """
         errors: Dict[str, str] = {}
 
-        if data_type == "C":
+        if data_type == constants.DataType.CONTINUOUS:
             var = data.get("variance")
             if var is not None and variance_type in (0, 3):
                 errors["variance"] = cls.VARIANCE_REQ
-        elif data_type == "P":
+        elif data_type == constants.DataType.PERCENT_DIFFERENCE:
             lower_ci = data.get("lower_ci")
             upper_ci = data.get("upper_ci")
             if lower_ci is None and upper_ci is not None:
@@ -648,7 +651,7 @@ class EndpointGroupForm(forms.ModelForm):
                 errors["upper_ci"] = cls.UPPER_CI_REQ
             if lower_ci is not None and upper_ci is not None and lower_ci > upper_ci:
                 errors["lower_ci"] = cls.LOWER_CI_GT_UPPER
-        elif data_type in ["D", "DC"]:
+        elif data_type in [constants.DataType.DICHOTOMOUS, constants.DataType.DICHOTOMOUS_CANCER]:
             if data.get("incidence") is None and data.get("n") is not None:
                 errors["incidence"] = cls.INC_REQ
             if data.get("incidence") is not None and data.get("n") is None:

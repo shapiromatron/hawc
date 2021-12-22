@@ -50,19 +50,19 @@ def get_significance_and_direction(data_type, groups):
         return significance_list
 
     if data_type in {
-        constants.DataType.C,
-        constants.DataType.P,
-        constants.DataType.D,
-        constants.DataType.DC,
+        constants.DataType.CONTINUOUS,
+        constants.DataType.PERCENT_DIFFERENCE,
+        constants.DataType.DICHOTOMOUS,
+        constants.DataType.DICHOTOMOUS_CANCER,
     }:
         if data_type in {
-            constants.DataType.C,
-            constants.DataType.P,
+            constants.DataType.CONTINUOUS,
+            constants.DataType.PERCENT_DIFFERENCE,
         }:
             field = "response"
         elif data_type in {
-            constants.DataType.D,
-            constants.DataType.DC,
+            constants.DataType.DICHOTOMOUS,
+            constants.DataType.DICHOTOMOUS_CANCER,
         }:
             field = "percent_affected"
         else:

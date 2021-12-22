@@ -486,7 +486,7 @@ class DosingRegime(models.Model):
     )
     negative_control = models.CharField(
         max_length=2,
-        default="VT",
+        default=constants.NegativeControl.VT,
         choices=constants.NegativeControl.choices,
         help_text="Description of negative-controls used",
     )
@@ -745,7 +745,7 @@ class Endpoint(BaseEndpoint):
     data_type = models.CharField(
         max_length=2,
         choices=constants.DataType.choices,
-        default=constants.DataType.C,
+        default=constants.DataType.CONTINUOUS,
         verbose_name="Dataset type",
     )
     variance_type = models.PositiveSmallIntegerField(
@@ -1326,9 +1326,9 @@ class ConfidenceIntervalsMixin:
     @staticmethod
     def stdev(variance_type, variance, n):
         # calculate stdev given re
-        if variance_type == 1:
+        if variance_type == constants.VarianceType.SD:
             return variance
-        elif variance_type == 2 and variance is not None and n is not None:
+        elif variance_type == constants.VarianceType.SE and variance is not None and n is not None:
             return variance * math.sqrt(n)
         else:
             return None
@@ -1362,7 +1362,7 @@ class ConfidenceIntervalsMixin:
         """
         for i, eg in enumerate(egs):
             mean = low = high = None
-            if data_type == "C":
+            if data_type == constants.DataType.CONTINUOUS:
 
                 if i == 0:
                     n_1 = eg["n"]
@@ -1388,7 +1388,7 @@ class ConfidenceIntervalsMixin:
                         low = rng[0]
                         high = rng[1]
 
-            elif data_type == "P":
+            elif data_type == constants.DataType.PERCENT_DIFFERENCE:
                 mean = eg["response"]
                 low = eg["lower_ci"]
                 high = eg["upper_ci"]
@@ -1410,7 +1410,11 @@ class ConfidenceIntervalsMixin:
             if lower_ci is not None or upper_ci is not None or n is None or n <= 0:
                 continue
 
-            if data_type == "C" and eg["response"] is not None and eg["stdev"] is not None:
+            if (
+                data_type == constants.DataType.CONTINUOUS
+                and eg["response"] is not None
+                and eg["stdev"] is not None
+            ):
                 """
                 Two-tailed t-test, assuming 95% confidence interval.
                 """

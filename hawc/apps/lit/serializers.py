@@ -53,13 +53,13 @@ class SearchSerializer(serializers.ModelSerializer):
         if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
             raise serializers.ValidationError({"slug": ASSESSMENT_UNIQUE_MESSAGE})
 
-        if data["search_type"] != "i":
+        if data["search_type"] != constants.SearchType.IMPORT:
             raise serializers.ValidationError("API currently only supports imports")
 
         if data["source"] != constants.ReferenceDatabase.HERO:
             raise serializers.ValidationError("API currently only supports HERO imports")
 
-        if data["search_type"] == "i":
+        if data["search_type"] == constants.SearchType.IMPORT:
             ids = forms.ImportForm.validate_import_search_string(data["search_string"])
             self.validate_import_ids_exist(data, ids)
 

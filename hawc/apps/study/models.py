@@ -61,7 +61,7 @@ class Study(Reference):
     full_citation = models.TextField(help_text="Complete study citation, in desired format.")
     coi_reported = models.PositiveSmallIntegerField(
         choices=constants.CoiReported.choices,
-        default=4,
+        default=constants.CoiReported.NONE,
         verbose_name="COI reported",
         help_text="Was a conflict of interest reported by the study authors?",
     )

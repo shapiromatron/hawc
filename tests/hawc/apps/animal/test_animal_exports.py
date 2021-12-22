@@ -4,12 +4,12 @@ from hawc.apps.animal.exports import EndpointFlatDataPivot, get_significance_and
 
 def test_get_significance_and_direction():
     # no data
-    resp = get_significance_and_direction(DataType.C, [],)
+    resp = get_significance_and_direction(DataType.CONTINUOUS, [],)
     assert resp == []
 
     # continuous
     resp = get_significance_and_direction(
-        DataType.C,
+        DataType.CONTINUOUS,
         [
             dict(significant=False, response=0),
             dict(significant=False, response=1),
@@ -22,7 +22,7 @@ def test_get_significance_and_direction():
 
     # dichotomous
     resp = get_significance_and_direction(
-        DataType.D,
+        DataType.DICHOTOMOUS,
         [
             dict(percent_affected=0, significant=False),
             dict(percent_affected=10, significant=False),
@@ -32,7 +32,7 @@ def test_get_significance_and_direction():
     assert resp == ["No", "No", "Yes - ↑"]
 
     resp = get_significance_and_direction(
-        DataType.DC,
+        DataType.DICHOTOMOUS_CANCER,
         [
             dict(percent_affected=50, significant=False),
             dict(percent_affected=40, significant=False),
@@ -43,7 +43,7 @@ def test_get_significance_and_direction():
 
     # percent diff
     resp = get_significance_and_direction(
-        DataType.C,
+        DataType.CONTINUOUS,
         [
             dict(significant=False, response=0),
             dict(significant=False, response=0),

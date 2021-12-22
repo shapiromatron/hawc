@@ -26,7 +26,7 @@ class Task(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="tasks")
     type = models.PositiveSmallIntegerField(choices=constants.TaskType.choices)
     status = models.PositiveSmallIntegerField(
-        default=constants.TaskStatus.STATUS_NOT_STARTED, choices=constants.TaskStatus.choices
+        default=constants.TaskStatus.NOT_STARTED, choices=constants.TaskStatus.choices
     )
     open = models.BooleanField(default=False)
     due_date = models.DateTimeField(blank=True, null=True)
@@ -59,17 +59,17 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and open/closed."""
-        if self.status == constants.TaskStatus.STATUS_NOT_STARTED:
+        if self.status == constants.TaskStatus.NOT_STARTED:
             self.started = None
             self.completed = None
             self.open = False
-        elif self.status == constants.TaskStatus.STATUS_STARTED:
+        elif self.status == constants.TaskStatus.STARTED:
             self.started = timezone.now()
             self.completed = None
             self.open = True
         elif self.status in [
-            constants.TaskStatus.STATUS_COMPLETED,
-            constants.TaskStatus.STATUS_ABANDONED,
+            constants.TaskStatus.COMPLETED,
+            constants.TaskStatus.ABANDONED,
         ]:
             self.completed = timezone.now()
             self.open = False
@@ -78,15 +78,15 @@ class Task(models.Model):
 
     def start_if_unstarted(self, user):
         """Save task as started by user if currently not started."""
-        if self.status == constants.TaskStatus.STATUS_NOT_STARTED:
+        if self.status == constants.TaskStatus.NOT_STARTED:
             logger.info(f'Starting "{self.get_type_display()}" task {self.id}')
             self.owner = user
-            self.status = constants.TaskStatus.STATUS_STARTED
+            self.status = constants.TaskStatus.STARTED
             self.save()
 
     def stop_if_started(self):
         """Stop task if currently started."""
-        if self.status == constants.TaskStatus.STATUS_STARTED:
+        if self.status == constants.TaskStatus.STARTED:
             logger.info(f'Stopping "{self.get_type_display()}" task {self.id}')
-            self.status = constants.TaskStatus.STATUS_COMPLETED
+            self.status = constants.TaskStatus.COMPLETED
             self.save()

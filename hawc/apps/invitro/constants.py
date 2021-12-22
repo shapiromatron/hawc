@@ -33,8 +33,8 @@ class VarianceType(models.IntegerChoices):
 
 
 class DataType(models.TextChoices):
-    C = "C", "Continuous"
-    D = "D", "Dichotomous"
+    CONTINUOUS = "C", "Continuous"
+    DICHOTOMOUS = "D", "Dichotomous"
     NR = "NR", "Not reported"
 
 
@@ -70,11 +70,11 @@ class TrendTestResult(models.IntegerChoices):
 
 class ObservationTimeUnits(models.IntegerChoices):
     NR = 0, "not-reported"
-    S = 1, "seconds"
+    SEC = 1, "seconds"
     MIN = 2, "minutes"
-    H = 3, "hours"
-    D = 4, "days"
-    W = 5, "weeks"
+    HR = 3, "hours"
+    DAY = 4, "days"
+    WK = 5, "weeks"
     MON = 6, "months"
 
 

@@ -2,9 +2,9 @@ from django.db import models
 
 
 class NoelName(models.IntegerChoices):
+    NEL = 2, "NEL/LEL"
     NOEL = 0, "NOEL/LOEL"
     NOAEL = 1, "NOAEL/LOAEL"
-    NEL = 2, "NEL/LEL"
 
 
 class RobName(models.IntegerChoices):
@@ -13,7 +13,7 @@ class RobName(models.IntegerChoices):
 
 
 class JobStatus(models.IntegerChoices):
-    PENDING = 0, "PENDING"
+    PENDING = 1, "PENDING"
     SUCCESS = 2, "SUCCESS"
     FAILURE = 3, "FAILURE"
 

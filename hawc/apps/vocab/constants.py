@@ -1,17 +1,16 @@
 from typing import Dict, List
 
+from django.db.models import IntegerChoices
 from django.utils.functional import classproperty
 
-from ..common.constants import IntChoiceEnum
 
-
-class VocabularyNamespace(IntChoiceEnum):
+class VocabularyNamespace(IntegerChoices):
     """
     A namespace for a vocabulary. HAWC will not enforce a single vocabulary, this can be controlled
     at the assessment level.
     """
 
-    EHV = 1  # environmental health vocabulary
+    EHV = 1, "EHV"
 
     @classproperty
     def display_dict(cls) -> Dict:
@@ -26,16 +25,16 @@ class VocabularyNamespace(IntChoiceEnum):
         return self.display_dict[self.value]
 
 
-class VocabularyTermType(IntChoiceEnum):
+class VocabularyTermType(IntegerChoices):
     """
     Vocabulary will be associated with certain fields in HAWC. This enum allows us to map the vocab.
     """
 
-    system = 1
-    organ = 2
-    effect = 3
-    effect_subtype = 4
-    endpoint_name = 5
+    system = 1, "system"
+    organ = 2, "organ"
+    effect = 3, "effect"
+    effect_subtype = 4, "effect_subtype"
+    endpoint_name = 5, "endpoint_name"
 
     @classmethod
     def value_to_text_field(cls) -> Dict:
@@ -58,9 +57,9 @@ class VocabularyTermType(IntChoiceEnum):
         }
 
 
-class Ontology(IntChoiceEnum):
+class Ontology(IntegerChoices):
     """
     Ontology for for UID
     """
 
-    umls = 1
+    umls = 1, "UMLS"

@@ -290,7 +290,7 @@ class Visual(models.Model):
         help_text="For assessments marked for public viewing, mark visual to be viewable by public",
     )
     sort_order = models.CharField(
-        max_length=40, choices=constants.SortOrder.choices, default="short_citation",
+        max_length=40, choices=constants.SortOrder.choices, default=constants.SortOrder.SC,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -544,10 +544,15 @@ class Visual(models.Model):
     def _update_settings_across_assessments(self, cw: Dict) -> str:
         settings = json.loads(self.settings)
 
-        if (self.visual_type == 1) and "included_metrics" in settings:
+        if (
+            self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW
+        ) and "included_metrics" in settings:
             pass
 
-        if (self.visual_type == 2 or self.visual_type == 3) and "included_metrics" in settings:
+        if (
+            self.visual_type
+            in [constants.VisualType.ROB_BARCHART, constants.VisualType.ROB_HEATMAP]
+        ) and "included_metrics" in settings:
             ids = []
             model_cw = cw[get_model_copy_name(apps.get_model("riskofbias", "RiskOfBiasMetric"))]
             for id_ in settings["included_metrics"]:

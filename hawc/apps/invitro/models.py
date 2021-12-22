@@ -163,7 +163,7 @@ class IVExperiment(models.Model):
     metabolic_activation = models.CharField(
         max_length=2,
         choices=constants.MetabolicActivation.choices,
-        default="nr",
+        default=constants.MetabolicActivation.NR,
         help_text="Was metabolic-activation used in system (ex: S9)?",
     )
     serum = models.CharField(
@@ -291,10 +291,13 @@ class IVEndpoint(BaseEndpoint):
         "(ex: Figure 1, Table 2, etc.)",
     )
     data_type = models.CharField(
-        max_length=2, choices=constants.DataType.choices, default="C", verbose_name="Dataset type",
+        max_length=2,
+        choices=constants.DataType.choices,
+        default=constants.DataType.CONTINUOUS,
+        verbose_name="Dataset type",
     )
     variance_type = models.PositiveSmallIntegerField(
-        default=0, choices=constants.VarianceType.choices
+        default=constants.VarianceType.NA, choices=constants.VarianceType.choices
     )
     response_units = models.CharField(max_length=64, blank=True, verbose_name="Response units")
     values_estimated = models.BooleanField(
@@ -303,7 +306,7 @@ class IVEndpoint(BaseEndpoint):
     )
     observation_time = models.CharField(blank=True, max_length=32)
     observation_time_units = models.PositiveSmallIntegerField(
-        default=0, choices=constants.ObservationTimeUnits.choices
+        default=constants.ObservationTimeUnits.NR, choices=constants.ObservationTimeUnits.choices
     )
     NOEL = models.SmallIntegerField(
         verbose_name="NOEL", default=-999, help_text="No observed effect level"
@@ -312,10 +315,10 @@ class IVEndpoint(BaseEndpoint):
         verbose_name="LOEL", default=-999, help_text="Lowest observed effect level"
     )
     monotonicity = models.PositiveSmallIntegerField(
-        default=8, choices=constants.Monotonicity.choices
+        default=constants.Monotonicity.NR, choices=constants.Monotonicity.choices
     )
     overall_pattern = models.PositiveSmallIntegerField(
-        default=0, choices=constants.OverallPattern.choices
+        default=constants.OverallPattern.NA, choices=constants.OverallPattern.choices
     )
     statistical_test_notes = models.CharField(
         max_length=256,
@@ -323,7 +326,7 @@ class IVEndpoint(BaseEndpoint):
         help_text="Notes describing details on the statistical tests performed",
     )
     trend_test = models.PositiveSmallIntegerField(
-        default=0, choices=constants.TrendTestResult.choices
+        default=constants.TrendTestResult.NR, choices=constants.TrendTestResult.choices
     )
     trend_test_notes = models.CharField(
         max_length=256,
@@ -441,10 +444,12 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     response = models.FloatField(blank=True, null=True)
     variance = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
     difference_control = models.CharField(
-        max_length=2, choices=constants.DifferenceControl.choices, default="nc"
+        max_length=2,
+        choices=constants.DifferenceControl.choices,
+        default=constants.DifferenceControl.NC,
     )
     significant_control = models.CharField(
-        max_length=2, default="nr", choices=constants.Significance.choices
+        max_length=2, default=constants.Significance.NR, choices=constants.Significance.choices
     )
     cytotoxicity_observed = models.BooleanField(
         default=None, choices=constants.OBSERVATION_CHOICES, null=True, blank=True,

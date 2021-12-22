@@ -645,7 +645,7 @@ class Group(models.Model):
         + "typically the group with the lowest or no exposure",
         blank=True,
     )
-    sex = models.CharField(max_length=1, default="U", choices=constants.Sex.choices)
+    sex = models.CharField(max_length=1, default=constants.Sex.U, choices=constants.Sex.choices)
     ethnicities = models.ManyToManyField(Ethnicity, blank=True, help_text="Optional")
     eligible_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Eligible N", help_text="Optional"
@@ -976,7 +976,9 @@ class CentralTendency(models.Model):
         + HAWC_VIS_NOTE,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=constants.EstimateType.choices, verbose_name="Central estimate type", default=0
+        choices=constants.EstimateType.choices,
+        verbose_name="Central estimate type",
+        default=constants.EstimateType.NONE,
     )
     variance = models.FloatField(blank=True, null=True, verbose_name="Variance")
     variance_type = models.PositiveSmallIntegerField(
@@ -1084,9 +1086,13 @@ class GroupNumericalDescriptions(models.Model):
         choices=constants.GroupVarianceType.choices, default=constants.GroupVarianceType.NONE
     )
     lower = models.FloatField(blank=True, null=True)
-    lower_type = models.PositiveSmallIntegerField(choices=constants.LowerLimit.choices, default=0)
+    lower_type = models.PositiveSmallIntegerField(
+        choices=constants.LowerLimit.choices, default=constants.LowerLimit.NONE
+    )
     upper = models.FloatField(blank=True, null=True)
-    upper_type = models.PositiveSmallIntegerField(choices=constants.UpperLimit.choices, default=0)
+    upper_type = models.PositiveSmallIntegerField(
+        choices=constants.UpperLimit.choices, default=constants.UpperLimit.NONE
+    )
 
     COPY_NAME = "group_descriptions"
 
@@ -1199,7 +1205,7 @@ class Result(models.Model):
     dose_response = models.PositiveSmallIntegerField(
         verbose_name="Dose Response Trend",
         help_text=OPTIONAL_NOTE,
-        default=0,
+        default=constants.DoseResponse.NA,
         choices=constants.DoseResponse.choices,
     )
     dose_response_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
@@ -1211,7 +1217,7 @@ class Result(models.Model):
     )
     statistical_power = models.PositiveSmallIntegerField(
         help_text="Is the study sufficiently powered?" + OPTIONAL_NOTE,
-        default=0,
+        default=constants.StatisticalPower.NR,
         choices=constants.StatisticalPower.choices,
     )
     statistical_power_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
@@ -1227,7 +1233,9 @@ class Result(models.Model):
         AdjustmentFactor, through=ResultAdjustmentFactor, related_name="outcomes", blank=True,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=constants.EstimateType.choices, verbose_name="Central estimate type", default=0
+        choices=constants.EstimateType.choices,
+        verbose_name="Central estimate type",
+        default=constants.EstimateType.NONE,
     )
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
@@ -1561,7 +1569,7 @@ class GroupResult(models.Model):
         + 'See "Results" section of https://ehp.niehs.nih.gov/1205502/ for examples and further details. '
         + 'Choose between "inconclusive" vs. "not-supportive" based on chemical- and study-specific context. '
         + HAWC_VIS_NOTE_UNSTYLED,
-        default=1,
+        default=constants.MainFinding.I,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

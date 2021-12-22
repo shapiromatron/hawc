@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ("ontology", models.PositiveSmallIntegerField(choices=[(1, "umls")])),
+                ("ontology", models.PositiveSmallIntegerField(choices=[(1, "UMLS")])),
                 ("uid", models.CharField(max_length=128, verbose_name="UID")),
                 ("deprecated_on", models.DateTimeField(blank=True, null=True)),
                 ("created_on", models.DateTimeField(auto_now_add=True)),
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                     "namespace",
                     models.PositiveSmallIntegerField(
                         choices=[(1, "EHV")],
-                        default=hawc.apps.vocab.constants.VocabularyNamespace(1),
+                        default=hawc.apps.vocab.constants.VocabularyNamespace.EHV,
                     ),
                 ),
                 (
