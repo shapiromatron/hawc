@@ -5,7 +5,7 @@ from django.db import transaction
 
 from hawc.apps.lit import constants
 from hawc.apps.lit.models import Identifiers, Reference
-from hawc.services.utils.doi import get_doi_from_hero, get_doi_from_pubmed_or_ris, get_doi_if_valid
+from hawc.services.utils.doi import get_doi_from_hero, get_doi_from_pubmed_or_ris, try_get_doi
 
 
 class Command(BaseCommand):
@@ -66,7 +66,7 @@ def validate_dois(self, doi_identifiers):
             doi_id_saved[ident.unique_id] = ident
 
     for ident in doi_identifiers:
-        new_doi = get_doi_if_valid(ident.unique_id)
+        new_doi = try_get_doi(ident.unique_id)
         if new_doi:
             if new_doi not in doi_id_saved:
                 # doi validation resulted in a new doi--save to be bulk updated
@@ -101,28 +101,25 @@ def validate_dois(self, doi_identifiers):
 
 
 def create_dois(refs, extensive: bool = False):
-    """goes through all references and attempts to locate a DOI from other ids
-    default: json loads each id's content attribute and checks the doi attribute for a valid doi if false
-        if True, searches entire content attribute as a string, no json loading
-    extensive: searches entire content field for a valid doi
+    """Attempt to find a DOI for each reference given other identifier metadata
 
     Args:
         refs ([References]): a list of references without doi identifiers
-        extensive (bool, optional): Determines whether to search extensively or by default (see above). Defaults to False.
+        extensive (bool, optional): Determines whether to search full text (True) of field (False; default)
     """
     for ref in refs.prefetch_related("identifiers"):
         for ids in ref.identifiers.all():
             doi = None
             if extensive:
-                doi = get_doi_if_valid(ids.content)
+                doi = try_get_doi(ids.content, full_text=True)
             else:
-                if ids.content != "":
+                if ids.content:
                     if ids.database == constants.HERO:
                         doi = get_doi_from_hero(ids)
                     if ids.database == constants.RIS or ids.database == constants.PUBMED:
                         doi = get_doi_from_pubmed_or_ris(ids)
             if doi:
-                doi_identifier, created = Identifiers.objects.get_or_create(
+                doi_identifier, _ = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI
                 )
                 ref.identifiers.add(doi_identifier)

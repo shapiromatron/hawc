@@ -1,41 +1,47 @@
 import html
 import json
 import urllib.parse
+from typing import Optional
 
 from hawc.apps.lit import constants
 
 
-def get_doi_if_valid(text: str):
+def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
+    """Try to extract a DOI out of text.
+
+    Args:
+        text (str): The text to find a DOI
+        full_text (bool, optional): Additional checks if unstructured text, default False.
+
+    Returns:
+        Optional[str]: A DOI string if one can be found
+    """
+    text = html.unescape(text)
+    text = urllib.parse.unquote(text)
     doi = constants.DOI_EXTRACT.search(text)
     if doi:
         doi = doi.group(0)
-        doi = html.unescape(doi)
-        doi = urllib.parse.unquote(doi)
-        while doi.endswith((".", ",", '"')):
+        if doi.endswith((".", ",", '"')):
             doi = doi[:-1]
-        if (index := doi.find("</ArticleId>")) != -1:
-            doi = doi[:index]
-        if (index2 := doi.find("</ELocationID>")) != -1:
-            doi = doi[:index2]
+        if full_text:
+            if (index := doi.find("</ArticleId>")) >= 0:
+                doi = doi[:index]
+            if (index2 := doi.find("</ELocationID>")) >= 0:
+                doi = doi[:index2]
     return doi
 
 
-def get_doi_from_hero(ident):
-    try:
-        doi = json.loads(ident.content)["json"]["doi"]
-    except (KeyError):
-        try:
-            doi = json.loads(ident.content)["doi"]
-        except (KeyError):
-            doi = None
-    doi = get_doi_if_valid(str(doi))
-    return doi
+def get_doi_from_hero(ident) -> Optional[str]:
+    data = json.loads(ident.content)
+    if "doi" in data:
+        return try_get_doi(data["doi"])
+    if "json" in data:
+        return try_get_doi(data["json"].get("doi", ""))
+    return None
 
 
-def get_doi_from_pubmed_or_ris(ident):
-    try:
-        doi = json.loads(ident.content)["doi"]
-    except (KeyError):
-        doi = None
-    doi = get_doi_if_valid(str(doi))
-    return doi
+def get_doi_from_pubmed_or_ris(ident) -> Optional[str]:
+    data = json.loads(ident.content)
+    if "doi" in data:
+        return try_get_doi(data["doi"])
+    return None
