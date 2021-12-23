@@ -11,10 +11,11 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import HttpResponse, get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -456,6 +457,10 @@ class AttachmentRead(BaseDetail):
     model = models.Attachment
 
     def get(self, request, *args, **kwargs):
+        if request.GET.get("test", -1) != -1:
+            return render(
+                request, "assessment/components/attachment_row.html", {"object": self.get_object()}
+            )
         self.object = self.get_object()
         if self.assessment.user_is_part_of_team(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
@@ -465,13 +470,38 @@ class AttachmentRead(BaseDetail):
 
 class AttachmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
+    template_name = "assessment/components/attachment_edit_row.html"
     model = models.Attachment
-    form_class = forms.AttachmentForm
+    form_class = forms.NewAttachmentForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.post_object_save(form)  # add hook for post-object save
+        self.create_log(self.object)
+        self.send_message()
+        response = render(
+            self.request, "assessment/components/attachment_row.html", {"object": self.object}
+        )
+        return response
 
 
 class AttachmentDelete(BaseDelete):
     success_message = "Attachment deleted."
     model = models.Attachment
+
+    @transaction.atomic
+    def delete(self, request, *args, **kwargs):
+        super().delete(self, request, *args, **kwargs)
+        context = self.get_context_data()
+        return render(request, "assessment/_attachment_list.html", context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            self.assessment, not context["obj_perms"]["edit"]
+        )
+        context["canEdit"] = context["obj_perms"]["edit"]
+        return context
 
     def get_success_url(self):
         return self.object.get_absolute_url()

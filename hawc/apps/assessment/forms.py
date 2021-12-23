@@ -1,6 +1,9 @@
 from pathlib import Path
 from textwrap import dedent
 
+from crispy_forms import bootstrap as cfb
+from crispy_forms import layout as cfl
+from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -196,6 +199,64 @@ class AttachmentForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
+        return helper
+
+
+class NewAttachmentForm(forms.ModelForm):
+    class Meta:
+        model = models.Attachment
+        exclude = ("content_type", "object_id", "content_object")
+
+    def __init__(self, *args, **kwargs):
+        obj = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if obj:
+            self.instance.content_type = ContentType.objects.get_for_model(obj)
+            self.instance.object_id = obj.id
+            self.instance.content_object = obj
+
+    @property
+    def helper(self):
+        # by default take-up the whole row
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) == forms.Textarea:
+                widget.attrs["rows"] = 3
+                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
+        buttons = [
+            cfl.HTML(
+                f"""<button class="btn btn-sm btn-info"
+                            hx-trigger="click"
+                            hx-target="#attach-row-{self.instance.pk}"
+                            hx-swap="innerHTML"
+                            hx-post="/assessment/attachment/{self.instance.pk}/update/">
+                            Save</button>"""
+            ),
+            cfl.HTML(
+                f"""<button class="btn btn-sm btn-light"
+                            hx-trigger="click"
+                            hx-target="#attach-row-{self.instance.pk}"
+                            hx-swap="innerHTML"
+                            hx-params="test"
+                            hx-get="/assessment/attachment/{self.instance.pk}">
+                            Cancel</button>"""
+            ),
+        ]
+        helper = BaseFormHelper(self)
+        helper.layout = Layout(
+            Fieldset(
+                "",
+                cfl.Row(
+                    Div("title", style="width: 25%; padding: 15px"),
+                    Div("description", style="width: 60%; padding: 15px"),
+                    cfb.FormActions(*buttons, style="width: 15%"),
+                ),
+                cfl.Row(
+                    Div("publicly_available", style="width: 25%; padding: 15px"),
+                    Div("attachment", style="width: 60%; padding: 15px"),
+                ),
+            ),
+        )
         return helper
 
 

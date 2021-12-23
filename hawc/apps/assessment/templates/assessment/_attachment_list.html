@@ -1,4 +1,5 @@
 {% if object_list.count > 0 %}
+<div id="attachTable">
 <h2>Attachments</h2>
 <table class="table table-sm table-striped">
     <colgroup>
@@ -22,17 +23,31 @@
     </thead>
     <tbody>
         {% for object in object_list %}
-        <tr>
+        <tr id="attach-row-{{object.pk}}">
             <td><a href="{{object.attachment.url}}">{{object.title}}</a></td>
             <td>{{object.description|safe}}</td>
             {% if canEdit %}
             <td>
-                <a class="btn btn-sm btn-info" href="{{object.get_edit_url}}">Edit</a>
-                <a class="btn btn-sm btn-danger" href="{{object.get_delete_url}}">Delete</a>
+                <button
+                    class="btn btn-sm btn-info"
+                    hx-get="{{object.get_edit_url}}"
+                    hx-trigger="click"
+                    hx-target="#attach-row-{{object.pk}}"
+                    hx-swap="innerHTML">
+                    Edit</button>
+                <button
+                    class="btn btn-sm btn-danger"
+                    hx-delete="{{object.get_delete_url}}"
+                    hx-trigger="click"
+                    hx-target="#attachTable"
+                    hx-swap="innerHTML"
+                    hx-confirm="Are you sure you wish to delete this attachment?">
+                    Delete</button>
             </td>
             {% endif %}
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% endif %}

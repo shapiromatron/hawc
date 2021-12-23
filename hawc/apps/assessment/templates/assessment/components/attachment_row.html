@@ -1,0 +1,12 @@
+            <td><a href="{{object.attachment.url}}">{{object.title}}</a></td>
+            <td>{{object.description|safe}}</td>
+            <td>
+                <button
+                    class="btn btn-sm btn-info"
+                    hx-get="{{object.get_edit_url}}"
+                    hx-trigger="click"
+                    hx-target="#attach-row-{{object.pk}}"
+                    hx-swap="innerHTML">
+                    Edit</button>
+                <a class="btn btn-sm btn-danger" href="{{object.get_delete_url}}">Delete</a>
+            </td>
