@@ -11,7 +11,6 @@ import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 @observer
 class Root extends Component {
     componentDidMount() {
-        this.props.store.setConfig("config");
         this.props.store.fetchFormData();
     }
 

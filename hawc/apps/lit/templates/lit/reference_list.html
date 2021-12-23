@@ -7,21 +7,5 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script id="config" type="text/json" charset="utf-8">
-    {
-        "assessment_id": {{assessment.id}},
-        "search_id": {{ object.id | default:"null" }},
-        "tags": {{ tags | safe }},
-        "references": {{ ref_objs | safe }},
-        "canEdit": {{ obj_perms.edit | lower }},
-        "untaggedReferenceCount": {{untagged.count}}
-    }
-  </script>
-  <script type="text/javascript">
-    window.app.startup("litStartup", function(lit){
-      const el = document.getElementById('main'),
-            data = window.app.getConfig();
-      lit.startupReferenceList(el, data);
-    });
-  </script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

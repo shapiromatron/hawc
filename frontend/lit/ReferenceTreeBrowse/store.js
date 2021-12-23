@@ -91,34 +91,6 @@ class Store {
         return refs;
     }
 
-    @computed get getActionLinks() {
-        let links = [];
-        if (this.untaggedReferencesSelected === true && this.config.canEdit) {
-            links.push([
-                `/lit/assessment/${this.config.assessment_id}/tag/untagged/`,
-                "Tag untagged references",
-            ]);
-        } else if (this.selectedTag !== null) {
-            links = [
-                [
-                    `/lit/api/tags/${this.selectedTag.data.pk}/references/?format=xlsx`,
-                    "Download references",
-                ],
-                [
-                    `/lit/api/tags/${this.selectedTag.data.pk}/references-table-builder/?format=xlsx`,
-                    "Download references (table-builder format)",
-                ],
-            ];
-            if (this.config.canEdit) {
-                links.push([
-                    `/lit/tag/${this.selectedTag.data.pk}/tag/`,
-                    "Tag references with this tag (but not descendants)",
-                ]);
-            }
-        }
-        return links;
-    }
-
     // year filter
     @observable yearFilter = null;
     @action.bound updateYearFilter(filter) {

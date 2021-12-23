@@ -15,23 +15,13 @@ from ..assessment.serializers import AssessmentSerializer
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper, cleanHTML
 from ..lit.models import Reference, Search
-from . import managers
+from . import constants, managers
 
 logger = logging.getLogger(__name__)
 
 
 class Study(Reference):
     objects = managers.StudyManager()
-
-    COI_REPORTED_CHOICES = (
-        (4, "---"),
-        (0, "Authors report they have no COI"),
-        (1, "Authors disclosed COI"),
-        (5, "Not reported; no COI is inferred based on author affiliation and/or funding source",),
-        (6, "Not reported; a COI is inferred based on author affiliation and/or funding source",),
-        (3, "Not reported"),
-        (2, "Unknown"),
-    )
 
     TEXT_CLEANUP_FIELDS = (
         "short_citation",
@@ -70,8 +60,8 @@ class Study(Reference):
     )
     full_citation = models.TextField(help_text="Complete study citation, in desired format.")
     coi_reported = models.PositiveSmallIntegerField(
-        choices=COI_REPORTED_CHOICES,
-        default=4,
+        choices=constants.CoiReported.choices,
+        default=constants.CoiReported.NONE,
         verbose_name="COI reported",
         help_text="Was a conflict of interest reported by the study authors?",
     )
@@ -145,7 +135,11 @@ class Study(Reference):
             attrs["full_citation"] = reference.ref_full_citation
         if "short_citation" not in attrs:
             attrs["short_citation"] = reference.ref_short_citation
-        return Study.objects.create(**attrs)
+        internal_communications = attrs.pop("internal_communications", None)
+        study = Study.objects.create(**attrs)
+        if internal_communications and len(internal_communications.strip()) > 0:
+            study.set_communications(internal_communications)
+        return study
 
     @classmethod
     @transaction.atomic
