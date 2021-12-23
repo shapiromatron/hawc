@@ -167,10 +167,10 @@ class SearchUpdate(BaseUpdate):
     model = models.Search
 
     def get_form_class(self):
-        if self.object.search_type == "s":
+        if self.object.search_type == constants.SearchType.SEARCH:
             return forms.SearchForm
-        elif self.object.search_type == "i":
-            if self.object.source == constants.RIS:
+        elif self.object.search_type == constants.SearchType.IMPORT:
+            if self.object.source == constants.ReferenceDatabase.RIS:
                 return forms.RisImportForm
             else:
                 return forms.ImportForm
