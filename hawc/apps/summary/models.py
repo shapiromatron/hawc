@@ -253,6 +253,10 @@ class SummaryTable(models.Model):
         docx = table.to_docx(parser=QuillParser(base_url=base_url))
         return ReportExport(docx=docx, filename=self.slug)
 
+    @classmethod
+    def get_data(cls, table_type: int, assessment_id: int, data_source: str):
+        return cls.TABLE_SCHEMA_MAP[table_type].get_data(assessment_id, data_source)
+
     def clean(self):
         # make sure table can be built
         try:
