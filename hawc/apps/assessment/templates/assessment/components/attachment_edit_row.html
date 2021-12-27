@@ -5,7 +5,14 @@
         {% crispy form %}
     </div>
 </td>
-
+{% block extrajs %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.html5text').quillify();
+        $('.html5text').removeClass('html5text');
+    });
+</script>
+{% endblock extrajs %}
 
 
 

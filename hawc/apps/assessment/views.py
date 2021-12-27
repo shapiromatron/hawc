@@ -459,7 +459,9 @@ class AttachmentRead(BaseDetail):
     def get(self, request, *args, **kwargs):
         if request.GET.get("test", -1) != -1:
             return render(
-                request, "assessment/components/attachment_row.html", {"object": self.get_object(), "canEdit": True}
+                request,
+                "assessment/components/attachment_row.html",
+                {"object": self.get_object(), "canEdit": True},
             )
         self.object = self.get_object()
         if self.assessment.user_is_part_of_team(self.request.user):
@@ -480,7 +482,9 @@ class AttachmentUpdate(BaseUpdate):
         self.create_log(self.object)
         self.send_message()
         response = render(
-            self.request, "assessment/components/attachment_row.html", {"object": self.object}
+            self.request,
+            "assessment/components/attachment_row.html",
+            {"object": self.object, "canEdit": True},
         )
         return response
 
