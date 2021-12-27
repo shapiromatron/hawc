@@ -24,27 +24,7 @@
     <tbody>
         {% for object in object_list %}
         <tr id="attach-row-{{object.pk}}">
-            <td><a href="{{object.attachment.url}}">{{object.title}}</a></td>
-            <td>{{object.description|safe}}</td>
-            {% if canEdit %}
-            <td>
-                <button
-                    class="btn btn-sm btn-info"
-                    hx-get="{{object.get_edit_url}}"
-                    hx-trigger="click"
-                    hx-target="#attach-row-{{object.pk}}"
-                    hx-swap="innerHTML">
-                    Edit</button>
-                <button
-                    class="btn btn-sm btn-danger"
-                    hx-delete="{{object.get_delete_url}}"
-                    hx-trigger="click"
-                    hx-target="#attachTable"
-                    hx-swap="innerHTML"
-                    hx-confirm="Are you sure you wish to delete this attachment?">
-                    Delete</button>
-            </td>
-            {% endif %}
+            {% include "assessment/components/attachment_row.html" with object=object canEdit=canEdit %}
         </tr>
         {% endfor %}
     </tbody>
