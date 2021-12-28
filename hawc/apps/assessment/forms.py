@@ -223,25 +223,51 @@ class NewAttachmentForm(forms.ModelForm):
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-        buttons = [
-            cfl.HTML(
-                f"""<button class="btn btn-sm btn-info"
+        if self.instance.id:
+            buttons = [
+                cfl.HTML(
+                    """<button class="btn btn-sm btn-info"
                             hx-trigger="click"
-                            hx-target="#attach-row-{self.instance.pk}"
+                            hx-target="#attach-row-{{object.pk}}"
+                            hx-encoding="multipart/form-data"
                             hx-swap="innerHTML"
-                            hx-post="/assessment/attachment/{self.instance.pk}/update/">
+                            hx-post="
+                            /assessment/attachment/{{object.pk}}/update/">
                             Save</button>"""
-            ),
-            cfl.HTML(
-                f"""<button class="btn btn-sm btn-light"
+                ),
+                cfl.HTML(
+                    """<button class="btn btn-sm btn-light"
                             hx-trigger="click"
-                            hx-target="#attach-row-{self.instance.pk}"
+                            hx-target="#attach-row-{{object.pk}}"
                             hx-swap="innerHTML"
                             hx-params="test"
-                            hx-get="/assessment/attachment/{self.instance.pk}">
+                            hx-get="/assessment/attachment/{{object.pk}}">
                             Cancel</button>"""
-            ),
-        ]
+                ),
+            ]
+        else:
+            buttons = [
+                cfl.HTML(
+                    """<button
+                                class="btn btn-sm btn-info"
+                                hx-trigger="click"
+                                hx-target="#attachNew"
+                                hx-encoding="multipart/form-data"
+                                hx-post="{% url 'assessment:attachment_create' assessment.pk %}"
+                                hx-swap="innerHTML">
+                                Save
+                        </button>"""
+                ),
+                cfl.HTML(
+                    """<button class="btn btn-sm btn-light"
+                                hx-trigger="click"
+                                hx-target="#attachTable"
+                                hx-vals='{"new": "False"}'
+                                hx-swap="innerHTML"
+                                hx-get="{% url 'assessment:attachment_list' assessment.pk %}">
+                                Cancel</button>"""
+                ),
+            ]
         helper = BaseFormHelper(self)
         helper.layout = Layout(
             Fieldset(

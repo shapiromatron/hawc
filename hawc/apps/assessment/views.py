@@ -449,8 +449,25 @@ class AttachmentCreate(BaseCreate):
     success_message = "Attachment added."
     parent_model = models.Assessment
     parent_template_name = "parent"
+    template_name = "assessment/components/attachment_edit_row.html"
     model = models.Attachment
-    form_class = forms.AttachmentForm
+    form_class = forms.NewAttachmentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["newAttach"] = True
+        return context
+
+    @transaction.atomic
+    def form_valid(self, form):
+        super().form_valid(form)
+        context = self.get_context_data()
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            self.assessment, not context["obj_perms"]["edit"]
+        )
+        context["canEdit"] = context["obj_perms"]["edit"]
+        # context["newAttach"] = True
+        return render(self.request, "assessment/components/attachment_row.html", context)
 
 
 class AttachmentRead(BaseDetail):
@@ -470,23 +487,46 @@ class AttachmentRead(BaseDetail):
             return PermissionDenied
 
 
+class AttachmentList(BaseList):
+    model = models.Attachment
+    parent_model = models.Assessment
+    parent_template_name = "parent"
+    template_name = "assessment/_attachment_list.html"
+    object_list = None
+    form_class = forms.NewAttachmentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            self.assessment, not context["obj_perms"]["edit"]
+        )
+        context["canEdit"] = context["obj_perms"]["edit"]
+        context["object"] = context["assessment"]
+        context["form"] = self.form_class()
+        return context
+
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+        context = self.get_context_data()
+        if request.GET["new"] == "True":
+            context["newAttach"] = True
+        return render(request, "assessment/_attachment_list.html", context)
+
+
 class AttachmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
     template_name = "assessment/components/attachment_edit_row.html"
     model = models.Attachment
     form_class = forms.NewAttachmentForm
 
+    @transaction.atomic
     def form_valid(self, form):
-        self.object = form.save()
-        self.post_object_save(form)  # add hook for post-object save
-        self.create_log(self.object)
-        self.send_message()
-        response = render(
+        super().form_valid(form)
+        return render(
             self.request,
             "assessment/components/attachment_row.html",
             {"object": self.object, "canEdit": True},
         )
-        return response
 
 
 class AttachmentDelete(BaseDelete):
@@ -505,6 +545,7 @@ class AttachmentDelete(BaseDelete):
             self.assessment, not context["obj_perms"]["edit"]
         )
         context["canEdit"] = context["obj_perms"]["edit"]
+        context["object"] = self.assessment
         return context
 
     def get_success_url(self):
