@@ -151,7 +151,7 @@ def form_error_list_to_lis(form):
             if key == "__all__":
                 lis.append(f"<li>{value}</li>")
             else:
-                lis.append("<li>{key}: {value}</li>")
+                lis.append(f"<li>{key}: {value}</li>")
     return lis
 
 

@@ -3,7 +3,7 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import hawc.apps.vocab.models
+import hawc.apps.vocab.constants
 
 
 class Migration(migrations.Migration):
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ("ontology", models.PositiveSmallIntegerField(choices=[(1, "umls")])),
+                ("ontology", models.PositiveSmallIntegerField(choices=[(1, "UMLS")])),
                 ("uid", models.CharField(max_length=128, verbose_name="UID")),
                 ("deprecated_on", models.DateTimeField(blank=True, null=True)),
                 ("created_on", models.DateTimeField(auto_now_add=True)),
@@ -42,7 +42,8 @@ class Migration(migrations.Migration):
                 (
                     "namespace",
                     models.PositiveSmallIntegerField(
-                        choices=[(1, "EHV")], default=hawc.apps.vocab.models.VocabularyNamespace(1)
+                        choices=[(1, "EHV")],
+                        default=hawc.apps.vocab.constants.VocabularyNamespace.EHV,
                     ),
                 ),
                 (

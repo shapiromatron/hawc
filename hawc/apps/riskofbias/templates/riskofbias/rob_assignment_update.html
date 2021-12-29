@@ -13,15 +13,5 @@
 {% endblock %}
 
 {% block extrajs %}
-{{config|json_script:"config"}}
-<script type="text/javascript">
-$(document).ready(function (){
-    const el = document.getElementById('main'),
-        config = JSON.parse(document.getElementById('config').text);
-
-    window.app.startup("riskofbiasStartup", function(riskofbias) {
-        riskofbias.robAssignmentStartup(el, config);
-    });
-});
-</script>
+    {{config|json_script:"config"}}
 {% endblock extrajs %}

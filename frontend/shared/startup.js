@@ -4,6 +4,7 @@ import $ from "$";
 import "react-tabs/style/react-tabs.css";
 
 import sidebarStartup from "./utils/sidebarStartup";
+import tryWebAppStartup from "./utils/tryWebAppStartup";
 import Quillify from "./utils/Quillify";
 
 $.fn.quillify = Quillify;
@@ -44,5 +45,7 @@ d3.selection.prototype.moveToFront = function() {
     });
 };
 
-// sidebar startup
-sidebarStartup();
+$(document).ready(() => {
+    sidebarStartup();
+    tryWebAppStartup();
+});
