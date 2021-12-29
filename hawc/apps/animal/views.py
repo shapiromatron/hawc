@@ -1,16 +1,18 @@
 import json
 
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 
 from ..assessment.models import Assessment, DoseUnits
 from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
 from ..common.helper import WebappConfig
+from ..common.htmx import CrudModelViewSet, Item, action, can_edit_study_item, can_view_study_items
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
@@ -28,6 +30,75 @@ from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from ..study.views import StudyRead
 from . import forms, models
+
+
+class ExperimentViewSet(CrudModelViewSet):
+    actions = {"create", "read", "update", "delete", "list", "clone"}
+    parent_model = Study
+    model = models.Experiment
+    form_fragment = "animal/fragments/experiment_form.html"
+    detail_fragment = "animal/fragments/experiment_detail.html"
+
+    def get_objects(self, item: Item) -> QuerySet:
+        return item.object.experiments.all()
+
+    def get_context_data(self, request, **kw):
+        context = request.item.to_dict()
+        context["permissions"] = request.item.assessment.user_permissions(request.user)
+        context["action"] = request.action
+        context.update(**kw)
+        return context
+
+    @action(permission=can_view_study_items)
+    def list(self, request: HttpRequest, *args, **kwargs):
+        return render(request, "exp_v2_list.html", self.get_context_data(request))
+
+    @action(htmx=True, permission=can_view_study_items)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data(request))
+
+    @action(htmx=True, methods=("get", "post"), permission=can_edit_study_item)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "GET":
+            form = forms.ExperimentForm2()
+        else:
+            form = forms.ExperimentForm2(request.POST)
+            if form.is_valid():
+                form.instance.study = request.item.object
+                request.item.object = form.save()
+                template = self.detail_fragment
+        context = self.get_context_data(request, form=form)
+        return render(request, template, context)
+
+    @action(htmx=True, methods=("get", "post"), permission=can_edit_study_item)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "GET":
+            form = forms.ExperimentForm2(instance=request.item.object)
+        elif request.method == "POST":
+            form = forms.ExperimentForm2(request.POST, instance=request.item.object)
+            if form.is_valid():
+                form.save()
+                template = self.detail_fragment
+        context = self.get_context_data(request, form=form)
+        return render(request, template, context)
+
+    @action(htmx=True, methods=("get", "post"), permission=can_edit_study_item)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "GET":
+            return render(request, self.detail_fragment, self.get_context_data(request))
+        elif request.method == "POST":
+            request.item.object.delete()
+            return HttpResponse("")
+
+    @action(htmx=True, methods=("post",), permission=can_edit_study_item)
+    def clone(self, request: HttpRequest, *args, **kwargs):
+        instance = request.item.object
+        instance.id = None
+        instance.name += " (clone)"
+        instance.save()
+        return render(request, self.detail_fragment, self.get_context_data(request))
 
 
 # Heatmap views

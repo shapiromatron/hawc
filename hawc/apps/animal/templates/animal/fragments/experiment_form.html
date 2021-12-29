@@ -1,0 +1,21 @@
+<form hx-target="this" hx-swap="outerHTML">
+    {% csrf_token %}
+    {{ form }}
+    <div>
+    {% if form.instance.id %}
+        <button
+            hx-post="/ani/v2/experiment/{{object.id}}/update/"
+            >Update</button>
+        <button
+            hx-get="/ani/v2/experiment/{{object.id}}/"
+            >Cancel</button>
+    {% else %}
+        <button
+            hx-post="/ani/v2/experiment/study/{{object.id}}/create/"
+            >Create</button>
+        <button
+            type='button'
+            onclick="this.parentNode.parentNode.outerHTML = ''">Cancel</button>
+    {% endif %}
+    </div>
+</form>

@@ -1,0 +1,32 @@
+<div hx-target="this" hx-swap="outerHTML">
+    {{object}}
+    {% if action == 'delete' %}
+        <form>
+            {% csrf_token %}
+            Are you sure you want to delete?
+            <div>
+                <button
+                    hx-post="/ani/v2/experiment/{{object.id}}/delete/"
+                    hx-swap="outerHTML swap:1s"
+                    >Delete</button>
+                <button
+                    hx-get="/ani/v2/experiment/{{object.id}}/"
+                    >Cancel</button>
+            </div>
+        </form>
+    {% elif permissions.edit %}
+        <div>
+            <button
+                hx-get="/ani/v2/experiment/{{object.id}}/update/"
+                >Update</button>
+            <button
+                hx-get="/ani/v2/experiment/{{object.id}}/delete/"
+                >Delete</button>
+            <button
+                hx-post="/ani/v2/experiment/{{object.id}}/clone/"
+                hx-target="#experiment-main"
+                hx-swap="beforeend"
+                >Clone</button>
+        </div>
+    {% endif %}
+</div>

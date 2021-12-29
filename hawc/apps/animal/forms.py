@@ -18,6 +18,12 @@ from ..vocab.constants import VocabularyNamespace
 from . import constants, lookups, models
 
 
+class ExperimentForm2(ModelForm):
+    class Meta:
+        model = models.Experiment
+        fields = ("name",)
+
+
 class ExperimentForm(ModelForm):
     class Meta:
         model = models.Experiment
