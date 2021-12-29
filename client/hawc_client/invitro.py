@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .base_client import BaseClient
+from .client import BaseClient
 
 
 class InvitroClient(BaseClient):

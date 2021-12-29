@@ -1,6 +1,6 @@
 from typing import Dict, Optional
 
-from .base_client import BaseClient
+from .client import BaseClient
 
 
 class StudyClient(BaseClient):

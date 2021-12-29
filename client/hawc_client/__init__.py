@@ -1,18 +1,19 @@
 from .animal import AnimalClient
 from .assessment import AssessmentClient
-from .base_client import BaseClient
+from .client import BaseClient
 from .epi import EpiClient
 from .epimeta import EpiMetaClient
-from .hawc_session import HawcSession
+from .exceptions import HawcClientException, HawcServerException
 from .invitro import InvitroClient
 from .literature import LiteratureClient
 from .riskofbias import RiskOfBiasClient
+from .session import HawcSession
 from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2020.10"
-__all__ = ["HawcClient"]
+__version__ = "2021.12"
+__all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
 class HawcClient(BaseClient):

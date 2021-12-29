@@ -1,26 +1,11 @@
 import json
 import math
-from typing import Any, Dict, Generator, Optional
+from typing import Dict, Generator, Optional
 
 from requests import Response, Session
 from tqdm import tqdm
 
-
-class HawcException(Exception):
-    def __init__(self, status_code: int, message: Any):
-        self.status_code = status_code
-        self.message = message
-
-    def __str__(self):
-        return f"<{self.status_code}> {self.message}"
-
-
-class HawcClientException(HawcException):
-    """An exception occurred in the HAWC client module."""
-
-
-class HawcServerException(HawcException):
-    """An exception occurred on the HAWC server."""
+from .exceptions import HawcClientException, HawcServerException
 
 
 class HawcSession:

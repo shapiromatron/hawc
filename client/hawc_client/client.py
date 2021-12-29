@@ -2,7 +2,7 @@ from io import StringIO
 
 import pandas as pd
 
-from .hawc_session import HawcSession
+from .session import HawcSession
 
 
 class BaseClient:

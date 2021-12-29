@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple
 
-from .base_client import BaseClient
+from .client import BaseClient
 
 
 class VocabClient(BaseClient):

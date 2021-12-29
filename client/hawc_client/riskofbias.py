@@ -2,7 +2,7 @@ from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from .base_client import BaseClient
+from .client import BaseClient
 
 
 class RiskOfBiasClient(BaseClient):

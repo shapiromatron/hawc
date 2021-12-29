@@ -18,8 +18,7 @@ from hawc.apps.epi.models import (
     StudyPopulation,
 )
 from hawc.apps.lit.models import Reference
-from hawc_client import BaseClient, HawcClient
-from hawc_client.hawc_session import HawcClientException
+from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
 @pytest.mark.usefixtures("set_db_keys")

@@ -3,7 +3,7 @@ from typing import Dict, List
 import pandas as pd
 from requests import Response
 
-from .base_client import BaseClient
+from .client import BaseClient
 
 
 class EpiClient(BaseClient):
