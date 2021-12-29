@@ -9,7 +9,7 @@ from pathlib import Path
 from django.conf import settings
 from django.db import migrations
 
-from hawc.apps.assessment.models import NOEL_NAME_CHOICES_NEL, NOEL_NAME_CHOICES_NOEL
+from hawc.apps.assessment.constants import NoelName
 from hawc.apps.summary import models
 
 
@@ -47,10 +47,10 @@ def rename_fields(apps, schema_editor):
         old_settings = copy(obj.settings)
         new_settings = copy(obj.settings)
 
-        if obj.assessment.noel_name == NOEL_NAME_CHOICES_NEL:
+        if obj.assessment.noel_name == NoelName.NEL:
             new_settings = _replace_column(new_settings, "LOAEL", "LEL")
             new_settings = _replace_column(new_settings, "NOAEL", "NEL")
-        elif obj.assessment.noel_name == NOEL_NAME_CHOICES_NOEL:
+        elif obj.assessment.noel_name == NoelName.NOEL:
             new_settings = _replace_column(new_settings, "LOAEL", "LOEL")
             new_settings = _replace_column(new_settings, "NOAEL", "NOEL")
 
@@ -64,10 +64,10 @@ def rename_fields(apps, schema_editor):
         old_settings = copy(obj.settings)
         new_settings = copy(obj.settings)
 
-        if obj.assessment.noel_name == NOEL_NAME_CHOICES_NEL:
+        if obj.assessment.noel_name == NoelName.NEL:
             new_settings = _replace_column(new_settings, "LOAEL", "LEL")
             new_settings = _replace_column(new_settings, "NOAEL", "NEL")
-        elif obj.assessment.noel_name == NOEL_NAME_CHOICES_NOEL:
+        elif obj.assessment.noel_name == NoelName.NOEL:
             new_settings = _replace_column(new_settings, "LOAEL", "LOEL")
             new_settings = _replace_column(new_settings, "NOAEL", "NOEL")
 

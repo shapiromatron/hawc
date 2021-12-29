@@ -2,22 +2,9 @@
 
 {% block content %}
   <h4>Reference details:</h4>
-  <div id="reference_detail_div"></div>
+  <div id="main"></div>
 {% endblock %}
 
-{% block extrajs %}{
-<script id="config" type="text/json" charset="utf-8">
-  {
-      "tags": {{ tags| safe}},
-      "reference": {{ object_json | safe }},
-      "canEdit": {{ obj_perms.edit | lower }}
-  }
-</script>
-<script type="text/javascript">
-  window.app.startup("litStartup", function(lit){
-    const el = document.getElementById("reference_detail_div"),
-      config = window.app.getConfig();
-    lit.startupReferenceDetail(el, config.tags, config.reference, config.canEdit);
-  });
-</script>
+{% block extrajs %}
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

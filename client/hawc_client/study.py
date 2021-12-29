@@ -23,7 +23,7 @@ class StudyClient(BaseClient):
                     epi_meta: bool (study contains epidemiology meta-analysis data)
                     in_vitro: bool (study contains in-vitro data)
                     coi_reported: int (COI reported, see
-                        hawc.apps.study.models.Study.COI_REPORTED_CHOICES for choices )
+                        hawc.apps.study.constants.CoiReported for choices)
                     coi_details: str (COI details; use the COI declaration when available)
                     funding_source: str (any funding source information)
                     study_identifier: str (reference descriptor for assessment-tracking,

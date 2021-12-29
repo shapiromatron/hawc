@@ -139,7 +139,9 @@ def test_successful_single_hero_id(db_keys):
 
     search = models.Search.objects.get(assessment=assessment_pk, title="example search")
     ref = models.Reference.objects.get(title="Effect of thyroid hormone on growth and development")
-    ident = models.Identifiers.objects.get(unique_id="51001", database=constants.HERO)
+    ident = models.Identifiers.objects.get(
+        unique_id="51001", database=constants.ReferenceDatabase.HERO
+    )
 
     assert ref.searches.all()[0] == search
     assert ref.identifiers.all()[0] == ident
@@ -259,7 +261,7 @@ def test_ris_import(db_keys):
     search = models.Search.objects.create(
         assessment_id=assessment_id,
         search_type="i",
-        source=constants.RIS,
+        source=constants.ReferenceDatabase.RIS,
         title="ris",
         slug="ris",
         description="-",
@@ -278,13 +280,14 @@ def test_ris_import(db_keys):
     assert models.Identifiers.objects.count() == initial_identifiers + 3
     assert ris_ref.identifiers.count() == 3
 
-    assert ris_ref.identifiers.filter(database=constants.PUBMED).count() == 1
-    assert ris_ref.identifiers.filter(database=constants.RIS).count() == 1
-    assert ris_ref.identifiers.filter(database=constants.DOI).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.ReferenceDatabase.PUBMED).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.ReferenceDatabase.RIS).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.ReferenceDatabase.DOI).count() == 1
 
     # assert Pubmed XML content is loaded
     assert (
-        "<PubmedArticle>" in ris_ref.identifiers.filter(database=constants.PUBMED).first().content
+        "<PubmedArticle>"
+        in ris_ref.identifiers.filter(database=constants.ReferenceDatabase.PUBMED).first().content
     )
 
 
@@ -301,7 +304,7 @@ def test_ris_import_with_existing(db_keys):
     search = models.Search.objects.create(
         assessment_id=assessment_id,
         search_type="i",
-        source=constants.RIS,
+        source=constants.ReferenceDatabase.RIS,
         title="ris",
         slug="ris",
         description="-",
@@ -309,9 +312,11 @@ def test_ris_import_with_existing(db_keys):
     search.import_file = RisFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
 
     # create existing identifiers
-    models.Identifiers.objects.create(database=constants.PUBMED, unique_id="19425233", content="")
     models.Identifiers.objects.create(
-        database=constants.DOI, unique_id="10.1016/j.fct.2009.02.003", content="",
+        database=constants.ReferenceDatabase.PUBMED, unique_id="19425233", content=""
+    )
+    models.Identifiers.objects.create(
+        database=constants.ReferenceDatabase.DOI, unique_id="10.1016/j.fct.2009.02.003", content="",
     )
     search.run_new_import()
 
@@ -327,6 +332,6 @@ def test_ris_import_with_existing(db_keys):
     assert ris_ref.identifiers.count() == 3
 
     # ensure new ones aren't created
-    assert ris_ref.identifiers.filter(database=constants.PUBMED).count() == 1
-    assert ris_ref.identifiers.filter(database=constants.RIS).count() == 1
-    assert ris_ref.identifiers.filter(database=constants.DOI).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.ReferenceDatabase.PUBMED).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.ReferenceDatabase.RIS).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.ReferenceDatabase.DOI).count() == 1

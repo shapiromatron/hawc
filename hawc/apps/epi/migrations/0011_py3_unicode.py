@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
             name="estimate_type",
             field=models.PositiveSmallIntegerField(
                 choices=[
-                    (0, None),
+                    (0, "---"),
                     (1, "mean"),
                     (2, "geometric mean"),
                     (3, "median"),
@@ -167,7 +167,7 @@ class Migration(migrations.Migration):
             model_name="exposure",
             name="variance_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, None), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other")],
+                choices=[(0, "---"), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other")],
                 default=0,
             ),
         ),
@@ -256,7 +256,7 @@ class Migration(migrations.Migration):
             model_name="groupnumericaldescriptions",
             name="lower_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, None), (1, "lower limit"), (2, "5% CI"), (3, "other")], default=0,
+                choices=[(0, "---"), (1, "lower limit"), (2, "5% CI"), (3, "other")], default=0,
             ),
         ),
         migrations.AlterField(
@@ -269,7 +269,7 @@ class Migration(migrations.Migration):
             name="mean_type",
             field=models.PositiveSmallIntegerField(
                 choices=[
-                    (0, None),
+                    (0, "---"),
                     (1, "mean"),
                     (2, "geometric mean"),
                     (3, "median"),
@@ -283,14 +283,14 @@ class Migration(migrations.Migration):
             model_name="groupnumericaldescriptions",
             name="upper_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, None), (1, "upper limit"), (2, "95% CI"), (3, "other")], default=0,
+                choices=[(0, "---"), (1, "upper limit"), (2, "95% CI"), (3, "other")], default=0,
             ),
         ),
         migrations.AlterField(
             model_name="groupnumericaldescriptions",
             name="variance_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, None), (1, "SD"), (2, "SEM"), (3, "GSD"), (4, "other")], default=0,
+                choices=[(0, "---"), (1, "SD"), (2, "SEM"), (3, "GSD"), (4, "other")], default=0,
             ),
         ),
         migrations.AlterField(
@@ -509,7 +509,7 @@ class Migration(migrations.Migration):
             name="estimate_type",
             field=models.PositiveSmallIntegerField(
                 choices=[
-                    (0, None),
+                    (0, "---"),
                     (1, "mean"),
                     (2, "geometric mean"),
                     (3, "median"),
@@ -582,7 +582,7 @@ class Migration(migrations.Migration):
             model_name="result",
             name="variance_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, None), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other")],
+                choices=[(0, "---"), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other")],
                 default=0,
             ),
         ),

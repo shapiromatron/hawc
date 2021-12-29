@@ -6,7 +6,7 @@ import django.contrib.postgres.fields.jsonb
 import django.db.models.deletion
 from django.db import migrations, models
 
-import hawc.apps.assessment.models
+from hawc.apps.assessment.constants import JobStatus, JobType
 
 
 class Migration(migrations.Migration):
@@ -29,15 +29,13 @@ class Migration(migrations.Migration):
                     "status",
                     models.PositiveSmallIntegerField(
                         choices=[(1, "PENDING"), (2, "SUCCESS"), (3, "FAILURE")],
-                        default=hawc.apps.assessment.models.JobStatus(1),
+                        default=JobStatus.PENDING,
                         editable=False,
                     ),
                 ),
                 (
                     "job",
-                    models.PositiveSmallIntegerField(
-                        choices=[(1, "TEST")], default=hawc.apps.assessment.models.JobType(1)
-                    ),
+                    models.PositiveSmallIntegerField(choices=[(1, "TEST")], default=JobType.TEST),
                 ),
                 (
                     "kwargs",
