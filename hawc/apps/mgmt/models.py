@@ -7,34 +7,12 @@ from django.utils import timezone
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..study.models import Study
-from . import managers
+from . import constants, managers
 
 logger = logging.getLogger(__name__)
 
 
 class Task(models.Model):
-
-    TYPE_PREPARATION = 10
-    TYPE_EXTRACTION = 20
-    TYPE_QA = 30
-    TYPE_ROB = 40
-    TYPE_CHOICES = (
-        (TYPE_PREPARATION, "preparation"),
-        (TYPE_EXTRACTION, "extraction"),
-        (TYPE_QA, "qa/qc"),
-        (TYPE_ROB, "rob completed"),
-    )
-
-    STATUS_NOT_STARTED = 10
-    STATUS_STARTED = 20
-    STATUS_COMPLETED = 30
-    STATUS_ABANDONED = 40
-    STATUS_CHOICES = (
-        (STATUS_NOT_STARTED, "not started"),
-        (STATUS_STARTED, "started"),
-        (STATUS_COMPLETED, "completed"),
-        (STATUS_ABANDONED, "abandoned"),
-    )
 
     objects = managers.TaskManager()
 
@@ -46,8 +24,10 @@ class Task(models.Model):
         related_name="tasks",
     )
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="tasks")
-    type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
-    status = models.PositiveSmallIntegerField(default=STATUS_CHOICES[0][0], choices=STATUS_CHOICES)
+    type = models.PositiveSmallIntegerField(choices=constants.TaskType.choices)
+    status = models.PositiveSmallIntegerField(
+        default=constants.TaskStatus.NOT_STARTED, choices=constants.TaskStatus.choices
+    )
     open = models.BooleanField(default=False)
     due_date = models.DateTimeField(blank=True, null=True)
     started = models.DateTimeField(blank=True, null=True)
@@ -79,15 +59,18 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and open/closed."""
-        if self.status == self.STATUS_NOT_STARTED:
+        if self.status == constants.TaskStatus.NOT_STARTED:
             self.started = None
             self.completed = None
             self.open = False
-        elif self.status == self.STATUS_STARTED:
+        elif self.status == constants.TaskStatus.STARTED:
             self.started = timezone.now()
             self.completed = None
             self.open = True
-        elif self.status in [self.STATUS_COMPLETED, self.STATUS_ABANDONED]:
+        elif self.status in [
+            constants.TaskStatus.COMPLETED,
+            constants.TaskStatus.ABANDONED,
+        ]:
             self.completed = timezone.now()
             self.open = False
 
@@ -95,15 +78,15 @@ class Task(models.Model):
 
     def start_if_unstarted(self, user):
         """Save task as started by user if currently not started."""
-        if self.status == self.STATUS_NOT_STARTED:
+        if self.status == constants.TaskStatus.NOT_STARTED:
             logger.info(f'Starting "{self.get_type_display()}" task {self.id}')
             self.owner = user
-            self.status = self.STATUS_STARTED
+            self.status = constants.TaskStatus.STARTED
             self.save()
 
     def stop_if_started(self):
         """Stop task if currently started."""
-        if self.status == self.STATUS_STARTED:
+        if self.status == constants.TaskStatus.STARTED:
             logger.info(f'Stopping "{self.get_type_display()}" task {self.id}')
-            self.status = self.STATUS_COMPLETED
+            self.status = constants.TaskStatus.COMPLETED
             self.save()

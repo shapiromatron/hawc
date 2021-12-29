@@ -58,7 +58,7 @@ class TestImportForm:
         form = ImportForm(
             {
                 "search_type": "i",
-                "source": constants.HERO,
+                "source": constants.ReferenceDatabase.HERO,
                 "title": "demo title",
                 "slug": "demo-title",
                 "description": "",
@@ -73,7 +73,7 @@ class TestImportForm:
 
         payload = {
             "search_type": "i",
-            "source": constants.HERO,
+            "source": constants.ReferenceDatabase.HERO,
             "title": "demo title",
             "slug": "demo-title",
             "description": "",
@@ -128,7 +128,7 @@ class TestImportForm:
         form = ImportForm(
             {
                 "search_type": "i",
-                "source": constants.HERO,
+                "source": constants.ReferenceDatabase.HERO,
                 "title": "demo title",
                 "slug": "demo-title",
                 "description": "",
@@ -150,7 +150,7 @@ class TestRisImportForm:
         return RisImportForm(
             {
                 "search_type": "i",
-                "source": constants.RIS,
+                "source": constants.ReferenceDatabase.RIS,
                 "title": "demo title",
                 "slug": "demo-title",
                 "description": "",
