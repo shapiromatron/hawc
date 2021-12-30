@@ -71,21 +71,31 @@ class BaseFormHelper(cf.FormHelper):
             form_actions = []
             final_htmx = []
             for button in htmx:
-                htmx_attribs = { "hx-trigger": "click" } #standard htmx attributes to add
+                htmx_attribs = {"hx-trigger": "click"}  # standard htmx attributes to add
                 htmx_list = []
-                for key, value in button.items(): # add in the given htmx attributes, overwriting standards as necessary
+                for (
+                    key,
+                    value,
+                ) in (
+                    button.items()
+                ):  # add in the given htmx attributes, overwriting standards as necessary
                     htmx_attribs[key] = value
 
-                for key, value in htmx_attribs.items(): # if value is not None, add as an htmx attribute
+                for (
+                    key,
+                    value,
+                ) in htmx_attribs.items():  # if value is not None, add as an htmx attribute
                     if value:
                         htmx_attrib = f"""{key}="{value}" """
                         htmx_list.append(htmx_attrib)
 
-                final_htmx.append("".join(htmx_list)) # join all attributes together, pin to list
-            #import pdb; pdb.set_trace()
+                final_htmx.append("".join(htmx_list))  # join all attributes together, pin to list
+            # import pdb; pdb.set_trace()
             form_actions = [
                 cfl.HTML(f"""<button class="btn btn-sm btn-info" {final_htmx[0]} >Save</button>"""),
-                cfl.HTML(f"""<button class="btn btn-sm btn-light" {final_htmx[1]} >Cancel</button>""")
+                cfl.HTML(
+                    f"""<button class="btn btn-sm btn-light" {final_htmx[1]} >Cancel</button>"""
+                ),
             ]
             layout.append(cfb.FormActions(*form_actions))
             form_actions = []

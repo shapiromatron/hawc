@@ -98,9 +98,13 @@ class StudyRead(BaseDetail):
             "studyContent": self.object.get_json(json_encode=False),
             "attachments_viewable": attachments_viewable,
         }
-        context["attachments"] = models.Attachment.objects.get_attachments(
-            self.get_object(), not context["obj_perms"]["edit"]
-            ) if attachments_viewable else None
+        context["attachments"] = (
+            models.Attachment.objects.get_attachments(
+                self.get_object(), not context["obj_perms"]["edit"]
+            )
+            if attachments_viewable
+            else None
+        )
         context["internal_communications"] = self.object.get_communications()
         return context
 
@@ -204,17 +208,16 @@ class AttachmentRead(BaseDetail):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         try:
-            if request.headers['HX-Request']:
+            if request.headers["HX-Request"]:
                 return render(
-                    request,
-                    "study/attachment_row.html",
-                    {"object": self.object, "canEdit": True},
+                    request, "study/attachment_row.html", {"object": self.object, "canEdit": True},
                 )
         except KeyError:
             if self.assessment.user_is_part_of_team(self.request.user):
                 return HttpResponseRedirect(self.object.attachment.url)
             else:
                 raise PermissionDenied
+
 
 class AttachmentList(BaseList):
     model = models.Attachment
@@ -233,8 +236,8 @@ class AttachmentList(BaseList):
         }
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.parent, not context["obj_perms"]["edit"]
-            )
-        context['object'] = self.parent
+        )
+        context["object"] = self.parent
         return context
 
     def get(self, request, *args, **kwargs):

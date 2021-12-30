@@ -169,10 +169,7 @@ class AttachmentForm(forms.ModelForm):
             "hx-target": "#attachTable",
             "hx-get": "{% url 'study:attachment_list' object.pk %}",
         }
-        helper = BaseFormHelper(
-            self,
-            htmx=[save_htmx, cancel_htmx]
-        )
+        helper = BaseFormHelper(self, htmx=[save_htmx, cancel_htmx])
         return helper
 
 

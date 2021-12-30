@@ -239,7 +239,7 @@ class AttachmentForm(forms.ModelForm):
                     Div("title", style="width: 25%; padding: 5px"),
                     Div("description", style="width: 60%; padding: 5px"),
                     cfb.FormActions(*buttons, style="width: 15%"),
-                    #form_actions,
+                    # form_actions,
                 ),
                 cfl.Row(
                     Div("publicly_available", style="width: 25%; padding: 5px"),

@@ -475,7 +475,7 @@ class AttachmentRead(BaseDetail):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         try:
-            if request.headers['HX-Request']:
+            if request.headers["HX-Request"]:
                 return render(
                     request,
                     "assessment/components/attachment_row.html",
@@ -521,8 +521,7 @@ class AttachmentUpdate(BaseUpdate):
     form_class = forms.AttachmentForm
 
     def get_success_url(self):
-        return reverse('assessment:attachment_detail', args=[self.object.pk])
-
+        return reverse("assessment:attachment_detail", args=[self.object.pk])
 
 
 class AttachmentDelete(BaseDelete):
