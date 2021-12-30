@@ -58,6 +58,11 @@
 
   <div id="study_details"></div>
 
+
+  {% if config.attachments_viewable and attachments %}
+    {% include "study/_attachment_list.html" %}
+  {% endif %}
+
   {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
       <colgroup>
@@ -125,10 +130,6 @@ window.app.startup("studyStartup", function(app){
     detail_div = $('#study_details');
 
   thisStudy.build_details_table(detail_div);
-
-  if(data.attachments_viewable){
-    thisStudy.add_attachments_row(detail_div, data.attachments);
-  }
 
   if (thisStudy.has_riskofbias()){
     window.app.startup("riskofbiasStartup", function (riskofbias) {

@@ -192,94 +192,58 @@ class AttachmentForm(forms.ModelForm):
                 widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
-            inputs = {"legend_text": f"Update {self.instance}"}
-        else:
-            inputs = {"legend_text": "Create new attachment"}
-        inputs["cancel_url"] = self.instance.get_absolute_url()
-
-        helper = BaseFormHelper(self, **inputs)
-
-        return helper
-
-
-class NewAttachmentForm(forms.ModelForm):
-    class Meta:
-        model = models.Attachment
-        exclude = ("content_type", "object_id", "content_object")
-
-    def __init__(self, *args, **kwargs):
-        obj = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-        if obj:
-            self.instance.content_type = ContentType.objects.get_for_model(obj)
-            self.instance.object_id = obj.id
-            self.instance.content_object = obj
-
-    @property
-    def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-        if self.instance.id:
             buttons = [
                 cfl.HTML(
                     """<button class="btn btn-sm btn-info"
                             hx-trigger="click"
                             hx-target="#attach-row-{{object.pk}}"
                             hx-encoding="multipart/form-data"
-                            hx-swap="innerHTML"
-                            hx-post="
-                            /assessment/attachment/{{object.pk}}/update/">
-                            Save</button>"""
-                ),
-                cfl.HTML(
-                    """<button class="btn btn-sm btn-light"
+                            hx-swap="outerHTML"
+                            hx-post="{% url 'assessment:attachment_update' object.pk %}">
+                            Save</button>
+                        <button class="btn btn-sm btn-light"
                             hx-trigger="click"
                             hx-target="#attach-row-{{object.pk}}"
-                            hx-swap="innerHTML"
-                            hx-params="test"
-                            hx-get="/assessment/attachment/{{object.pk}}">
+                            hx-swap="outerHTML"
+                            hx-vals='{"html": "True"}'
+                            hx-get="{% url 'assessment:attachment_detail' object.pk %}">
                             Cancel</button>"""
                 ),
             ]
         else:
             buttons = [
                 cfl.HTML(
-                    """<button
-                                class="btn btn-sm btn-info"
+                    """<button class="btn btn-sm btn-info"
                                 hx-trigger="click"
-                                hx-target="#attachNew"
+                                hx-target="#newAttach"
                                 hx-encoding="multipart/form-data"
                                 hx-post="{% url 'assessment:attachment_create' assessment.pk %}"
-                                hx-swap="innerHTML">
+                                hx-swap="outerHTML">
                                 Save
-                        </button>"""
-                ),
-                cfl.HTML(
-                    """<button class="btn btn-sm btn-light"
+                        </button>
+                    <button class="btn btn-sm btn-light"
                                 hx-trigger="click"
                                 hx-target="#attachTable"
                                 hx-vals='{"new": "False"}'
-                                hx-swap="innerHTML"
+                                hx-swap="outerHTML"
                                 hx-get="{% url 'assessment:attachment_list' assessment.pk %}">
                                 Cancel</button>"""
                 ),
             ]
+
         helper = BaseFormHelper(self)
         helper.layout = Layout(
             Fieldset(
                 "",
                 cfl.Row(
-                    Div("title", style="width: 25%; padding: 15px"),
-                    Div("description", style="width: 60%; padding: 15px"),
+                    Div("title", style="width: 25%; padding: 5px"),
+                    Div("description", style="width: 60%; padding: 5px"),
                     cfb.FormActions(*buttons, style="width: 15%"),
+                    #form_actions,
                 ),
                 cfl.Row(
-                    Div("publicly_available", style="width: 25%; padding: 15px"),
-                    Div("attachment", style="width: 60%; padding: 15px"),
+                    Div("publicly_available", style="width: 25%; padding: 5px"),
+                    Div("attachment", style="width: 60%; padding: 5px"),
                 ),
             ),
         )

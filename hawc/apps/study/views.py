@@ -2,7 +2,7 @@ from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 
@@ -97,8 +97,10 @@ class StudyRead(BaseDetail):
         context["config"] = {
             "studyContent": self.object.get_json(json_encode=False),
             "attachments_viewable": attachments_viewable,
-            "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
+        context["attachments"] = models.Attachment.objects.get_attachments(
+            self.get_object(), not context["obj_perms"]["edit"]
+            ) if attachments_viewable else None
         context["internal_communications"] = self.object.get_communications()
         return context
 
@@ -180,19 +182,20 @@ class AttachmentCreate(BaseCreate):
     form_class = forms.AttachmentForm
 
     def get_success_url(self):
-        return reverse_lazy("study:detail", kwargs={"pk": self.parent.pk})
+        return reverse("study:attachment_list", args=[self.parent.pk])
 
 
 class AttachmentDelete(BaseDelete):
     success_message = "Attachment deleted."
     model = models.Attachment
 
-    def get_success_url(self):
-        self.parent = self.object.study
-        return self.object.study.get_absolute_url()
+    def delete(self, request, *args, **kwargs):
+        redirect = super().delete(self, request, *args, **kwargs)
+        redirect.status_code = 303
+        return redirect
 
-    def get_cancel_url(self) -> str:
-        return self.object.study.get_absolute_url()
+    def get_success_url(self):
+        return reverse("study:attachment_list", args=[self.object.study.pk])
 
 
 class AttachmentRead(BaseDetail):
@@ -200,10 +203,46 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
-            return HttpResponseRedirect(self.object.attachment.url)
-        else:
-            raise PermissionDenied
+        try:
+            if request.headers['HX-Request']:
+                return render(
+                    request,
+                    "study/attachment_row.html",
+                    {"object": self.object, "canEdit": True},
+                )
+        except KeyError:
+            if self.assessment.user_is_part_of_team(self.request.user):
+                return HttpResponseRedirect(self.object.attachment.url)
+            else:
+                raise PermissionDenied
+
+class AttachmentList(BaseList):
+    model = models.Attachment
+    parent_model = models.Study
+    parent_template_name = "parent"
+    template_name = "study/_attachment_list.html"
+    object_list = None
+    form_class = forms.AttachmentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
+        context["form"] = self.form_class(parent=self.parent)
+        context["config"] = {
+            "attachments_viewable": attachments_viewable,
+        }
+        context["attachments"] = models.Attachment.objects.get_attachments(
+            self.parent, not context["obj_perms"]["edit"]
+            )
+        context['object'] = self.parent
+        return context
+
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+        context = self.get_context_data()
+        if request.GET.get("new", -1) == "True":
+            context["newAttach"] = True
+        return render(request, "study/_attachment_list.html", context)
 
 
 class EditabilityUpdate(BaseUpdate):

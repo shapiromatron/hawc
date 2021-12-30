@@ -49,7 +49,7 @@ urlpatterns = [
     path(
         "attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete",
     ),
-    path("<int:pk>/attachment/list/", views.AttachmentList.as_view(), name="attachment_list"),
+    path("<int:pk>/attachments/", views.AttachmentList.as_view(), name="attachment_list"),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),
     path("dataset/<int:pk>/", views.DatasetRead.as_view(), name="dataset_detail"),

@@ -158,13 +158,22 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        return BaseFormHelper(
+        save_htmx = {
+            "hx-encoding": "multipart/form-data",
+            "hx-swap": "outerHTML",
+            "hx-target": "#attachTable",
+            "hx-post": "{% url 'study:attachment_create' object.pk %}",
+        }
+        cancel_htmx = {
+            "hx-swap": "outerHTML",
+            "hx-target": "#attachTable",
+            "hx-get": "{% url 'study:attachment_list' object.pk %}",
+        }
+        helper = BaseFormHelper(
             self,
-            legend_text="Add an attachment to a study",
-            help_text="Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.",
-            cancel_url=self.instance.study.get_absolute_url(),
-            submit_text="Create attachment",
+            htmx=[save_htmx, cancel_htmx]
         )
+        return helper
 
 
 class StudiesCopy(forms.Form):

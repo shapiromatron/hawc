@@ -1,5 +1,7 @@
-
 {% load crispy_forms_tags  %}
+{% if newAttach %}
+<tr id="newAttach">
+    {% endif %}
 <td colspan="3">
     <div>
         {% crispy form %}
@@ -12,6 +14,7 @@
         $('.html5text').removeClass('html5text');
     });
 </script>
+</tr>
 {% endblock extrajs %}
 
 

@@ -3,13 +3,12 @@
 <h2>Attachments
 {% if canEdit %}
 <button
-    class="btn btn-sm btn-info"
-    style="margin-left: 85%;"
+    class="btn btn-sm btn-info pull-right"
     hx-get="{% url 'assessment:attachment_list' object.pk %}"
     hx-vals='{"new": "True"}'
     hx-trigger="click"
     hx-target="#attachTable"
-    hx-swap="innerHTML">
+    hx-swap="outerHTML">
     Add Attachment</button>
 {% endif %}
 </h2>
@@ -34,16 +33,15 @@
         </tr>
     </thead>
     <tbody>
-            {% if newAttach %}
-                <tr id="attachNew">
-                {% include "assessment/components/attachment_edit_row.html" %}
-                </tr>
-            {% endif %}
         {% for object in object_list %}
-        <tr id="attach-row-{{object.pk}}">
             {% include "assessment/components/attachment_row.html" %}
-        </tr>
         {% endfor %}
+
+        {% if newAttach %}
+            {% include "assessment/components/attachment_edit_row.html" %}
+        {% endif %}
+        </tr>
+
     </tbody>
 </table>
 </div>

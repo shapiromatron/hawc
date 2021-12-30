@@ -1,3 +1,4 @@
+<tr id="attach-row-{{object.pk}}">
             <td><a href="{{object.attachment.url}}">{{object.title}}</a></td>
             <td>{{object.description|safe}}</td>
             {% if canEdit %}
@@ -14,8 +15,9 @@
                     hx-delete="{{object.get_delete_url}}"
                     hx-trigger="click"
                     hx-target="#attachTable"
-                    hx-swap="innerHTML"
+                    hx-swap="outerHTML"
                     hx-confirm="Are you sure you wish to delete this attachment?">
                     Delete</button>
             </td>
             {% endif %}
+</tr>

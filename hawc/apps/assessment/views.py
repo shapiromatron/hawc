@@ -451,7 +451,7 @@ class AttachmentCreate(BaseCreate):
     parent_template_name = "parent"
     template_name = "assessment/components/attachment_edit_row.html"
     model = models.Attachment
-    form_class = forms.NewAttachmentForm
+    form_class = forms.AttachmentForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -466,7 +466,6 @@ class AttachmentCreate(BaseCreate):
             self.assessment, not context["obj_perms"]["edit"]
         )
         context["canEdit"] = context["obj_perms"]["edit"]
-        # context["newAttach"] = True
         return render(self.request, "assessment/components/attachment_row.html", context)
 
 
@@ -474,17 +473,19 @@ class AttachmentRead(BaseDetail):
     model = models.Attachment
 
     def get(self, request, *args, **kwargs):
-        if request.GET.get("test", -1) != -1:
-            return render(
-                request,
-                "assessment/components/attachment_row.html",
-                {"object": self.get_object(), "canEdit": True},
-            )
         self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
-            return HttpResponseRedirect(self.object.attachment.url)
-        else:
-            return PermissionDenied
+        try:
+            if request.headers['HX-Request']:
+                return render(
+                    request,
+                    "assessment/components/attachment_row.html",
+                    {"object": self.object, "canEdit": True},
+                )
+        except KeyError:
+            if self.assessment.user_is_part_of_team(self.request.user):
+                return HttpResponseRedirect(self.object.attachment.url)
+            else:
+                return PermissionDenied
 
 
 class AttachmentList(BaseList):
@@ -493,7 +494,7 @@ class AttachmentList(BaseList):
     parent_template_name = "parent"
     template_name = "assessment/_attachment_list.html"
     object_list = None
-    form_class = forms.NewAttachmentForm
+    form_class = forms.AttachmentForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -508,7 +509,7 @@ class AttachmentList(BaseList):
     def get(self, request, *args, **kwargs):
         super().get(request, *args, **kwargs)
         context = self.get_context_data()
-        if request.GET["new"] == "True":
+        if request.GET.get("new", -1) == "True":
             context["newAttach"] = True
         return render(request, "assessment/_attachment_list.html", context)
 
@@ -517,16 +518,11 @@ class AttachmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
     template_name = "assessment/components/attachment_edit_row.html"
     model = models.Attachment
-    form_class = forms.NewAttachmentForm
+    form_class = forms.AttachmentForm
 
-    @transaction.atomic
-    def form_valid(self, form):
-        super().form_valid(form)
-        return render(
-            self.request,
-            "assessment/components/attachment_row.html",
-            {"object": self.object, "canEdit": True},
-        )
+    def get_success_url(self):
+        return reverse('assessment:attachment_detail', args=[self.object.pk])
+
 
 
 class AttachmentDelete(BaseDelete):
@@ -535,24 +531,12 @@ class AttachmentDelete(BaseDelete):
 
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
-        super().delete(self, request, *args, **kwargs)
-        context = self.get_context_data()
-        return render(request, "assessment/_attachment_list.html", context)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            self.assessment, not context["obj_perms"]["edit"]
-        )
-        context["canEdit"] = context["obj_perms"]["edit"]
-        context["object"] = self.assessment
-        return context
+        redirect = super().delete(self, request, *args, **kwargs)
+        redirect.status_code = 303
+        return redirect
 
     def get_success_url(self):
-        return self.object.get_absolute_url()
-
-    def get_cancel_url(self) -> str:
-        return self.object.content_object.get_absolute_url()
+        return reverse("assessment:attachment_list", args=[self.assessment.pk])
 
 
 # Dataset views
