@@ -18,7 +18,7 @@ from ..common.forms import (
 )
 from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
-from . import lookups, models
+from . import constants, lookups, models
 
 
 class CriteriaForm(forms.ModelForm):
@@ -474,9 +474,9 @@ class OutcomeFilterForm(forms.Form):
 
     design = forms.MultipleChoiceField(
         label="Study design",
-        choices=models.StudyPopulation.DESIGN_CHOICES,
+        choices=constants.Design.choices,
         widget=forms.CheckboxSelectMultiple,
-        initial=[c[0] for c in models.StudyPopulation.DESIGN_CHOICES],
+        initial=constants.Design.values,
         required=False,
     )
 
@@ -502,9 +502,9 @@ class OutcomeFilterForm(forms.Form):
     )
 
     diagnostic = forms.MultipleChoiceField(
-        choices=models.Outcome.DIAGNOSTIC_CHOICES,
+        choices=constants.Diagnostic.choices,
         widget=forms.CheckboxSelectMultiple,
-        initial=[c[0] for c in models.Outcome.DIAGNOSTIC_CHOICES],
+        initial=constants.Diagnostic.values,
         required=False,
     )
 

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from treebeard.admin import TreeAdmin
 
+from ..study.models import Study
 from . import forms, models
 
 
@@ -42,11 +43,37 @@ class SearchAdmin(admin.ModelAdmin):
     search_fields = ("title",)
 
 
+class ReferencesInline(admin.StackedInline):
+    can_delete = False
+    extra = 0
+    model = models.Reference.identifiers.through
+    readonly_fields = ("reference",)
+    verbose_name = "Reference"
+    verbose_name_plural = "Related references"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("reference")
+
+
+class StudiesInline(admin.StackedInline):
+    can_delete = False
+    exclude = ("reference",)
+    extra = 0
+    model = Study.identifiers.through
+    readonly_fields = ("identifiers",)
+    verbose_name = "Study"
+    verbose_name_plural = "Related studies"
+
+    def get_queryset(self, request):
+        return Study.objects.all()
+
+
 @admin.register(models.Identifiers)
 class IdentifiersAdmin(admin.ModelAdmin):
     list_display = ("unique_id", "database")
     list_filter = ("database",)
     search_fields = ("unique_id",)
+    inlines = (ReferencesInline, StudiesInline)
 
 
 @admin.register(models.Reference)

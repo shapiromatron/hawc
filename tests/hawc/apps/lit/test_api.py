@@ -472,7 +472,9 @@ class TestHEROApis:
             updated_reference.title
             == "Asbestos-related diseases of the lungs and pleura: Current clinical issues"
         )
-        assert updated_reference.identifiers.get(database=constants.HERO).unique_id == str(1)
+        assert updated_reference.identifiers.get(
+            database=constants.ReferenceDatabase.HERO
+        ).unique_id == str(1)
 
     def test_bad_replace_requests(self, db_keys):
 

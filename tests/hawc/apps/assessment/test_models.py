@@ -2,24 +2,24 @@ import pytest
 from django.core.cache import cache
 from django.test.client import RequestFactory
 
-from hawc.apps.assessment import models
+from hawc.apps.assessment import constants, models
 from hawc.apps.assessment.models import Blog
 
 
 @pytest.mark.django_db
 class TestJob:
     def test_job_success(self, db_keys):
-        job = models.Job.objects.create(job=models.JobType.TEST)
+        job = models.Job.objects.create(job=constants.JobType.TEST)
         ran_job = models.Job.objects.get(pk=job.task_id)
 
-        assert ran_job.status == models.JobStatus.SUCCESS
+        assert ran_job.status == constants.JobStatus.SUCCESS
         assert ran_job.result.get("data") == "SUCCESS"
 
     def test_job_failure(self, db_keys):
-        job = models.Job.objects.create(job=models.JobType.TEST, kwargs={"fail": True})
+        job = models.Job.objects.create(job=constants.JobType.TEST, kwargs={"fail": True})
         ran_job = models.Job.objects.get(pk=job.task_id)
 
-        assert ran_job.status == models.JobStatus.FAILURE
+        assert ran_job.status == constants.JobStatus.FAILURE
         assert ran_job.result.get("error") == "FAILURE"
 
 

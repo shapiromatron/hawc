@@ -9,16 +9,9 @@ from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
 
+from ..animal.constants import DataType
 from ..common.models import get_model_copy_name
-from . import managers
-
-BMDS_CHOICES = (
-    ("BMDS231", "BMDS v2.3.1"),
-    ("BMDS240", "BMDS v2.4.0"),
-    ("BMDS260", "BMDS v2.6.0"),
-    ("BMDS2601", "BMDS v2.6.0.1"),
-    ("BMDS270", "BMDS v2.7.0"),
-)
+from . import constants, managers
 
 
 class AssessmentSettings(models.Model):
@@ -27,7 +20,9 @@ class AssessmentSettings(models.Model):
     assessment = models.OneToOneField(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="bmd_settings"
     )
-    version = models.CharField(max_length=10, choices=BMDS_CHOICES, default=BMDS_CHOICES[-1][0])
+    version = models.CharField(
+        max_length=10, choices=constants.BmdsVersion.choices, default=constants.BmdsVersion.BMDS270
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -62,12 +57,6 @@ class AssessmentSettings(models.Model):
 class LogicField(models.Model):
     objects = managers.LogicFieldManager()
 
-    LOGIC_BIN_CHOICES = (
-        (0, "Warning (no change)"),
-        (1, "Questionable"),
-        (2, "Not Viable"),
-    )
-
     assessment = models.ForeignKey(
         "assessment.Assessment",
         on_delete=models.CASCADE,
@@ -79,7 +68,7 @@ class LogicField(models.Model):
     name = models.CharField(max_length=30, editable=False)
     description = models.TextField(editable=False)
     failure_bin = models.PositiveSmallIntegerField(
-        choices=LOGIC_BIN_CHOICES,
+        choices=constants.LogicBin.choices,
         blank=False,
         help_text="If the test fails, select the model-bin should the model be placed into.",
     )  # noqa
@@ -141,7 +130,7 @@ class Session(models.Model):
     dose_units = models.ForeignKey(
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
     )
-    version = models.CharField(max_length=10, choices=BMDS_CHOICES)
+    version = models.CharField(max_length=10, choices=constants.BmdsVersion.choices)
     bmrs = models.JSONField(default=list)
     date_executed = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -219,7 +208,7 @@ class Session(models.Model):
         # only get doses where data are reported
         doses = [d for d, grp in zip(doses, grps) if grp["isReported"]]
 
-        if self.endpoint.data_type == "C":
+        if self.endpoint.data_type == DataType.CONTINUOUS:
             Cls = bmds.ContinuousDataset
             kwargs = dict(
                 doses=doses,

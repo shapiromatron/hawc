@@ -20,7 +20,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import forms, models, serializers
+from . import constants, forms, models, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -294,8 +294,8 @@ class VisualizationCreate(BaseCreate):
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
         if visual_type in {
-            models.Visual.LITERATURE_TAGTREE,
-            models.Visual.EXTERNAL_SITE,
+            constants.VisualType.LITERATURE_TAGTREE,
+            constants.VisualType.EXTERNAL_SITE,
         }:
             return "summary/visual_form_django.html"
         else:
@@ -349,8 +349,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in {
-            models.Visual.LITERATURE_TAGTREE,
-            models.Visual.EXTERNAL_SITE,
+            constants.VisualType.LITERATURE_TAGTREE,
+            constants.VisualType.EXTERNAL_SITE,
         }:
             return "summary/visual_form_django.html"
         else:
