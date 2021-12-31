@@ -567,6 +567,7 @@ class Identifiers(models.Model):
     class Meta:
         unique_together = (("database", "unique_id"),)
         index_together = (("database", "unique_id"),)
+        verbose_name_plural = "identifiers"
 
     def __str__(self):
         return f"{self.database}: {self.unique_id}"

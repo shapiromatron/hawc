@@ -44,29 +44,28 @@ class SearchAdmin(admin.ModelAdmin):
 
 
 class ReferencesInline(admin.StackedInline):
-    def get_queryset(self, request):
-        qs = super(ReferencesInline, self).get_queryset(request)
-        return qs.select_related("reference")
-
+    can_delete = False
+    extra = 0
     model = models.Reference.identifiers.through
     readonly_fields = ("reference",)
-    extra = 0
-    can_delete = False
-    verbose_name = "Ref"
-    verbose_name_plural = "Reference-identifier relationships"
+    verbose_name = "Reference"
+    verbose_name_plural = "Related references"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("reference")
 
 
 class StudiesInline(admin.StackedInline):
-    def get_queryset(self, request):
-        return Study.objects.all()
-
-    model = Study.identifiers.through
-    readonly_fields = ("identifiers",)
-    extra = 0
     can_delete = False
     exclude = ("reference",)
+    extra = 0
+    model = Study.identifiers.through
+    readonly_fields = ("identifiers",)
     verbose_name = "Study"
-    verbose_name_plural = "Study-identifier relationships"
+    verbose_name_plural = "Related studies"
+
+    def get_queryset(self, request):
+        return Study.objects.all()
 
 
 @admin.register(models.Identifiers)
@@ -74,10 +73,7 @@ class IdentifiersAdmin(admin.ModelAdmin):
     list_display = ("unique_id", "database")
     list_filter = ("database",)
     search_fields = ("unique_id",)
-    inlines = (
-        ReferencesInline,
-        StudiesInline,
-    )
+    inlines = (ReferencesInline, StudiesInline)
 
 
 @admin.register(models.Reference)
