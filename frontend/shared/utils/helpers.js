@@ -5,6 +5,8 @@ import ReactDOM from "react-dom";
 import _ from "lodash";
 import moment from "moment";
 
+import {addOuterTag} from "./_helpers";
+
 const stopwords = new Set("the is at which of on".split(" ")),
     hexChars = "abcdef0123456789",
     regexEscapeChars = /[-|\\{}()[\]^$+*?.]/g,
@@ -304,13 +306,7 @@ const helpers = {
         // column and row are 0-based
         return `${excelColumn(column)}${row + 1}`;
     },
-    addOuterTag(html, tag) {
-        // if the html's outermost tag is not the given tag, add it
-        // otherwise return the original html
-        let regex = /^\s*<(.*)>.*<\/\1>\s*$/,
-            match = html.match(regex);
-        return match == null || match[1] != tag ? `<${tag}>${html}</${tag}>` : html;
-    },
+    addOuterTag,
     hasInnerText(text) {
         // wrap text with html tag to ensure it is a valid jQuery selector expression
         // then return whether there is text content
