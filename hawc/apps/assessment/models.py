@@ -257,7 +257,10 @@ class Assessment(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    epi_version = models.PositiveSmallIntegerField(default=2)
+    epi_version = models.PositiveSmallIntegerField(
+        default=2,
+        help_text="Set based on Epi Version used for this assessment. Only use a value of 1 or 2.",
+    )
 
     COPY_NAME = "assessments"
     BREADCRUMB_PARENT = None
