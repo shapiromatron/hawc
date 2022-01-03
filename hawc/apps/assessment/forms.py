@@ -139,6 +139,7 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_risk_of_bias",
             "enable_bmd",
             "enable_summary_text",
+            "epi_version",
         )
         model = models.Assessment
 
