@@ -3,6 +3,13 @@
 from django.db import migrations, models
 
 
+def set_epi_version(apps, schema_editor):
+    # set epi_version to 1 on existing assessments
+    Assessment = apps.get_model("assessment", "Assessment")
+    db_alias = schema_editor.connection.alias
+    Assessment.objects.using(db_alias).update(epi_version=1)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -13,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="assessment",
             name="epi_version",
-            field=models.PositiveSmallIntegerField(default=1),
-            preserve_default=False,
+            field=models.PositiveSmallIntegerField(default=2),
         ),
+        migrations.RunPython(set_epi_version),
     ]
