@@ -7,17 +7,16 @@ import {Provider} from "mobx-react";
 import {createExploratoryHeatmapStore} from "../stores";
 
 const exploratoryHeatmapFormAppStartup = function(el, config, djangoForm) {
-    const store = createExploratoryHeatmapStore();
-    store.base.setConfig(config);
+    const store = createExploratoryHeatmapStore(config);
+    store.base.setInitialData();
     store.base.setDjangoForm(djangoForm);
     store.subclass.getDatasetOptions();
-
-    const Root = (
+    ReactDOM.render(
         <Provider store={store}>
             <App />
-        </Provider>
+        </Provider>,
+        el
     );
-    ReactDOM.render(Root, el);
     $(el).fadeIn();
 };
 

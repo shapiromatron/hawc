@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from ..common.helper import SerializerHelper
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
-from . import models
+from . import constants, models
 
 
 class CollectionDataPivotSerializer(serializers.ModelSerializer):
@@ -61,7 +61,10 @@ class VisualSerializer(CollectionVisualSerializer):
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
 
-        if instance.visual_type in [instance.ROB_HEATMAP, instance.ROB_BARCHART]:
+        if instance.visual_type in [
+            constants.VisualType.ROB_HEATMAP,
+            constants.VisualType.ROB_BARCHART,
+        ]:
             ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
 
         ret["endpoints"] = [
@@ -151,7 +154,7 @@ class SummaryTableSerializer(serializers.ModelSerializer):
 
 
 class SummaryTableDataSerializer(serializers.Serializer):
-    table_type = serializers.ChoiceField(models.SummaryTable.TableType.choices)
+    table_type = serializers.ChoiceField(constants.TableType.choices)
     assessment_id = serializers.IntegerField()
     data_source = serializers.CharField()
 
