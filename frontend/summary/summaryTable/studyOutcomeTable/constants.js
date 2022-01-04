@@ -1,6 +1,7 @@
 import h from "shared/utils/helpers";
 
-export const dataUrl = id => `/ani/api/assessment/${id}/endpoint-doses-heatmap/`,
+export const dataUrl = (table_type, data_source, assessment_id) =>
+        `/summary/api/summary-table/data/?table_type=${table_type}&data_source=${data_source}&assessment_id=${assessment_id}`,
     rowTypeChoices = [{id: "study", label: "Study"}],
     robAttributeChoices = [
         {id: "rob_score", label: "rob_score"},
@@ -13,5 +14,10 @@ export const dataUrl = id => `/ani/api/assessment/${id}/endpoint-doses-heatmap/`
         return {id: studyId, type: "study", customized: []};
     },
     createNewColumn = () => {
-        return {label: "Study name", attribute: "study_name", key: h.randomString(5), width: 1};
+        return {
+            label: "Study name",
+            attribute: "study_name",
+            key: h.randomString(5),
+            width: 1,
+        };
     };

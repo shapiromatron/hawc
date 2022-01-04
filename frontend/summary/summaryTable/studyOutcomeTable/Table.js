@@ -1,5 +1,4 @@
 import _ from "lodash";
-import {toJS} from "mobx";
 import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -8,6 +7,8 @@ import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import CheckboxInput from "shared/components/CheckboxInput";
+import QuillTextInput from "shared/components/QuillTextInput";
 
 import {robAttributeChoices} from "./constants";
 
@@ -28,15 +29,67 @@ EditButton.propTypes = {
     handleClick: PropTypes.func.isRequired,
 };
 
+@observer
 class EditCellForm extends Component {
     render() {
-        const {rowIdx, colIdx} = this.props;
+        const {rowIdx, colIdx, store} = this.props,
+            col = store.stagedEdits.columns[colIdx],
+            row = store.stagedEdits.rows[rowIdx],
+            customized = _.find(row.customized, d => d.key == col.key);
         return (
-            <td>
-                <span>
-                    CELL-{rowIdx}-{colIdx}
-                </span>
-            </td>
+            <>
+                <CheckboxInput
+                    label="Customize?"
+                    name="customize"
+                    onChange={e =>
+                        store.updateStagedCell(
+                            rowIdx,
+                            col.key,
+                            e.target.checked ? store.getDefaultCustomized(row, col) : null
+                        )
+                    }
+                    checked={customized != null}
+                    helpText={"Overrides cell dimensions for calculated best fit"}
+                />
+                {customized != null
+                    ? col.attribute == "rob_score"
+                        ? this.renderRobForm()
+                        : this.renderTextForm()
+                    : null}
+            </>
+        );
+    }
+    renderRobForm() {
+        const {rowIdx, colIdx, store} = this.props,
+            col = store.stagedEdits.columns[colIdx],
+            row = store.stagedEdits.rows[rowIdx],
+            customized = _.find(row.customized, d => d.key == col.key),
+            choices = store.scoreIdChoices(row.id, col.metric);
+        return choices.length ? (
+            <SelectInput
+                choices={choices}
+                value={customized.score_id}
+                handleSelect={value =>
+                    store.updateStagedCell(rowIdx, col.key, {key: col.key, score_id: value})
+                }
+                label="Score ID"
+            />
+        ) : (
+            "No scores available"
+        );
+    }
+    renderTextForm() {
+        const {rowIdx, colIdx, store} = this.props,
+            col = store.stagedEdits.columns[colIdx],
+            customized = _.find(store.stagedEdits.rows[rowIdx].customized, d => d.key == col.key);
+        return (
+            <QuillTextInput
+                label="Custom text"
+                value={customized.html}
+                onChange={value =>
+                    store.updateStagedCell(rowIdx, col.key, {key: col.key, html: value})
+                }
+            />
         );
     }
 }
@@ -46,31 +99,28 @@ EditCellForm.propTypes = {
     colIdx: PropTypes.number.isRequired,
 };
 
+@observer
 class EditRowForm extends Component {
-    constructor(props) {
-        super(props);
-        const {store, rowIdx} = this.props;
-        this.state = toJS(store.settings.rows[rowIdx]);
-    }
     render() {
         const {store, rowIdx} = this.props,
+            row = store.stagedEdits.rows[rowIdx],
             typeChoices = store.rowTypeChoices,
             idChoices = store.rowIdChoices;
         return (
-            <td>
+            <>
                 <div className="col-md-12">
                     <SelectInput
                         choices={typeChoices}
-                        value={this.state.type}
-                        handleSelect={value => this.setState({type: value})}
+                        value={row.type}
+                        handleSelect={value => store.updateStagedRow(rowIdx, {type: value})}
                         label="Data type"
                     />
                 </div>
                 <div className="col-md-12">
                     <SelectInput
                         choices={idChoices}
-                        value={this.state.id}
-                        handleSelect={value => this.setState({id: parseInt(value)})}
+                        value={row.id}
+                        handleSelect={value => store.updateStagedRow(rowIdx, {id: parseInt(value)})}
                         label="Item"
                     />
                 </div>
@@ -78,12 +128,12 @@ class EditRowForm extends Component {
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
-                            onClick={() => store.updateRow(rowIdx, this.state)}>
+                            onClick={() => store.commitStagedEdits()}>
                             Update
                         </button>
                         <button
                             className="btn btn-sm btn-light"
-                            onClick={() => store.setEditRowIndex(null)}>
+                            onClick={() => store.resetStagedEdits()}>
                             Cancel
                         </button>
                     </div>
@@ -107,7 +157,7 @@ class EditRowForm extends Component {
                         </button>
                     </div>
                 </div>
-            </td>
+            </>
         );
     }
 }
@@ -118,41 +168,47 @@ EditRowForm.propTypes = {
 
 @observer
 class EditColumnForm extends Component {
-    constructor(props) {
-        super(props);
-        const {store, colIdx} = this.props;
-        this.state = toJS(store.settings.columns[colIdx]);
-    }
     render() {
-        const {store, colIdx} = this.props;
+        const {store, colIdx} = this.props,
+            col = store.stagedEdits.columns[colIdx];
         return (
-            <td>
+            <>
                 <div className="col-md-12">
                     <TextInput
-                        onChange={e => this.setState({label: e.target.value})}
+                        onChange={e => store.updateStagedColumn(colIdx, {label: e.target.value})}
                         name="label"
-                        value={this.state.label}
+                        value={col.label}
                         label="Label"
                     />
                 </div>
                 <div className="col-md-12">
                     <SelectInput
                         choices={robAttributeChoices}
-                        handleSelect={value => this.setState({attribute: value})}
-                        value={this.state.attribute}
+                        handleSelect={value => store.updateStagedColumn(colIdx, {attribute: value})}
+                        value={col.attribute}
                         label="Attribute"
                     />
+                    {col.attribute == "rob_score" ? (
+                        <SelectInput
+                            choices={store.metricIdChoices}
+                            handleSelect={value =>
+                                store.updateStagedColumn(colIdx, {metric: value})
+                            }
+                            value={col.metric}
+                            label="Metric"
+                        />
+                    ) : null}
                 </div>
                 <div className="col-md-12 text-center">
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
-                            onClick={() => store.updateColumn(colIdx, this.state)}>
+                            onClick={() => store.commitStagedEdits()}>
                             Update
                         </button>
                         <button
                             className="btn btn-sm btn-light"
-                            onClick={() => store.setEditColumnIndex(null)}>
+                            onClick={() => store.resetStagedEdits()}>
                             Cancel
                         </button>
                     </div>
@@ -176,7 +232,7 @@ class EditColumnForm extends Component {
                         </button>
                     </div>
                 </div>
-            </td>
+            </>
         );
     }
 }
@@ -191,6 +247,9 @@ class Table extends Component {
         const {store} = this.props;
         store.fetchData();
     }
+    cellContents() {
+        return 1;
+    }
     render() {
         const {store, forceReadOnly} = this.props,
             editable = store.editMode && !forceReadOnly;
@@ -203,68 +262,80 @@ class Table extends Component {
             );
         }
 
-        const {numColumns, settings, editColumnIndex, editRowIndex} = store;
+        const {numColumns, workingSettings, editColumnIndex, editRowIndex} = store;
         return (
             <table className="summaryTable table table-bordered table-sm">
                 <thead>
                     <tr>
-                        {settings.columns.map((col, idx) => {
-                            return editColumnIndex === idx ? (
-                                <EditColumnForm key={col.key} store={store} colIdx={idx} />
-                            ) : (
+                        {workingSettings.columns.map((col, idx) => {
+                            return (
                                 <th key={col.key} className="position-relative">
-                                    {editable ? (
-                                        <EditButton
-                                            handleClick={() => store.setEditColumnIndex(idx)}
-                                        />
-                                    ) : null}
-                                    {col.label}
+                                    {editable && editColumnIndex === idx ? (
+                                        <EditColumnForm store={store} colIdx={idx} />
+                                    ) : (
+                                        <>
+                                            {editable && editRowIndex == null ? (
+                                                <EditButton
+                                                    handleClick={() =>
+                                                        store.setEditColumnIndex(idx)
+                                                    }
+                                                />
+                                            ) : null}
+                                            {col.label}
+                                        </>
+                                    )}
                                 </th>
                             );
                         })}
                     </tr>
                 </thead>
                 <tbody>
-                    {settings.rows.map((row, rowIdx) => {
+                    {workingSettings.rows.map((row, rowIdx) => {
                         return (
                             <tr key={rowIdx}>
                                 {_.range(0, numColumns).map(colIdx => {
-                                    if (colIdx == 0 && rowIdx === editRowIndex) {
-                                        return (
-                                            <EditRowForm
-                                                key={colIdx}
-                                                store={store}
-                                                rowIdx={rowIdx}
-                                            />
-                                        );
-                                    } else if (
-                                        colIdx === editColumnIndex ||
-                                        rowIdx === editRowIndex
-                                    ) {
-                                        return (
-                                            <EditCellForm
-                                                key={colIdx}
-                                                store={store}
-                                                rowIdx={rowIdx}
-                                                colIdx={colIdx}
-                                            />
-                                        );
-                                    } else {
-                                        return (
-                                            <td
-                                                key={colIdx}
-                                                className={colIdx === 0 ? "position-relative" : ""}>
-                                                {editable && colIdx === 0 ? (
-                                                    <EditButton
-                                                        handleClick={() =>
-                                                            store.setEditRowIndex(rowIdx)
-                                                        }
+                                    return (
+                                        <td key={colIdx} className="position-relative">
+                                            {editable &&
+                                            (rowIdx === editRowIndex ||
+                                                colIdx === editColumnIndex) ? (
+                                                <>
+                                                    {rowIdx === editRowIndex && colIdx == 0 ? (
+                                                        <EditRowForm
+                                                            key={colIdx}
+                                                            store={store}
+                                                            rowIdx={rowIdx}
+                                                        />
+                                                    ) : null}
+                                                    <EditCellForm
+                                                        store={store}
+                                                        rowIdx={rowIdx}
+                                                        colIdx={colIdx}
                                                     />
-                                                ) : null}
-                                                {row.type}-{row.id}-{colIdx}
-                                            </td>
-                                        );
-                                    }
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {editable &&
+                                                    editColumnIndex == null &&
+                                                    colIdx === 0 ? (
+                                                        <EditButton
+                                                            handleClick={() =>
+                                                                store.setEditRowIndex(rowIdx)
+                                                            }
+                                                        />
+                                                    ) : null}
+                                                    <span
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: store.getCellContent(
+                                                                rowIdx,
+                                                                colIdx
+                                                            ),
+                                                        }}
+                                                    />
+                                                </>
+                                            )}
+                                        </td>
+                                    );
                                 })}
                             </tr>
                         );
