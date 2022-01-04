@@ -255,12 +255,13 @@ class Assessment(models.Model):
         this option until you like to "freeze" your assessment, and then this can be unchecked, if
         needed.""",
     )
+    epi_version = models.PositiveSmallIntegerField(
+        choices=constants.EpiVersion.choices,
+        default=2,
+        help_text="Set based on Epi Version used for this assessment.",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    epi_version = models.PositiveSmallIntegerField(
-        default=2,
-        help_text="Set based on Epi Version used for this assessment. Only use a value of 1 or 2.",
-    )
 
     COPY_NAME = "assessments"
     BREADCRUMB_PARENT = None
