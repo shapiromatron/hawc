@@ -12,7 +12,7 @@ from ..common.serializers import (
     IdLookupMixin,
 )
 from ..study.serializers import StudySerializer
-from . import models
+from . import constants, models
 
 
 class EthnicitySerializer(serializers.ModelSerializer):
@@ -70,12 +70,10 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
 
 
 class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
-    mean_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES)
-    variance_type = FlexibleChoiceField(
-        choices=models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES
-    )
-    lower_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES)
-    upper_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES)
+    mean_type = FlexibleChoiceField(choices=constants.GroupMeanType.choices)
+    variance_type = FlexibleChoiceField(choices=constants.GroupVarianceType.choices)
+    lower_type = FlexibleChoiceField(choices=constants.LowerLimit.choices)
+    upper_type = FlexibleChoiceField(choices=constants.UpperLimit.choices)
 
     class Meta:
         model = models.GroupNumericalDescriptions
@@ -83,7 +81,7 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(IdLookupMixin, serializers.ModelSerializer):
-    sex = FlexibleChoiceField(choices=models.Group.SEX_CHOICES)
+    sex = FlexibleChoiceField(choices=constants.Sex.choices)
     ethnicities = FlexibleDBLinkedChoiceField(models.Ethnicity, EthnicitySerializer, "name", True)
     descriptions = GroupNumericalDescriptionsSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
@@ -100,8 +98,8 @@ class ResultMetricSerializer(serializers.ModelSerializer):
 
 
 class CentralTendencySerializer(serializers.ModelSerializer):
-    variance_type = FlexibleChoiceField(choices=models.CentralTendency.VARIANCE_TYPE_CHOICES)
-    estimate_type = FlexibleChoiceField(choices=models.CentralTendency.ESTIMATE_TYPE_CHOICES)
+    variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
+    estimate_type = FlexibleChoiceField(choices=constants.EstimateType.choices)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
 
@@ -134,7 +132,7 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
     study = StudySerializer()
     criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True, read_only=True)
     countries = StudyPopulationCountrySerializer(many=True)
-    design = FlexibleChoiceField(choices=models.StudyPopulation.DESIGN_CHOICES)
+    design = FlexibleChoiceField(choices=constants.Design.choices)
     outcomes = OutcomeLinkSerializer(many=True, read_only=True)
     exposures = ExposureLinkSerializer(many=True, read_only=True)
     can_create_sets = serializers.BooleanField(read_only=True)
@@ -184,7 +182,7 @@ class ExposureWriteSerializer(serializers.ModelSerializer):
 
 
 class GroupResultSerializer(serializers.ModelSerializer):
-    main_finding_support = FlexibleChoiceField(choices=models.GroupResult.MAIN_FINDING_CHOICES)
+    main_finding_support = FlexibleChoiceField(choices=constants.MainFinding.choices)
     p_value_text = serializers.CharField(read_only=True)
     p_value_qualifier_display = serializers.CharField(
         source="get_p_value_qualifier_display", read_only=True
@@ -258,13 +256,13 @@ class SimpleComparisonSetSerializer(IdLookupMixin, serializers.ModelSerializer):
 
 
 class ResultSerializer(serializers.ModelSerializer):
-    dose_response = FlexibleChoiceField(choices=models.Result.DOSE_RESPONSE_CHOICES)
+    dose_response = FlexibleChoiceField(choices=constants.DoseResponse.choices)
     metric = FlexibleDBLinkedChoiceField(
         models.ResultMetric, ResultMetricSerializer, "metric", False
     )
-    statistical_power = FlexibleChoiceField(choices=models.Result.STATISTICAL_POWER_CHOICES)
-    estimate_type = FlexibleChoiceField(choices=models.Result.ESTIMATE_TYPE_CHOICES)
-    variance_type = FlexibleChoiceField(choices=models.Result.VARIANCE_TYPE_CHOICES)
+    statistical_power = FlexibleChoiceField(choices=constants.StatisticalPower.choices)
+    estimate_type = FlexibleChoiceField(choices=constants.EstimateType.choices)
+    variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
     factors = ResultAdjustmentFactorSerializer(source="resfactors", many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     resulttags = EffectTagsSerializer(read_only=True)
@@ -286,7 +284,7 @@ class ResultSerializer(serializers.ModelSerializer):
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
-    diagnostic = FlexibleChoiceField(choices=models.Outcome.DIAGNOSTIC_CHOICES)
+    diagnostic = FlexibleChoiceField(choices=constants.Diagnostic.choices)
     study_population = StudyPopulationSerializer()
     can_create_sets = serializers.BooleanField(read_only=True)
     effects = EffectTagsSerializer(read_only=True)
