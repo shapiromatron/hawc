@@ -87,7 +87,7 @@ class Column(BaseModel):
     label: str
     attribute: AttributeChoices
     width: int = 1
-    metric: Optional[int]
+    metric_id: Optional[int]
     key: str
 
 
@@ -153,7 +153,7 @@ class StudyOutcomeTable(BaseTable):
     def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:
         if column.attribute.value == "rob_score":
             try:
-                selection = self._rob.loc[(row.id, column.metric)]
+                selection = self._rob.loc[(row.id, column.metric_id)]
             except KeyError:
                 return pd.DataFrame(columns=self._rob.columns)
             # if there are duplicate indices, selection is a dataframe

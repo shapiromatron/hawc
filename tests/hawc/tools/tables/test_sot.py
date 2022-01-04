@@ -94,7 +94,7 @@ class TestStudyOutcomeTable:
                 {
                     "label": "Rob score",
                     "attribute": "rob_score",
-                    "metric": 1,
+                    "metric_id": 1,
                     "key": "4",
                     "width": 4,
                 },
