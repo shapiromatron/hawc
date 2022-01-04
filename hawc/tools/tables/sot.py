@@ -203,6 +203,7 @@ class StudyOutcomeTable(BaseTable):
     def get_default_props(cls):
         return {
             "assessment_id": -1,
+            "data_source": "ani",
             "subheaders": [],
             "columns": [],
             "rows": [],
