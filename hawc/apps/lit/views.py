@@ -213,6 +213,7 @@ class SearchQuery(BaseUpdate):
     model = models.Search
     form_class = forms.SearchForm
     http_method_names = ("get",)  # don't allow POST
+    template_name = "lit/search_too_large.html"
 
     def get_object(self, **kwargs):
         obj = get_object_or_404(
@@ -224,15 +225,8 @@ class SearchQuery(BaseUpdate):
         self.object = self.get_object()
         try:
             self.object.run_new_query()
-        except models.TooManyPubMedResults as e:
-            return HttpResponse(
-                """
-                                <p>PubMed Search error: <br>{0}</p>
-                                <p>Please perform a more targeted-search.</p>
-                                """.format(
-                    e
-                )
-            )
+        except models.TooManyPubMedResults as error:
+            return self.render_to_response({"error": error})
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 

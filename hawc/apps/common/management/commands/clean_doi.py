@@ -5,7 +5,7 @@ from django.db import transaction
 
 from hawc.apps.lit import constants
 from hawc.apps.lit.models import Identifiers, Reference
-from hawc.services.utils.doi import get_doi_from_hero, get_doi_from_pubmed_or_ris, try_get_doi
+from hawc.services.utils.doi import get_doi_from_identifier, try_get_doi
 
 
 class Command(BaseCommand):
@@ -25,16 +25,22 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        doi_identifiers = Identifiers.objects.filter(database=constants.DOI)
+        doi_identifiers = Identifiers.objects.filter(database=constants.ReferenceDatabase.DOI)
         doi_id_initial = doi_identifiers.count()
         validate_dois(self, doi_identifiers)
         if not options["skip_create"]:
-            refs = Reference.objects.exclude(identifiers__database=constants.DOI)
-            doi_ref_initial = Reference.objects.filter(identifiers__database=constants.DOI).count()
+            refs = Reference.objects.exclude(identifiers__database=constants.ReferenceDatabase.DOI)
+            doi_ref_initial = Reference.objects.filter(
+                identifiers__database=constants.ReferenceDatabase.DOI
+            ).count()
             self.stdout.write(f"Attempting to create doi IDs for {refs.count()} references...")
             create_dois(refs, extensive=options["extensive"])
-            doi_id_final = Identifiers.objects.filter(database=constants.DOI).count()
-            doi_ref_final = Reference.objects.filter(identifiers__database=constants.DOI).count()
+            doi_id_final = Identifiers.objects.filter(
+                database=constants.ReferenceDatabase.DOI
+            ).count()
+            doi_ref_final = Reference.objects.filter(
+                identifiers__database=constants.ReferenceDatabase.DOI
+            ).count()
             ref_total = Reference.objects.count()
             self.stdout.write(
                 f"Began with {doi_id_initial} doi IDs; finished with {doi_id_final} doi IDs"
@@ -97,7 +103,9 @@ def validate_dois(self, doi_identifiers):
     ids = [id.unique_id for id in invalid_doi_idents]
     for doi in invalid_doi_idents:
         self.stdout.write(f"\t Removing doi: '{doi.unique_id}'")
-    Identifiers.objects.filter(unique_id__in=ids).filter(database=constants.DOI).delete()
+    Identifiers.objects.filter(unique_id__in=ids).filter(
+        database=constants.ReferenceDatabase.DOI
+    ).delete()
 
 
 def create_dois(refs, extensive: bool = False):
@@ -114,13 +122,16 @@ def create_dois(refs, extensive: bool = False):
                 doi = try_get_doi(ids.content, full_text=True)
             else:
                 if ids.content:
-                    if ids.database == constants.HERO:
-                        doi = get_doi_from_hero(ids)
-                    if ids.database == constants.RIS or ids.database == constants.PUBMED:
-                        doi = get_doi_from_pubmed_or_ris(ids)
+                    if ids.database == constants.ReferenceDatabase.HERO:
+                        doi = get_doi_from_identifier(ids)
+                    if (
+                        ids.database == constants.ReferenceDatabase.RIS
+                        or ids.database == constants.ReferenceDatabase.PUBMED
+                    ):
+                        doi = get_doi_from_identifier(ids)
             if doi:
                 doi_identifier, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=constants.DOI
+                    unique_id=doi, database=constants.ReferenceDatabase.DOI
                 )
                 ref.identifiers.add(doi_identifier)
                 break

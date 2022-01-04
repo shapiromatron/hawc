@@ -3,7 +3,7 @@ import json
 import urllib.parse
 from typing import Optional
 
-from hawc.apps.lit import constants
+from hawc.apps.lit.constants import DOI_EXTRACT
 
 
 def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
@@ -16,9 +16,12 @@ def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
     Returns:
         Optional[str]: A DOI string if one can be found
     """
+    # empty string or None
+    if not text:
+        return None
     text = html.unescape(text)
     text = urllib.parse.unquote(text)
-    if doi := constants.DOI_EXTRACT.search(text):
+    if doi := DOI_EXTRACT.search(text):
         doi = doi.group(0)
         if full_text:
             # there may be multiple trailing invalid characters
@@ -31,17 +34,10 @@ def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
     return doi
 
 
-def get_doi_from_hero(ident) -> Optional[str]:
+def get_doi_from_identifier(ident) -> Optional[str]:
     data = json.loads(ident.content)
     if "doi" in data:
         return try_get_doi(data["doi"])
     if "json" in data and "doi" in data["json"]:
         return try_get_doi(data["json"]["doi"])
-    return None
-
-
-def get_doi_from_pubmed_or_ris(ident) -> Optional[str]:
-    data = json.loads(ident.content)
-    if "doi" in data:
-        return try_get_doi(data["doi"])
     return None
