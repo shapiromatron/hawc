@@ -38,15 +38,15 @@ class StudyOutcomeTableStore {
         let col = this.stagedEdits.columns[colIdx];
         if ("attribute" in value && col.attribute !== value.attribute) {
             if (col.attribute == "rob_score") {
-                delete col.metric;
+                delete col.metric_id;
             } else if (value.attribute == "rob_score") {
                 let metric = this.metricIdChoices[0];
-                col.metric = metric == null ? undefined : metric["id"];
+                col.metric_id = metric == null ? undefined : metric["id"];
             }
             this.stagedEdits.rows.forEach(row => {
                 row.customized = _.filter(row.customized, d => d.key != col.key);
             });
-        } else if ("metric" in value && col.metric !== value.metric) {
+        } else if ("metric_id" in value && col.metric_id !== value.metric_id) {
             this.stagedEdits.rows.forEach(row => {
                 row.customized = _.filter(row.customized, d => d.key != col.key);
             });
@@ -133,7 +133,7 @@ class StudyOutcomeTableStore {
 
     getDefaultCustomized(row, col) {
         if (col.attribute == "rob_score") {
-            let val = this.scoreIdChoices(row.id, col.metric)[0];
+            let val = this.scoreIdChoices(row.id, col.metric_id)[0];
             return val == null
                 ? {key: col.key, score_id: undefined}
                 : {key: col.key, score_id: val["id"]};
@@ -185,7 +185,7 @@ class StudyOutcomeTableStore {
                             this.dataset.rob,
                             d =>
                                 d["study_id"] == row.id &&
-                                d["metric_id"] == col.metric &&
+                                d["metric_id"] == col.metric_id &&
                                 _.isNil(d["content_type_id"])
                         ),
                         judgement = data.length ? data[0]["score_score"] : -1;

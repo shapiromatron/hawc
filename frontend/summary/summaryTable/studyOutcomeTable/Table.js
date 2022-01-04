@@ -64,7 +64,7 @@ class EditCellForm extends Component {
             col = store.stagedEdits.columns[colIdx],
             row = store.stagedEdits.rows[rowIdx],
             customized = _.find(row.customized, d => d.key == col.key),
-            choices = store.scoreIdChoices(row.id, col.metric);
+            choices = store.scoreIdChoices(row.id, col.metric_id);
         return choices.length ? (
             <SelectInput
                 choices={choices}
@@ -192,9 +192,9 @@ class EditColumnForm extends Component {
                         <SelectInput
                             choices={store.metricIdChoices}
                             handleSelect={value =>
-                                store.updateStagedColumn(colIdx, {metric: value})
+                                store.updateStagedColumn(colIdx, {metric_id: value})
                             }
-                            value={col.metric}
+                            value={col.metric_id}
                             label="Metric"
                         />
                     ) : null}
