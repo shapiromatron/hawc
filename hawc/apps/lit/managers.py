@@ -317,8 +317,7 @@ class ReferenceManager(BaseManager):
                 ref.save()
 
             Identifiers = apps.get_model("lit", "Identifiers")
-            doi = get_doi_from_hero(identifier)
-            if doi:
+            if doi := get_doi_from_hero(identifier):
                 doi_id, created = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI
                 )
@@ -376,8 +375,7 @@ class ReferenceManager(BaseManager):
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
-            doi = get_doi_from_pubmed_or_ris(identifier)
-            if doi:
+            if doi := get_doi_from_pubmed_or_ris(identifier):
                 doiIdentifier = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.DOI
                 )
