@@ -154,7 +154,7 @@ class SummaryTableSerializer(serializers.ModelSerializer):
 
 
 class SummaryTableDataSerializer(serializers.Serializer):
-    table_type = serializers.ChoiceField(models.SummaryTable.TableType.choices)
+    table_type = serializers.ChoiceField(constants.TableType.choices)
     assessment_id = serializers.IntegerField()
     data_source = serializers.CharField()
 

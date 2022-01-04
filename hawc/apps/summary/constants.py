@@ -12,6 +12,7 @@ class StudyType(models.IntegerChoices):
 class TableType(models.IntegerChoices):
     GENERIC = 0
     EVIDENCE_PROFILE = 1
+    STUDY_OUTCOME = 2
 
 
 class VisualType(models.IntegerChoices):
