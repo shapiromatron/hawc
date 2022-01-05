@@ -1,10 +1,12 @@
-from django.db.models import Q
-
-from ..common.models import BaseManager, get_distinct_charfield_opts
+from ..common.models import BaseManager
 
 
 class CriteriaManager(BaseManager):
     assessment_relation = "assessment"
+
+
+# class AgeProfileManger(BaseManager):
+#     assessment_relation = "studypopulation__study__assessment"
 
 
 class CountryManager(BaseManager):
