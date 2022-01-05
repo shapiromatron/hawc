@@ -149,8 +149,18 @@ class TestReferenceReplaceHeroIdSerializer:
         assessment = refs[0].assessment
         data = {
             "replace": [
-                [refs[0].id, int(refs[1].identifiers.get(database=constants.HERO).unique_id)],
-                [refs[1].id, int(refs[0].identifiers.get(database=constants.HERO).unique_id)],
+                [
+                    refs[0].id,
+                    int(
+                        refs[1].identifiers.get(database=constants.ReferenceDatabase.HERO).unique_id
+                    ),
+                ],
+                [
+                    refs[1].id,
+                    int(
+                        refs[0].identifiers.get(database=constants.ReferenceDatabase.HERO).unique_id
+                    ),
+                ],
             ]
         }
 
@@ -176,7 +186,12 @@ class TestReferenceReplaceHeroIdSerializer:
         refs = Reference.objects.filter(id__in=ref_ids)
         assessment = refs[0].assessment
         data = {
-            "replace": [[refs[0].id, refs[1].identifiers.get(database=constants.HERO).unique_id]]
+            "replace": [
+                [
+                    refs[0].id,
+                    refs[1].identifiers.get(database=constants.ReferenceDatabase.HERO).unique_id,
+                ]
+            ]
         }
         serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
         assert serializer.is_valid() is False

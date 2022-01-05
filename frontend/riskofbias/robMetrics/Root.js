@@ -10,7 +10,6 @@ import Loading from "shared/components/Loading";
 @observer
 class Root extends Component {
     componentDidMount() {
-        this.props.store.setConfig("config");
         this.props.store.fetchRoBData();
     }
 

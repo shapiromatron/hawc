@@ -1,6 +1,6 @@
 import abc
 import logging
-from typing import List, Optional
+from typing import Callable, List, Optional
 from urllib.parse import urlparse
 
 import reversion
@@ -12,6 +12,7 @@ from django.db import transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template import RequestContext
 from django.urls import Resolver404, resolve, reverse
 from django.utils.decorators import method_decorator
 from django.utils.http import is_same_domain
@@ -20,7 +21,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
-from .helper import tryParseInt
+from .helper import WebappConfig, tryParseInt
 
 logger = logging.getLogger(__name__)
 audit_logger = logging.getLogger("hawc.audit.change")
@@ -418,26 +419,43 @@ class CopyAsNewSelectorMixin:
         return [name]
 
 
+class WebappMixin:
+    """Mixin to startup a javascript single-page application"""
+
+    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.get_app_config:
+            context["config"] = self.get_app_config(context).dict()
+        return context
+
+
 # Base HAWC views
-class BaseDetail(AssessmentPermissionsMixin, DetailView):
+class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None  # optional
+    breadcrumb_active_name: Optional[str] = None
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
         return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
+        extras = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        context["crud"] = self.crud
-        context["obj_perms"] = super().get_obj_perms()
-        context["breadcrumbs"] = self.get_breadcrumbs()
         if self.breadcrumb_active_name:
             context["breadcrumbs"].append(Breadcrumb(name=self.breadcrumb_active_name))
         return context
 
 
-class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
+class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
 
     @transaction.atomic
@@ -457,12 +475,17 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return self.object.get_absolute_url()
 
     def get_context_data(self, **kwargs):
+        extras = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "cancel_url": self.get_cancel_url(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        context["crud"] = self.crud
-        context["obj_perms"] = super().get_obj_perms()
-        context["cancel_url"] = self.get_cancel_url()
-        context["breadcrumbs"] = self.get_breadcrumbs()
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -471,7 +494,9 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return crumbs
 
 
-class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
+class BaseUpdate(
+    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView
+):
     crud = "Update"
 
     @transaction.atomic
@@ -489,11 +514,16 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         pass
 
     def get_context_data(self, **kwargs):
+        extras = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        context["breadcrumbs"] = self.get_breadcrumbs()
-        context["crud"] = self.crud
-        context["obj_perms"] = super().get_obj_perms()
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
@@ -502,9 +532,11 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return crumbs
 
 
-class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
+class BaseCreate(
+    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
+):
     parent_model = None  # required
-    parent_template_name: str = None  # required
+    parent_template_name: Optional[str] = None  # required
     crud = "Create"
 
     def dispatch(self, *args, **kwargs):
@@ -532,12 +564,16 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return kwargs
 
     def get_context_data(self, **kwargs):
+        extras = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
         context = super().get_context_data(**kwargs)
-        context["crud"] = self.crud
-        context["assessment"] = self.assessment
-        context["obj_perms"] = super().get_obj_perms()
-        context["breadcrumbs"] = self.get_breadcrumbs()
-        context["crud"] = self.crud
         context[self.parent_template_name] = self.parent
         return context
 
@@ -561,15 +597,15 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return crumbs
 
 
-class BaseList(AssessmentPermissionsMixin, ListView):
+class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     """
     Basic view that shows a list of objects given
     """
 
     parent_model = None  # required
-    parent_template_name = None  # optional
+    parent_template_name = None
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None  # optional
+    breadcrumb_active_name: Optional[str] = None
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -578,11 +614,16 @@ class BaseList(AssessmentPermissionsMixin, ListView):
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        extras = {
+            "assessment": self.assessment,
+            "crud": self.crud,
+            "obj_perms": super().get_obj_perms(),
+            "breadcrumbs": self.get_breadcrumbs(),
+        }
+        for key, value in extras.items():
+            if key not in kwargs:
+                kwargs[key] = value
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        context["breadcrumbs"] = self.get_breadcrumbs()
-        context["obj_perms"] = super().get_obj_perms()
-        context["crud"] = self.crud
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
         return context
@@ -636,15 +677,9 @@ class BaseCreateWithFormset(BaseCreate):
         return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.method == "GET":
-            context["formset"] = self.build_initial_formset_factory()
-        else:
-            if kwargs.get("form"):
-                context["form"] = kwargs.get("form")
-            if kwargs.get("formset"):
-                context["formset"] = kwargs.get("formset")
-        return context
+        if "formset" not in kwargs:
+            kwargs["formset"] = self.build_initial_formset_factory()
+        return super().get_context_data(**kwargs)
 
     def pre_validate(self, form, formset):
         pass
@@ -712,15 +747,9 @@ class BaseUpdateWithFormset(BaseUpdate):
         raise NotImplementedError("Method should be overridden to return a formset factory")
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.method == "GET":
-            context["formset"] = self.build_initial_formset_factory()
-        else:
-            if kwargs.get("form"):
-                context["form"] = kwargs.get("form")
-            if kwargs.get("formset"):
-                context["formset"] = kwargs.get("formset")
-        return context
+        if "formset" not in kwargs:
+            kwargs["formset"] = self.build_initial_formset_factory()
+        return super().get_context_data(**kwargs)
 
 
 class BaseEndpointFilterList(BaseList):
@@ -771,11 +800,12 @@ class BaseEndpointFilterList(BaseList):
         return qs
 
     def get_context_data(self, **kwargs):
+        kwargs["form"] = self.form
         context = super().get_context_data(**kwargs)
-        context["form"] = self.form
-        context["config"] = {
-            "items": self.model.get_qs_json(context["object_list"], json_encode=False)
-        }
+        if "config" not in context:  # TODO - remove this case; implement #507
+            context["config"] = {
+                "items": self.model.get_qs_json(context["object_list"], json_encode=False)
+            }
         return context
 
 
@@ -791,27 +821,32 @@ class HeatmapBase(BaseList):
         return [self.template_name]
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        kwargs["breadcrumbs"] = [
+            Breadcrumb.build_root(self.request.user),
+            Breadcrumb.from_object(self.assessment),
+            Breadcrumb(
+                name="Endpoints",
+                url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
+            ),
+            Breadcrumb(name=self.heatmap_view_title),
+        ]
+        return super().get_context_data(**kwargs)
+
+    def get_app_config(self, context) -> WebappConfig:
         url_args = (
             "?unpublished=true"
             if self.request.GET.get("unpublished", "false").lower() == "true"
             else ""
         )
-        context.update(
-            dict(
+        can_edit = context["obj_perms"]["edit"]
+        create_url = reverse("summary:visualization_create", args=(self.assessment.id, 6))
+        return WebappConfig(
+            app="heatmapTemplateStartup",
+            data=dict(
+                assessment=str(self.assessment),
                 data_class=self.heatmap_data_class,
                 data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
-                heatmap_view_title=self.heatmap_view_title,
-                obj_perms=self.assessment.user_permissions(self.request.user),
-                breadcrumbs=[
-                    Breadcrumb.build_root(self.request.user),
-                    Breadcrumb.from_object(self.assessment),
-                    Breadcrumb(
-                        name="Endpoints",
-                        url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
-                    ),
-                    Breadcrumb(name=self.heatmap_view_title),
-                ],
-            )
+                clear_cache_url=self.assessment.get_clear_cache_url() if can_edit else None,
+                create_visual_url=create_url if can_edit else None,
+            ),
         )
-        return context

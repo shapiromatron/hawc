@@ -5,13 +5,14 @@ from typing import Dict
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.serializers import to_json
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -21,7 +22,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import forms, models, serializers
+from . import constants, forms, models, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -50,6 +51,11 @@ class SummaryTextList(BaseList):
         rt = self.model.get_assessment_root_node(self.assessment.id)
         return self.model.objects.filter(pk__in=[rt.pk])
 
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTextStartup", data=dict(assessment_id=self.assessment.id, editMode=False)
+        )
+
 
 class SummaryTextModify(BaseCreate):
     # Base view for all Create, Update, Delete GET operations
@@ -68,6 +74,14 @@ class SummaryTextModify(BaseCreate):
             [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
         )
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTextStartup",
+            data=dict(
+                assessment_id=self.assessment.id, editMode=True, csrf=get_token(self.request),
+            ),
+        )
 
 
 # SUMMARY TABLE
@@ -104,6 +118,9 @@ class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
         )
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(app="summaryTableViewStartup", data=dict(table_id=self.object.id))
 
 
 class SummaryTableCreateSelector(BaseCreate):
@@ -142,16 +159,23 @@ class SummaryTableCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            is_create=True,
-            initial=to_json(serializers.SummaryTableSerializer, context["form"].instance),
-            save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
-            cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
-        )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
         )
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTableEditStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                is_create=True,
+                initial=serializers.SummaryTableSerializer(context["form"].instance).data,
+                save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
+                cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
+                csrf=get_token(self.request),
+            ),
+        )
 
 
 class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
@@ -161,16 +185,23 @@ class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            is_create=False,
-            initial=to_json(serializers.SummaryTableSerializer, self.object),
-            save_url=self.object.get_api_url(),
-            cancel_url=self.object.get_absolute_url(),
-        )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
         )
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTableEditStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                is_create=False,
+                initial=serializers.SummaryTableSerializer(self.object).data,
+                save_url=self.object.get_api_url(),
+                cancel_url=self.object.get_absolute_url(),
+                csrf=get_token(self.request),
+            ),
+        )
 
 
 class SummaryTableDelete(GetSummaryTableMixin, BaseDelete):
@@ -292,8 +323,8 @@ class VisualizationCreate(BaseCreate):
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
         if visual_type in {
-            models.Visual.LITERATURE_TAGTREE,
-            models.Visual.EXTERNAL_SITE,
+            constants.VisualType.LITERATURE_TAGTREE,
+            constants.VisualType.EXTERNAL_SITE,
         }:
             return "summary/visual_form_django.html"
         else:
@@ -347,8 +378,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in {
-            models.Visual.LITERATURE_TAGTREE,
-            models.Visual.EXTERNAL_SITE,
+            constants.VisualType.LITERATURE_TAGTREE,
+            constants.VisualType.EXTERNAL_SITE,
         }:
             return "summary/visual_form_django.html"
         else:

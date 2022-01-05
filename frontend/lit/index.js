@@ -18,11 +18,11 @@ import TagTreeViz from "./TagTreeViz";
 export default {
     TagTree,
     TagTreeViz,
-    startupReferenceDetail(el, tags, reference, canEdit) {
-        let tagtree = new TagTree(tags[0]),
-            ref = new Reference(reference, tagtree),
+    startupReferenceDetail(el, config) {
+        let tagtree = new TagTree(config.tags[0]),
+            ref = new Reference(config.reference, tagtree),
             options = {
-                showActions: canEdit,
+                showActions: config.canEdit,
                 actionsBtnClassName: "btn-primary",
             };
 

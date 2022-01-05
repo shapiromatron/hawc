@@ -3,9 +3,12 @@ import {observable, computed, action} from "mobx";
 import h from "shared/utils/helpers";
 
 class RobMetricsStore {
+    constructor(config) {
+        this.config = config;
+    }
+
     // content
     @observable error = null;
-    @observable config = null;
     @observable domains = null;
 
     // computed props
@@ -15,11 +18,6 @@ class RobMetricsStore {
 
     @computed get isEditing() {
         return this.config.is_editing;
-    }
-
-    // actions
-    @action.bound setConfig(elementId) {
-        this.config = JSON.parse(document.getElementById(elementId).textContent);
     }
 
     @action.bound fetchRoBData() {

@@ -4,7 +4,7 @@
 {% load selectable_tags %}
 
 {% block content %}
-    <h1>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h1>
+    <h2>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
     <div class="card">
         <div class="card-header">
             <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
@@ -17,18 +17,11 @@
             </div>
         </div>
     </div>
-    <div id="endpointTable"></div>
+    <div id="main"></div>
     {% include "includes/paginator.html" %}
 {% endblock content %}
 
 {% block extrajs %}
     {{ form.media }}
     {{ config|json_script:"config" }}
-    <script type="text/javascript">
-        window.app.startup("epimetaStartup", function(app){
-            const data = window.app.getConfig(),
-                tbl = new app.MetaResultListTable(data.items);
-            $("#endpointTable").html(tbl.buildTable());
-        });
-    </script>
 {% endblock %}

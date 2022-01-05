@@ -1,14 +1,14 @@
 import pytest
 
 from hawc.apps.assessment.models import Assessment
+from hawc.apps.summary.constants import VisualType
 from hawc.apps.summary.forms import ExternalSiteForm
-from hawc.apps.summary.models import Visual
 
 
 @pytest.mark.django_db
 def test_ExternalSiteForm(db_keys):
     assessment = Assessment.objects.get(id=db_keys.assessment_working)
-    visual_type = Visual.EXTERNAL_SITE
+    visual_type = VisualType.EXTERNAL_SITE
 
     data = dict(
         title="title",
