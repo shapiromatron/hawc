@@ -135,7 +135,7 @@ class AssessmentFilterForm(forms.Form):
     def get_filters(self):
         query = Q()
         if name := self.cleaned_data.get("search"):
-            query &= Q(name__icontains=name) | Q(year__icontains=name)
+            query &= Q(name__icontains=name) | Q(year=name)
         return query
 
     def get_queryset(self, qs):
