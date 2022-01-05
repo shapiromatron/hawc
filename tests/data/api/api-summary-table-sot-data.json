@@ -47,6 +47,7 @@
       "object_id": 1,
       "riskofbias_id": 3,
       "score_id": 9,
+      "score_label": "other stuff",
       "score_score": 14,
       "study_id": 1
     },
@@ -58,6 +59,7 @@
       "object_id": null,
       "riskofbias_id": 3,
       "score_id": 6,
+      "score_label": "base",
       "score_score": 16,
       "study_id": 1
     },
@@ -69,6 +71,7 @@
       "object_id": null,
       "riskofbias_id": 3,
       "score_id": 5,
+      "score_label": "",
       "score_score": 16,
       "study_id": 1
     }
