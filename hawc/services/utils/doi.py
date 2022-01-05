@@ -17,7 +17,7 @@ def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
         Optional[str]: A DOI string if one can be found
     """
     # empty string or None
-    if not text:
+    if not isinstance(text, str):
         return None
     text = html.unescape(text)
     text = urllib.parse.unquote(text)
@@ -35,7 +35,10 @@ def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
 
 
 def get_doi_from_identifier(ident) -> Optional[str]:
-    data = json.loads(ident.content)
+    try:
+        data = json.loads(ident.content)
+    except json.JSONDecodeError:
+        return None
     if "doi" in data:
         return try_get_doi(data["doi"])
     if "json" in data and "doi" in data["json"]:

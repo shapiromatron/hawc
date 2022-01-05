@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Prefetch
@@ -7,7 +5,7 @@ from django.db.models import Prefetch
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit.constants import DOI_EXACT, ReferenceDatabase
 from hawc.apps.lit.models import Identifiers, Reference
-from hawc.services.utils.doi import get_doi_from_identifier, try_get_doi
+from hawc.services.utils.doi import try_get_doi
 
 
 class Command(BaseCommand):
@@ -46,7 +44,9 @@ class Command(BaseCommand):
             validate_existing(self.stdout)
         if options["create_from_existing"]:
             for assessment in assessments:
-                create_from_existing(self.stdout, assessment, options["full_text"])
+                self.stdout.write(f"Reviewing references in {assessment.id}: {assessment}")
+                qs = Reference.objects.filter(assessment=assessment)
+                Reference.extract_dois(qs, self.stdout, options["full_text"])
 
 
 def validate_existing(logger):
@@ -90,12 +90,7 @@ def validate_existing(logger):
     logger.write(f"{len(new_candidates_dois):8} new DOI candidates extracted from bad DOIs")
 
     # get existing dois that may already match
-    existing_dois = {
-        k: v
-        for (k, v) in Identifiers.objects.filter(
-            database=ReferenceDatabase.DOI, unique_id__in=new_candidates_dois
-        ).values_list("unique_id", "id")
-    }
+    existing_dois = Identifiers.existing_doi_map(new_candidates_dois)
     new_candidates_idents = Identifiers.objects.filter(id__in=new_candidates_ids).prefetch_related(
         Prefetch("references", queryset=Reference.objects.all().only("id"))
     )
@@ -118,59 +113,10 @@ def validate_existing(logger):
             existing_dois[doi] = ident.id
             ident_updates.append(ident)
 
-    logger.write(f"{len(ident_deletes):8} DOIs deleted from candidates")
-    logger.write(f"{len(ident_updates):8} DOIs updated from candidates")
-    logger.write(f"{len(m2m_creates):8} new Identifier-Reference relations created")
+    logger.write(f"{len(ident_deletes):8} DOIs deleted from candidates (merged w/ existing)")
+    logger.write(f"{len(ident_updates):8} DOIs updated from candidates (new valid DOI)")
+    logger.write(f"{len(m2m_creates):8} new Identifier-Reference relations created (post-merge)")
 
     Identifiers.objects.filter(id__in=ident_deletes).delete()
     Identifiers.objects.bulk_update(ident_updates, ["unique_id"])
     RefIdentM2M.objects.bulk_create(m2m_creates)
-
-
-def create_from_existing(logger, full_text: bool):
-    """Attempt to create new DOIs from existing reference identifier metadata
-
-    Args:
-        logger (file): A logger instance with the write method
-        full_text (bool): use full text instad of structured content
-    """
-    qs_dois = Identifiers.objects.filter(database=ReferenceDatabase.DOI)
-    qs_ref_with_doi = Reference.objects.filter(identifiers__database=ReferenceDatabase.DOI)
-    qs_refs_without_doi = Reference.objects.exclude(identifiers__database=ReferenceDatabase.DOI)
-
-    logger.write(f"Total DOI in HAWC: {qs_dois.count()}")
-    logger.write(f"References with DOI: {qs_ref_with_doi.count()}")
-    logger.write(f"References without DOI {qs_refs_without_doi.count()}")
-
-    create_dois(logger, qs_refs_without_doi, full_text=full_text)
-
-    logger.write(f"Total DOI in HAWC: {qs_dois.count()}")
-    logger.write(f"References with DOI: {qs_ref_with_doi.count()}")
-    logger.write(f"References without DOI {qs_refs_without_doi.count()}")
-
-
-def create_dois(logger, refs, full_text: bool = False):
-    """Attempt to find a DOI for each reference given other identifier metadata
-
-    Args:
-        logger (file): A logger instance with the write method
-        refs (References): a list of references without doi identifiers
-        full_text (bool, optional): Determines whether to search full text (True) of field (False; default)
-    """
-    n = refs.count()
-    for i, ref in enumerate(refs.prefetch_related("identifiers")):
-        if i % 1000 == 0:
-            logger.write(f"Processing {i+1:10} of {n}")
-        doi = None
-        for ids in ref.identifiers.all():
-            if full_text:
-                doi = try_get_doi(ids.content, full_text=True)
-            elif ids.content:
-                doi = get_doi_from_identifier(ids)
-
-            if doi:
-                doi_identifier, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=ReferenceDatabase.DOI
-                )
-                ref.identifiers.add(doi_identifier)
-                break
