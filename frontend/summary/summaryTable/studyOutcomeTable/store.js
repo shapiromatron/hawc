@@ -6,7 +6,9 @@ import * as constants from "./constants";
 class StudyOutcomeTableStore {
     @observable editMode = false;
     @observable settings = null;
+    @observable robSettings = null;
     @observable isFetchingData = false;
+    @observable isFetchingRob = false;
     @observable dataset = null;
     @observable showRowCreateForm = false;
     @observable showColumnCreateForm = false;
@@ -14,6 +16,26 @@ class StudyOutcomeTableStore {
     @observable editRowIndex = null;
 
     @observable stagedEdits = null;
+    @observable stagedDataSource = null;
+
+    @computed get isFetching() {
+        return this.isFetchingData || this.isFetchingRob;
+    }
+
+    @action.bound updateStagedDataSource(dataSource) {
+        this.stagedDataSource = dataSource;
+    }
+
+    @action.bound commitStagedDataSource() {
+        this.settings.data_source = this.stagedDataSource;
+        this.removeSettings();
+        this.fetchData();
+    }
+
+    @action.bound removeSettings() {
+        this.settings.rows = [];
+        this.settings.columns = [];
+    }
 
     @action.bound updateStagedCell(rowIdx, colKey, value) {
         let row = this.stagedEdits.rows[rowIdx];
@@ -77,7 +99,10 @@ class StudyOutcomeTableStore {
         this.editMode = editMode;
         this.table = table;
         this.settings = table.content;
+        this.stagedDataSource = table.content.data_source;
         this.editRootStore = editRootStore;
+        this.fetchData();
+        this.fetchRobSettings();
         if (editMode && editRootStore) {
             autorun(() => {
                 this.editRootStore.updateTableContent(JSON.stringify(this.settings), false);
@@ -112,7 +137,16 @@ class StudyOutcomeTableStore {
         return _.chain(this.dataset.rob)
             .uniqBy("metric_id")
             .map(d => {
-                return {id: d["metric_id"], label: d["metric_id"]};
+                let metricSettings = _.find(
+                    this.robSettings.metrics,
+                    s => s["id"] == d["metric_id"]
+                );
+                return {
+                    id: d["metric_id"],
+                    label: metricSettings["use_short_name"]
+                        ? metricSettings["short_name"]
+                        : metricSettings["name"],
+                };
             })
             .value();
     }
@@ -122,8 +156,14 @@ class StudyOutcomeTableStore {
             .filter(d => d["study_id"] == studyId && d["metric_id"] == metricId)
             .uniqBy("score_id")
             .map(d => {
-                return {id: d["score_id"], label: d["score_id"]};
+                return {
+                    id: d["score_id"],
+                    label: `${d["score_label"] ? d["score_label"] : "No label"} (${
+                        d["is_default"] ? "default score " : ""
+                    }${d["score_id"]})`,
+                };
             })
+            .unshift({id: -1, label: "None"})
             .value();
     }
 
@@ -132,13 +172,9 @@ class StudyOutcomeTableStore {
     }
 
     getDefaultCustomized(row, col) {
-        if (col.attribute == "rob_score") {
-            let val = this.scoreIdChoices(row.id, col.metric_id)[0];
-            return val == null
-                ? {key: col.key, score_id: undefined}
-                : {key: col.key, score_id: val["id"]};
-        }
-        return {key: col.key, html: "<p></p>"};
+        return col.attribute == "rob_score"
+            ? {key: col.key, score_id: -1}
+            : {key: col.key, html: this.getDefaultCellContent(row, col).html};
     }
 
     getDataSelection(type, id) {
@@ -173,46 +209,64 @@ class StudyOutcomeTableStore {
         }
     }
 
-    getCellContent(rowIdx, colIdx) {
-        // TODO return as object with properties "html" and "color", for consistency?
-        let row = this.workingSettings.rows[rowIdx],
-            col = this.workingSettings.columns[colIdx],
-            customized = this.getCustomized(rowIdx, col.key);
+    getDefaultCellContent(row, col) {
         switch (col.attribute) {
-            case "rob_score":
-                if (customized == null) {
-                    let data = _.filter(
-                            this.dataset.rob,
-                            d =>
-                                d["study_id"] == row.id &&
-                                d["metric_id"] == col.metric_id &&
-                                _.isNil(d["content_type_id"])
-                        ),
-                        judgement = data.length ? data[0]["score_score"] : -1;
-                    // TODO get actual thing
-                    return judgement;
-                } else {
-                    let data = _.filter(
-                            this.dataset.rob,
-                            d => d["score_id"] == customized.score_id
-                        ),
-                        judgement = data.length ? data[0]["score_score"] : -1;
-                    return judgement;
-                }
+            case "rob_score": {
+                let data = _.filter(
+                        this.dataset.rob,
+                        d =>
+                            d["study_id"] == row.id &&
+                            d["metric_id"] == col.metric_id &&
+                            _.isNil(d["content_type_id"])
+                    ),
+                    judgment = data.length ? data[0]["score_score"] : -1;
+                return judgment == -1
+                    ? constants.NM
+                    : {
+                          color: this.robSettings.score_metadata.colors[judgment],
+                          html: this.robSettings.score_metadata.symbols[judgment],
+                      };
+            }
+            case "study_name":
+            case "species_strain_sex":
+            case "doses": {
+                let data = this.getDataSelection(row.type, row.id),
+                    text = this.concatDataSelection(data, col.attribute);
+                return {html: `<p>${text}</p>`};
+            }
+
+            case "free_html":
+                return {html: "<p></p>"};
+        }
+    }
+
+    getCustomCellContent(attribute, customized) {
+        switch (attribute) {
+            case "rob_score": {
+                let data = _.filter(this.dataset.rob, d => d["score_id"] == customized.score_id),
+                    judgment = data.length ? data[0]["score_score"] : -1;
+                return judgment == -1
+                    ? constants.NM
+                    : {
+                          color: this.robSettings.score_metadata.colors[judgment],
+                          html: this.robSettings.score_metadata.symbols[judgment],
+                      };
+            }
             case "study_name":
             case "species_strain_sex":
             case "doses":
-                if (customized == null) {
-                    let data = this.getDataSelection(row.type, row.id);
-                    return this.concatDataSelection(data, col.attribute);
-                } else {
-                    return customized.html;
-                }
             case "free_html":
-                return customized == null ? null : customized.html;
-            default:
-                return null;
+                return {html: customized.html};
         }
+    }
+
+    getCellContent(rowIdx, colIdx) {
+        let row = this.workingSettings.rows[rowIdx],
+            col = this.workingSettings.columns[colIdx],
+            customized = this.getCustomized(rowIdx, col.key);
+        return customized == null
+            ? this.getDefaultCellContent(row, col)
+            : this.getCustomCellContent(col.attribute, customized);
     }
 
     @action.bound setEditColumnIndex(idx) {
@@ -224,10 +278,18 @@ class StudyOutcomeTableStore {
         this.setStagedEdits();
     }
 
+    @action.bound fetchRobSettings() {
+        const url = constants.robUrl(this.table.assessment);
+        this.isFetchingRob = true;
+        fetch(url)
+            .then(d => d.json())
+            .then(d => {
+                this.robSettings = d;
+                this.isFetchingRob = false;
+            });
+    }
+
     @action.bound fetchData() {
-        if (this.hasData || this.isFetchingData) {
-            return;
-        }
         const url = constants.dataUrl(
             this.table.table_type,
             this.settings.data_source,
@@ -261,13 +323,15 @@ class StudyOutcomeTableStore {
     }
 
     @action.bound moveRow(rowIdx, offset) {
+        let move = rows => {
+            const r1 = rows[rowIdx],
+                r2 = rows[rowIdx + offset];
+            rows[rowIdx] = r2;
+            rows[rowIdx + offset] = r1;
+        };
         if (rowIdx + offset >= 0 && rowIdx + offset < this.numRows) {
-            const r1 = this.settings.rows[rowIdx],
-                r2 = this.settings.rows[rowIdx + offset];
-            this.settings.rows[rowIdx] = r2;
-            this.settings.rows[rowIdx + offset] = r1;
-            this.stagedEdits.rows[rowIdx] = r2;
-            this.stagedEdits.rows[rowIdx + offset] = r1;
+            move(this.settings.rows);
+            move(this.stagedEdits.rows);
             this.editRowIndex = rowIdx + offset;
         }
     }
@@ -286,19 +350,20 @@ class StudyOutcomeTableStore {
     }
 
     @action.bound moveColumn(colIdx, offset) {
+        let move = columns => {
+            const c1 = columns[colIdx],
+                c2 = columns[colIdx + offset];
+            columns[colIdx] = c2;
+            columns[colIdx + offset] = c1;
+        };
         if (colIdx + offset >= 0 && colIdx + offset < this.numColumns) {
-            const c1 = this.settings.columns[colIdx],
-                c2 = this.settings.columns[colIdx + offset];
-            this.settings.columns[colIdx] = c2;
-            this.settings.columns[colIdx + offset] = c1;
-            this.stagedEdits.columns[colIdx] = c2;
-            this.stagedEdits.columns[colIdx + offset] = c1;
-            this.editColumnIndex = colIdx + offset;
+            move(this.settings.columns);
+            move(this.stagedEdits.columns);
         }
     }
     @action.bound deleteColumn(columnIdx) {
-        this.settings.columns.splice(columnIdx, 1);
-        // TODO remove customized using column key
+        let col = this.settings.columns.splice(columnIdx, 1)[0];
+        _.forEach(this.settings.rows, r => _.remove(r.customized, c => c.key == col.key));
         this.resetStagedEdits();
     }
 

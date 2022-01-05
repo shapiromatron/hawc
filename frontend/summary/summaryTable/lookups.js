@@ -9,6 +9,7 @@ import EvidenceProfileForm from "./evidenceProfileTable/Form";
 import EvidenceProfileTable from "./evidenceProfileTable/Table";
 import StudyOutcomeTableForm from "./studyOutcomeTable/TableForm";
 import StudyOutcomeTable from "./studyOutcomeTable/Table";
+import StudyOutcomeData from "./studyOutcomeTable/Data";
 
 const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableStore,
@@ -24,6 +25,9 @@ const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableForm,
         [TableType.EVIDENCE_PROFILE]: EvidenceProfileForm,
         [TableType.STUDY_OUTCOME_TABLE]: StudyOutcomeTableForm,
+    },
+    tableDataComponentLookup = {
+        [TableType.STUDY_OUTCOME_TABLE]: StudyOutcomeData,
     },
     getTableStore = function(table, editStore) {
         const Cls = tableStoreLookup[table.table_type];
@@ -50,6 +54,10 @@ const tableStoreLookup = {
             throw `Unknown table type: ${table.table_type}`;
         }
         return Component;
+    },
+    getTableDataComponent = function(table) {
+        const Component = tableDataComponentLookup[table.table_type];
+        return Component;
     };
 
-export {getTableStore, getViewTableComponent, getEditTableComponent};
+export {getTableStore, getViewTableComponent, getEditTableComponent, getTableDataComponent};

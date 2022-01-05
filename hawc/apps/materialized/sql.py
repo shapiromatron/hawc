@@ -12,6 +12,7 @@ FinalRiskOfBiasScore = SQL(
     SELECT
         ROW_NUMBER() OVER (ORDER BY score_id, ovr.content_type_id, ovr.object_id) as id,
         scr.id as "score_id",
+        scr.label as "score_label",
         scr.score as "score_score",
         scr.is_default,
         rob.study_id,

@@ -1,7 +1,10 @@
 import h from "shared/utils/helpers";
 
-export const dataUrl = (table_type, data_source, assessment_id) =>
+export const NM = {color: "#DFDFDF", html: "NM"},
+    dataUrl = (table_type, data_source, assessment_id) =>
         `/summary/api/summary-table/data/?table_type=${table_type}&data_source=${data_source}&assessment_id=${assessment_id}`,
+    robUrl = assessment_id => `/rob/api/assessment/${assessment_id}/settings/`,
+    dataSourceChoices = [{id: "ani", label: "Animal bioassay"}],
     rowTypeChoices = [{id: "study", label: "Study"}],
     robAttributeChoices = [
         {id: "rob_score", label: "rob_score"},

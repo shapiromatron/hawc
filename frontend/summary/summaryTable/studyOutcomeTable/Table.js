@@ -49,7 +49,6 @@ class EditCellForm extends Component {
                         )
                     }
                     checked={customized != null}
-                    helpText={"Overrides cell dimensions for calculated best fit"}
                 />
                 {customized != null
                     ? col.attribute == "rob_score"
@@ -65,17 +64,18 @@ class EditCellForm extends Component {
             row = store.stagedEdits.rows[rowIdx],
             customized = _.find(row.customized, d => d.key == col.key),
             choices = store.scoreIdChoices(row.id, col.metric_id);
-        return choices.length ? (
+        return (
             <SelectInput
                 choices={choices}
                 value={customized.score_id}
                 handleSelect={value =>
-                    store.updateStagedCell(rowIdx, col.key, {key: col.key, score_id: value})
+                    store.updateStagedCell(rowIdx, col.key, {
+                        key: col.key,
+                        score_id: parseInt(value),
+                    })
                 }
-                label="Score ID"
+                label="Score"
             />
-        ) : (
-            "No scores available"
         );
     }
     renderTextForm() {
@@ -192,7 +192,7 @@ class EditColumnForm extends Component {
                         <SelectInput
                             choices={store.metricIdChoices}
                             handleSelect={value =>
-                                store.updateStagedColumn(colIdx, {metric_id: value})
+                                store.updateStagedColumn(colIdx, {metric_id: parseInt(value)})
                             }
                             value={col.metric_id}
                             label="Metric"
@@ -243,17 +243,10 @@ EditColumnForm.propTypes = {
 
 @observer
 class Table extends Component {
-    componentDidMount() {
-        const {store} = this.props;
-        store.fetchData();
-    }
-    cellContents() {
-        return 1;
-    }
     render() {
         const {store, forceReadOnly} = this.props,
             editable = store.editMode && !forceReadOnly;
-        if (store.isFetchingData) {
+        if (store.isFetching) {
             return <Loading />;
         }
         if (!store.hasData) {
@@ -294,8 +287,18 @@ class Table extends Component {
                         return (
                             <tr key={rowIdx}>
                                 {_.range(0, numColumns).map(colIdx => {
+                                    let content = store.getCellContent(rowIdx, colIdx);
                                     return (
-                                        <td key={colIdx} className="position-relative">
+                                        <td
+                                            key={colIdx}
+                                            className="position-relative"
+                                            style={
+                                                editable &&
+                                                (rowIdx === editRowIndex ||
+                                                    colIdx === editColumnIndex)
+                                                    ? {}
+                                                    : {backgroundColor: content.color}
+                                            }>
                                             {editable &&
                                             (rowIdx === editRowIndex ||
                                                 colIdx === editColumnIndex) ? (
@@ -312,28 +315,22 @@ class Table extends Component {
                                                         rowIdx={rowIdx}
                                                         colIdx={colIdx}
                                                     />
+                                                    <hr />
                                                 </>
-                                            ) : (
-                                                <>
-                                                    {editable &&
-                                                    editColumnIndex == null &&
-                                                    colIdx === 0 ? (
-                                                        <EditButton
-                                                            handleClick={() =>
-                                                                store.setEditRowIndex(rowIdx)
-                                                            }
-                                                        />
-                                                    ) : null}
-                                                    <span
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: store.getCellContent(
-                                                                rowIdx,
-                                                                colIdx
-                                                            ),
-                                                        }}
-                                                    />
-                                                </>
-                                            )}
+                                            ) : editable &&
+                                              editColumnIndex == null &&
+                                              colIdx === 0 ? (
+                                                <EditButton
+                                                    handleClick={() =>
+                                                        store.setEditRowIndex(rowIdx)
+                                                    }
+                                                />
+                                            ) : null}
+                                            <span
+                                                dangerouslySetInnerHTML={{
+                                                    __html: content.html,
+                                                }}
+                                            />
                                         </td>
                                     );
                                 })}

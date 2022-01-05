@@ -8,13 +8,9 @@ import Table from "./Table";
 
 @observer
 class TableForm extends Component {
-    componentDidMount() {
-        const {store} = this.props;
-        store.fetchData();
-    }
     render() {
         const {store} = this.props;
-        if (store.isFetchingData) {
+        if (store.isFetching) {
             return <Loading />;
         }
 
@@ -35,7 +31,7 @@ class TableForm extends Component {
                         <i className="fa fa-plus mr-1"></i>Add row
                     </button>
                 </div>
-                <p className="text-muted">Help text... </p>
+                <p className="text-muted">Add and edit rows and columns.</p>
                 <Table store={store} />
             </>
         );
