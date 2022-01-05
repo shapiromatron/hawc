@@ -105,7 +105,7 @@ class IdentifiersManager(BaseManager):
             # create DOI identifier
             if doi := get_doi_from_identifier(ident):
                 ident, _ = self.get_or_create(
-                    database=constants.ReferenceDatabase.DOI, unique_id=doi, content="",
+                    database=constants.ReferenceDatabase.DOI, unique_id=doi
                 )
                 ids.append(ident)
 
@@ -322,7 +322,6 @@ class ReferenceManager(BaseManager):
                     unique_id=doi, database=constants.ReferenceDatabase.DOI
                 )
                 ref.identifiers.add(doi_id)
-                ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             refs.append(ref)
@@ -376,11 +375,10 @@ class ReferenceManager(BaseManager):
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             if doi := get_doi_from_identifier(identifier):
-                doiIdentifier = Identifiers.objects.get_or_create(
+                doi_identifier, _ = Identifiers.objects.get_or_create(
                     unique_id=doi, database=constants.ReferenceDatabase.DOI
                 )
-                ref.identifiers.add(doiIdentifier[0])
-                ref.save()
+                ref.identifiers.add(doi_identifier)
             refs.append(ref)
 
         return refs

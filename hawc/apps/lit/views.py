@@ -24,6 +24,7 @@ from ..common.views import (
     MessageMixin,
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
+    WebappMixin,
 )
 from . import constants, forms, models
 
@@ -227,10 +228,12 @@ class SearchQuery(BaseUpdate):
             self.object.run_new_query()
         except models.TooManyPubMedResults as error:
             return self.render_to_response({"error": error})
+        # attempt to extract DOIs from all references in search
+        models.Reference.extract_dois(self.object.references.all())
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class TagReferences(TeamMemberOrHigherMixin, FormView):
+class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
     """
     Abstract base-class to tag references, using various methods to get instance.
     """
@@ -669,7 +672,7 @@ class TagsJSON(BaseDetail):
         return HttpResponse(json.dumps(tags), content_type="application/json")
 
 
-class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
+class TagsUpdate(WebappMixin, ProjectManagerOrHigherMixin, DetailView):
     """
     Update tags for an assessment. Note that right now, only project managers
     of the assessment can update tags. (we use the Assessment as the model in an
