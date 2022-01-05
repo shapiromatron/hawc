@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
 
   <h2 class="d-inline-block">Available studies</h2>
@@ -21,17 +23,73 @@
       </div>
     </div>
   {% endif %}
-
-  <div id="studyTbl"></div>
-
+  <div class="card">
+    <div class="card-body pb-1">
+      {% crispy form %}
+    </div>
+  </div>
+  {% if study_list %}
+  <table id="mainTbl" class="table table-sm table-striped">
+    <colgroup>
+      <col style="width: 25%;">
+      <col style="width: 45%;">
+      <col style="width: 7%;">
+      <col style="width: 8%;">
+      <col style="width: 8%;">
+      <col style="width: 7%;">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Short citation</th>
+        <th>Full citation</th>
+        <th>Bioassay</th>
+        <th>Epidemiology</th>
+        <th>Epi. meta-analysis</th>
+        <th>In vitro</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for study in study_list %}
+      <tr>
+        <td>
+          <a href="{% url 'study:detail' study.pk %}">{{ study.short_citation }}</a>
+          {% if not study.published %}
+          <i title="Unpublished (not be visible to the public and in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>
+          {% endif %}
+        </td>
+        <td>
+          {{study.full_citation}}
+          {% for ident in study.identifiers.all %}
+          {% with url=ident.get_url %}
+          {% if url %}
+            <a class="badge badge-secondary" target="_blank" href="{{url}}">
+              {{ident.get_database_display}}
+            </a>
+          {% endif %}
+          {% endwith %}
+          {% endfor %}
+        </td>
+        {% for type in study.STUDY_TYPE_FIELDS %}
+            <td class="{% cycle study.bioassay study.epi study.epi_meta study.in_vitro as data_type %}">
+              {% if data_type %}
+              <i class="fa fa-check"></i>
+              {% else %}
+              <i class="fa fa-minus"></i>
+              {% endif %}
+            </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  <p><b>{{study_list.count}}</b> studies found.</p>
 {% endblock %}
-
 
 {% block extrajs %}
 <script type="text/javascript">
-const id = {{assessment.id}};
-window.app.startup("studyStartup", function(app){
-  app.StudyCollection.render(id, $('#studyTbl'));
-})
+  $(document).ready(function(){
+    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+  });
 </script>
 {% endblock extrajs %}
