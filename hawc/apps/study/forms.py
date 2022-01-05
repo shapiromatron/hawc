@@ -219,18 +219,21 @@ class StudyFilterForm(forms.Form):
     data_type = forms.ChoiceField(
         required=False,
         choices=[
+            ("", "<All>"),
             ("bioassay", "Bioassay"),
             ("epi", "Epidemiology"),
             ("epi_meta", "Epidemiology meta-analysis"),
             ("in_vitro", "In vitro"),
         ],
-        widget=forms.RadioSelect,
+        help_text="Data type for full-text extraction",
+        widget=forms.Select,
     )
     published = forms.ChoiceField(
         required=False,
-        choices=[(True, "Published only"), (False, "Unpublished only"), ("All", "All studies")],
-        widget=forms.RadioSelect,
-        initial="All",
+        choices=[("", "<All>"), (True, "Published only"), (False, "Unpublished only")],
+        widget=forms.Select,
+        help_text="Published status for HAWC extraction",
+        initial="",
     )
 
     def __init__(self, *args, **kwargs):
@@ -252,9 +255,8 @@ class StudyFilterForm(forms.Form):
             query &= Q(short_citation__icontains=text) | Q(full_citation__icontains=text)
         if data_type := self.cleaned_data.get("data_type"):
             query &= Q(**{data_type: True})
-        if published := self.cleaned_data.get("published", "All"):
-            if published != "All":
-                query &= Q(published=published)
+        if published := self.cleaned_data.get("published"):
+            query &= Q(published=published)
         if identifier := self.cleaned_data.get("identifier"):
             query &= Q(identifiers__unique_id__icontains=identifier)
         return query

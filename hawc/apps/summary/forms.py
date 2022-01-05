@@ -558,7 +558,7 @@ class VisualFilterForm(forms.Form):
     text = forms.CharField(required=False, help_text="Title or description text")
 
     type_choices = [
-        ("", "<all>"),
+        ("", "<All>"),
         ("v-0", "animal bioassay endpoint aggregation"),
         ("v-1", "animal bioassay endpoint crossview"),
         ("v-2", "risk of bias heatmap"),
@@ -581,20 +581,29 @@ class VisualFilterForm(forms.Form):
         "v-6": 6,
     }
     dp_type_filter = {
-        "dp-ani": models.BIOASSAY,
-        "dp-epi": models.EPI,
-        "dp-epimeta": models.EPI_META,
-        "dp-invitro": models.IN_VITRO,
+        "dp-ani": constants.StudyType.BIOASSAY,
+        "dp-epi": constants.StudyType.EPI,
+        "dp-epimeta": constants.StudyType.EPI_META,
+        "dp-invitro": constants.StudyType.IN_VITRO,
     }
-    type = forms.ChoiceField(label="Visualization type", required=False, choices=type_choices)
+    type = forms.ChoiceField(
+        label="Visualization type",
+        required=False,
+        choices=type_choices,
+        help_text="Type of visualization type to display",
+    )
 
     published_choices = [
+        ("", "<All>"),
         (True, "Published only"),
         (False, "Unpublished only"),
-        ("All", "All visuals"),
     ]
     published = forms.ChoiceField(
-        required=False, choices=published_choices, widget=forms.RadioSelect, initial="All"
+        required=False,
+        choices=published_choices,
+        widget=forms.Select,
+        initial="",
+        help_text="Published status for HAWC visualization",
     )
 
     def __init__(self, *args, **kwargs):
@@ -619,9 +628,8 @@ class VisualFilterForm(forms.Form):
                 filters &= Q(visual_type=self.visual_type_filter[visual_type])
             if visual_type.startswith("dp-"):
                 filters &= Q(id=-1)
-        if published := self.cleaned_data.get("published", "All"):
-            if published != "All":
-                filters &= Q(published=published)
+        if published := self.cleaned_data.get("published"):
+            filters &= Q(published=published)
         return filters
 
     def get_datapivot_filters(self):
@@ -633,9 +641,8 @@ class VisualFilterForm(forms.Form):
                 filters &= Q(datapivotquery__evidence_type=self.dp_type_filter[visual_type])
             if visual_type.startswith("v-"):
                 filters &= Q(id=-1)
-        if published := self.cleaned_data.get("published", "All"):
-            if published != "All":
-                filters &= Q(published=published)
+        if published := self.cleaned_data.get("published"):
+            filters &= Q(published=published)
         return filters
 
 
