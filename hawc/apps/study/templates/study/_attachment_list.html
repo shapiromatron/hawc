@@ -1,4 +1,5 @@
 <table class="table table-sm" id="attachTable">
+    {% if attachments or newAttach %}
     <colgroup>
         <col style="width: 30%;">
         <col style="width: 70%;">
@@ -7,18 +8,11 @@
         <tr>
             <th>Attachments</th>
             <td>
-                <div class="col-md-12">
-                    {% if obj_perms.edit %}
-                    <button class="btn btn-sm btn-info" hx-get="{% url 'study:attachment_list' object.pk %}"
-                        hx-vals='{"new": "True"}' hx-trigger="click" hx-target="#attachTable" hx-swap="outerHTML">
-                        Add Attachment</button>
-                    {% endif %}
-                </div>
                 <ul>
                 {% for attachment in attachments %}
-                    <li style="padding-top: 10px">
+                    <li style="padding-top: 0.75rem">
                         <a target="_blank" href="{{ attachment.get_absolute_url }}">{{attachment.filename}}</a>
-                        {% if obj_perms.edit or canEdit %}
+                        {% if object.editable or canEdit %}
                         <button class="btn btn-sm btn-danger float-right" hx-delete="{{attachment.get_delete_url}}" hx-trigger="click"
                             hx-target="#attachTable" hx-swap="outerHTML" hx-confirm="Are you sure you wish to delete this attachment?"><i
                                 class="fa fa-trash"></i></button>
@@ -27,7 +21,7 @@
                 {% endfor %}
                 {% if newAttach %}
                     {% load crispy_forms_tags %}
-                    <li>
+                    <li style="padding-top: 0.75rem">
                         <div>
                             {% crispy form %}
                         </div>
@@ -38,4 +32,5 @@
             </td>
         </tr>
     </tbody>
+    {% endif %}
 </table>

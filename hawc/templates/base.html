@@ -47,7 +47,7 @@
   </head>
 
   <body class="html">
-    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+
     <script>
       document.body.addEventListener('htmx:configRequest', (event) => {
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
@@ -110,6 +110,7 @@
     <script type="text/javascript" src="{% static 'vendor/popper.js/1.16.1/umd/popper.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.5.3/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/jqueryui/1.10.3/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/htmx.org/1.6.1/htmx.min.js' %}"></script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
   </body>

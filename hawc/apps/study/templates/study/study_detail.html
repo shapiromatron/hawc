@@ -22,7 +22,10 @@
 
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
-            <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
+            <button class="dropdown-item" hx-get="{% url 'study:attachment_list' object.pk %}"
+              hx-vals='{"new": "True"}' hx-trigger="click"
+                hx-target="#attachTable" hx-swap="outerHTML">
+              Add an attachment</button>
 
             {% if object.bioassay %}
               <div class="dropdown-divider"></div>
@@ -58,8 +61,7 @@
 
   <div id="study_details"></div>
 
-
-  {% if config.attachments_viewable and attachments %}
+  {% if config.attachments_viewable %}
     {% include "study/_attachment_list.html" %}
   {% endif %}
 

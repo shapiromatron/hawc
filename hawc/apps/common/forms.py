@@ -90,15 +90,14 @@ class BaseFormHelper(cf.FormHelper):
                         htmx_list.append(htmx_attrib)
 
                 final_htmx.append("".join(htmx_list))  # join all attributes together, pin to list
-            # import pdb; pdb.set_trace()
-            form_actions = [
-                cfl.HTML(f"""<button class="btn btn-sm btn-info" {final_htmx[0]} >Save</button>"""),
+            layout.append(
+                cfb.FormActions(
                 cfl.HTML(
-                    f"""<button class="btn btn-sm btn-light" {final_htmx[1]} >Cancel</button>"""
-                ),
-            ]
-            layout.append(cfb.FormActions(*form_actions))
-            form_actions = []
+                    f"""<button class="btn btn-sm btn-info" {final_htmx[0]}>{self.kwargs.get("submit_text", "Save")}</button>
+                        <button class="btn btn-sm btn-light" {final_htmx[1]}>Cancel</button>"""
+                        ),
+                style=self.kwargs.get("actions_style",""), css_class=self.kwargs.get("actions_class", "")
+            ))
 
         if form_actions:
             layout.append(cfb.FormActions(*form_actions, css_class="form-actions"))

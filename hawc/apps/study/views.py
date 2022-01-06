@@ -207,16 +207,14 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        try:
-            if request.headers["HX-Request"]:
-                return render(
-                    request, "study/attachment_row.html", {"object": self.object, "canEdit": True},
-                )
-        except KeyError:
-            if self.assessment.user_is_part_of_team(self.request.user):
-                return HttpResponseRedirect(self.object.attachment.url)
-            else:
-                raise PermissionDenied
+        if "HX-Request" in request.headers:
+            return render(
+                request, "study/attachment_row.html", {"object": self.object, "canEdit": True},
+            )
+        if self.assessment.user_is_part_of_team(self.request.user):
+           return HttpResponseRedirect(self.object.attachment.url)
+        else:
+            raise PermissionDenied
 
 
 class AttachmentList(BaseList):
