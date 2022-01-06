@@ -184,9 +184,20 @@ class AttachmentCreate(BaseCreate):
     parent_template_name = "study"
     model = models.Attachment
     form_class = forms.AttachmentForm
+    template_name = "study/_attachment_list.html"
 
     def get_success_url(self):
         return reverse("study:attachment_list", args=[self.parent.pk])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object'] = self.parent
+        context["newAttach"] = True
+        context["attachments"] = models.Attachment.objects.get_attachments(
+            self.parent, not context["obj_perms"]["edit"]
+        )
+        return context
+
 
 
 class AttachmentDelete(BaseDelete):

@@ -4,7 +4,28 @@
     {% endif %}
 <td colspan="3">
     <div>
+        <form method=post enctype="multipart/form-data">
+            <div class="pull-right" style="width: 15%">
+            {% if newAttach %}
+            <button class="btn btn-sm btn-info" hx-trigger="click" hx-target="#newAttach"
+                hx-encoding="multipart/form-data" hx-post="{% url 'assessment:attachment_create' assessment.pk %}"
+                hx-swap="outerHTML">
+                Save
+            </button>
+            <button class="btn btn-sm btn-light" hx-trigger="click" hx-target="#attachTable" hx-vals='{"new": "False"}'
+                hx-swap="outerHTML" hx-get="{% url 'assessment:attachment_list' assessment.pk %}">
+                Cancel</button>
+            {% else %}
+            <button class="btn btn-sm btn-info" hx-trigger="click" hx-target="#attach-row-{{object.pk}}"
+                hx-encoding="multipart/form-data" hx-swap="outerHTML" hx-post="{% url 'assessment:attachment_update' object.pk %}">
+                Save</button>
+            <button class="btn btn-sm btn-light" hx-trigger="click" hx-target="#attach-row-{{object.pk}}" hx-swap="outerHTML"
+                hx-get="{% url 'assessment:attachment_detail' object.pk %}">
+                Cancel</button>
+            {% endif %}
+            </div>
         {% crispy form %}
+        </form>
     </div>
 </td>
 {% block extrajs %}

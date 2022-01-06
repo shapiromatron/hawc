@@ -158,18 +158,8 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        save_htmx = {
-            "hx-encoding": "multipart/form-data",
-            "hx-swap": "outerHTML",
-            "hx-target": "#attachTable",
-            "hx-post": "{% url 'study:attachment_create' object.pk %}",
-        }
-        cancel_htmx = {
-            "hx-swap": "outerHTML",
-            "hx-target": "#attachTable",
-            "hx-get": "{% url 'study:attachment_list' object.pk %}",
-        }
-        helper = BaseFormHelper(self, htmx=[save_htmx, cancel_htmx])
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
         return helper
 
 

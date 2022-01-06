@@ -190,60 +190,18 @@ class AttachmentForm(forms.ModelForm):
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
-        if self.instance.id:
-            buttons = [
-                cfl.HTML(
-                    """<button class="btn btn-sm btn-info"
-                            hx-trigger="click"
-                            hx-target="#attach-row-{{object.pk}}"
-                            hx-encoding="multipart/form-data"
-                            hx-swap="outerHTML"
-                            hx-post="{% url 'assessment:attachment_update' object.pk %}">
-                            Save</button>
-                        <button class="btn btn-sm btn-light"
-                            hx-trigger="click"
-                            hx-target="#attach-row-{{object.pk}}"
-                            hx-swap="outerHTML"
-                            hx-vals='{"html": "True"}'
-                            hx-get="{% url 'assessment:attachment_detail' object.pk %}">
-                            Cancel</button>"""
-                ),
-            ]
-        else:
-            buttons = [
-                cfl.HTML(
-                    """<button class="btn btn-sm btn-info"
-                                hx-trigger="click"
-                                hx-target="#newAttach"
-                                hx-encoding="multipart/form-data"
-                                hx-post="{% url 'assessment:attachment_create' assessment.pk %}"
-                                hx-swap="outerHTML">
-                                Save
-                        </button>
-                    <button class="btn btn-sm btn-light"
-                                hx-trigger="click"
-                                hx-target="#attachTable"
-                                hx-vals='{"new": "False"}'
-                                hx-swap="outerHTML"
-                                hx-get="{% url 'assessment:attachment_list' assessment.pk %}">
-                                Cancel</button>"""
-                ),
-            ]
-
         helper = BaseFormHelper(self)
+        helper.form_tag = False
         helper.layout = Layout(
             Fieldset(
                 "",
                 cfl.Row(
-                    Div("title", style="width: 25%; padding: 5px"),
-                    Div("description", style="width: 60%; padding: 5px"),
-                    cfb.FormActions(*buttons, style="width: 15%"),
-                    # form_actions,
+                    Div("title", style="width: 30%; padding: 5px"),
+                    Div("description", style="width: 70%; padding: 5px"),
                 ),
                 cfl.Row(
-                    Div("publicly_available", style="width: 25%; padding: 5px"),
-                    Div("attachment", style="width: 60%; padding: 5px"),
+                    Div("publicly_available", style="width: 30%; padding: 5px"),
+                    Div("attachment", style="width: 70%; padding: 5px"),
                 ),
             ),
         )

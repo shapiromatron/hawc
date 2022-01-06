@@ -23,10 +23,15 @@
                     {% load crispy_forms_tags %}
                     <li style="padding-top: 0.75rem">
                         <div>
-                            {% crispy form %}
+                            <form method=post enctype="multipart/form-data">
+                                {% crispy form %}
+                                <button class="btn btn-sm btn-info" hx-trigger="click" hx-encoding="multipart/form-data" hx-swap="outerHTML"
+                                    hx-target="#attachTable" hx-post="{% url 'study:attachment_create' object.pk %}">Save</button>
+                                <button class="btn btn-sm btn-light" hx-trigger="click" hx-swap="outerHTML" hx-target="#attachTable"
+                                    hx-get="{% url 'study:attachment_list' object.pk %}">Cancel</button>
+                            </form>
                         </div>
                     </li>
-
                 {% endif %}
                 </ul>
             </td>
