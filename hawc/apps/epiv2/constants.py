@@ -32,3 +32,6 @@ class AgeProfile(models.TextChoices):
     PW = "PW", "Pregnant women"
     OT = "OT", "Other"
 
+
+class EffectEstimateType(models.TextChoices):
+    OT = "OT", "Other"

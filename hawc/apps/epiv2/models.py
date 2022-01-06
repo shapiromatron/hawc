@@ -8,7 +8,12 @@ from . import constants, managers
 class AgeProfile(models.Model):
     # objects = managers.AgeProfileManager()
 
-    name = models.CharField(unique=True, max_length=128)
+    name = models.CharField(
+        unique=True,
+        max_length=128,
+        help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women '
+        + "are only included as part of a general population sample",
+    )
 
 
 class Country(models.Model):
@@ -20,20 +25,6 @@ class Country(models.Model):
     class Meta:
         ordering = ("name",)
         verbose_name_plural = "Countries"
-
-    def __str__(self):
-        return self.name
-
-
-class Chemical(models.Model):
-    name = models.CharField(max_length=64)
-
-    def __str__(self):
-        return self.name
-
-
-class Criteria(models.Model):
-    name = models.CharField(max_length=64)
 
     def __str__(self):
         return self.name
@@ -51,15 +42,39 @@ class StudyPopulation(models.Model):
     study_design = models.CharField(choices=constants.StudyDesign.choices, blank=True)
     source = models.CharField(choices=constants.Source.choices)
     age_profile = models.ManyToManyField(AgeProfile, blank=True)
-    age_description = models.CharField()
+    age_description = models.CharField(help_text="")
     sex = models.CharField(default="U", choices=constants.Sex.choices,)
     summary = models.CharField()
     countries = models.ManyToManyField(Country, blank=True)
     region = models.CharField(max_length=128, blank=True)
     participant_n = models.PositiveIntegerField()
-    criteria = models.ManyToManyField(Criteria, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+
+class Chemical(models.Model):
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="chemicals"
+    )
+    name = models.CharField(max_length=64)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Criteria(models.Model):
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="criteria"
+    )
+
+    name = models.CharField(max_length=64)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Exposure(models.Model):
@@ -114,6 +129,8 @@ class AdjustmentFactor(models.Model):
         StudyPopulation, on_delete=models.CASCADE, related_name="adjustment_factors"
     )
     description = models.CharField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
 
 class DataExtraction(models.Model):
@@ -123,8 +140,8 @@ class DataExtraction(models.Model):
     outcome = models.ForeignKey(Outcome, on_delete=models.SET_NULL)
     exposure = models.ForeignKey(Exposure, on_delete=models.SET_NULL)
     n = models.PositiveIntegerField()
+    effect_estimate_type = models.CharField(choices=constants.EffectEstimateType.choices)
     effect_estimate = models.CharField()
-    effect_estimate_type = models.CharField()
     effect_description = models.CharField()
     exposure_rank = models.PositiveSmallIntegerField()
     # TODO: what are these fields
@@ -138,6 +155,9 @@ class DataExtraction(models.Model):
     confidence = models.CharField()
     location = models.CharField()
     statistical_method = models.CharField()
+    comments = models.CharField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Quantitative data extraction"
