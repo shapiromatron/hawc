@@ -114,3 +114,30 @@ class AdjustmentFactor(models.Model):
         StudyPopulation, on_delete=models.CASCADE, related_name="adjustment_factors"
     )
     description = models.CharField()
+
+
+class DataExtraction(models.Model):
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="data_extractions"
+    )
+    outcome = models.ForeignKey(Outcome, on_delete=models.SET_NULL)
+    exposure = models.ForeignKey(Exposure, on_delete=models.SET_NULL)
+    n = models.PositiveIntegerField()
+    effect_estimate = models.CharField()
+    effect_estimate_type = models.CharField()
+    effect_description = models.CharField()
+    exposure_rank = models.PositiveSmallIntegerField()
+    # TODO: what are these fields
+    # CI LCL
+    # CI UCL
+    # SD or SE
+    pvalue = models.FloatField()
+    # TODO: this is derived from the p-value (p-value>0.05). Necessary to have as a field?
+    significant = models.BooleanField()
+    adjustment_factor = models.ForeignKey(AdjustmentFactor, on_delete=models.SET_NULL)
+    confidence = models.CharField()
+    location = models.CharField()
+    statistical_method = models.CharField()
+
+    class Meta:
+        verbose_name = "Quantitative data extraction"
