@@ -1,0 +1,32 @@
+TY  - JOUR
+AB  - Valid
+AU  - Valid
+DO  - 10.1016/b36c36
+PY  - 2001
+ST  - Valid
+TI  - Valid
+VL  - 134
+ID  - 1
+ER  -
+
+TY  - JOUR
+AB  - Parse-required
+AU  - Parse-required
+DO  - https://dx.doi.org/10.1016/b37c37
+PY  - 2001
+ST  - Parse-required
+TI  - Parse-required
+VL  - 134
+ID  - 2
+ER  -
+
+TY  - JOUR
+AB  - Invalid
+AU  - Invalid
+DO  - not-a-doi
+PY  - 2001
+ST  - Invalid
+TI  - Invalid
+VL  - 134
+ID  - 3
+ER  -
