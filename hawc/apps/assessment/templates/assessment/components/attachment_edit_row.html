@@ -1,18 +1,18 @@
 {% load crispy_forms_tags  %}
-{% if newAttach %}
-<tr id="newAttach">
+{% if new_attach %}
+<tr id="new_attach">
     {% endif %}
 <td colspan="3">
     <div>
         <form method=post enctype="multipart/form-data">
             <div class="pull-right" style="width: 15%">
-            {% if newAttach %}
-            <button class="btn btn-sm btn-info" hx-trigger="click" hx-target="#newAttach"
+            {% if new_attach %}
+            <button class="btn btn-sm btn-info" hx-trigger="click" hx-target="#new_attach"
                 hx-encoding="multipart/form-data" hx-post="{% url 'assessment:attachment_create' assessment.pk %}"
                 hx-swap="outerHTML">
                 Save
             </button>
-            <button class="btn btn-sm btn-light" hx-trigger="click" hx-target="#attachTable" hx-vals='{"new": "False"}'
+            <button class="btn btn-sm btn-light" hx-trigger="click" hx-target="#attach_table" hx-vals='{"new": "False"}'
                 hx-swap="outerHTML" hx-get="{% url 'assessment:attachment_list' assessment.pk %}">
                 Cancel</button>
             {% else %}

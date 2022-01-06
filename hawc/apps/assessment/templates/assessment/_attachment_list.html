@@ -1,6 +1,5 @@
-
-<div id="attachTable">
-{% if object_list.count > 0 or newAttach %}
+<div id="attach_table">
+{% if object_list.count > 0 or new_attach %}
 <h2>Attachments
 {% if canEdit %}
 <button
@@ -8,7 +7,7 @@
     hx-get="{% url 'assessment:attachment_list' object.pk %}"
     hx-vals='{"new": "True"}'
     hx-trigger="click"
-    hx-target="#attachTable"
+    hx-target="#attach_table"
     hx-swap="outerHTML">
     Add Attachment</button>
 {% endif %}
@@ -38,7 +37,7 @@
             {% include "assessment/components/attachment_row.html" %}
         {% endfor %}
 
-        {% if newAttach %}
+        {% if new_attach %}
             {% include "assessment/components/attachment_edit_row.html" %}
         {% endif %}
         </tr>

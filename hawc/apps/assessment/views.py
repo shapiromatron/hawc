@@ -455,7 +455,7 @@ class AttachmentCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["newAttach"] = True
+        context["new_attach"] = True
         return context
 
     @transaction.atomic
@@ -508,7 +508,7 @@ class AttachmentList(BaseList):
         super().get(request, *args, **kwargs)
         context = self.get_context_data()
         if request.GET.get("new", -1) == "True":
-            context["newAttach"] = True
+            context["new_attach"] = True
         return render(request, "assessment/_attachment_list.html", context)
 
 
