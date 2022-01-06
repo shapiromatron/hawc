@@ -1,7 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
 
-from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms

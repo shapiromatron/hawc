@@ -191,13 +191,17 @@ class AttachmentCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object'] = self.parent
+        context["object"] = self.parent
         context["newAttach"] = True
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.parent, not context["obj_perms"]["edit"]
         )
         return context
 
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+        context = self.get_context_data()
+        return render(request, "study/_attachment_list.html", context)
 
 
 class AttachmentDelete(BaseDelete):
@@ -223,7 +227,7 @@ class AttachmentRead(BaseDetail):
                 request, "study/attachment_row.html", {"object": self.object, "canEdit": True},
             )
         if self.assessment.user_is_part_of_team(self.request.user):
-           return HttpResponseRedirect(self.object.attachment.url)
+            return HttpResponseRedirect(self.object.attachment.url)
         else:
             raise PermissionDenied
 
@@ -238,11 +242,7 @@ class AttachmentList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
         context["form"] = self.form_class(parent=self.parent)
-        context["config"] = {
-            "attachments_viewable": attachments_viewable,
-        }
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.parent, not context["obj_perms"]["edit"]
         )
@@ -252,8 +252,6 @@ class AttachmentList(BaseList):
     def get(self, request, *args, **kwargs):
         super().get(request, *args, **kwargs)
         context = self.get_context_data()
-        if request.GET.get("new", -1) == "True":
-            context["newAttach"] = True
         return render(request, "study/_attachment_list.html", context)
 
 
