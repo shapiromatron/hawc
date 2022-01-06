@@ -15,6 +15,7 @@ from ..common.views import (
     BaseUpdate,
     BaseUpdateWithFormset,
     ProjectManagerOrHigherMixin,
+    WebappMixin,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
@@ -103,7 +104,7 @@ class CellTypeDelete(BaseDelete):
 
 
 # Endpoint categories
-class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
+class EndpointCategoryUpdate(WebappMixin, ProjectManagerOrHigherMixin, DetailView):
     model = Assessment
     template_name = "invitro/ivendpointecategory_form.html"
 
