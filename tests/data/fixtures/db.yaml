@@ -665,6 +665,7 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+    epi_version: 1
 - model: assessment.assessment
   pk: 2
   fields:
@@ -702,6 +703,7 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+    epi_version: 1
 - model: assessment.assessment
   pk: 3
   fields:
@@ -735,6 +737,7 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+    epi_version: 1
 - model: assessment.attachment
   pk: 3
   fields:

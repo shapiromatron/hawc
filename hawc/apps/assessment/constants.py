@@ -20,3 +20,8 @@ class JobStatus(models.IntegerChoices):
 
 class JobType(models.IntegerChoices):
     TEST = 1, "TEST"
+
+
+class EpiVersion(models.IntegerChoices):
+    V1 = 1, "v1"
+    V2 = 2, "v2"
