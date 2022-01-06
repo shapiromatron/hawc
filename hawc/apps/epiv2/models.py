@@ -1,5 +1,6 @@
 from django.db import models
-from ..assessment.models import Assessment
+
+# from ..assessment.models import Assessment
 from ..study.models import Study
 from . import constants, managers
 
@@ -34,9 +35,38 @@ class Chemical(models.Model):
 class Criteria(models.Model):
     name = models.CharField(max_length=64)
 
+    def __str__(self):
+        return self.name
+
+
+class MeasurementType(models.Model):
+    description = models.CharField()
+
+    def __str__(self):
+        return self.name
+
+
+class StudyPopulation(models.Model):
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations")
+    study_design = models.CharField(choices=constants.StudyDesign.choices, blank=True)
+    source = models.CharField(choices=constants.Source.choices)
+    age_profile = models.ManyToManyField(AgeProfile, blank=True)
+    age_description = models.CharField()
+    sex = models.CharField(default="U", choices=constants.Sex.choices,)
+    summary = models.CharField()
+    countries = models.ManyToManyField(Country, blank=True)
+    region = models.CharField(max_length=128, blank=True)
+    participant_n = models.PositiveIntegerField()
+    criteria = models.ManyToManyField(Criteria, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
 
 class Exposure(models.Model):
-    measurement_type = models.ManyToManyField()
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="exposures"
+    )
+    measurement_type = models.ManyToManyField(MeasurementType)
     measurement_timing = models.CharField()
     exposure_route = models.CharField()
     analytic_method = models.CharField()
@@ -46,6 +76,9 @@ class Exposure(models.Model):
 
 
 class ExposureLevel(models.Model):
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="exposure_levels"
+    )
     chemical = models.ForeignKey(Chemical, on_delete=models.CASCADE)
     exposure_measurement = models.ForeignKey(Exposure, on_delete=models.CASCADE)
     sub_population = models.CharField()
@@ -64,6 +97,9 @@ class ExposureLevel(models.Model):
 
 
 class Outcome(models.Model):
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="outcomes"
+    )
     health_outcome = models.CharField()
     health_outcome_system = models.CharField()
     measurement_timing = (
@@ -74,24 +110,7 @@ class Outcome(models.Model):
 
 
 class AdjustmentFactor(models.Model):
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="adjustment_factors"
+    )
     description = models.CharField()
-
-
-class StudyPopulation(models.Model):
-    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations")
-    study_design = models.CharField(choices=constants.StudyDesign.choices, blank=True)
-    source = models.CharField(choices=constants.Source.choices)
-    age_profile = models.ManyToManyField(AgeProfile, blank=True)
-    age_description = models.CharField()
-    sex = models.CharField(default="U", choices=constants.Sex.choices,)
-    summary = models.CharField()
-    countries = models.ManyToManyField(Country, blank=True)
-    region = models.CharField(max_length=128, blank=True)
-    participant_n = models.PositiveIntegerField()
-    criteria = models.ManyToManyField(Criteria, blank=True)
-    chemicals = models.ManyToManyField(Chemical, blank=True)
-    exposures = models.ManyToManyField(Exposure, blank=True)
-    outcomes = models.ManyToManyField(Outcome, blank=True)
-    adjustment_factors = models.ManyToManyField(AdjustmentFactor, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
