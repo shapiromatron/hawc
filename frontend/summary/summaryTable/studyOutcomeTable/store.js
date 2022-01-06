@@ -18,83 +18,6 @@ class StudyOutcomeTableStore {
     @observable stagedEdits = null;
     @observable stagedDataSource = null;
 
-    @computed get isFetching() {
-        return this.isFetchingData || this.isFetchingRob;
-    }
-
-    @action.bound updateStagedDataSource(dataSource) {
-        this.stagedDataSource = dataSource;
-    }
-
-    @action.bound commitStagedDataSource() {
-        this.settings.data_source = this.stagedDataSource;
-        this.removeSettings();
-        this.fetchData();
-    }
-
-    @action.bound removeSettings() {
-        this.settings.rows = [];
-        this.settings.columns = [];
-    }
-
-    @action.bound updateStagedCell(rowIdx, colKey, value) {
-        let row = this.stagedEdits.rows[rowIdx];
-        row.customized = _.filter(row.customized, d => d.key != colKey);
-        if (value != null) {
-            row.customized.push(value);
-        }
-    }
-
-    @action.bound updateStagedRow(rowIdx, value) {
-        let row = this.stagedEdits.rows[rowIdx];
-        if (
-            ("type" in value && row.type !== value.type) ||
-            ("id" in value && row.id !== value.id)
-        ) {
-            row.customized = [];
-        }
-        _.assign(row, value);
-    }
-
-    @action.bound updateStagedColumn(colIdx, value) {
-        let col = this.stagedEdits.columns[colIdx];
-        if ("attribute" in value && col.attribute !== value.attribute) {
-            if (col.attribute == "rob_score") {
-                delete col.metric_id;
-            } else if (value.attribute == "rob_score") {
-                let metric = this.metricIdChoices[0];
-                col.metric_id = metric == null ? undefined : metric["id"];
-            }
-            this.stagedEdits.rows.forEach(row => {
-                row.customized = _.filter(row.customized, d => d.key != col.key);
-            });
-        } else if ("metric_id" in value && col.metric_id !== value.metric_id) {
-            this.stagedEdits.rows.forEach(row => {
-                row.customized = _.filter(row.customized, d => d.key != col.key);
-            });
-        }
-        _.assign(col, value);
-    }
-
-    @action.bound commitStagedEdits() {
-        this.settings = this.stagedEdits;
-        this.resetStagedEdits();
-    }
-
-    @action.bound resetStagedEdits() {
-        this.editRowIndex = null;
-        this.editColumnIndex = null;
-        this.stagedEdits = null;
-    }
-
-    @action.bound setStagedEdits() {
-        this.stagedEdits = _.cloneDeep(this.settings);
-    }
-
-    @computed get workingSettings() {
-        return this.stagedEdits == null ? this.settings : this.stagedEdits;
-    }
-
     constructor(editMode, table, editRootStore) {
         this.editMode = editMode;
         this.table = table;
@@ -116,8 +39,110 @@ class StudyOutcomeTableStore {
     @computed get numColumns() {
         return this.settings.columns.length;
     }
+
+    // fetch data
+    @action.bound fetchRobSettings() {
+        const url = constants.robUrl(this.table.assessment);
+        this.isFetchingRob = true;
+        fetch(url)
+            .then(d => d.json())
+            .then(d => {
+                this.robSettings = d;
+                this.isFetchingRob = false;
+            });
+    }
+    @action.bound fetchData() {
+        const url = constants.dataUrl(
+            this.table.table_type,
+            this.settings.data_source,
+            this.table.assessment
+        );
+        this.isFetchingData = true;
+        fetch(url)
+            .then(d => d.json())
+            .then(d => {
+                this.dataset = d;
+                this.isFetchingData = false;
+            });
+    }
+    @computed get isFetching() {
+        return this.isFetchingData || this.isFetchingRob;
+    }
     @computed get hasData() {
         return this.dataset !== null && this.dataset.data.length > 0;
+    }
+
+    // staged edits
+    @action.bound updateStagedDataSource(dataSource) {
+        this.stagedDataSource = dataSource;
+    }
+    @action.bound removeSettings() {
+        this.settings.rows = [];
+        this.settings.columns = [];
+    }
+    @action.bound commitStagedDataSource() {
+        this.settings.data_source = this.stagedDataSource;
+        this.removeSettings();
+        this.fetchData();
+    }
+    @action.bound setEditColumnIndex(idx) {
+        this.editColumnIndex = idx;
+        this.setStagedEdits();
+    }
+    @action.bound setEditRowIndex(idx) {
+        this.editRowIndex = idx;
+        this.setStagedEdits();
+    }
+    @action.bound updateStagedCell(rowIdx, colKey, value) {
+        let row = this.stagedEdits.rows[rowIdx];
+        row.customized = _.filter(row.customized, d => d.key != colKey);
+        if (value != null) {
+            row.customized.push(value);
+        }
+    }
+    @action.bound updateStagedRow(rowIdx, value) {
+        let row = this.stagedEdits.rows[rowIdx];
+        if (
+            ("type" in value && row.type !== value.type) ||
+            ("id" in value && row.id !== value.id)
+        ) {
+            row.customized = [];
+        }
+        _.assign(row, value);
+    }
+    @action.bound updateStagedColumn(colIdx, value) {
+        let col = this.stagedEdits.columns[colIdx];
+        if ("attribute" in value && col.attribute !== value.attribute) {
+            if (col.attribute == "rob_score") {
+                delete col.metric_id;
+            } else if (value.attribute == "rob_score") {
+                let metric = this.metricIdChoices[0];
+                col.metric_id = metric == null ? undefined : metric["id"];
+            }
+            this.stagedEdits.rows.forEach(row => {
+                row.customized = _.filter(row.customized, d => d.key != col.key);
+            });
+        } else if ("metric_id" in value && col.metric_id !== value.metric_id) {
+            this.stagedEdits.rows.forEach(row => {
+                row.customized = _.filter(row.customized, d => d.key != col.key);
+            });
+        }
+        _.assign(col, value);
+    }
+    @action.bound commitStagedEdits() {
+        this.settings = this.stagedEdits;
+        this.resetStagedEdits();
+    }
+    @action.bound resetStagedEdits() {
+        this.editRowIndex = null;
+        this.editColumnIndex = null;
+        this.stagedEdits = null;
+    }
+    @action.bound setStagedEdits() {
+        this.stagedEdits = _.cloneDeep(this.settings);
+    }
+    @computed get workingSettings() {
+        return this.stagedEdits == null ? this.settings : this.stagedEdits;
     }
 
     // row attributes
@@ -133,6 +158,7 @@ class StudyOutcomeTableStore {
             .value();
     }
 
+    // column attributes
     @computed get metricIdChoices() {
         return _.chain(this.dataset.rob)
             .uniqBy("metric_id")
@@ -150,7 +176,6 @@ class StudyOutcomeTableStore {
             })
             .value();
     }
-
     scoreIdChoices(studyId, metricId) {
         return _.chain(this.dataset.rob)
             .filter(d => d["study_id"] == studyId && d["metric_id"] == metricId)
@@ -167,16 +192,17 @@ class StudyOutcomeTableStore {
             .value();
     }
 
+    // customized rows
     getCustomized(rowIdx, colKey) {
         return _.find(this.workingSettings.rows[rowIdx].customized, d => d.key == colKey);
     }
-
     getDefaultCustomized(row, col) {
         return col.attribute == "rob_score"
             ? {key: col.key, score_id: -1}
             : {key: col.key, html: this.getDefaultCellContent(row, col).html};
     }
 
+    // cell content
     getDataSelection(type, id) {
         switch (type) {
             case "study":
@@ -185,7 +211,6 @@ class StudyOutcomeTableStore {
                 return [];
         }
     }
-
     concatDataSelection(data, attribute) {
         switch (attribute) {
             case "study_name":
@@ -208,7 +233,6 @@ class StudyOutcomeTableStore {
                     .value();
         }
     }
-
     getDefaultCellContent(row, col) {
         switch (col.attribute) {
             case "rob_score": {
@@ -239,7 +263,6 @@ class StudyOutcomeTableStore {
                 return {html: "<p></p>"};
         }
     }
-
     getCustomCellContent(attribute, customized) {
         switch (attribute) {
             case "rob_score": {
@@ -259,7 +282,6 @@ class StudyOutcomeTableStore {
                 return {html: customized.html};
         }
     }
-
     getCellContent(rowIdx, colIdx) {
         let row = this.workingSettings.rows[rowIdx],
             col = this.workingSettings.columns[colIdx],
@@ -267,47 +289,6 @@ class StudyOutcomeTableStore {
         return customized == null
             ? this.getDefaultCellContent(row, col)
             : this.getCustomCellContent(col.attribute, customized);
-    }
-
-    @action.bound setEditColumnIndex(idx) {
-        this.editColumnIndex = idx;
-        this.setStagedEdits();
-    }
-    @action.bound setEditRowIndex(idx) {
-        this.editRowIndex = idx;
-        this.setStagedEdits();
-    }
-
-    @action.bound fetchRobSettings() {
-        const url = constants.robUrl(this.table.assessment);
-        this.isFetchingRob = true;
-        fetch(url)
-            .then(d => d.json())
-            .then(d => {
-                this.robSettings = d;
-                this.isFetchingRob = false;
-            });
-    }
-
-    @action.bound fetchData() {
-        const url = constants.dataUrl(
-            this.table.table_type,
-            this.settings.data_source,
-            this.table.assessment
-        );
-        this.isFetchingData = true;
-        fetch(url)
-            .then(d => d.json())
-            .then(d => {
-                this.dataset = d;
-                this.isFetchingData = false;
-            });
-    }
-    @action.bound toggleShowCreateRowForm() {
-        this.showRowCreateForm = !this.showRowCreateForm;
-    }
-    @action.bound toggleColumnCreateRowForm() {
-        this.showColumnCreateForm = !this.showColumnCreateForm;
     }
 
     // row updates
@@ -321,7 +302,6 @@ class StudyOutcomeTableStore {
             }
         }
     }
-
     @action.bound moveRow(rowIdx, offset) {
         let move = rows => {
             const r1 = rows[rowIdx],
@@ -348,7 +328,6 @@ class StudyOutcomeTableStore {
             this.stagedEdits.columns.push(item);
         }
     }
-
     @action.bound moveColumn(colIdx, offset) {
         let move = columns => {
             const c1 = columns[colIdx],
