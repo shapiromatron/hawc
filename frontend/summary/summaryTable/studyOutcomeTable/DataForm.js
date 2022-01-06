@@ -6,7 +6,7 @@ import Loading from "shared/components/Loading";
 import * as constants from "./constants";
 
 @observer
-class DataPanel extends Component {
+class DataForm extends Component {
     render() {
         const {store} = this.props;
         let button = null;
@@ -37,7 +37,7 @@ class DataPanel extends Component {
                 <p className="form-text text-muted">
                     Settings which change the data which is used to build the table.
                 </p>
-                <p className="form-text text-warning">
+                <p className="form-text text-danger">
                     Note: Changing the underlying data will remove all columns and rows from your
                     current table.
                 </p>
@@ -58,7 +58,7 @@ class DataPanel extends Component {
     }
 }
 
-DataPanel.propTypes = {
+DataForm.propTypes = {
     store: PropTypes.object,
 };
-export default DataPanel;
+export default DataForm;

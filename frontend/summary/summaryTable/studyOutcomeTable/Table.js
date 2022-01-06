@@ -40,7 +40,6 @@ class EditCellForm extends Component {
             <>
                 <CheckboxInput
                     label="Customize?"
-                    name="customize"
                     onChange={e =>
                         store.updateStagedCell(
                             rowIdx,

@@ -9,7 +9,7 @@ import EvidenceProfileForm from "./evidenceProfileTable/Form";
 import EvidenceProfileTable from "./evidenceProfileTable/Table";
 import StudyOutcomeTableForm from "./studyOutcomeTable/TableForm";
 import StudyOutcomeTable from "./studyOutcomeTable/Table";
-import StudyOutcomeData from "./studyOutcomeTable/Data";
+import StudyOutcomeData from "./studyOutcomeTable/DataForm";
 
 const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableStore,
