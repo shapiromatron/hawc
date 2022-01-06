@@ -35,3 +35,30 @@ class AgeProfile(models.TextChoices):
 
 class EffectEstimateType(models.TextChoices):
     OT = "OT", "Other"
+    # TODO: include choices for effect estimate type
+
+
+class CentralTendencyType(models.TextChoices):
+    MEDIAN = "MED", "Median"
+    # TODO: include other choices for central tendency
+
+
+class ExposureRoute(models.TextChoices):
+    IH = "IH", "Inhalation"
+    OR = "OR", "Oral"
+    DE = "DE", "Dermal"
+    IU = "IU", "In utero"
+    IV = "IV", "Intravenous"
+    UK = "UK", "Unknown/Total"
+
+
+class HealthOutcomeSystem(models.TextChoices):
+    RE = "RE", "Reproductive"
+    # TODO: include other choices for health outcome system
+
+
+SIGNIFICANT_CHOICES = (
+    (True, "Yes"),
+    (False, "No"),
+    (None, "N/A"),
+)
