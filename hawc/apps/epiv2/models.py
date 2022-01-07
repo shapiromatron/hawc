@@ -11,12 +11,10 @@ from . import constants, managers
 class AgeProfile(models.Model):
     # objects = managers.AgeProfileManager()
 
-    name = models.CharField(
-        unique=True,
-        max_length=128,
-        help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women '
-        + "are only included as part of a general population sample",
-    )
+    name = models.CharField(unique=True, max_length=128,)
+
+    def __str__(self):
+        return self.name
 
 
 class Country(models.Model):
@@ -46,11 +44,11 @@ class StudyPopulation(models.Model):
         max_length=128, choices=constants.StudyDesign.choices, blank=True
     )
     source = models.CharField(max_length=128, choices=constants.Source.choices)
-    age_profile = models.ManyToManyField(AgeProfile, blank=True)
-    age_description = models.CharField(
-        max_length=128,
-        help_text='Select all that apply. Note: do not select "pregnant women" if pregnant women'
-        + " are only included as part of a general population sample.",
+    age_profile = models.ManyToManyField(
+        AgeProfile,
+        blank=True,
+        help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women '
+        + "are only included as part of a general population sample",
     )
     sex = models.CharField(default="U", max_length=1, choices=constants.Sex.choices,)
     summary = models.CharField(
@@ -117,6 +115,10 @@ class Exposure(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    # TODO: need a better way of displaying a unique (within the study) name
+    def __str__(self):
+        return "Exposure #" + str(self.id)
+
 
 class ExposureLevel(models.Model):
     study_population = models.ForeignKey(
@@ -146,6 +148,10 @@ class ExposureLevel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    # TODO: need a better way of displaying a unique (within the study) name
+    def __str__(self):
+        return "Exposure Level #" + str(self.id)
+
 
 class Outcome(models.Model):
     study_population = models.ForeignKey(
@@ -160,6 +166,10 @@ class Outcome(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    # TODO: need a better way of displaying a unique (within the study) name
+    def __str__(self):
+        return "Health Outcome #" + str(self.id)
+
 
 class AdjustmentFactor(models.Model):
     study_population = models.ForeignKey(
@@ -168,6 +178,10 @@ class AdjustmentFactor(models.Model):
     description = models.CharField(max_length=128,)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    # TODO: need a better way of displaying a unique (within the study) name
+    def __str__(self):
+        return "Adjustment Factor #" + str(self.id)
 
 
 class DataExtraction(models.Model):
