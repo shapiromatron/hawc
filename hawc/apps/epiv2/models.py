@@ -41,7 +41,7 @@ class MeasurementType(models.Model):
 
 
 class StudyPopulation(models.Model):
-    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations")
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations_v2")
     study_design = models.CharField(
         max_length=128, choices=constants.StudyDesign.choices, blank=True
     )
@@ -173,7 +173,7 @@ class DataExtraction(models.Model):
         StudyPopulation, on_delete=models.CASCADE, related_name="data_extractions"
     )
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE)
-    exposure_level = models.ForeignKey(ExposureLevel, on_delete=models.SET_NULL)
+    exposure_level = models.ForeignKey(ExposureLevel, on_delete=models.SET_NULL, null=True)
     n = models.PositiveIntegerField()
     effect_estimate_type = models.CharField(
         max_length=128, choices=constants.EffectEstimateType.choices
@@ -191,7 +191,7 @@ class DataExtraction(models.Model):
     significant = models.BooleanField(
         verbose_name="Statistically Significant", choices=constants.SIGNIFICANT_CHOICES
     )
-    adjustment_factor = models.ForeignKey(AdjustmentFactor, on_delete=models.SET_NULL)
+    adjustment_factor = models.ForeignKey(AdjustmentFactor, on_delete=models.SET_NULL, null=True)
     confidence = models.CharField(max_length=128, verbose_name="Study confidence")
     # TODO: data location appears in Exposure Level also. Are both required?
     data_location = models.CharField(max_length=128, help_text="e.g., table number")
