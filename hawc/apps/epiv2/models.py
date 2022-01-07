@@ -5,6 +5,8 @@ from ..study.models import Study
 from . import constants, managers
 
 
+# TODO: set all max_lengths based on the needs of each field
+# TODO: set all optional fields to blank=True
 # TODO: set up managers
 class AgeProfile(models.Model):
     # objects = managers.AgeProfileManager()
@@ -32,7 +34,7 @@ class Country(models.Model):
 
 
 class MeasurementType(models.Model):
-    description = models.CharField()
+    description = models.CharField(max_length=128,)
 
     def __str__(self):
         return self.description
@@ -40,15 +42,19 @@ class MeasurementType(models.Model):
 
 class StudyPopulation(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations")
-    study_design = models.CharField(choices=constants.StudyDesign.choices, blank=True)
-    source = models.CharField(choices=constants.Source.choices)
+    study_design = models.CharField(
+        max_length=128, choices=constants.StudyDesign.choices, blank=True
+    )
+    source = models.CharField(max_length=128, choices=constants.Source.choices)
     age_profile = models.ManyToManyField(AgeProfile, blank=True)
     age_description = models.CharField(
+        max_length=128,
         help_text='Select all that apply. Note: do not select "pregnant women" if pregnant women'
-        + " are only included as part of a general population sample."
+        + " are only included as part of a general population sample.",
     )
-    sex = models.CharField(default="U", choices=constants.Sex.choices,)
+    sex = models.CharField(default="U", max_length=1, choices=constants.Sex.choices,)
     summary = models.CharField(
+        max_length=128,
         verbose_name="Population Summary",
         help_text="Breifly describe the study population (e.g., Women undergoing fertility treatment).",
     )
@@ -97,14 +103,15 @@ class Exposure(models.Model):
     measurement_type = models.ManyToManyField(
         MeasurementType, verbose_name="Exposure measurement type"
     )
-    biomonitoring_matrix = models.CharField()
+    biomonitoring_matrix = models.CharField(max_length=128,)
     measurement_timing = models.CharField(
+        max_length=128,
         verbose_name="Timing of exposure measurement",
         help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
     )
-    exposure_route = models.CharField(choices=constants.ExposureRoute.choices)
-    analytic_method = models.CharField()
-    comments = models.CharField(blank=True)
+    exposure_route = models.CharField(max_length=2, choices=constants.ExposureRoute.choices)
+    analytic_method = models.CharField(max_length=128,)
+    comments = models.CharField(max_length=128, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -115,9 +122,12 @@ class ExposureLevel(models.Model):
     )
     chemical = models.ForeignKey(Chemical, on_delete=models.CASCADE)
     exposure_measurement = models.ForeignKey(Exposure, on_delete=models.CASCADE)
-    sub_population = models.CharField(verbose_name="Sub-population (if relevant)", blank=True)
-    central_tendency = models.CharField()
+    sub_population = models.CharField(
+        max_length=128, verbose_name="Sub-population (if relevant)", blank=True
+    )
+    central_tendency = models.CharField(max_length=128,)
     central_tendency_type = models.CharField(
+        max_length=128,
         choices=constants.CentralTendencyType.choices,
         default=constants.CentralTendencyType.MEDIAN,
         verbose_name="Central tendency type (median preferred)",
@@ -129,8 +139,8 @@ class ExposureLevel(models.Model):
     neg_exposure = models.FloatField(
         verbose_name="Percent with negligible exposure", help_text="e.g., %% below the LOD"
     )
-    comments = models.CharField(verbose_name="Exposure level comments")
-    data_location = models.CharField(help_text="e.g., table number")
+    comments = models.CharField(max_length=128, verbose_name="Exposure level comments")
+    data_location = models.CharField(max_length=128, help_text="e.g., table number")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -139,8 +149,9 @@ class Outcome(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="outcomes"
     )
-    health_outcome = models.CharField()
+    health_outcome = models.CharField(max_length=128,)
     health_outcome_system = models.CharField(
+        max_length=128,
         choices=constants.HealthOutcomeSystem.choices,
         help_text="If multiple cancer types are present, report all types under Cancer.",
     )
@@ -152,7 +163,7 @@ class AdjustmentFactor(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="adjustment_factors"
     )
-    description = models.CharField()
+    description = models.CharField(max_length=128,)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -164,26 +175,28 @@ class DataExtraction(models.Model):
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE)
     exposure_level = models.ForeignKey(ExposureLevel, on_delete=models.SET_NULL)
     n = models.PositiveIntegerField()
-    effect_estimate_type = models.CharField(choices=constants.EffectEstimateType.choices)
-    effect_estimate = models.CharField()
-    effect_description = models.CharField()
-    measurement_timing = models.CharField()
+    effect_estimate_type = models.CharField(
+        max_length=128, choices=constants.EffectEstimateType.choices
+    )
+    effect_estimate = models.CharField(max_length=128,)
+    effect_description = models.CharField(max_length=128,)
+    measurement_timing = models.CharField(max_length=128,)
     exposure_rank = models.PositiveSmallIntegerField(
         help_text="Rank this comparison group by exposure (lowest exposure group = 1)"
     )
     ci_lcl = models.FloatField(blank=True)
     ci_ucl = models.FloatField(blank=True)
     sd_or_se = models.FloatField(blank=True)
-    pvalue = models.CharField(blank=True)
+    pvalue = models.CharField(max_length=128, blank=True)
     significant = models.BooleanField(
         verbose_name="Statistically Significant", choices=constants.SIGNIFICANT_CHOICES
     )
     adjustment_factor = models.ForeignKey(AdjustmentFactor, on_delete=models.SET_NULL)
-    confidence = models.CharField(verbose_name="Study confidence")
+    confidence = models.CharField(max_length=128, verbose_name="Study confidence")
     # TODO: data location appears in Exposure Level also. Are both required?
-    data_location = models.CharField(help_text="e.g., table number")
-    statistical_method = models.CharField()
-    comments = models.CharField(blank=True)
+    data_location = models.CharField(max_length=128, help_text="e.g., table number")
+    statistical_method = models.CharField(max_length=128,)
+    comments = models.CharField(max_length=128, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
