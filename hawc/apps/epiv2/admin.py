@@ -45,12 +45,20 @@ class ExposureLevelInline(admin.StackedInline):
     extra = 0
 
 
-class OutcomeInline(admin.StackedInline):
+class OutcomeInline(admin.TabularInline):
     model = Outcome
     extra = 0
 
 
 class StudyPopulationAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "summary",
+        "study",
+        "study_design",
+        "created",
+        "last_updated",
+    )
     inlines = [
         CriteriaInline,
         ChemicalInline,
@@ -66,3 +74,10 @@ admin.site.register(StudyPopulation, StudyPopulationAdmin)
 admin.site.register(Country)
 admin.site.register(AgeProfile)
 admin.site.register(MeasurementType)
+admin.site.register(AdjustmentFactor)
+admin.site.register(Chemical)
+admin.site.register(Criteria)
+admin.site.register(DataExtraction)
+admin.site.register(Exposure)
+admin.site.register(ExposureLevel)
+admin.site.register(Outcome)
