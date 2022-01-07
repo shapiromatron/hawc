@@ -249,26 +249,6 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
     form_class = forms.TagReferenceForm
     template_name = "lit/search_tags_edit.html"
 
-    def post(self, request, *args, **kwargs):
-        if not self.request.is_ajax():
-            raise Http404
-        response = self.update_reference_tags()
-        return HttpResponse(json.dumps(response), content_type="application/json")
-
-    def update_reference_tags(self):
-        # find reference, check that the assessment is the same as the one we
-        # have permissions-checked for, and if so, update reference-tags
-        response = {"status": "fail"}
-        pk = tryParseInt(self.request.POST.get("pk"), -1)
-        ref = models.Reference.objects.filter(pk=pk, assessment=self.assessment).first()
-        if ref:
-            tag_pks = self.request.POST.getlist("tags[]", [])
-            ref.tags.set(tag_pks)
-            ref.last_updated = timezone.now()
-            ref.save()
-            response["status"] = "success"
-        return response
-
     def get_ref_qs_filters(self) -> Dict:
         raise NotImplementedError("Subclass requires implementation")
 

@@ -75,7 +75,9 @@ class Store {
                 this.errorOnSave = true;
             };
 
-        $.post(".", payload, v => (v.status === "success" ? success() : failure())).fail(failure);
+        $.post(`/lit/api/reference/${this.selectedReference.data.pk}/tag_references/`, payload, v =>
+            v.status === "success" ? success() : failure()
+        ).fail(failure);
     }
     @action.bound removeAllTags() {
         this.selectedReferenceTags = [];

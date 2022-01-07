@@ -394,3 +394,18 @@ class ReferenceViewset(
     serializer_class = serializers.ReferenceSerializer
     permission_classes = (AssessmentLevelPermissions,)
     queryset = models.Reference.objects.all()
+
+    @action(detail=True, methods=("post",))
+    def tag_references(self, request, pk):
+        if not self.request.is_ajax():
+            raise exceptions.NotFound()
+        response = {"status": "fail"}
+        ref = self.get_object()
+        assessment = ref.assessment
+        if assessment.user_can_edit_assessment(self.request.user):
+            tag_pks = self.request.POST.getlist("tags[]", [])
+            ref.tags.set(tag_pks)
+            ref.last_updated = timezone.now()
+            ref.save()
+            response["status"] = "success"
+        return Response(response)
