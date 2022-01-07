@@ -12,6 +12,7 @@ def set_epi_version(apps, schema_editor):
         n_sp__gt=0
     ).update(epi_version=1)
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
