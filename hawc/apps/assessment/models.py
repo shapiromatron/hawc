@@ -257,8 +257,8 @@ class Assessment(models.Model):
     )
     epi_version = models.PositiveSmallIntegerField(
         choices=constants.EpiVersion.choices,
-        default=2,
-        help_text="Set based on Epi Version used for this assessment.",
+        default=constants.EpiVersion.V2,
+        help_text="Data extraction schema used for epidemiology studies",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

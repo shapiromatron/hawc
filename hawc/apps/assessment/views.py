@@ -307,8 +307,16 @@ class AssessmentList(LoginRequiredMixin, ListView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class AssessmentFullList(LoginRequiredMixin, ListView):
+class AssessmentFullList(ListView):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -318,17 +326,20 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
             )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context["form"] = self.form
         return context
 
 
 class AssessmentPublicList(ListView):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
-        dtxsid = self.request.GET.get("dtxsid")
-        if dtxsid:
-            qs = qs.filter(dtxsids=dtxsid)
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        qs = qs.distinct().order_by(self.form.get_order_by())
         return qs
 
     def get_context_data(self, **kwargs):
@@ -346,6 +357,7 @@ class AssessmentPublicList(ListView):
             team; details on the objectives and methodology applied are described in each assessment.
             Data can also be downloaded for each individual assessment.
         """
+        context["form"] = self.form
         return context
 
 

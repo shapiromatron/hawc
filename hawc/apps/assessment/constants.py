@@ -23,5 +23,5 @@ class JobType(models.IntegerChoices):
 
 
 class EpiVersion(models.IntegerChoices):
-    ONE = 1, "v1"
-    TWO = 2, "v2"
+    V1 = 1, "v1"
+    V2 = 2, "v2"
