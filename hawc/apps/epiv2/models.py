@@ -59,7 +59,9 @@ class StudyPopulation(models.Model):
         help_text="Breifly describe the study population (e.g., Women undergoing fertility treatment).",
     )
     countries = models.ManyToManyField(Country, blank=True)
-    region = models.CharField(max_length=128, blank=True)
+    region = models.CharField(
+        max_length=128, blank=True, verbose_name="Other geographic information"
+    )
     participant_n = models.PositiveIntegerField(
         verbose_name="Overall study population N",
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\n"
@@ -184,10 +186,10 @@ class DataExtraction(models.Model):
     exposure_rank = models.PositiveSmallIntegerField(
         help_text="Rank this comparison group by exposure (lowest exposure group = 1)"
     )
-    ci_lcl = models.FloatField(blank=True)
-    ci_ucl = models.FloatField(blank=True)
-    sd_or_se = models.FloatField(blank=True)
-    pvalue = models.CharField(max_length=128, blank=True)
+    ci_lcl = models.FloatField(verbose_name="Confidence Interval LCL", blank=True)
+    ci_ucl = models.FloatField(verbose_name="Confidence Interval UCL", blank=True)
+    sd_or_se = models.FloatField(verbose_name="Standard Deviation or Standard Error", blank=True)
+    pvalue = models.CharField(verbose_name="p-value", max_length=128, blank=True)
     significant = models.BooleanField(
         verbose_name="Statistically Significant", choices=constants.SIGNIFICANT_CHOICES
     )
