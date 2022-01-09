@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
