@@ -37,11 +37,11 @@ class ExperimentList(BaseList):
     model = models.Experiment
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["permissions"] = self.assessment.get_permissions().to_dict(self.request.user)
-        context["objects"] = self.parent.experiments.all().order_by("id")
-        context["parent"] = self.parent
-        return context
+        return super().get_context_data(
+            permissions=self.assessment.get_permissions().to_dict(self.request.user),
+            objects=self.parent.experiments.all().order_by("id"),
+            parent=self.parent,
+        )
 
 
 class ExperimentViewSet(CrudModelViewSet):
@@ -84,11 +84,10 @@ class ExperimentViewSet(CrudModelViewSet):
 
     @action(methods=("get", "post"), permission=can_edit)
     def delete(self, request: HttpRequest, *args, **kwargs):
-        if request.method == "GET":
-            return render(request, self.detail_fragment, self.get_context_data())
-        elif request.method == "POST":
+        if request.method == "POST":
             self.perform_delete(request.item)
-            return HttpResponse("")
+            return self.empty_response()
+        return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
     def clone(self, request: HttpRequest, *args, **kwargs):

@@ -1,6 +1,7 @@
 {% load crispy_forms_tags %}
 
-<form hx-target="this" hx-swap="outerHTML">
+<form class="border my-2 p-2"
+    hx-target="this" hx-swap="outerHTML">
     {% csrf_token %}
     {% crispy form %}
     <div class="well d-flex flex-row-reverse">

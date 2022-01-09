@@ -4,7 +4,12 @@ from typing import Any, Callable, Iterable, Optional, Set
 
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseNotFound
+from django.http import (
+    HttpResponseBadRequest,
+    HttpResponseNotAllowed,
+    HttpResponseNotFound,
+    HttpResponse,
+)
 from django.http.request import HttpRequest
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
@@ -124,3 +129,6 @@ class CrudModelViewSet(View):
     def perform_clone(self, item: Item):
         item.object.clone()
         create_object_log("Created", item.object, item.assessment.id, self.request.user.id)
+
+    def empty_response(self) -> HttpResponse:
+        return HttpResponse("")
