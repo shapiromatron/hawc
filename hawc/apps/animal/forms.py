@@ -21,7 +21,26 @@ from . import constants, lookups, models
 class ExperimentForm2(ModelForm):
     class Meta:
         model = models.Experiment
-        fields = ("name",)
+        exclude = ("study",)
+
+    @property
+    def helper(self):
+        # by default take-up the whole row
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "form-control"
+
+        self.fields["description"].widget.attrs["rows"] = 4
+
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("name", 3, "col-md-4")
+        helper.add_row("chemical", 3, "col-md-4")
+        helper.add_row("purity_available", 4, ["col-md-2", "col-md-2", "col-md-2", "col-md-6"])
+        url = reverse("assessment:dtxsid_create")
+        helper.add_create_btn("dtxsid", url, "Add new DTXSID")
+        return helper
 
 
 class ExperimentForm(ModelForm):

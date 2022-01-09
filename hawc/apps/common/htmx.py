@@ -1,9 +1,9 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from functools import wraps
 from typing import Any, Callable, Iterable, Optional, Set
 
+from django.db import transaction
 from django.core.exceptions import PermissionDenied
-from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseNotFound
 from django.http.request import HttpRequest
 from django.shortcuts import get_object_or_404
@@ -11,50 +11,48 @@ from django.views.generic import View
 
 from ..assessment.models import Assessment
 from ..assessment.permissions import AssessmentPermissions
+from .views import create_object_log
 
 
 @dataclass
 class Item:
     assessment: Assessment
-    object: Any  # item or parent model instance
-    objects: Optional[QuerySet] = None  # items in a list view
+    object: Any  # instance or parent instance
+    # TODO - change to object and parent
 
     def __post_init__(self):
         self.permissions: AssessmentPermissions = self.assessment.get_permissions()
 
-    def to_dict(self):
-        return asdict(self)
+    def to_dict(self, user):
+        study = self.object.get_study() if hasattr(self.object, "get_study") else None
+        return {
+            "assessment": self.assessment,
+            "object": self.object,
+            "permissions": self.permissions.to_dict(user, study),
+        }
 
 
 def is_htmx(request) -> bool:
     return request.headers.get("HX-Request", "") == "true"
 
 
-def can_view_study_items(user, item: Item) -> bool:
-    # TODO - fix
-    return True
+def can_view(user, item: Item) -> bool:
+    return item.permissions.can_view_study(item.object.get_study(), user)
 
 
-def can_edit_study_item(user, item: Item) -> bool:
-    # TODO - fix
-    return True
+def can_edit(user, item: Item) -> bool:
+    return item.permissions.can_edit_study(item.object.get_study(), user)
 
 
-# influenced by:
-# https://github.com/encode/django-rest-framework/blob/master/rest_framework/decorators.py
-def action(permission: Callable, htmx: bool = False, methods: Optional[Iterable[str]] = None):
-    """Action handler for our custom htmx-based viewset
+def action(permission: Callable, htmx: bool = True, methods: Optional[Iterable[str]] = None):
+    """Action handler for an htmx-based viewset
+
+    Influenced by django-rest framework's action decorator on viewsets.
 
     Args:
         permission (Callable): A permssion function that returns True/False
-        htmx (bool, optional, default False): Only accepts htmx requests
+        htmx (bool, optional, default True): Accept only htmx requests
         methods (Optional[Iterable[str]]): Accepted http methods; defaults to {"get"} if undefined.
-
-    Raises:
-        PermissionDenied: [description]
-
-    Returns:
-        [type]: [description]
     """
     if methods is None:
         methods = {"get"}
@@ -78,18 +76,9 @@ def action(permission: Callable, htmx: bool = False, methods: Optional[Iterable[
     return actual_decorator
 
 
-# http://127.0.0.1:8000/ani/v2/experiment/study/3297/create/
-
-# todo - add a decorator for permissions class - assessment_perms, study_perms
-# todo - override template renderer to check if permission_checked = True; set to false at beginning
-# todo - pass in study to item for some checks
-# todo rename object to parent_object in some cases
-
-
 class CrudModelViewSet(View):
     actions: Set[str] = {"create", "read", "update", "delete", "list"}
     parent_actions: Set[str] = {"create", "list"}
-    list_actions: Set[str] = {"list"}
     pk_url_kwarg: str = "pk"
     parent_model: Any = None
     model: Any = None
@@ -99,20 +88,39 @@ class CrudModelViewSet(View):
         object = get_object_or_404(Model, pk=self.kwargs.get(self.pk_url_kwarg))
         assessment: Assessment = object.get_assessment()
         item = Item(object=object, assessment=assessment)
-        if request.action in self.list_actions:
-            item.objects = self.get_objects(item)
         return item
 
-    def get_objects(self, item: Item) -> QuerySet:
-        raise NotImplementedError("Requires custom implementation.")
+    def get_context_data(self, **kwargs):
+        context = self.request.item.to_dict(self.request.user)
+        context.update(action=self.request.action, **kwargs)
+        return context
 
     def dispatch(self, request, *args, **kwargs):
-        request.is_htmx = request.headers.get("HX-Request", "false").lower() == "true"
+        request.is_htmx = is_htmx(request)
         request.action = self.kwargs.get("action", "<none>").lower()
         request.from_parent_id = request.action in self.parent_actions
-        if request.action in self.actions:
-            handler = getattr(self, request.action, self.http_method_not_allowed)
-        else:
+        if request.action not in self.actions:
             return HttpResponseNotFound()
+        handler = getattr(self, request.action, self.http_method_not_allowed)
         request.item = self.get_item(request)
         return handler(request, *args, **kwargs)
+
+    @transaction.atomic
+    def perform_create(self, item: Item, form):
+        item.object = form.save()
+        create_object_log("Created", item.object, item.assessment.id, self.request.user.id)
+
+    @transaction.atomic
+    def perform_update(self, item: Item, form):
+        instance = form.save()
+        create_object_log("Updated", instance, item.assessment.id, self.request.user.id)
+
+    @transaction.atomic
+    def perform_delete(self, item: Item):
+        create_object_log("Deleted", item.object, item.assessment.id, self.request.user.id)
+        item.object.delete()
+
+    @transaction.atomic
+    def perform_clone(self, item: Item):
+        item.object.clone()
+        create_object_log("Created", item.object, item.assessment.id, self.request.user.id)

@@ -1,7 +1,7 @@
 import json
 
 from django.db import transaction
-from django.db.models import Q, QuerySet
+from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from ..assessment.models import Assessment, DoseUnits
 from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
 from ..common.helper import WebappConfig
-from ..common.htmx import CrudModelViewSet, Item, action, can_edit_study_item, can_view_study_items
+from ..common.htmx import CrudModelViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
@@ -32,32 +32,30 @@ from ..study.views import StudyRead
 from . import forms, models
 
 
+class ExperimentList(BaseList):
+    parent_model = Study
+    model = models.Experiment
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["permissions"] = self.assessment.get_permissions().to_dict(self.request.user)
+        context["objects"] = self.parent.experiments.all().order_by("id")
+        context["parent"] = self.parent
+        return context
+
+
 class ExperimentViewSet(CrudModelViewSet):
-    actions = {"create", "read", "update", "delete", "list", "clone"}
+    actions = {"create", "read", "update", "delete", "clone"}
     parent_model = Study
     model = models.Experiment
     form_fragment = "animal/fragments/experiment_form.html"
     detail_fragment = "animal/fragments/experiment_detail.html"
 
-    def get_objects(self, item: Item) -> QuerySet:
-        return item.object.experiments.all()
-
-    def get_context_data(self, request, **kw):
-        context = request.item.to_dict()
-        context["permissions"] = request.item.assessment.user_permissions(request.user)
-        context["action"] = request.action
-        context.update(**kw)
-        return context
-
-    @action(permission=can_view_study_items)
-    def list(self, request: HttpRequest, *args, **kwargs):
-        return render(request, "exp_v2_list.html", self.get_context_data(request))
-
-    @action(htmx=True, permission=can_view_study_items)
+    @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
-        return render(request, self.detail_fragment, self.get_context_data(request))
+        return render(request, self.detail_fragment, self.get_context_data())
 
-    @action(htmx=True, methods=("get", "post"), permission=can_edit_study_item)
+    @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         if request.method == "GET":
@@ -66,12 +64,12 @@ class ExperimentViewSet(CrudModelViewSet):
             form = forms.ExperimentForm2(request.POST)
             if form.is_valid():
                 form.instance.study = request.item.object
-                request.item.object = form.save()
+                self.perform_create(request.item, form)
                 template = self.detail_fragment
-        context = self.get_context_data(request, form=form)
+        context = self.get_context_data(form=form)
         return render(request, template, context)
 
-    @action(htmx=True, methods=("get", "post"), permission=can_edit_study_item)
+    @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         if request.method == "GET":
@@ -79,26 +77,23 @@ class ExperimentViewSet(CrudModelViewSet):
         elif request.method == "POST":
             form = forms.ExperimentForm2(request.POST, instance=request.item.object)
             if form.is_valid():
-                form.save()
+                self.perform_update(request.item, form)
                 template = self.detail_fragment
-        context = self.get_context_data(request, form=form)
+        context = self.get_context_data(form=form)
         return render(request, template, context)
 
-    @action(htmx=True, methods=("get", "post"), permission=can_edit_study_item)
+    @action(methods=("get", "post"), permission=can_edit)
     def delete(self, request: HttpRequest, *args, **kwargs):
         if request.method == "GET":
-            return render(request, self.detail_fragment, self.get_context_data(request))
+            return render(request, self.detail_fragment, self.get_context_data())
         elif request.method == "POST":
-            request.item.object.delete()
+            self.perform_delete(request.item)
             return HttpResponse("")
 
-    @action(htmx=True, methods=("post",), permission=can_edit_study_item)
+    @action(methods=("post",), permission=can_edit)
     def clone(self, request: HttpRequest, *args, **kwargs):
-        instance = request.item.object
-        instance.id = None
-        instance.name += " (clone)"
-        instance.save()
-        return render(request, self.detail_fragment, self.get_context_data(request))
+        self.perform_clone(request.item)
+        return render(request, self.detail_fragment, self.get_context_data())
 
 
 # Heatmap views

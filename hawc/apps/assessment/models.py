@@ -288,11 +288,7 @@ class Assessment(models.Model):
 
     def user_permissions(self, user):
         perms = self.get_permissions()
-        return {
-            "view": perms.can_view_object(user),
-            "edit": perms.can_edit_object(user),
-            "edit_assessment": perms.can_edit_assessment(user),
-        }
+        return perms.to_dict(user)
 
     def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
         if perms is None:
