@@ -1,32 +1,40 @@
-<div hx-target="this" hx-swap="outerHTML">
+<div
+    class="border"
+    hx-target="this" hx-swap="outerHTML">
     {{object}}
     {% if action == 'delete' %}
-        <form>
+        <form class="alert alert-danger">
             {% csrf_token %}
-            Are you sure you want to delete?
-            <div>
+            <i class="fa fa-fw fa-exclamation-triangle mx-1"></i>Are you sure you want to delete?
+            <div class="d-flex flex-row-reverse">
                 <button
+                    class="btn btn-sm btn-danger mx-1"
                     hx-post="/ani/v2/experiment/{{object.id}}/delete/"
                     hx-swap="outerHTML swap:1s"
-                    >Delete</button>
+                    >Confirm</button>
                 <button
+                    class="btn btn-sm btn-secondary mx-1"
                     hx-get="/ani/v2/experiment/{{object.id}}/"
                     >Cancel</button>
             </div>
         </form>
     {% elif permissions.edit %}
-        <div>
+        <div class="d-flex flex-row-reverse">
             <button
+                class="btn btn-sm btn-primary mx-1"
                 hx-get="/ani/v2/experiment/{{object.id}}/update/"
                 >Update</button>
             <button
+                class="btn btn-sm btn-danger mx-1"
                 hx-get="/ani/v2/experiment/{{object.id}}/delete/"
                 >Delete</button>
             <button
+                class="btn btn-sm btn-primary mx-1"
                 hx-post="/ani/v2/experiment/{{object.id}}/clone/"
                 hx-target="#experiment-main"
                 hx-swap="beforeend"
                 >Clone</button>
         </div>
     {% endif %}
+
 </div>

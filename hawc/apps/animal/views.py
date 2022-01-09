@@ -32,8 +32,20 @@ from ..study.views import StudyRead
 from . import forms, models
 
 
+class ExperimentList(BaseList):
+    parent_model = Study
+    model = models.Experiment
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["permissions"] = context["obj_perms"]
+        context["objects"] = self.parent.experiments.all().order_by("id")
+        context["parent"] = self.parent
+        return context
+
+
 class ExperimentViewSet(CrudModelViewSet):
-    actions = {"create", "read", "update", "delete", "list", "clone"}
+    actions = {"create", "read", "update", "delete", "clone"}
     parent_model = Study
     model = models.Experiment
     form_fragment = "animal/fragments/experiment_form.html"
@@ -48,10 +60,6 @@ class ExperimentViewSet(CrudModelViewSet):
         context["action"] = request.action
         context.update(**kw)
         return context
-
-    @action(permission=can_view_study_items)
-    def list(self, request: HttpRequest, *args, **kwargs):
-        return render(request, "exp_v2_list.html", self.get_context_data(request))
 
     @action(htmx=True, permission=can_view_study_items)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -94,10 +102,7 @@ class ExperimentViewSet(CrudModelViewSet):
 
     @action(htmx=True, methods=("post",), permission=can_edit_study_item)
     def clone(self, request: HttpRequest, *args, **kwargs):
-        instance = request.item.object
-        instance.id = None
-        instance.name += " (clone)"
-        instance.save()
+        request.item.object.clone()
         return render(request, self.detail_fragment, self.get_context_data(request))
 
 

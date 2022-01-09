@@ -1,0 +1,26 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<div id="experiment-main" hx-target="this" hx-swap="beforeend">
+    {% if permissions.edit %}
+    <div class="clearfix">
+        <button
+            class="btn btn-sm btn-primary float-right"
+            hx-get="/ani/v2/experiment/study/{{parent.id}}/create/"
+            ><i class="fa fa-fw fa-plus mr-1"></i>Create</button>
+    </div>
+    {% endif %}
+    {% for object in objects %}
+        {% include 'animal/fragments/experiment_detail.html' %}
+    {% endfor %}
+</div>
+{% endblock content %}
+
+
+{% block extrajs %}
+<script>
+    document.body.addEventListener("htmx:configRequest", function(event){
+        event.detail.headers["X-CSRFToken"] = "{{ csrf_token }}"
+    });
+</script>
+{% endblock %}

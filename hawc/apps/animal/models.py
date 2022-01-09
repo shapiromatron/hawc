@@ -211,6 +211,12 @@ class Experiment(models.Model):
     def get_study(self):
         return self.study
 
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
+
 
 class AnimalGroup(models.Model):
     objects = managers.AnimalGroupManager()
