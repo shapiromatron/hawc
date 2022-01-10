@@ -1,5 +1,9 @@
 - model: sites.site
   fields:
+    domain: example.com
+    name: example.com
+- model: sites.site
+  fields:
     domain: 127.0.0.1:8000
     name: localhost
 - model: contenttypes.contenttype
@@ -106,6 +110,10 @@
   fields:
     app_label: assessment
     model: job
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: communication
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
@@ -368,6 +376,54 @@
     model: task
 - model: contenttypes.contenttype
   fields:
+    app_label: materialized
+    model: finalriskofbiasscore
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: ageprofile
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: measurementtype
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: studypopulation
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: chemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: criteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: exposure
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: exposurelevel
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: outcome
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: adjustmentfactor
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: dataextraction
+- model: contenttypes.contenttype
+  fields:
     app_label: eco
     model: country
 - model: contenttypes.contenttype
@@ -404,12 +460,13 @@
     model: quantitative
 - model: myuser.hawcuser
   fields:
-    password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-11-25 20:21:43.412531+00:00
+    password: md5$9unkR0MDhhShphmuzu9eB8$da856775a579fcc62ddbfcf7583dd656
+    last_login: 2022-01-10 21:04:41.509932+00:00
     is_superuser: true
     email: admin@hawcproject.org
     first_name: a
     last_name: superuser
+    external_id: null
     is_staff: true
     is_active: true
     license_v1_accepted: false
@@ -425,6 +482,7 @@
     email: pm@hawcproject.org
     first_name: Project
     last_name: Manager
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -440,6 +498,7 @@
     email: team@hawcproject.org
     first_name: Team
     last_name: Member
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -455,6 +514,7 @@
     email: reviewer@hawcproject.org
     first_name: a
     last_name: reviewer
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -470,6 +530,7 @@
     email: public@hawcproject.org
     first_name: ''
     last_name: ''
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -477,12 +538,6 @@
     date_joined: 2020-01-25 14:23:16.175169+00:00
     groups: []
     user_permissions: []
-- model: authtoken.token
-  pk: cef32b9abcbe1a6e9c8460099403e9cd77e12c79
-  fields:
-    user:
-    - admin@hawcproject.org
-    created: 2045-01-01 12:00:00.123456+00:00
 - model: myuser.userprofile
   pk: 1
   fields:
@@ -656,6 +711,7 @@
     rob_name: 0
     vocabulary: 1
     modify_uncontrolled_vocabulary: true
+    epi_version: 1
     created: 2020-01-25 14:23:16.176620+00:00
     last_updated: 2020-02-27 20:12:29.233982+00:00
     dtxsids: []
@@ -665,7 +721,6 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
-    epi_version: 1
 - model: assessment.assessment
   pk: 2
   fields:
@@ -693,6 +748,7 @@
     rob_name: 0
     vocabulary: 1
     modify_uncontrolled_vocabulary: true
+    epi_version: 1
     created: 2020-01-25 14:23:16.288774+00:00
     last_updated: 2020-08-12 19:46:37.393988+00:00
     dtxsids:
@@ -703,7 +759,6 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
-    epi_version: 1
 - model: assessment.assessment
   pk: 3
   fields:
@@ -711,7 +766,8 @@
     year: 2020
     version: draft
     cas: 58-08-2
-    assessment_objective: '<p>Example the health effects of Chemical C. Drafted by scientists and contractors at US EPA.</p>'
+    assessment_objective: <p>Example the health effects of Chemical C. Drafted by
+      scientists and contractors at US EPA.</p>
     editable: true
     public: true
     hide_from_public_page: true
@@ -723,11 +779,12 @@
     enable_bmd: true
     enable_summary_text: false
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
-    funding_source: 'US EPA'
+    funding_source: US EPA
     noel_name: 0
     rob_name: 0
     vocabulary: 1
     modify_uncontrolled_vocabulary: true
+    epi_version: 1
     created: 2020-04-10 17:45:39.555285+00:00
     last_updated: 2020-04-10 17:45:39.555285+00:00
     dtxsids: []
@@ -737,7 +794,6 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
-    epi_version: 1
 - model: assessment.attachment
   pk: 3
   fields:
@@ -1029,7 +1085,7 @@
   fields:
     subject: Unpublished Blog
     content: Content
-    rendered_content: '<p>Content</p>'
+    rendered_content: <p>Content</p>
     published: false
     created: 2020-08-20 03:01:09.747019+00:00
     last_updated: 2020-08-20 03:01:09.747019+00:00
@@ -1038,7 +1094,7 @@
   fields:
     subject: Published Blog
     content: Content
-    rendered_content: '<p>Content</p>'
+    rendered_content: <p>Content</p>
     published: true
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
@@ -1462,8 +1518,8 @@
   fields:
     assessment: 1
     title: ''
-    authors_short: 'Frédéric Chopin'
-    authors: 'Frédéric Chopin'
+    authors_short: Frédéric Chopin
+    authors: Frédéric Chopin
     year: 2010
     journal: ''
     abstract: ''
@@ -1495,12 +1551,23 @@
   pk: 4
   fields:
     assessment: 3
-    title: 'Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application of oxidative stress markers to cancer risk assessment of dioxins.'
+    title: 'Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application
+      of oxidative stress markers to cancer risk assessment of dioxins.'
     authors_short: Yoshida R and Ogawa Y
     authors: Yoshida R, Ogawa Y
     year: 2000
-    journal: 'Ind Health 2000; 38 (1):5-14'
-    abstract: 'Dioxins are known to be a class of highly toxic and persistent environmental contaminants. Among them the toxicity of 2,3,7,8-tetrachlorodibenzo-p-dioxin (TCDD) has been the most intensively studied, and it has been classified as a human carcinogenic substance by the International Agency for Research on Cancer (IARC). Although the mechanism of carcinogenesis by TCDD is unclear, it is now considered to have act a cancer promoter. In this review, was discuss the ability of TCDD to induce oxidative stress in vivo, the mechanism of the oxidative stress induction, and how oxidative stress relates to the development of cancer. We then discuss the advantages of measuring the level of oxidative stress in people exposed to dioxins in epidemiological studies for cancer risk assessment. We also discuss several methods of measuring the level of oxidative stress in humans.'
+    journal: Ind Health 2000; 38 (1):5-14
+    abstract: Dioxins are known to be a class of highly toxic and persistent environmental
+      contaminants. Among them the toxicity of 2,3,7,8-tetrachlorodibenzo-p-dioxin
+      (TCDD) has been the most intensively studied, and it has been classified as
+      a human carcinogenic substance by the International Agency for Research on Cancer
+      (IARC). Although the mechanism of carcinogenesis by TCDD is unclear, it is now
+      considered to have act a cancer promoter. In this review, was discuss the ability
+      of TCDD to induce oxidative stress in vivo, the mechanism of the oxidative stress
+      induction, and how oxidative stress relates to the development of cancer. We
+      then discuss the advantages of measuring the level of oxidative stress in people
+      exposed to dioxins in epidemiological studies for cancer risk assessment. We
+      also discuss several methods of measuring the level of oxidative stress in humans.
     full_text_url: ''
     created: 2020-04-10 19:18:09.163184+00:00
     last_updated: 2020-04-10 19:18:10.164173+00:00
@@ -1535,8 +1602,8 @@
     searches:
     - 5
     identifiers:
-    - 4
     - 8
+    - 4
 - model: lit.reference
   pk: 6
   fields:
@@ -1696,7 +1763,9 @@
     epi_meta: true
     in_vitro: true
     short_citation: Yoshida R and Ogawa Y 2000
-    full_citation: "Yoshida R, Ogawa Y. Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application of oxidative stress markers to cancer risk assessment of dioxins. Ind Health 2000; 38 (1):5-14."
+    full_citation: 'Yoshida R, Ogawa Y. Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin:
+      an application of oxidative stress markers to cancer risk assessment of dioxins.
+      Ind Health 2000; 38 (1):5-14.'
     coi_reported: 0
     coi_details: ''
     funding_source: ''
@@ -1844,7 +1913,7 @@
     purity: 99.9
     vehicle: DMSO
     guideline_compliance: ''
-    description: 'Demonstration of data extraction of a study included in an assessment'
+    description: Demonstration of data extraction of a study included in an assessment
     created: 2020-04-10 19:21:14.709371+00:00
     last_updated: 2020-04-10 19:21:14.710369+00:00
 - model: animal.experiment
@@ -1900,7 +1969,15 @@
     siblings: null
     generation: ''
     dosing_regime: 2
-    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>'
+    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed
+      cages. Animal care, cages, and housing conditionswere in accordance with the
+      Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given
+      ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International
+      Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility
+      accredited by the Association for Assessment and Accreditation of Laboratory
+      Animal Care International. All procedures involving laboratory animals were
+      reviewed and approved by the Institutional Animal Care and Use Committee associated
+      with the facility in which the laboratory animals were housed.</p>'
     diet: 'Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)'
     created: 2020-04-10 19:35:26.254532+00:00
     last_updated: 2020-04-10 19:35:26.881519+00:00
@@ -1919,7 +1996,15 @@
     siblings: null
     generation: P0
     dosing_regime: 3
-    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>'
+    comments: '<p>Rats were assigned to individual housing in stainless steel, wire-bottomed
+      cages. Animal care, cages, and housing conditionswere in accordance with the
+      Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given
+      ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International
+      Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility
+      accredited by the Association for Assessment and Accreditation of Laboratory
+      Animal Care International. All procedures involving laboratory animals were
+      reviewed and approved by the Institutional Animal Care and Use Committee associated
+      with the facility in which the laboratory animals were housed.</p>'
     diet: 'Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)'
     created: 2020-05-08 17:40:30.086088+00:00
     last_updated: 2020-05-08 17:40:30.333334+00:00
@@ -1999,7 +2084,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 0
-    dose: 0
+    dose: 0.0
     created: 2020-04-10 19:35:26.748525+00:00
     last_updated: 2020-04-10 19:35:26.748525+00:00
 - model: animal.dosegroup
@@ -2026,7 +2111,7 @@
     dose_regime: 2
     dose_units: 1
     dose_group_id: 3
-    dose: 0.0010
+    dose: 0.001
     created: 2020-04-10 19:35:26.856523+00:00
     last_updated: 2020-04-10 19:35:26.856523+00:00
 - model: animal.dosegroup
@@ -3359,48 +3444,46 @@
       100.000000 2 13
 
       1000.000000 7 8'
-    outfile: "\n\n ====================================================================\
-      \ \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input Data\
-      \ File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting\
-      \ File:  C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov\
-      \ 28 00:35:10 2020\n ====================================================================\
-      \ \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\
-      \ \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\
-      \n\n   Dependent variable = Incidence\n   Independent variable = Dose\n   Slope\
-      \ parameter is not restricted\n\n   Total number of observations = 5\n   Total\
-      \ number of records with missing values = 0\n   Maximum number of iterations\
-      \ = 500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter\
-      \ Convergence has been set to: 1e-008\n\n\n\n                  Default Initial\
-      \ Parameter Values  \n                     background =            0   Specified\n\
-      \                      intercept =     -1.92753\n                          slope\
-      \ =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter\
-      \ Estimates\n\n           ( *** The model parameter(s)  -background   \n   \
-      \              have been estimated at a boundary point, or have been specified\
-      \ by the user,\n                 and do not appear in the correlation matrix\
-      \ )\n\n              intercept        slope\n\n intercept            1     \
-      \   -0.64\n\n     slope        -0.64            1\n\n\n\n                  \
-      \               Parameter Estimates\n\n                                    \
-      \                     95.0% Wald Confidence Interval\n       Variable      \
-      \   Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit\n  \
-      \    intercept         -2.08369         0.415186            -2.89744       \
-      \     -1.26994\n          slope       0.00195426        0.0006745          0.00063226\
-      \          0.00327625\n\n\n\n                        Analysis of Deviance Table\n\
-      \n       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value\n\
-      \     Full model        -31.1079         5\n   Fitted model        -31.9271\
-      \         2       1.63842      3          0.6507\n  Reduced model        -36.1015\
-      \         1       9.98719      4         0.04064\n\n           AIC:        \
-      \ 67.8542\n\n\n                                  Goodness  of  Fit \n      \
-      \                                                           Scaled\n     Dose\
-      \     Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n\
-      \    0.0000     0.1107         1.660     1.000      15.000       -0.543\n  \
-      \  1.0000     0.1109         1.663     1.000      15.000       -0.545\n   10.0000\
-      \     0.1126         1.689     3.000      15.000        1.070\n  100.0000  \
-      \   0.1314         1.972     2.000      15.000        0.022\n 1000.0000    \
-      \ 0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74 \
-      \     d.f. = 3        P-value = 0.6283\n\n\n   Benchmark Dose Computation\n\n\
-      Specified effect =            0.1\n\nRisk Type        =      Extra risk \n\n\
-      Confidence level =           0.95\n\n             BMD =        355.654\n\n \
-      \           BMDL =        238.329\n\n            BMDU =        667.165\n\n"
+    outfile: "\n\n ====================================================================
+      \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input Data
+      File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting File:
+      \ C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov 28 00:35:10
+      2020\n ====================================================================
+      \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
+      \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\n\n
+      \  Dependent variable = Incidence\n   Independent variable = Dose\n   Slope
+      parameter is not restricted\n\n   Total number of observations = 5\n   Total
+      number of records with missing values = 0\n   Maximum number of iterations =
+      500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter
+      Convergence has been set to: 1e-008\n\n\n\n                  Default Initial
+      Parameter Values  \n                     background =            0   Specified\n
+      \                     intercept =     -1.92753\n                          slope
+      =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter Estimates\n\n
+      \          ( *** The model parameter(s)  -background   \n                 have
+      been estimated at a boundary point, or have been specified by the user,\n                 and
+      do not appear in the correlation matrix )\n\n              intercept        slope\n\n
+      intercept            1        -0.64\n\n     slope        -0.64            1\n\n\n\n
+      \                                Parameter Estimates\n\n                                                         95.0%
+      Wald Confidence Interval\n       Variable         Estimate        Std. Err.
+      \    Lower Conf. Limit   Upper Conf. Limit\n      intercept         -2.08369
+      \        0.415186            -2.89744            -1.26994\n          slope       0.00195426
+      \       0.0006745          0.00063226          0.00327625\n\n\n\n                        Analysis
+      of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance
+      \ Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted
+      model        -31.9271         2       1.63842      3          0.6507\n  Reduced
+      model        -36.1015         1       9.98719      4         0.04064\n\n           AIC:
+      \        67.8542\n\n\n                                  Goodness  of  Fit \n
+      \                                                                Scaled\n     Dose
+      \    Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n
+      \   0.0000     0.1107         1.660     1.000      15.000       -0.543\n    1.0000
+      \    0.1109         1.663     1.000      15.000       -0.545\n   10.0000     0.1126
+      \        1.689     3.000      15.000        1.070\n  100.0000     0.1314         1.972
+      \    2.000      15.000        0.022\n 1000.0000     0.4677         7.015     7.000
+      \     15.000       -0.008\n\n Chi^2 = 1.74      d.f. = 3        P-value = 0.6283\n\n\n
+      \  Benchmark Dose Computation\n\nSpecified effect =            0.1\n\nRisk Type
+      \       =      Extra risk \n\nConfidence level =           0.95\n\n             BMD
+      =        355.654\n\n            BMDL =        238.329\n\n            BMDU =
+      \       667.165\n\n"
     output:
       df: 3.0
       AIC: 67.8542
@@ -3516,50 +3599,46 @@
       100.000000 2 13
 
       1000.000000 7 8'
-    outfile: "\n\n ====================================================================\
-      \ \n   \t  Probit Model. (Version: 3.4;  Date: 5/21/2017) \n  \t  Input Data\
-      \ File: C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.(d)  \n  \t  Gnuplot Plotting\
-      \ File:  C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.plt\n \t\t\t\t\t\t\tSat Nov\
-      \ 28 00:35:10 2020\n ====================================================================\
-      \ \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\
-      \ \n   The form of the probability function is: \n\n   P[response] = CumNorm(Intercept+Slope*Dose),\n\
-      \n   where CumNorm(.) is the cumulative normal distribution function\n\n\n \
-      \  Dependent variable = Incidence\n   Independent variable = Dose\n   Slope\
-      \ parameter is restricted as slope >= 1\n\n   Total number of observations =\
-      \ 5\n   Total number of records with missing values = 0\n   Maximum number of\
-      \ iterations = 501\n   Relative Function Convergence has been set to: 1e-008\n\
-      \   Parameter Convergence has been set to: 1e-008\n\n\n\n                 User\
-      \ Inputs Initial Parameter Values  \n                     background =     \
-      \   -9999   Specified\n                      intercept =          0.1\n    \
-      \                      slope =          1.1\n\n\n           Asymptotic Correlation\
-      \ Matrix of Parameter Estimates\n\n           ( *** The model parameter(s) \
-      \ -background   \n                 have been estimated at a boundary point,\
-      \ or have been specified by the user,\n                 and do not appear in\
-      \ the correlation matrix )\n\n              intercept        slope\n\n intercept\
-      \            1        -0.58\n\n     slope        -0.58            1\n\n\n\n\
-      \                                 Parameter Estimates\n\n                  \
-      \                                       95.0% Wald Confidence Interval\n   \
-      \    Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper\
-      \ Conf. Limit\n      intercept         -1.22642         0.218122           \
-      \ -1.65394           -0.798914\n          slope       0.00114535      0.000397623\
-      \         0.000366028          0.00192468\n\n\n\n                        Analysis\
-      \ of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance\
-      \  Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted\
-      \ model        -31.9239         2       1.63192      3          0.6522\n  Reduced\
-      \ model        -36.1015         1       9.98719      4         0.04064\n\n \
-      \          AIC:         67.8477\n\n\n                                  Goodness\
-      \  of  Fit \n                                                              \
-      \   Scaled\n     Dose     Est._Prob.    Expected    Observed     Size      \
-      \ Residual\n  ------------------------------------------------------------------------\n\
-      \    0.0000     0.1100         1.650     1.000      15.000       -0.537\n  \
-      \  1.0000     0.1102         1.654     1.000      15.000       -0.539\n   10.0000\
-      \     0.1122         1.683     3.000      15.000        1.078\n  100.0000  \
-      \   0.1331         1.996     2.000      15.000        0.003\n 1000.0000    \
-      \ 0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74 \
-      \     d.f. = 3        P-value = 0.6282\n\n\n   Benchmark Dose Computation\n\n\
-      Specified effect =            0.1\n\nRisk Type        =      Extra risk \n\n\
-      Confidence level =           0.95\n\n             BMD =          332.9\n\n \
-      \           BMDL =         222.21\n\n            BMDU =        654.367\n\n"
+    outfile: "\n\n ====================================================================
+      \n   \t  Probit Model. (Version: 3.4;  Date: 5/21/2017) \n  \t  Input Data File:
+      C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.(d)  \n  \t  Gnuplot Plotting File:  C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.plt\n
+      \t\t\t\t\t\t\tSat Nov 28 00:35:10 2020\n ====================================================================
+      \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
+      \n   The form of the probability function is: \n\n   P[response] = CumNorm(Intercept+Slope*Dose),\n\n
+      \  where CumNorm(.) is the cumulative normal distribution function\n\n\n   Dependent
+      variable = Incidence\n   Independent variable = Dose\n   Slope parameter is
+      restricted as slope >= 1\n\n   Total number of observations = 5\n   Total number
+      of records with missing values = 0\n   Maximum number of iterations = 501\n
+      \  Relative Function Convergence has been set to: 1e-008\n   Parameter Convergence
+      has been set to: 1e-008\n\n\n\n                 User Inputs Initial Parameter
+      Values  \n                     background =        -9999   Specified\n                      intercept
+      =          0.1\n                          slope =          1.1\n\n\n           Asymptotic
+      Correlation Matrix of Parameter Estimates\n\n           ( *** The model parameter(s)
+      \ -background   \n                 have been estimated at a boundary point,
+      or have been specified by the user,\n                 and do not appear in the
+      correlation matrix )\n\n              intercept        slope\n\n intercept            1
+      \       -0.58\n\n     slope        -0.58            1\n\n\n\n                                 Parameter
+      Estimates\n\n                                                         95.0%
+      Wald Confidence Interval\n       Variable         Estimate        Std. Err.
+      \    Lower Conf. Limit   Upper Conf. Limit\n      intercept         -1.22642
+      \        0.218122            -1.65394           -0.798914\n          slope       0.00114535
+      \     0.000397623         0.000366028          0.00192468\n\n\n\n                        Analysis
+      of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance
+      \ Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted
+      model        -31.9239         2       1.63192      3          0.6522\n  Reduced
+      model        -36.1015         1       9.98719      4         0.04064\n\n           AIC:
+      \        67.8477\n\n\n                                  Goodness  of  Fit \n
+      \                                                                Scaled\n     Dose
+      \    Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n
+      \   0.0000     0.1100         1.650     1.000      15.000       -0.537\n    1.0000
+      \    0.1102         1.654     1.000      15.000       -0.539\n   10.0000     0.1122
+      \        1.683     3.000      15.000        1.078\n  100.0000     0.1331         1.996
+      \    2.000      15.000        0.003\n 1000.0000     0.4677         7.015     7.000
+      \     15.000       -0.008\n\n Chi^2 = 1.74      d.f. = 3        P-value = 0.6282\n\n\n
+      \  Benchmark Dose Computation\n\nSpecified effect =            0.1\n\nRisk Type
+      \       =      Extra risk \n\nConfidence level =           0.95\n\n             BMD
+      =          332.9\n\n            BMDL =         222.21\n\n            BMDU =
+      \       654.367\n\n"
     output:
       df: 3.0
       AIC: 67.8477
@@ -3753,12 +3832,12 @@
     name: example metric
     short_name: metric
     description: <p>Is this a good study?</p>
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: true
-    responses: 1
     sort_order: 1
     created: 2020-02-27 19:31:21.953998+00:00
     last_updated: 2020-02-27 19:31:21.954027+00:00
@@ -3769,12 +3848,12 @@
     name: final domain
     short_name: final
     description: ''
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-02-27 20:04:35.816069+00:00
     last_updated: 2020-02-27 20:04:35.816096+00:00
@@ -3787,12 +3866,12 @@
     description: Randomization requires that each human subject or animal had an equal
       chance of being assigned to any study group including controls (e.g., use of
       random number table or computer generated randomization).
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3809,12 +3888,12 @@
       bias addresses blinding of personnel and human subjects to treatment during
       the study;</li><li>a question under detection bias addresses blinding of outcome
       assessors.</li></ol>'
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3827,12 +3906,12 @@
     description: Comparison group appropriateness refers to having similar baseline
       characteristics between the groups aside from the exposures and outcomes under
       study.
+    responses: 1
     required_animal: false
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 3
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3844,12 +3923,12 @@
       variables?
     short_name: ''
     description: ''
+    responses: 1
     required_animal: false
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.537996+00:00
     last_updated: 2020-04-10 17:45:43.537996+00:00
@@ -3860,12 +3939,12 @@
     name: Were experimental conditions identical across study groups?
     short_name: ''
     description: ''
+    responses: 1
     required_animal: true
     required_epi: false
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
@@ -3879,12 +3958,12 @@
     description: Blinding requires that study scientists do not know which administered
       dose or exposure level the human subject or animal is being given (i.e., study
       group). Human studies also require blinding of the human subjects when possible.
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
@@ -3896,12 +3975,12 @@
     short_name: ''
     description: Attrition rates are required to be similar and uniformly low across
       groups with respect to withdrawal or exclusion from analysis
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.116719+00:00
     last_updated: 2020-04-10 17:45:44.116719+00:00
@@ -3913,12 +3992,12 @@
     short_name: ''
     description: Confidence requires valid, reliable, and sensitive methods to measure
       exposure applied consistently across groups.
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
@@ -3930,12 +4009,12 @@
     short_name: ''
     description: Confidence requires valid, reliable, and sensitive methods to assess
       the outcome and the methods should be applied consistently across groups.
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
@@ -3946,12 +4025,12 @@
     name: Were all measured outcomes reported?
     short_name: ''
     description: ''
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.732154+00:00
     last_updated: 2020-04-10 17:45:44.732154+00:00
@@ -3965,12 +4044,12 @@
       threats to internal validity can be added and applied to study designs as appropriate.</p><br><p>Examples
       may include appropriateness of statistical methods, adherence to the study-protocol,
       etc.</p>
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.981198+00:00
     last_updated: 2020-04-10 17:45:44.981198+00:00
@@ -3981,12 +4060,12 @@
     name: metric 1
     short_name: metric 1 short
     description: <p>description</p>
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-05-08 17:06:18.057471+00:00
     last_updated: 2020-05-08 17:06:18.057493+00:00
@@ -3997,12 +4076,12 @@
     name: overall metric 1
     short_name: overall short
     description: <p>overall description</p>
+    responses: 1
     required_animal: true
     required_epi: true
     required_invitro: true
     hide_description: false
     use_short_name: false
-    responses: 1
     sort_order: 1
     created: 2020-05-08 17:06:55.509303+00:00
     last_updated: 2020-05-08 17:06:55.509353+00:00
@@ -4664,6 +4743,641 @@
     main_finding_support: 3
     created: 2020-05-11 02:23:49.859670+00:00
     last_updated: 2020-05-11 02:23:49.859696+00:00
+- model: epiv2.ageprofile
+  pk: 1
+  fields:
+    name: Children and adolescents <18 yrs
+- model: epiv2.ageprofile
+  pk: 2
+  fields:
+    name: Adults
+- model: epiv2.ageprofile
+  pk: 3
+  fields:
+    name: Pregnant women
+- model: epiv2.country
+  pk: 1
+  fields:
+    code: TW
+    name: Taiwan
+- model: epiv2.country
+  pk: 2
+  fields:
+    code: DK
+    name: Denmark
+- model: epiv2.measurementtype
+  pk: 1
+  fields:
+    description: biomonitoring
+- model: epiv2.studypopulation
+  pk: 1
+  fields:
+    study: 1
+    study_design: CC
+    source: GP
+    age_description: 10-15 yrs
+    sex: B
+    race: Not specified but likely primarily Asian
+    summary: Case-control study of asthma in children
+    study_name: Genetic and Biomarkers study for Childhood Asthma
+    region: northern Taiwan
+    years: 2009-2010
+    participant_n: 456
+    created: 2022-01-10 21:12:17.714337+00:00
+    last_updated: 2022-01-10 21:22:42.498598+00:00
+    age_profile:
+    - 1
+    countries:
+    - 1
+- model: epiv2.studypopulation
+  pk: 2
+  fields:
+    study: 1
+    study_design: CO
+    source: GP
+    age_description: Birth to 7 years
+    sex: B
+    race: not specified but primarily White region
+    summary: Birth cohort in Faroe Islands with follow-up at 5 and 7 years
+    study_name: Faroe birth cohort
+    region: Faroe Islands
+    years: Enrollment 1997-2000
+    participant_n: 587
+    created: 2022-01-10 21:26:09.641642+00:00
+    last_updated: 2022-01-10 21:49:25.163116+00:00
+    age_profile:
+    - 1
+    countries:
+    - 2
+- model: epiv2.chemical
+  pk: 1
+  fields:
+    study_population: 1
+    name: PFDA
+    created: 2022-01-10 21:12:17.740624+00:00
+    last_updated: 2022-01-10 21:12:17.740635+00:00
+- model: epiv2.chemical
+  pk: 2
+  fields:
+    study_population: 1
+    name: PFNA
+    created: 2022-01-10 21:12:17.744413+00:00
+    last_updated: 2022-01-10 21:12:17.744423+00:00
+- model: epiv2.chemical
+  pk: 3
+  fields:
+    study_population: 2
+    name: PFDA
+    created: 2022-01-10 21:26:09.667425+00:00
+    last_updated: 2022-01-10 21:26:09.667434+00:00
+- model: epiv2.chemical
+  pk: 4
+  fields:
+    study_population: 2
+    name: PFNA
+    created: 2022-01-10 21:26:09.671290+00:00
+    last_updated: 2022-01-10 21:26:09.671299+00:00
+- model: epiv2.criteria
+  pk: 1
+  fields:
+    study_population: 1
+    name: 'cases: asthma diagnosis by physician'
+    created: 2022-01-10 21:12:17.736159+00:00
+    last_updated: 2022-01-10 21:12:17.736173+00:00
+- model: epiv2.criteria
+  pk: 2
+  fields:
+    study_population: 2
+    name: singleton birth
+    created: 2022-01-10 21:26:09.662491+00:00
+    last_updated: 2022-01-10 21:26:09.662504+00:00
+- model: epiv2.exposure
+  pk: 1
+  fields:
+    name: child serum
+    study_population: 1
+    biomonitoring_matrix: serum
+    measurement_timing: study enrollment
+    exposure_route: UK
+    analytic_method: high-performance liquid chromatography with tandem with mass
+      spectrometry
+    comments: null
+    created: 2022-01-10 21:12:17.748634+00:00
+    last_updated: 2022-01-10 21:12:17.748644+00:00
+    measurement_type:
+    - 1
+- model: epiv2.exposure
+  pk: 2
+  fields:
+    name: maternal serum
+    study_population: 2
+    biomonitoring_matrix: maternal serum
+    measurement_timing: parental (32 wks gestation)
+    exposure_route: UK
+    analytic_method: online solid-phase extraction and analysis, using high-pressure
+      liquid chromatography with tandem mass spectrometry
+    comments: last antenatal exam
+    created: 2022-01-10 21:30:38.554898+00:00
+    last_updated: 2022-01-10 21:30:38.554911+00:00
+    measurement_type:
+    - 1
+- model: epiv2.exposure
+  pk: 3
+  fields:
+    name: child serum age 5
+    study_population: 2
+    biomonitoring_matrix: serum
+    measurement_timing: 5 yrs
+    exposure_route: UK
+    analytic_method: online solid-phase extraction and analysis, using high-pressure
+      liquid chromatography with tandem mass spectrometry
+    comments: prebooster
+    created: 2022-01-10 21:30:38.566082+00:00
+    last_updated: 2022-01-10 21:30:38.566092+00:00
+    measurement_type:
+    - 1
+- model: epiv2.exposurelevel
+  pk: 1
+  fields:
+    name: PFDA child serum
+    study_population: 1
+    chemical: 1
+    exposure_measurement: 1
+    sub_population: without asthma
+    central_tendency: '1.0'
+    central_tendency_type: MED
+    minimum: null
+    percentile25: 0.8
+    percentile75: 1.2
+    maximum: 5.0
+    neg_exposure: 5.0
+    comments: test
+    data_location: Table 2
+    created: 2022-01-10 21:16:10.379351+00:00
+    last_updated: 2022-01-10 21:16:10.379365+00:00
+- model: epiv2.exposurelevel
+  pk: 2
+  fields:
+    name: PFNA child serum
+    study_population: 1
+    chemical: 2
+    exposure_measurement: 1
+    sub_population: without asthma
+    central_tendency: '0.8'
+    central_tendency_type: MED
+    minimum: 0.26
+    percentile25: 0.6
+    percentile75: 1.1
+    maximum: 2.5
+    neg_exposure: 0.0
+    comments: p<0.001 vs children with asthma
+    data_location: Table 2
+    created: 2022-01-10 21:16:10.384076+00:00
+    last_updated: 2022-01-10 21:16:10.384110+00:00
+- model: epiv2.exposurelevel
+  pk: 3
+  fields:
+    name: PFDA maternal serum
+    study_population: 2
+    chemical: 3
+    exposure_measurement: 2
+    sub_population: all
+    central_tendency: '0.28'
+    central_tendency_type: GME
+    minimum: 0.0
+    percentile25: 0.22
+    percentile75: 0.38
+    maximum: 0.5
+    neg_exposure: 80.0
+    comments: null
+    data_location: Table 2
+    created: 2022-01-10 21:34:38.043650+00:00
+    last_updated: 2022-01-10 21:39:43.128782+00:00
+- model: epiv2.exposurelevel
+  pk: 4
+  fields:
+    name: PFDA child 5
+    study_population: 2
+    chemical: 3
+    exposure_measurement: 3
+    sub_population: all
+    central_tendency: '0.28'
+    central_tendency_type: GME
+    minimum: 0.1
+    percentile25: 0.21
+    percentile75: 0.38
+    maximum: 0.6
+    neg_exposure: 81.0
+    comments: null
+    data_location: Table 2
+    created: 2022-01-10 21:39:43.133506+00:00
+    last_updated: 2022-01-10 21:39:43.133517+00:00
+- model: epiv2.exposurelevel
+  pk: 5
+  fields:
+    name: PFNA maternal serum
+    study_population: 2
+    chemical: 4
+    exposure_measurement: 2
+    sub_population: all
+    central_tendency: '0.60'
+    central_tendency_type: GME
+    minimum: 0.2
+    percentile25: 0.46
+    percentile75: 0.79
+    maximum: 0.7
+    neg_exposure: 95.0
+    comments: null
+    data_location: Table 2
+    created: 2022-01-10 21:39:43.137612+00:00
+    last_updated: 2022-01-10 21:39:43.137622+00:00
+- model: epiv2.exposurelevel
+  pk: 6
+  fields:
+    name: PFNA child 5
+    study_population: 2
+    chemical: 4
+    exposure_measurement: 3
+    sub_population: all
+    central_tendency: '1.00'
+    central_tendency_type: GME
+    minimum: 0.3
+    percentile25: 0.76
+    percentile75: 1.24
+    maximum: 0.8
+    neg_exposure: 94.0
+    comments: null
+    data_location: Table 2
+    created: 2022-01-10 21:39:43.141816+00:00
+    last_updated: 2022-01-10 21:39:43.141827+00:00
+- model: epiv2.outcome
+  pk: 1
+  fields:
+    name: Asthma within previous year
+    study_population: 1
+    health_outcome: Asthma
+    health_outcome_system: IM
+    created: 2022-01-10 21:16:10.388760+00:00
+    last_updated: 2022-01-10 21:16:10.388770+00:00
+- model: epiv2.outcome
+  pk: 2
+  fields:
+    name: Tetanus antibody concentrations
+    study_population: 2
+    health_outcome: Vaccine response
+    health_outcome_system: IM
+    created: 2022-01-10 21:41:54.322800+00:00
+    last_updated: 2022-01-10 21:41:54.322816+00:00
+- model: epiv2.outcome
+  pk: 3
+  fields:
+    name: Diphtheria antibody concentrations
+    study_population: 2
+    health_outcome: Vaccine response
+    health_outcome_system: IM
+    created: 2022-01-10 21:41:54.327398+00:00
+    last_updated: 2022-01-10 21:41:54.327412+00:00
+- model: epiv2.adjustmentfactor
+  pk: 1
+  fields:
+    name: A
+    study_population: 1
+    description: age, sex, BMI, parental education, ETS exposure, month of survey
+    created: 2022-01-10 21:16:10.393576+00:00
+    last_updated: 2022-01-10 21:16:10.393587+00:00
+- model: epiv2.adjustmentfactor
+  pk: 2
+  fields:
+    name: A
+    study_population: 2
+    description: age, sex
+    created: 2022-01-10 21:41:54.332000+00:00
+    last_updated: 2022-01-10 21:41:54.332017+00:00
+- model: epiv2.adjustmentfactor
+  pk: 3
+  fields:
+    name: B
+    study_population: 2
+    description: age, sex, time since vaccination, booster type
+    created: 2022-01-10 21:41:54.336562+00:00
+    last_updated: 2022-01-10 21:41:54.336577+00:00
+- model: epiv2.adjustmentfactor
+  pk: 4
+  fields:
+    name: C
+    study_population: 2
+    description: age, sex, booster type
+    created: 2022-01-10 21:41:54.340708+00:00
+    last_updated: 2022-01-10 21:41:54.340720+00:00
+- model: epiv2.adjustmentfactor
+  pk: 5
+  fields:
+    name: D
+    study_population: 2
+    description: age, sex, booster type, child's specific antibody concentrations
+      at 5 years
+    created: 2022-01-10 21:41:54.345186+00:00
+    last_updated: 2022-01-10 21:41:54.345198+00:00
+- model: epiv2.dataextraction
+  pk: 1
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.0
+    exposure_rank: 1
+    ci_lcl: null
+    ci_ucl: null
+    sd_or_se: null
+    pvalue: null
+    significant: null
+    adjustment_factor: null
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: reference, p-trend <0.001
+    created: 2022-01-10 21:18:05.442039+00:00
+    last_updated: 2022-01-10 21:22:42.511191+00:00
+- model: epiv2.dataextraction
+  pk: 2
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.02
+    exposure_rank: 2
+    ci_lcl: 0.58
+    ci_ucl: 1.8
+    sd_or_se: null
+    pvalue: null
+    significant: false
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: null
+    created: 2022-01-10 21:18:05.446161+00:00
+    last_updated: 2022-01-10 21:22:42.515351+00:00
+- model: epiv2.dataextraction
+  pk: 3
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.3
+    exposure_rank: 3
+    ci_lcl: 0.72
+    ci_ucl: 2.33
+    sd_or_se: null
+    pvalue: null
+    significant: false
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: null
+    created: 2022-01-10 21:18:05.449764+00:00
+    last_updated: 2022-01-10 21:22:42.519795+00:00
+- model: epiv2.dataextraction
+  pk: 4
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 3.22
+    exposure_rank: 4
+    ci_lcl: 1.75
+    ci_ucl: 5.94
+    sd_or_se: null
+    pvalue: null
+    significant: true
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: null
+    created: 2022-01-10 21:18:05.453394+00:00
+    last_updated: 2022-01-10 21:22:42.523789+00:00
+- model: epiv2.dataextraction
+  pk: 5
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.0
+    exposure_rank: 1
+    ci_lcl: null
+    ci_ucl: null
+    sd_or_se: null
+    pvalue: null
+    significant: null
+    adjustment_factor: null
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: reference, p-trend=0.001
+    created: 2022-01-10 21:18:05.457140+00:00
+    last_updated: 2022-01-10 21:22:42.527813+00:00
+- model: epiv2.dataextraction
+  pk: 6
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.19
+    exposure_rank: 2
+    ci_lcl: 0.68
+    ci_ucl: 2.09
+    sd_or_se: null
+    pvalue: null
+    significant: false
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: null
+    created: 2022-01-10 21:18:05.460901+00:00
+    last_updated: 2022-01-10 21:22:42.531803+00:00
+- model: epiv2.dataextraction
+  pk: 7
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.54
+    exposure_rank: 3
+    ci_lcl: 0.86
+    ci_ucl: 2.76
+    sd_or_se: null
+    pvalue: null
+    significant: false
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: null
+    created: 2022-01-10 21:18:05.464462+00:00
+    last_updated: 2022-01-10 21:22:42.536404+00:00
+- model: epiv2.dataextraction
+  pk: 8
+  fields:
+    study_population: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 2.56
+    exposure_rank: 4
+    ci_lcl: 1.41
+    ci_ucl: 4.65
+    sd_or_se: null
+    pvalue: null
+    significant: true
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: null
+    created: 2022-01-10 21:18:05.468642+00:00
+    last_updated: 2022-01-10 21:22:42.540743+00:00
+- model: epiv2.dataextraction
+  pk: 9
+  fields:
+    study_population: 2
+    sub_population: Prebooster Age 5
+    outcome: 2
+    exposure_level: 3
+    measurement_timing: 5 yrs
+    n: 509
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -2.5
+    exposure_rank: null
+    ci_lcl: -18.5
+    ci_ucl: 16.8
+    sd_or_se: null
+    pvalue: null
+    significant: false
+    adjustment_factor: 2
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: test
+    created: 2022-01-10 21:44:55.946716+00:00
+    last_updated: 2022-01-10 21:49:25.176133+00:00
+- model: epiv2.dataextraction
+  pk: 10
+  fields:
+    study_population: 2
+    sub_population: Year 7 adjusted for Age 5
+    outcome: 2
+    exposure_level: 4
+    measurement_timing: 7 yrs
+    n: 401
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -12.5
+    exposure_rank: null
+    ci_lcl: -24.6
+    ci_ucl: 1.5
+    sd_or_se: null
+    pvalue: null
+    significant: false
+    adjustment_factor: 5
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: preferred outcome
+    created: 2022-01-10 21:44:55.951328+00:00
+    last_updated: 2022-01-10 21:49:25.180575+00:00
+- model: epiv2.dataextraction
+  pk: 11
+  fields:
+    study_population: 2
+    sub_population: Prebooster Age 5
+    outcome: 3
+    exposure_level: 3
+    measurement_timing: 5 yrs
+    n: 510
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -21.7
+    exposure_rank: null
+    ci_lcl: -35.7
+    ci_ucl: -4.8
+    sd_or_se: null
+    pvalue: null
+    significant: true
+    adjustment_factor: 2
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: a different endpoint the same PFAS
+    created: 2022-01-10 21:44:55.955074+00:00
+    last_updated: 2022-01-10 21:49:25.185131+00:00
+- model: epiv2.dataextraction
+  pk: 12
+  fields:
+    study_population: 2
+    sub_population: Postbooster Age 5
+    outcome: 3
+    exposure_level: 6
+    measurement_timing: 5 yrs
+    n: 510
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -8.7
+    exposure_rank: null
+    ci_lcl: -20.6
+    ci_ucl: 5.0
+    sd_or_se: null
+    pvalue: null
+    significant: false
+    adjustment_factor: 3
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: testing another PFAS
+    created: 2022-01-10 21:44:55.958967+00:00
+    last_updated: 2022-01-10 21:49:25.189357+00:00
 - model: invitro.ivchemical
   pk: 1
   fields:
@@ -5051,9 +5765,9 @@
         header: false
         col_span: 1
         row_span: 1
-        quill_text: <p><strong><em><u>Other features</u></em></strong></p><ul><li>bullets can be added</li><li><a
-          href="https://google.com" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
-          can be added</li></ul>
+        quill_text: <p><strong><em><u>Other features</u></em></strong></p><ul><li>bullets
+          can be added</li><li><a href="https://google.com" rel="noopener noreferrer"
+          target="_blank">Hyperlinks</a> can be added</li></ul>
       - row: 7
         column: 1
         header: false
@@ -5127,10 +5841,10 @@
             - key: -20
               long_description: <p>Example with <strong>bolded</strong> text.</p>
               short_description: <p></p>
-        hide_content: false
-        no_content_text: No data available
         title: Evidence from animal studies
+        hide_content: false
         merge_judgement: false
+        no_content_text: No data available
       mechanistic:
         rows:
         - summary:
@@ -5139,19 +5853,19 @@
             description: '<p>Event #1. Event #2. Event #3.</p>'
           judgement:
             description: <p>Judgement was...</p>
-        hide_content: false
-        no_content_text: No data available
         title: Mechanistic evidence and supplemental information
         col_header_1: Biological events or pathways
+        hide_content: false
         merge_judgement: true
+        no_content_text: No data available
       exposed_human:
         rows:
         - summary:
             findings: <p>Exposure orally. 8oz multiple times a day for 70 years.</p>
           evidence:
-            description: <ul><li><a href="/study/1/" rel="noopener noreferrer"
-              target="_blank">Doe et al. 2015</a></li><li><a href="/study/1/"
-              rel="noopener noreferrer" target="_blank">Doe et al 2018</a></li></ul>
+            description: <ul><li><a href="/study/1/" rel="noopener noreferrer" target="_blank">Doe
+              et al. 2015</a></li><li><a href="/study/1/" rel="noopener noreferrer"
+              target="_blank">Doe et al 2018</a></li></ul>
           judgement:
             judgement: 30
             description: <p>Robust findings.</p>
@@ -5169,14 +5883,14 @@
             - key: 0
               long_description: <p></p>
               short_description: <p></p>
-        hide_content: false
-        no_content_text: No data available
         title: Evidence from studies of exposed humans
+        hide_content: false
         merge_judgement: true
+        no_content_text: No data available
       summary_judgement:
         judgement: 20
-        hide_content: false
         description: <p>Water hydrates individuals who drink it.</p>
+        hide_content: false
         susceptibility: <p>No additionally susceptible groups.</p>
         human_relevance: <p>Humans require water as well.</p>
         custom_judgement_icon: ''
@@ -5286,7 +6000,8 @@
     visual_type: 4
     dose_units: null
     prefilters: '{}'
-    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280}'
+    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes":
+      false, "height": 500, "width": 1280}'
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
@@ -5323,7 +6038,25 @@
     visual_type: 6
     dose_units: null
     prefilters: '{}'
-    settings: '{"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic": "and"}'
+    settings: '{"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"],
+      "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
+      "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter":
+      "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter":
+      "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left":
+      30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true,
+      "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells":
+      true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation",
+      "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment
+      name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column":
+      "animal group name", "delimiter": "", "on_click_event": "animal_group", "header":
+      ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete",
+      "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header":
+      ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column":
+      "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0,
+      "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation",
+      "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate":
+      0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":
+      "and"}'
     caption: ''
     published: true
     sort_order: short_citation
