@@ -6,7 +6,6 @@ from . import constants, managers
 
 
 # TODO: set all max_lengths based on the needs of each field
-# TODO: set all optional fields to blank=True
 # TODO: set up managers
 class AgeProfile(models.Model):
     # objects = managers.AgeProfileManager()
@@ -58,7 +57,7 @@ class StudyPopulation(models.Model):
         verbose_name="Population Summary",
         help_text="Breifly describe the study population (e.g., Women undergoing fertility treatment).",
     )
-    countries = models.ManyToManyField(Country, blank=True, null=True,)
+    countries = models.ManyToManyField(Country, blank=True,)
     region = models.CharField(
         max_length=128, blank=True, null=True, verbose_name="Other geographic information"
     )
@@ -107,7 +106,7 @@ class Exposure(models.Model):
         StudyPopulation, on_delete=models.CASCADE, related_name="exposures"
     )
     measurement_type = models.ManyToManyField(
-        MeasurementType, verbose_name="Exposure measurement type", blank=True, null=True,
+        MeasurementType, verbose_name="Exposure measurement type", blank=True,
     )
     biomonitoring_matrix = models.CharField(max_length=128,)
     measurement_timing = models.CharField(
