@@ -9,6 +9,7 @@ import Paginator from "shared/components/Paginator";
 
 import Reference from "../Reference";
 import ReferenceTable from "./ReferenceTable";
+import TagActions from "./TagActions";
 
 class ReferenceListStore {
     @observable currentPage = null;
@@ -54,13 +55,21 @@ class PaginatedReferenceList extends Component {
         this.store.fetchFirstPage();
     }
     render() {
-        const {hasPage, formattedReferences, currentPage, fetchPage} = this.store;
+        const {hasPage, formattedReferences, currentPage, fetchPage} = this.store,
+            {settings, canEdit} = this.props;
         if (!hasPage) {
             return <Loading />;
         }
-
         return (
             <>
+                <div>
+                    &nbsp;
+                    <TagActions
+                        assessmentId={settings.assessment_id}
+                        tagId={settings.tag_id}
+                        canEdit={canEdit}
+                    />
+                </div>
                 {formattedReferences ? (
                     <ReferenceTable references={formattedReferences} showActions={false} />
                 ) : null}
@@ -77,6 +86,10 @@ PaginatedReferenceList.propTypes = {
         search_id: PropTypes.number,
         tag: PropTypes.object.isRequired,
     }),
+    canEdit: PropTypes.bool,
+};
+PaginatedReferenceList.defaultProps = {
+    canEdit: false,
 };
 
 export default PaginatedReferenceList;

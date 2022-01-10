@@ -3,6 +3,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
 from django import forms
+from django.db.models import Q
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
@@ -10,14 +11,14 @@ from ..animal.lookups import EndpointByAssessmentLookup
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import selectable
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
 from ..common.helper import read_excel
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
 from ..study.lookups import StudyLookup
 from ..study.models import Study
-from . import lookups, models
+from . import constants, lookups, models
 
 
 def clean_slug(form):
@@ -472,9 +473,7 @@ class SummaryTableForm(forms.ModelForm):
 
 
 class SummaryTableSelectorForm(forms.Form):
-    table_type = forms.IntegerField(
-        widget=forms.Select(choices=models.SummaryTable.TableType.choices)
-    )
+    table_type = forms.IntegerField(widget=forms.Select(choices=constants.TableType.choices))
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent")
@@ -512,11 +511,11 @@ class VisualForm(forms.ModelForm):
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
         if self.instance.visual_type not in [
-            models.Visual.BIOASSAY_AGGREGATION,
-            models.Visual.ROB_HEATMAP,
-            models.Visual.LITERATURE_TAGTREE,
-            models.Visual.EXTERNAL_SITE,
-            models.Visual.EXPLORE_HEATMAP,
+            constants.VisualType.BIOASSAY_AGGREGATION,
+            constants.VisualType.ROB_HEATMAP,
+            constants.VisualType.LITERATURE_TAGTREE,
+            constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.EXPLORE_HEATMAP,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
@@ -553,6 +552,98 @@ class VisualForm(forms.ModelForm):
 
     def clean_slug(self):
         return clean_slug(self)
+
+
+class VisualFilterForm(forms.Form):
+    text = forms.CharField(required=False, help_text="Title or description text")
+
+    type_choices = [
+        ("", "<All>"),
+        ("v-0", "animal bioassay endpoint aggregation"),
+        ("v-1", "animal bioassay endpoint crossview"),
+        ("v-2", "risk of bias heatmap"),
+        ("v-3", "risk of bias barchart"),
+        ("v-4", "literature tagtree"),
+        ("v-5", "embedded external website"),
+        ("v-6", "exploratory heatmap"),
+        ("dp-ani", "Data pivot (animal bioassay)"),
+        ("dp-epi", "Data pivot (epidemiology)"),
+        ("dp-epimeta", "Data pivot (epidemiology meta-analysis/pooled-analysis)"),
+        ("dp-invitro", "Data pivot (in vitro)"),
+    ]
+    visual_type_filter = {
+        "v-0": 0,
+        "v-1": 1,
+        "v-2": 2,
+        "v-3": 3,
+        "v-4": 4,
+        "v-5": 5,
+        "v-6": 6,
+    }
+    dp_type_filter = {
+        "dp-ani": constants.StudyType.BIOASSAY,
+        "dp-epi": constants.StudyType.EPI,
+        "dp-epimeta": constants.StudyType.EPI_META,
+        "dp-invitro": constants.StudyType.IN_VITRO,
+    }
+    type = forms.ChoiceField(
+        label="Visualization type",
+        required=False,
+        choices=type_choices,
+        help_text="Type of visualization type to display",
+    )
+
+    published_choices = [
+        ("", "<All>"),
+        (True, "Published only"),
+        (False, "Unpublished only"),
+    ]
+    published = forms.ChoiceField(
+        required=False,
+        choices=published_choices,
+        widget=forms.Select,
+        initial="",
+        help_text="Published status for HAWC visualization",
+    )
+
+    def __init__(self, *args, **kwargs):
+        can_edit = kwargs.pop("can_edit", False)
+        super().__init__(*args, **kwargs)
+        if not can_edit:
+            self.fields.pop("published")
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        helper.add_row("text", len(self.fields), "col-md-3")
+        return helper
+
+    def get_visual_filters(self):
+        filters = Q()
+        if text := self.cleaned_data.get("text"):
+            filters &= Q(title__icontains=text) | Q(caption__icontains=text)
+        if visual_type := self.cleaned_data.get("type"):
+            if visual_type.startswith("v-"):
+                filters &= Q(visual_type=self.visual_type_filter[visual_type])
+            if visual_type.startswith("dp-"):
+                filters &= Q(id=-1)
+        if published := self.cleaned_data.get("published"):
+            filters &= Q(published=published)
+        return filters
+
+    def get_datapivot_filters(self):
+        filters = Q()
+        if text := self.cleaned_data.get("text"):
+            filters &= Q(title__icontains=text) | Q(caption__icontains=text)
+        if visual_type := self.cleaned_data.get("type"):
+            if visual_type.startswith("dp-"):
+                filters &= Q(datapivotquery__evidence_type=self.dp_type_filter[visual_type])
+            if visual_type.startswith("v-"):
+                filters &= Q(id=-1)
+        if published := self.cleaned_data.get("published"):
+            filters &= Q(published=published)
+        return filters
 
 
 class EndpointAggregationForm(VisualForm):
@@ -803,13 +894,13 @@ class ExploreHeatmapForm(VisualForm):
 def get_visual_form(visual_type):
     try:
         return {
-            models.Visual.BIOASSAY_AGGREGATION: EndpointAggregationForm,
-            models.Visual.BIOASSAY_CROSSVIEW: CrossviewForm,
-            models.Visual.ROB_HEATMAP: RoBForm,
-            models.Visual.ROB_BARCHART: RoBForm,
-            models.Visual.LITERATURE_TAGTREE: TagtreeForm,
-            models.Visual.EXTERNAL_SITE: ExternalSiteForm,
-            models.Visual.EXPLORE_HEATMAP: ExploreHeatmapForm,
+            constants.VisualType.BIOASSAY_AGGREGATION: EndpointAggregationForm,
+            constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm,
+            constants.VisualType.ROB_HEATMAP: RoBForm,
+            constants.VisualType.ROB_BARCHART: RoBForm,
+            constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
+            constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
+            constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
         }[visual_type]
     except Exception:
         raise ValueError()
@@ -934,7 +1025,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
         export_style = self.cleaned_data["export_style"]
         if (
             evidence_type not in (models.IN_VITRO, models.BIOASSAY)
-            and export_style != self.instance.EXPORT_GROUP
+            and export_style != constants.ExportStyle.EXPORT_GROUP
         ):
             raise forms.ValidationError(
                 "Outcome/Result level export not implemented for this data-type."

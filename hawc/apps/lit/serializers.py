@@ -53,20 +53,20 @@ class SearchSerializer(serializers.ModelSerializer):
         if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
             raise serializers.ValidationError({"slug": ASSESSMENT_UNIQUE_MESSAGE})
 
-        if data["search_type"] != "i":
+        if data["search_type"] != constants.SearchType.IMPORT:
             raise serializers.ValidationError("API currently only supports imports")
 
-        if data["source"] != constants.HERO:
+        if data["source"] != constants.ReferenceDatabase.HERO:
             raise serializers.ValidationError("API currently only supports HERO imports")
 
-        if data["search_type"] == "i":
+        if data["search_type"] == constants.SearchType.IMPORT:
             ids = forms.ImportForm.validate_import_search_string(data["search_string"])
             self.validate_import_ids_exist(data, ids)
 
         return data
 
     def validate_import_ids_exist(self, data, ids: List[int]):
-        if data["source"] == constants.HERO:
+        if data["source"] == constants.ReferenceDatabase.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
         else:
@@ -427,7 +427,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         existing_hero_ids = [
             int(id_)
             for id_ in models.Identifiers.objects.filter(
-                references__in=references_diff, database=constants.HERO
+                references__in=references_diff, database=constants.ReferenceDatabase.HERO
             ).values_list("unique_id", flat=True)
         ]
         hero_counts = Counter(itertools.chain(existing_hero_ids, self.hero_ids))

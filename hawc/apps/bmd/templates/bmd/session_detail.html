@@ -1,7 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h1 class="d-inline-block">{{object}}</h1>
     {% if obj_perms.edit and crud == "Read" %}
       <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -12,31 +11,10 @@
         </div>
       </div>
     {% endif %}
-
-    <div id="bmd"></div>
-
+    <h2 class="d-inline-block">{{object}}</h2>
+    <div id="main"></div>
 {% endblock %}
 
-
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-  "editMode": false,
-  "assessment_id": {{ assessment.id }},
-  "bmds_version": "{{object.get_version_display}}",
-  "endpoint_id": {{ object.endpoint_id }},
-  "session_url": "{{ object.get_api_url }}",
-  "execute_url": "{{ object.get_execute_url }}",
-  "execute_status_url": "{{ object.get_execute_status_url }}",
-  "selected_model_url": "{{ object.get_selected_model_url }}",
-  "csrf": "{{ csrf_token }}"
-}
-</script>
-<script type="text/javascript">
-$(document).ready(function () {
-  const el = document.getElementById('bmd'),
-    config = window.app.getConfig();
-  window.app.startup("bmds2Startup", function(cb){ cb(el, config) });
-});
-</script>
+  {{ config|json_script:"config" }}
 {% endblock %}

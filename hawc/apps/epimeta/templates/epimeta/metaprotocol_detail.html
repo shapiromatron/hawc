@@ -1,31 +1,24 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h1 class="d-inline-block">{{object}}</h1>
   {% if obj_perms.edit and crud == "Read" %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
-          <span class="dropdown-header">Meta-protocol editing</span>
-          <a class="dropdown-item" href="{% url 'meta:protocol_update' object.pk %}">Update</a>
-          <a class="dropdown-item" href="{% url 'meta:protocol_delete' object.pk %}">Delete</a>
-
-          <div class="dropdown-divider"></div>
-          <span class="dropdown-header">Meta-result editing</span>
-          <a class="dropdown-item" href="{% url 'meta:result_create' object.pk %}">Create new</a>
-          <a class="dropdown-item" href="{% url 'meta:result_copy_selector' object.pk %}">Copy from existing</a>
-      </div>
+  <div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+        <span class="dropdown-header">Meta-protocol editing</span>
+        <a class="dropdown-item" href="{% url 'meta:protocol_update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'meta:protocol_delete' object.pk %}">Delete</a>
+        <div class="dropdown-divider"></div>
+        <span class="dropdown-header">Meta-result editing</span>
+        <a class="dropdown-item" href="{% url 'meta:result_create' object.pk %}">Create new</a>
+        <a class="dropdown-item" href="{% url 'meta:result_copy_selector' object.pk %}">Copy from existing</a>
     </div>
+  </div>
   {% endif %}
-  <div id="objContainer"></div>
+  <h2 class="d-inline-block">{{object}}</h2>
+  <div id="main"></div>
 {% endblock %}
 
-
 {% block extrajs %}
-  <script type="text/javascript">
-    const id = {{object.id}};
-    window.app.startup("epimetaStartup", function(app){
-      app.MetaProtocol.displayFullPager($("#objContainer"), id);
-    });
-  </script>
+  {{ config|json_script:"config" }}
 {% endblock %}

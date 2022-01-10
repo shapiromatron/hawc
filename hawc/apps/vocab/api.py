@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from ..common.helper import FlatExport, tryParseInt
 from ..common.renderers import PandasRenderers
-from . import models, serializers
+from . import constants, models, serializers
 
 
 class EhvTermViewset(viewsets.GenericViewSet):
@@ -19,10 +19,10 @@ class EhvTermViewset(viewsets.GenericViewSet):
 
     def get_queryset(self) -> QuerySet:
         return models.Term.objects.filter(
-            namespace=models.VocabularyNamespace.EHV, deprecated_on__isnull=True
+            namespace=constants.VocabularyNamespace.EHV, deprecated_on__isnull=True
         )
 
-    def filter_qs(self, request: Request, type: models.VocabularyTermType) -> QuerySet:
+    def filter_qs(self, request: Request, type: constants.VocabularyTermType) -> QuerySet:
         term: Optional[str] = request.query_params.get("term")
         parent: Optional[int] = tryParseInt(request.query_params.get("parent"))
         limit: Optional[int] = tryParseInt(request.query_params.get("limit"), 100, 1, 10000)
@@ -41,31 +41,31 @@ class EhvTermViewset(viewsets.GenericViewSet):
 
     @action(detail=False)
     def system(self, request: Request) -> Response:
-        qs = self.filter_qs(request, models.VocabularyTermType.system)
+        qs = self.filter_qs(request, constants.VocabularyTermType.system)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def organ(self, request: Request) -> Response:
-        qs = self.filter_qs(request, models.VocabularyTermType.organ)
+        qs = self.filter_qs(request, constants.VocabularyTermType.organ)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def effect(self, request: Request) -> Response:
-        qs = self.filter_qs(request, models.VocabularyTermType.effect)
+        qs = self.filter_qs(request, constants.VocabularyTermType.effect)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def effect_subtype(self, request: Request) -> Response:
-        qs = self.filter_qs(request, models.VocabularyTermType.effect_subtype)
+        qs = self.filter_qs(request, constants.VocabularyTermType.effect_subtype)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def endpoint_name(self, request: Request) -> Response:
-        qs = self.filter_qs(request, models.VocabularyTermType.endpoint_name)
+        qs = self.filter_qs(request, constants.VocabularyTermType.endpoint_name)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
@@ -74,8 +74,8 @@ class EhvTermViewset(viewsets.GenericViewSet):
         try:
             term = models.Term.objects.get(
                 id=pk,
-                type=models.VocabularyTermType.endpoint_name,
-                namespace=models.VocabularyNamespace.EHV,
+                type=constants.VocabularyTermType.endpoint_name,
+                namespace=constants.VocabularyNamespace.EHV,
                 deprecated_on__isnull=True,
             )
         except models.Term.DoesNotExist:
