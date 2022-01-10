@@ -341,6 +341,9 @@ class StudyOutcomeTableStore {
             start = last == null ? 1 : last.start + last.length,
             item = constants.createNewSubheader(start);
         this.settings.subheaders.push(item);
+        if (this.stagedEdits != null) {
+            this.stagedEdits.subheaders.push(item);
+        }
     }
     @action.bound deleteSubheader(shIdx) {
         this.settings.subheaders.splice(shIdx, 1);
