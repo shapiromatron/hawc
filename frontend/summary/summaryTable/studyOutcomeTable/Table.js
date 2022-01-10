@@ -9,6 +9,7 @@ import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import QuillTextInput from "shared/components/QuillTextInput";
+import IntegerInput from "shared/components/IntegerInput";
 
 import {robAttributeChoices} from "./constants";
 
@@ -166,6 +167,88 @@ EditRowForm.propTypes = {
 };
 
 @observer
+class EditSubheaderForm extends Component {
+    render() {
+        const {store, shIdx} = this.props,
+            subheader = store.stagedEdits.subheaders[shIdx],
+            {max, min} = store.getSubheaderBounds(shIdx);
+        return (
+            <>
+                <div className="col-md-12">
+                    <TextInput
+                        onChange={e => store.updateStagedSubheader(shIdx, {label: e.target.value})}
+                        name="label"
+                        value={subheader.label}
+                        label="Label"
+                    />
+                </div>
+                <div className="col-md-12">
+                    <IntegerInput
+                        minimum={min}
+                        maximum={max}
+                        onChange={e => {
+                            let value = parseInt(e.target.value),
+                                start =
+                                    value >= min && value <= max
+                                        ? value
+                                        : store.settings.subheaders[shIdx].start;
+                            store.updateStagedSubheader(shIdx, {start});
+                        }}
+                        value={subheader.start}
+                        required={true}
+                        name="start"
+                        label="Start"
+                    />
+                </div>
+                <div className="col-md-12">
+                    <IntegerInput
+                        minimum={1}
+                        maximum={max - min + 1}
+                        onChange={e => {
+                            let value = parseInt(e.target.value),
+                                length =
+                                    value >= 1 && value <= max - min + 1
+                                        ? value
+                                        : store.settings.subheaders[shIdx].length;
+                            store.updateStagedSubheader(shIdx, {length});
+                        }}
+                        value={subheader.length}
+                        required={true}
+                        name="length"
+                        label="Length"
+                    />
+                </div>
+                <div className="col-md-12 text-center">
+                    <div className="btn-group">
+                        <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => store.commitStagedEdits()}>
+                            Update
+                        </button>
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => store.resetStagedEdits()}>
+                            Cancel
+                        </button>
+                    </div>
+                    <div className="btn-group ml-2">
+                        <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => store.deleteSubheader(shIdx)}>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </>
+        );
+    }
+}
+EditSubheaderForm.propTypes = {
+    store: PropTypes.object.isRequired,
+    shIdx: PropTypes.number.isRequired,
+};
+
+@observer
 class EditColumnForm extends Component {
     render() {
         const {store, colIdx} = this.props,
@@ -178,6 +261,24 @@ class EditColumnForm extends Component {
                         name="label"
                         value={col.label}
                         label="Label"
+                    />
+                </div>
+                <div className="col-md-12">
+                    <IntegerInput
+                        minimum={1}
+                        maximum={20}
+                        onChange={e => {
+                            let value = parseInt(e.target.value),
+                                width =
+                                    value >= 1 && value <= 20
+                                        ? value
+                                        : store.settings.columns[colIdx].width;
+                            store.updateStagedColumn(colIdx, {width});
+                        }}
+                        value={col.width}
+                        required={true}
+                        name="width"
+                        label="Width"
                     />
                 </div>
                 <div className="col-md-12">
@@ -242,6 +343,46 @@ EditColumnForm.propTypes = {
 
 @observer
 class Table extends Component {
+    renderSubheaders() {
+        const {store, forceReadOnly} = this.props,
+            editable = store.editMode && !forceReadOnly;
+
+        const {workingSettings, editing, editingSubheader, editIndex} = store;
+
+        let last = workingSettings.subheaders[workingSettings.subheaders.length - 1],
+            length = last.start + last.length - 1;
+        let subheaders = [],
+            count = 0;
+        for (let i = 0; i < length; i++) {
+            let idx = count,
+                subheader = workingSettings.subheaders[idx],
+                item = null;
+            if (subheader.start == i + 1) {
+                item = (
+                    <th key={i} className="position-relative" colSpan={subheader.length}>
+                        {editable && editingSubheader && editIndex == idx ? (
+                            <EditSubheaderForm store={store} shIdx={idx} />
+                        ) : (
+                            <>
+                                {editable && (editingSubheader || !editing) ? (
+                                    <EditButton
+                                        handleClick={() => store.setEditSubheaderIndex(idx)}
+                                    />
+                                ) : null}
+                                {subheader.label}
+                            </>
+                        )}
+                    </th>
+                );
+                i += subheader.length - 1;
+                count++;
+            } else {
+                item = <th key={i}></th>;
+            }
+            subheaders.push(item);
+        }
+        return subheaders;
+    }
     render() {
         const {store, forceReadOnly} = this.props,
             editable = store.editMode && !forceReadOnly;
@@ -254,19 +395,34 @@ class Table extends Component {
             );
         }
 
-        const {numColumns, workingSettings, editColumnIndex, editRowIndex} = store;
+        const {
+            numColumns,
+            workingSettings,
+            editing,
+            editingSubheader,
+            editingColumn,
+            editingRow,
+            editIndex,
+        } = store;
+
         return (
             <table className="summaryTable table table-bordered table-sm">
+                <colgroup>
+                    {_.map(store.columnWidths, (w, i) => {
+                        return <col key={i} style={{width: `${w}%`}} />;
+                    })}
+                </colgroup>
                 <thead>
+                    {workingSettings.subheaders.length ? <tr>{this.renderSubheaders()}</tr> : null}
                     <tr>
                         {workingSettings.columns.map((col, idx) => {
                             return (
                                 <th key={col.key} className="position-relative">
-                                    {editable && editColumnIndex === idx ? (
+                                    {editable && editingColumn && editIndex == idx ? (
                                         <EditColumnForm store={store} colIdx={idx} />
                                     ) : (
                                         <>
-                                            {editable && editRowIndex == null ? (
+                                            {editable && (editingColumn || !editing) ? (
                                                 <EditButton
                                                     handleClick={() =>
                                                         store.setEditColumnIndex(idx)
@@ -292,17 +448,13 @@ class Table extends Component {
                                             key={colIdx}
                                             className="position-relative"
                                             style={
-                                                editable &&
-                                                (rowIdx === editRowIndex ||
-                                                    colIdx === editColumnIndex)
+                                                editable && store.editingCell(rowIdx, colIdx)
                                                     ? {}
                                                     : {backgroundColor: content.color}
                                             }>
-                                            {editable &&
-                                            (rowIdx === editRowIndex ||
-                                                colIdx === editColumnIndex) ? (
+                                            {editable && store.editingCell(rowIdx, colIdx) ? (
                                                 <>
-                                                    {rowIdx === editRowIndex && colIdx == 0 ? (
+                                                    {editingRow && colIdx == 0 ? (
                                                         <EditRowForm
                                                             key={colIdx}
                                                             store={store}
@@ -317,8 +469,8 @@ class Table extends Component {
                                                     <hr />
                                                 </>
                                             ) : editable &&
-                                              editColumnIndex == null &&
-                                              colIdx === 0 ? (
+                                              (editingRow || !editing) &&
+                                              colIdx == 0 ? (
                                                 <EditButton
                                                     handleClick={() =>
                                                         store.setEditRowIndex(rowIdx)

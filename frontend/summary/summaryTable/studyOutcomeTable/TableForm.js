@@ -24,6 +24,9 @@ class TableForm extends Component {
             <>
                 <h4>Editing table</h4>
                 <div className="float-right">
+                    <button className="btn btn-light mx-1" onClick={store.createSubheader}>
+                        <i className="fa fa-plus mr-1"></i>Add subheader
+                    </button>
                     <button className="btn btn-light mx-1" onClick={store.createColumn}>
                         <i className="fa fa-plus mr-1"></i>Add column
                     </button>

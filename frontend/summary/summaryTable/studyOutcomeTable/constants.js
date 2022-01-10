@@ -23,4 +23,7 @@ export const NM = {color: "#DFDFDF", html: "NM"},
             key: h.randomString(5),
             width: 1,
         };
+    },
+    createNewSubheader = start => {
+        return {label: "Label", start, length: 1};
     };

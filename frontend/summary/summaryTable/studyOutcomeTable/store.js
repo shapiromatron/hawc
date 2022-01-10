@@ -10,13 +10,25 @@ class StudyOutcomeTableStore {
     @observable isFetchingData = false;
     @observable isFetchingRob = false;
     @observable dataset = null;
-    @observable showRowCreateForm = false;
-    @observable showColumnCreateForm = false;
     @observable editColumnIndex = null;
-    @observable editRowIndex = null;
+    @observable editIndex = null;
 
     @observable stagedEdits = null;
     @observable stagedDataSource = null;
+
+    @observable editingRow = false;
+    @observable editingColumn = false;
+    @observable editingSubheader = false;
+
+    @computed get editing() {
+        return this.editingSubheader || this.editingColumn || this.editingRow;
+    }
+    editingCell(rowIdx, colIdx) {
+        return (
+            (this.editingRow && this.editIndex == rowIdx) ||
+            (this.editingColumn && this.editIndex == colIdx)
+        );
+    }
 
     constructor(editMode, table, editRootStore) {
         this.editMode = editMode;
@@ -85,12 +97,19 @@ class StudyOutcomeTableStore {
         this.removeSettings();
         this.fetchData();
     }
+    @action.bound setEditSubheaderIndex(idx) {
+        this.editingSubheader = true;
+        this.editIndex = idx;
+        this.setStagedEdits();
+    }
     @action.bound setEditColumnIndex(idx) {
-        this.editColumnIndex = idx;
+        this.editingColumn = true;
+        this.editIndex = idx;
         this.setStagedEdits();
     }
     @action.bound setEditRowIndex(idx) {
-        this.editRowIndex = idx;
+        this.editingRow = true;
+        this.editIndex = idx;
         this.setStagedEdits();
     }
     @action.bound updateStagedCell(rowIdx, colKey, value) {
@@ -99,6 +118,15 @@ class StudyOutcomeTableStore {
         if (value != null) {
             row.customized.push(value);
         }
+    }
+    @action.bound updateStagedSubheader(shIdx, value) {
+        let subheader = this.stagedEdits.subheaders[shIdx];
+        if ("start" in value) {
+            let {max} = this.getSubheaderBounds(shIdx),
+                maxLength = max - value.start + 1;
+            value.length = Math.min(subheader.length, maxLength);
+        }
+        _.assign(subheader, value);
     }
     @action.bound updateStagedRow(rowIdx, value) {
         let row = this.stagedEdits.rows[rowIdx];
@@ -134,8 +162,10 @@ class StudyOutcomeTableStore {
         this.resetStagedEdits();
     }
     @action.bound resetStagedEdits() {
-        this.editRowIndex = null;
-        this.editColumnIndex = null;
+        this.editingSubheader = false;
+        this.editingColumn = false;
+        this.editingRow = false;
+        this.editIndex = null;
         this.stagedEdits = null;
     }
     @action.bound setStagedEdits() {
@@ -159,6 +189,10 @@ class StudyOutcomeTableStore {
     }
 
     // column attributes
+    @computed get columnWidths() {
+        const totalWidth = _.sumBy(this.workingSettings.columns, c => c.width);
+        return _.map(this.workingSettings.columns, c => Math.round((c.width / totalWidth) * 100));
+    }
     @computed get metricIdChoices() {
         return _.chain(this.dataset.rob)
             .uniqBy("metric_id")
@@ -291,6 +325,28 @@ class StudyOutcomeTableStore {
             : this.getCustomCellContent(col.attribute, customized);
     }
 
+    // subheader updates
+    getSubheaderBounds(shIdx) {
+        let prev = shIdx > 0 ? this.settings.subheaders[shIdx - 1] : null,
+            next =
+                shIdx < this.settings.subheaders.length - 1
+                    ? this.settings.subheaders[shIdx + 1]
+                    : null,
+            min = prev == null ? 1 : prev.start + prev.length,
+            max = next == null ? Infinity : next.start - 1;
+        return {min, max};
+    }
+    @action.bound createSubheader() {
+        let last = this.settings.subheaders[this.settings.subheaders.length - 1],
+            start = last == null ? 1 : last.start + last.length,
+            item = constants.createNewSubheader(start);
+        this.settings.subheaders.push(item);
+    }
+    @action.bound deleteSubheader(shIdx) {
+        this.settings.subheaders.splice(shIdx, 1);
+        this.resetStagedEdits();
+    }
+
     // row updates
     @action.bound createRow() {
         const rows = this.rowIdChoices;
@@ -312,7 +368,7 @@ class StudyOutcomeTableStore {
         if (rowIdx + offset >= 0 && rowIdx + offset < this.numRows) {
             move(this.settings.rows);
             move(this.stagedEdits.rows);
-            this.editRowIndex = rowIdx + offset;
+            this.editIndex = rowIdx + offset;
         }
     }
     @action.bound deleteRow(rowIdx) {
@@ -338,6 +394,7 @@ class StudyOutcomeTableStore {
         if (colIdx + offset >= 0 && colIdx + offset < this.numColumns) {
             move(this.settings.columns);
             move(this.stagedEdits.columns);
+            this.editIndex = colIdx + offset;
         }
     }
     @action.bound deleteColumn(columnIdx) {
