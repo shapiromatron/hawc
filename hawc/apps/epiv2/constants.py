@@ -35,13 +35,17 @@ class AgeProfile(models.TextChoices):
 
 class EffectEstimateType(models.TextChoices):
     OR = "OR", "Odds Ratio"
+    PC = "PC", "Percent Change"
     OT = "OT", "Other"
     # TODO: include choices for effect estimate type
 
 
 class CentralTendencyType(models.TextChoices):
     MEDIAN = "MED", "Median"
-    # TODO: include other choices for central tendency
+    GMEAN = "GME", "Geometric Mean"
+    POINT = "POI", "Point"
+    MEAN = "MEA", "Mean"
+    OTHER = "OTH", "Other"
 
 
 class ExposureRoute(models.TextChoices):
