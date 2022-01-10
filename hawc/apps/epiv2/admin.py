@@ -1,52 +1,40 @@
 from django.contrib import admin
 
-from .models import (
-    AdjustmentFactor,
-    AgeProfile,
-    Chemical,
-    Country,
-    Criteria,
-    DataExtraction,
-    Exposure,
-    ExposureLevel,
-    MeasurementType,
-    Outcome,
-    StudyPopulation,
-)
+from . import models
 
 
 class AdjustmentFactorInline(admin.TabularInline):
-    model = AdjustmentFactor
+    model = models.AdjustmentFactor
     extra = 0
 
 
 class ChemicalInline(admin.TabularInline):
-    model = Chemical
+    model = models.Chemical
     extra = 0
 
 
 class CriteriaInline(admin.TabularInline):
-    model = Criteria
+    model = models.Criteria
     extra = 0
 
 
 class DataExtractionInline(admin.TabularInline):
-    model = DataExtraction
+    model = models.DataExtraction
     extra = 0
 
 
 class ExposureInline(admin.TabularInline):
-    model = Exposure
+    model = models.Exposure
     extra = 0
 
 
 class ExposureLevelInline(admin.TabularInline):
-    model = ExposureLevel
+    model = models.ExposureLevel
     extra = 0
 
 
 class OutcomeInline(admin.TabularInline):
-    model = Outcome
+    model = models.Outcome
     extra = 0
 
 
@@ -70,14 +58,14 @@ class StudyPopulationAdmin(admin.ModelAdmin):
     ]
 
 
-admin.site.register(StudyPopulation, StudyPopulationAdmin)
-admin.site.register(Country)
-admin.site.register(AgeProfile)
-admin.site.register(MeasurementType)
-admin.site.register(AdjustmentFactor)
-admin.site.register(Chemical)
-admin.site.register(Criteria)
-admin.site.register(DataExtraction)
-admin.site.register(Exposure)
-admin.site.register(ExposureLevel)
-admin.site.register(Outcome)
+admin.site.register(models.StudyPopulation, StudyPopulationAdmin)
+admin.site.register(models.Country)
+admin.site.register(models.AgeProfile)
+admin.site.register(models.MeasurementType)
+admin.site.register(models.AdjustmentFactor)
+admin.site.register(models.Chemical)
+admin.site.register(models.Criteria)
+admin.site.register(models.DataExtraction)
+admin.site.register(models.Exposure)
+admin.site.register(models.ExposureLevel)
+admin.site.register(models.Outcome)
