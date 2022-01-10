@@ -15,32 +15,32 @@ from .models import (
 )
 
 
-class AdjustmentFactorInline(admin.StackedInline):
+class AdjustmentFactorInline(admin.TabularInline):
     model = AdjustmentFactor
     extra = 0
 
 
-class ChemicalInline(admin.StackedInline):
+class ChemicalInline(admin.TabularInline):
     model = Chemical
     extra = 0
 
 
-class CriteriaInline(admin.StackedInline):
+class CriteriaInline(admin.TabularInline):
     model = Criteria
     extra = 0
 
 
-class DataExtractionInline(admin.StackedInline):
+class DataExtractionInline(admin.TabularInline):
     model = DataExtraction
     extra = 0
 
 
-class ExposureInline(admin.StackedInline):
+class ExposureInline(admin.TabularInline):
     model = Exposure
     extra = 0
 
 
-class ExposureLevelInline(admin.StackedInline):
+class ExposureLevelInline(admin.TabularInline):
     model = ExposureLevel
     extra = 0
 

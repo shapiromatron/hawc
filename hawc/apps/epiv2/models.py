@@ -50,16 +50,34 @@ class StudyPopulation(models.Model):
         blank=True,
         help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women '
         + "are only included as part of a general population sample",
+        verbose_name="Population age category",
+    )
+    age_description = models.CharField(
+        max_length=64, blank=True, null=True, verbose_name="Population age details",
     )
     sex = models.CharField(default="U", max_length=1, choices=constants.Sex.choices,)
+    race = models.CharField(
+        max_length=128, blank=True, null=True, verbose_name="Population race/ethnicity"
+    )
     summary = models.CharField(
         max_length=128,
         verbose_name="Population Summary",
         help_text="Breifly describe the study population (e.g., Women undergoing fertility treatment).",
     )
+    study_name = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        verbose_name="Study name (if applicable",
+        help_text="Typically available for cohorts. Abbreviations provided in the paper are fine",
+    )
     countries = models.ManyToManyField(Country, blank=True,)
     region = models.CharField(
         max_length=128, blank=True, null=True, verbose_name="Other geographic information"
+    )
+    # TODO: is there a better way of doing this with datetime objects to make it searchable
+    years = models.CharField(
+        max_length=64, verbose_name="Year(s) of data collection", blank=True, null=True
     )
     participant_n = models.PositiveIntegerField(
         verbose_name="Overall study population N",
@@ -68,6 +86,9 @@ class StudyPopulation(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.study) + "/" + self.summary
 
 
 class Chemical(models.Model):
@@ -153,9 +174,9 @@ class ExposureLevel(models.Model):
         null=True,
     )
     minimum = models.FloatField(blank=True, null=True,)
-    maximum = models.FloatField(blank=True, null=True,)
     percentile25 = models.FloatField(blank=True, null=True,)
     percentile75 = models.FloatField(blank=True, null=True,)
+    maximum = models.FloatField(blank=True, null=True,)
     neg_exposure = models.FloatField(
         verbose_name="Percent with negligible exposure",
         help_text="e.g., %% below the LOD",
@@ -218,17 +239,24 @@ class DataExtraction(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="data_extractions"
     )
+    sub_population = models.CharField(max_length=64,)
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE, blank=True, null=True,)
     exposure_level = models.ForeignKey(
         ExposureLevel, on_delete=models.SET_NULL, blank=True, null=True
     )
+    measurement_timing = models.CharField(max_length=128, blank=True, null=True,)
     n = models.PositiveIntegerField(blank=True, null=True,)
     effect_estimate_type = models.CharField(
         max_length=128, choices=constants.EffectEstimateType.choices, blank=True, null=True,
     )
-    effect_estimate = models.CharField(max_length=128, blank=True, null=True,)
-    effect_description = models.CharField(max_length=128, blank=True, null=True,)
-    measurement_timing = models.CharField(max_length=128, blank=True, null=True,)
+    effect_description = models.CharField(
+        max_length=128,
+        blank=True,
+        null=True,
+        verbose_name="Effect estimate description",
+        help_text="Description of the effect estimate with units, including comparison group if applicable",
+    )
+    effect_estimate = models.FloatField(blank=True, null=True,)
     exposure_rank = models.PositiveSmallIntegerField(
         blank=True,
         null=True,

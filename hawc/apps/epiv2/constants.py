@@ -34,6 +34,7 @@ class AgeProfile(models.TextChoices):
 
 
 class EffectEstimateType(models.TextChoices):
+    OR = "OR", "Odds Ratio"
     OT = "OT", "Other"
     # TODO: include choices for effect estimate type
 
@@ -54,6 +55,7 @@ class ExposureRoute(models.TextChoices):
 
 class HealthOutcomeSystem(models.TextChoices):
     RE = "RE", "Reproductive"
+    IM = "IM", "Immune"
     # TODO: include other choices for health outcome system
 
 
