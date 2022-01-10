@@ -22,17 +22,19 @@ from .views import create_object_log
 @dataclass
 class Item:
     assessment: Assessment
-    object: Any  # instance or parent instance
-    # TODO - change to object and parent
+    object: Optional[Any]
+    parent: Optional[Any]
 
     def __post_init__(self):
         self.permissions: AssessmentPermissions = self.assessment.get_permissions()
 
     def to_dict(self, user):
-        study = self.object.get_study() if hasattr(self.object, "get_study") else None
+        perms_item = self.parent if self.parent else self.object
+        study = perms_item.get_study() if hasattr(perms_item, "get_study") else None
         return {
             "assessment": self.assessment,
             "object": self.object,
+            "parent": self.parent,
             "permissions": self.permissions.to_dict(user, study),
         }
 
@@ -42,6 +44,8 @@ def is_htmx(request) -> bool:
 
 
 def can_view(user, item: Item) -> bool:
+    # todo - prevent duplication here and in context - add user?
+    # http://127.0.0.1:8000/ani/v2/experiment/study/3297/
     return item.permissions.can_view_study(item.object.get_study(), user)
 
 
