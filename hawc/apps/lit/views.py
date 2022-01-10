@@ -3,11 +3,10 @@ from typing import Dict, List
 
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
