@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0004_auto_20220110_1143'),
+        ("epiv2", "0004_auto_20220110_1143"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='studypopulation',
-            name='race',
-            field=models.CharField(blank=True, max_length=128, null=True, verbose_name='Population race/ethnicity'),
+            model_name="studypopulation",
+            name="race",
+            field=models.CharField(
+                blank=True, max_length=128, null=True, verbose_name="Population race/ethnicity"
+            ),
         ),
     ]

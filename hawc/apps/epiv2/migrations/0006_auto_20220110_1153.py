@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0005_studypopulation_race'),
+        ("epiv2", "0005_studypopulation_race"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='studypopulation',
-            name='study_name',
-            field=models.CharField(blank=True, help_text='Typically available for cohorts. Abbreviations provided in the paper are fine', max_length=64, null=True, verbose_name='Study name (if applicable'),
+            model_name="studypopulation",
+            name="study_name",
+            field=models.CharField(
+                blank=True,
+                help_text="Typically available for cohorts. Abbreviations provided in the paper are fine",
+                max_length=64,
+                null=True,
+                verbose_name="Study name (if applicable",
+            ),
         ),
         migrations.AddField(
-            model_name='studypopulation',
-            name='years',
-            field=models.CharField(blank=True, max_length=64, null=True, verbose_name='Year(s) of data collection'),
+            model_name="studypopulation",
+            name="years",
+            field=models.CharField(
+                blank=True, max_length=64, null=True, verbose_name="Year(s) of data collection"
+            ),
         ),
     ]

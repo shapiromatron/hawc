@@ -6,22 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0001_initial'),
+        ("epiv2", "0001_initial"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='studypopulation',
-            name='age_description',
-        ),
+        migrations.RemoveField(model_name="studypopulation", name="age_description",),
         migrations.AlterField(
-            model_name='ageprofile',
-            name='name',
+            model_name="ageprofile",
+            name="name",
             field=models.CharField(max_length=128, unique=True),
         ),
         migrations.AlterField(
-            model_name='studypopulation',
-            name='age_profile',
-            field=models.ManyToManyField(blank=True, help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample', to='epiv2.AgeProfile'),
+            model_name="studypopulation",
+            name="age_profile",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
+                to="epiv2.AgeProfile",
+            ),
         ),
     ]

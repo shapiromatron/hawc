@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0008_alter_exposurelevel_central_tendency_type'),
+        ("epiv2", "0008_alter_exposurelevel_central_tendency_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dataextraction',
-            name='effect_estimate_type',
-            field=models.CharField(blank=True, choices=[('OR', 'Odds Ratio'), ('PC', 'Percent Change'), ('OT', 'Other')], max_length=128, null=True),
+            model_name="dataextraction",
+            name="effect_estimate_type",
+            field=models.CharField(
+                blank=True,
+                choices=[("OR", "Odds Ratio"), ("PC", "Percent Change"), ("OT", "Other")],
+                max_length=128,
+                null=True,
+            ),
         ),
     ]

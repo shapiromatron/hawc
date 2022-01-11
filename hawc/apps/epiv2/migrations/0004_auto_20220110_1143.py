@@ -6,18 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0003_auto_20220110_1131'),
+        ("epiv2", "0003_auto_20220110_1131"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='studypopulation',
-            name='age_description',
-            field=models.CharField(blank=True, max_length=64, null=True, verbose_name='Population age details'),
+            model_name="studypopulation",
+            name="age_description",
+            field=models.CharField(
+                blank=True, max_length=64, null=True, verbose_name="Population age details"
+            ),
         ),
         migrations.AlterField(
-            model_name='studypopulation',
-            name='age_profile',
-            field=models.ManyToManyField(blank=True, help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample', to='epiv2.AgeProfile', verbose_name='Population age category'),
+            model_name="studypopulation",
+            name="age_profile",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
+                to="epiv2.AgeProfile",
+                verbose_name="Population age category",
+            ),
         ),
     ]
