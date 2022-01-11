@@ -4,6 +4,7 @@ import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
 import Reference from "../components/Reference";
+import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
 
 @inject("store")
@@ -35,6 +36,7 @@ class TagReferencesMain extends Component {
         return (
             <div className="row">
                 <div className="col-md-3">
+                    <ReferenceSortSelector onChange={store.sortReferences} />
                     <h4>References</h4>
                     <div className="card">
                         <div className="card-header p-2">
