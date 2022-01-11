@@ -279,22 +279,26 @@ class TestLiteratureAssessmentViewset:
 @pytest.mark.django_db
 class TestReferenceFilterTagViewset:
     def test_references(self):
-        # ensure we get a valid json return
         url = reverse("lit:api:tags-references", args=(12,))
         c = APIClient()
         assert c.login(email="pm@hawcproject.org", password="pw") is True
+
+        # base report; reference metadata plus columns for each tag
         resp = c.get(url).json()
         assert len(resp) == 2
+        assert len(resp[0]) > 20
         assert resp[0]["Inclusion"] is True
 
-    def test_references_table_builder(self):
-        # ensure we get the expected return
-        url = reverse("lit:api:tags-references-table-builder", args=(12,))
-        c = APIClient()
-        assert c.login(email="pm@hawcproject.org", password="pw") is True
-        resp = c.get(url).json()
+        # table builder format
+        resp = c.get(url, {"exporter": "table-builder"}).json()
         assert len(resp) == 2
+        assert len(resp[0]) == 5
         assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
+
+        # invalid exporter format
+        resp = c.get(url, {"exporter": "not-a-format"})
+        assert resp.status_code == 400
+        assert resp.json() == {"exporter": ['"not-a-format" is not a valid choice.']}
 
 
 @pytest.mark.vcr

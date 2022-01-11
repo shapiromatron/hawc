@@ -24,7 +24,7 @@ const getActionLinks = function(assessmentId, tagId, untagged, canEdit) {
             <ActionLink
                 key={2}
                 label="Download references (table-builder format)"
-                href={`/lit/api/tags/${tagId}/references-table-builder/?format=xlsx`}
+                href={`/lit/api/tags/${tagId}/references/?format=xlsx&exporter=table-builder`}
             />,
         ];
         if (canEdit) {
