@@ -6,9 +6,8 @@ from . import constants, managers
 
 
 # TODO: set all max_lengths based on the needs of each field
-# TODO: set up managers
 class AgeProfile(models.Model):
-    # objects = managers.AgeProfileManager()
+    objects = managers.AgeProfileManger()
 
     name = models.CharField(unique=True, max_length=128,)
 
@@ -31,6 +30,8 @@ class Country(models.Model):
 
 
 class MeasurementType(models.Model):
+    objects = managers.MeasurementTypeManager()
+
     description = models.CharField(max_length=128,)
 
     def __str__(self):
@@ -38,6 +39,8 @@ class MeasurementType(models.Model):
 
 
 class StudyPopulation(models.Model):
+    objects = managers.StudyPopulationManager()
+
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations_v2")
     study_design = models.CharField(
         max_length=128, choices=constants.StudyDesign.choices, blank=True, null=True,
@@ -92,6 +95,8 @@ class StudyPopulation(models.Model):
 
 
 class Chemical(models.Model):
+    objects = managers.ChemicalManager()
+
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="chemicals"
     )
@@ -104,6 +109,8 @@ class Chemical(models.Model):
 
 
 class Criteria(models.Model):
+    objects = managers.CriteriaManager()
+
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="criteria"
     )
@@ -119,6 +126,8 @@ class Criteria(models.Model):
 
 
 class Exposure(models.Model):
+    objects = managers.ExposureManager()
+
     name = models.CharField(
         max_length=64,
         help_text="A unique name for this exposure that will help you identify it later.",
@@ -150,6 +159,8 @@ class Exposure(models.Model):
 
 
 class ExposureLevel(models.Model):
+    objects = managers.ExposureLevelManager()
+
     name = models.CharField(
         max_length=64,
         help_text="A unique name for this exposure level that will help you identify it later.",
@@ -197,6 +208,8 @@ class ExposureLevel(models.Model):
 
 
 class Outcome(models.Model):
+    objects = managers.OutcomeManager()
+
     name = models.CharField(
         max_length=64,
         help_text="A unique name for this health outcome that will help you identify it later.",
@@ -220,6 +233,8 @@ class Outcome(models.Model):
 
 
 class AdjustmentFactor(models.Model):
+    objects = managers.AdjustmentFactorManager()
+
     name = models.CharField(
         max_length=64,
         help_text="A unique name for this adjustment factor that will help you identify it later.",
@@ -236,6 +251,8 @@ class AdjustmentFactor(models.Model):
 
 
 class DataExtraction(models.Model):
+    objects = managers.DataExtractionManager()
+
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="data_extractions"
     )
