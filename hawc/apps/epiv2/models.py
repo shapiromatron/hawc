@@ -1,6 +1,6 @@
+import reversion
 from django.db import models
 
-# from ..assessment.models import Assessment
 from ..study.models import Study
 from . import constants, managers
 
@@ -290,3 +290,16 @@ class DataExtraction(models.Model):
 
     class Meta:
         verbose_name = "Quantitative data extraction"
+
+
+reversion.register(AgeProfile)
+reversion.register(Country)
+reversion.register(MeasurementType)
+reversion.register(StudyPopulation, follow=("countries", "criteria", "age_profile",))
+reversion.register(Chemical)
+reversion.register(Criteria)
+reversion.register(Exposure, follow="measurement_type")
+reversion.register(ExposureLevel)
+reversion.register(Outcome)
+reversion.register(AdjustmentFactor)
+reversion.register(DataExtraction)
