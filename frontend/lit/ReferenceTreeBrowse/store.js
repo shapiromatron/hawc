@@ -5,6 +5,7 @@ import h from "shared/utils/helpers";
 
 import Reference from "../Reference";
 import TagTree from "../TagTree";
+import {sortReferences} from "../constants";
 
 class Store {
     constructor(config) {
@@ -89,6 +90,10 @@ class Store {
             refs = refs.filter(d => d.data.year >= filter.min && d.data.year <= filter.max);
         }
         return refs;
+    }
+
+    @action.bound sortReferences(sortBy) {
+        this.selectedReferences = sortReferences(this.selectedReferences, sortBy);
     }
 
     // year filter
