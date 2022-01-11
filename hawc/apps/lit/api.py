@@ -331,11 +331,12 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     @action(detail=True, renderer_classes=PandasRenderers)
     def references(self, request, pk):
         """
-        Return all references for a selected tag; does not include tag-descendants.
+        Return all references for a selected tag, including tag-descendants.
         """
         tag = self.get_object()
+        qs = models.Reference.objects.get_references_with_tag(tag=tag, descendants=True)
         exporter = exports.ReferenceFlatComplete(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
+            queryset=qs.order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
             tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
@@ -346,12 +347,12 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     @action(detail=True, url_path="references-table-builder", renderer_classes=PandasRenderers)
     def references_table_builder(self, request, pk):
         """
-        Return all references for a selected tag in table-builder import format; does not include
-        tag-descendants.
+        Return all references in table-builder format for a selected tag, including tag-descendants.
         """
         tag = self.get_object()
+        qs = models.Reference.objects.get_references_with_tag(tag=tag, descendants=True)
         exporter = exports.TableBuilderFormat(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
+            queryset=qs.order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
         )
