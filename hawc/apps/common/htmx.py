@@ -85,7 +85,7 @@ def action(permission: Callable, htmx: bool = True, methods: Optional[Iterable[s
     return actual_decorator
 
 
-class CrudModelViewSet(View):
+class HtmxViewSet(View):
     actions: Set[str] = {"create", "read", "update", "delete", "list"}
     parent_actions: Set[str] = {"create", "list"}
     pk_url_kwarg: str = "pk"

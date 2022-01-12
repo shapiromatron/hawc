@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from ..assessment.models import Assessment, DoseUnits
 from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
 from ..common.helper import WebappConfig
-from ..common.htmx import CrudModelViewSet, action, can_edit, can_view
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
@@ -44,7 +44,7 @@ class ExperimentList(BaseList):
         )
 
 
-class ExperimentViewSet(CrudModelViewSet):
+class ExperimentViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = Study
     model = models.Experiment
