@@ -15,11 +15,3 @@
     {% endfor %}
 </div>
 {% endblock content %}
-
-{% block extrajs %}
-<script>
-    document.body.addEventListener("htmx:configRequest", function(event){
-        event.detail.headers["X-CSRFToken"] = "{{ csrf_token }}"
-    });
-</script>
-{% endblock %}

@@ -47,12 +47,6 @@
   </head>
 
   <body class="html">
-
-    <script>
-      document.body.addEventListener('htmx:configRequest', (event) => {
-        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-      })
-    </script>
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
       <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{GTM_ID}}" height="0" width="0"
@@ -105,13 +99,17 @@
       {% include "./includes/base/footer.html" %}
     {% endif %}
     {% endcache %}
-    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
     <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/jquery-migrate/3.3.1/jquery-migrate.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/popper.js/1.16.1/umd/popper.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.5.3/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/jqueryui/1.10.3/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/htmx.org/1.6.1/htmx.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/htmx/1.6.1/htmx.min.js' %}"></script>
+    <script>
+      document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      })
+    </script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
   </body>
