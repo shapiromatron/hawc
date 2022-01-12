@@ -119,7 +119,6 @@ class Study {
         return ul;
     }
 
-
     displayAsModal() {
         var modal = new HAWCModal(),
             title = `<h4>${this.build_breadcrumbs()}</h4>`,
