@@ -6,17 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0018_django31'),
-        ('epiv2', '0003_alter_studypopulationv2_options'),
+        ("epi", "0018_django31"),
+        ("epiv2", "0003_alter_studypopulationv2_options"),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='Country',
-        ),
+        migrations.DeleteModel(name="Country",),
         migrations.AlterField(
-            model_name='studypopulationv2',
-            name='countries',
-            field=models.ManyToManyField(blank=True, to='epi.Country'),
+            model_name="studypopulationv2",
+            name="countries",
+            field=models.ManyToManyField(blank=True, to="epi.Country"),
         ),
     ]

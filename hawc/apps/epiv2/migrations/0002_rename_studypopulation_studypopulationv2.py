@@ -6,13 +6,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('study', '0011_auto_20190416_2035'),
-        ('epiv2', '0001_initial'),
+        ("study", "0011_auto_20190416_2035"),
+        ("epiv2", "0001_initial"),
     ]
 
     operations = [
-        migrations.RenameModel(
-            old_name='StudyPopulation',
-            new_name='StudyPopulationV2',
-        ),
+        migrations.RenameModel(old_name="StudyPopulation", new_name="StudyPopulationV2",),
     ]
