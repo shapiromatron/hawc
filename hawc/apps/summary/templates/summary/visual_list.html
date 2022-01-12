@@ -47,8 +47,8 @@
         </td>
         <td>{{visual.get_visual_type_display}}</td>
         <td><p>{{ visual.caption|truncatewords_html:40|safe }}</p></td>
-        <td>{{ visual.created|date:'SHORT_DATE_FORMAT' }}</td>
-        <td>{{ visual.last_updated|date:'SHORT_DATE_FORMAT' }}</td>
+        <td>{{ visual.created|date:"Y-m-d" }}</td>
+        <td>{{ visual.last_updated|date:"Y-m-d" }}</td>
       </tr>
       {% endfor %}
     </tbody>
