@@ -9,12 +9,12 @@
             <div class="d-flex flex-row-reverse">
                 <button
                     class="btn btn-sm btn-danger mx-1"
-                    hx-post="/ani/v2/experiment/{{object.id}}/delete/"
+                    hx-post="{% url 'animal:v2-experiment-delete' object.id %}"
                     hx-swap="outerHTML swap:1s"
                     >Confirm</button>
                 <button
                     class="btn btn-sm btn-secondary mx-1"
-                    hx-get="/ani/v2/experiment/{{object.id}}/"
+                    hx-get="{% url 'animal:v2-experiment-detail' object.id %}"
                     >Cancel</button>
             </div>
         </form>
@@ -22,15 +22,15 @@
         <div class="d-flex flex-row-reverse">
             <button
                 class="btn btn-sm btn-primary mx-1"
-                hx-get="/ani/v2/experiment/{{object.id}}/update/"
+                hx-get="{% url 'animal:v2-experiment-update' object.id %}"
                 >Update</button>
             <button
                 class="btn btn-sm btn-danger mx-1"
-                hx-get="/ani/v2/experiment/{{object.id}}/delete/"
+                hx-get="{% url 'animal:v2-experiment-delete' object.id %}"
                 >Delete</button>
             <button
                 class="btn btn-sm btn-primary mx-1"
-                hx-post="/ani/v2/experiment/{{object.id}}/clone/"
+                hx-post="{% url 'animal:v2-experiment-clone' object.id %}"
                 hx-target="#experiment-main"
                 hx-swap="beforeend"
                 >Clone</button>

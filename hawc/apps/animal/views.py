@@ -58,27 +58,23 @@ class ExperimentViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        if request.method == "GET":
-            form = forms.ExperimentForm2()
-        else:
-            form = forms.ExperimentForm2(request.POST)
-            if form.is_valid():
-                form.instance.study = request.item.object
-                self.perform_create(request.item, form)
-                template = self.detail_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.ExperimentForm2(data=data)
+        if request.method == "POST" and form.is_valid():
+            form.instance.study = request.item.parent
+            self.perform_create(request.item, form)
+            template = self.detail_fragment
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        if request.method == "GET":
-            form = forms.ExperimentForm2(instance=request.item.object)
-        elif request.method == "POST":
-            form = forms.ExperimentForm2(request.POST, instance=request.item.object)
-            if form.is_valid():
-                self.perform_update(request.item, form)
-                template = self.detail_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.ExperimentForm2(data=data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
@@ -86,7 +82,7 @@ class ExperimentViewSet(HtmxViewSet):
     def delete(self, request: HttpRequest, *args, **kwargs):
         if request.method == "POST":
             self.perform_delete(request.item)
-            return self.empty_response()
+            return self.str_response()
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)

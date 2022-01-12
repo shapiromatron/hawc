@@ -6,7 +6,7 @@
     <div class="clearfix">
         <button
             class="btn btn-sm btn-primary float-right"
-            hx-get="/ani/v2/experiment/study/{{parent.id}}/create/"
+            hx-get="{% url 'animal:v2-experiment-create' parent.id %}"
             ><i class="fa fa-fw fa-plus mr-1"></i>Create</button>
     </div>
     {% endif %}

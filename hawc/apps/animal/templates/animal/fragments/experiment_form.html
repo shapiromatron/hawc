@@ -8,16 +8,16 @@
     {% if form.instance.id %}
         <button
             class="btn btn-sm btn-primary mx-1"
-            hx-post="/ani/v2/experiment/{{object.id}}/update/"
+            hx-post="{% url 'animal:v2-experiment-update' object.id %}"
             ><i class="fa fa-fw fa-save mr-1"></i>Update</button>
         <button
             class="btn btn-sm btn-secondary mx-1"
-            hx-get="/ani/v2/experiment/{{object.id}}/"
+            hx-get="{% url 'animal:v2-experiment-detail' object.id %}"
             ><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
     {% else %}
         <button
             class="btn btn-sm btn-primary mx-1"
-            hx-post="/ani/v2/experiment/study/{{object.id}}/create/"
+            hx-post="{% url 'animal:v2-experiment-create' parent.id %}"
             ><i class="fa fa-fw fa-save mr-1"></i>Create</button>
         <button
             class="btn btn-sm btn-secondary mx-1"
