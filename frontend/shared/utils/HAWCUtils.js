@@ -3,6 +3,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 import slugify from "slugify";
 
+import Tablesort from "tablesort";
 import Hero from "./Hero";
 import h from "./helpers";
 
@@ -298,6 +299,9 @@ class HAWCUtils {
             };
         $selectEl.on("change", handleChange).trigger("change");
     }
-}
 
+    static tablesort(el) {
+        new Tablesort(el);
+    }
+}
 export default HAWCUtils;

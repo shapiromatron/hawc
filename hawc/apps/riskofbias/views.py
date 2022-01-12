@@ -1,5 +1,3 @@
-import json
-
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
@@ -10,6 +8,7 @@ from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -55,13 +54,19 @@ class ARoBDetail(BaseList):
         context = super().get_context_data(**kwargs)
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
-        context["config"] = {
-            "assessment_id": self.assessment.id,
-            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-            "is_editing": False,
-            "csrf": get_token(self.request),
-        }
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="RobMetricsStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                api_url=f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+                is_editing=False,
+                csrf=get_token(self.request),
+            ),
+        )
 
 
 class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
@@ -82,15 +87,21 @@ class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"].append(get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Update"))
-        context["config"] = {
-            "assessment_id": self.assessment.id,
-            "api_url": f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-            "submit_url": f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
-            "cancel_url": reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
-            "is_editing": True,
-            "csrf": get_token(self.request),
-        }
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="RobMetricsStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                api_url=f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
+                submit_url=f"{reverse('riskofbias:api:domain-order-rob')}?assessment_id={self.assessment.id}",
+                cancel_url=reverse("riskofbias:arob_detail", args=(self.assessment.id,)),
+                is_editing=True,
+                csrf=get_token(self.request),
+            ),
+        )
 
 
 class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
@@ -213,23 +224,22 @@ class RobAssignmentList(TeamMemberOrHigherMixin, BaseList):
             raise PermissionDenied()
         return qs
 
-    def get_custom_data(self, context):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"][3] = Breadcrumb(
+            name=f"{self.assessment.get_rob_name_display()} assignments"
+        )
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
         data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
         data.update(
             edit=False,
             user_id=self.request.user.id,
             can_edit_assessment=context["obj_perms"]["edit_assessment"],
         )
-        return data
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"] = self.get_custom_data(context)
-        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
-        context["breadcrumbs"][3] = Breadcrumb(
-            name=f"{self.assessment.get_rob_name_display()} assignments"
-        )
-        return context
+        return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
 
 
 class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
@@ -253,7 +263,14 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
             raise PermissionDenied()
         return qs
 
-    def get_custom_data(self, context):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update")
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
         data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
         data.update(
             edit=True,
@@ -262,15 +279,7 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
             ],
             csrf=get_token(self.request),
         )
-        return data
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"] = self.get_custom_data(context)
-        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
-        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
-        context["breadcrumbs"][4] = Breadcrumb(name="Update")
-        return context
+        return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
 
 
 class RobNumberReviewsUpdate(BaseUpdate):
@@ -401,17 +410,27 @@ class RoBDetail(BaseDetail):
     model = Study
     template_name = "riskofbias/rob_detail.html"
 
+    def get_webapp_config(self, display: str) -> WebappConfig:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="TableStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                study=dict(id=self.object.study.id, url=reverse("study:api:study-list")),
+                csrf=get_token(self.request),
+                host=f"//{self.request.get_host()}",
+                display=display,
+                isForm=False,
+            ),
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].append(Breadcrumb(name=self.assessment.get_rob_name_display()))
-        context["config"] = {
-            "assessment_id": self.assessment.id,
-            "study": {"id": self.object.id, "url": reverse("study:api:study-list")},
-            "csrf": get_token(self.request),
-            "display": "final",
-            "isForm": False,
-        }
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return self.get_webapp_config("final")
 
 
 class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
@@ -430,8 +449,10 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
         context["breadcrumbs"][3] = Breadcrumb(
             name=f"{self.assessment.get_rob_name_display()} (all reviews)"
         )
-        context["config"]["display"] = "all"
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return self.get_webapp_config("all")
 
 
 class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
@@ -454,8 +475,15 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = json.dumps(
-            {
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update review")
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="RobStudyFormStartup",
+            data={
                 "assessment_id": self.assessment.id,
                 "cancelUrl": get_referrer(self.request, self.object.get_absolute_url()),
                 "csrf": get_token(self.request),
@@ -474,8 +502,5 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
                     ),
                     "scores_url": reverse("riskofbias:api:scores-list"),
                 },
-            }
+            },
         )
-        context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
-        context["breadcrumbs"][4] = Breadcrumb(name="Update review")
-        return context

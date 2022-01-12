@@ -30,15 +30,14 @@ def _check_browsing(driver, root_url):
     - a risk of bias heatmap can be rendered
     """
 
-    assessment_url = "/assessment/2/"
-
     # go to website
-    helium.go_to(root_url + "/summary" + assessment_url + "visuals/")
+    helium.go_to(root_url + "/summary/assessment/2/visuals/")
     assert helium.Text("Available visualizations").exists() is True
     helium.wait_until(helium.Text("Title").exists)
     assert len(driver.find_elements_by_css_selector("tr")) > 10
 
     # view data pivot
+    helium.scroll_down(600)
     helium.click("data pivot - animal bioassay - endpoint")
     assert "animal-bioassay-data-pivot-endpoint" in driver.current_url
     assert helium.Link("Actions").exists() is True
@@ -49,7 +48,7 @@ def _check_browsing(driver, root_url):
     assert helium.Text("Download as a SVG").exists() is True
 
     # view browse again
-    helium.go_to(root_url + "/summary" + assessment_url + "visuals/")
+    helium.go_to(root_url + "/summary/assessment/2/visuals/")
     helium.wait_until(helium.Text("Title").exists)
 
     # click the rob heatmap example
@@ -69,23 +68,23 @@ def _check_visuals_working(driver, root_url):
     # visual id should redirect to slug url
     helium.wait_until(lambda: "/summary/visual/assessment/2/barchart/" in driver.current_url)
     helium.wait_until(helium.Text("legend").exists)
-    assert len(driver.find_elements_by_css_selector("svg")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg .legend")) > 0
 
     helium.go_to(root_url + "/summary/visual/assessment/2/crossview/")
     helium.wait_until(helium.Text("Dose").exists)
-    assert len(driver.find_elements_by_css_selector("svg")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg .crossview_path_group")) > 0
 
     helium.go_to(root_url + "/summary/data-pivot/assessment/2/animal-bioassay-data-pivot-endpoint/")
     helium.wait_until(helium.Text("study name").exists)
-    assert len(driver.find_elements_by_css_selector("svg")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg .x_gridlines")) > 0
     assert len(driver.find_elements_by_css_selector("svg .y_gridlines")) > 0
 
     helium.go_to(root_url + "/summary/data-pivot/assessment/2/data-pivot-epi/")
     helium.wait_until(helium.Text("study name").exists)
-    assert len(driver.find_elements_by_css_selector("svg")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg .x_gridlines")) > 0
     assert len(driver.find_elements_by_css_selector("svg .y_gridlines")) > 0
 
@@ -96,22 +95,22 @@ def _check_visuals_working(driver, root_url):
 
     helium.go_to(root_url + "/summary/visual/assessment/2/rob-heatmap/")
     helium.wait_until(helium.Text("rob-heatmap").exists)
-    assert len(driver.find_elements_by_css_selector("svg")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg .legend")) > 0
 
     helium.go_to(root_url + "/summary/visual/assessment/2/tagtree/")
     helium.wait_until(helium.Text("Human Study").exists)
-    assert len(driver.find_elements_by_css_selector("svg")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg .tagnode")) == 4
 
     helium.go_to(root_url + "/summary/visual/assessment/2/exploratory-heatmap/")
     helium.wait_until(helium.Text("exploratory-heatmap").exists)
-    assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg.d3 g rect")) > 5
 
     helium.go_to(root_url + "/summary/visual/assessment/2/bioassay-aggregation/")
     helium.wait_until(helium.Text("bioassay-aggregation").exists)
-    assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
+    helium.wait_until(helium.S("svg.d3").exists)
     assert len(driver.find_elements_by_css_selector("svg.d3 g circle")) > 5
 
 

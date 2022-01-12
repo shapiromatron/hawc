@@ -97,7 +97,7 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">{{ config| safe}}</script>
+{{ config|json_script:"config" }}
 <script type="text/javascript">
   const config = window.app.getConfig();
 

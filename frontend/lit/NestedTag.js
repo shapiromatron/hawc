@@ -55,14 +55,14 @@ class NestedTag {
         }
     }
 
-    renderPaginatedReferenceList(el) {
+    renderPaginatedReferenceList(el, canEdit) {
         const settings = {
             assessment_id: this.assessment_id,
             tag_id: this.data.pk,
             search_id: this.search_id,
             tag: this,
         };
-        ReactDOM.render(<PaginatedReferenceList settings={settings} />, el);
+        ReactDOM.render(<PaginatedReferenceList settings={settings} canEdit={canEdit} />, el);
     }
 
     renderReferenceList(el) {

@@ -8,6 +8,7 @@ from rest_framework.serializers import ValidationError
 from ..assessment.models import Assessment
 from ..common.models import BaseManager
 from ..study.models import Study
+from . import constants
 
 logger = logging.getLogger(__name__)
 
@@ -60,56 +61,56 @@ class TaskManager(BaseManager):
             return None
 
         # create prep task
-        task = task_by_type(existing_tasks, self.model.TYPE_PREPARATION)
+        task = task_by_type(existing_tasks, constants.TaskType.PREPARATION)
         if task is None:
-            new_tasks.append(self.model(study=study, type=self.model.TYPE_PREPARATION))
+            new_tasks.append(self.model(study=study, type=constants.TaskType.PREPARATION))
 
         # create extraction tasks
         if assessment.enable_data_extraction:
 
-            task = task_by_type(existing_tasks, self.model.TYPE_EXTRACTION)
+            task = task_by_type(existing_tasks, constants.TaskType.EXTRACTION)
             if task is None:
-                new_tasks.append(self.model(study=study, type=self.model.TYPE_EXTRACTION))
+                new_tasks.append(self.model(study=study, type=constants.TaskType.EXTRACTION))
 
-            task = task_by_type(existing_tasks, self.model.TYPE_QA)
+            task = task_by_type(existing_tasks, constants.TaskType.QA)
             if task is None:
-                new_tasks.append(self.model(study=study, type=self.model.TYPE_QA))
+                new_tasks.append(self.model(study=study, type=constants.TaskType.QA))
 
         # create rob tasks
         if assessment.enable_risk_of_bias:
-            task = task_by_type(existing_tasks, self.model.TYPE_ROB)
+            task = task_by_type(existing_tasks, constants.TaskType.ROB)
             if task is None:
-                new_tasks.append(self.model(study=study, type=self.model.TYPE_ROB))
+                new_tasks.append(self.model(study=study, type=constants.TaskType.ROB))
 
         return new_tasks
 
     def ensure_preparation_started(self, study, user):
         """Start preparation task if not started."""
-        task = self.filter(study=study, type=self.model.TYPE_PREPARATION).first()
+        task = self.filter(study=study, type=constants.TaskType.PREPARATION).first()
         if task:
             task.start_if_unstarted(user)
 
     def ensure_preparation_stopped(self, study):
         """Stop preparation task if started."""
-        task = self.filter(study=study, type=self.model.TYPE_PREPARATION).first()
+        task = self.filter(study=study, type=constants.TaskType.PREPARATION).first()
         if task:
             task.stop_if_started()
 
     def ensure_extraction_started(self, study, user):
         """Start extraction task if not started."""
-        task = self.filter(study=study, type=self.model.TYPE_EXTRACTION).first()
+        task = self.filter(study=study, type=constants.TaskType.EXTRACTION).first()
         if task:
             task.start_if_unstarted(user)
 
     def ensure_rob_started(self, study, user):
         """Start RoB task if not started."""
-        task = self.filter(study=study, type=self.model.TYPE_ROB).first()
+        task = self.filter(study=study, type=constants.TaskType.ROB).first()
         if task:
             task.start_if_unstarted(user)
 
     def ensure_rob_stopped(self, study):
         """Stop RoB task if started."""
-        task = self.filter(study=study, type=self.model.TYPE_ROB).first()
+        task = self.filter(study=study, type=constants.TaskType.ROB).first()
         if task:
             task.stop_if_started()
 
@@ -122,7 +123,7 @@ class TaskManager(BaseManager):
             raise ValidationError(f"{tasks.count()} tasks found; expected {len(values)}")
 
         # check all valid status
-        valid_statuses = {el[0] for el in self.model.STATUS_CHOICES}
+        valid_statuses = set(constants.TaskStatus.values)
         statuses = {value["status"] for value in values if "status" in values}
         if len(statuses - valid_statuses) > 0:
             raise ValidationError(f"Invalid status codes: {statuses- valid_statuses}")

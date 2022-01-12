@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
   <h1 class="d-inline-block">Available visualizations</h1>
   {% if obj_perms.edit %}
@@ -11,17 +13,54 @@
         </div>
       </div>
   {% endif %}
-  <div class="visualizationsList"></div>
-{% endblock %}
+
+  <div class="card">
+    <div class="card-body pb-1">
+      {% crispy form %}
+    </div>
+  </div>
+
+  <table id="mainTbl" class="table table-sm table-striped">
+    <colgroup>
+      <col style="width: 30%;">
+      <col style="width: 20%;">
+      <col style="width: 30%;">
+      <col style="width: 10%;">
+      <col style="width: 10%;">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Visual Type</th>
+        <th>Description</th>
+        <th>Created</th>
+        <th>Modified</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for visual in objects %}
+      <tr>
+        <td>
+          <a href="{{visual.get_absolute_url}}">{{visual.title}}</a>
+          {% if not visual.published %}
+          <i title="Unpublished (not be visible to the public)" class="fa fa-eye-slash" aria-hidden="true"></i>
+          {% endif %}
+        </td>
+        <td>{{visual.get_visual_type_display}}</td>
+        <td><p>{{ visual.caption|truncatewords_html:40|safe }}</p></td>
+        <td>{{ visual.created|date:"Y-m-d" }}</td>
+        <td>{{ visual.last_updated|date:"Y-m-d" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><b>{{n_objects}}</b> visuals found.</p>
+{% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    window.app.startup("summaryStartup", function(summary){
-      summary.VisualCollection.buildTable(
-        "{% url 'summary:api:visual-list' %}?assessment_id={{assessment.id}}",
-        "{% url 'summary:api:data_pivot-list' %}?assessment_id={{assessment.id}}",
-        $('.visualizationsList'),
-        {showPublished: {{show_published|lower}}});
-    });
-  </script>
-{% endblock %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+  });
+</script>
+{% endblock extrajs %}
