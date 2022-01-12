@@ -1,12 +1,11 @@
 import reversion
 from django.db import models
 
-from ..study.models import Study
 from ..epi.models import Country
+from ..study.models import Study
 from . import constants, managers
 
 
-# TODO: set all max_lengths based on the needs of each field
 class AgeProfile(models.Model):
     objects = managers.AgeProfileManger()
 
@@ -14,20 +13,6 @@ class AgeProfile(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# class Country(models.Model):
-#     objects = managers.CountryManager()
-
-#     code = models.CharField(blank=True, max_length=2)
-#     name = models.CharField(unique=True, max_length=64)
-
-#     class Meta:
-#         ordering = ("name",)
-#         verbose_name_plural = "Countries"
-
-#     def __str__(self):
-#         return self.name
 
 
 class MeasurementType(models.Model):
@@ -79,7 +64,7 @@ class StudyPopulationV2(models.Model):
     region = models.CharField(
         max_length=128, blank=True, null=True, verbose_name="Other geographic information"
     )
-    # TODO: is there a better way of doing this with datetime objects to make it searchable
+    # TODO: create regex
     years = models.CharField(
         max_length=64, verbose_name="Year(s) of data collection", blank=True, null=True
     )
@@ -90,6 +75,14 @@ class StudyPopulationV2(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "study"
+
+    def get_assessment(self):
+        return self.study.get_assessment()
+
+    def get_study(self):
+        return self.study
 
     class Meta:
         verbose_name = "Study Population"
@@ -109,6 +102,12 @@ class Chemical(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_study(self):
+        return self.study_population.get_study()
+
     def __str__(self):
         return self.name
 
@@ -125,6 +124,12 @@ class Criteria(models.Model):
 
     class Meta:
         verbose_name = "Inclusion/exclusion criteria"
+
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_study(self):
+        return self.study_population.get_study()
 
     def __str__(self):
         return self.name
@@ -158,6 +163,12 @@ class Exposure(models.Model):
     comments = models.CharField(max_length=128, blank=True, null=True,)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_study(self):
+        return self.study_population.get_study()
 
     def __str__(self):
         return self.name
@@ -208,6 +219,12 @@ class ExposureLevel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_study(self):
+        return self.study_population.get_study()
+
     def __str__(self):
         return self.name
 
@@ -233,6 +250,12 @@ class Outcome(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_study(self):
+        return self.study_population.get_study()
+
     def __str__(self):
         return self.name
 
@@ -250,6 +273,12 @@ class AdjustmentFactor(models.Model):
     description = models.CharField(max_length=128, blank=True, null=True,)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_study(self):
+        return self.study_population.get_study()
 
     def __str__(self):
         return self.name
@@ -312,6 +341,12 @@ class DataExtraction(models.Model):
 
     class Meta:
         verbose_name = "Quantitative data extraction"
+
+    def get_assessment(self):
+        return self.study_population.get_assessment()
+
+    def get_study(self):
+        return self.study_population.get_study()
 
 
 reversion.register(AgeProfile)
