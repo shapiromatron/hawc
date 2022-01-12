@@ -2,6 +2,7 @@ import reversion
 from django.db import models
 
 from ..study.models import Study
+from ..epi.models import Country
 from . import constants, managers
 
 
@@ -15,18 +16,18 @@ class AgeProfile(models.Model):
         return self.name
 
 
-class Country(models.Model):
-    objects = managers.CountryManager()
+# class Country(models.Model):
+#     objects = managers.CountryManager()
 
-    code = models.CharField(blank=True, max_length=2)
-    name = models.CharField(unique=True, max_length=64)
+#     code = models.CharField(blank=True, max_length=2)
+#     name = models.CharField(unique=True, max_length=64)
 
-    class Meta:
-        ordering = ("name",)
-        verbose_name_plural = "Countries"
+#     class Meta:
+#         ordering = ("name",)
+#         verbose_name_plural = "Countries"
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
 class MeasurementType(models.Model):
@@ -314,7 +315,6 @@ class DataExtraction(models.Model):
 
 
 reversion.register(AgeProfile)
-reversion.register(Country)
 reversion.register(MeasurementType)
 reversion.register(StudyPopulationV2, follow=("countries", "criteria", "age_profile",))
 reversion.register(Chemical)
