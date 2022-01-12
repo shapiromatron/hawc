@@ -38,7 +38,7 @@ class MeasurementType(models.Model):
         return self.description
 
 
-class StudyPopulation(models.Model):
+class StudyPopulationV2(models.Model):
     objects = managers.StudyPopulationManager()
 
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations_v2")
@@ -90,6 +90,10 @@ class StudyPopulation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name = "Study Population"
+        verbose_name_plural = "Study Populations"
+
     def __str__(self):
         return str(self.study) + "/" + self.summary
 
@@ -98,7 +102,7 @@ class Chemical(models.Model):
     objects = managers.ChemicalManager()
 
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.CASCADE, related_name="chemicals"
+        StudyPopulationV2, on_delete=models.CASCADE, related_name="chemicals"
     )
     name = models.CharField(max_length=64)
     created = models.DateTimeField(auto_now_add=True)
@@ -112,7 +116,7 @@ class Criteria(models.Model):
     objects = managers.CriteriaManager()
 
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.CASCADE, related_name="criteria"
+        StudyPopulationV2, on_delete=models.CASCADE, related_name="criteria"
     )
     name = models.CharField(max_length=64)
     created = models.DateTimeField(auto_now_add=True)
@@ -133,7 +137,7 @@ class Exposure(models.Model):
         help_text="A unique name for this exposure that will help you identify it later.",
     )
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.CASCADE, related_name="exposures"
+        StudyPopulationV2, on_delete=models.CASCADE, related_name="exposures"
     )
     measurement_type = models.ManyToManyField(
         MeasurementType, verbose_name="Exposure measurement type", blank=True,
@@ -166,7 +170,7 @@ class ExposureLevel(models.Model):
         help_text="A unique name for this exposure level that will help you identify it later.",
     )
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.CASCADE, related_name="exposure_levels"
+        StudyPopulationV2, on_delete=models.CASCADE, related_name="exposure_levels"
     )
     chemical = models.ForeignKey(Chemical, on_delete=models.CASCADE)
     exposure_measurement = models.ForeignKey(
@@ -215,7 +219,7 @@ class Outcome(models.Model):
         help_text="A unique name for this health outcome that will help you identify it later.",
     )
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.CASCADE, related_name="outcomes"
+        StudyPopulationV2, on_delete=models.CASCADE, related_name="outcomes"
     )
     health_outcome = models.CharField(max_length=128,)
     health_outcome_system = models.CharField(
@@ -240,7 +244,7 @@ class AdjustmentFactor(models.Model):
         help_text="A unique name for this adjustment factor that will help you identify it later.",
     )
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.CASCADE, related_name="adjustment_factors"
+        StudyPopulationV2, on_delete=models.CASCADE, related_name="adjustment_factors"
     )
     description = models.CharField(max_length=128, blank=True, null=True,)
     created = models.DateTimeField(auto_now_add=True)
@@ -254,7 +258,7 @@ class DataExtraction(models.Model):
     objects = managers.DataExtractionManager()
 
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.CASCADE, related_name="data_extractions"
+        StudyPopulationV2, on_delete=models.CASCADE, related_name="data_extractions"
     )
     sub_population = models.CharField(max_length=64,)
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE, blank=True, null=True,)
@@ -312,7 +316,7 @@ class DataExtraction(models.Model):
 reversion.register(AgeProfile)
 reversion.register(Country)
 reversion.register(MeasurementType)
-reversion.register(StudyPopulation, follow=("countries", "criteria", "age_profile",))
+reversion.register(StudyPopulationV2, follow=("countries", "criteria", "age_profile",))
 reversion.register(Chemical)
 reversion.register(Criteria)
 reversion.register(Exposure, follow="measurement_type")

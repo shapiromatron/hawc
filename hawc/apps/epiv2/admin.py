@@ -58,7 +58,7 @@ class StudyPopulationAdmin(admin.ModelAdmin):
     ]
 
 
-admin.site.register(models.StudyPopulation, StudyPopulationAdmin)
+admin.site.register(models.StudyPopulationV2, StudyPopulationAdmin)
 admin.site.register(models.Country)
 admin.site.register(models.AgeProfile)
 admin.site.register(models.MeasurementType)
