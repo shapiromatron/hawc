@@ -1,23 +1,32 @@
 {% if object_list %}
-<table class="table table-sm table-hover table-striped table-bordered">
+<table id="mainTbl" class="table table-sm table-striped">
+    <colgroup>
+        <col width="64%" />
+        <col width="12%" />
+        <col width="12%" />
+        <col width="12%" />
+    </colgroup>
     <thead>
         <tr>
             <th>Name</th>
             <th>Year</th>
-            <th>Latest Version</th>
             <th>Date Created</th>
             <th>Date Updated</th>
         </tr>
     </thead>
     <tbody>
         {% for object in object_list %}
-            <tr>
-                <td><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a></td>
-                <td>{{object.year}}</td>
-                <td>{{object.version}}</td>
-                <td>{{object.created}}</td>
-                <td>{{object.last_updated}}</td>
-            </tr>
+        <tr>
+            <td>
+                <p class='mb-0'><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a></p>
+                {% if object.assessment_objective %}
+                <p class='text-muted'>{{object.assessment_objective|striptags|truncatewords:50}}</p>
+                {% endif %}
+            </td>
+            <td>{{object.year}}</td>
+            <td>{{object.created|date:"SHORT_DATE_FORMAT"}}</td>
+            <td>{{object.last_updated|date:"SHORT_DATE_FORMAT"}}</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>

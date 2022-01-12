@@ -47,6 +47,9 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     def test_epi(self):
         tests.epi(self.driver, self.live_server_url)
 
+    def test_invitro(self):
+        tests.invitro(self.driver, self.live_server_url)
+
     def test_mgmt(self):
         tests.mgmt(self.driver, self.live_server_url)
 

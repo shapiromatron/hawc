@@ -110,6 +110,45 @@ class AssessmentForm(forms.ModelForm):
         return helper
 
 
+class AssessmentFilterForm(forms.Form):
+    search = forms.CharField(required=False)
+
+    ORDER_BY_CHOICES = [
+        ("name", "Name"),
+        ("year", "Year, ascending"),
+        ("-year", "Year, descending"),
+        ("last_updated", "Date Updated, ascending"),
+        ("-last_updated", "Date Updated, descending"),
+    ]
+    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial="-last_updated")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        helper.add_row("search", 2, ["col-md-8", "col-md-4"])
+        return helper
+
+    def get_filters(self):
+        query = Q()
+        if name := self.cleaned_data.get("search"):
+            query &= Q(name__icontains=name) | Q(year=name)
+        return query
+
+    def get_queryset(self, qs):
+        if self.is_valid():
+            qs = qs.filter(self.get_filters())
+        return qs.order_by(self.get_order_by())
+
+    def get_order_by(self):
+        if self.is_valid():
+            return self.cleaned_data.get("order_by", "-last_updated")
+        return "-last_updated"
+
+
 class AssessmentAdminForm(forms.ModelForm):
     class Meta:
         fields = "__all__"

@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ("content", models.TextField()),
                 ("url", models.URLField(blank=True)),
             ],
-            options={},
+            options={"verbose_name_plural": "identifiers"},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

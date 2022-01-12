@@ -14,6 +14,7 @@ from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
 from hawc.refml import tags as refmltags
+from hawc.services.utils.doi import get_doi_from_identifier
 
 from ...services.epa import hero
 from ...services.nih import pubmed
@@ -102,9 +103,9 @@ class IdentifiersManager(BaseManager):
             ids.append(ident)
 
             # create DOI identifier
-            if ref["doi"] is not None:
+            if doi := get_doi_from_identifier(ident):
                 ident, _ = self.get_or_create(
-                    database=constants.ReferenceDatabase.DOI, unique_id=ref["doi"], content=""
+                    database=constants.ReferenceDatabase.DOI, unique_id=doi
                 )
                 ids.append(ident)
 
@@ -315,6 +316,12 @@ class ReferenceManager(BaseManager):
                 ref = identifier.create_reference(search.assessment)
                 ref.save()
 
+            Identifiers = apps.get_model("lit", "Identifiers")
+            if doi := get_doi_from_identifier(identifier):
+                doi_id, _ = Identifiers.objects.get_or_create(
+                    unique_id=doi, database=constants.ReferenceDatabase.DOI
+                )
+                ref.identifiers.add(doi_id)
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             refs.append(ref)
@@ -360,12 +367,18 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
+        Identifiers = apps.get_model("lit", "Identifiers")
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
+            if doi := get_doi_from_identifier(identifier):
+                doi_identifier, _ = Identifiers.objects.get_or_create(
+                    unique_id=doi, database=constants.ReferenceDatabase.DOI
+                )
+                ref.identifiers.add(doi_identifier)
             refs.append(ref)
 
         return refs

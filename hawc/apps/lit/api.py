@@ -331,31 +331,25 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     @action(detail=True, renderer_classes=PandasRenderers)
     def references(self, request, pk):
         """
-        Return all references for a selected tag; does not include tag-descendants.
+        Return all references for a selected tag, including tag-descendants.
         """
         tag = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
-            filename=f"{self.assessment}-{tag.slug}",
-            assessment=self.assessment,
-            tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
-            include_parent_tag=False,
-        )
-        return Response(exporter.build_export())
-
-    @action(detail=True, url_path="references-table-builder", renderer_classes=PandasRenderers)
-    def references_table_builder(self, request, pk):
-        """
-        Return all references for a selected tag in table-builder import format; does not include
-        tag-descendants.
-        """
-        tag = self.get_object()
-        exporter = exports.TableBuilderFormat(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
-            filename=f"{self.assessment}-{tag.slug}",
-            assessment=self.assessment,
-        )
-        return Response(exporter.build_export())
+        serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
+        if serializer.is_valid():
+            qs = models.Reference.objects.get_references_with_tag(
+                tag=tag, descendants=serializer.include_descendants()
+            ).order_by("id")
+            ExportClass = serializer.get_exporter()
+            exporter = ExportClass(
+                queryset=qs,
+                filename=f"{self.assessment}-{tag.slug}",
+                assessment=self.assessment,
+                tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
+                include_parent_tag=False,
+            )
+            return Response(exporter.build_export())
+        else:
+            return Response(serializer.errors, status=400)
 
 
 class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):

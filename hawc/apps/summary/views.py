@@ -1,7 +1,9 @@
+import itertools
 import json
 from typing import Dict
 
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
@@ -230,13 +232,40 @@ class VisualizationList(BaseList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
+    form_class = forms.VisualFilterForm
+
+    def get_filters(self, perms):
+        query = Q(assessment=self.assessment.id)
+        if not perms["edit"]:
+            query &= Q(published=True)
+        return query
 
     def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment)
+        qs = super().get_queryset()
+        self.perms = super().get_obj_perms()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial, can_edit=self.perms["edit"])
+        filters = self.get_filters(self.perms)
+        if self.form.is_valid():
+            filters &= self.form.get_visual_filters()
+        return qs.filter(filters).distinct()
+
+    def get_datapivotset(self):
+        qs = models.DataPivot.objects.all()
+        filters = self.get_filters(self.perms)
+        if self.form.is_valid():
+            filters &= self.form.get_datapivot_filters()
+        return qs.filter(filters).distinct().select_related("datapivotquery", "datapivotupload")
+
+    def get_item_list(self):
+        items = list(itertools.chain(self.object_list, self.get_datapivotset()))
+        return sorted(items, key=lambda d: d.title.lower())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
+        context["objects"] = self.get_item_list()
+        context["n_objects"] = len(context["objects"])
+        context["form"] = self.form
         return context
 
 
