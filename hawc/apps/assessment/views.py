@@ -11,10 +11,11 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import HttpResponse, get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -460,8 +461,24 @@ class AttachmentCreate(BaseCreate):
     success_message = "Attachment added."
     parent_model = models.Assessment
     parent_template_name = "parent"
+    template_name = "assessment/components/attachment_edit_row.html"
     model = models.Attachment
     form_class = forms.AttachmentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["new_attach"] = True
+        return context
+
+    @transaction.atomic
+    def form_valid(self, form):
+        super().form_valid(form)
+        context = self.get_context_data()
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            self.assessment, not context["obj_perms"]["edit"]
+        )
+        context["canEdit"] = context["obj_perms"]["edit"]
+        return render(self.request, "assessment/components/attachment_row.html", context)
 
 
 class AttachmentRead(BaseDetail):
@@ -469,27 +486,66 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        if "HX-Request" in request.headers:
+            return render(
+                request,
+                "assessment/components/attachment_row.html",
+                {"object": self.object, "canEdit": True},
+            )
         if self.assessment.user_is_part_of_team(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
             return PermissionDenied
 
 
+class AttachmentList(BaseList):
+    model = models.Attachment
+    parent_model = models.Assessment
+    parent_template_name = "parent"
+    template_name = "assessment/_attachment_list.html"
+    object_list = None
+    form_class = forms.AttachmentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            self.assessment, not context["obj_perms"]["edit"]
+        )
+        context["canEdit"] = context["obj_perms"]["edit"]
+        context["object"] = context["assessment"]
+        context["form"] = self.form_class()
+        return context
+
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+        context = self.get_context_data()
+        if request.GET.get("new", -1) == "True":
+            context["new_attach"] = True
+        return render(request, "assessment/_attachment_list.html", context)
+
+
 class AttachmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
+    template_name = "assessment/components/attachment_edit_row.html"
     model = models.Attachment
     form_class = forms.AttachmentForm
+
+    def get_success_url(self):
+        return reverse("assessment:attachment_detail", args=[self.object.pk])
 
 
 class AttachmentDelete(BaseDelete):
     success_message = "Attachment deleted."
     model = models.Attachment
 
-    def get_success_url(self):
-        return self.object.get_absolute_url()
+    @transaction.atomic
+    def delete(self, request, *args, **kwargs):
+        redirect = super().delete(self, request, *args, **kwargs)
+        redirect.status_code = 303
+        return redirect
 
-    def get_cancel_url(self) -> str:
-        return self.object.content_object.get_absolute_url()
+    def get_success_url(self):
+        return reverse("assessment:attachment_list", args=[self.assessment.pk])
 
 
 # Dataset views

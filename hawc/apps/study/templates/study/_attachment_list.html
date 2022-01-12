@@ -1,0 +1,41 @@
+<table class="table table-sm" id="attachTable">
+    {% if attachments or newAttach %}
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>Attachments</th>
+            <td>
+                <ul>
+                {% for attachment in attachments %}
+                    <li style="padding-top: 0.75rem">
+                        <a target="_blank" href="{{ attachment.get_absolute_url }}">{{attachment.filename}}</a>
+                        {% if object.editable or canEdit %}
+                        <button class="btn btn-sm btn-danger float-right" hx-delete="{{attachment.get_delete_url}}" hx-trigger="click"
+                            hx-target="#attachTable" hx-swap="outerHTML" hx-confirm="Are you sure you wish to delete this attachment?"><i
+                                class="fa fa-trash"></i></button>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                {% if newAttach %}
+                    {% load crispy_forms_tags %}
+                    <li style="padding-top: 0.75rem">
+                        <div>
+                            <form method=post enctype="multipart/form-data">
+                                {% crispy form %}
+                                <button class="btn btn-sm btn-info" hx-trigger="click" hx-encoding="multipart/form-data" hx-swap="outerHTML"
+                                    hx-target="#attachTable" hx-post="{% url 'study:attachment_create' object.pk %}">Save</button>
+                                <button class="btn btn-sm btn-light" hx-trigger="click" hx-swap="outerHTML" hx-target="#attachTable"
+                                    hx-get="{% url 'study:attachment_list' object.pk %}">Cancel</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endif %}
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+    {% endif %}
+</table>

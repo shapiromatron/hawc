@@ -1,5 +1,17 @@
-{% if object_list.count > 0 %}
-<h2>Attachments</h2>
+<div id="attach_table">
+{% if object_list.count > 0 or new_attach %}
+<h2>Attachments
+{% if canEdit %}
+<button
+    class="btn btn-sm btn-info pull-right"
+    hx-get="{% url 'assessment:attachment_list' object.pk %}"
+    hx-vals='{"new": "True"}'
+    hx-trigger="click"
+    hx-target="#attach_table"
+    hx-swap="outerHTML">
+    Add Attachment</button>
+{% endif %}
+</h2>
 <table class="table table-sm table-striped">
     <colgroup>
         {% if canEdit %}
@@ -22,17 +34,16 @@
     </thead>
     <tbody>
         {% for object in object_list %}
-        <tr>
-            <td><a href="{{object.attachment.url}}">{{object.title}}</a></td>
-            <td>{{object.description|safe}}</td>
-            {% if canEdit %}
-            <td>
-                <a class="btn btn-sm btn-info" href="{{object.get_edit_url}}">Edit</a>
-                <a class="btn btn-sm btn-danger" href="{{object.get_delete_url}}">Delete</a>
-            </td>
-            {% endif %}
-        </tr>
+            {% include "assessment/components/attachment_row.html" %}
         {% endfor %}
+
+        {% if new_attach %}
+            {% include "assessment/components/attachment_edit_row.html" %}
+        {% endif %}
+        </tr>
+
     </tbody>
 </table>
 {% endif %}
+</div>
+

@@ -25,6 +25,7 @@ urlpatterns = [
     path(
         "attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete",
     ),
+    path("<int:pk>/attachments/", views.AttachmentList.as_view(), name="attachment_list"),
     re_path(
         r"^(?P<pk>\d+)/editability-update/(?P<updated_value>.*)/$",
         views.EditabilityUpdate.as_view(),
