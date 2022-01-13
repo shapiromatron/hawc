@@ -23,7 +23,7 @@
     </colgroup>
     <tbody>
       {% if object.description %}
-        <tr><th>Description</th><td>{{object.description}}</td></tr>
+        <tr><th>Description</th><td>{{object.description|safe}}</td></tr>
       {% endif %}
       <tr><th>Search type</th><td>{{object.get_search_type_display}}</td></tr>
       <tr><th>Search database</th><td>{{object.get_source_display}}</td></tr>

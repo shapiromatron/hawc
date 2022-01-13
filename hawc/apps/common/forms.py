@@ -5,9 +5,11 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
+from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from . import selectable, validators
+from . import selectable, tasks, validators
+from .svg import SVGConverter
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
@@ -149,7 +151,7 @@ def form_error_list_to_lis(form):
             if key == "__all__":
                 lis.append(f"<li>{value}</li>")
             else:
-                lis.append("<li>{key}: {value}</li>")
+                lis.append(f"<li>{key}: {value}</li>")
     return lis
 
 
@@ -205,3 +207,46 @@ class AdderLayout(cfl.Field):
 
 class CustomURLField(forms.URLField):
     default_validators = [validators.CustomURLValidator()]
+
+
+class DownloadPlotForm(forms.Form):
+    CROSSWALK = {
+        "svg": (tasks.convert_to_svg, "image/svg+xml"),
+        "png": (tasks.convert_to_png, "application/png"),
+        "pdf": (tasks.convert_to_pdf, "application/pdf"),
+        "pptx": (
+            tasks.convert_to_pptx,
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ),
+    }
+
+    output = forms.ChoiceField(
+        choices=(("svg", "svg"), ("png", "png"), ("pdf", "pdf"), ("pptx", "pptx"))
+    )
+    svg = forms.CharField()
+    width = forms.FloatField()
+    height = forms.FloatField()
+
+    def clean_svg(self):
+        data = self.cleaned_data["svg"]
+        try:
+            SVGConverter.decode_svg(data)
+        except ValueError as err:
+            raise forms.ValidationError(str(err))
+        return data
+
+    def process(self, url: str) -> HttpResponse:
+        extension = self.cleaned_data["output"]
+        handler, content_type = self.CROSSWALK[extension]
+        task = handler.delay(
+            self.cleaned_data["svg"],
+            url,
+            int(self.cleaned_data["width"] * 5),
+            int(self.cleaned_data["height"] * 5),
+        )
+        response = HttpResponse("<p>An error in processing occurred.</p>")
+        output = task.get(timeout=90)
+        if output:
+            response = HttpResponse(output, content_type=content_type)
+            response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
+        return response

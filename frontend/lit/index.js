@@ -10,17 +10,19 @@ import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
 import TagReferencesMain from "./TagReferences/Main";
 import TagReferencesMainStore from "./TagReferences/store";
+import BulkTagReferencesMain from "./BulkTagReferences/Main";
+import BulkTagReferencesMainStore from "./BulkTagReferences/store";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
 
 export default {
     TagTree,
     TagTreeViz,
-    startupReferenceDetail(el, tags, reference, canEdit) {
-        let tagtree = new TagTree(tags[0]),
-            ref = new Reference(reference, tagtree),
+    startupReferenceDetail(el, config) {
+        let tagtree = new TagTree(config.tags[0]),
+            ref = new Reference(config.reference, tagtree),
             options = {
-                showActions: canEdit,
+                showActions: config.canEdit,
                 actionsBtnClassName: "btn-primary",
             };
 
@@ -46,6 +48,14 @@ export default {
         ReactDOM.render(
             <Provider store={new TagReferencesMainStore(config)}>
                 <TagReferencesMain />
+            </Provider>,
+            el
+        );
+    },
+    startupBulkTagReferences(el, config) {
+        ReactDOM.render(
+            <Provider store={new BulkTagReferencesMainStore(config)}>
+                <BulkTagReferencesMain />
             </Provider>,
             el
         );

@@ -28,6 +28,11 @@ def run_job(url, data, api_token, interval=3, timeout=60):
             }
         )
 
+        # trusted, but has cert issues. This is not ideal; but only anonymzed scientific data with
+        # no identifiers are passed via https TODO - remove when we deprecate bmds2
+        if "nih.gov" in settings.BMDS_SUBMISSION_URL:
+            s.verify = False
+
         # initial job request
         response = s.post(url, data=data)
         if response.status_code in [400, 403]:

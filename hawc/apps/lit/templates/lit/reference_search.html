@@ -8,19 +8,5 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-    "assessment_id": {{assessment.id}},
-    "canEdit": {{obj_perms.edit|lower}},
-    "tags": {{tags|safe}},
-    "csrf": "{{csrf_token}}"
-}
-</script>
-<script type="text/javascript">
-window.app.startup("litStartup", function (lit) {
-    const el = document.getElementById('main'),
-        data = window.app.getConfig();
-    lit.startupSearchReference(el, data)
-});
-</script>
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

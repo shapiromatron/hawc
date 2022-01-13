@@ -23,7 +23,7 @@
         <tr>
           <td>
             <a href="{{object.get_absolute_url}}">{{object.title}}</a><br>
-            <span class='form-text text-muted'>{{object.description}}</span>
+            <span class='form-text text-muted'>{{object.description|safe}}</span>
           </td>
           <td>{{object.get_search_type_display}}: {{object.get_source_display}}</td>
           <td>{{object.references.count}}<br/>

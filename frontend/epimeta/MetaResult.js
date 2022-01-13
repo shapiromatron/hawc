@@ -39,7 +39,7 @@ class MetaResult {
         this.data.single_results = [];
     }
 
-    build_details_table(div) {
+    build_details_table() {
         return new DescriptiveTable()
             .add_tbody_tr("Health outcome", this.data.health_outcome)
             .add_tbody_tr("Data location", this.data.data_location)

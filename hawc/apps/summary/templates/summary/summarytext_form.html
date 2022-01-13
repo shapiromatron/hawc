@@ -15,19 +15,6 @@
 {% endblock %}
 
 {% block extrajs %}
-{{ smart_tag_form.media }}
-<script id="config" type="text/json" charset="utf-8">
-{
-    "assessment_id": {{assessment.pk}},
-    "editMode": true,
-    "csrf": "{{csrf_token}}"
-}
-</script>
-<script type="text/javascript">
-  window.app.startup("summaryTextStartup", function (startup) {
-    var root = document.getElementById('main'),
-      config = window.app.getConfig();
-    startup(root, config);
-  })
-</script>
+  {{ smart_tag_form.media }}
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

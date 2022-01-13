@@ -152,7 +152,7 @@ class TagTreeViz extends D3Plot {
             },
             fetch_references = function(tag) {
                 var title = `<h4>${tag.data.name}</h4>`,
-                    div = $('<div id="references_div"></div');
+                    div = $("<div>");
 
                 self.modal
                     .addHeader(title)
@@ -160,7 +160,7 @@ class TagTreeViz extends D3Plot {
                     .addFooter("")
                     .show({maxWidth: 1200});
 
-                tag.renderPaginatedReferenceList(div.get(0));
+                tag.renderPaginatedReferenceList(div.get(0), self.stateStore.options.can_edit);
             },
             update = function(event, source) {
                 var duration = event && event.altKey ? 5000 : 500,

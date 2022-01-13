@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load hastext %}
+
 {% block content %}
   <h2 class="d-inline-block">{{object}}</h2>
   {% if crud == "Read" %}
@@ -104,7 +106,7 @@
 
       {% if obj_perms.edit %}
         <tr>
-          <th>Project manager(s)</th>
+          <th>Project manager(s)*</th>
           <td>
             <ul>
               {% for m in object.project_manager.all %}
@@ -115,7 +117,7 @@
         </tr>
 
         <tr>
-          <th>Team member(s)</th>
+          <th>Team member(s)*</th>
           <td>
             <ul>
               {% for m in object.team_members.all %}
@@ -126,7 +128,7 @@
         </tr>
 
         <tr>
-          <th>Reviewer(s)</th>
+          <th>Reviewer(s)*</th>
           <td>
             <ul>
               {% for m in object.reviewers.all %}
@@ -137,23 +139,23 @@
         </tr>
 
         <tr>
-          <th>Editable</th>
+          <th>Editable*</th>
           <td>{{object.editable}}</td>
         </tr>
 
         <tr>
-          <th>Public</th>
+          <th>Public*</th>
           <td>{{object.public}}</td>
         </tr>
 
         <tr>
-          <th>Public training data</th>
+          <th>Public training data*</th>
           <td>{{object.is_public_training_data}}</td>
         </tr>
 
         {% if object.public %}
           <tr>
-            <th>Hidden on public page?</th>
+            <th>Hidden on public page?*</th>
             <td>{{object.hide_from_public_page}}</td>
           </tr>
         {% endif %}
@@ -185,7 +187,22 @@
       </tr>
       {% endif %}
 
+      {% if obj_perms.edit and internal_communications|hastext %}
+      <tr>
+        <th>Internal communications*</th>
+        <td>{{ internal_communications|safe }}</td>
+      </tr>
+      {% endif %}
     </tbody>
+    {% if obj_perms.edit %}
+    <tfoot>
+      <tr>
+        <td colspan="2" class="text-muted">
+          * These fields are only shown to assessment team members, even if the assessment is made public.
+        </td>
+      </tr>
+    </tfoot>
+    {% endif %}
   </table>
 
   {% if crud == "Read" %}

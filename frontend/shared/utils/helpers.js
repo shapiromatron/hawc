@@ -5,6 +5,8 @@ import ReactDOM from "react-dom";
 import _ from "lodash";
 import moment from "moment";
 
+import {addOuterTag} from "./_helpers";
+
 const stopwords = new Set("the is at which of on".split(" ")),
     hexChars = "abcdef0123456789",
     regexEscapeChars = /[-|\\{}()[\]^$+*?.]/g,
@@ -45,6 +47,17 @@ const helpers = {
                 "content-type": "application/json",
             }),
             body: JSON.stringify(obj),
+        };
+    },
+    fetchPostFile(csrf, file) {
+        return {
+            credentials: "same-origin",
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrf,
+                "Content-Disposition": "attachment; filename=upload.xlsx",
+            },
+            body: file,
         };
     },
     fetchForm(csrf, form, verb = "POST") {
@@ -100,9 +113,6 @@ const helpers = {
                     error(exception);
                 }
             });
-    },
-    parseJsonFromElement(element) {
-        return JSON.parse(element.textContent);
     },
     ff(number) {
         // ff = float format
@@ -296,9 +306,12 @@ const helpers = {
         // column and row are 0-based
         return `${excelColumn(column)}${row + 1}`;
     },
+    addOuterTag,
     hasInnerText(text) {
+        // wrap text with html tag to ensure it is a valid jQuery selector expression
+        // then return whether there is text content
         return (
-            $(text)
+            $(`<p>${text}</p>`)
                 .text()
                 .trim().length > 0
         );

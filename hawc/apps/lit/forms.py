@@ -64,9 +64,11 @@ class SearchForm(forms.ModelForm):
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice
         self.fields["description"].widget.attrs["rows"] = 3
+        self.fields["description"].widget.attrs["class"] = "html5text"
         if "search_string" in self.fields:
             self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
+            self.fields["search_string"].widget.attrs["class"] = "html5text"
 
     @property
     def helper(self):
@@ -101,6 +103,7 @@ class ImportForm(SearchForm):
                 "search_string"
             ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
             self.fields["search_string"].label = "ID List"
+            self.fields["search_string"].widget.attrs.pop("class")
         else:
             self.fields.pop("search_string")
 
@@ -147,7 +150,7 @@ class ImportForm(SearchForm):
 
         ids = self.validate_import_search_string(search_string)
 
-        if self.cleaned_data["source"] == constants.HERO:
+        if self.cleaned_data["source"] == constants.ReferenceDatabase.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
 
@@ -158,7 +161,7 @@ class ImportForm(SearchForm):
         is_create = self.instance.id is None
         search = super().save(commit=commit)
         if is_create:
-            if search.source == constants.HERO:
+            if search.source == constants.ReferenceDatabase.HERO:
                 # create missing identifiers from import
                 models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
                 # get hero identifiers
@@ -358,18 +361,18 @@ def check_external_id(
 
     else:
         # try to make an identifier; if it cannot be made an exception is thrown.
-        if db_type == constants.PUBMED:
+        if db_type == constants.ReferenceDatabase.PUBMED:
             identifiers = models.Identifiers.objects.get_pubmed_identifiers([id_])
             if len(identifiers) == 0:
                 raise forms.ValidationError(f"Invalid PubMed ID: {id_}")
             identifier = identifiers[0]
 
-        elif db_type == constants.HERO:
+        elif db_type == constants.ReferenceDatabase.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids([id_])
             models.Identifiers.objects.bulk_create_hero_ids(content)
             identifier = models.Identifiers.objects.get(database=db_type, unique_id=str(id_))
 
-        elif db_type == constants.DOI:
+        elif db_type == constants.ReferenceDatabase.DOI:
             if not constants.DOI_EXACT.fullmatch(id_):
                 raise forms.ValidationError(
                     f'Invalid DOI; should be in format "{constants.DOI_EXAMPLE}"'
@@ -449,13 +452,13 @@ class ReferenceForm(forms.ModelForm):
             self._ident_removals.extend(list(existing))
 
     def clean_doi_id(self):
-        self._update_identifier(constants.DOI, "doi_id")
+        self._update_identifier(constants.ReferenceDatabase.DOI, "doi_id")
 
     def clean_pubmed_id(self):
-        self._update_identifier(constants.PUBMED, "pubmed_id")
+        self._update_identifier(constants.ReferenceDatabase.PUBMED, "pubmed_id")
 
     def clean_hero_id(self):
-        self._update_identifier(constants.HERO, "hero_id")
+        self._update_identifier(constants.ReferenceDatabase.HERO, "hero_id")
 
     @transaction.atomic
     def save(self, commit=True):
@@ -497,7 +500,7 @@ class TagsCopyForm(forms.Form):
         return BaseFormHelper(self)
 
     def copy_tags(self):
-        models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data["assessment"])
+        models.ReferenceFilterTag.copy_tags(self.cleaned_data["assessment"].id, self.assessment.id)
 
 
 class ReferenceExcelUploadForm(forms.Form):

@@ -26,6 +26,11 @@ app.conf.beat_schedule = {
         "schedule": timedelta(minutes=5),
         "options": {"expires": timedelta(minutes=5).total_seconds()},
     },
+    "destroy-api-tokens": {
+        "task": "hawc.apps.common.tasks.destroy_old_api_tokens",
+        "schedule": timedelta(minutes=10),
+        "options": {"expires": timedelta(minutes=10).total_seconds()},
+    },
     "lit-schedule_topic_model_reruns-10-min": {
         "task": "hawc.apps.lit.tasks.schedule_topic_model_reruns",
         "schedule": timedelta(minutes=10),

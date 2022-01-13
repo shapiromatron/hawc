@@ -23,24 +23,15 @@ from reversion import revisions as reversion
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
-from ..common.models import IntChoiceEnum, get_private_data_storage
+from ..common.models import get_private_data_storage
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
-from ..vocab.models import VocabularyNamespace
-from . import jobs, managers
+from ..vocab.constants import VocabularyNamespace
+from . import constants, jobs, managers
 from .permissions import AssessmentPermissions
 from .tasks import add_time_spent
 
 logger = logging.getLogger(__name__)
-
-NOEL_NAME_CHOICES_NOEL = 0
-NOEL_NAME_CHOICES_NOAEL = 1
-NOEL_NAME_CHOICES_NEL = 2
-
-ROB_NAME_CHOICES_ROB = 0
-ROB_NAME_CHOICES_SE = 1
-ROB_NAME_CHOICES_ROB_TEXT = "Risk of bias"
-ROB_NAME_CHOICES_SE_TEXT = "Study evaluation"
 
 
 class NoelNames(NamedTuple):
@@ -48,24 +39,6 @@ class NoelNames(NamedTuple):
     loel: str
     noel_help_text: str
     loel_help_text: str
-
-
-class JobStatus(IntChoiceEnum):
-    """
-    Status of the running job.
-    """
-
-    PENDING = 1
-    SUCCESS = 2
-    FAILURE = 3
-
-
-class JobType(IntChoiceEnum):
-    """
-    Short descriptor of job functionality.
-    """
-
-    TEST = 1
 
 
 class DSSTox(models.Model):
@@ -117,30 +90,19 @@ class DSSTox(models.Model):
 class Assessment(models.Model):
     objects = managers.AssessmentManager()
 
-    NOEL_NAME_CHOICES = (
-        (NOEL_NAME_CHOICES_NEL, "NEL/LEL"),
-        (NOEL_NAME_CHOICES_NOEL, "NOEL/LOEL"),
-        (NOEL_NAME_CHOICES_NOAEL, "NOAEL/LOAEL"),
-    )
-
-    ROB_NAME_CHOICES = (
-        (ROB_NAME_CHOICES_ROB, ROB_NAME_CHOICES_ROB_TEXT),
-        (ROB_NAME_CHOICES_SE, ROB_NAME_CHOICES_SE_TEXT),
-    )
-
     def get_noel_name_default():
         if settings.HAWC_FLAVOR == "PRIME":
-            return NOEL_NAME_CHOICES_NOEL
+            return constants.NoelName.NOEL
         elif settings.HAWC_FLAVOR == "EPA":
-            return NOEL_NAME_CHOICES_NOAEL
+            return constants.NoelName.NOAEL
         else:
             raise ValueError("Unknown HAWC flavor")
 
     def get_rob_name_default():
         if settings.HAWC_FLAVOR == "PRIME":
-            return ROB_NAME_CHOICES_ROB
+            return constants.RobName.ROB
         elif settings.HAWC_FLAVOR == "EPA":
-            return ROB_NAME_CHOICES_SE
+            return constants.RobName.SE
         else:
             raise ValueError("Unknown HAWC flavor")
 
@@ -265,19 +227,19 @@ class Assessment(models.Model):
     )
     noel_name = models.PositiveSmallIntegerField(
         default=get_noel_name_default,
-        choices=NOEL_NAME_CHOICES,
+        choices=constants.NoelName.choices,
         verbose_name="NEL/NOEL/NOAEL name",
         help_text="What term should be used to refer to NEL/NOEL/NOAEL and LEL/LOEL/LOAEL?",
     )
     rob_name = models.PositiveSmallIntegerField(
         default=get_rob_name_default,
-        choices=ROB_NAME_CHOICES,
+        choices=constants.RobName.choices,
         verbose_name="Risk of bias/Study evaluation name",
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
     vocabulary = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.display_choices(),
-        default=VocabularyNamespace.EHV.value,
+        default=VocabularyNamespace.EHV,
         blank=True,
         null=True,
         verbose_name="Controlled vocabulary",
@@ -363,13 +325,13 @@ class Assessment(models.Model):
             return ""
 
     def get_noel_names(self):
-        if self.noel_name == NOEL_NAME_CHOICES_NEL:
+        if self.noel_name == constants.NoelName.NEL:
             return NoelNames("NEL", "LEL", "No effect level", "Lowest effect level",)
-        elif self.noel_name == NOEL_NAME_CHOICES_NOEL:
+        elif self.noel_name == constants.NoelName.NOEL:
             return NoelNames(
                 "NOEL", "LOEL", "No observed effect level", "Lowest observed effect level",
             )
-        elif self.noel_name == NOEL_NAME_CHOICES_NOAEL:
+        elif self.noel_name == constants.NoelName.NOAEL:
             return NoelNames(
                 "NOAEL",
                 "LOAEL",
@@ -444,6 +406,12 @@ class Assessment(models.Model):
             .order_by("id")
             .distinct("id")
         )
+
+    def get_communications(self) -> str:
+        return Communication.get_message(self)
+
+    def set_communications(self, text: str):
+        Communication.set_message(self, text)
 
 
 class Attachment(models.Model):
@@ -842,7 +810,7 @@ class DatasetRevision(models.Model):
 class Job(models.Model):
 
     JOB_TO_FUNC = {
-        JobType.TEST: jobs.test,
+        constants.JobType.TEST: jobs.test,
     }
 
     task_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -850,9 +818,11 @@ class Job(models.Model):
         Assessment, blank=True, null=True, on_delete=models.CASCADE, related_name="jobs"
     )
     status = models.PositiveSmallIntegerField(
-        choices=JobStatus.choices(), default=JobStatus.PENDING, editable=False
+        choices=constants.JobStatus.choices, default=constants.JobStatus.PENDING, editable=False
     )
-    job = models.PositiveSmallIntegerField(choices=JobType.choices(), default=JobType.TEST)
+    job = models.PositiveSmallIntegerField(
+        choices=constants.JobType.choices, default=constants.JobType.TEST
+    )
 
     kwargs = models.JSONField(default=dict, blank=True, null=True)
     result = models.JSONField(default=dict, editable=False)
@@ -886,7 +856,7 @@ class Job(models.Model):
             {"data" : <data>} MUST be JSON serializable.
         """
         self.result = {"data": data}
-        self.status = JobStatus.SUCCESS
+        self.status = constants.JobStatus.SUCCESS
 
     def set_failure(self, exception: Exception):
         """
@@ -899,10 +869,38 @@ class Job(models.Model):
             MUST have a built in string representation.
         """
         self.result = {"error": str(exception)}
-        self.status = JobStatus.FAILURE
+        self.status = constants.JobStatus.FAILURE
 
     def get_detail_url(self):
         return reverse("assessment:api:jobs-detail", args=(self.task_id,))
+
+
+class Communication(models.Model):
+    message = models.TextField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.IntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("content_type_id", "object_id"),)
+
+    @classmethod
+    def get_message(cls, model) -> str:
+        instance = cls.objects.filter(
+            content_type=ContentType.objects.get_for_model(model), object_id=model.id
+        ).first()
+        return instance.message if instance else ""
+
+    @classmethod
+    def set_message(cls, model, text: str) -> "Communication":
+        instance, _ = cls.objects.update_or_create(
+            content_type=ContentType.objects.get_for_model(model),
+            object_id=model.id,
+            defaults={"message": text},
+        )
+        return instance
 
 
 class Log(models.Model):
@@ -1041,5 +1039,6 @@ reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
+reversion.register(Communication)
 reversion.register(Blog)
 reversion.register(Content)

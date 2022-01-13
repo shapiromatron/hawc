@@ -3,6 +3,8 @@ from textwrap import dedent
 
 from django import forms
 from django.conf import settings
+from django.contrib import admin
+from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
@@ -19,6 +21,13 @@ from . import lookups, models
 
 
 class AssessmentForm(forms.ModelForm):
+
+    internal_communications = forms.CharField(
+        required=False,
+        help_text="Internal communications regarding this assessment; this field is only displayed to assessment team members.",
+        widget=forms.Textarea,
+    )
+
     class Meta:
         exclude = (
             "enable_literature_review",
@@ -50,6 +59,15 @@ class AssessmentForm(forms.ModelForm):
             for field in ("editable", "public", "hide_from_public_page"):
                 self.fields[field].disabled = True
                 self.fields[field].help_text += help_text
+
+        if self.instance:
+            self.fields["internal_communications"].initial = self.instance.get_communications()
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if commit and "internal_communications" in self.changed_data:
+            instance.set_communications(self.cleaned_data["internal_communications"])
+        return instance
 
     @property
     def helper(self):
@@ -90,6 +108,65 @@ class AssessmentForm(forms.ModelForm):
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
+
+
+class AssessmentFilterForm(forms.Form):
+    search = forms.CharField(required=False)
+
+    ORDER_BY_CHOICES = [
+        ("name", "Name"),
+        ("year", "Year, ascending"),
+        ("-year", "Year, descending"),
+        ("last_updated", "Date Updated, ascending"),
+        ("-last_updated", "Date Updated, descending"),
+    ]
+    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial="-last_updated")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        helper.add_row("search", 2, ["col-md-8", "col-md-4"])
+        return helper
+
+    def get_filters(self):
+        query = Q()
+        if name := self.cleaned_data.get("search"):
+            query &= Q(name__icontains=name) | Q(year=name)
+        return query
+
+    def get_queryset(self, qs):
+        if self.is_valid():
+            qs = qs.filter(self.get_filters())
+        return qs.order_by(self.get_order_by())
+
+    def get_order_by(self):
+        if self.is_valid():
+            return self.cleaned_data.get("order_by", "-last_updated")
+        return "-last_updated"
+
+
+class AssessmentAdminForm(forms.ModelForm):
+    class Meta:
+        fields = "__all__"
+        model = models.Assessment
+        widgets = {
+            "dtxsids": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("dtxsids"), admin.site
+            ),
+            "project_manager": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("project_manager"), admin.site
+            ),
+            "team_members": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("team_members"), admin.site
+            ),
+            "reviewers": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("reviewers"), admin.site
+            ),
+        }
 
 
 class AssessmentModulesForm(forms.ModelForm):

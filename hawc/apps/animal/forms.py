@@ -14,8 +14,8 @@ from ..assessment.models import DoseUnits
 from ..common import selectable
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
 from ..study.lookups import AnimalStudyLookup
-from ..vocab.models import VocabularyNamespace
-from . import lookups, models
+from ..vocab.constants import VocabularyNamespace
+from . import constants, lookups, models
 
 
 class ExperimentForm(ModelForm):
@@ -144,23 +144,23 @@ class AnimalGroupForm(ModelForm):
             self.instance.experiment = parent
 
         # for lifestage assessed/exposed, use a select widget. Manually add in
-        # previously saved values that don't conform to the LIFESTAGE_CHOICES tuple
-        lifestage_dict = dict(models.AnimalGroup.LIFESTAGE_CHOICES)
+        # previously saved values that don't conform to the lifestage choices
+        lifestage_dict = dict(constants.Lifestage.choices)
 
         if self.instance.lifestage_exposed in lifestage_dict:
-            le_choices = models.AnimalGroup.LIFESTAGE_CHOICES
+            le_choices = constants.Lifestage.choices
         else:
             le_choices = (
                 (self.instance.lifestage_exposed, self.instance.lifestage_exposed),
-            ) + models.AnimalGroup.LIFESTAGE_CHOICES
+            ) + constants.Lifestage.choices
         self.fields["lifestage_exposed"].widget = forms.Select(choices=le_choices)
 
         if self.instance.lifestage_assessed in lifestage_dict:
-            la_choices = models.AnimalGroup.LIFESTAGE_CHOICES
+            la_choices = constants.Lifestage.choices
         else:
             la_choices = (
                 (self.instance.lifestage_assessed, self.instance.lifestage_assessed),
-            ) + models.AnimalGroup.LIFESTAGE_CHOICES
+            ) + constants.Lifestage.choices
         self.fields["lifestage_assessed"].widget = forms.Select(choices=la_choices)
 
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
@@ -544,7 +544,7 @@ class EndpointForm(ModelForm):
         obs_time = data.get("observation_time", None)
         observation_time_units = data.get("observation_time_units", 0)
 
-        if obs_time is not None and observation_time_units == 0:
+        if obs_time is not None and observation_time_units == constants.ObservationTimeUnits.NR:
             errors["observation_time_units"] = cls.OBS_TIME_UNITS_REQ
 
         if obs_time is None and observation_time_units > 0:
@@ -568,11 +568,14 @@ class EndpointForm(ModelForm):
 
         confidence_interval = data.get("confidence_interval", None)
         variance_type = data.get("variance_type", 0)
-        data_type = data.get("data_type", "C")
-        if data_type == "P" and confidence_interval is None:
+        data_type = data.get("data_type", constants.DataType.CONTINUOUS)
+        if data_type == constants.DataType.PERCENT_DIFFERENCE and confidence_interval is None:
             errors["confidence_interval"] = cls.CONF_INT_REQ
 
-        if data_type == "C" and variance_type == 0:
+        if (
+            data_type == constants.DataType.CONTINUOUS
+            and variance_type == constants.VarianceType.NA
+        ):
             errors["variance_type"] = cls.VAR_TYPE_REQ
 
         response_units = data.get("response_units", "")
@@ -635,11 +638,11 @@ class EndpointGroupForm(forms.ModelForm):
         """
         errors: Dict[str, str] = {}
 
-        if data_type == "C":
+        if data_type == constants.DataType.CONTINUOUS:
             var = data.get("variance")
             if var is not None and variance_type in (0, 3):
                 errors["variance"] = cls.VARIANCE_REQ
-        elif data_type == "P":
+        elif data_type == constants.DataType.PERCENT_DIFFERENCE:
             lower_ci = data.get("lower_ci")
             upper_ci = data.get("upper_ci")
             if lower_ci is None and upper_ci is not None:
@@ -648,7 +651,7 @@ class EndpointGroupForm(forms.ModelForm):
                 errors["upper_ci"] = cls.UPPER_CI_REQ
             if lower_ci is not None and upper_ci is not None and lower_ci > upper_ci:
                 errors["lower_ci"] = cls.LOWER_CI_GT_UPPER
-        elif data_type in ["D", "DC"]:
+        elif data_type in [constants.DataType.DICHOTOMOUS, constants.DataType.DICHOTOMOUS_CANCER]:
             if data.get("incidence") is None and data.get("n") is not None:
                 errors["incidence"] = cls.INC_REQ
             if data.get("incidence") is not None and data.get("n") is None:
@@ -708,14 +711,8 @@ class EndpointFilterForm(forms.Form):
         ("effect", "effect"),
         ["-NOEL", "<NOEL-NAME>"],
         ["-LOEL", "<LOEL-NAME>"],
-        # BMD/BMDL is stored in output which is a JsonField on the bmd Model object. We want to sort on a sub-field of that.
-        # when/if HAWC upgrades to Django 2.1 (see yekta's comment on https://stackoverflow.com/questions/36641759/django-1-9-jsonfield-order-by)
-        # could possibly do something like this instead.
-        # for now we use a custom sort string and handle it in EndpointList class
-        # ('bmd_model__model__output__-BMD', 'BMD'),
-        # ('bmd_model__model__output__-BMDL', 'BMDLS'),
-        ("customBMD", "BMD"),
-        ("customBMDLS", "BMDLS"),
+        ("bmd", "BMD"),
+        ("bmdl", "BMDLS"),
         ("effect_subtype", "effect subtype"),
         ("animal_group__experiment__chemical", "chemical"),
     ]
@@ -764,9 +761,9 @@ class EndpointFilterForm(forms.Form):
     )
 
     sex = forms.MultipleChoiceField(
-        choices=models.AnimalGroup.SEX_CHOICES,
+        choices=constants.Sex.choices,
         widget=forms.CheckboxSelectMultiple,
-        initial=[c[0] for c in models.AnimalGroup.SEX_CHOICES],
+        initial=constants.Sex.values,
         required=False,
     )
 
@@ -857,61 +854,42 @@ class EndpointFilterForm(forms.Form):
 
     def get_query(self):
 
-        studies = self.cleaned_data.get("studies")
-        chemical = self.cleaned_data.get("chemical")
-        cas = self.cleaned_data.get("cas")
-        lifestage_exposed = self.cleaned_data.get("lifestage_exposed")
-        lifestage_assessed = self.cleaned_data.get("lifestage_assessed")
-        species = self.cleaned_data.get("species")
-        strain = self.cleaned_data.get("strain")
-        sex = self.cleaned_data.get("sex")
-        data_extracted = self.cleaned_data.get("data_extracted")
-        name = self.cleaned_data.get("name")
-        system = self.cleaned_data.get("system")
-        organ = self.cleaned_data.get("organ")
-        effect = self.cleaned_data.get("effect")
-        effect_subtype = self.cleaned_data.get("effect_subtype")
-        NOEL = self.cleaned_data.get("NOEL")
-        LOEL = self.cleaned_data.get("LOEL")
-        tags = self.cleaned_data.get("tags")
-        dose_units = self.cleaned_data.get("dose_units")
-
         query = Q()
-        if studies:
+        if studies := self.cleaned_data.get("studies"):
             query &= Q(animal_group__experiment__study__in=studies)
-        if chemical:
+        if chemical := self.cleaned_data.get("chemical"):
             query &= Q(animal_group__experiment__chemical__icontains=chemical)
-        if cas:
+        if cas := self.cleaned_data.get("cas"):
             query &= Q(animal_group__experiment__cas__icontains=cas)
-        if lifestage_exposed:
+        if lifestage_exposed := self.cleaned_data.get("lifestage_exposed"):
             query &= Q(animal_group__lifestage_exposed__icontains=lifestage_exposed)
-        if lifestage_assessed:
+        if lifestage_assessed := self.cleaned_data.get("lifestage_assessed"):
             query &= Q(animal_group__lifestage_assessed__icontains=lifestage_assessed)
-        if species:
+        if species := self.cleaned_data.get("species"):
             query &= Q(animal_group__species=species)
-        if strain:
+        if strain := self.cleaned_data.get("strain"):
             query &= Q(animal_group__strain__name__icontains=strain.name)
-        if sex:
+        if sex := self.cleaned_data.get("sex"):
             query &= Q(animal_group__sex__in=sex)
-        if data_extracted:
+        if data_extracted := self.cleaned_data.get("data_extracted"):
             query &= Q(data_extracted=data_extracted == "True")
-        if name:
+        if name := self.cleaned_data.get("name"):
             query &= Q(name__icontains=name)
-        if system:
+        if system := self.cleaned_data.get("system"):
             query &= Q(system__icontains=system)
-        if organ:
+        if organ := self.cleaned_data.get("organ"):
             query &= Q(organ__icontains=organ)
-        if effect:
+        if effect := self.cleaned_data.get("effect"):
             query &= Q(effect__icontains=effect)
-        if effect_subtype:
+        if effect_subtype := self.cleaned_data.get("effect_subtype"):
             query &= Q(effect_subtype__icontains=effect_subtype)
-        if NOEL:
+        if NOEL := self.cleaned_data.get("NOEL"):
             query &= Q(NOEL__icontains=NOEL)
-        if LOEL:
+        if LOEL := self.cleaned_data.get("LOEL"):
             query &= Q(LOEL__icontains=LOEL)
-        if tags:
+        if tags := self.cleaned_data.get("tags"):
             query &= Q(effects__name__icontains=tags)
-        if dose_units:
+        if dose_units := self.cleaned_data.get("dose_units"):
             query &= Q(animal_group__dosing_regime__doses__dose_units=dose_units)
         return query
 

@@ -1,7 +1,6 @@
 import json
 import logging
 import math
-from enum import IntEnum
 from typing import Dict, List, Set, Tuple
 
 import django
@@ -88,16 +87,6 @@ class BaseManager(models.Manager):
         """
         valid_ids = self.valid_ids(ids, **kwargs)
         return set(ids) - valid_ids
-
-
-class IntChoiceEnum(IntEnum):
-    @classmethod
-    def choices(cls):
-        return [(key.value, key.name) for key in cls]
-
-    @classmethod
-    def as_dict(cls) -> Dict:
-        return {key.value: key.name for key in cls}
 
 
 @property
@@ -340,55 +329,74 @@ class AssessmentRootMixin:
         return depth
 
     @classmethod
-    def copy_tags(cls, copy_to_assessment, copy_from_assessment) -> Dict[int, int]:
-        # delete existing tags for this assessment
-        old_root = cls.get_assessment_root(copy_to_assessment.pk)
-        old_root.delete()
+    def add_slugs_to_tagtree(cls, tree):
+        """Recursively add slugs to a tree if one is missing at any level."""
 
-        # copy tags from alternative assessment, renaming root-tag
-        root = cls.get_assessment_root(copy_from_assessment.pk)
-        tags = cls.dump_bulk(root)
-        assert "name" in tags[0]["data"]
-        tags[0]["data"]["name"] = cls.get_assessment_root_name(copy_to_assessment.pk)
-        if "slug" in tags[0]["data"]:
-            tags[0]["data"]["slug"] = cls.get_assessment_root_name(copy_to_assessment.pk)
+        def _add_slugs(item):
+            if not item["data"].get("slug"):
+                item["data"]["slug"] = default_slugify(item["data"]["name"])
+            for child in item.get("children", []):
+                _add_slugs(child)
 
-        # insert as new taglist
-        cls.load_bulk(tags, parent=None, keep_ids=False)
-        cls.clear_cache(copy_to_assessment.pk)
+        for item in tree:
+            _add_slugs(item)
 
-        # return mapping of old to new
-        def get_tag_ids(taglist: List) -> Tuple[List[int], List[str]]:
-            """
-            Return a list of tag-ids and tag-names to map from old tag to new tag.
-            Args:
-                taglist (List): A `dump_bulk` ordered list of tags
-            Returns:
-                Tuple[List[int], List[str]]: A list of id and name for all tags
-            """
-            tag_ids = []
-            tag_names = []
+    @classmethod
+    @transaction.atomic
+    def replace_tree(cls, assessment_id: int, tagtree: List[Dict]) -> List[Dict]:
+        """
+        Replaces the tag tree for an assessment; this also removes reference/tag associations.
 
-            def append_child(node):
-                # recursively append id and name to lists
-                tag_ids.append(node["id"])
-                tag_names.append(node["data"]["name"])
-                if "children" in node:
-                    for child in node["children"]:
-                        append_child(child)
+        Args:
+            assessment_id (int): assessment id to operate on
+            tagtree (List[Dict]): the user-supplied tags. This method will create the "assessment-<id>"
+                                    top parent tag and should NOT be included in the supplied argument.
 
-            append_child(taglist[0])
+        Returns:
+            List[Dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
+        """
+        cls.add_slugs_to_tagtree(tagtree)
 
-            return tag_ids, tag_names
+        root_node = cls.get_assessment_root(assessment_id)
+        root_name = cls.get_assessment_root_name(assessment_id)
+        complete_tree = [{"data": {"name": root_name, "slug": root_name}, "children": tagtree}]
 
-        # return a mapping of old tag id to new tag id
-        old_taglist = cls.dump_bulk(cls.get_assessment_root(copy_from_assessment.pk))
-        new_taglist = cls.dump_bulk(cls.get_assessment_root(copy_to_assessment.pk))
-        old_ids, old_names = get_tag_ids(old_taglist)
-        new_ids, new_names = get_tag_ids(new_taglist)
-        assert old_names[0] != new_names[0]  # root id should change
-        assert old_names[1:] == new_names[1:]  # everything else should be the same
-        return {old_id: new_id for old_id, new_id in zip(old_ids, new_ids)}
+        root_node.delete()
+        cls.load_bulk(complete_tree, parent=None, keep_ids=False)
+        cls.clear_cache(assessment_id)
+        return cls.get_all_tags(assessment_id, json_encode=False)
+
+    @classmethod
+    @transaction.atomic
+    def copy_tags(cls, src_assessment: int, dest_assessment: int) -> Dict[int, int]:
+        rt = cls.get_assessment_root(src_assessment)
+        tree = rt.dump_bulk(rt, keep_ids=True)
+        source_tags = tree[0].get("children", [])
+        updated_tree = cls.replace_tree(dest_assessment, source_tags)
+        return cls.build_tree_mapping(tree, updated_tree)
+
+    @classmethod
+    def build_tree_mapping(cls, src: List[Dict], dest: List[Dict]) -> Dict:
+        """Map tags IDs from a source tree to destination tree; assumes trees are equal
+
+        Args:
+            src (List[Dict]): A tree export from dump_bulk
+            dest (List[Dict]): A tree export from dump_bulk
+
+        Returns:
+            Dict[int, int]: id key mapping from src to dest
+        """
+        mapping = {}
+
+        def _match_nodes(_src: List[Dict], _dest: List[Dict]):
+            for idx, src_node in enumerate(_src):
+                dest_node = _dest[idx]
+                mapping[src_node["id"]] = dest_node["id"]
+                if "children" in src_node:
+                    _match_nodes(src_node.get("children", []), dest_node.get("children", []))
+
+        _match_nodes(src, dest)
+        return mapping
 
     def get_assessment_id(self) -> int:
         name = self.name if self.is_root() else self.get_ancestors()[0].name

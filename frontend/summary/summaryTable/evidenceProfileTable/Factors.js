@@ -87,13 +87,12 @@ const increaseFactors = [
     FactorsCell = observer(props => {
         /*
         Users provide descriptive text in html using a wysiwyg editor. We update the text provided
-        to inject the header-text if available, as well as the help-text popup, if available. We
-        assume that the text starts and ends with <p> tags which are required for our regular
-        expressions for content insertion.
+        to inject the header-text if available, as well as the help-text popup, if available.
         */
         const {content} = props,
             _factors = increaseFactors.concat(decreaseFactors),
-            injectText = (block, injectionText) => block.replace(/^<p>/gm, `<p>${injectionText}`),
+            injectText = (block, injectionText) =>
+                h.addOuterTag(block, "p").replace(/^<p>/gm, `<p>${injectionText}`),
             injectPopup = (block, factorType, factor) => {
                 if (h.hasInnerText(factor.long_description)) {
                     // popup is designed to be the same as the HelpTextPopup component.
@@ -104,7 +103,7 @@ const increaseFactors = [
                             data-toggle="popover"
                             title="${factorType.label}"
                             data-content="${_.escape(factor.long_description)}"></i>`;
-                    block = block.replace(/<\/p>$/gm, `${popup}</p>`);
+                    block = h.addOuterTag(block, "p").replace(/<\/p>$/gm, `${popup}</p>`);
                 }
                 return block;
             };

@@ -12,23 +12,16 @@
             </button>
         </div>
         <div id="EndpointForm" class="collapse">
-            <div class="card-body container-fluid">
+            <div class="card-body">
                 {% crispy form %}
             </div>
         </div>
     </div>
-    <div id="endpointTable"></div>
+    <div id="main"></div>
     {% include "includes/paginator.html" %}
 {% endblock content %}
 
 {% block extrajs %}
     {{ form.media }}
     {{ config|json_script:"config" }}
-    <script type="text/javascript">
-        window.app.startup("epimetaStartup", function(app){
-            const data = window.app.getConfig(),
-                tbl = new app.MetaResultListTable(data.items);
-            $("#endpointTable").html(tbl.buildTable());
-        });
-    </script>
 {% endblock %}

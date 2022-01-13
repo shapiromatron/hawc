@@ -12,8 +12,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.middleware.csrf import get_token
 from django.shortcuts import HttpResponse, get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -23,6 +25,8 @@ from django.views.generic import DetailView, FormView, ListView, TemplateView, V
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
+from ..common.forms import DownloadPlotForm
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -39,7 +43,7 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
-from . import forms, models, serializers, tasks
+from . import constants, forms, models, serializers
 
 logger = logging.getLogger(__name__)
 
@@ -202,9 +206,9 @@ class About(TemplateView):
 
     def get_rob_name(self):
         if settings.HAWC_FLAVOR == "PRIME":
-            return models.ROB_NAME_CHOICES_ROB_TEXT
+            return constants.RobName.ROB.label
         elif settings.HAWC_FLAVOR == "EPA":
-            return models.ROB_NAME_CHOICES_SE_TEXT
+            return constants.RobName.SE.label
         else:
             raise ValueError("Unknown HAWC flavor")
 
@@ -272,6 +276,20 @@ class Error500(TemplateView):
     template_name = "500.html"
 
 
+class Error401Response(TemplateResponse):
+    status_code = 401  # Unauthorized
+
+
+class Error401(TemplateView):
+    response_class = Error401Response
+    template_name = "401.html"
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class Swagger(TemplateView):
+    template_name = "swagger.html"
+
+
 # Assessment Object
 class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
@@ -289,8 +307,16 @@ class AssessmentList(LoginRequiredMixin, ListView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class AssessmentFullList(LoginRequiredMixin, ListView):
+class AssessmentFullList(ListView):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -300,17 +326,20 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
             )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context["form"] = self.form
         return context
 
 
 class AssessmentPublicList(ListView):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
-        dtxsid = self.request.GET.get("dtxsid")
-        if dtxsid:
-            qs = qs.filter(dtxsids=dtxsid)
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        qs = qs.distinct().order_by(self.form.get_order_by())
         return qs
 
     def get_context_data(self, **kwargs):
@@ -328,6 +357,7 @@ class AssessmentPublicList(ListView):
             team; details on the objectives and methodology applied are described in each assessment.
             Data can also be downloaded for each individual assessment.
         """
+        context["form"] = self.form
         return context
 
 
@@ -370,6 +400,7 @@ class AssessmentRead(BaseDetail):
         context["dtxsids"] = json.dumps(
             serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
         )
+        context["internal_communications"] = self.object.get_communications()
         context["datasets"] = (
             context["object"].datasets.all()
             if context["obj_perms"]["edit"]
@@ -597,6 +628,18 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="textCleanupStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
+                ),
+                csrf=get_token(self.request),
+            ),
+        )
+
 
 # Assorted functionality
 class CloseWindow(TemplateView):
@@ -620,42 +663,16 @@ class UpdateSession(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class DownloadPlot(FormView):
+    form_class = DownloadPlotForm
+    http_method_names = ["post"]
 
-    http_method_names = [
-        "post",
-    ]
+    def form_invalid(self, form: DownloadPlotForm):
+        # intentionally don't provide helpful data
+        return JsonResponse({"valid": False}, status=400)
 
-    EXPORT_CROSSWALK = {
-        "svg": {"fn": tasks.convert_to_svg, "ct": "image/svg+xml"},
-        "png": {"fn": tasks.convert_to_png, "ct": "application/png"},
-        "pdf": {"fn": tasks.convert_to_pdf, "ct": "application/pdf"},
-        "pptx": {
-            "fn": tasks.convert_to_pptx,
-            "ct": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        },
-    }
-
-    def post(self, request, *args, **kwargs):
-
-        # default response
-        response = HttpResponse("<p>An error in processing occurred.</p>")
-
-        # grab input values and create converter object
-        extension = request.POST.get("output", None)
-        svg = request.POST["svg"]
-        url = get_referrer(request, "/<unknown>/")
-        width = int(float(request.POST["width"]) * 5)
-        height = int(float(request.POST["height"]) * 5)
-
-        handler = self.EXPORT_CROSSWALK.get(extension, None)
-        if handler:
-            task = handler["fn"].delay(svg, url, width, height)
-            output = task.get(timeout=90)
-            if output:
-                response = HttpResponse(output, content_type=handler["ct"])
-                response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
-
-        return response
+    def form_valid(self, form: DownloadPlotForm):
+        url = get_referrer(self.request, "/<unknown>/")
+        return form.process(url)
 
 
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
@@ -665,6 +682,25 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="riskofbiasStartup",
+            page="ScoreCleanupStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
+                ),
+                items=dict(
+                    url=reverse("riskofbias:api:metric_scores-list"),
+                    patchUrl=reverse("riskofbias:api:score-cleanup-list"),
+                ),
+                studyTypes=dict(url=reverse("study:api:study-types")),
+                csrf=get_token(self.request),
+                host=f"//{self.request.get_host()}",
+            ),
+        )
 
 
 @method_decorator(staff_member_required, name="dispatch")

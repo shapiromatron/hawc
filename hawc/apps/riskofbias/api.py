@@ -59,7 +59,9 @@ class RiskOfBiasAssessmentViewset(
         self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}"
+            self.get_queryset().none(),
+            filename=f"{self.assessment}-{rob_name}",
+            assessment_id=self.assessment.id,
         )
 
         return Response(exporter.build_export())
@@ -70,7 +72,9 @@ class RiskOfBiasAssessmentViewset(
         self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}-complete"
+            self.get_queryset().none(),
+            filename=f"{self.assessment}-{rob_name}-complete",
+            assessment_id=self.assessment.id,
         )
         return Response(exporter.build_export())
 
@@ -81,7 +85,7 @@ class RiskOfBiasAssessmentViewset(
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
-    @action(detail=True, methods=("get",), url_path="settings")
+    @action(detail=True, url_path="settings")
     def rob_settings(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
@@ -151,7 +155,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RiskOfBias(viewsets.ModelViewSet):
+class RiskOfBias(AssessmentEditViewset):
     assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination

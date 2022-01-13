@@ -177,9 +177,7 @@
         "url": "/ani/animal-group/3/"
       },
       "assessment": 2,
-      "bmd": null,
-      "bmd_notes": "",
-      "bmd_url": "",
+      "bmds": [],
       "confidence_interval": null,
       "created": "2020-05-08T12:47:49.464004-05:00",
       "data_extracted": true,
@@ -525,9 +523,7 @@
         "url": "/ani/animal-group/3/"
       },
       "assessment": 2,
-      "bmd": null,
-      "bmd_notes": "",
-      "bmd_url": "",
+      "bmds": [],
       "confidence_interval": null,
       "created": "2020-07-06T14:45:07.271513-05:00",
       "data_extracted": true,
@@ -868,100 +864,105 @@
         "url": "/ani/animal-group/3/"
       },
       "assessment": 2,
-      "bmd": {
-        "bmr_id": 0,
-        "created": "2020-11-27T23:35:09.127297-06:00",
-        "date_executed": "2020-11-27T23:35:14.130064-06:00",
-        "dose_units": 1,
-        "execution_error": false,
-        "id": 8,
-        "last_updated": "2020-11-27T23:35:14.130216-06:00",
-        "model_id": 0,
-        "name": "Logistic",
-        "outfile": "\n\n ==================================================================== \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input Data File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting File:  C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov 28 00:35:10 2020\n ==================================================================== \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\n\n   Dependent variable = Incidence\n   Independent variable = Dose\n   Slope parameter is not restricted\n\n   Total number of observations = 5\n   Total number of records with missing values = 0\n   Maximum number of iterations = 500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter Convergence has been set to: 1e-008\n\n\n\n                  Default Initial Parameter Values  \n                     background =            0   Specified\n                      intercept =     -1.92753\n                          slope =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter Estimates\n\n           ( *** The model parameter(s)  -background   \n                 have been estimated at a boundary point, or have been specified by the user,\n                 and do not appear in the correlation matrix )\n\n              intercept        slope\n\n intercept            1        -0.64\n\n     slope        -0.64            1\n\n\n\n                                 Parameter Estimates\n\n                                                         95.0% Wald Confidence Interval\n       Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit\n      intercept         -2.08369         0.415186            -2.89744            -1.26994\n          slope       0.00195426        0.0006745          0.00063226          0.00327625\n\n\n\n                        Analysis of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted model        -31.9271         2       1.63842      3          0.6507\n  Reduced model        -36.1015         1       9.98719      4         0.04064\n\n           AIC:         67.8542\n\n\n                                  Goodness  of  Fit \n                                                                 Scaled\n     Dose     Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n    0.0000     0.1107         1.660     1.000      15.000       -0.543\n    1.0000     0.1109         1.663     1.000      15.000       -0.545\n   10.0000     0.1126         1.689     3.000      15.000        1.070\n  100.0000     0.1314         1.972     2.000      15.000        0.022\n 1000.0000     0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74      d.f. = 3        P-value = 0.6283\n\n\n   Benchmark Dose Computation\n\nSpecified effect =            0.1\n\nRisk Type        =      Extra risk \n\nConfidence level =           0.95\n\n             BMD =        355.654\n\n            BMDL =        238.329\n\n            BMDU =        667.165\n\n",
-        "output": {
-          "AIC": 67.8542,
-          "BMD": 355.654,
-          "BMDL": 238.329,
-          "BMDU": 667.165,
-          "CSF": -999,
-          "Chi2": 1.74,
-          "df": 3.0,
-          "execution_duration": 4.622659,
-          "execution_end_time": "2020-11-27T23:35:14.115467",
-          "execution_start_time": "2020-11-27T23:35:09.492808",
-          "fit_dose": [
-            0.0,
-            1.0,
-            10.0,
-            100.0,
-            1000.0
-          ],
-          "fit_est_prob": [
-            0.1107,
-            0.1109,
-            0.1126,
-            0.1314,
-            0.4677
-          ],
-          "fit_estimated": [
-            1.66,
-            1.663,
-            1.689,
-            1.972,
-            7.015
-          ],
-          "fit_observed": [
-            1.0,
-            1.0,
-            3.0,
-            2.0,
-            7.0
-          ],
-          "fit_residuals": [
-            -0.543,
-            -0.545,
-            1.07,
-            0.022,
-            -0.008
-          ],
-          "fit_size": [
-            15.0,
-            15.0,
-            15.0,
-            15.0,
-            15.0
-          ],
-          "model_date": "3/20/2017",
-          "model_name": "Logistic",
-          "model_version": 2.15,
-          "p_value4": 0.6283,
-          "parameters": {
-            "intercept": {
-              "95_high_limit": -1.26994,
-              "95_low_limit": -2.89744,
-              "estimate": -2.08369,
-              "stdev": 0.415186
+      "bmds": [
+        {
+          "dose_units_id": 1,
+          "model": {
+            "bmr_id": 0,
+            "created": "2020-11-27T23:35:09.127297-06:00",
+            "date_executed": "2020-11-27T23:35:14.130064-06:00",
+            "dose_units": 1,
+            "execution_error": false,
+            "id": 8,
+            "last_updated": "2020-11-27T23:35:14.130216-06:00",
+            "model_id": 0,
+            "name": "Logistic",
+            "outfile": "\n\n ==================================================================== \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input Data File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting File:  C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov 28 00:35:10 2020\n ==================================================================== \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\n\n   Dependent variable = Incidence\n   Independent variable = Dose\n   Slope parameter is not restricted\n\n   Total number of observations = 5\n   Total number of records with missing values = 0\n   Maximum number of iterations = 500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter Convergence has been set to: 1e-008\n\n\n\n                  Default Initial Parameter Values  \n                     background =            0   Specified\n                      intercept =     -1.92753\n                          slope =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter Estimates\n\n           ( *** The model parameter(s)  -background   \n                 have been estimated at a boundary point, or have been specified by the user,\n                 and do not appear in the correlation matrix )\n\n              intercept        slope\n\n intercept            1        -0.64\n\n     slope        -0.64            1\n\n\n\n                                 Parameter Estimates\n\n                                                         95.0% Wald Confidence Interval\n       Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit\n      intercept         -2.08369         0.415186            -2.89744            -1.26994\n          slope       0.00195426        0.0006745          0.00063226          0.00327625\n\n\n\n                        Analysis of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted model        -31.9271         2       1.63842      3          0.6507\n  Reduced model        -36.1015         1       9.98719      4         0.04064\n\n           AIC:         67.8542\n\n\n                                  Goodness  of  Fit \n                                                                 Scaled\n     Dose     Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n    0.0000     0.1107         1.660     1.000      15.000       -0.543\n    1.0000     0.1109         1.663     1.000      15.000       -0.545\n   10.0000     0.1126         1.689     3.000      15.000        1.070\n  100.0000     0.1314         1.972     2.000      15.000        0.022\n 1000.0000     0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74      d.f. = 3        P-value = 0.6283\n\n\n   Benchmark Dose Computation\n\nSpecified effect =            0.1\n\nRisk Type        =      Extra risk \n\nConfidence level =           0.95\n\n             BMD =        355.654\n\n            BMDL =        238.329\n\n            BMDU =        667.165\n\n",
+            "output": {
+              "AIC": 67.8542,
+              "BMD": 355.654,
+              "BMDL": 238.329,
+              "BMDU": 667.165,
+              "CSF": -999,
+              "Chi2": 1.74,
+              "df": 3.0,
+              "execution_duration": 4.622659,
+              "execution_end_time": "2020-11-27T23:35:14.115467",
+              "execution_start_time": "2020-11-27T23:35:09.492808",
+              "fit_dose": [
+                0.0,
+                1.0,
+                10.0,
+                100.0,
+                1000.0
+              ],
+              "fit_est_prob": [
+                0.1107,
+                0.1109,
+                0.1126,
+                0.1314,
+                0.4677
+              ],
+              "fit_estimated": [
+                1.66,
+                1.663,
+                1.689,
+                1.972,
+                7.015
+              ],
+              "fit_observed": [
+                1.0,
+                1.0,
+                3.0,
+                2.0,
+                7.0
+              ],
+              "fit_residuals": [
+                -0.543,
+                -0.545,
+                1.07,
+                0.022,
+                -0.008
+              ],
+              "fit_size": [
+                15.0,
+                15.0,
+                15.0,
+                15.0,
+                15.0
+              ],
+              "model_date": "3/20/2017",
+              "model_name": "Logistic",
+              "model_version": 2.15,
+              "p_value4": 0.6283,
+              "parameters": {
+                "intercept": {
+                  "95_high_limit": -1.26994,
+                  "95_low_limit": -2.89744,
+                  "estimate": -2.08369,
+                  "stdev": 0.415186
+                },
+                "slope": {
+                  "95_high_limit": 0.00327625,
+                  "95_low_limit": 0.00063226,
+                  "estimate": 0.00195426,
+                  "stdev": 0.0006745
+                }
+              },
+              "residual_of_interest": 0.022,
+              "warnings": []
             },
-            "slope": {
-              "95_high_limit": 0.00327625,
-              "95_low_limit": 0.00063226,
-              "estimate": 0.00195426,
-              "stdev": 0.0006745
-            }
+            "overrides": {
+              "bmr": 0.1,
+              "bmr_type": 0,
+              "confidence_level": 0.95
+            },
+            "url": "/bmd/session/2/"
           },
-          "residual_of_interest": 0.022,
-          "warnings": []
-        },
-        "overrides": {
-          "bmr": 0.1,
-          "bmr_type": 0,
-          "confidence_level": 0.95
-        },
-        "url": "/bmd/session/2/"
-      },
-      "bmd_notes": "Selected model notes.",
-      "bmd_url": "",
+          "notes": "Selected model notes.",
+          "session_url": "/bmd/session/2/"
+        }
+      ],
       "confidence_interval": null,
       "created": "2020-11-27T21:16:20.324080-06:00",
       "data_extracted": true,

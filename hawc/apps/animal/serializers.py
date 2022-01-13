@@ -12,7 +12,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
 from ..study.serializers import StudySerializer
-from ..vocab.models import VocabularyTermType
+from ..vocab.constants import VocabularyTermType
 from . import forms, models
 
 
@@ -284,17 +284,24 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.get_incidence_summary(ret["data_type"], ret["groups"])
         models.Endpoint.setMaximumPercentControlChange(ret)
 
-        ret["bmd"] = None
-        ret["bmd_notes"] = ""
-        ret["bmd_url"] = ""
-        selected_model = instance.get_selected_bmd_model()
-        if selected_model:
-            ret["bmd_notes"] = selected_model.notes
-            if selected_model.model_id is not None:
-                ret["bmd"] = ModelSerializer().to_representation(selected_model.model)
-            else:
-                ret["bmd_url"] = instance.bmd_sessions.latest().get_absolute_url()
-
+        selected_models = instance.bmd_models.all()
+        bmds = []
+        if selected_models.count() > 0:
+            for sm in selected_models:
+                model_data = ModelSerializer().to_representation(sm.model) if sm.model_id else None
+                bmds.append(
+                    {
+                        "dose_units_id": sm.dose_units_id,
+                        "notes": sm.notes,
+                        "model": model_data,
+                        "session_url": model_data["url"]
+                        if model_data
+                        else instance.bmd_sessions.filter(dose_units_id=sm.dose_units_id)
+                        .latest()
+                        .get_absolute_url(),
+                    }
+                )
+        ret["bmds"] = bmds
         return ret
 
     def _validate_term_and_text(self, data, term_field: str, text_field: str, term_type_str: str):
@@ -303,7 +310,6 @@ class EndpointSerializer(serializers.ModelSerializer):
         """
 
         term = data.get(term_field)
-        text = data.get(text_field)
         if term is None:
             return
 
@@ -320,12 +326,6 @@ class EndpointSerializer(serializers.ModelSerializer):
         if term.type != term_type:
             raise serializers.ValidationError(
                 {term_field: f"Got term type '{term.type}', expected type '{term_type}'."}
-            )
-
-        # Term overrides its non-term counterpart, so non-term cannot be set at the same time
-        if term and text:
-            raise serializers.ValidationError(
-                {term_field: f"'{text_field}' and '{text_field}_term' are mutually exclusive."}
             )
 
         # Save the non-term equivalent

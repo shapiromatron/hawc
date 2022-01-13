@@ -477,6 +477,12 @@
     date_joined: 2020-01-25 14:23:16.175169+00:00
     groups: []
     user_permissions: []
+- model: authtoken.token
+  pk: cef32b9abcbe1a6e9c8460099403e9cd77e12c79
+  fields:
+    user:
+    - admin@hawcproject.org
+    created: 2045-01-01 12:00:00.123456+00:00
 - model: myuser.userprofile
   pk: 1
   fields:
@@ -3622,6 +3628,7 @@
   pk: 3
   fields:
     endpoint: 8
+    dose_units: 1
     model: 8
     notes: Selected model notes.
     created: 2020-11-28 05:35:28.734847+00:00
@@ -4542,6 +4549,20 @@
     lower_range: null
     upper_range: null
     description: (made-up)
+- model: epi.groupnumericaldescriptions
+  pk: 1
+  fields:
+    group: 1
+    description: Description
+    mean: null
+    mean_type: 1
+    is_calculated: false
+    variance: null
+    variance_type: 0
+    lower: null
+    lower_type: 0
+    upper: null
+    upper_type: 0
 - model: epi.resultmetric
   pk: 1
   fields:

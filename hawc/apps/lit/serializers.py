@@ -18,7 +18,8 @@ from rest_framework.exceptions import ParseError
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
-from . import constants, forms, models, tasks
+from ..common.serializers import validate_jsonschema
+from . import constants, exports, forms, models, tasks
 
 logger = logging.getLogger(__name__)
 
@@ -52,20 +53,20 @@ class SearchSerializer(serializers.ModelSerializer):
         if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
             raise serializers.ValidationError({"slug": ASSESSMENT_UNIQUE_MESSAGE})
 
-        if data["search_type"] != "i":
+        if data["search_type"] != constants.SearchType.IMPORT:
             raise serializers.ValidationError("API currently only supports imports")
 
-        if data["source"] != constants.HERO:
+        if data["source"] != constants.ReferenceDatabase.HERO:
             raise serializers.ValidationError("API currently only supports HERO imports")
 
-        if data["search_type"] == "i":
+        if data["search_type"] == constants.SearchType.IMPORT:
             ids = forms.ImportForm.validate_import_search_string(data["search_string"])
             self.validate_import_ids_exist(data, ids)
 
         return data
 
     def validate_import_ids_exist(self, data, ids: List[int]):
-        if data["source"] == constants.HERO:
+        if data["source"] == constants.ReferenceDatabase.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
         else:
@@ -182,8 +183,52 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
         fields = cleanup_fields + ("id",)
 
 
+class ReferenceTreeSerializer(serializers.Serializer):
+    tree = serializers.JSONField()
+
+    tree_schema = {
+        "$id": "tree",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$defs": {
+            "tagNode": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["data"],
+                "properties": {
+                    "id": {"type": "integer"},
+                    "data": {
+                        "type": "object",
+                        "required": ["name"],
+                        "additionalProperties": False,
+                        "properties": {
+                            "name": {"type": "string", "minLength": 1, "maxLength": 128},
+                            "slug": {"type": "string", "pattern": r"^[-a-zA-Z0-9_]+$"},
+                        },
+                    },
+                    "children": {"type": "array", "items": {"$ref": "#/$defs/tagNode"}},
+                },
+            }
+        },
+        "type": "array",
+        "items": {"$ref": "#/$defs/tagNode"},
+    }
+
+    def validate_tree(self, value):
+        return validate_jsonschema(value, self.tree_schema)
+
+    def update(self):
+        assessment_id = self.context["assessment"].id
+        models.ReferenceFilterTag.replace_tree(assessment_id, self.validated_data["tree"])
+
+    def to_representation(self, instance):
+        assessment_id = self.context["assessment"].id
+        root = models.ReferenceFilterTag.get_assessment_root(assessment_id)
+        tree = root.dump_bulk(root, keep_ids=True)
+        return {"tree": tree[0].get("children", [])}
+
+
 class BulkReferenceTagSerializer(serializers.Serializer):
-    operation = serializers.ChoiceField(choices=["append", "replace"], required=True)
+    operation = serializers.ChoiceField(choices=["append", "replace", "remove"], required=True)
     csv = serializers.CharField(required=True)
     dry_run = serializers.BooleanField(default=False)
 
@@ -267,9 +312,18 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             )
 
         if operation == "replace":
-            tags_to_delete = models.ReferenceTags.objects.assessment_qs(assessment_id)
-            logger.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
-            tags_to_delete.delete()
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
+
+        if operation == "remove":
+            query = Q()
+            for row in self.df.itertuples(index=False):
+                query |= Q(tag_id=row.tag_id, content_object_id=row.reference_id)
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id).filter(query)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
+            return
 
         new_tags = [
             models.ReferenceTags(tag_id=row.tag_id, content_object_id=row.reference_id)
@@ -318,6 +372,9 @@ class ReferenceSerializer(serializers.ModelSerializer):
         # updates the reference tags
         if "tags" in validated_data:
             instance.tags.set(validated_data.pop("tags"))
+        # updates the searches
+        if "searches" in validated_data:
+            instance.searches.set(validated_data.pop("searches"))
         # updates the rest of the fields
         for attr, value in list(validated_data.items()):
             setattr(instance, attr, value)
@@ -370,7 +427,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         existing_hero_ids = [
             int(id_)
             for id_ in models.Identifiers.objects.filter(
-                references__in=references_diff, database=constants.HERO
+                references__in=references_diff, database=constants.ReferenceDatabase.HERO
             ).values_list("unique_id", flat=True)
         ]
         hero_counts = Counter(itertools.chain(existing_hero_ids, self.hero_ids))
@@ -406,3 +463,20 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         # run chained tasks
         return chain(t1, t2, t3)()
+
+
+class ReferenceTagExportSerializer(serializers.Serializer):
+    nested = serializers.ChoiceField(choices=[("t", "true"), ("f", "false")], default="t")
+    exporter = serializers.ChoiceField(
+        choices=[("base", "base"), ("table-builder", "table builder")], default="base"
+    )
+    _exporters = {
+        "base": exports.ReferenceFlatComplete,
+        "table-builder": exports.TableBuilderFormat,
+    }
+
+    def get_exporter(self):
+        return self._exporters[self.validated_data["exporter"]]
+
+    def include_descendants(self):
+        return self.validated_data["nested"] == "t"

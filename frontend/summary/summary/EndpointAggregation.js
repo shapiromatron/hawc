@@ -135,8 +135,8 @@ class EndpointAggregation extends BaseVisual {
                 e._endpoint_detail_td(),
                 e.get_special_dose_text("NOEL"),
                 e.get_special_dose_text("LOEL"),
-                e.get_bmd_special_values("BMD"),
-                e.get_bmd_special_values("BMDL"),
+                e.get_special_bmd_value("BMD"),
+                e.get_special_bmd_value("BMDL"),
             ]).data("endpoint", e);
         });
 

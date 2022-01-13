@@ -5,7 +5,7 @@ from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
-from . import models
+from . import constants, models
 
 
 def get_gen_species_strain_sex(e, withN=False):
@@ -50,19 +50,19 @@ def get_significance_and_direction(data_type, groups):
         return significance_list
 
     if data_type in {
-        models.Endpoint.DATA_TYPE_CONTINUOUS,
-        models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS,
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+        constants.DataType.CONTINUOUS,
+        constants.DataType.PERCENT_DIFFERENCE,
+        constants.DataType.DICHOTOMOUS,
+        constants.DataType.DICHOTOMOUS_CANCER,
     }:
         if data_type in {
-            models.Endpoint.DATA_TYPE_CONTINUOUS,
-            models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
+            constants.DataType.CONTINUOUS,
+            constants.DataType.PERCENT_DIFFERENCE,
         }:
             field = "response"
         elif data_type in {
-            models.Endpoint.DATA_TYPE_DICHOTOMOUS,
-            models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+            constants.DataType.DICHOTOMOUS,
+            constants.DataType.DICHOTOMOUS_CANCER,
         }:
             field = "percent_affected"
         else:
@@ -79,7 +79,7 @@ def get_significance_and_direction(data_type, groups):
                     significance_list.append("Yes - ↓")
             else:
                 significance_list.append("No")
-    elif data_type == models.Endpoint.DATA_TYPE_NOT_REPORTED:
+    elif data_type == constants.DataType.NR:
         for group in groups:
             significance_list.append("?")
     else:
@@ -440,10 +440,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return header
 
     @staticmethod
-    def _get_bmd_values(bmd, preferred_units):
+    def _get_bmd_values(bmds, preferred_units):
         # only return BMD values if they're in the preferred units
-        if bmd and bmd["dose_units"] in preferred_units:
-            return [bmd["output"]["BMD"], bmd["output"]["BMDL"]]
+        for bmd in bmds:
+            if bmd["dose_units_id"] in preferred_units:
+                return [bmd["model"]["output"]["BMD"], bmd["model"]["output"]["BMDL"]]
         return [None, None]
 
     @staticmethod
@@ -565,7 +566,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
 
             # bmd/bmdl information
-            row.extend(self._get_bmd_values(ser["bmd"], preferred_units))
+            row.extend(self._get_bmd_values(ser["bmds"], preferred_units))
 
             row.extend([ser["trend_value"], ser["trend_result"]])
 
