@@ -74,8 +74,17 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_animal_endpoints(self):
         client = HawcClient(self.live_server_url)
+
+        # TODO - fix tests - use different assessment w/ data or investigate?
         response = client.animal.endpoints(self.db_keys.assessment_client)
         assert isinstance(response, list)
+        assert response[0].get("animal_group") is not None
+        assert response[0].get("experiments") is None
+
+        response = client.animal.endpoints(self.db_keys.assessment_client, invert=True)
+        assert isinstance(response, list)
+        assert response[0].get("animal_group") is None
+        assert len(response[0].get("experiments")) > 0
 
     def test_animal_create(self):
         """
@@ -656,6 +665,16 @@ class TestClient(LiveServerTestCase, TestCase):
 
         assert isinstance(rob, dict) and rob["id"] > 0
 
+    def test_riskofbias_metrics(self):
+        client = HawcClient(self.live_server_url)
+        response = client.riskofbias.metrics(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame) and response.shape[0] > 0
+
+    def test_riskofbias_reviews(self):
+        client = HawcClient(self.live_server_url)
+        response = client.riskofbias.reviews(self.db_keys.assessment_final)
+        assert isinstance(response, list) and len(response) > 0
+
     #######################
     # SummaryClient tests #
     #######################
@@ -674,3 +693,8 @@ class TestClient(LiveServerTestCase, TestCase):
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.study.create(self.db_keys.reference_unlinked)
         assert isinstance(response, dict)
+
+    def test_study_list(self):
+        client = HawcClient(self.live_server_url)
+        response = client.study.studies(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame) and response.shape[0] > 0
