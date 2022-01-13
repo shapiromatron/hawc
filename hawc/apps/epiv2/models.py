@@ -45,6 +45,7 @@ class StudyPopulationV2(models.Model):
     sex = models.CharField(
         default=constants.Sex.UNKNOWN, max_length=1, choices=constants.Sex.choices
     )
+    race = models.CharField(max_length=128, blank=True, verbose_name="Population race/ethnicity")
     summary = models.CharField(
         max_length=128,
         verbose_name="Population Summary",
