@@ -1,6 +1,6 @@
 import _ from "lodash";
 import $ from "$";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class BaseVisualForm {
     constructor($el, config) {
@@ -136,9 +136,7 @@ class BaseVisualForm {
         } catch (err) {
             // run anyways
         }
-        this.fields.forEach(function(d) {
-            d.fromSerialized();
-        });
+        this.fields.forEach(d => d.fromSerialized());
     }
 
     buildSettingsForm() {

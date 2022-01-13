@@ -49,7 +49,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
     render($div) {
         this.plot_div = $div;
         this.processData();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "An exposure response array");
         this.add_title();
         this.add_axes();
         this.build_x_label();
@@ -75,15 +75,14 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             default_x_scale = this.default_x_scale,
             lines_data = [],
             points_data = [],
-            dose_units = this.data.endpoints[0].dose_units,
-            egs;
+            dose_units = this.data.endpoints[0].doseUnits.activeUnit;
 
         this.data.endpoints
-            .filter(function(e) {
-                return e.data.groups.length > 0;
-            })
+            .filter(d => d.data.groups.length > 0)
             .forEach(function(e) {
-                egs = e.data.groups;
+                let bmd = e.get_special_bmd_value("BMD"),
+                    bmdl = e.get_special_bmd_value("BMDL"),
+                    egs = e.data.groups;
 
                 // get min/max information
                 min =
@@ -91,9 +90,9 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                         ? Math.min(min, egs[1].dose)
                         : Math.min(min, egs[0].dose);
                 max = Math.max(max, egs[egs.length - 1].dose);
-                if (isFinite(e.get_bmd_special_values("BMDL"))) {
-                    min = Math.min(min, e.get_bmd_special_values("BMDL"));
-                    max = Math.max(max, e.get_bmd_special_values("BMDL"));
+                if (isFinite(bmdl)) {
+                    min = Math.min(min, bmdl);
+                    max = Math.max(max, bmdl);
                 }
 
                 //setup lines information for dose-response line (excluding control)
@@ -116,14 +115,14 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                     var txt = [
                         e.data.animal_group.experiment.study.short_citation,
                         e.data.name,
-                        "Dose: " + v2.dose,
-                        "N: " + v2.n,
+                        `Dose: ${v2.dose}`,
+                        `N: ${v2.n}`,
                     ];
                     if (v2.dose > 0) {
                         if (e.data.data_type == "C") {
-                            txt.push("Mean: " + v2.response, "Stdev: " + v2.stdev);
+                            txt.push(`Mean: ${v2.response}\nStdev: ${v2.stdev}`);
                         } else {
-                            txt.push("Incidence: " + v2.incidence);
+                            txt.push(`Incidence: ${v2.incidence}`);
                         }
                         var coords = {
                             endpoint: e,
@@ -142,18 +141,17 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                     }
                 });
                 // add BMDL
-                if (isFinite(e.get_bmd_special_values("BMDL"))) {
+                if (isFinite(bmdl)) {
                     var txt = [
                         e.data.animal_group.experiment.study.short_citation,
                         e.data.name,
-                        "BMD Model: " + e.data.BMD.outputs.model_name,
-                        "BMD: " + e.data.BMD.outputs.BMD + " (" + e.data.dose_units + ")",
-                        "BMDL: " + e.data.BMD.outputs.BMDL + " (" + e.data.dose_units + ")",
+                        `BMD: ${bmd}`,
+                        `BMDL: ${bmdl}`,
                     ];
 
                     points_data.push({
                         endpoint: e,
-                        x: e.get_bmd_special_values("BMDL"),
+                        x: bmdl,
                         y: e.data.id,
                         classes: "BMDL",
                         text: txt.join("\n"),
@@ -182,7 +180,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             w: plot_width,
             h: plot_height,
             title_str: this.data.title,
-            x_label_text: `Dose (${dose_units})`,
+            x_label_text: `Dose (${dose_units.name})`,
             y_label_text: "Endpoints",
         });
         this.plot_div.css({height: `${container_height}px`});
@@ -229,19 +227,13 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             .selectAll("line")
             .transition()
             .duration(1000)
-            .attr("x1", function(d) {
-                return x(d.x_lower);
-            })
-            .attr("x2", function(d) {
-                return x(d.x_upper);
-            });
+            .attr("x1", d => x(d.x_lower))
+            .attr("x2", d => x(d.x_upper));
 
         this.dots
             .transition()
             .duration(1000)
-            .attr("cx", function(d) {
-                return x(d.x);
-            });
+            .attr("cx", d => x(d.x));
     }
 
     resize_plot_dimensions() {
@@ -266,9 +258,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         });
 
         $.extend(this.y_axis_settings, {
-            domain: this.lines_data.map(function(d) {
-                return d.y;
-            }),
+            domain: this.lines_data.map(d => d.y),
             rangeRound: [0, this.h],
             number_ticks: this.lines_data.length,
             x_translate: 0,
@@ -313,18 +303,10 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             .data(this.lines_data)
             .enter()
             .append("line")
-            .attr("x1", function(d) {
-                return x(d.x_lower);
-            })
-            .attr("y1", function(d) {
-                return y(d.y) + halfway;
-            })
-            .attr("x2", function(d) {
-                return x(d.x_upper);
-            })
-            .attr("y2", function(d) {
-                return y(d.y) + halfway;
-            })
+            .attr("x1", d => x(d.x_lower))
+            .attr("x2", d => x(d.x_upper))
+            .attr("y1", d => y(d.y) + halfway)
+            .attr("y2", d => y(d.y) + halfway)
             .attr("class", "dr_err_bars"); // todo: rename class to more general name
     }
 
@@ -354,25 +336,15 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             .enter()
             .append("circle")
             .attr("r", "7")
-            .attr("class", function(d) {
-                return "dose_points " + d.classes;
-            })
+            .attr("class", d => `dose_points ${d.classes}`)
             .attr("cursor", "pointer")
-            .attr("cx", function(d) {
-                return x(d.x);
-            })
-            .attr("cy", function(d) {
-                return y(d.y) + halfway;
-            })
+            .attr("cx", d => x(d.x))
+            .attr("cy", d => y(d.y) + halfway)
             .style("cursor", "pointer")
-            .on("click", function(v) {
-                v.endpoint.displayAsModal();
-            });
+            .on("click", (event, v) => v.endpoint.displayAsModal());
 
         // add the outer element last
-        this.dots.append("svg:title").text(function(d) {
-            return d.text;
-        });
+        this.dots.append("svg:title").text(d => d.text);
     }
 
     customize_menu() {
@@ -401,11 +373,17 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             items = [addItem("Doses", "dose_points")],
             noel_names = this.data.endpoints[0].data.noel_names;
 
-        if (this.plot_div.find(".NOEL").length > 0)
+        if (this.plot_div.find(".NOEL").length > 0) {
             items.push(addItem(noel_names.noel, "dose_points NOEL"));
-        if (this.plot_div.find(".LOEL").length > 0)
+        }
+
+        if (this.plot_div.find(".LOEL").length > 0) {
             items.push(addItem(noel_names.loel, "dose_points LOEL"));
-        if (this.plot_div.find(".BMDL").length > 0) items.push(addItem("BMDL", "dose_points BMDL"));
+        }
+
+        if (this.plot_div.find(".BMDL").length > 0) {
+            items.push(addItem("BMDL", "dose_points BMDL"));
+        }
 
         this.build_legend({
             items,

@@ -8,35 +8,11 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{object}}
-        <a class="btn btn-primary float-right"
-           href="{{object.get_absolute_url}}">Cancel</a>
-    </h1>
-
-    <div id="bmd"></div>
-
+    <a class="btn btn-primary float-right" href="{{object.get_absolute_url}}">Cancel</a>
+    <h2>{{object}}</h2>
+    <div id="main"></div>
 {% endblock %}
 
-
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-  "editMode": true,
-  "assessment_id": {{ assessment.id }},
-  "bmds_version": "{{object.get_version_display}}",
-  "endpoint_id": {{ object.endpoint_id }},
-  "session_url": "{{ object.get_api_url }}",
-  "execute_url": "{{ object.get_execute_url }}",
-  "execute_status_url": "{{ object.get_execute_status_url }}",
-  "selected_model_url": "{{ object.get_selected_model_url }}",
-  "csrf": "{{ csrf_token }}"
-}
-</script>
-<script type="text/javascript">
-$(document).ready(function(){
-  const el = document.getElementById('bmd'),
-    config = JSON.parse(document.getElementById('config').text);
-  window.app.bmds2Startup(el, config);
-});
-</script>
+  {{ config|json_script:"config" }}
 {% endblock %}

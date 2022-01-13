@@ -4,7 +4,7 @@ import {observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import {NULL_VALUE} from "../../summary/constants";
 import {applyRowFilters} from "../../summary/filters";
@@ -30,7 +30,12 @@ class HeatmapDatastore {
         this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.settings = settings;
-        this.dataset = applyRowFilters(dataset, settings.filters, settings.filtersLogic);
+        this.dataset = applyRowFilters(
+            dataset,
+            settings.filters,
+            settings.filtersLogic,
+            settings.filtersQuery
+        );
         this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
@@ -129,8 +134,7 @@ class HeatmapDatastore {
                         return items.sort();
                     }
                     let itemsSet = new Set(items);
-                    items = field.items.map(item => item.id);
-                    items.forEach(item => itemsSet.delete(item));
+                    items = field.items.map(item => item.id).filter(item => itemsSet.delete(item));
                     items.push([...itemsSet].sort());
                     return _.flatten(items);
                 },
@@ -260,7 +264,7 @@ class HeatmapDatastore {
             let validRows = rows.filter(index => {
                 const d = this.dataset[index],
                     nonNull = _.map(fields, field => {
-                        const text = d[field.column] || "",
+                        const text = (d[field.column] || "").toString(),
                             values = field.delimiter ? text.split(field.delimiter) : [text];
                         return _.some(values, d => d.length > 0);
                     });

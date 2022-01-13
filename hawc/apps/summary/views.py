@@ -1,15 +1,18 @@
+import itertools
 import json
 from typing import Dict
 
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.db.models import Q
+from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView
+from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.serializers import to_json
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -19,7 +22,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import forms, models, serializers
+from . import constants, forms, models, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -48,6 +51,11 @@ class SummaryTextList(BaseList):
         rt = self.model.get_assessment_root_node(self.assessment.id)
         return self.model.objects.filter(pk__in=[rt.pk])
 
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTextStartup", data=dict(assessment_id=self.assessment.id, editMode=False)
+        )
+
 
 class SummaryTextModify(BaseCreate):
     # Base view for all Create, Update, Delete GET operations
@@ -66,6 +74,14 @@ class SummaryTextModify(BaseCreate):
             [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
         )
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTextStartup",
+            data=dict(
+                assessment_id=self.assessment.id, editMode=True, csrf=get_token(self.request),
+            ),
+        )
 
 
 # SUMMARY TABLE
@@ -103,6 +119,9 @@ class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
         )
         return context
 
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(app="summaryTableViewStartup", data=dict(table_id=self.object.id))
+
 
 class SummaryTableCreateSelector(BaseCreate):
     success_message = None
@@ -135,19 +154,58 @@ class SummaryTableCreate(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["table_type"] = int(self.kwargs.get("table_type"))
+        kwargs["table_type"] = self.kwargs["table_type"]
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            is_create=True,
-            initial=to_json(serializers.SummaryTableSerializer, context["form"].instance),
-            save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
-            cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
-        )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
+        )
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTableEditStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                is_create=True,
+                initial=serializers.SummaryTableSerializer(context["form"].instance).data,
+                save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
+                cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
+                csrf=get_token(self.request),
+            ),
+        )
+
+
+class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
+    template_name = "summary/copy_selector.html"
+    model = Assessment
+    form_class = forms.SummaryTableCopySelectorForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs["pk"])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(
+            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
+            assessment_id=self.assessment.id,
+            queryset=models.SummaryTable.objects.clonable_queryset(self.request.user).filter(
+                assessment=self.assessment
+            ),
+        )
+        return kwargs
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(form.get_create_url())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Copy existing",
+            [Breadcrumb.from_object(self.assessment), get_table_list_crumb(self.assessment)],
         )
         return context
 
@@ -159,16 +217,23 @@ class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            is_create=False,
-            initial=to_json(serializers.SummaryTableSerializer, self.object),
-            save_url=self.object.get_api_url(),
-            cancel_url=self.object.get_absolute_url(),
-        )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
         )
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="summaryTableEditStartup",
+            data=dict(
+                assessment_id=self.assessment.id,
+                is_create=False,
+                initial=serializers.SummaryTableSerializer(self.object).data,
+                save_url=self.object.get_api_url(),
+                cancel_url=self.object.get_absolute_url(),
+                csrf=get_token(self.request),
+            ),
+        )
 
 
 class SummaryTableDelete(GetSummaryTableMixin, BaseDelete):
@@ -199,13 +264,40 @@ class VisualizationList(BaseList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
+    form_class = forms.VisualFilterForm
+
+    def get_filters(self, perms):
+        query = Q(assessment=self.assessment.id)
+        if not perms["edit"]:
+            query &= Q(published=True)
+        return query
 
     def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment)
+        qs = super().get_queryset()
+        self.perms = super().get_obj_perms()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial, can_edit=self.perms["edit"])
+        filters = self.get_filters(self.perms)
+        if self.form.is_valid():
+            filters &= self.form.get_visual_filters()
+        return qs.filter(filters).distinct()
+
+    def get_datapivotset(self):
+        qs = models.DataPivot.objects.all()
+        filters = self.get_filters(self.perms)
+        if self.form.is_valid():
+            filters &= self.form.get_datapivot_filters()
+        return qs.filter(filters).distinct().select_related("datapivotquery", "datapivotupload")
+
+    def get_item_list(self):
+        items = list(itertools.chain(self.object_list, self.get_datapivotset()))
+        return sorted(items, key=lambda d: d.title.lower())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
+        context["objects"] = self.get_item_list()
+        context["n_objects"] = len(context["objects"])
+        context["form"] = self.form
         return context
 
 
@@ -235,6 +327,11 @@ class VisualizationCreateSelector(BaseDetail):
     breadcrumb_active_name = "Visualization selector"
 
     def get_context_data(self, **kwargs):
+        kwargs.update(
+            action="Create",
+            viz_url_pattern="summary:visualization_create",
+            dp_url_pattern="summary:dp_new-prompt",
+        )
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
@@ -258,13 +355,17 @@ class VisualizationCreate(BaseCreate):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["visual_type"] = int(self.kwargs.get("visual_type"))
+        if kwargs["initial"]:
+            kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
+            kwargs["instance"].pk = None
+            self.instance = kwargs["instance"]
         return kwargs
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
         if visual_type in {
-            models.Visual.LITERATURE_TAGTREE,
-            models.Visual.EXTERNAL_SITE,
+            constants.VisualType.LITERATURE_TAGTREE,
+            constants.VisualType.EXTERNAL_SITE,
         }:
             return "summary/visual_form_django.html"
         else:
@@ -286,10 +387,14 @@ class VisualizationCreate(BaseCreate):
         return context
 
     def get_initial_visual(self, context) -> Dict:
-        instance = self.model()
-        instance.id = instance.FAKE_INITIAL_ID
-        instance.assessment = self.assessment
-        instance.visual_type = context["visual_type"]
+        if context["form"].initial:
+            instance = self.instance
+            instance.id = instance.FAKE_INITIAL_ID
+        else:
+            instance = self.model()
+            instance.id = instance.FAKE_INITIAL_ID
+            instance.assessment = self.assessment
+            instance.visual_type = context["visual_type"]
         return serializers.VisualSerializer().to_representation(instance)
 
 
@@ -302,7 +407,56 @@ class VisualizationCreateTester(VisualizationCreate):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         response = form.instance.get_editing_dataset(request)
-        return HttpResponse(response, content_type="application/json")
+        return JsonResponse(response)
+
+
+class VisualizationCopySelector(BaseDetail):
+    model = Assessment
+    template_name = "summary/visual_selector.html"
+    breadcrumb_active_name = "Visualization selector"
+
+    def get_context_data(self, **kwargs):
+        kwargs.update(
+            action="Copy",
+            viz_url_pattern="summary:visualization_copy",
+            dp_url_pattern="summary:dp_copy_selector",
+        )
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
+
+
+class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
+    template_name = "summary/copy_selector.html"
+    model = Assessment
+    form_class = forms.VisualSelectorForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs["pk"])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(
+            assessment_id=self.assessment.id,
+            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
+            queryset=models.Visual.objects.clonable_queryset(self.request.user).filter(
+                visual_type=self.kwargs["visual_type"], assessment__pk=self.assessment.id
+            ),
+        )
+        return kwargs
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(form.get_create_url())
+
+    def get_context_data(self, **kwargs):
+        kwargs["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Copy existing",
+            [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
+        )
+        return super().get_context_data(**kwargs)
 
 
 class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
@@ -318,8 +472,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in {
-            models.Visual.LITERATURE_TAGTREE,
-            models.Visual.EXTERNAL_SITE,
+            constants.VisualType.LITERATURE_TAGTREE,
+            constants.VisualType.EXTERNAL_SITE,
         }:
             return "summary/visual_form_django.html"
         else:
@@ -427,7 +581,7 @@ class DataPivotFileNew(DataPivotNew):
 class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     # Select an existing assessed outcome as a template for a new one
     model = Assessment
-    template_name = "summary/datapivot_copy_selector.html"
+    template_name = "summary/copy_selector.html"
     form_class = forms.DataPivotSelectorForm
 
     def get_assessment(self, request, *args, **kwargs):
@@ -557,3 +711,7 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
         return context
+
+
+class DatasetInteractivity(TemplateView):
+    template_name = "summary/dataset_interactivity.html"

@@ -27,12 +27,12 @@ def update_hero_content(ids: List[int]):
     with transaction.atomic():
         for d in contents.get("success"):
             content = json.dumps(d)
-            Identifiers.objects.filter(unique_id=str(d["HEROID"]), database=constants.HERO).update(
-                content=content
-            )
+            Identifiers.objects.filter(
+                unique_id=str(d["HEROID"]), database=constants.ReferenceDatabase.HERO
+            ).update(content=content)
         ids_str = [str(id) for id in ids]
         Identifiers.objects.filter(
-            unique_id__in=ids_str, database=constants.HERO, content=""
+            unique_id__in=ids_str, database=constants.ReferenceDatabase.HERO, content=""
         ).update(content='{"status": "failed"}')
 
 
@@ -49,7 +49,9 @@ def update_hero_fields(ref_ids: List[int]):
     with transaction.atomic():
         references = Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
         for reference in references:
-            content = reference.identifiers.get(database=constants.HERO).get_content()
+            content = reference.identifiers.get(
+                database=constants.ReferenceDatabase.HERO
+            ).get_content()
             reference.update_from_hero_content(content, save=True)
 
 
@@ -68,7 +70,9 @@ def replace_hero_ids(replace: List[List[int]]):
     ref_ids, new_hero_ids = zip(*replace)
     identifier_map: Dict[int, int] = {
         int(ident.unique_id): ident.id
-        for ident in Identifiers.objects.filter(database=constants.HERO, unique_id__in=new_hero_ids)
+        for ident in Identifiers.objects.filter(
+            database=constants.ReferenceDatabase.HERO, unique_id__in=new_hero_ids
+        )
     }
     if len(identifier_map) != len(new_hero_ids):
         raise ValueError("Identifiers map length != HERO ID length length")
@@ -88,7 +92,7 @@ def replace_hero_ids(replace: List[List[int]]):
             identifier_ids = [
                 ident.id
                 for ident in reference.identifiers.all()
-                if ident.database != constants.HERO
+                if ident.database != constants.ReferenceDatabase.HERO
             ]
             identifier_ids.append(identifier_map[hero_id])
             reference.identifiers.set(identifier_ids)
@@ -102,20 +106,20 @@ def update_pubmed_content(ids: List[int]):
     contents = fetcher.get_content()
     for d in contents:
         content = json.dumps(d)
-        Identifiers.objects.filter(unique_id=str(d["PMID"]), database=constants.PUBMED).update(
-            content=content
-        )
+        Identifiers.objects.filter(
+            unique_id=str(d["PMID"]), database=constants.ReferenceDatabase.PUBMED
+        ).update(content=content)
     ids_str = [str(id) for id in ids]
-    Identifiers.objects.filter(unique_id__in=ids_str, database=constants.PUBMED, content="").update(
-        content='{"status": "failed"}'
-    )
+    Identifiers.objects.filter(
+        unique_id__in=ids_str, database=constants.ReferenceDatabase.PUBMED, content=""
+    ).update(content='{"status": "failed"}')
 
 
 @shared_task
 def fix_pubmed_without_content():
     # Try getting pubmed data without content
     Identifiers = apps.get_model("lit", "identifiers")
-    ids = Identifiers.objects.filter(content="", database=constants.PUBMED)
+    ids = Identifiers.objects.filter(content="", database=constants.ReferenceDatabase.PUBMED)
     num_ids = ids.count()
     logger.info(f"Attempting to update pubmed content for {num_ids} identifiers")
     if num_ids > 0:
@@ -137,11 +141,13 @@ def schedule_topic_model_reruns():
     )
     logger.info(f"Scheduling {qs1.count()} new assessments for topic modeling")
 
-    # if model execution datetime < max(reference.last_updated)
+    # if model execution datetime < max(reference.last_updated), and has minimum references
     qs2 = (
         LiteratureAssessment.objects.filter(topic_tsne_last_refresh__isnull=False)
         .annotate(ref_last_updated=Max("assessment__references__last_updated"))
         .filter(topic_tsne_last_refresh__lte=F("ref_last_updated"))
+        .annotate(num_refs=Count("assessment__references"))
+        .filter(num_refs__gte=LiteratureAssessment.TOPIC_MODEL_MIN_REFERENCES)
     )
     logger.info(f"Scheduling {qs2.count()} assessments for topic modeling refresh")
 

@@ -1,6 +1,6 @@
 - model: sites.site
   fields:
-    domain: 127.0.0.1
+    domain: 127.0.0.1:8000
     name: localhost
 - model: contenttypes.contenttype
   fields:
@@ -462,6 +462,27 @@
     date_joined: 2020-01-25 14:23:16.173584+00:00
     groups: []
     user_permissions: []
+- model: myuser.hawcuser
+  fields:
+    password: md5$jzGYN20VEexO$c1d4bd0bf1280917505a6989338fb37d
+    last_login: 2020-01-25 14:23:16.175169+00:00
+    is_superuser: false
+    email: public@hawcproject.org
+    first_name: ''
+    last_name: ''
+    is_staff: false
+    is_active: true
+    license_v1_accepted: false
+    license_v2_accepted: false
+    date_joined: 2020-01-25 14:23:16.175169+00:00
+    groups: []
+    user_permissions: []
+- model: authtoken.token
+  pk: cef32b9abcbe1a6e9c8460099403e9cd77e12c79
+  fields:
+    user:
+    - admin@hawcproject.org
+    created: 2045-01-01 12:00:00.123456+00:00
 - model: myuser.userprofile
   pk: 1
   fields:
@@ -723,6 +744,17 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+- model: assessment.attachment
+  pk: 3
+  fields:
+    content_type:
+    - assessment
+    - assessment
+    object_id: 3
+    title: demo attachment
+    attachment: attachment/nothing.txt
+    publicly_available: false
+    description: <p>Example missing attachment</p>
 - model: assessment.doseunits
   pk: 1
   fields:
@@ -957,17 +989,47 @@
   fields:
     assessment: 1
     user: null
-    message: Assessment log
+    message: Global assessment log
+    content: {}
+    content_type: null
+    object_id: null
     created: 2020-08-20 03:03:15.442430+00:00
-    last_updated: 2020-08-20 03:03:15.442430+00:00
 - model: assessment.log
   pk: 2
   fields:
     assessment: null
     user: null
     message: Global log
+    content: {}
+    content_type: null
+    object_id: null
     created: 2020-08-20 03:03:22.348931+00:00
-    last_updated: 2020-08-20 03:03:22.348931+00:00
+- model: assessment.log
+  pk: 3
+  fields:
+    assessment: 1
+    user:
+    - admin@hawcproject.org
+    message: Deleted object log
+    content: {}
+    content_type:
+    - summary
+    - summarytable
+    object_id: 999
+    created: 2021-09-16 01:36:18.132469+00:00
+- model: assessment.log
+  pk: 4
+  fields:
+    assessment: 1
+    user:
+    - pm@hawcproject.org
+    message: Updated assessment object
+    content: {}
+    content_type:
+    - assessment
+    - assessment
+    object_id: 1
+    created: 2021-09-17 18:47:19.786686+00:00
 - model: assessment.blog
   pk: 1
   fields:
@@ -1133,6 +1195,13 @@
     unique_id: '3'
     database: 2
     content: demo-content
+    url: ''
+- model: lit.identifiers
+  pk: 8
+  fields:
+    unique_id: 10.1093/milmed/166.suppl_2.23
+    database: 4
+    content: ''
     url: ''
 - model: lit.referencefiltertag
   pk: 1
@@ -1473,6 +1542,7 @@
     - 5
     identifiers:
     - 4
+    - 8
 - model: lit.reference
   pk: 6
   fields:
@@ -3567,6 +3637,7 @@
   pk: 3
   fields:
     endpoint: 8
+    dose_units: 1
     model: 8
     notes: Selected model notes.
     created: 2020-11-28 05:35:28.734847+00:00
@@ -3693,6 +3764,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: true
+    responses: 1
     sort_order: 1
     created: 2020-02-27 19:31:21.953998+00:00
     last_updated: 2020-02-27 19:31:21.954027+00:00
@@ -3708,6 +3780,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-02-27 20:04:35.816069+00:00
     last_updated: 2020-02-27 20:04:35.816096+00:00
@@ -3725,6 +3798,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3746,6 +3820,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3763,6 +3838,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 3
     created: 2020-04-10 17:45:43.195936+00:00
     last_updated: 2020-04-10 17:45:43.195936+00:00
@@ -3779,6 +3855,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.537996+00:00
     last_updated: 2020-04-10 17:45:43.537996+00:00
@@ -3794,6 +3871,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
@@ -3812,6 +3890,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:43.834572+00:00
     last_updated: 2020-04-10 17:45:43.834572+00:00
@@ -3828,6 +3907,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.116719+00:00
     last_updated: 2020-04-10 17:45:44.116719+00:00
@@ -3844,6 +3924,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
@@ -3860,6 +3941,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 2
     created: 2020-04-10 17:45:44.445107+00:00
     last_updated: 2020-04-10 17:45:44.445107+00:00
@@ -3875,6 +3957,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.732154+00:00
     last_updated: 2020-04-10 17:45:44.732154+00:00
@@ -3893,6 +3976,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-04-10 17:45:44.981198+00:00
     last_updated: 2020-04-10 17:45:44.981198+00:00
@@ -3908,6 +3992,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-05-08 17:06:18.057471+00:00
     last_updated: 2020-05-08 17:06:18.057493+00:00
@@ -3915,7 +4000,7 @@
   pk: 15
   fields:
     domain: 11
-    name: overall
+    name: overall metric 1
     short_name: overall short
     description: <p>overall description</p>
     required_animal: true
@@ -3923,6 +4008,7 @@
     required_invitro: true
     hide_description: false
     use_short_name: false
+    responses: 1
     sort_order: 1
     created: 2020-05-08 17:06:55.509303+00:00
     last_updated: 2020-05-08 17:06:55.509353+00:00
@@ -3986,6 +4072,36 @@
     active: true
     created: 2020-05-08 17:56:46.183552+00:00
     last_updated: 2020-05-08 19:34:31.468702+00:00
+- model: riskofbias.riskofbias
+  pk: 7
+  fields:
+    study: 8
+    final: false
+    author:
+    - team@hawcproject.org
+    active: true
+    created: 2021-09-02 15:57:26.492990+00:00
+    last_updated: 2021-09-02 15:57:26.733132+00:00
+- model: riskofbias.riskofbias
+  pk: 8
+  fields:
+    study: 5
+    final: false
+    author:
+    - team@hawcproject.org
+    active: true
+    created: 2021-09-02 15:57:27.448945+00:00
+    last_updated: 2021-09-02 15:57:27.851056+00:00
+- model: riskofbias.riskofbias
+  pk: 9
+  fields:
+    study: 6
+    final: false
+    author:
+    - team@hawcproject.org
+    active: true
+    created: 2021-09-02 15:57:28.629575+00:00
+    last_updated: 2021-09-02 15:57:29.033255+00:00
 - model: riskofbias.riskofbiasscore
   pk: 1
   fields:
@@ -4136,6 +4252,66 @@
     score: 14
     bias_direction: 1
     notes: <p>beep</p>
+- model: riskofbias.riskofbiasscore
+  pk: 17
+  fields:
+    riskofbias: 7
+    metric: 14
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 18
+  fields:
+    riskofbias: 7
+    metric: 15
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 19
+  fields:
+    riskofbias: 8
+    metric: 14
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 20
+  fields:
+    riskofbias: 8
+    metric: 15
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 21
+  fields:
+    riskofbias: 9
+    metric: 14
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
+- model: riskofbias.riskofbiasscore
+  pk: 22
+  fields:
+    riskofbias: 9
+    metric: 15
+    is_default: true
+    label: ''
+    score: 12
+    bias_direction: 0
+    notes: ''
 - model: riskofbias.riskofbiasscoreoverrideobject
   pk: 1
   fields:
@@ -4166,16 +4342,12 @@
     assessment: 1
     number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 3
   fields:
     assessment: 2
     number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 4
   fields:
@@ -4185,8 +4357,6 @@
       risk of bias metrics can be entered for a metric of bias for each study. Risk
       of Bias metrics are organized by domain. The following questions are required
       for evaluation for this assessment.</p>
-    default_questions: 1
-    responses: 0
 - model: epi.criteria
   pk: 1
   fields:
@@ -4388,6 +4558,20 @@
     lower_range: null
     upper_range: null
     description: (made-up)
+- model: epi.groupnumericaldescriptions
+  pk: 1
+  fields:
+    group: 1
+    description: Description
+    mean: null
+    mean_type: 1
+    is_calculated: false
+    variance: null
+    variance_type: 0
+    lower: null
+    lower_type: 0
+    upper: null
+    upper_type: 0
 - model: epi.resultmetric
   pk: 1
   fields:
@@ -5108,7 +5292,7 @@
     visual_type: 4
     dose_units: null
     prefilters: '{}'
-    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": []}'
+    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280}'
     caption: <p>caption</p>
     published: true
     sort_order: short_citation

@@ -1,29 +1,21 @@
 import $ from "$";
 import _ from "lodash";
-import * as d3 from "d3";
 
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
-import Hero from "utils/Hero";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
+import Hero from "shared/utils/Hero";
 
 import {getReferenceTagListUrl} from "shared/utils/urls";
-
-import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
-import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
-import Donut from "riskofbias/Donut";
+import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
+import {transformStudy} from "riskofbias/study";
 
 class Study {
     constructor(data) {
         this.data = data;
-        this.riskofbias = [];
-        this.final = _.find(this.data.riskofbiases, {
-            final: true,
-            active: true,
-        });
-        if (this.data.assessment.enable_risk_of_bias && this.final) {
-            this.unpack_riskofbias();
+        if (this.data.assessment.enable_risk_of_bias) {
+            _.extend(this, transformStudy(this, data));
         }
     }
 
@@ -36,15 +28,11 @@ class Study {
     }
 
     static displayAsModal(id) {
-        Study.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        Study.get_object(id, d => d.displayAsModal());
     }
 
     static render(id, $div, $shower) {
-        Study.get_object(id, function(d) {
-            d.render($div, $shower);
-        });
+        Study.get_object(id, d => d.render($div, $shower));
     }
 
     static displayInline(id, setTitle, setBody) {
@@ -62,48 +50,6 @@ class Study {
         return this.riskofbias.length > 0;
     }
 
-    unpack_riskofbias() {
-        // unpack rob information and nest by domain
-        var self = this,
-            riskofbias = [],
-            rob_response_values = this.data.rob_response_values;
-
-        this.final.scores.forEach(function(v, i) {
-            v.score_color = SCORE_SHADES[v.score];
-            v.score_text_color = String.contrasting_color(v.score_color);
-            v.score_text = SCORE_TEXT[v.score];
-            riskofbias.push(new RiskOfBiasScore(self, v, rob_response_values));
-        });
-
-        // group rob by domains
-        this.riskofbias = d3
-            .nest()
-            .key(function(d) {
-                return d.data.metric.domain.name;
-            })
-            .entries(riskofbias);
-
-        // now generate a score for each domain (aggregating metrics)
-        this.riskofbias.forEach(function(v) {
-            v.domain = v.values[0].data.metric.domain.id;
-            v.domain_text = v.values[0].data.metric.domain.name;
-            v.domain_is_overall_confidence =
-                typeof v.values[0].data.metric.domain.is_overall_confidence === "boolean"
-                    ? v.values[0].data.metric.domain.is_overall_confidence
-                    : false;
-            v.criteria = v.values;
-        });
-
-        // try to put the 'other' domain at the end
-        var l = this.riskofbias.length;
-        for (var i = 0; i < l; i++) {
-            if (this.riskofbias[i].domain_text.toLowerCase() === "other") {
-                this.riskofbias.push(this.riskofbias.splice(i, 1)[0]);
-                break;
-            }
-        }
-    }
-
     build_breadcrumbs() {
         var urls = [{url: this.data.url, name: this.data.short_citation}];
         return HAWCUtils.build_breadcrumbs(urls);
@@ -118,15 +64,10 @@ class Study {
     }
 
     _get_data_types() {
-        var data = this.data;
         return _.chain(Study.typeNames)
             .keys()
-            .filter(function(d) {
-                return data[d];
-            })
-            .map(function(d) {
-                return Study.typeNames[d];
-            })
+            .filter(d => this.data[d])
+            .map(d => Study.typeNames[d])
             .value()
             .join(", ");
     }
@@ -217,10 +158,7 @@ class Study {
         var self = this,
             $details = $("<div>").appendTo($div),
             displayRoB = () => {
-                var render_obj = {
-                    riskofbias: self.riskofbias,
-                    display: "final",
-                };
+                var render_obj = {riskofbias: self.riskofbias, display: "final"};
                 render_obj = self.format_for_react(self.riskofbias);
                 renderStudyDisplay(render_obj, $rob[0]);
             };
@@ -258,16 +196,11 @@ class Study {
     }
 
     format_for_react(riskofbias) {
-        let scores = _.flattenDeep(
-            _.map(riskofbias, function(rob) {
-                return rob.values;
-            })
-        );
+        let scores = _.chain(riskofbias)
+            .map(rob => rob.values)
+            .flattenDeep()
+            .value();
         return RiskOfBiasScore.format_for_react(scores);
-    }
-
-    createDonutVisualization(element) {
-        new Donut(this, element);
     }
 }
 

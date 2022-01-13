@@ -1,16 +1,13 @@
 import $ from "$";
 
-import HAWCUtils from "utils/HAWCUtils";
+import h from "shared/utils/helpers";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class BaseVisual {
     constructor(data) {
         this.data = data;
-        if (this.data.created) {
-            this.data.created = new Date(this.data.created);
-        }
-        if (this.data.last_updated) {
-            this.data.last_updated = new Date(this.data.last_updated);
-        }
+        this.data.created = new Date(this.data.created);
+        this.data.last_updated = new Date(this.data.last_updated);
     }
 
     build_row(opts) {
@@ -18,8 +15,8 @@ class BaseVisual {
             `<a href="${this.data.url}">${this.data.title}</a>`,
             this.data.visual_type,
             HAWCUtils.truncateChars(this.data.caption),
-            this.data.created.toString(),
-            this.data.last_updated.toString(),
+            h.dateToString(this.data.created),
+            h.dateToString(this.data.last_updated),
         ];
         if (opts.showPublished) {
             arr.splice(3, 0, HAWCUtils.booleanCheckbox(this.data.published));

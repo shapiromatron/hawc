@@ -1,25 +1,28 @@
 {
-  "id": 6,
-  "title": "tagtree",
-  "slug": "tagtree",
-  "visual_type": "literature tagtree",
-  "prefilters": "{}",
-  "settings": {
-    "root_node": 11,
-    "required_tags": [],
-    "pruned_tags": []
-  },
-  "caption": "<p>caption</p>",
-  "published": true,
-  "sort_order": "short_citation",
-  "created": "2020-05-08T14:43:09.448597-05:00",
-  "last_updated": "2020-05-08T14:43:09.448621-05:00",
   "assessment": 2,
+  "assessment_rob_name": "Risk of bias",
+  "caption": "<p>caption</p>",
+  "created": "2020-05-08T14:43:09.448597-05:00",
   "dose_units": null,
-  "url": "/summary/visual/assessment/2/tagtree/",
-  "url_update": "/summary/visual/assessment/2/tagtree/update/",
-  "url_delete": "/summary/visual/assessment/2/tagtree/delete/",
   "endpoints": [],
+  "id": 6,
+  "last_updated": "2020-05-08T14:43:09.448621-05:00",
+  "prefilters": "{}",
+  "published": true,
+  "settings": {
+    "height": 500,
+    "hide_empty_tag_nodes": false,
+    "pruned_tags": [],
+    "required_tags": [],
+    "root_node": 11,
+    "width": 1280
+  },
+  "slug": "tagtree",
+  "sort_order": "short_citation",
   "studies": [],
-  "assessment_rob_name": "Risk of bias"
+  "title": "tagtree",
+  "url": "/summary/visual/assessment/2/tagtree/",
+  "url_delete": "/summary/visual/assessment/2/tagtree/delete/",
+  "url_update": "/summary/visual/assessment/2/tagtree/update/",
+  "visual_type": "literature tagtree"
 }

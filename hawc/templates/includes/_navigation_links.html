@@ -1,5 +1,5 @@
 <li class="nav-item">
-    <a class="nav-link" href="{{ CONTACT_US }}">Contact Us</a>
+    <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
 </li>
 {% if not contact_only %}
 <li class="nav-item">
@@ -22,7 +22,10 @@
         <a class="dropdown-item" href="{% url 'mgmt:user_assignments' %}">Assigned tasks</a>
         {% if user.is_staff %}
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{%url 'admin:index' %}">Admin</a>
+            {% if has_admin %}
+                <a class="dropdown-item" href="{%url 'admin:index' %}">Admin</a>
+            {% endif %}
+            <a class="dropdown-item" href="{% url 'assessment:full_list' %}">View all assessments</a>
         {% endif %}
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{% url 'user:logout' %}">Logout</a>

@@ -1,7 +1,7 @@
-{% extends 'breadcrumbed.html' %}
+{% extends 'crumbless.html' %}
 
 {% block content %}
-<h1>Environmental Health Vocabulary (EHV)</h1>
+<h2>Environmental Health Vocabulary (EHV)</h2>
 <div>
     <p>
         Experimental data extracted into HAWC is designed to enable filtering, sorting, and
@@ -11,23 +11,10 @@
         domain that can map health-effects and knowledge. Therefore, these controlled vocabularies
         can also be mapped to external entities.
     </p>
-    <p>
-        <b>Have some thoughts regarding changes to the EHV?</b> Please <a href="{{CONTACT_US}}"> submit feedback!</a>
-    </p>
 </div>
-<div id="ehv">
-
-</div>
+<div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/json" id="settings">{{config|safe}}</script>
-<script type="text/javascript">
-    const root = document.getElementById('ehv'),
-        config = JSON.parse(document.getElementById('settings').text);
-
-    window.app.animalStartup(function (cb) {
-        cb.ehvBrowserStartup(root, config);
-    });
-</script>
+<script type="text/json" id="config">{{config|safe}}</script>
 {% endblock %}

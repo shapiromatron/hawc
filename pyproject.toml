@@ -7,12 +7,15 @@ exclude = '''
     \.git
   | \.mypy_cache
   | bin
+  | build
   | compose
   | data
+  | dist
   | docs
   | frontend
   | public
   | requirements
+  | scripts/private
   | venv
 )/
 '''
@@ -23,7 +26,17 @@ omit = [
   "*urls.py",
   "./build/",
   "./hawc/main/*",
+  "./scripts/private/*",
   "./tests/*",
   "./venv/*",
   "*/bmds/*",
 ]
+
+[tool.isort]
+atomic = true
+include_trailing_comma = true
+known_first_party = ["hawc", "hawc_client"]
+known_third_party = ["bmds"]
+line_length = 100
+multi_line_output = 3
+skip = ["build/", "frontend/", "scripts/private/", "venv/"]

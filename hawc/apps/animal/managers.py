@@ -9,7 +9,9 @@ from rest_framework.serializers import ValidationError
 
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
-from ..vocab.models import Term, VocabularyTermType
+from ..vocab.constants import VocabularyTermType
+from ..vocab.models import Term
+from . import constants
 
 
 class ExperimentManager(BaseManager):
@@ -31,7 +33,6 @@ class AnimalGroupManager(BaseManager):
         Returns:
             pandas Dataframe of data
         """
-        Experiment = apps.get_model("animal", "Experiment")
         qs = (
             self.filter(experiment__study__assessment_id=assessment_id)
             .annotate(min_n=Min("endpoints__groups__n"), max_n=Max("endpoints__groups__n"),)
@@ -62,7 +63,7 @@ class AnimalGroupManager(BaseManager):
             if min_n or max_n:
                 ns = f"N={min_n}" if min_n == max_n else f"N={min_n}-{max_n}"
 
-            treatment_text = Experiment.EXPERIMENT_TYPE_DICT[exp_type]
+            treatment_text = constants.ExperimentType(exp_type).label
             if "(" in treatment_text:
                 treatment_text = treatment_text[: treatment_text.find("(")]
 
@@ -184,9 +185,9 @@ class EndpointManager(BaseManager):
         # get BMD values
         values = dict(
             endpoint_id="endpoint id",
+            dose_units_id="dose units id",
             model__output__BMD="BMD",
             model__output__BMDL="BMDL",
-            model__session__dose_units_id="dose units id",
         )
         qs = SelectedModel.objects.filter(endpoint__assessment=assessment).values_list(
             *values.keys()
@@ -403,7 +404,7 @@ class EndpointManager(BaseManager):
                 f"Term id(s) {excluded_terms_str} are not in the assessment vocabulary"
             )
         # terms must be the correct type
-        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name.value)
+        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name)
         if excluded_terms.exists():
             excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
             raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")

@@ -5,7 +5,8 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common.helper import SerializerHelper
-from . import models
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
+from . import constants, models
 
 
 class CollectionDataPivotSerializer(serializers.ModelSerializer):
@@ -59,6 +60,12 @@ class VisualSerializer(CollectionVisualSerializer):
         if instance.id != instance.FAKE_INITIAL_ID:
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
+
+        if instance.visual_type in [
+            constants.VisualType.ROB_HEATMAP,
+            constants.VisualType.ROB_BARCHART,
+        ]:
+            ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()

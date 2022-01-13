@@ -1,8 +1,10 @@
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import _ from "lodash";
+
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import BaseVisual from "./BaseVisual";
 import TagTree from "lit/TagTree";
 import TagTreeViz from "lit/TagTreeViz";
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {
@@ -48,6 +50,8 @@ class LiteratureTagtree extends BaseVisual {
 
         // change root node
         tagtree.reset_root_node(this.data.settings.root_node);
+
+        _.extend(this.data.settings, {can_edit: window.isEditable});
 
         new TagTreeViz(tagtree, $plotDiv, title, url, this.data.settings);
     }

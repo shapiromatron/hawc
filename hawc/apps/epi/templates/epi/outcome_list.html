@@ -12,7 +12,7 @@
             </button>
         </div>
         <div id="EndpointForm" class="collapse">
-            <div class="card-body container-fluid">
+            <div class="card-body">
                 {% crispy form %}
             </div>
         </div>
@@ -23,15 +23,11 @@
 
 {% block extrajs %}
     {{ form.media }}
+    {{ config|json_script:"config" }}
     <script type="text/javascript">
-        window.app.epiStartup(function(epi){
-            var outcomes = [];
-
-            {{list_json|safe}}.map(function(outcome){
-                outcomes.push(new epi.Outcome(outcome));
-            })
-
-            var tbl = new epi.OutcomeListTable(outcomes);
+        window.app.startup("epiStartup", function(app){
+            const data = window.app.getConfig(),
+                tbl = new app.OutcomeListTable(data.items);
             $("#endpointTable").html(tbl.buildTable());
         });
     </script>

@@ -27,16 +27,5 @@
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/json" id="config">
-{
-  "table_id": {{object.id}}
-}
-</script>
-<script type="text/javascript">
-  window.app.summaryTableViewStartup(function (startup) {
-    const config = JSON.parse(document.getElementById("config").text),
-      el = document.getElementById('main');
-    startup(el, config);
-  });
-</script>
+  {{ config|json_script:"config" }}
 {% endblock %}

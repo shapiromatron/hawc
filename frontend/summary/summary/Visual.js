@@ -7,7 +7,7 @@ import ExternalSiteVisual from "./ExternalSiteVisual";
 import RoBBarchart from "./RoBBarchart";
 import RoBHeatmap from "./RoBHeatmap";
 import LiteratureTagtree from "./LiteratureTagtree";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class Visual {
     static get_object(id, cb) {
@@ -46,15 +46,11 @@ class Visual {
 
     static displayAsPage(id, $el) {
         $el.html(HAWCUtils.loading());
-        Visual.get_object(id, function(d) {
-            d.displayAsPage($el);
-        });
+        Visual.get_object(id, d => d.displayAsPage($el));
     }
 
     static displayAsModal(id, options) {
-        Visual.get_object(id, function(d) {
-            d.displayAsModal(options);
-        });
+        Visual.get_object(id, d => d.displayAsModal(options));
     }
 
     static displayInline(id, setTitle, setBody) {

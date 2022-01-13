@@ -1,6 +1,7 @@
 from .bioassay import bioassay  # noqa: F401
 from .cleanup import cleanup  # noqa: F401
 from .epi import epi  # noqa: F401
+from .invitro import invitro  # noqa: F401
 from .literature import literature  # noqa: F401
 from .login import login  # noqa: F401
 from .mgmt import mgmt  # noqa: F401

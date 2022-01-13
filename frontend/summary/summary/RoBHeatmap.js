@@ -1,17 +1,25 @@
 import $ from "$";
 import _ from "lodash";
 
-import HAWCModal from "utils/HAWCModal";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import HAWCModal from "shared/utils/HAWCModal";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import Study from "study/Study";
 import Aggregation from "riskofbias/Aggregation";
 
 import RoBHeatmapPlot from "./RoBHeatmapPlot";
 import BaseVisual from "./BaseVisual";
 
+import {mutateRobSettings, mutateRobStudies} from "riskofbias/study";
+
 class RoBHeatmap extends BaseVisual {
+    static transformData(data) {
+        mutateRobSettings(data.rob_settings);
+        mutateRobStudies(data.studies, data.rob_settings);
+    }
+
     constructor(data) {
         super(data);
+        RoBHeatmap.transformData(data);
         var studies = _.map(data.studies, d => new Study(d));
         this.roba = new Aggregation(studies);
         delete this.data.studies;
@@ -66,6 +74,7 @@ class RoBHeatmap extends BaseVisual {
             aggregation: this.roba,
             settings: this.data.settings,
             assessment_rob_name: this.data.assessment_rob_name,
+            rob_settings: this.data.rob_settings,
         };
     }
 }

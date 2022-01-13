@@ -1,7 +1,8 @@
 import $ from "$";
 import _ from "lodash";
 
-import TableFootnotes from "utils/TableFootnotes";
+import h from "shared/utils/helpers";
+import TableFootnotes from "shared/utils/TableFootnotes";
 
 class EndpointTable {
     constructor(endpoint, tbl_id) {
@@ -42,17 +43,17 @@ class EndpointTable {
     build_header() {
         var self = this,
             d = this.endpoint.data,
-            dose = $(`<th>Dose (${this.endpoint.dose_units})</th>`),
+            dose = $(`<th>Dose (${this.endpoint.doseUnits.activeUnit.name})</th>`),
             tr = $("<tr>"),
             txt;
 
-        if (this.endpoint.doses.length > 1) {
+        if (this.endpoint.doseUnits.numUnits() > 1) {
             $(
                 '<a class="btn btn-sm btn-light" title="View alternate dose" href="#"><i class="fa fa-chevron-right"></i></a>'
             )
                 .on("click", function(e) {
                     e.preventDefault();
-                    self.endpoint.toggle_dose_units();
+                    self.endpoint.doseUnits.next();
                 })
                 .appendTo(dose);
         }
@@ -94,7 +95,7 @@ class EndpointTable {
             if (!v.isReported) return;
 
             var tr = $("<tr>"),
-                dose = v.dose.toHawcString();
+                dose = h.ff(v.dose);
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 

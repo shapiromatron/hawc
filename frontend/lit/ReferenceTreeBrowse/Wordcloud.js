@@ -1,8 +1,7 @@
 // adapted from `https://observablehq.com/@d3/word-cloud`
 import $ from "$";
 import {observer} from "mobx-react";
-import * as d3Base from "d3";
-import {rollups} from "d3-array";
+import * as d3 from "d3";
 import * as cloud from "d3-cloud";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -10,9 +9,6 @@ import ReactDOM from "react-dom";
 
 import Loading from "shared/components/Loading";
 import VisualToolbar from "shared/components/VisualToolbar";
-
-// https://www.giacomodebidda.com/how-to-import-d3-plugins-with-webpack/
-const d3 = Object.assign(d3Base, {rollups, cloud});
 
 const padding = 0,
     MIN_REFS = 2,
@@ -65,11 +61,13 @@ const padding = 0,
 
         const svg = d3
             .create("svg")
+            .attr("role", "image")
+            .attr("aria-label", "A wordcloud of frequent words in the selected literature")
             .attr("viewBox", [0, 0, width, height])
             .attr("font-family", "sans-serif")
             .attr("text-anchor", "middle");
 
-        d3.cloud()
+        cloud()
             .size([width, height])
             .words(data.map(d => Object.create(d)))
             .padding(padding)
@@ -103,10 +101,7 @@ const padding = 0,
             .append(svg.node())
             .append(toolbarNode);
 
-        ReactDOM.render(
-            <VisualToolbar svg={svg.node()} parentContainer={el} />,
-            toolbarNode.get(0)
-        );
+        ReactDOM.render(<VisualToolbar svg={svg.node()} />, toolbarNode.get(0));
     };
 
 @observer

@@ -16,7 +16,7 @@ from ..common.api import (
     LegacyAssessmentAdapterMixin,
     ReadWriteSerializerMixin,
 )
-from ..common.api.viewsets import PermCheckerMixin
+from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -97,15 +97,15 @@ class EpiAssessmentViewset(
         return Response(export)
 
 
-class Criteria(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "assessment"
+class Criteria(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Criteria
     serializer_class = serializers.CriteriaSerializer
 
 
-class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
-    perm_checker_key = "study"
+class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["study"]
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
     serializer_class = serializers.StudyPopulationSerializer
@@ -246,8 +246,8 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "study_population"
+class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["study_population"]
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
     read_serializer_class = serializers.ExposureSerializer
@@ -318,7 +318,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
                     ct["exposure"] = exposure.id
 
         if missing_needed_cts:
-            raise ValidationError(f"At least one central tendency is required")
+            raise ValidationError("At least one central tendency is required")
         elif len(cts) > 0:
             ct_serializer = serializers.CentralTendencySerializer(data=cts, many=True)
             ct_serializer.is_valid(raise_exception=True)
@@ -333,22 +333,22 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
         self.process_ct_creation(serializer.instance, False)
 
 
-class Outcome(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = ["assessment", "study_population"]
+class Outcome(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["assessment", "study_population"]
     assessment_filter_args = "assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
 
-class GroupResult(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "group"
+class GroupResult(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["group"]
     assessment_filter_args = "result__outcome__assessment"
     model = models.GroupResult
     serializer_class = serializers.GroupResultSerializer
 
 
-class Result(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = ["outcome", "comparison_set"]
+class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["outcome", "comparison_set"]
     assessment_filter_args = "outcome__assessment"
     model = models.Result
     serializer_class = serializers.ResultSerializer
@@ -477,22 +477,22 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
         self.process_adjustment_factor_association(serializer, serializer.instance.id, False)
 
 
-class ComparisonSet(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "study_population"
+class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["study_population"]
     assessment_filter_args = "assessment"  # todo: fix
     model = models.ComparisonSet
     serializer_class = serializers.ComparisonSetSerializer
 
 
-class GroupNumericalDescriptions(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "group"
+class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["group"]
     # assessment_filter_args = "group__assessment"
     model = models.GroupNumericalDescriptions
     serializer_class = serializers.GroupNumericalDescriptionsSerializer
 
 
-class Group(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = "comparison_set"
+class Group(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["comparison_set"]
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
     serializer_class = serializers.GroupSerializer

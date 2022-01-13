@@ -4,45 +4,41 @@
 
 {% block content %}
 <div class="container-fluid">
-  <h1>Create a new visualization</h1>
+  <h1>{{action}} a new visualization</h1>
   <p class="form-text text-muted">Multiple visualization types are available. Please select the type of visualization
     you would like to create.</p>
   <div class="row">
     <div class="col-md-9">
       <select id="vis_selector" class="form-control col-md-12">
-        <option data-showcase="#dataPivot" value="{% url 'summary:dp_new-prompt' assessment.id %}">Data pivot</option>
-        {% comment %}
-        <!-- deprecate; let's see if anyone requests it..  -->
-        <option data-showcase="#visual0" value="{% url 'summary:visualization_create' assessment.id 0 %}">Bioassay
-          endpoint aggregation</option>
-        {% endcomment %}
-        <option data-showcase="#visual1" value="{% url 'summary:visualization_create' assessment.id 1 %}">Bioassay
-          endpoint crossview</option>
-        <option data-showcase="#visual2" value="{% url 'summary:visualization_create' assessment.id 2 %}">
+        <option value="4" data-url="{% url viz_url_pattern assessment.id 4 %}">
+          Literature tagtree</option>
+        <option value="6" data-url="{% url viz_url_pattern assessment.id 6 %}">
+          Exploratory heatmap</option>
+        <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
+          Embedded external website</option>
+        <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
           {{assessment.get_rob_name_display}} heatmap</option>
-        <option data-showcase="#visual3" value="{% url 'summary:visualization_create' assessment.id 3 %}">
+        <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">
           {{assessment.get_rob_name_display}} barchart</option>
-        <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">Literature
-          tagtree</option>
-        <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">Embedded
-          external website</option>
-        <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">Exploratory
-          heatmap</option>
+        <option value="100" data-url="{% url dp_url_pattern assessment.id %}">
+          Data pivot</option>
+        <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
+          Bioassay endpoint crossview</option>
       </select>
     </div>
     <div class="col-md-3">
       <a id="create_btn" class="btn btn-block btn-primary" href="#">Select</a>
     </div>
   </div>
-  <div id="showcase" class="row py-3" style="display: none;"></div>
-  <div style="display: none;">
-    <div id="visual0" class="col-md-12" >
+  <div id="detail_display" class="row py-3"></div>
+  <div id="detail_library" class="hidden">
+    <div id="detail-0" class="col-md-12" >
       <h2>Bioassay endpoint aggregation</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation1.png' %}">
+        <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation1.png' %}">
       </div>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
+        <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
       </div>
       <p class="form-text text-muted">
         Select a subset of animal bioassay endpoints and present these using
@@ -51,10 +47,10 @@
         Interactive, clicking on any point shows dose-response details.
       </p>
     </div>
-    <div id="visual1" class="col-md-12" >
+    <div id="detail-1" class="col-md-12" >
       <h2>Bioassay endpoint crossview</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
+        <img alt="Image of a bioassay endpoint crossview figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
       </div>
       <p class="form-text text-muted">
         All animal bioassay dose-response datasets available in a HAWC assessment
@@ -66,11 +62,11 @@
         between non-control dose-groups, and 2+ are required to create a line).
       </p>
     </div>
-    <div id="dataPivot" class="col-md-12" >
+    <div id="detail-100" class="col-md-12" >
       <h2>Data Pivot</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+        <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+        <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
       </div>
       <p class="form-text text-muted">
         Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
@@ -80,10 +76,10 @@
         can also be applied.
       </p>
     </div>
-    <div id="visual2" class="col-md-12">
+    <div id="detail-2" class="col-md-12">
       <h2>{{assessment.get_rob_name_display}} heatmap</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
+        <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-heatmap.svg' %}">
       </div>
       <p class="form-text text-muted">
@@ -93,30 +89,30 @@
         with these cells.
       </p>
     </div>
-    <div id="visual3" class="col-md-12">
+    <div id="detail-3" class="col-md-12">
       <h2>{{assessment.get_rob_name_display}} barchart</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
+        <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-barchart.svg' %}">
       </div>
       <p class="form-text text-muted">
         A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
-        each score, for each metric, in a selectable subset of studies.
+        each judgment, for each metric, in a selectable subset of studies.
       </p>
     </div>
-    <div id="visual4" class="col-md-12">
+    <div id="detail-4" class="col-md-12">
       <h2>Literature tagtree</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
+        <img alt="Image of a literature tagtree" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
       </div>
       <p class="form-text text-muted">
         A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
       </p>
     </div>
-    <div id="visual5" class="col-md-12">
+    <div id="detail-5" class="col-md-12">
       <h2>Embedded external website</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
+        <img alt="Image of an embedded external website" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
       </div>
       <p class="form-text text-muted">
         Embed an external website. The following websites can be linked to:
@@ -128,10 +124,10 @@
         If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
       </p>
     </div>
-    <div id="visual6" class="col-md-12">
+    <div id="detail-6" class="col-md-12">
       <h2>Exploratory heatmap</h2>
       <div class="row">
-        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
+        <img alt="Image of an exploratory data heatmap" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
       </div>
       <p class="form-text text-muted">
         A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented
@@ -146,18 +142,19 @@
 {% block extrajs %}
 <script type="text/javascript">
   $(document).ready(function () {
-    var a = $('#create_btn'),
-      sel = $('#vis_selector'),
-      showcase = $('#showcase');
+    // change selector detail
+    window.app.HAWCUtils.onSelectChangeShowDetail(
+        document.getElementById("vis_selector"),
+        document.getElementById("detail_display"),
+        document.getElementById("detail_library")
+      );
 
-    sel.on('change', function (e) {
-      a.attr('href', e.target.value);
-      var clone = $(sel.find(':selected').data('showcase')).clone();
-      showcase
-        .fadeOut(function () { showcase.html(clone); })
-        .fadeIn();
-    })
-      .trigger('change');
+    // change the url when selector changes
+    var selector = $('#vis_selector'),
+      btn = $('#create_btn');
+    selector.on('change', function () {
+      btn.attr('href', selector.find(":selected").data('url'));
+    }).trigger('change')
   });
 </script>
 {% endblock %}

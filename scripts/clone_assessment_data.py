@@ -8,17 +8,16 @@ from pathlib import Path
 from typing import Dict, List
 
 import django
-from django.core import management
-from django.db import transaction
-from django.db.models import Model
-from django.db.models.signals import post_save
-
 from animal import models as ani_models
 from animal import signals as ani_signals
 from assessment import signals as assess_signals
 from assessment.models import Assessment
 from bmd import models as bmd_models
 from bmd import signals as bmd_signals
+from django.core import management
+from django.db import transaction
+from django.db.models import Model
+from django.db.models.signals import post_save
 from epi import models as epi_models
 from epi import signals as epi_signals
 from invitro import models as iv_models
@@ -265,11 +264,13 @@ def clone_assessment(
     cw = defaultdict(dict)
     cw[Assessment.COPY_NAME][old_assessment_id] = new_assessment_id
 
-    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(new_assessment, old_assessment)
+    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(
+        old_assessment.id, new_assessment.id
+    )
     lit_models.Search.build_default(new_assessment)
 
     cw["iv-endpoint-categories"] = iv_models.IVEndpointCategory.copy_tags(
-        new_assessment, old_assessment
+        old_assessment.id, new_assessment.id,
     )
 
     # copy rob logic

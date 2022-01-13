@@ -1,9 +1,14 @@
 {
+  "assessment": 2,
+  "assessment_rob_name": "Risk of bias",
+  "caption": "<p>iris (flowers)</p>",
+  "created": "2020-05-08T14:45:29.985823-05:00",
+  "dose_units": null,
+  "endpoints": [],
   "id": 7,
-  "title": "embedded-tableau",
-  "slug": "embedded-tableau",
-  "visual_type": "embedded external website",
+  "last_updated": "2020-05-08T14:45:29.985848-05:00",
   "prefilters": "{}",
+  "published": true,
   "settings": {
     "external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
     "external_url_hostname": "https://public.tableau.com",
@@ -13,17 +18,12 @@
       ":embed=y"
     ]
   },
-  "caption": "<p>iris (flowers)</p>",
-  "published": true,
+  "slug": "embedded-tableau",
   "sort_order": "short_citation",
-  "created": "2020-05-08T14:45:29.985823-05:00",
-  "last_updated": "2020-05-08T14:45:29.985848-05:00",
-  "assessment": 2,
-  "dose_units": null,
-  "url": "/summary/visual/assessment/2/embedded-tableau/",
-  "url_update": "/summary/visual/assessment/2/embedded-tableau/update/",
-  "url_delete": "/summary/visual/assessment/2/embedded-tableau/delete/",
-  "endpoints": [],
   "studies": [],
-  "assessment_rob_name": "Risk of bias"
+  "title": "embedded-tableau",
+  "url": "/summary/visual/assessment/2/embedded-tableau/",
+  "url_delete": "/summary/visual/assessment/2/embedded-tableau/delete/",
+  "url_update": "/summary/visual/assessment/2/embedded-tableau/update/",
+  "visual_type": "embedded external website"
 }

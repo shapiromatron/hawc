@@ -1,7 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2 class="d-inline-block">Management dashboard</h2>
   <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
@@ -10,20 +9,10 @@
         <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
     </div>
   </div>
-  <div id='taskDashboard'></div>
+  <h2 class="d-inline-block">Management dashboard</h2>
+  <div id='main'></div>
 {% endblock %}
 
 {% block extrajs %}
-<script id='config' type="text/json" charset="utf-8">
-{
-  "assessment_id": "{{ assessment.id }}"
-}
-</script>
-<script type="text/javascript">
-window.app.mgmtStartup(function(mgmt){
-  const el = document.getElementById('taskDashboard'),
-    config = JSON.parse(document.getElementById('config').text);
-  mgmt.Dashboard(el, config);
-});
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

@@ -1,30 +1,16 @@
 from typing import Any, Dict, List, Tuple, Type
 
+import jsonschema
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.renderers import JSONRenderer
 from rest_framework.settings import api_settings
 from rest_framework.utils import html
 from rest_framework.validators import UniqueTogetherValidator
 
 from .helper import get_id_from_choices
-
-
-def to_json(Serializer: serializers.ModelSerializer, instance: models.Model) -> str:
-    """Return a JSON string from an instance just like a serializer would, outside of the drf view logic.
-
-    Args:
-        Serializer (serializers.ModelSerializer): a django model serializer class
-        instance (models.Model): a django model instance
-
-    Returns:
-        str: a JSON string representation
-    """
-    serializer = Serializer(instance=instance)
-    return JSONRenderer().render(serializer.data).decode("utf8")
 
 
 def validate_pydantic(
@@ -47,6 +33,26 @@ def validate_pydantic(
         return pydantic_class.parse_obj(data)
     except pydantic.ValidationError as err:
         raise ValidationError({field: err.json()})
+
+
+def validate_jsonschema(data: Any, schema: Dict) -> Any:
+    """Validate data and return if appropriate; else raise django ValidationError.
+
+    Args:
+        data (Any): The data to validate
+        schema (Dict): The jsonschema to validate against
+
+    Raises:
+        serializers.ValidationError: If validation is unsuccessful
+
+    Returns:
+        Any: The unmodified, but validated dataset
+    """
+    try:
+        jsonschema.validate(data, schema)
+    except jsonschema.ValidationError as err:
+        raise serializers.ValidationError(err.message)
+    return data
 
 
 class UnusedSerializer(serializers.Serializer):

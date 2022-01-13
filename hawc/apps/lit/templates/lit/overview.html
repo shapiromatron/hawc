@@ -16,6 +16,7 @@
       <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
       <a class="dropdown-item" href="{% url 'lit:search_tags_edit' assessment.pk manual_import.slug %}">Tag manually-added references</a>
       <a class="dropdown-item" href="{% url 'lit:tag_untagged' assessment.pk %}">Tag untagged references</a>
+      <a class="dropdown-item" href="{% url 'lit:bulk_tag' assessment.pk %}">Bulk tag references</a>
       {% if obj_perms.edit_assessment %}
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Assessment-level editing</span>
@@ -96,11 +97,11 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">{{ config| safe}}</script>
+{{ config|json_script:"config" }}
 <script type="text/javascript">
-  const config = JSON.parse(document.getElementById('config').textContent);
+  const config = window.app.getConfig();
 
-  window.app.litStartup(function(lit){
+  window.app.startup("litStartup", function(lit){
     let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
     tagtree.render(document.getElementById('tags'))
   });

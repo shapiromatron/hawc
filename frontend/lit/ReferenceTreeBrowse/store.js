@@ -40,10 +40,7 @@ class Store {
         }
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            const references = Reference.sorted(
-                results.refs.map(datum => new Reference(datum, this.tagtree))
-            );
-            this.selectedReferences = references;
+            this.selectedReferences = Reference.sortedArray(results.refs, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
@@ -61,7 +58,7 @@ class Store {
         this.selectedReferences = null;
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            this.selectedReferences = results.refs.map(datum => new Reference(datum, this.tagtree));
+            this.selectedReferences = Reference.sortedArray(results.refs, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
@@ -92,34 +89,6 @@ class Store {
             refs = refs.filter(d => d.data.year >= filter.min && d.data.year <= filter.max);
         }
         return refs;
-    }
-
-    @computed get getActionLinks() {
-        let links = [];
-        if (this.untaggedReferencesSelected === true && this.config.canEdit) {
-            links.push([
-                `/lit/assessment/${this.config.assessment_id}/tag/untagged/`,
-                "Tag untagged references",
-            ]);
-        } else if (this.selectedTag !== null) {
-            links = [
-                [
-                    `/lit/api/tags/${this.selectedTag.data.pk}/references/?format=xlsx`,
-                    "Download references",
-                ],
-                [
-                    `/lit/api/tags/${this.selectedTag.data.pk}/references-table-builder/?format=xlsx`,
-                    "Download references (table-builder format)",
-                ],
-            ];
-            if (this.config.canEdit) {
-                links.push([
-                    `/lit/tag/${this.selectedTag.data.pk}/tag/`,
-                    "Tag references with this tag (but not descendants)",
-                ]);
-            }
-        }
-        return links;
     }
 
     // year filter

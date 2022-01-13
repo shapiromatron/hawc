@@ -49,17 +49,12 @@ tfoot > tr > td {
     font-size: 80%;
     border-top: none;
 }
-code {
-    margin: 0 2px;
-    padding: 0px 5px;
-    border: 1px solid #ddd;
-    background-color: #f8f8f8;
-    border-radius: 2px;
-    font-size: 0.95em;
-    color: #444;
-}
 .hidden {
     display: none;
+}
+.resize-y {
+    overflow-y: auto;
+    resize:vertical;
 }
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
@@ -169,15 +164,6 @@ input[type='number'] {
     border-radius: 8px;
     overflow: auto;
     z-index: 1150;
-}
-
-/* Login form */
-.loginForm {
-    margin-top: 15px;
-    padding: 30px 15px 0px 15px;
-    border: 2px solid gray;
-    border-radius: 5px;
-    box-shadow: 0 0 2em #888888;
 }
 
 /* About-us page */
@@ -320,16 +306,11 @@ div.smart-tag.active {
 .refTagEditing {
     cursor: pointer;
 }
-.ref-container {
-    max-height: 40vh;
-    overflow-y: auto;
-}
 .abstract_label {
     font-weight: bold;
 }
 .nestedTag {
     border: 2px solid transparent;
-    margin: 0;
     cursor: pointer;
 }
 .nestedTag:hover {
@@ -341,10 +322,6 @@ div.smart-tag.active {
     font-weight: bold;
     border: 2px solid #ababab;
     background-color: gold;
-}
-.nestedTagCollapser {
-    position: absolute;
-    padding: 2px 0 0 2px;
 }
 .reference {
     padding-left: 0.5rem;
@@ -361,8 +338,12 @@ div.smart-tag.active {
     background-color: #0044cc;
 }
 
-/* animal endpoint list */
-.eyeEndpointModal {
+/* preview modal icon */
+.previewModalParent:hover .previewModalIcon{
+    display: inherit;
+}
+.previewModalIcon {
+    display: none;
     padding-left: 1em;
     cursor: pointer;
 }
@@ -388,38 +369,36 @@ label {
 
 /*
 Table-sorting
-https://github.com/tristen/tablesort
+https://github.com/tristen/tablesort/blob/HEAD/tablesort.css
 */
-th.sort-header::-moz-selection {
-    background: transparent;
+th[role=columnheader]:not(.no-sort) {
+	cursor: pointer;
 }
-th.sort-header::selection {
-    background: transparent;
+th[role=columnheader]:not(.no-sort):after {
+	content: '';
+	float: right;
+	margin-top: 7px;
+	border-width: 0 4px 4px;
+	border-style: solid;
+	border-color: #404040 transparent;
+	visibility: hidden;
+	opacity: 0;
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
 }
-th.sort-header {
-    cursor: pointer;
+th[aria-sort=ascending]:not(.no-sort):after {
+	border-bottom: none;
+	border-width: 4px 4px 0;
 }
-table th.sort-header:after {
-    content: '';
-    float: right;
-    margin-top: 7px;
-    border-width: 0 4px 4px;
-    border-style: solid;
-    border-color: #404040 transparent;
-    visibility: hidden;
+th[aria-sort]:not(.no-sort):after {
+	visibility: visible;
+	opacity: 0.4;
 }
-table th.sort-header:hover:after {
-    visibility: visible;
-}
-table th.sort-up:after,
-table th.sort-down:after,
-table th.sort-down:hover:after {
-    visibility: visible;
-    opacity: 0.4;
-}
-table th.sort-up:after {
-    border-bottom: none;
-    border-width: 4px 4px 0;
+th[role=columnheader]:not(.no-sort):hover:after {
+	visibility: visible;
+	opacity: 1;
 }
 
 /* server-side order_by functionality for endpoint listings */

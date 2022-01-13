@@ -7,7 +7,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import IdLookupMixin
 from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
-from ..riskofbias.serializers import RiskOfBiasSerializer
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer, FinalRiskOfBiasSerializer
 from . import models
 
 
@@ -34,7 +34,7 @@ class SimpleStudySerializer(StudySerializer):
             except ValueError:
                 raise serializers.ValidationError("Reference ID must be a number.")
             except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Reference ID does not exist.")
+                raise serializers.ValidationError("Reference ID does not exist.")
 
         return super().validate(data)
 
@@ -74,14 +74,13 @@ class StudyAssessmentSerializer(serializers.ModelSerializer):
 class VerboseStudySerializer(StudySerializer):
     assessment = AssessmentMiniSerializer(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
+    riskofbiases = serializers.SerializerMethodField()
+    rob_settings = AssessmentRiskOfBiasSerializer(source="assessment")
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["rob_response_values"] = instance.assessment.rob_settings.get_rob_response_values()
-        return ret
+    def get_riskofbiases(self, study):
+        return FinalRiskOfBiasSerializer(study.get_final_qs(), many=True).data
 
     class Meta:
         model = models.Study

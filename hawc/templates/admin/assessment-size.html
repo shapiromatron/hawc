@@ -14,9 +14,5 @@
 {% block content %}
 <div class="container-fluid" id="main"></div>
 {% render_bundle "main" %}
-<script type="text/javascript">
-    window.app.adminStartup(function (app) {
-        app.assessmentSizeStartup(document.getElementById("main"));
-    });
-</script>
+<script id="config" type="application/json">{"app": "assessmentSizeStartup"}</script>
 {% endblock content %}

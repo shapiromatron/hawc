@@ -11,7 +11,6 @@ import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 @observer
 class Root extends Component {
     componentDidMount() {
-        this.props.store.setConfig("config");
         this.props.store.fetchFormData();
     }
 
@@ -28,16 +27,18 @@ class Root extends Component {
                     {store.domainIds.map(domainId => {
                         return <Domain key={domainId} domainId={domainId} />;
                     })}
-                    <Completeness number={store.numIncompleteScores} />
-                    <button
-                        className="btn btn-primary space"
-                        type="button"
-                        onClick={store.submitScores}>
-                        Save changes
-                    </button>
-                    <button className="btn space" onClick={store.cancelSubmitScores}>
-                        Cancel
-                    </button>
+                    <div className="well">
+                        <Completeness number={store.numIncompleteScores} />
+                        <button
+                            className="btn btn-primary space"
+                            type="button"
+                            onClick={store.submitScores}>
+                            Save changes
+                        </button>
+                        <button className="ml-3 btn btn-light" onClick={store.cancelSubmitScores}>
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             </div>
         );

@@ -14,19 +14,22 @@
   {{ smart_tag_form.media }}
   <script type="text/javascript">
     $(document).ready(function () {
+      let printf = window.app.HAWCUtils.printf;
 
       {% if crud == "Create" %}
         $('#id_title').on('keyup', function(){
-          $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
         });
       {% endif %}
 
-      var doseWidget = new window.app.assessmentStartup.DoseUnitsWidget($('form'), {
-        api: "{% url 'animal:api:dose_units-list' %}",
-        el: '#id_preferred_units',
-      }), printf = window.app.utils.HAWCUtils.printf;
+      window.app.startup("assessmentStartup", function(app){
+        var doseWidget = new app.DoseUnitsWidget($('form'), {
+          api: "{% url 'animal:api:dose_units-list' %}",
+          el: '#id_preferred_units',
+        });
+      });
 
-      window.app.smartTagsStartup(function(smartTags){
+      window.app.startup("smartTagsStartup", function(smartTags){
           new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});
       })
 

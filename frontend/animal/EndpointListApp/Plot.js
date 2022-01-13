@@ -119,6 +119,8 @@ const dodgeLogarithmic = (data, x, radius, options) => {
         let svg = d3
                 .select(el)
                 .append("svg")
+                .attr("role", "image")
+                .attr("aria-label", "A dose-response plot")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
@@ -137,10 +139,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                                 .filter(d => _.includes(settings.doses, d.data["dose units id"]))
                                 .filter(d => _.includes(settings.systems, d.data.system))
                                 .filter(d => _.includes(settings.criticalValues, d.type)),
-                            grouped = d3
-                                .nest()
-                                .key(d => d.data.system)
-                                .map(filtered);
+                            grouped = h.groupNest(filtered, d => d.data.system);
 
                         return _.values(grouped);
                     },
@@ -241,7 +240,9 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                                 .attr("cy", height)
                                 .attr("r", 0)
                                 .attr("fill", d => colorScale(d.type))
-                                .on("click", d => Endpoint.displayAsModal(d.data["endpoint id"])),
+                                .on("click", (event, d) =>
+                                    Endpoint.displayAsModal(d.data["endpoint id"])
+                                ),
                         update =>
                             update
                                 .transition(t)

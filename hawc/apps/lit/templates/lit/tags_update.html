@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div id='root'></div>
+<div id='main'></div>
 <div class="well">
   <a class='btn btn-primary'
      href="{% url 'lit:tags_copy' assessment.pk %}">
@@ -11,26 +11,6 @@
 </div>
 {% endblock %}
 
-
 {% block extrajs %}
-<script type="text/json" id="config">
-{
-    "assessment_id": {{assessment.id}},
-    "base_url": "{% url "lit:api:tags-list" %}",
-    "list_url": "{% url "lit:api:tags-list" %}?assessment_id={{assessment.id}}",
-    "csrf": "{{ csrf_token }}",
-    "host": "//{{request.get_host}}",
-    "title": "Reference tags for {{assessment}}",
-    "extraHelpHtml": "Edit tags which can be applied to literature for this assessment. If extracting data, all references marked with a tag in the \"Inclusion\" category will be labeled as ready for data-extraction on the assessment literature review page (<a href=\"{% url 'lit:overview' assessment.pk %}\">here</a>).<br/><br/>",
-    "btnLabel": "Add new tag"
-}
-</script>
-<script type="text/javascript">
-  $(document).ready(function () {
-    const el = document.getElementById('root'),
-      config = JSON.parse(document.getElementById('config').text);
-    window.app.nestedTagEditorStartup(el, config);
-  });
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}
-

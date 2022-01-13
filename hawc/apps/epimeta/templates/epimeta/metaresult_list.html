@@ -4,7 +4,7 @@
 {% load selectable_tags %}
 
 {% block content %}
-    <h1>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h1>
+    <h2>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
     <div class="card">
         <div class="card-header">
             <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
@@ -12,27 +12,16 @@
             </button>
         </div>
         <div id="EndpointForm" class="collapse">
-            <div class="card-body container-fluid">
+            <div class="card-body">
                 {% crispy form %}
             </div>
         </div>
     </div>
-    <div id="endpointTable"></div>
+    <div id="main"></div>
     {% include "includes/paginator.html" %}
 {% endblock content %}
 
 {% block extrajs %}
     {{ form.media }}
-    <script type="text/javascript">
-        window.app.epimetaStartup(function(epimeta){
-            var results = [];
-
-            {{list_json|safe}}.map(function(endpoint){
-                results.push(new epimeta.MetaResult(endpoint));
-            })
-
-            var tbl = new epimeta.MetaResultListTable(results);
-            $("#endpointTable").html(tbl.buildTable());
-        });
-    </script>
+    {{ config|json_script:"config" }}
 {% endblock %}

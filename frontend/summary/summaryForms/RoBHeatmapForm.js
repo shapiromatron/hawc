@@ -9,14 +9,16 @@ import RoBScoreExcludeTable from "./RoBScoreExcludeTable";
 import {TextField, IntegerField, CheckboxField, SelectField} from "./Fields";
 
 class RoBHeatmapForm extends BaseVisualForm {
+    afterGetDataHook(data) {
+        RoBHeatmap.transformData(data);
+    }
+
     buildPreview($parent, data) {
-        this.preview = new RoBHeatmap(data).displayAsPage($parent.empty(), {
-            dev: true,
-        });
+        this.preview = new RoBHeatmap(data).displayAsPage($parent.empty(), {dev: true});
     }
 
     initDataForm() {
-        _.each(["system", "organ", "effect", "effect_subtype"], function(d) {
+        ["system", "organ", "effect", "effect_subtype"].forEach(d => {
             $(`#id_prefilter_${d}`)
                 .on("change", function() {
                     var div = $(`#div_id_${d}s`);
@@ -37,7 +39,7 @@ _.extend(RoBHeatmapForm, {
     tabs: [
         {name: "overall", label: "General settings"},
         {name: "metrics", label: "Included metrics"},
-        {name: "excluded_scores", label: "Included scores"},
+        {name: "excluded_scores", label: "Included judgments"},
         {name: "legend", label: "Legend settings"},
     ],
     schema: [
@@ -132,7 +134,7 @@ _.extend(RoBHeatmapForm, {
         {
             type: RoBScoreExcludeTable,
             prependSpacer: false,
-            label: "Included scores",
+            label: "Included judgments",
             name: "excluded_score_ids",
             colWidths: [10, 30, 30, 30],
             addBlankRowIfNone: false,

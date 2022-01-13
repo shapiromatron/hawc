@@ -64,6 +64,9 @@ class DataPivotViewset(AssessmentViewset):
     pagination_class = DisabledPagination
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
 
+    def get_queryset(self):
+        return self.model.objects.select_related("datapivotquery", "datapivotupload").all()
+
     def get_serializer_class(self):
         cls = serializers.DataPivotSerializer
         if self.action == "list":
@@ -126,5 +129,5 @@ class SummaryTableViewset(AssessmentEditViewset):
     @action(detail=True, renderer_classes=(DocxRenderer,))
     def docx(self, request, pk):
         obj = self.get_object()
-        report = obj.to_docx()
+        report = obj.to_docx(base_url=request._current_scheme_host)
         return Response(report)

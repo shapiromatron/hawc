@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import {
     getMultiScoreDisplaySettings,
@@ -37,7 +37,7 @@ class RoBHeatmapPlot extends D3Visualization {
             );
         }
         this.get_plot_sizes();
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "A heatmap visualization of judgments for each study");
         this.add_axes();
         this.draw_visualization();
         this.resize_plot_dimensions();
@@ -97,7 +97,7 @@ class RoBHeatmapPlot extends D3Visualization {
         _.each(this.data.aggregation.metrics_dataset, function(metric) {
             _.chain(metric.rob_scores)
                 .filter(rob => _.includes(included_metrics, rob.data.metric.id))
-                .groupBy(rob => rob.data.study_id)
+                .groupBy(rob => rob.study.data.id)
                 .values()
                 .each(robArray => {
                     const displayedScores = robArray.filter(
@@ -161,6 +161,7 @@ class RoBHeatmapPlot extends D3Visualization {
         _.extend(this, {
             cell_size: this.data.settings.cell_size,
             cells_data,
+            has_multiple_scores: cells_data.filter(d => d.symbols.length > 1).length > 0,
             cells_data_up: cells_data.filter(d => _.includes(d.directions, BIAS_DIRECTION_UP)),
             cells_data_down: cells_data.filter(d => _.includes(d.directions, BIAS_DIRECTION_DOWN)),
             gradients_data,
@@ -262,9 +263,9 @@ class RoBHeatmapPlot extends D3Visualization {
                     : "heatmap_selectable"
             )
             .style("fill", d => d.score_color)
-            .on("mouseover", v => this.draw_hovers(v, {draw: true, type: "cell"}))
-            .on("mouseout", v => this.draw_hovers(v, {draw: false}))
-            .on("click", v => {
+            .on("mouseover", (event, v) => this.draw_hovers(v, {draw: true, type: "cell"}))
+            .on("mouseout", (event, v) => this.draw_hovers(v, {draw: false}))
+            .on("click", (event, v) => {
                 this.print_details(this.modal.getBody(), {
                     type: "cell",
                     robs: v.robArray,
@@ -482,14 +483,13 @@ class RoBHeatmapPlot extends D3Visualization {
         if (this.legend || !this.data.settings.show_legend) {
             return;
         }
-        const rob_response_values = this.data.aggregation.studies[0].data.rob_response_values,
-            options = {
+        const options = {
                 dev: this.options.dev || false,
                 collapseNR: false,
             },
             getFootnoteOptions = () => {
                 let footnotes = [];
-                if (this.cells_data.filter(d => d.symbols.length > 1).length > 0) {
+                if (this.has_multiple_scores) {
                     footnotes.push(FOOTNOTES.MULTIPLE_SCORES);
                 }
                 if (this.cells_data_up.length > 0) {
@@ -502,13 +502,7 @@ class RoBHeatmapPlot extends D3Visualization {
             },
             footnotes = getFootnoteOptions();
 
-        this.legend = new RoBLegend(
-            this.svg,
-            this.data.settings,
-            rob_response_values,
-            footnotes,
-            options
-        );
+        this.legend = new RoBLegend(this.svg, this.data, footnotes, options);
     }
 
     print_details($div, d) {

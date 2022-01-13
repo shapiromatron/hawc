@@ -4,18 +4,24 @@ import logging
 import re
 import uuid
 from collections import OrderedDict, defaultdict
-from dataclasses import dataclass
+from datetime import timedelta
 from math import inf
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, NamedTuple, Optional, Set
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
-from django.utils import html
+from django.http import QueryDict
 from django.utils.encoding import force_str
+from django.utils.html import strip_tags
 from docx.document import Document
+from matplotlib.axes import Axes
+from matplotlib.dates import DateFormatter
+from pydantic import BaseModel as PydanticModel
 from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
@@ -72,20 +78,6 @@ def strip_entities(value):
     """Return the given HTML with all entities (&something;) stripped."""
     # Note: Originally in Django but removed in v1.10
     return re.sub(r"&(?:\w+|#\d+);", "", force_str(value))
-
-
-def strip_tags(value):
-    """Return the given HTML with all tags stripped."""
-    # Note: in typical case this loop executes _strip_once once. Loop condition
-    # is redundant, but helps to reduce number of executions of _strip_once.
-    # Note: Originally in Django but removed in v1.10
-    while "<" in value and ">" in value:
-        new_value = html._strip_once(value)
-        if new_value == value:
-            # _strip_once was not able to detect more tags
-            break
-        value = new_value
-    return value
 
 
 def listToUl(list_):
@@ -150,6 +142,23 @@ def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -
     insert_index = cols.index(after) + 1 if after else 0
     cols.insert(insert_index, target_name)
     return df[cols]
+
+
+def url_query(path: str, query: Dict) -> str:
+    """Generate a URL with appropriate query string parameters
+
+    Args:
+        path (str): The url path
+        query (Dict): A dictionary of parameters to add
+
+    Returns:
+        str: A url-encoded string with query values
+    """
+    if not query:
+        return path
+    q = QueryDict("", mutable=True)
+    q.update(query)
+    return f"{path}?{q.urlencode()}"
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
@@ -239,8 +248,7 @@ class SerializerHelper:
         cls.delete_caches(Model, ids)
 
 
-@dataclass(frozen=True)
-class ReportExport:
+class ReportExport(NamedTuple):
     """
     Document export.
     """
@@ -249,8 +257,7 @@ class ReportExport:
     filename: str
 
 
-@dataclass(frozen=True)
-class FlatExport:
+class FlatExport(NamedTuple):
     """
     Response class of an exporter method.
     """
@@ -288,6 +295,13 @@ class FlatFileExporter:
     def build_export(self) -> FlatExport:
         df = self.build_df()
         return FlatExport(df, self.filename)
+
+
+class WebappConfig(PydanticModel):
+    # single-page webapp configuration
+    app: str
+    page: Optional[str]
+    data: Dict
 
 
 re_digits = r"\d+"
@@ -349,3 +363,46 @@ def get_id_from_choices(items, lookup_value):
         raise ValueError(f"Found multiple matches when searching {items} for {lookup_value}")
     else:
         return matching_vals[0]
+
+
+def empty_mpl_figure(title: str = "No data available.") -> Axes:
+    """Create a matplotlib figure with no data"""
+    plt.figure(figsize=(3, 1))
+    plt.axis("off")
+    plt.suptitle(title)
+    return plt.gca()
+
+
+def event_plot(series: pd.Series) -> Axes:
+    """Return matplotlib event plot"""
+    plt.style.use("bmh")
+
+    if series.empty:
+        return empty_mpl_figure()
+
+    df = series.to_frame(name="timestamp")
+    df.loc[:, "event"] = 1 + (np.random.rand(df.size) - 0.5) / 5  # jitter
+    ax = df.plot.scatter(
+        x="timestamp",
+        y="event",
+        c="None",
+        edgecolors="blue",
+        alpha=1,
+        s=80,
+        figsize=(15, 5),
+        legend=False,
+        grid=True,
+    )
+
+    # set x axis
+    ax.xaxis.set_major_formatter(DateFormatter("%b %d %H:%M"))
+    buffer = ((series.max() - series.min()) / 30) + timedelta(seconds=1)
+    ax.set_xlim(left=series.min() - buffer, right=pd.Timestamp.utcnow() + buffer)
+    ax.set_xlabel("Timestamp (UTC)")
+
+    # set y axis
+    ax.set_ybound(0, 2)
+    ax.axes.get_yaxis().set_visible(False)
+
+    plt.tight_layout()
+    return ax

@@ -1,22 +1,33 @@
 from pathlib import Path
 from textwrap import dedent
 
-from crispy_forms import layout as cfl
 from django import forms
+from django.conf import settings
+from django.contrib import admin
+from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
+from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..myuser.lookups import HAWCUserLookup
+from ..myuser.models import HAWCUser
 from . import lookups, models
 
 
 class AssessmentForm(forms.ModelForm):
+
+    internal_communications = forms.CharField(
+        required=False,
+        help_text="Internal communications regarding this assessment; this field is only displayed to assessment team members.",
+        widget=forms.Textarea,
+    )
+
     class Meta:
         exclude = (
             "creator",
@@ -48,6 +59,20 @@ class AssessmentForm(forms.ModelForm):
         self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
+        if not settings.PM_CAN_MAKE_PUBLIC:
+            help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
+            for field in ("editable", "public", "hide_from_public_page"):
+                self.fields[field].disabled = True
+                self.fields[field].help_text += help_text
+
+        if self.instance:
+            self.fields["internal_communications"].initial = self.instance.get_communications()
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if commit and "internal_communications" in self.changed_data:
+            instance.set_communications(self.cleaned_data["internal_communications"])
+        return instance
 
     @property
     def helper(self):
@@ -87,6 +112,65 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         return helper
+
+
+class AssessmentFilterForm(forms.Form):
+    search = forms.CharField(required=False)
+
+    ORDER_BY_CHOICES = [
+        ("name", "Name"),
+        ("year", "Year, ascending"),
+        ("-year", "Year, descending"),
+        ("last_updated", "Date Updated, ascending"),
+        ("-last_updated", "Date Updated, descending"),
+    ]
+    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial="-last_updated")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        helper.add_row("search", 2, ["col-md-8", "col-md-4"])
+        return helper
+
+    def get_filters(self):
+        query = Q()
+        if name := self.cleaned_data.get("search"):
+            query &= Q(name__icontains=name) | Q(year=name)
+        return query
+
+    def get_queryset(self, qs):
+        if self.is_valid():
+            qs = qs.filter(self.get_filters())
+        return qs.order_by(self.get_order_by())
+
+    def get_order_by(self):
+        if self.is_valid():
+            return self.cleaned_data.get("order_by", "-last_updated")
+        return "-last_updated"
+
+
+class AssessmentAdminForm(forms.ModelForm):
+    class Meta:
+        fields = "__all__"
+        model = models.Assessment
+        widgets = {
+            "dtxsids": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("dtxsids"), admin.site
+            ),
+            "project_manager": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("project_manager"), admin.site
+            ),
+            "team_members": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("team_members"), admin.site
+            ),
+            "reviewers": AutocompleteSelectMultiple(
+                models.Assessment._meta.get_field("reviewers"), admin.site
+            ),
+        }
 
 
 class AssessmentModulesForm(forms.ModelForm):
@@ -173,7 +257,7 @@ class SpeciesForm(forms.ModelForm):
             self,
             legend_text="Create new species",
             help_text="""Create a new species. Note that the creation of a new species is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the species is indeed new and not pre-existing.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -197,7 +281,7 @@ class StrainForm(forms.ModelForm):
             self,
             legend_text="Create a new strain",
             help_text="""Create a new strain. Note that the creation of a new strain is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the strain is indeed new and not pre-existing.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -224,7 +308,7 @@ class DoseUnitsForm(forms.ModelForm):
             self,
             legend_text="Create new dose/exposure units",
             help_text="""Create a new set of dose/exposure units (for example μg/g). Note that the creation of new dose/exposure-units are all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the dose-units are indeed new and not pre-existing.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -250,7 +334,7 @@ class DSSToxForm(forms.ModelForm):
             self,
             legend_text="Import new DSSTox substance",
             help_text="""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the <a href="https://comptox.epa.gov/dashboard">Chemistry dashboard</a>.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -278,7 +362,7 @@ class EffectTagForm(forms.ModelForm):
             self,
             legend_text="Create new effect tag",
             help_text="""Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or in vitro endpoints. Please take care not to duplicate existing effect tags.""",
-            form_actions=[cfl.Submit("save", "Create")],
+            form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
         return helper
@@ -314,14 +398,12 @@ class ContactForm(forms.Form):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(
+        return BaseFormHelper(
             self,
             legend_text="Contact us",
             help_text="Have a question, comment, or need some help? Use this form to to let us know what's going on.",
             cancel_url=self.back_href,
         )
-        helper.form_class = "loginForm"
-        return helper
 
 
 class DatasetForm(forms.ModelForm):
@@ -451,3 +533,66 @@ class DatasetForm(forms.ModelForm):
     class Meta:
         model = models.Dataset
         fields = ("name", "description", "published")
+
+
+class LogFilterForm(forms.Form):
+    user = forms.ModelChoiceField(
+        queryset=HAWCUser.objects.all(),
+        initial=None,
+        required=False,
+        help_text="The user who made the change",
+    )
+    object_id = forms.IntegerField(
+        min_value=1,
+        label="Object ID",
+        initial=None,
+        required=False,
+        help_text="The HAWC ID for the item which was modified; can often be found in the URL or in data exports",
+    )
+    content_type = forms.IntegerField(min_value=1, label="Data type", initial=None, required=False,)
+    before = forms.DateField(
+        required=False,
+        label="Modified before",
+        widget=forms.widgets.DateInput(attrs={"type": "date"}),
+    )
+    after = forms.DateField(
+        required=False,
+        label="Modified After",
+        widget=forms.widgets.DateInput(attrs={"type": "date"}),
+    )
+    on = forms.DateField(
+        required=False, label="Modified On", widget=forms.widgets.DateInput(attrs={"type": "date"})
+    )
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        self.fields["user"].queryset = assessment.pms_and_team_users()
+        url = reverse("assessment:content_types")
+        self.fields[
+            "content_type"
+        ].help_text = f"""Data <a target="_blank" href="{url}">content type</a>; by filtering by data types below the content type can also be set."""
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "get"
+        helper.add_row("user", 3, "col-md-4")
+        helper.add_row("before", 3, "col-md-4")
+        return helper
+
+    def filters(self) -> Q:
+        query = Q()
+        if user := self.cleaned_data.get("user"):
+            query &= Q(user=user)
+        if content_type := self.cleaned_data.get("content_type"):
+            query &= Q(content_type=content_type)
+        if object_id := self.cleaned_data.get("object_id"):
+            query &= Q(object_id=object_id)
+        if before := self.cleaned_data.get("before"):
+            query &= Q(created__date__lt=before)
+        if after := self.cleaned_data.get("after"):
+            query &= Q(created__date__gt=after)
+        if on := self.cleaned_data.get("on"):
+            query &= Q(created__date=on)
+        return query

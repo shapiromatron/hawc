@@ -17,7 +17,9 @@ from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
-from . import constants, forms, models, tasks
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
+from ..common.serializers import validate_jsonschema
+from . import constants, exports, forms, models, tasks
 
 logger = logging.getLogger(__name__)
 
@@ -49,24 +51,22 @@ class SearchSerializer(serializers.ModelSerializer):
         # (assessment+title is checked w/ built-in serializer)
         data["slug"] = slugify(data["title"])
         if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
-            raise serializers.ValidationError(
-                {"slug": "slug (generated from title) must be unique for assessment"}
-            )
+            raise serializers.ValidationError({"slug": ASSESSMENT_UNIQUE_MESSAGE})
 
-        if data["search_type"] != "i":
+        if data["search_type"] != constants.SearchType.IMPORT:
             raise serializers.ValidationError("API currently only supports imports")
 
-        if data["source"] != constants.HERO:
+        if data["source"] != constants.ReferenceDatabase.HERO:
             raise serializers.ValidationError("API currently only supports HERO imports")
 
-        if data["search_type"] == "i":
+        if data["search_type"] == constants.SearchType.IMPORT:
             ids = forms.ImportForm.validate_import_search_string(data["search_string"])
             self.validate_import_ids_exist(data, ids)
 
         return data
 
     def validate_import_ids_exist(self, data, ids: List[int]):
-        if data["source"] == constants.HERO:
+        if data["source"] == constants.ReferenceDatabase.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
         else:
@@ -105,9 +105,26 @@ class ReferenceQuerySerializer(serializers.Serializer):
     authors = serializers.CharField(required=False, allow_blank=True)
     journal = serializers.CharField(required=False, allow_blank=True)
     abstract = serializers.CharField(required=False, allow_blank=True)
+    tags = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=True,
+        required=False,
+        min_length=0,
+        max_length=10,
+    )
+
+    def validate_tags(self, values):
+        assessment = self.context["assessment"]
+        if len(values) > 0:
+            try:
+                self._tags = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, values)
+            except ValueError:
+                raise serializers.ValidationError("Invalid tag IDs")
+        return values
 
     def search(self):
-        query = Q(assessment=self.context["assessment"])
+        qs = models.Reference.objects.filter(assessment=self.context["assessment"])
+        query = Q()
         if "id" in self.data and self.data["id"] is not None:
             query &= Q(id=self.data["id"])
         if "db_id" in self.data and self.data["db_id"] is not None:
@@ -124,9 +141,14 @@ class ReferenceQuerySerializer(serializers.Serializer):
             query &= Q(journal__icontains=self.data["journal"])
         if "abstract" in self.data:
             query &= Q(abstract__icontains=self.data["abstract"])
-
+        if tags := getattr(self, "_tags", None):
+            # don't use a Q for tags; Q creates a subquery with join instead; this approach
+            # appends additional where clauses which are much more performant
+            for tag in tags:
+                tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                qs = qs.filter(tags__in=tag_ids)
         qs = (
-            models.Reference.objects.filter(query)
+            qs.filter(query)
             .select_related("study")
             .prefetch_related("searches", "identifiers")[:100]
         )
@@ -161,9 +183,54 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
         fields = cleanup_fields + ("id",)
 
 
+class ReferenceTreeSerializer(serializers.Serializer):
+    tree = serializers.JSONField()
+
+    tree_schema = {
+        "$id": "tree",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$defs": {
+            "tagNode": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["data"],
+                "properties": {
+                    "id": {"type": "integer"},
+                    "data": {
+                        "type": "object",
+                        "required": ["name"],
+                        "additionalProperties": False,
+                        "properties": {
+                            "name": {"type": "string", "minLength": 1, "maxLength": 128},
+                            "slug": {"type": "string", "pattern": r"^[-a-zA-Z0-9_]+$"},
+                        },
+                    },
+                    "children": {"type": "array", "items": {"$ref": "#/$defs/tagNode"}},
+                },
+            }
+        },
+        "type": "array",
+        "items": {"$ref": "#/$defs/tagNode"},
+    }
+
+    def validate_tree(self, value):
+        return validate_jsonschema(value, self.tree_schema)
+
+    def update(self):
+        assessment_id = self.context["assessment"].id
+        models.ReferenceFilterTag.replace_tree(assessment_id, self.validated_data["tree"])
+
+    def to_representation(self, instance):
+        assessment_id = self.context["assessment"].id
+        root = models.ReferenceFilterTag.get_assessment_root(assessment_id)
+        tree = root.dump_bulk(root, keep_ids=True)
+        return {"tree": tree[0].get("children", [])}
+
+
 class BulkReferenceTagSerializer(serializers.Serializer):
-    operation = serializers.ChoiceField(choices=["append", "replace"], required=True)
+    operation = serializers.ChoiceField(choices=["append", "replace", "remove"], required=True)
     csv = serializers.CharField(required=True)
+    dry_run = serializers.BooleanField(default=False)
 
     def validate_csv(self, value):
         try:
@@ -185,10 +252,11 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             raise serializers.ValidationError("CSV has no data")
 
         expected_assessment_id = self.context["assessment"].id
+        unique_refs = df.reference_id.unique()
 
         # ensure that all references are from this assessment
         assessments = (
-            models.Reference.objects.filter(id__in=df.reference_id.unique())
+            models.Reference.objects.filter(id__in=unique_refs)
             .values_list("assessment_id", flat=True)
             .distinct()
         )
@@ -204,6 +272,14 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"All tag ids are not from assessment {expected_assessment_id}"
             )
+
+        # ensure all references exist
+        founds_refs = set(
+            models.Reference.objects.filter(id__in=unique_refs).values_list("id", flat=True)
+        )
+        missing = set(unique_refs) - set(founds_refs)
+        if missing:
+            raise serializers.ValidationError(f"Reference(s) not found: {missing}")
 
         # check to make sure we have no duplicates
         df_nrows = df.shape[0]
@@ -221,6 +297,9 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
     @transaction.atomic
     def bulk_create_tags(self):
+        if self.validated_data["dry_run"]:
+            return
+
         assessment_id = self.assessment.id
         operation = self.validated_data["operation"]
 
@@ -233,9 +312,18 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             )
 
         if operation == "replace":
-            tags_to_delete = models.ReferenceTags.objects.assessment_qs(assessment_id)
-            logger.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
-            tags_to_delete.delete()
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
+
+        if operation == "remove":
+            query = Q()
+            for row in self.df.itertuples(index=False):
+                query |= Q(tag_id=row.tag_id, content_object_id=row.reference_id)
+            qs = models.ReferenceTags.objects.assessment_qs(assessment_id).filter(query)
+            logger.info(f"Deleting {qs.count()} reference tags for {assessment_id}")
+            qs.delete()
+            return
 
         new_tags = [
             models.ReferenceTags(tag_id=row.tag_id, content_object_id=row.reference_id)
@@ -246,7 +334,6 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if new_tags:
             logger.info(f"Creating {len(new_tags)} reference tags for {assessment_id}")
             models.ReferenceTags.objects.bulk_create(new_tags)
-
             models.Reference.delete_cache(assessment_id)
 
 
@@ -276,15 +363,18 @@ class ReferenceSerializer(serializers.ModelSerializer):
             self.instance.assessment_id
         ).filter(id__in=value)
         if valid_tags.count() != len(value):
-            raise serializers.ValidationError(f"All tag ids are not from this assessment")
+            raise serializers.ValidationError("All tag ids are not from this assessment")
         return value
 
-    @transaction.atomic()
+    @transaction.atomic
     def update(self, instance, validated_data):
 
         # updates the reference tags
         if "tags" in validated_data:
             instance.tags.set(validated_data.pop("tags"))
+        # updates the searches
+        if "searches" in validated_data:
+            instance.searches.set(validated_data.pop("searches"))
         # updates the rest of the fields
         for attr, value in list(validated_data.items()):
             setattr(instance, attr, value)
@@ -337,7 +427,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         existing_hero_ids = [
             int(id_)
             for id_ in models.Identifiers.objects.filter(
-                references__in=references_diff, database=constants.HERO
+                references__in=references_diff, database=constants.ReferenceDatabase.HERO
             ).values_list("unique_id", flat=True)
         ]
         hero_counts = Counter(itertools.chain(existing_hero_ids, self.hero_ids))
@@ -373,3 +463,20 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         # run chained tasks
         return chain(t1, t2, t3)()
+
+
+class ReferenceTagExportSerializer(serializers.Serializer):
+    nested = serializers.ChoiceField(choices=[("t", "true"), ("f", "false")], default="t")
+    exporter = serializers.ChoiceField(
+        choices=[("base", "base"), ("table-builder", "table builder")], default="base"
+    )
+    _exporters = {
+        "base": exports.ReferenceFlatComplete,
+        "table-builder": exports.TableBuilderFormat,
+    }
+
+    def get_exporter(self):
+        return self._exporters[self.validated_data["exporter"]]
+
+    def include_descendants(self):
+        return self.validated_data["nested"] == "t"

@@ -8,7 +8,7 @@ const DetailMetric = props => {
     return (
         <div className="row mr-1" style={{maxHeight: 300, overflowY: "auto"}}>
             <div className="col-md-4">
-                <ul>
+                <ul className="mb-0">
                     <li>
                         <b>Name:&nbsp;</b>
                         {object.name}
@@ -28,10 +28,6 @@ const DetailMetric = props => {
                     <li>
                         <b>Required invitro:&nbsp;</b>
                         {h.booleanCheckbox(object.required_invitro)}
-                    </li>
-                    <li>
-                        <b>Hide description:&nbsp;</b>
-                        {h.booleanCheckbox(object.hide_description)}
                     </li>
                     <li>
                         <b>Use short name:&nbsp;</b>

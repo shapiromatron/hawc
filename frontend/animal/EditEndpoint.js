@@ -1,9 +1,13 @@
 import $ from "$";
 import _ from "lodash";
 
+import {
+    addStdev,
+    addContinuousConfidenceIntervals,
+    addDichotomousConfidenceIntervals,
+} from "shared/utils/math";
 import DRPlot from "./DRPlot";
 import Endpoint from "./Endpoint";
-
 class EditEndpoint {
     constructor(initialData) {
         this.initialData = initialData;
@@ -172,7 +176,7 @@ class EditEndpoint {
         delete vals[""]; // cleanup
         this.endpoint.data = vals;
         this._calculate_confidence_intervals();
-        this.endpoint._switch_dose(0);
+        this.endpoint.activateFirst();
         new DRPlot(this.endpoint, "#endpoint_plot");
     }
 
@@ -187,66 +191,15 @@ class EditEndpoint {
             return;
         }
         if (endpoint.data.data_type === "C") {
-            /*
-            Use t-test z-score of 1.96 for approximation. Note only used during
-            input forms;
-            */
-            endpoint.data.groups
-                .filter(d => d.isReported)
-                .forEach(v => {
-                    if (!v.variance || !v.n) {
-                        return;
-                    }
-                    if (v.stdev === undefined) {
-                        endpoint._calculate_stdev(v);
-                    }
-                    var se = v.stdev / Math.sqrt(v.n),
-                        z = Math.inv_tdist_05(v.n - 1) || 1.96;
-
-                    v.lower_ci = v.response - se * z;
-                    v.upper_ci = v.response + se * z;
-                });
+            addStdev(endpoint);
+            addContinuousConfidenceIntervals(endpoint);
         } else if (endpoint.data.data_type === "P") {
             // no change needed
         } else {
-            /*
-            Procedure adds confidence intervals to dichotomous datasets.
-            Taken from bmds231_manual.pdf, pg 124-5
-
-            LL = {(2np + z2 - 1) - z*sqrt[z2 - (2+1/n) + 4p(nq+1)]}/[2*(n+z2)]
-            UL = {(2np + z2 + 1) + z*sqrt[z2 + (2-1/n) + 4p(nq-1)]}/[2*(n+z2)]
-
-            - p = the observed proportion
-            - n = the total number in the group in question
-            - z = Z(1-alpha/2) is the inverse standard normal cumulative distribution
-                    function evaluated at 1-alpha/2
-            - q = 1-p.
-
-            The error bars shown in BMDS plots use alpha = 0.05 and so represent
-            the 95% confidence intervals on the observed proportions (independent of
-            model).
-            */
-            endpoint.data.groups
-                .filter(d => d.isReported)
-                .forEach(v => {
-                    var p = v.incidence / v.n,
-                        q = 1 - p,
-                        z = 1.959963986120195;
-                    v.lower_ci =
-                        (2 * v.n * p +
-                            2 * z -
-                            1 -
-                            z * Math.sqrt(2 * z - (2 + 1 / v.n) + 4 * p * (v.n * q + 1))) /
-                        (2 * (v.n + 2 * z));
-                    v.upper_ci =
-                        (2 * v.n * p +
-                            2 * z +
-                            1 +
-                            z * Math.sqrt(2 * z + (2 + 1 / v.n) + 4 * p * (v.n * q - 1))) /
-                        (2 * (v.n + 2 * z));
-                });
+            addDichotomousConfidenceIntervals(endpoint);
         }
     }
 }
 
 export default EditEndpoint;
+export {addContinuousConfidenceIntervals, addDichotomousConfidenceIntervals};

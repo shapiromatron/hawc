@@ -3,6 +3,8 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import {bmdLabelText} from "bmd/common/constants";
+import SelectInput from "shared/components/SelectInput";
+import TextAreaInput from "shared/components/TextAreaInput";
 
 import RecommendationNotes from "./RecommendationNotes";
 import RecommendationTable from "./RecommendationTable";
@@ -14,20 +16,21 @@ class Recommendation extends React.Component {
     }
 
     updateState(props) {
-        let d;
-        if (props.selectedModelId === null) {
-            d = {
-                bmr: props.models[0].bmr_id,
-                model: null,
-                notes: props.selectedModelNotes,
-            };
-        } else {
+        let d = {
+            bmr: props.models[0].bmr_id,
+            model: null,
+            notes: props.selectedModelNotes,
+        };
+        if (props.selectedModelId) {
+            // get select model. this may be null if the selected model is from another bmd session.
             let model = _.find(props.models, {id: props.selectedModelId});
-            d = {
-                bmr: model.bmr_id,
-                model: model.id,
-                notes: props.selectedModelNotes,
-            };
+            if (model) {
+                d = {
+                    bmr: model.bmr_id,
+                    model: model.id,
+                    notes: props.selectedModelNotes,
+                };
+            }
         }
         return d;
     }
@@ -36,143 +39,86 @@ class Recommendation extends React.Component {
         this.setState(this.updateState(nextProps));
     }
 
-    handleFieldChange(e) {
-        let d = {},
-            name = e.target.name,
-            val = e.target.value;
-
-        if (_.includes(["bmr", "model"], name)) {
-            val = parseInt(val);
-        }
-
-        if (val === -1) {
-            val = null;
-        }
-
-        d[name] = val;
-        this.setState(d);
-    }
-
-    handleSaveSelected() {
-        this.props.handleSaveSelected(this.state.model, this.state.notes);
-    }
-
     renderForm() {
-        let models = _.filter(this.props.models, {bmr_id: this.state.bmr}),
-            selectedModel = this.state.model !== null ? this.state.model : -1;
+        const {bmrs, models, handleSaveSelected} = this.props,
+            {bmr, model, notes} = this.state,
+            selectedModel = model !== null ? model : -1,
+            handleSelectChange = (name, value) => {
+                const d = {};
+                d[name] = parseInt(value);
+                if (d[name] === -1) {
+                    d[name] = null;
+                }
+                this.setState(d);
+            },
+            bmrChoices = bmrs.map((d, idx) => {
+                return {id: idx, label: bmdLabelText(d)};
+            }),
+            modelChoices = models
+                .filter(d => d.bmr_id == bmr)
+                .map(d => {
+                    return {id: d.id, label: d.name};
+                });
 
-        models.unshift({
-            id: -1,
-            name: "<no model selected>",
-        });
+        modelChoices.unshift({id: -1, label: "<no model selected>"});
 
         return (
-            <>
-                <legend>Select BMD model</legend>
-                <form className="form">
-                    <div className="col-md-4">
-                        <label htmlFor="bmr">Selected BMR</label>
-                        <div className="form-group">
-                            <select
-                                className="form-control"
-                                value={this.state.bmr}
-                                name="bmr"
-                                onChange={this.handleFieldChange.bind(this)}>
-                                {this.props.bmrs.map((d, i) => {
-                                    return (
-                                        <option key={i} value={i}>
-                                            {bmdLabelText(d)}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </div>
-
-                        <label htmlFor="model">Selected model</label>
-
-                        <div className="form-group">
-                            <select
-                                className="form-control"
-                                value={selectedModel}
-                                name="model"
-                                onChange={this.handleFieldChange.bind(this)}>
-                                {models.map(d => {
-                                    return (
-                                        <option key={d.id} value={d.id}>
-                                            {d.name}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="col-md-8">
-                        <label htmlFor="notes">Notes</label>
-                        <div className="form-group">
-                            <textarea
-                                className="form-control"
-                                value={this.state.notes}
-                                onChange={this.handleFieldChange.bind(this)}
-                                name="notes"
-                                rows="5"
-                                cols="40"
-                            />
-                            <p className="form-text text-muted">
-                                Enter notes on why a model was selected as best fitting; if no model
-                                is selected, add notes on why no model was selected.
-                            </p>
-                        </div>
-                    </div>
-                </form>
-            </>
-        );
-    }
-
-    renderWell() {
-        return (
-            <div className="well" key={1}>
-                <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={this.handleSaveSelected.bind(this)}>
-                    Save selected model
-                </button>
+            <div className="row">
+                <div className="col-md-12">
+                    <legend>Select BMD model</legend>
+                </div>
+                <div className="col-md-4">
+                    <SelectInput
+                        label="Selected BMR"
+                        choices={bmrChoices}
+                        value={bmr}
+                        handleSelect={value => handleSelectChange("bmr", value)}
+                    />
+                    <SelectInput
+                        label="Selected model"
+                        choices={modelChoices}
+                        value={selectedModel}
+                        handleSelect={value => handleSelectChange("model", value)}
+                    />
+                </div>
+                <div className="col-md-8">
+                    <TextAreaInput
+                        name="notes"
+                        label="Notes"
+                        value={notes}
+                        onChange={e => this.setState({notes: e.target.value})}
+                        helpText={`Enter notes on why a model was selected as best fitting;
+                            if no model is selected, add notes on why no model was selected.`}
+                    />
+                </div>
+                <div className="well col-md-12">
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => handleSaveSelected(model, notes)}>
+                        Save selected model
+                    </button>
+                </div>
             </div>
         );
     }
 
-    renderUserNotes() {
-        if (this.props.editMode) {
-            return null;
-        }
-        return <RecommendationNotes notes={this.props.selectedModelNotes} />;
-    }
-
-    renderEditMode() {
-        if (!this.props.editMode) {
-            return null;
-        }
-
-        return [this.renderForm(), this.renderWell()];
-    }
-
     render() {
-        if (this.props.models.length === 0) {
+        const {bmr} = this.state,
+            {editMode, models, selectedModelId} = this.props,
+            modelSubset = _.filter(models, {bmr_id: bmr});
+
+        if (models.length === 0) {
             return null;
         }
-
-        let modelSubset = _.filter(this.props.models, {
-            bmr_id: this.state.bmr,
-        });
-
         return (
             <div className="container-fluid">
-                <RecommendationTable
-                    models={modelSubset}
-                    selectedModelId={this.props.selectedModelId}
-                />
-                {this.renderEditMode()}
-                {this.renderUserNotes()}
+                <RecommendationTable models={modelSubset} selectedModelId={selectedModelId} />
+                {editMode ? (
+                    this.renderForm()
+                ) : (
+                    <RecommendationNotes notes={this.props.selectedModelNotes} />
+                )}
             </div>
         );
     }

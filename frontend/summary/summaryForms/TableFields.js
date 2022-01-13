@@ -1,7 +1,7 @@
 import _ from "lodash";
 import $ from "$";
 
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import D3Visualization from "summary/summary/D3Visualization";
 
 import {InputField, SpacerNullField, HeaderNullField, HelpTextNullField} from "./Fields";
@@ -42,9 +42,7 @@ class TableField extends InputField {
 
     setColgroup() {
         var cw = this.schema.colWidths || [],
-            setCol = function(d) {
-                return `<col width="${d}%"`;
-            };
+            setCol = d => `<col width="${d}%"`;
         $("<colgroup>")
             .append(_.map(cw, setCol))
             .appendTo(this.table);
@@ -151,7 +149,7 @@ class TableField extends InputField {
 
     addTdSelectLabels(name, options) {
         var sel = $(`<select name="${name}" class="form-control">`).append(
-            _.map(options, d => `<option value="${d.value}">${d.label}</option>`)
+            _.map(options, d => `<option value="${d.id}">${d.label}</option>`)
         );
         return $("<td>").append(sel);
     }

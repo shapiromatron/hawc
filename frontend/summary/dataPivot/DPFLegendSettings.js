@@ -4,7 +4,7 @@ import DataPivotLegend from "./DataPivotLegend";
 import {NULL_CASE} from "./shared";
 import StyleViewer from "./StyleViewer";
 import DataPivot from "./DataPivot";
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 const build_tr = function(label, input) {
         return $("<tr>")
@@ -120,6 +120,8 @@ class LegendSettings {
         const vis = d3
             .select(this.plot_div[0])
             .append("svg")
+            .attr("role", "image")
+            .attr("aria-label", "A chart legend")
             .attr("width", "95%")
             .attr("height", "300px")
             .attr("class", "d3")

@@ -8,11 +8,15 @@ class Completeness extends Component {
                 <div className="alert alert-danger">
                     <p>{this.props.number} note(s) still need input.</p>
                     <p>
-                        Notes should only be left blank if &quot;Not applicable&quot; score is
+                        Notes should only be left blank if &quot;Not applicable&quot; judgment is
                         selected.
                     </p>
                 </div>
-            ) : null;
+            ) : (
+                <div className="alert alert-success">
+                    <p>All items complete! Ready to submit.</p>
+                </div>
+            );
         return display;
     }
 }

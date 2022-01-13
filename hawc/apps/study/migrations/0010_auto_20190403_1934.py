@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
             name="summary",
             field=models.TextField(
                 blank=True,
-                help_text="This field is often left blank, but used to add comments on data extraction, e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
+                help_text="This field is often left blank, but used to add comments on data extraction or other general comments. This field is displayed if an assessment is made public.",
                 verbose_name="Summary/extraction comments",
             ),
         ),

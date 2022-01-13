@@ -47,7 +47,8 @@ class DataStatusIndicator extends Component {
         } else {
             component = (
                 <div className="alert alert-danger" role="alert">
-                    <i className="fa fa-close"></i>&nbsp;No data; please edit settings...
+                    <i className="fa fa-close"></i>&nbsp;No dataset selected; please edit
+                    settings...
                 </div>
             );
         }

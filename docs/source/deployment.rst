@@ -71,16 +71,42 @@ To test-deploy the containers on your development computer:
 
 The same approach can be done in production, except please harden the deployment :) .
 
+Pex
+---
+
+Currently we're exploring the use of pex for bundling the entire python virtual environment into a single file, so it's available as a single environment that only requires a python runtime.  We expect that the containers may be modified in the future to use this pex artifact, but will requires further testing.
+
+.. _`pex`: https://pypi.org/project/pex/
+
+The following commands are used to generate and run the pex artifact:
+
+.. code-block:: bash
+
+    # build pex artifact
+    make build-pex
+
+    # activate environment variables ...
+
+    # commands to run gunicorn WSGI server
+    ./dist/hawc.pex run_gunicorn --bind 0.0.0.0:5000
+
+    # commands to run workers and beat for scheduled tasks
+    ./dist/hawc.pex run_celery --app=hawc.main.celery beat --loglevel=INFO
+    ./dist/hawc.pex run_celery --app=hawc.main.celery worker --loglevel=INFO
+
 Configuration
 -------------
 
-In general, for configurable parameters, we use environment variables and corresponding settings in the `hawc.main.settings.staging`_ module. If you need to configure something that's hard-coded, we're happy to modify the settings; feel free to contact us.
+For configurable parameters, we use environment variables which are loaded in the application configuration at runtime.  See the example `configuration file`_ for a complete example. Many variables directly map to settings which are commonly used in django; refer to django documentation for these settings. Additional details on HAWC-specific variables are described below:
 
-.. _`hawc.main.settings.staging`: https://github.com/shapiromatron/hawc/blob/main/hawc/main/settings/staging.py
+.. _`configuration file`: https://github.com/shapiromatron/hawc/blob/main/compose/example.env
 
-Assessment creation
-~~~~~~~~~~~~~~~~~~~
-
-The django setting ``ANYONE_CAN_CREATE_ASSESSMENTS`` determines if anyone can create assessments, or if the ability to allow users to create assessments are controlled by system administrators. To change in staging/production, set the environment variable ``HAWC_ANYONE_CAN_CREATE_ASSESSMENTS`` to "True" or "False" (default "True").
-
-If anyone cannot create assessments, either superusers or users assigned to the group named ``can-create-assessments`` are the only allowed to create assessments; if that group access is removed then assessment creation is also revoked.
+- ``HAWC_ANYONE_CAN_CREATE_ASSESSMENTS`` [True/False; default True]. If true, anyone can create a new assessment. If false, only those who are added to the ``can-create-assessments`` group by system administrators can create a new assessment.
+- ``HAWC_PM_CAN_MAKE_PUBLIC`` [True/False; default True].  If true, assessment project managers have the ability to make an assessment public (and editable) on the HAWC website. If false, only administrators can make assessments public.
+- ``HAWC_INCLUDE_ADMIN`` [True/False, default True]. If true, the admin is included in the hawc deployment. If false, it's not included. In some deployments, the admin may be deployed separately with additional security.
+- ``HAWC_SESSION_DURATION`` [int, default 604800 seconds or 1 week]. The length of a HAWC user-session. After this duration is exceeded, the user must login for a new session.
+- ``HAWC_AUTH_PROVIDERS`` [pipe-separated str of hawc.constants.AuthProvider, default "django"]. A list of providers which can be used for authentication. One or more providers can be used and pipe separated.
+    - The "django" authentication provider means accounts can be created in hawc and passwords are managed in hawc
+    - The "external" authentication provider assumes an upstream server handles authentication and returns appropriate user metadata for integration via ``/user/login/wam/``.  If used, ``hawc.apps.myuser.views.ExternalAuth.get_user_metadata`` requires a custom implementation.
+- ``HAWC_LOGOUT_REDIRECT`` [str, optional]. URL to redirect to after logout. Defaults to the homepage of hawc; this may need to be modified with some authentication providers.
+- ``HAWC_LOAD_TEST_DB`` [0/1/2; default 0]. Load a test database with pre-populated fake data: always (2), if empty (1), or never (0; default). This setting is only used in staging and production django settings.

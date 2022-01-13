@@ -1,31 +1,18 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
+  {% if obj_perms.edit_assessment %}
+  <div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+      <a class="dropdown-item" href="{{object.get_final_rob.get_edit_url}}">Edit final review</a>
+    </div>
+  </div>
+  {% endif %}
   <h2>{{object}}: {{assessment.get_rob_name_display}} (all reviews)</h2>
-  <div id="robTable"></div>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-    {
-        "assessment_id": "{{ assessment.id }}",
-        "study": {
-            "id": "{{ object.study.pk }}",
-            "url": "{% url 'study:api:study-list' %}"
-        },
-        "csrf": "{{ csrf_token }}",
-        "host": "//{{request.get_host}}",
-        "display": "all",
-        "isForm": false
-    }
-</script>
-<script type="text/javascript">
-$(document).ready(function (){
-  window.app.riskofbiasStartup(function (riskofbias) {
-    const el = document.getElementById('robTable'),
-      config = JSON.parse(document.getElementById('config').text);
-    riskofbias.TableStartup(el, config);
-  });
-});
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

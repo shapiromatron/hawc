@@ -31,6 +31,7 @@ urlpatterns = [
         views.SummaryTableCreate.as_view(),
         name="tables_create",
     ),
+    path("assessment/<int:pk>/tables/copy/", views.SummaryTableCopy.as_view(), name="tables_copy",),
     path(
         "assessment/<int:pk>/tables/<slug:slug>/",
         views.SummaryTableDetail.as_view(),
@@ -61,6 +62,16 @@ urlpatterns = [
         "assessment/<int:pk>/visuals/<int:visual_type>/create/",
         views.VisualizationCreate.as_view(),
         name="visualization_create",
+    ),
+    path(
+        "assessment/<int:pk>/visuals/copy/",
+        views.VisualizationCopySelector.as_view(),
+        name="visualization_copy_selector",
+    ),
+    path(
+        "assessment/<int:pk>/visuals/<int:visual_type>/copy/",
+        views.VisualizationCopy.as_view(),
+        name="visualization_copy",
     ),
     path(
         "assessment/<int:pk>/type/<int:visual_type>/data/",
@@ -131,5 +142,11 @@ urlpatterns = [
         "data-pivot/assessment/<int:pk>/<slug:slug>/delete/",
         views.DataPivotDelete.as_view(),
         name="dp_delete",
+    ),
+    # HELP TEXT
+    path(
+        "dataset-interactivity/",
+        views.DatasetInteractivity.as_view(),
+        name="dataset_interactivity",
     ),
 ]

@@ -1,3 +1,5 @@
+from zipfile import BadZipFile
+
 import pandas as pd
 import plotly.express as px
 from django.conf import settings
@@ -6,6 +8,8 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -20,7 +24,7 @@ from ..common.api import (
     OncePerMinuteThrottle,
     PaginationWithCount,
 )
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport, re_digits, read_excel
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
@@ -46,6 +50,25 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
+    @action(detail=True, methods=("get", "post"))
+    def tagtree(self, request, pk, *args, **kwargs):
+        """
+        Get/Update literature tags for an assessment in tree-based structure
+        """
+        assessment = self.get_object()
+        context = context = {"assessment": assessment}
+        if self.request.method == "GET":
+            if not assessment.user_can_view_object(request.user):
+                raise exceptions.PermissionDenied()
+            serializer = serializers.ReferenceTreeSerializer(instance={}, context=context)
+        elif self.request.method == "POST":
+            if not assessment.user_can_edit_object(request.user):
+                raise exceptions.PermissionDenied()
+            serializer = serializers.ReferenceTreeSerializer(data=request.data, context=context)
+            serializer.is_valid(raise_exception=True)
+            serializer.update()
+        return Response(serializer.data)
+
     @action(detail=True, pagination_class=PaginationWithCount)
     def references(self, request, pk):
         assessment = self.get_object()
@@ -54,7 +77,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         tag_id = request.query_params.get("tag_id")
         tag = None
         if tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tag_in_assessment(assessment.id, int(tag_id))
+            tag = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, [int(tag_id)])[0]
 
         if search_id:
             search = models.Search.objects.get(id=search_id)
@@ -146,8 +169,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     @action(detail=True, url_path="topic-model")
     def topic_model(self, request, pk):
         assessment = self.get_object()
-        fig_dict = assessment.literature_settings.get_topic_tsne_fig_dict()
-        return Response(fig_dict)
+        if assessment.literature_settings.has_topic_model:
+            data = assessment.literature_settings.get_topic_tsne_fig_dict()
+        else:
+            data = {"status": "No topic model available"}
+        return Response(data)
 
     @action(detail=True, methods=("post",), url_path="topic-model-request-refresh")
     def topic_model_request_refresh(self, request, pk):
@@ -159,10 +185,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True,
-        methods=("get",),
-        url_path="references-download",
-        renderer_classes=PandasRenderers,
+        detail=True, url_path="references-download", renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """
@@ -194,7 +217,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"df-{instance.id}")
         return Response(export)
 
-    @transaction.atomic()
+    @transaction.atomic
     @action(
         detail=True,
         throttle_classes=(OncePerMinuteThrottle,),
@@ -215,7 +238,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         serializer.execute()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @transaction.atomic()
+    @transaction.atomic
     @action(
         detail=True,
         throttle_classes=(OncePerMinuteThrottle,),
@@ -252,6 +275,29 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
         return Response(dict(references=resp))
 
+    @action(
+        detail=True,
+        methods=("post",),
+        parser_classes=(FileUploadParser,),
+        renderer_classes=PandasRenderers,
+        url_path="excel-to-json",
+    )
+    def excel_to_json(self, request, pk):
+        self.get_object()  # permissions check
+
+        file_ = request.data["file"]
+
+        if not file_.name.endswith(".xlsx"):
+            raise ValidationError({"file": "File extension must be .xlsx"})
+
+        try:
+            df = read_excel(file_)
+        except (BadZipFile, ValueError):
+            raise ParseError({"file": "Unable to parse excel file"})
+
+        export = FlatExport(df=df, filename=file_.name)
+        return Response(export)
+
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search
@@ -285,31 +331,25 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     @action(detail=True, renderer_classes=PandasRenderers)
     def references(self, request, pk):
         """
-        Return all references for a selected tag; does not include tag-descendants.
+        Return all references for a selected tag, including tag-descendants.
         """
         tag = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
-            filename=f"{self.assessment}-{tag.slug}",
-            assessment=self.assessment,
-            tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
-            include_parent_tag=False,
-        )
-        return Response(exporter.build_export())
-
-    @action(detail=True, url_path="references-table-builder", renderer_classes=PandasRenderers)
-    def references_table_builder(self, request, pk):
-        """
-        Return all references for a selected tag in table-builder import format; does not include
-        tag-descendants.
-        """
-        tag = self.get_object()
-        exporter = exports.TableBuilderFormat(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
-            filename=f"{self.assessment}-{tag.slug}",
-            assessment=self.assessment,
-        )
-        return Response(exporter.build_export())
+        serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
+        if serializer.is_valid():
+            qs = models.Reference.objects.get_references_with_tag(
+                tag=tag, descendants=serializer.include_descendants()
+            ).order_by("id")
+            ExportClass = serializer.get_exporter()
+            exporter = ExportClass(
+                queryset=qs,
+                filename=f"{self.assessment}-{tag.slug}",
+                assessment=self.assessment,
+                tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
+                include_parent_tag=False,
+            )
+            return Response(exporter.build_export())
+        else:
+            return Response(serializer.errors, status=400)
 
 
 class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):

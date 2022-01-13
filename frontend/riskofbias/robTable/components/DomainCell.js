@@ -15,7 +15,7 @@ class DomainCell extends Component {
         // scoresByMetric is an array of score arrays, grouped by metric
         let {domain, handleSelectDomain, handleSelectMetric} = this.props,
             scoresByMetric = _.map(this.props.domain.values, "values"),
-            domainName = scoresByMetric[0][0].metric.domain.name;
+            domainName = scoresByMetric[0][0].domain_name;
 
         return (
             <div className="domain-cell" style={{flex: scoresByMetric.length}}>
@@ -26,7 +26,7 @@ class DomainCell extends Component {
                     {scoresByMetric.map(scores => {
                         return (
                             <MetricCell
-                                key={scores[0].metric.id}
+                                key={scores[0].metric_id}
                                 scores={scores}
                                 handleClick={handleSelectMetric}
                             />
@@ -50,9 +50,6 @@ DomainCell.propTypes = {
                         score_shade: PropTypes.string.isRequired,
                         bias_direction: PropTypes.number.isRequired,
                         domain_name: PropTypes.string.isRequired,
-                        metric: PropTypes.shape({
-                            name: PropTypes.string.isRequired,
-                        }).isRequired,
                     })
                 ).isRequired,
             })

@@ -1,23 +1,9 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div id="main"></div>
+    <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/json" id="config">{
-    "assessment_id": {{assessment.id}},
-    "is_create": {{is_create|lower}},
-    "initial": {{initial|safe}},
-    "save_url": "{{save_url}}",
-    "cancel_url": "{{cancel_url}}",
-    "csrf": "{{csrf_token}}"
-}</script>
-<script type="text/javascript">
-    window.app.summaryTableEditStartup(function (startup) {
-        const config = JSON.parse(document.getElementById("config").text),
-            el = document.getElementById('main');
-        startup(el, config);
-    });
-</script>
+    {{ config|json_script:"config" }}
 {% endblock %}

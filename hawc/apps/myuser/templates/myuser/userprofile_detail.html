@@ -1,4 +1,4 @@
-{% extends "breadcrumbed.html" %}
+{% extends "crumbless.html" %}
 
 {% load crispy_forms_tags %}
 
@@ -25,11 +25,19 @@
       <th>Full Name</th>
       <td colspan="2">{{user.get_full_name}}</td>
     </tr>
+    {% if user.external_id %}
+    <tr>
+      <th>External</th>
+      <td colspan="2">{{user.external_id}}</td>
+    </tr>
+    {% endif %}
+    {% if user.has_usable_password %}
     <tr>
       <th>Password</th>
       <td>********</td>
       <td><a href="{% url 'user:change_password' %}">Click to change</a></td>
     </tr>
+    {% endif %}
     <tr>
       <th>Can create assessments</th>
       <td colspan="2">{{user.can_create_assessments}}</td>
@@ -37,6 +45,13 @@
     <tr>
       <th>Authenticated HERO Access</th>
       <td colspan="2">{{object.HERO_access}}</td>
+    </tr>
+    <tr>
+      <th>API token</th>
+      <td colspan="2">
+        <span id="api_token">{{token.key}}</span>
+        <p class="text-muted mb-0">Token is only valid during the current login session.</p>
+    </td>
     </tr>
   </tbody>
 </table>

@@ -1,24 +1,20 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h1 class="d-inline-block">{{object}}</h1>
   {% if obj_perms.edit and crud == "Read" %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
-          <span class="dropdown-header">Meta-result editing</span>
-          <a class="dropdown-item" href="{% url 'meta:result_update' object.pk %}">Update</a>
-          <a class="dropdown-item" href="{% url 'meta:result_delete' object.pk %}">Delete</a>
-      </div>
+  <div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+      <span class="dropdown-header">Meta-result editing</span>
+      <a class="dropdown-item" href="{% url 'meta:result_update' object.pk %}">Update</a>
+      <a class="dropdown-item" href="{% url 'meta:result_delete' object.pk %}">Delete</a>
     </div>
+  </div>
   {% endif %}
-  <div id="objContainer"></div>
+  <h2 class="d-inline-block">{{object}}</h2>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    window.app.epimetaStartup(function(epimeta){
-      epimeta.MetaResult.displayFullPager($("#objContainer"), {{object.id}});
-    });
-  </script>
+  {{ config|json_script:"config" }}
 {% endblock %}

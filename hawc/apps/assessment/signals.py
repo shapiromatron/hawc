@@ -28,7 +28,6 @@ def default_configuration(sender, instance, created, **kwargs):
         logger.info(
             f"Creating default settings for {instance.get_rob_name_display().lower()} criteria"
         )
-        apps.get_model("riskofbias", "RiskOfBiasDomain").build_default(instance)
         apps.get_model("riskofbias", "RiskOfBiasAssessment").build_default(instance)
 
         logger.info("Creating new BMD settings assessment creation")

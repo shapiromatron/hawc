@@ -1,12 +1,28 @@
-{% extends 'breadcrumbed.html' %}
+{% extends 'crumbless.html' %}
 
-{% block content %}
-<div>
+{% load add_class %}
+{% load crispy_forms_tags %}
+
+{% block content_outer %}
+<div class="col-lg-12" >
   <h1>Available Assessments</h1>
   {% if desc %}
   <p>{{desc}}</p>
   {% endif %}
+  <div class="card mb-2">
+    <div class="card-body pb-1">
+      {% crispy form %}
+    </div>
+  </div>
   {% include "assessment/_assessment_list_tbl.html" %}
+  <p><b>{{object_list.count}}</b> assessments found.</p>
 </div>
+{% endblock content_outer %}
 
-{% endblock content %}
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+  });
+</script>
+{% endblock extrajs %}

@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from ..common.admin import YesNoFilter
 from . import models
 
 
@@ -22,12 +23,14 @@ class RiskOfBiasMetricAdmin(admin.ModelAdmin):
         "id",
         "domain",
         "name",
+        "responses",
         "required_animal",
         "required_epi",
         "required_invitro",
         "created",
     )
     list_filter = (
+        "responses",
         "required_animal",
         "required_epi",
         "required_invitro",
@@ -43,10 +46,18 @@ class RiskOfBiasAssessmentAdmin(admin.ModelAdmin):
         "id",
         "assessment",
         "number_of_reviewers",
-        "default_questions",
-        "responses",
     )
-    list_filter = ("number_of_reviewers", "default_questions", "responses")
+    list_filter = ("number_of_reviewers",)
+
+
+class RiskOfBiasScoreInlineAdmin(admin.TabularInline):
+    model = models.RiskOfBiasScore
+    raw_id_fields = ("metric",)
+    extra = 0
+    can_delete = False
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("metric")
 
 
 @admin.register(models.RiskOfBias)
@@ -54,11 +65,11 @@ class RiskOfBiasAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "study",
-        "final",
         "author",
         "num_scores",
         "num_override_scores",
         "active",
+        "final",
         "created",
         "last_updated",
     )
@@ -84,6 +95,7 @@ class RiskOfBiasAdmin(admin.ModelAdmin):
     list_filter = ("final", "active", "author")
     search_fields = ("study__short_citation", "author__last_name")
     raw_id_fields = ("study",)
+    inlines = [RiskOfBiasScoreInlineAdmin]
 
 
 class RiskOfBiasScoreOverrideObjectInline(admin.TabularInline):
@@ -113,8 +125,23 @@ class RiskOfBiasScoreAdmin(admin.ModelAdmin):
     inlines = [RiskOfBiasScoreOverrideObjectInline]
 
 
+class IsOrphanedFilter(YesNoFilter):
+    title = "Orphaned"
+    parameter_name = "orphaned"
+    query = -1
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == "Yes":
+            return queryset.orphaned()
+        elif value == "No":
+            return queryset.not_orphaned()
+        return queryset
+
+
 @admin.register(models.RiskOfBiasScoreOverrideObject)
 class RiskOfBiasScoreOverrideObjectAdmin(admin.ModelAdmin):
     list_display = ("id", "content_type", "object_id")
-    list_filter = (("content_type", admin.RelatedOnlyFieldListFilter),)
+    list_filter = (("content_type", admin.RelatedOnlyFieldListFilter), IsOrphanedFilter)
     raw_id_fields = ("score",)
+    search_fields = ("object_id",)

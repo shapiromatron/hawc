@@ -1,8 +1,8 @@
 import $ from "$";
 import * as d3 from "d3";
 
-import D3Plot from "utils/D3Plot";
-import HAWCUtils from "utils/HAWCUtils";
+import D3Plot from "shared/utils/D3Plot";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class StyleViewer extends D3Plot {
     constructor($plot_div, style, settings) {
@@ -36,7 +36,7 @@ class StyleViewer extends D3Plot {
     build_plot() {
         this.plot_div.html("");
         this.get_plot_sizes();
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "Style preview functionality");
         this.draw_visualizations();
     }
 

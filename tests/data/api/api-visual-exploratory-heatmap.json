@@ -1,10 +1,17 @@
 {
+  "assessment": 2,
+  "assessment_rob_name": "Risk of bias",
+  "caption": "",
+  "created": "2020-11-25T08:25:27.528283-06:00",
+  "dose_units": null,
+  "endpoints": [],
   "id": 8,
-  "title": "exploratory-heatmap",
-  "slug": "exploratory-heatmap",
-  "visual_type": "exploratory heatmap",
+  "last_updated": "2020-11-25T08:29:33.991892-06:00",
   "prefilters": "{}",
+  "published": true,
   "settings": {
+    "autorotate_tick_labels": true,
+    "autosize_cells": true,
     "cell_height": 50,
     "cell_width": 50,
     "color_range": [
@@ -14,115 +21,108 @@
     "compress_x": true,
     "compress_y": true,
     "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
-    "hawc_interactivity": true,
-    "filters": [],
-    "filtersLogic": "and",
     "filter_widgets": [
       {
         "column": "species",
-        "header": "",
         "delimiter": "",
+        "header": "",
         "on_click_event": "---"
       },
       {
         "column": "strain",
-        "header": "",
         "delimiter": "",
+        "header": "",
         "on_click_event": "---"
       }
     ],
+    "filters": [],
+    "filtersLogic": "and",
+    "hawc_interactivity": true,
     "padding": {
-      "top": 30,
-      "left": 30,
       "bottom": 30,
-      "right": 30
+      "left": 30,
+      "right": 30,
+      "top": 30
     },
     "show_axis_border": true,
     "show_grid": true,
+    "show_null": true,
     "show_tooltip": true,
     "show_totals": true,
-    "show_null": true,
-    "autosize_cells": true,
-    "autorotate_tick_labels": true,
     "table_fields": [
       {
         "column": "study citation",
-        "header": "",
         "delimiter": "",
+        "header": "",
         "on_click_event": "study"
       },
       {
         "column": "experiment name",
-        "header": "",
         "delimiter": "",
+        "header": "",
         "on_click_event": "experiment"
       },
       {
         "column": "animal group name",
-        "header": "",
         "delimiter": "",
+        "header": "",
         "on_click_event": "animal_group"
       },
       {
         "column": "endpoint name",
-        "header": "",
         "delimiter": "",
+        "header": "",
         "on_click_event": "endpoint_complete"
       },
       {
         "column": "---",
-        "header": "",
         "delimiter": "",
+        "header": "",
         "on_click_event": "---"
       }
     ],
     "title": {
+      "rotate": 0,
       "text": "",
       "x": 0,
-      "y": 0,
-      "rotate": 0
+      "y": 0
     },
+    "x_axis_bottom": false,
     "x_fields": [
       {
         "column": "system",
-        "wrap_text": 0,
-        "delimiter": ""
+        "delimiter": "",
+        "wrap_text": 0
       }
     ],
     "x_label": {
+      "rotate": 0,
       "text": "",
       "x": 0,
-      "y": 0,
-      "rotate": 0
+      "y": 0
     },
     "x_tick_rotate": 0,
     "y_fields": [
       {
         "column": "study citation",
-        "wrap_text": 0,
-        "delimiter": ""
+        "delimiter": "",
+        "wrap_text": 0
       }
     ],
     "y_label": {
+      "rotate": 0,
       "text": "",
       "x": 0,
-      "y": 0,
-      "rotate": 0
+      "y": 0
     },
-    "y_tick_rotate": -90,
-    "x_axis_bottom": false
+    "y_tick_rotate": -90
   },
-  "caption": "",
-  "published": true,
+  "slug": "exploratory-heatmap",
   "sort_order": "short_citation",
-  "created": "2020-11-25T08:25:27.528283-06:00",
-  "last_updated": "2020-11-25T08:29:33.991892-06:00",
-  "assessment": 2,
-  "dose_units": null,
-  "url": "/summary/visual/assessment/2/exploratory-heatmap/",
-  "url_update": "/summary/visual/assessment/2/exploratory-heatmap/update/",
-  "url_delete": "/summary/visual/assessment/2/exploratory-heatmap/delete/",
-  "endpoints": [],
   "studies": [],
-  "assessment_rob_name": "Risk of bias"
+  "title": "exploratory-heatmap",
+  "url": "/summary/visual/assessment/2/exploratory-heatmap/",
+  "url_delete": "/summary/visual/assessment/2/exploratory-heatmap/delete/",
+  "url_update": "/summary/visual/assessment/2/exploratory-heatmap/update/",
+  "visual_type": "exploratory heatmap"
 }

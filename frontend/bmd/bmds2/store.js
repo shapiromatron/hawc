@@ -100,7 +100,9 @@ class Bmd2Store {
         this.selectedModelNotes = "";
     }
     @action.bound applyRecommendationLogic() {
-        applyRecommendationLogic(this.logic, this.models, this.endpoint, this.doseUnits);
+        if (this.hasExecuted) {
+            applyRecommendationLogic(this.logic, this.models, this.endpoint, this.doseUnits);
+        }
         this.isReady = true;
     }
     autoApplyRecommendationLogic = autorun(() => {
@@ -260,10 +262,7 @@ class Bmd2Store {
     }
     @action.bound saveSelectedModel(model_id, notes) {
         const url = this.config.selected_model_url,
-            data = {
-                model: model_id,
-                notes,
-            };
+            data = {model: model_id, notes};
 
         fetch(url, h.fetchPost(this.config.csrf, data, "POST")).then(() => {
             this.selectedModelId = model_id;

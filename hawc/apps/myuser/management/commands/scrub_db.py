@@ -6,11 +6,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
 
-HELP_TEXT = """Anonymize user information."""
-
 
 class Command(BaseCommand):
-    help = HELP_TEXT
+    help = """Anonymize user information."""
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -49,7 +47,12 @@ class Command(BaseCommand):
             user.save()
 
         # save superuser
-        superuser = get_user_model().objects.filter(is_superuser=True).first()
+        superuser = (
+            get_user_model()
+            .objects.filter(is_superuser=True, is_active=True)
+            .order_by("id")
+            .first()
+        )
         superuser.first_name = "Super"
         superuser.last_name = "Duper"
         superuser.email = "webmaster@hawcproject.org"

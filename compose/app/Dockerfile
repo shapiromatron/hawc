@@ -1,4 +1,4 @@
-FROM python:3.6.13
+FROM python:3.9-slim
 
 ENV PYTHONUNBUFFERED 1
 
@@ -13,12 +13,17 @@ COPY ./compose/app/cron.sh /app/bin/cron.sh
 COPY ./compose/app/phantomjs_openssh.conf /app/phantomjs_openssh.conf
 COPY ./compose/app/fonts /usr/share/fonts/truetype/app
 COPY ./vendor/phantomjs-2.1.1-linux-x86_64.tar.bz2 /phantomjs.tar.bz2
+COPY ./vendor/bmds-0.11.0.tar.gz /app/build/vendor/bmds-0.11.0.tar.gz
 
 # used in some dev/staging environments
 COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 
+# security updates
+# https://pythonspeed.com/articles/system-packages-docker/
 RUN apt-get update && \
-    apt-get install -y netcat fonts-liberation && \
+    apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends netcat fonts-liberation bzip2 fontconfig git && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     fc-cache -fv && \
     su app -c "fc-cache -fvs" && \
@@ -27,21 +32,16 @@ RUN apt-get update && \
     mv /phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/ && \
     rm -rf /phantomjs* && \
     \
-    mkdir -p /app/logs && \
-    mkdir -p /app/public/media && \
-    mkdir -p /app/public/media/bmds_plot
+    mkdir -p /app/logs
 
-COPY ./requirements /requirements
+COPY ./requirements /app/build/requirements
+COPY ./dist /app/build/dist
+
+WORKDIR /app/build
 RUN pip install -U pip && \
-    pip install -r /requirements/production.txt --no-cache-dir && \
-    rm -rf /requirements
-
-WORKDIR /app
-
-COPY ./dist/hawc.tar.gz /app/hawc.tar.gz
-RUN tar -xf /app/hawc.tar.gz -C /app && \
-    rm /app/hawc.tar.gz && \
-    pip install -e . && \
+    pip install -r /app/build/requirements/production.txt --no-cache-dir && \
+    rm -rf /app/build && \
     chown -R app:app /app
 
+WORKDIR /app
 USER app

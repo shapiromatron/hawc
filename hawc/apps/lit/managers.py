@@ -14,6 +14,7 @@ from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
 from hawc.refml import tags as refmltags
+from hawc.services.utils.doi import get_doi_from_identifier
 
 from ...services.epa import hero
 from ...services.nih import pubmed
@@ -92,17 +93,19 @@ class IdentifiersManager(BaseManager):
             # create id based on search_id and id from RIS file.
             id_ = f"s{search_id}-id{ref['id']}"
             content = json.dumps(ref)
-            ident = self.filter(database=constants.RIS, unique_id=id_).first()
+            ident = self.filter(database=constants.ReferenceDatabase.RIS, unique_id=id_).first()
             if ident:
                 ident.update(content=content)
             else:
-                ident = self.create(database=constants.RIS, unique_id=id_, content=content)
+                ident = self.create(
+                    database=constants.ReferenceDatabase.RIS, unique_id=id_, content=content
+                )
             ids.append(ident)
 
             # create DOI identifier
-            if ref["doi"] is not None:
+            if doi := get_doi_from_identifier(ident):
                 ident, _ = self.get_or_create(
-                    database=constants.DOI, unique_id=ref["doi"], content=""
+                    database=constants.ReferenceDatabase.DOI, unique_id=doi
                 )
                 ids.append(ident)
 
@@ -111,10 +114,14 @@ class IdentifiersManager(BaseManager):
             if ref["PMID"] is not None or db == "nlm":
                 id_ = ref["PMID"] or ref["accession_number"]
                 if id_ is not None:
-                    ident = self.filter(database=constants.PUBMED, unique_id=str(id_)).first()
+                    ident = self.filter(
+                        database=constants.ReferenceDatabase.PUBMED, unique_id=str(id_)
+                    ).first()
                     if not ident:
                         ident = self.create(
-                            database=constants.PUBMED, unique_id=str(id_), content=""
+                            database=constants.ReferenceDatabase.PUBMED,
+                            unique_id=str(id_),
+                            content="",
                         )
                         pimdsFetch.append(ident)
                     ids.append(ident)
@@ -127,11 +134,11 @@ class IdentifiersManager(BaseManager):
             ):
                 db_id = None
                 if db == "wos":
-                    db_id = constants.WOS
+                    db_id = constants.ReferenceDatabase.WOS
                 elif db == "scopus":
-                    db_id = constants.SCOPUS
+                    db_id = constants.ReferenceDatabase.SCOPUS
                 elif db == "emb":
-                    db_id = constants.EMBASE
+                    db_id = constants.ReferenceDatabase.EMBASE
 
                 if db_id:
                     id_ = ref["accession_number"]
@@ -162,7 +169,7 @@ class IdentifiersManager(BaseManager):
         self.bulk_create(
             [
                 apps.get_model("lit", "Identifiers")(
-                    database=constants.HERO,
+                    database=constants.ReferenceDatabase.HERO,
                     unique_id=str(content["HEROID"]),
                     content=json.dumps(content),
                 )
@@ -171,7 +178,7 @@ class IdentifiersManager(BaseManager):
         )
 
     def hero(self, hero_ids: List[int], allow_missing=False):
-        qs = self.filter(database=constants.HERO, unique_id__in=hero_ids)
+        qs = self.filter(database=constants.ReferenceDatabase.HERO, unique_id__in=hero_ids)
 
         if allow_missing is False and qs.count() != len(hero_ids):
             raise ValueError(
@@ -193,9 +200,9 @@ class IdentifiersManager(BaseManager):
         # Filter IDs which need to be imported; we cast to str and back to mirror db fields
         pmids_str = [str(id) for id in pmids]
         existing = list(
-            self.filter(database=constants.PUBMED, unique_id__in=pmids_str).values_list(
-                "unique_id", flat=True
-            )
+            self.filter(
+                database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str
+            ).values_list("unique_id", flat=True)
         )
         need_import = [int(id) for id in set(pmids_str) - set(existing)]
 
@@ -207,14 +214,14 @@ class IdentifiersManager(BaseManager):
             [
                 Identifiers(
                     unique_id=str(item["PMID"]),
-                    database=constants.PUBMED,
+                    database=constants.ReferenceDatabase.PUBMED,
                     content=json.dumps(item),
                 )
                 for item in fetch.get_content()
             ]
         )
 
-        return self.filter(database=constants.PUBMED, unique_id__in=pmids_str)
+        return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str)
 
 
 class ReferenceManager(BaseManager):
@@ -290,12 +297,13 @@ class ReferenceManager(BaseManager):
         for identifier in identifiers:
             # check if any identifiers have a pubmed ID that already exists
             # in database. If not, save a new reference.
-            content = json.loads(identifier.content, encoding="utf-8")
+            content = json.loads(identifier.content)
             pmid = content.get("PMID", None)
 
             if pmid:
                 ref = self.get_qs(search.assessment).filter(
-                    identifiers__unique_id=str(pmid), identifiers__database=constants.PUBMED
+                    identifiers__unique_id=str(pmid),
+                    identifiers__database=constants.ReferenceDatabase.PUBMED,
                 )
             else:
                 ref = self.none()
@@ -308,6 +316,12 @@ class ReferenceManager(BaseManager):
                 ref = identifier.create_reference(search.assessment)
                 ref.save()
 
+            Identifiers = apps.get_model("lit", "Identifiers")
+            if doi := get_doi_from_identifier(identifier):
+                doi_id, _ = Identifiers.objects.get_or_create(
+                    unique_id=doi, database=constants.ReferenceDatabase.DOI
+                )
+                ref.identifiers.add(doi_id)
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             refs.append(ref)
@@ -353,12 +367,18 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
+        Identifiers = apps.get_model("lit", "Identifiers")
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
+            if doi := get_doi_from_identifier(identifier):
+                doi_identifier, _ = Identifiers.objects.get_or_create(
+                    unique_id=doi, database=constants.ReferenceDatabase.DOI
+                )
+                ref.identifiers.add(doi_identifier)
             refs.append(ref)
 
         return refs
@@ -463,7 +483,12 @@ class ReferenceManager(BaseManager):
         """
         qs = qs.prefetch_related("identifiers")
 
-        captured = {None, constants.HERO, constants.PUBMED}
+        captured = {
+            None,
+            constants.ReferenceDatabase.HERO,
+            constants.ReferenceDatabase.PUBMED,
+            constants.ReferenceDatabase.DOI,
+        }
         diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
         if diff:
             logger.warning(f"Missing some identifier IDs from id export: {diff}")
@@ -471,18 +496,25 @@ class ReferenceManager(BaseManager):
         data = defaultdict(dict)
 
         # capture HERO ids
-        heros = qs.filter(identifiers__database=constants.HERO).values_list(
+        heros = qs.filter(identifiers__database=constants.ReferenceDatabase.HERO).values_list(
             "id", "identifiers__unique_id"
         )
         for hawc_id, hero_id in heros:
             data[hawc_id]["hero_id"] = int(hero_id)
 
         # capture PUBMED ids
-        pubmeds = qs.filter(identifiers__database=constants.PUBMED).values_list(
+        pubmeds = qs.filter(identifiers__database=constants.ReferenceDatabase.PUBMED).values_list(
             "id", "identifiers__unique_id"
         )
         for hawc_id, pubmed_id in pubmeds:
             data[hawc_id]["pubmed_id"] = int(pubmed_id)
+
+        # capture DOI ids
+        dois = qs.filter(identifiers__database=constants.ReferenceDatabase.DOI).values_list(
+            "id", "identifiers__unique_id"
+        )
+        for hawc_id, doi_id in dois:
+            data[hawc_id]["doi_id"] = doi_id
 
         # create a dataframe
         df = (
@@ -492,7 +524,7 @@ class ReferenceManager(BaseManager):
         )
 
         # set missing columns
-        for col in ["hero_id", "pubmed_id"]:
+        for col in ["hero_id", "pubmed_id", "doi_id"]:
             if col not in df.columns:
                 df[col] = None
 
@@ -516,17 +548,17 @@ class ReferenceManager(BaseManager):
         )
         pubmed_qs = models.Subquery(
             Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.PUBMED
+                references=models.OuterRef("id"), database=constants.ReferenceDatabase.PUBMED
             ).values("unique_id")[:1]
         )
         hero_qs = models.Subquery(
             Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.HERO
+                references=models.OuterRef("id"), database=constants.ReferenceDatabase.HERO
             ).values("unique_id")[:1]
         )
         doi_qs = models.Subquery(
             Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.DOI
+                references=models.OuterRef("id"), database=constants.ReferenceDatabase.DOI
             ).values("unique_id")[:1]
         )
         qs = (
@@ -553,7 +585,7 @@ class ReferenceManager(BaseManager):
             )
             .str.replace(r"-999", "", regex=True)  # remove flag number
             .str.replace(r"^\|+|\|+$", "", regex=True)  # remove pipes at beginning/end
-            .str.replace("|", ". ")  # change pipes to periods
+            .str.replace("|", ". ", regex=False)  # change pipes to periods
         )
 
         tree = ReferenceFilterTag.get_all_tags(assessment_id, json_encode=False)
@@ -568,7 +600,9 @@ class ReferenceManager(BaseManager):
         return df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
 
     def hero_references(self, assessment_id: int) -> QuerySet:
-        return self.assessment_qs(assessment_id).filter(identifiers__database=constants.HERO)
+        return self.assessment_qs(assessment_id).filter(
+            identifiers__database=constants.ReferenceDatabase.HERO
+        )
 
 
 class ReferenceTagsManager(BaseManager):
