@@ -3,6 +3,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
 from django import forms
+from django.urls import reverse
 from django.db.models import Q
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
@@ -283,15 +284,15 @@ class PrefilterMixin:
             prefilters = {}
 
         if type(self.instance) is models.Visual:
-            evidence_type = models.BIOASSAY
+            evidence_type = constants.StudyType.BIOASSAY
         else:
             evidence_type = self.initial.get("evidence_type") or self.instance.evidence_type
         for k, v in prefilters.items():
             if k == "system__in":
-                if evidence_type == models.BIOASSAY:
+                if evidence_type == constants.StudyType.BIOASSAY:
                     self.fields["prefilter_system"].initial = True
                     self.fields["systems"].initial = v
-                elif evidence_type == models.EPI:
+                elif evidence_type == constants.StudyType.EPI:
                     self.fields["prefilter_episystem"].initial = True
                     self.fields["episystems"].initial = v
 
@@ -300,10 +301,10 @@ class PrefilterMixin:
                 self.fields["organs"].initial = v
 
             if k == "effect__in":
-                if evidence_type == models.BIOASSAY:
+                if evidence_type == constants.StudyType.BIOASSAY:
                     self.fields["prefilter_effect"].initial = True
                     self.fields["effects"].initial = v
-                elif evidence_type == models.EPI:
+                elif evidence_type == constants.StudyType.EPI:
                     self.fields["prefilter_epieffect"].initial = True
                     self.fields["epieffects"].initial = v
 
@@ -391,13 +392,13 @@ class PrefilterMixin:
             if self.__class__.__name__ == "CrossviewForm":
                 evidence_type = 0
 
-            if evidence_type == models.BIOASSAY:
+            if evidence_type == constants.StudyType.BIOASSAY:
                 prefilters["animal_group__experiment__study__in"] = studies
-            elif evidence_type == models.IN_VITRO:
+            elif evidence_type == constants.StudyType.IN_VITRO:
                 prefilters["experiment__study__in"] = studies
-            elif evidence_type == models.EPI:
+            elif evidence_type == constants.StudyType.EPI:
                 prefilters["study_population__study__in"] = studies
-            elif evidence_type == models.EPI_META:
+            elif evidence_type == constants.StudyType.EPI_META:
                 prefilters["protocol__study__in"] = studies
             else:
                 raise ValueError("Unknown evidence type")
@@ -605,38 +606,36 @@ class VisualModelChoiceField(forms.ModelChoiceField):
 
 class VisualSelectorForm(forms.Form):
 
-    vs = VisualModelChoiceField(
-        label="Visualization", queryset=models.Visual.objects.all(), empty_label=" --- "
-    )
+    visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user")
         self.cancel_url = kwargs.pop("cancel_url")
-        self.visual_type = kwargs.pop("visual_type")
         self.assessment_id = kwargs.pop("assessment_id")
+        self.queryset = kwargs.pop("queryset")
         super().__init__(*args, **kwargs)
-        self.fields["vs"].queryset = models.Visual.objects.clonable_queryset(user).filter(
-            visual_type=self.visual_type, assessment__pk=self.assessment_id
-        )
+        self.fields["visual"].queryset = self.queryset
 
     @property
     def helper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "col-md-12"
-
         return BaseFormHelper(
             self,
             legend_text="Copy visualization",
             help_text="""
-                Select an existing visualization from this assessment and copy as a new visualization. This includes all
-                model-settings, and the selected dataset. You will be taken to a new view to
-                create a new visualization, but the form will be pre-populated using the values from
-                the currently-selected visualization.""",
+                Select an existing visualization from this assessment to copy as a template for a
+                new one. This will include all model-settings, and the selected dataset.""",
             submit_text="Copy selected as new",
             cancel_url=self.cancel_url,
+        )
+
+    def get_create_url(self):
+        visual = self.cleaned_data["visual"]
+        return (
+            reverse("summary:visualization_create", args=(self.assessment_id, visual.visual_type))
+            + f"?initial={visual.pk}"
         )
 
 
@@ -1094,10 +1093,10 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["evidence_type"].choices = (
-            (models.BIOASSAY, "Animal Bioassay"),
-            (models.EPI, "Epidemiology"),
-            (models.EPI_META, "Epidemiology meta-analysis/pooled analysis"),
-            (models.IN_VITRO, "In vitro"),
+            (constants.StudyType.BIOASSAY, "Animal Bioassay"),
+            (constants.StudyType.EPI, "Epidemiology"),
+            (constants.StudyType.EPI_META, "Epidemiology meta-analysis/pooled analysis"),
+            (constants.StudyType.IN_VITRO, "In vitro"),
         )
         self.fields["preferred_units"].required = False
         self.helper = self.setHelper()
@@ -1110,7 +1109,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
         evidence_type = self.cleaned_data["evidence_type"]
         export_style = self.cleaned_data["export_style"]
         if (
-            evidence_type not in (models.IN_VITRO, models.BIOASSAY)
+            evidence_type not in (constants.StudyType.IN_VITRO, constants.StudyType.BIOASSAY)
             and export_style != constants.ExportStyle.EXPORT_GROUP
         ):
             raise forms.ValidationError(

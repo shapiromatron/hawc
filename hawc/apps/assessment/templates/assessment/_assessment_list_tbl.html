@@ -24,8 +24,8 @@
                 {% endif %}
             </td>
             <td>{{object.year}}</td>
-            <td>{{object.created|date:"Y-m-d"}}</td>
-            <td>{{object.last_updated|date:"Y-m-d"}}</td>
+            <td>{{object.created|date:"SHORT_DATE_FORMAT"}}</td>
+            <td>{{object.last_updated|date:"SHORT_DATE_FORMAT"}}</td>
         </tr>
         {% endfor %}
     </tbody>

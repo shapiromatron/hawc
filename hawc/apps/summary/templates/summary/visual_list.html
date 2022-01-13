@@ -8,8 +8,12 @@
       <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">Create new visualization</a>
-            <a class="dropdown-item" href="{% url 'summary:visualization_copy_selector' assessment.pk %}">Clone visualization from existing</a>
+          <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">
+            <i class="fa fa-fw fa-edit"></i>&nbsp;Create new visual
+          </a>
+          <a class="dropdown-item" href="{% url 'summary:visualization_copy_selector' assessment.pk %}">
+            <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
+          </a>
         </div>
       </div>
   {% endif %}
@@ -48,8 +52,8 @@
         </td>
         <td>{{visual.get_visual_type_display}}</td>
         <td><p>{{ visual.caption|truncatewords_html:40|safe }}</p></td>
-        <td>{{ visual.created|date:"Y-m-d" }}</td>
-        <td>{{ visual.last_updated|date:"Y-m-d" }}</td>
+        <td>{{ visual.created|date:'SHORT_DATE_FORMAT' }}</td>
+        <td>{{ visual.last_updated|date:'SHORT_DATE_FORMAT' }}</td>
       </tr>
       {% endfor %}
     </tbody>
