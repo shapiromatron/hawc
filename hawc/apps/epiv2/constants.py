@@ -63,8 +63,7 @@ class HealthOutcomeSystem(models.TextChoices):
     # TODO: include other choices for health outcome system
 
 
-SIGNIFICANT_CHOICES = (
-    (True, "Yes"),
-    (False, "No"),
-    (None, "N/A"),
-)
+class Significant(models.IntegerChoices):
+    NO = 0, "No"
+    YES = 1, "Yes"
+    NA = 2, "N/A"

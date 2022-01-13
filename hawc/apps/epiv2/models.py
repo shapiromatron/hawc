@@ -300,11 +300,10 @@ class DataExtraction(models.Model):
         verbose_name="Standard Deviation or Standard Error", blank=True, null=True
     )
     pvalue = models.CharField(verbose_name="p-value", max_length=128, blank=True)
-    significant = models.BooleanField(
+    significant = models.PositiveSmallIntegerField(
         verbose_name="Statistically Significant",
-        choices=constants.SIGNIFICANT_CHOICES,
-        blank=True,
-        null=True,
+        choices=constants.Significant.choices,
+        default=constants.Significant.NA,
     )
     adjustment_factor = models.ForeignKey(
         AdjustmentFactor, on_delete=models.SET_NULL, blank=True, null=True,
