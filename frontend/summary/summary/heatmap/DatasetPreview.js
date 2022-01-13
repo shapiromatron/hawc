@@ -1,7 +1,9 @@
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+
 import DataTable from "shared/components/DataTable";
+import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 
 class DatasetPreview extends Component {
     render() {
@@ -17,42 +19,32 @@ class DatasetPreview extends Component {
                 numColumns: _.keys(firstRow).length,
                 columnNames: _.keys(firstRow),
             },
-            rowsToShow = 50;
+            rowsToShow = 50,
+            actionItems = [
+                <ActionLink
+                    key={0}
+                    icon="fa-refresh"
+                    label="Clear assessment cache"
+                    href={clearCacheUrl}
+                />,
+                <ActionLink
+                    key={1}
+                    icon="fa-file-text-o"
+                    label="Download dataset (csv)"
+                    href={url.includes("?") ? `${url}&format=csv` : `${url}?format=csv`}
+                />,
+                <ActionLink
+                    key={2}
+                    icon="fa-file-excel-o"
+                    label="Download dataset (xlsx)"
+                    href={url.includes("?") ? `${url}&format=xlsx` : `${url}?format=xlsx`}
+                />,
+            ];
 
         return (
             <div>
-                <h4>
-                    Dataset overview
-                    <div className="dropdown btn-group float-right">
-                        <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            Actions
-                        </a>
-                        <div className="dropdown-menu dropdown-menu-right">
-                            {clearCacheUrl ? (
-                                <a className="dropdown-item" href={clearCacheUrl}>
-                                    <i className="fa fa-fw fa-refresh"></i>&nbsp;Clear assessment
-                                    cache
-                                </a>
-                            ) : null}
-                            <a
-                                className="dropdown-item"
-                                href={
-                                    url.includes("?") ? `${url}&format=csv` : `${url}?format=csv`
-                                }>
-                                <i className="fa fa-fw fa-file-text-o"></i>&nbsp;Download dataset
-                                (csv)
-                            </a>
-                            <a
-                                className="dropdown-item"
-                                href={
-                                    url.includes("?") ? `${url}&format=xlsx` : `${url}?format=xlsx`
-                                }>
-                                <i className="fa fa-fw fa-file-excel-o"></i>&nbsp;Download dataset
-                                (xlsx)
-                            </a>
-                        </div>
-                    </div>
-                </h4>
+                <ActionsButton items={actionItems} />
+                <h4 className="d-inline-block">Dataset overview</h4>
                 <ul>
                     <li>
                         <b>Number of rows:</b>&nbsp;{summary.numRows}

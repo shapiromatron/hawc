@@ -5,6 +5,7 @@ from operator import xor
 from typing import Any, Dict
 
 import pandas as pd
+from django.apps import apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -14,7 +15,7 @@ from scipy.stats import t
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
 from ..study.models import Study
-from . import managers
+from . import constants, managers
 
 # version with no special formatting exists as sometimes it is used in a tag title attribute, e.g. for tooltips
 HAWC_VIS_NOTE_UNSTYLED = "This field is commonly used in HAWC visualizations"
@@ -43,6 +44,9 @@ class Criteria(models.Model):
 
     def __str__(self):
         return self.description
+
+    def get_assessment(self):
+        return self.assessment
 
     def copy_across_assessments(self, cw):
         new_obj, _ = self._meta.model.objects.get_or_create(
@@ -108,12 +112,11 @@ class Ethnicity(models.Model):
 class StudyPopulationCriteria(models.Model):
     objects = managers.StudyPopulationCriteriaManager()
 
-    CRITERIA_TYPE = (("I", "Inclusion"), ("E", "Exclusion"), ("C", "Confounding"))
     criteria = models.ForeignKey("Criteria", on_delete=models.CASCADE, related_name="spcriteria")
     study_population = models.ForeignKey(
         "StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria"
     )
-    criteria_type = models.CharField(max_length=1, choices=CRITERIA_TYPE)
+    criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType.choices)
 
     COPY_NAME = "spcriterias"
 
@@ -143,21 +146,6 @@ class StudyPopulation(models.Model):
         "comments",
     )
 
-    DESIGN_CHOICES = (
-        ("CO", "Cohort"),
-        ("CX", "Cohort (Retrospective)"),
-        ("CY", "Cohort (Prospective)"),
-        ("CC", "Case-control"),
-        ("NC", "Nested case-control"),
-        ("CR", "Case report"),
-        ("SE", "Case series"),
-        ("RT", "Randomized controlled trial"),
-        ("NT", "Non-randomized controlled trial"),
-        ("CS", "Cross-sectional"),
-    )
-
-    DESIGN_CHOICES_DICT = {el[0]: el[1] for el in DESIGN_CHOICES}
-
     OUTCOME_GROUP_DESIGNS = ("CC", "NC")
 
     study = models.ForeignKey(
@@ -177,7 +165,7 @@ class StudyPopulation(models.Model):
     )
     design = models.CharField(
         max_length=2,
-        choices=DESIGN_CHOICES,
+        choices=constants.Design.choices,
         help_text="Choose the most specific description of study design." + HAWC_VIS_NOTE,
     )
     age_profile = models.CharField(
@@ -302,7 +290,7 @@ class StudyPopulation(models.Model):
         ordering = ("name",)
 
     def get_absolute_url(self):
-        return reverse("epi:sp_detail", kwargs={"pk": self.pk})
+        return reverse("epi:sp_detail", args=(self.pk,))
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -363,17 +351,6 @@ class Outcome(BaseEndpoint):
         "effect_subtype",
     )
 
-    DIAGNOSTIC_CHOICES = (
-        (0, "not reported"),
-        (1, "medical professional or test"),
-        (2, "medical records"),
-        (3, "self-reported"),
-        (4, "questionnaire"),
-        (5, "hospital admission"),
-        (7, "registry"),
-        (6, "other"),
-    )
-
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.CASCADE, related_name="outcomes"
     )
@@ -391,7 +368,7 @@ class Outcome(BaseEndpoint):
         help_text="Effect subtype, using common-vocabulary. Use title style (capitalize all words). Ex. Absolute"
         + formatHelpTextNotes("This field is not mandatory; often no effect subtype is necessary"),
     )
-    diagnostic = models.PositiveSmallIntegerField(choices=DIAGNOSTIC_CHOICES)
+    diagnostic = models.PositiveSmallIntegerField(choices=constants.Diagnostic.choices)
     diagnostic_description = models.TextField(
         help_text='Copy and paste diagnostic methods directly from study. Ex. "Birth weight (grams) was measured by trained midwives at delivery." '
         + formatHelpTextNotes("Use quotation marks around direct quotes from a study")
@@ -447,7 +424,7 @@ class Outcome(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     def get_absolute_url(self):
-        return reverse("epi:outcome_detail", kwargs={"pk": self.pk})
+        return reverse("epi:outcome_detail", args=(self.pk,))
 
     def can_create_sets(self):
         return not self.study_population.can_create_sets()
@@ -581,7 +558,7 @@ class ComparisonSet(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("epi:cs_detail", kwargs={"pk": self.pk})
+        return reverse("epi:cs_detail", args=(self.pk,))
 
     def get_assessment(self):
         if self.outcome:
@@ -641,19 +618,6 @@ class ComparisonSet(models.Model):
 class Group(models.Model):
     objects = managers.GroupManager()
 
-    SEX_CHOICES = (
-        ("U", "Not reported"),
-        ("M", "Male"),
-        ("F", "Female"),
-        ("B", "Male and Female"),
-    )
-
-    IS_CONTROL_CHOICES = (
-        (True, "Yes"),
-        (False, "No"),
-        (None, "N/A"),
-    )
-
     comparison_set = models.ForeignKey(
         ComparisonSet, on_delete=models.CASCADE, related_name="groups"
     )
@@ -681,7 +645,7 @@ class Group(models.Model):
         + "typically the group with the lowest or no exposure",
         blank=True,
     )
-    sex = models.CharField(max_length=1, default="U", choices=SEX_CHOICES)
+    sex = models.CharField(max_length=1, default=constants.Sex.U, choices=constants.Sex.choices)
     ethnicities = models.ManyToManyField(Ethnicity, blank=True, help_text="Optional")
     eligible_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Eligible N", help_text="Optional"
@@ -695,9 +659,10 @@ class Group(models.Model):
     isControl = models.BooleanField(
         verbose_name="Control?",
         default=None,
-        choices=IS_CONTROL_CHOICES,
+        choices=constants.IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group, if applicable",
         null=True,
+        blank=True,
     )
     comments = models.TextField(
         blank=True, help_text="Provide additional group or extraction details if necessary",
@@ -715,7 +680,7 @@ class Group(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse("epi:g_detail", kwargs={"pk": self.pk})
+        return reverse("epi:g_detail", args=(self.pk,))
 
     def get_assessment(self):
         return self.comparison_set.get_assessment()
@@ -914,7 +879,7 @@ class Exposure(models.Model):
         return self.study_population.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("epi:exp_detail", kwargs={"pk": self.pk})
+        return reverse("epi:exp_detail", args=(self.pk,))
 
     @classmethod
     def delete_caches(cls, ids):
@@ -997,23 +962,6 @@ class Exposure(models.Model):
 
 class CentralTendency(models.Model):
     # object = managers.CentralTendencyManager
-    ESTIMATE_TYPE_CHOICES = (
-        (0, None),
-        (1, "mean"),
-        (2, "geometric mean"),
-        (3, "median"),
-        (5, "point"),
-        (4, "other"),
-    )
-
-    VARIANCE_TYPE_CHOICES = (
-        (0, None),
-        (1, "SD"),
-        (2, "SE"),
-        (3, "SEM"),
-        (4, "GSD"),
-        (5, "other"),
-    )
 
     exposure = models.ForeignKey(
         Exposure, on_delete=models.CASCADE, related_name="central_tendencies"
@@ -1028,10 +976,14 @@ class CentralTendency(models.Model):
         + HAWC_VIS_NOTE,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=ESTIMATE_TYPE_CHOICES, verbose_name="Central estimate type", default=0
+        choices=constants.EstimateType.choices,
+        verbose_name="Central estimate type",
+        default=constants.EstimateType.NONE,
     )
     variance = models.FloatField(blank=True, null=True, verbose_name="Variance")
-    variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+    )
     lower_ci = models.FloatField(
         blank=True, null=True, verbose_name="Lower CI", help_text="Numerical value"
     )
@@ -1114,20 +1066,6 @@ class CentralTendency(models.Model):
 class GroupNumericalDescriptions(models.Model):
     objects = managers.GroupNumericalDescriptionsManager()
 
-    MEAN_TYPE_CHOICES = (
-        (0, None),
-        (1, "mean"),
-        (2, "geometric mean"),
-        (3, "median"),
-        (4, "other"),
-    )
-
-    VARIANCE_TYPE_CHOICES = ((0, None), (1, "SD"), (2, "SEM"), (3, "GSD"), (4, "other"))
-
-    LOWER_LIMIT_CHOICES = ((0, None), (1, "lower limit"), (2, "5% CI"), (3, "other"))
-
-    UPPER_LIMIT_CHOICES = ((0, None), (1, "upper limit"), (2, "95% CI"), (3, "other"))
-
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="descriptions")
     description = models.CharField(
         max_length=128,
@@ -1136,22 +1074,36 @@ class GroupNumericalDescriptions(models.Model):
     )
     mean = models.FloatField(blank=True, null=True, verbose_name="Central estimate")
     mean_type = models.PositiveSmallIntegerField(
-        choices=MEAN_TYPE_CHOICES, verbose_name="Central estimate type", default=0
+        choices=constants.GroupMeanType.choices,
+        verbose_name="Central estimate type",
+        default=constants.GroupMeanType.NONE,
     )
     is_calculated = models.BooleanField(
         default=False, help_text="Was value calculated/estimated from literature?"
     )
     variance = models.FloatField(blank=True, null=True)
-    variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.GroupVarianceType.choices, default=constants.GroupVarianceType.NONE
+    )
     lower = models.FloatField(blank=True, null=True)
-    lower_type = models.PositiveSmallIntegerField(choices=LOWER_LIMIT_CHOICES, default=0)
+    lower_type = models.PositiveSmallIntegerField(
+        choices=constants.LowerLimit.choices, default=constants.LowerLimit.NONE
+    )
     upper = models.FloatField(blank=True, null=True)
-    upper_type = models.PositiveSmallIntegerField(choices=UPPER_LIMIT_CHOICES, default=0)
+    upper_type = models.PositiveSmallIntegerField(
+        choices=constants.UpperLimit.choices, default=constants.UpperLimit.NONE
+    )
 
     COPY_NAME = "group_descriptions"
 
+    class Meta:
+        verbose_name_plural = "Group Numerical Descriptions"
+
     def __str__(self):
         return self.description
+
+    def get_assessment(self):
+        return self.group.get_assessment()
 
     def copy_across_assessments(self, cw):
         old_id = self.id
@@ -1214,40 +1166,6 @@ class ResultAdjustmentFactor(models.Model):
 class Result(models.Model):
     objects = managers.ResultManager()
 
-    DOSE_RESPONSE_CHOICES = (
-        (0, "not-applicable"),
-        (1, "monotonic"),
-        (2, "non-monotonic"),
-        (3, "no trend"),
-        (4, "not reported"),
-    )
-
-    STATISTICAL_POWER_CHOICES = (
-        (0, "not reported or calculated"),
-        (1, "appears to be adequately powered (sample size met)"),
-        (2, "somewhat underpowered (sample size is 75% to <100% of recommended)"),
-        (3, "underpowered (sample size is 50 to <75% required)"),
-        (4, "severely underpowered (sample size is <50% required)"),
-    )
-
-    ESTIMATE_TYPE_CHOICES = (
-        (0, None),
-        (1, "mean"),
-        (2, "geometric mean"),
-        (3, "median"),
-        (5, "point"),
-        (4, "other"),
-    )
-
-    VARIANCE_TYPE_CHOICES = (
-        (0, None),
-        (1, "SD"),
-        (2, "SE"),
-        (3, "SEM"),
-        (4, "GSD"),
-        (5, "other"),
-    )
-
     name = models.CharField(
         max_length=256,
         help_text="Name the result, following the format <b>Effect Exposure (If log-transformed) (continuous, quartiles, tertiles, etc.) "
@@ -1287,8 +1205,8 @@ class Result(models.Model):
     dose_response = models.PositiveSmallIntegerField(
         verbose_name="Dose Response Trend",
         help_text=OPTIONAL_NOTE,
-        default=0,
-        choices=DOSE_RESPONSE_CHOICES,
+        default=constants.DoseResponse.NA,
+        choices=constants.DoseResponse.choices,
     )
     dose_response_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     prevalence_incidence = models.CharField(
@@ -1299,8 +1217,8 @@ class Result(models.Model):
     )
     statistical_power = models.PositiveSmallIntegerField(
         help_text="Is the study sufficiently powered?" + OPTIONAL_NOTE,
-        default=0,
-        choices=STATISTICAL_POWER_CHOICES,
+        default=constants.StatisticalPower.NR,
+        choices=constants.StatisticalPower.choices,
     )
     statistical_power_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     statistical_test_results = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
@@ -1315,9 +1233,13 @@ class Result(models.Model):
         AdjustmentFactor, through=ResultAdjustmentFactor, related_name="outcomes", blank=True,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=ESTIMATE_TYPE_CHOICES, verbose_name="Central estimate type", default=0
+        choices=constants.EstimateType.choices,
+        verbose_name="Central estimate type",
+        default=constants.EstimateType.NONE,
     )
-    variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+    )
     ci_units = models.FloatField(
         blank=True,
         null=True,
@@ -1356,7 +1278,7 @@ class Result(models.Model):
         return self.outcome.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("epi:result_detail", kwargs={"pk": self.pk})
+        return reverse("epi:result_detail", args=(self.pk,))
 
     @staticmethod
     def flat_complete_header_row():
@@ -1449,7 +1371,7 @@ class Result(models.Model):
         return self.outcome.get_study()
 
     @classmethod
-    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+    def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
@@ -1458,7 +1380,7 @@ class Result(models.Model):
             return "|".join(sorted(items))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment, "epi": True}
+        filters: Dict[str, Any] = {"assessment_id": assessment_id, "epi": True}
         if published_only:
             filters["published"] = True
         columns = {
@@ -1470,31 +1392,29 @@ class Result(models.Model):
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies
-        df2 = (
-            cls.heatmap_df(assessment, published_only)
-            .groupby("study id")
-            .agg(
-                {
-                    "study design": unique_items,
-                    "study population source": unique_items,
-                    "exposure name": unique_items,
-                    "exposure route": unique_list_items,
-                    "exposure measure": unique_list_items,
-                    "exposure metric": unique_list_items,
-                    "system": unique_items,
-                    "effect": unique_items,
-                    "effect subtype": unique_items,
-                }
-            )
-        )
+        df2 = cls.heatmap_df(assessment_id, published_only)
+        aggregates = {
+            "study design": unique_items,
+            "study population source": unique_items,
+            "exposure name": unique_items,
+            "exposure route": unique_list_items,
+            "exposure measure": unique_list_items,
+            "exposure metric": unique_list_items,
+            "system": unique_items,
+            "effect": unique_items,
+            "effect subtype": unique_items,
+        }
+        if "overall study evaluation" in df2:
+            aggregates["overall study evaluation"] = unique_items
+        df2 = df2.groupby("study id").agg(aggregates)
 
         # merge all the data frames together
         df = df1.merge(df2, how="left", left_index=True, right_index=True).fillna("").reset_index()
         return df
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters = {"outcome__assessment": assessment}
+    def heatmap_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        filters = {"outcome__assessment": assessment_id}
         if published_only:
             filters["outcome__study_population__study__published"] = True
         columns = {
@@ -1533,11 +1453,11 @@ class Result(models.Model):
         )
 
         df1 = pd.DataFrame(data=list(qs), columns=columns.values())
-        df1["study design"] = df1["study design"].map(StudyPopulation.DESIGN_CHOICES_DICT)
+        df1["study design"] = df1["study design"].map(dict(constants.Design.choices))
 
         # add exposure column
         exposure_cols = ["inhalation", "dermal", "oral", "in_utero", "iv", "unknown_route"]
-        qs = Exposure.objects.filter(study_population__study__assessment=assessment).values(
+        qs = Exposure.objects.filter(study_population__study__assessment=assessment_id).values(
             "id", *exposure_cols
         )
 
@@ -1548,32 +1468,28 @@ class Result(models.Model):
         df2 = df2.drop(columns=exposure_cols)
 
         # join data together
-        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True)
-        df = df_move_column(df, "exposure route", "exposure name")
+        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True).pipe(
+            df_move_column, "exposure route", "exposure name"
+        )
         df["exposure route"].fillna("", inplace=True)
         df["exposure measure"].fillna("", inplace=True)
         df["exposure metric"].fillna("", inplace=True)
+
+        # overall risk of bias evaluation
+        FinalRiskOfBiasScore = apps.get_model("materialized", "FinalRiskOfBiasScore")
+        df2 = FinalRiskOfBiasScore.objects.overall_result_scores(assessment_id)
+        if df2 is not None:
+            df = (
+                df.merge(df2, how="left", left_on="result id", right_on="result id")
+                .pipe(df_move_column, "overall study evaluation", "study identifier")
+                .fillna("")
+            )
 
         return df
 
 
 class GroupResult(models.Model):
     objects = managers.GroupResultManager()
-
-    P_VALUE_QUALIFIER_CHOICES = (
-        (" ", "-"),
-        ("-", "n.s."),
-        ("<", "<"),
-        ("=", "="),
-        (">", ">"),
-    )
-
-    MAIN_FINDING_CHOICES = (
-        (3, "not-reported"),
-        (2, "supportive"),
-        (1, "inconclusive"),
-        (0, "not-supportive"),
-    )
 
     result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name="results")
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="results")
@@ -1621,7 +1537,7 @@ class GroupResult(models.Model):
     )
     p_value_qualifier = models.CharField(
         max_length=1,
-        choices=P_VALUE_QUALIFIER_CHOICES,
+        choices=constants.PValueQualifier.choices,
         default="-",
         verbose_name="p-value qualifier",
         help_text="Select n.s. if results are not statistically significant; otherwise, choose the appropriate qualifier. "
@@ -1648,12 +1564,12 @@ class GroupResult(models.Model):
         + HAWC_VIS_NOTE_UNSTYLED,
     )
     main_finding_support = models.PositiveSmallIntegerField(
-        choices=MAIN_FINDING_CHOICES,
+        choices=constants.MainFinding.choices,
         help_text="Select appropriate level of support for the main finding."
         + 'See "Results" section of https://ehp.niehs.nih.gov/1205502/ for examples and further details. '
         + 'Choose between "inconclusive" vs. "not-supportive" based on chemical- and study-specific context. '
         + HAWC_VIS_NOTE_UNSTYLED,
-        default=1,
+        default=constants.MainFinding.I,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -1716,7 +1632,7 @@ class GroupResult(models.Model):
             ser["upper_range"],
             ser["lower_bound_interval"],
             ser["upper_bound_interval"],
-            ser["p_value_qualifier"],
+            ser["p_value_qualifier_display"],
             ser["p_value"],
             ser["is_main_finding"],
             ser["main_finding_support"],
@@ -1853,6 +1769,9 @@ class GroupResult(models.Model):
         self.group_id = cw[Group.COPY_NAME][self.group_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+    def get_assessment(self):
+        return self.result.get_assessment()
 
 
 reversion.register(Country)

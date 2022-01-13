@@ -5,36 +5,45 @@ on: [pull_request]
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     services:
       postgres:
-        image: postgres:9.6
+        image: postgres:12-alpine
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc-test
-        ports:
-        # will assign a random free host port
-        - 5432/tcp
+          POSTGRES_DB: hawc
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 5432/tcp
+      redis:
+        image: redis:6-alpine
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          - 6379/tcp
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
-        python-version: '3.6'
+        python-version: '3.9'
         architecture: 'x64'
     - name: try to restore pip cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        make loc
     - name: install
       run: |
-        mv ci-webpack-stats.json webpack-stats.json
+        mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
+        pip install -U pip wheel
         pip install -r requirements/dev.txt
     - name: lint
       run: |
@@ -43,10 +52,11 @@ jobs:
       env:
         # use localhost for the host here because we are running the job on the VM.
         # If we were running the job on in a container this would be postgres
-        DJANGO_DB_NAME: hawc-test
+        DJANGO_DB_NAME: hawc
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
+        DJANGO_CACHE_LOCATION: redis://localhost:${{job.services.redis.ports[6379]}}/0
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
@@ -54,18 +64,18 @@ jobs:
 
   frontend:
     name: frontend
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
       with:
-        node-version: '12.x'
+        node-version: '16.x'
     - name: set yarn cache directory
       id: yarn-cache-dir-path
       run: |
         echo "::set-output name=dir::$(yarn cache dir)"
     - name: try to restore yarn cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -78,22 +88,36 @@ jobs:
     - name: lint
       run: |
         make lint-js
+    - name: test
+      run: |
+        npm --prefix ./frontend run test
+    - name: build for integration tests
+      run: |
+        npm --prefix ./frontend run build
+    - name: Upload webpack build
+      uses: actions/upload-artifact@v2
+      with:
+        name: webpack-build
+        path: |
+          hawc/webpack-stats.json
+          hawc/static/bundles/
 
   integration:
     name: integration
-    runs-on: ubuntu-18.04
+    needs: [backend, frontend]
+    runs-on: ubuntu-20.04
 
     container:
-      image: nikolaik/python-nodejs:python3.6-nodejs12
+      image: python:3.9-slim
       options: --network-alias container
 
     services:
       postgres:
-        image: postgres:9.6
+        image: postgres:12-alpine
         env:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc-test
+          POSTGRES_DB: hawc
         ports:
         - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -114,7 +138,7 @@ jobs:
 
     env:
       DJANGO_DB_HOST: postgres
-      DJANGO_DB_NAME: hawc-test
+      DJANGO_DB_NAME: hawc
       DJANGO_DB_PORT: 5432
       DJANGO_DB_PW: password
       DJANGO_DB_USER: hawc
@@ -127,27 +151,35 @@ jobs:
       SELENIUM_PORT: 4444
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+    - name: try to restore pip cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Download webpack build
+      uses: actions/download-artifact@v2
+      with:
+        name: webpack-build
+        path: hawc
     - name: install hawc
       run: |
+        pip install -U pip
         pip install -r requirements/dev.txt
-    - name: setup web server
-      run: |
-        mv ci-webpack-stats.json webpack-stats.json
-        yarn --cwd ./frontend install
-        npm run --prefix ./frontend start  &
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run selenium tests
       id: test
       continue-on-error: true
       run: |
-        py.test -s tests/frontend/integration/
+        py.test -sv tests/frontend/integration/
     - name: run selenium tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        py.test -s tests/frontend/integration/
+        py.test -sv tests/frontend/integration/
     - name: set status
       if: always()
       run: |

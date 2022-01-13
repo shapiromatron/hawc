@@ -1,4 +1,4 @@
-.PHONY: build dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
+.PHONY: sync-dev build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh test-js coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -23,11 +23,27 @@ endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
-build:  ## build python application
-	rm -rf build/ dist/
+sync-dev:  ## Sync dev environment after code checkout
+	python -m pip install -U pip
+	pip install -r requirements/dev.txt
+	yarn --cwd frontend
+	manage.py migrate
+
+build:  ## build hawc package
 	npm --prefix ./frontend run build
 	manage.py set_git_commit
-	manage.py build_hawc_bundle
+	rm -rf build/ dist/
+	python setup.py bdist_wheel
+
+build-pex: build ## build pex
+	cd requirements; pex \
+		-r production.txt \
+		-c manage.py \
+		-o ../dist/hawc.pex \
+		--python-shebang='#!/usr/bin/env python'  \
+		--disable-cache \
+		--ignore-errors \
+		../dist/hawc-0.1-py3-none-any.whl
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \
@@ -46,14 +62,11 @@ docs: ## Generate Sphinx HTML documentation, including API docs
 
 loc: ## Generate lines of code report
 	@cloc \
-		--exclude-dir=debug,migrations,node_modules,public,private,vendor,venv \
+		--exclude-dir=migrations,node_modules,public,private,vendor,venv \
 		--exclude-ext=json,yaml,svg,toml,ini \
 		--vcs=git \
 		--counted loc-files.txt \
 		.
-
-servedocs: docs ## Compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 lint: lint-py lint-js  ## Check for javascript/python for linting issues
 
@@ -63,7 +76,7 @@ lint-py:  ## Check for python formatting issues via black & flake8
 	@black . --check && flake8 .
 
 format-py:  ## Modify python code using black & show flake8 issues
-	@black . && isort -rc -y && flake8 .
+	@black . && isort . && flake8 .
 
 lint-js:  ## Check for javascript formatting issues
 	@npm --prefix ./frontend run lint
@@ -80,6 +93,9 @@ test-integration:  ## Run integration tests (requires `npm run start`)
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes
 	@py.test
+
+test-js:  ## Run javascript tests
+	@npm --prefix ./frontend run test
 
 coverage:  ## Run coverage and create html report
 	coverage run -m pytest

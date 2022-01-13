@@ -2,41 +2,10 @@
 
 {% block content %}
     <h2>Clean {{assessment}} metrics</h2>
-    <p class='form-text text-muted'>Clean and standardize the {{assessment.get_rob_name_display|lower}} metric reviews across studies assessment-wide. Both <b>score</b> and <b>text</b> are editable.</p>
-    <div id="root"></div>
+    <p class='form-text text-muted'>Clean and standardize the {{assessment.get_rob_name_display|lower}} metric reviews across studies assessment-wide. Both <b>judgment</b> and <b>text</b> are editable.</p>
+    <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-    {
-        "assessment_id": "{{ assessment.id }}",
-        "assessment": "{% url 'assessment:api:assessment-endpoints' assessment.id %}",
-        "items": {
-            "url": "{% url 'riskofbias:api:metric_scores-list' %}",
-            "patchUrl": "{% url 'riskofbias:api:score-cleanup-list' %}",
-            "title": "Metric Scores"
-        },
-        "metrics": {
-            "url": "{% url 'riskofbias:api:metrics-list' %}",
-            "title": "Metric Choices"
-        },
-        "scores": {
-            "url": "{% url 'riskofbias:api:scores-choices' %}",
-            "title": "Score Choices"
-        },
-        "studyTypes": {
-            "url": "{% url 'study:api:study-types' %}",
-            "title": "Study Types"
-        },
-        "csrf": "{{ csrf_token }}",
-        "host": "//{{request.get_host}}"
-    }
-</script>
-<script type="text/javascript">
-$(document).ready(function(){
-    window.app.riskofbiasStartup(function(riskofbias){
-        riskofbias.ScoreCleanupStartup(document.getElementById('root'));
-    });
-});
-</script>
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

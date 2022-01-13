@@ -1,6 +1,7 @@
 from ..common.helper import FlatFileExporter
 from ..study.models import Study
-from . import models
+from ..study.serializers import VerboseStudySerializer
+from . import models, serializers
 
 
 class RiskOfBiasFlat(FlatFileExporter):
@@ -9,32 +10,65 @@ class RiskOfBiasFlat(FlatFileExporter):
     reviewer information.
     """
 
+    final_only = True  # only return final data
+
+    def get_serialized_data(self):
+        assessment_id = self.kwargs["assessment_id"]
+        qs = (
+            Study.objects.filter(assessment_id=assessment_id)
+            .prefetch_related("identifiers", "riskofbiases__scores__overridden_objects")
+            .select_related("assessment")
+        )
+        ser = VerboseStudySerializer(qs, many=True)
+        study_data = ser.data
+
+        if not self.final_only:
+            qs = (
+                models.RiskOfBias.objects.filter(study__assessment_id=assessment_id, active=True)
+                .select_related("author")
+                .prefetch_related("scores__overridden_objects")
+            )
+            ser = serializers.RiskOfBiasSerializer(qs, many=True)
+            rob_data = ser.data
+            for study in study_data:
+                study["riskofbiases"] = [rob for rob in rob_data if rob["study"] == study["id"]]
+
+        return study_data
+
     def _get_header_row(self):
         header = []
         header.extend(Study.flat_complete_header_row())
+        header.extend(models.RiskOfBias.flat_header_row(final_only=self.final_only))
         header.extend(models.RiskOfBiasScore.flat_complete_header_row())
         return header
 
     def _get_data_rows(self):
         rows = []
-        for obj in self.queryset:
-            ser = obj.get_json(json_encode=False)
-            row = []
-            row.extend(Study.flat_complete_data_row(ser))
+        for ser in self.get_serialized_data():
+            domains = ser["rob_settings"]["domains"]
+            metrics = ser["rob_settings"]["metrics"]
+            domain_map = {domain["id"]: domain for domain in domains}
+            metric_map = {
+                metric["id"]: dict(metric, domain=domain_map[metric["domain_id"]])
+                for metric in metrics
+            }
 
-            try:
-                scores = [
-                    rob["scores"]
-                    for rob in ser.get("riskofbiases", [])
-                    if rob["final"] and rob["active"]
-                ][0]
-            except IndexError:
-                scores = []
+            row1 = []
+            row1.extend(Study.flat_complete_data_row(ser))
 
-            for score in scores:
-                row_copy = list(row)  # clone
-                row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
-                rows.append(row_copy)
+            robs = [rob for rob in ser.get("riskofbiases", [])]
+            if self.final_only:
+                robs = [rob for rob in robs if rob["final"] and rob["active"]]
+
+            for rob in robs:
+                row2 = list(row1)
+                row2.extend(models.RiskOfBias.flat_data_row(rob, final_only=self.final_only))
+                for score in rob["scores"]:
+                    row3 = list(row2)
+                    score["metric"] = metric_map[score["metric_id"]]
+                    row3.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
+                    rows.append(row3)
+
         return rows
 
 
@@ -44,22 +78,4 @@ class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
     information.
     """
 
-    def _get_header_row(self):
-        header = super()._get_header_row()
-        header.extend(models.RiskOfBias.flat_complete_header_row())
-        return header
-
-    def _get_data_rows(self):
-        rows = []
-        for obj in self.queryset:
-            ser = obj.get_json(json_encode=False)
-            row = []
-            row.extend(Study.flat_complete_data_row(ser))
-            for rob in ser.get("riskofbiases", []):
-                rob_data = models.RiskOfBias.flat_complete_data_row(rob)
-                for score in rob["scores"]:
-                    row_copy = list(row)
-                    row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
-                    row_copy.extend(rob_data)
-                    rows.append(row_copy)
-        return rows
+    final_only = False

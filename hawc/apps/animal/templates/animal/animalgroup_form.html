@@ -20,12 +20,11 @@
       {% crispy form_dosing_regime %}
       <div id="doseGroupsDiv">
 
-        <legend>Dose-groups
-          <span class='float-right'>
+        <legend class='d-inline-block'>Dose-groups</legend>
+        <span class='float-right'>
             <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-            <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
-          </span>
-        </legend>
+            <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+        </span>
 
         {% if dose_groups_errors %}
           <div class="alert alert-danger">{{dose_groups_errors|safe}}</div>
@@ -44,7 +43,7 @@
 {{form.media}}
 <script type="text/javascript">
 $(document).ready(function() {
-    var printf = window.app.utils.HAWCUtils.printf,
+    var printf = window.app.HAWCUtils.printf,
         animalGroupSetup = function(){
             var onSpeciesChange = function(e, onStrainUpdateComplete){
                 // only show proper strains for a given species
@@ -77,7 +76,7 @@ $(document).ready(function() {
 
             // refresh species after "Add new strain" popup closes. Wait half a second
             // to give the addition, if any, time to register.
-            $("a[title='Add new strain']").on(window.app.utils.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, function(e) {
+            $("a[title='Add new strain']").on(window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, function(e) {
                 setTimeout(function() {
                     var numStrainsBefore = $("#id_strain option").length;
 
@@ -141,7 +140,7 @@ $(document).ready(function() {
                 .change(onDosingRegimeChange)
                 .trigger('change');
 
-            window.app.animalStartup(function(animal){
+            window.app.startup("animalStartup", function(animal){
                 new animal.DosingRegimeForm(
                     $("#animal_group"), dose_types, dose_values);
             })

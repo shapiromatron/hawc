@@ -1,14 +1,22 @@
 from django import forms
-from django.forms.fields import TextInput
+from django.db.models import Q
+from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, build_form_actions
+from ..common.forms import BaseFormHelper, form_actions_apply_filters
 from ..lit.models import Reference
 from . import models
 
 
 class BaseStudyForm(forms.ModelForm):
+
+    internal_communications = forms.CharField(
+        widget=forms.Textarea,
+        required=False,
+        help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
+    )
+
     class Meta:
         model = models.Study
         fields = (
@@ -37,6 +45,9 @@ class BaseStudyForm(forms.ModelForm):
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
 
+        if self.instance:
+            self.fields["internal_communications"].initial = self.instance.get_communications()
+
         self.helper = self.setHelper()
 
     def setHelper(self, inputs={}):
@@ -51,6 +62,9 @@ class BaseStudyForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
+        for fld in ("summary", "internal_communications"):
+            self.fields[fld].widget.attrs["class"] += " html5text"
+
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
@@ -58,6 +72,12 @@ class BaseStudyForm(forms.ModelForm):
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
         return helper
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if commit and "internal_communications" in self.changed_data:
+            instance.set_communications(self.cleaned_data["internal_communications"])
+        return instance
 
 
 class StudyForm(BaseStudyForm):
@@ -121,7 +141,7 @@ class ReferenceStudyForm(BaseStudyForm):
         inputs = {
             "legend_text": "Create a new study",
             "help_text": "",
-            "cancel_url": reverse("study:list", args=[self.instance.assessment.id]),
+            "cancel_url": reverse("study:list", args=[self.instance.assessment_id]),
         }
         return super().setHelper(inputs)
 
@@ -143,9 +163,8 @@ class AttachmentForm(forms.ModelForm):
             self,
             legend_text="Add an attachment to a study",
             help_text="Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.",
-            form_actions=build_form_actions(
-                cancel_url=self.instance.study.get_absolute_url(), save_text="Create attachment"
-            ),
+            cancel_url=self.instance.study.get_absolute_url(),
+            submit_text="Create attachment",
         )
 
 
@@ -190,3 +209,54 @@ class StudiesCopy(forms.Form):
         helper = BaseFormHelper(self, **inputs)
 
         return helper
+
+
+class StudyFilterForm(forms.Form):
+    citation = forms.CharField(required=False, help_text="Authors, year, title, etc.")
+    identifier = forms.CharField(
+        required=False, help_text="Database identifier<br/>(PubMed ID, DOI, HERO ID, etc)"
+    )
+    data_type = forms.ChoiceField(
+        required=False,
+        choices=[
+            ("", "<All>"),
+            ("bioassay", "Bioassay"),
+            ("epi", "Epidemiology"),
+            ("epi_meta", "Epidemiology meta-analysis"),
+            ("in_vitro", "In vitro"),
+        ],
+        help_text="Data type for full-text extraction",
+        widget=forms.Select,
+    )
+    published = forms.ChoiceField(
+        required=False,
+        choices=[("", "<All>"), (True, "Published only"), (False, "Unpublished only")],
+        widget=forms.Select,
+        help_text="Published status for HAWC extraction",
+        initial="",
+    )
+
+    def __init__(self, *args, **kwargs):
+        can_edit = kwargs.pop("can_edit", False)
+        super().__init__(*args, **kwargs)
+        if not can_edit:
+            self.fields.pop("published")
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        helper.add_row("citation", len(self.fields), "col-md-3")
+        return helper
+
+    def get_query(self):
+        query = Q()
+        if text := self.cleaned_data.get("citation"):
+            query &= Q(short_citation__icontains=text) | Q(full_citation__icontains=text)
+        if data_type := self.cleaned_data.get("data_type"):
+            query &= Q(**{data_type: True})
+        if published := self.cleaned_data.get("published"):
+            query &= Q(published=published)
+        if identifier := self.cleaned_data.get("identifier"):
+            query &= Q(identifiers__unique_id__icontains=identifier)
+        return query

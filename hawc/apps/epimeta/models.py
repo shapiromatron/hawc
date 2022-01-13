@@ -9,23 +9,23 @@ from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..epi.models import AdjustmentFactor, Criteria, ResultMetric
 from ..study.models import Study
-from . import managers
+from . import constants, managers
 
 
 class MetaProtocol(models.Model):
     objects = managers.MetaProtocolManager()
 
-    META_PROTOCOL_CHOICES = ((0, "Meta-analysis"), (1, "Pooled-analysis"))
-
-    META_LIT_SEARCH_CHOICES = ((0, "Systematic"), (1, "Other"))
-
     study = models.ForeignKey(
         "study.Study", on_delete=models.CASCADE, related_name="meta_protocols"
     )
     name = models.CharField(verbose_name="Protocol name", max_length=128)
-    protocol_type = models.PositiveSmallIntegerField(choices=META_PROTOCOL_CHOICES, default=0)
+    protocol_type = models.PositiveSmallIntegerField(
+        choices=constants.MetaProtocol.choices, default=constants.MetaProtocol.META
+    )
     lit_search_strategy = models.PositiveSmallIntegerField(
-        verbose_name="Literature search strategy", choices=META_LIT_SEARCH_CHOICES, default=0,
+        verbose_name="Literature search strategy",
+        choices=constants.MetaLitSearch.choices,
+        default=constants.MetaLitSearch.SYSTEMATIC,
     )
     lit_search_notes = models.TextField(verbose_name="Literature search notes", blank=True)
     lit_search_start_date = models.DateField(
@@ -67,7 +67,7 @@ class MetaProtocol(models.Model):
         return self.study.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("meta:protocol_detail", kwargs={"pk": self.pk})
+        return reverse("meta:protocol_detail", args=(self.pk,))
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
@@ -177,7 +177,7 @@ class MetaResult(models.Model):
         return self.protocol.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("meta:result_detail", kwargs={"pk": self.pk})
+        return reverse("meta:result_detail", args=(self.pk,))
 
     @property
     def estimate_formatted(self):

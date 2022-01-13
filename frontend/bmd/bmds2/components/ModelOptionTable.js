@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import ModelOptionOverrideList from "../containers/ModelOptionOverrideList";
+import {ActionItem, ActionsButton} from "shared/components/ActionsButton";
 
 class ModelOptionTable extends React.Component {
     constructor(props) {
@@ -16,6 +17,20 @@ class ModelOptionTable extends React.Component {
 
         let {allOptions} = this.props,
             showVariance = this.props.dataType === "C";
+
+        const actionItems = [
+            <ActionItem key={0} label="Add all models" onClick={this.props.handleAddAll} />,
+            <ActionItem key={1} label="Remove all models" onClick={this.props.handleRemoveAll} />,
+        ];
+        if (showVariance) {
+            actionItems.push(
+                <ActionItem
+                    key={2}
+                    label="Toggle all variance models"
+                    onClick={this.props.handleVarianceToggle}
+                />
+            );
+        }
 
         return (
             <div className="form-row">
@@ -47,44 +62,7 @@ class ModelOptionTable extends React.Component {
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <div className="dropdown btn-group float-right">
-                        <a className="btn btn-light dropdown-toggle" data-toggle="dropdown">
-                            Actions
-                        </a>
-                        <div className="dropdown-menu dropdown-menu-right">
-                            <a
-                                className="dropdown-item"
-                                href="#"
-                                onClick={event => {
-                                    event.preventDefault();
-                                    this.props.handleAddAll();
-                                }}>
-                                Add all models
-                            </a>
-                            <a
-                                className="dropdown-item"
-                                href="#"
-                                onClick={event => {
-                                    event.preventDefault();
-                                    this.props.handleRemoveAll();
-                                }}>
-                                Remove all models
-                            </a>
-                            {showVariance ? (
-                                <li>
-                                    <a
-                                        href="#"
-                                        onClick={event => {
-                                            event.preventDefault();
-                                            this.props.handleVarianceToggle();
-                                        }}
-                                        title="Change the variance model for all continuous models">
-                                        Toggle all variance models
-                                    </a>
-                                </li>
-                            ) : null}
-                        </div>
-                    </div>
+                    <ActionsButton dropdownClasses="btn-light" items={actionItems} />
                 </div>
             </div>
         );

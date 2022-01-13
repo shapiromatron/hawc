@@ -1,47 +1,46 @@
 # web application
-Django==3.1.3
-django-crispy-forms==1.9.1
+Django==3.2.11
+django-crispy-forms==1.12.0
 django-filter==2.4.0
-django-redis==4.12.1
-django-reversion==3.0.8
+django-redis==5.0.0
+django-reversion==4.0.0
 django-selectable==1.3.0
-django-taggit==1.2.0
-django-treebeard==4.3.1
-django-webpack-loader==0.7.0
-djangorestframework==3.12.1
+django-taggit==1.5.1
+django-treebeard==4.5.1
+django-webpack-loader==1.1.0
+djangorestframework==3.12.4
   uritemplate==3.0.1  # schema dependencies
-  pyyaml==5.3.1       # schema dependencies
+  pyyaml==5.4.1       # schema dependencies
+gunicorn==20.1.0
 
 # tasks
-celery==4.4.2
-  billiard==3.6.3.0
-  kombu==4.6.8
+celery==5.1.2
+  billiard==3.6.4.0
+  kombu==5.1.0
 
 # utilities
-dataclasses==0.7
-jsonschema==3.2.0
-lxml==4.5.0
-psycopg2-binary==2.8.4
-redis==3.4.1
-requests==2.23.0
-pydantic==1.5.1
-myst-parser==0.12.10
+jsonschema==4.1.2
+lxml==4.6.3
+psycopg2-binary==2.9.1
+redis==3.5.3
+requests==2.26.0
+pydantic==1.8.2
+myst-parser==0.15.1
 
 # computational
-numpy==1.18.2
-pandas==1.0.3
-  openpyxl==3.0.4
-plotly==4.5.4
-pyarrow==0.17.0
-scipy==1.4.1
-nltk==3.5
-scikit-learn==0.22.2.post1
+numpy==1.21.1
+pandas==1.3.0
+  openpyxl==3.0.7
+plotly==5.1.0
+pyarrow==4.0.1
+scipy==1.7.0
+nltk==3.6.2
+scikit-learn==0.24.2
 
 # exports
-XlsxWriter==1.2.8
-RISparser==0.4.3
-python-docx==0.8.10
-python-pptx==0.6.18
+rispy==0.7.1
+python-docx==0.8.11
+python-pptx==0.6.19
 
-# bmds
-git+https://github.com/shapiromatron/bmds.git@36c102cfc0340ad98efcb57686dfcd72a8a02895#egg=bmds
+# bmds; https://github.com/shapiromatron/bmds/commit/36c102cfc0340ad98efcb57686dfcd72a8a02895
+vendor/bmds-0.11.0.tar.gz

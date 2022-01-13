@@ -1,21 +1,19 @@
-import * as d3 from "d3";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
+import StudyRobStore from "../stores/StudyRobStore";
 
-class RobTableStore {
+class RobTableStore extends StudyRobStore {
     @observable error = null;
     @observable isFetching = false;
     @observable itemsLoaded = false;
     @observable riskofbiases = [];
     @observable active = [];
     @observable final = null;
-    @observable name = "";
-    @observable rob_response_values = [];
-    @observable current_score_state = {};
 
     constructor(config) {
+        super();
         this.config = config;
     }
 
@@ -30,35 +28,48 @@ class RobTableStore {
         if (this.isFetching || this.itemsLoaded) {
             return;
         }
+        const urls = [
+            this.fetchStudy(this.config.study.id),
+            this.fetchSettings(this.config.assessment_id),
+        ];
+        if (this.config.display === "all") {
+            urls.push(this.fetchRobStudy(this.config.study.id));
+        }
 
         this.isFetching = true;
         this.itemsLoaded = false;
         this.resetError();
-        fetch(
-            h.getObjectUrl(this.config.host, this.config.study.url, this.config.study.id),
-            h.fetchGet
-        )
-            .then(response => response.json())
-            .then(study => {
-                const dirtyRoBs = _.filter(study.riskofbiases, rob => rob.active === true),
+        Promise.all(urls)
+            .then(d => {
+                const allRobs =
+                        this.config.display === "all" ? this.activeRobs : this.study.riskofbiases,
+                    dirtyRoBs = _.filter(allRobs, rob => rob.active === true),
                     domains = _.flattenDeep(
                         _.map(dirtyRoBs, riskofbias => {
                             return _.map(riskofbias.scores, score => {
                                 return Object.assign({}, score, {
+                                    score_symbol: this.settings.score_metadata.symbols[score.score],
+                                    score_shade: this.settings.score_metadata.colors[score.score],
+                                    score_description: this.settings.score_metadata.choices[
+                                        score.score
+                                    ],
+                                    assessment_id: this.config.assessment_id,
                                     riskofbias_id: riskofbias.id,
                                     author: riskofbias.author,
                                     final: riskofbias.final,
-                                    domain_name: score.metric.domain.name,
-                                    domain_id: score.metric.domain.id,
+                                    domain_name: this.metricDomains[score.metric_id].name,
+                                    domain_id: this.metricDomains[score.metric_id].id,
+                                    metric_name: this.metrics[score.metric_id].name,
+                                    metric: this.metrics[score.metric_id],
                                 });
                             });
                         })
                     ),
-                    robs = d3
-                        .nest()
-                        .key(d => d.metric.domain.name)
-                        .key(d => d.metric.name)
-                        .entries(domains),
+                    robs = h.groupNest(
+                        domains,
+                        d => this.metricDomains[d.metric_id].name,
+                        d => this.metrics[d.metric_id].name
+                    ),
                     finalRobs = _.find(dirtyRoBs, {final: true});
 
                 this.riskofbiases = robs;
@@ -95,11 +106,11 @@ class RobTableStore {
             })
         );
 
-        return d3
-            .nest()
-            .key(d => d.metric.domain.name)
-            .key(d => d.metric.name)
-            .entries(domains);
+        return h.groupNest(
+            domains,
+            d => this.metricDomains[d.metric_id].name,
+            d => this.metrics[d.metric_id].name
+        );
     }
 
     @computed get allRobShown() {

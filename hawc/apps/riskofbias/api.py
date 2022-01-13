@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -16,16 +18,23 @@ from ..assessment.api import (
     get_assessment_id_param,
 )
 from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.api import (
+    CleanupFieldsBaseViewSet,
+    CleanupFieldsPermissions,
+    LegacyAssessmentAdapterMixin,
+)
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
+from ..common.validators import validate_exact_ids
 from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
 from . import models, serializers
 from .actions.rob_clone import BulkRobCopyAction
+
+logger = logging.getLogger(__name__)
 
 
 class RiskOfBiasAssessmentViewset(
@@ -44,24 +53,28 @@ class RiskOfBiasAssessmentViewset(
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment.id)
 
-    @action(detail=True, methods=("get",), url_path="export", renderer_classes=PandasRenderers)
+    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
     def export(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}"
+            self.get_queryset().none(),
+            filename=f"{self.assessment}-{rob_name}",
+            assessment_id=self.assessment.id,
         )
 
         return Response(exporter.build_export())
 
-    @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
+    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset(), filename=f"{self.assessment}-{rob_name}-complete"
+            self.get_queryset().none(),
+            filename=f"{self.assessment}-{rob_name}-complete",
+            assessment_id=self.assessment.id,
         )
         return Response(exporter.build_export())
 
@@ -72,6 +85,13 @@ class RiskOfBiasAssessmentViewset(
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
+    @action(detail=True, url_path="settings")
+    def rob_settings(self, request, pk):
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
+        return Response(ser.data)
+
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
@@ -79,14 +99,63 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
-    serializer_class = serializers.AssessmentDomainSerializer
+    serializer_class = serializers.NestedDomainSerializer
     lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related("metrics")
 
+    @action(detail=False, methods=("patch",), permission_classes=(CleanupFieldsPermissions,))
+    def order_rob(self, request):
+        """Reorder domains/metrics in the order specified.
 
-class RiskOfBias(viewsets.ModelViewSet):
+        The requests.data is expected to be a list in the following format:
+            List[Tuple[int, List[int]]] where, the first item in the tuple is a domain_id and
+            the second is al ist of metric_ids associated with that domain.
+        """
+        qs = self.get_queryset().filter(assessment=self.assessment).prefetch_related("metrics")
+        domain_id_to_domain = {domain.id: domain for domain in qs}
+        metric_id_to_metric = {
+            metric.id: metric for domain in qs for metric in domain.metrics.all()
+        }
+        domain_id_to_metric_ids = {
+            domain.id: [metric.id for metric in domain.metrics.all()] for domain in qs
+        }
+        updated_domains = []
+        updated_metrics = []
+
+        expected_domain_ids = list(domain_id_to_metric_ids.keys())
+        domain_ids = [domain_id for domain_id, _ in request.data]
+        validate_exact_ids(expected_domain_ids, domain_ids, "domain")
+        for i, (domain_id, metric_ids) in enumerate(request.data, start=1):
+            expected_metric_ids = domain_id_to_metric_ids[domain_id]
+            validate_exact_ids(expected_metric_ids, metric_ids, "metric")
+
+            domain = domain_id_to_domain[domain_id]
+            if domain.sort_order != i:
+                domain.sort_order = i
+                updated_domains.append(domain)
+
+            for j, metric_id in enumerate(metric_ids, start=1):
+                metric = metric_id_to_metric[metric_id]
+                if metric.sort_order != j:
+                    metric.sort_order = j
+                    updated_metrics.append(metric)
+
+        if updated_domains:
+            obj_ids = [obj.id for obj in updated_domains]
+            logger.info(f"Updating order for assessment {self.assessment.id}, domains {obj_ids}")
+            models.RiskOfBiasDomain.objects.bulk_update(updated_domains, ["sort_order"])
+
+        if updated_metrics:
+            obj_ids = [obj.id for obj in updated_metrics]
+            logger.info(f"Updating order for assessment {self.assessment.id}, metrics {obj_ids}")
+            models.RiskOfBiasMetric.objects.bulk_update(updated_metrics, ["sort_order"])
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RiskOfBias(AssessmentEditViewset):
     assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination
@@ -145,10 +214,30 @@ class RiskOfBias(viewsets.ModelViewSet):
         object_ = self.get_object()
         return Response(object_.get_override_options())
 
+    @action(detail=False, methods=("post",))
+    def create_v2(self, request):
+        kw = {"context": self.get_serializer_context()}
+        serializer = serializers.RiskOfBiasAssignmentSerializer(data=request.data, **kw)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=("patch",))
+    def update_v2(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        kw = {"context": self.get_serializer_context()}
+        serializer = serializers.RiskOfBiasAssignmentSerializer(
+            instance, data=request.data, partial=partial, **kw
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
 
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricChoiceSerializer
+    serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -158,7 +247,7 @@ class AssessmentMetricViewset(AssessmentViewset):
 
 class AssessmentMetricScoreViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
-    serializer_class = serializers.AssessmentMetricScoreSerializer
+    serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
@@ -169,18 +258,16 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
 class AssessmentScoreViewset(AssessmentEditViewset):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
-    assessment_filter_args = "metric__domain_assessment"
+    assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
+    list_actions = ["list", "v2"]
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
-    @action(detail=False)
-    def choices(self, request):
-        assessment_id = self.get_assessment(request)
-        rob_assessment = models.RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
-        return Response(rob_assessment.get_rob_response_values())
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("overridden_objects__content_object")
 
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one

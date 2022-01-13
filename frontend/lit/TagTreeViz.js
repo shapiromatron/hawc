@@ -1,9 +1,9 @@
 import $ from "$";
 import * as d3 from "d3";
 
-import D3Plot from "utils/D3Plot";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import D3Plot from "shared/utils/D3Plot";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
@@ -67,7 +67,7 @@ class TagTreeViz extends D3Plot {
     build_plot() {
         this.plot_div.html("");
         this.get_plot_sizes();
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "A dendrogram of reference counts for each tag");
         this.prepare_data();
         this.draw_visualization();
         this.add_menu();
@@ -85,9 +85,10 @@ class TagTreeViz extends D3Plot {
     }
 
     set_defaults() {
+        const {width, height} = this.stateStore.options;
         this.padding = {top: 40, right: 5, bottom: 5, left: 115};
-        this.w = 1280 - this.padding.left - this.padding.right;
-        this.h = 800 - this.padding.top - this.padding.bottom;
+        this.w = width - this.padding.left - this.padding.right;
+        this.h = height - this.padding.top - this.padding.bottom;
         this.path_length = 180;
         this.minimum_radius = 8;
         this.maximum_radius = 30;
@@ -151,7 +152,7 @@ class TagTreeViz extends D3Plot {
             },
             fetch_references = function(tag) {
                 var title = `<h4>${tag.data.name}</h4>`,
-                    div = $('<div id="references_div"></div');
+                    div = $("<div>");
 
                 self.modal
                     .addHeader(title)
@@ -159,10 +160,10 @@ class TagTreeViz extends D3Plot {
                     .addFooter("")
                     .show({maxWidth: 1200});
 
-                tag.renderReferenceList(div.get(0));
+                tag.renderPaginatedReferenceList(div.get(0), self.stateStore.options.can_edit);
             },
-            update = function(source) {
-                var duration = d3.event && d3.event.altKey ? 5000 : 500,
+            update = function(event, source) {
+                var duration = event && event.altKey ? 5000 : 500,
                     t = d3.transition().duration(duration);
 
                 // Compute the new tree layout.
@@ -183,8 +184,8 @@ class TagTreeViz extends D3Plot {
                     .append("svg:g")
                     .attr("class", "tagnode")
                     .attr("transform", () => `translate(${source.y0},${source.x0})`)
-                    .on("click", function(d) {
-                        if (d3.event.ctrlKey || d3.event.metaKey) {
+                    .on("click", function(event, d) {
+                        if (event.ctrlKey || event.metaKey) {
                             if (d.depth == 0) {
                                 alert("Cannot view details on root-node.");
                             } else {
@@ -192,7 +193,7 @@ class TagTreeViz extends D3Plot {
                             }
                         } else {
                             toggle(d);
-                            update(d);
+                            update(event, d);
                         }
                     });
 
@@ -301,7 +302,7 @@ class TagTreeViz extends D3Plot {
             .range([this.minimum_radius, this.maximum_radius]);
 
         treeNode.children.forEach(toggleAll);
-        update(treeNode);
+        update(null, treeNode);
     }
 }
 

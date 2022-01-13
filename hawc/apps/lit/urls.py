@@ -25,11 +25,12 @@ urlpatterns = [
     ),
     # Reference-level details
     path("reference/<int:pk>/", views.RefDetail.as_view(), name="ref_detail"),
-    path("reference/<int:pk>/edit/", views.RefEdit.as_view(), name="ref_edit"),
+    path("reference/<int:pk>/update/", views.RefEdit.as_view(), name="ref_edit"),
     path("reference/<int:pk>/delete/", views.RefDelete.as_view(), name="ref_delete"),
     path("reference/<int:pk>/tag/", views.TagByReference.as_view(), name="reference_tags_edit",),
     path("tag/<int:pk>/tag/", views.TagByTag.as_view(), name="references_tags_edit"),
     path("assessment/<int:pk>/tag/untagged/", views.TagByUntagged.as_view(), name="tag_untagged",),
+    path("assessment/<int:pk>/tag/bulk/", views.BulkTagReferences.as_view(), name="bulk_tag",),
     path("assessment/<int:pk>/references/", views.RefList.as_view(), name="ref_list",),
     path(
         "assessment/<int:pk>/references/extraction-ready/",

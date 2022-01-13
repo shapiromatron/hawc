@@ -1,12 +1,11 @@
 import _ from "lodash";
-import * as d3 from "d3";
+
+import h from "shared/utils/helpers";
 
 class RiskOfBiasScore {
     constructor(study, data) {
         this.study = study;
         this.data = data;
-        this.data.metric.created = new Date(this.data.metric.created);
-        this.data.metric.last_updated = new Date(this.data.metric.last_updated);
     }
 
     static format_for_react(robs, config) {
@@ -29,11 +28,11 @@ class RiskOfBiasScore {
         return {
             domain: robs[0].data.metric.domain.name,
             metric: robs[0].data.metric,
-            scores: d3
-                .nest()
-                .key(d => d.metric.domain.name)
-                .key(d => d.metric.name)
-                .entries(scores),
+            scores: h.groupNest(
+                scores,
+                d => d.metric.domain.name,
+                d => d.metric.name
+            ),
             config,
         };
     }

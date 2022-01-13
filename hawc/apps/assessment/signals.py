@@ -9,6 +9,8 @@ from ..common.helper import SerializerHelper
 from . import models
 from .tasks import run_job
 
+logger = logging.getLogger(__name__)
+
 
 @receiver(post_save, sender=models.Assessment)
 def default_configuration(sender, instance, created, **kwargs):
@@ -18,25 +20,24 @@ def default_configuration(sender, instance, created, **kwargs):
     """
     if created:
 
-        logging.info("Creating default literature inclusion/exclusion tags")
+        logger.info("Creating default literature inclusion/exclusion tags")
         apps.get_model("lit", "ReferenceFilterTag").build_default(instance)
         apps.get_model("lit", "LiteratureAssessment").build_default(instance)
         apps.get_model("lit", "Search").build_default(instance)
 
-        logging.info(
+        logger.info(
             f"Creating default settings for {instance.get_rob_name_display().lower()} criteria"
         )
-        apps.get_model("riskofbias", "RiskOfBiasDomain").build_default(instance)
         apps.get_model("riskofbias", "RiskOfBiasAssessment").build_default(instance)
 
-        logging.info("Creating new BMD settings assessment creation")
+        logger.info("Creating new BMD settings assessment creation")
         apps.get_model("bmd", "LogicField").build_defaults(instance)
         apps.get_model("bmd", "AssessmentSettings").build_default(instance)
 
-        logging.info("Creating default summary text")
+        logger.info("Creating default summary text")
         apps.get_model("summary", "SummaryText").build_default(instance)
 
-        logging.info("Building in-vitro endpoint category-root")
+        logger.info("Building in-vitro endpoint category-root")
         apps.get_model("invitro", "IVEndpointCategory").create_root(assessment_id=instance.pk)
 
     apps.get_model("mgmt", "Task").objects.create_assessment_tasks(assessment=instance)

@@ -6,9 +6,11 @@
 
 {% block extrajs %}
 <script type="text/javascript">
-window.app.invitroStartup(function(invitro){
-    window.canEdit = {{obj_perms.edit|lower}};
-    invitro.IVChemical.displayAsPage({{object.id}}, $("#ivChemical"));
+const canEdit = {{obj_perms.edit|lower}},
+    id = {{object.id}};
+window.app.startup("invitroStartup", function(app){
+    window.canEdit = canEdit;
+    app.IVChemical.displayAsPage(id, $("#ivChemical"));
 });
 </script>
 {% endblock %}

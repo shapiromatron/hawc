@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="hawcuser",
             name="license_v1_accepted",
-            field=models.BooleanField(default=False),
+            field=models.BooleanField(default=False, verbose_name="Accept license"),
         ),
         migrations.AddField(
             model_name="hawcuser",
             name="license_v2_accepted",
-            field=models.BooleanField(default=False),
+            field=models.BooleanField(default=False, verbose_name="Accept license"),
         ),
     ]

@@ -19,7 +19,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
     render($div) {
         this.plot_div = $div;
         this.processData();
-        this.build_plot_skeleton(true);
+        this.build_plot_skeleton(true, "An exposure response forest plot");
         this.add_title();
         this.add_axes();
         this.add_endpoint_lines();
@@ -303,7 +303,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
             .attr("class", d => "dose_points " + d.class)
             .style("cursor", "pointer")
             .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
-            .on("click", d => d.endpoint.displayAsModal());
+            .on("click", (event, d) => d.endpoint.displayAsModal());
 
         // add the outer element last
         this.dots.append("svg:title").text(d => d.text);
@@ -343,7 +343,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
             .text(function(d, i) {
                 return d.label;
             })
-            .on("click", function(v) {
+            .on("click", function(event, v) {
                 v.endpoint.displayAsModal();
             });
     }

@@ -6,6 +6,7 @@ import OverallPanel from "./OverallPanel";
 import DataPanel from "./DataPanel";
 import VisualCustomizationPanel from "./VisualCustomizationPanel";
 import PreviewPanel from "./PreviewPanel";
+import FormActions from "shared/components/FormActions";
 
 @inject("store")
 @observer
@@ -39,19 +40,7 @@ class App extends Component {
                         <PreviewPanel />
                     </TabPanel>
                 </Tabs>
-                <div className="form-actions">
-                    <input
-                        type="submit"
-                        name="save"
-                        value="Save"
-                        className="btn btn-primary"
-                        onClick={handleSubmit}
-                    />
-                    <span>&nbsp;</span>
-                    <a role="button" className="btn btn-secondary" href={cancel_url}>
-                        Cancel
-                    </a>
-                </div>
+                <FormActions handleSubmit={handleSubmit} cancel={cancel_url} />
             </div>
         );
     }

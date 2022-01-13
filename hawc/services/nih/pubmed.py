@@ -8,6 +8,8 @@ import requests
 
 from ..utils.authors import get_author_short_text, normalize_author
 
+logger = logging.getLogger(__name__)
+
 
 class PubMedSettings:
     """Module-level settings to check that PubMed requests registered."""
@@ -57,7 +59,7 @@ class PubMedSearch(PubMedUtility):
         if r.status_code == 200:
             txt = ET.fromstring(r.text)
             self.id_count = int(txt.find("Count").text)
-            logging.info(f"{self.id_count} references found")
+            logger.info(f"{self.id_count} references found")
         else:
             raise Exception("Search query failed; please reformat query or try again later")
 
@@ -124,13 +126,13 @@ class PubMedFetch(PubMedUtility):
                 tree = ET.fromstring(resp.text.encode("utf-8"))
                 if tree.tag != "PubmedArticleSet":
                     raise ValueError(f"Unexpected response type: {tree.tag}")
-                for content in tree.getchildren():
+                for content in tree:
                     result = PubMedParser.parse(content)
                     if result:
                         self.content.append(result)
             else:
-                logging.error(f"Pubmed failure: {resp.status_code} -> {resp.text}")
-                logging.error(f"Pubmed failure data submission: {data}")
+                logger.error(f"Pubmed failure: {resp.status_code} -> {resp.text}")
+                logger.error(f"Pubmed failure data submission: {data}")
                 raise Exception("Fetch query failed; please reformat query or try again later")
         return self.content
 
@@ -153,7 +155,7 @@ class PubMedParser:
         elif tree.tag == "PubmedBookArticle":
             return cls._parse_book(tree)
         else:
-            logging.warning(f"Cannot parse response: {tree.tag}")
+            logger.warning(f"Cannot parse response: {tree.tag}")
             return None
 
     @classmethod

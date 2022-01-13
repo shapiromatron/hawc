@@ -5,7 +5,8 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common.helper import SerializerHelper
-from . import models
+from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
+from . import constants, models
 
 
 class CollectionDataPivotSerializer(serializers.ModelSerializer):
@@ -32,7 +33,8 @@ class DataPivotSerializer(CollectionDataPivotSerializer):
 class CollectionVisualSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["url"] = instance.get_absolute_url()
+        if instance.id != instance.FAKE_INITIAL_ID:
+            ret["url"] = instance.get_absolute_url()
         ret["visual_type"] = instance.get_rob_visual_type_display(
             instance.get_visual_type_display()
         )
@@ -55,8 +57,15 @@ class VisualSerializer(CollectionVisualSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 
-        ret["url_update"] = instance.get_update_url()
-        ret["url_delete"] = instance.get_delete_url()
+        if instance.id != instance.FAKE_INITIAL_ID:
+            ret["url_update"] = instance.get_update_url()
+            ret["url_delete"] = instance.get_delete_url()
+
+        if instance.visual_type in [
+            constants.VisualType.ROB_HEATMAP,
+            constants.VisualType.ROB_BARCHART,
+        ]:
+            ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()
@@ -125,6 +134,23 @@ class SummaryTextSerializer(serializers.ModelSerializer):
             instance.move(parent, pos="first-child")
 
         return instance
+
+
+class SummaryTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SummaryTable
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        if instance.id:
+            ret["url"] = instance.get_absolute_url()
+        return ret
+
+    def validate(self, data):
+        # check model level validation
+        models.SummaryTable(**data).clean()
+        return data
 
 
 SerializerHelper.add_serializer(models.Visual, VisualSerializer)

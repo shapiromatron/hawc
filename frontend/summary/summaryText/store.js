@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
-import SmartTagContainer from "smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import h from "shared/utils/helpers";
 
 const getLabelText = function(item) {

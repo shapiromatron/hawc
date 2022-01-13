@@ -8,6 +8,7 @@ from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
+from hawc.constants import AuthProvider
 from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
@@ -69,12 +70,14 @@ MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "hawc.apps.common.middleware.CsrfRefererCheckMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
+    "hawc.apps.common.middleware.RequestLogMiddleware",
 )
 
 
@@ -114,7 +117,11 @@ INSTALLED_APPS = (
     "hawc.apps.bmd",
     "hawc.apps.summary",
     "hawc.apps.mgmt",
+    "hawc.apps.materialized",
 )
+
+if os.getenv("HAWC_INCLUDE_ECO", "False") == "True":
+    INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
 
 
 # DB settings
@@ -129,7 +136,7 @@ DATABASES = {
         "CONN_MAX_AGE": 300,
     }
 }
-
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Celery settings
 CELERY_ACCEPT_CONTENT = ("json", "pickle")
@@ -161,20 +168,26 @@ EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[HAWC] ")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@hawcproject.org")
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "webmaster@hawcproject.org")
 
+# External page handlers
+EXTERNAL_CONTACT_US = os.getenv("HAWC_EXTERNAL_CONTACT_US", "")
+EXTERNAL_ABOUT = os.getenv("HAWC_EXTERNAL_ABOUT", "")
+EXTERNAL_HOME = os.getenv("HAWC_EXTERNAL_HOME", "")
+EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
-PASSWORD_RESET_TIMEOUT_DAYS = 3
+AUTH_PROVIDERS = {AuthProvider(p) for p in os.getenv("HAWC_AUTH_PROVIDERS", "django").split("|")}
+PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
+SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
-
+INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
 
 # Server URL settings
 ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
-LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
-
+LOGOUT_REDIRECT_URL = os.getenv("HAWC_LOGOUT_REDIRECT", reverse_lazy("home"))
 
 # Static files
 STATIC_URL = "/static/"
@@ -204,7 +217,7 @@ LOGGING = {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
         },
-        "simple": {"format": "%(levelname)s %(message)s"},
+        "simple": {"format": "%(levelname)s %(asctime)s %(name)s %(message)s"},
     },
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "handlers": {
@@ -232,32 +245,45 @@ LOGGING = {
             "maxBytes": 10 * 1024 * 1024,  # 10 MB
             "backupCount": 10,
         },
+        "hawc-request": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "simple",
+            "filename": str(LOGS_ROOT / "hawc-request.log"),
+            "maxBytes": 10 * 1024 * 1024,  # 10 MB
+            "backupCount": 10,
+        },
     },
     "loggers": {
-        "": {"handlers": ["null"], "level": "DEBUG"},
-        "django": {"handlers": ["null"], "propagate": True, "level": "INFO"},
+        "": {"handlers": ["null"], "level": "INFO"},
+        "django": {"handlers": ["null"], "propagate": False, "level": "INFO"},
         "django.request": {
-            "handlers": ["file_500s", "mail_admins"],
+            "handlers": ["console", "file_500s", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
         },
+        "hawc": {"handlers": ["null"], "propagate": False, "level": "INFO"},
+        "hawc.request": {"handlers": ["null"], "propagate": False, "level": "INFO"},
     },
 }
 
 
 # commit information
 def get_git_commit() -> Commit:
+    if GIT_COMMIT_FILE.exists():
+        return Commit.parse_file(GIT_COMMIT_FILE)
     try:
         return Commit.current(str(PROJECT_ROOT))
     except (CalledProcessError, FileNotFoundError):
-        if GIT_COMMIT_FILE.exists():
-            return Commit.parse_file(GIT_COMMIT_FILE)
-    return Commit(sha="<undefined>", dt=datetime.now())
+        return Commit(sha="<undefined>", dt=datetime.now())
 
 
-GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
+GIT_COMMIT_FILE = PROJECT_PATH / "gitcommit.json"
 COMMIT = get_git_commit()
 
+
+# Google Tag Manager settings
+GTM_ID = os.getenv("GTM_ID")
 
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
@@ -293,15 +319,28 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 WEBPACK_LOADER = {
     "DEFAULT": {
         "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": str(PROJECT_ROOT / "webpack-stats.json"),
+        "STATS_FILE": str(PROJECT_PATH / "webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "IGNORE": [".+/.map"],
     }
 }
 
+# can anyone create a new assessment; or can only those in the group `can-create-assessments`
 ANYONE_CAN_CREATE_ASSESSMENTS = True
+
+# can project-managers for an assessment make that assessments public, or only administrators?
+PM_CAN_MAKE_PUBLIC = True
+
+# are users required to accept a license
+ACCEPT_LICENSE_REQUIRED = True
+
+# add extra branding (EPA flavor only)
 EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
 
+IS_TESTING = False
+
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
+
+DISCLAIMER_TEXT = ""

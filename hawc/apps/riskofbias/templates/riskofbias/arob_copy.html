@@ -4,90 +4,33 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  {% crispy form %}
-  <div id='extra_content' class='hidden'>
+{% crispy form %}
+<div id='extra_content' class='hidden'>
     <div class="alert alert-warning">
-      <a class="close" href="#" data-dismiss="alert">×</a>
-      <h4>Warning!</h4>
-      <p>Copying the approach from another assessment will delete all {{assessment.get_rob_name_display|lower}} information currently saved for this assessment.</p>
+        <h4>Warning!</h4>
+        <p>Copying this approach from another assessment will delete all {{assessment.get_rob_name_display|lower}}
+            information currently saved in this assessment. This includes all domains and metrics
+            which currently exist, as well as any completed evaluations for studies already assessed.</p>
+        <p>It does not change the assessment which the approach is copied from.</p>
     </div>
-    <b>{{assessment.get_rob_name_display}} approach for selected assessment:</b>
-    <div id="approach"></div>
-  </div>
+</div>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
-        // disable submit button on form submit.
-        $('form').submit(function(){
-            $('#submit-id-save').prop('disabled', true);
-        });
+<script type="text/javascript">
+$(document).ready(function(){
+    // move extra-content to appropriate location then make visible
+    $('#extra_content').appendTo($('#extra_content_insertion')).removeClass('hidden');
 
-        $(document).ready(function(){
+    const updateLink = function(){
+        const url = `/rob/assessment/${$('#id_assessment').val()}/`,
+            name = $('#id_assessment option:selected').text(),
+            text = `<p>View approach for <a target="_blank" href="${url}">${name}<a/>.</p>`;
+        $('#approach').html(text);
+    };
 
-            var addMetricRow = function(data, i){
-                var tr = document.createElement('tr'),
-                    th = document.createElement('th'),
-                    tdMetric = document.createElement('td'),
-                    tdDescr = document.createElement('td');
-                th.innerHTML = i + 1;
-                tr.appendChild(th);
-                tdMetric.innerHTML = data.name +
-                    '<br><br><strong>Required for animal bioassay: </strong>'
-                    + window.app.utils.HAWCUtils.booleanCheckbox(data.required_animal)
-                    + '<br><strong>Required for epidemiological: </strong>'
-                    + window.app.utils.HAWCUtils.booleanCheckbox(data.required_epi);
-
-                tdDescr.innerHTML = data.description;
-                tr.appendChild(tdMetric);
-                tr.appendChild(tdDescr);
-                return $(tr);
-            };
-
-            var displayDomain = function(domain){
-                var div  = document.createElement('div'),
-                    header = document.createElement('h3'),
-                    table = new window.app.utils.BaseTable(),
-                    colgroups = [5, 35, 60],
-                    thead = ['ID', 'Metric', 'Description'];
-
-                header.innerHTML = domain.name + ' Domain';
-                table.addHeaderRow(thead);
-                table.setColGroup(colgroups);
-                domain.metrics.forEach(function(metric, i){
-                    table.addRow(addMetricRow(metric, i));
-                });
-                div.appendChild(header);
-                div.appendChild(table.getTbl()[0]);
-                return div;
-            };
-
-            var displayApproach = function(domains){
-                var printf = window.app.utils.HAWCUtils.printf,
-                    displayDiv = document.getElementById('approach');
-                displayDiv.innerHTML = '';
-                if (domains.length === 0){
-                    var assessment = $('#id_assessment option:selected').text(),
-                        warn = printf('<div class="alert alert-danger">{0} does not have a default approach.</div>', assessment);
-                    displayDiv.innerHTML = warn;
-                }
-                domains.forEach(function(domain){
-                    displayDiv.appendChild(displayDomain(domain));
-                });
-            };
-
-            // move extra-content to appropriate location then make visible
-            $('#extra_content')
-              .appendTo($('#extra_content_insertion'))
-              .removeClass('hidden');
-
-            // load approach on assessment change
-            $('#id_assessment')
-                .on('change', function(){
-                    var url = '{% url "riskofbias:api:domain-list" %}?assessment_id=' + $('#id_assessment').val();
-                    $.get(url, displayApproach);
-                })
-                .trigger('change');
-        });
-    </script>
+    // load approach on assessment change
+    $('#id_assessment').on('change', updateLink).trigger('change');
+});
+</script>
 {% endblock extrajs %}

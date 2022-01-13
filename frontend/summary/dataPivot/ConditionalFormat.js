@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
 import DataPivot from "./DataPivot";
 import DataPivotVisualization from "./DataPivotVisualization";
@@ -102,7 +102,7 @@ class _DataPivot_settings_conditionalFormat {
     }
 
     delete_condition(conditional) {
-        this.conditionals.splice_object(conditional);
+        _.remove(this.conditionals, d => d === conditional);
         this._set_empty_message();
     }
 
@@ -239,7 +239,9 @@ class _DataPivot_settings_conditional {
             max_color = $('<input class="form-control" name="max_color" type="color">').val(
                 values.max_color || defaults.max_color
             ),
-            svg = $('<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'),
+            svg = $(
+                '<svg role="image" aria-label="Color gradient" width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
+            ),
             gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
 
         // add event-handlers to change gradient color
@@ -275,26 +277,23 @@ class _DataPivot_settings_conditional {
             var subset = DataPivotVisualization.filter(
                     dp.data,
                     dp.settings.filters,
-                    dp.settings.plot_settings.filter_logic
+                    dp.settings.plot_settings.filter_logic,
+                    dp.settings.plot_settings.filter_query
                 ),
-                arr = subset.map(function(v) {
-                    return v[fieldName.val()];
-                }),
+                arr = subset.map(v => v[fieldName.val()]),
                 vals = DataPivot.getRowDetails(arr);
 
             if (conditionType.val() === "discrete-style") {
                 // make map of current values
-                var hash = d3.map();
-                values.discrete_styles.forEach(function(v) {
-                    hash.set(v.key, v.style);
-                });
+                var hash = new Map();
+                values.discrete_styles.forEach(v => hash.set(v.key, v.style));
 
                 vals.unique.forEach(function(v) {
                     var style = dp.style_manager
                         .add_select(parent.settings.type, hash.get(v), true)
                         .data("key", v);
                     self.discrete_styles.push(style);
-                    add_input_row(discrete, `Style for <code>${v}</code>:`, style);
+                    add_input_row(discrete, `Style for <kbd>${v}</kbd>:`, style);
                 });
 
                 if (vals.unique.length === 0) {

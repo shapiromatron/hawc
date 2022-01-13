@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import {formulas} from "./constants";
+import {buildModelFormula} from "./constants";
 
 class BmdLine {
     /*
@@ -21,76 +21,32 @@ class BmdLine {
         this.plot.remove_bmd_line(this.model.id);
     }
 
-    _getModel() {
-        // Construct BMD model-form
-        let params = {},
-            formula = formulas[this.model.name],
-            estimates = this.model.output.fit_estimated,
-            params_in_formula = formula.match(/\{[\w()]+\}/g);
-
-        // get parameter values for models
-        _.each(this.model.output.parameters, (v, k) => {
-            params[k] = v.estimate;
-        });
-        params["isIncreasing"] = estimates[0] < estimates[estimates.length - 1] ? 1 : -1;
-
-        _.each(params_in_formula, function(param) {
-            let unbracketed = param.slice(1, param.length - 1),
-                v = params[unbracketed] !== undefined ? params[unbracketed] : 0,
-                regex = param.replace("(", "\\(").replace(")", "\\)"), // escape ()
-                re = new RegExp(regex, "g");
-            formula = formula.replace(re, v);
-        });
-        return formula;
-    }
-
     _getPlotData() {
-        let model = this._getModel(),
-            bmd = this.model.output.BMD,
+        let bmd = this.model.output.BMD,
             bmdl = this.model.output.BMDL,
-            bmd_line,
-            bmdl_line,
-            bmd_y;
-
-        // x must be defined since we're calling "eval" in the javascript models
-        // eslint-disable-next-line no-unused-vars
-        var x;
-
-        if (bmd && bmd > 0) {
-            x = bmd;
-            bmd_y = eval(model);
-            bmd_line = {
-                x: bmd,
-                y: bmd_y,
+            {params, formula} = buildModelFormula(
+                this.model.name,
+                this.model.output.parameters,
+                this.model.output.fit_estimated
+            ),
+            func = xs => {
+                return _.chain(xs)
+                    .filter(d => d >= 0)
+                    .map(d => (d === 0 ? 1e-8 : d))
+                    .map(x => {
+                        return {x, y: formula(x, params)};
+                    })
+                    .value();
             };
-        }
-
-        if (bmdl && bmdl > 0) {
-            bmdl_line = {
-                x: bmdl,
-                y: bmd_y,
-            };
-        }
 
         return {
             id: this.model.id,
             dose_units_id: this.model.dose_units,
             name: this.model.name,
             stroke: this.color,
-            getData(xs) {
-                return _.chain(xs)
-                    .filter(d => d >= 0)
-                    .map(d => (d === 0 ? 1e-8 : d))
-                    .map(x => {
-                        return {
-                            x,
-                            y: eval(model),
-                        };
-                    })
-                    .value();
-            },
-            bmd_line,
-            bmdl_line,
+            getData: func,
+            bmd_line: bmd && bmd > 0 ? {x: bmd, y: formula(bmd, params)} : undefined,
+            bmdl_line: bmdl && bmdl > 0 ? {x: bmdl, y: formula(bmdl, params)} : undefined,
         };
     }
 }

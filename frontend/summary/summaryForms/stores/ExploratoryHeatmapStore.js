@@ -1,18 +1,27 @@
-import {observable, action, computed} from "mobx";
+import {observable, action, computed, toJS} from "mobx";
 
 import _ from "lodash";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
+import {DATA_FILTER_CONTAINS, DATA_FILTER_LOGIC_AND} from "../../summary/filters";
 import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
+import {
+    moveArrayElementUp,
+    moveArrayElementDown,
+    deleteArrayElement,
+} from "shared/components/EditableRowData";
 
 let createDefaultAxisItem = function() {
-        return {column: NULL_VALUE, wrap_text: 0, delimiter: ""};
+        return {column: NULL_VALUE, items: null, wrap_text: 0, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
-        return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
+        return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
     },
     createTableRow = function() {
-        return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
+        return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
+    },
+    createFilterRow = function() {
+        return {column: NULL_VALUE, type: DATA_FILTER_CONTAINS, value: ""};
     };
 
 class ExploratoryHeatmapStore {
@@ -38,6 +47,9 @@ class ExploratoryHeatmapStore {
             show_null: true,
             autosize_cells: true,
             autorotate_tick_labels: true,
+            filters: [],
+            filtersLogic: DATA_FILTER_LOGIC_AND,
+            filtersQuery: "",
             table_fields: [
                 createTableRow(),
                 createTableRow(),
@@ -62,32 +74,29 @@ class ExploratoryHeatmapStore {
     @observable dpeOptions = [];
 
     @action.bound moveArrayElementUp(key, index) {
-        const arr = this.settings[key];
-        if (index === 0) {
-            return;
-        }
-        let b = arr[index];
-        arr[index] = arr[index - 1];
-        arr[index - 1] = b;
+        const arr = _.cloneDeep(this.settings[key]);
+        moveArrayElementUp(arr, index);
+        this.settings[key] = arr;
     }
 
     @action.bound moveArrayElementDown(key, index) {
-        const arr = this.settings[key];
-        if (index + 1 >= arr.length) {
-            return;
-        }
-        let b = arr[index];
-        arr[index] = arr[index + 1];
-        arr[index + 1] = b;
+        const arr = _.cloneDeep(this.settings[key]);
+        moveArrayElementDown(arr, index);
+        this.settings[key] = arr;
     }
 
     @action.bound deleteArrayElement(key, index) {
         const arr = this.settings[key];
-        arr.splice(index, 1);
+        deleteArrayElement(arr, index);
+        this.settings[key] = arr;
     }
 
     @action.bound createNewAxisLabel(key) {
         this.settings[key].push(createDefaultAxisItem());
+    }
+
+    @action.bound createNewFilter() {
+        this.settings.filters.push(createFilterRow());
     }
 
     @action.bound createNewFilterWidget() {
@@ -112,6 +121,13 @@ class ExploratoryHeatmapStore {
 
     @action.bound changeArraySettings(arrayKey, index, key, value) {
         this.settings[arrayKey][index][key] = value;
+    }
+
+    @action.bound changeOrderArrayItems(arrayKey, arrayIndex, oldIndex, newIndex) {
+        const items = _.cloneDeep(toJS(this.settings[arrayKey][arrayIndex].items)),
+            item = items.splice(oldIndex, 1)[0];
+        items.splice(newIndex, 0, item);
+        this.settings[arrayKey][arrayIndex].items = items;
     }
 
     @action.bound changeDatasetUrl(value) {
@@ -177,7 +193,6 @@ class ExploratoryHeatmapStore {
     }
 
     @observable visualCustomizationPanelActiveTab = 0;
-
     @action.bound changeActiveVisualCustomizationTab(index) {
         this.visualCustomizationPanelActiveTab = index;
         return true;

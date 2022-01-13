@@ -1,8 +1,8 @@
 import $ from "$";
 
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class MetaProtocol {
     constructor(data) {
@@ -25,7 +25,7 @@ class MetaProtocol {
         MetaProtocol.get_object(id, d => d.displayFullPager($el));
     }
 
-    build_details_table(div) {
+    build_details_table() {
         return new DescriptiveTable()
             .add_tbody_tr("Description", this.data.name)
             .add_tbody_tr("Protocol type", this.data.protocol_type)

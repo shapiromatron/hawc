@@ -3,6 +3,10 @@ import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
+import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+
+import {HelpText} from "./common";
 
 const key = "filter_widgets";
 
@@ -16,25 +20,25 @@ class FilterWidgetTable extends Component {
         return (
             <table className="table table-sm table-striped">
                 <colgroup>
-                    <col width="40%" />
                     <col width="25%" />
                     <col width="25%" />
+                    <col width="20%" />
+                    <col width="20%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>Column</th>
-                        <th>Delimiter</th>
-                        <th>Interactivity</th>
+                        <th>Data column</th>
                         <th>
-                            Actions&nbsp;
-                            <button
-                                className="btn btn-sm btn-primary"
-                                title="New row"
-                                onClick={() => createNewFilterWidget()}>
-                                <i className="fa fa-plus"></i>
-                            </button>
+                            Header name
+                            <HelpTextPopup content={HelpText.header} />
                         </th>
+                        <th>
+                            Delimiter
+                            <HelpTextPopup content={HelpText.delimiter} />
+                        </th>
+                        <th>Interactivity</th>
+                        <ActionsTh onClickNew={createNewFilterWidget} />
                     </tr>
                 </thead>
                 <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
@@ -64,12 +68,17 @@ class FilterWidgetTable extends Component {
                 </td>
                 <td>
                     <TextInput
+                        name={`${key}-header-${index}`}
+                        value={row.header}
+                        onChange={e => changeArraySettings(key, index, "header", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
                         name={`${key}-delimiter-${index}`}
                         className="col-md-12"
                         value={row.delimiter}
-                        onChange={e =>
-                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
-                        }
+                        onChange={e => changeArraySettings(key, index, "delimiter", e.target.value)}
                     />
                 </td>
                 <td>
@@ -83,26 +92,11 @@ class FilterWidgetTable extends Component {
                         value={row.on_click_event}
                     />
                 </td>
-                <td>
-                    <button
-                        className="btn btn-sm btn-secondary"
-                        title="Move row up"
-                        onClick={() => moveArrayElementUp(key, index)}>
-                        <i className="fa fa-long-arrow-up"></i>
-                    </button>
-                    <button
-                        className="btn btn-sm btn-secondary"
-                        title="Move row down"
-                        onClick={() => moveArrayElementDown(key, index)}>
-                        <i className="fa fa-long-arrow-down"></i>
-                    </button>
-                    <button
-                        className="btn btn-sm btn-danger"
-                        title="Delete row"
-                        onClick={() => deleteArrayElement(key, index)}>
-                        <i className="fa fa-trash"></i>
-                    </button>
-                </td>
+                <MoveRowTd
+                    onMoveUp={() => moveArrayElementUp(key, index)}
+                    onMoveDown={() => moveArrayElementDown(key, index)}
+                    onDelete={() => deleteArrayElement(key, index)}
+                />
             </tr>
         );
     }

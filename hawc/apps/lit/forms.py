@@ -1,6 +1,6 @@
 import logging
 from io import StringIO
-from typing import List
+from typing import List, Union
 
 import numpy as np
 from django import forms
@@ -9,9 +9,11 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, addPopupLink, build_form_actions
+from ..common.forms import BaseFormHelper, addPopupLink
 from ..common.helper import read_excel
 from . import constants, models
+
+logger = logging.getLogger(__name__)
 
 
 class LiteratureAssessmentForm(forms.ModelForm):
@@ -62,9 +64,11 @@ class SearchForm(forms.ModelForm):
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice
         self.fields["description"].widget.attrs["rows"] = 3
+        self.fields["description"].widget.attrs["class"] = "html5text"
         if "search_string" in self.fields:
             self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
+            self.fields["search_string"].widget.attrs["class"] = "html5text"
 
     @property
     def helper(self):
@@ -82,9 +86,7 @@ class SearchForm(forms.ModelForm):
                     the search will not be executed, but can instead by run on
                     the next page. The search should be well-tested before
                     attempting to import into HAWC.""",
-                "cancel_url": reverse_lazy(
-                    "lit:overview", kwargs={"pk": self.instance.assessment.pk}
-                ),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -101,6 +103,7 @@ class ImportForm(SearchForm):
                 "search_string"
             ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
             self.fields["search_string"].label = "ID List"
+            self.fields["search_string"].widget.attrs.pop("class")
         else:
             self.fields.pop("search_string")
 
@@ -120,9 +123,7 @@ class ImportForm(SearchForm):
                     specifying a comma-separated list of primary keys from the
                     database. This is an import or known references, not a
                     search based on a query.""",
-                "cancel_url": reverse_lazy(
-                    "lit:overview", kwargs={"pk": self.instance.assessment.pk}
-                ),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -149,7 +150,7 @@ class ImportForm(SearchForm):
 
         ids = self.validate_import_search_string(search_string)
 
-        if self.cleaned_data["source"] == constants.HERO:
+        if self.cleaned_data["source"] == constants.ReferenceDatabase.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
 
@@ -160,7 +161,7 @@ class ImportForm(SearchForm):
         is_create = self.instance.id is None
         search = super().save(commit=commit)
         if is_create:
-            if search.source == constants.HERO:
+            if search.source == constants.ReferenceDatabase.HERO:
                 # create missing identifiers from import
                 models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
                 # get hero identifiers
@@ -211,9 +212,7 @@ class RisImportForm(SearchForm):
                     universal data-format which is used by reference management
                     software solutions such as EndNote or Reference Manager.
                 """,
-                "cancel_url": reverse_lazy(
-                    "lit:overview", kwargs={"pk": self.instance.assessment.pk}
-                ),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
@@ -326,13 +325,14 @@ class SearchSelectorForm(forms.Form):
         this assessment. You will be taken to a new view to create a new
         search, but the form will be pre-populated using values from the
         selected search or import.""",
-            form_actions=build_form_actions(
-                reverse("lit:overview", args=(self.assessment.id,)), "Copy selected as new"
-            ),
+            cancel_url=reverse("lit:overview", args=(self.assessment.id,)),
+            submit_text="Copy selected as new",
         )
 
 
-def check_external_id(assessment: Assessment, db_type: int, id_: int,) -> models.Identifiers:
+def check_external_id(
+    assessment: Assessment, db_type: int, id_: Union[str, int]
+) -> models.Identifiers:
     """Validate that the external ID can be used for a reference in this assessment.
 
     This method has a side effect which may create a new identifier; however this identifier object
@@ -352,7 +352,6 @@ def check_external_id(assessment: Assessment, db_type: int, id_: int,) -> models
     """
     identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(id_)).first()
     if identifier:
-
         # make sure ID doesn't already exist for this assessment
         existing_reference = identifier.references.filter(assessment=assessment).first()
         if existing_reference:
@@ -362,25 +361,38 @@ def check_external_id(assessment: Assessment, db_type: int, id_: int,) -> models
 
     else:
         # try to make an identifier; if it cannot be made an exception is thrown.
-        if db_type == constants.PUBMED:
+        if db_type == constants.ReferenceDatabase.PUBMED:
             identifiers = models.Identifiers.objects.get_pubmed_identifiers([id_])
             if len(identifiers) == 0:
                 raise forms.ValidationError(f"Invalid PubMed ID: {id_}")
             identifier = identifiers[0]
 
-        elif db_type == constants.HERO:
+        elif db_type == constants.ReferenceDatabase.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids([id_])
             models.Identifiers.objects.bulk_create_hero_ids(content)
             identifier = models.Identifiers.objects.get(database=db_type, unique_id=str(id_))
 
+        elif db_type == constants.ReferenceDatabase.DOI:
+            if not constants.DOI_EXACT.fullmatch(id_):
+                raise forms.ValidationError(
+                    f'Invalid DOI; should be in format "{constants.DOI_EXAMPLE}"'
+                )
+            identifier = models.Identifiers.objects.create(database=db_type, unique_id=str(id_))
+
         else:
-            raise ValueError("Unknown database type.")
+            raise ValueError(f"Unknown database type {db_type}.")
 
     return identifier
 
 
 class ReferenceForm(forms.ModelForm):
 
+    doi_id = forms.CharField(
+        max_length=64,
+        label="DOI",
+        required=False,
+        help_text=f'Add/update DOI. Should be in format: "{constants.DOI_EXAMPLE}"',
+    )
     pubmed_id = forms.IntegerField(
         label="PubMed ID", required=False, help_text="Add/update PubMed ID."
     )
@@ -396,14 +408,18 @@ class ReferenceForm(forms.ModelForm):
             "journal",
             "abstract",
             "full_text_url",
+            "doi_id",
             "pubmed_id",
             "hero_id",
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["doi_id"].initial = self.instance.get_doi_id()
         self.fields["pubmed_id"].initial = self.instance.get_pubmed_id()
         self.fields["hero_id"].initial = self.instance.get_hero_id()
+        self._ident_additions = []
+        self._ident_removals = []
 
     @property
     def helper(self):
@@ -422,59 +438,35 @@ class ReferenceForm(forms.ModelForm):
 
         helper.add_row("authors_short", 3, "col-md-4")
         helper.add_row("authors", 2, "col-md-6")
-        helper.add_row("pubmed_id", 2, "col-md-6")
+        helper.add_row("doi_id", 3, "col-md-4")
 
         return helper
 
-    def clean_pubmed_id(self):
-        """Check if a modifications are required to the PMID.
+    def _update_identifier(self, db_type: int, field: str):
+        value = self.cleaned_data[field]
+        if self.fields[field].initial != value:
+            if value:
+                ident = check_external_id(self.instance.assessment, db_type, value)
+                self._ident_additions.append(ident)
+            existing = self.instance.identifiers.filter(database=db_type)
+            self._ident_removals.extend(list(existing))
 
-        If added/changed, sets the `self._new_pubmed_identifier` to the new identifier. If removed,
-        sets `self._new_pubmed_identifier` to -1.
-        """
-        pubmed_id = self.cleaned_data["pubmed_id"]
-        if self.fields["pubmed_id"].initial != pubmed_id:
-            if pubmed_id is None:
-                logging.info(f"Removing PMID for reference {self.instance.id}")
-                self._new_pubmed_identifier = -1
-            else:
-                logging.info(f"Setting PMID {pubmed_id} for reference {self.instance.id}")
-                self._new_pubmed_identifier = check_external_id(
-                    self.instance.assessment, constants.PUBMED, pubmed_id
-                )
+    def clean_doi_id(self):
+        self._update_identifier(constants.ReferenceDatabase.DOI, "doi_id")
+
+    def clean_pubmed_id(self):
+        self._update_identifier(constants.ReferenceDatabase.PUBMED, "pubmed_id")
 
     def clean_hero_id(self):
-        """Check if a modifications are required to the HERO ID.
-
-        If added/changed, sets the `self._new_pubmed_identifier` to the new identifier. If removed,
-        sets `self._new_pubmed_identifier` to -1.
-        """
-        hero_id = self.cleaned_data["hero_id"]
-        if self.fields["hero_id"].initial != hero_id:
-            if hero_id is None:
-                logging.info(f"Removing HEROID for reference {self.instance.id}")
-                self._new_hero_identifier = -1
-            else:
-                logging.info(f"Setting HEROID {hero_id} for reference {self.instance.id}")
-                self._new_hero_identifier = check_external_id(
-                    self.instance.assessment, constants.HERO, hero_id
-                )
+        self._update_identifier(constants.ReferenceDatabase.HERO, "hero_id")
 
     @transaction.atomic
     def save(self, commit=True):
         instance = super().save(commit=commit)
-        if hasattr(self, "_new_pubmed_identifier"):
-            existing = list(instance.identifiers.filter(database=constants.PUBMED))
-            if existing:
-                instance.identifiers.remove(*existing)
-            if self._new_pubmed_identifier != -1:
-                instance.identifiers.add(self._new_pubmed_identifier)
-        if hasattr(self, "_new_hero_identifier"):
-            existing = list(instance.identifiers.filter(database=constants.HERO))
-            if existing:
-                instance.identifiers.remove(*existing)
-            if self._new_hero_identifier != -1:
-                instance.identifiers.add(self._new_hero_identifier)
+        if self._ident_additions:
+            instance.identifiers.add(*self._ident_additions)
+        if self._ident_removals:
+            instance.identifiers.remove(*self._ident_removals)
         return instance
 
 
@@ -508,7 +500,7 @@ class TagsCopyForm(forms.Form):
         return BaseFormHelper(self)
 
     def copy_tags(self):
-        models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data["assessment"])
+        models.ReferenceFilterTag.copy_tags(self.cleaned_data["assessment"].id, self.assessment.id)
 
 
 class ReferenceExcelUploadForm(forms.Form):
@@ -550,7 +542,7 @@ class ReferenceExcelUploadForm(forms.Form):
             assert df["Full text URL"].dtype == np.object0
             self.cleaned_data["df"] = df
         except Exception as e:
-            logging.warning(e)
+            logger.warning(e)
             raise forms.ValidationError(
                 "Invalid Excel format. The first worksheet in the workbook "
                 'must contain at least two columns- "HAWC ID", and '

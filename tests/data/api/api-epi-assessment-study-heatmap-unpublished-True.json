@@ -1,16 +1,17 @@
 [
   {
-    "study id": 5,
-    "study citation": "Kawana N, Ishimatsu S, and Kanda K 2001",
-    "study identifier": "",
-    "study design": "Case series",
-    "study population source": "",
-    "exposure name": "sarin poisoning",
-    "exposure route": "inhalation",
+    "effect": "neurological: behavior",
+    "effect subtype": "",
     "exposure measure": "Sarin",
     "exposure metric": "air",
-    "system": "nervous system and special sense organs",
-    "effect": "neurological: behavior",
-    "effect subtype": ""
+    "exposure name": "sarin poisoning",
+    "exposure route": "inhalation",
+    "overall study evaluation": "",
+    "study citation": "Kawana N, Ishimatsu S, and Kanda K 2001",
+    "study design": "Case series",
+    "study id": 5,
+    "study identifier": "",
+    "study population source": "",
+    "system": "nervous system and special sense organs"
   }
 ]

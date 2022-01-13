@@ -29,69 +29,65 @@ class TagReferencesMain extends Component {
         const {store} = this.props,
             selectedReferencePk = store.selectedReference ? store.selectedReference.data.pk : null,
             selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
-            allTagged = store.referencesUntagged.length == 0;
+            allTagged = store.referencesUntagged.length == 0,
+            anyTagged = store.referencesTagged.length > 0,
+            anyUntagged = store.referencesUntagged.length > 0;
         return (
             <div className="row">
                 <div className="col-md-3">
                     <h4>References</h4>
-                    <div id="references_lists">
-                        <div className="card">
-                            <div className="card-header p-1">
-                                <button
-                                    className="btn btn-link"
-                                    data-toggle="collapse"
-                                    data-target="#references_tagged">
-                                    Tagged
-                                </button>
-                            </div>
-                            <div
-                                id="references_tagged"
-                                className="collapse"
-                                data-parent="#references_lists">
-                                <div className="card-body ref-container p-1">
-                                    {store.referencesTagged.map(ref => (
-                                        <p
-                                            key={ref.data.pk}
-                                            className={
-                                                ref.data.pk === selectedReferencePk
-                                                    ? "reference selected"
-                                                    : "reference"
-                                            }
-                                            onClick={() => store.changeSelectedReference(ref)}>
-                                            {ref.shortCitation()}
-                                        </p>
-                                    ))}
-                                </div>
-                            </div>
+                    <div className="card">
+                        <div className="card-header p-2">
+                            <button
+                                className="btn btn-link"
+                                data-toggle="collapse"
+                                data-target="#taggedRefList">
+                                Tagged
+                            </button>
                         </div>
-                        <div className="card">
-                            <div className="card-header p-1">
-                                <button
-                                    className="btn btn-link"
-                                    data-toggle="collapse"
-                                    data-target="#references_untagged">
-                                    Untagged
-                                </button>
-                            </div>
-                            <div
-                                id="references_untagged"
-                                className="collapse show p-1"
-                                data-parent="#references_lists">
-                                <div className="card-body ref-container">
-                                    {store.referencesUntagged.map(ref => (
-                                        <p
-                                            key={ref.data.pk}
-                                            className={
-                                                ref.data.pk === selectedReferencePk
-                                                    ? "reference selected"
-                                                    : "reference"
-                                            }
-                                            onClick={() => store.changeSelectedReference(ref)}>
-                                            {ref.shortCitation()}
-                                        </p>
-                                    ))}
-                                </div>
-                            </div>
+                        <div
+                            id="taggedRefList"
+                            className="show card-body ref-container px-1 resize-y"
+                            style={{minHeight: "10vh", height: anyTagged ? "40vh" : "10vh"}}>
+                            {store.referencesTagged.map(ref => (
+                                <p
+                                    key={ref.data.pk}
+                                    className={
+                                        ref.data.pk === selectedReferencePk
+                                            ? "reference selected"
+                                            : "reference"
+                                    }
+                                    onClick={() => store.changeSelectedReference(ref)}>
+                                    {ref.shortCitation()}
+                                </p>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="card mt-3">
+                        <div className="card-header p-2">
+                            <button
+                                className="btn btn-link"
+                                data-toggle="collapse"
+                                data-target="#untaggedRefList">
+                                Untagged
+                            </button>
+                        </div>
+                        <div
+                            id="untaggedRefList"
+                            className="show card-body px-1 resize-y"
+                            style={{minHeight: "10vh", height: anyUntagged ? "40vh" : "10vh"}}>
+                            {store.referencesUntagged.map(ref => (
+                                <p
+                                    key={ref.data.pk}
+                                    className={
+                                        ref.data.pk === selectedReferencePk
+                                            ? "reference selected"
+                                            : "reference"
+                                    }
+                                    onClick={() => store.changeSelectedReference(ref)}>
+                                    {ref.shortCitation()}
+                                </p>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -135,7 +131,7 @@ class TagReferencesMain extends Component {
                                     Saved!
                                 </span>
                                 <a
-                                    className="btn float-right"
+                                    className="btn btn-light float-right"
                                     rel="noopener noreferrer"
                                     target="_blank"
                                     href={store.selectedReference.get_edit_url()}

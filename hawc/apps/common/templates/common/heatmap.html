@@ -1,25 +1,9 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div id="main"></div>
+    <div id="main"></div>
 {% endblock content %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-    "assessment": "{{assessment}}",
-    "clear_cache_url": {% if obj_perms.edit %}"{{assessment.get_clear_cache_url}}"{% else %}null{% endif %},
-    "data_class": "{{data_class}}",
-    "data_url": "{{data_url}}",
-    "create_visual_url": {% if obj_perms.edit %}"{% url 'summary:visualization_create' assessment.id 6 %}"{% else %}null{% endif %}
-}
-</script>
-<script type="text/javascript">
-    window.app.heatmapTemplateStartup(function (app) {
-        var root = document.getElementById('main'),
-            config = JSON.parse(document.getElementById('config').textContent);
-
-        app.func(root, config);
-    });
-</script>
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

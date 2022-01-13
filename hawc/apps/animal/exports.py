@@ -3,9 +3,9 @@ from typing import Dict, List, Optional, Tuple
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
-from ..riskofbias.models import RiskOfBias
+from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
-from . import models
+from . import constants, models
 
 
 def get_gen_species_strain_sex(e, withN=False):
@@ -50,19 +50,19 @@ def get_significance_and_direction(data_type, groups):
         return significance_list
 
     if data_type in {
-        models.Endpoint.DATA_TYPE_CONTINUOUS,
-        models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS,
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+        constants.DataType.CONTINUOUS,
+        constants.DataType.PERCENT_DIFFERENCE,
+        constants.DataType.DICHOTOMOUS,
+        constants.DataType.DICHOTOMOUS_CANCER,
     }:
         if data_type in {
-            models.Endpoint.DATA_TYPE_CONTINUOUS,
-            models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
+            constants.DataType.CONTINUOUS,
+            constants.DataType.PERCENT_DIFFERENCE,
         }:
             field = "response"
         elif data_type in {
-            models.Endpoint.DATA_TYPE_DICHOTOMOUS,
-            models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+            constants.DataType.DICHOTOMOUS,
+            constants.DataType.DICHOTOMOUS_CANCER,
         }:
             field = "percent_affected"
         else:
@@ -79,7 +79,7 @@ def get_significance_and_direction(data_type, groups):
                     significance_list.append("Yes - ↓")
             else:
                 significance_list.append("No")
-    elif data_type == models.Endpoint.DATA_TYPE_NOT_REPORTED:
+    elif data_type == constants.DataType.NR:
         for group in groups:
             significance_list.append("?")
     else:
@@ -194,11 +194,9 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
-            study_ids = set(
-                self.queryset.values_list("animal_group__experiment__study_id", flat=True)
-            )
-            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id, study_ids, "animal",
+            endpoint_ids = set(self.queryset.values_list("id", flat=True))
+            self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
+                self.queryset.first().assessment_id, endpoint_ids, "animal",
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()
@@ -277,9 +275,8 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             doses = self._get_doses_list(ser, preferred_units)
-            study_id = ser["animal_group"]["experiment"]["study"]["id"]
-            study_robs = [
-                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
+            endpoint_robs = [
+                self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()
             ]
 
             # build endpoint-group independent data
@@ -365,7 +362,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                         eg["percent_upper_ci"],
                     ]
                 )
-                row_copy.extend(study_robs)
+                row_copy.extend(endpoint_robs)
                 rows.append(row_copy)
 
         return rows
@@ -376,11 +373,9 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
-            study_ids = set(
-                self.queryset.values_list("animal_group__experiment__study_id", flat=True)
-            )
-            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id, study_ids, "animal",
+            endpoint_ids = set(self.queryset.values_list("id", flat=True))
+            self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
+                self.queryset.first().assessment_id, endpoint_ids, "animal",
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()
@@ -445,10 +440,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return header
 
     @staticmethod
-    def _get_bmd_values(bmd, preferred_units):
+    def _get_bmd_values(bmds, preferred_units):
         # only return BMD values if they're in the preferred units
-        if bmd and bmd["dose_units"] in preferred_units:
-            return [bmd["output"]["BMD"], bmd["output"]["BMDL"]]
+        for bmd in bmds:
+            if bmd["dose_units_id"] in preferred_units:
+                return [bmd["model"]["output"]["BMD"], bmd["model"]["output"]["BMDL"]]
         return [None, None]
 
     @staticmethod
@@ -570,7 +566,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
 
             # bmd/bmdl information
-            row.extend(self._get_bmd_values(ser["bmd"], preferred_units))
+            row.extend(self._get_bmd_values(ser["bmds"], preferred_units))
 
             row.extend([ser["trend_value"], ser["trend_result"]])
 
@@ -581,9 +577,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             row.extend(sigs)
 
-            study_id = ser["animal_group"]["experiment"]["study"]["id"]
             row.extend(
-                [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
+                [self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()]
             )
 
             rows.append(row)

@@ -4,18 +4,27 @@ import logging
 import re
 import uuid
 from collections import OrderedDict, defaultdict
-from dataclasses import dataclass
+from datetime import timedelta
 from math import inf
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, NamedTuple, Optional, Set
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
-from django.utils import html
+from django.http import QueryDict
 from django.utils.encoding import force_str
+from django.utils.html import strip_tags
+from docx.document import Document
+from matplotlib.axes import Axes
+from matplotlib.dates import DateFormatter
+from pydantic import BaseModel as PydanticModel
 from rest_framework.renderers import JSONRenderer
+
+logger = logging.getLogger(__name__)
 
 
 def read_excel(*args, **kwargs):
@@ -69,20 +78,6 @@ def strip_entities(value):
     """Return the given HTML with all entities (&something;) stripped."""
     # Note: Originally in Django but removed in v1.10
     return re.sub(r"&(?:\w+|#\d+);", "", force_str(value))
-
-
-def strip_tags(value):
-    """Return the given HTML with all tags stripped."""
-    # Note: in typical case this loop executes _strip_once once. Loop condition
-    # is redundant, but helps to reduce number of executions of _strip_once.
-    # Note: Originally in Django but removed in v1.10
-    while "<" in value and ">" in value:
-        new_value = html._strip_once(value)
-        if new_value == value:
-            # _strip_once was not able to detect more tags
-            break
-        value = new_value
-    return value
 
 
 def listToUl(list_):
@@ -149,6 +144,23 @@ def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -
     return df[cols]
 
 
+def url_query(path: str, query: Dict) -> str:
+    """Generate a URL with appropriate query string parameters
+
+    Args:
+        path (str): The url path
+        query (Dict): A dictionary of parameters to add
+
+    Returns:
+        str: A url-encoded string with query values
+    """
+    if not query:
+        return path
+    q = QueryDict("", mutable=True)
+    q.update(query)
+    return f"{path}?{q.urlencode()}"
+
+
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
     """
     Modified to return a float instead of a string.
@@ -183,7 +195,7 @@ class SerializerHelper:
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
-                logging.debug(f"using cache: {name}")
+                logger.debug(f"using cache: {name}")
             else:
                 cached = cls._serialize_and_cache(obj, json=json)
             return cached
@@ -211,7 +223,7 @@ class SerializerHelper:
         json_str = JSONRenderer().render(serialized).decode("utf8")
         serialized = OrderedDict(serialized)  # for pickling
 
-        logging.debug(f"setting cache: {name}")
+        logger.debug(f"setting cache: {name}")
         cache.set_many({name: serialized, json_name: json_str})
 
         if json:
@@ -227,7 +239,7 @@ class SerializerHelper:
     def delete_caches(cls, model, ids):
         names = [cls._get_cache_name(model, id, json=False) for id in ids]
         names.extend([cls._get_cache_name(model, id, json=True) for id in ids])
-        logging.debug(f"Removing caches: {', '.join(names)}")
+        logger.debug(f"Removing caches: {', '.join(names)}")
         cache.delete_many(names)
 
     @classmethod
@@ -236,8 +248,16 @@ class SerializerHelper:
         cls.delete_caches(Model, ids)
 
 
-@dataclass(frozen=True)
-class FlatExport:
+class ReportExport(NamedTuple):
+    """
+    Document export.
+    """
+
+    docx: Document
+    filename: str
+
+
+class FlatExport(NamedTuple):
     """
     Response class of an exporter method.
     """
@@ -277,4 +297,112 @@ class FlatFileExporter:
         return FlatExport(df, self.filename)
 
 
+class WebappConfig(PydanticModel):
+    # single-page webapp configuration
+    app: str
+    page: Optional[str]
+    data: Dict
+
+
 re_digits = r"\d+"
+
+
+def get_id_from_choices(items, lookup_value):
+    """Checks a Django choice tuple and returns the id that matches the lookup value.
+
+    For example, given items like:
+
+    JERSEY_NUMBERS = (
+        (23, "jordan"),
+        (99, "gretzky"),
+        (56, "taylor")
+    )
+
+    Call this function like:
+
+    num = get_id_from_choices(JERSEY_NUMBERS, "TAYLOR")
+    # num == 56
+
+    This function will traverse the series of lists/tuples, find the one that matches the
+    supplied lookup value, and return another value from that list/tuple.
+
+    This is used for instance by the FlexibleChoiceField, when allowing API clients to supply
+    either the internal HAWC code for a given value, or the human-readable name.
+
+    Args:
+        items (list, tuple): list of items to search
+        lookup_value: the value to search for
+
+    Returns:
+        The value, if a single match can be found.
+
+        Returns None if no matches are found.
+
+    Raises:
+        ValueError if multiple matches are found.
+    """
+
+    # This function used to be a little more generic and could accept these as arguments; no longer
+    # needed but keeping them here in case we ever want to expand the function back to what it used to support.
+    case_insensitive = True
+    lookup_index = 1
+    return_index = 0
+
+    if case_insensitive and type(lookup_value) is str:
+        lookup_value = lookup_value.lower()
+        matching_vals = [
+            x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value
+        ]
+    else:
+        matching_vals = [x[return_index] for x in items if x[lookup_index] == lookup_value]
+
+    num_matches = len(matching_vals)
+    if num_matches == 0:
+        return None
+    elif num_matches > 1:
+        raise ValueError(f"Found multiple matches when searching {items} for {lookup_value}")
+    else:
+        return matching_vals[0]
+
+
+def empty_mpl_figure(title: str = "No data available.") -> Axes:
+    """Create a matplotlib figure with no data"""
+    plt.figure(figsize=(3, 1))
+    plt.axis("off")
+    plt.suptitle(title)
+    return plt.gca()
+
+
+def event_plot(series: pd.Series) -> Axes:
+    """Return matplotlib event plot"""
+    plt.style.use("bmh")
+
+    if series.empty:
+        return empty_mpl_figure()
+
+    df = series.to_frame(name="timestamp")
+    df.loc[:, "event"] = 1 + (np.random.rand(df.size) - 0.5) / 5  # jitter
+    ax = df.plot.scatter(
+        x="timestamp",
+        y="event",
+        c="None",
+        edgecolors="blue",
+        alpha=1,
+        s=80,
+        figsize=(15, 5),
+        legend=False,
+        grid=True,
+    )
+
+    # set x axis
+    ax.xaxis.set_major_formatter(DateFormatter("%b %d %H:%M"))
+    buffer = ((series.max() - series.min()) / 30) + timedelta(seconds=1)
+    ax.set_xlim(left=series.min() - buffer, right=pd.Timestamp.utcnow() + buffer)
+    ax.set_xlabel("Timestamp (UTC)")
+
+    # set y axis
+    ax.set_ybound(0, 2)
+    ax.axes.get_yaxis().set_visible(False)
+
+    plt.tight_layout()
+    return ax

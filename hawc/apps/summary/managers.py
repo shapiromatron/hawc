@@ -14,8 +14,34 @@ class SummaryTextManager(BaseManager):
         return MP_NodeQuerySet(self.model).order_by("path")
 
 
+class SummaryTableManager(BaseManager):
+    assessment_relation = "assessment"
+
+    def clonable_queryset(self, user):
+        """
+        Return summary tables which can cloned by a specific user
+        """
+        Assessment = apps.get_model("assessment", "Assessment")
+        return (
+            self.filter(assessment__in=Assessment.objects.get_viewable_assessments(user))
+            .select_related("assessment")
+            .order_by("assessment__name", "title")
+        )
+
+
 class VisualManager(BaseManager):
     assessment_relation = "assessment"
+
+    def clonable_queryset(self, user):
+        """
+        Return visuals which can cloned by a specific user
+        """
+        Assessment = apps.get_model("assessment", "Assessment")
+        return (
+            self.filter(assessment__in=Assessment.objects.get_viewable_assessments(user))
+            .select_related("assessment")
+            .order_by("assessment__name", "title")
+        )
 
 
 class DataPivotManager(BaseManager):
@@ -26,11 +52,10 @@ class DataPivotManager(BaseManager):
         Return data-pivots which can cloned by a specific user
         """
         Assessment = apps.get_model("assessment", "Assessment")
-        assessment_ids = Assessment.objects.get_viewable_assessments(user, public=True).values_list(
-            "id", flat=True
-        )
         return (
-            self.filter(assessment__in=assessment_ids)
+            self.filter(
+                assessment__in=Assessment.objects.get_viewable_assessments(user, public=True)
+            )
             .select_related("assessment")
             .order_by("assessment__name", "title")
         )

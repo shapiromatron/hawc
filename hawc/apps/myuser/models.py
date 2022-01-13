@@ -7,7 +7,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from rest_framework.authtoken.models import Token
 
 from ..common.helper import SerializerHelper
 from . import managers
@@ -18,24 +18,23 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     objects = managers.HAWCMgr()
 
     email = models.EmailField(max_length=254, unique=True, db_index=True)
-    first_name = models.CharField(_("first name"), max_length=30, blank=True)
-    last_name = models.CharField(_("last name"), max_length=30, blank=True)
+    first_name = models.CharField("first name", max_length=30, blank=True)
+    last_name = models.CharField("last name", max_length=30, blank=True)
+    external_id = models.CharField(max_length=30, unique=True, blank=True, null=True, default=None)
     is_staff = models.BooleanField(
-        _("staff status"),
+        "staff status",
         default=False,
-        help_text=_("Designates whether the user can log into this admin " "site."),
+        help_text="Designates whether the user can log into this admin " "site.",
     )
     is_active = models.BooleanField(
-        _("active"),
+        "active",
         default=True,
-        help_text=_(
-            "Designates whether this user should be treated as "
-            "active. Unselect this instead of deleting accounts."
-        ),
+        help_text="Designates whether this user should be treated as "
+        "active. Unselect this instead of deleting accounts.",
     )
-    license_v1_accepted = models.BooleanField(default=False)
-    license_v2_accepted = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    license_v1_accepted = models.BooleanField(default=False, verbose_name="Accept license")
+    license_v2_accepted = models.BooleanField(default=False, verbose_name="Accept license")
+    date_joined = models.DateTimeField("date joined", default=timezone.now)
 
     USERNAME_FIELD = "email"
     CAN_CREATE_ASSESSMENTS = "can-create-assessments"
@@ -89,6 +88,13 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
             return (
                 self.is_superuser or self.groups.filter(name=self.CAN_CREATE_ASSESSMENTS).exists()
             )
+
+    def get_api_token(self) -> Token:
+        token, _ = Token.objects.get_or_create(user=self)
+        return token
+
+    def destroy_api_token(self):
+        Token.objects.filter(user=self).delete()
 
 
 class UserProfile(models.Model):

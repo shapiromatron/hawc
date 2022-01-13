@@ -7,11 +7,18 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
 from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
+from ..assessment.models import DoseUnits
 from ..common import selectable
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
+from ..common.forms import (
+    ASSESSMENT_UNIQUE_MESSAGE,
+    BaseFormHelper,
+    CopyAsNewSelectorForm,
+    form_actions_apply_filters,
+    form_actions_create_or_close,
+)
 from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
-from . import lookups, models
+from . import constants, lookups, models
 
 
 class CriteriaForm(forms.ModelForm):
@@ -36,7 +43,7 @@ class CriteriaForm(forms.ModelForm):
         )
         self.instance.assessment = assessment
         self.fields["description"].widget.update_query_parameters(
-            {"related": self.instance.assessment.id}
+            {"related": self.instance.assessment_id}
         )
 
     def clean(self):
@@ -50,26 +57,18 @@ class CriteriaForm(forms.ModelForm):
         ).exclude(pk=pk)
 
         if crits.count() > 0:
-            self.add_error("description", "Must be unique for assessment")
+            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
 
         return self.cleaned_data
 
     @property
     def helper(self):
-        inputs = {
-            "legend_text": self.CREATE_LEGEND,
-            "help_text": self.CREATE_HELP_TEXT,
-            "form_actions": [
-                cfl.Submit("save", "Save"),
-                cfl.HTML(
-                    """<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""
-                ),
-            ],
-        }
-
-        helper = BaseFormHelper(self, **inputs)
-
-        return helper
+        return BaseFormHelper(
+            self,
+            legend_text=self.CREATE_LEGEND,
+            help_text=self.CREATE_HELP_TEXT,
+            form_actions=form_actions_create_or_close(),
+        )
 
 
 class StudyPopulationForm(forms.ModelForm):
@@ -112,6 +111,7 @@ class StudyPopulationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
+        self.fields["countries"].required = True
         self.fields["comments"] = self.fields.pop("comments")  # move to end
         self.fields["region"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.RegionLookup, allow_new=True
@@ -228,7 +228,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         )
         self.instance.assessment = assessment
         self.fields["description"].widget.update_query_parameters(
-            {"related": self.instance.assessment.id}
+            {"related": self.instance.assessment_id}
         )
 
     def clean(self):
@@ -242,24 +242,18 @@ class AdjustmentFactorForm(forms.ModelForm):
         ).exclude(pk=pk)
 
         if crits.count() > 0:
-            self.add_error("description", "Must be unique for assessment")
+            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
 
         return self.cleaned_data
 
     @property
     def helper(self):
-        inputs = {
-            "legend_text": self.CREATE_LEGEND,
-            "help_text": self.CREATE_HELP_TEXT,
-            "form_actions": [
-                cfl.Submit("save", "Save"),
-                cfl.HTML(
-                    """<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""
-                ),
-            ],
-        }
-        helper = BaseFormHelper(self, **inputs)
-        return helper
+        return BaseFormHelper(
+            self,
+            legend_text=self.CREATE_LEGEND,
+            help_text=self.CREATE_HELP_TEXT,
+            form_actions=form_actions_create_or_close(),
+        )
 
 
 class ExposureForm(forms.ModelForm):
@@ -480,9 +474,9 @@ class OutcomeFilterForm(forms.Form):
 
     design = forms.MultipleChoiceField(
         label="Study design",
-        choices=models.StudyPopulation.DESIGN_CHOICES,
+        choices=constants.Design.choices,
         widget=forms.CheckboxSelectMultiple,
-        initial=[c[0] for c in models.StudyPopulation.DESIGN_CHOICES],
+        initial=constants.Design.values,
         required=False,
     )
 
@@ -508,35 +502,36 @@ class OutcomeFilterForm(forms.Form):
     )
 
     diagnostic = forms.MultipleChoiceField(
-        choices=models.Outcome.DIAGNOSTIC_CHOICES,
+        choices=constants.Diagnostic.choices,
         widget=forms.CheckboxSelectMultiple,
-        initial=[c[0] for c in models.Outcome.DIAGNOSTIC_CHOICES],
+        initial=constants.Diagnostic.values,
         required=False,
     )
 
+    metric_units = forms.ModelChoiceField(queryset=DoseUnits.objects.all(), required=False)
     order_by = forms.ChoiceField(choices=ORDER_BY_CHOICES,)
-
     paginate_by = forms.IntegerField(
-        label="Items per page", min_value=1, initial=25, max_value=10000, required=False
+        label="Items per page", min_value=10, initial=25, max_value=500, required=False
     )
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
+        self.fields["metric_units"].queryset = DoseUnits.objects.get_epi_units(assessment.id)
         for field in self.fields:
-            if field not in ("design", "diagnostic", "order_by", "paginate_by"):
+            if field not in ("design", "diagnostic", "metric_units", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
 
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
         helper.add_row("system", 4, "col-md-3")
-        helper.add_row("order_by", 2, "col-md-3")
+        helper.add_row("metric_units", 3, "col-md-3")
 
         return helper
 
@@ -554,6 +549,7 @@ class OutcomeFilterForm(forms.Form):
         effect = self.cleaned_data.get("effect")
         effect_subtype = self.cleaned_data.get("effect_subtype")
         diagnostic = self.cleaned_data.get("diagnostic")
+        metric_units = self.cleaned_data.get("metric_units")
 
         query = Q()
         if studies:
@@ -569,7 +565,7 @@ class OutcomeFilterForm(forms.Form):
         if source:
             query &= Q(study_population__source__icontains=source)
         if country:
-            query &= Q(study_population__country__name__icontains=country)
+            query &= Q(study_population__countries__name__icontains=country)
         if design:
             query &= Q(study_population__design__in=design)
         if system:
@@ -580,6 +576,8 @@ class OutcomeFilterForm(forms.Form):
             query &= Q(effect_subtype__icontains=effect_subtype)
         if diagnostic:
             query &= Q(diagnostic__in=diagnostic)
+        if metric_units:
+            query &= Q(study_population__exposures__metric_units=metric_units)
         return query
 
     def get_order_by(self):

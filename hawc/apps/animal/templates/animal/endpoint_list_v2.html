@@ -10,19 +10,5 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-    "data_url": "{{data_url}}"
-}
-</script>
-<script type="text/javascript">
-    window.app.animalStartup(function (app) {
-        var root = document.getElementById('main'),
-            config = JSON.parse(document.getElementById('config').textContent);
-
-        app.EndpointListApp(startup => {
-            startup.func(root, config)
-        });
-    });
-</script>
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

@@ -4,9 +4,7 @@
 
 {% block dp_content %}
 
-  <div id="loading_div">
-    <p>Fetching the latest data from {{assessment}}... <img src="{% static 'img/loading.gif' %}"></p>
-  </div>
+  <div id="loading_div"></div>
 
   <div id='data_pivot' style='display:none;'>
     <ul class="nav nav-tabs">
@@ -39,7 +37,8 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-  window.app.dataPivotStartup(function(dataPivot){
+  $('#loading_div').html(window.app.HAWCUtils.loading())
+  window.app.startup("dataPivotStartup", function(app){
       var data_url = '{{object.get_data_url|safe}}',
           settings = {{object.settings|safe}},
           options = {
@@ -50,7 +49,7 @@
               submissionDiv: '#dp_settings_form',
               settingsField: '#id_settings',
           };
-      dataPivot.DataPivot.displayEditView(data_url, settings, options)
+      app.DataPivot.displayEditView(data_url, settings, options)
   });
   </script>
 {% endblock extrajs %}

@@ -2,7 +2,11 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 import h from "shared/utils/helpers";
+import {getReferenceTagListUrl} from "shared/utils/urls";
+import Hero from "shared/utils/Hero";
+
 import ReferenceButton from "./ReferenceButton";
 
 class Reference extends Component {
@@ -29,7 +33,7 @@ class Reference extends Component {
                     <ReferenceButton
                         key={h.randomString()}
                         className={"btn btn-sm btn-success"}
-                        url={v.url}
+                        url={v.database === "HERO" ? Hero.getUrl(v.id) : v.url}
                         displayText={v.database}
                         textToCopy={v.id}
                     />
@@ -70,32 +74,26 @@ class Reference extends Component {
         const {reference, showActions, showTags, showHr, actionsBtnClassName} = this.props,
             {data, tags} = reference,
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
-            year = data.year || "";
+            year = data.year || "",
+            actionItems = [
+                <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
+                <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
+                <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
+            ];
 
         return (
-            <div id="reference_detail_div">
+            <div className="referenceDetail">
+                <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
                     <div className="ref_small">
                         <span>
                             {authors}&nbsp;{year}
                         </span>
                         {showActions ? (
-                            <div className="dropdown btn-group float-right">
-                                <a className={actionsBtnClassName} data-toggle="dropdown">
-                                    Actions
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                    <a className="dropdown-item" href={data.editTagUrl}>
-                                        Edit tags
-                                    </a>
-                                    <a className="dropdown-item" href={data.editReferenceUrl}>
-                                        Edit reference
-                                    </a>
-                                    <a className="dropdown-item" href={data.deleteReferenceUrl}>
-                                        Delete reference
-                                    </a>
-                                </div>
-                            </div>
+                            <ActionsButton
+                                dropdownClasses={actionsBtnClassName}
+                                items={actionItems}
+                            />
                         ) : null}
                     </div>
                 }
@@ -106,22 +104,30 @@ class Reference extends Component {
                 ) : null}
                 {showTags && tags.length > 0 ? (
                     <p>
-                        {tags.map((tag, i) => [
-                            <span key={i} className="badge badge-info">
+                        {tags.map((tag, i) => (
+                            <a
+                                key={i}
+                                href={getReferenceTagListUrl(data.assessment_id, tag.data.pk)}
+                                className="referenceTag badge badge-info mr-1">
                                 {tag.get_full_name()}
-                            </span>,
-                            <span key={i + 1000}>&nbsp;</span>,
-                        ])}
+                            </a>
+                        ))}
                     </p>
                 ) : null}
                 {data.searches.length > 0 ? (
-                    <p>
+                    <p className="my-1">
                         <strong>HAWC searches/imports:</strong>
                         {data.searches.map((d, i) => (
-                            <span key={i}>
+                            <span className="badge badge-light mr-1" key={i}>
                                 &nbsp;<a href={d.url}>{d.title}</a>
                             </span>
                         ))}
+                    </p>
+                ) : null}
+                {data.has_study ? (
+                    <p className="my-1">
+                        <strong>HAWC study extraction:&nbsp;</strong>
+                        <a href={reference.get_study_url()}>{data.study_short_citation}</a>
                     </p>
                 ) : null}
                 {this.renderIdentifiers(data)}
@@ -141,7 +147,7 @@ Reference.propTypes = {
 
 Reference.defaultProps = {
     showActions: false,
-    actionsBtnClassName: "btn btn-sm dropdown-toggle",
+    actionsBtnClassName: "btn-sm",
     showHr: false,
     showTags: true,
 };

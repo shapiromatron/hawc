@@ -1,10 +1,7 @@
 {
     "rules": {
         "generator-star-spacing": 1,
-        "linebreak-style": [
-            2,
-            "unix"
-        ],
+        "linebreak-style": 0,
         "no-await-in-loop": 1,
         "no-console": [
             2,

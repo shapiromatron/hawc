@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  postgres:
+    build: ./compose/postgres
+    platform: linux/x86_64
+    ports:
+      - "0.0.0.0:5432:5432"
+
+  redis:
+    build: ./compose/redis
+    platform: linux/x86_64
+    ports:
+      - "0.0.0.0:6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: ./compose/app/Dockerfile
+    platform: linux/x86_64
+
+  nginx:
+    build: ./compose/nginx
+    platform: linux/x86_64

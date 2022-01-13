@@ -34,7 +34,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).on('ready', function(){
-      new window.app.utils.DynamicFormset($('#gFormset'), 'form', {oneFormRequired: true});
+      new window.app.DynamicFormset($('#gFormset'), 'form', {oneFormRequired: true});
       $('#gFormset').insertBefore($('#gcForm .form-actions'));
     });
   </script>

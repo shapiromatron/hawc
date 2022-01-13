@@ -1,6 +1,7 @@
 import json
+import logging
 import uuid
-from typing import Any, List, NamedTuple
+from typing import Any, Dict, List, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -11,26 +12,26 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.http import HttpRequest
+from django.template import RequestContext, Template
+from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
+from hawc.services.epa.dsstox import DssSubstance
+
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
-from ..common.models import IntChoiceEnum, get_private_data_storage
+from ..common.models import get_private_data_storage
+from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
-from ..vocab.models import VocabularyNamespace
-from . import jobs, managers
+from ..vocab.constants import VocabularyNamespace
+from . import constants, jobs, managers
+from .permissions import AssessmentPermissions
 from .tasks import add_time_spent
 
-NOEL_NAME_CHOICES_NOEL = 0
-NOEL_NAME_CHOICES_NOAEL = 1
-NOEL_NAME_CHOICES_NEL = 2
-
-ROB_NAME_CHOICES_ROB = 0
-ROB_NAME_CHOICES_SE = 1
-ROB_NAME_CHOICES_ROB_TEXT = "Risk of bias"
-ROB_NAME_CHOICES_SE_TEXT = "Study evaluation"
+logger = logging.getLogger(__name__)
 
 
 class NoelNames(NamedTuple):
@@ -38,24 +39,6 @@ class NoelNames(NamedTuple):
     loel: str
     noel_help_text: str
     loel_help_text: str
-
-
-class JobStatus(IntChoiceEnum):
-    """
-    Status of the running job.
-    """
-
-    PENDING = 1
-    SUCCESS = 2
-    FAILURE = 3
-
-
-class JobType(IntChoiceEnum):
-    """
-    Short descriptor of job functionality.
-    """
-
-    TEST = 1
 
 
 class DSSTox(models.Model):
@@ -75,6 +58,20 @@ class DSSTox(models.Model):
     def __str__(self):
         return self.dtxsid
 
+    def save(self, *args, **kwargs):
+        """
+        Save the DSSTox to the database.
+
+        Raises:
+            ValueError if the supplied dtxsid isn't valid
+        """
+        if len(self.content) == 0:
+            # If no content set, then attempt to set it based on the dtxsid.
+            substance = DssSubstance.create_from_dtxsid(self.dtxsid)
+            self.content = substance.content
+
+        super().save(*args, **kwargs)
+
     @property
     def verbose_str(self) -> str:
         return f"{self.dtxsid}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
@@ -93,30 +90,19 @@ class DSSTox(models.Model):
 class Assessment(models.Model):
     objects = managers.AssessmentManager()
 
-    NOEL_NAME_CHOICES = (
-        (NOEL_NAME_CHOICES_NEL, "NEL/LEL"),
-        (NOEL_NAME_CHOICES_NOEL, "NOEL/LOEL"),
-        (NOEL_NAME_CHOICES_NOAEL, "NOAEL/LOAEL"),
-    )
-
-    ROB_NAME_CHOICES = (
-        (ROB_NAME_CHOICES_ROB, ROB_NAME_CHOICES_ROB_TEXT),
-        (ROB_NAME_CHOICES_SE, ROB_NAME_CHOICES_SE_TEXT),
-    )
-
     def get_noel_name_default():
         if settings.HAWC_FLAVOR == "PRIME":
-            return NOEL_NAME_CHOICES_NOEL
+            return constants.NoelName.NOEL
         elif settings.HAWC_FLAVOR == "EPA":
-            return NOEL_NAME_CHOICES_NOAEL
+            return constants.NoelName.NOAEL
         else:
             raise ValueError("Unknown HAWC flavor")
 
     def get_rob_name_default():
         if settings.HAWC_FLAVOR == "PRIME":
-            return ROB_NAME_CHOICES_ROB
+            return constants.RobName.ROB
         elif settings.HAWC_FLAVOR == "EPA":
-            return ROB_NAME_CHOICES_SE
+            return constants.RobName.SE
         else:
             raise ValueError("Unknown HAWC flavor")
 
@@ -241,19 +227,19 @@ class Assessment(models.Model):
     )
     noel_name = models.PositiveSmallIntegerField(
         default=get_noel_name_default,
-        choices=NOEL_NAME_CHOICES,
+        choices=constants.NoelName.choices,
         verbose_name="NEL/NOEL/NOAEL name",
         help_text="What term should be used to refer to NEL/NOEL/NOAEL and LEL/LOEL/LOAEL?",
     )
     rob_name = models.PositiveSmallIntegerField(
         default=get_rob_name_default,
-        choices=ROB_NAME_CHOICES,
+        choices=constants.RobName.choices,
         verbose_name="Risk of bias/Study evaluation name",
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
     vocabulary = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.display_choices(),
-        default=VocabularyNamespace.EHV.value,
+        default=VocabularyNamespace.EHV,
         blank=True,
         null=True,
         verbose_name="Controlled vocabulary",
@@ -281,6 +267,9 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.id,))
 
+    def get_assessment_logs_url(self):
+        return reverse("assessment:assessment_logs", args=(self.id,))
+
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
 
@@ -290,83 +279,43 @@ class Assessment(models.Model):
     def __str__(self):
         return f"{self.name} ({self.year})"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        AssessmentPermissions.clear_cache(self.id)
+
+    def get_permissions(self) -> AssessmentPermissions:
+        return AssessmentPermissions.get(self)
+
     def user_permissions(self, user):
+        perms = self.get_permissions()
         return {
-            "view": self.user_can_view_object(user),
-            "edit": self.user_can_edit_object(user),
-            "edit_assessment": self.user_can_edit_assessment(user),
+            "view": perms.can_view_object(user),
+            "edit": perms.can_edit_object(user),
+            "edit_assessment": perms.can_edit_assessment(user),
         }
 
-    def user_can_view_object(self, user):
-        """
-        Superusers can view all, noneditible reviews can be viewed, team
-        members or project managers can view.
-        Anonymous users on noneditable projects cannot view, nor can those who
-        are non members of a project.
-        """
-        if self.public or user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return (
-                (user in self.project_manager.all())
-                or (user in self.team_members.all())
-                or (user in self.reviewers.all())
-            )
+    def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
+        if perms is None:
+            perms = self.get_permissions()
+        return perms.can_view_object(user)
 
-    def user_can_edit_object(self, user):
-        """
-        If person has enhanced permissions beyond the general public, which may
-        be used to view attachments associated with a study.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return self.editable and (
-                user in self.project_manager.all() or user in self.team_members.all()
-            )
+    def user_can_edit_object(self, user, perms: AssessmentPermissions = None) -> bool:
+        if perms is None:
+            perms = self.get_permissions()
+        return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user):
-        """
-        If person is superuser or assessment is editible and user is a project
-        manager or team member.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return user in self.project_manager.all()
+    def user_can_edit_assessment(self, user, perms: AssessmentPermissions = None) -> bool:
+        if perms is None:
+            perms = self.get_permissions()
+        return perms.can_edit_assessment(user)
 
-    def user_is_part_of_team(self, user):
-        """
-        Used for permissions-checking if attachments for a study can be
-        viewed. Checks to ensure user is part of the team.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return (
-                (user in self.project_manager.all())
-                or (user in self.team_members.all())
-                or (user in self.reviewers.all())
-            )
+    def user_is_part_of_team(self, user) -> bool:
+        perms = self.get_permissions()
+        return perms.part_of_team(user)
 
     def user_is_team_member_or_higher(self, user) -> bool:
-        """
-        Check if user is superuser, project-manager, or team-member, otherwise False.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return user in self.project_manager.all() or user in self.team_members.all()
+        perms = self.get_permissions()
+        return perms.team_member_or_higher(user)
 
     def get_vocabulary_display(self) -> str:
         # override default method
@@ -376,13 +325,13 @@ class Assessment(models.Model):
             return ""
 
     def get_noel_names(self):
-        if self.noel_name == NOEL_NAME_CHOICES_NEL:
+        if self.noel_name == constants.NoelName.NEL:
             return NoelNames("NEL", "LEL", "No effect level", "Lowest effect level",)
-        elif self.noel_name == NOEL_NAME_CHOICES_NOEL:
+        elif self.noel_name == constants.NoelName.NOEL:
             return NoelNames(
                 "NOEL", "LOEL", "No observed effect level", "Lowest observed effect level",
             )
-        elif self.noel_name == NOEL_NAME_CHOICES_NOAEL:
+        elif self.noel_name == constants.NoelName.NOAEL:
             return NoelNames(
                 "NOAEL",
                 "LOAEL",
@@ -391,10 +340,6 @@ class Assessment(models.Model):
             )
         else:
             raise ValueError(f"Unknown noel_name: {self.noel_name}")
-
-    def hide_rob_scores(self):
-        # TODO - remove 100500031 hack
-        return self.id == 100500031
 
     def bust_cache(self):
         """
@@ -423,12 +368,15 @@ class Assessment(models.Model):
             # django-redis can delete by key pattern
             cache.delete_pattern(f"assessment-{self.id}-*")
         except AttributeError:
-            if settings.DEBUG:
-                # no big-deal in debug, just wipe the whole cache
+            if settings.DEBUG or settings.IS_TESTING:
+                # if debug/testing, wipe whole cache
                 cache.clear()
             else:
                 # in prod, throw exception
                 raise NotImplementedError("Cannot wipe assessment cache using this cache backend")
+
+        # refresh materialized views
+        refresh_all_mvs(force=True)
 
     @classmethod
     def size_df(cls) -> pd.DataFrame:
@@ -458,6 +406,12 @@ class Assessment(models.Model):
             .order_by("id")
             .distinct("id")
         )
+
+    def get_communications(self) -> str:
+        return Communication.get_message(self)
+
+    def set_communications(self, text: str):
+        Communication.set_message(self, text)
 
 
 class Attachment(models.Model):
@@ -806,6 +760,14 @@ class DatasetRevision(models.Model):
     def get_df(self) -> pd.DataFrame:
         return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
 
+    def data_exists(self) -> bool:
+        try:
+            _ = self.data.file
+            return True
+        except FileNotFoundError:
+            logger.error(f"DatasetRevision {self.id} not found: {self.data.path}")
+            return False
+
     @classmethod
     def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
         """
@@ -848,7 +810,7 @@ class DatasetRevision(models.Model):
 class Job(models.Model):
 
     JOB_TO_FUNC = {
-        JobType.TEST: jobs.test,
+        constants.JobType.TEST: jobs.test,
     }
 
     task_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -856,9 +818,11 @@ class Job(models.Model):
         Assessment, blank=True, null=True, on_delete=models.CASCADE, related_name="jobs"
     )
     status = models.PositiveSmallIntegerField(
-        choices=JobStatus.choices(), default=JobStatus.PENDING, editable=False
+        choices=constants.JobStatus.choices, default=constants.JobStatus.PENDING, editable=False
     )
-    job = models.PositiveSmallIntegerField(choices=JobType.choices(), default=JobType.TEST)
+    job = models.PositiveSmallIntegerField(
+        choices=constants.JobType.choices, default=constants.JobType.TEST
+    )
 
     kwargs = models.JSONField(default=dict, blank=True, null=True)
     result = models.JSONField(default=dict, editable=False)
@@ -892,7 +856,7 @@ class Job(models.Model):
             {"data" : <data>} MUST be JSON serializable.
         """
         self.result = {"data": data}
-        self.status = JobStatus.SUCCESS
+        self.status = constants.JobStatus.SUCCESS
 
     def set_failure(self, exception: Exception):
         """
@@ -905,26 +869,97 @@ class Job(models.Model):
             MUST have a built in string representation.
         """
         self.result = {"error": str(exception)}
-        self.status = JobStatus.FAILURE
+        self.status = constants.JobStatus.FAILURE
 
     def get_detail_url(self):
         return reverse("assessment:api:jobs-detail", args=(self.task_id,))
+
+
+class Communication(models.Model):
+    message = models.TextField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.IntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("content_type_id", "object_id"),)
+
+    @classmethod
+    def get_message(cls, model) -> str:
+        instance = cls.objects.filter(
+            content_type=ContentType.objects.get_for_model(model), object_id=model.id
+        ).first()
+        return instance.message if instance else ""
+
+    @classmethod
+    def set_message(cls, model, text: str) -> "Communication":
+        instance, _ = cls.objects.update_or_create(
+            content_type=ContentType.objects.get_for_model(model),
+            object_id=model.id,
+            defaults={"message": text},
+        )
+        return instance
 
 
 class Log(models.Model):
     assessment = models.ForeignKey(
         Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
     )
+    user = models.ForeignKey(
+        HAWCUser, blank=True, null=True, related_name="logs", on_delete=models.SET_NULL
+    )
     message = models.TextField()
-
+    content = models.JSONField(default=dict)
+    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
+    object_id = models.IntegerField(null=True)
+    content_object = GenericForeignKey("content_type", "object_id")
     created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-created",)
 
+    def __str__(self) -> str:
+        if self.object_id and self.content_type_id:
+            return self.get_object_name() + " Log"
+        if self.assessment is not None:
+            return str(self.assessment) + " Log"
+        return "Custom Log"
+
+    def get_absolute_url(self):
+        return reverse("assessment:log_detail", args=(self.id,))
+
+    def get_object_list_url(self):
+        return reverse("assessment:log_object_list", args=(self.content_type_id, self.object_id))
+
+    def get_object_url(self):
+        # get list view if we can, else fall-back to the absolute view
+        if self.object_id and self.content_type_id:
+            return self.get_object_list_url()
+        return self.get_absolute_url()
+
     def get_api_url(self):
         return reverse("assessment:api:logs-detail", args=(self.id,))
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_generic_object_name(self) -> str:
+        return f"{self.content_type.app_label}.{self.content_type.model} #{self.object_id}"
+
+    def get_object_name(self):
+        if self.content_object:
+            return str(self.content_object)
+        if self.object_id and self.content_type_id:
+            return self.get_generic_object_name()
+
+    def user_can_view(self, user) -> bool:
+        return (
+            self.assessment.user_is_team_member_or_higher(user)
+            if self.assessment
+            else user.is_staff
+        )
 
 
 class Blog(models.Model):
@@ -942,6 +977,59 @@ class Blog(models.Model):
         return self.subject
 
 
+class ContentTypeChoices(models.IntegerChoices):
+    HOMEPAGE = 1
+    ABOUT = 2
+    RESOURCES = 3
+
+
+class Content(models.Model):
+    content_type = models.PositiveIntegerField(choices=ContentTypeChoices.choices, unique=True)
+    template = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+    def __str__(self) -> str:
+        return self.get_content_type_display()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.clear_cache()
+
+    def clear_cache(self):
+        key = self.get_cache_key(self.content_type)
+        cache.delete(key)
+
+    @property
+    def template_truncated(self):
+        return truncatewords(self.template, 100)
+
+    @classmethod
+    def get_cache_key(cls, content_type: ContentTypeChoices) -> str:
+        return f"assessment.Content.{content_type}"
+
+    @classmethod
+    def rendered_page(
+        cls, content_type: ContentTypeChoices, request: HttpRequest, context: Dict
+    ) -> str:
+        """Return rendered template response for the requested content.
+
+        Return cached content for this page if one exists, or if it does not exist, render using
+        the current context provided, cache, and return.
+        """
+        key = cls.get_cache_key(content_type)
+        html = cache.get(key)
+        if html is None:
+            context = RequestContext(request, context)
+            content = cls.objects.get(content_type=content_type)
+            html = Template(content.template).render(context)
+            cache.set(key, html, settings.CACHE_10_MIN)
+        return html
+
+
 reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(EffectTag)
@@ -951,5 +1039,6 @@ reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
-reversion.register(Log)
+reversion.register(Communication)
 reversion.register(Blog)
+reversion.register(Content)

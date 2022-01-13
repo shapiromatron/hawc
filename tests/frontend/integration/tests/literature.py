@@ -15,17 +15,18 @@ def literature(driver, root_url):
     # /lit/assessment/:id/references/
     h.click("View By Tag")
     h.wait_until(h.Text("Available references").exists)
-    h.wait_until(h.S(".nestedTagCollapser").exists)
+    h.wait_until(h.S(".nestedTag").exists)
     assert "/lit/assessment/2/references/" in driver.current_url
     assert h.Text("Human Study (2)").exists() is True
     assert len(driver.find_elements_by_css_selector("#references_detail_div")) > 0
     h.click("Human Study (2)")
-    h.wait_until(h.Text("References tagged:").exists)
-    assert len(driver.find_elements_by_css_selector("#reference_detail_div")) > 1
+    h.wait_until(h.Text("2 references tagged:").exists)
+    h.wait_until(h.S("#references_detail_div").exists)
+    assert len(driver.find_elements_by_css_selector(".referenceDetail")) == 2
 
     # /lit/assessment/:id/references/visualization/
     h.go_to(root_url + "/lit/assessment/2/references/visualization/")
-    h.wait_until(h.Text("public final").exists)
+    h.wait_until(h.Text("Chemical X").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .tagnode")) == 3
 
@@ -35,6 +36,18 @@ def literature(driver, root_url):
     h.write("Kawana", into="Authors")
     h.click("Search")
     h.wait_until(h.Text("1 references found.").exists)
-    assert len(driver.find_elements_by_css_selector("#reference_detail_div")) == 1
+    assert len(driver.find_elements_by_css_selector(".referenceDetail")) == 1
+
+    # /lit/assessment/:id/tag/untagged/
+    h.go_to(root_url + "/lit/assessment/1/tag/untagged/")
+    h.wait_until(h.Text("Tags for current reference").exists)
+
+    # /lit/assessment/:id/tags/update/
+    h.go_to(root_url + "/lit/assessment/1/tags/update/")
+    h.wait_until(h.Text("Reference tags for Chemical Z").exists)
+
+    # /lit/assessment/:id/tag/bulk/
+    h.go_to(root_url + "/lit/assessment/1/tag/bulk/")
+    h.wait_until(h.Text("Select an Excel file (.xlsx) to load and process.").exists)
 
     shared.logout()

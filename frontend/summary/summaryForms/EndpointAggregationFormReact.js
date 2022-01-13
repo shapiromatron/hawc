@@ -1,11 +1,8 @@
+import _ from "lodash";
 import $ from "$";
 import React from "react";
 import {render} from "react-dom";
-import {Async} from "react-select";
-
-import "react-tabs/style/react-tabs.css";
-import "react-select/dist/react-select.css";
-
+import AsyncSelect from "react-select/async";
 import BaseVisualForm from "./BaseVisualFormReact";
 import EndpointAggregation from "summary/summary/EndpointAggregation";
 
@@ -67,17 +64,13 @@ class EndpointAggregationForm extends BaseVisualForm {
                         Endpoints
                         <span className="asteriskField">*</span>
                     </label>
-                    <Async
-                        multi
+                    <AsyncSelect
+                        cacheOptions
+                        isMulti
                         name="endpoints"
+                        loadOptions={_.debounce(this.fetchEndpoints, 500)}
                         value={this.state.endpoints}
                         onChange={this.handleEndpointSelect}
-                        autoload={false}
-                        loadOptions={this.fetchEndpoints}
-                        backspaceRemoves={false}
-                        deleteRemoves={false}
-                        clearable={false}
-                        onValueClick={ep => window.open(`/ani/endpoint/${ep.value}`, "_blank")}
                     />
                 </div>
                 <TextAreaInput

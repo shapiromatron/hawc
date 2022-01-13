@@ -1,36 +1,31 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
+    {% if obj_perms.edit %}
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <span class="dropdown-header">Animal Group Editing</span>
+            <a class="dropdown-item" href="{% url 'animal:animal_group_update' object.pk %}">Update</a>
+            <a class="dropdown-item" href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a>
 
-    <h1 id="animal-group-header">{{object}}
-      {% if obj_perms.edit %}
-        <div class="dropdown btn-group float-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-          <div class="dropdown-menu dropdown-menu-right">
-              <h6 class="dropdown-header">Animal Group Editing</h6>
-              <a class="dropdown-item" href="{% url 'animal:animal_group_update' object.pk %}">Update</a>
-              <a class="dropdown-item" href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a>
-
-              {% if object.dosing_regime and object == object.dosing_regime.dosed_animals %}
-                <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">Dose Regime Editing</h6>
-                <a class="dropdown-item" href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a>
-              {% endif %}
-
+            {% if object.dosing_regime and object == object.dosing_regime.dosed_animals %}
               <div class="dropdown-divider"></div>
-              <h6 class="dropdown-header">Endpoint Editing</h6>
-              <a class="dropdown-item" href="{% url 'animal:endpoint_new' object.pk %}">Create new</a>
-              <a class="dropdown-item" href="{% url 'animal:endpoint_copy_selector' object.pk %}">Copy from existing</a>
-          </div>
+              <span class="dropdown-header">Dose Regime Editing</span>
+              <a class="dropdown-item" href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a>
+            {% endif %}
+
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-header">Endpoint Editing</span>
+            <a class="dropdown-item" href="{% url 'animal:endpoint_new' object.pk %}">Create new</a>
+            <a class="dropdown-item" href="{% url 'animal:endpoint_copy_selector' object.pk %}">Copy from existing</a>
         </div>
-      {% endif %}
-    </h1>
+      </div>
+    {% endif %}
+    <h2 id="animal-group-header" class="d-inline-block">{{object}}</h2>
 
   {% if crud == "Read" %}
-  <div id="endpointsDivParent" class="hidden">
-    <h2>Available endpoints</h2>
-    <div id="endpointsDiv"></div>
-  </div>
+  <div id="animalGroupTableMain"></div>
   {% endif %}
 
 {% endblock %}
@@ -38,68 +33,19 @@
 
 {% block extrajs %}
 
-  <script type="text/javascript">
-
-  function sortByOrganAsc(a, b) { return a.data.organ.localeCompare(b.data.organ); }
-  function sortByOrganDesc(a, b) { return -1 * sortByOrganAsc(a, b); }
-  function sortByNameAsc(a, b) { return a.data.name.localeCompare(b.data.name); }
-  function sortByNameDesc(a, b) { return -1 * sortByNameAsc(a, b); }
-  function sortByObsTimeAsc(a, b) { return a.data.observation_time_text.localeCompare(b.data.observation_time_text); }
-  function sortByObsTimeDesc(a, b) { return -1 * sortByObsTimeAsc(a, b); }
-
-  window.app.animalStartup(function(animal){
-      animal.AnimalGroup.get_object({{object.id}}, function(d){
-          $('h1#animal-group-header')
-            .after(
-                d.build_details_table(),
-                $("<h2>Dosing regime</h2>"),
-                d.build_dr_details_table()
-            );
-      });
-
-      var endpoints = [];
-      {% for obj in object.endpoints.all %}
-        endpoints.push(new animal.Endpoint({{obj.get_json|safe}}));
-      {% endfor %}
-
-  var lastEndpointSort = "";
-  // calls the AnimalGroupTable render function, but wraps it inside some sorting and some DOM manipulation to build a simple sort UI
-  var renderTableAsSortable = function (sortField) {
-    var reverseSort = false;
-    if (lastEndpointSort == sortField) {
-      reverseSort = true;
-      lastEndpointSort = "-" + sortField;
-    } else {
-      lastEndpointSort = sortField;
-    }
-    if (sortField == "organ") {
-      endpoints.sort(reverseSort ? sortByOrganDesc : sortByOrganAsc);
-    } else if (sortField == "name") {
-      endpoints.sort(reverseSort ? sortByNameDesc : sortByNameAsc);
-    } else if (sortField == "obs-time") {
-      endpoints.sort(reverseSort ? sortByObsTimeDesc : sortByObsTimeAsc);
-    }
-    $("#endpointsDiv").empty();
-    animal.AnimalGroupTable.render($("#endpointsDiv"), endpoints);
-    // make the headers clickable...
-    $("#endpointsDiv thead tr th.sortable").each(function () {
-      var th = $(this);
-      var sortKey = th.attr("data-sortable-field");
-      if (sortKey !== undefined) {
-        th.css({
-          cursor: "pointer",
-          "text-decoration": "underline"
-        });
-        th.click(function () {
-          renderTableAsSortable(sortKey);
-        });
-      }
+{{ config|json_script:"config" }}
+<script type="text/javascript">
+window.app.startup("animalStartup", function(animal){
+    const data = window.app.getConfig();
+    animal.AnimalGroup.get_object(data.id, function(d){
+        $('h2#animal-group-header')
+          .after(
+              d.build_details_table(),
+              $("<h3>Dosing regime</h3>"),
+              d.build_dr_details_table()
+          );
     });
-    var clickedHeader = $("th.sortable[data-sortable-field='" + sortField + "']");
-    clickedHeader.html((reverseSort ? "&darr; " : "&uarr; ") + clickedHeader.html());
-  };
-  renderTableAsSortable("name");
-  $('#endpointsDivParent').fadeIn();
+    animal.startupAnimalGroupTable(document.getElementById("animalGroupTableMain"), data);
   });
-  </script>
+</script>
 {% endblock %}

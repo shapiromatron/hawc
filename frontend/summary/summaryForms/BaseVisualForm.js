@@ -1,7 +1,6 @@
 import _ from "lodash";
 import $ from "$";
-
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class BaseVisualForm {
     constructor($el, config) {
@@ -137,9 +136,7 @@ class BaseVisualForm {
         } catch (err) {
             // run anyways
         }
-        this.fields.forEach(function(d) {
-            d.fromSerialized();
-        });
+        this.fields.forEach(d => d.fromSerialized());
     }
 
     buildSettingsForm() {
@@ -209,15 +206,16 @@ class BaseVisualForm {
 
     setPreviewLoading() {
         var $preview = this.$el.find("#preview"),
-            loading = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
+            loading = HAWCUtils.loading();
         $preview.html(loading);
     }
 
     addSettingsLoader() {
         var div = $("#settings"),
             loader = div.find("p.loader");
-        if (loader.length === 0)
-            loader = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
+        if (loader.length === 0) {
+            loader = HAWCUtils.loading();
+        }
         div.children().hide(0, function() {
             div.append(loader).show();
         });

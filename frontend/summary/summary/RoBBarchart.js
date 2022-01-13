@@ -1,7 +1,7 @@
 import $ from "$";
 
-import HAWCModal from "utils/HAWCModal";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import HAWCModal from "shared/utils/HAWCModal";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 import RoBBarchartPlot from "./RoBBarchartPlot";
 import RoBHeatmap from "./RoBHeatmap";
@@ -16,10 +16,13 @@ class RoBBarchart extends RoBHeatmap {
 
         options = options || {};
 
-        if (window.isEditable) title.append(this.addActionsMenu());
+        const actions = window.isEditable ? this.addActionsMenu() : null;
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend(title).append(captionDiv);
+
+        if (!options.visualOnly) {
+            $el.prepend([actions, title]).append(captionDiv);
+        }
 
         new RoBBarchartPlot(this, data, options).render($plotDiv);
         caption.renderAndEnable();
@@ -53,6 +56,7 @@ class RoBBarchart extends RoBHeatmap {
             aggregation: this.roba,
             settings: this.data.settings,
             assessment_rob_name: this.data.assessment_rob_name,
+            rob_settings: this.data.rob_settings,
         };
     }
 }

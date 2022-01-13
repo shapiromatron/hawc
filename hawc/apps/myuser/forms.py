@@ -1,6 +1,7 @@
 from crispy_forms import layout as cfl
 from django import forms
-from django.contrib.auth import get_backends
+from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME, get_backends
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
@@ -10,8 +11,10 @@ from django.contrib.auth.forms import (
 from django.forms import ModelForm
 from django.urls import reverse
 
+from ...constants import AuthProvider
 from ..assessment import lookups
 from ..common.forms import BaseFormHelper
+from ..common.helper import url_query
 from ..common.selectable import AutoCompleteSelectMultipleField
 from . import models
 
@@ -19,6 +22,12 @@ _PASSWORD_HELP = (
     "Password must be at least eight characters in length, "
     + "at least one special character, and at least one digit."
 )
+
+_accept_license_help_text = """
+<p>Please <a href="#" data-toggle="modal" data-target="#license_modal">review</a>
+and accept the HAWC license</p>
+"""
+_accept_license_error = "License must be accepted to continue."
 
 
 def checkPasswordComplexity(pw):
@@ -29,6 +38,12 @@ def checkPasswordComplexity(pw):
         or (not any(char in special_characters for char in pw))
     ):
         raise forms.ValidationError(_PASSWORD_HELP)
+
+
+def add_disclaimer(helper: BaseFormHelper):
+    if settings.DISCLAIMER_TEXT:
+        disclaimer_text = f"""<p><b>Disclaimer:</b>&nbsp;{settings.DISCLAIMER_TEXT}</p>"""
+        helper.layout.insert(len(helper.layout) - 1, cfl.HTML(disclaimer_text))
 
 
 class PasswordForm(forms.ModelForm):
@@ -81,13 +96,9 @@ class HAWCSetPasswordForm(SetPasswordForm):
             self,
             legend_text="Password reset",
             help_text="Enter a new password for your account.",
-            form_actions=[
-                cfl.Submit("submit", "Change password"),
-                cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
-            ],
+            cancel_url=cancel_url,
+            submit_text="Change password",
         )
-        helper.form_class = "loginForm"
-
         return helper
 
     def clean_new_password1(self):
@@ -118,8 +129,6 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
 
 
 class RegisterForm(PasswordForm):
-    _accept_license_help_text = "License must be accepted in order to create an account."
-
     class Meta:
         model = models.HAWCUser
         fields = (
@@ -133,31 +142,26 @@ class RegisterForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["license_v2_accepted"].label = "Accept license"
-        self.fields["license_v2_accepted"].help_text = self._accept_license_help_text
-        txt = '&nbsp;<a href="#" data-toggle="modal" data-target="#license_modal">View license</a>'
-        self.fields["license_v2_accepted"].help_text += txt
+        if settings.ACCEPT_LICENSE_REQUIRED:
+            self.fields["license_v2_accepted"].help_text = _accept_license_help_text
+        else:
+            self.fields.pop("license_v2_accepted")
 
     @property
     def helper(self):
         login_url = reverse("user:login")
         helper = BaseFormHelper(
-            self,
-            legend_text="Create an account",
-            form_actions=[
-                cfl.Submit("login", "Create account"),
-                cfl.HTML(f'<a role="button" class="btn btn-light" href="{login_url}">Cancel</a>'),
-            ],
+            self, legend_text="Create an account", cancel_url=login_url, submit_text="Create",
         )
-        helper.form_class = "loginForm"
         helper.add_row("first_name", 2, "col-6")
         helper.add_row("password1", 2, "col-6")
+        add_disclaimer(helper)
         return helper
 
     def clean_license_v2_accepted(self):
         license = self.cleaned_data.get("license_v2_accepted")
         if not license:
-            raise forms.ValidationError(self._accept_license_help_text)
+            raise forms.ValidationError(_accept_license_error)
         return license
 
     def clean_email(self):
@@ -176,7 +180,6 @@ class RegisterForm(PasswordForm):
 
 
 class UserProfileForm(ModelForm):
-
     first_name = forms.CharField(label="First name", required=True)
     last_name = forms.CharField(label="Last name", required=True)
 
@@ -188,6 +191,9 @@ class UserProfileForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["first_name"].initial = self.instance.user.first_name
         self.fields["last_name"].initial = self.instance.user.last_name
+        if self.instance.user.external_id:
+            self.fields["first_name"].disabled = True
+            self.fields["last_name"].disabled = True
 
     @property
     def helper(self):
@@ -197,6 +203,7 @@ class UserProfileForm(ModelForm):
             help_text="Change settings associated with your account",
             cancel_url=reverse("user:settings"),
         )
+        helper.add_row("first_name", 2, "col-md-6")
         return helper
 
     def save(self, commit=True):
@@ -214,6 +221,25 @@ class AcceptNewLicenseForm(ModelForm):
     class Meta:
         model = models.HAWCUser
         fields = ("license_v2_accepted",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["license_v2_accepted"].help_text = _accept_license_help_text
+
+    def clean_license_v2_accepted(self):
+        license = self.cleaned_data.get("license_v2_accepted")
+        if not license:
+            raise forms.ValidationError(_accept_license_error)
+        return license
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Please accept the terms of use",
+            cancel_url=reverse("portal"),
+            submit_text="Submit",
+        )
 
 
 def hawc_authenticate(email=None, password=None):
@@ -240,10 +266,19 @@ class HAWCAuthenticationForm(AuthenticationForm):
     """
 
     def __init__(self, *args, **kwargs):
+        self.next_url = kwargs.pop("next_url")
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
+        external_auth_btn = ""
+        if AuthProvider.external in settings.AUTH_PROVIDERS:
+            url = reverse("user:external_auth")
+            if self.next_url:
+                url = url_query(url, {REDIRECT_FIELD_NAME: self.next_url})
+            external_auth_btn = (
+                f'&nbsp;<a role="button" class="btn btn-primary" href="{url}">External login</a>'
+            )
         helper = BaseFormHelper(
             self,
             legend_text="HAWC login",
@@ -251,6 +286,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 cfl.Submit("login", "Login"),
                 cfl.HTML(
                     f"""
+                {external_auth_btn}&nbsp;
                 <a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
                 <br>
                 <br>
@@ -262,7 +298,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 ),
             ],
         )
-        helper.form_class = "loginForm"
+        add_disclaimer(helper)
         return helper
 
     def clean(self):
@@ -288,20 +324,13 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(
+        return BaseFormHelper(
             self,
             legend_text="Password reset",
             help_text="Enter your email address below, and we'll email instructions for setting a new password.",
-            form_actions=[
-                cfl.Submit("submit", "Send email confirmation"),
-                cfl.HTML(
-                    f'<a role="button" class="btn btn-secondary" href="{reverse("user:login")}">Cancel</a>'
-                ),
-            ],
+            cancel_url=reverse("user:login"),
+            submit_text="Send email confirmation",
         )
-        helper.form_class = "loginForm"
-
-        return helper
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -331,6 +360,7 @@ class AdminUserForm(PasswordForm):
             "email",
             "first_name",
             "last_name",
+            "external_id",
             "is_active",
             "is_staff",
             "password1",
@@ -340,8 +370,17 @@ class AdminUserForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.id:
+        if self.instance.external_id:
+            for field in (
+                "email",
+                "first_name",
+                "last_name",
+                "password1",
+                "password2",
+            ):
+                self.fields[field].disabled = True
 
+        if self.instance.id:
             self.fields["password1"].required = False
             self.fields["password2"].required = False
 

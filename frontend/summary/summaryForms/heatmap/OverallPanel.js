@@ -7,7 +7,7 @@ import TextInput from "shared/components/TextInput";
 import TextAreaInput from "shared/components/TextAreaInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 @inject("store")
 @observer

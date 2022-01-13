@@ -2,6 +2,8 @@
 
 import logging
 
+from hawc.constants import AuthProvider
+
 from .dev import *  # noqa
 
 DEBUG = True
@@ -10,12 +12,24 @@ DEBUG = True
 INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]
 MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in middleware]
 
-HAWC_FLAVOR = "PRIME"
+AUTH_PROVIDERS = {AuthProvider.django, AuthProvider.external}
 
-DATABASES["default"]["NAME"] = "hawc-fixture-test"
+HAWC_FLAVOR = "PRIME"
+ANYONE_CAN_CREATE_ASSESSMENTS = True
+
+# default database name; this is used when managing fixtures
+DATABASES["default"]["NAME"] = "hawc-fixture"
+# default test database name; this is used when the test suite is ran
+DATABASES["default"]["TEST"] = {"NAME": "hawc-test"}
+
+IS_TESTING = True
 
 PRIVATE_DATA_ROOT = PROJECT_ROOT / "tests/data/private-data"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
+
+ANYONE_CAN_CREATE_ASSESSMENTS = True
+PM_CAN_MAKE_PUBLIC = True
+ACCEPT_LICENSE_REQUIRED = True
 
 logging.disable(logging.CRITICAL)

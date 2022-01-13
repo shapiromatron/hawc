@@ -10,12 +10,13 @@ import {
 } from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
+import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
 
 let buildFilterTable = function(tab, dp, handleTableChange) {
         var thead = $("<thead>").html(
                 buildHeaderTr(["Field name", "Filter type", "Value", "Ordering"])
             ),
-            colgroup = buildColGroup(["", "180px", "", "120px"]),
+            colgroup = buildColGroup(["30%", "20%", "35%", "15%"]),
             tbody = $("<tbody>").on("change autocompletechange", "input,select", handleTableChange),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.filters,
@@ -41,7 +42,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         tab.append(
-            $("<h3>Row filters</h3>").append(newRowBtn),
+            newRowBtn,
+            $("<h3>Row filters</h3>"),
             '<p class="form-text text-muted">Use filters to determine which components of your dataset should be displayed on the figure.</p>',
             tbl
         );
@@ -56,26 +58,53 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 <input class="form-check-input" type="radio" name="filter_logic" value="or">
                 <label class="form-check-label">OR</label>
             </div>`),
-            value = dp.settings.plot_settings.filter_logic || "and";
+            custom = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="custom">
+                <label class="form-check-label">CUSTOM</label>
+            </div>`),
+            string = $(`<div class="form-group">
+                <input class="form-control" type="text" name="filter_query">
+            </div>
+            <p class="form-text text-muted">${filterQueryHelpText}. In the above table, the first row is 1, second row is 2, etc.</p>`),
+            value = dp.settings.plot_settings.filter_logic,
+            string_value = dp.settings.plot_settings.filter_query;
 
         // set initial value
         if (value === "and") {
             and.find("input").prop("checked", true);
-        } else {
+            string.hide();
+        } else if (value === "or") {
             or.find("input").prop("checked", true);
+            string.hide();
+        } else {
+            custom.find("input").prop("checked", true);
+            string.show();
         }
+        string.find("input").val(string_value);
 
         // set event binding to change settings
         div.on("change", 'input[name="filter_logic"]', function() {
-            dp.settings.plot_settings.filter_logic = $('input[name="filter_logic"]:checked').val();
+            let val = $('input[name="filter_logic"]:checked').val();
+            dp.settings.plot_settings.filter_logic = val;
+            if (_.includes(["and", "or"], val)) {
+                string.hide();
+            } else {
+                string.show();
+            }
+            handleTableChange();
+        });
+        div.on("change", 'input[name="filter_query"]', function() {
+            dp.settings.plot_settings.filter_query = $('input[name="filter_query"]').val();
             handleTableChange();
         });
 
         div.append(
             "<h4>Filter logic</h4>",
-            '<p class="form-text text-muted">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
             and,
-            or
+            or,
+            custom,
+            `<p class="form-text text-muted">${filterLogicHelpText}</p>`,
+            string
         );
 
         tab.append(div, "<hr/>");
@@ -109,7 +138,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         tab.append(
-            $("<h3>Row sorting</h3>").append(newRowBtn),
+            newRowBtn,
+            $("<h3>Row sorting</h3>"),
             '<p class="form-text text-muted">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
             tbl,
             "<hr/>"
@@ -144,7 +174,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         tab.append(
-            $("<h3>Additional row spacing</h3>").append(newRowBtn),
+            newRowBtn,
+            $("<h3>Additional row spacing</h3>"),
             '<p class="form-text text-muted">Add additional-space between rows, and optionally a horizontal line.</p>',
             tbl,
             "<hr/>"
@@ -160,6 +191,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             sorts = dp.settings.sorts.filter(get_selected_fields),
             overrides = dp.settings.row_overrides,
             filter_logic = dp.settings.plot_settings.filter_logic,
+            filter_query = dp.settings.plot_settings.filter_query,
             dataline = dp.settings.dataline_settings[0],
             datapoints = dp.settings.datapoint_settings,
             barchart = dp.settings.barchart,
@@ -173,7 +205,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         }
 
         // apply filters
-        data = DataPivotVisualization.filter(dp.data, filters, filter_logic);
+        data = DataPivotVisualization.filter(dp.data, filters, filter_logic, filter_query);
 
         data = _.filter(
             data,
@@ -252,7 +284,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 buildManualOverrideRows(dp, tbody);
             },
             refreshRowsBtn = $(
-                '<button class="btn btn-info" style="margin-left: 2em"><i class="fa fa-refresh"></i> Refresh</button>'
+                '<button class="btn btn-info float-right mr-2"><i class="fa fa-refresh"></i> Refresh</button>'
             ).on("click", () => buildManualOverrideRows(dp, tbody)),
             resetOverridesBtn = $(
                 '<button class="btn btn-danger float-right"><i class="fa fa-trash"></i> Reset</button>'
@@ -265,7 +297,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         buildManualOverrideRows(dp, tbody);
 
         tab.append(
-            $("<h3>Row-level customization</h3>").append(refreshRowsBtn, resetOverridesBtn),
+            resetOverridesBtn,
+            refreshRowsBtn,
+            $("<h3>Row-level customization</h3>"),
             '<p class="form-text text-muted">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
             tbl
         );

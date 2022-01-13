@@ -11,7 +11,7 @@ from ..assessment.models import Assessment, BaseEndpoint
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootedTagTree
 from ..study.models import Study
-from . import managers
+from . import constants, managers
 
 
 class IVChemical(models.Model):
@@ -64,13 +64,13 @@ class IVChemical(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("invitro:chemical_detail", args=[str(self.id)])
+        return reverse("invitro:chemical_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:chemical_update", args=[str(self.id)])
+        return reverse("invitro:chemical_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:chemical_delete", args=[str(self.id)])
+        return reverse("invitro:chemical_delete", args=(self.id,))
 
     def get_assessment(self):
         return self.study.assessment
@@ -95,32 +95,14 @@ class IVChemical(models.Model):
 class IVCellType(models.Model):
     objects = managers.IVCellTypeManager()
 
-    SEX_CHOICES = (
-        ("m", "Male"),
-        ("f", "Female"),
-        ("mf", "Male and female"),
-        ("na", "Not-applicable"),
-        ("nr", "Not-reported"),
-    )
-
     SEX_SYMBOLS = {"m": "♂", "f": "♀", "mf": "♂♀", "na": "N/A", "nr": "not reported"}
-
-    CULTURE_TYPE_CHOICES = (
-        ("nr", "not reported"),
-        ("im", "Immortalized cell line"),
-        ("pc", "Primary culture"),
-        ("tt", "Transient transfected cell line"),
-        ("st", "Stably transfected cell line"),
-        ("ts", "Transient transfected into stably transfected cell line"),
-        ("na", "not applicable"),
-    )
 
     study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="ivcelltypes")
     species = models.CharField(max_length=64)
     strain = models.CharField(max_length=64, default="not applicable")
-    sex = models.CharField(max_length=2, choices=SEX_CHOICES)
+    sex = models.CharField(max_length=2, choices=constants.Sex.choices)
     cell_type = models.CharField(max_length=64)
-    culture_type = models.CharField(max_length=2, choices=CULTURE_TYPE_CHOICES)
+    culture_type = models.CharField(max_length=2, choices=constants.CultureType.choices)
     tissue = models.CharField(max_length=64)
     source = models.CharField(max_length=128, verbose_name="Source of cell cultures")
 
@@ -131,13 +113,13 @@ class IVCellType(models.Model):
         return f"{self.cell_type} {self.species} {self.tissue}"
 
     def get_absolute_url(self):
-        return reverse("invitro:celltype_detail", args=[str(self.id)])
+        return reverse("invitro:celltype_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:celltype_update", args=[str(self.id)])
+        return reverse("invitro:celltype_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:celltype_delete", args=[str(self.id)])
+        return reverse("invitro:celltype_delete", args=(self.id,))
 
     def get_sex_symbol(self):
         return self.SEX_SYMBOLS.get(self.sex)
@@ -158,13 +140,6 @@ class IVCellType(models.Model):
 
 class IVExperiment(models.Model):
     objects = managers.IVExperimentManager()
-
-    METABOLIC_ACTIVATION_CHOICES = (
-        ("+", "with metabolic activation"),
-        ("-", "without metabolic activation"),
-        ("na", "not applicable"),
-        ("nr", "not reported"),
-    )
 
     study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="ivexperiments")
     name = models.CharField(max_length=128)
@@ -187,8 +162,8 @@ class IVExperiment(models.Model):
     )
     metabolic_activation = models.CharField(
         max_length=2,
-        choices=METABOLIC_ACTIVATION_CHOICES,
-        default="nr",
+        choices=constants.MetabolicActivation.choices,
+        default=constants.MetabolicActivation.NR,
         help_text="Was metabolic-activation used in system (ex: S9)?",
     )
     serum = models.CharField(
@@ -224,16 +199,16 @@ class IVExperiment(models.Model):
         return self.study.assessment
 
     def get_absolute_url(self):
-        return reverse("invitro:experiment_detail", args=[str(self.id)])
+        return reverse("invitro:experiment_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:experiment_update", args=[str(self.id)])
+        return reverse("invitro:experiment_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:experiment_delete", args=[str(self.id)])
+        return reverse("invitro:experiment_delete", args=(self.id,))
 
     def get_endpoint_create_url(self):
-        return reverse("invitro:endpoint_create", args=[str(self.id)])
+        return reverse("invitro:endpoint_create", args=(self.id,))
 
     def copy_across_assessments(self, cw):
         children = list(self.endpoints.all().order_by("id"))
@@ -287,54 +262,6 @@ class IVEndpointCategory(AssessmentRootedTagTree):
 class IVEndpoint(BaseEndpoint):
     objects = managers.IVEndpointManager()
 
-    VARIANCE_TYPE_CHOICES = ((0, "NA"), (1, "SD"), (2, "SE"))
-
-    DATA_TYPE_CHOICES = (
-        ("C", "Continuous"),
-        ("D", "Dichotomous"),
-        ("NR", "Not reported"),
-    )
-
-    MONOTONICITY_CHOICES = (
-        (8, "--"),
-        (0, "N/A, single dose level study"),
-        (1, "N/A, no effects detected"),
-        (2, "visual appearance of monotonicity"),
-        (3, "monotonic and significant trend"),
-        (4, "visual appearance of non-monotonicity"),
-        (6, "no pattern/unclear"),
-    )
-
-    OVERALL_PATTERN_CHOICES = (
-        (0, "not-available"),
-        (1, "increase"),
-        (2, "increase, then decrease"),
-        (6, "increase, then no change"),
-        (3, "decrease"),
-        (4, "decrease, then increase"),
-        (7, "decrease, then no change"),
-        (5, "no clear pattern"),
-        (8, "no change"),
-    )
-
-    TREND_TEST_RESULT_CHOICES = (
-        (0, "not reported"),
-        (1, "not analyzed"),
-        (2, "not applicable"),
-        (3, "significant"),
-        (4, "not significant"),
-    )
-
-    OBSERVATION_TIME_UNITS = (
-        (0, "not-reported"),
-        (1, "seconds"),
-        (2, "minutes"),
-        (3, "hours"),
-        (4, "days"),
-        (5, "weeks"),
-        (6, "months"),
-    )
-
     TEXT_CLEANUP_FIELDS = (
         "name",
         "short_description",
@@ -364,9 +291,14 @@ class IVEndpoint(BaseEndpoint):
         "(ex: Figure 1, Table 2, etc.)",
     )
     data_type = models.CharField(
-        max_length=2, choices=DATA_TYPE_CHOICES, default="C", verbose_name="Dataset type",
+        max_length=2,
+        choices=constants.DataType.choices,
+        default=constants.DataType.CONTINUOUS,
+        verbose_name="Dataset type",
     )
-    variance_type = models.PositiveSmallIntegerField(default=0, choices=VARIANCE_TYPE_CHOICES)
+    variance_type = models.PositiveSmallIntegerField(
+        default=constants.VarianceType.NA, choices=constants.VarianceType.choices
+    )
     response_units = models.CharField(max_length=64, blank=True, verbose_name="Response units")
     values_estimated = models.BooleanField(
         default=False,
@@ -374,7 +306,7 @@ class IVEndpoint(BaseEndpoint):
     )
     observation_time = models.CharField(blank=True, max_length=32)
     observation_time_units = models.PositiveSmallIntegerField(
-        default=0, choices=OBSERVATION_TIME_UNITS
+        default=constants.ObservationTimeUnits.NR, choices=constants.ObservationTimeUnits.choices
     )
     NOEL = models.SmallIntegerField(
         verbose_name="NOEL", default=-999, help_text="No observed effect level"
@@ -382,14 +314,20 @@ class IVEndpoint(BaseEndpoint):
     LOEL = models.SmallIntegerField(
         verbose_name="LOEL", default=-999, help_text="Lowest observed effect level"
     )
-    monotonicity = models.PositiveSmallIntegerField(default=8, choices=MONOTONICITY_CHOICES)
-    overall_pattern = models.PositiveSmallIntegerField(default=0, choices=OVERALL_PATTERN_CHOICES)
+    monotonicity = models.PositiveSmallIntegerField(
+        default=constants.Monotonicity.NR, choices=constants.Monotonicity.choices
+    )
+    overall_pattern = models.PositiveSmallIntegerField(
+        default=constants.OverallPattern.NA, choices=constants.OverallPattern.choices
+    )
     statistical_test_notes = models.CharField(
         max_length=256,
         blank=True,
         help_text="Notes describing details on the statistical tests performed",
     )
-    trend_test = models.PositiveSmallIntegerField(default=0, choices=TREND_TEST_RESULT_CHOICES)
+    trend_test = models.PositiveSmallIntegerField(
+        default=constants.TrendTestResult.NR, choices=constants.TrendTestResult.choices
+    )
     trend_test_notes = models.CharField(
         max_length=256,
         blank=True,
@@ -419,13 +357,13 @@ class IVEndpoint(BaseEndpoint):
             return endpoints
 
     def get_absolute_url(self):
-        return reverse("invitro:endpoint_detail", args=[str(self.id)])
+        return reverse("invitro:endpoint_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:endpoint_update", args=[str(self.id)])
+        return reverse("invitro:endpoint_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:endpoint_delete", args=[str(self.id)])
+        return reverse("invitro:endpoint_delete", args=(self.id,))
 
     @classmethod
     def delete_caches(cls, ids):
@@ -492,32 +430,12 @@ class IVEndpoint(BaseEndpoint):
 class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     objects = managers.IVEndpointGroupManager()
 
-    DIFFERENCE_CONTROL_CHOICES = (
-        ("nc", "no-change"),
-        ("-", "decrease"),
-        ("+", "increase"),
-        ("nt", "not-tested"),
-    )
-
     DIFFERENCE_CONTROL_SYMBOLS = {
         "nc": "↔",
         "-": "↓",
         "+": "↑",
         "nt": "NT",
     }
-
-    SIGNIFICANCE_CHOICES = (
-        ("nr", "not reported"),
-        ("si", "p ≤ 0.05"),
-        ("ns", "not significant"),
-        ("na", "not applicable"),
-    )
-
-    OBSERVATION_CHOICES = (
-        (None, "not reported"),
-        (False, "not observed"),
-        (True, "observed"),
-    )
 
     endpoint = models.ForeignKey(IVEndpoint, on_delete=models.CASCADE, related_name="groups")
     dose_group_id = models.PositiveSmallIntegerField()
@@ -526,14 +444,18 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     response = models.FloatField(blank=True, null=True)
     variance = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
     difference_control = models.CharField(
-        max_length=2, choices=DIFFERENCE_CONTROL_CHOICES, default="nc"
+        max_length=2,
+        choices=constants.DifferenceControl.choices,
+        default=constants.DifferenceControl.NC,
     )
-    significant_control = models.CharField(max_length=2, default="nr", choices=SIGNIFICANCE_CHOICES)
+    significant_control = models.CharField(
+        max_length=2, default=constants.Significance.NR, choices=constants.Significance.choices
+    )
     cytotoxicity_observed = models.BooleanField(
-        default=None, choices=OBSERVATION_CHOICES, null=True, blank=True,
+        default=None, choices=constants.OBSERVATION_CHOICES, null=True, blank=True,
     )
     precipitation_observed = models.BooleanField(
-        default=None, choices=OBSERVATION_CHOICES, null=True, blank=True,
+        default=None, choices=constants.OBSERVATION_CHOICES, null=True, blank=True,
     )
 
     COPY_NAME = "ivendpoint_groups"

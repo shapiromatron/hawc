@@ -2,8 +2,10 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import {filterFunction, DATA_FILTER_LOGIC_CUSTOM} from "./filters";
 import h from "shared/utils/helpers";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils from "shared/utils/HAWCUtils";
+import Query from "shared/parsers/query";
 
 import D3Visualization from "./D3Visualization";
 import {applyStyles} from "./common";
@@ -73,7 +75,7 @@ class CrossviewPlot extends D3Visualization {
                 "<p>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>"
             );
         }
-        this.build_plot_skeleton(false);
+        this.build_plot_skeleton(false, "A dose-response visualization of multiple endpoints");
         this.add_axes();
         this.draw_visualization();
         this.draw_text();
@@ -108,13 +110,13 @@ class CrossviewPlot extends D3Visualization {
                   })
                 : function() {},
             dragY = this.options.dev
-                ? d3.drag().on("drag", function(d, i) {
+                ? d3.drag().on("drag", function(event) {
                       let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                           p = d3.select(this),
                           m = regexp.exec(p.attr("transform"));
                       if (m !== null && m.length === 3) {
-                          let x = parseInt(m[1]) + parseInt(d3.event.dx),
-                              y = parseInt(m[2]) + parseInt(d3.event.dy);
+                          let x = parseInt(m[1]) + parseInt(event.dx),
+                              y = parseInt(m[2]) + parseInt(event.dy);
                           p.attr(
                               "transform",
                               `translate(${x},${y}) rotate(270,${yAxisXDefault + x},${midY + y})`
@@ -171,47 +173,9 @@ class CrossviewPlot extends D3Visualization {
             });
         }
 
-        // get filter function
-        var filters_map = d3.map({
-            lt(val, tgt) {
-                return val < tgt;
-            },
-            lte(val, tgt) {
-                return val <= tgt;
-            },
-            gt(val, tgt) {
-                return val > tgt;
-            },
-            gte(val, tgt) {
-                return val >= tgt;
-            },
-            contains(val, tgt) {
-                if (val instanceof Array) val = val.join("|");
-                val = val.toString().toLowerCase();
-                tgt = tgt.toString().toLowerCase();
-                return val.indexOf(tgt.toLowerCase()) > -1;
-            },
-            not_contains(val, tgt) {
-                if (val instanceof Array) val = val.join("|").toLowerCase();
-                val = val.toString().toLowerCase();
-                tgt = tgt.toString().toLowerCase();
-                return val.indexOf(tgt.toLowerCase()) === 1;
-            },
-            exact(val, tgt) {
-                tgt = tgt.toString().toLowerCase();
-                if (val instanceof Array) {
-                    return _.chain(val)
-                        .map(d => d.toString().toLowerCase() === tgt)
-                        .some()
-                        .value();
-                } else {
-                    return val.toString().toLowerCase() === tgt;
-                }
-            },
-        });
         if (this.data.settings.endpointFilters) {
             this.data.settings.endpointFilters.forEach(function(d) {
-                d.fn = _.partial(filters_map.get(d.filterType), _, d.value);
+                d.fn = _.partial(filterFunction(d.filterType), _, d.value);
             });
         }
 
@@ -288,17 +252,36 @@ class CrossviewPlot extends D3Visualization {
                     );
                 return settings.endpointFilterLogic === "and" ? _.every(res) : _.some(res);
             },
+            getValue = i => {
+                let filter = settings.endpointFilters[i - 1]; // convert 1 to 0 indexing
+                return this.data.endpoints.filter(e =>
+                    filter.fn(CrossviewPlot._cw_filter_process[filter.field](e))
+                );
+            },
+            negateValue = v => _.difference(this.data.endpoints, v),
+            andValues = (l, r) => _.intersection(l, r),
+            orValues = (l, r) => _.union(l, r),
+            parserOptions = {getValue, negateValue, andValues, orValues},
             numDG = CrossviewPlot._requiredGroups(settings.dose_isLog),
-            dataset = _.chain(this.data.endpoints)
-                .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
-                .filter(applyEndpointFilters)
-                .map(processEndpoint)
-                .filter(function(d) {
-                    return d.plotting.length > 0;
-                })
-                .value(),
             container_height = settings.height + 50, // menu-spacing
             dose_scale = settings.dose_isLog ? "log" : "linear";
+
+        // build and filter dataset
+        let dataset = [];
+        if (settings.endpointFilterLogic === DATA_FILTER_LOGIC_CUSTOM) {
+            try {
+                dataset = Query.parse(settings.filtersQuery, parserOptions);
+            } catch (err) {
+                console.error(err);
+            }
+        } else {
+            dataset = this.data.endpoints.filter(applyEndpointFilters);
+        }
+        dataset = _.chain(dataset)
+            .filter(_.partial(CrossviewPlot._filterEndpoint, _, numDG))
+            .map(processEndpoint)
+            .filter(d => d.plotting.length > 0)
+            .value();
 
         // build filters
         var filters = _.chain(settings.filters)
@@ -545,19 +528,23 @@ class CrossviewPlot extends D3Visualization {
 
         // add labels
         if (this.options.dev) {
-            drag = d3.drag().on("drag", function(d, i) {
+            drag = d3.drag().on("drag", function(event) {
                 var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                     p = d3.select(this),
                     m = regexp.exec(p.attr("transform"));
                 if (m !== null && m.length === 3) {
-                    var x = parseFloat(m[1]) + d3.event.dx,
-                        y = parseFloat(m[2]) + d3.event.dy;
+                    var i = d3
+                            .selectAll("g.labels")
+                            .nodes()
+                            .indexOf(this),
+                        x = parseFloat(m[1]) + event.dx,
+                        y = parseFloat(m[2]) + event.dy;
                     p.attr("transform", `translate(${x},${y})`);
                     self.setLabelLocation(i, x, y);
                 }
             });
         } else {
-            drag = function() {};
+            drag = h.noop;
         }
 
         labels = this.vis
@@ -649,14 +636,14 @@ class CrossviewPlot extends D3Visualization {
             .attr("y", (d, i) => (i + 1) * 15)
             .text(d => d.headerName)
             .style("fill", d => d.color)
-            .on("mouseover", function(d) {
+            .on("mouseover", function(event, d) {
                 d3.select(this).style("fill", self.plot_settings.colorHover);
                 self.vis
                     .selectAll("." + d.className)
                     .style("stroke", self.plot_settings.colorHover);
                 self._bringColorFilterToFront(d);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function(event, d) {
                 d3.select(this).style("fill", d.color);
                 self.vis.selectAll("." + d.className).style("stroke", d.color);
             });
@@ -731,8 +718,8 @@ class CrossviewPlot extends D3Visualization {
             .attr("class", d => `crossview_paths ${d[0].classes.join(" ")}`)
             .attr("d", line)
             .style("stroke", d => d[0].currentStroke)
-            .on("click", d => d[0].endpoint.displayAsModal())
-            .on("mouseover", function(d) {
+            .on("click", (event, d) => d[0].endpoint.displayAsModal())
+            .on("mouseover", function(event, d) {
                 if (
                     self.active_filters.length === 0 ||
                     d[0].currentStroke === self.plot_settings.colorSelected
@@ -741,7 +728,7 @@ class CrossviewPlot extends D3Visualization {
                 }
                 self.change_show_selected_fields(this, d, true);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function(event, d) {
                 d3.select(this).style("stroke", d[0].currentStroke);
                 self.change_show_selected_fields(this, d, false);
             })
@@ -809,14 +796,14 @@ class CrossviewPlot extends D3Visualization {
             .attr("text-anchor", "start")
             .attr("class", "crossview_fields")
             .text(v => v.text)
-            .on("click", function(v) {
+            .on("click", function(event, v) {
                 self.change_active_filters(v, this);
             })
-            .on("mouseover", function(d) {
+            .on("mouseover", function(event, d) {
                 d3.select(this).attr("fill", self.plot_settings.colorHover);
                 self._update_hover_filters(d);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function() {
                 d3.select(this).attr("fill", null);
                 self._update_hover_filters();
             });

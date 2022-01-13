@@ -1,9 +1,17 @@
+import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
+import CheckboxInput from "shared/components/CheckboxInput";
 import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
+import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+import SortableList from "shared/components/SortableList";
+
+import {getColumnValues} from "../../summary/heatmap/common";
+import {HelpText} from "./common";
 
 @inject("store")
 @observer
@@ -16,25 +24,28 @@ class AxisLabelTable extends Component {
         return (
             <table className="table table-sm table-striped">
                 <colgroup>
-                    <col width="50%" />
-                    <col width="20%" />
-                    <col width="20%" />
+                    <col width="25%" />
+                    <col width="35%" />
+                    <col width="15%" />
+                    <col width="15%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>Column</th>
-                        <th>Delimiter</th>
-                        <th>Wrap text</th>
+                        <th>Data column</th>
                         <th>
-                            Actions&nbsp;
-                            <button
-                                className="btn btn-sm btn-primary"
-                                title="New row"
-                                onClick={() => createNewAxisLabel(key)}>
-                                <i className="fa fa-plus"></i>
-                            </button>
+                            Custom item ordering
+                            <HelpTextPopup content={HelpText.customItems} />
                         </th>
+                        <th>
+                            Delimiter
+                            <HelpTextPopup content={HelpText.delimiter} />
+                        </th>
+                        <th>
+                            Wrap text
+                            <HelpTextPopup content={HelpText.wrapText} />
+                        </th>
+                        <ActionsTh onClickNew={() => createNewAxisLabel(key)} />
                     </tr>
                 </thead>
                 <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
@@ -49,7 +60,10 @@ class AxisLabelTable extends Component {
                 moveArrayElementUp,
                 moveArrayElementDown,
                 deleteArrayElement,
-            } = this.props.store.subclass;
+                changeOrderArrayItems,
+            } = this.props.store.subclass,
+            {dataset} = this.props.store.base,
+            hasItems = _.isArray(row.items);
 
         return (
             <tr key={index}>
@@ -63,12 +77,30 @@ class AxisLabelTable extends Component {
                     />
                 </td>
                 <td>
+                    <CheckboxInput
+                        checked={hasItems}
+                        onChange={e => {
+                            const items = e.target.checked
+                                ? getColumnValues(dataset, row.column, row.delimiter)
+                                : null;
+                            changeArraySettings(key, index, "items", items);
+                        }}
+                        label="Customize items"
+                    />
+                    {hasItems ? (
+                        <SortableList
+                            items={row.items}
+                            onOrderChange={(id, oldIndex, newIndex) => {
+                                changeOrderArrayItems(key, index, oldIndex, newIndex);
+                            }}
+                        />
+                    ) : null}
+                </td>
+                <td>
                     <TextInput
                         name={`${key}-delimiter-${index}`}
                         value={row.delimiter}
-                        onChange={e =>
-                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
-                        }
+                        onChange={e => changeArraySettings(key, index, "delimiter", e.target.value)}
                     />
                 </td>
                 <td>
@@ -85,26 +117,11 @@ class AxisLabelTable extends Component {
                         }
                     />
                 </td>
-                <td>
-                    <button
-                        className="btn btn-sm btn-secondary"
-                        title="Move row up"
-                        onClick={() => moveArrayElementUp(key, index)}>
-                        <i className="fa fa-long-arrow-up"></i>
-                    </button>
-                    <button
-                        className="btn btn-sm btn-secondary"
-                        title="Move row down"
-                        onClick={() => moveArrayElementDown(key, index)}>
-                        <i className="fa fa-long-arrow-down"></i>
-                    </button>
-                    <button
-                        className="btn btn-sm btn-danger"
-                        title="Delete row"
-                        onClick={() => deleteArrayElement(key, index)}>
-                        <i className="fa fa-trash"></i>
-                    </button>
-                </td>
+                <MoveRowTd
+                    onMoveUp={() => moveArrayElementUp(key, index)}
+                    onMoveDown={() => moveArrayElementDown(key, index)}
+                    onDelete={() => deleteArrayElement(key, index)}
+                />
             </tr>
         );
     }

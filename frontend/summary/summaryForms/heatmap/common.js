@@ -47,7 +47,8 @@ class DataStatusIndicator extends Component {
         } else {
             component = (
                 <div className="alert alert-danger" role="alert">
-                    <i className="fa fa-close"></i>&nbsp;No data; please edit settings...
+                    <i className="fa fa-close"></i>&nbsp;No dataset selected; please edit
+                    settings...
                 </div>
             );
         }
@@ -58,4 +59,14 @@ DataStatusIndicator.propTypes = {
     store: PropTypes.object,
 };
 
-export {MissingData, RefreshRequired, DataStatusIndicator};
+const HelpText = {
+    customItems: `By default, items are presented in alphabetical order.
+        If customized, users can customize the order of display.`,
+    delimiter: `If data are delimited in a cell, the delimiter character used.
+        If unspecified, the data are not delimited`,
+    header: `By default the data column name is shown as the header;
+        this can be overridden with custom text here.`,
+    wrapText: "Wrap text at a specified length, else auto calculated",
+};
+
+export {MissingData, RefreshRequired, DataStatusIndicator, HelpText};

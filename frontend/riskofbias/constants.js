@@ -1,8 +1,12 @@
 import _ from "lodash";
+import h from "shared/utils/helpers";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
+    hideScore = score => score === 0,
     SCORE_TEXT = {
+        0: "━",
+
         10: "N/A",
         12: "NR",
         14: "--",
@@ -21,8 +25,18 @@ const NA_KEYS = [10, 20],
         35: "-",
         36: "+",
         37: "++",
+
+        40: "Y",
+        41: "N",
+
+        50: "0",
+        51: "+",
+        52: "++",
+        53: "+++",
     },
     SCORE_SHADES = {
+        0: "#DFDFDF",
+
         10: "#E8E8E8",
         12: "#FFCC00",
         14: "#CC3333",
@@ -41,8 +55,18 @@ const NA_KEYS = [10, 20],
         35: "#FFCC00",
         36: "#6FFF00",
         37: "#00CC00",
+
+        40: "#00CC00",
+        41: "#CC3333",
+
+        50: "#f7fcf5",
+        51: "#addea7",
+        52: "#238d46",
+        53: "#00441b",
     },
     SCORE_BAR_WIDTH_PERCENTAGE = {
+        0: 50,
+
         10: 50,
         12: 50,
         14: 25,
@@ -61,8 +85,18 @@ const NA_KEYS = [10, 20],
         35: 50,
         36: 75,
         37: 100,
+
+        40: 100,
+        41: 25,
+
+        50: 25,
+        51: 50,
+        52: 75,
+        53: 100,
     },
     SCORE_TEXT_DESCRIPTION = {
+        0: "None",
+
         10: "Not applicable",
         12: "Not reported",
         14: "Definitely high risk of bias",
@@ -81,8 +115,18 @@ const NA_KEYS = [10, 20],
         35: "Low confidence",
         36: "Medium confidence",
         37: "High confidence",
+
+        40: "Yes",
+        41: "No",
+
+        50: "Critical concerns",
+        51: "Major concerns",
+        52: "Some concerns",
+        53: "Minor concerns",
     },
     SCORE_TEXT_DESCRIPTION_LEGEND = {
+        0: "None",
+
         10: "Not applicable",
         12: "Not reported",
         14: "Definitely high risk of bias",
@@ -96,6 +140,14 @@ const NA_KEYS = [10, 20],
         25: "Deficient (metric) or Low confidence (overall)",
         26: "Adequate (metric) or Medium confidence (overall)",
         27: "Good (metric) or High confidence (overall)",
+
+        40: "Yes",
+        41: "No",
+
+        50: "Critical concerns",
+        51: "Major concerns",
+        52: "Some concerns",
+        53: "Minor concerns",
     },
     FOOTNOTES = {
         MULTIPLE_SCORES: ["✱", "Multiple judgments exist"],
@@ -131,9 +183,11 @@ const NA_KEYS = [10, 20],
     },
     getMultiScoreDisplaySettings = function(scores) {
         // Return visualization/color settings for situations where multiple scores may exist for
-        // a given metric (eg, study-level override settings)
+        // a given metric (eg, study-level override settings).
+        // By default, if multiple scores exist and show he defaults score label if one exists.
+        // If the default score does not exist, present the value of the first score (random).
         let sortedScores = _.orderBy(scores, "score", "desc"),
-            defaultScore = _.find(scores, {is_default: true}),
+            defaultScore = _.find(scores, {is_default: true}) || sortedScores[0],
             shades = _.chain(sortedScores)
                 .map(score => score.score_shade)
                 .uniq()
@@ -201,11 +255,30 @@ const NA_KEYS = [10, 20],
         "epi.outcome": "Epidemiological outcomes",
         "epi.exposure": "Epidemiological exposures",
         "epi.result": "Epidemiological results",
+    },
+    fetchRobSettings = function(assessmentId, success, error) {
+        return fetch(`/rob/api/assessment/${assessmentId}/settings/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
+    },
+    fetchStudy = function(studyId, success, error) {
+        return fetch(`/study/api/study/${studyId}/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
+    },
+    fetchRobStudy = function(studyId, success, error) {
+        return fetch(`/study/api/study/${studyId}/all-rob/`, h.fetchGet)
+            .then(response => response.json())
+            .then(success)
+            .catch(error || _.noop);
     };
 
 export {
     NA_KEYS,
     NR_KEYS,
+    hideScore,
     SCORE_TEXT,
     SCORE_SHADES,
     SCORE_TEXT_DESCRIPTION,
@@ -222,4 +295,7 @@ export {
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,
     OVERRIDE_SCORE_LABEL_MAPPING,
+    fetchRobSettings,
+    fetchRobStudy,
+    fetchStudy,
 };

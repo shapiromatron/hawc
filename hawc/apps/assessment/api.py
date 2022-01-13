@@ -21,10 +21,20 @@ from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
 
+from ..common.diagnostics import worker_healthcheck
 from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
-from ..common.renderers import PandasRenderers
+from ..common.renderers import PandasRenderers, SvgRenderer
+from ..common.views import create_object_log
 from ..lit import constants
 from . import models, serializers
+from .actions import media_metadata_report
+
+
+class DisabledPagination(PageNumberPagination):
+    page_size = None
+
+
+logger = logging.getLogger(__name__)
 
 
 class RequiresAssessmentID(APIException):
@@ -32,8 +42,9 @@ class RequiresAssessmentID(APIException):
     default_detail = "Please provide an `assessment_id` argument to your GET request."
 
 
-class DisabledPagination(PageNumberPagination):
-    page_size = None
+class InvalidAssessmentID(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Assessment does not exist for given `assessment_id`."
 
 
 def get_assessment_id_param(request) -> int:
@@ -47,9 +58,12 @@ def get_assessment_id_param(request) -> int:
 
 
 def get_assessment_from_query(request) -> Optional[models.Assessment]:
-    """Returns assessment or None."""
+    """Returns assessment or raises exception if does not exist."""
     assessment_id = get_assessment_id_param(request)
-    return models.Assessment.objects.filter(pk=assessment_id).first()
+    try:
+        return models.Assessment.objects.get(pk=assessment_id)
+    except models.Assessment.DoesNotExist:
+        raise InvalidAssessmentID()
 
 
 class JobPermissions(permissions.BasePermission):
@@ -100,13 +114,10 @@ class AssessmentLevelPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         list_actions = getattr(view, "list_actions", self.default_list_actions)
         if view.action in list_actions:
-            logging.info("Permission checked")
+            logger.debug("Permission checked")
 
             if not hasattr(view, "assessment"):
                 view.assessment = get_assessment_from_query(request)
-
-            if view.assessment is None:
-                return False
 
             return view.assessment.user_can_view_object(request.user)
 
@@ -135,9 +146,6 @@ class InAssessmentFilter(filters.BaseFilterBackend):
         if not hasattr(view, "assessment"):
             view.assessment = get_assessment_from_query(request)
 
-        if view.assessment is None:
-            return queryset.none()
-
         if not view.assessment_filter_args:
             raise ValueError("Viewset requires the `assessment_filter_args` argument")
 
@@ -164,6 +172,28 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        create_object_log(
+            "Updated",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
+
+    def perform_destroy(self, instance):
+        create_object_log("Deleted", instance, instance.get_assessment().id, self.request.user.id)
+        super().perform_destroy(instance)
 
 
 class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
@@ -228,14 +258,14 @@ class Assessment(AssessmentViewset):
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
 
-    @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
+    @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
         queryset = self.model.objects.get_public_assessments()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @method_decorator(cache_page(60 * 60 * 24))
-    @action(detail=False, methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=False, renderer_classes=PandasRenderers)
     def bioassay_ml_dataset(self, request):
         Endpoint = apps.get_model("animal", "Endpoint")
         # map of django field names to friendlier column names
@@ -279,12 +309,14 @@ class Assessment(AssessmentViewset):
 
         # Assigns db_id to hero_id in all instances where db == HERO
         df["hero_id"] = None
-        df.loc[df["db"] == constants.HERO, ["hero_id"]] = df["db_id"][df["db"] == constants.HERO]
+        df.loc[df["db"] == constants.ReferenceDatabase.HERO, ["hero_id"]] = df["db_id"][
+            df["db"] == constants.ReferenceDatabase.HERO
+        ]
 
         # Assigns db_id to pubmed_id in all instances where db == PUBMED
         df["pubmed_id"] = None
-        df.loc[df["db"] == constants.PUBMED, ["pubmed_id"]] = df["db_id"][
-            df["db"] == constants.PUBMED
+        df.loc[df["db"] == constants.ReferenceDatabase.PUBMED, ["pubmed_id"]] = df["db_id"][
+            df["db"] == constants.ReferenceDatabase.PUBMED
         ]
         df = df.drop(columns=["db", "db_id"]).drop_duplicates()
         today = timezone.now().strftime("%Y-%m-%d")
@@ -465,9 +497,7 @@ class Assessment(AssessmentViewset):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(
-        detail=True, methods=("get",),
-    )
+    @action(detail=True)
     def logs(self, request, pk: int = None):
         instance = self.get_object()
         queryset = instance.logs.all()
@@ -496,6 +526,8 @@ class DatasetViewset(AssessmentViewset):
     def data(self, request, pk: int = None):
         instance = self.get_object()
         revision = instance.get_latest_revision()
+        if not revision.data_exists():
+            raise Http404()
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)
 
@@ -505,7 +537,7 @@ class DatasetViewset(AssessmentViewset):
         if not self.assessment.user_is_team_member_or_higher(request.user):
             raise PermissionDenied()
         revision = instance.revisions.filter(version=version).first()
-        if revision is None:
+        if revision is None or not revision.data_exists():
             raise Http404()
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)
@@ -528,6 +560,13 @@ class AdminDashboardViewset(viewsets.ViewSet):
     def assessment_size(self, request):
         df = models.Assessment.size_df()
         export = FlatExport(df=df, filename="assessment-size")
+        return Response(export)
+
+    @action(detail=False, renderer_classes=PandasRenderers)
+    def media(self, request):
+        uri = request.build_absolute_uri(location="/")[:-1]
+        df = media_metadata_report(uri)
+        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
         return Response(export)
 
 
@@ -567,3 +606,30 @@ class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=None)
+
+
+class HealthcheckViewset(viewsets.ViewSet):
+    @action(detail=False)
+    def web(self, request):
+        return Response({"healthy": True})
+
+    @action(detail=False)
+    def worker(self, request):
+        is_healthy = worker_healthcheck.healthy()
+        # don't use 5xx email; django logging catches and sends error emails
+        status_code = status.HTTP_200_OK if is_healthy else status.HTTP_400_BAD_REQUEST
+        return Response({"healthy": is_healthy}, status=status_code)
+
+    @action(
+        detail=False,
+        url_path="worker-plot",
+        renderer_classes=(SvgRenderer,),
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def worker_plot(self, request):
+        ax = worker_healthcheck.plot()
+        return Response(ax)
+
+    @action(detail=False, url_path="worker-stats", permission_classes=(permissions.IsAdminUser,))
+    def worker_stats(self, request):
+        return Response(worker_healthcheck.stats())

@@ -3,9 +3,10 @@ import ReactDOM from "react-dom";
 import React from "react";
 
 import Loading from "shared/components/Loading";
-import GenericError from "shared/components/GenericError";
+import Alert from "shared/components/Alert";
 import ReferenceTable from "lit/components/ReferenceTable";
 import Reference from "./Reference";
+import PaginatedReferenceList from "./components/PaginatedReferenceList";
 
 class NestedTag {
     constructor(item, depth, tree, parent, assessment_id, search_id) {
@@ -54,6 +55,16 @@ class NestedTag {
         }
     }
 
+    renderPaginatedReferenceList(el, canEdit) {
+        const settings = {
+            assessment_id: this.assessment_id,
+            tag_id: this.data.pk,
+            search_id: this.search_id,
+            tag: this,
+        };
+        ReactDOM.render(<PaginatedReferenceList settings={settings} canEdit={canEdit} />, el);
+    }
+
     renderReferenceList(el) {
         let url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
         if (this.search_id) {
@@ -64,13 +75,13 @@ class NestedTag {
         $.get(url, results => {
             if (results.status == "success") {
                 let expected_references = new Set(this.get_references_deep()),
-                    refs = results.refs
-                        .map(datum => new Reference(datum, this.tree))
-                        .filter(ref => expected_references.has(ref.data.pk));
+                    refs = Reference.sortedArray(results.refs, this.tree).filter(ref =>
+                        expected_references.has(ref.data.pk)
+                    );
 
                 ReactDOM.render(<ReferenceTable references={refs} showActions={false} />, el);
             } else {
-                ReactDOM.render(<GenericError />, el);
+                ReactDOM.render(<Alert />, el);
             }
         });
     }

@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
             model_name="group",
             name="isControl",
             field=models.BooleanField(
+                blank=True,
                 choices=[(True, "Yes"), (False, "No"), (None, "N/A")],
                 default=None,
                 help_text="Should this group be interpreted as a null/control group, if applicable",

@@ -13,7 +13,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.helper import re_digits
-from ..common.renderers import PandasRenderers
+from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
@@ -64,13 +64,16 @@ class DataPivotViewset(AssessmentViewset):
     pagination_class = DisabledPagination
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
 
+    def get_queryset(self):
+        return self.model.objects.select_related("datapivotquery", "datapivotupload").all()
+
     def get_serializer_class(self):
         cls = serializers.DataPivotSerializer
         if self.action == "list":
             cls = serializers.CollectionDataPivotSerializer
         return cls
 
-    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=True, renderer_classes=PandasRenderers)
     def data(self, request, pk):
         obj = self.get_object()
         export = obj.get_dataset()
@@ -115,3 +118,16 @@ class SummaryTextViewset(AssessmentEditViewset):
         if not self.assessment.user_can_edit_object(request.user):
             raise exceptions.PermissionDenied()
         return super().create(request, *args, **kwargs)
+
+
+class SummaryTableViewset(AssessmentEditViewset):
+    assessment_filter_args = "assessment"
+    model = models.SummaryTable
+    filter_backends = (InAssessmentFilter, UnpublishedFilter)
+    serializer_class = serializers.SummaryTableSerializer
+
+    @action(detail=True, renderer_classes=(DocxRenderer,))
+    def docx(self, request, pk):
+        obj = self.get_object()
+        report = obj.to_docx(base_url=request._current_scheme_host)
+        return Response(report)

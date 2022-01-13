@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import BaseVisual from "./BaseVisual";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import TableauDashboard from "./TableauDashboard";
 
 import {TABLEAU_HOSTNAME} from "./constants";
@@ -57,15 +57,17 @@ class ExternalWebsite extends BaseVisual {
         var title = $("<h1>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
-            $plotDiv = $("<div>"),
-            linkOut = $();
+            $plotDiv = $("<div>");
 
         options = options || {};
 
-        title.append(this.addActionsMenu());
+        const actions = this.addActionsMenu();
 
         $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend([title, linkOut]).append(captionDiv);
+
+        if (!options.visualOnly) {
+            $el.prepend([actions, title]).append(captionDiv);
+        }
 
         this.embedPage($plotDiv[0]);
         caption.renderAndEnable();

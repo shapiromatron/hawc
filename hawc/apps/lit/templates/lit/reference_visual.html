@@ -17,12 +17,15 @@
       url: "{% url 'lit:api:assessment-references-download' assessment.pk %}"
     };
     window.canEdit = {{ obj_perms.edit | lower }};
-    window.app.litStartup(function(lit){
+    window.app.startup("litStartup", function(lit){
       let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, data.search_id);
       tagtree.rename_top_level_node(data.assessment_name);
       tagtree.add_references(data.references);
       new lit.TagTreeViz(tagtree, $('#tagtree'), data.title, data.url, {
         hide_empty_tag_nodes: false,
+        width: 1280,
+        height: 800,
+        can_edit: {{ obj_perms.edit | lower }}
       });
     });
   </script>

@@ -6,10 +6,10 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - `Git`_
-- `Python`_ == 3.6 (recommended to stay on Python 3.6 for some packages)
+- `Python`_ == 3.9
 - `Node.js`_
 - `Yarn`_
-- `PostgreSQL`_ ≥ 9.6
+- `PostgreSQL`_ == 12
 
 .. _`Git`: https://git-scm.com/
 .. _`Python`: https://www.python.org/
@@ -28,7 +28,7 @@ See the `Useful utilities`_ below for more details on how to automatically lint/
 Environment setup
 -----------------
 
-HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. However, instructions are provided below for both environments.
+HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. Instructions are provided below for both environments.
 
 Linux/Mac
 ~~~~~~~~~
@@ -57,51 +57,41 @@ Instructions below have been written for bash, so should work out of the box for
     createdb -E UTF-8 -U hawc hawc
 
 
-
 Windows
 ~~~~~~~
 
-Windows requires using anaconda, or miniconda to get requirements.
+Windows requires using anaconda or miniconda to get requirements.
 
 .. code-block:: bat
 
     :: create a conda environment with our hard to get dependencies
     conda create --name hawc
     conda activate hawc
-    conda install python=3.6 postgresql=9.6
+    conda install python=3.9 postgresql=12
     conda install -c conda-forge nodejs
     conda install -c conda-forge yarn
 
-    :: now create a virtual python environment for our project
+    :: clone repository; we'll put in dev but you can put anywhere
     mkdir %HOMEPATH%\dev
     cd %HOMEPATH%\dev
     git clone https://github.com/shapiromatron/hawc.git
-    cd hawc
 
-    :: install the python requirements
-    conda activate hawc
-    python -m venv venv
-    venv\Scripts\activate.bat
+    :: install python requirements
+    cd %HOMEPATH%\dev\hawc
     python -m pip install --upgrade pip
     pip install -r requirements\dev.txt
 
-    :: install the javascript requirements
-    cd frontend
-    yarn
+    :: setup and start PostgreSQL; in this example we'll put it in dev
+    cd %HOMEPATH%\dev
+    mkdir pgdata
+    pg_ctl -D pgdata initdb
+    mkdir pgdata\logs
+    pg_ctl -D pgdata -l pgdata\logs\logfile start
 
-    :: setup our postgres database
-    mkdir %HOMEPATH%\dev\pgdata\
-    pg_ctl -D %HOMEPATH%\dev\pgdata initdb
-    mkdir %HOMEPATH%\dev\pgdata\logs
-    pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
+    :: create our superuser and main/test databases
     createuser --superuser --no-password hawc
-
-    :: create our main and test databases
     createdb -T template0 -E UTF8 hawc
-    createdb -T template0 -E UTF8 test_hawc-fixture-test
-
-    :: sync the hawc code with the database
-    manage.py migrate
+    createdb -T template0 -E UTF8 hawc-test
 
 Running the application
 -----------------------
@@ -119,8 +109,8 @@ In the first terminal, let's create our database and then run the python webserv
     cd ~/dev/hawc
     source ./venv/bin/activate
 
-    # sync db state with application state
-    manage.py migrate
+    # update python/js packages; sync app state with database
+    make sync-dev
 
     # run development webserver
     manage.py runserver
@@ -150,14 +140,15 @@ In the first terminal, let's create our database and then run the python webserv
 .. code-block:: bat
 
     :: activate our environment
-    cd %HOMEPATH%\dev\hawc
     conda activate hawc
-    venv\Scripts\activate
 
     :: start the postgres database (if not already started)
     pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 
-    :: run the python webserver
+    :: update python/js packages; sync app state with database
+    make sync-dev
+
+    :: run development webserver
     manage.py runserver
 
 In a second terminal, run the node development webserver for javascript:
@@ -165,12 +156,15 @@ In a second terminal, run the node development webserver for javascript:
 .. code-block:: bat
 
     :: activate our environment
-    cd %HOMEPATH%\dev\hawc
     conda activate hawc
-    venv\Scripts\activate
 
-    :: run the frontend build server
+    :: navigate to frontend folder
     cd %HOMEPATH%\dev\hawc\frontend
+
+    :: install javascript dependencies
+    yarn install
+
+    :: start node hot-reloading server
     npm start
 
 You can check `localhost`_ to see if everything is hosted correctly.
@@ -188,6 +182,7 @@ the same commands.
 
     # run unit tests
     make test
+    make test-js
 
     # lint code (show changes required) - all, javascript-only, or python-only
     make lint
@@ -228,61 +223,88 @@ When using the recommended settings below, your python and javascript code shoul
 .. code-block:: json
 
     {
-        "restructuredtext.linter.disabled": true,
-        "[html]": {
+        "[dockerfile]": {
             "editor.formatOnSave": false
-        },
-        "[python]": {
-            "editor.formatOnPaste": false,
-            "editor.formatOnSave": true
         },
         "[javascript]": {
             "editor.formatOnSave": false,
-            "editor.codeActionsOnSave": {
-                "source.fixAll.eslint": true
-            }
         },
-        "editor.formatOnSave": true,
-        "eslint.workingDirectories": [
-            "./frontend"
+        "[markdown]": {
+            "editor.wordWrap": "bounded",
+            "editor.quickSuggestions": false
+        },
+        "[python]": {
+            "editor.formatOnPaste": false,
+        },
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        },
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": false,
+        "editor.rulers": [
+            100,
+            120
         ],
+        "editor.tabSize": 4,
+        "eslint.format.enable": true,
+        "files.eol": "\n",
+        "files.exclude": {
+            "**/*.pytest_cache": true,
+            "**/__pycache__": true
+        },
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true,
+        "python.analysis.diagnosticSeverityOverrides": {
+            "reportUnknownMemberType": "information",
+        },
+        "python.analysis.typeCheckingMode": "basic",
+        "python.autoUpdateLanguageServer": true,
         "python.formatting.provider": "black",
-        "python.jediEnabled": false,
-        "python.languageServer": "Microsoft",
-        "python.linting.flake8Args": [
-            "--config=.flake8"
-        ],
+        "python.languageServer": "Pylance",
         "python.linting.flake8Enabled": true,
-        "python.linting.mypyCategorySeverity.error": "Warning",
-        "python.linting.mypyEnabled": true,
-        "python.pythonPath": "./venv/bin/python",
-        "cSpell.words": [
-            "chemspider",
-            "epimeta",
-            "invitro",
-            "lel",
-            "loael",
-            "loel",
-            "mgmt",
-            "nel",
-            "noael",
-            "noel",
-            "noel",
-            "pmid",
-            "pmids",
-            "transfection",
-        ]
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/.git": true,
+        },
     }
 
 More settings
 -------------
 
+Local settings
+~~~~~~~~~~~~~~
+
+Settings are defined using the django settings framework. Within the ``hawc/main/settings``, there are a number of settings files that inherit using the following pattern:
+
+.. code-block:: text
+
+               -------------------
+               |  HAWC SETTINGS  |
+               -------------------
+                       |
+                       |
+                   -----------
+                   | base.py |
+                   -----------
+                    /        \
+                   /          \
+        --------------       ----------        ------------
+        | staging.py |       | dev.py |  <---  | local.py |
+        --------------       ----------        ------------
+              |                  |             (imported into dev.py, if file exists)
+              |                  |
+      -----------------    ---------------
+      | production.py |    | unittest.py |
+      -----------------    ---------------
+
+To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make any changes to this file to configure your local environment.
+
 HAWC flavors
 ~~~~~~~~~~~~
 
-Currently HAWC has two possible application "flavors", where the application is slightly
-different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR``
-variable ``hawc/main/settings/local.py``. Possible values include:
+Currently HAWC has two possible application "flavors", where the application is slightly different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR`` variable at ``hawc/main/settings/local.py``.
+
+Possible values include:
 
 - PRIME (default application; as hosted at https://hawcproject.org)
 - EPA (EPA application; as hosted at EPA)
@@ -345,7 +367,7 @@ Linux/Mac
     export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
 
     # load existing test
-    createdb hawc-fixture-test
+    createdb hawc-fixture
     manage.py load_test_db
 
     # now make edits to the database using the GUI or via command line
@@ -361,7 +383,7 @@ Windows
     set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
 
     :: load existing test
-    createdb -T template0 -E UTF8 hawc-fixture-test
+    createdb -T template0 -E UTF8 hawc-fixture
     manage.py load_test_db
 
     :: now make edits to the database using the GUI or via command line
@@ -369,7 +391,7 @@ Windows
     :: export database
     manage.py dump_test_db
 
-If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
+If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb hawc-test``.
 
 Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
 
@@ -390,6 +412,8 @@ To run tests without using the cassettes and making the network requests, use:
 Testing celery application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The following requires ``redis-cli`` and ``docker-compose``.
+
 To test asynchronous functionality in development, modify your ``hawc/main/settings/local.py``:
 
 .. code-block:: python
@@ -404,32 +428,46 @@ Then, create the example docker container and start a celery worker instance:
 .. code-block:: bash
 
     # build container
-    docker-compose build redis
-    docker-compose up -d redis
+    docker-compose -f compose/dc-build.yml --project-directory . build redis
+    docker-compose -f compose/dc-build.yml --project-directory . up -d redis
 
     # check redis is up and can be pinged successfully
     redis-cli -h localhost -a default-password ping
 
     # start workers
-    celery worker --app=hawc.main.celery --loglevel=INFO
-    celery beat --app=hawc.main.celery --loglevel=INFO
+    celery --app=hawc.main.celery worker --loglevel=INFO
+    celery --app=hawc.main.celery beat --loglevel=INFO
 
     # stop redis when you're done
-    docker-compose down
+    docker-compose -f compose/dc-build.yml --project-directory . down
 
-Asynchronous tasks will no be executed by celery workers instead of the main thread.
+Asynchronous tasks will not be executed by celery workers instead of the main thread.
 
 Integration tests
 ~~~~~~~~~~~~~~~~~
 
 Integration tests use selenium and Firefox or Chrome for for testing. By default, integration tests are skipped. Firefox appears to be more stable based on initial investigation for these tests To run, you'll need to set a few environment variables.
 
+On mac/linux:
+
 .. code-block:: bash
 
     export HAWC_INTEGRATION_TESTS=1
     export SHOW_BROWSER=1            # or 0 for headless
     export BROWSER="firefox"         # or "chrome"
-    py.test -s tests/frontend/integration/ --pdb
+
+    py.test -sv tests/frontend/integration/ --pdb
+
+On windows:
+
+.. code-block:: batch
+
+    set HAWC_INTEGRATION_TESTS=1
+    set SHOW_BROWSER=1            # or 0 for headless
+    set BROWSER=firefox           # or chrome
+
+    py.test -sv tests/frontend/integration/ --pdb
+
 
 When writing these tests, it's often easiest to write the tests in an interactive scripting environment like ipython or jupyter. This allows you to interact with the DOM and the requests much easier than manually re-running tests as they're written. An example session:
 
@@ -451,6 +489,28 @@ When writing these tests, it's often easiest to write the tests in an interactiv
     driver.close()
 
 Then, transfer the interactive potions into unit-tests...
+
+Materialized views and reporting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+HAWC is in essence two different systems with very different data requirements:
+
+1. It is a content-management capture system for data used in systematic reviews
+2. It is a data visualization and summarization system of these data
+
+To facilitate #2, materialized views have been added and other caching systems to precompute views
+of the data frequently used for generate data visuals and other insights. In production, materialized
+views are refreshed daily via a persistent celery task, as well as up to every five minutes if a
+flag for updating the data is set.
+
+In development however, we generally do not run the celery task service in the backend. Thus, to
+trigger a materialized view rest, you can use a manage.py command:
+
+.. code-block:: bash
+
+    manage.py refresh_views
+
+You may need to do this periodically if your data is stale.
 
 Distributing HAWC clients
 ~~~~~~~~~~~~~~~~~~~~~~~~~

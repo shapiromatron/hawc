@@ -1,9 +1,9 @@
 import $ from "$";
 import _ from "lodash";
 
-import DescriptiveTable from "utils/DescriptiveTable";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import DescriptiveTable from "shared/utils/DescriptiveTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 class StudyPopulation {
     constructor(data) {
@@ -79,7 +79,7 @@ class StudyPopulation {
             };
 
         $el.append("<h2>Outcomes</h2>");
-        if (this.data.outcomes.length > 0) {
+        if (this.data.outcomes !== undefined && this.data.outcomes.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.outcomes, liFunc));
         } else {
             $el.append('<p class="form-text text-muted">No outcomes are available.</p>');
@@ -95,7 +95,7 @@ class StudyPopulation {
         }
 
         $el.append("<h2>Exposure measurements</h2>");
-        if (this.data.exposures.length > 0) {
+        if (this.data.exposures !== undefined && this.data.exposures.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
             $el.append(

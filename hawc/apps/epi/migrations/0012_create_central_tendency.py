@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                     "estimate_type",
                     models.PositiveSmallIntegerField(
                         choices=[
-                            (0, None),
+                            (0, "---"),
                             (1, "mean"),
                             (2, "geometric mean"),
                             (3, "median"),
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                     "variance_type",
                     models.PositiveSmallIntegerField(
                         choices=[
-                            (0, None),
+                            (0, "---"),
                             (1, "SD"),
                             (2, "SE"),
                             (3, "SEM"),

@@ -1,96 +1,114 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load hastext %}
+
 {% block content %}
-  <h1>{{object}}
-    {% if obj_perms.edit %}
-      <div class="dropdown btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
+  <h2 class="d-inline-block">{{object}}</h2>
+  {% if obj_perms.edit %}
+    <div class="dropdown btn-group float-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+      <div class="dropdown-menu dropdown-menu-right">
 
-            <h6 class="dropdown-header">Study editing</h6>
-            {% if object.editable %}
-            <a class="dropdown-item" href="{% url 'study:update' object.pk %}">Update study details</a>
-            <a class="dropdown-item" href="{% url 'lit:ref_edit' object.pk %}">Update reference</a>
+          <span class="dropdown-header">Study editing</span>
+          {% if object.editable %}
+          <a class="dropdown-item" href="{% url 'study:update' object.pk %}">Update study details</a>
+          <a class="dropdown-item" href="{% url 'lit:ref_edit' object.pk %}">Update reference</a>
+          {% endif %}
+
+          {% if obj_perms.edit_assessment %}
+          <a class="dropdown-item"
+              href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
+          {% endif %}
+
+          {% if object.editable %}
+            <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
+            <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
+
+            {% if object.bioassay %}
+              <div class="dropdown-divider"></div>
+              <span class="dropdown-header">Animal bioassay editing</span>
+              <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
+              <a class="dropdown-item" href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a>
             {% endif %}
 
-            {% if obj_perms.edit_assessment %}
-            <a class="dropdown-item"
-                href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
+            {% if object.in_vitro %}
+              <div class="dropdown-divider"></div>
+              <span class="dropdown-header">In-vitro analysis editing</span>
+              <a class="dropdown-item" href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a>
+              <a class="dropdown-item" href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a>
+              <a class="dropdown-item" href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a>
             {% endif %}
 
-            {% if object.editable %}
-              <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
-              <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
-
-              {% if object.bioassay %}
-                <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">Animal bioassay editing</h6>
-                <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
-                <a class="dropdown-item" href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a>
-              {% endif %}
-
-              {% if object.in_vitro %}
-                <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">In-vitro analysis editing</h6>
-                <a class="dropdown-item" href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a>
-                <a class="dropdown-item" href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a>
-                <a class="dropdown-item" href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a>
-              {% endif %}
-
-              {% if object.epi %}
-                <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">Epidemiology editing</h6>
-                <a class="dropdown-item" href="{% url 'epi:sp_create' object.pk %}">Create new study population</a>
-                <a class="dropdown-item" href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a>
-              {% endif %}
-
-              {% if object.epi_meta %}
-                <div class="dropdown-divider"></div>
-                <h6 class="dropdown-header">Epidemiology meta-analysis editing</h6>
-                <a class="dropdown-item" href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a>
-              {% endif %}
+            {% if object.epi %}
+              <div class="dropdown-divider"></div>
+              <span class="dropdown-header">Epidemiology editing</span>
+              <a class="dropdown-item" href="{% url 'epi:sp_create' object.pk %}">Create new study population</a>
+              <a class="dropdown-item" href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a>
             {% endif %}
-        </div>
+
+            {% if object.epi_meta %}
+              <div class="dropdown-divider"></div>
+              <span class="dropdown-header">Epidemiology meta-analysis editing</span>
+              <a class="dropdown-item" href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a>
+            {% endif %}
+          {% endif %}
       </div>
-    {% endif %}
-  </h1>
+    </div>
+  {% endif %}
 
   <div id="study_details"></div>
+
+  {% if obj_perms.edit and internal_communications|hastext %}
+    <table class="table table-sm table-striped">
+      <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Internal communications*</th>
+          <td>{{ internal_communications|safe }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" class="text-muted">
+            * These fields are only shown to assessment team members, even if the assessment is made public.
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  {% endif %}
 
   {% if crud == "Read" %}
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
-      <h3>{{assessment.get_rob_name_display}} visualization
-        <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
-      </h3>
-      {% if assessment.hide_rob_scores %}
-      <div>Click button on right to view study evaluation details</div>
-      {% else %}
+      <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
+      <h3 class="d-inline-block">{{assessment.get_rob_name_display}}</h3>
       <div id='rob_plot'></div>
-      {% endif %}
     {% endif %}
 
     {% if study.bioassay %}
-      <h2>Available animal bioassay experiments</h2>
+      <h3>Available animal bioassay experiments</h3>
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
     {% endif %}
 
     {% if study.in_vitro %}
-      <h2>Available <i>in vitro</i> experiments</h2>
+      <h3>Available <i>in vitro</i> experiments</h3>
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
-      <h2>Chemicals used in <i>in vitro</i> experiments</h2>
+      <h3>Chemicals used in <i>in vitro</i> experiments</h3>
       {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
-      <h2>Cell types used in <i>in vitro</i> experiments</h2>
+      <h3>Cell types used in <i>in vitro</i> experiments</h3>
       {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
     {% endif %}
 
     {% if study.epi %}
-      <h2>Available epidemiological study populations</h2>
+      <h3>Available epidemiological study populations</h3>
       {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
     {% endif %}
 
     {% if study.epi_meta %}
-      <h2>Available epidemiological meta-analyses</h2>
+      <h3>Available epidemiological meta-analyses</h3>
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}
 
@@ -99,29 +117,28 @@
 {% endblock %}
 
 {% block extrajs %}
-<script id='data' type='text/json'>
-{
-  "studyContent": {{study.get_json|safe}}
-  {% if attachments_viewable %},"attachments": {{study.get_attachments_json|safe}} {% endif %}
-}
-</script>
+{{ config|json_script:"config" }}
 <script type="text/javascript">
-const data = JSON.parse(document.getElementById('data').textContent);
+window.app.startup("studyStartup", function(app){
+  const data = window.app.getConfig(),
+    thisStudy = new app.Study(data.studyContent),
+    detail_div = $('#study_details');
 
-window.app.studyStartup(function(study){
-  var thisStudy = new study.Study(data.studyContent);
-  var detail_div = $('#study_details');
   thisStudy.build_details_table(detail_div);
 
-  {% if attachments_viewable %}
+  if(data.attachments_viewable){
     thisStudy.add_attachments_row(detail_div, data.attachments);
-  {% endif %}
-
-  {% if not assessment.hide_rob_scores %}
-  if (thisStudy.has_riskofbias()){
-    thisStudy.createDonutVisualization(document.getElementById('rob_plot'));
   }
-  {% endif %}
+
+  if (thisStudy.has_riskofbias()){
+    window.app.startup("riskofbiasStartup", function (riskofbias) {
+      riskofbias.robDonutStartup({
+        studyId: data.studyContent.id,
+        assessmentId: data.studyContent.assessment.id,
+        el: document.getElementById('rob_plot')
+      });
+    });
+  }
 });
 </script>
 {% endblock extrajs %}

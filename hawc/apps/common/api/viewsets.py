@@ -4,9 +4,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ...assessment.api import DisabledPagination
+from ..exceptions import ClassConfigurationException
 from .filters import CleanupBulkIdFilter
 from .mixins import ListUpdateModelMixin
-from .permissions import CleanupFieldsPermissions
+from .permissions import CleanupFieldsPermissions, user_can_edit_object
 
 
 class CleanupFieldsBaseViewSet(
@@ -50,3 +51,55 @@ class CleanupFieldsBaseViewSet(
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
         queryset.model.delete_caches(ids)
+
+
+class EditPermissionsCheckMixin:
+    """
+    API Viewset mixin which provides permission checking during create/update/destroy operations.
+
+    Fires "user_can_edit_object" checks during requests to create/update/destroy. Viewsets mixing
+    this in can define a variable "edit_check_keys", which is a list of serializer attribute
+    keys that should be used as the source for the checks.
+    """
+
+    def get_object_checks(self, serializer):
+        """
+        Generates a list of model objects to check permissions against. Each object returned
+        can then be checked using user_can_edit_object, throwing an exception if necessary.
+
+        Args:
+            serializer: the serializer of the associated viewset
+
+        Returns:
+            List: A list of django model instances
+        """
+        objects = []
+
+        # if thing already is created, check that we can edit it
+        if serializer.instance and serializer.instance.pk:
+            objects.append(serializer.instance)
+
+        # additional checks on other attributes
+        for checker_key in getattr(self, "edit_check_keys", []):
+            if checker_key in serializer.validated_data:
+                objects.append(serializer.validated_data.get(checker_key))
+
+        # ensure we have at least one object to check
+        if len(objects) == 0:
+            raise ClassConfigurationException("Permission check required; nothing to check")
+
+        return objects
+
+    def perform_create(self, serializer):
+        for object_ in self.get_object_checks(serializer):
+            user_can_edit_object(object_, self.request.user, raise_exception=True)
+        super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        for object_ in self.get_object_checks(serializer):
+            user_can_edit_object(object_, self.request.user, raise_exception=True)
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        user_can_edit_object(instance, self.request.user, raise_exception=True)
+        super().perform_destroy(instance)

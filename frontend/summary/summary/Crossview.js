@@ -1,8 +1,8 @@
 import $ from "$";
 
-import HAWCModal from "utils/HAWCModal";
+import HAWCModal from "shared/utils/HAWCModal";
 
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 import CrossviewPlot from "./CrossviewPlot";
 import EndpointAggregation from "./EndpointAggregation";
@@ -17,11 +17,13 @@ class Crossview extends EndpointAggregation {
 
         options = options || {};
 
-        if (window.isEditable) title.append(this.addActionsMenu());
+        const actions = window.isEditable ? this.addActionsMenu() : null;
 
         $el.empty().append($plotDiv);
 
-        if (!options.visualOnly) $el.prepend(title).append(captionDiv);
+        if (!options.visualOnly) {
+            $el.prepend([actions, title]).append(captionDiv);
+        }
 
         new CrossviewPlot(this, data, options).render($plotDiv);
         caption.renderAndEnable();

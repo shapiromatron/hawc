@@ -4,11 +4,14 @@ import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.db import transaction
+from django.db.models import Max, Min
 from rest_framework.serializers import ValidationError
 
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
-from ..vocab.models import Term, VocabularyTermType
+from ..vocab.constants import VocabularyTermType
+from ..vocab.models import Term
+from . import constants
 
 
 class ExperimentManager(BaseManager):
@@ -17,6 +20,74 @@ class ExperimentManager(BaseManager):
 
 class AnimalGroupManager(BaseManager):
     assessment_relation = "experiment__study__assessment"
+
+    def animal_description(self, assessment_id: int) -> pd.DataFrame:
+        """Returns animal description with and without the number of animals.
+
+        This method mirrors the exports.get_gen_species_strain_sex method, but uses results from
+        a database queryset instead of a deeply nested dictionary representation.
+
+        Args:
+            assessment_id (int): Assessment id.
+
+        Returns:
+            pandas Dataframe of data
+        """
+        qs = (
+            self.filter(experiment__study__assessment_id=assessment_id)
+            .annotate(min_n=Min("endpoints__groups__n"), max_n=Max("endpoints__groups__n"),)
+            .values_list(
+                "id",
+                "species__name",
+                "strain__name",
+                "sex",
+                "generation",
+                "min_n",
+                "max_n",
+                "experiment__type",
+                "dosing_regime__duration_exposure_text",
+            )
+        )
+        rows = []
+        for (id, species, strain, sex, generation, min_n, max_n, exp_type, duration_text) in qs:
+
+            gen = self.model.get_generation_short(generation)
+            if len(gen) > 0:
+                gen += " "
+
+            sex = self.model.SEX_SYMBOLS[sex]
+            if sex == "NR":
+                sex = "sex=NR"
+
+            ns = "N=NR"
+            if min_n or max_n:
+                ns = f"N={min_n}" if min_n == max_n else f"N={min_n}-{max_n}"
+
+            treatment_text = constants.ExperimentType(exp_type).label
+            if "(" in treatment_text:
+                treatment_text = treatment_text[: treatment_text.find("(")]
+
+            if duration_text:
+                treatment_text += f" ({duration_text})"
+
+            rows.append(
+                (
+                    id,
+                    f"{gen}{species}, {strain} ({sex})",
+                    f"{gen}{species}, {strain} ({sex}, {ns})",
+                    treatment_text,
+                )
+            )
+
+        return pd.DataFrame(
+            data=rows,
+            columns=[
+                "animal group id",
+                "animal description",
+                "animal description, with n",
+                "treatment period",
+            ],
+        )
 
 
 class DosingRegimeManager(BaseManager):
@@ -114,9 +185,9 @@ class EndpointManager(BaseManager):
         # get BMD values
         values = dict(
             endpoint_id="endpoint id",
+            dose_units_id="dose units id",
             model__output__BMD="BMD",
             model__output__BMDL="BMDL",
-            model__session__dose_units_id="dose units id",
         )
         qs = SelectedModel.objects.filter(endpoint__assessment=assessment).values_list(
             *values.keys()
@@ -333,7 +404,7 @@ class EndpointManager(BaseManager):
                 f"Term id(s) {excluded_terms_str} are not in the assessment vocabulary"
             )
         # terms must be the correct type
-        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name.value)
+        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name)
         if excluded_terms.exists():
             excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
             raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")

@@ -2,31 +2,9 @@
 
 {% block content %}
     <h2>My assigned tasks</h2>
-    <div id='taskAssignments'></div>
+    <div id='main'></div>
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-    "assessment_id": {{ assessment.id }},
-    "csrf": "{{ csrf_token }}",
-    "user": {{user.id}},
-    "rob_tasks": {{review_tasks|safe}},
-    "tasks": {
-        "submit_url": "{% url 'mgmt:api:task-list' %}",
-        "url": "{% url 'mgmt:api:task-assessment-assignments' assessment.id %}",
-        "list": {{list_json|safe}}
-    },
-    "autocomplete": {
-        "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
-    }
-}
-</script>
-<script type="text/javascript">
-window.app.mgmtStartup(function (mgmt) {
-    const el = document.getElementById('taskAssignments'),
-        config = JSON.parse(document.getElementById('config').text);
-    mgmt.TaskAssignments(el, config);
-});
-</script>
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

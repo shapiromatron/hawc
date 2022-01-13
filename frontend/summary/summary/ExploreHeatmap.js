@@ -5,26 +5,35 @@ import React, {Component} from "react";
 import {inject, observer, Provider} from "mobx-react";
 
 import h from "shared/utils/helpers";
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import Loading from "shared/components/Loading";
 import BaseVisual from "./BaseVisual";
-import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import {NULL_VALUE} from "./constants";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 
-let startupHeatmapAppRender = function(el, settings, datastore, options) {
-    const store = new HeatmapDatastore(settings, datastore, options);
-    ReactDOM.render(
-        <Provider store={store}>
-            <ExploreHeatmapComponent options={options} />
-        </Provider>,
-        el
-    );
-};
+const startupHeatmapAppRender = function(el, settings, datastore, options) {
+        const store = new HeatmapDatastore(settings, datastore, options);
+        try {
+            ReactDOM.render(
+                <Provider store={store}>
+                    <ExploreHeatmapComponent options={options} />
+                </Provider>,
+                el
+            );
+        } catch (err) {
+            ReactDOM.render(<p>An error occurred</p>, el);
+        }
+    },
+    getErrorDiv = function() {
+        return `<div class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
+        </div>`;
+    };
 
 @inject("store")
 @observer
@@ -51,27 +60,29 @@ class ExploreHeatmapComponent extends Component {
         }
 
         return (
-            <div style={{display: "flex", flexDirection: "row"}}>
-                <div style={{flex: 9}}>
-                    <div id={id}>
-                        <Loading />
+            <>
+                <div style={{display: "flex", flexDirection: "row"}}>
+                    <div style={{flex: 9}}>
+                        <div id={id}>
+                            <Loading />
+                        </div>
                     </div>
-                    <DatasetTable />
+                    {hasFilters ? (
+                        <div
+                            className="col-3 ml-2"
+                            style={{
+                                display: "flex",
+                                flex: 3,
+                                minWidth: 300,
+                                maxWidth: 400,
+                            }}>
+                            <FilterWidgetContainer />
+                        </div>
+                    ) : null}
+                    <div id={`tooltip-${id}`} style={{position: "absolute"}}></div>
                 </div>
-                {hasFilters ? (
-                    <div
-                        className="ml-2"
-                        style={{
-                            display: "flex",
-                            flex: 3,
-                            minWidth: 300,
-                            maxWidth: 400,
-                        }}>
-                        <FilterWidgetContainer />
-                    </div>
-                ) : null}
-                <div id={`tooltip-${id}`} style={{position: "absolute"}}></div>
-            </div>
+                <DatasetTable />
+            </>
         );
     }
 }
@@ -101,6 +112,9 @@ class ExploreHeatmap extends BaseVisual {
             show_tooltip: settings.show_tooltip,
             show_totals: settings.show_totals,
             show_null: settings.show_null,
+            filters: settings.filters,
+            filtersLogic: settings.filtersLogic,
+            filtersQuery: settings.filtersQuery,
             autosize_cells: settings.autosize_cells,
             autorotate_tick_labels: settings.autorotate_tick_labels,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
@@ -127,10 +141,9 @@ class ExploreHeatmap extends BaseVisual {
                     this.dataset = json;
                     return {dataset: json};
                 })
-                .catch(error => {
+                .then(callback, error => {
                     callback({error});
-                })
-                .then(callback);
+                });
         }
     }
 
@@ -165,29 +178,38 @@ class ExploreHeatmap extends BaseVisual {
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             callback = resp => {
-                if (this.data.title) {
-                    title.append(this.addActionsMenu(window.isEditable));
-                }
-                if (resp.dataset) {
+                if (resp.dataset || resp.error) {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
+                    const actions = this.data.title ? this.addActionsMenu(window.isEditable) : null;
+
                     $el.empty().append($plotDiv);
+
                     if (!options.visualOnly) {
-                        $el.prepend(title).append(captionDiv);
+                        $el.prepend([actions, title]).append(captionDiv);
                     }
 
-                    startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
+                    // exit early if we got an error
+                    if (resp.error) {
+                        console.error(resp.error);
+                        $plotDiv.append(getErrorDiv());
+                        return;
+                    }
+
+                    try {
+                        startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
+                    } catch (err) {
+                        console.error(err);
+                        $plotDiv.append(getErrorDiv());
+                        return;
+                    }
 
                     if (options.cb) {
                         options.cb(this);
                     }
 
                     caption.renderAndEnable();
-                } else if (resp.error) {
-                    $el.empty()
-                        .prepend(title)
-                        .append(this.getErrorDiv());
                 } else {
                     throw "Unknown status.";
                 }
@@ -210,7 +232,12 @@ class ExploreHeatmap extends BaseVisual {
                         dataset = resp.dataset;
 
                     modal.getModal().on("shown.bs.modal", function() {
-                        startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
+                        try {
+                            startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
+                        } catch (err) {
+                            console.error(err);
+                            $plotDiv.append(getErrorDiv());
+                        }
                         caption.renderAndEnable();
                     });
 
@@ -222,7 +249,7 @@ class ExploreHeatmap extends BaseVisual {
                 } else if (resp.error) {
                     modal
                         .addHeader($("<h4>").text(this.data.title))
-                        .addBody(this.getErrorDiv())
+                        .addBody(getErrorDiv())
                         .addFooter("")
                         .show({maxWidth: 1200});
                 } else {
@@ -232,12 +259,6 @@ class ExploreHeatmap extends BaseVisual {
 
         options = options || {};
         this.getDataset(callback);
-    }
-
-    getErrorDiv() {
-        return `<div class="alert alert-danger" role="alert">
-            <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
-        </div>`;
     }
 }
 

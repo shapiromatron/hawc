@@ -3,34 +3,20 @@
 {% block content %}
   <div class="row pl-1">
     <div class="col-md-12">
-        <h1>Summary text
-          <div class="dropdown btn-group float-right">
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-            <div class="dropdown-menu dropdown-menu-right">
-              {% if obj_perms.edit %}
-              <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
-              {% endif %}
-            </div>
+        <h1 class="d-inline-block">Summary text</h1>
+        <div class="dropdown btn-group float-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+            {% if obj_perms.edit %}
+            <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
+            {% endif %}
           </div>
-        </h1>
+        </div>
     </div>
     <div id="main" class="container-fluid col-md-12"></div>
   </div>
 {% endblock %}
 
-
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-{
-    "assessment_id": {{assessment.pk}},
-    "editMode": false
-}
-</script>
-<script type="text/javascript">
-  window.app.summaryTextStartup(function (startup) {
-    var root = document.getElementById('main'),
-      config = JSON.parse(document.getElementById('config').textContent);
-    startup(root, config);
-  })
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

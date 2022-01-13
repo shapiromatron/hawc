@@ -5,7 +5,7 @@ import pickle
 import re
 from io import BytesIO
 from math import ceil
-from typing import Dict, Optional
+from typing import Dict, List
 from urllib import parse
 
 import pandas as pd
@@ -26,6 +26,8 @@ from treebeard.mp_tree import MP_Node
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
+from ...services.utils.doi import get_doi_from_identifier, try_get_doi
+from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -34,6 +36,8 @@ from ..common.models import (
     get_private_data_storage,
 )
 from . import constants, managers, tasks
+
+logger = logging.getLogger(__name__)
 
 
 class TooManyPubMedResults(Exception):
@@ -100,7 +104,7 @@ class LiteratureAssessment(models.Model):
         return self.assessment
 
     def get_absolute_url(self):
-        return reverse("lit:tags_update", args=(self.assessment.id,))
+        return reverse("lit:tags_update", args=(self.assessment_id,))
 
     def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
@@ -137,7 +141,7 @@ class LiteratureAssessment(models.Model):
 
         data = dict(df=f1.getvalue(), topics=f2.getvalue())
 
-        if self.has_topic_model():
+        if self.has_topic_model:
             self.topic_tsne_data.delete(save=False)
         self.topic_tsne_refresh_requested = None
         self.topic_tsne_last_refresh = timezone.now()
@@ -145,7 +149,7 @@ class LiteratureAssessment(models.Model):
         cache.delete(self.topic_tsne_fig_dict_cache_key)
 
     def get_topic_tsne_data(self) -> Dict:
-        if not self.has_topic_model():
+        if not self.has_topic_model:
             raise ValueError("No data available.")
         data = pickle.load(self.topic_tsne_data.file.file)
         data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
@@ -161,8 +165,10 @@ class LiteratureAssessment(models.Model):
             cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
         return fig_dict
 
+    @property
     def has_topic_model(self) -> bool:
-        return self.topic_tsne_data.name is not None and self.topic_tsne_data.name != ""
+        name = self.topic_tsne_data.name
+        return name is not None and name != ""
 
     def can_topic_model(self) -> bool:
         return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES
@@ -176,17 +182,13 @@ class Search(models.Model):
 
     MANUAL_IMPORT_SLUG = "manual-import"
 
-    SEARCH_TYPES = (
-        ("s", "Search"),
-        ("i", "Import"),
-    )
-
     assessment = models.ForeignKey(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="literature_searches"
     )
-    search_type = models.CharField(max_length=1, choices=SEARCH_TYPES)
+    search_type = models.CharField(max_length=1, choices=constants.SearchType.choices)
     source = models.PositiveSmallIntegerField(
-        choices=constants.REFERENCE_DATABASES, help_text="Database used to identify literature.",
+        choices=constants.ReferenceDatabase.choices,
+        help_text="Database used to identify literature.",
     )
     title = models.CharField(
         max_length=128, help_text="A brief-description to describe the identified literature.",
@@ -223,12 +225,15 @@ class Search(models.Model):
     @property
     def is_manual_import(self):
         # special case- created when assessment is created
-        return self.search_type == "i" and self.slug == self.MANUAL_IMPORT_SLUG
+        return (
+            self.search_type == constants.SearchType.IMPORT and self.slug == self.MANUAL_IMPORT_SLUG
+        )
 
     def clean(self):
         # unique_together constraint checked above;
         # not done in form because assessment is excluded
         pk_exclusion = {}
+        errors = {}
         if self.pk:
             pk_exclusion["pk"] = self.pk
         if (
@@ -237,17 +242,19 @@ class Search(models.Model):
             .count()
             > 0
         ):
-            raise ValidationError("Error- title must be unique for assessment.")
+            errors["title"] = ASSESSMENT_UNIQUE_MESSAGE
         if (
             Search.objects.filter(assessment=self.assessment, slug=self.slug)
             .exclude(**pk_exclusion)
             .count()
             > 0
         ):
-            raise ValidationError("Error- slug name must be unique for assessment.")
+            errors["slug"] = ASSESSMENT_UNIQUE_MESSAGE
+        if errors:
+            raise ValidationError(errors)
 
     def get_absolute_url(self):
-        return reverse("lit:search_detail", kwargs={"pk": self.assessment.pk, "slug": self.slug})
+        return reverse("lit:search_detail", args=(self.assessment_id, self.slug))
 
     def get_assessment(self):
         return self.assessment
@@ -263,7 +270,7 @@ class Search(models.Model):
 
     @transaction.atomic
     def run_new_query(self):
-        if self.source == constants.PUBMED:
+        if self.source == constants.ReferenceDatabase.PUBMED:
             prior_query = None
             try:
                 prior_query = PubMedQuery.objects.filter(search=self.pk).latest("query_date")
@@ -281,13 +288,13 @@ class Search(models.Model):
 
     @transaction.atomic
     def run_new_import(self):
-        if self.source == constants.PUBMED:
+        if self.source == constants.ReferenceDatabase.PUBMED:
             pmids = [int(id) for id in self.import_ids]
             identifiers = Identifiers.objects.get_pubmed_identifiers(pmids)
             Reference.objects.get_pubmed_references(self, identifiers)
-        elif self.source == constants.HERO:
+        elif self.source == constants.ReferenceDatabase.HERO:
             raise NotImplementedError()
-        elif self.source == constants.RIS:
+        elif self.source == constants.ReferenceDatabase.RIS:
             # check if importer references are cached on object
             refs = getattr(self, "_references", None)
             if refs is None:
@@ -321,10 +328,10 @@ class Search(models.Model):
         ids_count = ref_ids.count()
 
         if ids_count > 0:
-            logging.debug("Starting bulk creation of existing search-through values")
+            logger.debug("Starting bulk creation of existing search-through values")
             ref_searches = [RefSearchM2M(reference_id=ref, search_id=self.pk) for ref in ref_ids]
             RefSearchM2M.objects.bulk_create(ref_searches)
-            logging.debug(f"Completed bulk creation of {len(ref_searches)} search-through values")
+            logger.debug(f"Completed bulk creation of {len(ref_searches)} search-through values")
 
         # For the cases where the search resulted in new ids which may or may
         # not already be imported as a reference for this assessment, find the
@@ -343,9 +350,9 @@ class Search(models.Model):
             refs = [i.create_reference(self.assessment, block_id) for i in ids]
             id_pks = [i.pk for i in ids]
 
-            logging.debug(f"Starting  bulk creation of {len(refs)} references")
+            logger.debug(f"Starting  bulk creation of {len(refs)} references")
             Reference.objects.bulk_create(refs)
-            logging.debug(f"Completed bulk creation of {len(refs)} references")
+            logger.debug(f"Completed bulk creation of {len(refs)} references")
 
             # re-query to get the objects back with PKs
             refs = Reference.objects.filter(assessment=self.assessment, block_id=block_id).order_by(
@@ -355,21 +362,24 @@ class Search(models.Model):
             # associate identifiers with each
             ref_searches = []
             ref_ids = []
-            logging.debug(f"Starting  bulk creation of {refs.count()} reference-through values")
+            logger.debug(f"Starting  bulk creation of {refs.count()} reference-through values")
             for i, ref in enumerate(refs):
                 ref_searches.append(RefSearchM2M(reference_id=ref.pk, search_id=self.pk))
                 ref_ids.append(RefIdM2M(reference_id=ref.pk, identifiers_id=id_pks[i]))
             RefSearchM2M.objects.bulk_create(ref_searches)
             RefIdM2M.objects.bulk_create(ref_ids)
-            logging.debug(f"Completed bulk creation of {refs.count()} reference-through values")
+            logger.debug(f"Completed bulk creation of {refs.count()} reference-through values")
 
             # finally, remove temporary identifier used for re-query after bulk_create
-            logging.debug("Removing block-id from created references")
+            logger.debug("Removing block-id from created references")
             refs.update(block_id=None)
 
     @property
     def date_last_run(self):
-        if self.source == constants.PUBMED and self.search_type == "s":
+        if (
+            self.source == constants.ReferenceDatabase.PUBMED
+            and self.search_type == constants.SearchType.SEARCH
+        ):
             try:
                 return PubMedQuery.objects.filter(search=self).latest().query_date
             except Exception:
@@ -402,7 +412,7 @@ class Search(models.Model):
         dicts = []
         pubmed_queries = PubMedQuery.objects.filter(search=self)
         for pubmed_query in pubmed_queries:
-            dicts.append(pubmed_query.get_json(json_encode=False))
+            dicts.append(pubmed_query.to_dict())
         return dicts
 
     def get_all_reference_tags(self, json_encode=True):
@@ -449,14 +459,13 @@ class Search(models.Model):
     def references_untagged(self):
         return self.references.all().annotate(tag_count=models.Count("tags")).filter(tag_count=0)
 
-    def get_json(self):
-        d = {}
-        fields = ("pk", "title")
-        for field in fields:
-            d[field] = getattr(self, field)
-        d["url"] = self.get_absolute_url()
-        d["search_type"] = self.get_search_type_display()
-        return d
+    def to_dict(self):
+        return dict(
+            pk=self.pk,
+            title=self.title,
+            url=self.get_absolute_url(),
+            search_type=self.get_search_type_display(),
+        )
 
 
 class PubMedQuery(models.Model):
@@ -503,18 +512,18 @@ class PubMedQuery(models.Model):
         existing_pmids = [
             int(id_)
             for id_ in Identifiers.objects.filter(
-                database=constants.PUBMED, unique_id__in=new_ids
+                database=constants.ReferenceDatabase.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
         ]
         ids_to_add = list(set(new_ids) - set(existing_pmids))
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
-        logging.debug(f"{ids_to_add_len} IDs to be added")
+        logger.debug(f"{ids_to_add_len} IDs to be added")
         for i in range(int(ceil(ids_to_add_len / block_size))):
             start_index = int(i * block_size)
             end_index = min(int(i * block_size + block_size), ids_to_add_len)
-            logging.debug(f"Building from {start_index} to {end_index}")
+            logger.debug(f"Building from {start_index} to {end_index}")
             fetch = pubmed.PubMedFetch(
                 id_list=ids_to_add[start_index:end_index], retmax=int(block_size)
             )
@@ -522,12 +531,14 @@ class PubMedQuery(models.Model):
             for item in fetch.get_content():
                 identifiers.append(
                     Identifiers(
-                        unique_id=item["PMID"], database=constants.PUBMED, content=json.dumps(item),
+                        unique_id=item["PMID"],
+                        database=constants.ReferenceDatabase.PUBMED,
+                        content=json.dumps(item),
                     )
                 )
             Identifiers.objects.bulk_create(identifiers)
 
-    def get_json(self, json_encode=True):
+    def to_dict(self):
         def get_len(obj):
             if obj is not None:
                 return len(obj)
@@ -541,10 +552,7 @@ class PubMedQuery(models.Model):
             "total_added": get_len(details["added"]),
             "total_removed": get_len(details["removed"]),
         }
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        return d
 
 
 class Identifiers(models.Model):
@@ -553,23 +561,24 @@ class Identifiers(models.Model):
     unique_id = models.CharField(
         max_length=256, db_index=True
     )  # DOI has no limit; we make this relatively large
-    database = models.IntegerField(choices=constants.REFERENCE_DATABASES)
+    database = models.IntegerField(choices=constants.ReferenceDatabase.choices)
     content = models.TextField()
     url = models.URLField(blank=True)
 
     class Meta:
         unique_together = (("database", "unique_id"),)
         index_together = (("database", "unique_id"),)
+        verbose_name_plural = "identifiers"
 
     def __str__(self):
         return f"{self.database}: {self.unique_id}"
 
     URL_TEMPLATES = {
-        constants.PUBMED: r"https://www.ncbi.nlm.nih.gov/pubmed/{0}",
-        constants.HERO: r"http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}",
-        constants.DOI: r"https://doi.org/{0}",
-        constants.WOS: r"http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord",
-        constants.SCOPUS: r"http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist",
+        constants.ReferenceDatabase.PUBMED: r"https://www.ncbi.nlm.nih.gov/pubmed/{0}",
+        constants.ReferenceDatabase.HERO: r"http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}",
+        constants.ReferenceDatabase.DOI: r"https://doi.org/{0}",
+        constants.ReferenceDatabase.WOS: r"http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord",
+        constants.ReferenceDatabase.SCOPUS: r"http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist",
     }
 
     def get_url(self):
@@ -582,24 +591,24 @@ class Identifiers(models.Model):
     def create_reference(self, assessment, block_id=None):
         # create, but don't save reference object
         try:
-            content = self.get_content_json()
+            content = self.get_content()
         except ValueError:
-            if self.database == constants.PUBMED:
+            if self.database == constants.ReferenceDatabase.PUBMED:
                 self.update_pubmed_content([self])
             raise AttributeError(f"Content invalid JSON: {self.unique_id}")
 
-        if self.database == constants.PUBMED:
+        if self.database == constants.ReferenceDatabase.PUBMED:
             ref = Reference(
                 assessment=assessment,
-                title=content.get("title", ""),
-                authors_short=content.get("authors_short", ""),
+                title=content.get("title", "[no title]"),
+                authors_short=content.get("authors_short", "[no authors]"),
                 authors=", ".join(content.get("authors", [])),
-                journal=content.get("citation", ""),
-                abstract=content.get("abstract", ""),
+                journal=content.get("citation", "[no journal citation]"),
+                abstract=content.get("abstract", "[no abstract]"),
                 year=content.get("year", None),
                 block_id=block_id,
             )
-        elif self.database == constants.HERO:
+        elif self.database == constants.ReferenceDatabase.HERO:
             ref = Reference(assessment=assessment)
             ref.update_from_hero_content(content)
         else:
@@ -607,7 +616,7 @@ class Identifiers(models.Model):
 
         return ref
 
-    def get_json(self, json_encode=True):
+    def to_dict(self):
         return {
             "id": self.unique_id,
             "database": self.get_database_display(),
@@ -615,12 +624,24 @@ class Identifiers(models.Model):
             "url": self.get_url(),
         }
 
-    def get_content_json(self) -> Optional[Dict]:
-        return json.loads(self.content, encoding="utf-8") if self.content else None
+    def get_content(self) -> Dict:
+        return json.loads(self.content) if self.content else {}
 
     @staticmethod
     def update_pubmed_content(idents):
         tasks.update_pubmed_content.delay([d.unique_id for d in idents])
+
+    @classmethod
+    def existing_doi_map(cls, dois: List[str]) -> Dict[str, int]:
+        """
+        Return a mapping of DOI and Identifier ID given a list of candidate DOIs
+        """
+        return {
+            k: v
+            for (k, v) in Identifiers.objects.filter(
+                database=constants.ReferenceDatabase.DOI, unique_id__in=dois
+            ).values_list("unique_id", "id")
+        }
 
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
@@ -634,10 +655,23 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
             return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     @classmethod
-    def get_tag_in_assessment(cls, assessment_pk, tag_id):
-        tag = cls.objects.get(id=tag_id)
-        assert tag.get_root().name == cls.get_assessment_root_name(assessment_pk)
-        return tag
+    def get_tags_in_assessment(cls, assessment_pk: int, tag_ids: list[int]):
+        """Returns a queryset of matching tags which are in the assessment
+
+        Args:
+            assessment_pk (int): assessment id
+            tag_ids (list[int]): list of tag ids expected to be in assessment
+
+        Raises:
+            ValueError: if any tags are missing or are not in the assessment
+        """
+        tags = cls.objects.filter(id__in=tag_ids)
+        assessment_root = ReferenceFilterTag.get_assessment_root(assessment_pk)
+        if len(set(tag_ids)) != tags.count():
+            raise ValueError("Tags not found")
+        if any(not tag.is_descendant_of(assessment_root) for tag in tags):
+            raise ValueError("Tags are not descendants of root")
+        return tags
 
     @classmethod
     def build_default(cls, assessment):
@@ -724,15 +758,16 @@ class Reference(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("lit:ref_detail", kwargs={"pk": self.pk})
+        return reverse("lit:ref_detail", args=(self.pk,))
 
     def __str__(self):
         return self.ref_short_citation
 
-    def get_json(self, json_encode=True):
+    def to_dict(self):
         d = {}
         fields = (
             "pk",
+            "assessment_id",
             "title",
             "authors_short",
             "authors",
@@ -740,6 +775,7 @@ class Reference(models.Model):
             "journal",
             "abstract",
             "full_text_url",
+            "has_study",
         )
         for field in fields:
             d[field] = getattr(self, field)
@@ -749,15 +785,15 @@ class Reference(models.Model):
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
 
-        d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
-        d["searches"] = [ref.get_json() for ref in self.searches.all()]
+        d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
+        d["searches"] = [search.to_dict() for search in self.searches.all()]
+        d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
 
-        d["tags"] = list(self.tags.all().values_list("pk", flat=True))
-        d["tags_text"] = list(self.tags.all().values_list("name", flat=True))
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
+        d["tags"] = [tag.id for tag in self.tags.all()]
+        return d
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
     @classmethod
     def delete_caches(cls, ids):
@@ -781,7 +817,7 @@ class Reference(models.Model):
         reference_ids = cls.objects.hero_references(assessment_id).values_list("id", flat=True)
         reference_ids = list(reference_ids)  # queryset to list for JSON serializability
         identifiers = Identifiers.objects.filter(
-            references__in=reference_ids, database=constants.HERO
+            references__in=reference_ids, database=constants.ReferenceDatabase.HERO
         )
         hero_ids = identifiers.values_list("unique_id", flat=True)
         hero_ids = list(hero_ids)  # queryset to list for JSON serializability
@@ -827,16 +863,26 @@ class Reference(models.Model):
 
         return citation
 
+    @property
+    def has_study(self) -> bool:
+        return apps.get_model("study", "Study").objects.filter(id=self.id).exists()
+
     def get_pubmed_id(self):
         for ident in self.identifiers.all():
-            if ident.database == constants.PUBMED:
+            if ident.database == constants.ReferenceDatabase.PUBMED:
                 return int(ident.unique_id)
         return None
 
     def get_hero_id(self):
         for ident in self.identifiers.all():
-            if ident.database == constants.HERO:
+            if ident.database == constants.ReferenceDatabase.HERO:
                 return int(ident.unique_id)
+        return None
+
+    def get_doi_id(self):
+        for ident in self.identifiers.all():
+            if ident.database == constants.ReferenceDatabase.DOI:
+                return ident.unique_id
         return None
 
     def update_from_hero_content(self, content: Dict, save: bool = False):
@@ -864,3 +910,70 @@ class Reference(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    @classmethod
+    def extract_dois(cls, qs, logger=None, full_text: bool = False):
+        """Attempt to extract a DOI for each reference given other identifier metadata
+
+        Args:
+            qs (Reference QuerySet): a QuerySet of References
+            logger (logger): An optional logger instance
+            full_text (bool, optional): Determines whether to search full text (True) of field (False; default)
+        """
+        n = qs.count()
+        if n == 0:
+            return
+
+        qs_dois = qs.filter(identifiers__database=constants.ReferenceDatabase.DOI)
+        n_doi_initial = qs_dois.count()
+
+        qs_no_doi = (
+            qs.only("id")
+            .exclude(identifiers__database=constants.ReferenceDatabase.DOI)
+            .prefetch_related("identifiers")
+        )
+
+        new_doi_relations = []
+        for ref in qs_no_doi:
+            doi = None
+            for ident in ref.identifiers.all():
+                if full_text:
+                    doi = try_get_doi(ident.content, full_text=True)
+                else:
+                    doi = get_doi_from_identifier(ident)
+                if doi:
+                    new_doi_relations.append((doi, ref.id))
+                    break
+
+        existing_dois = Identifiers.existing_doi_map([el[0] for el in new_doi_relations])
+        RefIdentM2M = Reference.identifiers.through
+
+        # create new DOIs as needed
+        doi_creates = []
+        for doi, _ in new_doi_relations:
+            if doi not in existing_dois:
+                doi_creates.append(
+                    Identifiers(database=constants.ReferenceDatabase.DOI, unique_id=doi)
+                )
+                existing_dois[doi] = -1  # set temporary value until after bulk_create
+
+        created = Identifiers.objects.bulk_create(doi_creates)
+        for ident in created:
+            existing_dois[ident.unique_id] = ident.id
+
+        # create new Reference-DOI assignments
+        m2m_creates = []
+        for doi, ref_id in new_doi_relations:
+            ident_id = existing_dois[doi]
+            m2m_creates.append(RefIdentM2M(identifiers_id=ident_id, reference_id=ref_id))
+        RefIdentM2M.objects.bulk_create(m2m_creates)
+
+        if logger:
+            n_doi = qs_dois.count()
+            logger.write(f"{n:8} references reviewed ({n_doi_initial/n:.0%} have DOI)")
+            logger.write(
+                f"{n_doi_initial:8} -> {n_doi:8} references with a DOI (+{n_doi-n_doi_initial}; {n_doi/n:.0%} have DOI)"
+            )
+            logger.write(
+                f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
+            )

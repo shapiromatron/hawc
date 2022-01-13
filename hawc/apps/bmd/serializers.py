@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from jsonschema import ValidationError, validate
 from rest_framework import serializers
 
+from ..common.serializers import validate_jsonschema
 from . import models
 
 
@@ -24,7 +24,7 @@ class LogicFieldSerializer(serializers.ModelSerializer):
 class SelectedModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SelectedModel
-        fields = ("id", "model", "notes")
+        fields = ("id", "dose_units", "model", "notes")
 
 
 class ModelSerializer(serializers.ModelSerializer):
@@ -106,18 +106,10 @@ class SessionUpdateSerializer(serializers.Serializer):
     }
 
     def validate_bmrs(self, value):
-        try:
-            validate(value, self.bmr_schema)
-        except ValidationError as err:
-            raise serializers.ValidationError(err.message)
-        return value
+        return validate_jsonschema(value, self.bmr_schema)
 
     def validate_modelSettings(self, value):
-        try:
-            validate(value, self.model_schema)
-        except ValidationError as err:
-            raise serializers.ValidationError(err.message)
-        return value
+        return validate_jsonschema(value, self.model_schema)
 
     def save(self):
         self.instance.bmrs = self.validated_data["bmrs"]
@@ -149,12 +141,12 @@ class SelectedModelUpdateSerializer(serializers.ModelSerializer):
         fields = ("id", "model", "notes")
 
     def save(self):
-        session = self.instance
-
-        instance = session.get_selected_model()
-        if not instance:
-            instance = models.SelectedModel(endpoint_id=session.endpoint_id)
-
-        instance.model = self.validated_data["model"]
-        instance.notes = self.validated_data["notes"]
-        instance.save()
+        session = self.context["session"]
+        data = self.validated_data
+        obj, _ = models.SelectedModel.objects.update_or_create(
+            endpoint_id=session.endpoint_id,
+            dose_units_id=session.dose_units_id,
+            defaults={"model": data["model"], "notes": data["notes"]},
+        )
+        self.instance = obj
+        return self.instance

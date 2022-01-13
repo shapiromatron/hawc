@@ -1,9 +1,10 @@
-import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+import {observer} from "mobx-react";
 
 import h from "shared/utils/helpers";
 
+@observer
 class TagNode extends Component {
     constructor(props) {
         super(props);
@@ -13,25 +14,34 @@ class TagNode extends Component {
         };
     }
     render() {
-        const {tag, showReferenceCount, handleOnClick} = this.props;
+        const {tag, showReferenceCount, handleOnClick, selectedTag} = this.props,
+            tagClass = tag === selectedTag ? "d-flex nestedTag selected" : "d-flex nestedTag",
+            hasChildren = tag.children.length > 0,
+            expanderIcon = this.state.expanded ? "fa-minus" : "fa-plus",
+            toggleExpander = e => {
+                e.stopPropagation();
+                const newValue = !this.state.expanded;
+                window.localStorage.setItem(this.localStorageKey, newValue);
+                this.setState({expanded: newValue});
+            };
+
         return (
-            <div>
-                {tag.children.length > 0 ? (
-                    <span
-                        className="nestedTagCollapser"
-                        onClick={() => {
-                            const newValue = !this.state.expanded;
-                            window.localStorage.setItem(this.localStorageKey, newValue);
-                            this.setState({expanded: newValue});
-                        }}>
-                        <span className={this.state.expanded ? "fa fa-minus" : "fa fa-plus"}></span>
-                    </span>
-                ) : null}
-                <p className="nestedTag" onClick={() => handleOnClick(tag)}>
-                    {_.repeat("   ", tag.depth - 1)}
-                    {tag.data.name}
-                    {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
-                </p>
+            <>
+                <div className={tagClass} onClick={() => handleOnClick(tag)}>
+                    <div style={{width: (tag.depth - 1) * 10 + 25}}>
+                        {hasChildren ? (
+                            <button className="btn btn-sm pull-right px-2" onClick={toggleExpander}>
+                                <i className={`fa ${expanderIcon}`}></i>
+                            </button>
+                        ) : null}
+                    </div>
+                    <div style={{flex: 1}}>
+                        <span>
+                            {tag.data.name}
+                            {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
+                        </span>
+                    </div>
+                </div>
                 {this.state.expanded
                     ? tag.children.map((tag, i) => (
                           <TagNode
@@ -39,10 +49,11 @@ class TagNode extends Component {
                               tag={tag}
                               handleOnClick={handleOnClick}
                               showReferenceCount={showReferenceCount}
+                              selectedTag={selectedTag}
                           />
                       ))
                     : null}
-            </div>
+            </>
         );
     }
 }
@@ -50,19 +61,22 @@ TagNode.propTypes = {
     tag: PropTypes.object.isRequired,
     handleOnClick: PropTypes.func.isRequired,
     showReferenceCount: PropTypes.bool.isRequired,
+    selectedTag: PropTypes.object,
 };
 
+@observer
 class TagTree extends Component {
     render() {
-        const {tagtree, handleTagClick, showReferenceCount} = this.props;
+        const {tagtree, handleTagClick, showReferenceCount, selectedTag} = this.props;
         return (
-            <div>
+            <div className="resize-y" style={{height: "80vh"}}>
                 {tagtree.rootNode.children.map((tag, i) => (
                     <TagNode
                         key={i}
                         tag={tag}
                         handleOnClick={handleTagClick}
                         showReferenceCount={showReferenceCount}
+                        selectedTag={selectedTag}
                     />
                 ))}
             </div>
@@ -73,6 +87,7 @@ TagTree.propTypes = {
     tagtree: PropTypes.object.isRequired,
     handleTagClick: PropTypes.func,
     showReferenceCount: PropTypes.bool,
+    selectedTag: PropTypes.object,
 };
 TagTree.defaultProps = {
     showReferenceCount: false,

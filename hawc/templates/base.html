@@ -3,94 +3,107 @@
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
-<html lang="en-us">
+<html class="js" lang="en-us">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
-    <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
-    <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
-    <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
-    <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
+
+    {% if GTM_ID %}
+      <!-- Google Tag Manager -->
+      <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{GTM_ID}}");</script>
+      <!-- End Google Tag Manager -->
+    {% endif %}
+
+    {% if extra_branding and flavor == "EPA" %}
+      <link rel="shortcut icon" href="https://www.epa.gov/sites/all/themes/epa/favicon.ico" type="image/vnd.microsoft.icon" />
+    {% else %}
+      <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
+      <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
+      <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
+      <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
+    {% endif %}
+
     {% block extrahead %}{% endblock %}
-    {% include 'includes/css.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.5.3/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/jqueryui/1.10.3/css/jquery-ui.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
+    {% if extra_branding and flavor == "EPA" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/accordions.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/boxes.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/tables.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/tabs.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-hawc.css' %}" />
+    {% endif %}
+    {% block extrastyle %}{% endblock %}
+
   </head>
-  <body>
+  <body class="html">
+
+    {% if GTM_ID %}
+      <!-- Google Tag Manager -->
+      <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{GTM_ID}}" height="0" width="0"
+          style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager -->
+    {% endif %}
 
     {% if user.is_superuser or SERVER_ROLE != 'production' %}
-    {% include 'includes/environment_banner.html' %}
+      {% include 'includes/environment_banner.html' %}
     {% endif %}
 
     {% cache 3600 header %}
     {% if extra_branding and flavor == "EPA" %}
-    {% include 'includes/epa/header.html' %}
+      {% include 'includes/epa/header.html' %}
     {% endif %}
     {% endcache %}
 
-    {% include 'includes/navigation.html' %}
-
     {% block content_row_outer %}
-      <div class="row no-gutters" style="min-height: 100vh;">
-        {% block sidebar_outer %}{% endblock sidebar_outer %}
-        <div id="main-content" class="col overflow-auto">
-          <div id="main-content-container" class="container-fluid">
-            {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
+      <section class="main-content clearfix" id="main-content">
+        {% include 'includes/navigation.html' %}
+        <div class="row no-gutters" style="min-height: 100vh;">
+          {% block sidebar_outer %}{% endblock sidebar_outer %}
+          <div class="col overflow-auto">
+            <div id="main-content-container" class="container-fluid">
+              {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
-            {% include "includes/messages.html" %}
+              {% include "includes/messages.html" %}
+              {% if UA_SUPPORTED is False %}
+                {% include "includes/unsupported_browser.html" %}
+              {% endif %}
 
-            {% if UA_SUPPORTED is False %}
-            <div class="alert alert-danger">
-              <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in
-                some some errors with functionality. The following browsers are fully supported:</p>
-              <ul>
-                <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a></li>
-                <li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li>
-                <li><a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
-                <li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li>
-              </ul>
-              <p>Please use a different browser.</p>
-            </div>
-            {% endif %}
-            {% block content_header %}{% endblock content_header %}
-            {% block content_outer %}
-              <div class="row" style="min-height: 300px;">
-                <div class="col overflow-auto">
-                {% block content %}{% endblock content %}
+              {% block content_header %}{% endblock content_header %}
+              {% block content_outer %}
+                <div class="row  overflow-auto"  style="min-height: 50vh;">
+                  <div class="col overflow-auto">
+                  {% block content %}{% endblock content %}
+                  </div>
                 </div>
-              </div>
-            {% endblock content_outer %}
+              {% endblock content_outer %}
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     {% endblock content_row_outer %}
 
-    {% include "includes/footer.html" %}
-
-    {% if debug %}
-    <script type="text/javascript" src="{% static 'debug/jquery/3.5.1/jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'debug/jquery-migrate/3.3.1/jquery-migrate.js' %}"></script>
-    <script type="text/javascript" src="{% static 'debug/popper.js/1.16.1/umd/popper.js' %}"></script>
-    <script type="text/javascript" src="{% static 'debug/twitter-bootstrap/4.5.2/js/bootstrap.js' %}"></script>
-    <script type="text/javascript" src="{% static 'debug/jqueryui/1.10.3/jquery-ui.js' %}"></script>
+    {% cache 3600 footer %}
+    {% if extra_branding and flavor == "EPA" %}
+      {% include "./includes/epa/footer.html" %}
     {% else %}
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.3.1/jquery-migrate.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-      {% block google_analytics %}
-        <script>
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-          ga('create', 'UA-45455759-1', 'hawcproject.org');
-          ga('send', 'pageview');
-        </script>
-      {% endblock google_analytics %}
+      {% include "./includes/base/footer.html" %}
     {% endif %}
+    {% endcache %}
+    <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/jquery-migrate/3.3.1/jquery-migrate.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/popper.js/1.16.1/umd/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/bootstrap/4.5.3/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/jqueryui/1.10.3/jquery-ui.min.js' %}"></script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
   </body>
