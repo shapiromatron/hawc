@@ -4,36 +4,26 @@
 
 {% block content %}
 <div class="container-fluid">
-  {% for label, linky in create_or_copy.items %}
-  <h1>{{label}} a new visualization</h1>
+  <h1>{{action}} a new visualization</h1>
   <p class="form-text text-muted">Multiple visualization types are available. Please select the type of visualization
     you would like to create.</p>
   <div class="row">
     <div class="col-md-9">
       <select id="vis_selector" class="form-control col-md-12">
-        <option value="4" data-url="{% url linky assessment.id 4 %}">Literature
-          tagtree</option>
-        <option value="6" data-url="{% url linky assessment.id 6 %}">Exploratory
-          heatmap</option>
-        <option value="5" data-url="{% url linky assessment.id 5 %}">Embedded
-          external website</option>
-        <option value="2" data-url="{% url linky assessment.id 2 %}">
+        <option value="4" data-url="{% url viz_url_pattern assessment.id 4 %}">
+          Literature tagtree</option>
+        <option value="6" data-url="{% url viz_url_pattern assessment.id 6 %}">
+          Exploratory heatmap</option>
+        <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
+          Embedded external website</option>
+        <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
           {{assessment.get_rob_name_display}} heatmap</option>
-        <option value="3" data-url="{% url linky assessment.id 3 %}">
+        <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">
           {{assessment.get_rob_name_display}} barchart</option>
-        {% if label == "Create" %}
-        <option value="100" data-url="{% url 'summary:dp_new-prompt' assessment.id %}">Data pivot</option>
-        {% else %}
-        <option value="100" data-url="{% url 'summary:dp_copy_selector' assessment.id %}">Data pivot</option>
-        {% endif %}
-        <option value="1" data-url="{% url linky assessment.id 1 %}">Bioassay
-          endpoint crossview</option>
-          {% endfor %}
-        {% comment %}
-        <!-- deprecate; let's see if anyone requests it..  -->
-        <option value="0" data-url="{% url linky assessment.id 0 %}">Bioassay
-          endpoint aggregation</option>
-        {% endcomment %}
+        <option value="100" data-url="{% url dp_url_pattern assessment.id %}">
+          Data pivot</option>
+        <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
+          Bioassay endpoint crossview</option>
       </select>
     </div>
     <div class="col-md-3">

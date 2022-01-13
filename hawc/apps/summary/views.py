@@ -329,8 +329,12 @@ class VisualizationCreateSelector(BaseDetail):
     breadcrumb_active_name = "Visualization selector"
 
     def get_context_data(self, **kwargs):
+        kwargs.update(
+            action="Create",
+            viz_url_pattern="summary:visualization_create",
+            dp_url_pattern="summary:dp_new-prompt",
+        )
         context = super().get_context_data(**kwargs)
-        context["create_or_copy"] = {"Create": "summary:visualization_create"}
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
@@ -415,8 +419,12 @@ class VisualizationCopySelector(BaseDetail):
     breadcrumb_active_name = "Visualization selector"
 
     def get_context_data(self, **kwargs):
+        kwargs.update(
+            action="Copy",
+            viz_url_pattern="summary:visualization_copy",
+            dp_url_pattern="summary:dp_copy_selector",
+        )
         context = super().get_context_data(**kwargs)
-        context["create_or_copy"] = {"Copy": "summary:visualization_copy"}
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )

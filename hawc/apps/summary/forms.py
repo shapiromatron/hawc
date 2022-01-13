@@ -520,7 +520,6 @@ class SummaryTableCopySelectorForm(forms.Form):
 
     @property
     def helper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -548,7 +547,6 @@ class VisualForm(forms.ModelForm):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
         super().__init__(*args, **kwargs)
-
         if "settings" in self.fields:
             self.fields["settings"].widget.attrs["rows"] = 2
         if assessment:

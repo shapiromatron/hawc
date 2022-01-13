@@ -64,6 +64,7 @@ TEMPLATES = [
     },
 ]
 
+
 # Middleware
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
