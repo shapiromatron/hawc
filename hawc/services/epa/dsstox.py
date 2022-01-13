@@ -34,7 +34,14 @@ class DssSubstance(NamedTuple):
         if not re.compile(RE_DTXSID).fullmatch(dtxsid):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
 
-        obj = cls.create_from_identifier(dtxsid)
+        # obj = cls.create_from_identifier(dtxsid)
+        response = requests.get(
+            f"https://comptox.epa.gov/dashboard-api/ccdapp2/chemical-detail/search/by-dsstoxsid?id={dtxsid}"
+        )
+        response_dict = response.json()
+        response_dict["dtxsid"] = response_dict.pop("dsstoxSubstanceId")
+        response_dict.pop("presenceInLists")
+        obj = cls(dtxsid=response_dict["dtxsid"], content=response_dict)
 
         if obj.dtxsid != dtxsid:
             raise ValueError(f"{dtxsid} not found in DSSTox lookup")
