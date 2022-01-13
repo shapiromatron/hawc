@@ -3,8 +3,8 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
 from django import forms
-from django.urls import reverse
 from django.db.models import Q
+from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
@@ -468,7 +468,8 @@ class SummaryTableForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.instance.id:
             self.instance = models.SummaryTable.build_default(self.assessment.id, table_type)
-
+        # TODO - we shouldn't have to do this; and 400 errors are not rendering
+        # instead, switch to htmx or use a REST API
         if self.initial:
             self.instance.content = self.initial["content"]
             self.instance.title = self.initial["title"]
@@ -501,14 +502,12 @@ class SummaryTableSelectorForm(forms.Form):
 
 class SummaryTableModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return f"{obj.assessment}: {obj}"
+        return f"{obj.assessment}: [{obj.get_table_type_display()}] {obj}"
 
 
 class SummaryTableCopySelectorForm(forms.Form):
 
-    st = SummaryTableModelChoiceField(
-        label="Summary table", queryset=models.Visual.objects.all(), empty_label=" --- "
-    )
+    st = SummaryTableModelChoiceField(label="Summary table", queryset=models.Visual.objects.all())
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user")
@@ -601,7 +600,7 @@ class VisualForm(forms.ModelForm):
 
 class VisualModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return f"{obj.assessment}: {obj}"
+        return f"{obj.assessment}: [{obj.get_visual_type_display()}] {obj}"
 
 
 class VisualSelectorForm(forms.Form):

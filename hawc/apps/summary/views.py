@@ -154,7 +154,7 @@ class SummaryTableCreate(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["table_type"] = int(self.kwargs.get("table_type"))
+        kwargs["table_type"] = self.kwargs["table_type"]
         return kwargs
 
     def get_context_data(self, **kwargs):

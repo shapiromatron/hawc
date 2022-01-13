@@ -39,8 +39,8 @@
         <td><a href="{{object.get_absolute_url}}">{{object.title}}</a></td>
         <td>{{object.get_table_type_display}}</td>
         {% if show_published %}<td>{{object.published}}</td>{% endif %}
-        <td>{{object.created}}</td>
-        <td>{{object.last_updated}}</td>
+        <td>{{object.created|date:"Y-m-d" }}</td>
+        <td>{{object.last_updated|date:"Y-m-d" }}</td>
       </tr>
       {% endfor %}
     </tbody>

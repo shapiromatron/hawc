@@ -63,7 +63,6 @@ TEMPLATES = [
         },
     },
 ]
-SHORT_DATE_FORMAT = "Y-m-d"  # change from default; sortable
 
 # Middleware
 MIDDLEWARE = (
