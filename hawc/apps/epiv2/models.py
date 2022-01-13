@@ -292,9 +292,7 @@ class DataExtraction(models.Model):
     )
     effect_estimate = models.FloatField(blank=True, null=True)
     exposure_rank = models.PositiveSmallIntegerField(
-        blank=True,
-        null=True,
-        help_text="Rank this comparison group by exposure (lowest exposure group = 1)",
+        default=0, help_text="Rank this comparison group by exposure (lowest exposure group = 1)",
     )
     ci_lcl = models.FloatField(verbose_name="Confidence Interval LCL", blank=True, null=True)
     ci_ucl = models.FloatField(verbose_name="Confidence Interval UCL", blank=True, null=True)
