@@ -1,5 +1,6 @@
+import hashlib
+import json
 from typing import Any, Dict
-import hashlib, json
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
