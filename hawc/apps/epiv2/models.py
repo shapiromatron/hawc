@@ -29,11 +29,9 @@ class StudyPopulationV2(models.Model):
 
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations_v2")
     study_design = models.CharField(
-        max_length=128, choices=constants.StudyDesign.choices, blank=True, null=True,
+        max_length=128, choices=constants.StudyDesign.choices, blank=True
     )
-    source = models.CharField(
-        max_length=128, choices=constants.Source.choices, blank=True, null=True,
-    )
+    source = models.CharField(max_length=128, choices=constants.Source.choices, blank=True)
     age_profile = models.ManyToManyField(
         AgeProfile,
         blank=True,
@@ -58,14 +56,12 @@ class StudyPopulationV2(models.Model):
         verbose_name="Study name (if applicable",
         help_text="Typically available for cohorts. Abbreviations provided in the paper are fine",
     )
-    countries = models.ManyToManyField(Country, blank=True,)
+    countries = models.ManyToManyField(Country, blank=True)
     region = models.CharField(
-        max_length=128, blank=True, null=True, verbose_name="Other geographic information"
+        max_length=128, blank=True, verbose_name="Other geographic information"
     )
     # TODO: create regex
-    years = models.CharField(
-        max_length=64, verbose_name="Year(s) of data collection", blank=True, null=True
-    )
+    years = models.CharField(max_length=64, verbose_name="Year(s) of data collection", blank=True)
     participant_n = models.PositiveIntegerField(
         verbose_name="Overall study population N",
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
@@ -149,15 +145,14 @@ class Exposure(models.Model):
     measurement_timing = models.CharField(
         max_length=128,
         blank=True,
-        null=True,
         verbose_name="Timing of exposure measurement",
         help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
     )
     exposure_route = models.CharField(
-        max_length=2, choices=constants.ExposureRoute.choices, blank=True, null=True,
+        max_length=2, choices=constants.ExposureRoute.choices, blank=True
     )
-    analytic_method = models.CharField(max_length=128, blank=True, null=True,)
-    comments = models.CharField(max_length=128, blank=True, null=True,)
+    analytic_method = models.CharField(max_length=128, blank=True)
+    comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -186,7 +181,7 @@ class ExposureLevel(models.Model):
         Exposure, on_delete=models.CASCADE, blank=True, null=True,
     )
     sub_population = models.CharField(
-        max_length=128, verbose_name="Sub-population (if relevant)", blank=True, null=True,
+        max_length=128, verbose_name="Sub-population (if relevant)", blank=True
     )
     central_tendency = models.CharField(max_length=128)
     central_tendency_type = models.CharField(
@@ -206,12 +201,8 @@ class ExposureLevel(models.Model):
         blank=True,
         null=True,
     )
-    comments = models.CharField(
-        max_length=128, verbose_name="Exposure level comments", blank=True, null=True,
-    )
-    data_location = models.CharField(
-        max_length=128, help_text="e.g., table number", blank=True, null=True,
-    )
+    comments = models.TextField(verbose_name="Exposure level comments", blank=True)
+    data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -241,7 +232,6 @@ class Outcome(models.Model):
         choices=constants.HealthOutcomeSystem.choices,
         help_text="If multiple cancer types are present, report all types under Cancer.",
         blank=True,
-        null=True,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -266,7 +256,7 @@ class AdjustmentFactor(models.Model):
     study_population = models.ForeignKey(
         StudyPopulationV2, on_delete=models.CASCADE, related_name="adjustment_factors"
     )
-    description = models.CharField(max_length=128, blank=True, null=True,)
+    description = models.CharField(max_length=128, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -286,20 +276,17 @@ class DataExtraction(models.Model):
     study_population = models.ForeignKey(
         StudyPopulationV2, on_delete=models.CASCADE, related_name="data_extractions"
     )
-    sub_population = models.CharField(max_length=64,)
+    sub_population = models.CharField(max_length=64)
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE)
-    exposure_level = models.ForeignKey(
-        ExposureLevel, on_delete=models.SET_NULL, blank=True, null=True
-    )
-    measurement_timing = models.CharField(max_length=128, blank=True, null=True,)
-    n = models.PositiveIntegerField(blank=True, null=True,)
+    exposure_level = models.ForeignKey(ExposureLevel, on_delete=models.CASCADE)
+    measurement_timing = models.CharField(max_length=128, blank=True)
+    n = models.PositiveIntegerField(blank=True, null=True)
     effect_estimate_type = models.CharField(
-        max_length=128, choices=constants.EffectEstimateType.choices, blank=True, null=True,
+        max_length=128, choices=constants.EffectEstimateType.choices, blank=True
     )
     effect_description = models.CharField(
         max_length=128,
         blank=True,
-        null=True,
         verbose_name="Effect estimate description",
         help_text="Description of the effect estimate with units, including comparison group if applicable",
     )
@@ -314,7 +301,7 @@ class DataExtraction(models.Model):
     sd_or_se = models.FloatField(
         verbose_name="Standard Deviation or Standard Error", blank=True, null=True
     )
-    pvalue = models.CharField(verbose_name="p-value", max_length=128, blank=True, null=True,)
+    pvalue = models.CharField(verbose_name="p-value", max_length=128, blank=True)
     significant = models.BooleanField(
         verbose_name="Statistically Significant",
         choices=constants.SIGNIFICANT_CHOICES,
@@ -324,14 +311,10 @@ class DataExtraction(models.Model):
     adjustment_factor = models.ForeignKey(
         AdjustmentFactor, on_delete=models.SET_NULL, blank=True, null=True,
     )
-    confidence = models.CharField(
-        max_length=128, verbose_name="Study confidence", blank=True, null=True,
-    )
-    data_location = models.CharField(
-        max_length=128, help_text="e.g., table number", blank=True, null=True,
-    )
-    statistical_method = models.CharField(max_length=128, blank=True, null=True,)
-    comments = models.CharField(max_length=128, blank=True, null=True,)
+    confidence = models.CharField(max_length=128, verbose_name="Study confidence", blank=True)
+    data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
+    statistical_method = models.CharField(max_length=128, blank=True)
+    comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
