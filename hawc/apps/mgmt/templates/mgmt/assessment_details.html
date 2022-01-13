@@ -9,28 +9,9 @@
           <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
       </div>
   </div>
-  <div id='taskTable' class='mb-3'></div>
+  <div id='main' class='mb-3'></div>
 {% endblock %}
 
 {% block extrajs %}
-<script id="config" type="text/json" charset="utf-8">
-    {
-        "assessment_id": {{ assessment.id }},
-        "csrf": "{{ csrf_token }}",
-        "displayAsForm": false,
-        "cancelUrl": "{% url 'mgmt:assessment_tasks' assessment.pk %}",
-        "tasksListUrl": "{% url 'mgmt:api:task-list' %}?assessment_id={{assessment.pk}}",
-        "taskUpdateBaseUrl": "{% url 'mgmt:api:task-list' %}",
-        "taskBulkPatchUrl": "{% url 'mgmt:api:task-bulk-patch' %}?assessment_id={{assessment.pk}}",
-        "studyListUrl": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}",
-        "userAutocompleteUrl": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
-    }
-</script>
-<script type="text/javascript">
-window.app.startup("mgmtStartup", function(mgmt){
-  const el = document.getElementById('taskTable'),
-    config = window.app.getConfig();
-  mgmt.TaskTable(el, config);
-});
-</script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

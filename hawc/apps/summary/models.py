@@ -42,23 +42,9 @@ from ..invitro import exports as ivexports
 from ..invitro.models import IVEndpoint
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
-from . import managers
+from . import constants, managers
 
 logger = logging.getLogger(__name__)
-
-BIOASSAY = 0
-EPI = 1
-EPI_META = 4
-IN_VITRO = 2
-OTHER = 3
-
-STUDY_TYPE_CHOICES = (
-    (BIOASSAY, "Animal Bioassay"),
-    (EPI, "Epidemiology"),
-    (EPI_META, "Epidemiology meta-analysis/pooled analysis"),
-    (IN_VITRO, "In vitro"),
-    (OTHER, "Other"),
-)
 
 
 class SummaryText(MP_Node):
@@ -160,13 +146,9 @@ class SummaryText(MP_Node):
 class SummaryTable(models.Model):
     objects = managers.SummaryTableManager()
 
-    class TableType(models.IntegerChoices):
-        GENERIC = 0
-        EVIDENCE_PROFILE = 1
-
     TABLE_SCHEMA_MAP = {
-        TableType.GENERIC: GenericTable,
-        TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
+        constants.TableType.GENERIC: GenericTable,
+        constants.TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
     }
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
@@ -178,7 +160,7 @@ class SummaryTable(models.Model):
     )
     content = models.JSONField(default=dict)
     table_type = models.PositiveSmallIntegerField(
-        choices=TableType.choices, default=TableType.GENERIC
+        choices=constants.TableType.choices, default=constants.TableType.GENERIC
     )
     published = models.BooleanField(
         default=False,
@@ -276,29 +258,6 @@ class HeatmapDatasets(PydanticModel):
 class Visual(models.Model):
     objects = managers.VisualManager()
 
-    BIOASSAY_AGGREGATION = 0
-    BIOASSAY_CROSSVIEW = 1
-    ROB_HEATMAP = 2
-    ROB_BARCHART = 3
-    LITERATURE_TAGTREE = 4
-    EXTERNAL_SITE = 5
-    EXPLORE_HEATMAP = 6
-
-    VISUAL_CHOICES = (
-        (BIOASSAY_AGGREGATION, "animal bioassay endpoint aggregation"),
-        (BIOASSAY_CROSSVIEW, "animal bioassay endpoint crossview"),
-        (ROB_HEATMAP, "risk of bias heatmap"),
-        (ROB_BARCHART, "risk of bias barchart"),
-        (LITERATURE_TAGTREE, "literature tagtree"),
-        (EXTERNAL_SITE, "embedded external website"),
-        (EXPLORE_HEATMAP, "exploratory heatmap"),
-    )
-
-    SORT_ORDER_CHOICES = (
-        ("short_citation", "Short Citation"),
-        ("overall_confidence", "Final Study Confidence"),
-    )
-
     FAKE_INITIAL_ID = -1
 
     title = models.CharField(max_length=128)
@@ -308,7 +267,7 @@ class Visual(models.Model):
         "(no spaces or special-characters).",
     )
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
-    visual_type = models.PositiveSmallIntegerField(choices=VISUAL_CHOICES)
+    visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
     prefilters = models.TextField(default="{}")
     endpoints = models.ManyToManyField(
@@ -331,7 +290,7 @@ class Visual(models.Model):
         help_text="For assessments marked for public viewing, mark visual to be viewable by public",
     )
     sort_order = models.CharField(
-        max_length=40, choices=SORT_ORDER_CHOICES, default="short_citation",
+        max_length=40, choices=constants.SortOrder.choices, default=constants.SortOrder.SC,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -454,7 +413,7 @@ class Visual(models.Model):
         qs = Endpoint.objects.none()
         filters = {"assessment_id": self.assessment_id}
 
-        if self.visual_type == self.BIOASSAY_AGGREGATION:
+        if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
             if request:
                 ids = request.POST.getlist("endpoints")
             else:
@@ -463,7 +422,7 @@ class Visual(models.Model):
             filters["id__in"] = ids
             qs = Endpoint.objects.filter(**filters)
 
-        elif self.visual_type == self.BIOASSAY_CROSSVIEW:
+        elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
 
             if request:
                 dose_id = tryParseInt(request.POST.get("dose_units"), -1)
@@ -487,7 +446,10 @@ class Visual(models.Model):
         qs = Study.objects.none()
         filters = {"assessment_id": self.assessment_id}
 
-        if self.visual_type in [self.ROB_HEATMAP, self.ROB_BARCHART]:
+        if self.visual_type in [
+            constants.VisualType.ROB_HEATMAP,
+            constants.VisualType.ROB_BARCHART,
+        ]:
             if request:
                 efilters = {"assessment_id": self.assessment_id}
                 Prefilter.setFiltersFromForm(efilters, request.POST, self.visual_type)
@@ -582,10 +544,15 @@ class Visual(models.Model):
     def _update_settings_across_assessments(self, cw: Dict) -> str:
         settings = json.loads(self.settings)
 
-        if (self.visual_type == 1) and "included_metrics" in settings:
+        if (
+            self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW
+        ) and "included_metrics" in settings:
             pass
 
-        if (self.visual_type == 2 or self.visual_type == 3) and "included_metrics" in settings:
+        if (
+            self.visual_type
+            in [constants.VisualType.ROB_BARCHART, constants.VisualType.ROB_HEATMAP]
+        ) and "included_metrics" in settings:
             ids = []
             model_cw = cw[get_model_copy_name(apps.get_model("riskofbias", "RiskOfBiasMetric"))]
             for id_ in settings["included_metrics"]:
@@ -671,6 +638,9 @@ class DataPivot(models.Model):
         else:
             return self.datapivotquery.visual_type
 
+    def get_visual_type_display(self):
+        return self.visual_type
+
     def get_settings(self):
         try:
             return json.loads(self.settings)
@@ -743,17 +713,12 @@ class DataPivotQuery(DataPivot):
 
     MAXIMUM_QUERYSET_COUNT = 1000
 
-    EXPORT_GROUP = 0
-    EXPORT_ENDPOINT = 1
-    EXPORT_STYLE_CHOICES = (
-        (EXPORT_GROUP, "One row per Endpoint-group/Result-group"),
-        (EXPORT_ENDPOINT, "One row per Endpoint/Result"),
+    evidence_type = models.PositiveSmallIntegerField(
+        choices=constants.StudyType.choices, default=constants.StudyType.BIOASSAY
     )
-
-    evidence_type = models.PositiveSmallIntegerField(choices=STUDY_TYPE_CHOICES, default=BIOASSAY)
     export_style = models.PositiveSmallIntegerField(
-        choices=EXPORT_STYLE_CHOICES,
-        default=EXPORT_GROUP,
+        choices=constants.ExportStyle.choices,
+        default=constants.ExportStyle.EXPORT_GROUP,
         help_text="The export style changes the level at which the "
         "data are aggregated, and therefore which columns and types "
         "of data are presented in the export, for use in the visual.",
@@ -804,7 +769,7 @@ class DataPivotQuery(DataPivot):
     def _get_dataset_filters(self):
         filters = {}
 
-        if self.evidence_type == BIOASSAY:
+        if self.evidence_type == constants.StudyType.BIOASSAY:
 
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
@@ -812,19 +777,19 @@ class DataPivotQuery(DataPivot):
             if self.preferred_units:
                 filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
-        elif self.evidence_type == EPI:
+        elif self.evidence_type == constants.StudyType.EPI:
 
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["study_population__study__published"] = True
 
-        elif self.evidence_type == EPI_META:
+        elif self.evidence_type == constants.StudyType.EPI_META:
 
             filters["protocol__study__assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["protocol__study__published"] = True
 
-        elif self.evidence_type == IN_VITRO:
+        elif self.evidence_type == constants.StudyType.IN_VITRO:
 
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
@@ -834,27 +799,27 @@ class DataPivotQuery(DataPivot):
         return filters
 
     def _get_dataset_queryset(self, filters):
-        if self.evidence_type == BIOASSAY:
+        if self.evidence_type == constants.StudyType.BIOASSAY:
             qs = Endpoint.objects.filter(**filters)
 
-        elif self.evidence_type == EPI:
+        elif self.evidence_type == constants.StudyType.EPI:
             qs = Outcome.objects.filter(**filters)
 
-        elif self.evidence_type == EPI_META:
+        elif self.evidence_type == constants.StudyType.EPI_META:
             qs = MetaResult.objects.filter(**filters)
 
-        elif self.evidence_type == IN_VITRO:
+        elif self.evidence_type == constants.StudyType.IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
 
         return qs.order_by("id")
 
     def _get_dataset_exporter(self, qs):
-        if self.evidence_type == BIOASSAY:
+        if self.evidence_type == constants.StudyType.BIOASSAY:
 
             # select export class
-            if self.export_style == self.EXPORT_GROUP:
+            if self.export_style == constants.ExportStyle.EXPORT_GROUP:
                 ExportClass = EndpointGroupFlatDataPivot
-            elif self.export_style == self.EXPORT_ENDPOINT:
+            elif self.export_style == constants.ExportStyle.EXPORT_ENDPOINT:
                 ExportClass = EndpointFlatDataPivot
 
             exporter = ExportClass(
@@ -864,22 +829,22 @@ class DataPivotQuery(DataPivot):
                 preferred_units=self.preferred_units,
             )
 
-        elif self.evidence_type == EPI:
+        elif self.evidence_type == constants.StudyType.EPI:
             exporter = OutcomeDataPivot(
                 qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
             )
 
-        elif self.evidence_type == EPI_META:
+        elif self.evidence_type == constants.StudyType.EPI_META:
             exporter = MetaResultFlatDataPivot(
                 qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
             )
 
-        elif self.evidence_type == IN_VITRO:
+        elif self.evidence_type == constants.StudyType.IN_VITRO:
 
             # select export class
-            if self.export_style == self.EXPORT_GROUP:
+            if self.export_style == constants.ExportStyle.EXPORT_GROUP:
                 Exporter = ivexports.DataPivotEndpointGroup
-            elif self.export_style == self.EXPORT_ENDPOINT:
+            elif self.export_style == constants.ExportStyle.EXPORT_ENDPOINT:
                 Exporter = ivexports.DataPivotEndpoint
 
             # generate export
@@ -900,13 +865,13 @@ class DataPivotQuery(DataPivot):
 
     @property
     def visual_type(self):
-        if self.evidence_type == BIOASSAY:
+        if self.evidence_type == constants.StudyType.BIOASSAY:
             return "Data pivot (animal bioassay)"
-        elif self.evidence_type == EPI:
+        elif self.evidence_type == constants.StudyType.EPI:
             return "Data pivot (epidemiology)"
-        elif self.evidence_type == EPI_META:
+        elif self.evidence_type == constants.StudyType.EPI_META:
             return "Data pivot (epidemiology meta-analysis/pooled-analysis)"
-        elif self.evidence_type == IN_VITRO:
+        elif self.evidence_type == constants.StudyType.IN_VITRO:
             return "Data pivot (in vitro)"
         else:
             raise ValueError("Unknown type")
@@ -937,13 +902,25 @@ class DataPivotQuery(DataPivot):
             return self.settings
 
         if len(settings["row_overrides"]) > 0:
-            if self.evidence_type == BIOASSAY and self.export_style == self.EXPORT_GROUP:
+            if (
+                self.evidence_type == constants.StudyType.BIOASSAY
+                and self.export_style == constants.ExportStyle.EXPORT_GROUP
+            ):
                 Model = apps.get_model("animal", "EndpointGroup")
-            elif self.evidence_type == BIOASSAY and self.export_style == self.EXPORT_ENDPOINT:
+            elif (
+                self.evidence_type == constants.StudyType.BIOASSAY
+                and self.export_style == constants.ExportStyle.EXPORT_ENDPOINT
+            ):
                 Model = apps.get_model("animal", "Endpoint")
-            elif self.evidence_type == EPI and self.export_style == self.EXPORT_GROUP:
+            elif (
+                self.evidence_type == constants.StudyType.EPI
+                and self.export_style == constants.ExportStyle.EXPORT_GROUP
+            ):
                 Model = apps.get_model("epi", "ResultGroup")
-            elif self.evidence_type == EPI and self.export_style == self.EXPORT_ENDPOINT:
+            elif (
+                self.evidence_type == constants.StudyType.EPI
+                and self.export_style == constants.ExportStyle.EXPORT_ENDPOINT
+            ):
                 Model = apps.get_model("epi", "Outcome")
             else:
                 raise NotImplementedError()
@@ -965,7 +942,7 @@ class Prefilter:
         evidence_type = d.get("evidence_type")
 
         if visual_type == Visual.BIOASSAY_CROSSVIEW:
-            evidence_type = BIOASSAY
+            evidence_type = constants.StudyType.BIOASSAY
 
         if d.get("prefilter_system"):
             filters["system__in"] = d.getlist("systems")
@@ -990,25 +967,25 @@ class Prefilter:
 
         if d.get("prefilter_study"):
             studies = d.getlist("studies", [])
-            if evidence_type == BIOASSAY:
+            if evidence_type == constants.StudyType.BIOASSAY:
                 filters["animal_group__experiment__study__in"] = studies
-            elif evidence_type == EPI:
+            elif evidence_type == constants.StudyType.EPI:
                 filters["study_population__study__in"] = studies
-            elif evidence_type == IN_VITRO:
+            elif evidence_type == constants.StudyType.IN_VITRO:
                 filters["experiment__study__in"] = studies
-            elif evidence_type == EPI_META:
+            elif evidence_type == constants.StudyType.EPI_META:
                 filters["protocol__study__in"] = studies
             else:
                 raise ValueError("Unknown evidence type")
 
         if d.get("published_only"):
-            if evidence_type == BIOASSAY:
+            if evidence_type == constants.StudyType.BIOASSAY:
                 filters["animal_group__experiment__study__published"] = True
-            elif evidence_type == EPI:
+            elif evidence_type == constants.StudyType.EPI:
                 filters["study_population__study__published"] = True
-            elif evidence_type == IN_VITRO:
+            elif evidence_type == constants.StudyType.IN_VITRO:
                 filters["experiment__study__published"] = True
-            elif evidence_type == EPI_META:
+            elif evidence_type == constants.StudyType.EPI_META:
                 filters["protocol__study__published"] = True
             else:
                 raise ValueError("Unknown evidence type")

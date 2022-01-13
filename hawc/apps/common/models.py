@@ -1,7 +1,6 @@
 import json
 import logging
 import math
-from enum import IntEnum
 from typing import Dict, List, Set, Tuple
 
 import django
@@ -88,16 +87,6 @@ class BaseManager(models.Manager):
         """
         valid_ids = self.valid_ids(ids, **kwargs)
         return set(ids) - valid_ids
-
-
-class IntChoiceEnum(IntEnum):
-    @classmethod
-    def choices(cls):
-        return [(key.value, key.name) for key in cls]
-
-    @classmethod
-    def as_dict(cls) -> Dict:
-        return {key.value: key.name for key in cls}
 
 
 @property

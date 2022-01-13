@@ -9,7 +9,7 @@ def rob(driver, root_url):
 
     # /rob/assessment/:id/
     h.go_to(root_url + "/rob/assessment/1/")
-    h.wait_until(h.S("#robMain table").exists)
+    h.wait_until(h.S("#main table").exists)
     assert h.Text("example domain").exists() is True
     assert h.Text("final domain").exists() is True
     assert h.Text("example metric").exists() is True
@@ -22,6 +22,7 @@ def rob(driver, root_url):
 
     # /rob/assessment/1/study-assignments/update/
     h.go_to(root_url + "/rob/assessment/1/study-assignments/update/")
+    h.wait_until(h.Text("Individual reviews required:").exists)
     assert len(driver.find_elements_by_css_selector("tr")) >= 3
     assert len(driver.find_elements_by_css_selector("td")) >= 4
     assert h.Text("Foo et al.", to_left_of="Team Member").exists()

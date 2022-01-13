@@ -167,10 +167,15 @@ class TestLiteratureAssessmentViewset:
         assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert resp == [
-            {"reference_id": 5, "pubmed_id": 11778423, "hero_id": None},
-            {"reference_id": 6, "pubmed_id": 15907334, "hero_id": None},
-            {"reference_id": 7, "pubmed_id": 21284075, "hero_id": None},
-            {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None},
+            {
+                "reference_id": 5,
+                "pubmed_id": 11778423,
+                "doi_id": "10.1093/milmed/166.suppl_2.23",
+                "hero_id": None,
+            },
+            {"reference_id": 6, "pubmed_id": 15907334, "doi_id": None, "hero_id": None},
+            {"reference_id": 7, "pubmed_id": 21284075, "doi_id": None, "hero_id": None},
+            {"reference_id": 8, "pubmed_id": 24004895, "doi_id": None, "hero_id": None},
         ]
 
     def test_reference_search(self, db_keys):
@@ -274,22 +279,26 @@ class TestLiteratureAssessmentViewset:
 @pytest.mark.django_db
 class TestReferenceFilterTagViewset:
     def test_references(self):
-        # ensure we get a valid json return
         url = reverse("lit:api:tags-references", args=(12,))
         c = APIClient()
         assert c.login(email="pm@hawcproject.org", password="pw") is True
+
+        # base report; reference metadata plus columns for each tag
         resp = c.get(url).json()
         assert len(resp) == 2
+        assert len(resp[0]) > 20
         assert resp[0]["Inclusion"] is True
 
-    def test_references_table_builder(self):
-        # ensure we get the expected return
-        url = reverse("lit:api:tags-references-table-builder", args=(12,))
-        c = APIClient()
-        assert c.login(email="pm@hawcproject.org", password="pw") is True
-        resp = c.get(url).json()
+        # table builder format
+        resp = c.get(url, {"exporter": "table-builder"}).json()
         assert len(resp) == 2
+        assert len(resp[0]) == 5
         assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
+
+        # invalid exporter format
+        resp = c.get(url, {"exporter": "not-a-format"})
+        assert resp.status_code == 400
+        assert resp.json() == {"exporter": ['"not-a-format" is not a valid choice.']}
 
 
 @pytest.mark.vcr
@@ -467,7 +476,9 @@ class TestHEROApis:
             updated_reference.title
             == "Asbestos-related diseases of the lungs and pleura: Current clinical issues"
         )
-        assert updated_reference.identifiers.get(database=constants.HERO).unique_id == str(1)
+        assert updated_reference.identifiers.get(
+            database=constants.ReferenceDatabase.HERO
+        ).unique_id == str(1)
 
     def test_bad_replace_requests(self, db_keys):
 
