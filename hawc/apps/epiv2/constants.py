@@ -2,10 +2,10 @@ from django.db import models
 
 
 class Sex(models.TextChoices):
-    U = "U", "Not reported"
-    M = "M", "Male"
-    F = "F", "Female"
-    B = "B", "Male and Female"
+    UNKNOWN = "U", "Not reported"
+    MALE = "M", "Male"
+    FEMALE = "F", "Female"
+    BOTH = "B", "Male and Female"
 
 
 class StudyDesign(models.TextChoices):

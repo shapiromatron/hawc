@@ -9,7 +9,7 @@ from . import constants, managers
 class AgeProfile(models.Model):
     objects = managers.AgeProfileManger()
 
-    name = models.CharField(unique=True, max_length=128,)
+    name = models.CharField(unique=True, max_length=128)
 
     def __str__(self):
         return self.name
@@ -18,7 +18,7 @@ class AgeProfile(models.Model):
 class MeasurementType(models.Model):
     objects = managers.MeasurementTypeManager()
 
-    description = models.CharField(max_length=128,)
+    description = models.CharField(max_length=128)
 
     def __str__(self):
         return self.description
@@ -37,16 +37,14 @@ class StudyPopulationV2(models.Model):
     age_profile = models.ManyToManyField(
         AgeProfile,
         blank=True,
-        help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women '
-        + "are only included as part of a general population sample",
+        help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
         verbose_name="Population age category",
     )
     age_description = models.CharField(
-        max_length=64, blank=True, null=True, verbose_name="Population age details",
+        max_length=64, blank=True, verbose_name="Population age details",
     )
-    sex = models.CharField(default="U", max_length=1, choices=constants.Sex.choices,)
-    race = models.CharField(
-        max_length=128, blank=True, null=True, verbose_name="Population race/ethnicity"
+    sex = models.CharField(
+        default=constants.Sex.UNKNOWN, max_length=1, choices=constants.Sex.choices
     )
     summary = models.CharField(
         max_length=128,
@@ -70,8 +68,7 @@ class StudyPopulationV2(models.Model):
     )
     participant_n = models.PositiveIntegerField(
         verbose_name="Overall study population N",
-        help_text="Enter the total number of participants enrolled in the study (after exclusions).\n"
-        + "Note: Sample size for specific result can be extracted in qualitative data extraction",
+        help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -89,7 +86,7 @@ class StudyPopulationV2(models.Model):
         verbose_name_plural = "Study Populations"
 
     def __str__(self):
-        return str(self.study) + "/" + self.summary
+        return f"{self.study}/{self.summary}"
 
 
 class Chemical(models.Model):
@@ -148,7 +145,7 @@ class Exposure(models.Model):
     measurement_type = models.ManyToManyField(
         MeasurementType, verbose_name="Exposure measurement type", blank=True,
     )
-    biomonitoring_matrix = models.CharField(max_length=128,)
+    biomonitoring_matrix = models.CharField(max_length=128)
     measurement_timing = models.CharField(
         max_length=128,
         blank=True,
@@ -191,19 +188,18 @@ class ExposureLevel(models.Model):
     sub_population = models.CharField(
         max_length=128, verbose_name="Sub-population (if relevant)", blank=True, null=True,
     )
-    central_tendency = models.CharField(max_length=128,)
+    central_tendency = models.CharField(max_length=128)
     central_tendency_type = models.CharField(
         max_length=128,
         choices=constants.CentralTendencyType.choices,
         default=constants.CentralTendencyType.MEDIAN,
         verbose_name="Central tendency type (median preferred)",
         blank=True,
-        null=True,
     )
-    minimum = models.FloatField(blank=True, null=True,)
-    percentile25 = models.FloatField(blank=True, null=True,)
-    percentile75 = models.FloatField(blank=True, null=True,)
-    maximum = models.FloatField(blank=True, null=True,)
+    minimum = models.FloatField(blank=True, null=True)
+    percentile25 = models.FloatField(blank=True, null=True)
+    percentile75 = models.FloatField(blank=True, null=True)
+    maximum = models.FloatField(blank=True, null=True)
     neg_exposure = models.FloatField(
         verbose_name="Percent with negligible exposure",
         help_text="e.g., %% below the LOD",
@@ -239,7 +235,7 @@ class Outcome(models.Model):
     study_population = models.ForeignKey(
         StudyPopulationV2, on_delete=models.CASCADE, related_name="outcomes"
     )
-    health_outcome = models.CharField(max_length=128,)
+    health_outcome = models.CharField(max_length=128)
     health_outcome_system = models.CharField(
         max_length=128,
         choices=constants.HealthOutcomeSystem.choices,
@@ -291,7 +287,7 @@ class DataExtraction(models.Model):
         StudyPopulationV2, on_delete=models.CASCADE, related_name="data_extractions"
     )
     sub_population = models.CharField(max_length=64,)
-    outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE, blank=True, null=True,)
+    outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE)
     exposure_level = models.ForeignKey(
         ExposureLevel, on_delete=models.SET_NULL, blank=True, null=True
     )
@@ -307,16 +303,16 @@ class DataExtraction(models.Model):
         verbose_name="Effect estimate description",
         help_text="Description of the effect estimate with units, including comparison group if applicable",
     )
-    effect_estimate = models.FloatField(blank=True, null=True,)
+    effect_estimate = models.FloatField(blank=True, null=True)
     exposure_rank = models.PositiveSmallIntegerField(
         blank=True,
         null=True,
         help_text="Rank this comparison group by exposure (lowest exposure group = 1)",
     )
-    ci_lcl = models.FloatField(verbose_name="Confidence Interval LCL", blank=True, null=True,)
-    ci_ucl = models.FloatField(verbose_name="Confidence Interval UCL", blank=True, null=True,)
+    ci_lcl = models.FloatField(verbose_name="Confidence Interval LCL", blank=True, null=True)
+    ci_ucl = models.FloatField(verbose_name="Confidence Interval UCL", blank=True, null=True)
     sd_or_se = models.FloatField(
-        verbose_name="Standard Deviation or Standard Error", blank=True, null=True,
+        verbose_name="Standard Deviation or Standard Error", blank=True, null=True
     )
     pvalue = models.CharField(verbose_name="p-value", max_length=128, blank=True, null=True,)
     significant = models.BooleanField(
@@ -351,7 +347,7 @@ class DataExtraction(models.Model):
 
 reversion.register(AgeProfile)
 reversion.register(MeasurementType)
-reversion.register(StudyPopulationV2, follow=("countries", "criteria", "age_profile",))
+reversion.register(StudyPopulationV2, follow=("countries", "criteria", "age_profile"))
 reversion.register(Chemical)
 reversion.register(Criteria)
 reversion.register(Exposure, follow="measurement_type")
