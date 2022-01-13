@@ -184,23 +184,21 @@ class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
     form_class = forms.SummaryTableCopySelectorForm
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+        return get_object_or_404(Assessment, pk=self.kwargs["get"])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
-        kwargs["assessment_id"] = self.assessment.id
+        kwargs.update(
+            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
+            assessment_id=self.assessment.id,
+            queryset=models.SummaryTable.objects.clonable_queryset(self.request.user).filter(
+                assessment=self.assessment
+            ),
+        )
         return kwargs
 
     def form_valid(self, form):
-        st = form.cleaned_data["st"]
-        url = reverse_lazy(
-            "summary:tables_create", kwargs={"pk": self.assessment.id, "table_type": st.table_type},
-        )
-        url += f"?initial={st.pk}"
-
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(form.get_create_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

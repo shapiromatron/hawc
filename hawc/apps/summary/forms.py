@@ -507,16 +507,16 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
 
 class SummaryTableCopySelectorForm(forms.Form):
 
-    st = SummaryTableModelChoiceField(label="Summary table", queryset=models.Visual.objects.all())
+    table = SummaryTableModelChoiceField(
+        label="Summary table", queryset=models.Visual.objects.all()
+    )
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user")
         self.cancel_url = kwargs.pop("cancel_url")
         self.assessment_id = kwargs.pop("assessment_id")
+        self.queryset = kwargs.pop("queryset")
         super().__init__(*args, **kwargs)
-        self.fields["st"].queryset = models.SummaryTable.objects.clonable_queryset(user).filter(
-            assessment__pk=self.assessment_id
-        )
+        self.fields["table"].queryset = self.queryset
 
     @property
     def helper(self):
@@ -535,6 +535,13 @@ class SummaryTableCopySelectorForm(forms.Form):
             """,
             submit_text="Copy table",
             cancel_url=self.cancel_url,
+        )
+
+    def get_create_url(self):
+        table = self.cleaned_data["table"]
+        return (
+            reverse("summary:tables_create", args=(self.assessment_id, table.table_type))
+            + f"?initial={table.pk}"
         )
 
 
