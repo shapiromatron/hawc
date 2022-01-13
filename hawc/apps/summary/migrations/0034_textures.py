@@ -26,7 +26,7 @@ def add_patterns(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("summary", "0027_tagtree_hide_empty_tag_nodes"),
+        ("summary", "0033_filter_query"),
     ]
 
     operations = [
