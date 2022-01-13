@@ -3,6 +3,7 @@ from django.db import models
 
 from ..epi.models import Country
 from ..study.models import Study
+from ..assessment.models import DSSTox
 from . import constants, managers
 
 
@@ -92,6 +93,13 @@ class Chemical(models.Model):
         StudyPopulationV2, on_delete=models.CASCADE, related_name="chemicals"
     )
     name = models.CharField(max_length=64)
+    dsstox = models.ForeignKey(
+        DSSTox,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        verbose_name="DSSTox substance identifier",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
