@@ -179,12 +179,12 @@ class SummaryTableCreate(BaseCreate):
 
 
 class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
-    template_name = "summary/summary_copy_selector.html"
+    template_name = "summary/copy_selector.html"
     model = Assessment
     form_class = forms.SummaryTableCopySelectorForm
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs["get"])
+        return get_object_or_404(Assessment, pk=self.kwargs["pk"])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -384,7 +384,6 @@ class VisualizationCreate(BaseCreate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
-
         return context
 
     def get_initial_visual(self, context) -> Dict:
@@ -430,7 +429,7 @@ class VisualizationCopySelector(BaseDetail):
 
 
 class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
-    template_name = "summary/summary_copy_selector.html"
+    template_name = "summary/copy_selector.html"
     model = Assessment
     form_class = forms.VisualSelectorForm
 
@@ -582,7 +581,7 @@ class DataPivotFileNew(DataPivotNew):
 class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     # Select an existing assessed outcome as a template for a new one
     model = Assessment
-    template_name = "summary/summary_copy_selector.html"
+    template_name = "summary/copy_selector.html"
     form_class = forms.DataPivotSelectorForm
 
     def get_assessment(self, request, *args, **kwargs):
