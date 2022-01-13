@@ -1,9 +1,9 @@
 import reversion
 from django.db import models
 
+from ..assessment.models import DSSTox
 from ..epi.models import Country
 from ..study.models import Study
-from ..assessment.models import DSSTox
 from . import constants, managers
 
 
