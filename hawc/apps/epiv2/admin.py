@@ -38,7 +38,7 @@ class OutcomeInline(admin.TabularInline):
     extra = 0
 
 
-class StudyPopulationAdmin(admin.ModelAdmin):
+class DesignAdmin(admin.ModelAdmin):
     search_fields = ("summary", "study__short_citation")
     list_display = (
         "id",
@@ -59,7 +59,7 @@ class StudyPopulationAdmin(admin.ModelAdmin):
     ]
 
 
-admin.site.register(models.StudyPopulationV2, StudyPopulationAdmin)
+admin.site.register(models.Design, DesignAdmin)
 admin.site.register(models.AgeProfile)
 admin.site.register(models.MeasurementType)
 admin.site.register(models.AdjustmentFactor)

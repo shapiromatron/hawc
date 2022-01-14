@@ -25,10 +25,10 @@ class MeasurementType(models.Model):
         return self.description
 
 
-class StudyPopulationV2(models.Model):
-    objects = managers.StudyPopulationManager()
+class Design(models.Model):
+    objects = managers.DesignManager()
 
-    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="study_populations_v2")
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="designs")
     study_design = models.CharField(
         max_length=128, choices=constants.StudyDesign.choices, blank=True
     )
@@ -90,9 +90,7 @@ class StudyPopulationV2(models.Model):
 class Chemical(models.Model):
     objects = managers.ChemicalManager()
 
-    study_population = models.ForeignKey(
-        StudyPopulationV2, on_delete=models.CASCADE, related_name="chemicals"
-    )
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="chemicals")
     name = models.CharField(max_length=64)
     dsstox = models.ForeignKey(
         DSSTox,
@@ -105,10 +103,10 @@ class Chemical(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        return self.design.get_assessment()
 
     def get_study(self):
-        return self.study_population.get_study()
+        return self.design.get_study()
 
     def __str__(self):
         return self.name
@@ -117,9 +115,7 @@ class Chemical(models.Model):
 class Criteria(models.Model):
     objects = managers.CriteriaManager()
 
-    study_population = models.ForeignKey(
-        StudyPopulationV2, on_delete=models.CASCADE, related_name="criteria"
-    )
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="criteria")
     name = models.CharField(max_length=64)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -128,10 +124,10 @@ class Criteria(models.Model):
         verbose_name = "Inclusion/exclusion criteria"
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        return self.design.get_assessment()
 
     def get_study(self):
-        return self.study_population.get_study()
+        return self.design.get_study()
 
     def __str__(self):
         return self.name
@@ -144,9 +140,7 @@ class Exposure(models.Model):
         max_length=64,
         help_text="A unique name for this exposure that will help you identify it later.",
     )
-    study_population = models.ForeignKey(
-        StudyPopulationV2, on_delete=models.CASCADE, related_name="exposures"
-    )
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
     measurement_type = models.ManyToManyField(
         MeasurementType, verbose_name="Exposure measurement type", blank=True,
     )
@@ -166,10 +160,10 @@ class Exposure(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        return self.design.get_assessment()
 
     def get_study(self):
-        return self.study_population.get_study()
+        return self.design.get_study()
 
     def __str__(self):
         return self.name
@@ -182,9 +176,7 @@ class ExposureLevel(models.Model):
         max_length=64,
         help_text="A unique name for this exposure level that will help you identify it later.",
     )
-    study_population = models.ForeignKey(
-        StudyPopulationV2, on_delete=models.CASCADE, related_name="exposure_levels"
-    )
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposure_levels")
     chemical = models.ForeignKey(Chemical, on_delete=models.CASCADE)
     exposure_measurement = models.ForeignKey(
         Exposure, on_delete=models.CASCADE, blank=True, null=True,
@@ -216,10 +208,10 @@ class ExposureLevel(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        return self.design.get_assessment()
 
     def get_study(self):
-        return self.study_population.get_study()
+        return self.design.get_study()
 
     def __str__(self):
         return self.name
@@ -232,9 +224,7 @@ class Outcome(models.Model):
         max_length=64,
         help_text="A unique name for this health outcome that will help you identify it later.",
     )
-    study_population = models.ForeignKey(
-        StudyPopulationV2, on_delete=models.CASCADE, related_name="outcomes"
-    )
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="outcomes")
     health_outcome = models.CharField(max_length=128)
     health_outcome_system = models.CharField(
         max_length=128,
@@ -246,10 +236,10 @@ class Outcome(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        return self.design.get_assessment()
 
     def get_study(self):
-        return self.study_population.get_study()
+        return self.design.get_study()
 
     def __str__(self):
         return self.name
@@ -262,18 +252,16 @@ class AdjustmentFactor(models.Model):
         max_length=64,
         help_text="A unique name for this adjustment factor that will help you identify it later.",
     )
-    study_population = models.ForeignKey(
-        StudyPopulationV2, on_delete=models.CASCADE, related_name="adjustment_factors"
-    )
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="adjustment_factors")
     description = models.CharField(max_length=128, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        return self.design.get_assessment()
 
     def get_study(self):
-        return self.study_population.get_study()
+        return self.design.get_study()
 
     def __str__(self):
         return self.name
@@ -282,9 +270,7 @@ class AdjustmentFactor(models.Model):
 class DataExtraction(models.Model):
     objects = managers.DataExtractionManager()
 
-    study_population = models.ForeignKey(
-        StudyPopulationV2, on_delete=models.CASCADE, related_name="data_extractions"
-    )
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="data_extractions")
     sub_population = models.CharField(max_length=64)
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE)
     exposure_level = models.ForeignKey(ExposureLevel, on_delete=models.CASCADE)
@@ -328,15 +314,15 @@ class DataExtraction(models.Model):
         verbose_name = "Quantitative data extraction"
 
     def get_assessment(self):
-        return self.study_population.get_assessment()
+        return self.design.get_assessment()
 
     def get_study(self):
-        return self.study_population.get_study()
+        return self.design.get_study()
 
 
 reversion.register(AgeProfile)
 reversion.register(MeasurementType)
-reversion.register(StudyPopulationV2, follow=("countries", "criteria", "age_profile"))
+reversion.register(Design, follow=("countries", "criteria", "age_profile"))
 reversion.register(Chemical)
 reversion.register(Criteria)
 reversion.register(Exposure, follow="measurement_type")

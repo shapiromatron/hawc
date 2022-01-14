@@ -13,7 +13,7 @@ class MeasurementTypeManager(BaseManager):
     assessment_relation = "assessment"
 
 
-class StudyPopulationManager(BaseManager):
+class DesignManager(BaseManager):
     assessment_relation = "study__assessment"
 
 
