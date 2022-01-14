@@ -274,6 +274,16 @@ class DataPivot {
         return opts.concat(this.data_headers.map(v => `<option value="${v}">${v}</option>`));
     }
 
+    _get_header_options_react(show_blank = false) {
+        const options = this.data_headers.map(d => {
+            return {id: d, label: d};
+        });
+        if (show_blank) {
+            options.unshift({id: NULL_CASE, label: NULL_CASE});
+        }
+        return options;
+    }
+
     _get_description_options() {
         return this.settings.description_settings.map(
             (d, i) => `<option value="${i}">${d.header_name}</option>`
