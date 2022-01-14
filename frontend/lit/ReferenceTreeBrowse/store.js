@@ -34,7 +34,7 @@ class Store {
             return;
         }
 
-        let url = `/lit/api/assessment/${this.config.assessment_id}/references/all/?tag_id=${this.selectedTag.data.pk}`;
+        let url = `/lit/api/assessment/${this.config.assessment_id}/references/?all&tag_id=${this.selectedTag.data.pk}`;
         if (this.config.search_id) {
             url += `&search_id=${this.config.search_id}`;
         }
@@ -47,7 +47,7 @@ class Store {
     @action.bound handleUntaggedReferenceClick() {
         const {assessment_id, search_id} = this.config;
 
-        let url = `/lit/api/assessment/${assessment_id}/references/all/?tag_id=untagged`;
+        let url = `/lit/api/assessment/${assessment_id}/references/?all&tag_id=untagged`;
         if (search_id) {
             url += `&search_id=${search_id}`;
         }

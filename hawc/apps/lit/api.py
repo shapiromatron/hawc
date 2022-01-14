@@ -90,21 +90,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Returns:
             json: Paginated json reference data
         """
-        response = LiteratureAssessmentViewset.references_all(self, request, pk)
-        return self.get_paginated_response(response.data)
-
-    @action(detail=True, url_path="references/all")
-    def references_all(self, request, pk):
-        """Get references for an assessment without pagination
-
-        Args:
-            request:
-                - search_id: Search object id; if provided, gets references within a search
-                - tag_id: Tag object id; if provided, gets references with tag
-
-        Returns:
-            json: Serialized json reference data
-        """
         assessment = self.get_object()
 
         search_id = request.query_params.get("search_id")
@@ -129,7 +114,10 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             .order_by("id")
         )
         serializer = serializers.ReferenceSerializer(page, many=True)
-        return Response(serializer.data)
+        if request.query_params.get("all", -1) != -1:
+            return Response(serializer.data)
+        else:
+            return self.get_paginated_response(serializer.data)
 
     @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
     def reference_ids(self, request, pk):
