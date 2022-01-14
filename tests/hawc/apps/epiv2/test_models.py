@@ -1,6 +1,6 @@
 import pytest
-
 from django.apps import apps
+
 from hawc.apps.epiv2 import models
 
 
