@@ -39,6 +39,7 @@ class OutcomeInline(admin.TabularInline):
 
 
 class StudyPopulationAdmin(admin.ModelAdmin):
+    search_fields = ("summary", "study__short_citation")
     list_display = (
         "id",
         "summary",
