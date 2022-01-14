@@ -118,11 +118,13 @@ INSTALLED_APPS = (
     "hawc.apps.summary",
     "hawc.apps.mgmt",
     "hawc.apps.materialized",
-    "hawc.apps.epiv2",
 )
 
 if os.getenv("HAWC_INCLUDE_ECO", "False") == "True":
     INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
+
+if os.getenv("HAWC_INCLUDE_EPIV2", "False") == "True":
+    INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.epiv2",)
 
 
 # DB settings
