@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     "hawc.apps.summary",
     "hawc.apps.mgmt",
     "hawc.apps.materialized",
+    "hawc.apps.epiv2",
 )
 
 if os.getenv("HAWC_INCLUDE_ECO", "False") == "True":
