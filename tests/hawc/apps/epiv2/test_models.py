@@ -3,7 +3,6 @@ import pytest
 from hawc.apps.epiv2 import models
 
 
-@pytest.mark.skip
 class TestEpiV2Models:
     @pytest.mark.django_db
     def test_get_assessment(db_keys):
