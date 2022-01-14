@@ -1,13 +1,8 @@
 import pytest
-from django.apps import apps
 
 from hawc.apps.epiv2 import models
 
 
-@pytest.mark.skipif(
-    apps.is_installed("hawc.apps.epiv2") is False,
-    reason="epi v2 is not installed in your environment",
-)
 class TestEpiV2Models:
     @pytest.mark.django_db
     def test_get_assessment(db_keys):
