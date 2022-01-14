@@ -48,6 +48,10 @@ class DesignAdmin(admin.ModelAdmin):
         "created",
         "last_updated",
     )
+    list_filters = (
+        "study_design",
+        ("study__assessment", admin.RelatedOnlyFieldListFilter),
+    )
     inlines = [
         CriteriaInline,
         ChemicalInline,
