@@ -393,7 +393,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: studypopulation
+    model: studypopulationv2
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
@@ -461,7 +461,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$9unkR0MDhhShphmuzu9eB8$da856775a579fcc62ddbfcf7583dd656
-    last_login: 2022-01-10 21:04:41.509932+00:00
+    last_login: 2022-01-11 21:49:50.013021+00:00
     is_superuser: true
     email: admin@hawcproject.org
     first_name: a
@@ -1602,8 +1602,8 @@
     searches:
     - 5
     identifiers:
-    - 8
     - 4
+    - 8
 - model: lit.reference
   pk: 6
   fields:
@@ -4466,6 +4466,16 @@
   fields:
     code: JP
     name: Japan
+- model: epi.country
+  pk: 2
+  fields:
+    code: TW
+    name: Taiwan
+- model: epi.country
+  pk: 3
+  fields:
+    code: DK
+    name: Denmark
 - model: epi.adjustmentfactor
   pk: 1
   fields:
@@ -4755,21 +4765,11 @@
   pk: 3
   fields:
     name: Pregnant women
-- model: epiv2.country
-  pk: 1
-  fields:
-    code: TW
-    name: Taiwan
-- model: epiv2.country
-  pk: 2
-  fields:
-    code: DK
-    name: Denmark
 - model: epiv2.measurementtype
   pk: 1
   fields:
     description: biomonitoring
-- model: epiv2.studypopulation
+- model: epiv2.studypopulationv2
   pk: 1
   fields:
     study: 1
@@ -4784,12 +4784,12 @@
     years: 2009-2010
     participant_n: 456
     created: 2022-01-10 21:12:17.714337+00:00
-    last_updated: 2022-01-10 21:22:42.498598+00:00
+    last_updated: 2022-01-13 20:38:10.024296+00:00
     age_profile:
     - 1
     countries:
-    - 1
-- model: epiv2.studypopulation
+    - 2
+- model: epiv2.studypopulationv2
   pk: 2
   fields:
     study: 1
@@ -4804,16 +4804,17 @@
     years: Enrollment 1997-2000
     participant_n: 587
     created: 2022-01-10 21:26:09.641642+00:00
-    last_updated: 2022-01-10 21:49:25.163116+00:00
+    last_updated: 2022-01-13 20:37:57.529050+00:00
     age_profile:
     - 1
     countries:
-    - 2
+    - 3
 - model: epiv2.chemical
   pk: 1
   fields:
     study_population: 1
     name: PFDA
+    dsstox: null
     created: 2022-01-10 21:12:17.740624+00:00
     last_updated: 2022-01-10 21:12:17.740635+00:00
 - model: epiv2.chemical
@@ -4821,6 +4822,7 @@
   fields:
     study_population: 1
     name: PFNA
+    dsstox: null
     created: 2022-01-10 21:12:17.744413+00:00
     last_updated: 2022-01-10 21:12:17.744423+00:00
 - model: epiv2.chemical
@@ -4828,6 +4830,7 @@
   fields:
     study_population: 2
     name: PFDA
+    dsstox: null
     created: 2022-01-10 21:26:09.667425+00:00
     last_updated: 2022-01-10 21:26:09.667434+00:00
 - model: epiv2.chemical
@@ -4835,6 +4838,7 @@
   fields:
     study_population: 2
     name: PFNA
+    dsstox: null
     created: 2022-01-10 21:26:09.671290+00:00
     last_updated: 2022-01-10 21:26:09.671299+00:00
 - model: epiv2.criteria
@@ -4861,7 +4865,7 @@
     exposure_route: UK
     analytic_method: high-performance liquid chromatography with tandem with mass
       spectrometry
-    comments: null
+    comments: ''
     created: 2022-01-10 21:12:17.748634+00:00
     last_updated: 2022-01-10 21:12:17.748644+00:00
     measurement_type:
@@ -4949,7 +4953,7 @@
     percentile75: 0.38
     maximum: 0.5
     neg_exposure: 80.0
-    comments: null
+    comments: ''
     data_location: Table 2
     created: 2022-01-10 21:34:38.043650+00:00
     last_updated: 2022-01-10 21:39:43.128782+00:00
@@ -4968,7 +4972,7 @@
     percentile75: 0.38
     maximum: 0.6
     neg_exposure: 81.0
-    comments: null
+    comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.133506+00:00
     last_updated: 2022-01-10 21:39:43.133517+00:00
@@ -4987,7 +4991,7 @@
     percentile75: 0.79
     maximum: 0.7
     neg_exposure: 95.0
-    comments: null
+    comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.137612+00:00
     last_updated: 2022-01-10 21:39:43.137622+00:00
@@ -5006,7 +5010,7 @@
     percentile75: 1.24
     maximum: 0.8
     neg_exposure: 94.0
-    comments: null
+    comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.141816+00:00
     last_updated: 2022-01-10 21:39:43.141827+00:00
@@ -5094,8 +5098,8 @@
     ci_lcl: null
     ci_ucl: null
     sd_or_se: null
-    pvalue: null
-    significant: null
+    pvalue: ''
+    significant: 2
     adjustment_factor: null
     confidence: medium
     data_location: Table 3
@@ -5119,15 +5123,15 @@
     ci_lcl: 0.58
     ci_ucl: 1.8
     sd_or_se: null
-    pvalue: null
-    significant: false
+    pvalue: ''
+    significant: 0
     adjustment_factor: 1
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
-    comments: null
+    comments: ''
     created: 2022-01-10 21:18:05.446161+00:00
-    last_updated: 2022-01-10 21:22:42.515351+00:00
+    last_updated: 2022-01-13 17:31:45.166735+00:00
 - model: epiv2.dataextraction
   pk: 3
   fields:
@@ -5144,15 +5148,15 @@
     ci_lcl: 0.72
     ci_ucl: 2.33
     sd_or_se: null
-    pvalue: null
-    significant: false
+    pvalue: ''
+    significant: 0
     adjustment_factor: 1
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
-    comments: null
+    comments: ''
     created: 2022-01-10 21:18:05.449764+00:00
-    last_updated: 2022-01-10 21:22:42.519795+00:00
+    last_updated: 2022-01-13 17:31:45.330298+00:00
 - model: epiv2.dataextraction
   pk: 4
   fields:
@@ -5169,15 +5173,15 @@
     ci_lcl: 1.75
     ci_ucl: 5.94
     sd_or_se: null
-    pvalue: null
-    significant: true
+    pvalue: ''
+    significant: 1
     adjustment_factor: 1
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
-    comments: null
+    comments: ''
     created: 2022-01-10 21:18:05.453394+00:00
-    last_updated: 2022-01-10 21:22:42.523789+00:00
+    last_updated: 2022-01-13 17:31:45.373797+00:00
 - model: epiv2.dataextraction
   pk: 5
   fields:
@@ -5194,8 +5198,8 @@
     ci_lcl: null
     ci_ucl: null
     sd_or_se: null
-    pvalue: null
-    significant: null
+    pvalue: ''
+    significant: 2
     adjustment_factor: null
     confidence: medium
     data_location: Table 3
@@ -5219,15 +5223,15 @@
     ci_lcl: 0.68
     ci_ucl: 2.09
     sd_or_se: null
-    pvalue: null
-    significant: false
+    pvalue: ''
+    significant: 0
     adjustment_factor: 1
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
-    comments: null
+    comments: ''
     created: 2022-01-10 21:18:05.460901+00:00
-    last_updated: 2022-01-10 21:22:42.531803+00:00
+    last_updated: 2022-01-13 17:31:45.412605+00:00
 - model: epiv2.dataextraction
   pk: 7
   fields:
@@ -5244,15 +5248,15 @@
     ci_lcl: 0.86
     ci_ucl: 2.76
     sd_or_se: null
-    pvalue: null
-    significant: false
+    pvalue: ''
+    significant: 0
     adjustment_factor: 1
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
-    comments: null
+    comments: ''
     created: 2022-01-10 21:18:05.464462+00:00
-    last_updated: 2022-01-10 21:22:42.536404+00:00
+    last_updated: 2022-01-13 17:31:45.446933+00:00
 - model: epiv2.dataextraction
   pk: 8
   fields:
@@ -5269,15 +5273,15 @@
     ci_lcl: 1.41
     ci_ucl: 4.65
     sd_or_se: null
-    pvalue: null
-    significant: true
+    pvalue: ''
+    significant: 1
     adjustment_factor: 1
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
-    comments: null
+    comments: ''
     created: 2022-01-10 21:18:05.468642+00:00
-    last_updated: 2022-01-10 21:22:42.540743+00:00
+    last_updated: 2022-01-13 17:31:45.496401+00:00
 - model: epiv2.dataextraction
   pk: 9
   fields:
@@ -5290,19 +5294,19 @@
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -2.5
-    exposure_rank: null
+    exposure_rank: 0
     ci_lcl: -18.5
     ci_ucl: 16.8
     sd_or_se: null
-    pvalue: null
-    significant: false
+    pvalue: ''
+    significant: 0
     adjustment_factor: 2
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
     comments: test
     created: 2022-01-10 21:44:55.946716+00:00
-    last_updated: 2022-01-10 21:49:25.176133+00:00
+    last_updated: 2022-01-13 17:32:54.027252+00:00
 - model: epiv2.dataextraction
   pk: 10
   fields:
@@ -5315,19 +5319,19 @@
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -12.5
-    exposure_rank: null
+    exposure_rank: 0
     ci_lcl: -24.6
     ci_ucl: 1.5
     sd_or_se: null
-    pvalue: null
-    significant: false
+    pvalue: ''
+    significant: 0
     adjustment_factor: 5
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
     comments: preferred outcome
     created: 2022-01-10 21:44:55.951328+00:00
-    last_updated: 2022-01-10 21:49:25.180575+00:00
+    last_updated: 2022-01-13 17:32:54.031518+00:00
 - model: epiv2.dataextraction
   pk: 11
   fields:
@@ -5340,19 +5344,19 @@
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -21.7
-    exposure_rank: null
+    exposure_rank: 0
     ci_lcl: -35.7
     ci_ucl: -4.8
     sd_or_se: null
-    pvalue: null
-    significant: true
+    pvalue: ''
+    significant: 1
     adjustment_factor: 2
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
     comments: a different endpoint the same PFAS
     created: 2022-01-10 21:44:55.955074+00:00
-    last_updated: 2022-01-10 21:49:25.185131+00:00
+    last_updated: 2022-01-13 17:32:54.035581+00:00
 - model: epiv2.dataextraction
   pk: 12
   fields:
@@ -5365,19 +5369,19 @@
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -8.7
-    exposure_rank: null
+    exposure_rank: 0
     ci_lcl: -20.6
     ci_ucl: 5.0
     sd_or_se: null
-    pvalue: null
-    significant: false
+    pvalue: ''
+    significant: 0
     adjustment_factor: 3
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
     comments: testing another PFAS
     created: 2022-01-10 21:44:55.958967+00:00
-    last_updated: 2022-01-10 21:49:25.189357+00:00
+    last_updated: 2022-01-13 17:32:54.039436+00:00
 - model: invitro.ivchemical
   pk: 1
   fields:
