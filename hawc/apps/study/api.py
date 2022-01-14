@@ -71,10 +71,7 @@ class Study(
     def update_editability(self, request, pk: int):
         study = self.get_object()
         if self.assessment.user_can_edit_assessment(self.request.user):
-            if not study.editable:
-                study.editable = False
-            else:
-                study.editable = True
+            study.editable = not study.editable
             study.save()
             return HttpResponseRedirect(study.get_absolute_url())
         else:
