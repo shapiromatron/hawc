@@ -71,7 +71,7 @@ class Study(
     def update_editability(self, request, pk: int):
         study = self.get_object()
         if self.assessment.user_can_edit_assessment(self.request.user):
-            if study.editable:
+            if not study.editable:
                 study.editable = False
             else:
                 study.editable = True

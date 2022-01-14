@@ -88,6 +88,21 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
                 - tag_id: Tag object id; if provided, gets references with tag
 
         Returns:
+            json: Paginated json reference data
+        """
+        response = LiteratureAssessmentViewset.references_all(self, request, pk)
+        return self.get_paginated_response(response.data)
+
+    @action(detail=True, url_path="references/all")
+    def references_all(self, request, pk):
+        """Get references for an assessment without pagination
+
+        Args:
+            request:
+                - search_id: Search object id; if provided, gets references within a search
+                - tag_id: Tag object id; if provided, gets references with tag
+
+        Returns:
             json: Serialized json reference data
         """
         assessment = self.get_object()
@@ -95,7 +110,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         search_id = request.query_params.get("search_id")
         tag_id = request.query_params.get("tag_id")
         tag = None
-        if tag_id != "untagged":
+        if tag_id and tag_id != "untagged":
             tag = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, [int(tag_id)])[0]
 
         if search_id:
@@ -103,8 +118,10 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             qs = search.get_references_with_tag(tag=tag, descendants=True)
         elif tag:
             qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
-        else:
+        elif tag_id == "untagged":
             qs = models.Reference.objects.get_untagged_references(assessment)
+        else:
+            qs = models.Reference.objects.filter(assessment=assessment)
 
         page = self.paginate_queryset(
             qs.select_related("study")
@@ -112,9 +129,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             .order_by("id")
         )
         serializer = serializers.ReferenceSerializer(page, many=True)
-
         return Response(serializer.data)
-        return self.get_paginated_response(serializer.data)
 
     @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
     def reference_ids(self, request, pk):
@@ -397,12 +412,10 @@ class ReferenceViewset(
 
     @action(detail=True, methods=("post",))
     def tag_references(self, request, pk):
-        if not self.request.is_ajax():
-            raise exceptions.NotFound()
         response = {"status": "fail"}
         ref = self.get_object()
         assessment = ref.assessment
-        if assessment.user_can_edit_assessment(self.request.user):
+        if assessment.user_can_edit_object(self.request.user):
             tag_pks = self.request.POST.getlist("tags[]", [])
             ref.tags.set(tag_pks)
             ref.last_updated = timezone.now()

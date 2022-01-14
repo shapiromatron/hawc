@@ -11,7 +11,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import filters, mixins, permissions, status, viewsets
+from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework import filters, generics, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
@@ -608,18 +609,15 @@ class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
         return self.model.objects.filter(assessment=None)
 
 
-class StrainViewset(viewsets.ViewSet):
+class StrainList(generics.ListAPIView):
     model = models.Strain
-
-    @action(detail=False)
-    def get_strains(self, request):
-        strains = []
-        try:
-            sp = models.Species.objects.get(pk=request.GET.get("species"))
-            strains = list(self.model.objects.filter(species=sp).values("id", "name"))
-        except Exception:
-            pass
-        return Response(strains)
+    queryset = models.Strain.objects.all()
+    serializer_class = serializers.StrainSerializer
+    pagination_class = None
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = [
+        "species",
+    ]
 
 
 class HealthcheckViewset(viewsets.ViewSet):

@@ -62,7 +62,7 @@ $(document).ready(function() {
                         }
                     }
                 $.get(
-                    '{% url "assessment:api:strains-get-strains" %}',
+                    '{% url "assessment:strain_list" %}',
                     {species: $('#id_species').val()},
                     update_strain_opts
                 );
