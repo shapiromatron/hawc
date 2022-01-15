@@ -1,66 +1,18 @@
 import _ from "lodash";
-import {action, observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
 
-import {
-    ActionsTh,
-    MoveRowTd,
-    moveArrayElementUp,
-    moveArrayElementDown,
-    deleteArrayElement,
-} from "shared/components/EditableRowData";
+import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import RadioInput from "shared/components/RadioInput";
 import SelectInput from "shared/components/SelectInput";
-import {NULL_CASE} from "./shared";
-
-class SortStore {
-    @observable settings = null;
-    constructor(dp) {
-        this.dp = dp;
-        this.settings = dp.settings.sorts;
-    }
-    sync() {
-        // sync state in store to global object - TODO - remove?
-        this.dp.settings.sorts = toJS(this.settings);
-    }
-    @action.bound createNew() {
-        this.settings.push({
-            field_name: NULL_CASE,
-            ascending: true,
-        });
-        this.sync();
-    }
-    @action.bound moveUp(idx) {
-        moveArrayElementUp(this.settings, idx);
-        this.sync();
-    }
-    @action.bound moveDown(idx) {
-        moveArrayElementDown(this.settings, idx);
-        this.sync();
-    }
-    @action.bound delete(idx) {
-        deleteArrayElement(this.settings, idx);
-        this.sync();
-    }
-    @action.bound updateElement(idx, field, value) {
-        this.settings[idx][field] = value;
-        this.sync();
-    }
-}
 
 @observer
 class SortingTable extends Component {
-    constructor(props) {
-        super(props);
-        this.store = new SortStore(props.dp);
-    }
     render() {
         const {dp} = this.props,
-            {store} = this;
-
+            store = dp.store.sortStore;
         return (
             <>
                 <h3>Row sorting</h3>
@@ -131,9 +83,8 @@ SortingTable.propTypes = {
     dp: PropTypes.object,
 };
 
-const buildSortingTable = (tab, dp) => {
+export default (tab, dp) => {
     const div = document.createElement("div");
     ReactDOM.render(<SortingTable dp={dp} />, div);
     tab.append(div);
 };
-export default buildSortingTable;

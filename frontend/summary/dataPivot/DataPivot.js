@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import HAWCModal from "shared/utils/HAWCModal";
 import DataTable from "shared/components/DataTable";
 
+import Store from "./store";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotExtension from "./DataPivotExtension";
 import {NULL_CASE} from "./shared";
@@ -201,6 +202,7 @@ class DataPivot {
             }
         });
 
+        this.store = new Store(this);
         this.build_data_table();
         this.build_settings();
         this.$div.fadeIn();
