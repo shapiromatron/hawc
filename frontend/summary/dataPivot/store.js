@@ -65,9 +65,6 @@ class SortStore {
             .map(key)
             .uniq()
             .sort()
-            .map(d => {
-                return {id: d, label: d};
-            })
             .value();
     }
 }

@@ -53,20 +53,28 @@ class DataPivotVisualization extends D3Plot {
                 return tz;
             },
             alphanum = function(a, b) {
-                var field_name, ascending;
+                let field_name, order;
                 for (var i = 0; i < sorts.length; i++) {
                     field_name = sorts[i].field_name;
-                    ascending = sorts[i].order === OrderChoices.asc;
+                    order = sorts[i].order;
 
                     if (a[field_name].toString() !== b[field_name].toString()) {
                         break;
                     }
+                }
+                if (i === sorts.length) {
+                    return 1;
                 }
 
                 var aSort = DataPivotVisualization.parseSortValue(a[field_name]),
                     bSort = DataPivotVisualization.parseSortValue(b[field_name]),
                     aa,
                     bb;
+
+                if (order === OrderChoices.custom && sorts[i].custom) {
+                    // sort a token in an array. This is slow b/c it's an array, not a SortedSet.
+                    return sorts[i].custom.indexOf(aSort) > sorts[i].custom.indexOf(bSort) ? 1 : -1;
+                }
 
                 aa = chunkify(aSort.toString());
                 bb = chunkify(bSort.toString());
@@ -76,13 +84,13 @@ class DataPivotVisualization extends D3Plot {
                         var c = Number(aa[x]),
                             d = Number(bb[x]);
                         if (c == aa[x] && d == bb[x]) {
-                            if (ascending) {
+                            if (order === OrderChoices.ascending) {
                                 return c - d;
                             } else {
                                 return d - c;
                             }
                         } else {
-                            if (ascending) {
+                            if (order === OrderChoices.ascending) {
                                 return aa[x] > bb[x] ? 1 : -1;
                             } else {
                                 return aa[x] < bb[x] ? 1 : -1;
@@ -91,7 +99,7 @@ class DataPivotVisualization extends D3Plot {
                     }
                 }
 
-                return ascending ? aa.length - bb.length : bb.length - aa.length;
+                return OrderChoices.ascending ? aa.length - bb.length : bb.length - aa.length;
             };
 
         return sorts.length > 0 ? arr.sort(alphanum) : arr;

@@ -65,7 +65,9 @@ class SortingTable extends Component {
                                         />
                                         {data.order === OrderChoices.custom ? (
                                             <SortableList
-                                                items={data.custom}
+                                                items={data.custom.map(d => {
+                                                    return {id: d, label: d};
+                                                })}
                                                 onOrderChange={(id, oldIndex, newIndex) =>
                                                     store.changeOrder(idx, oldIndex, newIndex)
                                                 }
