@@ -10,7 +10,7 @@ import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
-import {NULL_CASE} from "./shared";
+import {NULL_CASE, OrderChoices} from "./shared";
 import Query from "shared/parsers/query";
 
 class DataPivotVisualization extends D3Plot {
@@ -54,10 +54,9 @@ class DataPivotVisualization extends D3Plot {
             },
             alphanum = function(a, b) {
                 var field_name, ascending;
-
                 for (var i = 0; i < sorts.length; i++) {
                     field_name = sorts[i].field_name;
-                    ascending = sorts[i].ascending;
+                    ascending = sorts[i].order === OrderChoices.asc;
 
                     if (a[field_name].toString() !== b[field_name].toString()) {
                         break;

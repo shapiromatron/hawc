@@ -7,6 +7,8 @@ import ReactDOM from "react-dom";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import RadioInput from "shared/components/RadioInput";
 import SelectInput from "shared/components/SelectInput";
+import SortableList from "shared/components/SortableList";
+import {OrderChoices} from "./shared";
 
 @observer
 class SortingTable extends Component {
@@ -50,19 +52,25 @@ class SortingTable extends Component {
                                     </td>
                                     <td>
                                         <RadioInput
-                                            name={`sort-ascending-${idx}`}
-                                            onChange={value => {
-                                                store.updateElement(idx, "ascending", value);
-                                            }}
+                                            name={`sort-order-${idx}`}
+                                            onChange={value => store.updateOrder(idx, value)}
                                             choices={[
-                                                {id: true, label: "Ascending"},
-                                                {id: false, label: "Descending"},
-                                                {id: "custom", label: "Custom"},
+                                                {id: OrderChoices.asc, label: "Ascending"},
+                                                {id: OrderChoices.desc, label: "Descending"},
+                                                {id: OrderChoices.custom, label: "Custom"},
                                             ]}
                                             required={false}
                                             horizontal={true}
-                                            value={data.ascending}
+                                            value={data.order}
                                         />
+                                        {data.order === OrderChoices.custom ? (
+                                            <SortableList
+                                                items={data.custom}
+                                                onOrderChange={(id, oldIndex, newIndex) =>
+                                                    store.changeOrder(idx, oldIndex, newIndex)
+                                                }
+                                            />
+                                        ) : null}
                                     </td>
                                     <MoveRowTd
                                         onMoveUp={() => store.moveUp(idx)}

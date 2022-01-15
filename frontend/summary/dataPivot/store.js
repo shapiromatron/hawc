@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {action, observable, toJS} from "mobx";
 
 import {
@@ -5,7 +6,7 @@ import {
     moveArrayElementDown,
     deleteArrayElement,
 } from "shared/components/EditableRowData";
-import {NULL_CASE} from "./shared";
+import {NULL_CASE, OrderChoices} from "./shared";
 
 class SortStore {
     constructor(rootStore) {
@@ -18,7 +19,8 @@ class SortStore {
     @action.bound createNew() {
         this.settings.push({
             field_name: NULL_CASE,
-            ascending: true,
+            order: OrderChoices.asc,
+            custom: null,
         });
         this.rootStore.sync();
     }
@@ -37,6 +39,36 @@ class SortStore {
     @action.bound updateElement(idx, field, value) {
         this.settings[idx][field] = value;
         this.rootStore.sync();
+    }
+    @action.bound updateOrder(idx, value) {
+        if (value === OrderChoices.custom) {
+            this.settings[idx].custom = this.getSortItems(idx);
+        } else {
+            this.settings[idx].custom = null;
+        }
+        this.settings[idx].order = value;
+        this.rootStore.sync();
+    }
+    @action.bound changeOrder(idx, oldIndex, newIndex) {
+        const items = _.cloneDeep(toJS(this.settings[idx].custom)),
+            item = items.splice(oldIndex, 1)[0];
+        items.splice(newIndex, 0, item);
+        this.settings[idx].custom = items;
+        this.rootStore.sync();
+    }
+    getSortItems(idx) {
+        const key = this.settings[idx].field_name;
+        if (key === NULL_CASE) {
+            return [];
+        }
+        return _.chain(this.rootStore.dp.data)
+            .map(key)
+            .uniq()
+            .sort()
+            .map(d => {
+                return {id: d, label: d};
+            })
+            .value();
     }
 }
 
