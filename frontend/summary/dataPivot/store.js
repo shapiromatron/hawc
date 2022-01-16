@@ -171,7 +171,6 @@ class Store {
         this.dp.settings.filters = toJS(this.filterStore.settings);
         this.dp.settings.sorts = toJS(this.sortStore.settings);
         this.dp.settings.spacers = toJS(this.spacerStore.settings);
-        console.log(this.dp.settings.spacers);
     }
     resetRowOverrides() {
         this.dp.settings.row_overrides.forEach(v => (v.index = null));

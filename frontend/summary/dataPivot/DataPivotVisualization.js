@@ -68,6 +68,7 @@ class DataPivotVisualization extends D3Plot {
 
                 var aSort = DataPivotVisualization.parseSortValue(a[field_name]),
                     bSort = DataPivotVisualization.parseSortValue(b[field_name]),
+                    isAscending = order === OrderChoices.asc,
                     aa,
                     bb;
 
@@ -84,22 +85,14 @@ class DataPivotVisualization extends D3Plot {
                         var c = Number(aa[x]),
                             d = Number(bb[x]);
                         if (c == aa[x] && d == bb[x]) {
-                            if (order === OrderChoices.ascending) {
-                                return c - d;
-                            } else {
-                                return d - c;
-                            }
+                            return isAscending ? c - d : d - c;
                         } else {
-                            if (order === OrderChoices.ascending) {
-                                return aa[x] > bb[x] ? 1 : -1;
-                            } else {
-                                return aa[x] < bb[x] ? 1 : -1;
-                            }
+                            return isAscending ? (aa[x] > bb[x] ? 1 : -1) : aa[x] < bb[x] ? 1 : -1;
                         }
                     }
                 }
 
-                return OrderChoices.ascending ? aa.length - bb.length : bb.length - aa.length;
+                return isAscending ? aa.length - bb.length : bb.length - aa.length;
             };
 
         return sorts.length > 0 ? arr.sort(alphanum) : arr;
