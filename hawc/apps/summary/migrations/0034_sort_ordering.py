@@ -53,4 +53,3 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(set_sorts, reverse_code=unset_sorts),
     ]
-

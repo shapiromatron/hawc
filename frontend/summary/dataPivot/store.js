@@ -6,8 +6,68 @@ import {
     moveArrayElementDown,
     deleteArrayElement,
 } from "shared/components/EditableRowData";
-import {NULL_CASE, OrderChoices} from "./shared";
+import {NULL_CASE, OrderChoices, FilterLogicChoices} from "./shared";
 
+class PlotSettingsStore {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
+        this.settings = this.rootStore.dp.settings.plot_settings;
+    }
+
+    @observable settings = null;
+
+    @action.bound updateFilterLogic(value) {
+        this.settings.filter_logic = value;
+        if (value !== FilterLogicChoices.custom) {
+            this.settings.filter_query = "";
+        }
+        this.rootStore.resetRowOverrides();
+        this.rootStore.sync();
+    }
+    @action.bound updateFilterQuery(value) {
+        this.settings.filter_query = value;
+        this.rootStore.resetRowOverrides();
+        this.rootStore.sync();
+    }
+}
+class FilterStore {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
+        this.settings = this.rootStore.dp.settings.filters;
+    }
+
+    @observable settings = null;
+
+    @action.bound createNew() {
+        this.settings.push({
+            field_name: NULL_CASE,
+            quantifier: "contains",
+            value: "",
+        });
+        this.rootStore.resetRowOverrides();
+        this.rootStore.sync();
+    }
+    @action.bound moveUp(idx) {
+        moveArrayElementUp(this.settings, idx);
+        this.rootStore.resetRowOverrides();
+        this.rootStore.sync();
+    }
+    @action.bound moveDown(idx) {
+        moveArrayElementDown(this.settings, idx);
+        this.rootStore.resetRowOverrides();
+        this.rootStore.sync();
+    }
+    @action.bound delete(idx) {
+        deleteArrayElement(this.settings, idx);
+        this.rootStore.resetRowOverrides();
+        this.rootStore.sync();
+    }
+    @action.bound updateElement(idx, field, value) {
+        this.settings[idx][field] = value;
+        this.rootStore.resetRowOverrides();
+        this.rootStore.sync();
+    }
+}
 class SortStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
@@ -72,11 +132,23 @@ class SortStore {
 class Store {
     constructor(dp) {
         this.dp = dp;
+        this.plotSettingsStore = new PlotSettingsStore(this);
         this.sortStore = new SortStore(this);
+        this.filterStore = new FilterStore(this);
     }
+    overrideRefresh = null;
     sync() {
         // sync state in store to global object - TODO - remove?
+        this.dp.settings.plot_settings = toJS(this.plotSettingsStore.settings);
+        this.dp.settings.filters = toJS(this.filterStore.settings);
         this.dp.settings.sorts = toJS(this.sortStore.settings);
+    }
+    resetRowOverrides() {
+        this.dp.settings.row_overrides.forEach(v => (v.index = null));
+        this.overrideRefresh();
+    }
+    @action.bound setOverrideRefreshHandler(fn) {
+        this.overrideRefresh = fn;
     }
 }
 
