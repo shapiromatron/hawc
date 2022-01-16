@@ -4,9 +4,9 @@ import _ from "lodash";
 import {_DataPivot_settings_spacers, buildHeaderTr, buildColGroup} from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
-import buildFilterTable from "./FilterTable";
-import buildFilterBooleanDiv from "./FilterLogic";
-import buildSortingTable from "./SortTable";
+import buildFilterTable from "./components/FilterTable";
+import buildFilterBooleanDiv from "./components/FilterLogic";
+import buildSortingTable from "./components/SortTable";
 
 let buildSpacingTable = function(tab, dp) {
         let tbody = $("<tbody>"),

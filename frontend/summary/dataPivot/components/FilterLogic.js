@@ -5,8 +5,9 @@ import ReactDOM from "react-dom";
 
 import RadioInput from "shared/components/RadioInput";
 import TextInput from "shared/components/TextInput";
-import {FilterLogicChoices} from "./shared";
-import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
+
+import {FilterLogicChoices} from "../shared";
+import {filterLogicHelpText, filterQueryHelpText} from "../../summary/filters";
 
 const choices = [
     {id: FilterLogicChoices.and, label: "AND"},
@@ -21,9 +22,9 @@ class FilterLogic extends Component {
             store = dp.store.plotSettingsStore;
         return (
             <>
-                <h4>Filter logic</h4>
                 <RadioInput
                     name="filter_logic"
+                    label="Filter logic"
                     onChange={value => store.updateFilterLogic(value)}
                     choices={choices}
                     required={false}
