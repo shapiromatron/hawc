@@ -148,60 +148,6 @@ class _DataPivot_settings_label {
     }
 }
 
-class _DataPivot_settings_spacers {
-    constructor(data_pivot, values, index) {
-        var self = this,
-            movement_td = DataPivot.build_movement_td(data_pivot.settings.spacers, this, {
-                showSort: false,
-            });
-
-        this.data_pivot = data_pivot;
-        this.values = values;
-
-        // create fields
-        this.content = {
-            index: $('<input class="form-control" type="number">'),
-            show_line: $('<input type="checkbox">'),
-            line_style: data_pivot.style_manager.add_select("lines", values.line_style),
-            extra_space: $('<input type="checkbox">'),
-        };
-
-        // set default values
-        this.content.index.val(values.index);
-        this.content.show_line.prop("checked", values.show_line);
-        this.content.extra_space.prop("checked", values.extra_space);
-
-        this.tr = $("<tr>")
-            .append($("<td>").append(this.content.index))
-            .append($("<td>").append(this.content.show_line))
-            .append($("<td>").append(this.content.line_style))
-            .append($("<td>").append(this.content.extra_space))
-            .append(movement_td)
-            .on("change", "input,select", function() {
-                self.data_push();
-            });
-
-        this.data_push();
-        return this;
-    }
-
-    static defaults() {
-        return {
-            index: NULL_CASE,
-            show_line: true,
-            line_style: "reference line",
-            extra_space: false,
-        };
-    }
-
-    data_push() {
-        this.values.index = parseInt(this.content.index.val(), 10) || -1;
-        this.values.show_line = this.content.show_line.prop("checked");
-        this.values.line_style = this.content.line_style.find("option:selected").text();
-        this.values.extra_space = this.content.extra_space.prop("checked");
-    }
-}
-
 class _DataPivot_settings_description {
     constructor(data_pivot, values) {
         var self = this;
@@ -816,7 +762,6 @@ let buildHeaderTr = function(lst) {
 export {_DataPivot_settings_refline};
 export {_DataPivot_settings_refrect};
 export {_DataPivot_settings_label};
-export {_DataPivot_settings_spacers};
 export {_DataPivot_settings_description};
 export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};

@@ -1,50 +1,15 @@
 import $ from "$";
 import _ from "lodash";
 
-import {_DataPivot_settings_spacers, buildHeaderTr, buildColGroup} from "./DataPivotUtilities";
+import {buildHeaderTr} from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
 import buildFilterTable from "./components/FilterTable";
 import buildFilterBooleanDiv from "./components/FilterLogic";
 import buildSortingTable from "./components/SortTable";
+import buildRowSpacing from "./components/RowSpacing";
 
-let buildSpacingTable = function(tab, dp) {
-        let tbody = $("<tbody>"),
-            thead = $("<thead>").html(
-                buildHeaderTr(["Row index", "Show line?", "Line style", "Extra space?", "Delete"])
-            ),
-            colgroup = buildColGroup(["", "", "", "", "120px"]),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
-            settings = dp.settings.spacers,
-            addDataRow = function(i) {
-                let obj;
-                if (!settings[i]) {
-                    settings[i] = _DataPivot_settings_spacers.defaults();
-                }
-                obj = new _DataPivot_settings_spacers(dp, settings[i], i);
-                tbody.append(obj.tr);
-            },
-            newDataRow = function() {
-                addDataRow(settings.length);
-            },
-            newRowBtn = $(
-                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
-            ).on("click", newDataRow),
-            numRows = settings.length === 0 ? 1 : settings.length;
-
-        for (let i = 0; i < numRows; i++) {
-            addDataRow(i);
-        }
-
-        tab.append(
-            newRowBtn,
-            $("<h3>Additional row spacing</h3>"),
-            '<p class="form-text text-muted">Add additional-space between rows, and optionally a horizontal line.</p>',
-            tbl,
-            "<hr/>"
-        );
-    },
-    buildManualOverrideRows = function(dp, tbody) {
+let buildManualOverrideRows = function(dp, tbody) {
         let rows = [],
             get_selected_fields = function(v) {
                 return v.field_name !== NULL_CASE;
@@ -226,7 +191,7 @@ let buildSpacingTable = function(tab, dp) {
         buildFilterTable(tab, dp);
         buildFilterBooleanDiv(tab, dp);
         buildSortingTable(tab, dp);
-        buildSpacingTable(tab, dp);
+        buildRowSpacing(tab, dp);
         buildOrderingTable(tab, dp, overrideTbody);
         return tab;
     };
