@@ -77,6 +77,7 @@ class FilterTable extends Component {
                                         />
                                     </td>
                                     <td>
+                                        {/* TODO - needs an autocomplete instead. */}
                                         <TextInput
                                             name={`filter-value-${idx}`}
                                             onChange={e =>

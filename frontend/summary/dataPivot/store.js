@@ -8,6 +8,42 @@ import {
 } from "shared/components/EditableRowData";
 import {NULL_CASE, OrderChoices, FilterLogicChoices} from "./shared";
 
+class DescriptiveTextStore {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
+        this.settings = this.rootStore.dp.settings.description_settings;
+    }
+
+    @observable settings = null;
+
+    @action.bound createNew() {
+        this.settings.push({
+            field_name: NULL_CASE,
+            header_name: "",
+            header_style: "header",
+            text_style: "base",
+            dpe: NULL_CASE,
+            max_width: undefined,
+        });
+        this.rootStore.sync();
+    }
+    @action.bound moveUp(idx) {
+        moveArrayElementUp(this.settings, idx);
+        this.rootStore.sync();
+    }
+    @action.bound moveDown(idx) {
+        moveArrayElementDown(this.settings, idx);
+        this.rootStore.sync();
+    }
+    @action.bound delete(idx) {
+        deleteArrayElement(this.settings, idx);
+        this.rootStore.sync();
+    }
+    @action.bound updateElement(idx, field, value) {
+        this.settings[idx][field] = value;
+        this.rootStore.sync();
+    }
+}
 class PlotSettingsStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
@@ -159,6 +195,7 @@ class SpacerStore {
 class Store {
     constructor(dp) {
         this.dp = dp;
+        this.descriptiveTextStore = new DescriptiveTextStore(this);
         this.plotSettingsStore = new PlotSettingsStore(this);
         this.sortStore = new SortStore(this);
         this.filterStore = new FilterStore(this);
@@ -167,6 +204,7 @@ class Store {
     overrideRefresh = null;
     sync() {
         // sync state in store to global object - TODO - remove?
+        this.rootStore.dp.settings.description_settings = toJS(this.descriptiveTextStore.settings);
         this.dp.settings.plot_settings = toJS(this.plotSettingsStore.settings);
         this.dp.settings.filters = toJS(this.filterStore.settings);
         this.dp.settings.sorts = toJS(this.sortStore.settings);

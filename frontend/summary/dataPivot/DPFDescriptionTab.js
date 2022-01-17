@@ -1,5 +1,8 @@
 import $ from "$";
+import React from "react";
+import ReactDOM from "react-dom";
 
+import DescriptiveTable from "./components/DescriptiveTable";
 import {_DataPivot_settings_description, buildHeaderTr, buildColGroup} from "./DataPivotUtilities";
 
 let buildDescriptionTable = function(tab, dp) {
@@ -43,6 +46,9 @@ let buildDescriptionTable = function(tab, dp) {
     buildDescriptionTab = function(dp) {
         let tab = $('<div class="tab-pane active" id="data_pivot_settings_description">');
         buildDescriptionTable(tab, dp);
+        const div = document.createElement("div");
+        ReactDOM.render(<DescriptiveTable dp={dp} />, div);
+        tab.append(div);
         return tab;
     };
 
