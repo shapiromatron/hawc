@@ -148,89 +148,6 @@ class _DataPivot_settings_label {
     }
 }
 
-class _DataPivot_settings_description {
-    constructor(data_pivot, values) {
-        var self = this;
-        this.data_pivot = data_pivot;
-        this.values = values;
-
-        // create fields
-        this.content = {
-            field_name: $('<select class="form-control"></select>').html(
-                this.data_pivot._get_header_options(true)
-            ),
-            header_name: $('<input class="form-control" type="text">'),
-            header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
-            text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
-            max_width: $('<input class="form-control" type="number">'),
-            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
-        };
-
-        // set default values
-        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
-        this.content.header_name.val(values.header_name);
-        this.content.max_width.val(values.max_width);
-        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
-
-        var header_input = this.content.header_name;
-        this.content.field_name.on("change", function() {
-            header_input.val(
-                $(this)
-                    .find("option:selected")
-                    .val()
-            );
-        });
-
-        this.tr = $("<tr>")
-            .append($("<td>").append(this.content.field_name))
-            .append($("<td>").append(this.content.header_name))
-            .append($("<td>").append(this.content.header_style))
-            .append($("<td>").append(this.content.text_style))
-            .append($("<td>").append(this.content.max_width))
-            .append($("<td>").append(this.content.dpe))
-            .on("change", "input,select", function() {
-                self.data_push();
-            });
-
-        var movement_td = DataPivot.build_movement_td(
-            self.data_pivot.settings.description_settings,
-            this,
-            {showSort: true}
-        );
-        this.tr.append(movement_td);
-
-        this.data_push();
-        return this;
-    }
-
-    static defaults() {
-        return {
-            field_name: NULL_CASE,
-            header_name: "",
-            header_style: "header",
-            text_style: "base",
-            dpe: NULL_CASE,
-            max_width: undefined,
-        };
-    }
-
-    data_push() {
-        this.values.field_name = this.content.field_name.find("option:selected").val();
-        this.values.field_index = this.content.field_name.find("option:selected").val();
-        this.values.header_style = this.content.header_style.find("option:selected").val();
-        this.values.text_style = this.content.text_style.find("option:selected").val();
-        this.values.header_name = this.content.header_name.val();
-        this.values.max_width = parseFloat(this.content.max_width.val(), 10) || undefined;
-        this.values.dpe = NULL_CASE;
-        if (this.values.header_name === "") {
-            this.values.header_name = this.values.field_name;
-        }
-        if (this.content.dpe) {
-            this.values.dpe = this.content.dpe.find("option:selected").val();
-        }
-    }
-}
-
 class _DataPivot_settings_filters {
     constructor(data_pivot, values) {
         var self = this;
@@ -359,6 +276,89 @@ class _DataPivot_settings_spacers {
         this.values.show_line = this.content.show_line.prop("checked");
         this.values.line_style = this.content.line_style.find("option:selected").text();
         this.values.extra_space = this.content.extra_space.prop("checked");
+    }
+}
+
+class _DataPivot_settings_description {
+    constructor(data_pivot, values) {
+        var self = this;
+        this.data_pivot = data_pivot;
+        this.values = values;
+
+        // create fields
+        this.content = {
+            field_name: $('<select class="form-control"></select>').html(
+                this.data_pivot._get_header_options(true)
+            ),
+            header_name: $('<input class="form-control" type="text">'),
+            header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
+            text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
+            max_width: $('<input class="form-control" type="number">'),
+            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
+        };
+
+        // set default values
+        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
+        this.content.header_name.val(values.header_name);
+        this.content.max_width.val(values.max_width);
+        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
+
+        var header_input = this.content.header_name;
+        this.content.field_name.on("change", function () {
+            header_input.val(
+                $(this)
+                    .find("option:selected")
+                    .val()
+            );
+        });
+
+        this.tr = $("<tr>")
+            .append($("<td>").append(this.content.field_name))
+            .append($("<td>").append(this.content.header_name))
+            .append($("<td>").append(this.content.header_style))
+            .append($("<td>").append(this.content.text_style))
+            .append($("<td>").append(this.content.max_width))
+            .append($("<td>").append(this.content.dpe))
+            .on("change", "input,select", function () {
+                self.data_push();
+            });
+
+        var movement_td = DataPivot.build_movement_td(
+            self.data_pivot.settings.description_settings,
+            this,
+            { showSort: true }
+        );
+        this.tr.append(movement_td);
+
+        this.data_push();
+        return this;
+    }
+
+    static defaults() {
+        return {
+            field_name: NULL_CASE,
+            header_name: "",
+            header_style: "header",
+            text_style: "base",
+            dpe: NULL_CASE,
+            max_width: undefined,
+        };
+    }
+
+    data_push() {
+        this.values.field_name = this.content.field_name.find("option:selected").val();
+        this.values.field_index = this.content.field_name.find("option:selected").val();
+        this.values.header_style = this.content.header_style.find("option:selected").val();
+        this.values.text_style = this.content.text_style.find("option:selected").val();
+        this.values.header_name = this.content.header_name.val();
+        this.values.max_width = parseFloat(this.content.max_width.val(), 10) || undefined;
+        this.values.dpe = NULL_CASE;
+        if (this.values.header_name === "") {
+            this.values.header_name = this.values.field_name;
+        }
+        if (this.content.dpe) {
+            this.values.dpe = this.content.dpe.find("option:selected").val();
+        }
     }
 }
 
