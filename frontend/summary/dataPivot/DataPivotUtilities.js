@@ -230,6 +230,188 @@ class _DataPivot_settings_description {
         }
     }
 }
+class _DataPivot_settings_sorts {
+    constructor(data_pivot, values, index) {
+        var self = this,
+            movement_td = DataPivot.build_movement_td(data_pivot.settings.sorts, this, {
+                showSort: true,
+            });
+        this.data_pivot = data_pivot;
+        this.values = values;
+
+        // create fields
+        this.content = {};
+        this.content.field_name = $('<select class="form-control"></select>').html(
+            this.data_pivot._get_header_options(true)
+        );
+        this.content.ascending = $(
+            `<label class="form-check">
+                <input name="asc${index}" type="radio" value="true"> Ascending
+            </label>
+            <label class="form-check">
+                <input name="asc${index}" type="radio" value="false"> Descending
+            </label>`
+        );
+
+        // set default values
+        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
+        this.content.ascending.find(`[value="${values.ascending}"]`).prop("checked", true);
+
+        this.tr = $("<tr>")
+            .append($("<td>").append(this.content.field_name))
+            .append($("<td>").append(this.content.ascending))
+            .append(movement_td)
+            .on("change", "input,select", function() {
+                self.data_push();
+            });
+
+        this.data_push();
+        return this;
+    }
+
+    static defaults() {
+        return {
+            field_name: NULL_CASE,
+            ascending: true,
+        };
+    }
+
+    data_push() {
+        this.values.field_name = this.content.field_name.find("option:selected").text();
+        this.values.ascending = this.content.ascending.find("input").prop("checked");
+    }
+}
+
+class _DataPivot_settings_filters {
+    constructor(data_pivot, values) {
+        var self = this;
+        this.data_pivot = data_pivot;
+        this.values = values;
+
+        var get_quantifier_options = function() {
+            return (
+                '<option value="gt">&gt;</option>' +
+                '<option value="gte">≥</option>' +
+                '<option value="lt">&lt;</option>' +
+                '<option value="lte">≤</option>' +
+                '<option value="exact">exact</option>' +
+                '<option value="contains">contains</option>' +
+                '<option value="not_contains">does not contain</option>'
+            );
+        };
+
+        // create fields
+        this.content = {};
+        this.content.field_name = $('<select class="form-control"></select>').html(
+            this.data_pivot._get_header_options(true)
+        );
+        this.content.quantifier = $('<select class="form-control"></select>').html(
+            get_quantifier_options()
+        );
+        this.content.value = $('<input class="form-control" type="text">').autocomplete({
+            source: values.value,
+        });
+
+        // set default values
+        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
+        this.content.quantifier.find(`option[value="${values.quantifier}"]`).prop("selected", true);
+        this.content.value.val(values.value);
+
+        var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.filters, this, {
+            showSort: true,
+        });
+
+        this.tr = $("<tr>")
+            .append($("<td>").append(this.content.field_name))
+            .append($("<td>").append(this.content.quantifier))
+            .append($("<td>").append(this.content.value))
+            .append(movement_td)
+            .on("change autocompletechange autocompleteselect", "input,select", function() {
+                self.data_push();
+            });
+
+        var content = this.content,
+            enable_autocomplete = function(request, response) {
+                var field = content.field_name.find("option:selected").val(),
+                    values = Array.from(new Set(data_pivot.data.map(v => v[field])).values());
+                content.value.autocomplete("option", {source: values});
+            };
+
+        this.content.field_name.on("change", enable_autocomplete);
+        enable_autocomplete();
+
+        this.data_push();
+        return this;
+    }
+
+    static defaults() {
+        return {
+            field_name: NULL_CASE,
+            quantifier: "contains",
+            value: "",
+        };
+    }
+
+    data_push() {
+        this.values.field_name = this.content.field_name.find("option:selected").val();
+        this.values.quantifier = this.content.quantifier.find("option:selected").val();
+        this.values.value = this.content.value.val();
+    }
+}
+
+class _DataPivot_settings_spacers {
+    constructor(data_pivot, values, index) {
+        var self = this,
+            movement_td = DataPivot.build_movement_td(data_pivot.settings.spacers, this, {
+                showSort: false,
+            });
+
+        this.data_pivot = data_pivot;
+        this.values = values;
+
+        // create fields
+        this.content = {
+            index: $('<input class="form-control" type="number">'),
+            show_line: $('<input type="checkbox">'),
+            line_style: data_pivot.style_manager.add_select("lines", values.line_style),
+            extra_space: $('<input type="checkbox">'),
+        };
+
+        // set default values
+        this.content.index.val(values.index);
+        this.content.show_line.prop("checked", values.show_line);
+        this.content.extra_space.prop("checked", values.extra_space);
+
+        this.tr = $("<tr>")
+            .append($("<td>").append(this.content.index))
+            .append($("<td>").append(this.content.show_line))
+            .append($("<td>").append(this.content.line_style))
+            .append($("<td>").append(this.content.extra_space))
+            .append(movement_td)
+            .on("change", "input,select", function() {
+                self.data_push();
+            });
+
+        this.data_push();
+        return this;
+    }
+
+    static defaults() {
+        return {
+            index: NULL_CASE,
+            show_line: true,
+            line_style: "reference line",
+            extra_space: false,
+        };
+    }
+
+    data_push() {
+        this.values.index = parseInt(this.content.index.val(), 10) || -1;
+        this.values.show_line = this.content.show_line.prop("checked");
+        this.values.line_style = this.content.line_style.find("option:selected").text();
+        this.values.extra_space = this.content.extra_space.prop("checked");
+    }
+}
 
 class _DataPivot_settings_pointdata {
     constructor(data_pivot, values) {
@@ -762,6 +944,9 @@ let buildHeaderTr = function(lst) {
 export {_DataPivot_settings_refline};
 export {_DataPivot_settings_refrect};
 export {_DataPivot_settings_label};
+export {_DataPivot_settings_sorts};
+export {_DataPivot_settings_filters};
+export {_DataPivot_settings_spacers};
 export {_DataPivot_settings_description};
 export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};

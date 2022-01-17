@@ -1,15 +1,151 @@
 import $ from "$";
 import _ from "lodash";
 
-import {buildHeaderTr} from "./DataPivotUtilities";
+import {
+    _DataPivot_settings_filters,
+    _DataPivot_settings_spacers,
+    buildHeaderTr,
+    buildColGroup,
+} from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
-import buildFilterTable from "./components/FilterTable";
-import buildFilterBooleanDiv from "./components/FilterLogic";
+import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
 import buildSortingTable from "./components/SortTable";
-import buildRowSpacing from "./components/RowSpacing";
 
-let buildManualOverrideRows = function(dp, tbody) {
+let buildFilterTable = function(tab, dp, handleTableChange) {
+        var thead = $("<thead>").html(
+                buildHeaderTr(["Field name", "Filter type", "Value", "Ordering"])
+            ),
+            colgroup = buildColGroup(["30%", "20%", "35%", "15%"]),
+            tbody = $("<tbody>").on("change autocompletechange", "input,select", handleTableChange),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
+            settings = dp.settings.filters,
+            addDataRow = function(i) {
+                let obj;
+                if (!settings[i]) {
+                    settings[i] = _DataPivot_settings_filters.defaults();
+                }
+                obj = new _DataPivot_settings_filters(dp, settings[i]);
+                tbody.append(obj.tr);
+            },
+            newDataRow = function() {
+                addDataRow(settings.length);
+                handleTableChange();
+            },
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
+            num_rows = settings.length === 0 ? 2 : settings.length;
+
+        for (let i = 0; i < num_rows; i++) {
+            addDataRow(i);
+        }
+
+        tab.append(
+            newRowBtn,
+            $("<h3>Row filters</h3>"),
+            '<p class="form-text text-muted">Use filters to determine which components of your dataset should be displayed on the figure.</p>',
+            tbl
+        );
+    },
+    buildFilterBooleanDiv = function(tab, dp, handleTableChange) {
+        let div = $("<div>"),
+            and = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="and">
+                <label class="form-check-label">AND</label>
+            </div>`),
+            or = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="or">
+                <label class="form-check-label">OR</label>
+            </div>`),
+            custom = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="custom">
+                <label class="form-check-label">CUSTOM</label>
+            </div>`),
+            string = $(`<div class="form-group">
+                <input class="form-control" type="text" name="filter_query">
+            </div>
+            <p class="form-text text-muted">${filterQueryHelpText}. In the above table, the first row is 1, second row is 2, etc.</p>`),
+            value = dp.settings.plot_settings.filter_logic,
+            string_value = dp.settings.plot_settings.filter_query;
+
+        // set initial value
+        if (value === "and") {
+            and.find("input").prop("checked", true);
+            string.hide();
+        } else if (value === "or") {
+            or.find("input").prop("checked", true);
+            string.hide();
+        } else {
+            custom.find("input").prop("checked", true);
+            string.show();
+        }
+        string.find("input").val(string_value);
+
+        // set event binding to change settings
+        div.on("change", 'input[name="filter_logic"]', function() {
+            let val = $('input[name="filter_logic"]:checked').val();
+            dp.settings.plot_settings.filter_logic = val;
+            if (_.includes(["and", "or"], val)) {
+                string.hide();
+            } else {
+                string.show();
+            }
+            handleTableChange();
+        });
+        div.on("change", 'input[name="filter_query"]', function() {
+            dp.settings.plot_settings.filter_query = $('input[name="filter_query"]').val();
+            handleTableChange();
+        });
+
+        div.append(
+            "<h4>Filter logic</h4>",
+            and,
+            or,
+            custom,
+            `<p class="form-text text-muted">${filterLogicHelpText}</p>`,
+            string
+        );
+
+        tab.append(div, "<hr/>");
+    },
+    buildSpacingTable = function(tab, dp) {
+        let tbody = $("<tbody>"),
+            thead = $("<thead>").html(
+                buildHeaderTr(["Row index", "Show line?", "Line style", "Extra space?", "Delete"])
+            ),
+            colgroup = buildColGroup(["", "", "", "", "120px"]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
+            settings = dp.settings.spacers,
+            addDataRow = function(i) {
+                let obj;
+                if (!settings[i]) {
+                    settings[i] = _DataPivot_settings_spacers.defaults();
+                }
+                obj = new _DataPivot_settings_spacers(dp, settings[i], i);
+                tbody.append(obj.tr);
+            },
+            newDataRow = function() {
+                addDataRow(settings.length);
+            },
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
+            numRows = settings.length === 0 ? 1 : settings.length;
+
+        for (let i = 0; i < numRows; i++) {
+            addDataRow(i);
+        }
+
+        tab.append(
+            newRowBtn,
+            $("<h3>Additional row spacing</h3>"),
+            '<p class="form-text text-muted">Add additional-space between rows, and optionally a horizontal line.</p>',
+            tbl,
+            "<hr/>"
+        );
+    },
+    buildManualOverrideRows = function(dp, tbody) {
         let rows = [],
             get_selected_fields = function(v) {
                 return v.field_name !== NULL_CASE;
@@ -132,6 +268,21 @@ let buildManualOverrideRows = function(dp, tbody) {
             tbl
         );
     },
+    resetRowOrderOverrides = function(dp) {
+        dp.settings.row_overrides.forEach(function(v) {
+            v.index = null;
+        });
+    },
+    showOverrideRebuildRequired = function(dp, tbody) {
+        let btn = $('<button class="btn btn-primary">Click to rebuild</button>').on(
+                "click",
+                function() {
+                    buildManualOverrideRows(dp, tbody);
+                }
+            ),
+            td = $('<td colspan="6">').append("<p>Row-ordering has changed.</p>", btn);
+        tbody.html($("<tr>").append(td));
+    },
     updateOverrideSettingState = function(dp, tbody) {
         dp.settings.row_overrides = [];
         tbody.find("tr").each(function(i, v) {
@@ -164,6 +315,10 @@ let buildManualOverrideRows = function(dp, tbody) {
     buildOrderingTab = function(dp) {
         let tab = $('<div class="tab-pane" id="data_pivot_settings_ordering">'),
             overrideTbody = $("<tbody>"),
+            handleTableChange = function() {
+                resetRowOrderOverrides(dp);
+                showOverrideRebuildRequired(dp, overrideTbody);
+            },
             handleStateOverrideUpdate = function() {
                 updateOverrideSettingState(dp, overrideTbody);
             };
@@ -178,20 +333,10 @@ let buildManualOverrideRows = function(dp, tbody) {
             buildManualOverrideRows(dp, overrideTbody);
         });
 
-        // set a trigger if things have changed
-        dp.store.setOverrideRefreshHandler(function() {
-            let btn = $('<button class="btn btn-primary">Click to rebuild</button>').on(
-                    "click",
-                    () => buildManualOverrideRows(dp, overrideTbody)
-                ),
-                td = $('<td colspan="6">').append("<p>Row-ordering has changed.</p>", btn);
-            overrideTbody.html($("<tr>").append(td));
-        });
-
-        buildFilterTable(tab, dp);
-        buildFilterBooleanDiv(tab, dp);
+        buildFilterTable(tab, dp, handleTableChange.bind(this));
+        buildFilterBooleanDiv(tab, dp, handleTableChange.bind(this));
         buildSortingTable(tab, dp);
-        buildRowSpacing(tab, dp);
+        buildSpacingTable(tab, dp);
         buildOrderingTable(tab, dp, overrideTbody);
         return tab;
     };
