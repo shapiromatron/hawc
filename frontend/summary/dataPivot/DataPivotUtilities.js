@@ -230,57 +230,6 @@ class _DataPivot_settings_description {
         }
     }
 }
-class _DataPivot_settings_sorts {
-    constructor(data_pivot, values, index) {
-        var self = this,
-            movement_td = DataPivot.build_movement_td(data_pivot.settings.sorts, this, {
-                showSort: true,
-            });
-        this.data_pivot = data_pivot;
-        this.values = values;
-
-        // create fields
-        this.content = {};
-        this.content.field_name = $('<select class="form-control"></select>').html(
-            this.data_pivot._get_header_options(true)
-        );
-        this.content.ascending = $(
-            `<label class="form-check">
-                <input name="asc${index}" type="radio" value="true"> Ascending
-            </label>
-            <label class="form-check">
-                <input name="asc${index}" type="radio" value="false"> Descending
-            </label>`
-        );
-
-        // set default values
-        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
-        this.content.ascending.find(`[value="${values.ascending}"]`).prop("checked", true);
-
-        this.tr = $("<tr>")
-            .append($("<td>").append(this.content.field_name))
-            .append($("<td>").append(this.content.ascending))
-            .append(movement_td)
-            .on("change", "input,select", function() {
-                self.data_push();
-            });
-
-        this.data_push();
-        return this;
-    }
-
-    static defaults() {
-        return {
-            field_name: NULL_CASE,
-            ascending: true,
-        };
-    }
-
-    data_push() {
-        this.values.field_name = this.content.field_name.find("option:selected").text();
-        this.values.ascending = this.content.ascending.find("input").prop("checked");
-    }
-}
 
 class _DataPivot_settings_filters {
     constructor(data_pivot, values) {
