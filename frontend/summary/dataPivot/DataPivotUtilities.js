@@ -304,7 +304,7 @@ class _DataPivot_settings_description {
         this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
 
         var header_input = this.content.header_name;
-        this.content.field_name.on("change", function () {
+        this.content.field_name.on("change", function() {
             header_input.val(
                 $(this)
                     .find("option:selected")
@@ -319,14 +319,14 @@ class _DataPivot_settings_description {
             .append($("<td>").append(this.content.text_style))
             .append($("<td>").append(this.content.max_width))
             .append($("<td>").append(this.content.dpe))
-            .on("change", "input,select", function () {
+            .on("change", "input,select", function() {
                 self.data_push();
             });
 
         var movement_td = DataPivot.build_movement_td(
             self.data_pivot.settings.description_settings,
             this,
-            { showSort: true }
+            {showSort: true}
         );
         this.tr.append(movement_td);
 
@@ -893,7 +893,6 @@ let buildHeaderTr = function(lst) {
 export {_DataPivot_settings_refline};
 export {_DataPivot_settings_refrect};
 export {_DataPivot_settings_label};
-export {_DataPivot_settings_sorts};
 export {_DataPivot_settings_filters};
 export {_DataPivot_settings_spacers};
 export {_DataPivot_settings_description};
