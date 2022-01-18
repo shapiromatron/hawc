@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db import DataError
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_str
 from rest_framework import status
@@ -55,6 +56,9 @@ class ListUpdateModelMixin:
             try:
                 queryset.update(**update_bulk_dict)
             except ValueError as e:
+                errors = {"detail": force_str(e)}
+                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+            except DataError as e:
                 errors = {"detail": force_str(e)}
                 return Response(errors, status=status.HTTP_400_BAD_REQUEST)
             self.post_save_bulk(queryset, update_bulk_dict)
