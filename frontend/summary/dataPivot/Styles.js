@@ -1,5 +1,6 @@
 import $ from "$";
 
+import {Patterns} from "../summary/common";
 import DataPivot from "./DataPivot";
 import StyleViewer from "./StyleViewer";
 
@@ -438,7 +439,7 @@ class StyleRectangle {
             stroke: "#000000",
             "fill-opacity": 0.8,
             "stroke-width": 1.0,
-            pattern: "solid",
+            pattern: Patterns.solid,
         };
     }
 
