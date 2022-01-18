@@ -1,15 +1,12 @@
-<div id="attach_table">
 {% if object_list.count > 0 or new_attach %}
 <h2>Attachments
 {% if canEdit %}
 <button
     class="btn btn-sm btn-info pull-right"
-    hx-get="{% url 'assessment:attachment_list' object.pk %}"
-    hx-vals='{"new": "True"}'
-    hx-trigger="click"
-    hx-target="#attach_table"
-    hx-swap="outerHTML">
-    Add Attachment</button>
+    hx-get="{% url 'assessment:attachment-create' object.pk %}"
+    hx-target="#new_row"
+    hx-swap="outerHTML"
+    >Add Attachment</button>
 {% endif %}
 </h2>
 <table class="table table-sm table-striped">
@@ -37,13 +34,11 @@
             {% include "assessment/components/attachment_row.html" %}
         {% endfor %}
 
-        {% if new_attach %}
-            {% include "assessment/components/attachment_edit_row.html" %}
-        {% endif %}
+        {% include "assessment/components/attachment_edit_row.html" %}
         </tr>
 
     </tbody>
 </table>
 {% endif %}
-</div>
+
 
