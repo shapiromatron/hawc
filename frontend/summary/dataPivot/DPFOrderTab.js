@@ -3,7 +3,6 @@ import _ from "lodash";
 
 import {
     _DataPivot_settings_filters,
-    _DataPivot_settings_sorts,
     _DataPivot_settings_spacers,
     buildHeaderTr,
     buildColGroup,
@@ -11,6 +10,7 @@ import {
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
 import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
+import buildSortingTable from "./components/SortTable";
 
 let buildFilterTable = function(tab, dp, handleTableChange) {
         var thead = $("<thead>").html(
@@ -108,42 +108,6 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         );
 
         tab.append(div, "<hr/>");
-    },
-    buildSortingTable = function(tab, dp, handleTableChange) {
-        let thead = $("<thead>").html(buildHeaderTr(["Field name", "Sort order", "Ordering"])),
-            colgroup = buildColGroup(["", "", "120px"]),
-            tbody = $("<tbody>")
-                .on("change", "input,select", handleTableChange)
-                .on("click", "button", handleTableChange),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
-            settings = dp.settings.sorts,
-            addDataRow = function(i) {
-                let obj;
-                if (!settings[i]) {
-                    settings[i] = _DataPivot_settings_sorts.defaults();
-                }
-                obj = new _DataPivot_settings_sorts(dp, settings[i], i);
-                tbody.append(obj.tr);
-            },
-            newDataRow = function() {
-                addDataRow(settings.length);
-            },
-            newRowBtn = $(
-                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
-            ).on("click", newDataRow),
-            numRows = settings.length === 0 ? 2 : settings.length;
-
-        for (let i = 0; i < numRows; i++) {
-            addDataRow(i);
-        }
-
-        tab.append(
-            newRowBtn,
-            $("<h3>Row sorting</h3>"),
-            '<p class="form-text text-muted">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
-            tbl,
-            "<hr/>"
-        );
     },
     buildSpacingTable = function(tab, dp) {
         let tbody = $("<tbody>"),
@@ -371,7 +335,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         buildFilterTable(tab, dp, handleTableChange.bind(this));
         buildFilterBooleanDiv(tab, dp, handleTableChange.bind(this));
-        buildSortingTable(tab, dp, handleTableChange.bind(this));
+        buildSortingTable(tab, dp);
         buildSpacingTable(tab, dp);
         buildOrderingTable(tab, dp, overrideTbody);
         return tab;
