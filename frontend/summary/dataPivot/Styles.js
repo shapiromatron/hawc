@@ -440,6 +440,7 @@ class StyleRectangle {
             "fill-opacity": 0.8,
             "stroke-width": 1.0,
             pattern: Patterns.solid,
+            pattern_fill: "#ffffff",
         };
     }
 
@@ -452,7 +453,7 @@ class StyleRectangle {
 
     get_modified_settings() {
         var settings = {},
-            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width"];
+            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width", "pattern_fill"];
         for (var i = 0; i < fields.length; i++) {
             settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
@@ -536,8 +537,8 @@ class StyleRectangle {
             '<option value="solid">solid</option>',
             '<option value="stripes">stripes</option>',
             '<option value="reverse_stripes">reverse stripes</option>',
-            '<option value="thick_strips">thin stripes</option>',
-            '<option value="thick_reverse_strips">thin reverse stripes</option>',
+            '<option value="vertical">vertical</option>',
+            '<option value="horizontal">horizontal</option>',
             '<option value="diamonds">diamonds</option>',
             '<option value="circles">circles</option>',
             '<option value="woven">woven</option>',
@@ -547,6 +548,16 @@ class StyleRectangle {
 
         type.find(`option[value="${set.pattern}"]`).prop("selected", true);
         form.append(add_horizontal_field("Pattern", type));
+
+        // pattern fill
+        form.append(
+            add_horizontal_field(
+                "Pattern fill",
+                $(
+                    `<input class="form-control" name="pattern_fill" type="color" value="${set.pattern_fill}">`
+                )
+            )
+        );
 
         this.controls = form;
     }

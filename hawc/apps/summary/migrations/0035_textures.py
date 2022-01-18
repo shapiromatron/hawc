@@ -15,6 +15,7 @@ def add_patterns(apps, schema_editor):
 
         for rect in settings["styles"]["rectangles"]:
             rect["pattern"] = "solid"
+            rect["pattern_fill"] = "#ffffff"
 
         dp.settings = json.dumps(settings)
         updates.append(dp)
@@ -36,6 +37,7 @@ def unadd_patterns(apps, schema_editor):
 
         for rect in settings["styles"]["rectangles"]:
             rect.pop("pattern")
+            rect.pop("pattern_fill")
 
         dp.settings = json.dumps(settings)
         updates.append(dp)

@@ -6,8 +6,8 @@ const Patterns = {
         solid: "solid",
         stripes: "stripes",
         reverse_stripes: "reverse_stripes",
-        thick_strips: "thick_strips",
-        thick_reverse_strips: "thick_reverse_strips",
+        vertical: "vertical",
+        horizontal: "horizontal",
         diamonds: "diamonds",
         circles: "circles",
         woven: "woven",
@@ -15,6 +15,7 @@ const Patterns = {
         hexagons: "hexagons",
     },
     createPattern = function(styles) {
+        const pattern_fill = styles.pattern_fill || "#ffffff";
         switch (styles.pattern) {
             case Patterns.solid:
                 return null;
@@ -24,7 +25,7 @@ const Patterns = {
                     .lines()
                     .orientation("2/8")
                     .heavier()
-                    .stroke("white")
+                    .stroke(pattern_fill)
                     .background(styles.fill);
 
             case Patterns.reverse_stripes:
@@ -32,31 +33,33 @@ const Patterns = {
                     .lines()
                     .orientation("6/8")
                     .heavier()
-                    .stroke("white")
+                    .stroke(pattern_fill)
                     .background(styles.fill);
 
-            case Patterns.thick_strips:
+            case Patterns.vertical:
                 return textures
                     .lines()
-                    .orientation("3/8")
-                    .thicker()
+                    .orientation("vertical")
+                    .size(6)
+                    .strokeWidth(4)
                     .stroke(styles.fill)
-                    .background("white");
+                    .background(pattern_fill);
 
-            case Patterns.thick_reverse_strips:
+            case Patterns.horizontal:
                 return textures
                     .lines()
-                    .orientation("5/8")
-                    .thicker()
+                    .orientation("horizontal")
+                    .size(6)
+                    .strokeWidth(4)
                     .stroke(styles.fill)
-                    .background("white");
+                    .background(pattern_fill);
 
             case Patterns.diamonds:
                 return textures
                     .lines()
                     .orientation("2/8", "6/8")
                     .heavier()
-                    .stroke("white")
+                    .stroke(pattern_fill)
                     .background(styles.fill);
 
             case Patterns.circles:
@@ -64,14 +67,14 @@ const Patterns = {
                     .circles()
                     .size(9)
                     .radius(3)
-                    .fill("white")
+                    .fill(pattern_fill)
                     .background(styles.fill);
 
             case Patterns.woven:
                 return textures
                     .paths()
                     .d("woven")
-                    .stroke("white")
+                    .stroke(pattern_fill)
                     .thicker()
                     .background(styles.fill);
 
@@ -80,7 +83,7 @@ const Patterns = {
                     .paths()
                     .d("waves")
                     .thicker()
-                    .stroke("white")
+                    .stroke(pattern_fill)
                     .background(styles.fill);
 
             case Patterns.hexagons:
@@ -89,7 +92,7 @@ const Patterns = {
                     .d("hexagons")
                     .size(6)
                     .strokeWidth(2)
-                    .stroke("white")
+                    .stroke(pattern_fill)
                     .background(styles.fill);
 
             default:
