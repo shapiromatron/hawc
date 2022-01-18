@@ -1,17 +1,18 @@
 import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
+
 import h from "shared/utils/helpers";
 import D3Plot from "shared/utils/D3Plot";
 import Query from "shared/parsers/query";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
+import {applyStyles} from "../summary/common";
 import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE, OrderChoices} from "./shared";
-import {applyStyles} from "../summary/common";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
