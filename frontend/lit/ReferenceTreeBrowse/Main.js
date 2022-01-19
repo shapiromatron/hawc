@@ -6,6 +6,7 @@ import {toJS} from "mobx";
 
 import Loading from "shared/components/Loading";
 import TextInput from "shared/components/TextInput";
+import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
 import YearHistogram from "./YearHistogram";
 import ReferenceTableMain from "./ReferenceTableMain";
@@ -91,6 +92,7 @@ class ReferenceTreeMain extends Component {
                                 yearFilter={store.yearFilter}
                                 onFilter={store.updateYearFilter}
                             />
+                            <ReferenceSortSelector onChange={store.sortReferences} />
                             <QuickSearch
                                 updateQuickFilter={text => store.changeQuickFilterText(text)}
                             />
