@@ -10,7 +10,7 @@ from django.conf import settings
 from django.db import migrations
 
 from hawc.apps.assessment.constants import NoelName
-from hawc.apps.summary import models
+from hawc.apps.summary import constants
 
 
 def _replace_column(text: str, existing: str, replacement: str) -> str:
@@ -43,7 +43,9 @@ def rename_fields(apps, schema_editor):
     DataPivotQuery = apps.get_model("summary", "DataPivotQuery")
 
     # bioassay
-    for obj in DataPivotQuery.objects.filter(evidence_type=models.BIOASSAY, export_style=0):
+    for obj in DataPivotQuery.objects.filter(
+        evidence_type=constants.StudyType.BIOASSAY, export_style=0
+    ):
         old_settings = copy(obj.settings)
         new_settings = copy(obj.settings)
 
@@ -60,7 +62,9 @@ def rename_fields(apps, schema_editor):
             obj.save()
             changes.append(dict(id=obj.id, old=old_settings, new=new_settings))
 
-    for obj in DataPivotQuery.objects.filter(evidence_type=models.BIOASSAY, export_style=1):
+    for obj in DataPivotQuery.objects.filter(
+        evidence_type=constants.StudyType.BIOASSAY, export_style=1
+    ):
         old_settings = copy(obj.settings)
         new_settings = copy(obj.settings)
 
@@ -77,7 +81,7 @@ def rename_fields(apps, schema_editor):
             obj.save()
             changes.append(dict(id=obj.id, old=old_settings, new=new_settings))
 
-    for obj in DataPivotQuery.objects.filter(evidence_type=models.EPI):
+    for obj in DataPivotQuery.objects.filter(evidence_type=constants.StudyType.EPI):
         old_settings = copy(obj.settings)
         new_settings = copy(obj.settings)
 
