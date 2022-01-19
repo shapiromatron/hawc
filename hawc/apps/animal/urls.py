@@ -108,35 +108,4 @@ urlpatterns = [
     path("endpoint/<int:pk>/", views.EndpointRead.as_view(), name="endpoint_detail"),
     path("endpoint/<int:pk>/update/", views.EndpointUpdate.as_view(), name="endpoint_update",),
     path("endpoint/<int:pk>/delete/", views.EndpointDelete.as_view(), name="endpoint_delete",),
-    path("v2/experiment/study/<int:pk>/", views.ExperimentList.as_view()),
-    path(
-        "v2/experiment/study/<int:pk>/create/",
-        views.ExperimentViewSet.as_view(),
-        {"action": "create"},
-        name="v2-experiment-create",
-    ),
-    path(
-        "v2/experiment/<int:pk>/",
-        views.ExperimentViewSet.as_view(),
-        {"action": "read"},
-        name="v2-experiment-detail",
-    ),
-    path(
-        "v2/experiment/<int:pk>/clone/",
-        views.ExperimentViewSet.as_view(),
-        {"action": "clone"},
-        name="v2-experiment-clone",
-    ),
-    path(
-        "v2/experiment/<int:pk>/update/",
-        views.ExperimentViewSet.as_view(),
-        {"action": "update"},
-        name="v2-experiment-update",
-    ),
-    path(
-        "v2/experiment/<int:pk>/delete/",
-        views.ExperimentViewSet.as_view(),
-        {"action": "delete"},
-        name="v2-experiment-delete",
-    ),
 ]
