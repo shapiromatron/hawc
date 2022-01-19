@@ -67,16 +67,6 @@ class Study(
         serializer = RiskOfBiasSerializer(study.get_active_robs(), many=True)
         return Response(serializer.data)
 
-    @action(detail=True, url_name="update-editability")
-    def update_editability(self, request, pk: int):
-        study = self.get_object()
-        if self.assessment.user_can_edit_assessment(self.request.user):
-            study.editable = not study.editable
-            study.save()
-            return HttpResponseRedirect(study.get_absolute_url())
-        else:
-            raise PermissionDenied
-
 
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Study

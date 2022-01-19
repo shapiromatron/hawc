@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -119,6 +119,18 @@ class StudyRead(BaseDetail):
         }
         context["internal_communications"] = self.object.get_communications()
         return context
+
+
+class StudyToggleEdit(RedirectView):
+    # Toggle locking of a study; redirect back to the study detail page
+    pattern_name = "study:detail"
+
+    def get(self, request, *args, **kwargs):
+        study = get_object_or_404(models.Study, pk=kwargs["pk"])
+        if study.assessment.user_can_edit_assessment(self.request.user):
+            study.editable = not study.editable
+            study.save()
+        return super().get(request, *args, **kwargs)
 
 
 class StudyUpdate(BaseUpdate):
