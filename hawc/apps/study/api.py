@@ -1,4 +1,3 @@
-from django.http.response import HttpResponseRedirect
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action

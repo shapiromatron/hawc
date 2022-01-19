@@ -11,6 +11,7 @@ router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"jobs", api.JobViewset, basename="jobs")
 router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
+router.register(r"strain", api.StrainViewset, basename="strain")
 router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
 
 
@@ -89,7 +90,6 @@ urlpatterns = [
         "<int:pk>/clean-study-metrics/", views.CleanStudyRoB.as_view(), name="clean_study_metrics",
     ),
     # api views
-    path("api/strains/", api.StrainList.as_view(), name="strain_list"),
     path("api/", include((router.urls, "api"))),
 ]
 

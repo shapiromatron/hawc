@@ -122,14 +122,13 @@ class StudyRead(BaseDetail):
 
 
 class StudyToggleLock(RedirectView):
-    # Toggle locking of a study; redirect back to the study detail page
     pattern_name = "study:detail"
 
     def get(self, request, *args, **kwargs):
         study = get_object_or_404(models.Study, pk=kwargs["pk"])
-        if study.assessment.user_can_edit_assessment(self.request.user):
-            study.editable = not study.editable
-            study.save()
+        if not study.user_can_toggle_editable(self.request.user):
+            raise PermissionDenied()
+        study.toggle_editable()
         return super().get(request, *args, **kwargs)
 
 

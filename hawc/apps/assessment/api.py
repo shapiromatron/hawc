@@ -609,15 +609,13 @@ class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
         return self.model.objects.filter(assessment=None)
 
 
-class StrainList(generics.ListAPIView):
+class StrainViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     model = models.Strain
     queryset = models.Strain.objects.all()
     serializer_class = serializers.StrainSerializer
     pagination_class = None
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = [
-        "species",
-    ]
+    filterset_fields = ("species",)
 
 
 class HealthcheckViewset(viewsets.ViewSet):
