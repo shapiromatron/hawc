@@ -510,11 +510,6 @@ class AttachmentViewset(HtmxViewSet):
             return self.str_response()
         return render(request, self.detail_fragment, self.get_context_data())
 
-    @action(methods=("post",), permission=can_edit)
-    def clone(self, request: HttpRequest, *args, **kwargs):
-        self.perform_clone(request.item)
-        return render(request, self.detail_fragment, self.get_context_data())
-
 
 class AttachmentList(BaseList):
     model = models.Attachment

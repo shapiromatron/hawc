@@ -39,8 +39,6 @@ class AttachmentManager(BaseManager):
         filters = {
             "study_id": obj.id,
         }
-        if isPublic:
-            filters["publicly_available"] = True
         return self.filter(**filters)
 
     def assessment_qs(self, study_id):
