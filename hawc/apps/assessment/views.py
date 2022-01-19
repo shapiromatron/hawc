@@ -11,14 +11,13 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
-from django.db import transaction
 from django.db.models import Count
 from django.http import (
     Http404,
+    HttpRequest,
     HttpResponseNotAllowed,
     HttpResponseRedirect,
     JsonResponse,
-    HttpRequest,
 )
 from django.middleware.csrf import get_token
 from django.shortcuts import HttpResponse, get_object_or_404, render

@@ -2,14 +2,14 @@ from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
-from django.http import HttpRequest
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -19,7 +19,6 @@ from ..common.views import (
     MessageMixin,
     TeamMemberOrHigherMixin,
 )
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
