@@ -1,17 +1,18 @@
-{% if object_list.count > 0 or new_attach %}
+<div id="attach_table">
+{% if object_list.count > 0 or action == 'create' %}
 <h2>Attachments
-{% if canEdit %}
+{% if canEdit or permissions.edit %}
 <button
     class="btn btn-sm btn-info pull-right"
-    hx-get="{% url 'assessment:attachment-create' object.pk %}"
-    hx-target="#new_row"
+    hx-get="{% url 'assessment:attachment-create' assessment.pk %}"
+    hx-target="#attach_table"
     hx-swap="outerHTML"
     >Add Attachment</button>
 {% endif %}
 </h2>
 <table class="table table-sm table-striped">
     <colgroup>
-        {% if canEdit %}
+        {% if canEdit or permissions.edit %}
            <col style="width: 25%;">
            <col style="width: 60%;">
            <col style="width: 15%;">
@@ -24,7 +25,7 @@
         <tr>
             <th>Attachment</th>
             <th>Description</th>
-            {% if canEdit %}
+            {% if canEdit or permissions.edit %}
                 <th>Editing</th>
             {% endif %}
         </tr>
@@ -40,5 +41,6 @@
     </tbody>
 </table>
 {% endif %}
+</div>
 
 

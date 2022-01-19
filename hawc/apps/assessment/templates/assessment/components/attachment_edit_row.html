@@ -1,9 +1,7 @@
 {% load crispy_forms_tags  %}
-{% if form.instance.id %}
+
 <tr hx-target="this" hx-swap="outerHTML">
-{% else %}
-<tr id="new_row" hx-target="this" hx-swap="outerHTML">
-{% endif %}
+
 {% if form %}
 <td colspan="3">
         <form method=post enctype="multipart/form-data" class="border my-2 p-2">
