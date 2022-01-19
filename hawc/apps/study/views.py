@@ -121,7 +121,7 @@ class StudyRead(BaseDetail):
         return context
 
 
-class StudyToggleEdit(RedirectView):
+class StudyToggleLock(RedirectView):
     # Toggle locking of a study; redirect back to the study detail page
     pattern_name = "study:detail"
 
