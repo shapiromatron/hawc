@@ -99,7 +99,7 @@ class IdentifiersSerializer(serializers.ModelSerializer):
 
 class ReferenceQuerySerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False, allow_null=True)
-    db_id = serializers.IntegerField(required=False, allow_null=True)
+    db_id = serializers.CharField(required=False, allow_blank=True)
     year = serializers.IntegerField(required=False, allow_null=True)
     title = serializers.CharField(required=False, allow_blank=True)
     authors = serializers.CharField(required=False, allow_blank=True)
@@ -127,8 +127,8 @@ class ReferenceQuerySerializer(serializers.Serializer):
         query = Q()
         if "id" in self.data and self.data["id"] is not None:
             query &= Q(id=self.data["id"])
-        if "db_id" in self.data and self.data["db_id"] is not None:
-            query &= Q(identifiers__unique_id=self.data["db_id"])
+        if db_id := self.data.get("db_id", ""):
+            query &= Q(identifiers__unique_id__icontains=db_id)
         if "year" in self.data and self.data["year"] is not None:
             query &= Q(year=self.data["year"])
         if "title" in self.data:
