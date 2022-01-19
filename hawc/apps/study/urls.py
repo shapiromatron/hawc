@@ -21,9 +21,23 @@ urlpatterns = [
     path("<int:pk>/risk-of-bias/", views.StudyRoBRedirect.as_view(), name="rob_redirect",),
     # attachment
     path("attachment/<int:pk>/", views.AttachmentRead.as_view(), name="attachment_detail",),
-    path("<int:pk>/attachment/add/", views.AttachmentCreate.as_view(), name="attachment_create",),
     path(
-        "attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete",
+        "attachment/<int:pk>/create/",
+        views.AttachmentViewset.as_view(),
+        {"action": "create"},
+        name="attachment-create",
+    ),
+    path(
+        "attachment/<int:pk>/read/",
+        views.AttachmentViewset.as_view(),
+        {"action": "read"},
+        name="attachment-read",
+    ),
+    path(
+        "attachment/<int:pk>/delete/",
+        views.AttachmentViewset.as_view(),
+        {"action": "delete"},
+        name="attachment-delete",
     ),
     path("<int:pk>/attachments/", views.AttachmentList.as_view(), name="attachment_list"),
     re_path(

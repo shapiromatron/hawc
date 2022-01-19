@@ -22,9 +22,8 @@
 
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
-            <button class="dropdown-item" hx-get="{% url 'study:attachment_create' object.pk %}"
-              hx-vals='{"new": "True"}' hx-trigger="click"
-                hx-target="#attachTable" hx-swap="outerHTML">
+            <button class="dropdown-item" hx-get="{% url 'study:attachment-create' object.pk %}"
+              hx-target="#attach_list" hx-swap="outerHTML">
               Add an attachment</button>
 
             {% if object.bioassay %}

@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
+from django.http import HttpRequest
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -18,6 +19,7 @@ from ..common.views import (
     MessageMixin,
     TeamMemberOrHigherMixin,
 )
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
@@ -195,44 +197,41 @@ class StudyRoBRedirect(StudyRead):
         return redirect(self.object.get_final_rob_url(), permanent=True)
 
 
-# Attachment views
-class AttachmentCreate(BaseCreate):
-    success_message = "Attachment added to study."
+# Attachment viewset
+class AttachmentViewset(HtmxViewSet):
+    actions = {"create", "read", "delete"}
     parent_model = models.Study
-    parent_template_name = "study"
     model = models.Attachment
-    form_class = forms.AttachmentForm
-    template_name = "study/_attachment_list.html"
+    form_fragment = "study/attachment_form.html"
+    detail_fragment = "study/attachment_item.html"
+    list_fragment = "study/_attachment_list.html"
 
-    def get_success_url(self):
-        return reverse("study:attachment_list", args=[self.parent.pk])
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object"] = self.parent
-        context["newAttach"] = True
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.list_fragment
+        if request.method == "POST":
+            form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.AttachmentForm(parent=request.item.parent)
+        context = self.get_context_data(form=form)
         context["attachments"] = models.Attachment.objects.get_attachments(
-            self.parent, not context["obj_perms"]["edit"]
+            request.item.parent, False
         )
-        return context
+        return render(request, template, context)
 
-    def get(self, request, *args, **kwargs):
-        super().get(request, *args, **kwargs)
-        context = self.get_context_data()
-        return render(request, "study/_attachment_list.html", context)
-
-
-class AttachmentDelete(BaseDelete):
-    success_message = "Attachment deleted."
-    model = models.Attachment
-
-    def delete(self, request, *args, **kwargs):
-        redirect = super().delete(self, request, *args, **kwargs)
-        redirect.status_code = 303
-        return redirect
-
-    def get_success_url(self):
-        return reverse("study:attachment_list", args=[self.object.study.pk])
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        return render(request, self.detail_fragment, self.get_context_data())
 
 
 class AttachmentRead(BaseDetail):
@@ -240,10 +239,6 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if "HX-Request" in request.headers:
-            return render(
-                request, "study/attachment_row.html", {"object": self.object, "canEdit": True},
-            )
         if self.assessment.user_is_part_of_team(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
@@ -256,15 +251,12 @@ class AttachmentList(BaseList):
     parent_template_name = "parent"
     template_name = "study/_attachment_list.html"
     object_list = None
-    form_class = forms.AttachmentForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = self.form_class(parent=self.parent)
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.parent, not context["obj_perms"]["edit"]
         )
-        context["object"] = self.parent
         return context
 
     def get(self, request, *args, **kwargs):

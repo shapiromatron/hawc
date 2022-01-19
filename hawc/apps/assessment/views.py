@@ -479,7 +479,7 @@ class AttachmentViewset(HtmxViewSet):
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         if request.method == "POST":
-            form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.assessment)
+            form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.parent)
             if form.is_valid():
                 self.perform_create(request.item, form)
                 template = self.detail_fragment
