@@ -55,10 +55,7 @@ class ListUpdateModelMixin:
             self.pre_save_bulk(queryset, update_bulk_dict)
             try:
                 queryset.update(**update_bulk_dict)
-            except ValueError as e:
-                errors = {"detail": force_str(e)}
-                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-            except DataError as e:
+            except (DataError, ValueError) as e:
                 errors = {"detail": force_str(e)}
                 return Response(errors, status=status.HTTP_400_BAD_REQUEST)
             self.post_save_bulk(queryset, update_bulk_dict)
