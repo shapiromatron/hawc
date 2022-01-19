@@ -50,14 +50,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True)
-    def tags_nested(self, request, pk):
-        """
-        Show nested literature tags for entire assessment
-        """
-        instance = self.get_object()
-        return Response(models.ReferenceFilterTag.get_all_tags(instance.id, json_encode=False))
-
     @action(detail=True, methods=("get", "post"))
     def tagtree(self, request, pk, *args, **kwargs):
         """
@@ -393,7 +385,7 @@ class ReferenceViewset(
     queryset = models.Reference.objects.all()
 
     @action(detail=True, methods=("post",))
-    def tag_references(self, request, pk):
+    def tag(self, request, pk):
         response = {"status": "fail"}
         ref = self.get_object()
         assessment = ref.assessment

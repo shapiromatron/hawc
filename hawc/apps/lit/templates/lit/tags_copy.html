@@ -44,16 +44,17 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    let data = {
-      rootUrl: "{% url 'lit:tags_list' %}",
-    };
     window.app.startup("litStartup", function(lit){
-      $('#id_assessment').on('change', function () {
-        $.get(data.rootUrl, { pk: $('#id_assessment').val() }, function (d) {
-          const tagtree = new lit.TagTree(JSON.parse(d)[0]);
+      const handleChange = function () {
+        const assessment_id = $('#id_assessment').val(),
+          url = `/lit/api/assessment/${assessment_id}/tagtree/`
+        $.get(url, function(data){
+          const tree = {data:{}, id:1, children: data.tree},
+            tagtree = new lit.TagTree(tree)
           tagtree.render(document.getElementById('tags'));
         });
-      }).trigger('change');
+      }
+      $('#id_assessment').on('change', handleChange).trigger('change');
     });
   </script>
 {% endblock extrajs %}
