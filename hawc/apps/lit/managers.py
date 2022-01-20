@@ -228,9 +228,9 @@ class ReferenceQuerySet(models.QuerySet):
     def untagged(self):
         return self.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
 
-    def with_tag(self, tag, children: bool = False):
+    def with_tag(self, tag, descendants: bool = False):
         tag_ids = [tag.id]
-        if children:
+        if descendants:
             tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
         return self.filter(tags__in=tag_ids).distinct("pk")
 

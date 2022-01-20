@@ -74,15 +74,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         Get references for an assessment
 
-        Args:
-            request_params:
-                - search_id: Search object id; if provided, gets references within a search
-                - tag_id: Tag object id; if provided, gets references with tag
-                - all: include references; no pagination (default None)
-                - untagged: include untagged references (default None)
-
-        Returns:
-            json: Paginated json reference data
+        Args (via GET parameters):
+            - search_id: Search object id; if provided, gets references within a search
+            - tag_id: Tag object id; if provided, gets references with tag
+            - all: include references; no pagination (default None)
+            - untagged: include untagged references (default None)
         """
         assessment = self.get_object()
         qs = models.Reference.objects.assessment_qs(assessment.id)
@@ -94,7 +90,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             qs = qs.untagged()
         elif tag_id := tryParseInt(request.query_params.get("tag_id")):
             if tag := models.ReferenceFilterTag.objects.filter(id=tag_id).first():
-                qs = qs.with_tag(tag=tag, children=True)
+                qs = qs.with_tag(tag=tag, descendants=True)
 
         qs = (
             qs.select_related("study")
@@ -353,7 +349,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         if serializer.is_valid():
             qs = (
                 models.Reference.objects.all()
-                .with_tag(tag=tag, children=serializer.include_descendants())
+                .with_tag(tag=tag, descendants=serializer.include_descendants())
                 .order_by("id")
             )
             ExportClass = serializer.get_exporter()
