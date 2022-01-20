@@ -1,13 +1,63 @@
 import django.db.models.deletion
+import pandas as pd
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import migrations, models
+from reversion.models import Version
+
+
+def set_creator(apps, schema_editor):
+    ct_id = ContentType.objects.get(app_label="assessment", model="assessment").id
+    versions = Version.objects.filter(content_type=ct_id).select_related(
+        "revision", "revision__user"
+    )
+    data = []
+    for version in versions:
+        data.append(
+            [
+                version.id,
+                version.revision.date_created,
+                version.revision.user.id,
+                version.object_id,
+            ]
+        )
+
+    df = (
+        pd.DataFrame(
+            data=data, columns="log_id revision_timestamp revision_user_id assessment_id".split(" ")
+        )
+        .sort_values("revision_timestamp")
+        .reset_index(drop=True)
+    )
+
+    if df.shape[0] == 0:
+        return
+
+    df["revision_timestamp"] = df["revision_timestamp"].dt.tz_localize(None)
+    df.assessment_id = df.assessment_id.astype(int)
+
+    df = (
+        df.groupby("assessment_id").nth(0)[["revision_timestamp", "revision_user_id"]].reset_index()
+    )
+
+    dict = pd.Series(data=df.revision_user_id, index=df.assessment_id).to_dict()
+
+    Assessment = apps.get_model("assessment", "assessment")
+    updates = []
+    for assessment in Assessment.objects.all():
+        user_id = dict.get(assessment.id)
+        if user_id:
+            assessment.creator_id = user_id
+            updates.append(assessment)
+
+    Assessment.objects.bulk_update(updates, ["creator_id"])
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("assessment", "0027_content_v2"),
+        ("assessment", "0029_communications"),
     ]
 
     operations = [
@@ -49,4 +99,5 @@ class Migration(migrations.Migration):
                 verbose_name="Public training data",
             ),
         ),
+        migrations.RunPython(set_creator, migrations.RunPython.noop),
     ]
