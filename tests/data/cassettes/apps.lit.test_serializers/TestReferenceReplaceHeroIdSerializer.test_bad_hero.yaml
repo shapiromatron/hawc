@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.23.0
+      - python-requests/2.26.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/-1/recordsperpage/100.json
   response:
@@ -21,53 +21,18 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Fri, 31 Jul 2020 03:36:31 GMT
+      - Wed, 19 Jan 2022 23:28:12 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.43 (Win64) OpenSSL/1.1.1g mod_jk/1.2.46
+      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
       Set-Cookie:
-      - CFID=39872295; Expires=Sat, 01-Aug-2020 03:36:31 GMT; Path=/; HttpOnly
-      - CFTOKEN=84244139; Expires=Sat, 01-Aug-2020 03:36:31 GMT; Path=/; HttpOnly
-      - JSESSIONID=4DB78A63719525A6049FA50289614C12.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2020%2F07%2F30%2023%3A36%3A31; Path=/
-      Transfer-Encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
-    method: GET
-    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/-1/recordsperpage/100.json
-  response:
-    body:
-      string: '{"results":[],"isValid":true,"message":"Success","error":""} '
-    headers:
-      Connection:
-      - Keep-Alive
-      Content-Type:
-      - application/json;charset=utf-8
-      Date:
-      - Fri, 31 Jul 2020 05:17:25 GMT
-      Keep-Alive:
-      - timeout=5, max=100
-      Server:
-      - Apache/2.4.43 (Win64) OpenSSL/1.1.1g mod_jk/1.2.46
-      Set-Cookie:
-      - CFID=39874949; Expires=Sat, 01-Aug-2020 05:17:25 GMT; Path=/; HttpOnly
-      - CFTOKEN=82783194; Expires=Sat, 01-Aug-2020 05:17:25 GMT; Path=/; HttpOnly
-      - JSESSIONID=0D99EE9BF7DA69B155CBE71172B144F8.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2020%2F07%2F31%2001%3A17%3A25; Path=/
+      - CFID=9376449; Expires=Thu, 20-Jan-2022 23:28:12 GMT; Path=/; HttpOnly
+      - CFTOKEN=93389776; Expires=Thu, 20-Jan-2022 23:28:12 GMT; Path=/; HttpOnly
+      - JSESSIONID=1A7C0672342FA8CCB0616DC253FF6FB7.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2022%2F01%2F19%2018%3A28%3A12; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains; preload
       Transfer-Encoding:
       - chunked
     status:
