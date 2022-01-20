@@ -13,6 +13,7 @@ def casrn_to_dtxsid(apps, schema_editor):
     DSSTox = apps.get_model("assessment", "dsstox")
 
     def _create_dsstox(identifier: str) -> Optional[models.Model]:
+        return None
         try:
             substance = DssSubstance.create_from_identifier(identifier)
             return DSSTox(dtxsid=substance.dtxsid, content=substance.content)
