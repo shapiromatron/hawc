@@ -354,6 +354,9 @@ class TagByUntagged(TagReferences):
 
 
 def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
+    qs = (
+        search.references.all() if search else models.Reference.objects.assessment_qs(assessment.id)
+    )
     return WebappConfig(
         app="litStartup",
         page="startupReferenceList",
@@ -361,9 +364,7 @@ def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
             assessment_id=assessment.id,
             search_id=search.id if search else None,
             tags=models.ReferenceFilterTag.get_all_tags(assessment.id),
-            references=models.Reference.objects.get_full_assessment_json(
-                assessment, search_id=search.id if search else None
-            ),
+            references=models.Reference.objects.tag_pairs(qs),
             canEdit=permissions["edit"],
             untaggedReferenceCount=models.Reference.objects.assessment_qs(assessment.id)
             .untagged()
@@ -396,10 +397,10 @@ class SearchRefList(BaseDetail):
 
 def _get_viz_app_startup(view, context, search=None) -> WebappConfig:
     title = f'"{search}" Literature Tagtree' if search else f"{view.assessment}: Literature Tagtree"
-    references = (
-        search.get_all_reference_tags()
+    qs = (
+        search.references.all()
         if search
-        else models.Reference.objects.get_full_assessment_json(view.assessment)
+        else models.Reference.objects.assessment_qs(view.assessment.id)
     )
     return WebappConfig(
         app="litStartup",
@@ -411,7 +412,7 @@ def _get_viz_app_startup(view, context, search=None) -> WebappConfig:
             search_id=search.id if search else None,
             tags=models.ReferenceFilterTag.get_all_tags(view.assessment.id),
             title=title,
-            references=references,
+            references=models.Reference.objects.tag_pairs(qs),
         ),
     )
 

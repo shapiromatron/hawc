@@ -415,13 +415,6 @@ class Search(models.Model):
             dicts.append(pubmed_query.to_dict())
         return dicts
 
-    def get_all_reference_tags(self):
-        return list(
-            ReferenceTags.objects.filter(content_object__in=self.references.all())
-            .annotate(reference_id=models.F("content_object_id"))
-            .values("reference_id", "tag_id")
-        )
-
     @property
     def references_count(self):
         return self.references.all().count()

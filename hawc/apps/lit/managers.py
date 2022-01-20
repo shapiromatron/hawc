@@ -274,17 +274,14 @@ class ReferenceManager(BaseManager):
         logger.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
         orphans.delete()
 
-    def get_full_assessment_json(self, assessment, search_id=None):
-        refs_qs = self.assessment_qs(assessment)
-        if search_id:
-            refs_qs = refs_qs.filter(searches=search_id)
+    def tag_pairs(self, qs):
+        # get reference tag pairs
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
-        ref_objs = list(
-            ReferenceTags.objects.filter(content_object__in=refs_qs)
+        return list(
+            ReferenceTags.objects.filter(content_object__in=qs)
             .annotate(reference_id=models.F("content_object_id"))
             .values("reference_id", "tag_id")
         )
-        return ref_objs
 
     def get_hero_references(self, search, identifiers):
         """
