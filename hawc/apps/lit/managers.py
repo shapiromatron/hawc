@@ -18,7 +18,6 @@ from hawc.services.utils.doi import get_doi_from_identifier
 
 from ...services.epa import hero
 from ...services.nih import pubmed
-from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
 from . import constants
 
@@ -224,9 +223,23 @@ class IdentifiersManager(BaseManager):
         return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str)
 
 
+class ReferenceQuerySet(models.QuerySet):
+    def untagged(self):
+        return self.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
+
+    def with_tag(self, tag, descendants: bool = False):
+        tag_ids = [tag.id]
+        if descendants:
+            tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
+        return self.filter(tags__in=tag_ids).distinct("pk")
+
+
 class ReferenceManager(BaseManager):
 
     assessment_relation = "assessment"
+
+    def get_queryset(self):
+        return ReferenceQuerySet(self.model, using=self._db)
 
     def build_ref_ident_m2m(self, objs):
         # Bulk-create reference-search relationships
@@ -261,17 +274,14 @@ class ReferenceManager(BaseManager):
         logger.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
         orphans.delete()
 
-    def get_full_assessment_json(self, assessment, json_encode=True):
+    def tag_pairs(self, qs):
+        # get reference tag pairs
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
-        ref_objs = list(
-            ReferenceTags.objects.filter(content_object__in=self.get_qs(assessment))
+        return list(
+            ReferenceTags.objects.filter(content_object__in=qs)
             .annotate(reference_id=models.F("content_object_id"))
             .values("reference_id", "tag_id")
         )
-        if json_encode:
-            return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
-        else:
-            return ref_objs
 
     def get_hero_references(self, search, identifiers):
         """
@@ -400,15 +410,6 @@ class ReferenceManager(BaseManager):
             )
         else:
             return self.none()
-
-    def get_references_with_tag(self, tag, descendants=False):
-        tag_ids = [tag.id]
-        if descendants:
-            tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
-        return self.filter(tags__in=tag_ids).distinct("pk")
-
-    def get_untagged_references(self, assessment):
-        return self.get_qs(assessment).annotate(tag_count=models.Count("tags")).filter(tag_count=0)
 
     def process_excel(self, df, assessment_id):
         """
@@ -588,7 +589,7 @@ class ReferenceManager(BaseManager):
             .str.replace("|", ". ", regex=False)  # change pipes to periods
         )
 
-        tree = ReferenceFilterTag.get_all_tags(assessment_id, json_encode=False)
+        tree = ReferenceFilterTag.get_all_tags(assessment_id)
         tag_qs = ReferenceTags.objects.assessment_qs(assessment_id)
         node_dict = refmltags.build_tree_node_dict(tree)
         df2 = (
