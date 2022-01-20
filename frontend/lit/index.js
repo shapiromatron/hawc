@@ -16,6 +16,7 @@ import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
 
 export default {
+    TagTree,
     startupReferenceDetail(el, config) {
         let tagtree = new TagTree(config.tags[0]),
             ref = new Reference(config.reference, tagtree),

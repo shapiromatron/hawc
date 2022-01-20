@@ -347,16 +347,14 @@ class TagByUntagged(TagReferences):
         return dict(tags=self.object.pk)
 
     def get_context_data(self, **kwargs):
-        self.qs_reference = models.Reference.objects.assessment_qs(self.assessment).untagged()
+        self.qs_reference = self.assessment.references.all().untagged()
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][3] = Breadcrumb(name="Tag untagged references")
         return context
 
 
 def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
-    qs = (
-        search.references.all() if search else models.Reference.objects.assessment_qs(assessment.id)
-    )
+    qs = search.references.all() if search else assessment.references.all()
     return WebappConfig(
         app="litStartup",
         page="startupReferenceList",
@@ -366,9 +364,7 @@ def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
             tags=models.ReferenceFilterTag.get_all_tags(assessment.id),
             references=models.Reference.objects.tag_pairs(qs),
             canEdit=permissions["edit"],
-            untaggedReferenceCount=models.Reference.objects.assessment_qs(assessment.id)
-            .untagged()
-            .count(),
+            untaggedReferenceCount=qs.untagged().count(),
         ),
     )
 
@@ -397,11 +393,7 @@ class SearchRefList(BaseDetail):
 
 def _get_viz_app_startup(view, context, search=None) -> WebappConfig:
     title = f'"{search}" Literature Tagtree' if search else f"{view.assessment}: Literature Tagtree"
-    qs = (
-        search.references.all()
-        if search
-        else models.Reference.objects.assessment_qs(view.assessment.id)
-    )
+    qs = search.references.all() if search else view.assessment.references.all()
     return WebappConfig(
         app="litStartup",
         page="startupTagTreeViz",

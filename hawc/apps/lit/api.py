@@ -81,7 +81,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             - untagged: include untagged references (default None)
         """
         assessment = self.get_object()
-        qs = models.Reference.objects.assessment_qs(assessment.id)
+        qs = assessment.references.all()
 
         if search_id := tryParseInt(request.query_params.get("search_id")):
             qs = qs.filter(searches=search_id)
@@ -112,7 +112,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get literature reference ids for all assessment references
         """
         instance = self.get_object()
-        qs = models.Reference.objects.assessment_qs(instance.id)
+        qs = instance.references.all()
         df = models.Reference.objects.identifiers_dataframe(qs)
         export = FlatExport(df=df, filename=f"reference-ids-{self.assessment.id}")
         return Response(export)
