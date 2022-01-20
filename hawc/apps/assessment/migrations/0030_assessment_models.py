@@ -41,7 +41,7 @@ def set_creator(apps, schema_editor):
         df.groupby("assessment_id").nth(0)[["revision_timestamp", "revision_user_id"]].reset_index()
     )
 
-    dict = pd.Series(data=df.revision_user_id, index=df.assessment_id).to_dict()
+    dict = pd.Series(data=df.revision_user_id.values, index=df.assessment_id).to_dict()
 
     Assessment = apps.get_model("assessment", "assessment")
     updates = []
