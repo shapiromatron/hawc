@@ -1,11 +1,6 @@
-import $ from "$";
 import ReactDOM from "react-dom";
 import React from "react";
 
-import Loading from "shared/components/Loading";
-import Alert from "shared/components/Alert";
-import ReferenceTable from "lit/components/ReferenceTable";
-import Reference from "./Reference";
 import PaginatedReferenceList from "./components/PaginatedReferenceList";
 
 class NestedTag {
