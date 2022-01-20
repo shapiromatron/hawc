@@ -35,6 +35,7 @@ def set_creator(apps, schema_editor):
 
     df["revision_timestamp"] = df["revision_timestamp"].dt.tz_localize(None)
     df.assessment_id = df.assessment_id.astype(int)
+    df.revision_user_id = df.revision_user_id.astype(int)
 
     df = (
         df.groupby("assessment_id").nth(0)[["revision_timestamp", "revision_user_id"]].reset_index()
