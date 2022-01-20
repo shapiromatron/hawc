@@ -3,6 +3,6 @@
 {% block submit_buttons_bottom %}
 {{block.super}}
 <!-- Add an inline preview of the `assessment.Blog` post -->
-<h1><i>Preview:</i>&nbsp;{{adminform.form.instance.subject|safe}}</h1>
+<h2><i>Preview:</i>&nbsp;{{adminform.form.instance.subject|safe}}</h2>
 {{adminform.form.instance.rendered_content|safe}}
 {% endblock %}
