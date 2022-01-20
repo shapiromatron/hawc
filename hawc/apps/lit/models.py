@@ -28,7 +28,7 @@ from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -415,16 +415,12 @@ class Search(models.Model):
             dicts.append(pubmed_query.to_dict())
         return dicts
 
-    def get_all_reference_tags(self, json_encode=True):
-        ref_objs = list(
+    def get_all_reference_tags(self):
+        return list(
             ReferenceTags.objects.filter(content_object__in=self.references.all())
             .annotate(reference_id=models.F("content_object_id"))
             .values("reference_id", "tag_id")
         )
-        if json_encode:
-            return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
-        else:
-            return ref_objs
 
     @property
     def references_count(self):

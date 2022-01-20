@@ -47,18 +47,17 @@ class VizState {
 }
 
 class TagTreeViz extends D3Plot {
-    constructor(tagtree, el, title, downloadURL, options) {
+    constructor(tagtree, el, title, options) {
         // Displays multiple-dose-response details on the same view and allows for
         // custom visualization of these plots
         super();
         this.stateStore = new VizState(options);
         this.set_defaults();
-        this.el = el;
+        this.el = $(el);
         this.plot_div = $("<div>").appendTo(el);
         this.options_div = $("<div>").appendTo(el);
         this.tagtree = tagtree;
         this.title_str = title;
-        this.downloadURL = downloadURL;
         this.modal = new HAWCModal();
         this.build_plot();
         this.build_options();

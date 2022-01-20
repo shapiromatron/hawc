@@ -57,7 +57,7 @@ class LitOverview(BaseList):
             ).count()
         context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
         context["config"] = {
-            "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id),
             "assessment_id": self.assessment.id,
             "referenceYearHistogramUrl": reverse(
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
@@ -261,7 +261,7 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
             app="litStartup",
             page="startupTagReferences",
             data=dict(
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
                 refs=[ref.to_dict() for ref in refs],
                 csrf=get_token(self.request),
             ),
@@ -360,9 +360,9 @@ def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
         data=dict(
             assessment_id=assessment.id,
             search_id=search.id if search else None,
-            tags=models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False),
+            tags=models.ReferenceFilterTag.get_all_tags(assessment.id),
             references=models.Reference.objects.get_full_assessment_json(
-                assessment, search_id=search.id if search else None, json_encode=False
+                assessment, search_id=search.id if search else None
             ),
             canEdit=permissions["edit"],
             untaggedReferenceCount=models.Reference.objects.assessment_qs(assessment.id)
@@ -394,6 +394,28 @@ class SearchRefList(BaseDetail):
         return _get_reference_list(self.assessment, context["obj_perms"], self.object)
 
 
+def _get_viz_app_startup(view, context, search=None) -> WebappConfig:
+    title = f'"{search}" Literature Tagtree' if search else f"{view.assessment}: Literature Tagtree"
+    references = (
+        search.get_all_reference_tags()
+        if search
+        else models.Reference.objects.get_full_assessment_json(view.assessment)
+    )
+    return WebappConfig(
+        app="litStartup",
+        page="startupTagTreeViz",
+        data=dict(
+            can_edit=context["obj_perms"]["edit"],
+            assessment_id=view.assessment.id,
+            assessment_name=str(view.assessment),
+            search_id=search.id if search else None,
+            tags=models.ReferenceFilterTag.get_all_tags(view.assessment.id),
+            title=title,
+            references=references,
+        ),
+    )
+
+
 class SearchTagsVisualization(BaseDetail):
     model = models.Search
     template_name = "lit/reference_visual.html"
@@ -408,13 +430,12 @@ class SearchTagsVisualization(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["object_type"] = "search"
-        context["ref_objs"] = self.object.get_all_reference_tags()
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["objectType"] = self.model.__name__
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Visualization"))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_viz_app_startup(self, context, search=self.object)
 
 
 class RefList(BaseList):
@@ -486,6 +507,18 @@ class RefListExtract(BaseList):
         return context
 
 
+def _get_ref_app_startup(view, context) -> WebappConfig:
+    return WebappConfig(
+        app="litStartup",
+        page="startupReferenceDetail",
+        data={
+            "tags": models.ReferenceFilterTag.get_all_tags(view.assessment.id),
+            "reference": view.object.to_dict(),
+            "canEdit": context["obj_perms"]["edit"],
+        },
+    )
+
+
 class RefDetail(BaseDetail):
     model = models.Reference
 
@@ -495,17 +528,7 @@ class RefDetail(BaseDetail):
         return context
 
     def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="litStartup",
-            page="startupReferenceDetail",
-            data={
-                "tags": models.ReferenceFilterTag.get_all_tags(
-                    self.assessment.id, json_encode=False
-                ),
-                "reference": self.object.to_dict(),
-                "canEdit": context["obj_perms"]["edit"],
-            },
-        )
+        return _get_ref_app_startup(self, context)
 
 
 class RefEdit(BaseUpdate):
@@ -535,10 +558,11 @@ class RefDelete(BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["object_json"] = self.object.to_json()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_ref_app_startup(self, context)
 
 
 class RefSearch(BaseDetail):
@@ -558,7 +582,7 @@ class RefSearch(BaseDetail):
             data=dict(
                 assessment_id=self.assessment.id,
                 canEdit=context["obj_perms"]["edit"],
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
                 csrf=get_token(self.request),
             ),
         )
@@ -571,12 +595,11 @@ class RefVisualization(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["object_type"] = "reference"
-        context["ref_objs"] = models.Reference.objects.get_full_assessment_json(self.assessment)
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["objectType"] = self.model.__name__
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_viz_app_startup(self, context)
 
 
 class RefTopicModel(BaseDetail):

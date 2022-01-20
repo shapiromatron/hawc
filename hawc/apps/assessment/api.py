@@ -214,7 +214,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     def list(self, request):
         self.filter_queryset(self.get_queryset())
-        data = self.model.get_all_tags(self.assessment.id, json_encode=False)
+        data = self.model.get_all_tags(self.assessment.id)
         return Response(data)
 
     def create(self, request, *args, **kwargs):

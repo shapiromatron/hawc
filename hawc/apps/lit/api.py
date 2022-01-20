@@ -203,7 +203,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get all references in an assessment.
         """
         assessment = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
         exporter = exports.ReferenceFlatComplete(
             models.Reference.objects.get_qs(assessment)
             .prefetch_related("identifiers")
@@ -329,7 +329,7 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
             instance.references.all(),
             filename=f"{instance.assessment}-search-{instance.slug}",
             assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
             include_parent_tag=False,
         )
         return Response(exporter.build_export())
@@ -357,7 +357,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
                 queryset=qs,
                 filename=f"{self.assessment}-{tag.slug}",
                 assessment=self.assessment,
-                tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
+                tags=self.model.get_all_tags(self.assessment.id),
                 include_parent_tag=False,
             )
             return Response(exporter.build_export())
