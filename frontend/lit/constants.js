@@ -6,13 +6,13 @@ export const ReferenceStorageKey = "sortReferencesBy",
         AUTH_ASC: [
             "AUTH_ASC",
             "author ↑",
-            [d => d.data.authors_short, d => d.data.year],
+            [d => d.data.authors_short.toUpperCase(), d => d.data.year],
             ["asc", "asc"],
         ],
         AUTH_DESC: [
             "AUTH_DESC",
             "author ↓",
-            [d => d.data.authors_short, d => d.data.year],
+            [d => d.data.authors_short.toUpperCase(), d => d.data.year],
             ["desc", "asc"],
         ],
         YEAR_ASC: [
