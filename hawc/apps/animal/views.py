@@ -30,18 +30,6 @@ from ..study.views import StudyRead
 from . import forms, models
 
 
-class ExperimentList(BaseList):
-    parent_model = Study
-    model = models.Experiment
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            permissions=self.assessment.get_permissions().to_dict(self.request.user),
-            objects=self.parent.experiments.all().order_by("id"),
-            parent=self.parent,
-        )
-
-
 # Heatmap views
 class HeatmapStudyDesign(HeatmapBase):
     heatmap_data_class = "bioassay-study-design"
