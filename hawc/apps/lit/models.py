@@ -426,15 +426,6 @@ class Search(models.Model):
         else:
             return ref_objs
 
-    def get_references_with_tag(self, tag=None, descendants=False):
-        if tag is None:
-            return self.references_untagged
-        else:
-            tag_ids = [tag.id]
-            if descendants:
-                tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
-            return self.references.filter(tags__in=tag_ids).distinct("pk")
-
     @property
     def references_count(self):
         return self.references.all().count()

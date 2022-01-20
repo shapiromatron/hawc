@@ -347,7 +347,7 @@ class TagByUntagged(TagReferences):
         return dict(tags=self.object.pk)
 
     def get_context_data(self, **kwargs):
-        self.qs_reference = models.Reference.objects.get_untagged_references(self.assessment)
+        self.qs_reference = models.Reference.objects.assessment_qs(self.assessment).untagged()
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][3] = Breadcrumb(name="Tag untagged references")
         return context
@@ -362,12 +362,12 @@ def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
             search_id=search.id if search else None,
             tags=models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False),
             references=models.Reference.objects.get_full_assessment_json(
-                assessment, json_encode=False
+                assessment, search_id=search.id if search else None, json_encode=False
             ),
             canEdit=permissions["edit"],
-            untaggedReferenceCount=models.Reference.objects.get_untagged_references(
-                assessment
-            ).count(),
+            untaggedReferenceCount=models.Reference.objects.assessment_qs(assessment.id)
+            .untagged()
+            .count(),
         ),
     )
 

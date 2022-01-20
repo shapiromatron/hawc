@@ -24,7 +24,7 @@ from ..common.api import (
     OncePerMinuteThrottle,
     PaginationWithCount,
 )
-from ..common.helper import FlatExport, re_digits, read_excel
+from ..common.helper import FlatExport, re_digits, read_excel, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
@@ -75,40 +75,39 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get references for an assessment
 
         Args:
-            request:
+            request_params:
                 - search_id: Search object id; if provided, gets references within a search
                 - tag_id: Tag object id; if provided, gets references with tag
+                - all: include references; no pagination (default None)
+                - untagged: include untagged references (default None)
 
         Returns:
             json: Paginated json reference data
         """
         assessment = self.get_object()
+        qs = models.Reference.objects.assessment_qs(assessment.id)
 
-        search_id = request.query_params.get("search_id")
-        tag_id = request.query_params.get("tag_id")
-        tag = None
-        if tag_id and tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, [int(tag_id)])[0]
+        if search_id := tryParseInt(request.query_params.get("search_id")):
+            qs = qs.filter(searches=search_id)
 
-        if search_id:
-            search = models.Search.objects.get(id=search_id)
-            qs = search.get_references_with_tag(tag=tag, descendants=True)
-        elif tag:
-            qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
-        elif tag_id == "untagged":
-            qs = models.Reference.objects.get_untagged_references(assessment)
-        else:
-            qs = models.Reference.objects.filter(assessment=assessment)
+        if "untagged" in request.query_params:
+            qs = qs.untagged()
+        elif tag_id := tryParseInt(request.query_params.get("tag_id")):
+            if tag := models.ReferenceFilterTag.objects.filter(id=tag_id).first():
+                qs = qs.with_tag(tag=tag, children=True)
 
-        page = self.paginate_queryset(
+        qs = (
             qs.select_related("study")
             .prefetch_related("searches", "identifiers", "tags")
             .order_by("id")
         )
-        serializer = serializers.ReferenceSerializer(page, many=True)
-        if request.query_params.get("all", -1) != -1:
+
+        if "all" in request.query_params:
+            serializer = serializers.ReferenceSerializer(qs, many=True)
             return Response(serializer.data)
         else:
+            page = self.paginate_queryset(qs)
+            serializer = serializers.ReferenceSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
     @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
@@ -352,9 +351,11 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         tag = self.get_object()
         serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
         if serializer.is_valid():
-            qs = models.Reference.objects.get_references_with_tag(
-                tag=tag, descendants=serializer.include_descendants()
-            ).order_by("id")
+            qs = (
+                models.Reference.objects.all()
+                .with_tag(tag=tag, children=serializer.include_descendants())
+                .order_by("id")
+            )
             ExportClass = serializer.get_exporter()
             exporter = ExportClass(
                 queryset=qs,

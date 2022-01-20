@@ -48,7 +48,7 @@ class Store {
     @action.bound handleUntaggedReferenceClick() {
         const {assessment_id, search_id} = this.config;
 
-        let url = `/lit/api/assessment/${assessment_id}/references/?all&tag_id=untagged`;
+        let url = `/lit/api/assessment/${assessment_id}/references/?all=1&untagged=1`;
         if (search_id) {
             url += `&search_id=${search_id}`;
         }

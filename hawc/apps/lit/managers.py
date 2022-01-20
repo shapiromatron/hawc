@@ -224,9 +224,23 @@ class IdentifiersManager(BaseManager):
         return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str)
 
 
+class ReferenceQuerySet(models.QuerySet):
+    def untagged(self):
+        return self.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
+
+    def with_tag(self, tag, children: bool = False):
+        tag_ids = [tag.id]
+        if children:
+            tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
+        return self.filter(tags__in=tag_ids).distinct("pk")
+
+
 class ReferenceManager(BaseManager):
 
     assessment_relation = "assessment"
+
+    def get_queryset(self):
+        return ReferenceQuerySet(self.model, using=self._db)
 
     def build_ref_ident_m2m(self, objs):
         # Bulk-create reference-search relationships
@@ -261,10 +275,13 @@ class ReferenceManager(BaseManager):
         logger.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
         orphans.delete()
 
-    def get_full_assessment_json(self, assessment, json_encode=True):
+    def get_full_assessment_json(self, assessment, search_id=None, json_encode=True):
+        refs_qs = self.assessment_qs(assessment)
+        if search_id:
+            refs_qs = refs_qs.filter(searches=search_id)
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
         ref_objs = list(
-            ReferenceTags.objects.filter(content_object__in=self.get_qs(assessment))
+            ReferenceTags.objects.filter(content_object__in=refs_qs)
             .annotate(reference_id=models.F("content_object_id"))
             .values("reference_id", "tag_id")
         )
@@ -400,15 +417,6 @@ class ReferenceManager(BaseManager):
             )
         else:
             return self.none()
-
-    def get_references_with_tag(self, tag, descendants=False):
-        tag_ids = [tag.id]
-        if descendants:
-            tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
-        return self.filter(tags__in=tag_ids).distinct("pk")
-
-    def get_untagged_references(self, assessment):
-        return self.get_qs(assessment).annotate(tag_count=models.Count("tags")).filter(tag_count=0)
 
     def process_excel(self, df, assessment_id):
         """
