@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -16,6 +16,7 @@ urlpatterns = [
     path("assessment/<int:pk>/new-study/", views.ReferenceStudyCreate.as_view(), name="new_ref",),
     path("assessment/<int:pk>/copy-studies/", views.StudiesCopy.as_view(), name="studies_copy",),
     path("<int:pk>/", views.StudyRead.as_view(), name="detail"),
+    path("<int:pk>/toggle-lock/", views.StudyToggleLock.as_view(), name="toggle-lock"),
     path("<int:pk>/update/", views.StudyUpdate.as_view(), name="update"),
     path("<int:pk>/delete/", views.StudyDelete.as_view(), name="delete"),
     path("<int:pk>/risk-of-bias/", views.StudyRoBRedirect.as_view(), name="rob_redirect",),
@@ -40,9 +41,4 @@ urlpatterns = [
         name="attachment-delete",
     ),
     path("<int:pk>/attachments/", views.AttachmentList.as_view(), name="attachment_list"),
-    re_path(
-        r"^(?P<pk>\d+)/editability-update/(?P<updated_value>.*)/$",
-        views.EditabilityUpdate.as_view(),
-        name="editability_update",
-    ),
 ]

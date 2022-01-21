@@ -569,19 +569,6 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     form_class = forms.EffectTagForm
 
 
-class getStrains(TemplateView):
-    # Return the valid strains for the requested species in JSON
-
-    def get(self, request, *args, **kwargs):
-        strains = []
-        try:
-            sp = models.Species.objects.get(pk=request.GET.get("species"))
-            strains = list(models.Strain.objects.filter(species=sp).values("id", "name"))
-        except Exception:
-            pass
-        return HttpResponse(json.dumps(strains), content_type="application/json")
-
-
 class SpeciesCreate(CloseIfSuccessMixin, BaseCreate):
     success_message = "Species created."
     parent_model = models.Assessment

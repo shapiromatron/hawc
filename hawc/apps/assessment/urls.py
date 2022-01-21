@@ -11,6 +11,7 @@ router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"jobs", api.JobViewset, basename="jobs")
 router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
+router.register(r"strain", api.StrainViewset, basename="strain")
 router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
 
 
@@ -74,7 +75,6 @@ urlpatterns = [
         "assessment/<int:pk>/species/create/", views.SpeciesCreate.as_view(), name="species_create",
     ),
     # strain
-    path("strains/", views.getStrains.as_view(), name="get_strains"),
     path("assessment/<int:pk>/strain/create/", views.StrainCreate.as_view(), name="strain_create",),
     # dose units
     path(
