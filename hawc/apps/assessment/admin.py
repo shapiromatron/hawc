@@ -28,6 +28,8 @@ class AssessmentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "__str__",
+        "assessment_objective",
+        "authors",
         "editable",
         "public",
         "hide_from_public_page",
