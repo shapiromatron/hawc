@@ -333,6 +333,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             buildManualOverrideRows(dp, overrideTbody);
         });
 
+        dp.store.setOverrideRefreshHandler(handleTableChange);
         buildFilterTable(tab, dp, handleTableChange.bind(this));
         buildFilterBooleanDiv(tab, dp, handleTableChange.bind(this));
         buildSortingTable(tab, dp);
