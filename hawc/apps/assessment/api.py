@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
@@ -213,7 +214,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     def list(self, request):
         self.filter_queryset(self.get_queryset())
-        data = self.model.get_all_tags(self.assessment.id, json_encode=False)
+        data = self.model.get_all_tags(self.assessment.id)
         return Response(data)
 
     def create(self, request, *args, **kwargs):
@@ -606,6 +607,15 @@ class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=None)
+
+
+class StrainViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+    model = models.Strain
+    queryset = models.Strain.objects.all()
+    serializer_class = serializers.StrainSerializer
+    pagination_class = None
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("species",)
 
 
 class HealthcheckViewset(viewsets.ViewSet):
