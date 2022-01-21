@@ -81,8 +81,8 @@ class Store {
         this.dp = dp;
         this.sortStore = new SortStore(this);
     }
+    // TODO - remove methods below (after rewrite to React from jQuery)
     sync() {
-        // sync state in store to global object - TODO - remove?
         this.dp.settings.sorts = toJS(this.sortStore.settings);
     }
     handleOverrideRefresh = null;
@@ -92,6 +92,7 @@ class Store {
     @action.bound setOverrideRefreshHandler(fn) {
         this.handleOverrideRefresh = fn;
     }
+    // END TODO - remove methods above (after rewrite to React from jQuery)
 }
 
 export default Store;
