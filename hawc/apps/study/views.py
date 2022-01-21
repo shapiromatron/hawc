@@ -254,7 +254,7 @@ class AttachmentRead(BaseDetail):
         else:
             raise PermissionDenied
 
-            
+
 class AttachmentList(BaseList):
     model = models.Attachment
     parent_model = models.Study
