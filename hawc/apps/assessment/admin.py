@@ -32,6 +32,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "authors",
         "editable",
         "public",
+        "released_on",
         "hide_from_public_page",
         "get_managers",
         "get_team_members",
@@ -39,7 +40,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "created",
         "last_updated",
     )
-    list_filter = ("public", "hide_from_public_page", "editable")
+    list_filter = ("public", "hide_from_public_page", "released_on", "editable")
     search_fields = (
         "name",
         "project_manager__last_name",

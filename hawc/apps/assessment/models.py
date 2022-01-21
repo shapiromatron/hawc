@@ -182,6 +182,10 @@ class Assessment(models.Model):
     public = models.BooleanField(
         default=False, help_text="The assessment can be viewed by the general public."
     )
+    released_on = models.DateTimeField(
+        null=True,
+        help_text="The date this assessment was released to be viewed by the general public.",
+    )
     hide_from_public_page = models.BooleanField(
         default=False,
         help_text="If public, anyone with a link can view, "
