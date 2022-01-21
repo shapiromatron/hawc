@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -15,7 +15,6 @@ urlpatterns = [
     # overview
     path("assessment/<int:pk>/", views.LitOverview.as_view(), name="overview"),
     # CRUD tags
-    path("assessment/tags/json/", views.TagsJSON.as_view(), name="tags_list"),
     path("assessment/<int:pk>/tags/update/", views.TagsUpdate.as_view(), name="tags_update",),
     path("assessment/<int:pk>/tags/update/copy/", views.TagsCopy.as_view(), name="tags_copy",),
     path(
@@ -48,11 +47,6 @@ urlpatterns = [
         name="topic_model",
     ),
     path("assessment/<int:pk>/references/search/", views.RefSearch.as_view(), name="ref_search",),
-    re_path(
-        r"^assessment/(?P<pk>\d+)/references/(?P<tag_id>(\d+|untagged))/json/$",
-        views.RefsByTagJSON.as_view(),
-        name="refs_json",
-    ),
     path(
         "assessment/<int:pk>/references/upload/", views.RefUploadExcel.as_view(), name="ref_upload",
     ),

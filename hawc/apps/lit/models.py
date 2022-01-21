@@ -28,7 +28,7 @@ from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -414,26 +414,6 @@ class Search(models.Model):
         for pubmed_query in pubmed_queries:
             dicts.append(pubmed_query.to_dict())
         return dicts
-
-    def get_all_reference_tags(self, json_encode=True):
-        ref_objs = list(
-            ReferenceTags.objects.filter(content_object__in=self.references.all())
-            .annotate(reference_id=models.F("content_object_id"))
-            .values("reference_id", "tag_id")
-        )
-        if json_encode:
-            return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
-        else:
-            return ref_objs
-
-    def get_references_with_tag(self, tag=None, descendants=False):
-        if tag is None:
-            return self.references_untagged
-        else:
-            tag_ids = [tag.id]
-            if descendants:
-                tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
-            return self.references.filter(tags__in=tag_ids).distinct("pk")
 
     @property
     def references_count(self):
