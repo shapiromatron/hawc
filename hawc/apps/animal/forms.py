@@ -146,21 +146,20 @@ class AnimalGroupForm(ModelForm):
         # for lifestage assessed/exposed, use a select widget. Manually add in
         # previously saved values that don't conform to the lifestage choices
         lifestage_dict = dict(constants.Lifestage.choices)
-
         if self.instance.lifestage_exposed in lifestage_dict:
             le_choices = constants.Lifestage.choices
         else:
-            le_choices = (
+            le_choices = [
                 (self.instance.lifestage_exposed, self.instance.lifestage_exposed),
-            ) + constants.Lifestage.choices
+            ] + constants.Lifestage.choices
         self.fields["lifestage_exposed"].widget = forms.Select(choices=le_choices)
 
         if self.instance.lifestage_assessed in lifestage_dict:
             la_choices = constants.Lifestage.choices
         else:
-            la_choices = (
+            la_choices = [
                 (self.instance.lifestage_assessed, self.instance.lifestage_assessed),
-            ) + constants.Lifestage.choices
+            ] + constants.Lifestage.choices
         self.fields["lifestage_assessed"].widget = forms.Select(choices=la_choices)
 
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(

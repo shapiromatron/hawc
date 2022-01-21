@@ -122,14 +122,9 @@ class ReferenceTreeMain extends Component {
                         handleTagClick={tag => store.handleTagClick(tag)}
                         showReferenceCount={true}
                         selectedTag={store.selectedTag}
+                        untaggedHandleClick={store.handleUntaggedReferenceClick}
+                        untaggedCount={store.config.untaggedReferenceCount}
                     />
-                    <br />
-                    <p
-                        className="nestedTag"
-                        id="untaggedReferences"
-                        onClick={() => store.handleUntaggedReferenceClick(null)}>
-                        Untagged References: ({store.config.untaggedReferenceCount})
-                    </p>
                 </div>
             </div>
         );
