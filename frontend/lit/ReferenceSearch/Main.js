@@ -7,13 +7,28 @@ import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 import ReferenceTable from "../components/ReferenceTable";
 import SearchForm from "./SearchForm";
+import ReferenceSortSelector from "../components/ReferenceSortSelector";
 
 @inject("store")
 @observer
 class ReferenceSearchMain extends Component {
     render() {
         const {store} = this.props,
-            {isSearching, searchError, references, hasReferences, numReferences} = store;
+            {
+                isSearching,
+                searchError,
+                references,
+                sortReferences,
+                hasReferences,
+                numReferences,
+            } = store,
+            nRefText =
+                numReferences === store.MAX_REFERENCES ? (
+                    <b>Showing the first {numReferences} references.</b>
+                ) : (
+                    <b>{numReferences} references found.</b>
+                );
+
         return (
             <div className="container-fluid">
                 <div className="card">
@@ -41,15 +56,10 @@ class ReferenceSearchMain extends Component {
                         />
                     ) : null}
                     {numReferences > 0 ? (
-                        numReferences === store.MAX_REFERENCES ? (
-                            <p>
-                                <b>Showing the first {numReferences} references.</b>
-                            </p>
-                        ) : (
-                            <p>
-                                <b>{numReferences} references found.</b>
-                            </p>
-                        )
+                        <>
+                            <ReferenceSortSelector onChange={sortReferences} />
+                            <p>{nRefText}</p>
+                        </>
                     ) : null}
                     {hasReferences && numReferences > 0 ? (
                         <ReferenceTable references={toJS(references)} showActions={false} />

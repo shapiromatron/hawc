@@ -67,7 +67,14 @@ TagNode.propTypes = {
 @observer
 class TagTree extends Component {
     render() {
-        const {tagtree, handleTagClick, showReferenceCount, selectedTag} = this.props;
+        const {
+            tagtree,
+            handleTagClick,
+            showReferenceCount,
+            selectedTag,
+            untaggedHandleClick,
+            untaggedCount,
+        } = this.props;
         return (
             <div className="resize-y" style={{height: "80vh"}}>
                 {tagtree.rootNode.children.map((tag, i) => (
@@ -79,6 +86,11 @@ class TagTree extends Component {
                         selectedTag={selectedTag}
                     />
                 ))}
+                {untaggedHandleClick ? (
+                    <p className="nestedTag mt-2" onClick={untaggedHandleClick}>
+                        Untagged References: ({untaggedCount})
+                    </p>
+                ) : null}
             </div>
         );
     }
@@ -88,6 +100,8 @@ TagTree.propTypes = {
     handleTagClick: PropTypes.func,
     showReferenceCount: PropTypes.bool,
     selectedTag: PropTypes.object,
+    untaggedCount: PropTypes.number,
+    untaggedHandleClick: PropTypes.func,
 };
 TagTree.defaultProps = {
     showReferenceCount: false,

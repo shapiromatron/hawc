@@ -504,8 +504,8 @@ class D3Plot {
             .attr("style", "color: black");
 
         // add menu below div
-        this.menu_div = $('<div class="options_menu"></div>');
-        this.plot_div.append(this.menu_div).css({marginBottom: 45 + "px"});
+        this.menu_div = $('<div class="optionsMenu"></div>');
+        this.plot_div.append(this.menu_div);
 
         // add close button to menu
         var close_button = {
@@ -588,7 +588,7 @@ class D3Plot {
     }
 
     _toggle_menu_bar() {
-        $(this.menu_div).toggleClass("hidden");
+        $(this.menu_div).toggleClass("optionsMenuHidden");
         $("foreignObject#embeddedCog a").toggleClass("hidden");
     }
 

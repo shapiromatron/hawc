@@ -1,11 +1,6 @@
-import $ from "$";
 import ReactDOM from "react-dom";
 import React from "react";
 
-import Loading from "shared/components/Loading";
-import Alert from "shared/components/Alert";
-import ReferenceTable from "lit/components/ReferenceTable";
-import Reference from "./Reference";
 import PaginatedReferenceList from "./components/PaginatedReferenceList";
 
 class NestedTag {
@@ -63,27 +58,6 @@ class NestedTag {
             tag: this,
         };
         ReactDOM.render(<PaginatedReferenceList settings={settings} canEdit={canEdit} />, el);
-    }
-
-    renderReferenceList(el) {
-        let url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
-        if (this.search_id) {
-            url += `?search_id=${this.search_id}`;
-        }
-        ReactDOM.render(<Loading />, el);
-
-        $.get(url, results => {
-            if (results.status == "success") {
-                let expected_references = new Set(this.get_references_deep()),
-                    refs = Reference.sortedArray(results.refs, this.tree).filter(ref =>
-                        expected_references.has(ref.data.pk)
-                    );
-
-                ReactDOM.render(<ReferenceTable references={refs} showActions={false} />, el);
-            } else {
-                ReactDOM.render(<Alert />, el);
-            }
-        });
     }
 }
 
