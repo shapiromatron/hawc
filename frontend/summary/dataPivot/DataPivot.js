@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import HAWCModal from "shared/utils/HAWCModal";
 import DataTable from "shared/components/DataTable";
 
+import Store from "./store";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotExtension from "./DataPivotExtension";
 import {NULL_CASE} from "./shared";
@@ -201,6 +202,7 @@ class DataPivot {
             }
         });
 
+        this.store = new Store(this);
         this.build_data_table();
         this.build_settings();
         this.$div.fadeIn();
@@ -272,6 +274,16 @@ class DataPivot {
         var opts = [];
         if (show_blank) opts.push(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
         return opts.concat(this.data_headers.map(v => `<option value="${v}">${v}</option>`));
+    }
+
+    _get_header_options_react(show_blank = false) {
+        const options = this.data_headers.map(d => {
+            return {id: d, label: d};
+        });
+        if (show_blank) {
+            options.unshift({id: NULL_CASE, label: NULL_CASE});
+        }
+        return options;
     }
 
     _get_description_options() {
