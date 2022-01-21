@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -121,6 +121,17 @@ class StudyRead(BaseDetail):
         return context
 
 
+class StudyToggleLock(RedirectView):
+    pattern_name = "study:detail"
+
+    def get(self, request, *args, **kwargs):
+        study = get_object_or_404(models.Study, pk=kwargs["pk"])
+        if not study.user_can_toggle_editable(self.request.user):
+            raise PermissionDenied()
+        study.toggle_editable()
+        return super().get(request, *args, **kwargs)
+
+
 class StudyUpdate(BaseUpdate):
     model = models.Study
     form_class = forms.StudyForm
@@ -220,28 +231,5 @@ class AttachmentRead(BaseDetail):
         self.object = self.get_object()
         if self.assessment.user_is_part_of_team(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
-        else:
-            raise PermissionDenied
-
-
-class EditabilityUpdate(BaseUpdate):
-    # TODO - change to DRF or add new option to standard StudyUpdate view
-
-    model = models.Study
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        if self.assessment.user_can_edit_assessment(self.request.user):
-            probe = kwargs["updated_value"]
-            if probe == "True":
-                self.object.editable = True
-            elif probe == "False":
-                self.object.editable = False
-            else:
-                raise Exception("invalid input value")
-
-            self.object.save()
-            return HttpResponseRedirect(self.object.get_absolute_url())
         else:
             raise PermissionDenied
