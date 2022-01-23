@@ -549,13 +549,6 @@ class AdminDashboardViewset(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 
-    @action(detail=False)
-    def growth(self, request):
-        serializer = serializers.GrowthPlotSerializer(data=request.GET)
-        serializer.is_valid(raise_exception=True)
-        fig = serializer.create_figure()
-        return Response(fig.to_dict())
-
     @method_decorator(cache_page(60 * 60))
     @action(detail=False, url_path="assessment-size", renderer_classes=PandasRenderers)
     def assessment_size(self, request):

@@ -916,3 +916,11 @@ class AboutContentTypes(TemplateView):
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context
+
+
+class GrowthDashboardView(View):
+    def get(self, request, *args, **kwargs):
+        serializer = serializers.GrowthPlotSerializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+        fig = serializer.create_figure()
+        return HttpResponse(fig.to_html())

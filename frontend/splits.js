@@ -7,9 +7,6 @@ const startup = (name, cb) => {
         case "assessmentStartup":
             import("./assessment/index.js").then(app => cb(app.default));
             break;
-        case "adminGrowthStartup":
-            import("./admin/growth/index.js").then(app => cb(app.default));
-            break;
         case "animalStartup":
             import("./animal/index.js").then(app => cb(app.default));
             break;

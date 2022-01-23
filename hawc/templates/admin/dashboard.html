@@ -12,9 +12,25 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid" id="main"></div>
+<form hx-get="/assessment/growth/" hx-target="#plotly-figure" hx-trigger="load, change">
+    <div class="form-group">
+        <label for="select-model">Select model to view results</label>
+        <select id="select-model" name="model">
+            <option value="user">User growth</option>
+            <option value="assessment">Assessment growth</option>
+            <option value="study">Study growth</option>
+        </select></div>
+        <div class="form-group">
+            <label for="select-grouper">Select grouping frequency</label>
+        <select id="select-grouper" name="grouper">
+            <option value="A">Annually</option>
+            <option value="Q">Quarterly</option>
+            <option value="M">Monthly</option>
+        </select></div>
+</div>
+<div id="plotly-figure"></div>
 
 <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'vendor/htmx/1.6.1/htmx.min.js' %}"></script>
 {% render_bundle "main" %}
-<script id="config" type="application/json">{"app": "adminGrowthStartup"}</script>
 {% endblock content %}
