@@ -2,6 +2,12 @@ import _ from "lodash";
 import {action, autorun, computed, observable} from "mobx";
 
 import * as constants from "./constants";
+import h from "shared/utils/helpers";
+
+import HAWCModal from "shared/utils/HAWCModal";
+import Study from "study/Study";
+import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
+import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
 
 class StudyOutcomeTableStore {
     @observable editMode = false;
@@ -245,6 +251,18 @@ class StudyOutcomeTableStore {
                 return [];
         }
     }
+    getRobSelection(studyId, metricId, scoreId) {
+        if (scoreId != null) {
+            return _.filter(this.dataset.rob, d => d["score_id"] == scoreId);
+        }
+        return _.filter(
+            this.dataset.rob,
+            d =>
+                d["study_id"] == studyId &&
+                d["metric_id"] == metricId &&
+                _.isNil(d["content_type_id"])
+        );
+    }
     concatDataSelection(data, attribute) {
         switch (attribute) {
             case "study_name":
@@ -270,13 +288,7 @@ class StudyOutcomeTableStore {
     getDefaultCellContent(row, col) {
         switch (col.attribute) {
             case "rob_score": {
-                let data = _.filter(
-                        this.dataset.rob,
-                        d =>
-                            d["study_id"] == row.id &&
-                            d["metric_id"] == col.metric_id &&
-                            _.isNil(d["content_type_id"])
-                    ),
+                let data = this.getRobSelection(row.id, col.metric_id),
                     judgment = data.length ? data[0]["score_score"] : -1;
                 return judgment == -1
                     ? constants.NM
@@ -300,7 +312,7 @@ class StudyOutcomeTableStore {
     getCustomCellContent(attribute, customized) {
         switch (attribute) {
             case "rob_score": {
-                let data = _.filter(this.dataset.rob, d => d["score_id"] == customized.score_id),
+                let data = this.getRobSelection(null, null, customized.score_id),
                     judgment = data.length ? data[0]["score_score"] : -1;
                 return judgment == -1
                     ? constants.NM
@@ -409,6 +421,93 @@ class StudyOutcomeTableStore {
     // inject new settings from parent object
     @action.bound updateSettings(settings) {
         this.settings = settings;
+    }
+
+    // interactivity
+    interactiveOnClick(rowIdx, colIdx) {
+        let row = this.workingSettings.rows[rowIdx],
+            col = this.workingSettings.columns[colIdx],
+            customized = this.getCustomized(rowIdx, col.key);
+        if (col.attribute == "rob_score") {
+            let scoreId = customized == null ? null : customized.score_id,
+                selection = this.getRobSelection(row.id, col.metric_id, scoreId);
+
+            if (!selection.length) {
+                return null;
+            }
+
+            let score = selection[0],
+                config = {
+                    display: "all",
+                    isForm: false,
+                    showStudyHeader: false,
+                },
+                scoreData = {
+                    id: score["score_id"],
+                    score: score["score_score"],
+                    is_default: score["is_default"],
+                    label: score["score_label"],
+                    bias_direction: 0, // TODO add to mat view?
+                    notes: "", // TODO add to mat view?
+                    metric_id: score["metric_id"],
+                    overridden_objects: [],
+                    riskofbias_id: score["riskofbias_id"],
+                },
+                metric = _.find(this.robSettings.metrics, m => m["id"] == score["metric_id"]),
+                domain = _.find(this.robSettings.domains, d => d["id"] == metric["domain_id"]),
+                score_metadata = this.robSettings["score_metadata"],
+                robData = {
+                    assessment_id: this.robSettings.assessment_id,
+                    score_description: score_metadata["choices"][score["score_score"]],
+                    score_symbol: score_metadata["symbols"][score["score_score"]], // same as text, remove one?
+                    score_shade: score_metadata["colors"][score["score_score"]], // same as color, remove one?
+
+                    score_color: score_metadata["colors"][score["score_score"]],
+                    score_text_color: h.contrastingColor(
+                        score_metadata["colors"][score["score_score"]]
+                    ),
+                    score_text: score_metadata["symbols"][score["score_score"]],
+                    metric: {
+                        id: metric["id"],
+                        name: metric["name"],
+                        description: metric["description"],
+                        domain_id: metric["domain_id"],
+                        responses: metric["responses"],
+                        response_values: metric["response_values"],
+                        default_response: metric["default_response"],
+                        short_name: metric["short_name"],
+                        use_short_name: metric["use_short_name"],
+                        domain: {
+                            id: domain["id"],
+                            name: domain["name"],
+                            description: domain["description"],
+                            is_overall_confidence: domain["is_overall_confidence"],
+                        },
+                    },
+                };
+            //return customized != null && customized.score_id == -1 ? null : null;
+            return () => this.displayAsModal(_.extend({}, scoreData, robData), config);
+        } else {
+            return () => Study.displayAsModal(row.id);
+        }
+    }
+    displayAsModal(data, config) {
+        var modal = new HAWCModal(),
+            title = `<h4>TODO add title</h4>`,
+            $content = $('<div class="container-fluid">');
+
+        window.setTimeout(function() {
+            renderRiskOfBiasDisplay(
+                RiskOfBiasScore.format_for_react([new RiskOfBiasScore(null, data)], config),
+                $content[0]
+            );
+        }, 200);
+
+        modal
+            .addHeader(title)
+            .addFooter("")
+            .addBody($content)
+            .show({maxWidth: 1000});
     }
 }
 

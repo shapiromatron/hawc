@@ -13,6 +13,12 @@ import IntegerInput from "shared/components/IntegerInput";
 
 import {robAttributeChoices} from "./constants";
 
+import Study from "study/Study";
+
+import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
+import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
+import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
+
 class EditButton extends Component {
     render() {
         const {handleClick} = this.props;
@@ -343,6 +349,22 @@ EditColumnForm.propTypes = {
 
 @observer
 class Table extends Component {
+    getInteractiveIcon(rowIdx, colIdx) {
+        const {store} = this.props,
+            onClick = store.interactiveOnClick(rowIdx, colIdx);
+
+        // TODO add 'interactive' bool to column, if false return null?
+
+        return (
+            <p>
+                {onClick == null ? (
+                    <i className="fa fa-eye-slash"></i>
+                ) : (
+                    <i className="fa fa-eye" onClick={onClick}></i>
+                )}
+            </p>
+        );
+    }
     renderSubheaders() {
         const {store, forceReadOnly} = this.props,
             editable = store.editMode && !forceReadOnly;
@@ -482,6 +504,7 @@ class Table extends Component {
                                                     __html: content.html,
                                                 }}
                                             />
+                                            {this.getInteractiveIcon(rowIdx, colIdx)}
                                         </td>
                                     );
                                 })}
