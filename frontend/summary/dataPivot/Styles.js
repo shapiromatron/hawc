@@ -1,5 +1,6 @@
 import $ from "$";
 
+import {Patterns} from "../summary/common";
 import DataPivot from "./DataPivot";
 import StyleViewer from "./StyleViewer";
 
@@ -268,7 +269,7 @@ class StyleText {
         );
 
         //text-anchor
-        var text_anchor = $('<select name="text-anchor"></select>').html([
+        var text_anchor = $('<select class="form-control" name="text-anchor"></select>').html([
             '<option value="start">start</option>',
             '<option value="middle">middle</option>',
             '<option value="end">end</option>',
@@ -277,7 +278,7 @@ class StyleText {
         form.append(add_horizontal_field("Type", text_anchor));
 
         //text-anchor
-        var font_weight = $('<select name="font-weight"></select>').html([
+        var font_weight = $('<select class="form-control" name="font-weight"></select>').html([
             '<option value="normal">normal</option>',
             '<option value="bold">bold</option>',
         ]);
@@ -409,7 +410,7 @@ class StyleLine {
         );
 
         //line-style
-        var line_style = $('<select name="stroke-dasharray"></select>').html([
+        var line_style = $('<select class="form-control" name="stroke-dasharray"></select>').html([
             '<option value="none">solid</option>',
             '<option value="10, 10">dashed</option>',
             '<option value="2, 3">dotted</option>',
@@ -438,6 +439,8 @@ class StyleRectangle {
             stroke: "#000000",
             "fill-opacity": 0.8,
             "stroke-width": 1.0,
+            pattern: Patterns.solid,
+            pattern_fill: "#ffffff",
         };
     }
 
@@ -450,10 +453,11 @@ class StyleRectangle {
 
     get_modified_settings() {
         var settings = {},
-            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width"];
+            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width", "pattern_fill"];
         for (var i = 0; i < fields.length; i++) {
             settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
+        settings["pattern"] = this.$modal.find('select[name="pattern"] option:selected').val();
         return settings;
     }
 
@@ -524,6 +528,33 @@ class StyleRectangle {
                     $(
                         `<input class="form-control" name="stroke-width" type="range" min="0" max="10" step="0.5" value="${value}">`
                     )
+                )
+            )
+        );
+
+        // pattern
+        var type = $('<select class="form-control" name="pattern">').html([
+            '<option value="solid">solid</option>',
+            '<option value="stripes">stripes</option>',
+            '<option value="reverse_stripes">reverse stripes</option>',
+            '<option value="vertical">vertical</option>',
+            '<option value="horizontal">horizontal</option>',
+            '<option value="diamonds">diamonds</option>',
+            '<option value="circles">circles</option>',
+            '<option value="woven">woven</option>',
+            '<option value="waves">waves</option>',
+            '<option value="hexagons">hexagons</option>',
+        ]);
+
+        type.find(`option[value="${set.pattern}"]`).prop("selected", true);
+        form.append(add_horizontal_field("Pattern", type));
+
+        // pattern fill
+        form.append(
+            add_horizontal_field(
+                "Pattern fill",
+                $(
+                    `<input class="form-control" name="pattern_fill" type="color" value="${set.pattern_fill}">`
                 )
             )
         );
