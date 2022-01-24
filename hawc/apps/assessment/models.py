@@ -179,10 +179,7 @@ class Assessment(models.Model):
         default=True,
         help_text="Project-managers and team-members are allowed to edit assessment components.",
     )
-    public = models.BooleanField(
-        default=False, help_text="The assessment can be viewed by the general public."
-    )
-    released_on = models.DateTimeField(
+    public_on = models.DateTimeField(
         null=True,
         help_text="The date this assessment was released to be viewed by the general public.",
     )

@@ -644,8 +644,7 @@
     creator:
     - pm@hawcproject.org
     editable: true
-    public: false
-    released_on: null
+    public_on: null
     hide_from_public_page: false
     enable_literature_review: true
     enable_project_management: true
@@ -683,8 +682,7 @@
     creator:
     - pm@hawcproject.org
     editable: false
-    public: true
-    released_on: 2020-01-25 14:23:16.288774+00:00
+    public_on: 2020-01-25 14:23:16.288774+00:00
     hide_from_public_page: false
     enable_literature_review: true
     enable_project_management: true
@@ -720,8 +718,7 @@
     creator:
     - pm@hawcproject.org
     editable: true
-    public: true
-    released_on: 2020-04-10 17:45:39.555285+00:00
+    public_on: 2020-04-10 17:45:39.555285+00:00
     hide_from_public_page: true
     enable_literature_review: true
     enable_project_management: true

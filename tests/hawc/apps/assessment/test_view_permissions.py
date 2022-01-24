@@ -14,7 +14,7 @@ _successful_post = {
     "assessment_objective": "<p>Test.</p>",
     "authors": "<p>Test.</p>",
     "public": "off",
-    "released_on": timezone.now(),
+    "public_on": timezone.now(),
     "noel_name": 0,
     "rob_name": 0,
     "editable": "on",

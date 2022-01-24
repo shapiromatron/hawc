@@ -27,7 +27,7 @@ class AssessmentPermissions(BaseModel):
         perms = cache.get(key)
         if perms is None:
             perms = cls(
-                public=assessment.public,
+                public=(assessment.public_on is not None),
                 editable=assessment.editable,
                 project_manager={user.id for user in assessment.project_manager.all()},
                 team_members={user.id for user in assessment.team_members.all()},

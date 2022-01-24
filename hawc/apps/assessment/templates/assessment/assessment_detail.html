@@ -152,10 +152,10 @@
 
         <tr>
           <th>Public*</th>
-          <td>{{object.public}}</td>
+          <td>{{object.public_on|default_if_none:'This assessment is currently private.'}}</td>
         </tr>
 
-        {% if object.public %}
+        {% if object.public_on %}
           <tr>
             <th>Hidden on public page?*</th>
             <td>{{object.hide_from_public_page}}</td>
