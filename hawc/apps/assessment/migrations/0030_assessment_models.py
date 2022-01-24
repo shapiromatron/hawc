@@ -91,14 +91,6 @@ class Migration(migrations.Migration):
                 help_text="Describe the assessment objective(s), research questions, or clarification on the purpose of the assessment."
             ),
         ),
-        migrations.AlterField(
-            model_name="assessment",
-            name="is_public_training_data",
-            field=models.BooleanField(
-                default=True,
-                help_text="Allows data to be anonymized and made available for machine learning projects. Both assessment ID and user ID will be made anonymous for these purposes.",
-                verbose_name="Public training data",
-            ),
-        ),
+        migrations.RemoveField(model_name="assessment", name="is_public_training_data",),
         migrations.RunPython(set_creator, migrations.RunPython.noop),
     ]

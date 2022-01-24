@@ -647,7 +647,6 @@
     public: false
     released_on: null
     hide_from_public_page: false
-    is_public_training_data: false
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -687,7 +686,6 @@
     public: true
     released_on: 2020-01-25 14:23:16.288774+00:00
     hide_from_public_page: false
-    is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -725,7 +723,6 @@
     public: true
     released_on: 2020-04-10 17:45:39.555285+00:00
     hide_from_public_page: true
-    is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true

@@ -221,11 +221,6 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.assessment.public()
         assert isinstance(response, list)
 
-    def test_assessment_bioassay_ml_dataset(self):
-        client = HawcClient(self.live_server_url)
-        response = client.assessment.bioassay_ml_dataset()
-        assert isinstance(response, pd.DataFrame)
-
     ###################
     # EpiClient tests #
     ###################
