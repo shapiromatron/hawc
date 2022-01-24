@@ -181,7 +181,9 @@ class Assessment(models.Model):
     )
     public_on = models.DateTimeField(
         null=True,
-        help_text="The date this assessment was released to be viewed by the general public.",
+        blank=True,
+        verbose_name="Public",
+        help_text="The assessment can be viewed by the general public.",
     )
     hide_from_public_page = models.BooleanField(
         default=False,

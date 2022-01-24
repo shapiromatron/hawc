@@ -61,7 +61,7 @@ class AssessmentForm(forms.ModelForm):
         )
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
-            for field in ("editable", "public", "hide_from_public_page"):
+            for field in ("editable", "public_on", "hide_from_public_page"):
                 self.fields[field].disabled = True
                 self.fields[field].help_text += help_text
 
@@ -107,7 +107,7 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("cas", 2, "col-md-6")
         helper.add_row("assessment_objective", 2, "col-md-6")
         helper.add_row("project_manager", 3, "col-md-4")
-        helper.add_row("editable", 4, "col-md-3")
+        helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
         helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
