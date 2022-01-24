@@ -6,12 +6,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0032_rename_released_on_assessment_public_on'),
+        ("assessment", "0032_rename_released_on_assessment_public_on"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='assessment',
-            name='public',
-        ),
+        migrations.RemoveField(model_name="assessment", name="public",),
     ]
