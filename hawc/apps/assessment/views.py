@@ -12,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
+from django.db.models.functions import Lower
 from django.http import (
     Http404,
     HttpRequest,
@@ -916,3 +917,60 @@ class AboutContentTypes(TemplateView):
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context
+
+
+class PublishedItemsChecklist(HtmxViewSet):
+    actions = {"list", "update_study", "update_visual", "update_datapivot"}
+    parent_actions = {"list", "update_study", "update_visual", "update_datapivot"}
+    parent_model = models.Assessment
+    td_fragment = "assessment/fragments/publish_item_td.html"
+    # TODO - add create_object_log; add transaction; add link to assessment
+
+    @action(permission=can_edit, htmx_only=False)
+    def list(self, request: HttpRequest, *args, **kwargs):
+        return render(request, "assessment/published_items.html", self.get_context_data())
+
+    def get_context_data(self):
+        assessment = self.request.item.assessment
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, assessment)
+        crumbs.append(Breadcrumb(name="Published items"))
+        return {
+            "assessment": assessment,
+            "breadcrumbs": crumbs,
+            "studies": apps.get_model("study", "Study")
+            .objects.filter(assessment=assessment)
+            .order_by(Lower("short_citation")),
+            "datapivots": apps.get_model("summary", "DataPivot")
+            .objects.filter(assessment=assessment)
+            .order_by(Lower("title")),
+            "visuals": apps.get_model("summary", "Visual")
+            .objects.filter(assessment=assessment)
+            .order_by("visual_type", Lower("title")),
+        }
+
+    @action(permission=can_edit, methods={"post"})
+    def update_study(self, request: HttpRequest, *args, **kwargs):
+        Study = apps.get_model("study", "Study")
+        qs = Study.objects.filter(assessment=self.request.item.assessment)
+        study = get_object_or_404(qs, id=kwargs["object_id"])
+        study.published = not study.published
+        study.save()
+        return render(request, self.td_fragment, {"name": "study", "object": study})
+
+    @action(permission=can_edit, methods={"post"})
+    def update_visual(self, request: HttpRequest, *args, **kwargs):
+        Visual = apps.get_model("summary", "Visual")
+        qs = Visual.objects.filter(assessment=self.request.item.assessment)
+        visual = get_object_or_404(qs, id=kwargs["object_id"])
+        visual.published = not visual.published
+        visual.save()
+        return render(request, self.td_fragment, {"name": "visual", "object": visual})
+
+    @action(permission=can_edit, methods={"post"})
+    def update_datapivot(self, request: HttpRequest, *args, **kwargs):
+        DataPivot = apps.get_model("summary", "DataPivot")
+        qs = DataPivot.objects.filter(assessment=self.request.item.assessment)
+        dp = get_object_or_404(qs, id=kwargs["object_id"])
+        dp.published = not dp.published
+        dp.save()
+        return render(request, self.td_fragment, {"name": "datapivot", "object": dp})

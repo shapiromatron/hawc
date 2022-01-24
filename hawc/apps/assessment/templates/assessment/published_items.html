@@ -1,0 +1,66 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<h2>Modify published items</h2>
+<p class="text-muted">
+    This view provides an alternative way to view which items are published or unpublished in the
+    current assessment. You can modify the published status of an item by changing the status
+</p>
+<form action="." method="post">
+    {% csrf_token %}
+    <div class='row'>
+        <div class='col-md-6'>
+            <table class="table table-sm table-bordered">
+            <thread>
+                <tr>
+                    <th>Published</th>
+                    <th>Study</th>
+                </tr>
+            </thread>
+            <tbody>
+            {% for study in studies %}
+            <tr>
+                {% include 'assessment/fragments/publish_item_td.html' with name="study" object=study %}
+                <td><a href="{{study.get_absolute_url}}">{{study}}</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        <div class='col-md-6'>
+            <table class="table table-sm table-bordered">
+                <thread>
+                    <tr>
+                        <th>Published</th>
+                        <th>Visual</th>
+                    </tr>
+                </thread>
+                <tbody>
+                    {% for dp in datapivots %}
+                        {% if forloop.first %}
+                        <tr>
+                            <th colspan="2">Data Pivots</th>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            {% include 'assessment/fragments/publish_item_td.html' with name="datapivot" object=dp %}
+                            <td><a href="{{dp.get_absolute_url}}">{{dp}}</a></td>
+                        </tr>
+                    {% endfor %}
+                    {% for visual in visuals %}
+                        {% ifchanged visual.visual_type %}
+                        <tr>
+                            <th colspan="2">{{visual.get_visual_type_display}}</th>
+                        </tr>
+                        {% endifchanged %}
+                        <tr>
+                            {% include 'assessment/fragments/publish_item_td.html' with name="visual" object=visual %}
+                            <td><a href="{{visual.get_absolute_url}}">{{visual}}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+{% endblock content %}

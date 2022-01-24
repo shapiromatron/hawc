@@ -104,6 +104,28 @@ urlpatterns = [
     path(
         "<int:pk>/clean-study-metrics/", views.CleanStudyRoB.as_view(), name="clean_study_metrics",
     ),
+    # published items
+    path(
+        "<int:pk>/published/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "list"},
+        name="published-list",
+    ),
+    path(
+        "<int:pk>/published/study/<int:object_id>/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "update_study"},
+    ),
+    path(
+        "<int:pk>/published/visual/<int:object_id>/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "update_visual"},
+    ),
+    path(
+        "<int:pk>/published/datapivot/<int:object_id>/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "update_datapivot"},
+    ),
     # api views
     path("api/", include((router.urls, "api"))),
 ]

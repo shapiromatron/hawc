@@ -1,0 +1,6 @@
+<td hx-post="./{{name}}/{{object.id}}/" hx-target="this" hx-swap="outerHTML">
+  <form>{% csrf_token %}
+    <input type="checkbox" name={{name}} value="{{object.id}}" hx-trigger="click" {% if object.published %}checked{% endif %}/>
+    <span class="fa fa-spin fa-spinner pull-right htmx-indicator"></span>
+  </form>
+</td>
