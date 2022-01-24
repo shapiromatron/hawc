@@ -923,4 +923,4 @@ class GrowthDashboardView(View):
         serializer = serializers.GrowthPlotSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
         fig = serializer.create_figure()
-        return HttpResponse(fig.to_html())
+        return HttpResponse(fig.to_html(full_html=False))
