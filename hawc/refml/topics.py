@@ -82,7 +82,9 @@ def topic_model_tsne(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     n_topics = int(max(min(30, np.sqrt(df.shape[0])), 10))
     model = NMF(n_components=n_topics, random_state=1, alpha_W=0.1, l1_ratio=0.5, init="nndsvd")
     term_maps = model.fit_transform(X_train_tfidf.T)
-    nmf_embedded = TSNE(n_components=2, perplexity=20).fit_transform(model.components_.T)
+    nmf_embedded = TSNE(
+        n_components=2, perplexity=20, init="random", learning_rate="auto"
+    ).fit_transform(model.components_.T)
     df.drop(columns=["text"], inplace=True)
 
     df.loc[:, "max_topic"] = model.components_.argmax(axis=0)
