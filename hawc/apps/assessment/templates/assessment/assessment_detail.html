@@ -57,6 +57,7 @@
             {% if assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
             <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a>
             {% endif %}
+            <a class="dropdown-item" href="{% url 'assessment:bulk-publish' object.pk %}">Publish items</a>
         {% endif %}
 
       </div>

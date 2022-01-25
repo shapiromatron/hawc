@@ -109,22 +109,13 @@ urlpatterns = [
         "<int:pk>/published/",
         views.PublishedItemsChecklist.as_view(),
         {"action": "list"},
-        name="published-list",
+        name="bulk-publish",
     ),
     path(
-        "<int:pk>/published/study/<int:object_id>/",
+        "<int:pk>/published/<str:type>/<int:object_id>/",
         views.PublishedItemsChecklist.as_view(),
-        {"action": "update_study"},
-    ),
-    path(
-        "<int:pk>/published/visual/<int:object_id>/",
-        views.PublishedItemsChecklist.as_view(),
-        {"action": "update_visual"},
-    ),
-    path(
-        "<int:pk>/published/datapivot/<int:object_id>/",
-        views.PublishedItemsChecklist.as_view(),
-        {"action": "update_datapivot"},
+        {"action": "update_item"},
+        name="publish-update",
     ),
     # api views
     path("api/", include((router.urls, "api"))),
