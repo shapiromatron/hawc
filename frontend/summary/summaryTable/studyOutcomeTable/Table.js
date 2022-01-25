@@ -366,7 +366,14 @@ class Table extends Component {
                 item = null;
             if (subheader.start == i + 1) {
                 item = (
-                    <th key={i} className="position-relative" colSpan={subheader.length}>
+                    <th
+                        key={i}
+                        className={
+                            editable && editingSubheader && editIndex == idx
+                                ? "bg-light"
+                                : "bg-white"
+                        }
+                        colSpan={subheader.length}>
                         {editable && editingSubheader && editIndex == idx ? (
                             <EditSubheaderForm store={store} shIdx={idx} />
                         ) : (
@@ -408,7 +415,15 @@ class Table extends Component {
             <table className="summaryTable table table-bordered table-sm">
                 <colgroup>
                     {_.map(store.columnWidths, (w, i) => {
-                        return <col key={i} style={{width: `${w}%`}} />;
+                        return (
+                            <col
+                                key={i}
+                                className={
+                                    editable && editingColumn && editIndex == i ? "bg-light" : null
+                                }
+                                style={{width: `${w}%`}}
+                            />
+                        );
                     })}
                 </colgroup>
                 <thead>
@@ -439,7 +454,13 @@ class Table extends Component {
                 <tbody>
                     {workingSettings.rows.map((row, rowIdx) => {
                         return (
-                            <tr key={rowIdx}>
+                            <tr
+                                key={rowIdx}
+                                className={
+                                    editable && editingRow && editIndex == rowIdx
+                                        ? "bg-light"
+                                        : null
+                                }>
                                 {_.range(0, numColumns).map(colIdx => {
                                     let content = store.getCellContent(rowIdx, colIdx);
                                     return (
