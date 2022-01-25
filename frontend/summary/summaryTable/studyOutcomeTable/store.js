@@ -297,7 +297,13 @@ class StudyOutcomeTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study_name":
+            case "study_name": {
+                let data = this.getDataSelection(row.type, row.id),
+                    text = this.concatDataSelection(data, col.attribute);
+                return {
+                    html: `<p><a href="/study/${row.id}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
+                };
+            }
             case "species_strain_sex":
             case "doses": {
                 let data = this.getDataSelection(row.type, row.id),
@@ -437,6 +443,7 @@ class StudyOutcomeTableStore {
             }
 
             let score = selection[0],
+                study = this.getDataSelection("study", row.id)[0],
                 config = {
                     display: "all",
                     isForm: false,
@@ -459,14 +466,11 @@ class StudyOutcomeTableStore {
                 robData = {
                     assessment_id: this.robSettings.assessment_id,
                     score_description: score_metadata["choices"][score["score_score"]],
-                    score_symbol: score_metadata["symbols"][score["score_score"]], // same as text, remove one?
-                    score_shade: score_metadata["colors"][score["score_score"]], // same as color, remove one?
-
-                    score_color: score_metadata["colors"][score["score_score"]],
+                    score_symbol: score_metadata["symbols"][score["score_score"]],
+                    score_shade: score_metadata["colors"][score["score_score"]],
                     score_text_color: h.contrastingColor(
                         score_metadata["colors"][score["score_score"]]
                     ),
-                    score_text: score_metadata["symbols"][score["score_score"]],
                     metric: {
                         id: metric["id"],
                         name: metric["name"],
@@ -485,15 +489,16 @@ class StudyOutcomeTableStore {
                         },
                     },
                 };
-            //return customized != null && customized.score_id == -1 ? null : null;
-            return () => this.displayAsModal(_.extend({}, scoreData, robData), config);
+            return () => this.displayRobAsModal(_.extend({}, scoreData, robData), study, config);
         } else {
             return () => Study.displayAsModal(row.id);
         }
     }
-    displayAsModal(data, config) {
+    displayRobAsModal(data, study, config) {
         var modal = new HAWCModal(),
-            title = `<h4>TODO add title</h4>`,
+            title = `<h4><a target="_blank" href="/study/${study["study id"]}">${
+                study["study citation"]
+            }</a>${data["label"] ? `: ${data["label"]}` : ""}</h4>`,
             $content = $('<div class="container-fluid">');
 
         window.setTimeout(function() {

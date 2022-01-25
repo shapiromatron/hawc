@@ -13,20 +13,11 @@ import IntegerInput from "shared/components/IntegerInput";
 
 import {robAttributeChoices} from "./constants";
 
-import Study from "study/Study";
-
-import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
-import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
-import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
-
 class EditButton extends Component {
     render() {
         const {handleClick} = this.props;
         return (
-            <button
-                className="btn btn-light btn-sm float-right-absolute"
-                key={0}
-                onClick={handleClick}>
+            <button className="btn btn-light btn-sm float-right" key={0} onClick={handleClick}>
                 <i className="fa fa-edit mr-1"></i>Edit
             </button>
         );
@@ -353,15 +344,9 @@ class Table extends Component {
         const {store} = this.props,
             onClick = store.interactiveOnClick(rowIdx, colIdx);
 
-        // TODO add 'interactive' bool to column, if false return null?
-
-        return (
-            <p>
-                {onClick == null ? (
-                    <i className="fa fa-eye-slash"></i>
-                ) : (
-                    <i className="fa fa-eye" onClick={onClick}></i>
-                )}
+        return onClick == null ? null : (
+            <p className="float-right">
+                <i className="fa fa-eye" onClick={onClick}></i>
             </p>
         );
     }
@@ -417,15 +402,7 @@ class Table extends Component {
             );
         }
 
-        const {
-            numColumns,
-            workingSettings,
-            editing,
-            editingSubheader,
-            editingColumn,
-            editingRow,
-            editIndex,
-        } = store;
+        const {numColumns, workingSettings, editing, editingColumn, editingRow, editIndex} = store;
 
         return (
             <table className="summaryTable table table-bordered table-sm">
@@ -439,7 +416,7 @@ class Table extends Component {
                     <tr>
                         {workingSettings.columns.map((col, idx) => {
                             return (
-                                <th key={col.key} className="position-relative">
+                                <th key={col.key}>
                                     {editable && editingColumn && editIndex == idx ? (
                                         <EditColumnForm store={store} colIdx={idx} />
                                     ) : (
@@ -468,7 +445,6 @@ class Table extends Component {
                                     return (
                                         <td
                                             key={colIdx}
-                                            className="position-relative"
                                             style={
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? {}
@@ -499,12 +475,12 @@ class Table extends Component {
                                                     }
                                                 />
                                             ) : null}
+                                            {this.getInteractiveIcon(rowIdx, colIdx)}
                                             <span
                                                 dangerouslySetInnerHTML={{
                                                     __html: content.html,
                                                 }}
                                             />
-                                            {this.getInteractiveIcon(rowIdx, colIdx)}
                                         </td>
                                     );
                                 })}
