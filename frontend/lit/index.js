@@ -17,7 +17,6 @@ import TagTreeViz from "./TagTreeViz";
 
 export default {
     TagTree,
-    TagTreeViz,
     startupReferenceDetail(el, config) {
         let tagtree = new TagTree(config.tags[0]),
             ref = new Reference(config.reference, tagtree),
@@ -59,5 +58,17 @@ export default {
             </Provider>,
             el
         );
+    },
+    startupTagTreeViz(el, config) {
+        let tagtree = new TagTree(config.tags[0], config.assessment_id, config.search_id),
+            settings = {
+                hide_empty_tag_nodes: false,
+                width: 1280,
+                height: 800,
+                can_edit: config.can_edit,
+            };
+        tagtree.rename_top_level_node(config.assessment_name);
+        tagtree.add_references(config.references);
+        new TagTreeViz(tagtree, el, config.title, settings);
     },
 };

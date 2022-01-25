@@ -5,6 +5,7 @@ import h from "shared/utils/helpers";
 
 import Reference from "../Reference";
 import TagTree from "../TagTree";
+import {sortReferences} from "../constants";
 
 class Store {
     constructor(config) {
@@ -34,22 +35,22 @@ class Store {
             return;
         }
 
-        let url = `/lit/assessment/${this.config.assessment_id}/references/${this.selectedTag.data.pk}/json/`;
+        let url = `/lit/api/assessment/${this.config.assessment_id}/references/?all&tag_id=${this.selectedTag.data.pk}`;
         if (this.config.search_id) {
-            url += `?search_id=${this.config.search_id}`;
+            url += `&search_id=${this.config.search_id}`;
         }
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            this.selectedReferences = Reference.sortedArray(results.refs, this.tagtree);
+            this.selectedReferences = Reference.sortedArray(results, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
     @action.bound handleUntaggedReferenceClick() {
         const {assessment_id, search_id} = this.config;
 
-        let url = `/lit/assessment/${assessment_id}/references/untagged/json/`;
+        let url = `/lit/api/assessment/${assessment_id}/references/?all=1&untagged=1`;
         if (search_id) {
-            url += `?search_id=${search_id}`;
+            url += `&search_id=${search_id}`;
         }
 
         h.pushUrlParamsState("tag_id", null);
@@ -58,7 +59,7 @@ class Store {
         this.selectedReferences = null;
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            this.selectedReferences = Reference.sortedArray(results.refs, this.tagtree);
+            this.selectedReferences = Reference.sortedArray(results, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
@@ -89,6 +90,10 @@ class Store {
             refs = refs.filter(d => d.data.year >= filter.min && d.data.year <= filter.max);
         }
         return refs;
+    }
+
+    @action.bound sortReferences(sortBy) {
+        this.selectedReferences = sortReferences(this.selectedReferences, sortBy);
     }
 
     // year filter

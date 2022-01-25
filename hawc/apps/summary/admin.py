@@ -17,6 +17,7 @@ class VisualAdmin(admin.ModelAdmin):
         "visual_type",
         "published",
         "created",
+        "last_updated",
     )
 
     list_filter = ("visual_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
@@ -31,7 +32,15 @@ class VisualAdmin(admin.ModelAdmin):
 
 @admin.register(models.DataPivotUpload, models.DataPivotQuery)
 class DataPivotAdmin(admin.ModelAdmin):
-    list_display = ("title", "show_url", "assessment_id", "assessment", "published", "created")
+    list_display = (
+        "title",
+        "show_url",
+        "assessment_id",
+        "assessment",
+        "published",
+        "created",
+        "last_updated",
+    )
     list_filter = ("published", ("assessment", admin.RelatedOnlyFieldListFilter))
     search_fields = ("assessment__name", "title")
 

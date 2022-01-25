@@ -214,3 +214,9 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Blog
         fields = "__all__"
+
+
+class StrainSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Strain
+        fields = "__all__"

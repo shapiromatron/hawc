@@ -2,6 +2,8 @@ import _ from "lodash";
 
 import Hero from "shared/utils/Hero";
 
+import {sortReferences} from "./constants";
+
 class Reference {
     constructor(data, tagtree) {
         this.data = data;
@@ -22,10 +24,8 @@ class Reference {
     }
 
     static sortedArray(data, tagtree) {
-        return _.chain(data)
-            .map(d => new Reference(d, tagtree))
-            .orderBy([d => d.data.year, d => d.data.authors_short], ["desc", "asc"])
-            .value();
+        const refs = _.map(data, d => new Reference(d, tagtree));
+        return sortReferences(refs);
     }
 
     get_edit_url() {
