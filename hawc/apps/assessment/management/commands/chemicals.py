@@ -27,7 +27,8 @@ class Command(BaseCommand):
 
     def _refresh(self):
         updates = []
-        for dsstox in DSSTox.objects.all().iterator():
+        for dsstox in DSSTox.objects.all().order_by("dtxsid").iterator():
+            self.stdout.write(f"Refreshing {dsstox.dtxsid}")
             new_dsstox = DssSubstance.create_from_dtxsid(dsstox.dtxsid)
             existing_content = dsstox.content
             if _dict_hash(existing_content) != _dict_hash(new_dsstox.content):
