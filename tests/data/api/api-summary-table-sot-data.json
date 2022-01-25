@@ -40,6 +40,7 @@
   ],
   "rob": [
     {
+      "bias_direction": 1,
       "content_type_id": 53,
       "id": 1,
       "is_default": false,
@@ -48,10 +49,12 @@
       "riskofbias_id": 3,
       "score_id": 9,
       "score_label": "other stuff",
+      "score_notes": "<p>This wasn't reported in this case.</p>",
       "score_score": 14,
       "study_id": 1
     },
     {
+      "bias_direction": 2,
       "content_type_id": null,
       "id": 6,
       "is_default": true,
@@ -60,10 +63,12 @@
       "riskofbias_id": 3,
       "score_id": 6,
       "score_label": "base",
+      "score_notes": "<p>Fine, but subsets are imprortant</p>",
       "score_score": 16,
       "study_id": 1
     },
     {
+      "bias_direction": 1,
       "content_type_id": null,
       "id": 7,
       "is_default": true,
@@ -72,6 +77,7 @@
       "riskofbias_id": 3,
       "score_id": 5,
       "score_label": "",
+      "score_notes": "<p>Adequate.</p>",
       "score_score": 16,
       "study_id": 1
     }
