@@ -14,10 +14,6 @@ class DssSubstance(NamedTuple):
     dtxsid: str
     content: Dict
 
-    @staticmethod
-    def get_url(id_: str) -> str:
-        return f"https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier={id_}"
-
     @classmethod
     def create_from_dtxsid(cls, dtxsid: str) -> "DssSubstance":
         """Fetch a DssTox instance from the actor webservices using a DTXSID.
@@ -46,26 +42,3 @@ class DssSubstance(NamedTuple):
         obj = cls(dtxsid=response_dict["dtxsid"], content=response_dict)
 
         return obj
-
-    @classmethod
-    def create_from_identifier(cls, id_: str) -> "DssSubstance":
-        """Fetch a DssTox instance from the actor webservices using an identifier.
-
-        Args:
-            id_ (str): a chemical identifer (DTXSID, CASRN, common name, etc)
-
-        Raises:
-            ValueError: if object could not be created
-
-        Returns:
-            DssSubstance: a substance
-        """
-        url = cls.get_url(id_)
-        response = requests.get(url)
-        response_dict = response.json()["DataRow"]
-
-        dtxsid = response_dict["dtxsid"]
-        if not dtxsid:
-            raise ValueError(f"Chemical identifier {id_} not found in DSSTox lookup")
-
-        return cls(dtxsid=dtxsid, content=response_dict)
