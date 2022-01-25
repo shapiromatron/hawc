@@ -454,8 +454,8 @@ class StudyOutcomeTableStore {
                     score: score["score_score"],
                     is_default: score["is_default"],
                     label: score["score_label"],
-                    bias_direction: 0, // TODO add to mat view?
-                    notes: "", // TODO add to mat view?
+                    bias_direction: score["bias_direction"],
+                    notes: score["score_notes"],
                     metric_id: score["metric_id"],
                     overridden_objects: [],
                     riskofbias_id: score["riskofbias_id"],
