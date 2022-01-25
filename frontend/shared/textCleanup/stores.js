@@ -11,6 +11,7 @@ class TextCleanupStore {
     @observable termFieldMapping = null;
     @observable selectedField = null;
 
+    @observable bulkUpdateError = null;
     @observable isLoadingObjects = false;
     @observable objects = null;
 
@@ -76,8 +77,13 @@ class TextCleanupStore {
         fetch(url, opts)
             .then(response => {
                 if (response.ok) {
+                    this.bulkUpdateError = null;
                     groupStore.reset();
                     this.updateObjects(ids, payload);
+                } else {
+                    response.json().then(d => {
+                        this.bulkUpdateError = d.detail;
+                    });
                 }
             })
             .catch(ex => console.error("Patch failed", ex));
