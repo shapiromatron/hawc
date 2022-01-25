@@ -41,25 +41,25 @@ urlpatterns = [
     path("log/<int:pk>/", views.LogDetail.as_view(), name="log_detail",),
     # attachment objects
     path(
-        "v2/attachment/<int:pk>/create/",
+        "attachment/<int:pk>/create/",
         views.AttachmentViewset.as_view(),
         {"action": "create"},
         name="attachment-create",
     ),
     path(
-        "v2/attachment/<int:pk>/",
+        "attachment/<int:pk>/",
         views.AttachmentViewset.as_view(),
         {"action": "read"},
         name="attachment-detail",
     ),
     path(
-        "v2/attachment/<int:pk>/update/",
+        "attachment/<int:pk>/update/",
         views.AttachmentViewset.as_view(),
         {"action": "update"},
         name="attachment-update",
     ),
     path(
-        "v2/attachment/<int:pk>/delete/",
+        "attachment/<int:pk>/delete/",
         views.AttachmentViewset.as_view(),
         {"action": "delete"},
         name="attachment-delete",
