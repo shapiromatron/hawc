@@ -11,7 +11,7 @@ from . import models
 
 class DSSToxSerializer(serializers.ModelSerializer):
     dashboard_url = serializers.URLField(source="get_dashboard_url")
-    svg_url = serializers.URLField(source="get_svg_url")
+    img_url = serializers.URLField(source="get_img_url")
 
     class Meta:
         model = models.DSSTox
