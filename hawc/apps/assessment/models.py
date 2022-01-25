@@ -83,7 +83,7 @@ class DSSTox(models.Model):
     def get_dashboard_url(self) -> str:
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
 
-    def get_svg_url(self) -> str:
+    def get_img_url(self) -> str:
         return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
 
 
