@@ -9,7 +9,7 @@ from django.utils import timezone
 from reversion.models import Version
 
 
-def set_released_on(apps, schema_editor):
+def set_public_on(apps, schema_editor):
     ct_id = ContentType.objects.get(app_label="assessment", model="assessment").id
 
     versions = Version.objects.filter(content_type=ct_id).select_related("revision")
@@ -38,21 +38,21 @@ def set_released_on(apps, schema_editor):
 
     updates = []
     Assessment = apps.get_model("assessment", "assessment")
-    # set the released_on date for all public assessments
+    # set the public_on date for all public assessments
     for assessment in Assessment.objects.filter(public=True):
         release_dt = timestamps.get(assessment.id)
         if release_dt:
-            assessment.released_on = release_dt
-        else:  # if a date was not found, set released_on to now
-            assessment.released_on = timezone.now()
+            assessment.public_on = release_dt
+        else:  # if a date was not found, set public_on to now
+            assessment.public_on = timezone.now()
         updates.append(assessment)
 
-    Assessment.objects.bulk_update(updates, ["released_on"])
+    Assessment.objects.bulk_update(updates, ["public_on"])
 
 
-def unset_released_on(apps, schema_editor):
+def unset_public_on(apps, schema_editor):
     Assessment = apps.get_model("assessment", "assessment")
-    Assessment.objects.filter(released_on__isnull=False).update(public=True)
+    Assessment.objects.filter(public_on__isnull=False).update(public=True)
 
 
 class Migration(migrations.Migration):
@@ -64,11 +64,12 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="assessment",
-            name="released_on",
+            name="public_on",
             field=models.DateTimeField(
                 help_text="The date this assessment was released to be viewed by the general public.",
                 null=True,
             ),
         ),
-        migrations.RunPython(set_released_on, unset_released_on),
+        migrations.RunPython(set_public_on, unset_public_on),
+        migrations.RemoveField(model_name="assessment", name="public",),
     ]
