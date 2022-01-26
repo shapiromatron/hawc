@@ -423,6 +423,13 @@ class Study(Reference):
     def set_communications(self, text: str):
         Communication.set_message(self, text)
 
+    def user_can_toggle_editable(self, user) -> bool:
+        return self.assessment.user_can_edit_assessment(user)
+
+    def toggle_editable(self):
+        self.editable = not self.editable
+        self.save()
+
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
         ids = list(cls.objects.filter(assessment_id=assessment_id).values_list("id", flat=True))

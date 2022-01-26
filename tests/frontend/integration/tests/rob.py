@@ -22,6 +22,7 @@ def rob(driver, root_url):
 
     # /rob/assessment/1/study-assignments/update/
     h.go_to(root_url + "/rob/assessment/1/study-assignments/update/")
+    h.wait_until(h.Text("Individual reviews required:").exists)
     assert len(driver.find_elements_by_css_selector("tr")) >= 3
     assert len(driver.find_elements_by_css_selector("td")) >= 4
     assert h.Text("Foo et al.", to_left_of="Team Member").exists()

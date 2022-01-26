@@ -307,8 +307,16 @@ class AssessmentList(LoginRequiredMixin, ListView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class AssessmentFullList(LoginRequiredMixin, ListView):
+class AssessmentFullList(ListView):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -318,17 +326,20 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
             )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context["form"] = self.form
         return context
 
 
 class AssessmentPublicList(ListView):
     model = models.Assessment
+    form_class = forms.AssessmentFilterForm
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
-        dtxsid = self.request.GET.get("dtxsid")
-        if dtxsid:
-            qs = qs.filter(dtxsids=dtxsid)
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial)
+        qs = self.form.get_queryset(qs)
+        qs = qs.distinct().order_by(self.form.get_order_by())
         return qs
 
     def get_context_data(self, **kwargs):
@@ -346,6 +357,7 @@ class AssessmentPublicList(ListView):
             team; details on the objectives and methodology applied are described in each assessment.
             Data can also be downloaded for each individual assessment.
         """
+        context["form"] = self.form
         return context
 
 
@@ -520,19 +532,6 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = "assessment"
     model = models.EffectTag
     form_class = forms.EffectTagForm
-
-
-class getStrains(TemplateView):
-    # Return the valid strains for the requested species in JSON
-
-    def get(self, request, *args, **kwargs):
-        strains = []
-        try:
-            sp = models.Species.objects.get(pk=request.GET.get("species"))
-            strains = list(models.Strain.objects.filter(species=sp).values("id", "name"))
-        except Exception:
-            pass
-        return HttpResponse(json.dumps(strains), content_type="application/json")
 
 
 class SpeciesCreate(CloseIfSuccessMixin, BaseCreate):

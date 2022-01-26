@@ -30,15 +30,14 @@ def _check_browsing(driver, root_url):
     - a risk of bias heatmap can be rendered
     """
 
-    assessment_url = "/assessment/2/"
-
     # go to website
-    helium.go_to(root_url + "/summary" + assessment_url + "visuals/")
+    helium.go_to(root_url + "/summary/assessment/2/visuals/")
     assert helium.Text("Available visualizations").exists() is True
     helium.wait_until(helium.Text("Title").exists)
     assert len(driver.find_elements_by_css_selector("tr")) > 10
 
     # view data pivot
+    helium.scroll_down(600)
     helium.click("data pivot - animal bioassay - endpoint")
     assert "animal-bioassay-data-pivot-endpoint" in driver.current_url
     assert helium.Link("Actions").exists() is True
@@ -49,7 +48,7 @@ def _check_browsing(driver, root_url):
     assert helium.Text("Download as a SVG").exists() is True
 
     # view browse again
-    helium.go_to(root_url + "/summary" + assessment_url + "visuals/")
+    helium.go_to(root_url + "/summary/assessment/2/visuals/")
     helium.wait_until(helium.Text("Title").exists)
 
     # click the rob heatmap example

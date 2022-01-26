@@ -648,6 +648,9 @@ class DataPivot(models.Model):
         else:
             return self.datapivotquery.visual_type
 
+    def get_visual_type_display(self):
+        return self.visual_type
+
     def get_settings(self):
         try:
             return json.loads(self.settings)

@@ -146,21 +146,20 @@ class AnimalGroupForm(ModelForm):
         # for lifestage assessed/exposed, use a select widget. Manually add in
         # previously saved values that don't conform to the lifestage choices
         lifestage_dict = dict(constants.Lifestage.choices)
-
         if self.instance.lifestage_exposed in lifestage_dict:
             le_choices = constants.Lifestage.choices
         else:
-            le_choices = (
+            le_choices = [
                 (self.instance.lifestage_exposed, self.instance.lifestage_exposed),
-            ) + constants.Lifestage.choices
+            ] + constants.Lifestage.choices
         self.fields["lifestage_exposed"].widget = forms.Select(choices=le_choices)
 
         if self.instance.lifestage_assessed in lifestage_dict:
             la_choices = constants.Lifestage.choices
         else:
-            la_choices = (
+            la_choices = [
                 (self.instance.lifestage_assessed, self.instance.lifestage_assessed),
-            ) + constants.Lifestage.choices
+            ] + constants.Lifestage.choices
         self.fields["lifestage_assessed"].widget = forms.Select(choices=la_choices)
 
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
@@ -854,61 +853,42 @@ class EndpointFilterForm(forms.Form):
 
     def get_query(self):
 
-        studies = self.cleaned_data.get("studies")
-        chemical = self.cleaned_data.get("chemical")
-        cas = self.cleaned_data.get("cas")
-        lifestage_exposed = self.cleaned_data.get("lifestage_exposed")
-        lifestage_assessed = self.cleaned_data.get("lifestage_assessed")
-        species = self.cleaned_data.get("species")
-        strain = self.cleaned_data.get("strain")
-        sex = self.cleaned_data.get("sex")
-        data_extracted = self.cleaned_data.get("data_extracted")
-        name = self.cleaned_data.get("name")
-        system = self.cleaned_data.get("system")
-        organ = self.cleaned_data.get("organ")
-        effect = self.cleaned_data.get("effect")
-        effect_subtype = self.cleaned_data.get("effect_subtype")
-        NOEL = self.cleaned_data.get("NOEL")
-        LOEL = self.cleaned_data.get("LOEL")
-        tags = self.cleaned_data.get("tags")
-        dose_units = self.cleaned_data.get("dose_units")
-
         query = Q()
-        if studies:
+        if studies := self.cleaned_data.get("studies"):
             query &= Q(animal_group__experiment__study__in=studies)
-        if chemical:
+        if chemical := self.cleaned_data.get("chemical"):
             query &= Q(animal_group__experiment__chemical__icontains=chemical)
-        if cas:
+        if cas := self.cleaned_data.get("cas"):
             query &= Q(animal_group__experiment__cas__icontains=cas)
-        if lifestage_exposed:
+        if lifestage_exposed := self.cleaned_data.get("lifestage_exposed"):
             query &= Q(animal_group__lifestage_exposed__icontains=lifestage_exposed)
-        if lifestage_assessed:
+        if lifestage_assessed := self.cleaned_data.get("lifestage_assessed"):
             query &= Q(animal_group__lifestage_assessed__icontains=lifestage_assessed)
-        if species:
+        if species := self.cleaned_data.get("species"):
             query &= Q(animal_group__species=species)
-        if strain:
+        if strain := self.cleaned_data.get("strain"):
             query &= Q(animal_group__strain__name__icontains=strain.name)
-        if sex:
+        if sex := self.cleaned_data.get("sex"):
             query &= Q(animal_group__sex__in=sex)
-        if data_extracted:
+        if data_extracted := self.cleaned_data.get("data_extracted"):
             query &= Q(data_extracted=data_extracted == "True")
-        if name:
+        if name := self.cleaned_data.get("name"):
             query &= Q(name__icontains=name)
-        if system:
+        if system := self.cleaned_data.get("system"):
             query &= Q(system__icontains=system)
-        if organ:
+        if organ := self.cleaned_data.get("organ"):
             query &= Q(organ__icontains=organ)
-        if effect:
+        if effect := self.cleaned_data.get("effect"):
             query &= Q(effect__icontains=effect)
-        if effect_subtype:
+        if effect_subtype := self.cleaned_data.get("effect_subtype"):
             query &= Q(effect_subtype__icontains=effect_subtype)
-        if NOEL:
+        if NOEL := self.cleaned_data.get("NOEL"):
             query &= Q(NOEL__icontains=NOEL)
-        if LOEL:
+        if LOEL := self.cleaned_data.get("LOEL"):
             query &= Q(LOEL__icontains=LOEL)
-        if tags:
+        if tags := self.cleaned_data.get("tags"):
             query &= Q(effects__name__icontains=tags)
-        if dose_units:
+        if dose_units := self.cleaned_data.get("dose_units"):
             query &= Q(animal_group__dosing_regime__doses__dose_units=dose_units)
         return query
 
