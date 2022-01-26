@@ -79,7 +79,7 @@ class AttributeChoices(Enum):
 
 class Subheader(BaseModel):
     label: str
-    start: conint(ge=0)
+    start: conint(ge=1)
     length: conint(ge=1)
 
 
@@ -129,7 +129,7 @@ class StudyOutcomeTable(BaseTable):
         for subheader in self.subheaders:
             html = tag_wrapper(subheader.label, "p", "strong")
             cells.append(
-                GenericCell.parse_args(True, 0, subheader.start, 1, subheader.length, html)
+                GenericCell.parse_args(True, 0, subheader.start - 1, 1, subheader.length, html)
             )
         return BaseCellGroup.construct(cells=cells)
 
