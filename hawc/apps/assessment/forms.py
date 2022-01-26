@@ -15,9 +15,10 @@ from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
+from ..common.widgets import DateCheckboxInput
 from ..myuser.lookups import HAWCUserLookup
 from ..myuser.models import HAWCUser
-from . import lookups, models, widgets
+from . import lookups, models
 
 
 class AssessmentForm(forms.ModelForm):
@@ -40,7 +41,7 @@ class AssessmentForm(forms.ModelForm):
         )
         model = models.Assessment
         widgets = {
-            "public_on": widgets.DateCheckboxInput,
+            "public_on": DateCheckboxInput,
         }
 
     def __init__(self, *args, **kwargs):

@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from hawc.apps.assessment.widgets import DateCheckboxInput
+from hawc.apps.common.widgets import DateCheckboxInput
 
 # mock timezone.now() for consistent testing
 NOW_FOR_TESTING = datetime.datetime(2021, 10, 10, 10, 10, 10)
