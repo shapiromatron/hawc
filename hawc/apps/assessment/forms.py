@@ -39,6 +39,9 @@ class AssessmentForm(forms.ModelForm):
             "enable_summary_text",
         )
         model = models.Assessment
+        widgets = {
+            "public_on": widgets.DateCheckboxInput,
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
@@ -59,7 +62,6 @@ class AssessmentForm(forms.ModelForm):
         self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
-        self.fields["public_on"].widget = widgets.DateCheckboxInput()
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"

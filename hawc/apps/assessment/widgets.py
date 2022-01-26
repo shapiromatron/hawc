@@ -1,14 +1,9 @@
-from django import forms
+from django.forms.widgets import CheckboxInput
 from django.utils import timezone
 
 
-class DateCheckboxInput(forms.widgets.CheckboxInput):
+class DateCheckboxInput(CheckboxInput):
     def value_from_datadict(self, data, files, name):
-        if name not in data:
-            return None
-        value = data.get(name)
-        # True creates a datetime value and false returns None.
-        values = {"on": timezone.now(), "false": None}
-        if isinstance(value, str):
-            value = values.get(value.lower(), value)
-        return value
+        # cast the boolean returned to a timestamp or None
+        value = super().value_from_datadict(data, files, name)
+        return timezone.now() if value else None
