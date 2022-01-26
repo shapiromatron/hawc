@@ -409,7 +409,7 @@ class Table extends Component {
             );
         }
 
-        const {workingSettings, editing, editingColumn, editingRow, editIndex} = store;
+        const {numColumns, workingSettings, editing, editingColumn, editingRow, editIndex} = store;
 
         return (
             <table className="summaryTable table table-bordered table-sm">
@@ -453,7 +453,7 @@ class Table extends Component {
                 </thead>
                 <tbody>
                     {workingSettings.rows.map((row, rowIdx) => {
-                        return (
+                        return store.getDataSelection(row.type, row.id).length ? (
                             <tr
                                 key={rowIdx}
                                 className={
@@ -516,6 +516,21 @@ class Table extends Component {
                                         </td>
                                     );
                                 })}
+                            </tr>
+                        ) : (
+                            <tr key={rowIdx} className="bg-white">
+                                <td colSpan={numColumns}>
+                                    {editable && !editing ? (
+                                        <button
+                                            className="btn btn-sm btn-danger float-right"
+                                            onClick={() => store.deleteRow(rowIdx)}>
+                                            Delete
+                                        </button>
+                                    ) : null}
+                                    <span>
+                                        {row.type} {row.id} not found
+                                    </span>
+                                </td>
                             </tr>
                         );
                     })}
