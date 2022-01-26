@@ -293,7 +293,10 @@ class StudyOutcomeTableStore {
                 return judgment == -1
                     ? constants.NM
                     : {
-                          color: this.robSettings.score_metadata.colors[judgment],
+                          backgroundColor: this.robSettings.score_metadata.colors[judgment],
+                          color: h.contrastingColor(
+                              this.robSettings.score_metadata.colors[judgment]
+                          ),
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
@@ -323,7 +326,10 @@ class StudyOutcomeTableStore {
                 return judgment == -1
                     ? constants.NM
                     : {
-                          color: this.robSettings.score_metadata.colors[judgment],
+                          backgroundColor: this.robSettings.score_metadata.colors[judgment],
+                          color: h.contrastingColor(
+                              this.robSettings.score_metadata.colors[judgment]
+                          ),
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }

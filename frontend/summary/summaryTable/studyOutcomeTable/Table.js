@@ -409,7 +409,7 @@ class Table extends Component {
             );
         }
 
-        const {numColumns, workingSettings, editing, editingColumn, editingRow, editIndex} = store;
+        const {workingSettings, editing, editingColumn, editingRow, editIndex} = store;
 
         return (
             <table className="summaryTable table table-bordered table-sm">
@@ -461,15 +461,21 @@ class Table extends Component {
                                         ? "bg-light"
                                         : null
                                 }>
-                                {_.range(0, numColumns).map(colIdx => {
+                                {workingSettings.columns.map((col, colIdx) => {
                                     let content = store.getCellContent(rowIdx, colIdx);
                                     return (
                                         <td
                                             key={colIdx}
+                                            className={
+                                                col.attribute == "rob_score" &&
+                                                !(editable && store.editingCell(rowIdx, colIdx))
+                                                    ? "text-center align-middle"
+                                                    : null
+                                            }
                                             style={
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? {}
-                                                    : {backgroundColor: content.color}
+                                                    : {backgroundColor: content.backgroundColor}
                                             }>
                                             {editable && store.editingCell(rowIdx, colIdx) ? (
                                                 <>
@@ -498,6 +504,11 @@ class Table extends Component {
                                             ) : null}
                                             {this.getInteractiveIcon(rowIdx, colIdx)}
                                             <span
+                                                style={
+                                                    editable && store.editingCell(rowIdx, colIdx)
+                                                        ? {}
+                                                        : {color: content.color}
+                                                }
                                                 dangerouslySetInnerHTML={{
                                                     __html: content.html,
                                                 }}
