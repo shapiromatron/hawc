@@ -14,11 +14,18 @@ class GroupedObjectList extends Component {
         return (
             <div className="container-fluid">
                 {store.hasTermMapping ? (
-                    <div className="row">
+                    <div className="row-fluid">
                         <p className="alert alert-info">
                             <i className="fa fa-exclamation-triangle"></i> Controlled vocabulary may
                             exist for this assessment. This list is filtered to only display terms
                             which are not being used with controlled vocabulary.
+                        </p>
+                    </div>
+                ) : null}
+                {store.bulkUpdateError ? (
+                    <div className="row-fluid">
+                        <p className="alert alert-danger">
+                            <i className="fa fa-exclamation-triangle"></i> {store.bulkUpdateError}
                         </p>
                     </div>
                 ) : null}
