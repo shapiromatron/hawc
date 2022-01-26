@@ -27,7 +27,6 @@ class DateCheckboxInput(forms.widgets.Input):
         if name not in data:
             return None
         value = data.get(name)
-        print(f"!---{value}---!")
         # True creates a datetime value and false returns None.
         values = {"on": timezone.now(), "false": None}
         if isinstance(value, str):
