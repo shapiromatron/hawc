@@ -59,16 +59,15 @@ interactions:
         HERO references\",\"PPRTV|Toxaphene (bio-weathered)\",\"PPRTV|Zirconium\",\"PPRTV|p-Aminophenol\"],\"category_key\":[2,32,18,21],\"PROJECTS\":[{\"PROJECT\":\"Chromium
         VI - Archive\",\"PROJECT_ID\":1535,\"USAGES\":[{\"USAGE_ID\":1676,\"USAGE\":\"Considered
         References - Box 5\",\"USAGES\":[{\"USAGE_ID\":1720,\"USAGE\":\"Supporting
-        Studies\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Zirconium\",\"PROJECT_ID\":1435,\"USAGES\":[]},{\"PROJECT\":\"OPPT_1,4-Dioxane_F.
-        Human Health\",\"PROJECT_ID\":2546,\"USAGES\":[{\"USAGE_ID\":13886,\"USAGE\":\"Total
+        Studies\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_F. Human Health\",\"PROJECT_ID\":2546,\"USAGES\":[{\"USAGE_ID\":13886,\"USAGE\":\"Total
         \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":13888,\"USAGE\":\"Off
         topic\",\"USAGES\":[{\"USAGE_ID\":13893,\"USAGE\":\"Citied in IRIS document
-        or IRIS HERO page\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Biphenyl\",\"PROJECT_ID\":299,\"USAGES\":[{\"USAGE_ID\":1958,\"USAGE\":\"Excluded
+        or IRIS HERO page\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Zirconium\",\"PROJECT_ID\":1435,\"USAGES\":[]},{\"PROJECT\":\"Biphenyl\",\"PROJECT_ID\":299,\"USAGES\":[{\"USAGE_ID\":1958,\"USAGE\":\"Excluded
         References\",\"USAGES\":[]},{\"USAGE_ID\":1956,\"USAGE\":\"Considered \",\"USAGES\":[]}]},{\"PROJECT\":\"Vanadium
         Pentoxide\",\"PROJECT_ID\":1677,\"USAGES\":[{\"USAGE_ID\":2169,\"USAGE\":\"Cited
         References \",\"USAGES\":[{\"USAGE_ID\":2181,\"USAGE\":\"Other studies \",\"USAGES\":[{\"USAGE_ID\":2182,\"USAGE\":\"Physical
-        and chemical properties \",\"USAGES\":[]}]}]},{\"USAGE_ID\":2165,\"USAGE\":\"Previous
-        HERO references\",\"USAGES\":[]},{\"USAGE_ID\":7090,\"USAGE\":\"Cited 2015\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_Methylene
+        and chemical properties \",\"USAGES\":[]}]}]},{\"USAGE_ID\":7090,\"USAGE\":\"Cited
+        2015\",\"USAGES\":[]},{\"USAGE_ID\":2165,\"USAGE\":\"Previous HERO references\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_Methylene
         Chloride_E. Fate\",\"PROJECT_ID\":2567,\"USAGES\":[{\"USAGE_ID\":14048,\"USAGE\":\"Total
         \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10661,\"USAGE\":\"Off
         topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_E. Fate\",\"PROJECT_ID\":2545,\"USAGES\":[{\"USAGE_ID\":13945,\"USAGE\":\"Total
@@ -78,9 +77,9 @@ interactions:
         topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Vanadium Pentoxide (Draft, 2011)\",\"PROJECT_ID\":2203,\"USAGES\":[]},{\"PROJECT\":\"OPPT_1,4-Dioxane_D.
         Exposure\",\"PROJECT_ID\":2543,\"USAGES\":[{\"USAGE_ID\":13944,\"USAGE\":\"Total
         \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10025,\"USAGE\":\"Off
-        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Cyanobacterial Toxins\",\"PROJECT_ID\":1871,\"USAGES\":[{\"USAGE_ID\":1576,\"USAGE\":\"Cylindrospermopsin\",\"USAGES\":[]}]},{\"PROJECT\":\"Bromobenzene\",\"PROJECT_ID\":413,\"USAGES\":[]},{\"PROJECT\":\"OPPT_1,4-Dioxane_C.
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Cyanobacterial Toxins\",\"PROJECT_ID\":1871,\"USAGES\":[{\"USAGE_ID\":1576,\"USAGE\":\"Cylindrospermopsin\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_C.
         Engineering\",\"PROJECT_ID\":2542,\"USAGES\":[{\"USAGE_ID\":13943,\"USAGE\":\"Data
-        screening total\",\"USAGES\":[{\"USAGE_ID\":10013,\"USAGE\":\"Screening: Excluded\",\"USAGES\":[]}]}]},{\"PROJECT\":\"TCA
+        screening total\",\"USAGES\":[{\"USAGE_ID\":10013,\"USAGE\":\"Screening: Excluded\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Bromobenzene\",\"PROJECT_ID\":413,\"USAGES\":[]},{\"PROJECT\":\"TCA
         - Cited\",\"PROJECT_ID\":1651,\"USAGES\":[]},{\"PROJECT\":\"Trichloroacetic
         acid (TCA) (Final, 2011)\",\"PROJECT_ID\":438,\"USAGES\":[]},{\"PROJECT\":\"Benzo(a)pyrene
         (BaP)\",\"PROJECT_ID\":1836,\"USAGES\":[{\"USAGE_ID\":1941,\"USAGE\":\"Cited\",\"USAGES\":[]},{\"USAGE_ID\":1939,\"USAGE\":\"Considered\",\"USAGES\":[{\"USAGE_ID\":514,\"USAGE\":\"2011
@@ -157,16 +156,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 19 Jan 2022 23:29:08 GMT
+      - Wed, 26 Jan 2022 16:23:39 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
       Set-Cookie:
-      - CFID=9376478; Expires=Thu, 20-Jan-2022 23:29:08 GMT; Path=/; HttpOnly
-      - CFTOKEN=60863572; Expires=Thu, 20-Jan-2022 23:29:08 GMT; Path=/; HttpOnly
-      - JSESSIONID=2475185114AE660E91F488DCBFF57FB7.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F01%2F19%2018%3A29%3A08; Path=/
+      - CFID=9523758; Expires=Thu, 27-Jan-2022 16:23:39 GMT; Path=/; HttpOnly
+      - CFTOKEN=32088089; Expires=Thu, 27-Jan-2022 16:23:39 GMT; Path=/; HttpOnly
+      - JSESSIONID=17E289E45D6E21168C6A3C69D1858CBB.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2022%2F01%2F26%2011%3A23%3A39; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubdomains; preload
       Transfer-Encoding:

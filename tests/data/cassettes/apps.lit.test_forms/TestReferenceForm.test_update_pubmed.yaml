@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=-1
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=-1
     headers:
       Accept:
       - '*/*'
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '39'
+      - '84'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -59,28 +59,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 19 Jan 2022 23:27:50 GMT
+      - Wed, 26 Jan 2022 16:22:43 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD3879FD26AF85000051D368959F2F.1.1.m_3
+      - 939B44F6B46659C50000294E68107782.1.1.m_3
       NCBI-SID:
-      - 3DEF1B1CBBB2DB4C_6E07SID
+      - 5176D7622D8AE576_8948SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=3DEF1B1CBBB2DB4C_6E07SID; domain=.nih.gov; path=/; expires=Thu, 19
-        Jan 2023 23:27:51 GMT
+      - ncbi_sid=5176D7622D8AE576_8948SID; domain=.nih.gov; path=/; expires=Thu, 26
+        Jan 2023 16:22:43 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '8'
       X-Test-Test:
       - test42
       X-UA-Compatible:

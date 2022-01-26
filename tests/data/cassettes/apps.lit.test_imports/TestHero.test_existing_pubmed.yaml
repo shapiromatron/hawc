@@ -37,20 +37,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 19 Jan 2022 23:27:59 GMT
+      - Wed, 26 Jan 2022 16:22:48 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B321138522775000058D43AEDAAE0.1.1.m_1
+      - D0BD70A4A27193A50000254F5D3210A4.1.1.m_1
       NCBI-SID:
-      - 18FFDBF575C3E802_AC9ESID
+      - EA7ABB07D949964E_07E6SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=18FFDBF575C3E802_AC9ESID; domain=.nih.gov; path=/; expires=Thu, 19
-        Jan 2023 23:27:59 GMT
+      - ncbi_sid=EA7ABB07D949964E_07E6SID; domain=.nih.gov; path=/; expires=Thu, 26
+        Jan 2023 16:22:49 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -71,7 +71,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&term=1998+Longstreth+health+risks+ozone+depletion&retstart=0
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=1998+Longstreth+health+risks+ozone+depletion&retstart=0
     headers:
       Accept:
       - '*/*'
@@ -80,7 +80,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '82'
+      - '127'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -96,13 +96,13 @@ interactions:
         AP//skGxG8h3zi/NK7EztNGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaWF
         pYmxKVATkM0FIiFyAAAAAP//sgkpSswrzkksAYZMcCrQdCS+nQII2LgV5efaZaQm5pRk2OiDORDx
         kHw7JYiwUrRvarCHQkhqUW5xrIJ/kAJc3DEnR8EtMzUnpTjWRh+oAaxRH9kOXBbmV+XnpSqkpBbk
-        pIKkMGxGk8dwggZEBYoTFBz9XBSUkPQgyWmC3Y1hKroHAAAAAP//xFZNj4IwEL37KzzqiQ5QbBPS
-        22YvRtRkD56VqNGsG9BE/72l2AVpQUeIngozgb558+bj+QCSbbpLDdiZ1aQrt5aRamv6FASnIYtS
-        DcudUPfLCzNvX78I4JxV/p+Z8yAykyicMhRlUc6bJiEg3GNamcrzdf7bH1axmISOfszxFpdbgIwP
-        v+v0mMTHTQs4IxfQUKKpkKIIHXnakdkkbuIqnBZcPgl8l1ihLVAs1ZQVhiNKGQC4r/AUzf9pksf3
-        PPqZlg0PaDSEjyQRPOCUel2waFQbkkOXAyH+S1orcVgDzCh4FDJGP5LcpmaMzDP1u0ix2fuxTAYB
-        ox00tpppg220smpp6+ZmS2yzIB+MQ0wI3LN3wO50WfHfD0U1BMPZKU4u5clZHYBqQ7API+UaYDae
-        4e2TdjNf/+X9C88wdAzCenJ3rCyoVwAAAP//AwCGQQvNXgsAAA==
+        pIKkMGxGk8dwggZEBYoTFBz9XBSUkPQgyWmC3Y1hKroHAAAAAP//vFaxboMwEN37FR2bCWxj7JOQ
+        tyhLVNJIGTo3KK1SJREkUvv3NSYuBBuSKzST4U7g53fP9+72A+QfxbZwYJdRl64q2kRqo8VNEIKe
+        Kmo1vG2V2V9vWGYf7YsiALL1/zJcHaIMqTqpj2IiJnnWJIlDEMIq02SmX4fP/TpTz0lgHyu89eYe
+        IPP9blMc8+z4PgCOoAQNJV0oLYok0KsfmU/iLq466cEVhTGEfpZeUSx1XCsMR5wDFfJPPKXLX5r0
+        Mlumq0UzcIVGR/hIEgmjIUg2BovObUNySIHwiEQDOewA5lx4FDLJBYP7F7evGSPrzPkYJXZ7P5bJ
+        WDA6QmPrcBtso+WSEb/2Ec3NV9h+QV6xQ8wRgP1302nlL03RmGDycsry76Zztg3QTAh+MzKpJ8zE
+        Mzl/Mszz7V/uP/BMksAh7EHPjq0B9QcAAP//AwCwR3G7XgsAAA==
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -117,28 +117,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 19 Jan 2022 23:27:59 GMT
+      - Wed, 26 Jan 2022 16:22:48 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B321138522775000046D43C09DDF9.1.1.m_1
+      - 939B44F6B46659C50000484E788390B9.1.1.m_1
       NCBI-SID:
-      - 7682D939D5432244_03D3SID
+      - 83DCF79E7A2C0FD4_04F4SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=7682D939D5432244_03D3SID; domain=.nih.gov; path=/; expires=Thu, 19
-        Jan 2023 23:27:59 GMT
+      - ncbi_sid=83DCF79E7A2C0FD4_04F4SID; domain=.nih.gov; path=/; expires=Thu, 26
+        Jan 2023 16:22:49 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '1'
+      - '9'
       X-Test-Test:
       - test42
       X-UA-Compatible:
@@ -151,7 +151,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=9894351
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=9894351
     headers:
       Accept:
       - '*/*'
@@ -160,7 +160,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '44'
+      - '89'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -233,28 +233,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 19 Jan 2022 23:27:59 GMT
+      - Wed, 26 Jan 2022 16:22:49 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B321138522775000056D43D407BA0.1.1.m_3
+      - 939B44F6B46659C50000594E799DF2C3.1.1.m_3
       NCBI-SID:
-      - 9CFB3B15CA690214_2949SID
+      - 873E0E1868C617D6_A4F8SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=9CFB3B15CA690214_2949SID; domain=.nih.gov; path=/; expires=Thu, 19
-        Jan 2023 23:28:00 GMT
+      - ncbi_sid=873E0E1868C617D6_A4F8SID; domain=.nih.gov; path=/; expires=Thu, 26
+        Jan 2023 16:22:49 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '0'
+      - '8'
       X-Test-Test:
       - test42
       X-UA-Compatible:
@@ -343,16 +343,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 19 Jan 2022 23:28:00 GMT
+      - Wed, 26 Jan 2022 16:22:49 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
       Set-Cookie:
-      - CFID=9376436; Expires=Thu, 20-Jan-2022 23:28:00 GMT; Path=/; HttpOnly
-      - CFTOKEN=99140263; Expires=Thu, 20-Jan-2022 23:28:00 GMT; Path=/; HttpOnly
-      - JSESSIONID=A1CB4E684E939AF9D163F76BE98DEE71.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F01%2F19%2018%3A28%3A00; Path=/
+      - CFID=9523742; Expires=Thu, 27-Jan-2022 16:22:49 GMT; Path=/; HttpOnly
+      - CFTOKEN=30926130; Expires=Thu, 27-Jan-2022 16:22:49 GMT; Path=/; HttpOnly
+      - JSESSIONID=AEEA7DA720F1706B52ED34E187F70A77.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2022%2F01%2F26%2011%3A22%3A49; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubdomains; preload
       Transfer-Encoding:
