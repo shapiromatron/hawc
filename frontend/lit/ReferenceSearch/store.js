@@ -4,6 +4,7 @@ import {action, computed, toJS, observable} from "mobx";
 import h from "shared/utils/helpers";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
+import {sortReferences} from "../constants";
 
 class Store {
     config = null;
@@ -65,6 +66,10 @@ class Store {
             tags: [],
         };
         this.references = null;
+    }
+
+    @action.bound sortReferences(sortBy) {
+        this.references = sortReferences(this.references, sortBy);
     }
 
     @computed get hasReferences() {

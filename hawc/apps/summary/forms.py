@@ -4,6 +4,7 @@ from urllib.parse import urlparse, urlunparse
 
 from django import forms
 from django.db.models import Q
+from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
@@ -276,24 +277,22 @@ class PrefilterMixin:
             self.fields[k] = v
 
     def setInitialValues(self):
-
-        is_new = self.instance.id is None
+        is_new = self.initial == {}
         try:
             prefilters = json.loads(self.initial.get("prefilters", "{}"))
         except ValueError:
             prefilters = {}
 
         if type(self.instance) is models.Visual:
-            evidence_type = models.BIOASSAY
+            evidence_type = constants.StudyType.BIOASSAY
         else:
             evidence_type = self.initial.get("evidence_type") or self.instance.evidence_type
-
         for k, v in prefilters.items():
             if k == "system__in":
-                if evidence_type == models.BIOASSAY:
+                if evidence_type == constants.StudyType.BIOASSAY:
                     self.fields["prefilter_system"].initial = True
                     self.fields["systems"].initial = v
-                elif evidence_type == models.EPI:
+                elif evidence_type == constants.StudyType.EPI:
                     self.fields["prefilter_episystem"].initial = True
                     self.fields["episystems"].initial = v
 
@@ -302,10 +301,10 @@ class PrefilterMixin:
                 self.fields["organs"].initial = v
 
             if k == "effect__in":
-                if evidence_type == models.BIOASSAY:
+                if evidence_type == constants.StudyType.BIOASSAY:
                     self.fields["prefilter_effect"].initial = True
                     self.fields["effects"].initial = v
-                elif evidence_type == models.EPI:
+                elif evidence_type == constants.StudyType.EPI:
                     self.fields["prefilter_epieffect"].initial = True
                     self.fields["epieffects"].initial = v
 
@@ -393,13 +392,13 @@ class PrefilterMixin:
             if self.__class__.__name__ == "CrossviewForm":
                 evidence_type = 0
 
-            if evidence_type == models.BIOASSAY:
+            if evidence_type == constants.StudyType.BIOASSAY:
                 prefilters["animal_group__experiment__study__in"] = studies
-            elif evidence_type == models.IN_VITRO:
+            elif evidence_type == constants.StudyType.IN_VITRO:
                 prefilters["experiment__study__in"] = studies
-            elif evidence_type == models.EPI:
+            elif evidence_type == constants.StudyType.EPI:
                 prefilters["study_population__study__in"] = studies
-            elif evidence_type == models.EPI_META:
+            elif evidence_type == constants.StudyType.EPI_META:
                 prefilters["protocol__study__in"] = studies
             else:
                 raise ValueError("Unknown evidence type")
@@ -469,7 +468,13 @@ class SummaryTableForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.instance.id:
             self.instance = models.SummaryTable.build_default(self.assessment.id, table_type)
-        self.fields["content"].initial = self.instance.content
+        # TODO - we shouldn't have to do this; and 400 errors are not rendering
+        # instead, switch to htmx or use a REST API
+        if self.initial:
+            self.instance.content = self.initial["content"]
+            self.instance.title = self.initial["title"]
+            self.instance.published = self.initial["published"]
+            self.instance.slug = self.initial["slug"]
 
 
 class SummaryTableSelectorForm(forms.Form):
@@ -492,6 +497,51 @@ class SummaryTableSelectorForm(forms.Form):
             """,
             submit_text="Create table",
             cancel_url=url,
+        )
+
+
+class SummaryTableModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.assessment}: [{obj.get_table_type_display()}] {obj}"
+
+
+class SummaryTableCopySelectorForm(forms.Form):
+
+    table = SummaryTableModelChoiceField(
+        label="Summary table", queryset=models.Visual.objects.all()
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.cancel_url = kwargs.pop("cancel_url")
+        self.assessment_id = kwargs.pop("assessment_id")
+        self.queryset = kwargs.pop("queryset")
+        super().__init__(*args, **kwargs)
+        self.fields["table"].queryset = self.queryset
+
+    @property
+    def helper(self):
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "col-md-12"
+
+        return BaseFormHelper(
+            self,
+            legend_text="Select summary table",
+            help_text="""
+                Select an existing summary table and copy as a new summary table. You will be taken to a new view to
+                create a new table, but the form will be pre-populated using the values from
+                the currently-selected table.
+            """,
+            submit_text="Copy table",
+            cancel_url=self.cancel_url,
+        )
+
+    def get_create_url(self):
+        table = self.cleaned_data["table"]
+        return (
+            reverse("summary:tables_create", args=(self.assessment_id, table.table_type))
+            + f"?initial={table.pk}"
         )
 
 
@@ -520,7 +570,6 @@ class VisualForm(forms.ModelForm):
             self.fields["sort_order"].widget = forms.HiddenInput()
 
     def setHelper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -552,6 +601,46 @@ class VisualForm(forms.ModelForm):
 
     def clean_slug(self):
         return clean_slug(self)
+
+
+class VisualModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.assessment}: [{obj.get_visual_type_display()}] {obj}"
+
+
+class VisualSelectorForm(forms.Form):
+
+    visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        self.cancel_url = kwargs.pop("cancel_url")
+        self.assessment_id = kwargs.pop("assessment_id")
+        self.queryset = kwargs.pop("queryset")
+        super().__init__(*args, **kwargs)
+        self.fields["visual"].queryset = self.queryset
+
+    @property
+    def helper(self):
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "col-md-12"
+        return BaseFormHelper(
+            self,
+            legend_text="Copy visualization",
+            help_text="""
+                Select an existing visualization from this assessment to copy as a template for a
+                new one. This will include all model-settings, and the selected dataset.""",
+            submit_text="Copy selected as new",
+            cancel_url=self.cancel_url,
+        )
+
+    def get_create_url(self):
+        visual = self.cleaned_data["visual"]
+        return (
+            reverse("summary:visualization_create", args=(self.assessment_id, visual.visual_type))
+            + f"?initial={visual.pk}"
+        )
 
 
 class VisualFilterForm(forms.Form):
@@ -1008,10 +1097,10 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["evidence_type"].choices = (
-            (models.BIOASSAY, "Animal Bioassay"),
-            (models.EPI, "Epidemiology"),
-            (models.EPI_META, "Epidemiology meta-analysis/pooled analysis"),
-            (models.IN_VITRO, "In vitro"),
+            (constants.StudyType.BIOASSAY, "Animal Bioassay"),
+            (constants.StudyType.EPI, "Epidemiology"),
+            (constants.StudyType.EPI_META, "Epidemiology meta-analysis/pooled analysis"),
+            (constants.StudyType.IN_VITRO, "In vitro"),
         )
         self.fields["preferred_units"].required = False
         self.helper = self.setHelper()
@@ -1024,7 +1113,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
         evidence_type = self.cleaned_data["evidence_type"]
         export_style = self.cleaned_data["export_style"]
         if (
-            evidence_type not in (models.IN_VITRO, models.BIOASSAY)
+            evidence_type not in (constants.StudyType.IN_VITRO, constants.StudyType.BIOASSAY)
             and export_style != constants.ExportStyle.EXPORT_GROUP
         ):
             raise forms.ValidationError(
