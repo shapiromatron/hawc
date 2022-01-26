@@ -50,6 +50,11 @@ def set_released_on(apps, schema_editor):
     Assessment.objects.bulk_update(updates, ["released_on"])
 
 
+def unset_released_on(apps, schema_editor):
+    Assessment = apps.get_model("assessment", "assessment")
+    Assessment.objects.filter(released_on__isnull=False).update(public=True)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -65,5 +70,5 @@ class Migration(migrations.Migration):
                 null=True,
             ),
         ),
-        migrations.RunPython(set_released_on, migrations.RunPython.noop),
+        migrations.RunPython(set_released_on, unset_released_on),
     ]
