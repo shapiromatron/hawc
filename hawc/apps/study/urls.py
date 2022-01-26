@@ -40,5 +40,4 @@ urlpatterns = [
         {"action": "delete"},
         name="attachment-delete",
     ),
-    path("<int:pk>/attachments/", views.AttachmentList.as_view(), name="attachment_list"),
 ]

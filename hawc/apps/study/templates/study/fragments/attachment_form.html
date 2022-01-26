@@ -1,0 +1,11 @@
+{% load crispy_forms_tags %}
+
+<li hx-target="this" hx-swap="outerHTML">
+    <form class="well" method=post enctype="multipart/form-data">
+        {% crispy form %}
+        <button class="btn btn-sm btn-primary" hx-encoding="multipart/form-data"
+            hx-post="{% url 'study:attachment-create' parent.pk %}">Save</button>
+        <button class="btn btn-sm btn-light" type='button'
+            onclick="this.parentNode.parentNode.outerHTML = ''">Cancel</button>
+    </form>
+</li>

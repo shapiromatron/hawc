@@ -112,18 +112,8 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
-        context["config"] = {
-            "studyContent": self.object.get_json(json_encode=False),
-            "attachments_viewable": attachments_viewable,
-        }
-        context["attachments"] = (
-            models.Attachment.objects.get_attachments(
-                self.get_object(), not context["obj_perms"]["edit"]
-            )
-            if attachments_viewable
-            else None
-        )
+        context["config"] = {"studyContent": self.object.get_json(json_encode=False)}
+        context["attachments_viewable"] = self.assessment.user_is_part_of_team(self.request.user)
         context["internal_communications"] = self.object.get_communications()
         return context
 
@@ -212,9 +202,8 @@ class AttachmentViewset(HtmxViewSet):
     actions = {"create", "read", "delete"}
     parent_model = models.Study
     model = models.Attachment
-    form_fragment = "study/attachment_form.html"
-    detail_fragment = "study/attachment_item.html"
-    list_fragment = "study/_attachment_list.html"
+    form_fragment = "study/fragments/attachment_form.html"
+    detail_fragment = "study/fragments/attachment_detail.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -222,7 +211,7 @@ class AttachmentViewset(HtmxViewSet):
 
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
-        template = self.list_fragment
+        template = self.form_fragment
         if request.method == "POST":
             form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.parent)
             if form.is_valid():
@@ -231,9 +220,6 @@ class AttachmentViewset(HtmxViewSet):
         else:
             form = forms.AttachmentForm(parent=request.item.parent)
         context = self.get_context_data(form=form)
-        context["attachments"] = models.Attachment.objects.get_attachments(
-            request.item.parent, False
-        )
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -249,27 +235,6 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
-            return HttpResponseRedirect(self.object.attachment.url)
-        else:
-            raise PermissionDenied
-
-
-class AttachmentList(BaseList):
-    model = models.Attachment
-    parent_model = models.Study
-    parent_template_name = "parent"
-    template_name = "study/_attachment_list.html"
-    object_list = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["attachments"] = models.Attachment.objects.get_attachments(
-            self.parent, not context["obj_perms"]["edit"]
-        )
-        return context
-
-    def get(self, request, *args, **kwargs):
-        super().get(request, *args, **kwargs)
-        context = self.get_context_data()
-        return render(request, "study/_attachment_list.html", context)
+        if not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied()
+        return HttpResponseRedirect(self.object.attachment.url)

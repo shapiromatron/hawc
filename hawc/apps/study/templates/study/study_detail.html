@@ -23,7 +23,7 @@
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
             <button class="dropdown-item" hx-get="{% url 'study:attachment-create' object.pk %}"
-              hx-target="#attach_list" hx-swap="outerHTML">
+              hx-target="#attachment_list_ul" hx-swap="beforeend">
               Add an attachment</button>
 
             {% if object.bioassay %}
@@ -60,8 +60,25 @@
 
   <div id="study_details"></div>
 
-  {% if config.attachments_viewable %}
-    {% include "study/_attachment_list.html" %}
+  {% if attachments_viewable and study.attachments.exists %}
+  <table class="table table-sm">
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>Attachments</th>
+            <td>
+                <ul id="attachment_list_ul">
+                {% for object in study.attachments.all %}
+                    {% include "study/fragments/attachment_detail.html" %}
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+  </table>
   {% endif %}
 
   {% if obj_perms.edit and internal_communications|hastext %}
