@@ -40,252 +40,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name="Outcome",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
-                ("health_outcome", models.CharField(max_length=128)),
-                (
-                    "health_outcome_system",
-                    models.CharField(
-                        blank=True,
-                        choices=[("RE", "Reproductive"), ("IM", "Immune")],
-                        help_text="If multiple cancer types are present, report all types under Cancer.",
-                        max_length=128,
-                    ),
-                ),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
-                (
-                    "design",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="outcomes",
-                        to="epiv2.studypopulationv2",
-                    ),
-                ),
-                (
-                    "name",
-                    models.CharField(
-                        help_text="A unique name for this health outcome that will help you identify it later.",
-                        max_length=64,
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
-            name="Chemical",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
-                ("name", models.CharField(max_length=64)),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
-                (
-                    "design",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="chemicals",
-                        to="epiv2.studypopulationv2",
-                    ),
-                ),
-                (
-                    "dsstox",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="assessment.dsstox",
-                        verbose_name="DSSTox substance identifier",
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
-            name="AdjustmentFactor",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
-                ("description", models.CharField(blank=True, max_length=128)),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
-                (
-                    "design",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="adjustment_factors",
-                        to="epiv2.studypopulationv2",
-                    ),
-                ),
-                (
-                    "name",
-                    models.CharField(
-                        help_text="A unique name for this adjustment factor that will help you identify it later.",
-                        max_length=64,
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
-            name="Exposure",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
-                ("biomonitoring_matrix", models.CharField(max_length=128)),
-                (
-                    "measurement_timing",
-                    models.CharField(
-                        blank=True,
-                        help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
-                        max_length=128,
-                        verbose_name="Timing of exposure measurement",
-                    ),
-                ),
-                (
-                    "exposure_route",
-                    models.CharField(
-                        blank=True,
-                        choices=[
-                            ("IH", "Inhalation"),
-                            ("OR", "Oral"),
-                            ("DE", "Dermal"),
-                            ("IU", "In utero"),
-                            ("IV", "Intravenous"),
-                            ("UK", "Unknown/Total"),
-                        ],
-                        max_length=2,
-                    ),
-                ),
-                ("analytic_method", models.CharField(blank=True, max_length=128)),
-                ("comments", models.TextField(blank=True)),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
-                (
-                    "design",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="exposures",
-                        to="epiv2.studypopulationv2",
-                    ),
-                ),
-                (
-                    "name",
-                    models.CharField(
-                        help_text="A unique name for this exposure that will help you identify it later.",
-                        max_length=64,
-                    ),
-                ),
-                (
-                    "measurement_type",
-                    models.ManyToManyField(
-                        blank=True,
-                        to="epiv2.MeasurementType",
-                        verbose_name="Exposure measurement type",
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
-            name="ExposureLevel",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
-                (
-                    "sub_population",
-                    models.CharField(
-                        blank=True, max_length=128, verbose_name="Sub-population (if relevant)"
-                    ),
-                ),
-                ("central_tendency", models.CharField(max_length=128)),
-                (
-                    "central_tendency_type",
-                    models.CharField(
-                        blank=True,
-                        choices=[
-                            ("MED", "Median"),
-                            ("GME", "Geometric Mean"),
-                            ("POI", "Point"),
-                            ("MEA", "Mean"),
-                            ("OTH", "Other"),
-                        ],
-                        default="MED",
-                        max_length=128,
-                        verbose_name="Central tendency type (median preferred)",
-                    ),
-                ),
-                ("minimum", models.FloatField(blank=True, null=True)),
-                ("maximum", models.FloatField(blank=True, null=True)),
-                ("percentile25", models.FloatField(blank=True, null=True)),
-                ("percentile75", models.FloatField(blank=True, null=True)),
-                (
-                    "neg_exposure",
-                    models.FloatField(
-                        blank=True,
-                        help_text="e.g., %% below the LOD",
-                        null=True,
-                        verbose_name="Percent with negligible exposure",
-                    ),
-                ),
-                ("comments", models.TextField(blank=True, verbose_name="Exposure level comments")),
-                (
-                    "data_location",
-                    models.CharField(blank=True, help_text="e.g., table number", max_length=128),
-                ),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
-                (
-                    "chemical",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="epiv2.chemical"
-                    ),
-                ),
-                (
-                    "exposure_measurement",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="epiv2.exposure",
-                    ),
-                ),
-                (
-                    "design",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="exposure_levels",
-                        to="epiv2.studypopulationv2",
-                    ),
-                ),
-                (
-                    "name",
-                    models.CharField(
-                        help_text="A unique name for this exposure level that will help you identify it later.",
-                        max_length=64,
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
             name="Design",
             fields=[
                 (
@@ -413,6 +167,252 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name="Outcome",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("health_outcome", models.CharField(max_length=128)),
+                (
+                    "health_outcome_system",
+                    models.CharField(
+                        blank=True,
+                        choices=[("RE", "Reproductive"), ("IM", "Immune")],
+                        help_text="If multiple cancer types are present, report all types under Cancer.",
+                        max_length=128,
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "design",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="outcomes",
+                        to="epiv2.design",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="A unique name for this health outcome that will help you identify it later.",
+                        max_length=64,
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="Chemical",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("name", models.CharField(max_length=64)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "design",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="chemicals",
+                        to="epiv2.design",
+                    ),
+                ),
+                (
+                    "dsstox",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="assessment.dsstox",
+                        verbose_name="DSSTox substance identifier",
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="AdjustmentFactor",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("description", models.CharField(blank=True, max_length=128)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "design",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="adjustment_factors",
+                        to="epiv2.design",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="A unique name for this adjustment factor that will help you identify it later.",
+                        max_length=64,
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="Exposure",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("biomonitoring_matrix", models.CharField(max_length=128)),
+                (
+                    "measurement_timing",
+                    models.CharField(
+                        blank=True,
+                        help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
+                        max_length=128,
+                        verbose_name="Timing of exposure measurement",
+                    ),
+                ),
+                (
+                    "exposure_route",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("IH", "Inhalation"),
+                            ("OR", "Oral"),
+                            ("DE", "Dermal"),
+                            ("IU", "In utero"),
+                            ("IV", "Intravenous"),
+                            ("UK", "Unknown/Total"),
+                        ],
+                        max_length=2,
+                    ),
+                ),
+                ("analytic_method", models.CharField(blank=True, max_length=128)),
+                ("comments", models.TextField(blank=True)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "design",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exposures",
+                        to="epiv2.design",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="A unique name for this exposure that will help you identify it later.",
+                        max_length=64,
+                    ),
+                ),
+                (
+                    "measurement_type",
+                    models.ManyToManyField(
+                        blank=True,
+                        to="epiv2.MeasurementType",
+                        verbose_name="Exposure measurement type",
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="ExposureLevel",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "sub_population",
+                    models.CharField(
+                        blank=True, max_length=128, verbose_name="Sub-population (if relevant)"
+                    ),
+                ),
+                ("central_tendency", models.CharField(max_length=128)),
+                (
+                    "central_tendency_type",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("MED", "Median"),
+                            ("GME", "Geometric Mean"),
+                            ("POI", "Point"),
+                            ("MEA", "Mean"),
+                            ("OTH", "Other"),
+                        ],
+                        default="MED",
+                        max_length=128,
+                        verbose_name="Central tendency type (median preferred)",
+                    ),
+                ),
+                ("minimum", models.FloatField(blank=True, null=True)),
+                ("maximum", models.FloatField(blank=True, null=True)),
+                ("percentile25", models.FloatField(blank=True, null=True)),
+                ("percentile75", models.FloatField(blank=True, null=True)),
+                (
+                    "neg_exposure",
+                    models.FloatField(
+                        blank=True,
+                        help_text="e.g., %% below the LOD",
+                        null=True,
+                        verbose_name="Percent with negligible exposure",
+                    ),
+                ),
+                ("comments", models.TextField(blank=True, verbose_name="Exposure level comments")),
+                (
+                    "data_location",
+                    models.CharField(blank=True, help_text="e.g., table number", max_length=128),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "chemical",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="epiv2.chemical"
+                    ),
+                ),
+                (
+                    "exposure_measurement",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="epiv2.exposure",
+                    ),
+                ),
+                (
+                    "design",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exposure_levels",
+                        to="epiv2.design",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="A unique name for this exposure level that will help you identify it later.",
+                        max_length=64,
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
             name="Criteria",
             fields=[
                 (
@@ -429,7 +429,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="criteria",
-                        to="epiv2.studypopulationv2",
+                        to="epiv2.design",
                     ),
                 ),
             ],
@@ -528,7 +528,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="data_extractions",
-                        to="epiv2.studypopulationv2",
+                        to="epiv2.design",
                     ),
                 ),
                 ("sub_population", models.CharField(max_length=64)),
