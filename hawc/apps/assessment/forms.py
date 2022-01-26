@@ -17,7 +17,7 @@ from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_acti
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..myuser.lookups import HAWCUserLookup
 from ..myuser.models import HAWCUser
-from . import lookups, models
+from . import lookups, models, widgets
 
 
 class AssessmentForm(forms.ModelForm):
@@ -59,6 +59,8 @@ class AssessmentForm(forms.ModelForm):
         self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
+        self.fields["public_on"].widget = widgets.DateCheckboxInput()
+
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
             for field in ("editable", "public_on", "hide_from_public_page"):
