@@ -36,6 +36,7 @@ class Command(BaseCommand):
         call_command("dumpdata", "bmd", **shared_kwargs)
         call_command("dumpdata", "riskofbias", **shared_kwargs)
         call_command("dumpdata", "epi", **shared_kwargs)
+        call_command("dumpdata", "epiv2", **shared_kwargs)
         call_command("dumpdata", "invitro", **shared_kwargs)
         call_command("dumpdata", "epimeta", **shared_kwargs)
         call_command("dumpdata", "summary", **shared_kwargs)
