@@ -96,24 +96,20 @@ class TestEditPermissions:
                 assert response.status_code == 200
 
     def test_failure(self, db_keys):
-        clients = (None, "team@hawcproject.org", "reviewer@hawcproject.org")
-        for client in clients:
-            c = Client()
-            if client:
-                assert c.login(email=client, password="pw") is True
+        c = Client()
 
-            view = "epiv2:des_update"
-            with assertTemplateUsed("403.html"):
-                response = c.get(reverse(view, kwargs={"pk": db_keys.epiv2_design},), follow=True)
-                assert response.status_code == 403
+        view = "epiv2:des_update"
+        with assertTemplateUsed("403.html"):
+            response = c.get(reverse(view, kwargs={"pk": db_keys.epiv2_design},), follow=True)
+            assert response.status_code == 403
 
-            # check POST
-            with assertTemplateUsed("403.html"):
-                response = c.post(
-                    reverse("epiv2:des_update", kwargs={"pk": db_keys.epiv2_design},),
-                    {"name": "foo manchu"},
-                )
-                assert response.status_code == 403
+        # check POST
+        with assertTemplateUsed("403.html"):
+            response = c.post(
+                reverse("epiv2:des_update", kwargs={"pk": db_keys.epiv2_design},),
+                {"name": "foo manchu"},
+            )
+            assert response.status_code == 403
 
 
 @pytest.mark.django_db
@@ -130,21 +126,17 @@ class TestDeletePermissions:
             assert response.status_code == 200
 
     def test_failure(self, db_keys):
-        clients = (None, "team@hawcproject.org", "reviewer@hawcproject.org")
-        for client in clients:
-            c = Client()
-            if client:
-                assert c.login(email=client, password="pw") is True
+        c = Client()
 
-            view = "epiv2:des_delete"
-            with assertTemplateUsed("403.html"):
-                response = c.get(reverse(view, kwargs={"pk": db_keys.epiv2_design}), follow=True)
-                assert response.status_code == 403
+        view = "epiv2:des_delete"
+        with assertTemplateUsed("403.html"):
+            response = c.get(reverse(view, kwargs={"pk": db_keys.epiv2_design}), follow=True)
+            assert response.status_code == 403
 
-            # check POST
-            with assertTemplateUsed("403.html"):
-                response = c.post(
-                    reverse("epiv2:des_update", kwargs={"pk": db_keys.epiv2_design}),
-                    {"name": "foo manchu"},
-                )
-                assert response.status_code == 403
+        # check POST
+        with assertTemplateUsed("403.html"):
+            response = c.post(
+                reverse("epiv2:des_update", kwargs={"pk": db_keys.epiv2_design}),
+                {"name": "foo manchu"},
+            )
+            assert response.status_code == 403
