@@ -228,7 +228,7 @@ class StudyOutcomeTableStore {
                     }${d["score_id"]})`,
                 };
             })
-            .unshift({id: -1, label: "None"})
+            .unshift({id: -1, label: "Not measured"})
             .value();
     }
 
