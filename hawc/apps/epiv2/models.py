@@ -1,6 +1,6 @@
-from django.urls import reverse
 import reversion
 from django.db import models
+from django.urls import reverse
 
 from ..assessment.models import DSSTox
 from ..epi.models import Country
