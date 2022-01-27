@@ -61,6 +61,8 @@ class Keys:
         self.blog_published = 2
         self.blog_unpublished = 1
 
+        self.epiv2_design = 1
+
 
 _keys = Keys()
 
