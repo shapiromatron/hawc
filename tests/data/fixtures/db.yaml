@@ -368,10 +368,6 @@
     model: task
 - model: contenttypes.contenttype
   fields:
-    app_label: materialized
-    model: finalriskofbiasscore
-- model: contenttypes.contenttype
-  fields:
     app_label: epiv2
     model: ageprofile
 - model: contenttypes.contenttype
@@ -759,8 +755,7 @@
     year: 2020
     version: draft
     cas: 58-08-2
-    assessment_objective: <p>Example the health effects of Chemical C. Drafted by
-      scientists and contractors at US EPA.</p>
+    assessment_objective: '<p>Example the health effects of Chemical C. Drafted by scientists and contractors at US EPA.</p>'
     editable: true
     public: true
     hide_from_public_page: true
@@ -772,7 +767,7 @@
     enable_bmd: true
     enable_summary_text: false
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
-    funding_source: US EPA
+    funding_source: 'US EPA'
     noel_name: 0
     rob_name: 0
     vocabulary: 1
@@ -1078,7 +1073,7 @@
   fields:
     subject: Unpublished Blog
     content: Content
-    rendered_content: <p>Content</p>
+    rendered_content: '<p>Content</p>'
     published: false
     created: 2020-08-20 03:01:09.747019+00:00
     last_updated: 2020-08-20 03:01:09.747019+00:00
@@ -1087,7 +1082,7 @@
   fields:
     subject: Published Blog
     content: Content
-    rendered_content: <p>Content</p>
+    rendered_content: '<p>Content</p>'
     published: true
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
