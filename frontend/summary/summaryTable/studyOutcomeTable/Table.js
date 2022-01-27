@@ -369,9 +369,7 @@ class Table extends Component {
                     <th
                         key={i}
                         className={
-                            editable && editingSubheader && editIndex == idx
-                                ? "bg-light"
-                                : "bg-white"
+                            editable && editingSubheader && editIndex == idx ? "bg-light" : null
                         }
                         colSpan={subheader.length}>
                         {editable && editingSubheader && editIndex == idx ? (
@@ -415,15 +413,7 @@ class Table extends Component {
             <table className="summaryTable table table-bordered table-sm">
                 <colgroup>
                     {_.map(store.columnWidths, (w, i) => {
-                        return (
-                            <col
-                                key={i}
-                                className={
-                                    editable && editingColumn && editIndex == i ? "bg-light" : null
-                                }
-                                style={{width: `${w}%`}}
-                            />
-                        );
+                        return <col key={i} style={{width: `${w}%`}} />;
                     })}
                 </colgroup>
                 <thead>
@@ -431,7 +421,13 @@ class Table extends Component {
                     <tr>
                         {workingSettings.columns.map((col, idx) => {
                             return (
-                                <th key={col.key}>
+                                <th
+                                    key={col.key}
+                                    className={
+                                        editable && editingColumn && editIndex == idx
+                                            ? "bg-light"
+                                            : null
+                                    }>
                                     {editable && editingColumn && editIndex == idx ? (
                                         <EditColumnForm store={store} colIdx={idx} />
                                     ) : (
@@ -466,12 +462,13 @@ class Table extends Component {
                                     return (
                                         <td
                                             key={colIdx}
-                                            className={
-                                                col.attribute == "rob_score" &&
-                                                !(editable && store.editingCell(rowIdx, colIdx))
-                                                    ? "previewModalParent text-center align-middle"
-                                                    : "previewModalParent"
-                                            }
+                                            className={`previewModalParent${
+                                                editable && store.editingCell(rowIdx, colIdx)
+                                                    ? " bg-light"
+                                                    : col.attribute == "rob_score"
+                                                    ? " text-center align-middle"
+                                                    : ""
+                                            }`}
                                             style={
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? {}
@@ -518,7 +515,7 @@ class Table extends Component {
                                 })}
                             </tr>
                         ) : (
-                            <tr key={rowIdx} className="bg-white">
+                            <tr key={rowIdx}>
                                 <td colSpan={numColumns}>
                                     {editable && !editing ? (
                                         <button
