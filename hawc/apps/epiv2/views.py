@@ -1,4 +1,4 @@
-from ..common.views import BaseCreate, BaseDetail, BaseUpdate
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
 from ..study.models import Study
 from . import forms, models
 
@@ -22,3 +22,11 @@ class DesignUpdate(BaseUpdate):
 
 class DesignDetail(BaseDetail):
     model = models.Design
+
+
+class DesignDelete(BaseDelete):
+    success_message = "Study Population deleted."
+    model = models.Design
+
+    def get_success_url(self):
+        return self.object.study.get_absolute_url()

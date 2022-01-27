@@ -8,6 +8,7 @@
     <div class="dropdown-menu dropdown-menu-right">
         <span class="dropdown-header">Study design editing</span>
         <a class="dropdown-item" href="{% url 'epiv2:des_update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'epiv2:des_delete' pk=object.pk %}">Delete</a>
     </div>
 </div>
 {% endif %}
