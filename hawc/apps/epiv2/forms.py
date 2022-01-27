@@ -1,5 +1,4 @@
 from django import forms
-from django.urls import reverse
 
 from hawc.apps.common.forms import BaseFormHelper
 
@@ -17,6 +16,12 @@ class DesignForm(forms.ModelForm):
         model = models.Design
         exclude = ("study",)
         labels = {}
+
+    def __init__(self, *args, **kwargs):
+        study = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if study:
+            self.instance.study = study
 
     @property
     def helper(self):
