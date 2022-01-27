@@ -344,7 +344,6 @@ div.smart-tag.active {
 }
 .previewModalIcon {
     display: none;
-    padding-left: 1em;
     cursor: pointer;
 }
 

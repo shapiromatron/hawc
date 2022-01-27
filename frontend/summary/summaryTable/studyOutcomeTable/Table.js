@@ -345,7 +345,7 @@ class Table extends Component {
             onClick = store.interactiveOnClick(rowIdx, colIdx);
 
         return onClick == null ? null : (
-            <p className="float-right">
+            <p className="previewModalIcon float-right">
                 <i className="fa fa-eye" onClick={onClick}></i>
             </p>
         );
@@ -469,8 +469,8 @@ class Table extends Component {
                                             className={
                                                 col.attribute == "rob_score" &&
                                                 !(editable && store.editingCell(rowIdx, colIdx))
-                                                    ? "text-center align-middle"
-                                                    : null
+                                                    ? "previewModalParent text-center align-middle"
+                                                    : "previewModalParent"
                                             }
                                             style={
                                                 editable && store.editingCell(rowIdx, colIdx)
