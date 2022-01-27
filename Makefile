@@ -28,6 +28,7 @@ sync-dev:  ## Sync dev environment after code checkout
 	pip install -r requirements/dev.txt
 	yarn --cwd frontend
 	manage.py migrate
+	manage.py recreate_views
 
 build:  ## build hawc package
 	npm --prefix ./frontend run build
