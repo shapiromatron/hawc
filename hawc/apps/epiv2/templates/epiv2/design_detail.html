@@ -1,14 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h1 class="d-inline-block">{{object.name}}</h1>
+<h2 class="d-inline-block">{{object.name}}</h2>
 {% if obj_perms.edit and crud == "Read" %}
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
         <span class="dropdown-header">Study design editing</span>
         <a class="dropdown-item" href="{% url 'epiv2:design_update' object.pk %}">Update</a>
-        <a class="dropdown-item" href="{% url 'epiv2:design_delete' pk=object.pk %}">Delete</a>
+        <a class="dropdown-item" href="{% url 'epiv2:design_delete' object.pk %}">Delete</a>
     </div>
 </div>
 {% endif %}
