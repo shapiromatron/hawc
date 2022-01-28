@@ -49,7 +49,7 @@
             {% if object.epi and object.assessment.epi_version == 2 %}
               <div class="dropdown-divider"></div>
               <span class="dropdown-header">Epidemiology editing</span>
-              <a class="dropdown-item" href="{% url 'epiv2:des_create' object.pk %}">Create new study population</a>
+              <a class="dropdown-item" href="{% url 'epiv2:design_create' object.pk %}">Create new study population</a>
             {% endif %}
 
             {% if object.epi_meta %}

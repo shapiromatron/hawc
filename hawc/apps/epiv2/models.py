@@ -85,7 +85,7 @@ class Design(models.Model):
         verbose_name_plural = "Study Populations"
 
     def get_absolute_url(self):
-        return reverse("epiv2:des_detail", args=(self.pk,))
+        return reverse("epiv2:design_detail", args=(self.pk,))
 
     def __str__(self):
         return f"{self.study}/{self.summary}"
