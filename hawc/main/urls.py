@@ -50,7 +50,7 @@ urlpatterns = [
     path("study/", include("hawc.apps.study.urls")),
     path("ani/", include("hawc.apps.animal.urls")),
     path("epi/", include("hawc.apps.epi.urls")),
-    path("epiv2/", include("hawc.apps.epiv2.urls")),
+    path("epidemiology/", include("hawc.apps.epiv2.urls")),
     path("epi-meta/", include("hawc.apps.epimeta.urls")),
     path("in-vitro/", include("hawc.apps.invitro.urls")),
     path("bmd/", include("hawc.apps.bmd.urls")),
