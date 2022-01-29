@@ -1524,6 +1524,8 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
 
     class Meta:
         ordering = ("endpoint", "dose_group_id")
+        # TODO - test; make sure no issues....
+        unique_together = (("endpoint", "dose_group_id"),)
 
     def clean(self):
         self.significant = self.significance_level is not None and self.significance_level > 0
