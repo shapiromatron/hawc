@@ -165,6 +165,7 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
 
 class AssessmentEditViewset(viewsets.ModelViewSet):
+    http_method_names = ["get", "post", "patch", "delete", "head", "options", "trace"]
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     parent_model = models.Assessment
@@ -201,6 +202,8 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     """
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
+
+    http_method_names = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
     lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)

@@ -377,6 +377,7 @@ class ReferenceViewset(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
+    http_method_names = ["get", "post", "patch", "delete", "head", "options", "trace"]
     serializer_class = serializers.ReferenceSerializer
     permission_classes = (AssessmentLevelPermissions,)
     queryset = models.Reference.objects.all()
