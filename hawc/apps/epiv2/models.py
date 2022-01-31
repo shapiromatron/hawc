@@ -1,5 +1,6 @@
 import reversion
 from django.db import models
+from django.urls import reverse
 
 from ..assessment.models import DSSTox
 from ..epi.models import Country
@@ -82,6 +83,9 @@ class Design(models.Model):
     class Meta:
         verbose_name = "Study Population"
         verbose_name_plural = "Study Populations"
+
+    def get_absolute_url(self):
+        return reverse("epiv2:design_detail", args=(self.pk,))
 
     def __str__(self):
         return f"{self.study}/{self.summary}"
