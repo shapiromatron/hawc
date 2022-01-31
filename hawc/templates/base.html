@@ -108,7 +108,10 @@
     <script>
       document.body.addEventListener('htmx:configRequest', (event) => {
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-      })
+      });
+      document.body.addEventListener('htmxModal', (event) => {
+        new window.app.HAWCModal().show();
+      });
     </script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}

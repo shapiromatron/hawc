@@ -4,7 +4,7 @@
 {% load selectable_tags %}
 
 {% block content %}
-    <h1>Assessment endpoints ({{page_obj.paginator.count}} found)</h1>
+    <h1>Assessment endpoints ({{page_obj.paginator.count}} found) <button hx-get="{% url 'assessment:modal' %}" hx-swap="none">test modal</button></h1>
     <div class="card">
         <div class="card-header">
             <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
