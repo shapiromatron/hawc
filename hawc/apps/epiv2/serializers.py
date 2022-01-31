@@ -8,7 +8,6 @@ from . import constants, models
 
 
 class AgeProfileSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(read_only=True)
     class Meta:
         model = models.AgeProfile
         fields = ["name"]
@@ -32,6 +31,18 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     countries = StudyPopulationCountrySerializer(many=True)
     age_profile = AgeProfileSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
+
+    def create(self, validated_data):
+        countries = validated_data.pop("countries", None)
+        age_profile = validated_data.pop("age_profile", None)
+        instance = super().create(validated_data)
+        if countries:
+            instance.countries.set(countries)
+            
+        if age_profile:
+            instance.age_profile.set(age_profile)
+
+        return instance
 
     class Meta:
         model = models.Design
