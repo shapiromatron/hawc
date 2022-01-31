@@ -18,7 +18,7 @@ class TestDesignApi:
         url = reverse("epiv2:api:design-list")
         data = {
             "study": db_keys.study_working,
-            "study_design": "Case-control",
+            "study_design": "CC",
             "source": "GP",
             "age_description": "10-15 yrs",
             "sex": "B",
@@ -28,14 +28,8 @@ class TestDesignApi:
             "region": "northern Taiwan",
             "years": "2009-2010",
             "participant_n": 456,
-            "created": "2022-01-10T15:12:17.714337-06:00",
-            "last_updated": "2022-01-13T14:38:10.024296-06:00",
-            "age_profile": [
-                1
-            ],
-            "countries": [
-                2
-            ]
+            "age_profile": ["Children and adolescents <18 yrs"],
+            "countries": ["TW"]
         }
         generic_perm_tester(url, data)
 
@@ -47,7 +41,7 @@ class TestDesignApi:
 
         data = {
             "study": db_keys.study_working,
-            "study_design": "Case-control",
+            "study_design": "CC",
             "source": "GP",
             "age_description": "10-15 yrs",
             "sex": "B",
@@ -57,14 +51,8 @@ class TestDesignApi:
             "region": "northern Taiwan",
             "years": "2009-2010",
             "participant_n": 456,
-            "created": "2022-01-10T15:12:17.714337-06:00",
-            "last_updated": "2022-01-13T14:38:10.024296-06:00",
-            "age_profile": [
-                1
-            ],
-            "countries": [
-                2
-            ]
+            "age_profile": ["Children and adolescents <18 yrs"],
+            "countries": ["TW"]
         }
 
         just_created_design_id = None
