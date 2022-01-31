@@ -12,7 +12,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid" id="main"></div>
+{{table|safe}}
 {% render_bundle "main" %}
-<script id="config" type="application/json">{"app": "assessmentSizeStartup"}</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        window.app.HAWCUtils.tablesort(document.getElementById('assessmentSizeTable'));
+    });
+</script>
 {% endblock content %}

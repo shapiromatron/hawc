@@ -1,9 +1,6 @@
 const startup = (name, cb) => {
     // big switch statement for successful webpack splitting and compilation
     switch (name) {
-        case "assessmentSizeStartup":
-            import("./admin/assessmentSize/index.js").then(app => cb(app.default));
-            break;
         case "assessmentStartup":
             import("./assessment/index.js").then(app => cb(app.default));
             break;
