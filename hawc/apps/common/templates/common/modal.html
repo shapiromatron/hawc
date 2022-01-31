@@ -1,9 +1,17 @@
 <div hx-swap-oob="innerHTML:#hawcModal .modal-header">
-    This is my modal content
+    This is my modal header. Set from context?
+    if header in context:
+        set header from context
+    if obj (default for detail views):
+        hyperlink of object w/ object name
+    else:
+        default; nothing?
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 </div>
 <div hx-swap-oob="innerHTML:#hawcModal .modal-body">
-    This is my modal body
+    {% include view.snapshot_template %}
 </div>
 <div hx-swap-oob="innerHTML:#hawcModal .modal-footer">
-    This is my modal footer
+    This is my modal footer. Set from context?
+    <button class="btn btn-light" data-dismiss="modal">Close</button>
 </div>

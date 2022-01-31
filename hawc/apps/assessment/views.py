@@ -77,7 +77,9 @@ class Home(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["recent_assessments"] = models.Assessment.objects.recent_public()
-        context["page"] = models.Content.rendered_page(models.ContentTypeChoices.HOMEPAGE, self.request, context)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.HOMEPAGE, self.request, context
+        )
         return context
 
 
@@ -104,10 +106,15 @@ class About(TemplateView):
 
             tags = apps.get_model("lit", "ReferenceTags").objects.count()
 
-            references_tagged = apps.get_model("lit", "ReferenceTags").objects.distinct("content_object_id").count()
+            references_tagged = (
+                apps.get_model("lit", "ReferenceTags").objects.distinct("content_object_id").count()
+            )
 
             assessments_with_studies = (
-                apps.get_model("study", "Study").objects.values_list("assessment_id", flat=True).distinct().count()
+                apps.get_model("study", "Study")
+                .objects.values_list("assessment_id", flat=True)
+                .distinct()
+                .count()
             )
 
             studies = apps.get_model("study", "Study").objects.count()
@@ -115,7 +122,10 @@ class About(TemplateView):
             rob_scores = apps.get_model("riskofbias", "RiskOfBiasScore").objects.count()
 
             studies_with_rob = (
-                apps.get_model("study", "Study").objects.annotate(robc=Count("riskofbiases")).filter(robc__gt=0).count()
+                apps.get_model("study", "Study")
+                .objects.annotate(robc=Count("riskofbiases"))
+                .filter(robc__gt=0)
+                .count()
             )
 
             endpoints = apps.get_model("animal", "Endpoint").objects.count()
@@ -132,7 +142,10 @@ class About(TemplateView):
             results = apps.get_model("epi", "Result").objects.count()
 
             results_with_data = (
-                apps.get_model("epi", "GroupResult").objects.order_by("result_id").distinct("result_id").count()
+                apps.get_model("epi", "GroupResult")
+                .objects.order_by("result_id")
+                .distinct("result_id")
+                .count()
             )
 
             iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
@@ -209,9 +222,13 @@ class About(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            HAWC_FLAVOR=settings.HAWC_FLAVOR, rob_name=self.get_rob_name(), counts=self.get_object_counts(),
+            HAWC_FLAVOR=settings.HAWC_FLAVOR,
+            rob_name=self.get_rob_name(),
+            counts=self.get_object_counts(),
         )
-        context["page"] = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, self.request, context)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.ABOUT, self.request, context
+        )
         return context
 
 
@@ -225,7 +242,9 @@ class Resources(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page"] = models.Content.rendered_page(models.ContentTypeChoices.RESOURCES, self.request, context)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.RESOURCES, self.request, context
+        )
         return context
 
 
@@ -309,7 +328,9 @@ class AssessmentFullList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Public assessments")
+            context["breadcrumbs"] = Breadcrumb.build_crumbs(
+                self.request.user, "Public assessments"
+            )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         context["form"] = self.form
@@ -331,7 +352,9 @@ class AssessmentPublicList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Public assessments")
+            context["breadcrumbs"] = Breadcrumb.build_crumbs(
+                self.request.user, "Public assessments"
+            )
         else:
             context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         context[
@@ -371,7 +394,9 @@ class AssessmentRead(BaseDetail):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.prefetch_related("project_manager", "team_members", "reviewers", "datasets", "dtxsids")
+        qs = qs.prefetch_related(
+            "project_manager", "team_members", "reviewers", "datasets", "dtxsids"
+        )
         return qs
 
     def get_context_data(self, **kwargs):
@@ -379,7 +404,9 @@ class AssessmentRead(BaseDetail):
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.object, not context["obj_perms"]["edit"]
         )
-        context["dtxsids"] = json.dumps(serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"])
+        context["dtxsids"] = json.dumps(
+            serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
+        )
         context["internal_communications"] = self.object.get_communications()
         context["datasets"] = (
             context["object"].datasets.all()
@@ -460,7 +487,9 @@ class AttachmentViewset(HtmxViewSet):
             form = forms.AttachmentForm()
             template = self.list_fragment
         context = self.get_context_data(form=form)
-        context["object_list"] = models.Attachment.objects.get_attachments(request.item.assessment, False)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            request.item.assessment, False
+        )
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -584,12 +613,20 @@ class BaseEndpointList(BaseList):
 
         mrs = apps.get_model("epimeta", "metaresult").objects.get_qs(self.assessment.id).count()
 
-        iveps = self.model.ivendpoint.related.related_model.objects.get_qs(self.assessment.id).count()
+        iveps = self.model.ivendpoint.related.related_model.objects.get_qs(
+            self.assessment.id
+        ).count()
 
         alleps = eps + os + mrs + iveps
 
         context.update(
-            {"ivendpoints": iveps, "endpoints": eps, "outcomes": os, "meta_results": mrs, "total_endpoints": alleps,}
+            {
+                "ivendpoints": iveps,
+                "endpoints": eps,
+                "outcomes": os,
+                "meta_results": mrs,
+                "total_endpoints": alleps,
+            }
         )
 
         return context
@@ -618,7 +655,9 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
             app="textCleanupStartup",
             data=dict(
                 assessment_id=self.assessment.id,
-                assessment=reverse("assessment:api:assessment-endpoints", args=(self.assessment.id,)),
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
+                ),
                 csrf=get_token(self.request),
             ),
         )
@@ -672,7 +711,9 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
             page="ScoreCleanupStartup",
             data=dict(
                 assessment_id=self.assessment.id,
-                assessment=reverse("assessment:api:assessment-endpoints", args=(self.assessment.id,)),
+                assessment=reverse(
+                    "assessment:api:assessment-endpoints", args=(self.assessment.id,)
+                ),
                 items=dict(
                     url=reverse("riskofbias:api:metric_scores-list"),
                     patchUrl=reverse("riskofbias:api:score-cleanup-list"),
@@ -766,7 +807,10 @@ class LogDetail(DetailView):
         extras = []
         if assessment := self.object.assessment:
             extras.extend(
-                [Breadcrumb.from_object(assessment), Breadcrumb(name="Logs", url=assessment.get_assessment_logs_url()),]
+                [
+                    Breadcrumb.from_object(assessment),
+                    Breadcrumb(name="Logs", url=assessment.get_assessment_logs_url()),
+                ]
             )
         crumbs = Breadcrumb.build_crumbs(self.request.user, "Log", extras)
         return crumbs
@@ -818,7 +862,9 @@ class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.filter(assessment=self.assessment).select_related("assessment", "content_type", "user")
+        qs = qs.filter(assessment=self.assessment).select_related(
+            "assessment", "content_type", "user"
+        )
         self.form = forms.LogFilterForm(self.request.GET, assessment=self.assessment)
         if self.form.is_valid():
             qs = qs.filter(self.form.filters())
@@ -872,10 +918,22 @@ class AboutContentTypes(TemplateView):
         return context
 
 
-class TestModal(TemplateView):
-    template_name = "common/modal.html"
+# move to common/views.py
+class BaseModal(TemplateView):
+    snapshot_template = None
+    modal_template = "common/modal.html"
+
+    def get_template_names(self):
+        # TODO return snapshot or modal depending on query string? or similar implementation as htmxviewset?
+        return self.modal_template
 
     def render_to_response(self, context, **response_kwargs):
         response = super().render_to_response(context, **response_kwargs)
-        response["HX-Trigger"] = "htmxModal"
+        response[
+            "HX-Trigger"
+        ] = "htmxModal"  # only return if a modal request and not snapshot request
         return response
+
+
+class TestModal(BaseModal):
+    snapshot_template = "assessment/snapshot.html"
