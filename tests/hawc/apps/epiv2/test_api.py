@@ -51,7 +51,7 @@ class TestDesignApi:
 
         just_created_design_id = None
 
-        def design_lookup_test(resp):
+        def design_create_test(resp):
             nonlocal just_created_design_id
 
             design_id = resp.json()["id"]
@@ -79,13 +79,14 @@ class TestDesignApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.Design.objects.get(id=just_created_design_id)
 
+        # TODO: add scenarios for create/update for a child model
         create_scenarios = (
             {
                 "desc": "design create",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": data,
-                "post_request_test": design_lookup_test,
+                "post_request_test": design_create_test,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)
