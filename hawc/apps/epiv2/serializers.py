@@ -46,7 +46,7 @@ class ExposureSerializer(serializers.ModelSerializer):
     exposure_route = FlexibleChoiceField(choices=constants.ExposureRoute.choices)
 
     class Meta:
-        model = models.Criteria
+        model = models.Exposure
         fields = [
             "id",
             "name",
@@ -61,12 +61,12 @@ class ExposureSerializer(serializers.ModelSerializer):
 
 class ExposureLevelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Criteria
+        model = models.ExposureLevel
         fields = [
             "id",
             "name",
             "chemical",
-            "expsure_measurement",
+            "exposure_measurement",
             "sub_population",
             "central_tendency",
             "central_tendency_type",
