@@ -329,8 +329,8 @@ class Donut extends D3Plot {
         // print title
         this.title = this.vis
             .append("svg:text")
-            .attr("x", this.w + this.padding.right)
-            .attr("y", this.h + this.padding.bottom)
+            .attr("x", this.w)
+            .attr("y", this.h)
             .attr("text-anchor", "end")
             .attr("class", "dr_title")
             .text(this.data.title);
