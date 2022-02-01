@@ -1,32 +1,10 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div id="tagtree"></div><br><br>
+  <div id="main"></div>
   <p class='form-text text-muted'>Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references associated with an node (except root-node).</p>
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    let data = {
-      assessment_id: {{ assessment.pk }},
-      search_id: {% if objectType == "Search" %} {{object.id}} {% else %} null {% endif %},
-      tags: {{ tags | safe }},
-      assessment_name: "{{assessment}}",
-      references: {{ ref_objs | safe }},
-      title: {% if object_type == 'reference' %}"{{assessment}}: Literature Tagtree"{% else %}'"{{object}}" Literature Tagtree'{% endif %},
-      url: "{% url 'lit:api:assessment-references-download' assessment.pk %}"
-    };
-    window.canEdit = {{ obj_perms.edit | lower }};
-    window.app.startup("litStartup", function(lit){
-      let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, data.search_id);
-      tagtree.rename_top_level_node(data.assessment_name);
-      tagtree.add_references(data.references);
-      new lit.TagTreeViz(tagtree, $('#tagtree'), data.title, data.url, {
-        hide_empty_tag_nodes: false,
-        width: 1280,
-        height: 800,
-        can_edit: {{ obj_perms.edit | lower }}
-      });
-    });
-  </script>
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}
