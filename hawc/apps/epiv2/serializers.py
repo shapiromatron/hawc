@@ -23,6 +23,81 @@ class AgeProfileSerializer(serializers.ModelSerializer):
         return super().to_internal_value(data)
 
 
+class MeasurementTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MeasurementType
+        fields = ["description"]
+
+
+class ChemicalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Chemical
+        fields = ["id", "name", "dsstox"]
+
+
+class CriteriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Criteria
+        fields = ["id", "name"]
+
+
+class ExposureSerializer(serializers.ModelSerializer):
+    measurement_type = MeasurementTypeSerializer(many=True, read_only=True)
+    exposure_route = FlexibleChoiceField(choices=constants.ExposureRoute.choices)
+
+    class Meta:
+        model = models.Criteria
+        fields = [
+            "id",
+            "name",
+            "measurement_type",
+            "biomonitoring_matrix",
+            "measurement_timing",
+            "exposure_route",
+            "analytic_method",
+            "comments",
+        ]
+
+
+class ExposureLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Criteria
+        fields = [
+            "id",
+            "name",
+            "chemical",
+            "expsure_measurement",
+            "sub_population",
+            "central_tendency",
+            "central_tendency_type",
+            "minimum",
+            "percentile25",
+            "percentile75",
+            "maximum",
+            "neg_exposure",
+            "comments",
+            "data_location",
+        ]
+
+
+class OutcomeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Outcome
+        fields = "__all__"
+
+
+class AdjustmentFactorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.AdjustmentFactor
+        fields = "__all__"
+
+
+class DataExtractionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.DataExtraction
+        fields = "__all__"
+
+
 class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     study = StudySerializer()
     study_design = FlexibleChoiceField(choices=constants.StudyDesign.choices)
@@ -30,17 +105,74 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     sex = FlexibleChoiceField(choices=constants.Sex.choices)
     countries = StudyPopulationCountrySerializer(many=True)
     age_profile = AgeProfileSerializer(many=True, read_only=True)
+    chemicals = ChemicalSerializer(many=True, read_only=True)
+    criteria = CriteriaSerializer(many=True, read_only=True)
+    exposure = ExposureSerializer(many=True, read_only=True)
+    exposure_levels = ExposureLevelSerializer(many=True, read_only=True)
+    outcomes = OutcomeSerializer(many=True, read_only=True)
+    adjustment_factors = AdjustmentFactorSerializer(many=True, read_only=True)
+    data_extractions = DataExtractionSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
 
     def create(self, validated_data):
-        countries = validated_data.pop("countries", None)
-        age_profile = validated_data.pop("age_profile", None)
-        instance = super().create(validated_data)
-        if countries:
-            instance.countries.set(countries)
+        nested_models = [
+            "countries",
+            "age_profile",
+            "chemicals",
+            "criteria",
+            "exposure",
+            "exposure_levels",
+            "outcomes",
+            "adjustment_factors",
+            "data_extractions",
+        ]
 
-        if age_profile:
-            instance.age_profile.set(age_profile)
+        nested_validated_data = {}
+
+        # remove nested models from validated_data
+        for model in nested_models:
+            data = validated_data.pop(model, None)
+            nested_validated_data.update({model: data})
+
+        # execute inherited create method
+        instance = super().create(validated_data)
+
+        # add nested models to the instance
+        data = nested_validated_data.get("countries")
+        if data:
+            instance.countries.set(data),
+
+        data = nested_validated_data.get("age_profile")
+        if data:
+            instance.age_profile.set(data),
+
+        data = nested_validated_data.get("chemicals")
+        if data:
+            instance.chemicals.set(data),
+
+        data = nested_validated_data.get("criteria")
+        if data:
+            instance.criteria.set(data),
+
+        data = nested_validated_data.get("exposure")
+        if data:
+            instance.exposure.set(data),
+
+        data = nested_validated_data.get("exposure_levels")
+        if data:
+            instance.exposure_levels.set(data),
+
+        data = nested_validated_data.get("outcomes")
+        if data:
+            instance.outcomes.set(data),
+
+        data = nested_validated_data.get("adjustment_factors")
+        if data:
+            instance.adjustment_factors.set(data),
+
+        data = nested_validated_data.get("data_extractions")
+        if data:
+            instance.data_extractions.set(data),
 
         return instance
 
