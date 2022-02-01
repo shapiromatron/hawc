@@ -1,14 +1,9 @@
-import json
-from pathlib import Path
-from django import db
-
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
-from django.urls.exceptions import NoReverseMatch
 from rest_framework.test import APIClient
 
-from hawc.apps.assessment.models import Assessment, Log
+from hawc.apps.assessment.models import Log
 from hawc.apps.epiv2 import models
 
 
@@ -29,11 +24,10 @@ class TestDesignApi:
             "years": "2009-2010",
             "participant_n": 456,
             "age_profile": ["Children and adolescents <18 yrs"],
-            "countries": ["TW"]
+            "countries": ["TW"],
         }
         generic_perm_tester(url, data)
 
-    
     def test_valid_requests(self, db_keys):
         url = reverse("epiv2:api:design-list")
         client = APIClient()
@@ -52,7 +46,7 @@ class TestDesignApi:
             "years": "2009-2010",
             "participant_n": 456,
             "age_profile": ["Children and adolescents <18 yrs"],
-            "countries": ["TW"]
+            "countries": ["TW"],
         }
 
         just_created_design_id = None
@@ -118,7 +112,6 @@ class TestDesignApi:
             },
         )
         generic_test_scenarios(client, url, delete_scenarios)
-
 
     def test_bad_requests(self, db_keys):
         url = reverse("epiv2:api:design-list")

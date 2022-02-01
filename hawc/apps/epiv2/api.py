@@ -16,4 +16,3 @@ class Design(EditPermissionsCheckMixin, AssessmentEditViewset):
 
     def get_queryset(self, *args, **kwargs):
         return self.model.objects.all()
-

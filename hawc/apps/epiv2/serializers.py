@@ -2,8 +2,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from ..common.serializers import FlexibleChoiceField, IdLookupMixin
-from ..study.serializers import StudySerializer
 from ..epi.serializers import StudyPopulationCountrySerializer
+from ..study.serializers import StudySerializer
 from . import constants, models
 
 
@@ -11,7 +11,7 @@ class AgeProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AgeProfile
         fields = ["name"]
-    
+
     def to_internal_value(self, data):
         if type(data) is str:
             try:
@@ -38,7 +38,7 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         instance = super().create(validated_data)
         if countries:
             instance.countries.set(countries)
-            
+
         if age_profile:
             instance.age_profile.set(age_profile)
 
