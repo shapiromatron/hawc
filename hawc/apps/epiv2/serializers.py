@@ -47,55 +47,31 @@ class ExposureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Exposure
-        fields = [
-            "id",
-            "name",
-            "measurement_type",
-            "biomonitoring_matrix",
-            "measurement_timing",
-            "exposure_route",
-            "analytic_method",
-            "comments",
-        ]
+        exclude = ["design", "created", "last_updated"]
 
 
 class ExposureLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ExposureLevel
-        fields = [
-            "id",
-            "name",
-            "chemical",
-            "exposure_measurement",
-            "sub_population",
-            "central_tendency",
-            "central_tendency_type",
-            "minimum",
-            "percentile25",
-            "percentile75",
-            "maximum",
-            "neg_exposure",
-            "comments",
-            "data_location",
-        ]
+        exclude = ["design", "created", "last_updated"]
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Outcome
-        fields = "__all__"
+        exclude = ["design", "created", "last_updated"]
 
 
 class AdjustmentFactorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AdjustmentFactor
-        fields = "__all__"
+        exclude = ["design", "created", "last_updated"]
 
 
 class DataExtractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.DataExtraction
-        fields = "__all__"
+        exclude = ["design", "created", "last_updated"]
 
 
 class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
@@ -104,7 +80,7 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     source = FlexibleChoiceField(choices=constants.Source.choices)
     sex = FlexibleChoiceField(choices=constants.Sex.choices)
     countries = StudyPopulationCountrySerializer(many=True)
-    age_profile = AgeProfileSerializer(many=True, read_only=True)
+    age_profile = AgeProfileSerializer(many=True)
     chemicals = ChemicalSerializer(many=True, read_only=True)
     criteria = CriteriaSerializer(many=True, read_only=True)
     exposure = ExposureSerializer(many=True, read_only=True)
@@ -118,13 +94,13 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         nested_models = [
             "countries",
             "age_profile",
-            "chemicals",
-            "criteria",
-            "exposure",
-            "exposure_levels",
-            "outcomes",
-            "adjustment_factors",
-            "data_extractions",
+            # "chemicals",
+            # "criteria",
+            # "exposure",
+            # "exposure_levels",
+            # "outcomes",
+            # "adjustment_factors",
+            # "data_extractions",
         ]
 
         nested_validated_data = {}
@@ -146,33 +122,33 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         if data:
             instance.age_profile.set(data),
 
-        data = nested_validated_data.get("chemicals")
-        if data:
-            instance.chemicals.set(data),
+        # data = nested_validated_data.get("chemicals")
+        # if data:
+        #     instance.chemicals.set(data),
 
-        data = nested_validated_data.get("criteria")
-        if data:
-            instance.criteria.set(data),
+        # data = nested_validated_data.get("criteria")
+        # if data:
+        #     instance.criteria.set(data),
 
-        data = nested_validated_data.get("exposure")
-        if data:
-            instance.exposure.set(data),
+        # data = nested_validated_data.get("exposure")
+        # if data:
+        #     instance.exposure.set(data),
 
-        data = nested_validated_data.get("exposure_levels")
-        if data:
-            instance.exposure_levels.set(data),
+        # data = nested_validated_data.get("exposure_levels")
+        # if data:
+        #     instance.exposure_levels.set(data),
 
-        data = nested_validated_data.get("outcomes")
-        if data:
-            instance.outcomes.set(data),
+        # data = nested_validated_data.get("outcomes")
+        # if data:
+        #     instance.outcomes.set(data),
 
-        data = nested_validated_data.get("adjustment_factors")
-        if data:
-            instance.adjustment_factors.set(data),
+        # data = nested_validated_data.get("adjustment_factors")
+        # if data:
+        #     instance.adjustment_factors.set(data),
 
-        data = nested_validated_data.get("data_extractions")
-        if data:
-            instance.data_extractions.set(data),
+        # data = nested_validated_data.get("data_extractions")
+        # if data:
+        #     instance.data_extractions.set(data),
 
         return instance
 

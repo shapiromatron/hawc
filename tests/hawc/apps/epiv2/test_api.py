@@ -56,8 +56,10 @@ class TestDesignApi:
 
             design_id = resp.json()["id"]
             design = models.Design.objects.get(id=design_id)
+            country = models.Country.objects.get(code="TW")
             assert design.source == "GP"
             assert design.summary == data["summary"]
+            assert design.countries.get(code="TW") == country
             # Etc...
 
             if just_created_design_id is None:
