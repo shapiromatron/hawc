@@ -16,8 +16,11 @@ import hawc.apps.mgmt.urls
 import hawc.apps.riskofbias.urls
 import hawc.apps.study.urls
 import hawc.apps.summary.urls
+import hawc.apps.vocab.urls
 from hawc import __version__
 from hawc.apps.assessment import views
+
+from .openapi import OpenAPIGenerator
 
 open_api_patterns = [
     path("ani/api/", include(hawc.apps.animal.urls.router.urls)),
@@ -31,6 +34,7 @@ open_api_patterns = [
     path("rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
     path("study/api/", include(hawc.apps.study.urls.router.urls)),
     path("summary/api/", include(hawc.apps.summary.urls.router.urls)),
+    path("vocab/api", include(hawc.apps.vocab.urls.router.urls)),
 ]
 
 urlpatterns = [
@@ -78,6 +82,7 @@ if settings.INCLUDE_ADMIN:
                 version=__version__,
                 patterns=open_api_patterns,
                 permission_classes=(permissions.IsAdminUser,),
+                generator_class=OpenAPIGenerator,
             ),
             name="openapi",
         ),
