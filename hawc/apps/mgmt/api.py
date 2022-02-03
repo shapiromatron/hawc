@@ -9,6 +9,7 @@ from . import models, serializers
 
 
 class TaskViewSet(AssessmentEditViewset):
+    http_method_names = ["get", "post", "patch", "head", "options", "trace"]
     assessment_filter_args = "study__assessment"
     model = models.Task
     serializer_class = serializers.TaskSerializer
