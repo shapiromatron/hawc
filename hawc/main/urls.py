@@ -84,6 +84,11 @@ if settings.INCLUDE_ADMIN:
         path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
         path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
         path(
+            f"{admin_url}/dashboard/growth",
+            views.GrowthDashboardView.as_view(),
+            name="admin_growth",
+        ),
+        path(
             f"{admin_url}/assessment-size/",
             views.AdminAssessmentSize.as_view(),
             name="admin_assessment_size",

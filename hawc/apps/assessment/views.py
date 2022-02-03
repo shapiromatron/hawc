@@ -731,6 +731,15 @@ class AdminDashboard(TemplateView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
+class GrowthDashboardView(View):
+    def get(self, request, *args, **kwargs):
+        serializer = serializers.GrowthPlotSerializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+        fig = serializer.create_figure()
+        return HttpResponse(fig.to_html(full_html=False))
+
+
+@method_decorator(staff_member_required, name="dispatch")
 @method_decorator(cache_page(3600), name="dispatch")
 class AdminAssessmentSize(TemplateView):
     template_name = "admin/assessment-size.html"
@@ -932,11 +941,3 @@ class AboutContentTypes(TemplateView):
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context
-
-
-class GrowthDashboardView(View):
-    def get(self, request, *args, **kwargs):
-        serializer = serializers.GrowthPlotSerializer(data=request.GET)
-        serializer.is_valid(raise_exception=True)
-        fig = serializer.create_figure()
-        return HttpResponse(fig.to_html(full_html=False))

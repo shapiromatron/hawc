@@ -106,7 +106,6 @@ urlpatterns = [
     ),
     # api views
     path("api/", include((router.urls, "api"))),
-    path("growth/", views.GrowthDashboardView.as_view(), name="growth"),
 ]
 
 admin.autodiscover()

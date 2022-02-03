@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-<form hx-get="/assessment/growth/" hx-target="#plotly-figure" hx-trigger="load, change">
+<form hx-get="{% url 'admin_growth' %}" hx-target="#plotly-figure" hx-trigger="load, change">
     <div class="form-group">
         <label for="select-model">Select model to view results</label>
         <select id="select-model" name="model">
