@@ -549,13 +549,6 @@ class AdminDashboardViewset(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 
-    @method_decorator(cache_page(60 * 60))
-    @action(detail=False, url_path="assessment-size", renderer_classes=PandasRenderers)
-    def assessment_size(self, request):
-        df = models.Assessment.size_df()
-        export = FlatExport(df=df, filename="assessment-size")
-        return Response(export)
-
     @action(detail=False, renderer_classes=PandasRenderers)
     def media(self, request):
         uri = request.build_absolute_uri(location="/")[:-1]

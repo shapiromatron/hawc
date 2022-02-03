@@ -358,13 +358,13 @@ class TestAdminDashboardViewset:
 
         # failure - not admin
         assert client.login(username="pm@hawcproject.org", password="pw") is True
-        url = reverse("assessment:api:admin_dashboard-assessment-size")
+        url = reverse("assessment:api:admin_dashboard-media")
         resp = client.get(url)
         assert resp.status_code == 403
 
         # success - admin
         assert client.login(username="admin@hawcproject.org", password="pw") is True
-        url = reverse("assessment:api:admin_dashboard-assessment-size")
+        url = reverse("assessment:api:admin_dashboard-media")
         resp = client.get(url)
         assert resp.status_code == 200
 

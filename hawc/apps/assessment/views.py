@@ -731,6 +731,7 @@ class AdminDashboard(TemplateView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
+@method_decorator(cache_page(3600), name="dispatch")
 class AdminAssessmentSize(TemplateView):
     template_name = "admin/assessment-size.html"
 
