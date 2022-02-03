@@ -320,6 +320,15 @@ class TestSearchViewset:
         resp = c.post(url, payload, format="json")
         assert resp.status_code == 201
 
+        # search string with duplicates
+        new_payload = {
+            **payload,
+            **{"search_string": "5490558, 5490558"},
+            **{"title": "second demo"},
+        }
+        resp = c.post(url, new_payload, format="json")
+        assert resp.status_code == 201
+
     def test_validation_failures(self, db_keys):
         url = reverse("lit:api:search-list")
         c = APIClient()
@@ -389,16 +398,12 @@ class TestSearchViewset:
             }
 
         # check bad id lists
-        bad_search_strings = ["-1", "123,123"]
+        bad_search_strings = ["-1"]
         for bad_search_string in bad_search_strings:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             resp = c.post(url, new_payload, format="json")
             assert resp.status_code == 400
-            assert resp.data == {
-                "non_field_errors": [
-                    "At least one positive identifer must exist and must be unique"
-                ]
-            }
+            assert resp.data == {"non_field_errors": ["At least one positive identifer must exist"]}
 
     def test_missing_id_in_hero(self, db_keys):
         """
