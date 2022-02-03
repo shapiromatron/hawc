@@ -6,7 +6,9 @@ from rest_framework.schemas.openapi import SchemaGenerator
 
 class OpenAPIGenerator(SchemaGenerator):
     """
-    This subclass removes permission checks during endpoint determination, since we want all endpoints to be shown and some permission checks will fail without additional query params (AssessmentLevelPermissions)
+    This subclass removes permission checks during endpoint determination, since we want all
+    endpoints to be shown and some permission checks will fail without additional query params
+    (AssessmentLevelPermissions)
     """
 
     def get_schema(self, request=None, public=False):
