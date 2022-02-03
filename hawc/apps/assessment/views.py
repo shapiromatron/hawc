@@ -746,15 +746,21 @@ class AdminAssessmentSize(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         df = models.Assessment.size_df()
+
+        # stringify datetimes
         df[["created", "last_updated"]] = df[["created", "last_updated"]].applymap(
             lambda x: HAWCtoDateString(x)
         )
+        # apply hyperlink to assessment names
         df["name"] = df[["id", "name"]].apply(
             lambda row: f"<a href='/assessment/{row['id']}/'>{row['name']}</a>", axis=1
         )
+        # format column names for readability
         df = df.rename(lambda c: c.replace("_", " "), axis="columns")
-        context["table"] = df.to_html(
+
+        context["assessmentSizeTable"] = df.to_html(
             index=False, table_id="assessmentSizeTable", escape=False, border=0
         )
         return context
