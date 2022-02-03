@@ -12,9 +12,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponseNotAllowed,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.middleware.csrf import get_token
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import HttpResponse, get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -27,6 +33,7 @@ from django.views.generic.edit import CreateView
 from ..common.crumbs import Breadcrumb
 from ..common.forms import DownloadPlotForm
 from ..common.helper import WebappConfig
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -455,41 +462,69 @@ class AssessmentDownloads(BaseDetail):
     breadcrumb_active_name = "Downloads"
 
 
-# Attachment views
-class AttachmentCreate(BaseCreate):
-    success_message = "Attachment added."
+# Attachment viewset
+class AttachmentViewset(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = models.Assessment
+    model = models.Attachment
+    form_fragment = "assessment/components/attachment_edit_row.html"
+    detail_fragment = "assessment/components/attachment_row.html"
+    list_fragment = "assessment/_attachment_list.html"
+
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.AttachmentForm()
+            template = self.list_fragment
+        context = self.get_context_data(form=form)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            request.item.assessment, False
+        )
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.AttachmentForm(data=data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        return render(request, self.detail_fragment, self.get_context_data())
+
+
+class AttachmentList(BaseList):
+    model = models.Attachment
     parent_model = models.Assessment
     parent_template_name = "parent"
-    model = models.Attachment
-    form_class = forms.AttachmentForm
+    template_name = "assessment/_attachment_list.html"
+    object_list = None
 
-
-class AttachmentRead(BaseDetail):
-    model = models.Attachment
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
-            return HttpResponseRedirect(self.object.attachment.url)
-        else:
-            return PermissionDenied
-
-
-class AttachmentUpdate(BaseUpdate):
-    success_message = "Assessment updated."
-    model = models.Attachment
-    form_class = forms.AttachmentForm
-
-
-class AttachmentDelete(BaseDelete):
-    success_message = "Attachment deleted."
-    model = models.Attachment
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
-
-    def get_cancel_url(self) -> str:
-        return self.object.content_object.get_absolute_url()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            self.assessment, not context["obj_perms"]["edit"]
+        )
+        context["canEdit"] = context["obj_perms"]["edit"]
+        return context
 
 
 # Dataset views
@@ -532,19 +567,6 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = "assessment"
     model = models.EffectTag
     form_class = forms.EffectTagForm
-
-
-class getStrains(TemplateView):
-    # Return the valid strains for the requested species in JSON
-
-    def get(self, request, *args, **kwargs):
-        strains = []
-        try:
-            sp = models.Species.objects.get(pk=request.GET.get("species"))
-            strains = list(models.Strain.objects.filter(species=sp).values("id", "name"))
-        except Exception:
-            pass
-        return HttpResponse(json.dumps(strains), content_type="application/json")
 
 
 class SpeciesCreate(CloseIfSuccessMixin, BaseCreate):

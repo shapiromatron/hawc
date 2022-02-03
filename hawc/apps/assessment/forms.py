@@ -1,6 +1,8 @@
 from pathlib import Path
 from textwrap import dedent
 
+from crispy_forms import layout as cfl
+from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -228,15 +230,21 @@ class AttachmentForm(forms.ModelForm):
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
-        if self.instance.id:
-            inputs = {"legend_text": f"Update {self.instance}"}
-        else:
-            inputs = {"legend_text": "Create new attachment"}
-        inputs["cancel_url"] = self.instance.get_absolute_url()
-
-        helper = BaseFormHelper(self, **inputs)
-
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = Layout(
+            Fieldset(
+                "",
+                cfl.Row(
+                    Div("title", style="width: 30%; padding: 5px"),
+                    Div("description", style="width: 70%; padding: 5px"),
+                ),
+                cfl.Row(
+                    Div("publicly_available", style="width: 30%; padding: 5px"),
+                    Div("attachment", style="width: 70%; padding: 5px"),
+                ),
+            ),
+        )
         return helper
 
 

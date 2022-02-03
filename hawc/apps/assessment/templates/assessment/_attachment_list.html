@@ -1,8 +1,18 @@
-{% if object_list.count > 0 %}
-<h2>Attachments</h2>
+<div id="attach_table">
+{% if object_list.count > 0 or action == 'create' %}
+<h2>Attachments
+{% if canEdit or permissions.edit %}
+<button
+    class="btn btn-sm btn-info pull-right"
+    hx-get="{% url 'assessment:attachment-create' assessment.pk %}"
+    hx-target="#attach_table"
+    hx-swap="outerHTML"
+    >Add Attachment</button>
+{% endif %}
+</h2>
 <table class="table table-sm table-striped">
     <colgroup>
-        {% if canEdit %}
+        {% if canEdit or permissions.edit %}
            <col style="width: 25%;">
            <col style="width: 60%;">
            <col style="width: 15%;">
@@ -15,24 +25,22 @@
         <tr>
             <th>Attachment</th>
             <th>Description</th>
-            {% if canEdit %}
+            {% if canEdit or permissions.edit %}
                 <th>Editing</th>
             {% endif %}
         </tr>
     </thead>
     <tbody>
         {% for object in object_list %}
-        <tr>
-            <td><a href="{{object.attachment.url}}">{{object.title}}</a></td>
-            <td>{{object.description|safe}}</td>
-            {% if canEdit %}
-            <td>
-                <a class="btn btn-sm btn-info" href="{{object.get_edit_url}}">Edit</a>
-                <a class="btn btn-sm btn-danger" href="{{object.get_delete_url}}">Delete</a>
-            </td>
-            {% endif %}
-        </tr>
+            {% include "assessment/components/attachment_row.html" %}
         {% endfor %}
+
+        {% include "assessment/components/attachment_edit_row.html" %}
+        </tr>
+
     </tbody>
 </table>
 {% endif %}
+</div>
+
+

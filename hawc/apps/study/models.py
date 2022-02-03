@@ -270,9 +270,6 @@ class Study(Reference):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
-    def get_attachments_dict(self) -> list[dict]:
-        return [attachment.get_dict() for attachment in self.attachments.all()]
-
     def get_bioassay_endpoints(self):
         """
         Return a queryset of related bioassay endpoints for selected study
@@ -423,6 +420,13 @@ class Study(Reference):
     def set_communications(self, text: str):
         Communication.set_message(self, text)
 
+    def user_can_toggle_editable(self, user) -> bool:
+        return self.assessment.user_can_edit_assessment(user)
+
+    def toggle_editable(self):
+        self.editable = not self.editable
+        self.save()
+
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
         ids = list(cls.objects.filter(assessment_id=assessment_id).values_list("id", flat=True))
@@ -445,9 +449,6 @@ class Attachment(models.Model):
     def get_absolute_url(self):
         return reverse("study:attachment_detail", args=(self.pk,))
 
-    def get_delete_url(self):
-        return reverse("study:attachment_delete", args=[self.pk])
-
     @property
     def filename(self):
         return os.path.basename(self.attachment.name)
@@ -456,7 +457,6 @@ class Attachment(models.Model):
         return {
             "url": self.get_absolute_url(),
             "filename": self.filename,
-            "url_delete": self.get_delete_url(),
         }
 
     def get_assessment(self):

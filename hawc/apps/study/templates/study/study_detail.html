@@ -17,12 +17,14 @@
 
           {% if obj_perms.edit_assessment %}
           <a class="dropdown-item"
-              href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
+              href="{% url 'study:toggle-lock' object.pk %}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
           {% endif %}
 
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
-            <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
+            <button class="dropdown-item" hx-get="{% url 'study:attachment-create' object.pk %}"
+              hx-target="#attachment_list_ul" hx-swap="beforeend">
+              Add an attachment</button>
 
             {% if object.bioassay %}
               <div class="dropdown-divider"></div>
@@ -62,6 +64,27 @@
   {% endif %}
 
   <div id="study_details"></div>
+
+  {% if attachments_viewable and study.attachments.exists %}
+  <table class="table table-sm">
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>Attachments</th>
+            <td>
+                <ul id="attachment_list_ul">
+                {% for object in study.attachments.all %}
+                    {% include "study/fragments/attachment_detail.html" %}
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+  {% endif %}
 
   {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
@@ -135,10 +158,6 @@ window.app.startup("studyStartup", function(app){
     detail_div = $('#study_details');
 
   thisStudy.build_details_table(detail_div);
-
-  if(data.attachments_viewable){
-    thisStudy.add_attachments_row(detail_div, data.attachments);
-  }
 
   if (thisStudy.has_riskofbias()){
     window.app.startup("riskofbiasStartup", function (riskofbias) {

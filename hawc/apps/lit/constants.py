@@ -21,5 +21,6 @@ class SearchType(models.TextChoices):
 
 
 # generalized/adapted from https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-DOI_EXACT = re.compile(r"^10.\d{4,9}/[^\s]+$")
+DOI_EXACT = re.compile(r"^10\.\d{4,9}/[^\s]+$")
+DOI_EXTRACT = re.compile(r"10\.\d{4,9}/[^\s]+")
 DOI_EXAMPLE = "10.1234/s123456"

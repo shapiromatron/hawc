@@ -11,6 +11,7 @@ router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"jobs", api.JobViewset, basename="jobs")
 router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
+router.register(r"strain", api.StrainViewset, basename="strain")
 router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
 
 
@@ -40,15 +41,30 @@ urlpatterns = [
     path("log/<int:pk>/", views.LogDetail.as_view(), name="log_detail",),
     # attachment objects
     path(
-        "<int:pk>/attachment/create/", views.AttachmentCreate.as_view(), name="attachment_create",
+        "attachment/<int:pk>/create/",
+        views.AttachmentViewset.as_view(),
+        {"action": "create"},
+        name="attachment-create",
     ),
-    path("attachment/<int:pk>/", views.AttachmentRead.as_view(), name="attachment_detail",),
     path(
-        "attachment/<int:pk>/update/", views.AttachmentUpdate.as_view(), name="attachment_update",
+        "attachment/<int:pk>/",
+        views.AttachmentViewset.as_view(),
+        {"action": "read"},
+        name="attachment-detail",
     ),
     path(
-        "attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete",
+        "attachment/<int:pk>/update/",
+        views.AttachmentViewset.as_view(),
+        {"action": "update"},
+        name="attachment-update",
     ),
+    path(
+        "attachment/<int:pk>/delete/",
+        views.AttachmentViewset.as_view(),
+        {"action": "delete"},
+        name="attachment-delete",
+    ),
+    path("<int:pk>/attachments/", views.AttachmentList.as_view(), name="attachment_list"),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),
     path("dataset/<int:pk>/", views.DatasetRead.as_view(), name="dataset_detail"),
@@ -59,7 +75,6 @@ urlpatterns = [
         "assessment/<int:pk>/species/create/", views.SpeciesCreate.as_view(), name="species_create",
     ),
     # strain
-    path("strains/", views.getStrains.as_view(), name="get_strains"),
     path("assessment/<int:pk>/strain/create/", views.StrainCreate.as_view(), name="strain_create",),
     # dose units
     path(

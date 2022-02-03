@@ -93,6 +93,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.humanize",
     "django.contrib.postgres",
+    "django_filters",
     # External apps
     "rest_framework",
     "rest_framework.authtoken",
