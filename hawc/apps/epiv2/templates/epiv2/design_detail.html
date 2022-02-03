@@ -12,4 +12,43 @@
     </div>
 </div>
 {% endif %}
+
+<p>Design metadata here... (to add later)... </p>
+
+{% if obj_perms.edit and crud == "Read" %}
+<h3>Exposure data table</h3>
+<button>Create</button>
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Exposure name...</td>
+            <td><button>Update</button><button>Delete</button><button>Clone</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Outcome data table</h3>
+<button>Create</button>
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Outcome name...</td>
+            <td><button>Update</button><button>Delete</button><button>Clone</button></td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+
 {% endblock %}
