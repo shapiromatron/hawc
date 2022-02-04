@@ -44,7 +44,7 @@
     </tr>
     <tr>
       <th>Authenticated HERO Access</th>
-      <td colspan="2">{{object.HERO_access}}</td>
+      <td colspan="2">{{object.authenticated_hero}}</td>
     </tr>
     <tr>
       <th>API token</th>
@@ -58,5 +58,5 @@
 {% endblock content %}
 
 {% block extrajs %}
-  {% include "includes/hero_access.html" %}
+  {% include "includes/authenticated_hero.html" %}
 {% endblock extrajs %}

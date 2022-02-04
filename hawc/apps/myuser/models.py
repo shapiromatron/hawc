@@ -34,6 +34,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     )
     license_v1_accepted = models.BooleanField(default=False, verbose_name="Accept license")
     license_v2_accepted = models.BooleanField(default=False, verbose_name="Accept license")
+    two_factor_secret = models.CharField(max_length=100)
     date_joined = models.DateTimeField("date joined", default=timezone.now)
 
     USERNAME_FIELD = "email"
@@ -75,8 +76,8 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         msg.send()
 
     def create_profile(self) -> "UserProfile":
-        HERO_access = True if "@epa.gov" in self.email else False
-        return UserProfile.objects.create(user=self, HERO_access=HERO_access)
+        authenticated_hero = True if "@epa.gov" in self.email else False
+        return UserProfile.objects.create(user=self, authenticated_hero=authenticated_hero)
 
     def is_beta_tester(self):
         return self.is_staff or self.groups.filter(name="beta tester").exists()
@@ -101,18 +102,14 @@ class UserProfile(models.Model):
     objects = managers.UserProfileManager()
 
     user = models.OneToOneField(HAWCUser, on_delete=models.CASCADE, related_name="profile")
-    HERO_access = models.BooleanField(
+    authenticated_hero = models.BooleanField(
         default=False,
-        verbose_name="HERO access",
-        help_text="All HERO links will redirect to the login-only HERO access "
-        "page, allowing for full article text.",
+        verbose_name="Authenticated HERO access",
+        help_text="Use the login-required version of HERO links, instead of the public version",
     )
 
     def __str__(self):
-        return self.user.get_full_name() + " Profile"
+        return f"{self.user.get_full_name()} Profile"
 
     def get_absolute_url(self):
         return reverse("user:settings")
-
-    def get_assessment(self):
-        return self.assessment

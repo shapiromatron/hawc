@@ -488,7 +488,7 @@
   fields:
     user:
     - pm@hawcproject.org
-    HERO_access: false
+    authenticated_hero: false
 - model: vocab.term
   pk: 1
   fields:
