@@ -133,14 +133,12 @@ class SummaryText(MP_Node):
         def print_node(node, depth):
             report.doc.add_heading(node["data"]["title"], level=depth)
             report.doc.add_paragraph(strip_tags(node["data"]["text"]))
-            if node.get("children", None):
-                for node in node["children"]:
-                    print_node(node, depth + 1)
+            for node in node.get("children", []):
+                print_node(node, depth + 1)
 
         nodes = SummaryText.get_assessment_descendants(assessment.id, json_encode=False)
-        if nodes[0].get("children", None):
-            for node in nodes[0]["children"]:
-                print_node(node, 2)
+        for node in nodes[0].get("children", []):
+            print_node(node, 2)
 
 
 class SummaryTable(models.Model):
