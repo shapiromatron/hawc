@@ -17,8 +17,14 @@
 
 {% if obj_perms.edit and crud == "Read" %}
 <h3>Exposure data table</h3>
-<button>Create</button>
-<table class="table table-condensed table-striped">
+<button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposure-create' object.pk %}"
+    hx-target="#exposure_table" hx-swap="beforeend"
+    >Create</button>
+<table class="table table-condensed table-striped" id="exposure_table">
+    <colgroup>
+        <col style="width: 85%;">
+        <col style="width: 15%;">
+    </colgroup>
     <thead>
         <tr>
             <th>Name</th>
@@ -26,27 +32,34 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>Exposure name...</td>
-            <td><button>Update</button><button>Delete</button><button>Clone</button></td>
-        </tr>
+        {% for exposure in exposures %}
+            {% include "epiv2/components/exposure_row.html" %}
+        {% endfor %}
     </tbody>
 </table>
 
 <h3>Outcome data table</h3>
-<button>Create</button>
-<table class="table table-condensed table-striped">
+<button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:outcome-create' object.pk %}"
+    hx-target="#outcome_table" hx-swap="beforeend">Create</button>
+<table class="table table-condensed table-striped" id="outcome_table">
+    <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 30%;">
+        <col style="width: 30%;">
+        <col style="width: 15%;">
+    </colgroup>
     <thead>
         <tr>
             <th>Name</th>
+            <th>Health Outcome</th>
+            <th>Health Outcome System</th>
             <th>Edit</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>Outcome name...</td>
-            <td><button>Update</button><button>Delete</button><button>Clone</button></td>
-        </tr>
+        {% for object in outcomes %}
+            {% include "epiv2/components/outcome_row.html" %}
+        {% endfor %}
     </tbody>
 </table>
 {% endif %}
