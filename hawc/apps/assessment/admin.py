@@ -177,11 +177,9 @@ class DoseUnitsAdmin(admin.ModelAdmin):
 
 @admin.register(models.Species)
 class SpeciesAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "name",
-    )
+    list_display = ("id", "name")
     list_display_links = ("name",)
+    search_fields = ("name",)
 
 
 @admin.register(models.Strain)
@@ -190,6 +188,7 @@ class StrainAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "species")
     list_display_links = ("name",)
     list_filter = ("species",)
+    search_fields = ("name",)
 
 
 @admin.register(models.EffectTag)
