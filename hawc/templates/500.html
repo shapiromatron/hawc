@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html class="js" lang="en-us">
   <head>
@@ -7,25 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
     <title>500 | HAWC</title>
-
     <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
     <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
     <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
     <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.5.3/css/bootstrap.min.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/jqueryui/1.10.3/css/jquery-ui.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
-
   </head>
   <body class="html">
-    <nav class="navbar navbar-expand-sm bg-light">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
       <a class="ml-3 navbar-brand" href="{% url 'home' %}"><img alt="The website logo" src="/static/img/HAWC-40.png"></a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <ul class="nav navbar-nav collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+      <ul class="navbar-nav navbar-collapse justify-content-end">
         <li class="nav-item">
           <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
         </li>
@@ -34,17 +27,16 @@
         </li>
       </ul>
     </nav>
-    <div class="container">
-      <div class="jumbotron">
-        <h1>Error 500.</h1>
-        <p>Ohh goodness, something went wrong on HAWC server-side. An administrator has already been emailed what went wrong, but please <a href="{% url 'contact' %}">contact us</a> if urgent.</p>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-8 offset-2">
+          <div class="jumbotron mt-5">
+            <h1>Error 500.</h1>
+            <p>Ohh goodness, something went wrong on HAWC server-side. An administrator has already been emailed what went wrong, but please <a href="{% url 'contact' %}">contact us</a> if it's urgent.</p>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
-
-    <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/jquery-migrate/3.3.1/jquery-migrate.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/popper.js/1.16.1/umd/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/bootstrap/4.5.3/js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/jqueryui/1.10.3/jquery-ui.min.js' %}"></script>
   </body>
 </html>
