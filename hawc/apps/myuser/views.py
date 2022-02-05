@@ -15,11 +15,12 @@ from django.contrib.auth.views import (
 )
 from django.core.mail import mail_admins
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import CreateView, DetailView, TemplateView, View
+from django.views.generic import CreateView, DetailView, FormView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import UpdateView
 
@@ -57,6 +58,14 @@ class HawcLoginView(LoginView):
         kwargs["next_url"] = self.get_redirect_url()
         return kwargs
 
+    def form_valid(self, form):
+        """If OTP is eanbled, check TOTP code, else continue standard login"""
+        user = form.get_user()
+        if user.otp_enabled:
+            self.request.session["user_id"] = user.id
+            return HttpResponseRedirect(reverse("user:otp"))
+        return super().form_valid(form)
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse("portal"))
@@ -67,6 +76,28 @@ class HawcLoginView(LoginView):
                 url = url_query(url, {REDIRECT_FIELD_NAME: next_url})
             return HttpResponseRedirect(url)
         return super().dispatch(request, *args, **kwargs)
+
+
+class OneTimePasswordView(FormView):
+    form_class = forms.OneTimePasswordForm
+    template_name = "myuser/otp.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        self.maybe_user = get_object_or_404(
+            models.HAWCUser, pk=self.request.session.get("user_id", -1)
+        )
+        kwargs["user"] = self.maybe_user
+        return kwargs
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("portal"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        login(self.request, self.maybe_user)
+        return HttpResponseRedirect(reverse("portal"))
 
 
 class HawcLogoutView(LogoutView):

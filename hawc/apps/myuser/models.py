@@ -39,7 +39,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     )
     license_v1_accepted = models.BooleanField(default=False, verbose_name="Accept license")
     license_v2_accepted = models.BooleanField(default=False, verbose_name="Accept license")
-    two_factor_secret = models.CharField(max_length=100)
+    otp_secret = models.CharField(max_length=32)
     date_joined = models.DateTimeField("date joined", default=timezone.now)
 
     USERNAME_FIELD = "email"
@@ -104,13 +104,14 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     @property
     def otp_enabled(self) -> bool:
-        return len(self.two_factor_secret) > 0
+        return len(self.otp_secret) > 0
 
     def _get_2fa(self) -> pyotp.TOTP:
-        return pyotp.TOTP(self.two_factor_secret, name=self.email, issuer="hawc")
+        issuer = settings.ALLOWED_HOSTS[0] if len(settings.ALLOWED_HOSTS) > 0 else "hawc"
+        return pyotp.TOTP(self.otp_secret, name=self.email, issuer=issuer)
 
     def set_2fa_token(self):
-        self.two_factor_secret = pyotp.random_base32()
+        self.otp_secret = pyotp.random_base32()
 
     def check_2fa_token(self, token: str) -> bool:
         return self._get_2fa().verify(token)

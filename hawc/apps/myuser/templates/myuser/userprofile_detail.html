@@ -42,7 +42,7 @@
       <th>Can create assessments</th>
       <td colspan="2">{{user.can_create_assessments}}</td>
     </tr>
-    {% if user.two_factor_secret %}
+    {% if user.otp_secret %}
     <tr>
       <th>Two factor authorization</th>
       <td colspan="2">{{user.get_2fa_image|safe}}</td>

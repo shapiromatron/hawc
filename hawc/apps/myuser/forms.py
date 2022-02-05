@@ -182,7 +182,11 @@ class RegisterForm(PasswordForm):
 class UserProfileForm(ModelForm):
     first_name = forms.CharField(label="First name", required=True)
     last_name = forms.CharField(label="Last name", required=True)
-    otp_enabled = forms.BooleanField(label="Two factor authentication", required=False)
+    otp_enabled = forms.BooleanField(
+        label="Two factor authentication",
+        help_text="Enable two-factor authorization. Add the QR code to an application such as Google Authenticator or Authy.",
+        required=False,
+    )
 
     class Meta:
         model = models.UserProfile
@@ -217,11 +221,44 @@ class UserProfileForm(ModelForm):
             if self.cleaned_data["otp_enabled"]:
                 up.user.set_2fa_token()
             else:
-                up.user.two_factor_secret = ""
+                up.user.otp_secret = ""
         if commit:
             up.save()
             up.user.save()
         return up
+
+
+class OneTimePasswordForm(forms.Form):
+    passcode = forms.CharField(
+        label="One time passcode",
+        help_text="Enter your one-time password using an app such as Google Authenticator or Authy",
+        strip=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Verify one-time password",
+            cancel_url=reverse("user:login"),
+            submit_text="Submit",
+        )
+
+    def clean(self):
+        data = super().clean()
+        if not self.user.otp_enabled:
+            raise forms.ValidationError("One-time passcode not enabled for this account.")
+        return data
+
+    def clean_passcode(self):
+        passcode = self.cleaned_data["passcode"]
+        if not self.user.check_2fa_token(passcode):
+            raise forms.ValidationError("Invalid passcode.")
+        return passcode
 
 
 class AcceptNewLicenseForm(ModelForm):
@@ -360,6 +397,9 @@ class AdminUserForm(PasswordForm):
     reviewer = AutoCompleteSelectMultipleField(
         lookup_class=lookups.AssessmentLookup, label="Reviewer", required=False
     )
+    otp_enabled = forms.BooleanField(
+        label="One-time password (2FA) enabled", disabled=True, required=False
+    )
 
     class Meta:
         model = models.HAWCUser
@@ -368,6 +408,7 @@ class AdminUserForm(PasswordForm):
             "first_name",
             "last_name",
             "external_id",
+            "otp_enabled",
             "is_active",
             "is_staff",
             "password1",
@@ -400,6 +441,7 @@ class AdminUserForm(PasswordForm):
             self.fields["reviewer"].initial = self.instance.assessment_reviewers.all().values_list(
                 "id", flat=True
             )
+            self.fields["otp_enabled"].initial = self.instance.otp_enabled
 
     def save(self, commit=True):
         user = super().save(commit=commit)

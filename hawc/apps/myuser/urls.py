@@ -8,6 +8,7 @@ app_name = "user"
 
 urlpatterns = [
     path("login/", views.HawcLoginView.as_view(), name="login"),
+    path("login/otp/", views.OneTimePasswordView.as_view(), name="otp"),
     path("logout/", views.HawcLogoutView.as_view(), name="logout"),
     path("profile/", views.ProfileDetail.as_view(), name="settings"),
     path("profile/update/", views.ProfileUpdate.as_view(), name="profile_update"),

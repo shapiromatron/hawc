@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="hawcuser",
-            name="two_factor_secret",
-            field=models.CharField(default="", max_length=100),
+            name="otp_secret",
+            field=models.CharField(default="", max_length=32),
             preserve_default=False,
         ),
     ]

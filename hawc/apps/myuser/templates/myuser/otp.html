@@ -1,0 +1,14 @@
+{% extends "crumbless.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}One Time Passcode | Login | HAWC{% endblock %}
+
+{% block content %}
+{% crispy form %}
+{% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    document.getElementById('id_passcode').focus();
+</script>
+{% endblock extrajs %}
