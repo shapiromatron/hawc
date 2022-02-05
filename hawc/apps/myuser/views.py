@@ -58,6 +58,8 @@ class HawcLoginView(LoginView):
         return kwargs
 
     def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("portal"))
         if settings.AUTH_PROVIDERS == {AuthProvider.external}:
             url = reverse("user:external_auth")
             next_url = self.get_redirect_url()
