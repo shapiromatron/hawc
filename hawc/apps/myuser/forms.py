@@ -182,15 +182,17 @@ class RegisterForm(PasswordForm):
 class UserProfileForm(ModelForm):
     first_name = forms.CharField(label="First name", required=True)
     last_name = forms.CharField(label="Last name", required=True)
+    otp_enabled = forms.BooleanField(label="Two factor authentication", required=False)
 
     class Meta:
         model = models.UserProfile
-        fields = ("first_name", "last_name", "authenticated_hero")
+        fields = ("first_name", "last_name", "otp_enabled", "authenticated_hero")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["first_name"].initial = self.instance.user.first_name
         self.fields["last_name"].initial = self.instance.user.last_name
+        self.fields["otp_enabled"].initial = self.instance.user.otp_enabled
         if self.instance.user.external_id:
             self.fields["first_name"].disabled = True
             self.fields["last_name"].disabled = True
@@ -211,6 +213,11 @@ class UserProfileForm(ModelForm):
         up = super().save(commit=False)
         up.user.first_name = self.cleaned_data["first_name"]
         up.user.last_name = self.cleaned_data["last_name"]
+        if self.cleaned_data["otp_enabled"] != up.user.otp_enabled:
+            if self.cleaned_data["otp_enabled"]:
+                up.user.set_2fa_token()
+            else:
+                up.user.two_factor_secret = ""
         if commit:
             up.save()
             up.user.save()

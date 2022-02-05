@@ -42,6 +42,12 @@
       <th>Can create assessments</th>
       <td colspan="2">{{user.can_create_assessments}}</td>
     </tr>
+    {% if user.two_factor_secret %}
+    <tr>
+      <th>Two factor authorization</th>
+      <td colspan="2">{{user.get_2fa_image|safe}}</td>
+    </tr>
+    {% endif %}
     <tr>
       <th>Authenticated HERO Access</th>
       <td colspan="2">{{object.authenticated_hero}}</td>

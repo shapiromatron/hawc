@@ -1,3 +1,8 @@
+from base64 import b64encode
+from io import BytesIO
+
+import pyotp
+import qrcode
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -96,6 +101,29 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     def destroy_api_token(self):
         Token.objects.filter(user=self).delete()
+
+    @property
+    def otp_enabled(self) -> bool:
+        return len(self.two_factor_secret) > 0
+
+    def _get_2fa(self) -> pyotp.TOTP:
+        return pyotp.TOTP(self.two_factor_secret, name=self.email, issuer="hawc")
+
+    def set_2fa_token(self):
+        self.two_factor_secret = pyotp.random_base32()
+
+    def check_2fa_token(self, token: str) -> bool:
+        return self._get_2fa().verify(token)
+
+    def get_2fa_image(self):
+        """
+        Generate a QR code from user's TOTP session; return a base-64 encoded html html img tag.
+        """
+        f = BytesIO()
+        img = qrcode.make(self._get_2fa().provisioning_uri())
+        img.save(f, format="png")
+        data = b64encode(f.getvalue()).decode("utf-8")
+        return f'<img width="150px" src="data:image/png;base64,{data}" alt="Two factor QR code">'
 
 
 class UserProfile(models.Model):
