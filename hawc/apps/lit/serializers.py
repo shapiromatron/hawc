@@ -281,13 +281,8 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if missing:
             raise serializers.ValidationError(f"Reference(s) not found: {missing}")
 
-        # check to make sure we have no duplicates
-        df_nrows = df.shape[0]
+        # remove duplicate rows
         df = df.drop_duplicates()
-        if df.shape[0] != df_nrows:
-            raise serializers.ValidationError(
-                "CSV contained duplicates; please remove before importing"
-            )
 
         # success! save dataframe
         self.assessment = self.context["assessment"]

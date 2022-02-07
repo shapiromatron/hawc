@@ -94,8 +94,11 @@ def test_BulkReferenceTagSerializer(db_keys):
     # check duplicates
     data = {"operation": "replace", "csv": "reference_id,tag_id\n1,3\n1,3"}
     serializer = BulkReferenceTagSerializer(data=data, context=context)
-    assert serializer.is_valid() is False
-    assert serializer.errors["csv"][0] == "CSV contained duplicates; please remove before importing"
+    assert serializer.is_valid() is True
+    serializer.bulk_create_tags()
+
+    reference.refresh_from_db()
+    assert reference.tags.count() == 1
 
     # check that a 2x2 table works
     csv = "reference_id,tag_id\n1,3\n1,4\n3,3\n3,4\n"
