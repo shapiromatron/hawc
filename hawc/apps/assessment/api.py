@@ -163,8 +163,12 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
         return self.model.objects.all()
 
 
+# all http methods except PUT
+METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
+
+
 class AssessmentEditViewset(viewsets.ModelViewSet):
-    http_method_names = ["get", "post", "patch", "delete", "head", "options", "trace"]
+    http_method_names = METHODS_NO_PUT
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     parent_model = models.Assessment
@@ -202,7 +206,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
 
-    http_method_names = ["get", "post", "patch", "delete", "head", "options", "trace"]
+    http_method_names = METHODS_NO_PUT
 
     lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
@@ -246,9 +250,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
             raise exceptions.PermissionDenied()
 
 
-class DoseUnitsViewset(
-    mixins.ListModelMixin, viewsets.GenericViewSet,
-):
+class DoseUnitsViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     model = models.DoseUnits
     serializer_class = serializers.DoseUnitsSerializer
     pagination_class = DisabledPagination
