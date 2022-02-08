@@ -70,7 +70,7 @@ MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    # "hawc.apps.common.middleware.CsrfRefererCheckMiddleware",
+    "hawc.apps.common.middleware.CsrfRefererCheckMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
