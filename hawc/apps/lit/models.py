@@ -284,7 +284,8 @@ class Search(models.Model):
 
     @property
     def import_ids(self):
-        return [v.strip() for v in self.search_string_text.split(",")]
+        # convert from string->set->list to remove repeat ids
+        return list(set(v.strip() for v in self.search_string_text.split(",")))
 
     @transaction.atomic
     def run_new_import(self):
