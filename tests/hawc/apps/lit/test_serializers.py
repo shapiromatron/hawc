@@ -87,9 +87,10 @@ def test_BulkReferenceTagSerializer(db_keys):
     serializer = BulkReferenceTagSerializer(data=data, context=context)
     assert serializer.is_valid() is True
     serializer.bulk_create_tags()
-    reference.refresh_from_db()
-    assert reference.tags.count() == 1
-    assert reference.tags.all()[0].id == 4
+    resp = ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
+        index=False, line_terminator="\n"
+    )
+    assert resp == "reference_id,tag_id\n1,4\n"
 
     # check duplicates
     data = {"operation": "replace", "csv": "reference_id,tag_id\n1,3\n1,3"}
@@ -98,7 +99,10 @@ def test_BulkReferenceTagSerializer(db_keys):
     serializer.bulk_create_tags()
 
     reference.refresh_from_db()
-    assert reference.tags.count() == 1
+    resp = ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
+        index=False, line_terminator="\n"
+    )
+    assert resp == "reference_id,tag_id\n1,3\n"
 
     # check that a 2x2 table works
     csv = "reference_id,tag_id\n1,3\n1,4\n3,3\n3,4\n"
@@ -106,12 +110,10 @@ def test_BulkReferenceTagSerializer(db_keys):
     serializer = BulkReferenceTagSerializer(data=data, context=context)
     assert serializer.is_valid() is True
     serializer.bulk_create_tags()
-    assert (
-        ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
-            index=False, line_terminator="\n"
-        )
-        == csv
+    resp = ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
+        index=False, line_terminator="\n"
     )
+    assert resp == csv
 
 
 @pytest.mark.vcr

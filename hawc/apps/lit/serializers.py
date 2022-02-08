@@ -234,7 +234,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
     def validate_csv(self, value):
         try:
-            df = pd.read_csv(StringIO(value))
+            df = pd.read_csv(StringIO(value)).drop_duplicates()
         except pd.errors.ParserError:
             raise serializers.ValidationError("CSV could not be parsed")
         except pd.errors.EmptyDataError:
@@ -281,10 +281,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if missing:
             raise serializers.ValidationError(f"Reference(s) not found: {missing}")
 
-        # remove duplicate rows
-        df = df.drop_duplicates()
-
-        # success! save dataframe
+        # success! cache dataframe
         self.assessment = self.context["assessment"]
         self.df = df
 
