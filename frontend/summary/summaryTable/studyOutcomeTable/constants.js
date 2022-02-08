@@ -11,16 +11,16 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
     rowTypeChoices = {study: [{id: "study", label: "Study"}], ani: [{id: "study", label: "Study"}]},
     colAttributeChoices = {
         study: [
-            {id: "rob_score", label: "rob_score"},
-            {id: "study_name", label: "study_name"},
             {id: "free_html", label: "free_html"},
+            {id: "study_name", label: "study_name"},
+            {id: "rob_score", label: "rob_score"},
         ],
         ani: [
-            {id: "rob_score", label: "rob_score"},
+            {id: "free_html", label: "free_html"},
             {id: "study_name", label: "study_name"},
             {id: "species_strain_sex", label: "species_strain_sex"},
             {id: "doses", label: "doses"},
-            {id: "free_html", label: "free_html"},
+            {id: "rob_score", label: "rob_score"},
         ],
     },
     createNewRow = studyId => {
