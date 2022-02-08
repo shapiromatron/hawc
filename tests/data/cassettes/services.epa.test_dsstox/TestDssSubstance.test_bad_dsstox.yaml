@@ -9,57 +9,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.23.0
+      - python-requests/2.26.0
     method: GET
-    uri: https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=DTXSID123456789
+    uri: https://comptox.epa.gov/dashboard-api/ccdapp2/chemical-detail/search/by-dsstoxsid?id=DTXSID123456789
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAJVSXWvCMBT9L3nwSay6uY+CiCiTolNximNvIbltsyVNlxutIv73pXXtyhDGXkru
-        OT3nnpz2RMbU0pXOiH8i2ogo4JBYEQowxCfj9etLMO50b257d/cPj6RJGEWTED/ZSdkkqYEQjAE+
-        pwpKEI/JBAUnfrs4r49pnarbX0BuD8Xr1cR+pvdRDCpIRnEwhWMJioSLSP9GUQkJWE5Kyydt1E7S
-        GrIFEcXWBWu5aExLKbhIokltewWO6tes0OW1+1ojlAK+jYUFTClzREglQsXMgObiNzAaK845uXzU
-        WuD1Sr5ZFgP7wJ1yn2A+JHnRmgEi8KFzILPFYrpZkryJUD9jVCbJqEncohqicOWWH/MqcmFsbep7
-        HmVWmwxbkNJWpPfl7HFEqw/evt31FJpcOBBVtn7u6HZ+IjX/98tVV8yEohFsVrO/vVwjSjAqvUIy
-        uPwmhU0j63d67UZcPENl+7iPyPn8BdounZvZAgAA
+      string: '[ ]'
     headers:
-      Access-Control-Allow-Headers:
-      - x-requested-with
-      Access-Control-Allow-Methods:
-      - POST, GET, OPTIONS, DELETE
-      Access-Control-Allow-Origin:
-      - '*'
-      Allow:
-      - GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS
-      Cache-Control:
-      - no-cache, no-store, max-age=0
       Connection:
       - Keep-Alive
-      Content-Encoding:
-      - gzip
-      Content-Language:
-      - en-US
       Content-Type:
-      - application/json;charset=UTF-8
+      - application/json
       Date:
-      - Mon, 14 Sep 2020 14:25:00 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - Wed, 19 Jan 2022 23:29:49 GMT
       Keep-Alive:
-      - timeout=5, max=100
-      Pragma:
-      - no-cache
+      - timeout=5, max=87
       Server:
-      - Apache-Coyote/1.1
+      - nginx/1.21.1
       Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains
+      - "max-age=63072000; includeSubDomains\xE2\x80\x9C"
       Transfer-Encoding:
       - chunked
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
+      Vary:
+      - Origin,Access-Control-Request-Method,Access-Control-Request-Headers
     status:
-      code: 200
-      message: OK
+      code: 202
+      message: ''
 version: 1

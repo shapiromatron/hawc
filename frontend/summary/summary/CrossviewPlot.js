@@ -8,6 +8,7 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import Query from "shared/parsers/query";
 
 import D3Visualization from "./D3Visualization";
+import {applyStyles} from "./common";
 
 class CrossviewPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -384,6 +385,7 @@ class CrossviewPlot extends D3Visualization {
     _draw_ref_ranges() {
         var x = this.x_scale,
             y = this.y_scale,
+            svg = this.svg,
             hrng,
             vrng,
             filter_rng = d => $.isNumeric(d.lower) && $.isNumeric(d.upper),
@@ -410,10 +412,6 @@ class CrossviewPlot extends D3Visualization {
                         name: d.style,
                     }),
                 };
-            },
-            apply_styles = function(d) {
-                var obj = d3.select(this);
-                _.each(d.styles, (value, key) => obj.style(key, value));
             };
 
         hrng = _.chain(this.plot_settings.refranges_response)
@@ -440,7 +438,9 @@ class CrossviewPlot extends D3Visualization {
             .attr("y", d => d.y)
             .attr("width", d => d.width)
             .attr("height", d => d.height)
-            .each(apply_styles);
+            .each(function(d) {
+                applyStyles(svg, this, d.styles);
+            });
 
         g_reference_ranges
             .selectAll("rect")
@@ -451,6 +451,7 @@ class CrossviewPlot extends D3Visualization {
     _draw_ref_lines() {
         var x = this.x_scale,
             y = this.y_scale,
+            svg = this.svg,
             hrefs,
             vrefs,
             filter_ref = function(d) {
@@ -500,28 +501,18 @@ class CrossviewPlot extends D3Visualization {
             .data(hrefs)
             .enter()
             .append("svg:line")
-            .attr("x1", function(d) {
-                return d.x1;
-            })
-            .attr("x2", function(d) {
-                return d.x2;
-            })
-            .attr("y1", function(d) {
-                return d.y1;
-            })
-            .attr("y2", function(d) {
-                return d.y2;
-            })
+            .attr("x1", d => d.x1)
+            .attr("x2", d => d.x2)
+            .attr("y1", d => d.y1)
+            .attr("y2", d => d.y2)
             .each(function(d) {
-                d3.select(this).attr(d.styles);
+                applyStyles(svg, this, d.styles);
             });
 
         this.g_reference_lines
             .selectAll("line")
             .append("svg:title")
-            .text(function(d) {
-                return d.title;
-            });
+            .text(d => d.title);
     }
 
     _draw_labels() {
@@ -576,7 +567,7 @@ class CrossviewPlot extends D3Visualization {
                         return d.caption;
                     })
                     .each(function(d) {
-                        self.apply_text_styles(this, d._style);
+                        applyStyles(self.svg, this, d._style);
                     })
                     .each(function(d) {
                         HAWCUtils.wrapText(this, d.max_width);
