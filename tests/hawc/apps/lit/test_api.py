@@ -321,12 +321,8 @@ class TestSearchViewset:
         assert resp.status_code == 201
 
         # search string with duplicates
-        new_payload = {
-            **payload,
-            **{"search_string": "5490558, 5490558"},
-            **{"title": "second demo"},
-        }
-        resp = c.post(url, new_payload, format="json")
+        payload.update(search_string="5490558, 5490558", title="second demo")
+        resp = c.post(url, payload, format="json")
         assert resp.status_code == 201
 
     def test_validation_failures(self, db_keys):
@@ -403,7 +399,9 @@ class TestSearchViewset:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             resp = c.post(url, new_payload, format="json")
             assert resp.status_code == 400
-            assert resp.data == {"non_field_errors": ["At least one positive identifer must exist"]}
+            assert resp.data == {
+                "non_field_errors": ["At least one positive identifier must exist"]
+            }
 
     def test_missing_id_in_hero(self, db_keys):
         """

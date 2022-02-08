@@ -140,7 +140,7 @@ class ImportForm(SearchForm):
             )
 
         if len(ids) == 0 or any([el < 0 for el in ids]):
-            raise forms.ValidationError("At least one positive identifer must exist")
+            raise forms.ValidationError("At least one positive identifier must exist")
 
         return ids
 

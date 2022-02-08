@@ -110,7 +110,7 @@ class TestImportForm:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             form = ImportForm(new_payload, parent=parent)
             assert not form.is_valid()
-            assert form.errors == {"search_string": ["At least one positive identifer must exist"]}
+            assert form.errors == {"search_string": ["At least one positive identifier must exist"]}
 
     def test_missing_id_in_hero(self, db_keys):
         """
