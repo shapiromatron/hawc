@@ -14,6 +14,7 @@ from django.urls import reverse, reverse_lazy
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.helper import tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..myuser.lookups import HAWCUserLookup
 from ..myuser.models import HAWCUser
@@ -135,7 +136,9 @@ class AssessmentFilterForm(forms.Form):
     def get_filters(self):
         query = Q()
         if name := self.cleaned_data.get("search"):
-            query &= Q(name__icontains=name) | Q(year=name)
+            if name_int := tryParseInt(name):
+                query &= Q(year=name_int)
+            query |= Q(name__icontains=name)
         return query
 
     def get_queryset(self, qs):
