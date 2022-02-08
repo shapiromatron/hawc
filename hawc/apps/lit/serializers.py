@@ -441,7 +441,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
     def execute(self) -> ResultBase:
 
-        # import missing identifers
+        # import missing identifiers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
 
         # set hero ref
