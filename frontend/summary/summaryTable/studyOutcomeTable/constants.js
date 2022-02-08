@@ -5,8 +5,8 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
         `/summary/api/summary-table/data/?table_type=${table_type}&data_source=${data_source}&assessment_id=${assessment_id}`,
     robUrl = assessment_id => `/rob/api/assessment/${assessment_id}/settings/`,
     dataSourceChoices = [
-        {id: "study", label: "Study evaluation"},
-        {id: "ani", label: "Study evaluation + animal bioassay"},
+        {id: "study", label: "Study evaluation (published only)"},
+        {id: "ani", label: "Study evaluation + animal bioassay (published only)"},
     ],
     rowTypeChoices = {study: [{id: "study", label: "Study"}], ani: [{id: "study", label: "Study"}]},
     colAttributeChoices = {

@@ -28,7 +28,7 @@ class DataSourceChoices(Enum):
 
     def get_ani_data(self, assessment_id: int) -> Dict:
         ani_data = (
-            Endpoint.heatmap_doses_df(assessment_id=assessment_id, published_only=False)
+            Endpoint.heatmap_doses_df(assessment_id=assessment_id, published_only=True)
             .fillna("")
             .to_dict(orient="records")
         )
@@ -41,7 +41,7 @@ class DataSourceChoices(Enum):
         return {"data": ani_data, "rob": rob_data}
 
     def get_study_data(self, assessment_id: int) -> Dict:
-        study_qs = Study.objects.filter(assessment_id=assessment_id)
+        study_qs = Study.objects.filter(assessment_id=assessment_id, published=True)
         study_df = pd.DataFrame.from_records(study_qs.values("id", "short_citation"))
         study_data = study_df.rename(
             columns={"id": "study id", "short_citation": "study citation"}
