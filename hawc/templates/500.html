@@ -17,7 +17,9 @@
   </head>
   <body class="html">
     <nav class="navbar navbar-expand-sm navbar-light bg-light">
-      <a class="ml-3 navbar-brand" href="{% url 'home' %}"><img alt="The website logo" src="{% static 'img/HAWC-40.png' %}"></a>
+      <a class="ml-3 navbar-brand" href="{% url 'home' %}">
+        <img alt="The website logo" src="{% static 'img/HAWC-40.png' %}" />
+      </a>
       <ul class="navbar-nav navbar-collapse justify-content-end">
         <li class="nav-item">
           <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
@@ -31,23 +33,25 @@
       <div class="row">
         <div class="col-8 offset-2">
           <div class="jumbotron mt-5">
-            <div id="observablehq-graphic-24aaae82"></div>
             <h1>Error 500.</h1>
             <p>Ohh goodness, something went wrong on HAWC server-side. An administrator has already been emailed what went wrong, but please <a href="{% url 'contact' %}">contact us</a> if it's urgent.</p>
-            <p class="font-italic">Credit for graphic: <a href="https://observablehq.com/@mbostock/epicyclic-gearing">Epicyclic Gearing by Mike Bostock</a></p>
+            <div id="graphic"></div>
+            <p class="text-center pt-3">
+              <b>Graphic credit:</b>
+              <a href="https://observablehq.com/@mbostock/epicyclic-gearing">Epicyclic Gearing by Mike Bostock</a>
+            </p>
           </div>
         </div>
       </div>
-      </div>
     </div>
-  <script type="module">
-    import { Runtime, Inspector } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-    import define from "https://api.observablehq.com/@munnsmunns/epicyclic-gearing.js?v=3";
-    new Runtime().module(define, name => {
-      if (name === "graphic") return new Inspector(document.querySelector("#observablehq-graphic-24aaae82"));
-      return ["update"].includes(name);
-    });
-  </script>
+    <script type="module">
+      import { Runtime, Inspector } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+      import define from "https://api.observablehq.com/@munnsmunns/epicyclic-gearing.js?v=3";
+      new Runtime().module(define, name => {
+        if (name === "graphic") return new Inspector(document.querySelector("#graphic"));
+        return ["update"].includes(name);
+      });
+    </script>
   </body>
 </html>
 

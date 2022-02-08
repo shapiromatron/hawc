@@ -132,16 +132,15 @@ class ImportForm(SearchForm):
     @classmethod
     def validate_import_search_string(cls, search_string) -> List[int]:
         try:
-            ids = [int(el) for el in search_string.split(",")]
+            # convert to a set, then a list to remove duplicate ids
+            ids = list(set(int(el) for el in search_string.split(",")))
         except ValueError:
             raise forms.ValidationError(
                 "Must be a comma-separated list of positive integer identifiers"
             )
 
-        if len(ids) == 0 or len(ids) != len(set(ids)) or any([el < 0 for el in ids]):
-            raise forms.ValidationError(
-                "At least one positive identifer must exist and must be unique"
-            )
+        if len(ids) == 0 or any([el < 0 for el in ids]):
+            raise forms.ValidationError("At least one positive identifier must exist")
 
         return ids
 
