@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.23.0
+      - python-requests/2.26.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/51001/recordsperpage/100.json
   response:
@@ -17,7 +17,7 @@ interactions:
       string: '{"results":[{"bookTitle":"Molecular Basis of Thyroid Hormone Action","REFERENCE_ID":51001,"ABSTRACT":"","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/51001","hasPDF":false,"YEAR":1983,"allAuthors":["Schwartz,
         HL","Oppenheimer, J. H.; Samuels, H. H."],"HEROID":51001,"id":51001,"referencetype":["book/book
         chapter"],"type":"reference","sortYear":1983,"tag_path_text":["IRIS|Perchlorate"],"PROJECTS":[{"PROJECT":"Perchlorate","PROJECT_ID":33,"USAGES":[]}],"tag_path_key":["2|33"],"firstAuthor":"Schwartz","AUTHORS":"Schwartz,
-        HL","noPDFAvailable":false,"tag_path_type":["category|project"],"isPeerReviewed":false,"code":"bk","isDeleted":false,"isPublic":false,"hasPublicDoc":false,"SOURCE":"","TITLE":"Effect
+        HL","noPDFAvailable":false,"tag_path_type":["category|project"],"isPeerReviewed":false,"code":"bk","isDeleted":false,"REDIRECT_DATA":{},"isPublic":false,"hasPublicDoc":false,"SOURCE":"","TITLE":"Effect
         of thyroid hormone on growth and development","modified":"2018-04-18T18:27:01Z","PMID":"","_version_":1598109539563995139}],"isValid":true,"message":"Success","error":""} '
     headers:
       Connection:
@@ -25,16 +25,18 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 01 Apr 2020 15:24:49 GMT
+      - Wed, 26 Jan 2022 16:22:48 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.41 (Win64) OpenSSL/1.1.1c mod_jk/1.2.46
+      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
       Set-Cookie:
-      - CFID=36407180; Expires=Thu, 02-Apr-2020 15:24:49 GMT; Path=/; HttpOnly
-      - CFTOKEN=80857292; Expires=Thu, 02-Apr-2020 15:24:49 GMT; Path=/; HttpOnly
-      - JSESSIONID=75CFB9B6309AC52BEA4412467F9DED28.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2020%2F04%2F01%2011%3A24%3A49; Path=/
+      - CFID=9523739; Expires=Thu, 27-Jan-2022 16:22:48 GMT; Path=/; HttpOnly
+      - CFTOKEN=67690806; Expires=Thu, 27-Jan-2022 16:22:48 GMT; Path=/; HttpOnly
+      - JSESSIONID=8B7B7D5C7ECBE32626E1743F337771DA.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2022%2F01%2F26%2011%3A22%3A48; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains; preload
       Transfer-Encoding:
       - chunked
     status:
