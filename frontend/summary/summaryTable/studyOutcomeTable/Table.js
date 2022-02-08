@@ -370,6 +370,9 @@ class Table extends Component {
                         className={
                             editable && editingSubheader && editIndex == idx ? "bg-light" : null
                         }
+                        style={
+                            editable && editingSubheader && editIndex == idx ? {minWidth: 300} : {}
+                        }
                         colSpan={subheader.length}>
                         {editable && editingSubheader && editIndex == idx ? (
                             <EditSubheaderForm store={store} shIdx={idx} />
@@ -426,6 +429,11 @@ class Table extends Component {
                                         editable && editingColumn && editIndex == idx
                                             ? "bg-light"
                                             : null
+                                    }
+                                    style={
+                                        editable && editingColumn && editIndex == idx
+                                            ? {minWidth: 300}
+                                            : {}
                                     }>
                                     {editable && editingColumn && editIndex == idx ? (
                                         <EditColumnForm store={store} colIdx={idx} />
@@ -470,7 +478,7 @@ class Table extends Component {
                                             }`}
                                             style={
                                                 editable && store.editingCell(rowIdx, colIdx)
-                                                    ? {}
+                                                    ? {minWidth: 300}
                                                     : {backgroundColor: content.backgroundColor}
                                             }>
                                             {editable && store.editingCell(rowIdx, colIdx) ? (
