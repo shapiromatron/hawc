@@ -1,10 +1,42 @@
-{% extends "crumbless.html" %}
+{% load static %}
 
-{% block title %}500 | HAWC{% endblock %}
-
-{% block content %}
-  <div class="jumbotron">
-    <h1>Error 500.</h1>
-    <p>Ohh goodness, something went wrong on HAWC server-side. An administrator has already been emailed what went wrong, but please <a href="{% url 'contact' %}">contact us</a> if urgent.</p>
-  </div>
-{% endblock content %}
+<!DOCTYPE html>
+<html class="js" lang="en-us">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="NONE,NOARCHIVE" />
+    <title>500 | HAWC</title>
+    <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
+    <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
+    <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
+    <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.5.3/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
+  </head>
+  <body class="html">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a class="ml-3 navbar-brand" href="{% url 'home' %}"><img alt="The website logo" src="/static/img/HAWC-40.png"></a>
+      <ul class="navbar-nav navbar-collapse justify-content-end">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-8 offset-2">
+          <div class="jumbotron mt-5">
+            <h1>Error 500.</h1>
+            <p>Ohh goodness, something went wrong on HAWC server-side. An administrator has already been emailed what went wrong, but please <a href="{% url 'contact' %}">contact us</a> if it's urgent.</p>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </body>
+</html>
