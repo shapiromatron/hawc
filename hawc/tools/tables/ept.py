@@ -380,7 +380,7 @@ class EvidenceProfileTable(BaseTable):
         hide_evidence = self.exposed_human.hide_content and self.animal.hide_content
 
         if not (hide_evidence and self.mechanistic.hide_content):
-            text = tag_wrapper("Evidence Summary and Interpretation", "h1")
+            text = tag_wrapper("Evidence Summary and Interpretation", "h2")
             cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
         rows = 1
 
@@ -401,7 +401,7 @@ class EvidenceProfileTable(BaseTable):
             rows = self.mechanistic.rows
 
         if not self.summary_judgement.hide_content:
-            text = tag_wrapper("Inferences and Summary Judgment", "h1")
+            text = tag_wrapper("Inferences and Summary Judgment", "h2")
             if hide_evidence and self.mechanistic.hide_content:
                 cells.append(GenericCell.parse_args(True, 0, 0, 1, 1, text))
                 self.summary_judgement.row = 1

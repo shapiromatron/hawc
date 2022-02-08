@@ -7,7 +7,7 @@
 {% block content %}
 <div class="col-md-8 col-md-offset-2">
 
-<h1 id="preparing-endnote-exports-for-upload">Preparing EndNote exports for upload</h1>
+<h2 id="preparing-endnote-exports-for-upload">Preparing EndNote exports for upload</h2>
 
 <p>Download these <a href="{% static 'docs/ris/Endnote_to_HAWC_11-25-15.pdf' %}">instructions (pdf).</a></p>
 
@@ -31,7 +31,7 @@
 
 <hr>
 
-<h2 id="importing-data-into-endnote">Importing data into EndNote</h2>
+<h3 id="importing-data-into-endnote">Importing data into EndNote</h3>
 
 <p>Custom HAWC-specific filters (for importing references into EndNote) and styles (from exporting references from EndNote) are available for use.</p>
 
@@ -55,13 +55,13 @@
 
 
 
-<h3 id="pubmed">PubMed:</h3>
+<h4 id="pubmed">PubMed:</h4>
 
 <p>For PubMed import into EndNote, use the Medline format and save the text file. Import using PubMed filter customized for HAWC imports (<kbd>HAWC_PubMed</kbd>). “NLM” will appear in Database Name field.</p>
 
 
 
-<h4 id="copying-the-pmid-into-the-custom-8-field">Copying the PMID into the Custom 8 field</h4>
+<h5 id="copying-the-pmid-into-the-custom-8-field">Copying the PMID into the Custom 8 field</h5>
 
 <ul>
 <li>Select all PubMed references (<kbd>ctrl-A</kbd> selects all showing references) </li>
@@ -78,13 +78,13 @@
 
 
 
-<h3 id="web-of-science">Web of Science</h3>
+<h4 id="web-of-science">Web of Science</h4>
 
 <p>For Web of Science import into EndNote, search the Core Collection, save to “Endnote Desktop” and select “Full Record” for the record content. Import records using ICI filter customized for HAWC imports (<kbd>HAWC_WOS</kbd>).</p>
 
 
 
-<h4 id="adding-the-database-name-not-included-in-the-export">Adding the “Database name” not included in the export</h4>
+<h5 id="adding-the-database-name-not-included-in-the-export">Adding the “Database name” not included in the export</h5>
 
 <p>Select all references which were imported from Web of Science. Add the text “WOS” to the Name of Database Field as follows:</p>
 
@@ -101,7 +101,7 @@
 
 
 
-<h3 id="scopus">Scopus:</h3>
+<h4 id="scopus">Scopus:</h4>
 
 <p>For exporting Scopus results into EndNote, use the RIS format and be sure to Specify fields to be exported including the Citation information, DOI, PMID, Abstract etc. Import into EndNote using Scopus filter customized for HAWC imports (<kbd>HAWC_Scopus_RIS</kbd>).</p>
 
@@ -109,25 +109,25 @@
 
 
 
-<h3 id="embase">Embase:</h3>
+<h4 id="embase">Embase:</h4>
 
 <p>For importing Embase into EndNote, use the export format “Plain Text” and choose “Full Record” Output.  Import into EndNote using the <kbd>HAWC_Embase_TEXT</kbd> filter.</p>
 
 
 
-<h4 id="adding-the-database-name-not-included-in-the-export-1">Adding the “Database name” not included in the export</h4>
+<h5 id="adding-the-database-name-not-included-in-the-export-1">Adding the “Database name” not included in the export</h5>
 
 <p>Use the same process above in Web of Science instructions. However, use the following three-letter code for Embase for proper HAWC import: “EMB”.</p>
 
 
 
-<h4 id="copying-the-pmid-into-the-custom-8-field-1">Copying the PMID into the Custom 8 field</h4>
+<h5 id="copying-the-pmid-into-the-custom-8-field-1">Copying the PMID into the Custom 8 field</h5>
 
 <p>Use the same process as above in the PubMed instructions.</p>
 
 
 
-<h4 id="add-the-doi-field">Add the DOI field</h4>
+<h5 id="add-the-doi-field">Add the DOI field</h5>
 
 <ol>
 <li>Use the same process as described above for PubMed for copying the PMID field into the Custom 8 field, excepting using the URL field as the source and the DOI field as the destination.</li>
@@ -141,7 +141,7 @@
 
 <hr>
 
-<h2 id="removing-duplicates-in-endnote">Removing Duplicates (in EndNote)</h2>
+<h3 id="removing-duplicates-in-endnote">Removing Duplicates (in EndNote)</h3>
 
 <p>Use your preferred method of ensuring there are no duplicates within your list. <br>
 Also remove duplicates of items already in your HAWC project.</p>
@@ -162,14 +162,14 @@ Also remove duplicates of items already in your HAWC project.</p>
 
 <hr>
 
-<h2 id="exporting-from-endnote-for-hawc-import">Exporting from EndNote for HAWC import</h2>
+<h3 id="exporting-from-endnote-for-hawc-import">Exporting from EndNote for HAWC import</h3>
 
 <p>Select references to be exported. Export using customized <kbd>HAWC_Export_RIS</kbd> style. <br>
  </p>
 
 <hr>
 
-<h2 id="endnote-tutorial-adding-filters-and-styles">(EndNote tutorial) Adding filters and styles</h2>
+<h3 id="endnote-tutorial-adding-filters-and-styles">(EndNote tutorial) Adding filters and styles</h3>
 
 <ol>
 <li>Locate your Endnote folder on your computer (probably under <kbd>My Documents</kbd>).  Inside it you will see a <kbd>Styles</kbd> folder and a <kbd>Filters</kbd> folder. </li>
@@ -187,7 +187,7 @@ Also remove duplicates of items already in your HAWC project.</p>
 
 <hr>
 
-<h2 id="endnote-tutorial-changing-reference-list-display-fields">(EndNote tutorial) Changing reference list-display fields</h2>
+<h3 id="endnote-tutorial-changing-reference-list-display-fields">(EndNote tutorial) Changing reference list-display fields</h3>
 
 <p>You may display 10 fields at a time in your library view window. You may change them in the library screen (one at a time) or go to the <kbd>Preferences</kbd> window to make multiple changes at once.  To change which fields are showing within the library window, right-click in the header bar where you would like to add a column. A list of fields will open showing the fields in use in black text with a check, and fields not displayed grayed out.</p>
 

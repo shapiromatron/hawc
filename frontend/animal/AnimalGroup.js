@@ -160,7 +160,7 @@ class AnimalGroup {
     render($div) {
         $div.append(
             this.build_details_table(),
-            $("<h2>Dosing regime</h2>"),
+            $("<h3>Dosing regime</h3>"),
             this.build_dr_details_table()
         );
     }
