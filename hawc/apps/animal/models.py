@@ -1,6 +1,5 @@
 import collections
 import json
-import logging
 import math
 from itertools import chain
 from typing import Any, Dict
@@ -10,7 +9,7 @@ import pandas as pd
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models, transaction
+from django.db import models
 from django.forms import ModelForm
 from django.urls import reverse
 from reversion import revisions as reversion
@@ -28,8 +27,6 @@ from ..common.helper import (
 from ..study.models import Study
 from ..vocab.models import Term
 from . import constants, managers
-
-logger = logging.getLogger(__name__)
 
 
 class Experiment(models.Model):
@@ -588,11 +585,6 @@ class DosingRegime(models.Model):
 
     def get_study(self):
         return self.dosed_animals.get_study()
-
-    def sync_dose_groups(self):
-        """Ensure endpoint groups and dose groups are synced."""
-        endpoints = Endpoint.objects.filter(animal_group__dosing_regime=self, data_extracted=True)
-        EndpointGroup._sync_dose_groups(endpoints, self.num_dose_groups)
 
 
 class DoseGroup(models.Model):
@@ -1320,12 +1312,6 @@ class Endpoint(BaseEndpoint):
     def get_noel_names(self):
         return self.assessment.get_noel_names()
 
-    def sync_dose_groups(self):
-        """Ensure endpoint groups and dose groups are synced"""
-        if self.data_extracted is False:
-            return
-        EndpointGroup._sync_dose_groups([self], self.animal_group.dosing_regime.num_dose_groups)
-
 
 class ConfidenceIntervalsMixin:
     """
@@ -1524,8 +1510,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
 
     class Meta:
         ordering = ("endpoint", "dose_group_id")
-        # TODO - test; make sure no issues....
-        unique_together = (("endpoint", "dose_group_id"),)
 
     def clean(self):
         self.significant = self.significance_level is not None and self.significance_level > 0
@@ -1587,40 +1571,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             ser["dose_group_id"] == endpoint["LOEL"],
             ser["dose_group_id"] == endpoint["FEL"],
         )
-
-    @classmethod
-    def _sync_dose_groups(cls, endpoints, num_dose_groups: int):
-        """
-        Ensure endpoint groups and dose groups are synced.
-
-        Whenever a dosing regime has changed, it's possible that the number of dose-groups may
-        have also changed, which could cause animal.Endpoints to become out of sync. This signal
-        ensures that the number of dose groups between two tables are consistent.
-        """
-
-        existing = {
-            (v[1], v[2]): v[0]
-            for v in cls.objects.filter(endpoint__in=endpoints).values_list(
-                "id", "endpoint_id", "dose_group_id"
-            )
-        }
-        creates = []
-        for dg_id in list(range(num_dose_groups)):
-            for endpoint in endpoints:
-                key = (endpoint.id, dg_id)
-                if key in existing:
-                    del existing[key]
-                else:
-                    creates.append(cls(endpoint_id=endpoint.id, dose_group_id=dg_id))
-        deletes = list(existing.values())
-
-        with transaction.atomic():
-            if len(creates) > 0:
-                logger.info(f"creating {len(creates)} Endpoint Groups")
-                cls.objects.bulk_create(creates)
-            if len(deletes) > 0:
-                logger.info(f"deleting {len(deletes)} Endpoint Groups: {deletes}")
-                cls.objects.filter(id__in=deletes).delete()
 
     def copy_across_assessments(self, cw):
         old_id = self.id
