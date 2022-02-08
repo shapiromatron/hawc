@@ -39,6 +39,9 @@ class SearchSerializer(serializers.ModelSerializer):
             "last_updated",
         )
         read_only_fields = ["slug", "created", "last_updated"]
+        extra_kwargs = {
+            "search_string": {"required": True},
+        }
 
     def validate(self, data):
 
