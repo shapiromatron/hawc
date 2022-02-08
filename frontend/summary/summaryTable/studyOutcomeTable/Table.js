@@ -480,6 +480,12 @@ class Table extends Component {
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? {minWidth: 300}
                                                     : {backgroundColor: content.backgroundColor}
+                                            }
+                                            onClick={
+                                                (editable && store.editingCell(rowIdx, colIdx)) ||
+                                                col.attribute != "rob_score"
+                                                    ? null
+                                                    : store.interactiveOnClick(rowIdx, colIdx)
                                             }>
                                             {editable && store.editingCell(rowIdx, colIdx) ? (
                                                 <>
@@ -501,12 +507,16 @@ class Table extends Component {
                                               (editingRow || !editing) &&
                                               colIdx == 0 ? (
                                                 <EditButton
-                                                    handleClick={() =>
-                                                        store.setEditRowIndex(rowIdx)
-                                                    }
+                                                    handleClick={e => {
+                                                        e.stopPropagation();
+                                                        store.setEditRowIndex(rowIdx);
+                                                    }}
                                                 />
                                             ) : null}
-                                            {this.getInteractiveIcon(rowIdx, colIdx)}
+                                            {(editable && store.editingCell(rowIdx, colIdx)) ||
+                                            col.attribute == "rob_score"
+                                                ? null
+                                                : this.getInteractiveIcon(rowIdx, colIdx)}
                                             <span
                                                 style={
                                                     editable && store.editingCell(rowIdx, colIdx)
