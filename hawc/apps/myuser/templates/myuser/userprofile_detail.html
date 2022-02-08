@@ -42,10 +42,15 @@
       <th>Can create assessments</th>
       <td colspan="2">{{user.can_create_assessments}}</td>
     </tr>
-    {% if user.otp_secret %}
+    {% if user.otp_enabled %}
     <tr>
-      <th>Two factor authorization</th>
-      <td colspan="2">{{user.get_2fa_image|safe}}</td>
+      <th>Two-factor authentication</th>
+      <td colspan="2">
+        {{user.get_2fa_image|safe}}
+        <br/>
+        <p class="text-muted mb-0">Scan this QR code in an authentication application for time-based one-time password (TOPT) tokens. If you have not scanned this token and try to login in the future, you may not be able to retrieve a token for login.
+        </p>
+      </td>
     </tr>
     {% endif %}
     <tr>

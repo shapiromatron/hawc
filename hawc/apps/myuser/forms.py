@@ -183,8 +183,8 @@ class UserProfileForm(ModelForm):
     first_name = forms.CharField(label="First name", required=True)
     last_name = forms.CharField(label="Last name", required=True)
     otp_enabled = forms.BooleanField(
-        label="Two factor authentication",
-        help_text="Enable two-factor authorization. Add the QR code to an application such as Google Authenticator or Authy.",
+        label="Two-factor authentication",
+        help_text="Enable two-factor authorization. Add the QR code to an application such as Google Authenticator or Authy. If this option is enabled and you do not save the credentials to an authenticator application, you will be unable to login to your account. Currently, this option is only available to staff members.",
         required=False,
     )
 
@@ -196,7 +196,10 @@ class UserProfileForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["first_name"].initial = self.instance.user.first_name
         self.fields["last_name"].initial = self.instance.user.last_name
-        self.fields["otp_enabled"].initial = self.instance.user.otp_enabled
+        if self.instance.user.is_staff:
+            self.fields["otp_enabled"].initial = self.instance.user.otp_enabled
+        else:
+            self.fields.pop("otp_enabled")
         if self.instance.user.external_id:
             self.fields["first_name"].disabled = True
             self.fields["last_name"].disabled = True
@@ -212,16 +215,19 @@ class UserProfileForm(ModelForm):
         helper.add_row("first_name", 2, "col-md-6")
         return helper
 
+    def clean_otp_enabled(self):
+        otp_enabled = self.cleaned_data["otp_enabled"]
+        if otp_enabled is False and self.instance.user.requires_2fa:
+            raise forms.ValidationError("Two-factor authentication is required for your account.")
+        return otp_enabled
+
     def save(self, commit=True):
         # save content to both UserProfile and User
         up = super().save(commit=False)
         up.user.first_name = self.cleaned_data["first_name"]
         up.user.last_name = self.cleaned_data["last_name"]
-        if self.cleaned_data["otp_enabled"] != up.user.otp_enabled:
-            if self.cleaned_data["otp_enabled"]:
-                up.user.set_2fa_token()
-            else:
-                up.user.otp_secret = ""
+        if "otp_enabled" in self.changed_data:
+            up.user.set_2fa_token(self.cleaned_data["otp_enabled"])
         if commit:
             up.save()
             up.user.save()

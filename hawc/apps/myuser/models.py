@@ -15,7 +15,7 @@ from django.utils import timezone
 from rest_framework.authtoken.models import Token
 
 from ..common.helper import SerializerHelper
-from . import managers
+from . import constants, managers
 
 
 class HAWCUser(AbstractBaseUser, PermissionsMixin):
@@ -43,7 +43,6 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField("date joined", default=timezone.now)
 
     USERNAME_FIELD = "email"
-    CAN_CREATE_ASSESSMENTS = "can-create-assessments"
 
     class Meta:
         ordering = ("last_name",)
@@ -85,14 +84,15 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         return UserProfile.objects.create(user=self, authenticated_hero=authenticated_hero)
 
     def is_beta_tester(self):
-        return self.is_staff or self.groups.filter(name="beta tester").exists()
+        return self.is_staff or self.groups.filter(name=constants.HawcGroups.BETA_TESTER).exists()
 
     def can_create_assessments(self):
         if settings.ANYONE_CAN_CREATE_ASSESSMENTS:
             return True
         else:
             return (
-                self.is_superuser or self.groups.filter(name=self.CAN_CREATE_ASSESSMENTS).exists()
+                self.is_superuser
+                or self.groups.filter(name=constants.HawcGroups.CAN_CREATE_ASSESSMENTS).exists()
             )
 
     def get_api_token(self) -> Token:
@@ -110,8 +110,8 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         issuer = settings.ALLOWED_HOSTS[0] if len(settings.ALLOWED_HOSTS) > 0 else "hawc"
         return pyotp.TOTP(self.otp_secret, name=self.email, issuer=issuer)
 
-    def set_2fa_token(self):
-        self.otp_secret = pyotp.random_base32()
+    def set_2fa_token(self, enabled: bool = True):
+        self.otp_secret = pyotp.random_base32() if enabled else ""
 
     def check_2fa_token(self, token: str) -> bool:
         return self._get_2fa().verify(token)
@@ -124,7 +124,11 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         img = qrcode.make(self._get_2fa().provisioning_uri())
         img.save(f, format="png")
         data = b64encode(f.getvalue()).decode("utf-8")
-        return f'<img width="150px" src="data:image/png;base64,{data}" alt="Two factor QR code">'
+        return f'<img width="150px" src="data:image/png;base64,{data}" alt="Two-factor authentiation QR code">'
+
+    def requires_2fa(self):
+        has_group = self.groups.filter(name=constants.HawcGroups.REQUIRES_2FA).exists()
+        return (self.is_superuser and settings.DEBUG is False) or has_group
 
 
 class UserProfile(models.Model):
