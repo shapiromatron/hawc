@@ -11,7 +11,7 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import QuillTextInput from "shared/components/QuillTextInput";
 import IntegerInput from "shared/components/IntegerInput";
 
-import {robAttributeChoices} from "./constants";
+import {colAttributeChoices, rowTypeChoices} from "./constants";
 
 class EditButton extends Component {
     render() {
@@ -101,13 +101,12 @@ class EditRowForm extends Component {
     render() {
         const {store, rowIdx} = this.props,
             row = store.stagedEdits.rows[rowIdx],
-            typeChoices = store.rowTypeChoices,
             idChoices = store.rowIdChoices;
         return (
             <>
                 <div className="col-md-12">
                     <SelectInput
-                        choices={typeChoices}
+                        choices={rowTypeChoices[store.settings.data_source]}
                         value={row.type}
                         handleSelect={value => store.updateStagedRow(rowIdx, {type: value})}
                         label="Data type"
@@ -280,7 +279,7 @@ class EditColumnForm extends Component {
                 </div>
                 <div className="col-md-12">
                     <SelectInput
-                        choices={robAttributeChoices}
+                        choices={colAttributeChoices[store.settings.data_source]}
                         handleSelect={value => store.updateStagedColumn(colIdx, {attribute: value})}
                         value={col.attribute}
                         label="Attribute"

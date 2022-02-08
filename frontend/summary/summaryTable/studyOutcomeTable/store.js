@@ -97,6 +97,7 @@ class StudyOutcomeTableStore {
     @action.bound removeSettings() {
         this.settings.rows = [];
         this.settings.columns = [];
+        this.resetStagedEdits();
     }
     @action.bound commitStagedDataSource() {
         this.settings.data_source = this.stagedDataSource;
@@ -182,9 +183,6 @@ class StudyOutcomeTableStore {
     }
 
     // row attributes
-    @computed get rowTypeChoices() {
-        return constants.rowTypeChoices;
-    }
     @computed get rowIdChoices() {
         return _.chain(this.dataset.data)
             .uniqBy("study id")

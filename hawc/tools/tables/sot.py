@@ -19,6 +19,12 @@ NM_SHADE = "#DFDFDF"
 
 class DataSourceChoices(Enum):
     Animal = "ani"
+    Study = "study"
+
+    def get_rob_data(self, study_data):
+        study_ids = [r["study id"] for r in study_data]
+        rob_data = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
+        return rob_data
 
     def get_ani_data(self, assessment_id: int) -> Dict:
         ani_data = (
@@ -33,6 +39,14 @@ class DataSourceChoices(Enum):
         rob_data = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
 
         return {"data": ani_data, "rob": rob_data}
+
+    def get_study_data(self, assessment_id: int) -> Dict:
+        study_qs = Study.objects.filter(assessment_id=assessment_id)
+        study_df = pd.DataFrame.from_records(study_qs.values("id", "short_citation"))
+        study_data = study_df.rename(
+            columns={"id": "study id", "short_citation": "study citation"}
+        ).to_dict(orient="records")
+        return {"data": study_data, "rob": self.get_rob_data(study_data)}
 
     def get_data(self, assessment_id: int) -> Dict:
         return getattr(self, f"get_{self.value}_data")(assessment_id)
