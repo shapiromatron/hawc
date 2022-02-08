@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <h1>Assessment endpoints</h1>
+    <h2>Assessment endpoints</h2>
     <ul>
 
         {% if total_endpoints == 0 %}
@@ -36,7 +36,7 @@
     </ul>
 
     {% if total_endpoints > 0  %}
-    <h2>Dataset overview dashboards</h2>
+    <h3>Dataset overview dashboards</h3>
     <table class='table table-sm table-striped'>
         <colgroup>
             <col style="width: 40%" />
@@ -98,7 +98,7 @@
     {% endif %}
 
     {% if user.is_beta_tester  %}
-    <h2 class="betatester">Critical effects by dose</h2>
+    <h3 class="betatester">Critical effects by dose</h3>
     <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}">WIP</a></p>
     <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}?unpublished=true">WIP (unpublished)</a></p>
     {% endif %}

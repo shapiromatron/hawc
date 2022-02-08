@@ -29,7 +29,7 @@ class IVChemical {
     }
 
     build_title() {
-        var el = $("<h1>").text(this.data.name);
+        var el = $("<h2>").text(this.data.name);
         if (window.canEdit) {
             var urls = [
                 "Chemical editing",
