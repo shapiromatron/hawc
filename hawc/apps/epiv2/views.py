@@ -165,9 +165,6 @@ class ChemicalViewset(HtmxViewSet):
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         if request.method == "POST":
-            import pdb
-
-            pdb.set_trace()
             form = forms.ChemicalForm(request.POST, parent=request.item.parent)
             if form.is_valid():
                 self.perform_create(request.item, form)
