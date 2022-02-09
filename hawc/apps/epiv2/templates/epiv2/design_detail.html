@@ -33,6 +33,24 @@
     </tbody>
 </table>
 
+<h3>Criteria data table
+</h3>
+<table class="table table-condensed table-striped" id="criteria_table">
+    <colgroup>
+        <col style="width: 100%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in criteria %}
+        {% include "epiv2/components/criteria_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
+
 {% if obj_perms.edit and crud == "Read" %}
 <h3>Exposure data table</h3>
 

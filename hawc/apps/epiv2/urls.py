@@ -39,6 +39,37 @@ urlpatterns = [
         {"action": "delete"},
         name="design-delete",
     ),
+    # criteria
+    path(
+        "criteria/<int:pk>/create/",
+        views.CriteriaViewset.as_view(),
+        {"action": "create"},
+        name="criteria-create",
+    ),
+    path(
+        "chemical/<int:pk>/",
+        views.CriteriaViewset.as_view(),
+        {"action": "read"},
+        name="criteria-detail",
+    ),
+    path(
+        "chemical/<int:pk>/clone/",
+        views.CriteriaViewset.as_view(),
+        {"action": "clone"},
+        name="criteria-clone",
+    ),
+    path(
+        "chemical/<int:pk>/update/",
+        views.CriteriaViewset.as_view(),
+        {"action": "update"},
+        name="criteria-update",
+    ),
+    path(
+        "chemical/<int:pk>/delete/",
+        views.CriteriaViewset.as_view(),
+        {"action": "delete"},
+        name="criteria-delete",
+    ),
     # chemical
     path(
         "chemical/<int:pk>/create/",

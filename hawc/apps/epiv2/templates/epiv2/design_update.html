@@ -44,6 +44,32 @@
         {% endfor %}
     </tbody>
 </table>
+
+<h3>Criteria data table
+    {% if crud == "Update" %}
+    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:criteria-create' object.pk %}" hx-target="#criteria_table"
+        hx-swap="beforeend">Create</button>
+    {% endif %}
+</h3>
+<table class="table table-condensed table-striped" id="criteria_table">
+    <colgroup>
+        <col style="width: 85%;">
+        <col style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in criteria %}
+        {% include "epiv2/components/criteria_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
+
+
 <h3>Exposure data table
     {% if crud == "Update" %}
 <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposure-create' object.pk %}" hx-target="#exposure_table"
