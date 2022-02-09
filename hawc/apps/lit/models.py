@@ -814,7 +814,7 @@ class Reference(models.Model):
 
     @classmethod
     def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
-        """
+        """Bulk create studies from a list of reference ids, and a study type that will set a flag for that study
         """
 
     @property
