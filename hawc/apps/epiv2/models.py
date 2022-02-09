@@ -359,6 +359,12 @@ class DataExtraction(models.Model):
     def get_study(self):
         return self.design.get_study()
 
+    def clone(self):
+        self.id = None
+        self.sub_population = f"{self.sub_population} (2)"
+        self.save()
+        return self
+
 
 reversion.register(AgeProfile)
 reversion.register(MeasurementType)

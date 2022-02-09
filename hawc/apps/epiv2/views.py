@@ -352,7 +352,7 @@ class OutcomeViewset(HtmxViewSet):
         self.perform_clone(request.item)
         return render(request, self.detail_fragment, self.get_context_data())
 
-# Outcome viewset
+# Adjustment factor viewset
 class AdjustmentFactorViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
@@ -382,6 +382,54 @@ class AdjustmentFactorViewset(HtmxViewSet):
         template = self.form_fragment
         data = request.POST if request.method == "POST" else None
         form = forms.AdjustmentFactorForm(data=data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("post",), permission=can_edit)
+    def clone(self, request: HttpRequest, *args, **kwargs):
+        self.perform_clone(request.item)
+        return render(request, self.detail_fragment, self.get_context_data())
+
+# Data extraction viewset
+class DataExtractionViewset(HtmxViewSet):
+    actions = {"create", "read", "update", "delete", "clone"}
+    parent_model = models.Design
+    model = models.DataExtraction
+    form_fragment = "epiv2/components/data_extraction_edit_row.html"
+    detail_fragment = "epiv2/components/data_extraction_row.html"
+
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.DataExtractionForm(request.POST, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.DataExtractionForm()
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.DataExtractionForm(data=data, instance=request.item.object)
         if request.method == "POST" and form.is_valid():
             self.perform_update(request.item, form)
             template = self.detail_fragment

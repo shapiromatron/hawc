@@ -225,4 +225,35 @@ urlpatterns = [
         {"action": "delete"},
         name="adjustment_factor-delete",
     ),
+    # data extraction
+    path(
+        "data_extraction/<int:pk>/create/",
+        views.DataExtractionViewset.as_view(),
+        {"action": "create"},
+        name="data_extraction-create",
+    ),
+    path(
+        "data_extraction/<int:pk>/",
+        views.DataExtractionViewset.as_view(),
+        {"action": "read"},
+        name="data_extraction-detail",
+    ),
+    path(
+        "data_extraction/<int:pk>/clone/",
+        views.DataExtractionViewset.as_view(),
+        {"action": "clone"},
+        name="data_extraction-clone",
+    ),
+    path(
+        "data_extraction/<int:pk>/update/",
+        views.DataExtractionViewset.as_view(),
+        {"action": "update"},
+        name="data_extraction-update",
+    ),
+    path(
+        "data_extraction/<int:pk>/delete/",
+        views.DataExtractionViewset.as_view(),
+        {"action": "delete"},
+        name="data_extraction-delete",
+    ),
 ]

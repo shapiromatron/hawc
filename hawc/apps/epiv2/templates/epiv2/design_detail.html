@@ -142,6 +142,43 @@
     </tbody>
 </table>
 
+<h3>Data Extractions data table
+    {% if crud == "Update" %}
+    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:data_extraction-create' object.pk %}"
+        hx-target="#data_extraction_table" hx-swap="beforeend">Create</button>
+    {% endif %}
+</h3>
+<table class="table table-condensed table-striped" id="data_extraction_table">
+    <colgroup>
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+        <col style="width: 20%;">
+        <col style="width: 5%;">
+        <col style="width: 5%;">
+        <col style="width: 5%;">
+        <col style="width: 5%;">
+        <col style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Sub population</th>
+            <th>Outcome</th>
+            <th>Exposure Level</th>
+            <th>Measurement Timing</th>
+            <th>N</th>
+            <th>Effect Estimate</th>
+            <th>P-Value</th>
+            <th>Confidence</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in data_extractions %}
+        {% include "epiv2/components/data_extraction_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
 {% endif %}
 
 {% endblock %}

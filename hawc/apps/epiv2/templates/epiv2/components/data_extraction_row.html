@@ -1,0 +1,35 @@
+<tr hx-target="this" hx-swap="outerHTML">
+    <td>{{object.sub_population}}</td>
+    <td>{{object.outcome}}</td>
+    <td>{{object.exposure_level}}</td>
+    <td>{{object.measurement_timing}}</td>
+    <td>{{object.n}}</td>
+    <td>{{object.effect_estimate}}</td>
+    <td>{{object.pvalue}}</td>
+    <td>{{object.confidence}}</td>
+    <td>{{object.comments}}</td>
+    {% if action == 'delete' %}
+    <td>
+        <form class="alert alert-danger">
+            {% csrf_token %}
+            <i class="fa fa-fw fa-exclamation-triangle mx-1"></i>Are you sure you want to delete?
+            <div class="d-flex flex-row-reverse">
+                <button class="btn btn-sm btn-danger mx-1" hx-post="{% url 'epiv2:data_extraction-delete' object.pk %}"
+                    hx-swap="outerHTML swap:1s">Confirm</button>
+                <button class="btn btn-sm btn-secondary mx-1"
+                    hx-get="{% url 'epiv2:chemical-detail' object.pk %}">Cancel</button>
+            </div>
+        </form>
+    </td>
+    {% elif permissions.edit or obj_perms.edit and crud == "Update" %}
+    <td>
+        <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:data_extraction-update' object.pk %}">
+            Edit</button>
+        <button class="btn btn-sm btn-danger" hx-get="{% url 'epiv2:data_extraction-delete' object.pk %}">
+            Delete</button>
+        <button class="btn btn-sm btn-secondary" hx-post="{% url 'epiv2:data_extraction-clone' object.pk %}"
+            hx-target="#data_extraction_table" hx-swap="beforeend">
+            Clone</button>
+    </td>
+    {% endif %}
+</tr>
