@@ -115,6 +115,12 @@ class Chemical(models.Model):
     def __str__(self):
         return self.name
 
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
+
 
 class Criteria(models.Model):
     objects = managers.CriteriaManager()

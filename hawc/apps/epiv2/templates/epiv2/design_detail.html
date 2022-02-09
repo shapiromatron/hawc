@@ -13,68 +13,26 @@
 </div>
 {% endif %}
 
-<div id="design-div" hx-target="this">
-<table class="table table-condensed table-striped" id="design_table">
-    <tbody class="">
-        <tr class="row">
-            <td class="col-md-4">
-                <b class="d-block"> Study design</b>
-                {{object.study_design}}
-            </td>
-            <td class="col-md-4">
-                <b class="d-block">Source</b>
-                {{object.source}}
-            </td>
-            <td class="col-md-4">
-                <b class="d-block">Population age category</b>
-                {{object.age_profile}}
-            </td>
+{% include "epiv2/components/design_detail_frag.html" %}
+<h3>Chemical data table</h3>
+<table class="table table-condensed table-striped" id="chemical_table">
+    <colgroup>
+        <col style="width: 50%;">
+        <col style="width: 50%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>DTXSID</th>
         </tr>
-        <tr class="row">
-            <td class="col-md-4">
-                <b class="d-block">Population age details</b>
-                {{object.age_description}}
-            </td>
-            <td class="col-md-4">
-                <b class="d-block">Sex</b>
-                {{object.sex}}
-            </td>
-            <td class="col-md-4">
-                <b class="d-block">Population race/ethnicity</b>
-                {{object.race}}
-            </td>
-        </tr>
-        <tr class="row">
-            <td class="col-md-6">
-                <b class="d-block">Population Summary</b>
-                {{object.summary}}
-            </td>
-            <td class="col-md-6">
-                <b class="d-block">Study name</b>
-                {{object.study}}
-            </td>
-        </tr>
-        <tr class="row">
-            <td class="col-md-3">
-                <b class="d-block">Countries</b>
-                {{object.countries}}
-            </td>
-            <td class="col-md-3">
-                <b class="d-block">Other geographic information</b>
-                {{object.region}}
-            </td>
-            <td class="col-md-3">
-                <b class="d-block">Year(s) of data collection</b>
-                {{object.years}}
-            </td>
-            <td class="col-md-3">
-                <b class="d-block">Overall study population N</b>
-                {{object.participant_n}}
-            </td>
-        </tr>
+    </thead>
+    <tbody>
+        {% for object in chemical %}
+        {% include "epiv2/components/chemical_row.html" %}
+        {% endfor %}
     </tbody>
 </table>
-</div>
+
 {% if obj_perms.edit and crud == "Read" %}
 <h3>Exposure data table</h3>
 
