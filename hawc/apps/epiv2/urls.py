@@ -194,4 +194,35 @@ urlpatterns = [
         {"action": "delete"},
         name="outcome-delete",
     ),
+    # adjustment factor
+    path(
+        "adjustment_factor/<int:pk>/create/",
+        views.AdjustmentFactorViewset.as_view(),
+        {"action": "create"},
+        name="adjustment_factor-create",
+    ),
+    path(
+        "adjustment_factor/<int:pk>/",
+        views.AdjustmentFactorViewset.as_view(),
+        {"action": "read"},
+        name="adjustment_factor-detail",
+    ),
+    path(
+        "adjustment_factor/<int:pk>/clone/",
+        views.AdjustmentFactorViewset.as_view(),
+        {"action": "clone"},
+        name="adjustment_factor-clone",
+    ),
+    path(
+        "adjustment_factor/<int:pk>/update/",
+        views.AdjustmentFactorViewset.as_view(),
+        {"action": "update"},
+        name="adjustment_factor-update",
+    ),
+    path(
+        "adjustment_factor/<int:pk>/delete/",
+        views.AdjustmentFactorViewset.as_view(),
+        {"action": "delete"},
+        name="adjustment_factor-delete",
+    ),
 ]
