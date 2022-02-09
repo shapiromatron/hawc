@@ -125,6 +125,32 @@ class ExposureForm(forms.ModelForm):
         return helper
 
 
+class ExposureLevelForm(forms.ModelForm):
+    class Meta:
+        model = models.ExposureLevel
+        exclude = ("design",)
+        labels = {}
+
+    def __init__(self, *args, **kwargs):
+        design = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if design:
+            self.instance.design = design
+
+    @property
+    def helper(self):
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) == forms.Textarea:
+                widget.attrs["rows"] = 3
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("name", 4, "col-md-3")
+        helper.add_row("central_tendency", 6, "col-md-2")
+        helper.add_row("neg_exposure", 3, ["col-md-3", "col-md-4", "col-md-3"])
+        return helper
+
+
 class OutcomeForm(forms.ModelForm):
     class Meta:
         model = models.Outcome
