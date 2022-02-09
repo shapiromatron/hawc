@@ -31,8 +31,12 @@ class DesignUpdate(BaseUpdate):
         context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
         context["criteria"] = models.Criteria.objects.filter(design__id=self.object.pk)
         context["exposure_levels"] = models.ExposureLevel.objects.filter(design__id=self.object.pk)
-        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(design__id=self.object.pk)
-        context["data_extractions"] = models.DataExtraction.objects.filter(design__id=self.object.pk)
+        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(
+            design__id=self.object.pk
+        )
+        context["data_extractions"] = models.DataExtraction.objects.filter(
+            design__id=self.object.pk
+        )
         return context
 
 
@@ -46,8 +50,12 @@ class DesignDetail(BaseDetail):
         context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
         context["criteria"] = models.Criteria.objects.filter(design__id=self.object.pk)
         context["exposure_levels"] = models.ExposureLevel.objects.filter(design__id=self.object.pk)
-        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(design__id=self.object.pk)
-        context["data_extractions"] = models.DataExtraction.objects.filter(design__id=self.object.pk)
+        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(
+            design__id=self.object.pk
+        )
+        context["data_extractions"] = models.DataExtraction.objects.filter(
+            design__id=self.object.pk
+        )
         return context
 
 
@@ -352,6 +360,7 @@ class OutcomeViewset(HtmxViewSet):
         self.perform_clone(request.item)
         return render(request, self.detail_fragment, self.get_context_data())
 
+
 # Adjustment factor viewset
 class AdjustmentFactorViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
@@ -399,6 +408,7 @@ class AdjustmentFactorViewset(HtmxViewSet):
     def clone(self, request: HttpRequest, *args, **kwargs):
         self.perform_clone(request.item)
         return render(request, self.detail_fragment, self.get_context_data())
+
 
 # Data extraction viewset
 class DataExtractionViewset(HtmxViewSet):
