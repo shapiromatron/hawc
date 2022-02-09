@@ -812,6 +812,11 @@ class Reference(models.Model):
         # run chained tasks
         return chain(t1, t2)()
 
+    @classmethod
+    def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
+        """
+        """
+
     @property
     def ref_full_citation(self):
         # must be prefixed w/ ref b/c study.Study has the same property

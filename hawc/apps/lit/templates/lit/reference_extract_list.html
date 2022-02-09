@@ -6,7 +6,8 @@
     {% if object_list.count > 0 %}
         <table class="table table-compressed">
             <colgroup>
-                <col style='width:20%'></col>
+                <col style='width:5%'></col>
+                <col style='width:15%'></col>
                 <col style='width:40%'></col>
                 <col style='width:10%'></col>
                 <col style='width:20%'></col>
@@ -14,6 +15,7 @@
             </colgroup>
             <thead>
                 <tr>
+                    <th></th>
                     <th>Authors</th>
                     <th>Title</th>
                     <th>Year</th>
@@ -23,6 +25,7 @@
             </thead>
             {% for object in object_list %}
                 <tr>
+                    <td><input type="checkbox"></td>
                     <td>{{object.authors}}</td>
                     <td>{{object.title}}</td>
                     <td>{{object.year}}</td>
