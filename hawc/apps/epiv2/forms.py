@@ -52,6 +52,30 @@ class DesignForm(forms.ModelForm):
         return helper
 
 
+class ChemicalForm(forms.ModelForm):
+    class Meta:
+        model = models.Chemical
+        exclude = ("design",)
+        labels = {}
+
+        def __init__(self, *args, **kwargs):
+            design = kwargs.pop("parent", None)
+            super().__init__(*args, **kwargs)
+            if design:
+                self.instance.design = design
+
+        @property
+        def helper(self):
+            for fld in list(self.fields.keys()):
+                widget = self.fields[fld].widget
+                if type(widget) == forms.Textarea:
+                    widget.attrs["rows"] = 3
+            helper = BaseFormHelper(self)
+            helper.form_tag = False
+            helper.add_row("name", 2, "col-md-3")
+            return helper
+
+
 class ExposureForm(forms.ModelForm):
     class Meta:
         model = models.Exposure
