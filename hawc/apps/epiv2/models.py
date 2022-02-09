@@ -300,6 +300,12 @@ class AdjustmentFactor(models.Model):
     def __str__(self):
         return self.name
 
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
+
 
 class DataExtraction(models.Model):
     objects = managers.DataExtractionManager()

@@ -90,7 +90,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for object in exposurelevels %}
+        {% for object in exposure_levels %}
         {% include "epiv2/components/exposurelevel_row.html" %}
         {% endfor %}
     </tbody>
@@ -117,6 +117,31 @@
         {% endfor %}
     </tbody>
 </table>
+
+<h3>Adjustment Factors data table
+    {% if crud == "Update" %}
+    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:adjustment_factor-create' object.pk %}"
+        hx-target="#adjustment_factor_table" hx-swap="beforeend">Create</button>
+    {% endif %}
+</h3>
+<table class="table table-condensed table-striped" id="adjustment_factor_table">
+    <colgroup>
+        <col style="width: 50%;">
+        <col style="width: 50%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in adjustment_factors %}
+        {% include "epiv2/components/adjustment_factor_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endif %}
 
 {% endblock %}
