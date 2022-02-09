@@ -43,8 +43,8 @@ class DesignForm(forms.ModelForm):
                 "cancel_url": self.instance.study.get_absolute_url(),
             }
 
-        helper = BaseFormHelper(self, **inputs)
-
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
         helper.add_row("study_design", 3, "col-md-4")
         helper.add_row("age_description", 3, "col-md-4")
         helper.add_row("summary", 2, "col-md-6")
@@ -72,6 +72,8 @@ class ExposureForm(forms.ModelForm):
                 widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.add_row("name", 3, "col-md-3")
+        helper.add_row("measurement_timing", 4, "col-md-3")
         return helper
 
 

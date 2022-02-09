@@ -1,0 +1,19 @@
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block content %}
+  {% crispy form %}
+{% endblock %}
+<div class="d-block container">
+  <div class="pull-right">
+<button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:design-update' object.pk %}"
+  hx-encoding="multipart/form-data">
+  Save</button>
+<button class="btn btn-sm btn-light" hx-get="{% url 'epiv2:design-detail' object.pk %}">
+  Cancel</button>
+  </div>
+</div>

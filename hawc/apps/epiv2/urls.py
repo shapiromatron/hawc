@@ -8,6 +8,37 @@ urlpatterns = [
     path("design/<int:pk>/update/", views.DesignUpdate.as_view(), name="design_update",),
     path("design/<int:pk>/", views.DesignDetail.as_view(), name="design_detail",),
     path("design/<int:pk>/delete/", views.DesignDelete.as_view(), name="design_delete",),
+    # design htmx viewset
+    path(
+        "designv2/<int:pk>/create/",
+        views.DesignViewset.as_view(),
+        {"action": "create"},
+        name="design-create",
+    ),
+    path(
+        "designv2/<int:pk>/",
+        views.DesignViewset.as_view(),
+        {"action": "read"},
+        name="design-detail",
+    ),
+    path(
+        "designv2/<int:pk>/clone/",
+        views.DesignViewset.as_view(),
+        {"action": "clone"},
+        name="design-clone",
+    ),
+    path(
+        "designv2/<int:pk>/update/",
+        views.DesignViewset.as_view(),
+        {"action": "update"},
+        name="design-update",
+    ),
+    path(
+        "designv2/<int:pk>/delete/",
+        views.DesignViewset.as_view(),
+        {"action": "delete"},
+        name="design-delete",
+    ),
     # exposure
     path(
         "exposure/<int:pk>/create/",

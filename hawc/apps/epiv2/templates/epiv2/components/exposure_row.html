@@ -13,7 +13,7 @@
             </div>
         </form>
     </td>
-    {% elif permissions.edit or obj_perms.edit %}
+    {% elif permissions.edit or obj_perms.edit and crud == "Update" %}
     <td>
         <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposure-update' object.pk %}">
             Edit</button>

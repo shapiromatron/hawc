@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2 class="d-inline-block">{{object.name}}</h2>
+<h2 class="d-inline-block">{{object.summary}}</h2>
 {% if obj_perms.edit and crud == "Read" %}
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -13,47 +13,100 @@
 </div>
 {% endif %}
 
-<p>Design metadata here... (to add later)... </p>
-
+<div id="design-div" hx-target="this">
+<table class="table table-condensed table-striped" id="design_table">
+    <tbody class="">
+        <tr class="row">
+            <td class="col-md-4">
+                <b class="d-block"> Study design</b>
+                {{object.study_design}}
+            </td>
+            <td class="col-md-4">
+                <b class="d-block">Source</b>
+                {{object.source}}
+            </td>
+            <td class="col-md-4">
+                <b class="d-block">Population age category</b>
+                {{object.age_profile}}
+            </td>
+        </tr>
+        <tr class="row">
+            <td class="col-md-4">
+                <b class="d-block">Population age details</b>
+                {{object.age_description}}
+            </td>
+            <td class="col-md-4">
+                <b class="d-block">Sex</b>
+                {{object.sex}}
+            </td>
+            <td class="col-md-4">
+                <b class="d-block">Population race/ethnicity</b>
+                {{object.race}}
+            </td>
+        </tr>
+        <tr class="row">
+            <td class="col-md-6">
+                <b class="d-block">Population Summary</b>
+                {{object.summary}}
+            </td>
+            <td class="col-md-6">
+                <b class="d-block">Study name</b>
+                {{object.study}}
+            </td>
+        </tr>
+        <tr class="row">
+            <td class="col-md-3">
+                <b class="d-block">Countries</b>
+                {{object.countries}}
+            </td>
+            <td class="col-md-3">
+                <b class="d-block">Other geographic information</b>
+                {{object.region}}
+            </td>
+            <td class="col-md-3">
+                <b class="d-block">Year(s) of data collection</b>
+                {{object.years}}
+            </td>
+            <td class="col-md-3">
+                <b class="d-block">Overall study population N</b>
+                {{object.participant_n}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
 {% if obj_perms.edit and crud == "Read" %}
 <h3>Exposure data table</h3>
-<button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposure-create' object.pk %}"
-    hx-target="#exposure_table" hx-swap="beforeend"
-    >Create</button>
+
 <table class="table table-condensed table-striped" id="exposure_table">
     <colgroup>
-        <col style="width: 85%;">
-        <col style="width: 15%;">
+        <col style="width: 100%;">
     </colgroup>
     <thead>
         <tr>
             <th>Name</th>
-            <th>Edit</th>
         </tr>
     </thead>
     <tbody>
-        {% for exposure in exposures %}
+        {% for object in exposures %}
             {% include "epiv2/components/exposure_row.html" %}
         {% endfor %}
     </tbody>
 </table>
 
 <h3>Outcome data table</h3>
-<button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:outcome-create' object.pk %}"
-    hx-target="#outcome_table" hx-swap="beforeend">Create</button>
+
 <table class="table table-condensed table-striped" id="outcome_table">
     <colgroup>
-        <col style="width: 25%;">
-        <col style="width: 30%;">
-        <col style="width: 30%;">
-        <col style="width: 15%;">
+        <col style="width: 33%;">
+        <col style="width: 33%;">
+        <col style="width: 33%;">
     </colgroup>
     <thead>
         <tr>
             <th>Name</th>
             <th>Health Outcome</th>
             <th>Health Outcome System</th>
-            <th>Edit</th>
         </tr>
     </thead>
     <tbody>

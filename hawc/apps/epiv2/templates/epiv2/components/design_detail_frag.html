@@ -1,0 +1,62 @@
+<div id="design-div">
+    <table class="table table-condensed table-striped" id="design_table">
+        <tbody class="container-fluid">
+            <tr class="row">
+                <td class="col-md-4">
+                    <b class="d-block"> Study design</b>
+                    {{object.study_design}}
+                </td>
+                <td class="col-md-4">
+                    <b class="d-block">Source</b>
+                    {{object.source}}
+                </td>
+                <td class="col-md-4">
+                    <b class="d-block">Population age category</b>
+                    {{object.age_profile}}
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="col-md-4">
+                    <b class="d-block">Population age details</b>
+                    {{object.age_description}}
+                </td>
+                <td class="col-md-4">
+                    <b class="d-block">Sex</b>
+                    {{object.sex}}
+                </td>
+                <td class="col-md-4">
+                    <b class="d-block">Population race/ethnicity</b>
+                    {{object.race}}
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="col-md-6">
+                    <b class="d-block">Population Summary</b>
+                    {{object.summary}}
+                </td>
+                <td class="col-md-6">
+                    <b class="d-block">Study name</b>
+                    {{object.study}}
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="col-md-3">
+                    <b class="d-block">Countries</b>
+                    {{object.countries}}
+                </td>
+                <td class="col-md-3">
+                    <b class="d-block">Other geographic information</b>
+                    {{object.region}}
+                </td>
+                <td class="col-md-3">
+                    <b class="d-block">Year(s) of data collection</b>
+                    {{object.years}}
+                </td>
+                <td class="col-md-3">
+                    <b class="d-block">Overall study population N</b>
+                    {{object.participant_n}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

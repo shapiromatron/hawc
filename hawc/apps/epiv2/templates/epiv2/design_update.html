@@ -1,0 +1,70 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<h2 class="d-inline-block">{{object.summary}}
+    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:design-update' object.pk %}"
+        hx-target="#design-div">Update</button>
+</h2>
+<div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+        <span class="dropdown-header">Study design editing</span>
+        <a class="dropdown-item" href="{% url 'epiv2:design_update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'epiv2:design_delete' object.pk %}">Delete</a>
+    </div>
+</div>
+
+<div id="design-div" hx-target="this">
+ {% include "epiv2/components/design_detail_frag.html" %}
+</div>
+<h3>Exposure data table
+<button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposure-create' object.pk %}" hx-target="#exposure_table"
+    hx-swap="beforeend">Create</button>
+</h3>
+
+<table class="table table-condensed table-striped" id="exposure_table">
+    <colgroup>
+        <col style="width: 85%;">
+        <col style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in exposures %}
+            {% include "epiv2/components/exposure_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Outcome data table
+<button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:outcome-create' object.pk %}" hx-target="#outcome_table"
+    hx-swap="beforeend">Create</button>
+</h3>
+
+<table class="table table-condensed table-striped" id="outcome_table">
+    <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 30%;">
+        <col style="width: 30%;">
+        <col style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Health Outcome</th>
+            <th>Health Outcome System</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in outcomes %}
+            {% include "epiv2/components/outcome_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
