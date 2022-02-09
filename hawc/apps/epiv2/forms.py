@@ -226,4 +226,3 @@ class DataExtractionForm(forms.ModelForm):
         )
         helper.form_tag = False
         return helper
-
