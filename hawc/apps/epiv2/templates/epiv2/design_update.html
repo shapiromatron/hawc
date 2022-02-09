@@ -2,8 +2,10 @@
 
 {% block content %}
 <h2 class="d-inline-block">{{object.summary}}
+    {% if crud == "Update" %}
     <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:design-update' object.pk %}"
         hx-target="#design-div">Update</button>
+    {% endif %}
 </h2>
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -14,12 +16,39 @@
     </div>
 </div>
 
-<div id="design-div" hx-target="this">
  {% include "epiv2/components/design_detail_frag.html" %}
-</div>
+
+
+<h3>Chemical data table
+    {% if crud == "Update" %}
+    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:chemical-create' object.pk %}" hx-target="#chemical_table"
+        hx-swap="beforeend">Create</button>
+    {% endif %}
+</h3>
+<table class="table table-condensed table-striped" id="chemical_table">
+    <colgroup>
+        <col style="width: 42%;">
+        <col style="width: 42%;">
+        <col style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>DSSTox</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in chemical %}
+        {% include "epiv2/components/chemical_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
 <h3>Exposure data table
+    {% if crud == "Update" %}
 <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposure-create' object.pk %}" hx-target="#exposure_table"
     hx-swap="beforeend">Create</button>
+    {% endif %}
 </h3>
 
 <table class="table table-condensed table-striped" id="exposure_table">
@@ -41,8 +70,10 @@
 </table>
 
 <h3>Outcome data table
+    {% if crud == "Update" %}
 <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:outcome-create' object.pk %}" hx-target="#outcome_table"
     hx-swap="beforeend">Create</button>
+    {% endif %}
 </h3>
 
 <table class="table table-condensed table-striped" id="outcome_table">

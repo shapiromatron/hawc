@@ -39,6 +39,37 @@ urlpatterns = [
         {"action": "delete"},
         name="design-delete",
     ),
+    # chemical
+    path(
+        "chemical/<int:pk>/create/",
+        views.ChemicalViewset.as_view(),
+        {"action": "create"},
+        name="chemical-create",
+    ),
+    path(
+        "chemical/<int:pk>/",
+        views.ChemicalViewset.as_view(),
+        {"action": "read"},
+        name="chemical-detail",
+    ),
+    path(
+        "chemical/<int:pk>/clone/",
+        views.ChemicalViewset.as_view(),
+        {"action": "clone"},
+        name="chemical-clone",
+    ),
+    path(
+        "chemical/<int:pk>/update/",
+        views.ChemicalViewset.as_view(),
+        {"action": "update"},
+        name="chemical-update",
+    ),
+    path(
+        "chemical/<int:pk>/delete/",
+        views.ChemicalViewset.as_view(),
+        {"action": "delete"},
+        name="chemical-delete",
+    ),
     # exposure
     path(
         "exposure/<int:pk>/create/",

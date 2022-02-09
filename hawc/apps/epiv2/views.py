@@ -28,6 +28,7 @@ class DesignUpdate(BaseUpdate):
         context = super().get_context_data(**kwargs)
         context["exposures"] = models.Exposure.objects.filter(design__id=self.object.pk)
         context["outcomes"] = models.Outcome.objects.filter(design__id=self.object.pk)
+        context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
         return context
 
 
@@ -38,6 +39,7 @@ class DesignDetail(BaseDetail):
         context = super().get_context_data(**kwargs)
         context["exposures"] = models.Exposure.objects.filter(design__id=self.object.pk)
         context["outcomes"] = models.Outcome.objects.filter(design__id=self.object.pk)
+        context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
         return context
 
 
@@ -147,7 +149,59 @@ class ExposureViewset(HtmxViewSet):
         return render(request, self.detail_fragment, self.get_context_data())
 
 
-# Exposure viewset
+# Chemical viewset
+class ChemicalViewset(HtmxViewSet):
+    actions = {"create", "read", "update", "delete", "clone"}
+    parent_model = models.Design
+    model = models.Chemical
+    form_fragment = "epiv2/components/chemical_edit_row.html"
+    detail_fragment = "epiv2/components/chemical_row.html"
+
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            import pdb
+
+            pdb.set_trace()
+            form = forms.ChemicalForm(request.POST, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.ChemicalForm()
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.ChemicalForm(data=data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("post",), permission=can_edit)
+    def clone(self, request: HttpRequest, *args, **kwargs):
+        self.perform_clone(request.item)
+        return render(request, self.detail_fragment, self.get_context_data())
+
+
+# Outcome viewset
 class OutcomeViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
