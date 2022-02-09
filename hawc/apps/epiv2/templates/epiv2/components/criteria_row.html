@@ -20,7 +20,7 @@
         <button class="btn btn-sm btn-danger" hx-get="{% url 'epiv2:criteria-delete' object.pk %}">
             Delete</button>
         <button class="btn btn-sm btn-secondary" hx-post="{% url 'epiv2:criteria-clone' object.pk %}"
-            hx-target="#criteria" hx-swap="beforeend">
+            hx-target="#criteria_table" hx-swap="beforeend">
             Clone</button>
     </td>
     {% endif %}

@@ -70,6 +70,32 @@
     </tbody>
 </table>
 
+<h3>Exposure Level data table</h3>
+
+<table class="table table-condensed table-striped" id="exposurelevel_table">
+    <colgroup>
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Chemical</th>
+            <th>Exposure</th>
+            <th>Central Tendency</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in exposurelevels %}
+        {% include "epiv2/components/exposurelevel_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
+
 <h3>Outcome data table</h3>
 
 <table class="table table-condensed table-striped" id="outcome_table">

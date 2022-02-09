@@ -132,6 +132,37 @@ urlpatterns = [
         {"action": "delete"},
         name="exposure-delete",
     ),
+    # exposure level
+    path(
+        "exposurelevel/<int:pk>/create/",
+        views.ExposureLevelViewset.as_view(),
+        {"action": "create"},
+        name="exposurelevel-create",
+    ),
+    path(
+        "exposurelevel/<int:pk>/",
+        views.ExposureLevelViewset.as_view(),
+        {"action": "read"},
+        name="exposurelevel-detail",
+    ),
+    path(
+        "exposurelevel/<int:pk>/clone/",
+        views.ExposureLevelViewset.as_view(),
+        {"action": "clone"},
+        name="exposurelevel-clone",
+    ),
+    path(
+        "exposurelevel/<int:pk>/update/",
+        views.ExposureLevelViewset.as_view(),
+        {"action": "update"},
+        name="exposurelevel-update",
+    ),
+    path(
+        "exposurelevel/<int:pk>/delete/",
+        views.ExposureLevelViewset.as_view(),
+        {"action": "delete"},
+        name="exposurelevel-delete",
+    ),
     # outcome
     path(
         "outcome/<int:pk>/create/",

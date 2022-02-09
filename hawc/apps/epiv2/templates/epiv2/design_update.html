@@ -95,6 +95,39 @@
     </tbody>
 </table>
 
+<h3>Exposure Level data table
+    {% if crud == "Update" %}
+    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}" hx-target="#exposurelevel_table"
+        hx-swap="beforeend">Create</button>
+    {% endif %}
+</h3>
+<table class="table table-condensed table-striped" id="exposurelevel_table">
+    <colgroup>
+        <col style="width: 17%;">
+        <col style="width: 17%;">
+        <col style="width: 17%;">
+        <col style="width: 17%;">
+        <col style="width: 17%;">
+        <col style="width: 15%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Chemical</th>
+            <th>Exposure</th>
+            <th>Central Tendency</th>
+            <th>Comments</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in exposurelevels %}
+        {% include "epiv2/components/exposurelevel_row.html" %}
+        {% endfor %}
+    </tbody>
+</table>
+
+
 <h3>Outcome data table
     {% if crud == "Update" %}
 <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:outcome-create' object.pk %}" hx-target="#outcome_table"
