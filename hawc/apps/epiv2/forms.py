@@ -197,3 +197,33 @@ class OutcomeForm(forms.ModelForm):
         helper.add_row("name", 3, "col-md-4")
         helper.form_tag = False
         return helper
+
+
+class DataExtractionForm(forms.ModelForm):
+    class Meta:
+        model = models.DataExtraction
+        exclude = ("design",)
+        labels = {}
+
+    def __init__(self, *args, **kwargs):
+        design = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if design:
+            self.instance.design = design
+
+    @property
+    def helper(self):
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) == forms.Textarea:
+                widget.attrs["rows"] = 3
+        helper = BaseFormHelper(self)
+        helper.add_row("sub_population", 5, "col-md-2")
+        helper.add_row("effect_estimate_type", 3, "col-md-4")
+        helper.add_row("exposure_rank", 6, "col-md-2")
+        helper.add_row(
+            "adjustment_factor", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
+        )
+        helper.form_tag = False
+        return helper
+
