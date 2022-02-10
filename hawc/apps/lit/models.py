@@ -817,11 +817,10 @@ class Reference(models.Model):
     @classmethod
     def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
         """Bulk create studies from a list of reference ids
-        0: no study type
-        1: bioassay
-        2: epi
-        3: epi meta
-        4: in vitro
+        Args:
+            study_type (int): an integer from 0-4 that maps to the study type the objects will have when created
+                0: no study type, 1: bioassay, 2: epi, 3: epi meta, 4: in vitro
+            reference_ids (list[int]): the list of reference ids to convert to studies
         """
 
         studies = []
