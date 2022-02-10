@@ -270,6 +270,9 @@ class Study(Reference):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
+    def get_attachments_dict(self) -> list[dict]:
+        return [attachment.get_dict() for attachment in self.attachments.all()]
+
     def get_bioassay_endpoints(self):
         """
         Return a queryset of related bioassay endpoints for selected study
@@ -449,6 +452,9 @@ class Attachment(models.Model):
     def get_absolute_url(self):
         return reverse("study:attachment_detail", args=(self.pk,))
 
+    def get_delete_url(self):
+        return reverse("study:attachment_delete", args=[self.pk])
+
     @property
     def filename(self):
         return os.path.basename(self.attachment.name)
@@ -457,6 +463,7 @@ class Attachment(models.Model):
         return {
             "url": self.get_absolute_url(),
             "filename": self.filename,
+            "url_delete": self.get_delete_url(),
         }
 
     def get_assessment(self):

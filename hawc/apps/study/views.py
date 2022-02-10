@@ -2,14 +2,13 @@ from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpRequest, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -112,8 +111,12 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["config"] = {"studyContent": self.object.get_json(json_encode=False)}
-        context["attachments_viewable"] = self.assessment.user_is_part_of_team(self.request.user)
+        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
+        context["config"] = {
+            "studyContent": self.object.get_json(json_encode=False),
+            "attachments_viewable": attachments_viewable,
+            "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
+        }
         context["internal_communications"] = self.object.get_communications()
         return context
 
@@ -197,37 +200,28 @@ class StudyRoBRedirect(StudyRead):
         return redirect(self.object.get_final_rob_url(), permanent=True)
 
 
-# Attachment viewset
-class AttachmentViewset(HtmxViewSet):
-    actions = {"create", "read", "delete"}
+# Attachment views
+class AttachmentCreate(BaseCreate):
+    success_message = "Attachment added to study."
     parent_model = models.Study
+    parent_template_name = "study"
     model = models.Attachment
-    form_fragment = "study/fragments/attachment_form.html"
-    detail_fragment = "study/fragments/attachment_detail.html"
+    form_class = forms.AttachmentForm
 
-    @action(permission=can_view)
-    def read(self, request: HttpRequest, *args, **kwargs):
-        return render(request, self.detail_fragment, self.get_context_data())
+    def get_success_url(self):
+        return reverse_lazy("study:detail", kwargs={"pk": self.parent.pk})
 
-    @action(methods=("get", "post"), permission=can_edit)
-    def create(self, request: HttpRequest, *args, **kwargs):
-        template = self.form_fragment
-        if request.method == "POST":
-            form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.parent)
-            if form.is_valid():
-                self.perform_create(request.item, form)
-                template = self.detail_fragment
-        else:
-            form = forms.AttachmentForm(parent=request.item.parent)
-        context = self.get_context_data(form=form)
-        return render(request, template, context)
 
-    @action(methods=("get", "post"), permission=can_edit)
-    def delete(self, request: HttpRequest, *args, **kwargs):
-        if request.method == "POST":
-            self.perform_delete(request.item)
-            return self.str_response()
-        return render(request, self.detail_fragment, self.get_context_data())
+class AttachmentDelete(BaseDelete):
+    success_message = "Attachment deleted."
+    model = models.Attachment
+
+    def get_success_url(self):
+        self.parent = self.object.study
+        return self.object.study.get_absolute_url()
+
+    def get_cancel_url(self) -> str:
+        return self.object.study.get_absolute_url()
 
 
 class AttachmentRead(BaseDetail):
@@ -235,6 +229,7 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.assessment.user_is_part_of_team(self.request.user):
-            raise PermissionDenied()
-        return HttpResponseRedirect(self.object.attachment.url)
+        if self.assessment.user_is_part_of_team(self.request.user):
+            return HttpResponseRedirect(self.object.attachment.url)
+        else:
+            raise PermissionDenied
