@@ -21,7 +21,7 @@
             Delete</button>
         <button class="btn btn-sm btn-secondary" hx-post="{% url 'epiv2:criteria-clone' object.pk %}"
             hx-target="#criteria_table" hx-swap="beforeend">
-            Clone</button>
+            <i class="fa fa-clone" aria-hidden="true"></i></button>
     </td>
     {% endif %}
 </tr>
