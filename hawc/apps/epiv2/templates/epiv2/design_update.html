@@ -2,10 +2,8 @@
 
 {% block content %}
 <h2 class="d-inline-block">{{object.summary}}
-    {% if crud == "Update" %}
     <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:design-update' object.pk %}"
         hx-target="#design-div">Update</button>
-    {% endif %}
 </h2>
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -16,14 +14,12 @@
     </div>
 </div>
 
- {% include "epiv2/components/design_detail_frag.html" %}
+ {% include "epiv2/fragments/design_detail_frag.html" %}
 
 
 <h3>Chemical data table
-    {% if crud == "Update" %}
     <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:chemical-create' object.pk %}" hx-target="#chemical_table"
         hx-swap="beforeend">Create</button>
-    {% endif %}
 </h3>
 <table class="table table-condensed table-striped" id="chemical_table">
     <colgroup>
@@ -40,16 +36,14 @@
     </thead>
     <tbody>
         {% for object in chemical %}
-        {% include "epiv2/components/chemical_row.html" %}
+        {% include "epiv2/fragments/chemical_row.html" %}
         {% endfor %}
     </tbody>
 </table>
 
 <h3>Criteria data table
-    {% if crud == "Update" %}
     <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:criteria-create' object.pk %}" hx-target="#criteria_table"
         hx-swap="beforeend">Create</button>
-    {% endif %}
 </h3>
 <table class="table table-condensed table-striped" id="criteria_table">
     <colgroup>
@@ -64,17 +58,15 @@
     </thead>
     <tbody>
         {% for object in criteria %}
-        {% include "epiv2/components/criteria_row.html" %}
+        {% include "epiv2/fragments/criteria_row.html" %}
         {% endfor %}
     </tbody>
 </table>
 
 
 <h3>Exposure data table
-    {% if crud == "Update" %}
 <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposure-create' object.pk %}" hx-target="#exposure_table"
     hx-swap="beforeend">Create</button>
-    {% endif %}
 </h3>
 
 <table class="table table-condensed table-striped" id="exposure_table">
@@ -90,16 +82,14 @@
     </thead>
     <tbody>
         {% for object in exposures %}
-            {% include "epiv2/components/exposure_row.html" %}
+            {% include "epiv2/fragments/exposure_row.html" %}
         {% endfor %}
     </tbody>
 </table>
 
 <h3>Exposure Level data table
-    {% if crud == "Update" %}
     <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}" hx-target="#exposurelevel_table"
         hx-swap="beforeend">Create</button>
-    {% endif %}
 </h3>
 <table class="table table-condensed table-striped" id="exposurelevel_table">
     <colgroup>
@@ -122,17 +112,15 @@
     </thead>
     <tbody>
         {% for object in exposure_levels %}
-        {% include "epiv2/components/exposurelevel_row.html" %}
+        {% include "epiv2/fragments/exposurelevel_row.html" %}
         {% endfor %}
     </tbody>
 </table>
 
 
 <h3>Outcome data table
-    {% if crud == "Update" %}
 <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:outcome-create' object.pk %}" hx-target="#outcome_table"
     hx-swap="beforeend">Create</button>
-    {% endif %}
 </h3>
 
 <table class="table table-condensed table-striped" id="outcome_table">
@@ -152,16 +140,14 @@
     </thead>
     <tbody>
         {% for object in outcomes %}
-            {% include "epiv2/components/outcome_row.html" %}
+            {% include "epiv2/fragments/outcome_row.html" %}
         {% endfor %}
     </tbody>
 </table>
 
 <h3>Adjustment Factors data table
-    {% if crud == "Update" %}
     <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:adjustment_factor-create' object.pk %}"
         hx-target="#adjustment_factor_table" hx-swap="beforeend">Create</button>
-    {% endif %}
 </h3>
 <table class="table table-condensed table-striped" id="adjustment_factor_table">
     <colgroup>
@@ -178,16 +164,14 @@
     </thead>
     <tbody>
         {% for object in adjustment_factors %}
-        {% include "epiv2/components/adjustment_factor_row.html" %}
+        {% include "epiv2/fragments/adjustment_factor_row.html" %}
         {% endfor %}
     </tbody>
 </table>
 
 <h3>Data Extractions data table
-    {% if crud == "Update" %}
     <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:data_extraction-create' object.pk %}"
         hx-target="#data_extraction_table" hx-swap="beforeend">Create</button>
-    {% endif %}
 </h3>
 <table class="table table-condensed table-striped" id="data_extraction_table">
     <colgroup>
@@ -218,7 +202,7 @@
     </thead>
     <tbody>
         {% for object in data_extractions %}
-        {% include "epiv2/components/data_extraction_row.html" %}
+        {% include "epiv2/fragments/data_extraction_row.html" %}
         {% endfor %}
     </tbody>
 </table>

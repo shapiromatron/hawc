@@ -72,25 +72,13 @@ class DesignViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = Study
     model = models.Design
-    form_fragment = "epiv2/components/design_form_copy.html"
-    detail_fragment = "epiv2/components/design_detail_frag.html"
+    form_fragment = "epiv2/fragments/design_form_copy.html"
+    detail_fragment = "epiv2/fragments/design_detail_frag.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
         return render(request, self.detail_fragment, self.get_context_data())
 
-    @action(methods=("get", "post"), permission=can_edit)
-    def create(self, request: HttpRequest, *args, **kwargs):
-        template = self.form_fragment
-        if request.method == "POST":
-            form = forms.DesignForm(request.POST, parent=request.item.parent)
-            if form.is_valid():
-                self.perform_create(request.item, form)
-                template = self.detail_fragment
-        else:
-            form = forms.DesignForm()
-        context = self.get_context_data(form=form)
-        return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
@@ -103,26 +91,14 @@ class DesignViewset(HtmxViewSet):
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
-    @action(methods=("get", "post"), permission=can_edit)
-    def delete(self, request: HttpRequest, *args, **kwargs):
-        if request.method == "POST":
-            self.perform_delete(request.item)
-            return self.str_response()
-        return render(request, self.detail_fragment, self.get_context_data())
-
-    @action(methods=("post",), permission=can_edit)
-    def clone(self, request: HttpRequest, *args, **kwargs):
-        self.perform_clone(request.item)
-        return render(request, self.detail_fragment, self.get_context_data())
-
 
 # Criteria viewset
 class CriteriaViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = models.Criteria
-    form_fragment = "epiv2/components/criteria_edit_row.html"
-    detail_fragment = "epiv2/components/criteria_row.html"
+    form_fragment = "epiv2/fragments/criteria_edit_row.html"
+    detail_fragment = "epiv2/fragments/criteria_row.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -157,7 +133,7 @@ class CriteriaViewset(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": "criteria", "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/components/_delete_rows.html", context)
+            return render(request, "epiv2/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -171,8 +147,8 @@ class ChemicalViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = models.Chemical
-    form_fragment = "epiv2/components/chemical_edit_row.html"
-    detail_fragment = "epiv2/components/chemical_row.html"
+    form_fragment = "epiv2/fragments/chemical_edit_row.html"
+    detail_fragment = "epiv2/fragments/chemical_row.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -207,7 +183,7 @@ class ChemicalViewset(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": "chemical", "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/components/_delete_rows.html", context)
+            return render(request, "epiv2/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -221,8 +197,8 @@ class ExposureViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = models.Exposure
-    form_fragment = "epiv2/components/exposure_edit_row.html"
-    detail_fragment = "epiv2/components/exposure_row.html"
+    form_fragment = "epiv2/fragments/exposure_edit_row.html"
+    detail_fragment = "epiv2/fragments/exposure_row.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -257,7 +233,7 @@ class ExposureViewset(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": "exposure", "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/components/_delete_rows.html", context)
+            return render(request, "epiv2/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -271,8 +247,8 @@ class ExposureLevelViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = models.ExposureLevel
-    form_fragment = "epiv2/components/exposurelevel_edit_row.html"
-    detail_fragment = "epiv2/components/exposurelevel_row.html"
+    form_fragment = "epiv2/fragments/exposurelevel_edit_row.html"
+    detail_fragment = "epiv2/fragments/exposurelevel_row.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -307,7 +283,7 @@ class ExposureLevelViewset(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": "exposure_level", "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/components/_delete_rows.html", context)
+            return render(request, "epiv2/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -321,8 +297,8 @@ class OutcomeViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = models.Outcome
-    form_fragment = "epiv2/components/outcome_edit_row.html"
-    detail_fragment = "epiv2/components/outcome_row.html"
+    form_fragment = "epiv2/fragments/outcome_edit_row.html"
+    detail_fragment = "epiv2/fragments/outcome_row.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -357,7 +333,7 @@ class OutcomeViewset(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": "outcome", "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/components/_delete_rows.html", context)
+            return render(request, "epiv2/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -371,8 +347,8 @@ class AdjustmentFactorViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = models.AdjustmentFactor
-    form_fragment = "epiv2/components/adjustment_factor_edit_row.html"
-    detail_fragment = "epiv2/components/adjustment_factor_row.html"
+    form_fragment = "epiv2/fragments/adjustment_factor_edit_row.html"
+    detail_fragment = "epiv2/fragments/adjustment_factor_row.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -407,7 +383,7 @@ class AdjustmentFactorViewset(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": "adjustment_factor", "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/components/_delete_rows.html", context)
+            return render(request, "epiv2/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -421,8 +397,8 @@ class DataExtractionViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = models.DataExtraction
-    form_fragment = "epiv2/components/data_extraction_edit_row.html"
-    detail_fragment = "epiv2/components/data_extraction_row.html"
+    form_fragment = "epiv2/fragments/data_extraction_edit_row.html"
+    detail_fragment = "epiv2/fragments/data_extraction_row.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -457,7 +433,7 @@ class DataExtractionViewset(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": "data_extraction", "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/components/_delete_rows.html", context)
+            return render(request, "epiv2/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)

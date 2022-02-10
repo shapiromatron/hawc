@@ -13,7 +13,7 @@
 </div>
 {% endif %}
 
-{% include "epiv2/components/design_detail_frag.html" %}
+{% include "epiv2/fragments/design_detail_frag.html" %}
 <h3>Chemical data table</h3>
 <table class="table table-condensed table-striped" id="chemical_table">
     <colgroup>
@@ -28,7 +28,7 @@
     </thead>
     <tbody>
         {% for object in chemical %}
-        {% include "epiv2/components/chemical_row.html" %}
+        {% include "epiv2/fragments/chemical_row.html" %}
         {% endfor %}
     </tbody>
 </table>
@@ -46,7 +46,7 @@
     </thead>
     <tbody>
         {% for object in criteria %}
-        {% include "epiv2/components/criteria_row.html" %}
+        {% include "epiv2/fragments/criteria_row.html" %}
         {% endfor %}
     </tbody>
 </table>
@@ -65,7 +65,7 @@
     </thead>
     <tbody>
         {% for object in exposures %}
-            {% include "epiv2/components/exposure_row.html" %}
+            {% include "epiv2/fragments/exposure_row.html" %}
         {% endfor %}
     </tbody>
 </table>
@@ -91,7 +91,7 @@
     </thead>
     <tbody>
         {% for object in exposure_levels %}
-        {% include "epiv2/components/exposurelevel_row.html" %}
+        {% include "epiv2/fragments/exposurelevel_row.html" %}
         {% endfor %}
     </tbody>
 </table>
@@ -113,7 +113,7 @@
     </thead>
     <tbody>
         {% for object in outcomes %}
-            {% include "epiv2/components/outcome_row.html" %}
+            {% include "epiv2/fragments/outcome_row.html" %}
         {% endfor %}
     </tbody>
 </table>
@@ -137,7 +137,7 @@
     </thead>
     <tbody>
         {% for object in adjustment_factors %}
-        {% include "epiv2/components/adjustment_factor_row.html" %}
+        {% include "epiv2/fragments/adjustment_factor_row.html" %}
         {% endfor %}
     </tbody>
 </table>
@@ -175,7 +175,7 @@
     </thead>
     <tbody>
         {% for object in data_extractions %}
-        {% include "epiv2/components/data_extraction_row.html" %}
+        {% include "epiv2/fragments/data_extraction_row.html" %}
         {% endfor %}
     </tbody>
 </table>
