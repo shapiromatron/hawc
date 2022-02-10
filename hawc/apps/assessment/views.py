@@ -467,9 +467,9 @@ class AttachmentViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
     model = models.Attachment
-    form_fragment = "assessment/components/attachment_edit_row.html"
-    detail_fragment = "assessment/components/attachment_row.html"
-    list_fragment = "assessment/_attachment_list.html"
+    form_fragment = "assessment/fragments/attachment_edit_row.html"
+    detail_fragment = "assessment/fragments/attachment_row.html"
+    list_fragment = "assessment/fragments/attachment_list.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -515,7 +515,7 @@ class AttachmentList(BaseList):
     model = models.Attachment
     parent_model = models.Assessment
     parent_template_name = "parent"
-    template_name = "assessment/_attachment_list.html"
+    template_name = "assessment/fragments/attachment_list.html"
     object_list = None
 
     def get_context_data(self, **kwargs):

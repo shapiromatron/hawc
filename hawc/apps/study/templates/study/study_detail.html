@@ -126,7 +126,7 @@ window.app.startup("studyStartup", function(app){
 
   thisStudy.build_details_table(detail_div);
 
-  if (data.attachments_viewable) {
+  if(data.attachments_viewable){
     thisStudy.add_attachments_row(detail_div, data.attachments);
   }
 

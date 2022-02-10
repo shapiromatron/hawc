@@ -1,0 +1,42 @@
+<div id="attach_table">
+    {% if object_list.count > 0 or action == 'create' %}
+    <h2>Attachments
+    {% if canEdit or permissions.edit %}
+    <button
+        class="btn btn-sm btn-info float-right"
+        hx-get="{% url 'assessment:attachment-create' assessment.pk %}"
+        hx-target="#attach_table"
+        hx-swap="outerHTML"
+        >Add Attachment</button>
+    {% endif %}
+    </h2>
+    <table class="table table-sm table-striped">
+        <colgroup>
+            {% if canEdit or permissions.edit %}
+            <col style="width: 25%;">
+            <col style="width: 60%;">
+            <col style="width: 15%;">
+            {% else %}
+                <col style="width: 30%;">
+                <col style="width: 70%;">
+            {% endif %}
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Attachment</th>
+                <th>Description</th>
+                {% if canEdit or permissions.edit %}
+                    <th>Editing</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                {% include "assessment/fragments/attachment_row.html" %}
+            {% endfor %}
+            {% include "assessment/fragments/attachment_edit_row.html" %}
+            </tr>
+        </tbody>
+    </table>
+    {% endif %}
+</div>

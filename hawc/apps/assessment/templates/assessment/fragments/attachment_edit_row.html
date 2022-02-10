@@ -1,0 +1,42 @@
+{% load crispy_forms_tags  %}
+
+<tr hx-target="this" hx-swap="outerHTML">
+    {% if form %}
+    <td colspan="3">
+        <form method=post enctype="multipart/form-data" class="border my-2 p-2">
+            <div class="float-right" style="width: 15%">
+                {% if form.instance.id %}
+                    <button class="btn btn-sm btn-info"
+                        hx-post="{% url 'assessment:attachment-update' object.pk %}"
+                        hx-encoding="multipart/form-data">
+                        Save</button>
+                    <button class="btn btn-sm btn-light"
+                        hx-get="{% url 'assessment:attachment-detail' object.pk %}">
+                        Cancel</button>
+                {% else %}
+                    <button class="btn btn-sm btn-info"
+                        hx-post="{% url 'assessment:attachment-create' assessment.pk %}"
+                        hx-encoding="multipart/form-data">
+                        Save
+                    </button>
+                    <button class="btn btn-sm btn-light"
+                        type='button'
+                        onclick="this.parentNode.parentNode.parentNode.outerHTML = ''"
+                    ><i class = "fa fa-fw fa-times mr-1"></i>
+                        Cancel</button>
+                {% endif %}
+            </div>
+            {% crispy form %}
+        </form>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.html5text').quillify();
+            });
+        </script>
+    </td>
+    {% endif %}
+</tr>
+
+
+
+

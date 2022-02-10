@@ -1,0 +1,32 @@
+<tr hx-target="this" hx-swap="outerHTML">
+    <td>
+        <a href="{{object.attachment.url}}">{{object.title}}</a>
+    </td>
+    <td>{{object.description|safe}}</td>
+    {% if action == 'delete' %}
+        <td>
+            <form class="alert alert-danger">
+                {% csrf_token %}
+                <i class="fa fa-fw fa-exclamation-triangle mx-1"></i>Are you sure you want to delete?
+                <div class="d-flex flex-row-reverse">
+                    <button class="btn btn-sm btn-danger mx-1"
+                        hx-post="{{ object.get_delete_url }}"
+                        hx-swap="outerHTML swap:1s">Confirm</button>
+                    <button class="btn btn-sm btn-secondary mx-1"
+                        hx-get="{% url 'assessment:attachment-detail' object.pk %}">Cancel</button>
+                </div>
+            </form>
+        </td>
+        {% elif canEdit or permissions.edit %}
+        <td>
+            <button
+                class="btn btn-sm btn-info"
+                hx-get="{{ object.get_edit_url }}">
+                Edit</button>
+            <button
+                class="btn btn-sm btn-danger"
+                hx-get="{{ object.get_delete_url }}">
+                Delete</button>
+        </td>
+    {% endif %}
+</tr>
