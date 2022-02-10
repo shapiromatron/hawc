@@ -871,9 +871,6 @@ class Job(models.Model):
         self.result = {"error": str(exception)}
         self.status = constants.JobStatus.FAILURE
 
-    def get_detail_url(self):
-        return reverse("assessment:api:jobs-detail", args=(self.task_id,))
-
 
 class Communication(models.Model):
     message = models.TextField()
@@ -938,9 +935,6 @@ class Log(models.Model):
         if self.object_id and self.content_type_id:
             return self.get_object_list_url()
         return self.get_absolute_url()
-
-    def get_api_url(self):
-        return reverse("assessment:api:logs-detail", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment

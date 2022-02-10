@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h1 class="d-inline-block">{{object}}</h1>
+<h2 class="d-inline-block">{{object}}</h2>
 {% if crud == "Read" and obj_perms.edit %}
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -62,7 +62,7 @@
 </table>
 
 {% if crud == "Read" and obj_perms.edit and object.revisions.count > 0 %}
-<h2>Dataset revisions</h2>
+<h3>Dataset revisions</h3>
 <table class="table table-sm table-striped">
     <colgroup>
         <col style="width: 10%;">
