@@ -3,6 +3,7 @@ import * as d3 from "d3";
 
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import {applyStyles} from "../summary/common";
 
 class StyleViewer extends D3Plot {
     constructor($plot_div, style, settings) {
@@ -219,12 +220,6 @@ class StyleViewer extends D3Plot {
             .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`);
     }
 
-    _set_styles_from_object(selection, obj) {
-        for (const prop in obj) {
-            selection.style(prop, obj[prop]);
-        }
-    }
-
     _update_styles(style_settings, randomize_position) {
         var x = this.x_scale,
             y = this.y_scale;
@@ -233,7 +228,7 @@ class StyleViewer extends D3Plot {
             this.lines
                 .transition()
                 .duration(1000)
-                .call(selection => this._set_styles_from_object(selection, style_settings));
+                .call(selection => applyStyles(this.svg, selection, style_settings));
         }
 
         var randomize_data = function() {
@@ -260,7 +255,7 @@ class StyleViewer extends D3Plot {
                         .size(style_settings.size)
                         .type(HAWCUtils.symbolStringToType(style_settings.type))
                 )
-                .call(selection => this._set_styles_from_object(selection, style_settings));
+                .call(selection => applyStyles(this.svg, selection, style_settings));
         }
 
         if (this.style.type === "text") {
@@ -280,7 +275,7 @@ class StyleViewer extends D3Plot {
             this.rectangles
                 .transition()
                 .duration(1000)
-                .call(selection => this._set_styles_from_object(selection, style_settings));
+                .call(selection => applyStyles(this.svg, selection, style_settings));
         }
 
         if (this.style.type === "legend") {
@@ -290,7 +285,7 @@ class StyleViewer extends D3Plot {
                     .transition()
                     .duration(1000)
                     .call(selection =>
-                        this._set_styles_from_object(selection, style_settings.rect_style.settings)
+                        applyStyles(this.svg, selection, style_settings.rect_style.settings)
                     );
             } else {
                 if (this.rectangles) {
@@ -305,7 +300,7 @@ class StyleViewer extends D3Plot {
                     .transition()
                     .duration(1000)
                     .call(selection =>
-                        this._set_styles_from_object(selection, style_settings.line_style.settings)
+                        applyStyles(this.svg, selection, style_settings.line_style.settings)
                     );
             } else {
                 if (this.lines) {
@@ -332,10 +327,7 @@ class StyleViewer extends D3Plot {
                             )
                     )
                     .call(selection =>
-                        this._set_styles_from_object(
-                            selection,
-                            style_settings.symbol_style.settings
-                        )
+                        applyStyles(this.svg, selection, style_settings.symbol_style.settings)
                     );
             } else {
                 if (this.symbol) {
