@@ -1,6 +1,6 @@
 <script>
-    // using jQuery
-    $(".{{attribute}}-{{id}}").remove()
-    // or vanilla JS if we can (I'm not sure this will actually work)
-    //document.querySelector(".{{attribute}}-{{id}}").delete()
+    elements = document.getElementsByClassName("{{attribute}}-{{id}}")
+    while (elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
 </script>
