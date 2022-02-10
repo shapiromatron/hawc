@@ -430,10 +430,10 @@ class Attachment(models.Model):
         return self.content_object.get_absolute_url()
 
     def get_edit_url(self):
-        return reverse("assessment:attachment_update", args=[self.pk])
+        return reverse("assessment:attachment-update", args=[self.pk])
 
     def get_delete_url(self):
-        return reverse("assessment:attachment_delete", args=[self.pk])
+        return reverse("assessment:attachment-delete", args=[self.pk])
 
     def get_dict(self):
         return {

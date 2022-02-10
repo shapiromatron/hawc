@@ -1,15 +1,6 @@
 <div id="attach_table">
     {% if object_list.count > 0 or action == 'create' %}
-    <h2>Attachments
-    {% if canEdit or permissions.edit %}
-    <button
-        class="btn btn-sm btn-info float-right"
-        hx-get="{% url 'assessment:attachment-create' assessment.pk %}"
-        hx-target="#attach_table"
-        hx-swap="outerHTML"
-        >Add Attachment</button>
-    {% endif %}
-    </h2>
+    <h2>Attachments</h2>
     <table class="table table-sm table-striped">
         <colgroup>
             {% if canEdit or permissions.edit %}
