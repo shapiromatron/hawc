@@ -1,62 +1,56 @@
-<div id="design-div" hx-target="this">
-    <table class="table table-condensed table-striped" id="design_table">
-        <tbody class="container-fluid">
-            <tr class="row">
-                <td class="col-md-4">
-                    <b class="d-block"> Study design</b>
-                    {{object.study_design}}
-                </td>
-                <td class="col-md-4">
-                    <b class="d-block">Source</b>
-                    {{object.source}}
-                </td>
-                <td class="col-md-4">
-                    <b class="d-block">Population age category</b>
-                    {{object.age_profile}}
-                </td>
-            </tr>
-            <tr class="row">
-                <td class="col-md-4">
-                    <b class="d-block">Population age details</b>
-                    {{object.age_description}}
-                </td>
-                <td class="col-md-4">
-                    <b class="d-block">Sex</b>
-                    {{object.sex}}
-                </td>
-                <td class="col-md-4">
-                    <b class="d-block">Population race/ethnicity</b>
-                    {{object.race}}
-                </td>
-            </tr>
-            <tr class="row">
-                <td class="col-md-6">
-                    <b class="d-block">Population Summary</b>
-                    {{object.summary}}
-                </td>
-                <td class="col-md-6">
-                    <b class="d-block">Study name</b>
-                    {{object.study}}
-                </td>
-            </tr>
-            <tr class="row">
-                <td class="col-md-3">
-                    <b class="d-block">Countries</b>
-                    {{object.countries}}
-                </td>
-                <td class="col-md-3">
-                    <b class="d-block">Other geographic information</b>
-                    {{object.region}}
-                </td>
-                <td class="col-md-3">
-                    <b class="d-block">Year(s) of data collection</b>
-                    {{object.years}}
-                </td>
-                <td class="col-md-3">
-                    <b class="d-block">Overall study population N</b>
-                    {{object.participant_n}}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<table class="table table-condensed table-striped" hx-target="this" id="design-table">
+    <colgroup>
+        <col style="width: 20%;">
+        <col style="width: 80%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <td><b>Study design</b></td>
+            <td>{{object.study_design}}</td>
+        </tr>
+        <tr>
+            <td><b>Source</b></td>
+            <td>{{object.source}}</td>
+        </tr>
+        <tr>
+            <td><b>Population age category</b></td>
+            <td>{{object.age_profile}}</td>
+        </tr>
+        <tr>
+            <td><b>Population age details</b></td>
+            <td>{{object.age_description}}</td>
+        </tr>
+        <tr>
+            <td><b>Sex</b></td>
+            <td>{{object.sex}}</td>
+        </tr>
+        <tr>
+            <td><b>Population race/ethnicity</b></td>
+            <td>{{object.race}}</td>
+        </tr>
+        <tr>
+            <td><b>Population summary</b></td>
+            <td>{{object.summary}}</td>
+        </tr>
+        <tr>
+            <td><b>Study name</b></td>
+            <td>{{object.study}}</td>
+        </tr>
+        <tr>
+            <td><b>Countries</b></td>
+            <td>{{object.countries}}</td>
+        </tr>
+        <tr>
+            <td><b>Other geographic information</b></td>
+            <td>{{object.region}}</td>
+        </tr>
+        <tr>
+            <td><b>Year(s) of data collection</b></td>
+            <td>{{object.years}}</td>
+        </tr>
+        <tr>
+            <td><b>Overall study population</b></td>
+            <td>{{object.participant_n}}</td>
+        </tr>
+    </tbody>
+</table>

@@ -18,12 +18,12 @@
     {% elif permissions.edit or obj_perms.edit and crud == "Update" %}
     <td>
         <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:outcome-update' object.pk %}">
-            Edit</button>
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
         <button class="btn btn-sm btn-danger" hx-get="{% url 'epiv2:outcome-delete' object.pk %}">
-            Delete</button>
+            <i class="fa fa-trash" aria-hidden="true"></i></button>
         <button class="btn btn-sm btn-secondary" hx-post="{% url 'epiv2:outcome-clone' object.pk %}"
             hx-target="#outcome_table" hx-swap="beforeend">
-            Clone</button>
+            <i class="fa fa-clone" aria-hidden="true"></i></button>
     </td>
     {% endif %}
 </tr>
