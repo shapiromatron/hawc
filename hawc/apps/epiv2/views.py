@@ -1,3 +1,4 @@
+from django.db.models import prefetch_related_objects
 from django.http import HttpRequest
 from django.shortcuts import render
 
@@ -26,17 +27,13 @@ class DesignUpdate(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["exposures"] = models.Exposure.objects.filter(design__id=self.object.pk)
-        context["outcomes"] = models.Outcome.objects.filter(design__id=self.object.pk)
-        context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
-        context["criteria"] = models.Criteria.objects.filter(design__id=self.object.pk)
-        context["exposure_levels"] = models.ExposureLevel.objects.filter(design__id=self.object.pk)
-        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(
-            design__id=self.object.pk
-        )
-        context["data_extractions"] = models.DataExtraction.objects.filter(
-            design__id=self.object.pk
-        )
+        context["exposures"] = self.object.exposures.all()
+        context["outcomes"] = self.object.outcomes.all()
+        context["chemical"] = self.object.chemicals.all()
+        context["criteria"] = self.object.criteria.all()
+        context["exposure_levels"] = self.object.exposure_levels.all()
+        context["adjustment_factors"] = self.object.adjustment_factors.all()
+        context["data_extractions"] = self.object.data_extractions.all()
         return context
 
 
@@ -45,17 +42,13 @@ class DesignDetail(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["exposures"] = models.Exposure.objects.filter(design__id=self.object.pk)
-        context["outcomes"] = models.Outcome.objects.filter(design__id=self.object.pk)
-        context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
-        context["criteria"] = models.Criteria.objects.filter(design__id=self.object.pk)
-        context["exposure_levels"] = models.ExposureLevel.objects.filter(design__id=self.object.pk)
-        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(
-            design__id=self.object.pk
-        )
-        context["data_extractions"] = models.DataExtraction.objects.filter(
-            design__id=self.object.pk
-        )
+        context["exposures"] = self.object.exposures.all()
+        context["outcomes"] = self.object.outcomes.all()
+        context["chemical"] = self.object.chemicals.all()
+        context["criteria"] = self.object.criteria.all()
+        context["exposure_levels"] = self.object.exposure_levels.all()
+        context["adjustment_factors"] = self.object.adjustment_factors.all()
+        context["data_extractions"] = self.object.data_extractions.all()
         return context
 
 
