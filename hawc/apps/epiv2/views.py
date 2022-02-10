@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from django.shortcuts import render
 
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view, is_htmx
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
 from ..study.models import Study
 from . import forms, models
@@ -78,7 +78,6 @@ class DesignViewset(HtmxViewSet):
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
         return render(request, self.detail_fragment, self.get_context_data())
-
 
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
