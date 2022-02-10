@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 
-<tr hx-target="this" hx-swap="outerHTML" class="data_extraction-{{object.pk}} outcome-{{object.outcome_id}} exposure_level-{{object.exposure_level_id}} chemical-{{object.exposure_level.chemical_id}} exposure-{{object.exposure_level.exposure_id}} adjustment_factor-{{object.adjustment_factor_id}}">
+<tr hx-target="this" hx-swap="outerHTML" class="data_extraction-{{object.pk}} outcome-{{object.outcome_id}} exposure_level-{{object.exposure_level_id}} chemical-{{object.exposure_level.chemical_id}} exposure-{{object.exposure_level.exposure_measurement_id}} adjustment_factor-{{object.adjustment_factor_id}}">
     {% if form %}
     <td colspan="10">
         <form method=post enctype="multipart/form-data" class="border my-2 p-2">
