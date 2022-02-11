@@ -49,7 +49,7 @@
                 {% if log.object_id %}
                     {% if not request.GET.content_type or not request.GET.object_id %}
                     {% url_replace page=None content_type=log.content_type.id object_id=log.object_id as params %}
-                    <a class="pull-right" title="View History"
+                    <a class="float-right" title="View History"
                         href="{{request.path}}{{params|yesno:'?,'}}{{params}}">
                         <i class="fa fa-fw fa-filter" aria-hidden="true"></i>
                     </a>
