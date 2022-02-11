@@ -1,7 +1,10 @@
 from django import forms
 
 from hawc.apps.common.forms import BaseFormHelper
+from hawc.apps.epi import lookups
 
+from ..assessment.lookups import DssToxIdLookup
+from ..common import selectable
 from . import models
 
 
@@ -11,6 +14,11 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
 
     UPDATE_HELP_TEXT = "Update an existing study-population."
+
+    # TODO: create a new lookup
+    countries = selectable.AutoCompleteSelectMultipleField(
+        lookups.RelatedCountryNameLookup, required=False
+    )
 
     class Meta:
         model = models.Design
@@ -87,6 +95,10 @@ class ChemicalForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if design:
             self.instance.design = design
+
+        self.fields["dsstox"].widget = selectable.AutoCompleteSelectWidget(
+            lookup_class=DssToxIdLookup
+        )
 
     @property
     def helper(self):

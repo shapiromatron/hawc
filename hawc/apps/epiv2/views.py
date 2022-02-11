@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from django.http import HttpRequest
 from django.shortcuts import render
 
@@ -24,38 +25,80 @@ class DesignUpdate(BaseUpdate):
     form_class = forms.DesignForm
     template_name = "epiv2/design_update.html"
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "exposures",
+                "outcomes",
+                "chemicals",
+                "criteria",
+                "adjustment_factors",
+                Prefetch(
+                    "exposure_levels",
+                    queryset=models.ExposureLevel.objects.select_related(
+                        "chemical", "exposure_measurement"
+                    ),
+                ),
+                Prefetch(
+                    "data_extractions",
+                    queryset=models.DataExtraction.objects.select_related(
+                        "adjustment_factor", "outcome", "exposure_level"
+                    ),
+                ),
+            )
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["exposures"] = models.Exposure.objects.filter(design__id=self.object.pk)
-        context["outcomes"] = models.Outcome.objects.filter(design__id=self.object.pk)
-        context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
-        context["criteria"] = models.Criteria.objects.filter(design__id=self.object.pk)
-        context["exposure_levels"] = models.ExposureLevel.objects.filter(design__id=self.object.pk)
-        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(
-            design__id=self.object.pk
-        )
-        context["data_extractions"] = models.DataExtraction.objects.filter(
-            design__id=self.object.pk
-        )
+        context["exposures"] = self.object.exposures.all()
+        context["outcomes"] = self.object.outcomes.all()
+        context["chemical"] = self.object.chemicals.all()
+        context["criteria"] = self.object.criteria.all()
+        context["exposure_levels"] = self.object.exposure_levels.all()
+        context["adjustment_factors"] = self.object.adjustment_factors.all()
+        context["data_extractions"] = self.object.data_extractions.all()
         return context
 
 
 class DesignDetail(BaseDetail):
     model = models.Design
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "exposures",
+                "outcomes",
+                "chemicals",
+                "criteria",
+                "adjustment_factors",
+                Prefetch(
+                    "exposure_levels",
+                    queryset=models.ExposureLevel.objects.select_related(
+                        "chemical", "exposure_measurement"
+                    ),
+                ),
+                Prefetch(
+                    "data_extractions",
+                    queryset=models.DataExtraction.objects.select_related(
+                        "adjustment_factor", "outcome", "exposure_level"
+                    ),
+                ),
+            )
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["exposures"] = models.Exposure.objects.filter(design__id=self.object.pk)
-        context["outcomes"] = models.Outcome.objects.filter(design__id=self.object.pk)
-        context["chemical"] = models.Chemical.objects.filter(design__id=self.object.pk)
-        context["criteria"] = models.Criteria.objects.filter(design__id=self.object.pk)
-        context["exposure_levels"] = models.ExposureLevel.objects.filter(design__id=self.object.pk)
-        context["adjustment_factors"] = models.AdjustmentFactor.objects.filter(
-            design__id=self.object.pk
-        )
-        context["data_extractions"] = models.DataExtraction.objects.filter(
-            design__id=self.object.pk
-        )
+        context["exposures"] = self.object.exposures.all()
+        context["outcomes"] = self.object.outcomes.all()
+        context["chemical"] = self.object.chemicals.all()
+        context["criteria"] = self.object.criteria.all()
+        context["exposure_levels"] = self.object.exposure_levels.all()
+        context["adjustment_factors"] = self.object.adjustment_factors.all()
+        context["data_extractions"] = self.object.data_extractions.all()
         return context
 
 
