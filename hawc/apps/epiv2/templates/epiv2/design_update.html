@@ -8,7 +8,7 @@
     <div class="dropdown-menu dropdown-menu-right">
         <span class="dropdown-header">Study design editing</span>
         <a class="dropdown-item" class="btn btn-sm btn-info" hx-get="{% url 'epiv2:design-update' object.pk %}"
-        hx-target="#design-table">Update</a>
+        hx-target="#design-table" hx-swap="outerHTML">Update</a>
         <a class="dropdown-item" href="{% url 'epiv2:design_delete' object.pk %}">Delete</a>
     </div>
 </div>

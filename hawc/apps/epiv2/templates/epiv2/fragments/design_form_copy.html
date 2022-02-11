@@ -4,11 +4,12 @@
 {% block extrastyle %}
   {% include_ui_theme %}
 {% endblock %}
-
+<div hx-target="this">
+<form method=post enctype="multipart/form-data" class="border my-2 p-2 pb-5">
 {% block content %}
   {% crispy form %}
 {% endblock %}
-<div class="d-block container">
+<div class="d-block container pull-right">
   <div class="pull-right">
 <button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:design-update' object.pk %}"
   hx-encoding="multipart/form-data">
@@ -17,4 +18,5 @@
   Cancel</button>
   </div>
 </div>
-
+</form>
+</div>
