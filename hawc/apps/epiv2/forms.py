@@ -39,12 +39,7 @@ class DesignForm(forms.ModelForm):
                 widget.attrs["rows"] = 3
 
         if self.instance.id:
-            inputs = {
-                "legend_text": f"Update {self.instance}",
-                "help_text": self.UPDATE_HELP_TEXT,
-                "form_actions": "",
-            }
-            helper = BaseFormHelper(self, **inputs)
+            helper = BaseFormHelper(self)
             helper.form_tag = False
 
         else:
