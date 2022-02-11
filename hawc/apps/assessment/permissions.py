@@ -104,7 +104,17 @@ class AssessmentPermissions(BaseModel):
         """
         Check if user can edit a study; dependent on if study is editable
         """
-        if study.editable and self.can_edit_object(user):
-            return True
+        return self.can_edit_assessment(user) or (study.editable and self.can_edit_object(user))
 
-        return self.can_edit_assessment(user)
+    def can_view_study(self, study, user) -> bool:
+        """
+        Check if user can view a study object; dependent on if a study is published
+        """
+        return self.can_edit_object(user) or (study.published and self.can_view_object(user))
+
+    def to_dict(self, user, study=None):
+        return {
+            "view": self.can_view_study(study, user) if study else self.can_view_object(user),
+            "edit": self.can_edit_study(study, user) if study else self.can_edit_object(user),
+            "edit_assessment": self.can_edit_assessment(user),
+        }

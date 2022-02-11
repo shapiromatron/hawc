@@ -14,6 +14,7 @@ from django.urls import reverse, reverse_lazy
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.helper import tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
 from ..myuser.lookups import HAWCUserLookup
@@ -145,7 +146,9 @@ class AssessmentFilterForm(forms.Form):
     def get_filters(self):
         query = Q()
         if name := self.cleaned_data.get("search"):
-            query &= Q(name__icontains=name) | Q(year=name)
+            if name_int := tryParseInt(name):
+                query &= Q(year=name_int)
+            query |= Q(name__icontains=name)
         return query
 
     def get_queryset(self, qs):
@@ -230,21 +233,11 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
-        if self.instance.id:
-            inputs = {"legend_text": f"Update {self.instance}"}
-        else:
-            inputs = {"legend_text": "Create new attachment"}
-        inputs["cancel_url"] = self.instance.get_absolute_url()
-
-        helper = BaseFormHelper(self, **inputs)
-
+        self.fields["description"].widget.attrs["class"] = "html5text"
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("title", 2, "col-md-6")
+        helper.add_row("publicly_available", 2, "col-md-6")
         return helper
 
 

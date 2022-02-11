@@ -297,11 +297,7 @@ class Assessment(models.Model):
 
     def user_permissions(self, user):
         perms = self.get_permissions()
-        return {
-            "view": perms.can_view_object(user),
-            "edit": perms.can_edit_object(user),
-            "edit_assessment": perms.can_edit_assessment(user),
-        }
+        return perms.to_dict(user)
 
     def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
         if perms is None:
@@ -432,7 +428,7 @@ class Attachment(models.Model):
     title = models.CharField(max_length=128)
     attachment = models.FileField(upload_to="attachment")
     publicly_available = models.BooleanField(default=True)
-    description = models.TextField(blank=True)
+    description = models.TextField()
 
     BREADCRUMB_PARENT = "content_object"
 
@@ -440,13 +436,13 @@ class Attachment(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return self.content_object.get_absolute_url()
+        return reverse("assessment:attachment-detail", args=[self.pk])
 
     def get_edit_url(self):
-        return reverse("assessment:attachment_update", args=[self.pk])
+        return reverse("assessment:attachment-update", args=[self.pk])
 
     def get_delete_url(self):
-        return reverse("assessment:attachment_delete", args=[self.pk])
+        return reverse("assessment:attachment-delete", args=[self.pk])
 
     def get_dict(self):
         return {
@@ -880,9 +876,6 @@ class Job(models.Model):
         self.result = {"error": str(exception)}
         self.status = constants.JobStatus.FAILURE
 
-    def get_detail_url(self):
-        return reverse("assessment:api:jobs-detail", args=(self.task_id,))
-
 
 class Communication(models.Model):
     message = models.TextField()
@@ -947,9 +940,6 @@ class Log(models.Model):
         if self.object_id and self.content_type_id:
             return self.get_object_list_url()
         return self.get_absolute_url()
-
-    def get_api_url(self):
-        return reverse("assessment:api:logs-detail", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment

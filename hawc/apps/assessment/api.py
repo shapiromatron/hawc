@@ -15,7 +15,6 @@ from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -162,7 +161,12 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
         return self.model.objects.all()
 
 
+# all http methods except PUT
+METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
+
+
 class AssessmentEditViewset(viewsets.ModelViewSet):
+    http_method_names = METHODS_NO_PUT
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     parent_model = models.Assessment
@@ -199,6 +203,8 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     """
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
+
+    http_method_names = METHODS_NO_PUT
 
     lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
@@ -242,7 +248,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
             raise exceptions.PermissionDenied()
 
 
-class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
+class DoseUnitsViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     model = models.DoseUnits
     serializer_class = serializers.DoseUnitsSerializer
     pagination_class = DisabledPagination
@@ -421,29 +427,6 @@ class Assessment(AssessmentViewset):
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
 
-    @action(
-        detail=True, methods=("get", "post"),
-    )
-    def jobs(self, request, pk: int = None):
-        instance = self.get_object()
-        if request.method == "GET":
-            queryset = instance.jobs.all()
-            serializer = serializers.JobSerializer(queryset, many=True)
-            return Response(serializer.data)
-        elif request.method == "POST":
-            request.data["assessment"] = instance.id
-            serializer = serializers.JobSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True)
-    def logs(self, request, pk: int = None):
-        instance = self.get_object()
-        queryset = instance.logs.all()
-        serializer = serializers.LogSerializer(queryset, many=True)
-        return Response(serializer.data)
-
 
 class DatasetViewset(AssessmentViewset):
     model = models.Dataset
@@ -518,34 +501,6 @@ class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
 
     def get_queryset(self):
         return self.model.objects.all()
-
-
-class JobViewset(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet,
-):
-    model = models.Job
-    serializer_class = serializers.JobSerializer
-    permission_classes = (JobPermissions,)
-    pagination_class = None
-
-    def get_queryset(self):
-        if self.action == "list":
-            return self.model.objects.filter(assessment=None)
-        else:
-            return self.model.objects.all()
-
-
-class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    model = models.Log
-    permission_classes = (IsAdminUser,)
-    serializer_class = serializers.LogSerializer
-    pagination_class = None
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=None)
 
 
 class StrainViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
