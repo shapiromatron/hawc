@@ -8,202 +8,238 @@
     <div class="dropdown-menu dropdown-menu-right">
         <span class="dropdown-header">Study design editing</span>
         <a class="dropdown-item" class="btn btn-sm btn-info" hx-get="{% url 'epiv2:design-update' object.pk %}"
-        hx-target="#design-table">Update</a>
+        hx-target="#design-table" hx-swap="outerHTML">Update</a>
         <a class="dropdown-item" href="{% url 'epiv2:design_delete' object.pk %}">Delete</a>
     </div>
 </div>
 
  {% include "epiv2/fragments/design_detail_frag.html" %}
 
-<h3>Chemical
-    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}" hx-target="#chemical_table"
-        hx-swap="beforeend">Create</button>
-</h3>
-<table class="table table-condensed table-striped" id="chemical_table">
-    <colgroup>
-        <col style="width: 44%;">
-        <col style="width: 44%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>DSSTox</th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in chemical %}
-        {% include "epiv2/fragments/chemical_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
 
-<h3>Criteria
-    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:criteria-create' object.pk %}" hx-target="#criteria_table"
-        hx-swap="beforeend">Create</button>
-</h3>
-<table class="table table-condensed table-striped" id="criteria_table">
-    <colgroup>
-        <col style="width: 90%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in criteria %}
-        {% include "epiv2/fragments/criteria_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card my-3 mx-2">
+            <div class="card-body">
+                <h3 class="card-title">Chemical
+                    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
+                        hx-target="#chemical_table" hx-swap="beforeend">Create</button>
+                </h3>
 
+                <table class="table table-condensed table-striped" id="chemical_table">
+                    <colgroup>
+                        <col style="width: 38%;">
+                        <col style="width: 38%;">
+                        <col style="width: 25%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>DSSTox</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for object in chemical %}
+                        {% include "epiv2/fragments/chemical_row.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card my-3 mx-2">
+            <div class="card-body">
+                <h3 class="card-title">Criteria
+                    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:criteria-create' object.pk %}"
+                        hx-target="#criteria_table" hx-swap="beforeend">Create</button>
+                </h3>
+                <table class="table table-condensed table-striped" id="criteria_table">
+                    <colgroup>
+                        <col style="width: 75%;">
+                        <col style="width: 25%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for object in criteria %}
+                        {% include "epiv2/fragments/criteria_row.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h3>Exposure
-<button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposure-create' object.pk %}" hx-target="#exposure_table"
-    hx-swap="beforeend">Create</button>
-</h3>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Exposure
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposure-create' object.pk %}"
+                hx-target="#exposure_table" hx-swap="beforeend">Create</button>
+        </h3>
 
-<table class="table table-condensed table-striped" id="exposure_table">
-    <colgroup>
-        <col style="width: 90%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in exposures %}
-            {% include "epiv2/fragments/exposure_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
-
-<h3>Exposure Level
-    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}" hx-target="#exposurelevel_table"
-        hx-swap="beforeend">Create</button>
-</h3>
-<table class="table table-condensed table-striped" id="exposurelevel_table">
-    <colgroup>
-        <col style="width: 18%;">
-        <col style="width: 18%;">
-        <col style="width: 18%;">
-        <col style="width: 18%;">
-        <col style="width: 18%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Chemical</th>
-            <th>Exposure</th>
-            <th>Central Tendency</th>
-            <th>Comments</th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in exposure_levels %}
-        {% include "epiv2/fragments/exposurelevel_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
+        <table class="table table-condensed table-striped" id="exposure_table">
+            <colgroup>
+                <col style="width: 90%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in exposures %}
+                {% include "epiv2/fragments/exposure_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
-<h3>Outcome
-<button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:outcome-create' object.pk %}" hx-target="#outcome_table"
-    hx-swap="beforeend">Create</button>
-</h3>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Exposure Level
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}"
+                hx-target="#exposurelevel_table" hx-swap="beforeend">Create</button>
+        </h3>
+        <table class="table table-condensed table-striped" id="exposurelevel_table">
+            <colgroup>
+                <col style="width: 18%;">
+                <col style="width: 18%;">
+                <col style="width: 18%;">
+                <col style="width: 18%;">
+                <col style="width: 18%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Chemical</th>
+                    <th>Exposure</th>
+                    <th>Central Tendency</th>
+                    <th>Comments</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in exposure_levels %}
+                {% include "epiv2/fragments/exposurelevel_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<table class="table table-condensed table-striped" id="outcome_table">
-    <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 30%;">
-        <col style="width: 30%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Health Outcome</th>
-            <th>Health Outcome System</th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in outcomes %}
-            {% include "epiv2/fragments/outcome_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
 
-<h3>Adjustment Factors
-    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:adjustment_factor-create' object.pk %}"
-        hx-target="#adjustment_factor_table" hx-swap="beforeend">Create</button>
-</h3>
-<table class="table table-condensed table-striped" id="adjustment_factor_table">
-    <colgroup>
-        <col style="width: 44%;">
-        <col style="width: 44%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in adjustment_factors %}
-        {% include "epiv2/fragments/adjustment_factor_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
 
-<h3>Data Extractions
-    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:data_extraction-create' object.pk %}"
-        hx-target="#data_extraction_table" hx-swap="beforeend">Create</button>
-</h3>
-<table class="table table-condensed table-striped" id="data_extraction_table">
-    <colgroup>
-        <col style="width: 13%;">
-        <col style="width: 12%;">
-        <col style="width: 12%;">
-        <col style="width: 15%;">
-        <col style="width: 5%;">
-        <col style="width: 6%;">
-        <col style="width: 5%;">
-        <col style="width: 5%;">
-        <col style="width: 12%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Sub population</th>
-            <th>Outcome</th>
-            <th>Exposure Level</th>
-            <th>Measurement Timing</th>
-            <th>N</th>
-            <th>Effect Estimate</th>
-            <th>P-Value</th>
-            <th>Confidence</th>
-            <th>Comments</th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in data_extractions %}
-        {% include "epiv2/fragments/data_extraction_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Outcome
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:outcome-create' object.pk %}"
+                hx-target="#outcome_table" hx-swap="beforeend">Create</button>
+        </h3>
 
-<a class="btn btn-sm btn-light pull-right" href="{% url 'epiv2:design_detail' object.pk %}">Cancel</a>
+        <table class="table table-condensed table-striped" id="outcome_table">
+            <colgroup>
+                <col style="width: 30%;">
+                <col style="width: 30%;">
+                <col style="width: 30%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Health Outcome</th>
+                    <th>Health Outcome System</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in outcomes %}
+                {% include "epiv2/fragments/outcome_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Adjustment Factors
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:adjustment_factor-create' object.pk %}"
+                hx-target="#adjustment_factor_table" hx-swap="beforeend">Create</button>
+        </h3>
+        <table class="table table-condensed table-striped" id="adjustment_factor_table">
+            <colgroup>
+                <col style="width: 44%;">
+                <col style="width: 44%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in adjustment_factors %}
+                {% include "epiv2/fragments/adjustment_factor_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Data Extractions
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:data_extraction-create' object.pk %}"
+                hx-target="#data_extraction_table" hx-swap="beforeend">Create</button>
+        </h3>
+        <table class="table table-condensed table-striped" id="data_extraction_table">
+            <colgroup>
+                <col style="width: 13%;">
+                <col style="width: 12%;">
+                <col style="width: 12%;">
+                <col style="width: 15%;">
+                <col style="width: 5%;">
+                <col style="width: 6%;">
+                <col style="width: 5%;">
+                <col style="width: 5%;">
+                <col style="width: 12%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Sub population</th>
+                    <th>Outcome</th>
+                    <th>Exposure Level</th>
+                    <th>Measurement Timing</th>
+                    <th>N</th>
+                    <th>Effect Estimate</th>
+                    <th>P-Value</th>
+                    <th>Confidence</th>
+                    <th>Comments</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in data_extractions %}
+                {% include "epiv2/fragments/data_extraction_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a class="btn btn-m btn-light pull-right mb-3" href="{% url 'epiv2:design_detail' object.pk %}">Cancel</a>
 {% endblock %}

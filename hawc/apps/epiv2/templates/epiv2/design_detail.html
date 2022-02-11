@@ -14,171 +14,196 @@
 {% endif %}
 
 {% include "epiv2/fragments/design_detail_frag.html" %}
-<h3>Chemical data table</h3>
-<table class="table table-condensed table-striped" id="chemical_table">
-    <colgroup>
-        <col style="width: 50%;">
-        <col style="width: 50%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>DTXSID</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in chemical %}
-        {% include "epiv2/fragments/chemical_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
-
-<h3>Criteria
-</h3>
-<table class="table table-condensed table-striped" id="criteria_table">
-    <colgroup>
-        <col style="width: 100%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in criteria %}
-        {% include "epiv2/fragments/criteria_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
-
 {% if obj_perms.edit and crud == "Read" %}
-<h3>Exposure data table</h3>
 
-<table class="table table-condensed table-striped" id="exposure_table">
-    <colgroup>
-        <col style="width: 100%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in exposures %}
-            {% include "epiv2/fragments/exposure_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card my-3 mx-2">
+            <div class="card-body">
+                <h3 class="card-title">Chemical data table</h3>
+                <table class="table table-condensed table-striped" id="chemical_table">
+                    <colgroup>
+                        <col style="width: 50%;">
+                        <col style="width: 50%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>DTXSID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for object in chemical %}
+                        {% include "epiv2/fragments/chemical_row.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card my-3 mx-2">
+            <div class="card-body">
+                <h3 class="card-title">Criteria
+                </h3>
+                <table class="table table-condensed table-striped" id="criteria_table">
+                    <colgroup>
+                        <col style="width: 100%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for object in criteria %}
+                        {% include "epiv2/fragments/criteria_row.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h3>Exposure Level data table</h3>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Exposure data table</h3>
+        <table class="table table-condensed table-striped" id="exposure_table">
+            <colgroup>
+                <col style="width: 100%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in exposures %}
+                {% include "epiv2/fragments/exposure_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<table class="table table-condensed table-striped" id="exposurelevel_table">
-    <colgroup>
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Chemical</th>
-            <th>Exposure</th>
-            <th>Central Tendency</th>
-            <th>Comments</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in exposure_levels %}
-        {% include "epiv2/fragments/exposurelevel_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Exposure Level data table</h3>
+        <table class="table table-condensed table-striped" id="exposurelevel_table">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Chemical</th>
+                    <th>Exposure</th>
+                    <th>Central Tendency</th>
+                    <th>Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in exposure_levels %}
+                {% include "epiv2/fragments/exposurelevel_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<h3>Outcome data table</h3>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Outcome data table</h3>
+        <table class="table table-condensed table-striped" id="outcome_table">
+            <colgroup>
+                <col style="width: 33%;">
+                <col style="width: 33%;">
+                <col style="width: 33%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Health Outcome</th>
+                    <th>Health Outcome System</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in outcomes %}
+                {% include "epiv2/fragments/outcome_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<table class="table table-condensed table-striped" id="outcome_table">
-    <colgroup>
-        <col style="width: 33%;">
-        <col style="width: 33%;">
-        <col style="width: 33%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Health Outcome</th>
-            <th>Health Outcome System</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in outcomes %}
-            {% include "epiv2/fragments/outcome_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
 
-<h3>Adjustment Factors data table
-    {% if crud == "Update" %}
-    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:adjustment_factor-create' object.pk %}"
-        hx-target="#adjustment_factor_table" hx-swap="beforeend">Create</button>
-    {% endif %}
-</h3>
-<table class="table table-condensed table-striped" id="adjustment_factor_table">
-    <colgroup>
-        <col style="width: 50%;">
-        <col style="width: 50%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in adjustment_factors %}
-        {% include "epiv2/fragments/adjustment_factor_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
 
-<h3>Data Extractions data table
-    {% if crud == "Update" %}
-    <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:data_extraction-create' object.pk %}"
-        hx-target="#data_extraction_table" hx-swap="beforeend">Create</button>
-    {% endif %}
-</h3>
-<table class="table table-condensed table-striped" id="data_extraction_table">
-    <colgroup>
-        <col style="width: 15%;">
-        <col style="width: 15%;">
-        <col style="width: 15%;">
-        <col style="width: 20%;">
-        <col style="width: 5%;">
-        <col style="width: 5%;">
-        <col style="width: 5%;">
-        <col style="width: 5%;">
-        <col style="width: 15%;">
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Sub population</th>
-            <th>Outcome</th>
-            <th>Exposure Level</th>
-            <th>Measurement Timing</th>
-            <th>N</th>
-            <th>Effect Estimate</th>
-            <th>P-Value</th>
-            <th>Confidence</th>
-            <th>Comments</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in data_extractions %}
-        {% include "epiv2/fragments/data_extraction_row.html" %}
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Adjustment Factors data table
+        </h3>
+        <table class="table table-condensed table-striped" id="adjustment_factor_table">
+            <colgroup>
+                <col style="width: 50%;">
+                <col style="width: 50%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in adjustment_factors %}
+                {% include "epiv2/fragments/adjustment_factor_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Data Extractions data table
+        </h3>
+        <table class="table table-condensed table-striped" id="data_extraction_table">
+            <colgroup>
+                <col style="width: 15%;">
+                <col style="width: 15%;">
+                <col style="width: 15%;">
+                <col style="width: 20%;">
+                <col style="width: 5%;">
+                <col style="width: 5%;">
+                <col style="width: 5%;">
+                <col style="width: 5%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Sub population</th>
+                    <th>Outcome</th>
+                    <th>Exposure Level</th>
+                    <th>Measurement Timing</th>
+                    <th>N</th>
+                    <th>Effect Estimate</th>
+                    <th>P-Value</th>
+                    <th>Confidence</th>
+                    <th>Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in data_extractions %}
+                {% include "epiv2/fragments/data_extraction_row.html" %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endif %}
 
 {% endblock %}
