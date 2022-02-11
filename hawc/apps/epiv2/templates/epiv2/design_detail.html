@@ -34,7 +34,13 @@
                     </thead>
                     <tbody>
                         {% for object in chemical %}
-                        {% include "epiv2/fragments/chemical_row.html" %}
+                            {% include "epiv2/fragments/chemical_row.html" %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="2">
+                                    <p class="text-center mb-0">No chemicals added to design.</p>
+                                </td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -57,7 +63,13 @@
                     </thead>
                     <tbody>
                         {% for object in criteria %}
-                        {% include "epiv2/fragments/criteria_row.html" %}
+                            {% include "epiv2/fragments/criteria_row.html" %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="1">
+                                <p class="text-center mb-0">No criteria added to design.</p>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -80,7 +92,13 @@
             </thead>
             <tbody>
                 {% for object in exposures %}
-                {% include "epiv2/fragments/exposure_row.html" %}
+                    {% include "epiv2/fragments/exposure_row.html" %}
+                {% empty %}
+                <tr>
+                    <td colspan="1">
+                        <p class="text-center mb-0">No exposures added to design.</p>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -110,6 +128,12 @@
             <tbody>
                 {% for object in exposure_levels %}
                 {% include "epiv2/fragments/exposurelevel_row.html" %}
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <p class="text-center mb-0">No exposure levels added to design.</p>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -135,6 +159,12 @@
             <tbody>
                 {% for object in outcomes %}
                 {% include "epiv2/fragments/outcome_row.html" %}
+                {% empty %}
+                <tr>
+                    <td colspan="3">
+                        <p class="text-center mb-0">No outcomes added to design.</p>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -161,6 +191,12 @@
             <tbody>
                 {% for object in adjustment_factors %}
                 {% include "epiv2/fragments/adjustment_factor_row.html" %}
+                {% empty %}
+                <tr>
+                    <td colspan="2">
+                        <p class="text-center mb-0">No adjustment factors added to design.</p>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -199,6 +235,12 @@
             <tbody>
                 {% for object in data_extractions %}
                 {% include "epiv2/fragments/data_extraction_row.html" %}
+                {% empty %}
+                <tr>
+                    <td colspan="9">
+                        <p class="text-center mb-0">No data extractions added to design.</p>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
