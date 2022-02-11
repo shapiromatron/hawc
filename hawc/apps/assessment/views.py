@@ -478,7 +478,7 @@ class AttachmentViewset(HtmxViewSet):
         attachment = request.item.object
         if attachment.publicly_available or request.item.permissions(request.user)["edit"]:
             return HttpResponseRedirect(attachment.attachment.url)
-        return Http404()
+        raise Http404()
 
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
