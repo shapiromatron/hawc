@@ -42,21 +42,25 @@ class DesignForm(forms.ModelForm):
             inputs = {
                 "legend_text": f"Update {self.instance}",
                 "help_text": self.UPDATE_HELP_TEXT,
-                "cancel_url": self.instance.get_absolute_url(),
+                "form_actions": "",
             }
+            helper = BaseFormHelper(self, **inputs)
+            helper.form_tag = False
+
         else:
             inputs = {
                 "legend_text": self.CREATE_LEGEND,
                 "help_text": self.CREATE_HELP_TEXT,
                 "cancel_url": self.instance.study.get_absolute_url(),
+                "submit_text": "Next",
             }
+            helper = BaseFormHelper(self, **inputs)
 
-        helper = BaseFormHelper(self)
-        helper.form_tag = False
         helper.add_row("study_design", 3, "col-md-4")
         helper.add_row("age_description", 3, "col-md-4")
         helper.add_row("summary", 2, "col-md-6")
         helper.add_row("countries", 4, "col-md-3")
+
         return helper
 
 

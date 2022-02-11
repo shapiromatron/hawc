@@ -1,6 +1,7 @@
 from django.db.models import Prefetch
 from django.http import HttpRequest
 from django.shortcuts import render
+from django.urls import reverse
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
@@ -15,6 +16,9 @@ class DesignCreate(BaseCreate):
     parent_template_name = "study"
     model = models.Design
     form_class = forms.DesignForm
+
+    def get_success_url(self):
+        return reverse("epiv2:design_update", args=[self.object.id])
 
 
 class DesignUpdate(BaseUpdate):
