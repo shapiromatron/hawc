@@ -223,21 +223,11 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
-        if self.instance.id:
-            inputs = {"legend_text": f"Update {self.instance}"}
-        else:
-            inputs = {"legend_text": "Create new attachment"}
-        inputs["cancel_url"] = self.instance.get_absolute_url()
-
-        helper = BaseFormHelper(self, **inputs)
-
+        self.fields["description"].widget.attrs["class"] = "html5text"
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("title", 2, "col-md-6")
+        helper.add_row("publicly_available", 2, "col-md-6")
         return helper
 
 
