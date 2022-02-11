@@ -1,7 +1,6 @@
 import pytest
 from django.test.client import Client
 from django.urls import reverse
-from django.utils import timezone
 from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.models import Assessment, Log
@@ -13,8 +12,7 @@ _successful_post = {
     "version": "1",
     "assessment_objective": "<p>Test.</p>",
     "authors": "<p>Test.</p>",
-    "public": "off",
-    "public_on": timezone.now(),
+    "public_on": None,
     "noel_name": 0,
     "rob_name": 0,
     "editable": "on",
