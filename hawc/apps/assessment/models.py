@@ -419,7 +419,7 @@ class Attachment(models.Model):
     title = models.CharField(max_length=128)
     attachment = models.FileField(upload_to="attachment")
     publicly_available = models.BooleanField(default=True)
-    description = models.TextField(blank=True)
+    description = models.TextField()
 
     BREADCRUMB_PARENT = "content_object"
 

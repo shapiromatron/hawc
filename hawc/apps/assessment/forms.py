@@ -222,27 +222,11 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
+        self.fields["description"].widget.attrs["class"] = "html5text"
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.layout = Layout(
-            Fieldset(
-                "",
-                cfl.Row(
-                    Div("title", style="width: 30%; padding: 5px"),
-                    Div("description", style="width: 70%; padding: 5px"),
-                ),
-                cfl.Row(
-                    Div("publicly_available", style="width: 30%; padding: 5px"),
-                    Div("attachment", style="width: 70%; padding: 5px"),
-                ),
-            ),
-        )
+        helper.add_row("title", 2, "col-md-6")
+        helper.add_row("publicly_available", 2, "col-md-6")
         return helper
 
 

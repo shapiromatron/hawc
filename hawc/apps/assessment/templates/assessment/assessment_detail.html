@@ -226,5 +226,14 @@
   });
 </script>
 {% endif %}
-
+<script type="text/javascript">
+  htmx.onLoad(function (target) {
+    // attachment-form events
+    const form = $(target).find('.attachment-form');
+    if (form) {
+      form.find('.html5text').quillify();
+      form.find("#id_title").focus();
+    }
+  });
+</script>
 {% endblock extrajs %}

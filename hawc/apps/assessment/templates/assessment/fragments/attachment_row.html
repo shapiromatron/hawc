@@ -1,13 +1,20 @@
 <tr hx-target="this" hx-swap="outerHTML">
     <td>
         <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
+        {% if canEdit or permissions.edit %}
+            {% if object.publicly_available %}
+            <i class="float-right fa fa-eye" aria-hidden="true" title="Available to the public"></i>
+            {% else %}
+            <i class="float-right fa fa-eye-slash" aria-hidden="true" title="Not available to the public"></i>
+            {% endif %}
+        {% endif %}
     </td>
     <td>{{object.description|safe}}</td>
     {% if action == 'delete' %}
     <td>
         <form class="alert alert-danger">
             {% csrf_token %}
-            <i class="fa fa-fw fa-exclamation-triangle"></i>Are you sure you want to delete?
+            <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
             <div class="d-flex">
                 <button class="btn btn-sm btn-danger"
                     hx-post="{{ object.get_delete_url }}"

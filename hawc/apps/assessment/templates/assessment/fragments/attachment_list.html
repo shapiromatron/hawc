@@ -1,15 +1,15 @@
 <div id="attach_table">
-    {% if object_list.count > 0 or action == 'create' %}
+    {% if object_list or action == 'create' %}
     <h2>Attachments</h2>
     <table class="table table-sm table-striped">
         <colgroup>
             {% if canEdit or permissions.edit %}
             <col style="width: 25%;">
-            <col style="width: 60%;">
-            <col style="width: 15%;">
+            <col style="width: 50%;">
+            <col style="width: 25%;">
             {% else %}
-                <col style="width: 30%;">
-                <col style="width: 70%;">
+            <col style="width: 30%;">
+            <col style="width: 70%;">
             {% endif %}
         </colgroup>
         <thead>
@@ -17,7 +17,7 @@
                 <th>Attachment</th>
                 <th>Description</th>
                 {% if canEdit or permissions.edit %}
-                    <th>Editing</th>
+                <th>Editing</th>
                 {% endif %}
             </tr>
         </thead>
@@ -26,7 +26,6 @@
                 {% include "assessment/fragments/attachment_row.html" %}
             {% endfor %}
             {% include "assessment/fragments/attachment_edit_row.html" %}
-            </tr>
         </tbody>
     </table>
     {% endif %}
