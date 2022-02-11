@@ -427,7 +427,7 @@ class Attachment(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return self.content_object.get_absolute_url()
+        return reverse("assessment:attachment-detail", args=[self.pk])
 
     def get_edit_url(self):
         return reverse("assessment:attachment-update", args=[self.pk])

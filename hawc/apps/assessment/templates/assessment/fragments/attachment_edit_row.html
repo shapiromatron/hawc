@@ -6,10 +6,10 @@
         <form method=post enctype="multipart/form-data" class="border my-2 p-2">
             <div class="float-right" style="width: 15%">
                 {% if form.instance.id %}
-                    <button class="btn btn-sm btn-info"
+                    <button class="btn btn-sm btn-info ml-2"
                         hx-post="{% url 'assessment:attachment-update' object.pk %}"
                         hx-encoding="multipart/form-data">
-                        Save</button>
+                        <i class="fa fa-fw fa-save"></i>&nbsp;Update</button>
                     <button class="btn btn-sm btn-light"
                         hx-get="{% url 'assessment:attachment-detail' object.pk %}">
                         Cancel</button>
@@ -17,12 +17,12 @@
                     <button class="btn btn-sm btn-info"
                         hx-post="{% url 'assessment:attachment-create' assessment.pk %}"
                         hx-encoding="multipart/form-data">
-                        Save
+                        <i class="fa fa-fw fa-save"></i>&nbsp;Create
                     </button>
-                    <button class="btn btn-sm btn-light"
+                    <button class="btn btn-sm btn-light ml-2"
                         type='button'
                         onclick="this.parentNode.parentNode.parentNode.outerHTML = ''"
-                    ><i class = "fa fa-fw fa-times mr-1"></i>
+                    ><i class = "fa fa-fw fa-times"></i>
                         Cancel</button>
                 {% endif %}
             </div>
@@ -30,13 +30,10 @@
         </form>
         <script type="text/javascript">
             $(document).ready(function () {
-                $('.html5text').quillify();
+                // remove class after quillify in case new elements are inserted
+                $('.html5text').quillify().removeClass('html5text');
             });
         </script>
     </td>
     {% endif %}
 </tr>
-
-
-
-
