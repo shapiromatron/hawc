@@ -33,3 +33,7 @@
     </td>
     {% endif %}
 </tr>
+{% if action == 'create' %}
+<tr style="display: none" id="data_extraction-empty-row" hx-target="this"></tr>
+{% endif %}
+

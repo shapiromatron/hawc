@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 
-<tr hx-target="this" hx-swap="outerHTML" class="exposure-{{object.pk}}">
+<tr hx-target="this" hx-swap="outerHTML" class="exposure-{{object.pk}}" id="exposure-empty-row">
     {% if form %}
     <td colspan="3">
         <form method=post enctype="multipart/form-data" class="border my-2 p-2">
@@ -17,7 +17,7 @@
                     Save
                 </button>
                 <button class="btn btn-sm btn-light" type='button'
-                    onclick="this.parentNode.parentNode.parentNode.outerHTML = ''"><i
+                    onclick="this.parentNode.parentNode.parentNode.setAttribute('style', 'display: none')"><i
                         class="fa fa-fw fa-times mr-1"></i>
                     Cancel</button>
                 {% endif %}

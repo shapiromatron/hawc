@@ -29,3 +29,7 @@
     </td>
     {% endif %}
 </tr>
+{% if action == 'create' %}
+<tr style="display: none" id="exposure_level-empty-row" hx-target="this"></tr>
+{% endif %}
+

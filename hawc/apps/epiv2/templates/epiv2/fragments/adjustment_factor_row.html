@@ -27,3 +27,6 @@
     </td>
     {% endif %}
 </tr>
+{% if action == 'create' %}
+    <tr style="display: none" id="adjustment_factor-empty-row" hx-target="this"></tr>
+{% endif %}

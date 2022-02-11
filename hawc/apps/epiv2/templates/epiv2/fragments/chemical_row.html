@@ -26,3 +26,6 @@
     </td>
     {% endif %}
 </tr>
+{% if action == 'create' %}
+    <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
+{% endif %}

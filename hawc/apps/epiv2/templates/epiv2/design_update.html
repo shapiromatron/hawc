@@ -22,7 +22,7 @@
             <div class="card-body">
                 <h3 class="card-title">Chemical
                     <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
-                        hx-target="#chemical_table" hx-swap="beforeend">Create</button>
+                        hx-target="#chemical-empty-row" hx-swap="outerHTML">Create</button>
                 </h3>
 
                 <table class="table table-condensed table-striped" id="chemical_table">
@@ -39,9 +39,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for object in chemical %}
-                        {% include "epiv2/fragments/chemical_row.html" %}
-                        {% endfor %}
+                        {% if chemical %}
+                            {% for object in chemical %}
+                                {% include "epiv2/fragments/chemical_row.html" %}
+                            {% endfor %}
+                            <tr style="display: none" id="chemical-empty-row" hx-target="this">
+                            </tr>
+                        {% else %}
+                            <tr id="chemical-empty-row" hx-target="this">
+                                <td colspan="3">
+                                    <p class="text-center mb-0">No chemicals added to design.</p>
+                                </td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -52,7 +62,7 @@
             <div class="card-body">
                 <h3 class="card-title">Criteria
                     <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:criteria-create' object.pk %}"
-                        hx-target="#criteria_table" hx-swap="beforeend">Create</button>
+                        hx-target="#criteria-empty-row" hx-swap="outerHTML">Create</button>
                 </h3>
                 <table class="table table-condensed table-striped" id="criteria_table">
                     <colgroup>
@@ -66,9 +76,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for object in criteria %}
-                        {% include "epiv2/fragments/criteria_row.html" %}
-                        {% endfor %}
+                        {% if criteria %}
+                            {% for object in criteria %}
+                                {% include "epiv2/fragments/criteria_row.html" %}
+                            {% endfor %}
+                            <tr style="display: none" id="criteria-empty-row" hx-target="this">
+                            </tr>
+                        {% else %}
+                            <tr id="criteria-empty-row" hx-target="this">
+                                <td colspan="2">
+                                    <p class="text-center mb-0">No criteria added to design.</p>
+                                </td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -80,7 +100,7 @@
     <div class="card-body">
         <h3 class="card-title">Exposure
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposure-create' object.pk %}"
-                hx-target="#exposure_table" hx-swap="beforeend">Create</button>
+                hx-target="#exposure-empty-row" hx-swap="outerHTML">Create</button>
         </h3>
 
         <table class="table table-condensed table-striped" id="exposure_table">
@@ -95,9 +115,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in exposures %}
-                {% include "epiv2/fragments/exposure_row.html" %}
-                {% endfor %}
+                {% if exposures %}
+                    {% for object in exposures %}
+                        {% include "epiv2/fragments/exposure_row.html" %}
+                    {% endfor %}
+                <tr id="exposure-empty-row" hx-target="this">
+                </tr>
+                {% else %}
+                    <tr id="exposure-empty-row" hx-target="this">
+                        <td colspan="2">
+                            <p class="text-center mb-0">No exposures added to design.</p>
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -108,7 +138,7 @@
     <div class="card-body">
         <h3 class="card-title">Exposure Level
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}"
-                hx-target="#exposurelevel_table" hx-swap="beforeend">Create</button>
+                hx-target="#exposure_level-empty-row" hx-swap="outerHTML"> Create</button>
         </h3>
         <table class="table table-condensed table-striped" id="exposurelevel_table">
             <colgroup>
@@ -130,9 +160,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in exposure_levels %}
-                {% include "epiv2/fragments/exposurelevel_row.html" %}
-                {% endfor %}
+                {% if exposure_levels %}
+                    {% for object in exposure_levels %}
+                        {% include "epiv2/fragments/exposurelevel_row.html" %}
+                    {% endfor %}
+                    <tr id="exposure_level-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="exposure_level-empty-row" hx-target="this">
+                        <td colspan="6">
+                            <p class="text-center mb-0">No exposures added to design.</p>
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -144,7 +183,7 @@
     <div class="card-body">
         <h3 class="card-title">Outcome
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:outcome-create' object.pk %}"
-                hx-target="#outcome_table" hx-swap="beforeend">Create</button>
+                hx-target="#outcome-empty-row" hx-swap="outerHTML">Create</button>
         </h3>
 
         <table class="table table-condensed table-striped" id="outcome_table">
@@ -163,9 +202,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in outcomes %}
-                {% include "epiv2/fragments/outcome_row.html" %}
-                {% endfor %}
+                {% if outcomes %}
+                    {% for object in outcomes %}
+                        {% include "epiv2/fragments/outcome_row.html" %}
+                    {% endfor %}
+                    <tr id="outcome-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="outcome-empty-row" hx-target="this">
+                        <td colspan="4">
+                            <p class="text-center mb-0">No outcomes added to design.</p>
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -175,7 +223,7 @@
     <div class="card-body">
         <h3 class="card-title">Adjustment Factors
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:adjustment_factor-create' object.pk %}"
-                hx-target="#adjustment_factor_table" hx-swap="beforeend">Create</button>
+                hx-target="#adjustment_factor-empty-row" hx-swap="outerHTML">Create</button>
         </h3>
         <table class="table table-condensed table-striped" id="adjustment_factor_table">
             <colgroup>
@@ -191,9 +239,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in adjustment_factors %}
-                {% include "epiv2/fragments/adjustment_factor_row.html" %}
-                {% endfor %}
+                {% if adjustment_factors %}
+                    {% for object in adjustment_factors %}
+                        {% include "epiv2/fragments/adjustment_factor_row.html" %}
+                    {% endfor %}
+                    <tr id="adjustment_factor-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="adjustment_factor-empty-row" hx-target="this">
+                        <td colspan="3">
+                            <p class="text-center mb-0">No adjustment factors added to design.</p>
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -203,7 +260,7 @@
     <div class="card-body">
         <h3 class="card-title">Data Extractions
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:data_extraction-create' object.pk %}"
-                hx-target="#data_extraction_table" hx-swap="beforeend">Create</button>
+                hx-target="#data_extraction-empty-row" hx-swap="outerHTML">Create</button>
         </h3>
         <table class="table table-condensed table-striped" id="data_extraction_table">
             <colgroup>
@@ -233,9 +290,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in data_extractions %}
-                {% include "epiv2/fragments/data_extraction_row.html" %}
-                {% endfor %}
+                {% if data_extractions %}
+                    {% for object in data_extractions %}
+                        {% include "epiv2/fragments/data_extraction_row.html" %}
+                    {% endfor %}
+                    <tr id="data_extraction-empty-row" hx-target="this"></tr>
+                {% else %}
+                <tr id="data_extraction-empty-row" hx-target="this">
+                    <td colspan="10">
+                        <p class="text-center mb-0">No data extractions added to design.</p>
+                    </td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
