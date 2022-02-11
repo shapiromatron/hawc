@@ -22,7 +22,7 @@
             <div class="card-body">
                 <h3 class="card-title">Chemicals
                     <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
-                        hx-target="#chemical-empty-row" hx-swap="outerHTML">Create</button>
+                        hx-target="#chemical-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
                 </h3>
 
                 <table class="table table-condensed table-striped" id="chemical_table">
@@ -62,7 +62,7 @@
             <div class="card-body">
                 <h3 class="card-title">Criteria
                     <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:criteria-create' object.pk %}"
-                        hx-target="#criteria-empty-row" hx-swap="outerHTML">Create</button>
+                        hx-target="#criteria-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
                 </h3>
                 <table class="table table-condensed table-striped" id="criteria_table">
                     <colgroup>
@@ -100,7 +100,7 @@
     <div class="card-body">
         <h3 class="card-title">Exposures
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposure-create' object.pk %}"
-                hx-target="#exposure-empty-row" hx-swap="outerHTML">Create</button>
+                hx-target="#exposure-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
         </h3>
 
         <table class="table table-condensed table-striped" id="exposure_table">
@@ -138,7 +138,7 @@
     <div class="card-body">
         <h3 class="card-title">Exposure Levels
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}"
-                hx-target="#exposure_level-empty-row" hx-swap="outerHTML"> Create</button>
+                hx-target="#exposure_level-empty-row" hx-swap="outerHTML"> <i class="fa fa-plus fa-fw"></i> Create</button>
         </h3>
         <table class="table table-condensed table-striped" id="exposurelevel_table">
             <colgroup>
@@ -183,7 +183,7 @@
     <div class="card-body">
         <h3 class="card-title">Outcomes
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:outcome-create' object.pk %}"
-                hx-target="#outcome-empty-row" hx-swap="outerHTML">Create</button>
+                hx-target="#outcome-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
         </h3>
 
         <table class="table table-condensed table-striped" id="outcome_table">
@@ -223,7 +223,7 @@
     <div class="card-body">
         <h3 class="card-title">Adjustment Factors
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:adjustment_factor-create' object.pk %}"
-                hx-target="#adjustment_factor-empty-row" hx-swap="outerHTML">Create</button>
+                hx-target="#adjustment_factor-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
         </h3>
         <table class="table table-condensed table-striped" id="adjustment_factor_table">
             <colgroup>
@@ -260,7 +260,7 @@
     <div class="card-body">
         <h3 class="card-title">Data Extractions
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:data_extraction-create' object.pk %}"
-                hx-target="#data_extraction-empty-row" hx-swap="outerHTML">Create</button>
+                hx-target="#data_extraction-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
         </h3>
         <table class="table table-condensed table-striped" id="data_extraction_table">
             <colgroup>
@@ -307,5 +307,6 @@
     </div>
 </div>
 
-<a class="btn btn-m btn-light pull-right mb-3" href="{% url 'epiv2:design_detail' object.pk %}">Cancel</a>
+<a class="btn btn-m btn-light pull-right mb-3" href="{% url 'epiv2:design_detail' object.pk %}"><i class="fa fa-fw fa-times mr-1"></i>
+Cancel</a>
 {% endblock %}

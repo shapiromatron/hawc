@@ -6,15 +6,15 @@
     <tbody>
         <tr>
             <td><b>Study design</b></td>
-            <td>{{object.study_design}}</td>
+            <td>{{object.get_study_design_display}}</td>
         </tr>
         <tr>
             <td><b>Source</b></td>
-            <td>{{object.source}}</td>
+            <td>{{object.get_source_display}}</td>
         </tr>
         <tr>
             <td><b>Population age category</b></td>
-            <td>{{object.age_profile}}</td>
+            <td>{{object.get_age_profile_display}}</td>
         </tr>
         <tr>
             <td><b>Population age details</b></td>
@@ -22,7 +22,7 @@
         </tr>
         <tr>
             <td><b>Sex</b></td>
-            <td>{{object.sex}}</td>
+            <td>{{object.get_sex_display}}</td>
         </tr>
         <tr>
             <td><b>Population race/ethnicity</b></td>
@@ -38,7 +38,9 @@
         </tr>
         <tr>
             <td><b>Countries</b></td>
-            <td>{{object.countries}}</td>
+            <td>{% for object in object.countries.all %}
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <td><b>Other geographic information</b></td>
