@@ -4,7 +4,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("assessment", "0030_assessment_models"),
+        ("assessment", "0030_assessment_part1"),
     ]
 
     operations = [

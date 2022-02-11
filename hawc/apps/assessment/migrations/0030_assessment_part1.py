@@ -39,13 +39,11 @@ def set_creator(apps, schema_editor):
     df["revision_timestamp"] = df["revision_timestamp"].dt.tz_localize(None)
     df.assessment_id = df.assessment_id.astype(int)
     df.revision_user_id = df.revision_user_id.astype(int)
-
     df = (
         df.groupby("assessment_id").nth(0)[["revision_timestamp", "revision_user_id"]].reset_index()
     )
 
     dict = pd.Series(data=df.revision_user_id.values, index=df.assessment_id).to_dict()
-
     Assessment = apps.get_model("assessment", "assessment")
     updates = []
     for assessment in Assessment.objects.all():
@@ -82,7 +80,9 @@ def set_public_on(apps, schema_editor):
 
     df2 = df.groupby("assessment_id").nth(0)[["revision_timestamp"]].reset_index()
 
-    timestamps = pd.Series(data=df2.revision_timestamp.values, index=df2.assessment_id)
+    timestamps = pd.Series(
+        data=df2.revision_timestamp.values, index=df2.assessment_id
+    ).dt.tz_localize("utc")
 
     updates = []
     Assessment = apps.get_model("assessment", "assessment")
@@ -91,7 +91,8 @@ def set_public_on(apps, schema_editor):
         release_dt = timestamps.get(assessment.id)
         if release_dt:
             assessment.public_on = release_dt
-        else:  # if a date was not found, set public_on to now
+        else:
+            # if a date was not found, set public_on to now
             assessment.public_on = timezone.now()
         updates.append(assessment)
 
@@ -117,8 +118,7 @@ class Migration(migrations.Migration):
             field=models.TextField(
                 default="",
                 verbose_name="Assessment authors",
-                help_text="""A public description of the assessment authors. If this assessment is
-        made public, this will be shown to describe the authors of this project.""",
+                help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
             ),
             preserve_default=False,
         ),

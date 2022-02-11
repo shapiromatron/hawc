@@ -28,18 +28,23 @@ class AssessmentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "__str__",
-        "assessment_objective",
-        "authors",
-        "editable",
         "public_on",
         "hide_from_public_page",
+        "editable",
         "get_managers",
         "get_team_members",
         "get_reviewers",
+        "creator",
         "created",
         "last_updated",
     )
-    list_filter = ("hide_from_public_page", "public_on", "editable")
+    list_filter = (
+        "hide_from_public_page",
+        "public_on",
+        "editable",
+        "created",
+        ("creator", admin.RelatedOnlyFieldListFilter),
+    )
     search_fields = (
         "name",
         "project_manager__last_name",

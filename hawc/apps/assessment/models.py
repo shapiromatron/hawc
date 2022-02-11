@@ -143,8 +143,7 @@ class Assessment(models.Model):
     )
     authors = models.TextField(
         verbose_name="Assessment authors",
-        help_text="""A public description of the assessment authors. If this assessment is
-        made public, this will be shown to describe the authors of this project.""",
+        help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
     )
     creator = models.ForeignKey(
         HAWCUser,
