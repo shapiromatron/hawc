@@ -43,20 +43,22 @@ class AssessmentAdmin(admin.ModelAdmin):
         "public_on",
         "editable",
         "created",
-        ("creator", admin.RelatedOnlyFieldListFilter),
     )
     search_fields = (
         "name",
         "project_manager__last_name",
         "team_members__last_name",
         "reviewers__last_name",
+        "creator__last_name",
     )
     actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
     form = forms.AssessmentAdminForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.prefetch_related("project_manager", "team_members", "reviewers")
+        return qs.select_related("creator").prefetch_related(
+            "project_manager", "team_members", "reviewers"
+        )
 
     def delete_orphan_tags(self, request, queryset):
         # Action can only be run on one assessment at a time
