@@ -201,6 +201,11 @@
       </tr>
       {% endif %}
 
+      <tr>
+        <th>Date created</th>
+        <td colspan="3">Created by {{object.creator}} on {{object.created|date:"DATE_FORMAT"}}</td>
+      </tr>
+
       {% if internal_communications|hastext %}
       <tr>
         <th>Internal communications</th>
