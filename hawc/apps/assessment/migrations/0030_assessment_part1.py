@@ -20,7 +20,7 @@ def set_creator(apps, schema_editor):
             [
                 version.id,
                 version.revision.date_created,
-                version.revision.user.id,
+                version.revision.user.id if version.revision.user else None,
                 version.object_id,
             ]
         )
@@ -31,6 +31,7 @@ def set_creator(apps, schema_editor):
         )
         .sort_values("revision_timestamp")
         .reset_index(drop=True)
+        .dropna()
     )
 
     if df.shape[0] == 0:

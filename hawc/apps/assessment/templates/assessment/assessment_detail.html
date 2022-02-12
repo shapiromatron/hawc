@@ -137,7 +137,7 @@
   </table>
 
   {% if obj_perms.edit %}
-  <h3>Assessment details for team members</h3>
+  <h3>Assessment details for team members*</h3>
   <table id="assessment_table" class="table table-sm table-striped">
     <colgroup>
       <col style="width: 19%;">
@@ -147,9 +147,9 @@
     </colgroup>
     <tbody>
       <tr>
-        <th>Assessment team*</th>
+        <th>Assessment team</th>
         <td>
-          <p><strong><u>Project manager{{ object.project_manager.all|pluralize }}</u></strong></p>
+          <p><strong>Project manager{{ object.project_manager.all|pluralize }}</strong></p>
           <ul class="mb-0">
             {% for m in object.project_manager.all %}
               <li>{{ m.get_full_name }}</li>
@@ -157,7 +157,7 @@
           </ul>
         </td>
         <td>
-          <p><strong><u>Team member{{ object.team_members.all|pluralize }}</u></strong></p>
+          <p><strong>Team member{{ object.team_members.all|pluralize }}</strong></p>
           <ul class="mb-0">
             {% for m in object.team_members.all %}
             <li>{{ m.get_full_name }}</li>
@@ -167,7 +167,7 @@
           </ul>
         </td>
         <td>
-          <p><strong><u>Reviewer{{ object.reviewers.all|pluralize }}</u></strong></p>
+          <p><strong>Reviewer{{ object.reviewers.all|pluralize }}</strong></p>
           <ul class="mb-0">
             {% for m in object.reviewers.all %}
             <li>{{ m.get_full_name }}</li>
@@ -179,12 +179,12 @@
       </tr>
 
       <tr>
-        <th>Editable*</th>
-        <td colspan="3">{{object.editable}}</td>
+        <th>Editable</th>
+        <td colspan="3">{{object.editable|yesno:"Yes,No"}}</td>
       </tr>
 
       <tr>
-        <th>Public*</th>
+        <th>Public</th>
         <td colspan="3">
           {% if object.public_on %}
           Yes; published on {{object.public_on|date:"DATE_FORMAT"}}
@@ -196,14 +196,14 @@
 
       {% if object.public_on %}
       <tr>
-        <th>Hidden from public assessments page?*</th>
+        <th>Hidden from public assessments page?</th>
         <td colspan="3">{{object.hide_from_public_page|yesno:"Yes; available if you have the link but hidden from the list page,No; it's available via searching or browsing"|safe}}</td>
       </tr>
       {% endif %}
 
       {% if internal_communications|hastext %}
       <tr>
-        <th>Internal communications*</th>
+        <th>Internal communications</th>
         <td colspan="3">{{ internal_communications|safe }}</td>
       </tr>
       {% endif %}
