@@ -181,6 +181,9 @@ class Migration(migrations.Migration):
             field=models.FileField(upload_to="attachment"),
         ),
         migrations.AlterField(
+            model_name="attachment", name="description", field=models.TextField(),
+        ),
+        migrations.AlterField(
             model_name="baseendpoint",
             name="effects",
             field=models.ManyToManyField(

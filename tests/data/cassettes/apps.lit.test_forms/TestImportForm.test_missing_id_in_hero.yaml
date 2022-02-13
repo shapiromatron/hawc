@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.23.0
+      - python-requests/2.26.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/41589/recordsperpage/100.json
   response:
@@ -21,16 +21,18 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 01 Apr 2020 15:19:23 GMT
+      - Wed, 26 Jan 2022 16:22:42 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.41 (Win64) OpenSSL/1.1.1c mod_jk/1.2.46
+      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
       Set-Cookie:
-      - CFID=36407115; Expires=Thu, 02-Apr-2020 15:19:24 GMT; Path=/; HttpOnly
-      - CFTOKEN=39710173; Expires=Thu, 02-Apr-2020 15:19:24 GMT; Path=/; HttpOnly
-      - JSESSIONID=024D8927BC922AB5CAC78545932A9CDD.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2020%2F04%2F01%2011%3A19%3A24; Path=/
+      - CFID=9523737; Expires=Thu, 27-Jan-2022 16:22:42 GMT; Path=/; HttpOnly
+      - CFTOKEN=91430420; Expires=Thu, 27-Jan-2022 16:22:42 GMT; Path=/; HttpOnly
+      - JSESSIONID=178DE20638DF0C8CA4ADA8B0BD18C031.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2022%2F01%2F26%2011%3A22%3A42; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains; preload
       Transfer-Encoding:
       - chunked
     status:
