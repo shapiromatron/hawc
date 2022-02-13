@@ -22,9 +22,7 @@
 
           {% if object.editable %}
             <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
-            <button class="dropdown-item" hx-get="{% url 'study:attachment-create' object.pk %}"
-              hx-target="#attach_list" hx-swap="outerHTML">
-              Add an attachment</button>
+            <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
 
             {% if object.bioassay %}
               <div class="dropdown-divider"></div>
@@ -59,10 +57,6 @@
   {% endif %}
 
   <div id="study_details"></div>
-
-  {% if config.attachments_viewable %}
-    {% include "study/_attachment_list.html" %}
-  {% endif %}
 
   {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
@@ -131,6 +125,10 @@ window.app.startup("studyStartup", function(app){
     detail_div = $('#study_details');
 
   thisStudy.build_details_table(detail_div);
+
+  if(data.attachments_viewable){
+    thisStudy.add_attachments_row(detail_div, data.attachments);
+  }
 
   if (thisStudy.has_riskofbias()){
     window.app.startup("riskofbiasStartup", function (riskofbias) {

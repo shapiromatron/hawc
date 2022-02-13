@@ -1,4 +1,3 @@
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from ..common.models import BaseManager
@@ -34,13 +33,3 @@ class StudyManager(BaseManager):
 
 class AttachmentManager(BaseManager):
     assessment_relation = "study__assessment"
-
-    def get_attachments(self, obj, isPublic):
-        filters = {
-            "study_id": obj.id,
-        }
-        return self.filter(**filters)
-
-    def assessment_qs(self, study_id):
-        a = ContentType.objects.get(app_label="study", model="study").id
-        return self.filter(content_type=a, study_id=study_id)

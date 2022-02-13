@@ -8,8 +8,6 @@ from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
