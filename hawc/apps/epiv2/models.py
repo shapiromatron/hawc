@@ -88,7 +88,7 @@ class Design(models.Model):
         return reverse("epiv2:design_detail", args=(self.pk,))
 
     def __str__(self):
-        return f"{self.study}/{self.summary}"
+        return f"{self.summary}"
 
 
 class Chemical(models.Model):
