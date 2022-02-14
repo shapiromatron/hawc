@@ -8,7 +8,7 @@
     <td>{{object.pvalue}}</td>
     <td>{{object.confidence}}</td>
     <td>{{object.comments}}</td>
-    {% include "epiv2/fragments/object_fragment_row.html" with model="data_extraction" %}
+    {% include "epiv2/fragments/_object_row.html" with model="data_extraction" %}
 </tr>
 {% if action == 'create' %}
 <tr style="display: none" id="data_extraction-empty-row" hx-target="this"></tr>

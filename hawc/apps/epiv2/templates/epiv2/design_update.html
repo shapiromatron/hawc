@@ -24,7 +24,6 @@
                     <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
                         hx-target="#chemical-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
                 </h3>
-
                 <table class="table table-condensed table-striped">
                     <colgroup>
                         <col style="width: 38%;">
@@ -43,8 +42,7 @@
                             {% for object in chemical %}
                                 {% include "epiv2/fragments/chemical_row.html" %}
                             {% endfor %}
-                            <tr style="display: none" id="chemical-empty-row" hx-target="this">
-                            </tr>
+                            <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
                         {% else %}
                             <tr id="chemical-empty-row" hx-target="this">
                                 <td colspan="100%">
@@ -80,8 +78,7 @@
                             {% for object in criteria %}
                                 {% include "epiv2/fragments/criteria_row.html" %}
                             {% endfor %}
-                            <tr style="display: none" id="criteria-empty-row" hx-target="this">
-                            </tr>
+                            <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
                         {% else %}
                             <tr id="criteria-empty-row" hx-target="this">
                                 <td colspan="100%">
@@ -123,8 +120,7 @@
                     {% for object in exposures %}
                         {% include "epiv2/fragments/exposure_row.html" %}
                     {% endfor %}
-                <tr id="exposure-empty-row" hx-target="this">
-                </tr>
+                <tr id="exposure-empty-row" hx-target="this"></tr>
                 {% else %}
                     <tr id="exposure-empty-row" hx-target="this">
                         <td colspan="100%">

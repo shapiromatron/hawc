@@ -2,7 +2,7 @@
     <td>{{object.name}}</td>
     <td>{{object.health_outcome}}</td>
     <td>{{object.health_outcome_system}}</td>
-    {% include "epiv2/fragments/object_fragment_row.html" with model="outcome" %}
+    {% include "epiv2/fragments/_object_row.html" with model="outcome" %}
 </tr>
 {% if action == 'create' %}
 <tr style="display: none" id="outcome-empty-row" hx-target="this"></tr>

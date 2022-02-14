@@ -2,7 +2,7 @@
     <td>{{object.name}}</td>
     <td>{{object.biomonitoring_matrix}}</td>
     <td>{{object.measumrent_timing}}</td>
-    {% include "epiv2/fragments/object_fragment_row.html" with model="exposure" %}
+    {% include "epiv2/fragments/_object_row.html" with model="exposure" %}
 </tr>
 {% if action == 'create' %}
 <tr style="display: none" id="exposure-empty-row" hx-target="this"></tr>

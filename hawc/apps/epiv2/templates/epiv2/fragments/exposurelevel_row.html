@@ -4,7 +4,7 @@
     <td>{{object.exposure_measurement}}</td>
     <td>{{object.central_tendency}}</td>
     <td>{{object.comments}}</td>
-    {% include "epiv2/fragments/object_fragment_row.html" with model="exposurelevel" %}
+    {% include "epiv2/fragments/_object_row.html" with model="exposurelevel" %}
 </tr>
 {% if action == 'create' %}
 <tr style="display: none" id="exposure_level-empty-row" hx-target="this"></tr>

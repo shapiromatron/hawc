@@ -143,7 +143,7 @@ class DesignChildViewset(HtmxViewSet):
     parent_model = models.Design
     model = None  # required
     form_class = None  # required
-    form_fragment = "epiv2/fragments/object_fragment_edit_row.html"
+    form_fragment = "epiv2/fragments/_object_edit_row.html"
     detail_fragment = None  # required
 
     @action(permission=can_view)
