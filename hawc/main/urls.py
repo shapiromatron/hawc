@@ -67,7 +67,9 @@ urlpatterns = [
 ]
 
 if settings.INCLUDE_ADMIN:
-    from ..apps.hawc_admin.urls import urlpatterns as hawc_admin_urls
+    from ..apps.hawc_admin import urls as hawc_admin_urls
+
+    open_api_patterns.append(path("admin/api/", include(hawc_admin_urls.router.urls)))
 
     urlpatterns += [
         path(
@@ -81,7 +83,7 @@ if settings.INCLUDE_ADMIN:
             name="openapi",
         ),
     ]
-    urlpatterns += hawc_admin_urls
+    urlpatterns += hawc_admin_urls.urlpatterns
 
 
 # only for DEBUG, want to use static server otherwise

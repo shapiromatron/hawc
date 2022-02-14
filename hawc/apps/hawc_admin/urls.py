@@ -1,11 +1,18 @@
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from . import views
+from . import api, views
+
+router = DefaultRouter()
+router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
+
 
 admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
 urlpatterns = [
+    # api views
+    path(f"{admin_url}/api/", include((router.urls, "api"))),
     # swagger site
     path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
     # dashboard views

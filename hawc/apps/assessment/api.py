@@ -7,13 +7,11 @@ from django.core import exceptions
 from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
-from django.utils import timezone
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
@@ -23,7 +21,6 @@ from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers, SvgRenderer
 from ..common.views import create_object_log
 from . import models, serializers
-from .actions import media_metadata_report
 
 
 class DisabledPagination(PageNumberPagination):
@@ -461,19 +458,6 @@ class DatasetViewset(AssessmentViewset):
         if revision is None or not revision.data_exists():
             raise Http404()
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
-        return Response(export)
-
-
-class AdminDashboardViewset(viewsets.ViewSet):
-
-    permission_classes = (permissions.IsAdminUser,)
-    renderer_classes = (JSONRenderer,)
-
-    @action(detail=False, renderer_classes=PandasRenderers)
-    def media(self, request):
-        uri = request.build_absolute_uri(location="/")[:-1]
-        df = media_metadata_report(uri)
-        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
         return Response(export)
 
 

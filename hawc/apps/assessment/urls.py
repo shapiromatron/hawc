@@ -6,7 +6,6 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
 router.register(r"strain", api.StrainViewset, basename="strain")
