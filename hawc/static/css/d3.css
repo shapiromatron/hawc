@@ -22,10 +22,6 @@ svg {
     height: 42px; /* btn-sm are about 30px tall */
     padding: 5px;
 }
-.optionsMenuHidden {
-    opacity: 0;
-    pointer-events: none;
-}
 
 .dr_title {
     font-size: 12px;

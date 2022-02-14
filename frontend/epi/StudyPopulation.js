@@ -78,7 +78,7 @@ class StudyPopulation {
                 return `<li><a href="${d.url}">${d.name}</a></li>`;
             };
 
-        $el.append("<h2>Outcomes</h2>");
+        $el.append("<h3>Outcomes</h3>");
         if (this.data.outcomes !== undefined && this.data.outcomes.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.outcomes, liFunc));
         } else {
@@ -86,7 +86,7 @@ class StudyPopulation {
         }
 
         if (this.data.can_create_sets) {
-            $el.append("<h2>Comparison sets</h2>");
+            $el.append("<h3>Comparison sets</h3>");
             if (this.data.comparison_sets.length > 0) {
                 $el.append(HAWCUtils.buildUL(this.data.comparison_sets, liFunc));
             } else {
@@ -94,7 +94,7 @@ class StudyPopulation {
             }
         }
 
-        $el.append("<h2>Exposure measurements</h2>");
+        $el.append("<h3>Exposure measurements</h3>");
         if (this.data.exposures !== undefined && this.data.exposures.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
