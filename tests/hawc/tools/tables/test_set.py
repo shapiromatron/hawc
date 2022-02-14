@@ -69,7 +69,7 @@ class TestStudyEvaluationTable:
             "data_source": "ani",
             "published_only": False,
             "subheaders": [
-                {"label": "Subheader above animal description", "start": 2, "length": 2}
+                {"label": "Subheader above animal description", "start": 2, "length": 1}
             ],
             "columns": [
                 {
