@@ -1,4 +1,3 @@
-from io import StringIO
 from urllib.parse import urlparse
 
 import pytest
@@ -209,30 +208,3 @@ class TestDownloadPlot:
         assert client.get(url).status_code == 405
         resp = client.post(url, self._get_valid_payload(svg_data))
         assert resp.status_code == 200
-
-
-@pytest.mark.django_db(transaction=True)
-class TestAttachment:
-    def test_csrf(self):
-
-        url = reverse("assessment:attachment-create", args=[1])
-        data = StringIO("test")
-        client = Client(enforce_csrf_checks=True, HTTP_HX_REQUEST="true")
-        assert client.login(email="pm@hawcproject.org", password="pw") is True
-        resp = client.post(url, {"name": "test", "file": data})
-        assert resp.status_code == 200
-
-        csrf_client = Client(enforce_csrf_checks=True)
-
-    def test_create(self):
-        # pass
-        # TODO - check success case and then ensure it fails when we turn on csrf protection
-        # TODO - check failure w/ htmx
-        pass
-
-    def test_update(self):
-        pass
-
-    def test_delete(self):
-        pass
-
