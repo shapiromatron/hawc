@@ -719,21 +719,7 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class AdminDashboard(TemplateView):
-    template_name = "admin/dashboard.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class GrowthDashboardView(View):
-    def get(self, request, *args, **kwargs):
-        serializer = serializers.GrowthPlotSerializer(data=request.GET)
-        serializer.is_valid(raise_exception=True)
-        fig = serializer.create_figure()
-        return HttpResponse(fig.to_html(full_html=False))
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminDashboardV2(View):
+class AdminDashboard(View):
     def dispatch(self, request, *args, **kwargs):
         request.is_htmx = is_htmx(request)
         request.action = self.kwargs["action"]

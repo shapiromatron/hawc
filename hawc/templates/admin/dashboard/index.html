@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo;
+    Insights
+</div>
+{% endblock %}
+
+{% block content %}
+    <div hx-target="#dashboard-content">
+        <button hx-get="{% url 'admin_dashboard_assessments' %}">Assessments</button>
+        <button hx-get="{% url 'admin_dashboard_growth' %}">Growth</button>
+        <button hx-get="{% url 'admin_dashboard_users' %}">Users</button>
+    </div>
+    <div id="dashboard-content">
+        Select an item...
+    </div>
+    <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/htmx/1.6.1/htmx.min.js' %}"></script>
+    <script src="https://cdn.plot.ly/plotly-2.3.0.min.js"></script>
+{% endblock content %}
