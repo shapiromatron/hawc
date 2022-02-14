@@ -2,8 +2,8 @@
 
 <tr hx-target="this" hx-swap="outerHTML" class="exposure-{{object.pk}}" id="exposure-empty-row">
     {% if form %}
-    <td colspan="3">
-        <form method=post enctype="multipart/form-data" class="border my-2 p-2 pb-5">
+    <td colspan="4">
+        <form method=post enctype="multipart/form-data" class="border my-2 p-2 pb-5" style="background-color: #D5E6FF;">
             {% crispy form %}
             <div class="pull-right form-row">
                 {% if form.instance.id %}
