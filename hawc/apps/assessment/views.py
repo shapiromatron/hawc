@@ -32,7 +32,7 @@ from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
 from ..common.forms import DownloadPlotForm
-from ..common.helper import HAWCtoDateString, WebappConfig
+from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view, is_htmx
 from ..common.views import (
     BaseCreate,
@@ -719,21 +719,7 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class AdminDashboard(TemplateView):
-    template_name = "admin/dashboard.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class GrowthDashboardView(View):
-    def get(self, request, *args, **kwargs):
-        serializer = serializers.GrowthPlotSerializer(data=request.GET)
-        serializer.is_valid(raise_exception=True)
-        fig = serializer.create_figure()
-        return HttpResponse(fig.to_html(full_html=False))
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminDashboardV2(View):
+class AdminDashboard(View):
     def dispatch(self, request, *args, **kwargs):
         request.is_htmx = is_htmx(request)
         request.action = self.kwargs["action"]
@@ -752,22 +738,27 @@ class AdminDashboardV2(View):
         context = dict(form=form, fig=fig, df=df)
         return render(request, "admin/dashboard/growth.html", context)
 
+    @method_decorator(cache_page(3600))
     def users(self, request: HttpRequest, *args, **kwargs):
-        growth = dashboard.user_growth()
-        active = dashboard.user_active()
-        logins = dashboard.last_login()
         return render(
             request,
             "admin/dashboard/users.html",
-            {"growth": growth, "active": active, "logins": logins},
+            {
+                "growth": dashboard.user_growth(),
+                "active": dashboard.user_active(),
+                "logins": dashboard.last_login(),
+            },
         )
 
+    @method_decorator(cache_page(3600))
+    def assessment_size(self, request: HttpRequest, *args, **kwargs):
+        df = dashboard.size_df()
+        html = df.to_html(index=False, table_id="table", escape=False, border=0)
+        return render(request, "admin/dashboard/assessment_size.html", {"table": html})
+
+    @method_decorator(cache_page(3600))
     def assessment_growth(self, request: HttpRequest, *args, **kwargs):
-        key = "admin-assessment-growth"
-        matrix = cache.get(key)
-        if matrix is None:
-            matrix = dashboard.growth_matrix().to_html()
-            cache.set(key, matrix, 3600)
+        matrix = dashboard.growth_matrix().to_html()
         return render(
             request,
             "admin/dashboard/assessment_growth.html",
@@ -791,35 +782,8 @@ class AdminDashboardV2(View):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-@method_decorator(cache_page(3600), name="dispatch")
-class AdminAssessmentSize(TemplateView):
-    template_name = "admin/assessment-size.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        df = models.Assessment.size_df()
-
-        # stringify datetimes
-        df[["created", "last_updated"]] = df[["created", "last_updated"]].applymap(
-            lambda x: HAWCtoDateString(x)
-        )
-        # apply hyperlink to assessment names
-        df["name"] = df[["id", "name"]].apply(
-            lambda row: f"<a href='/assessment/{row['id']}/'>{row['name']}</a>", axis=1
-        )
-        # format column names for readability
-        df = df.rename(lambda c: c.replace("_", " "), axis="columns")
-
-        context["assessmentSizeTable"] = df.to_html(
-            index=False, table_id="assessmentSizeTable", escape=False, border=0
-        )
-        return context
-
-
-@method_decorator(staff_member_required, name="dispatch")
 class AdminMediaPreview(TemplateView):
-    template_name = "admin/media-preview.html"
+    template_name = "admin/media_preview.html"
 
     def get_context_data(self, **kwargs):
         """

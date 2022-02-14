@@ -7,12 +7,13 @@ from django.db.models import Count, F
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from hawc.apps.animal.models import Endpoint
-from hawc.apps.assessment.models import Assessment
-from hawc.apps.lit.models import Reference
-from hawc.apps.riskofbias.models import RiskOfBias
-from hawc.apps.study.models import Study
-from hawc.apps.summary.models import DataPivot, Visual
+from ...animal.models import Endpoint
+from ...assessment.models import Assessment
+from ...common.helper import HAWCtoDateString
+from ...lit.models import Reference
+from ...riskofbias.models import RiskOfBias
+from ...study.models import Study
+from ...summary.models import DataPivot, Visual
 
 from .constants import PandasDurationGrouper
 
@@ -127,3 +128,35 @@ class AssessmentGrowthSettings(forms.Form):
             labels={"id": "# items", "date": "created date"},
         )
         return assessment, fig
+
+
+def size_df() -> pd.DataFrame:
+    """Get the item count for many key item types in an assessment dataframe"""
+    qs = Assessment.objects.all().values("id", "name", "created", "last_updated")
+    df1 = pd.DataFrame(qs).set_index("id")
+    for annotation in [
+        dict(num_references=Count("references")),
+        dict(num_studies=Count("references__study")),
+        dict(num_ani_endpoints=Count("baseendpoint__endpoint")),
+        dict(num_epi_outcomes=Count("baseendpoint__outcome")),
+        dict(num_epi_results=Count("baseendpoint__outcome__results")),
+        dict(num_invitro_ivendpoints=Count("baseendpoint__ivendpoint")),
+        dict(num_datapivots=Count("datapivot")),
+        dict(num_viusals=Count("visuals")),
+    ]:
+        qs = Assessment.objects.all().values("id").annotate(**annotation)
+        df2 = pd.DataFrame(qs).set_index("id")
+        df1 = df1.merge(df2, left_index=True, right_index=True)
+
+    df1 = df1.reset_index().sort_values("id")
+
+    # stringify datetimes
+    df1[["created", "last_updated"]] = df1[["created", "last_updated"]].applymap(HAWCtoDateString)
+
+    # apply hyperlink to assessment names
+    df1["name"] = df1[["id", "name"]].apply(
+        lambda row: f"<a href='/assessment/{row['id']}/'>{row['name']}</a>", axis=1
+    )
+
+    # format column names for readability
+    return df1.rename(lambda c: c.replace("_", " "), axis="columns")
