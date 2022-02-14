@@ -1562,7 +1562,7 @@ class TestMetadataApi:
         client = APIClient()
 
         # Public should NOT be able to view the version for private assessments
-        private_assessment = Assessment.objects.filter(public=False).first()
+        private_assessment = Assessment.objects.filter(public_on__isnull=True).first()
         assert private_assessment is not None
         url = reverse("epi:api:metadata-detail", args=(private_assessment.id,))
         resp = client.get(url)

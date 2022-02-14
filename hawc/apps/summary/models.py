@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.html import strip_tags
 from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
@@ -27,7 +26,6 @@ from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
-    HAWCtoDateString,
     ReportExport,
     SerializerHelper,
     read_excel,
@@ -121,27 +119,6 @@ class SummaryText(MP_Node):
 
     def get_assessment(self):
         return self.assessment
-
-    @classmethod
-    def build_report(cls, report, assessment):
-        title = "Summary Text: " + HAWCtoDateString(timezone.now())
-        report.doc.add_heading(title, level=1)
-
-        preface = "Preliminary summary-text export in Word (work in progress)"
-        p = report.doc.add_paragraph(preface)
-        p.italic = True
-
-        def print_node(node, depth):
-            report.doc.add_heading(node["data"]["title"], level=depth)
-            report.doc.add_paragraph(strip_tags(node["data"]["text"]))
-            if node.get("children", None):
-                for node in node["children"]:
-                    print_node(node, depth + 1)
-
-        nodes = SummaryText.get_assessment_descendants(assessment.id, json_encode=False)
-        if nodes[0].get("children", None):
-            for node in nodes[0]["children"]:
-                print_node(node, 2)
 
 
 class SummaryTable(models.Model):

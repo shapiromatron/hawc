@@ -27,7 +27,7 @@ class Group {
         $el.hide().append(this.build_details_table());
 
         if (this.descriptions.length > 0) {
-            $el.append("<h2>Numerical group descriptions</h2>").append(
+            $el.append("<h3>Numerical group descriptions</h3>").append(
                 this.build_group_descriptions_table()
             );
         }

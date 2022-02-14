@@ -37,7 +37,7 @@ class Donut extends D3Plot {
         this.radius_outer = 200;
         this.padding = {top: 10, right: 10, bottom: 10, left: 10};
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + "px",
+            position: "relative",
         });
         this.rotated_label_start_padding = 3; // padding from the inner radius where the rotated domain labels should start
         this.rotated_label_end_padding = 2; // padding from the middle radius where the rotated domain labels should end
@@ -319,7 +319,7 @@ class Donut extends D3Plot {
 
         // build plot div, but make hidden by default
         this.subset_div = $("<div>").css({
-            position: "relative",
+            position: "absolute",
             display: "none",
             padding: "5px",
             overflow: "auto",
@@ -340,12 +340,11 @@ class Donut extends D3Plot {
 
     resize_subset() {
         $(window).resize(() => {
-            var menu_height = this.menu_div.hasClass("hidden") ? 0 : this.menu_div.outerHeight();
             this.subset_div.css({
                 height: this.svg.clientHeight - this.padding.top - this.padding.bottom,
                 width: this.svg.clientWidth / 2 - this.padding.left - this.padding.right,
                 left: this.svg.clientWidth / 2 + this.padding.left,
-                top: -this.svg.clientHeight - menu_height,
+                top: this.padding.top,
             });
         });
         $(window).resize();

@@ -495,6 +495,12 @@ Package style overrides
     padding: 0.8333em 0 0;
 }
 
+/* htmx */
+.htmx-swapping {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
 /*
 Utility classes
 */

@@ -245,9 +245,10 @@ class ExternalAuth(SuccessURLAllowedHostsMixin, View):
         email = metadata.pop("email")
         external_id = metadata.pop("external_id")
         try:
-            user = models.HAWCUser.objects.get(email=email)
+            user = models.HAWCUser.objects.get(email__iexact=email)
             # Save external ID if this is our first access
             if user.external_id is None:
+                user.email = email
                 user.external_id = external_id
                 # Set unusable password if only external auth is allowed
                 if settings.AUTH_PROVIDERS == {AuthProvider.external}:
