@@ -100,7 +100,7 @@ class MediaPreview(TemplateView):
         obj = self.request.GET.get("item", "")
         media = Path(settings.MEDIA_ROOT)
         context["has_object"] = False
-        resolved = media / obj
+        resolved = (media / obj).resolve()
         context["object_name"] = str(Path(obj))
         if obj and resolved.exists() and media in resolved.parents:
             root_uri = self.request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
