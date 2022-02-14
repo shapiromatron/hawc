@@ -156,9 +156,9 @@ class StudyEvaluationTableStore {
         let col = this.stagedEdits.columns[colIdx],
             isDefaultLabel = col.label == this.getDefaultColumnLabel(col);
         if ("attribute" in value && col.attribute !== value.attribute) {
-            if (col.attribute == "rob_score") {
+            if (col.attribute == "rob") {
                 delete col.metric_id;
-            } else if (value.attribute == "rob_score") {
+            } else if (value.attribute == "rob") {
                 let metric = this.metricIdChoices[0];
                 col.metric_id = metric == null ? undefined : metric["id"];
             }
@@ -243,7 +243,7 @@ class StudyEvaluationTableStore {
     }
     getDefaultColumnLabel(col) {
         switch (col.attribute) {
-            case "rob_score":
+            case "rob":
                 return _.find(this.metricIdChoices, c => c.id == col.metric_id).label;
             default:
                 return _.find(
@@ -258,7 +258,7 @@ class StudyEvaluationTableStore {
         return _.find(this.workingSettings.rows[rowIdx].customized, d => d.key == colKey);
     }
     getDefaultCustomized(row, col) {
-        return col.attribute == "rob_score"
+        return col.attribute == "rob"
             ? {key: col.key, score_id: -1}
             : {key: col.key, html: this.getDefaultCellContent(row, col).html};
     }
@@ -286,21 +286,15 @@ class StudyEvaluationTableStore {
     }
     concatDataSelection(data, attribute) {
         switch (attribute) {
-            case "study_name":
+            case "study__short_citation":
                 return _.chain(data)
                     .map(d => d["study citation"])
                     .uniq()
                     .join("; ")
                     .value();
-            case "species_strain_sex":
+            case "animal_group__description":
                 return _.chain(data)
                     .map(d => d["animal description"])
-                    .uniq()
-                    .join("; ")
-                    .value();
-            case "doses":
-                return _.chain(data)
-                    .map(d => d["doses"])
                     .uniq()
                     .join("; ")
                     .value();
@@ -308,7 +302,7 @@ class StudyEvaluationTableStore {
     }
     getDefaultCellContent(row, col) {
         switch (col.attribute) {
-            case "rob_score": {
+            case "rob": {
                 let data = this.getRobSelection(row.id, col.metric_id),
                     judgment = data.length ? data[0]["score_score"] : -1;
                 return judgment == -1
@@ -321,15 +315,14 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study_name": {
+            case "study__short_citation": {
                 let data = this.getDataSelection(row.type, row.id),
                     text = this.concatDataSelection(data, col.attribute);
                 return {
                     html: `<p><a href="/study/${row.id}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
                 };
             }
-            case "species_strain_sex":
-            case "doses": {
+            case "animal_group__description": {
                 let data = this.getDataSelection(row.type, row.id),
                     text = this.concatDataSelection(data, col.attribute);
                 return {html: `<p>${text}</p>`};
@@ -341,7 +334,7 @@ class StudyEvaluationTableStore {
     }
     getCustomCellContent(attribute, customized) {
         switch (attribute) {
-            case "rob_score": {
+            case "rob": {
                 let data = this.getRobSelection(null, null, customized.score_id),
                     judgment = data.length ? data[0]["score_score"] : -1;
                 return judgment == -1
@@ -354,9 +347,8 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study_name":
-            case "species_strain_sex":
-            case "doses":
+            case "study__short_citation":
+            case "animal_group__description":
             case "free_html":
                 return {html: customized.html};
         }
@@ -461,7 +453,7 @@ class StudyEvaluationTableStore {
         let row = this.workingSettings.rows[rowIdx],
             col = this.workingSettings.columns[colIdx],
             customized = this.getCustomized(rowIdx, col.key);
-        if (col.attribute == "rob_score") {
+        if (col.attribute == "rob") {
             let scoreId = customized == null ? null : customized.score_id,
                 selection = this.getRobSelection(row.id, col.metric_id, scoreId);
 

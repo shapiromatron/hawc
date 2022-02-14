@@ -48,7 +48,7 @@ class EditCellForm extends Component {
                     checked={customized != null}
                 />
                 {customized != null
-                    ? col.attribute == "rob_score"
+                    ? col.attribute == "rob"
                         ? this.renderRobForm()
                         : this.renderTextForm()
                     : null}
@@ -284,7 +284,7 @@ class EditColumnForm extends Component {
                         value={col.attribute}
                         label="Attribute"
                     />
-                    {col.attribute == "rob_score" ? (
+                    {col.attribute == "rob" ? (
                         <SelectInput
                             choices={store.metricIdChoices}
                             handleSelect={value =>
@@ -472,7 +472,7 @@ class Table extends Component {
                                             className={`previewModalParent${
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? " bg-light"
-                                                    : col.attribute == "rob_score"
+                                                    : col.attribute == "rob"
                                                     ? " text-center align-middle cursor-pointer"
                                                     : ""
                                             }`}
@@ -483,7 +483,7 @@ class Table extends Component {
                                             }
                                             onClick={
                                                 (editable && store.editingCell(rowIdx, colIdx)) ||
-                                                col.attribute != "rob_score"
+                                                col.attribute != "rob"
                                                     ? null
                                                     : store.interactiveOnClick(rowIdx, colIdx)
                                             }>
@@ -514,7 +514,7 @@ class Table extends Component {
                                                 />
                                             ) : null}
                                             {(editable && store.editingCell(rowIdx, colIdx)) ||
-                                            col.attribute == "rob_score"
+                                            col.attribute == "rob"
                                                 ? null
                                                 : this.getInteractiveIcon(rowIdx, colIdx)}
                                             <span

@@ -55,39 +55,32 @@ class DataSourceChoices(Enum):
 
 
 class AttributeChoices(Enum):
-    RobScore = "rob_score"
-    StudyName = "study_name"
-    SpeciesStrainSex = "species_strain_sex"
-    Doses = "doses"
     FreeHtml = "free_html"
+    Rob = "rob"
+    StudyShortCitation = "study__short_citation"
+    AnimalGroupDescription = "animal_group__description"
 
-    def get_rob_score(self, selection: pd.DataFrame) -> BaseCell:
+    def get_free_html(self, selection: pd.DataFrame) -> BaseCell:
+        # this will be overridden by 'customized' html
+        return GenericCell()
+
+    def get_rob(self, selection: pd.DataFrame) -> BaseCell:
         values = selection["score_score"].values
 
         judgment = -1 if values.size == 0 else values[0]
         return JudgmentColorCell(judgment=judgment)
 
-    def get_study_name(self, selection: pd.DataFrame) -> BaseCell:
+    def get_study__short_citation(self, selection: pd.DataFrame) -> BaseCell:
         values = selection["study citation"].dropna().unique()
 
         text = "; ".join(values)
         return GenericCell(quill_text=tag_wrapper(text, "p"))
 
-    def get_species_strain_sex(self, selection: pd.DataFrame) -> BaseCell:
+    def get_animal_group__description(self, selection: pd.DataFrame) -> BaseCell:
         values = selection["animal description"].dropna().unique()
 
         text = "; ".join(values)
         return GenericCell(quill_text=tag_wrapper(text, "p"))
-
-    def get_doses(self, selection: pd.DataFrame) -> BaseCell:
-        values = selection["doses"].dropna().unique()
-
-        text = "; ".join(values)
-        return GenericCell(quill_text=tag_wrapper(text, "p"))
-
-    def get_free_html(self, selection: pd.DataFrame) -> BaseCell:
-        # this will be overridden by 'customized' html
-        return GenericCell()
 
     def get_cell(self, selection: pd.DataFrame) -> BaseCell:
         return getattr(self, f"get_{self.value}")(selection)
@@ -184,7 +177,7 @@ class StudyEvaluationTable(BaseTable):
                 cell.judgment = -1 if values.size == 0 else values[0]
 
     def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:
-        if column.attribute.value == "rob_score":
+        if column.attribute.value == "rob":
             try:
                 selection = self._rob.loc[(row.id, column.metric_id)]
             except KeyError:
