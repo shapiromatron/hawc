@@ -32,7 +32,7 @@ class TestCreatePermissions:
         assert response.status_code == 200
 
         n_designs = Design.objects.count()
-        with assertTemplateUsed("epiv2/design_detail.html"):
+        with assertTemplateUsed("epiv2/design_update.html"):
             response = c.post(url, data=_successful_post, follow=True,)
             assert Design.objects.count() == n_designs + 1
             n_designs += 1
