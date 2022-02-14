@@ -1,20 +1,20 @@
+{% load crud_url %}
 {% load crispy_forms_tags %}
-
-<tr hx-target="this" hx-swap="outerHTML" class="exposure-{{object.pk}}" id="exposure-empty-row">
+<tr hx-target="this" hx-swap="outerHTML swap:0s" id="{{model}}-empty-row" class="">
     {% if form %}
-    <td colspan="4">
+    <td colspan="100%">
         <form method=post enctype="multipart/form-data" class="border my-2 p-2 pb-5" style="background-color: #D5E6FF;">
             {% crispy form %}
-            <div class="pull-right form-row">
+            <div class="form-row pull-right">
                 {% if form.instance.id %}
-                <button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:exposure-update' object.pk %}"
+                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'update' object.pk %}"
                     hx-encoding="multipart/form-data">
                     Save</button>
-                <button class="btn btn-sm btn-light" hx-get="{% url 'epiv2:exposure-detail' object.pk %}">
+                <button class="btn btn-sm btn-light" hx-get="{% crud_url 'epiv2' model 'detail' object.pk %}">
                     <i class="fa fa-fw fa-times mr-1"></i>
                     Cancel</button>
                 {% else %}
-                <button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:exposure-create' parent.pk %}"
+                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'create' parent.pk %}"
                     hx-encoding="multipart/form-data">
                     Save
                 </button>
@@ -24,15 +24,8 @@
                     Cancel</button>
                 {% endif %}
             </div>
+
         </form>
-        {% block extrajs %}
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('.html5text').quillify();
-                $('.html5text').removeClass('html5text');
-            });
-        </script>
-        {% endblock extrajs %}
     </td>
     {% endif %}
 </tr>

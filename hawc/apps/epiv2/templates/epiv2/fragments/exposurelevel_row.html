@@ -4,30 +4,7 @@
     <td>{{object.exposure_measurement}}</td>
     <td>{{object.central_tendency}}</td>
     <td>{{object.comments}}</td>
-    {% if action == 'delete' %}
-    <td>
-        <form class="alert alert-danger">
-            {% csrf_token %}
-            <i class="fa fa-fw fa-exclamation-triangle mx-1"></i>Are you sure you want to delete?
-            <div class="d-flex flex-row-reverse">
-                <button class="btn btn-sm btn-danger mx-1" hx-post="{% url 'epiv2:exposurelevel-delete' object.pk %}"
-                    hx-swap="outerHTML swap:1s">Confirm</button>
-                <button class="btn btn-sm btn-secondary mx-1"
-                    hx-get="{% url 'epiv2:exposurelevel-detail' object.pk %}">Cancel</button>
-            </div>
-        </form>
-    </td>
-    {% elif permissions.edit or obj_perms.edit and crud == "Update" %}
-    <td>
-        <button class="btn btn-sm btn-info" hx-get="{% url 'epiv2:exposurelevel-update' object.pk %}">
-            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-        <button class="btn btn-sm btn-danger" hx-get="{% url 'epiv2:exposurelevel-delete' object.pk %}">
-            <i class="fa fa-trash" aria-hidden="true"></i></button>
-        <button class="btn btn-sm btn-secondary" hx-post="{% url 'epiv2:exposurelevel-clone' object.pk %}"
-            hx-target="#exposurelevel_table" hx-swap="beforeend">
-            <i class="fa fa-clone" aria-hidden="true"></i></button>
-    </td>
-    {% endif %}
+    {% include "epiv2/fragments/object_fragment_row.html" with model="exposurelevel" %}
 </tr>
 {% if action == 'create' %}
 <tr style="display: none" id="exposure_level-empty-row" hx-target="this"></tr>
