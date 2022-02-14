@@ -33,7 +33,7 @@ from django.views.generic.edit import CreateView
 from ..common.crumbs import Breadcrumb
 from ..common.forms import DownloadPlotForm
 from ..common.helper import HAWCtoDateString, WebappConfig
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view, is_htmx
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -50,7 +50,7 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
-from . import constants, forms, models, serializers
+from . import constants, dashboard, forms, models, serializers
 
 logger = logging.getLogger(__name__)
 
@@ -730,6 +730,64 @@ class GrowthDashboardView(View):
         serializer.is_valid(raise_exception=True)
         fig = serializer.create_figure()
         return HttpResponse(fig.to_html(full_html=False))
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class AdminDashboardV2(View):
+    def dispatch(self, request, *args, **kwargs):
+        request.is_htmx = is_htmx(request)
+        request.action = self.kwargs["action"]
+        handler = getattr(self, request.action, self.http_method_not_allowed)
+        return handler(request, *args, **kwargs)
+
+    def index(self, request: HttpRequest, *args, **kwargs):
+        return render(request, "admin/dashboard/index.html", {})
+
+    def growth(self, request, *args, **kwargs):
+        form = dashboard.GrowthForm(data=request.POST) if request.POST else dashboard.GrowthForm()
+        df = fig = None
+        if form.is_valid():
+            df, fig = form.get_data()
+            fig = fig.to_json()
+        context = dict(form=form, fig=fig, df=df)
+        return render(request, "admin/dashboard/growth.html", context)
+
+    def users(self, request: HttpRequest, *args, **kwargs):
+        growth = dashboard.user_growth()
+        active = dashboard.user_active()
+        logins = dashboard.last_login()
+        return render(
+            request,
+            "admin/dashboard/users.html",
+            {"growth": growth, "active": active, "logins": logins},
+        )
+
+    def assessment_growth(self, request: HttpRequest, *args, **kwargs):
+        key = "admin-assessment-growth"
+        matrix = cache.get(key)
+        if matrix is None:
+            matrix = dashboard.growth_matrix().to_html()
+            cache.set(key, matrix, 3600)
+        return render(
+            request,
+            "admin/dashboard/assessment_growth.html",
+            {"matrix": matrix, "form": dashboard.AssessmentGrowthSettings()},
+        )
+
+    def assessment_profile(self, request: HttpRequest, *args, **kwargs):
+        form = (
+            dashboard.AssessmentGrowthSettings(data=request.POST)
+            if request.POST
+            else dashboard.AssessmentGrowthSettings()
+        )
+        assessment = fig = None
+        if form.is_valid():
+            assessment, fig = form.time_series()
+        return render(
+            request,
+            "admin/dashboard/assessment_profile.html",
+            {"form": form, "assessment": assessment, "fig": fig},
+        )
 
 
 @method_decorator(staff_member_required, name="dispatch")

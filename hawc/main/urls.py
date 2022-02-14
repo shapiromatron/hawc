@@ -84,6 +84,42 @@ if settings.INCLUDE_ADMIN:
         path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
         path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
         path(
+            f"{admin_url}/dashboard/v2/",
+            views.AdminDashboardV2.as_view(),
+            {"action": "index"},
+            name="admin_dashboard_v2",
+        ),
+        path(
+            f"{admin_url}/dashboard/v2/growth/",
+            views.AdminDashboardV2.as_view(),
+            {"action": "growth"},
+            name="admin_dashboard_v2_growth",
+        ),
+        path(
+            f"{admin_url}/dashboard/v2/users/",
+            views.AdminDashboardV2.as_view(),
+            {"action": "users"},
+            name="admin_dashboard_v2_users",
+        ),
+        path(
+            f"{admin_url}/dashboard/v2/assessments/",
+            views.AdminDashboardV2.as_view(),
+            {"action": "assessment_growth"},
+            name="admin_dashboard_v2_assessments",
+        ),
+        path(
+            f"{admin_url}/dashboard/v2/assessment-profile/",
+            views.AdminDashboardV2.as_view(),
+            {"action": "assessment_profile"},
+            name="admin_dashboard_v2_assessment_profile",
+        ),
+        path(
+            f"{admin_url}/media-preview/",
+            views.AdminMediaPreview.as_view(),
+            name="admin_media_preview",
+        ),
+        path(f"{admin_url}/dashboard/", views.AdminDashboard.as_view(), name="admin_dashboard",),
+        path(
             f"{admin_url}/dashboard/growth/",
             views.GrowthDashboardView.as_view(),
             name="admin_growth",
