@@ -1,33 +1,33 @@
 import GenericTableStore from "./genericTable/store.js";
 import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
-import StudyOutcomeTableStore from "./studyOutcomeTable/store.js";
+import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
 import {TableType} from "./constants";
 
 import GenericTableForm from "./genericTable/TableForm";
 import GenericTable from "./genericTable/Table";
 import EvidenceProfileForm from "./evidenceProfileTable/Form";
 import EvidenceProfileTable from "./evidenceProfileTable/Table";
-import StudyOutcomeTableForm from "./studyOutcomeTable/TableForm";
-import StudyOutcomeTable from "./studyOutcomeTable/Table";
-import StudyOutcomeData from "./studyOutcomeTable/DataForm";
+import StudyEvaluationTableForm from "./studyEvaluationTable/TableForm";
+import StudyEvaluationTable from "./studyEvaluationTable/Table";
+import StudyEvaluationData from "./studyEvaluationTable/DataForm";
 
 const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableStore,
         [TableType.EVIDENCE_PROFILE]: EvidenceProfileTableStore,
-        [TableType.STUDY_OUTCOME_TABLE]: StudyOutcomeTableStore,
+        [TableType.STUDY_EVALUATION_TABLE]: StudyEvaluationTableStore,
     },
     tableViewComponentLookup = {
         [TableType.GENERIC]: GenericTable,
         [TableType.EVIDENCE_PROFILE]: EvidenceProfileTable,
-        [TableType.STUDY_OUTCOME_TABLE]: StudyOutcomeTable,
+        [TableType.STUDY_EVALUATION_TABLE]: StudyEvaluationTable,
     },
     tableEditComponentLookup = {
         [TableType.GENERIC]: GenericTableForm,
         [TableType.EVIDENCE_PROFILE]: EvidenceProfileForm,
-        [TableType.STUDY_OUTCOME_TABLE]: StudyOutcomeTableForm,
+        [TableType.STUDY_EVALUATION_TABLE]: StudyEvaluationTableForm,
     },
     tableDataComponentLookup = {
-        [TableType.STUDY_OUTCOME_TABLE]: StudyOutcomeData,
+        [TableType.STUDY_EVALUATION_TABLE]: StudyEvaluationData,
     },
     getTableStore = function(table, editStore) {
         const Cls = tableStoreLookup[table.table_type];

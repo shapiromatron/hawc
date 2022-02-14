@@ -123,7 +123,7 @@ class JudgmentColorCell(BaseCell):
         return parser.feed(tag_wrapper(text, "p"), block)
 
 
-class StudyOutcomeTable(BaseTable):
+class StudyEvaluationTable(BaseTable):
     assessment_id: int
     data_source: DataSourceChoices
     published_only: bool
@@ -139,7 +139,23 @@ class StudyOutcomeTable(BaseTable):
 
         data_dict = self.get_data(self.assessment_id, self.data_source, self.published_only)
         self._data = pd.DataFrame.from_records(data_dict["data"])
-        self._rob = pd.DataFrame.from_records(data_dict["rob"]).set_index(["study_id", "metric_id"])
+        self._rob = pd.DataFrame.from_records(
+            data_dict["rob"],
+            columns=[
+                "study_id",
+                "metric_id",
+                "id",
+                "score_id",
+                "score_label",
+                "score_notes",
+                "score_score",
+                "bias_direction",
+                "is_default",
+                "riskofbias_id",
+                "content_type_id",
+                "object_id",
+            ],
+        ).set_index(["study_id", "metric_id"])
 
     def _subheaders_group(self):
         cells = []

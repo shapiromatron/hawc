@@ -9,7 +9,7 @@ import Study from "study/Study";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
 
-class StudyOutcomeTableStore {
+class StudyEvaluationTableStore {
     @observable editMode = false;
     @observable settings = null;
     @observable robSettings = null;
@@ -543,4 +543,4 @@ class StudyOutcomeTableStore {
     }
 }
 
-export default StudyOutcomeTableStore;
+export default StudyEvaluationTableStore;

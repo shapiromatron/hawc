@@ -19,7 +19,7 @@ from treebeard.mp_tree import MP_Node
 from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import BaseTable, GenericTable
 from hawc.tools.tables.parser import QuillParser
-from hawc.tools.tables.sot import StudyOutcomeTable
+from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -150,7 +150,7 @@ class SummaryTable(models.Model):
     TABLE_SCHEMA_MAP = {
         constants.TableType.GENERIC: GenericTable,
         constants.TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
-        constants.TableType.STUDY_OUTCOME: StudyOutcomeTable,
+        constants.TableType.STUDY_EVALUATION: StudyEvaluationTable,
     }
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)

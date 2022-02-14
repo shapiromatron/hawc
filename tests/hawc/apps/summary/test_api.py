@@ -351,9 +351,14 @@ class TestSummaryTableViewset:
         assert json.loads(fn.read_text()) == data
 
     def test_data(self, rewrite_data_files: bool):
-        data = {"assessment_id": 1, "table_type": 2, "data_source": "ani"}
-        missing_data = {"assessment_id": 1, "table_type": 2}
-        invalid_data = {"assessment_id": 1, "table_type": 2, "data_source": "not a data source"}
+        data = {"assessment_id": 1, "table_type": 2, "data_source": "ani", "published_only": True}
+        missing_data = {"assessment_id": 1, "table_type": 2, "published_only": True}
+        invalid_data = {
+            "assessment_id": 1,
+            "table_type": 2,
+            "data_source": "not a data source",
+            "published_only": True,
+        }
 
         base_url = reverse("summary:api:summary-table-data")
 
@@ -365,7 +370,7 @@ class TestSummaryTableViewset:
         url = f"{base_url}?{urlencode(data)}"
         resp = rev_client.get(url)
         assert resp.status_code == 200
-        self._test_data_file(rewrite_data_files, "sot", resp.json())
+        self._test_data_file(rewrite_data_files, "set", resp.json())
 
         # invalid request for unauthorized user
         resp = anon_client.get(url)

@@ -1,5 +1,5 @@
 export const TableType = {
     GENERIC: 0,
     EVIDENCE_PROFILE: 1,
-    STUDY_OUTCOME_TABLE: 2,
+    STUDY_EVALUATION_TABLE: 2,
 };

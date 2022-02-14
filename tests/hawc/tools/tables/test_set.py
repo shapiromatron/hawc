@@ -4,11 +4,11 @@ import pandas as pd
 import pytest
 from docx import Document
 
-from hawc.tools.tables.sot import AttributeChoices, StudyOutcomeTable
+from hawc.tools.tables.set import AttributeChoices, StudyEvaluationTable
 
 from . import documents_equal
 
-FILE_PATH = Path(__file__).parent.absolute() / "data" / "sot_report.docx"
+FILE_PATH = Path(__file__).parent.absolute() / "data" / "set_report.docx"
 
 
 class TestAttributeChoices:
@@ -76,11 +76,12 @@ class TestAttributeChoices:
 
 
 @pytest.mark.django_db
-class TestStudyOutcomeTable:
+class TestStudyEvaluationTable:
     def test_docx(self, rewrite_data_files: bool):
         data = {
             "assessment_id": 1,
             "data_source": "ani",
+            "published_only": False,
             "subheaders": [{"label": "This is a subheader", "start": 2, "length": 2}],
             "columns": [
                 {"label": "Study name", "attribute": "study_name", "key": "1", "width": 1},
@@ -114,7 +115,7 @@ class TestStudyOutcomeTable:
                 {"id": -1, "type": "study", "customized": []},
             ],
         }
-        table = StudyOutcomeTable.parse_obj(data)
+        table = StudyEvaluationTable.parse_obj(data)
         document = table.to_docx()
         if rewrite_data_files:
             document.save(FILE_PATH)
