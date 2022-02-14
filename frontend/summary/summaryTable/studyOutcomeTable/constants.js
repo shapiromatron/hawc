@@ -1,26 +1,26 @@
 import h from "shared/utils/helpers";
 
 export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
-    dataUrl = (table_type, data_source, assessment_id) =>
-        `/summary/api/summary-table/data/?table_type=${table_type}&data_source=${data_source}&assessment_id=${assessment_id}`,
+    dataUrl = (table_type, data_source, assessment_id, published_only) =>
+        `/summary/api/summary-table/data/?table_type=${table_type}&data_source=${data_source}&assessment_id=${assessment_id}&published_only=${published_only}`,
     robUrl = assessment_id => `/rob/api/assessment/${assessment_id}/settings/`,
     dataSourceChoices = [
-        {id: "study", label: "Study evaluation (published only)"},
-        {id: "ani", label: "Study evaluation + animal bioassay (published only)"},
+        {id: "study", label: "Study evaluation"},
+        {id: "ani", label: "Study evaluation + animal bioassay"},
     ],
     rowTypeChoices = {study: [{id: "study", label: "Study"}], ani: [{id: "study", label: "Study"}]},
     colAttributeChoices = {
         study: [
-            {id: "free_html", label: "free_html"},
-            {id: "study_name", label: "study_name"},
-            {id: "rob_score", label: "rob_score"},
+            {id: "free_html", label: "Free HTML"},
+            {id: "study_name", label: "Study citation"},
+            {id: "rob_score", label: "Evaluation"},
         ],
         ani: [
-            {id: "free_html", label: "free_html"},
-            {id: "study_name", label: "study_name"},
-            {id: "species_strain_sex", label: "species_strain_sex"},
-            {id: "doses", label: "doses"},
-            {id: "rob_score", label: "rob_score"},
+            {id: "free_html", label: "Free HTML"},
+            {id: "study_name", label: "Study citation"},
+            {id: "species_strain_sex", label: "Animal description"},
+            {id: "doses", label: "Doses"},
+            {id: "rob_score", label: "Evaluation"},
         ],
     },
     createNewRow = studyId => {
@@ -28,7 +28,7 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
     },
     createNewColumn = () => {
         return {
-            label: "Study name",
+            label: "Study citation",
             attribute: "study_name",
             key: h.randomString(5),
             width: 1,

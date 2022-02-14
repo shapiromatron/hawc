@@ -473,7 +473,7 @@ class Table extends Component {
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? " bg-light"
                                                     : col.attribute == "rob_score"
-                                                    ? " text-center align-middle"
+                                                    ? " text-center align-middle cursor-pointer"
                                                     : ""
                                             }`}
                                             style={

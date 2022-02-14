@@ -494,3 +494,10 @@ Package style overrides
     font-weight: 500;
     padding: 0.8333em 0 0;
 }
+
+/*
+Utility classes
+*/
+.cursor-pointer {
+    cursor: pointer;
+}

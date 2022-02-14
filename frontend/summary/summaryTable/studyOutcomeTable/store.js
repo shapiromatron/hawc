@@ -20,7 +20,7 @@ class StudyOutcomeTableStore {
     @observable editIndex = null;
 
     @observable stagedEdits = null;
-    @observable stagedDataSource = null;
+    @observable stagedDataSettings = null;
 
     @observable editingRow = false;
     @observable editingColumn = false;
@@ -40,7 +40,10 @@ class StudyOutcomeTableStore {
         this.editMode = editMode;
         this.table = table;
         this.settings = table.content;
-        this.stagedDataSource = table.content.data_source;
+        this.stagedDataSettings = {
+            data_source: table.content.data_source,
+            published_only: table.content.published_only,
+        };
         this.editRootStore = editRootStore;
         this.fetchData();
         this.fetchRobSettings();
@@ -73,7 +76,8 @@ class StudyOutcomeTableStore {
         const url = constants.dataUrl(
             this.table.table_type,
             this.settings.data_source,
-            this.table.assessment
+            this.table.assessment,
+            this.settings.published_only
         );
         this.isFetchingData = true;
         fetch(url)
@@ -91,17 +95,20 @@ class StudyOutcomeTableStore {
     }
 
     // staged edits
-    @action.bound updateStagedDataSource(dataSource) {
-        this.stagedDataSource = dataSource;
+    @action.bound updateStagedDataSettings(dataSettings) {
+        _.assign(this.stagedDataSettings, _.pick(dataSettings, ["data_source", "published_only"]));
     }
     @action.bound removeSettings() {
         this.settings.rows = [];
         this.settings.columns = [];
+        this.settings.subheaders = [];
         this.resetStagedEdits();
     }
-    @action.bound commitStagedDataSource() {
-        this.settings.data_source = this.stagedDataSource;
-        this.removeSettings();
+    @action.bound commitStagedDataSettings(removeSettings) {
+        _.assign(this.settings, this.stagedDataSettings);
+        if (removeSettings) {
+            this.removeSettings();
+        }
         this.fetchData();
     }
     @action.bound setEditSubheaderIndex(idx) {
@@ -146,7 +153,8 @@ class StudyOutcomeTableStore {
         _.assign(row, value);
     }
     @action.bound updateStagedColumn(colIdx, value) {
-        let col = this.stagedEdits.columns[colIdx];
+        let col = this.stagedEdits.columns[colIdx],
+            isDefaultLabel = col.label == this.getDefaultColumnLabel(col);
         if ("attribute" in value && col.attribute !== value.attribute) {
             if (col.attribute == "rob_score") {
                 delete col.metric_id;
@@ -163,6 +171,10 @@ class StudyOutcomeTableStore {
             });
         }
         _.assign(col, value);
+        // update default column label if in use
+        if (!("label" in value) && isDefaultLabel) {
+            col.label = this.getDefaultColumnLabel(col);
+        }
     }
     @action.bound commitStagedEdits() {
         this.settings = this.stagedEdits;
@@ -228,6 +240,17 @@ class StudyOutcomeTableStore {
             })
             .unshift({id: -1, label: "Not measured"})
             .value();
+    }
+    getDefaultColumnLabel(col) {
+        switch (col.attribute) {
+            case "rob_score":
+                return _.find(this.metricIdChoices, c => c.id == col.metric_id).label;
+            default:
+                return _.find(
+                    constants.colAttributeChoices[this.settings.data_source],
+                    c => c.id == col.attribute
+                ).label;
+        }
     }
 
     // customized rows

@@ -21,14 +21,9 @@ class DataSourceChoices(Enum):
     Animal = "ani"
     Study = "study"
 
-    def get_rob_data(self, study_data):
-        study_ids = [r["study id"] for r in study_data]
-        rob_data = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
-        return rob_data
-
-    def get_ani_data(self, assessment_id: int) -> Dict:
+    def get_ani_data(self, assessment_id: int, published_only: bool) -> Dict:
         ani_data = (
-            Endpoint.heatmap_doses_df(assessment_id=assessment_id, published_only=True)
+            Endpoint.heatmap_doses_df(assessment_id=assessment_id, published_only=published_only)
             .fillna("")
             .to_dict(orient="records")
         )
@@ -40,16 +35,23 @@ class DataSourceChoices(Enum):
 
         return {"data": ani_data, "rob": rob_data}
 
-    def get_study_data(self, assessment_id: int) -> Dict:
-        study_qs = Study.objects.filter(assessment_id=assessment_id, published=True)
+    def get_study_data(self, assessment_id: int, published_only: bool) -> Dict:
+        study_filters = {"assessment_id": assessment_id}
+        if published_only:
+            study_filters["published"] = True
+        study_qs = Study.objects.filter(**study_filters)
         study_df = pd.DataFrame.from_records(study_qs.values("id", "short_citation"))
         study_data = study_df.rename(
             columns={"id": "study id", "short_citation": "study citation"}
         ).to_dict(orient="records")
-        return {"data": study_data, "rob": self.get_rob_data(study_data)}
 
-    def get_data(self, assessment_id: int) -> Dict:
-        return getattr(self, f"get_{self.value}_data")(assessment_id)
+        study_ids = [r["study id"] for r in study_data]
+        rob_data = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
+
+        return {"data": study_data, "rob": rob_data}
+
+    def get_data(self, assessment_id: int, published_only: bool) -> Dict:
+        return getattr(self, f"get_{self.value}_data")(assessment_id, published_only)
 
 
 class AttributeChoices(Enum):
@@ -124,6 +126,7 @@ class JudgmentColorCell(BaseCell):
 class StudyOutcomeTable(BaseTable):
     assessment_id: int
     data_source: DataSourceChoices
+    published_only: bool
     subheaders: List[Subheader]
     cell_columns: List[Column] = Field([], alias="columns")
     cell_rows: List[Row] = Field([], alias="rows")
@@ -134,7 +137,7 @@ class StudyOutcomeTable(BaseTable):
     def _setup(self):
         self.column_widths = [col.width for col in self.cell_columns]
 
-        data_dict = self.get_data(self.assessment_id, self.data_source)
+        data_dict = self.get_data(self.assessment_id, self.data_source, self.published_only)
         self._data = pd.DataFrame.from_records(data_dict["data"])
         self._rob = pd.DataFrame.from_records(data_dict["rob"]).set_index(["study_id", "metric_id"])
 
@@ -210,14 +213,15 @@ class StudyOutcomeTable(BaseTable):
         self.cells = subheaders_group.cells + columns_group.cells + rows_group.cells
 
     @classmethod
-    def get_data(cls, assessment_id: int, data_source: str) -> Dict:
-        return DataSourceChoices(data_source).get_data(assessment_id)
+    def get_data(cls, assessment_id: int, data_source: str, published_only: bool) -> Dict:
+        return DataSourceChoices(data_source).get_data(assessment_id, published_only)
 
     @classmethod
     def get_default_props(cls):
         return {
             "assessment_id": -1,
-            "data_source": "ani",
+            "data_source": "study",
+            "published_only": True,
             "subheaders": [],
             "columns": [],
             "rows": [],

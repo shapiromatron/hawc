@@ -235,8 +235,8 @@ class SummaryTable(models.Model):
         return ReportExport(docx=docx, filename=self.slug)
 
     @classmethod
-    def get_data(cls, table_type: int, assessment_id: int, data_source: str):
-        return cls.TABLE_SCHEMA_MAP[table_type].get_data(assessment_id, data_source)
+    def get_data(cls, table_type: int, assessment_id: int, **kwargs):
+        return cls.TABLE_SCHEMA_MAP[table_type].get_data(assessment_id=assessment_id, **kwargs)
 
     def clean(self):
         # make sure table can be built

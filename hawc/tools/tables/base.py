@@ -125,7 +125,7 @@ class BaseTable(BaseCellGroup):
         return docx
 
     @classmethod
-    def get_data(cls, assessment_id: int, data_source: str) -> Dict:
+    def get_data(cls, assessment_id: int, **kwargs) -> Dict:
         # return any queried data needed to build the table
         return {}
 
