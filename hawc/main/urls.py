@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 from rest_framework import permissions
@@ -67,12 +66,12 @@ urlpatterns = [
     path("selectable/", include("selectable.urls")),
 ]
 
-
 if settings.INCLUDE_ADMIN:
-    admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
+    from ..apps.hawc_admin.urls import urlpatterns as hawc_admin_urls
+
     urlpatterns += [
         path(
-            f"{admin_url}/api/openapi/",
+            "api/openapi/",
             get_schema_view(
                 title="HAWC",
                 version=__version__,
@@ -81,51 +80,8 @@ if settings.INCLUDE_ADMIN:
             ),
             name="openapi",
         ),
-        path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
-        path(
-            f"{admin_url}/dashboard/",
-            views.AdminDashboard.as_view(),
-            {"action": "index"},
-            name="admin_dashboard",
-        ),
-        path(
-            f"{admin_url}/dashboard/growth/",
-            views.AdminDashboard.as_view(),
-            {"action": "growth"},
-            name="admin_dashboard_growth",
-        ),
-        path(
-            f"{admin_url}/dashboard/users/",
-            views.AdminDashboard.as_view(),
-            {"action": "users"},
-            name="admin_dashboard_users",
-        ),
-        path(
-            f"{admin_url}/dashboard/assessments/",
-            views.AdminDashboard.as_view(),
-            {"action": "assessment_growth"},
-            name="admin_dashboard_assessments",
-        ),
-        path(
-            f"{admin_url}/dashboard/assessment-profile/",
-            views.AdminDashboard.as_view(),
-            {"action": "assessment_profile"},
-            name="admin_dashboard_assessment_profile",
-        ),
-        path(
-            f"{admin_url}/dashboard/assessment-size/",
-            views.AdminDashboard.as_view(),
-            {"action": "assessment_size"},
-            name="admin_dashboard_assessment_size",
-        ),
-        path(
-            f"{admin_url}/media-preview/",
-            views.AdminMediaPreview.as_view(),
-            name="admin_media_preview",
-        ),
-        path(f"{admin_url}/", admin.site.urls),
     ]
-    admin.autodiscover()
+    urlpatterns += hawc_admin_urls
 
 
 # only for DEBUG, want to use static server otherwise

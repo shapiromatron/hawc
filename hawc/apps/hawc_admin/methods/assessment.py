@@ -14,7 +14,6 @@ from ...lit.models import Reference
 from ...riskofbias.models import RiskOfBias
 from ...study.models import Study
 from ...summary.models import DataPivot, Visual
-
 from .constants import PandasDurationGrouper
 
 
