@@ -94,13 +94,6 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         nested_models = [
             "countries",
             "age_profile",
-            # "chemicals",
-            # "criteria",
-            # "exposure",
-            # "exposure_levels",
-            # "outcomes",
-            # "adjustment_factors",
-            # "data_extractions",
         ]
 
         nested_validated_data = {}
@@ -121,34 +114,6 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         data = nested_validated_data.get("age_profile")
         if data:
             instance.age_profile.set(data),
-
-        # data = nested_validated_data.get("chemicals")
-        # if data:
-        #     instance.chemicals.set(data),
-
-        # data = nested_validated_data.get("criteria")
-        # if data:
-        #     instance.criteria.set(data),
-
-        # data = nested_validated_data.get("exposure")
-        # if data:
-        #     instance.exposure.set(data),
-
-        # data = nested_validated_data.get("exposure_levels")
-        # if data:
-        #     instance.exposure_levels.set(data),
-
-        # data = nested_validated_data.get("outcomes")
-        # if data:
-        #     instance.outcomes.set(data),
-
-        # data = nested_validated_data.get("adjustment_factors")
-        # if data:
-        #     instance.adjustment_factors.set(data),
-
-        # data = nested_validated_data.get("data_extractions")
-        # if data:
-        #     instance.data_extractions.set(data),
 
         return instance
 
