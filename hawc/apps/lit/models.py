@@ -23,8 +23,6 @@ from django.utils.html import strip_tags
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from hawc.apps.study.models import Study
-
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -813,35 +811,6 @@ class Reference(models.Model):
 
         # run chained tasks
         return chain(t1, t2)()
-
-    @classmethod
-    def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
-        """Bulk create studies from a list of reference ids
-        Args:
-            study_type (int): an integer from 0-4 that maps to the study type the objects will have when created
-                0: no study type, 1: bioassay, 2: epi, 3: epi meta, 4: in vitro
-            reference_ids (list[int]): the list of reference ids to convert to studies
-        """
-
-        studies = []
-        for reference_id in reference_ids:
-            reference = Reference.objects.get(pk=reference_id)
-            if study_type == 0:
-                studies.append(Study.save_new_from_reference(reference))
-
-            elif study_type == 1:
-                studies.append(Study.save_new_from_reference(reference, bioassay=True))
-
-            elif study_type == 2:
-                studies.append(Study.save_new_from_reference(reference, epi=True))
-
-            elif study_type == 3:
-                studies.append(Study.save_new_from_reference(reference, epi_meta=True))
-
-            elif study_type == 4:
-                studies.append(Study.save_new_from_reference(reference, in_vitro=True))
-
-        Study.objects.bulk_create(studies)
 
     @property
     def ref_full_citation(self):
