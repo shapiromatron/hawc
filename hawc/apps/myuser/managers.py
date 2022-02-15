@@ -56,3 +56,6 @@ class HAWCMgr(BaseUserManager):
         u.is_superuser = True
         u.save()
         return u
+
+    def active(self):
+        return self.filter(is_active=True)
