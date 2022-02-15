@@ -110,10 +110,10 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
 
         # add nested models to the instance
         if countries := nested_validated_data.get("countries"):
-            instance.countries.set(countries),
+            instance.countries.set(countries)
 
         if age_profile := nested_validated_data.get("age_profile"):
-            instance.age_profile.set(age_profile),
+            instance.age_profile.set(age_profile)
 
         return instance
 
