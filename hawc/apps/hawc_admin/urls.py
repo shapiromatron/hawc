@@ -17,21 +17,23 @@ def get_admin_urlpatterns(open_api_patterns) -> List:
     django setting; healthchecks are still included, but nothing else.
     """
 
+    admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
+
     # always include API for healthchecks
     router = DefaultRouter()
     router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
+    if settings.INCLUDE_ADMIN:
+        router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
+        open_api_patterns.append(path(f"{admin_url}/api/", include(router.urls)))
+        admin.autodiscover()
 
     # use admin prefix if one exists
-    admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
     patterns: List[Any] = [
         path(f"{admin_url}/api/", include((router.urls, "api"))),
     ]
 
     if settings.INCLUDE_ADMIN:
-        # extend admin routes and autodiscovery
-        open_api_patterns.append(path(f"{admin_url}/api/", include(router.urls)))
-        router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
-        admin.autodiscover()
+        # extend URL patterns
         patterns.extend(
             [
                 # swagger + openapi
