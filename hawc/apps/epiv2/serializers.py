@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
@@ -90,6 +91,7 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     data_extractions = DataExtractionSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
 
+    @transaction.atomic
     def create(self, validated_data):
         nested_models = [
             "countries",
@@ -107,13 +109,11 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         instance = super().create(validated_data)
 
         # add nested models to the instance
-        data = nested_validated_data.get("countries")
-        if data:
-            instance.countries.set(data),
+        if countries := nested_validated_data.get("countries"):
+            instance.countries.set(countries),
 
-        data = nested_validated_data.get("age_profile")
-        if data:
-            instance.age_profile.set(data),
+        if age_profile := nested_validated_data.get("age_profile"):
+            instance.age_profile.set(age_profile),
 
         return instance
 
