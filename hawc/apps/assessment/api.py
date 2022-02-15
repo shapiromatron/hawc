@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-import pandas as pd
 from django.apps import apps
 from django.core import exceptions
 from django.db.models import Count
@@ -16,17 +15,15 @@ from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
 
 from ..common.diagnostics import worker_healthcheck
-from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
+from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers, SvgRenderer
 from ..common.views import create_object_log
-from ..lit import constants
 from . import models, serializers
 from .actions import media_metadata_report
 
@@ -164,7 +161,12 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
         return self.model.objects.all()
 
 
+# all http methods except PUT
+METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
+
+
 class AssessmentEditViewset(viewsets.ModelViewSet):
+    http_method_names = METHODS_NO_PUT
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     parent_model = models.Assessment
@@ -201,6 +203,8 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     """
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
+
+    http_method_names = METHODS_NO_PUT
 
     lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
@@ -244,7 +248,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
             raise exceptions.PermissionDenied()
 
 
-class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
+class DoseUnitsViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     model = models.DoseUnits
     serializer_class = serializers.DoseUnitsSerializer
     pagination_class = DisabledPagination
@@ -264,65 +268,6 @@ class Assessment(AssessmentViewset):
         queryset = self.model.objects.get_public_assessments()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
-
-    @method_decorator(cache_page(60 * 60 * 24))
-    @action(detail=False, renderer_classes=PandasRenderers)
-    def bioassay_ml_dataset(self, request):
-        Endpoint = apps.get_model("animal", "Endpoint")
-        # map of django field names to friendlier column names
-        column_map = {
-            "assessment_id": "assessment_uuid",
-            "name": "endpoint_name",
-            "animal_group__experiment__chemical": "chemical",
-            "animal_group__species__name": "species",
-            "animal_group__strain__name": "strain",
-            "animal_group__sex": "sex",
-            "system": "endpoint_system",
-            "organ": "endpoint_organ",
-            "effect": "endpoint_effect",
-            "effect_subtype": "endpoint_effect_subtype",
-            "data_location": "endpoint_data_location",
-            "animal_group__experiment__study__title": "study_title",
-            "animal_group__experiment__study__abstract": "study_abstract",
-            "animal_group__experiment__study__full_citation": "study_full_citation",
-            "animal_group__experiment__study__identifiers__database": "db",
-            "animal_group__experiment__study__identifiers__unique_id": "db_id",
-        }
-        queryset = (
-            Endpoint.objects.filter(assessment__is_public_training_data=True)
-            .select_related(
-                "animal_group",
-                "animal_group__species",
-                "animal_group__strain",
-                "animal_group__experiment",
-                "animal_group__experiment__study",
-                "animal_group__experiment__study__identifiers",
-            )
-            .values(*column_map.keys())
-        )
-
-        df = pd.DataFrame.from_records(queryset).rename(
-            columns={k: v for k, v in column_map.items() if v is not None}
-        )
-
-        # Creates a UUID for each assessment_id, providing anonymity
-        df["assessment_uuid"] = df["assessment_uuid"].apply(create_uuid)
-
-        # Assigns db_id to hero_id in all instances where db == HERO
-        df["hero_id"] = None
-        df.loc[df["db"] == constants.ReferenceDatabase.HERO, ["hero_id"]] = df["db_id"][
-            df["db"] == constants.ReferenceDatabase.HERO
-        ]
-
-        # Assigns db_id to pubmed_id in all instances where db == PUBMED
-        df["pubmed_id"] = None
-        df.loc[df["db"] == constants.ReferenceDatabase.PUBMED, ["pubmed_id"]] = df["db_id"][
-            df["db"] == constants.ReferenceDatabase.PUBMED
-        ]
-        df = df.drop(columns=["db", "db_id"]).drop_duplicates()
-        today = timezone.now().strftime("%Y-%m-%d")
-        export = FlatExport(df=df, filename=f"hawc-bioassay-dataset-{today}")
-        return Response(export)
 
     @action(detail=True)
     def endpoints(self, request, pk: int = None):
@@ -482,29 +427,6 @@ class Assessment(AssessmentViewset):
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
 
-    @action(
-        detail=True, methods=("get", "post"),
-    )
-    def jobs(self, request, pk: int = None):
-        instance = self.get_object()
-        if request.method == "GET":
-            queryset = instance.jobs.all()
-            serializer = serializers.JobSerializer(queryset, many=True)
-            return Response(serializer.data)
-        elif request.method == "POST":
-            request.data["assessment"] = instance.id
-            serializer = serializers.JobSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True)
-    def logs(self, request, pk: int = None):
-        instance = self.get_object()
-        queryset = instance.logs.all()
-        serializer = serializers.LogSerializer(queryset, many=True)
-        return Response(serializer.data)
-
 
 class DatasetViewset(AssessmentViewset):
     model = models.Dataset
@@ -579,34 +501,6 @@ class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
 
     def get_queryset(self):
         return self.model.objects.all()
-
-
-class JobViewset(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet,
-):
-    model = models.Job
-    serializer_class = serializers.JobSerializer
-    permission_classes = (JobPermissions,)
-    pagination_class = None
-
-    def get_queryset(self):
-        if self.action == "list":
-            return self.model.objects.filter(assessment=None)
-        else:
-            return self.model.objects.all()
-
-
-class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    model = models.Log
-    permission_classes = (IsAdminUser,)
-    serializer_class = serializers.LogSerializer
-    pagination_class = None
-
-    def get_queryset(self):
-        return self.model.objects.filter(assessment=None)
 
 
 class StrainViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
