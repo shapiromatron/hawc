@@ -686,7 +686,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         if include_parent:
             appendChildren(tagslist[0], "")
         else:
-            for child in tagslist[0]["children"]:
+            for child in tagslist[0].get("children", []):
                 appendChildren(child, "")
 
         return lst

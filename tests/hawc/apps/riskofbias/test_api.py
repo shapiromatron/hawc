@@ -120,7 +120,7 @@ class TestRiskOfBiasAssessmentViewset:
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.post(url, data, format="json")
         assert resp.status_code == 200
-        assert list(resp.data.keys()) == ["log_id", "log_url", "mapping"]
+        assert list(resp.data.keys()) == ["mapping"]
 
         # invalid request
         data["src_assessment_id"] = -1
