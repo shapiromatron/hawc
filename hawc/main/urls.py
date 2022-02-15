@@ -16,20 +16,6 @@ import hawc.apps.study.urls
 import hawc.apps.summary.urls
 from hawc.apps.assessment import views
 
-open_api_patterns = [
-    path("ani/api/", include(hawc.apps.animal.urls.router.urls)),
-    path("assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
-    path("bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
-    path("epi/api/", include(hawc.apps.epi.urls.router.urls)),
-    path("epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
-    path("in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
-    path("lit/api/", include(hawc.apps.lit.urls.router.urls)),
-    path("mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
-    path("rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
-    path("study/api/", include(hawc.apps.study.urls.router.urls)),
-    path("summary/api/", include(hawc.apps.summary.urls.router.urls)),
-]
-
 urlpatterns = [
     # Portal
     path("", views.Home.as_view(), name="home"),
@@ -65,7 +51,20 @@ urlpatterns = [
 ]
 
 # add admin patterns
-urlpatterns += hawc.apps.hawc_admin.urls.get_urls(open_api_patterns)
+open_api_patterns = [
+    path("ani/api/", include(hawc.apps.animal.urls.router.urls)),
+    path("assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
+    path("bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
+    path("epi/api/", include(hawc.apps.epi.urls.router.urls)),
+    path("epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
+    path("in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
+    path("lit/api/", include(hawc.apps.lit.urls.router.urls)),
+    path("mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
+    path("rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
+    path("study/api/", include(hawc.apps.study.urls.router.urls)),
+    path("summary/api/", include(hawc.apps.summary.urls.router.urls)),
+]
+urlpatterns += hawc.apps.hawc_admin.urls.get_admin_urlpatterns(open_api_patterns)
 
 # only for DEBUG, want to use static server otherwise
 if settings.DEBUG:
