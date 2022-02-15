@@ -1,21 +1,19 @@
 from django.conf import settings
 from django.urls import include, path
 from django.views.generic import TemplateView
-from rest_framework import permissions
-from rest_framework.schemas import get_schema_view
 
 import hawc.apps.animal.urls
 import hawc.apps.assessment.urls
 import hawc.apps.bmd.urls
 import hawc.apps.epi.urls
 import hawc.apps.epimeta.urls
+import hawc.apps.hawc_admin.urls
 import hawc.apps.invitro.urls
 import hawc.apps.lit.urls
 import hawc.apps.mgmt.urls
 import hawc.apps.riskofbias.urls
 import hawc.apps.study.urls
 import hawc.apps.summary.urls
-from hawc import __version__
 from hawc.apps.assessment import views
 
 open_api_patterns = [
@@ -66,25 +64,8 @@ urlpatterns = [
     path("selectable/", include("selectable.urls")),
 ]
 
-if settings.INCLUDE_ADMIN:
-    from ..apps.hawc_admin import urls as hawc_admin_urls
-
-    open_api_patterns.append(path("admin/api/", include(hawc_admin_urls.router.urls)))
-
-    urlpatterns += [
-        path(
-            "api/openapi/",
-            get_schema_view(
-                title="HAWC",
-                version=__version__,
-                patterns=open_api_patterns,
-                permission_classes=(permissions.IsAdminUser,),
-            ),
-            name="openapi",
-        ),
-    ]
-    urlpatterns += hawc_admin_urls.urlpatterns
-
+# add admin patterns
+urlpatterns += hawc.apps.hawc_admin.urls.get_urls(open_api_patterns)
 
 # only for DEBUG, want to use static server otherwise
 if settings.DEBUG:

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 from django.conf import settings
 from django.urls import reverse
@@ -10,13 +8,6 @@ from hawc.apps.common.diagnostics import worker_healthcheck
 
 def has_redis():
     return "RedisCache" in settings.CACHES["default"]["BACKEND"]
-
-
-@pytest.fixture(scope="module")
-def media_file():
-    fn = Path(settings.MEDIA_ROOT) / "test.txt"
-    if not fn.exists():
-        fn.write_text("hello\n")
 
 
 @pytest.mark.django_db

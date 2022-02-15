@@ -1,60 +1,92 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
+from rest_framework.schemas import get_schema_view
 
+from hawc import __version__
 from . import api, views
 
-router = DefaultRouter()
-router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
-
-
 admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
-urlpatterns = [
-    # api views
-    path(f"{admin_url}/api/", include((router.urls, "api"))),
-    # swagger site
-    path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
-    # dashboard views
-    path(
-        f"{admin_url}/dashboard/",
-        views.Dashboard.as_view(),
-        {"action": "index"},
-        name="admin_dashboard",
-    ),
-    path(
-        f"{admin_url}/dashboard/growth/",
-        views.Dashboard.as_view(),
-        {"action": "growth"},
-        name="admin_dashboard_growth",
-    ),
-    path(
-        f"{admin_url}/dashboard/users/",
-        views.Dashboard.as_view(),
-        {"action": "users"},
-        name="admin_dashboard_users",
-    ),
-    path(
-        f"{admin_url}/dashboard/assessments/",
-        views.Dashboard.as_view(),
-        {"action": "assessment_growth"},
-        name="admin_dashboard_assessments",
-    ),
-    path(
-        f"{admin_url}/dashboard/assessment-profile/",
-        views.Dashboard.as_view(),
-        {"action": "assessment_profile"},
-        name="admin_dashboard_assessment_profile",
-    ),
-    path(
-        f"{admin_url}/dashboard/assessment-size/",
-        views.Dashboard.as_view(),
-        {"action": "assessment_size"},
-        name="admin_dashboard_assessment_size",
-    ),
-    # admin media preview
-    path(f"{admin_url}/media-preview/", views.MediaPreview.as_view(), name="admin_media_preview"),
-    # admin site
-    path(f"{admin_url}/", admin.site.urls),
-]
-admin.autodiscover()
+
+# always include healthchecks
+router = DefaultRouter()
+router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
+
+if settings.INCLUDE_ADMIN:
+    router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
+    admin.autodiscover()
+
+
+def get_urls(open_api_patterns):
+    """Return a list of admin patterns for inclusion.
+
+    If Admin is not included via a django setting; healthchecks are still included, but nothing
+    else.
+    """
+    if not settings.INCLUDE_ADMIN:
+        return [
+            # api views
+            path(f"{admin_url}/api/", include((router.urls, "api"))),
+        ]
+
+    return [
+        # api views
+        path(f"{admin_url}/api/", include((router.urls, "api"))),
+        # swagger site
+        path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
+        path(
+            f"{admin_url}/api/openapi/",
+            get_schema_view(
+                title="HAWC",
+                version=__version__,
+                patterns=open_api_patterns,
+                permission_classes=(permissions.IsAdminUser,),
+            ),
+            name="openapi",
+        ),
+        # dashboard views
+        path(
+            f"{admin_url}/dashboard/",
+            views.Dashboard.as_view(),
+            {"action": "index"},
+            name="admin_dashboard",
+        ),
+        path(
+            f"{admin_url}/dashboard/growth/",
+            views.Dashboard.as_view(),
+            {"action": "growth"},
+            name="admin_dashboard_growth",
+        ),
+        path(
+            f"{admin_url}/dashboard/users/",
+            views.Dashboard.as_view(),
+            {"action": "users"},
+            name="admin_dashboard_users",
+        ),
+        path(
+            f"{admin_url}/dashboard/assessments/",
+            views.Dashboard.as_view(),
+            {"action": "assessment_growth"},
+            name="admin_dashboard_assessments",
+        ),
+        path(
+            f"{admin_url}/dashboard/assessment-profile/",
+            views.Dashboard.as_view(),
+            {"action": "assessment_profile"},
+            name="admin_dashboard_assessment_profile",
+        ),
+        path(
+            f"{admin_url}/dashboard/assessment-size/",
+            views.Dashboard.as_view(),
+            {"action": "assessment_size"},
+            name="admin_dashboard_assessment_size",
+        ),
+        # admin media preview
+        path(
+            f"{admin_url}/media-preview/", views.MediaPreview.as_view(), name="admin_media_preview"
+        ),
+        # admin site
+        path(f"{admin_url}/", admin.site.urls),
+    ]

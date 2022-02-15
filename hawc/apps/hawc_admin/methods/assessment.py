@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 from django import forms
 from django.db.models import Count, F
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
@@ -101,6 +102,9 @@ class AssessmentGrowthSettings(forms.Form):
                 )
                 df.loc[:, "model"] = Model.__name__
                 dfs.append(df)
+
+        if len(dfs) == 0:
+            raise Http404()
 
         df = pd.concat(dfs)
         end = df.date.max() + timedelta(days=14)
