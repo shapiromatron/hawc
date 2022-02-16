@@ -4,7 +4,7 @@
     <td>{{object.measumrent_timing}}</td>
     {% include "epiv2/fragments/_object_row.html" with model="exposure" %}
 </tr>
-{% if action == 'create' %}
+{% if action == 'create' or action == 'clone' %}
 <tr style="display: none" id="exposure-empty-row" hx-target="this"></tr>
 {% endif %}
 

@@ -2,6 +2,6 @@
     <td>{{object.name}}</td>
     {% include "epiv2/fragments/_object_row.html" with model="criteria" %}
 </tr>
-{% if action == 'create' %}
+{% if action == 'create' or action == 'clone' %}
 <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
 {% endif %}

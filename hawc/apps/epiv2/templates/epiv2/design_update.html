@@ -138,7 +138,7 @@
     <div class="card-body">
         <h3 class="card-title">Exposure Levels
             <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}"
-                hx-target="#exposure_level-empty-row" hx-swap="outerHTML"> <i class="fa fa-plus fa-fw"></i> Create</button>
+                hx-target="#exposurelevel-empty-row" hx-swap="outerHTML"> <i class="fa fa-plus fa-fw"></i> Create</button>
         </h3>
         <table class="table table-condensed table-striped">
             <colgroup>
@@ -164,9 +164,9 @@
                     {% for object in exposure_levels %}
                         {% include "epiv2/fragments/exposurelevel_row.html" %}
                     {% endfor %}
-                    <tr id="exposure_level-empty-row" hx-target="this"></tr>
+                    <tr id="exposurelevel-empty-row" hx-target="this"></tr>
                 {% else %}
-                    <tr id="exposure_level-empty-row" hx-target="this">
+                    <tr id="exposurelevel-empty-row" hx-target="this">
                         <td colspan="100%">
                             <p class="text-center mb-0">No exposures added to design.</p>
                         </td>

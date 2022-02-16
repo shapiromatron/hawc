@@ -6,7 +6,7 @@
     <td>{{object.comments}}</td>
     {% include "epiv2/fragments/_object_row.html" with model="exposurelevel" %}
 </tr>
-{% if action == 'create' %}
-<tr style="display: none" id="exposure_level-empty-row" hx-target="this"></tr>
+{% if action == 'create' or action == 'clone' %}
+<tr style="display: none" id="exposurelevel-empty-row" hx-target="this"></tr>
 {% endif %}
 
