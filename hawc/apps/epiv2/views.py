@@ -116,11 +116,11 @@ class DesignDelete(BaseDelete):
 
 # Design viewset
 class DesignViewset(HtmxViewSet):
-    actions = {"create", "read", "update", "delete", "clone"}
+    actions = {"read", "update"}
     parent_model = Study
     model = models.Design
-    form_fragment = "epiv2/fragments/design_form_copy.html"
-    detail_fragment = "epiv2/fragments/design_detail_frag.html"
+    form_fragment = "epiv2/fragments/_design_edit.html"
+    detail_fragment = "epiv2/fragments/_design_detail.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
