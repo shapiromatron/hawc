@@ -555,6 +555,9 @@ class BulkReferenceStudyExtractForm(forms.Form):
     class Meta:
         model = models.Reference
 
+    reference_ids = forms.CheckboxInput()
+    
+
     def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
         """Bulk create studies from a list of reference ids
         Args:

@@ -4,36 +4,39 @@
     <h3>Included references in literature search/import</h3>
     <p>The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. Select one from the list below:</p>
     {% if object_list.count > 0 %}
-        <table class="table table-compressed">
-            <colgroup>
-                <col style='width:5%'></col>
-                <col style='width:15%'></col>
-                <col style='width:40%'></col>
-                <col style='width:10%'></col>
-                <col style='width:20%'></col>
-                <col style='width:10%'></col>
-            </colgroup>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Authors</th>
-                    <th>Title</th>
-                    <th>Year</th>
-                    <th>Journal</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            {% for object in object_list %}
-                <tr>
-                    <td><input type="checkbox" name="reference_ids"></td>
-                    <td>{{object.authors}}</td>
-                    <td>{{object.title}}</td>
-                    <td>{{object.year}}</td>
-                    <td>{{object.journal}}</td>
-                    <td><a href="{% url 'study:new_study' object.pk %}">Create study from reference</a></td>
-                </tr>
-            {% endfor %}
-        </table>
+        <form action="{% url 'lit:bulk-convert-references' %}" method="post">
+            <table class="table table-compressed">
+                <colgroup>
+                    <col style='width:5%'></col>
+                    <col style='width:15%'></col>
+                    <col style='width:40%'></col>
+                    <col style='width:10%'></col>
+                    <col style='width:20%'></col>
+                    <col style='width:10%'></col>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Authors</th>
+                        <th>Title</th>
+                        <th>Year</th>
+                        <th>Journal</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                {% for object in object_list %}
+                    <tr>
+                        <td>{{ form }}</td>
+                        <td>{{object.authors_short}}</td>
+                        <td>{{object.title}}</td>
+                        <td>{{object.year}}</td>
+                        <td>{{object.journal}}</td>
+                        <td><a href="{% url 'study:new_study' object.pk %}">Create study from reference</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <input type="submit" value="Submit">
+        </form>
     {% else %}
         <div class="alert alert-success">
             <button type="button" class="close" data-dismiss="alert">&times;</button>

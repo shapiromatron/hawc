@@ -487,6 +487,7 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
 class RefListExtract(BaseList):
     parent_model = Assessment
     model = models.Reference
+    form = forms.BulkReferenceStudyExtractForm
     crud = "Update"  # update-level permission required despite list-view
     template_name = "lit/reference_extract_list.html"
     breadcrumb_active_name = "Prepare for extraction"
