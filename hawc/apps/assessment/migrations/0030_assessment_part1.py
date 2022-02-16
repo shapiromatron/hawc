@@ -10,6 +10,13 @@ from reversion.models import Version
 
 
 def set_creator(apps, schema_editor):
+    Assessment = apps.get_model("assessment", "assessment")
+
+    # end early if there are no assessments / fresh db
+    # https://stackoverflow.com/questions/40344994/
+    if Assessment.objects.count() == 0:
+        return
+
     ct_id = ContentType.objects.get(app_label="assessment", model="assessment").id
     versions = Version.objects.filter(content_type=ct_id).select_related(
         "revision", "revision__user"
@@ -45,7 +52,6 @@ def set_creator(apps, schema_editor):
     )
 
     dict = pd.Series(data=df.revision_user_id.values, index=df.assessment_id).to_dict()
-    Assessment = apps.get_model("assessment", "assessment")
     updates = []
     for assessment in Assessment.objects.all():
         user_id = dict.get(assessment.id)
@@ -57,6 +63,13 @@ def set_creator(apps, schema_editor):
 
 
 def set_public_on(apps, schema_editor):
+    Assessment = apps.get_model("assessment", "assessment")
+
+    # end early if there are no assessments / fresh db
+    # https://stackoverflow.com/questions/40344994/
+    if Assessment.objects.count() == 0:
+        return
+
     ct_id = ContentType.objects.get(app_label="assessment", model="assessment").id
 
     versions = Version.objects.filter(content_type=ct_id).select_related("revision")
@@ -86,7 +99,6 @@ def set_public_on(apps, schema_editor):
     ).dt.tz_localize("utc")
 
     updates = []
-    Assessment = apps.get_model("assessment", "assessment")
     # set the public_on date for all public assessments
     for assessment in Assessment.objects.filter(public=True):
         release_dt = timestamps.get(assessment.id)
