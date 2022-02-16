@@ -4,33 +4,33 @@ import PropTypes from "prop-types";
 import React from "react";
 import SelectInput from "shared/components/SelectInput";
 
-import {NO_JUDGEMENT, CUSTOM_JUDGEMENT} from "./common";
+import {NO_JUDGMENT, CUSTOM_JUDGMENT} from "./common";
 
-const judgementChoices = [
+const judgmentChoices = [
         {value: 30, icon: "⊕⊕⊕", text: "Robust"},
         {value: 20, icon: "⊕⊕⊙", text: "Moderate"},
         {value: 10, icon: "⊕⊙⊙", text: "Slight"},
         {value: 1, icon: "⊙⊙⊙", text: "Indeterminate"},
         {value: -10, icon: "⊝⊝⊝", text: "Evidence of no effect"},
-        {value: NO_JUDGEMENT, icon: "", text: "None"},
-        {value: CUSTOM_JUDGEMENT, icon: "", text: "Custom"},
+        {value: NO_JUDGMENT, icon: "", text: "None"},
+        {value: CUSTOM_JUDGMENT, icon: "", text: "Custom"},
     ],
-    summaryJudgementChoices = [
+    summaryJudgmentChoices = [
         {value: 30, icon: "⊕⊕⊕", text: "Evidence demonstrates"},
         {value: 20, icon: "⊕⊕⊙", text: "Evidence indicates (likely)"},
         {value: 10, icon: "⊕⊙⊙", text: "Evidence suggests"},
         {value: 1, icon: "⊙⊙⊙", text: "Evidence inadequate"},
         {value: -10, icon: "⊝⊝⊝", text: "Strong evidence supports no effect"},
-        {value: NO_JUDGEMENT, icon: "", text: "None"},
-        {value: CUSTOM_JUDGEMENT, icon: "", text: "Custom"},
+        {value: NO_JUDGMENT, icon: "", text: "None"},
+        {value: CUSTOM_JUDGMENT, icon: "", text: "Custom"},
     ],
-    JudgementSelector = observer(props => {
+    JudgmentSelector = observer(props => {
         const {value, handleSelect, helpText} = props,
-            choicesList = props.summary ? summaryJudgementChoices : judgementChoices,
+            choicesList = props.summary ? summaryJudgmentChoices : judgmentChoices,
             choices = choicesList.map(d => {
                 return {id: d.value, label: `${d.icon} ${d.text}`};
             }),
-            label = props.summary ? "Judgement" : undefined;
+            label = props.summary ? "Judgment" : undefined;
         return (
             <SelectInput
                 label={label}
@@ -41,19 +41,19 @@ const judgementChoices = [
             />
         );
     }),
-    Judgement = observer(props => {
-        const choices = props.summary ? summaryJudgementChoices : judgementChoices,
+    Judgment = observer(props => {
+        const choices = props.summary ? summaryJudgmentChoices : judgmentChoices,
             choice = _.find(choices, {value: props.value});
 
         let {icon, text} = choice;
 
-        if (choice.value === NO_JUDGEMENT) {
+        if (choice.value === NO_JUDGMENT) {
             return null;
         }
 
-        if (choice.value === CUSTOM_JUDGEMENT) {
-            icon = props.judgement.custom_judgement_icon;
-            text = props.judgement.custom_judgement_label;
+        if (choice.value === CUSTOM_JUDGMENT) {
+            icon = props.judgment.custom_judgment_icon;
+            text = props.judgment.custom_judgment_label;
         }
 
         return (
@@ -68,16 +68,16 @@ const judgementChoices = [
         );
     });
 
-JudgementSelector.propTypes = {
+JudgmentSelector.propTypes = {
     value: PropTypes.number.isRequired,
     handleSelect: PropTypes.func.isRequired,
     summary: PropTypes.bool.isRequired,
     helpText: PropTypes.string,
 };
-Judgement.propTypes = {
+Judgment.propTypes = {
     value: PropTypes.number.isRequired,
-    judgement: PropTypes.object.isRequired,
+    judgment: PropTypes.object.isRequired,
     summary: PropTypes.bool.isRequired,
 };
 
-export {JudgementSelector, Judgement};
+export {JudgmentSelector, Judgment};

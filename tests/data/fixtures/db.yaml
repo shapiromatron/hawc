@@ -5091,11 +5091,11 @@
           evidence:
             description: <p><a href="/study/1/" rel="noopener noreferrer" target="_blank">Baz
               2021</a></p>
-          judgement:
-            judgement: 20
+          judgment:
+            judgment: 20
             description: <p></p>
-            custom_judgement_icon: ''
-            custom_judgement_label: ''
+            custom_judgment_icon: ''
+            custom_judgment_label: ''
           certain_factors:
             text: <p>Adding descriptive text here.</p>
             factors: []
@@ -5110,11 +5110,11 @@
           evidence:
             description: <p><a href="/study/1/" rel="noopener noreferrer" target="_blank">Foo
               2020 </a></p>
-          judgement:
-            judgement: 1
+          judgment:
+            judgment: 1
             description: <p></p>
-            custom_judgement_icon: <p></p>
-            custom_judgement_label: <p></p>
+            custom_judgment_icon: <p></p>
+            custom_judgment_label: <p></p>
           certain_factors:
             text: <p></p>
             factors:
@@ -5133,20 +5133,20 @@
         hide_content: false
         no_content_text: No data available
         title: Evidence from animal studies
-        merge_judgement: false
+        merge_judgment: false
       mechanistic:
         rows:
         - summary:
             findings: "<p>Key findings were....\t</p>"
           evidence:
             description: '<p>Event #1. Event #2. Event #3.</p>'
-          judgement:
-            description: <p>Judgement was...</p>
+          judgment:
+            description: <p>Judgment was...</p>
         hide_content: false
         no_content_text: No data available
         title: Mechanistic evidence and supplemental information
         col_header_1: Biological events or pathways
-        merge_judgement: true
+        merge_judgment: true
       exposed_human:
         rows:
         - summary:
@@ -5155,11 +5155,11 @@
             description: <ul><li><a href="/study/1/" rel="noopener noreferrer"
               target="_blank">Doe et al. 2015</a></li><li><a href="/study/1/"
               rel="noopener noreferrer" target="_blank">Doe et al 2018</a></li></ul>
-          judgement:
-            judgement: 30
+          judgment:
+            judgment: 30
             description: <p>Robust findings.</p>
-            custom_judgement_icon: ''
-            custom_judgement_label: ''
+            custom_judgment_icon: ''
+            custom_judgment_label: ''
           certain_factors:
             text: <p></p>
             factors:
@@ -5175,16 +5175,16 @@
         hide_content: false
         no_content_text: No data available
         title: Evidence from studies of exposed humans
-        merge_judgement: true
-      summary_judgement:
-        judgement: 20
+        merge_judgment: true
+      summary_judgment:
+        judgment: 20
         hide_content: false
         description: <p>Water hydrates individuals who drink it.</p>
         susceptibility: <p>No additionally susceptible groups.</p>
         human_relevance: <p>Humans require water as well.</p>
-        custom_judgement_icon: ''
+        custom_judgment_icon: ''
         cross_stream_coherence: <p>Observed in multiple evidence streams.</p>
-        custom_judgement_label: ''
+        custom_judgment_label: ''
     table_type: 1
     published: true
     created: 2021-03-22 20:02:50.190759+00:00

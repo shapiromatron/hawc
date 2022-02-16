@@ -14,8 +14,8 @@ class EvidenceProfileForm extends Component {
             {
                 editTabIndex,
                 editTabIndexUpdate,
-                numEpiJudgementRowSpan,
-                numAniJudgementRowSpan,
+                numEpiJudgmentRowSpan,
+                numAniJudgmentRowSpan,
             } = store;
         return (
             <Tabs selectedIndex={editTabIndex} onSelect={tabIndex => editTabIndexUpdate(tabIndex)}>
@@ -30,7 +30,7 @@ class EvidenceProfileForm extends Component {
                         store={store}
                         contentType={"exposed_human"}
                         createMethodName={"createHumanRow"}
-                        judgementRowSpan={numEpiJudgementRowSpan}
+                        judgmentRowSpan={numEpiJudgmentRowSpan}
                     />
                 </TabPanel>
                 <TabPanel>
@@ -38,7 +38,7 @@ class EvidenceProfileForm extends Component {
                         store={store}
                         contentType={"animal"}
                         createMethodName={"createAnimalRow"}
-                        judgementRowSpan={numAniJudgementRowSpan}
+                        judgmentRowSpan={numAniJudgmentRowSpan}
                     />
                 </TabPanel>
                 <TabPanel>

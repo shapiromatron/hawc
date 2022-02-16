@@ -1,7 +1,7 @@
 import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {Judgement} from "./Judgement";
+import {Judgment} from "./Judgment";
 import {FactorsCell} from "./Factors";
 import h from "shared/utils/helpers";
 
@@ -31,12 +31,12 @@ const subTitleStyle = {backgroundColor: "#f5f5f5"},
                 <FactorsCell content={row.uncertain_factors} />
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
-                        <Judgement
-                            value={row.judgement.judgement}
-                            judgement={row.judgement}
+                        <Judgment
+                            value={row.judgment.judgment}
+                            judgment={row.judgment}
                             summary={false}
                         />
-                        <div dangerouslySetInnerHTML={{__html: row.judgement.description}}></div>
+                        <div dangerouslySetInnerHTML={{__html: row.judgment.description}}></div>
                     </td>
                 ) : null}
             </tr>
@@ -66,24 +66,24 @@ const TextBlock = observer(props => {
 class SummaryCell extends Component {
     render() {
         const {settings, numSummaryRows} = this.props.store,
-            {summary_judgement} = settings;
+            {summary_judgment} = settings;
 
         return (
             <td rowSpan={numSummaryRows}>
-                <Judgement
-                    value={summary_judgement.judgement}
-                    judgement={summary_judgement}
+                <Judgment
+                    value={summary_judgment.judgment}
+                    judgment={summary_judgment}
                     summary={true}
                 />
-                <TextBlock label="Primary basis" html={summary_judgement.description} />
-                <TextBlock label="Human relevance" html={summary_judgement.human_relevance} />
+                <TextBlock label="Primary basis" html={summary_judgment.description} />
+                <TextBlock label="Human relevance" html={summary_judgment.human_relevance} />
                 <TextBlock
                     label="Cross-stream coherence"
-                    html={summary_judgement.cross_stream_coherence}
+                    html={summary_judgment.cross_stream_coherence}
                 />
                 <TextBlock
                     label="Susceptible populations and lifestages"
-                    html={summary_judgement.susceptibility}
+                    html={summary_judgment.susceptibility}
                 />
             </td>
         );
@@ -96,9 +96,9 @@ SummaryCell.propTypes = {
 @observer
 class EpidemiologyEvidenceRows extends Component {
     render() {
-        const {numEpiJudgementRowSpan} = this.props.store,
+        const {numEpiJudgmentRowSpan} = this.props.store,
             {exposed_human} = this.props.store.settings,
-            show_summary = !this.props.store.settings.summary_judgement.hide_content;
+            show_summary = !this.props.store.settings.summary_judgment.hide_content;
         return (
             <>
                 <tr>
@@ -113,7 +113,7 @@ class EpidemiologyEvidenceRows extends Component {
                         key={index}
                         row={row}
                         index={index}
-                        rowSpan={numEpiJudgementRowSpan}
+                        rowSpan={numEpiJudgmentRowSpan}
                     />
                 ))}
             </>
@@ -128,10 +128,10 @@ EpidemiologyEvidenceRows.propTypes = {
 @observer
 class AnimalEvidenceRows extends Component {
     render() {
-        const {numAniJudgementRowSpan} = this.props.store,
+        const {numAniJudgmentRowSpan} = this.props.store,
             {animal} = this.props.store.settings,
             show_summary =
-                !this.props.store.settings.summary_judgement.hide_content &&
+                !this.props.store.settings.summary_judgment.hide_content &&
                 this.props.store.settings.exposed_human.hide_content;
         return (
             <>
@@ -147,7 +147,7 @@ class AnimalEvidenceRows extends Component {
                         key={index}
                         row={row}
                         index={index}
-                        rowSpan={numAniJudgementRowSpan}
+                        rowSpan={numAniJudgmentRowSpan}
                     />
                 ))}
             </>
@@ -162,10 +162,10 @@ AnimalEvidenceRows.propTypes = {
 @observer
 class MechanisticEvidenceRows extends Component {
     render() {
-        const {numMechJudgementRowSpan} = this.props.store,
+        const {numMechJudgmentRowSpan} = this.props.store,
             {mechanistic} = this.props.store.settings,
             show_summary =
-                !this.props.store.settings.summary_judgement.hide_content &&
+                !this.props.store.settings.summary_judgment.hide_content &&
                 this.props.store.settings.exposed_human.hide_content &&
                 this.props.store.settings.animal.hide_content;
         return (
@@ -194,11 +194,11 @@ class MechanisticEvidenceRows extends Component {
                             <td colSpan={3}>
                                 <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                             </td>
-                            {index == 0 || numMechJudgementRowSpan == 1 ? (
-                                <td rowSpan={index == 0 ? numMechJudgementRowSpan : null}>
+                            {index == 0 || numMechJudgmentRowSpan == 1 ? (
+                                <td rowSpan={index == 0 ? numMechJudgmentRowSpan : null}>
                                     <div
                                         dangerouslySetInnerHTML={{
-                                            __html: row.judgement.description,
+                                            __html: row.judgment.description,
                                         }}></div>
                                 </td>
                             ) : null}
@@ -241,10 +241,10 @@ class Table extends Component {
 
     render() {
         const {store} = this.props,
-            {exposed_human, animal, mechanistic, summary_judgement} = store.settings,
+            {exposed_human, animal, mechanistic, summary_judgment} = store.settings,
             hide_evidence =
                 exposed_human.hide_content && animal.hide_content && mechanistic.hide_content;
-        return hide_evidence && summary_judgement.hide_content ? null : (
+        return hide_evidence && summary_judgment.hide_content ? null : (
             <table ref={this.domNode} className="summaryTable table table-bordered table-sm">
                 {hide_evidence ? null : (
                     <colgroup>
@@ -261,7 +261,7 @@ class Table extends Component {
                         {hide_evidence ? null : (
                             <th colSpan={5}>Evidence Summary and Interpretation</th>
                         )}
-                        {summary_judgement.hide_content ? null : (
+                        {summary_judgment.hide_content ? null : (
                             <th rowSpan={exposed_human.hide_content && animal.hide_content ? 1 : 2}>
                                 Inferences and Summary Judgment
                             </th>

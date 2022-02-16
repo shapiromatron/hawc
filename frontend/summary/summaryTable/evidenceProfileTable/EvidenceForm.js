@@ -7,13 +7,13 @@ import TextInput from "shared/components/TextInput";
 import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
-import {JudgementSelector} from "./Judgement";
+import {JudgmentSelector} from "./Judgment";
 import {FactorsForm} from "./Factors";
 
-import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
+import {CUSTOM_JUDGMENT, HELP_TEXT} from "./common";
 
 const EvidenceForm = observer(props => {
-        const {store, contentType, createMethodName, judgementRowSpan} = props,
+        const {store, contentType, createMethodName, judgmentRowSpan} = props,
             {settings} = props.store;
         return (
             <>
@@ -36,12 +36,12 @@ const EvidenceForm = observer(props => {
                         required
                     />
                     <CheckboxInput
-                        label="Merge judgement?"
-                        checked={settings[contentType].merge_judgement}
+                        label="Merge judgment?"
+                        checked={settings[contentType].merge_judgment}
                         onChange={e =>
-                            store.updateValue(`${contentType}.merge_judgement`, e.target.checked)
+                            store.updateValue(`${contentType}.merge_judgment`, e.target.checked)
                         }
-                        helpText={HELP_TEXT.JUDGEMENT}
+                        helpText={HELP_TEXT.JUDGMENT}
                         required
                     />
                     <table className="table table-sm table-bordered">
@@ -103,7 +103,7 @@ const EvidenceForm = observer(props => {
                                             index={index}
                                             key={index}
                                             contentType={contentType}
-                                            judgementRowSpan={judgementRowSpan}
+                                            judgmentRowSpan={judgmentRowSpan}
                                         />
                                     );
                                 })
@@ -132,7 +132,7 @@ const EvidenceForm = observer(props => {
         );
     }),
     EvidenceFormRow = observer(props => {
-        const {contentType, row, index, store, judgementRowSpan} = props;
+        const {contentType, row, index, store, judgmentRowSpan} = props;
         return (
             <tr>
                 <td>
@@ -174,39 +174,39 @@ const EvidenceForm = observer(props => {
                     />
                 </td>
                 <td>
-                    {index == 0 || judgementRowSpan == 1 ? (
+                    {index == 0 || judgmentRowSpan == 1 ? (
                         <>
-                            <JudgementSelector
-                                value={row.judgement.judgement}
+                            <JudgmentSelector
+                                value={row.judgment.judgment}
                                 handleSelect={value =>
                                     store.updateValue(
-                                        `${contentType}.rows[${index}].judgement.judgement`,
+                                        `${contentType}.rows[${index}].judgment.judgment`,
                                         parseInt(value)
                                     )
                                 }
                                 summary={false}
                             />
-                            {row.judgement.judgement === CUSTOM_JUDGEMENT ? (
+                            {row.judgment.judgment === CUSTOM_JUDGMENT ? (
                                 <>
                                     <TextInput
-                                        name="custom_judgement_icon"
+                                        name="custom_judgment_icon"
                                         label="Custom icon"
-                                        value={row.judgement.custom_judgement_icon}
+                                        value={row.judgment.custom_judgment_icon}
                                         onChange={e =>
                                             store.updateValue(
-                                                `${contentType}.rows[${index}].judgement.custom_judgement_icon`,
+                                                `${contentType}.rows[${index}].judgment.custom_judgment_icon`,
                                                 e.target.value
                                             )
                                         }
                                         required
                                     />
                                     <TextInput
-                                        name="custom_judgement_label"
+                                        name="custom_judgment_label"
                                         label="Custom label"
-                                        value={row.judgement.custom_judgement_label}
+                                        value={row.judgment.custom_judgment_label}
                                         onChange={e =>
                                             store.updateValue(
-                                                `${contentType}.rows[${index}].judgement.custom_judgement_label`,
+                                                `${contentType}.rows[${index}].judgment.custom_judgment_label`,
                                                 e.target.value
                                             )
                                         }
@@ -215,10 +215,10 @@ const EvidenceForm = observer(props => {
                                 </>
                             ) : null}
                             <QuillTextInput
-                                value={row.judgement.description}
+                                value={row.judgment.description}
                                 onChange={value =>
                                     store.updateValue(
-                                        `${contentType}.rows[${index}].judgement.description`,
+                                        `${contentType}.rows[${index}].judgment.description`,
                                         value
                                     )
                                 }

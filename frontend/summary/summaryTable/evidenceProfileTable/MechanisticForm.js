@@ -44,10 +44,10 @@ const MechanisticForm = observer(props => {
                         required
                     />
                     <CheckboxInput
-                        label="Merge judgement?"
-                        checked={mechanistic.merge_judgement}
+                        label="Merge judgment?"
+                        checked={mechanistic.merge_judgment}
                         onChange={e =>
-                            store.updateValue("mechanistic.merge_judgement", e.target.checked)
+                            store.updateValue("mechanistic.merge_judgment", e.target.checked)
                         }
                         helpText="Generally, a single judgment would be drawn across the mechanistic and supplemental evidence considered, with the exception of when specific key science issues are considered and addressed individually."
                         required
@@ -145,12 +145,12 @@ const MechanisticForm = observer(props => {
                     />
                 </td>
                 <td>
-                    {index == 0 || store.numMechJudgementRowSpan == 1 ? (
+                    {index == 0 || store.numMechJudgmentRowSpan == 1 ? (
                         <QuillTextInput
-                            value={row.judgement.description}
+                            value={row.judgment.description}
                             onChange={value =>
                                 store.updateValue(
-                                    `mechanistic.rows[${index}].judgement.description`,
+                                    `mechanistic.rows[${index}].judgment.description`,
                                     value
                                 )
                             }

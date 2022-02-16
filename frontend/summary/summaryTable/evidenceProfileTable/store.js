@@ -12,11 +12,11 @@ const getDefaultEvidence = () => {
         return {
             summary: {findings: blank},
             evidence: {description: blank},
-            judgement: {
-                judgement: 1,
+            judgment: {
+                judgment: 1,
                 description: blank,
-                custom_judgement_icon: "",
-                custom_judgement_label: "",
+                custom_judgment_icon: "",
+                custom_judgment_label: "",
             },
             certain_factors: {factors: [], text: blank},
             uncertain_factors: {factors: [], text: blank},
@@ -27,7 +27,7 @@ const getDefaultEvidence = () => {
         return {
             summary: {findings: blank},
             evidence: {description: blank},
-            judgement: {description: blank},
+            judgment: {description: blank},
         };
     };
 
@@ -63,18 +63,16 @@ class EvidenceProfileTableStore {
 
         return rows ? rows : 1;
     }
-    @computed get numEpiJudgementRowSpan() {
-        return this.settings.exposed_human.merge_judgement
+    @computed get numEpiJudgmentRowSpan() {
+        return this.settings.exposed_human.merge_judgment
             ? this.settings.exposed_human.rows.length
             : 1;
     }
-    @computed get numAniJudgementRowSpan() {
-        return this.settings.animal.merge_judgement ? this.settings.animal.rows.length : 1;
+    @computed get numAniJudgmentRowSpan() {
+        return this.settings.animal.merge_judgment ? this.settings.animal.rows.length : 1;
     }
-    @computed get numMechJudgementRowSpan() {
-        return this.settings.mechanistic.merge_judgement
-            ? this.settings.mechanistic.rows.length
-            : 1;
+    @computed get numMechJudgmentRowSpan() {
+        return this.settings.mechanistic.merge_judgment ? this.settings.mechanistic.rows.length : 1;
     }
 
     @action.bound editTabIndexUpdate(editTabIndex) {
