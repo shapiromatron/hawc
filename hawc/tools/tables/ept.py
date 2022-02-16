@@ -65,7 +65,9 @@ class SummaryJudgmentCell(BaseCell):
         if self.judgment == SummaryJudgmentChoices.NoJudgment:
             return ""
         if self.judgment == SummaryJudgmentChoices.Custom:
-            return tag_wrapper(self.custom_judgment_icon, "p",) + tag_wrapper(self.custom_judgment_label, "p", "em")
+            return tag_wrapper(self.custom_judgment_icon, "p",) + tag_wrapper(
+                self.custom_judgment_label, "p", "em"
+            )
         icon = SummaryJudgmentTexts[self.judgment.name].value[0]
         label = SummaryJudgmentTexts[self.judgment.name].value[1]
         return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
@@ -196,7 +198,9 @@ class JudgmentCell(BaseCell):
         if self.judgment == JudgmentChoices.NoJudgment:
             return ""
         if self.judgment == JudgmentChoices.Custom:
-            return tag_wrapper(self.custom_judgment_icon, "p",) + tag_wrapper(self.custom_judgment_label, "p", "em")
+            return tag_wrapper(self.custom_judgment_icon, "p",) + tag_wrapper(
+                self.custom_judgment_label, "p", "em"
+            )
         icon = JudgmentTexts[self.judgment.name].value[0]
         label = JudgmentTexts[self.judgment.name].value[1]
         return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
@@ -354,11 +358,21 @@ class EvidenceProfileTable(BaseTable):
     @property
     def column_headers(self):
         return [
-            GenericCell.parse_args(True, 1, 0, 1, 1, tag_wrapper("Studies, outcomes, and confidence", "p", "strong")),
-            GenericCell.parse_args(True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")),
-            GenericCell.parse_args(True, 1, 2, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")),
-            GenericCell.parse_args(True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")),
-            GenericCell.parse_args(True, 1, 4, 1, 1, tag_wrapper("Judgment(s) and rationale", "p", "strong")),
+            GenericCell.parse_args(
+                True, 1, 0, 1, 1, tag_wrapper("Studies, outcomes, and confidence", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 2, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 4, 1, 1, tag_wrapper("Judgment(s) and rationale", "p", "strong")
+            ),
         ]
 
     def _set_cells(self):
