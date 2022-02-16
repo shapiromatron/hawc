@@ -19,6 +19,9 @@ class HAWCUserLookup(ModelLookup):
         "is_active": True,
     }
 
+    def get_item_value(self, obj):
+        return str(obj) if obj is not None else "&lt;inactive user&gt;"
+
 
 class AssessmentTeamMemberOrHigherLookup(HAWCUserLookup):
     def get_query(self, request, term):
