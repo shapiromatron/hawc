@@ -118,36 +118,6 @@ class Study(Reference):
         ordering = ("short_citation",)
 
     @classmethod
-    def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
-        """Bulk create studies from a list of reference ids
-        Args:
-            study_type (int): an integer from 0-4 that maps to the study type the objects will have when created
-                0: no study type, 1: bioassay, 2: epi, 3: epi meta, 4: in vitro
-            reference_ids (list[int]): the list of reference ids to convert to studies
-        """
-
-        studies = []
-        for reference_id in reference_ids:
-            reference = Reference.objects.get(pk=reference_id)
-
-            attrs = {}
-            if study_type == 1:
-                attrs = {"bioassay": True}
-
-            elif study_type == 2:
-                attrs = {"epi": True}
-
-            elif study_type == 3:
-                attrs = {"epi_meta": True}
-
-            elif study_type == 4:
-                attrs = {"in_vitro": True}
-
-            studies.append(Study.save_new_from_reference(reference, attrs))
-
-        Study.objects.bulk_create(studies)
-
-    @classmethod
     def save_new_from_reference(cls, reference, attrs):
         """
         Save a new Study object from an existing reference object and the
