@@ -120,7 +120,7 @@ class DesignViewset(HtmxViewSet):
     parent_model = Study
     model = models.Design
     form_fragment = "epiv2/fragments/_design_edit.html"
-    detail_fragment = "epiv2/fragments/_design_detail.html"
+    detail_fragment = "epiv2/fragments/_design_table.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
