@@ -4,7 +4,7 @@
     <h3>Included references in literature search/import</h3>
     <p>The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. Select one from the list below:</p>
     {% if object_list.count > 0 %}
-        <form action="{% url 'lit:bulk-convert-references' %}" method="post">
+        <form action="{% url 'study:bulk-convert-references' %}" method="post">
             <table class="table table-compressed">
                 <colgroup>
                     <col style='width:5%'></col>
@@ -26,7 +26,7 @@
                 </thead>
                 {% for object in object_list %}
                     <tr>
-                        <td>{{ form }}</td>
+                        <td><input type="checkbox" name="reference_ids" value="{{object.id}}"></td>
                         <td>{{object.authors_short}}</td>
                         <td>{{object.title}}</td>
                         <td>{{object.year}}</td>
@@ -35,6 +35,15 @@
                     </tr>
                 {% endfor %}
             </table>
+            <div class="form-group">
+                <label for="exampleFormControlSelect2">Select Study Type</label>
+                <select multiple class="form-control" name="study_value">
+                    <option value="1">Bioassay</option>
+                    <option value="2">Epidemiology</option>
+                    <option value="3">Epi Meta</option>
+                    <option value="4">In Vitro</option>
+                </select>
+            </div>
             <input type="submit" value="Submit">
         </form>
     {% else %}
