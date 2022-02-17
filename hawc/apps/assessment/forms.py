@@ -16,7 +16,9 @@ from django.urls import reverse, reverse_lazy
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.helper import tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
+from ..common.widgets import DateCheckboxInput
 from ..myuser.lookups import HAWCUserLookup
 from ..myuser.models import HAWCUser
 from . import lookups, models
@@ -32,6 +34,7 @@ class AssessmentForm(forms.ModelForm):
 
     class Meta:
         exclude = (
+            "creator",
             "enable_literature_review",
             "enable_project_management",
             "enable_data_extraction",
@@ -41,9 +44,16 @@ class AssessmentForm(forms.ModelForm):
             "epi_version",
         )
         model = models.Assessment
+        widgets = {
+            "public_on": DateCheckboxInput,
+        }
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+        if self.instance.id is None:
+            self.instance.creator = self.user
+            self.fields["project_manager"].initial = [self.user]
 
         self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=lookups.DssToxIdLookup
@@ -57,9 +67,10 @@ class AssessmentForm(forms.ModelForm):
         self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
+
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
-            for field in ("editable", "public", "hide_from_public_page"):
+            for field in ("editable", "public_on", "hide_from_public_page"):
                 self.fields[field].disabled = True
                 self.fields[field].help_text += help_text
 
@@ -103,11 +114,11 @@ class AssessmentForm(forms.ModelForm):
 
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("cas", 2, "col-md-6")
+        helper.add_row("assessment_objective", 2, "col-md-6")
         helper.add_row("project_manager", 3, "col-md-4")
-        helper.add_row("editable", 4, "col-md-3")
+        helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
-        helper.add_row("noel_name", 2, "col-md-6")
-        helper.add_row("vocabulary", 2, "col-md-6")
+        helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
@@ -138,7 +149,9 @@ class AssessmentFilterForm(forms.Form):
     def get_filters(self):
         query = Q()
         if name := self.cleaned_data.get("search"):
-            query &= Q(name__icontains=name) | Q(year=name)
+            if name_int := tryParseInt(name):
+                query &= Q(year=name_int)
+            query |= Q(name__icontains=name)
         return query
 
     def get_queryset(self, qs):
@@ -224,27 +237,11 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
+        self.fields["description"].widget.attrs["class"] = "html5text"
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.layout = Layout(
-            Fieldset(
-                "",
-                cfl.Row(
-                    Div("title", style="width: 30%; padding: 5px"),
-                    Div("description", style="width: 70%; padding: 5px"),
-                ),
-                cfl.Row(
-                    Div("publicly_available", style="width: 30%; padding: 5px"),
-                    Div("attachment", style="width: 70%; padding: 5px"),
-                ),
-            ),
-        )
+        helper.add_row("title", 2, "col-md-6")
+        helper.add_row("publicly_available", 2, "col-md-6")
         return helper
 
 

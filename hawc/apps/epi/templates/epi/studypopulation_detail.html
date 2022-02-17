@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h1 class="d-inline-block">{{object.name}}</h1>
+    <h2 class="d-inline-block">{{object.name}}</h2>
     {% if obj_perms.edit and crud == "Read" %}
       <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>

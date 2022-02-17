@@ -8,8 +8,6 @@ router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"jobs", api.JobViewset, basename="jobs")
-router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
 router.register(r"strain", api.StrainViewset, basename="strain")
 router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
@@ -51,6 +49,18 @@ urlpatterns = [
         views.AttachmentViewset.as_view(),
         {"action": "read"},
         name="attachment-detail",
+    ),
+    path(
+        "attachment/<int:pk>/update/",
+        views.AttachmentViewset.as_view(),
+        {"action": "update"},
+        name="attachment-update",
+    ),
+    path(
+        "attachment/<int:pk>/delete/",
+        views.AttachmentViewset.as_view(),
+        {"action": "delete"},
+        name="attachment-delete",
     ),
     path(
         "attachment/<int:pk>/update/",

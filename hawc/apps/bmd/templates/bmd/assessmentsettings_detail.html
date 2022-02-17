@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h1 class="d-inline-block">{{object}}</h1>
+  <h2 class="d-inline-block">{{object}}</h2>
   {% if obj_perms.edit_assessment %}
     <div class="dropdown btn-group float-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -24,7 +24,7 @@
     </tbody>
   </table>
 
-  <h2>BMD decision logic</h2>
+  <h3>BMD decision logic</h3>
   {% include "bmd/_logic_settings_detail_list.html" with object_list=assessment.bmd_logic_fields.all %}
 
 {% endblock %}

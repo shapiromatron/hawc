@@ -380,8 +380,12 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
 
     def get_success_url(self):
         self.assessment = self.object
-        response = super().get_success_url()
-        return response
+        return super().get_success_url()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -467,13 +471,18 @@ class AttachmentViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
     model = models.Attachment
-    form_fragment = "assessment/components/attachment_edit_row.html"
-    detail_fragment = "assessment/components/attachment_row.html"
-    list_fragment = "assessment/_attachment_list.html"
+    form_fragment = "assessment/fragments/attachment_edit_row.html"
+    detail_fragment = "assessment/fragments/attachment_row.html"
+    list_fragment = "assessment/fragments/attachment_list.html"
 
-    @action(permission=can_view)
+    @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
-        return render(request, self.detail_fragment, self.get_context_data())
+        if request.is_htmx:
+            return render(request, self.detail_fragment, self.get_context_data())
+        attachment = request.item.object
+        if attachment.publicly_available or request.item.permissions(request.user)["edit"]:
+            return HttpResponseRedirect(attachment.attachment.url)
+        raise Http404()
 
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
@@ -509,22 +518,6 @@ class AttachmentViewset(HtmxViewSet):
             self.perform_delete(request.item)
             return self.str_response()
         return render(request, self.detail_fragment, self.get_context_data())
-
-
-class AttachmentList(BaseList):
-    model = models.Attachment
-    parent_model = models.Assessment
-    parent_template_name = "parent"
-    template_name = "assessment/_attachment_list.html"
-    object_list = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            self.assessment, not context["obj_perms"]["edit"]
-        )
-        context["canEdit"] = context["obj_perms"]["edit"]
-        return context
 
 
 # Dataset views

@@ -2,6 +2,8 @@ import DataPivotLegend from "./DataPivotLegend";
 import {StyleSymbol, StyleLine, StyleText, StyleRectangle} from "./Styles";
 import {_DataPivot_settings_barchart} from "./DataPivotUtilities";
 
+import {Patterns} from "../summary/common";
+
 export default {
     plot_settings: {
         plot_width: 400,
@@ -726,6 +728,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#FFFFFF",
                 "stroke-width": 1,
+                pattern: Patterns.solid,
             },
             {
                 name: "red",
@@ -733,6 +736,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#6f0000",
                 "stroke-width": 1,
+                pattern: Patterns.solid,
             },
             {
                 name: "green",
@@ -740,6 +744,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#006a1e",
                 "stroke-width": 1,
+                pattern: Patterns.solid,
             },
             {
                 name: "blue",
@@ -747,6 +752,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#006dbe",
                 "stroke-width": 1,
+                pattern: Patterns.solid,
             },
             {
                 name: "orange",
@@ -754,6 +760,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#dc8f00",
                 "stroke-width": 1,
+                pattern: Patterns.solid,
             },
             {
                 name: "purple",
@@ -761,6 +768,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#5e5e5e",
                 "stroke-width": 1,
+                pattern: Patterns.solid,
             },
             {
                 name: "fuschia",
@@ -768,6 +776,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#ab006c",
                 "stroke-width": 1,
+                pattern: Patterns.solid,
             },
         ],
     },

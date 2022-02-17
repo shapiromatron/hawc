@@ -44,11 +44,10 @@
             {% if object.epi %}
               <div class="dropdown-divider"></div>
               <span class="dropdown-header">Epidemiology editing</span>
-              {% if object.assessment.epi_version == 1 %}
+              {% if assessment.epi_version == 1 %}
                 <a class="dropdown-item" href="{% url 'epi:sp_create' object.pk %}">Create new study population</a>
                 <a class="dropdown-item" href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a>
-              {% endif %}
-              {% if object.assessment.epi_version == 2 %}
+              {% elif assessment.epi_version == 2 %}
                 <a class="dropdown-item" href="{% url 'epiv2:design_create' object.pk %}">Create new study population</a>
               {% endif %}
             {% endif %}
@@ -113,7 +112,7 @@
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
       <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
       <h3 class="d-inline-block">{{assessment.get_rob_name_display}}</h3>
-      <div id='rob_plot'></div>
+      <div id="rob_plot" class="mb-3"></div>
     {% endif %}
 
     {% if study.bioassay %}
@@ -130,14 +129,13 @@
       {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
     {% endif %}
 
-    {% if study.epi and study.assessment.epi_version == 1 %}
+    {% if study.epi %}
       <h3>Available epidemiological study populations</h3>
-      {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
-    {% endif %}
-
-    {% if study.epi and study.assessment.epi_version == 2 %}
-      <h3>Available epidemiological study populations</h3>
-      {% include "epiv2/_design_list.html" with object_list=object.designs.all %}
+      {% if assessment.epi_version == 1 %}
+        {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
+      {% elif assessment.epi_version == 2 %}
+        {% include "epiv2/_design_list.html" with object_list=object.designs.all %}
+      {% endif %}
     {% endif %}
 
     {% if study.epi_meta %}

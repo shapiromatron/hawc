@@ -10,7 +10,8 @@ _successful_post = {
     "name": "testing",
     "year": "2013",
     "version": "1",
-    "public": "off",
+    "assessment_objective": "<p>Test.</p>",
+    "authors": "<p>Test.</p>",
     "noel_name": 0,
     "rob_name": 0,
     "editable": "on",
@@ -32,15 +33,14 @@ class TestCreatePermissions:
         # with authentication
         url = reverse("assessment:new")
         c = Client()
-        assert c.login(username="reviewer@hawcproject.org", password="pw") is True
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
         response = c.get(url)
         assert response.status_code == 200
 
         n_assessments = Assessment.objects.count()
         with assertTemplateUsed("assessment/assessment_detail.html"):
-            response = c.post(url, data=_successful_post, follow=True,)
+            response = c.post(url, data=_successful_post, follow=True)
             assert Assessment.objects.count() == n_assessments + 1
-            n_assessments += 1
             assert response.status_code == 200
 
     def test_failure(self):

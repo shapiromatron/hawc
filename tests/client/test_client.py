@@ -147,10 +147,15 @@ class TestClient(LiveServerTestCase, TestCase):
         data = dict(
             animal_group_id=animal_group["id"],
             name="Relative liver weight",
+            name_term=5,
             system="Hepatic",
+            system_term=1,
             organ="Liver",
+            organ_term=2,
             effect="Organ weight",
+            effect_term=3,
             effect_subtype="Relative weight",
+            effect_subtype_term=None,
             litter_effects="NA",
             litter_effect_notes="",
             observation_time=104,
@@ -220,11 +225,6 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.assessment.public()
         assert isinstance(response, list)
-
-    def test_assessment_bioassay_ml_dataset(self):
-        client = HawcClient(self.live_server_url)
-        response = client.assessment.bioassay_ml_dataset()
-        assert isinstance(response, pd.DataFrame)
 
     ###################
     # EpiClient tests #

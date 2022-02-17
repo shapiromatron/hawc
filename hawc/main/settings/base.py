@@ -159,7 +159,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.getenv("DJANGO_CACHE_LOCATION"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-        "TIMEOUT": None,
+        "TIMEOUT": 60 * 60 * 24 * 10,  # 10 days
     }
 }
 CACHE_1_HR = 60 * 60
