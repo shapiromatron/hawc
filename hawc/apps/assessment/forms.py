@@ -1,8 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
 
-from crispy_forms import layout as cfl
-from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms
 from django.conf import settings
 from django.contrib import admin

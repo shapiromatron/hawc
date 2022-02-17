@@ -159,9 +159,13 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self)
-        helper.form_tag = False
-        return helper
+        return BaseFormHelper(
+            self,
+            legend_text="Add an attachment to a study",
+            help_text="Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.",
+            cancel_url=self.instance.study.get_absolute_url(),
+            submit_text="Create attachment",
+        )
 
 
 class StudiesCopy(forms.Form):
