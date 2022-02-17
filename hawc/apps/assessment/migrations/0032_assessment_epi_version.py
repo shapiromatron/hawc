@@ -16,7 +16,7 @@ def set_epi_version(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("assessment", "0029_communication"),
+        ("assessment", "0031_assessment_part2"),
     ]
 
     operations = [

@@ -107,14 +107,13 @@
       {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
     {% endif %}
 
-    {% if study.epi and study.assessment.epi_version == 1 %}
+    {% if study.epi %}
       <h3>Available epidemiological study populations</h3>
-      {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
-    {% endif %}
-
-    {% if study.epi and study.assessment.epi_version == 2 %}
-      <h3>Available epidemiological study populations</h3>
-      {% include "epiv2/_design_list.html" with object_list=object.designs.all %}
+      {% if assessment.epi_version == 1 %}
+        {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
+      {% elif assessment.epi_version == 2 %}
+        {% include "epiv2/_design_list.html" with object_list=object.designs.all %}
+      {% endif %}
     {% endif %}
 
     {% if study.epi_meta %}
