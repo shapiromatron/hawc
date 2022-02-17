@@ -93,6 +93,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.humanize",
     "django.contrib.postgres",
+    "django_filters",
     # External apps
     "rest_framework",
     "rest_framework.authtoken",
@@ -158,7 +159,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.getenv("DJANGO_CACHE_LOCATION"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-        "TIMEOUT": None,
+        "TIMEOUT": 60 * 60 * 24 * 10,  # 10 days
     }
 }
 CACHE_1_HR = 60 * 60

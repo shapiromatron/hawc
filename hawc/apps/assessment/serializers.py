@@ -11,7 +11,7 @@ from . import models
 
 class DSSToxSerializer(serializers.ModelSerializer):
     dashboard_url = serializers.URLField(source="get_dashboard_url")
-    svg_url = serializers.URLField(source="get_svg_url")
+    img_url = serializers.URLField(source="get_img_url")
 
     class Meta:
         model = models.DSSTox
@@ -191,26 +191,7 @@ class DatasetSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class JobSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["status"] = instance.get_status_display()
-        ret["job"] = instance.get_job_display()
-        ret["detail_url"] = instance.get_detail_url()
-        return ret
-
+class StrainSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Job
-        fields = "__all__"
-
-
-class LogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Log
-        fields = "__all__"
-
-
-class BlogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Blog
+        model = models.Strain
         fields = "__all__"

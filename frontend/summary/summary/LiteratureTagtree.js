@@ -13,8 +13,7 @@ class LiteratureTagtree extends BaseVisual {
 
     buildPlot($plotDiv, data) {
         let tagtree = new TagTree(data[0][0], this.data.assessment, null),
-            title = this.data.title,
-            url = `/lit/assessment/${this.data.assessment}/references/download/`;
+            title = this.data.title;
 
         if (tagtree.rootNode.data.name.startsWith("assessment-")) {
             // if this is an assessment-root node; hide the name
@@ -53,7 +52,7 @@ class LiteratureTagtree extends BaseVisual {
 
         _.extend(this.data.settings, {can_edit: window.isEditable});
 
-        new TagTreeViz(tagtree, $plotDiv, title, url, this.data.settings);
+        new TagTreeViz(tagtree, $plotDiv, title, this.data.settings);
     }
 
     buildViz($plotDiv, data) {
@@ -72,7 +71,7 @@ class LiteratureTagtree extends BaseVisual {
     }
 
     displayAsPage($el, options) {
-        var title = $("<h1>").text(this.data.title),
+        var title = $("<h2>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>");

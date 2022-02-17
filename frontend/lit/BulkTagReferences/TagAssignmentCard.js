@@ -78,7 +78,7 @@ class TagAssignmentCard extends Component {
                 <div
                     className={nUnmatchedRows > 0 ? "col-md-6 resize-y" : "col-md-12 resize-y"}
                     style={{height: 400}}>
-                    <p className="pull-right text-muted mb-2">{matchedMsg}</p>
+                    <p className="float-right text-muted mb-2">{matchedMsg}</p>
                     {nMatchedRows > 0 ? (
                         <table className="table table-condensed table-sm">
                             <thead>
@@ -111,7 +111,7 @@ class TagAssignmentCard extends Component {
                 </div>
                 {nUnmatchedRows > 0 ? (
                     <div className="col-md-6 resize-y" style={{height: 400}}>
-                        <p className="pull-right text-muted mb-2">{unmatchedMessage}</p>
+                        <p className="float-right text-muted mb-2">{unmatchedMessage}</p>
                         <table className="table table-condensed table-sm">
                             <thead>
                                 <tr>

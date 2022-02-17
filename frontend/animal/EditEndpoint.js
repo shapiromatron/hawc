@@ -176,7 +176,7 @@ class EditEndpoint {
         delete vals[""]; // cleanup
         this.endpoint.data = vals;
         this._calculate_confidence_intervals();
-        this.endpoint.activateFirst();
+        this.endpoint.doseUnits.activateFirst();
         new DRPlot(this.endpoint, "#endpoint_plot");
     }
 

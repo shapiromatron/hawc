@@ -1,13 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h1 class="d-inline-block">Available tables</h1>
+<h2 class="d-inline-block">Available tables</h2>
 {% if obj_perms.edit %}
 <div class="dropdown btn-group float-right">
   <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
   <div class="dropdown-menu dropdown-menu-right">
     <a class="dropdown-item" href="{% url 'summary:tables_create_selector' assessment.pk %}">
       <i class="fa fa-fw fa-edit"></i>&nbsp;Create new table
+    </a>
+    <a class="dropdown-item" href="{% url 'summary:tables_copy' assessment.pk %}">
+      <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
     </a>
   </div>
 </div>
@@ -36,8 +39,8 @@
         <td><a href="{{object.get_absolute_url}}">{{object.title}}</a></td>
         <td>{{object.get_table_type_display}}</td>
         {% if show_published %}<td>{{object.published}}</td>{% endif %}
-        <td>{{object.created}}</td>
-        <td>{{object.last_updated}}</td>
+        <td>{{object.created|date:"Y-m-d" }}</td>
+        <td>{{object.last_updated|date:"Y-m-d" }}</td>
       </tr>
       {% endfor %}
     </tbody>

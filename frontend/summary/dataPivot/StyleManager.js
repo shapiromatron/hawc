@@ -33,7 +33,7 @@ class StyleEditor {
             d3_div = $("<div>"),
             button_well = $('<div class="well">'),
             title = $(`<h3>${toTitleCase(styleType)}</h3>`),
-            style_selector = this.manager.add_select(styleType).on("change", load_style),
+            style_selector = this.manager.add_select(styleType),
             showModal = style => {
                 const modalHeader = $(`<h3>${toTitleCase(styleType)}</h3>`),
                     modalBody = $('<div class="style_fields">'),
@@ -110,6 +110,7 @@ class StyleEditor {
         container.append(title, style_div);
 
         // load initial style
+        style_selector.on("change", load_style);
         load_style();
 
         this.container = container;

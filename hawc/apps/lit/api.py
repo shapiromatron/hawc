@@ -13,6 +13,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
 from ..assessment.api import (
+    METHODS_NO_PUT,
     AssessmentLevelPermissions,
     AssessmentReadPermissions,
     AssessmentRootedTagTreeViewset,
@@ -24,7 +25,7 @@ from ..common.api import (
     OncePerMinuteThrottle,
     PaginationWithCount,
 )
-from ..common.helper import FlatExport, re_digits, read_excel
+from ..common.helper import FlatExport, re_digits, read_excel, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
@@ -71,29 +72,40 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
     @action(detail=True, pagination_class=PaginationWithCount)
     def references(self, request, pk):
+        """
+        Get references for an assessment
+
+        Args (via GET parameters):
+            - search_id: Search object id; if provided, gets references within a search
+            - tag_id: Tag object id; if provided, gets references with tag
+            - all: include references; no pagination (default None)
+            - untagged: include untagged references (default None)
+        """
         assessment = self.get_object()
+        qs = assessment.references.all()
 
-        search_id = request.query_params.get("search_id")
-        tag_id = request.query_params.get("tag_id")
-        tag = None
-        if tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, [int(tag_id)])[0]
+        if search_id := tryParseInt(request.query_params.get("search_id")):
+            qs = qs.filter(searches=search_id)
 
-        if search_id:
-            search = models.Search.objects.get(id=search_id)
-            qs = search.get_references_with_tag(tag=tag, descendants=True)
-        elif tag:
-            qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
-        else:
-            qs = models.Reference.objects.get_untagged_references(assessment)
+        if "untagged" in request.query_params:
+            qs = qs.untagged()
+        elif tag_id := tryParseInt(request.query_params.get("tag_id")):
+            if tag := models.ReferenceFilterTag.objects.filter(id=tag_id).first():
+                qs = qs.with_tag(tag=tag, descendants=True)
 
-        page = self.paginate_queryset(
+        qs = (
             qs.select_related("study")
             .prefetch_related("searches", "identifiers", "tags")
             .order_by("id")
         )
-        serializer = serializers.ReferenceSerializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+
+        if "all" in request.query_params:
+            serializer = serializers.ReferenceSerializer(qs, many=True)
+            return Response(serializer.data)
+        else:
+            page = self.paginate_queryset(qs)
+            serializer = serializers.ReferenceSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
     @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
     def reference_ids(self, request, pk):
@@ -101,7 +113,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get literature reference ids for all assessment references
         """
         instance = self.get_object()
-        qs = models.Reference.objects.assessment_qs(instance.id)
+        qs = instance.references.all()
         df = models.Reference.objects.identifiers_dataframe(qs)
         export = FlatExport(df=df, filename=f"reference-ids-{self.assessment.id}")
         return Response(export)
@@ -192,7 +204,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get all references in an assessment.
         """
         assessment = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
         exporter = exports.ReferenceFlatComplete(
             models.Reference.objects.get_qs(assessment)
             .prefetch_related("identifiers")
@@ -318,7 +330,7 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
             instance.references.all(),
             filename=f"{instance.assessment}-search-{instance.slug}",
             assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
             include_parent_tag=False,
         )
         return Response(exporter.build_export())
@@ -331,31 +343,27 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     @action(detail=True, renderer_classes=PandasRenderers)
     def references(self, request, pk):
         """
-        Return all references for a selected tag; does not include tag-descendants.
+        Return all references for a selected tag, including tag-descendants.
         """
         tag = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
-            filename=f"{self.assessment}-{tag.slug}",
-            assessment=self.assessment,
-            tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
-            include_parent_tag=False,
-        )
-        return Response(exporter.build_export())
-
-    @action(detail=True, url_path="references-table-builder", renderer_classes=PandasRenderers)
-    def references_table_builder(self, request, pk):
-        """
-        Return all references for a selected tag in table-builder import format; does not include
-        tag-descendants.
-        """
-        tag = self.get_object()
-        exporter = exports.TableBuilderFormat(
-            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
-            filename=f"{self.assessment}-{tag.slug}",
-            assessment=self.assessment,
-        )
-        return Response(exporter.build_export())
+        serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
+        if serializer.is_valid():
+            qs = (
+                models.Reference.objects.all()
+                .with_tag(tag=tag, descendants=serializer.include_descendants())
+                .order_by("id")
+            )
+            ExportClass = serializer.get_exporter()
+            exporter = ExportClass(
+                queryset=qs,
+                filename=f"{self.assessment}-{tag.slug}",
+                assessment=self.assessment,
+                tags=self.model.get_all_tags(self.assessment.id),
+                include_parent_tag=False,
+            )
+            return Response(exporter.build_export())
+        else:
+            return Response(serializer.errors, status=400)
 
 
 class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
@@ -370,6 +378,20 @@ class ReferenceViewset(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
+    http_method_names = METHODS_NO_PUT
     serializer_class = serializers.ReferenceSerializer
     permission_classes = (AssessmentLevelPermissions,)
     queryset = models.Reference.objects.all()
+
+    @action(detail=True, methods=("post",))
+    def tag(self, request, pk):
+        response = {"status": "fail"}
+        ref = self.get_object()
+        assessment = ref.assessment
+        if assessment.user_can_edit_object(self.request.user):
+            tag_pks = self.request.POST.getlist("tags[]", [])
+            ref.tags.set(tag_pks)
+            ref.last_updated = timezone.now()
+            ref.save()
+            response["status"] = "success"
+        return Response(response)

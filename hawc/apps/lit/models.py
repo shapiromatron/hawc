@@ -5,7 +5,7 @@ import pickle
 import re
 from io import BytesIO
 from math import ceil
-from typing import Dict
+from typing import Dict, List
 from urllib import parse
 
 import pandas as pd
@@ -26,8 +26,9 @@ from treebeard.mp_tree import MP_Node
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
+from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -283,7 +284,8 @@ class Search(models.Model):
 
     @property
     def import_ids(self):
-        return [v.strip() for v in self.search_string_text.split(",")]
+        # convert from string->set->list to remove repeat ids
+        return list(set(v.strip() for v in self.search_string_text.split(",")))
 
     @transaction.atomic
     def run_new_import(self):
@@ -413,26 +415,6 @@ class Search(models.Model):
         for pubmed_query in pubmed_queries:
             dicts.append(pubmed_query.to_dict())
         return dicts
-
-    def get_all_reference_tags(self, json_encode=True):
-        ref_objs = list(
-            ReferenceTags.objects.filter(content_object__in=self.references.all())
-            .annotate(reference_id=models.F("content_object_id"))
-            .values("reference_id", "tag_id")
-        )
-        if json_encode:
-            return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
-        else:
-            return ref_objs
-
-    def get_references_with_tag(self, tag=None, descendants=False):
-        if tag is None:
-            return self.references_untagged
-        else:
-            tag_ids = [tag.id]
-            if descendants:
-                tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
-            return self.references.filter(tags__in=tag_ids).distinct("pk")
 
     @property
     def references_count(self):
@@ -630,6 +612,18 @@ class Identifiers(models.Model):
     def update_pubmed_content(idents):
         tasks.update_pubmed_content.delay([d.unique_id for d in idents])
 
+    @classmethod
+    def existing_doi_map(cls, dois: List[str]) -> Dict[str, int]:
+        """
+        Return a mapping of DOI and Identifier ID given a list of candidate DOIs
+        """
+        return {
+            k: v
+            for (k, v) in Identifiers.objects.filter(
+                database=constants.ReferenceDatabase.DOI, unique_id__in=dois
+            ).values_list("unique_id", "id")
+        }
+
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"
@@ -692,7 +686,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         if include_parent:
             appendChildren(tagslist[0], "")
         else:
-            for child in tagslist[0]["children"]:
+            for child in tagslist[0].get("children", []):
                 appendChildren(child, "")
 
         return lst
@@ -897,3 +891,70 @@ class Reference(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    @classmethod
+    def extract_dois(cls, qs, logger=None, full_text: bool = False):
+        """Attempt to extract a DOI for each reference given other identifier metadata
+
+        Args:
+            qs (Reference QuerySet): a QuerySet of References
+            logger (logger): An optional logger instance
+            full_text (bool, optional): Determines whether to search full text (True) of field (False; default)
+        """
+        n = qs.count()
+        if n == 0:
+            return
+
+        qs_dois = qs.filter(identifiers__database=constants.ReferenceDatabase.DOI)
+        n_doi_initial = qs_dois.count()
+
+        qs_no_doi = (
+            qs.only("id")
+            .exclude(identifiers__database=constants.ReferenceDatabase.DOI)
+            .prefetch_related("identifiers")
+        )
+
+        new_doi_relations = []
+        for ref in qs_no_doi:
+            doi = None
+            for ident in ref.identifiers.all():
+                if full_text:
+                    doi = try_get_doi(ident.content, full_text=True)
+                else:
+                    doi = get_doi_from_identifier(ident)
+                if doi:
+                    new_doi_relations.append((doi, ref.id))
+                    break
+
+        existing_dois = Identifiers.existing_doi_map([el[0] for el in new_doi_relations])
+        RefIdentM2M = Reference.identifiers.through
+
+        # create new DOIs as needed
+        doi_creates = []
+        for doi, _ in new_doi_relations:
+            if doi not in existing_dois:
+                doi_creates.append(
+                    Identifiers(database=constants.ReferenceDatabase.DOI, unique_id=doi)
+                )
+                existing_dois[doi] = -1  # set temporary value until after bulk_create
+
+        created = Identifiers.objects.bulk_create(doi_creates)
+        for ident in created:
+            existing_dois[ident.unique_id] = ident.id
+
+        # create new Reference-DOI assignments
+        m2m_creates = []
+        for doi, ref_id in new_doi_relations:
+            ident_id = existing_dois[doi]
+            m2m_creates.append(RefIdentM2M(identifiers_id=ident_id, reference_id=ref_id))
+        RefIdentM2M.objects.bulk_create(m2m_creates)
+
+        if logger:
+            n_doi = qs_dois.count()
+            logger.write(f"{n:8} references reviewed ({n_doi_initial/n:.0%} have DOI)")
+            logger.write(
+                f"{n_doi_initial:8} -> {n_doi:8} references with a DOI (+{n_doi-n_doi_initial}; {n_doi/n:.0%} have DOI)"
+            )
+            logger.write(
+                f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
+            )

@@ -5,9 +5,11 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 
 import {StyleSymbol, StyleLine, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
+import {applyStyles} from "../summary/common";
 
 class DataPivotLegend {
-    constructor(vis, settings, dp_settings, options) {
+    constructor(svg, vis, settings, dp_settings, options) {
+        this.svg = svg;
         this.vis = vis;
         this.settings = settings;
         this.dp_settings = dp_settings;
@@ -60,10 +62,7 @@ class DataPivotLegend {
             cursor = this.options.editable ? "pointer" : "auto",
             buffer = 5,
             apply_styles = function(d) {
-                var obj = d3.select(this);
-                for (var property in d.style) {
-                    obj.style(property, d.style[property]);
-                }
+                applyStyles(self.svg, this, d.style);
             },
             drag = !this.options.editable
                 ? function() {}
@@ -160,18 +159,10 @@ class DataPivotLegend {
                     ])
                     .enter()
                     .append("svg:line")
-                    .attr("x1", function(v) {
-                        return v.x1;
-                    })
-                    .attr("x2", function(v) {
-                        return v.x2;
-                    })
-                    .attr("y1", function(v) {
-                        return v.y1;
-                    })
-                    .attr("y2", function(v) {
-                        return v.y2;
-                    })
+                    .attr("x1", v => v.x1)
+                    .attr("x2", v => v.x2)
+                    .attr("y1", v => v.y1)
+                    .attr("y2", v => v.y2)
                     .each(apply_styles);
             }
 
@@ -209,12 +200,8 @@ class DataPivotLegend {
                 .attr("x", 2 * buffer + text_x_offset)
                 .attr("class", "legend_text")
                 .attr("dy", "3.5px")
-                .attr("y", function(d) {
-                    return (row_index + 0.5) * vertical_spacing;
-                })
-                .text(function(d) {
-                    return d.label;
-                });
+                .attr("y", (row_index + 0.5) * vertical_spacing)
+                .text(d => d.label);
 
             row_index += 1;
         });
@@ -244,15 +231,11 @@ class DataPivotLegend {
         }
 
         if (isFinite(obj.line_index)) {
-            legend_item = this.settings.fields.filter(function(v) {
-                return v.line_index === obj.line_index;
-            })[0];
+            legend_item = this.settings.fields.filter(v => v.line_index === obj.line_index)[0];
         }
 
         if (obj.keyField !== undefined) {
-            legend_item = this.settings.fields.filter(function(v) {
-                return v.keyField === obj.keyField;
-            })[0];
+            legend_item = this.settings.fields.filter(v => v.keyField === obj.keyField)[0];
         }
 
         if (legend_item) {
@@ -270,25 +253,22 @@ class DataPivotLegend {
 
     _get_symbol_style(field) {
         return (
-            this.dp_settings.styles.symbols.filter(function(v) {
-                return v.name === field.symbol_style;
-            })[0] || StyleSymbol.default_settings()
+            this.dp_settings.styles.symbols.filter(v => v.name === field.symbol_style)[0] ||
+            StyleSymbol.default_settings()
         );
     }
 
     _get_line_style(field) {
         return (
-            this.dp_settings.styles.lines.filter(function(v) {
-                return v.name === field.line_style;
-            })[0] || StyleLine.default_settings()
+            this.dp_settings.styles.lines.filter(v => v.name === field.line_style)[0] ||
+            StyleLine.default_settings()
         );
     }
 
     _get_rect_style(field) {
         return (
-            this.dp_settings.styles.rectangles.filter(function(v) {
-                return v.name === field.rect_style;
-            })[0] || StyleRectangle.default_settings()
+            this.dp_settings.styles.rectangles.filter(v => v.name === field.rect_style)[0] ||
+            StyleRectangle.default_settings()
         );
     }
 

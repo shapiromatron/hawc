@@ -443,7 +443,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
     def _get_bmd_values(bmds, preferred_units):
         # only return BMD values if they're in the preferred units
         for bmd in bmds:
-            if bmd["dose_units_id"] in preferred_units:
+            # return first match
+            if bmd["dose_units_id"] in preferred_units and bmd["model"] is not None:
                 return [bmd["model"]["output"]["BMD"], bmd["model"]["output"]["BMDL"]]
         return [None, None]
 
