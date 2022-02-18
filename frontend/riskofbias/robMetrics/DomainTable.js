@@ -25,7 +25,6 @@ class DomainTable extends Component {
         const {store, domainIndex, domain, domainCount} = this.props,
             {detailedView} = this.state,
             {moveDomain} = store,
-            {domainKeys} = store.domains.keys(),
             btnCaption = detailedView ? "Hide details" : "Show details";
         return (
             <>
@@ -46,7 +45,6 @@ class DomainTable extends Component {
                         />,
                     ]}
                 />
-                <p>{domainKeys}</p>
                 <table className="table mt-2">
                     <colgroup>
                         <col width="115px" />
