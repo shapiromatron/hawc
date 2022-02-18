@@ -67,6 +67,10 @@ class Study(
         return Response(serializer.data)
 
 
+class BulkConvertReferences(viewsets.ModelViewSet):
+    serializer_class = serializers.BulkStudySerializer
+
+
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Study
     serializer_class = serializers.StudyCleanupFieldsSerializer
