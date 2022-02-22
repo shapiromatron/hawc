@@ -2,6 +2,7 @@ import abc
 import logging
 from typing import Callable, List, Optional
 from urllib.parse import urlparse
+from hawc_client import assessment
 
 import reversion
 from django.contrib import messages
@@ -99,6 +100,36 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
     )
     audit_logger.info(f"[{log.id}] assessment-{assessment_id} user-{user_id} {log_message}")
     reversion.set_comment(comment)
+
+
+def bulk_create_object_log(verb: str, obj_list, user_id: int):
+    objects = []
+    for obj in obj_list:
+        # Log action
+        assessment_id = obj.get_assessment().id
+        meta = obj._meta
+        log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
+        objects.append(
+            Log(
+                assessment_id=assessment_id,
+                user_id=user_id,
+                message=log_message,
+                content_object=obj,
+            )
+        )
+    logs = Log.objects.bulk_create(objects)
+
+    # Associate log with reversion
+    for log in logs:
+        comment = (
+            f"{reversion.get_comment()}, Log {log.id}"
+            if reversion.get_comment()
+            else f"Log {log.id}"
+        )
+        audit_logger.info(
+            f"[{log.id}] assessment-{log.get_assessment().id} user-{user_id} {log.message}"
+        )
+        reversion.set_comment(comment)
 
 
 class MessageMixin:

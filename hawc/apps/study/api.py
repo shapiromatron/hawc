@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from numpy import var
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -12,6 +13,7 @@ from ..assessment.api import (
 )
 from ..common.api import CleanupFieldsBaseViewSet
 from ..common.helper import re_digits
+from ..common.views import create_object_log
 from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models, serializers
 
@@ -57,6 +59,15 @@ class Study(
     def create(self, request):
         # permissions check not here; see serializer validation
         return super().create(request)
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
 
     @action(detail=True, url_path="all-rob")
     def rob(self, request, pk: int):

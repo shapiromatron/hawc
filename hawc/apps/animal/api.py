@@ -23,7 +23,7 @@ from ..common.api import (
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin
+from ..common.views import AssessmentPermissionsMixin, create_object_log
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
 from .actions.term_check import term_check
@@ -185,7 +185,14 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
     def perform_create(self, serializer):
         # permissions check
         user_can_edit_object(serializer.study, self.request.user, raise_exception=True)
-        return super().perform_create(serializer)
+        super().perform_create(serializer)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
+        return None
 
 
 class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
@@ -220,6 +227,13 @@ class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
         # refresh serializer instance and return
         instance = self.model.objects.get(id=animal_group.id)
         serializer = self.get_serializer(instance)
+
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -231,6 +245,15 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
 
     @action(detail=False)
     def effects(self, request):

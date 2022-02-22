@@ -1,3 +1,4 @@
+from turtle import update
 from django.db import models
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
@@ -8,6 +9,7 @@ from ..exceptions import ClassConfigurationException
 from .filters import CleanupBulkIdFilter
 from .mixins import ListUpdateModelMixin
 from .permissions import CleanupFieldsPermissions, user_can_edit_object
+from ..views import bulk_create_object_log
 
 
 class CleanupFieldsBaseViewSet(
@@ -48,8 +50,12 @@ class CleanupFieldsBaseViewSet(
             {"text_cleanup_fields": cleanup_fields, "term_field_mapping": TERM_FIELD_MAPPING}
         )
 
+    def partial_update_bulk(self, request, *args, **kwargs):
+        return super().partial_update_bulk(request, *args, **kwargs)
+
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
+        bulk_create_object_log("Updated", queryset, self.request.user.id)
         queryset.model.delete_caches(ids)
 
 

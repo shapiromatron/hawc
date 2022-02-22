@@ -27,7 +27,7 @@ from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.validators import validate_exact_ids
-from ..common.views import AssessmentPermissionsMixin
+from ..common.views import AssessmentPermissionsMixin, create_object_log
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
@@ -281,6 +281,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     def perform_destroy(self, instance):
         if instance.is_default:
             raise PermissionDenied("Cannot delete a default risk of bias score")
+        create_object_log("Deleted", instance, instance.get_assessment().id, self.request.user.id)
         instance.delete()
 
 

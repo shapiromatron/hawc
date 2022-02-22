@@ -224,12 +224,35 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         self.check_editing_permission(request)
         return super().create(request, *args, **kwargs)
 
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        create_object_log(
+            "Updated",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
+
+    def perform_destroy(self, instance):
+        create_object_log("Deleted", instance, instance.get_assessment().id, self.request.user.id)
+        super().perform_destroy(instance)
+
     @action(detail=True, methods=("patch",))
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
         self.assessment = instance.get_assessment()
         self.check_editing_permission(request)
         instance.moveWithinSiblingsToIndex(request.data["newIndex"])
+        create_object_log("Updated", instance, instance.get_assessment().id, self.request.user.id)
         return Response({"status": True})
 
     def check_editing_permission(self, request):
