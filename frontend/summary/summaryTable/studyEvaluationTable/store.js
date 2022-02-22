@@ -102,13 +102,13 @@ class StudyEvaluationTableStore {
         this.settings.rows = [];
         this.settings.columns = [];
         this.settings.subheaders = [];
-        this.resetStagedEdits();
     }
     @action.bound commitStagedDataSettings(removeSettings) {
         _.assign(this.settings, this.stagedDataSettings);
         if (removeSettings) {
             this.removeSettings();
         }
+        this.resetStagedEdits();
         this.fetchData();
     }
     @action.bound setEditSubheaderIndex(idx) {
@@ -177,7 +177,7 @@ class StudyEvaluationTableStore {
         }
     }
     @action.bound commitStagedEdits() {
-        this.settings = this.stagedEdits;
+        _.assign(this.settings, this.stagedEdits);
         this.resetStagedEdits();
     }
     @action.bound resetStagedEdits() {
@@ -188,7 +188,7 @@ class StudyEvaluationTableStore {
         this.stagedEdits = null;
     }
     @action.bound setStagedEdits() {
-        this.stagedEdits = _.cloneDeep(this.settings);
+        this.stagedEdits = _.cloneDeep(_.pick(this.settings, ["subheaders", "columns", "rows"]));
     }
     @computed get workingSettings() {
         return this.stagedEdits == null ? this.settings : this.stagedEdits;
