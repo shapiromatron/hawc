@@ -552,13 +552,18 @@ class ReferenceExcelUploadForm(forms.Form):
 
 
 class BulkReferenceStudyExtractForm(forms.Form):
-    reference_ids = forms.ModelChoiceField(
-        widget=forms.CheckboxSelectMultiple, queryset=models.Reference.objects.all(),
+    reference_ids = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple, queryset=models.Reference.objects.none()
     )
-    study_type = forms.ChoiceField(
+    study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         choices=[(1, "animal"), (2, "epi"), (3, "epi meta"), (4, "in vitro")],
+        coerce=int,
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        print(cleaned_data, self.errors)
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
@@ -566,17 +571,10 @@ class BulkReferenceStudyExtractForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["reference_ids"].queryset = self.reference_qs
 
-    def clean(self):
-        cleaned_data = super().clean()
-        print(cleaned_data, self.errors)
-
-    def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
-        """Bulk create studies from a list of reference ids
-        Args:
-            study_type (int): an integer from 0-4 that maps to the study type the objects will have when created
-                0: no study type, 1: bioassay, 2: epi, 3: epi meta, 4: in vitro
-            reference_ids (list[int]): the list of reference ids to convert to studies
-        """
+    @transaction.atomic
+    def bulk_create_studies(self):
+        print("TODO!")
+        return
 
         for reference_id in reference_ids:
             reference = models.Reference.objects.get(pk=reference_id)

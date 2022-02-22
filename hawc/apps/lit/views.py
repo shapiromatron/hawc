@@ -489,16 +489,16 @@ class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
     breadcrumb_active_name = "Prepare for extraction"
     model = Assessment
     form_class = forms.BulkReferenceStudyExtractForm
+    success_message = "Items created!"
 
     def get_assessment(self, request, *args, **kwargs):
-        self.assessment = get_object_or_404(self.model, pk=kwargs["pk"])
-        return self.assessment
+        return get_object_or_404(self.model, pk=kwargs["pk"])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
             assessment=self.assessment,
-            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment)
+            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment),
         )
         return kwargs
 
@@ -510,7 +510,11 @@ class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
         return super().get_context_data(**kwargs)
 
     def get_success_url(self):
-        return reverse_lazy("lit:overview", args=[self.assessment.pk])
+        return reverse_lazy("lit:ref_list_extract", args=[self.assessment.pk])
+
+    def form_valid(self, form):
+        form.bulk_create_studies()
+        return super().form_valid(form)
 
 
 def _get_ref_app_startup(view, context) -> WebappConfig:
