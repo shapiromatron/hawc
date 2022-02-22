@@ -484,20 +484,33 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return reverse_lazy("lit:overview", args=[self.assessment.pk])
 
 
-class RefListExtract(BaseList):
-    parent_model = Assessment
-    model = models.Reference
-    crud = "Update"  # update-level permission required despite list-view
+class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
     template_name = "lit/reference_extract_list.html"
     breadcrumb_active_name = "Prepare for extraction"
+    model = Assessment
+    form_class = forms.BulkReferenceStudyExtractForm
 
-    def get_queryset(self):
-        return self.model.objects.get_references_ready_for_import(self.assessment)
+    def get_assessment(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(self.model, pk=kwargs["pk"])
+        return self.assessment
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(
+            assessment=self.assessment,
+            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment)
+        )
+        return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
-        return context
+        kwargs.update(
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Reference upload"),
+            object_list=models.Reference.objects.get_references_ready_for_import(self.assessment),
+        )
+        return super().get_context_data(**kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy("lit:overview", args=[self.assessment.pk])
 
 
 def _get_ref_app_startup(view, context) -> WebappConfig:

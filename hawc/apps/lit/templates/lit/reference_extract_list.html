@@ -4,7 +4,7 @@
     <h3>Included references in literature search/import</h3>
     <p>The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. Select one from the list below:</p>
     {% if object_list.count > 0 %}
-        <form action="{% url 'study:bulk-convert-references' %}" method="post">
+        <form method="post">
             <table class="table table-compressed">
                 <colgroup>
                     <col style='width:5%'></col>
@@ -35,7 +35,8 @@
                     </tr>
                 {% endfor %}
             </table>
-            { form }
+            {% csrf_token %}
+            {{form.study_type}}
             <input type="submit" value="Submit">
         </form>
     {% else %}

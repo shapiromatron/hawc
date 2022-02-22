@@ -552,10 +552,23 @@ class ReferenceExcelUploadForm(forms.Form):
 
 
 class BulkReferenceStudyExtractForm(forms.Form):
-    study_type = forms.SelectMultiple(
+    reference_ids = forms.ModelChoiceField(
+        widget=forms.CheckboxSelectMultiple, queryset=models.Reference.objects.all(),
+    )
+    study_type = forms.ChoiceField(
         widget=forms.CheckboxSelectMultiple,
         choices=[(1, "animal"), (2, "epi"), (3, "epi meta"), (4, "in vitro")],
     )
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        self.reference_qs = kwargs.pop("reference_qs")
+        super().__init__(*args, **kwargs)
+        self.fields["reference_ids"].queryset = self.reference_qs
+
+    def clean(self):
+        cleaned_data = super().clean()
+        print(cleaned_data, self.errors)
 
     def bulk_create_studies(cls, study_type: int, reference_ids: list[int], assessment_id: int):
         """Bulk create studies from a list of reference ids
