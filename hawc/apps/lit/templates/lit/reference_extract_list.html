@@ -35,15 +35,7 @@
                     </tr>
                 {% endfor %}
             </table>
-            <div class="form-group">
-                <label for="exampleFormControlSelect2">Select Study Type</label>
-                <select multiple class="form-control" name="study_value">
-                    <option value="1">Bioassay</option>
-                    <option value="2">Epidemiology</option>
-                    <option value="3">Epi Meta</option>
-                    <option value="4">In Vitro</option>
-                </select>
-            </div>
+            { form }
             <input type="submit" value="Submit">
         </form>
     {% else %}

@@ -67,12 +67,6 @@ class Study(
         return Response(serializer.data)
 
 
-class BulkConvertReferences(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
-    model = models.Study
-    serializer_class = serializers.BulkStudySerializer
-    permission_classes = (AssessmentLevelPermissions,)
-
-
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Study
     serializer_class = serializers.StudyCleanupFieldsSerializer

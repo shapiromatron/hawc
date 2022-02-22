@@ -6,9 +6,6 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"study", api.Study, basename="study")
 router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cleanup")
-router.register(
-    r"bulk-convert-references", api.BulkConvertReferences, basename="bulk-convert-references"
-)
 
 app_name = "study"
 urlpatterns = [
