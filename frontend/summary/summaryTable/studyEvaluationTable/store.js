@@ -286,13 +286,13 @@ class StudyEvaluationTableStore {
     }
     concatDataSelection(data, attribute) {
         switch (attribute) {
-            case "study__short_citation":
+            case "study_short_citation":
                 return _.chain(data)
                     .map(d => d["study citation"])
                     .uniq()
                     .join("; ")
                     .value();
-            case "animal_group__description":
+            case "animal_group_description":
                 return _.chain(data)
                     .map(d => d["animal description"])
                     .uniq()
@@ -315,14 +315,14 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study__short_citation": {
+            case "study_short_citation": {
                 let data = this.getDataSelection(row.type, row.id),
                     text = this.concatDataSelection(data, col.attribute);
                 return {
                     html: `<p><a href="/study/${row.id}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
                 };
             }
-            case "animal_group__description": {
+            case "animal_group_description": {
                 let data = this.getDataSelection(row.type, row.id),
                     text = this.concatDataSelection(data, col.attribute);
                 return {html: `<p>${text}</p>`};
@@ -347,8 +347,8 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study__short_citation":
-            case "animal_group__description":
+            case "study_short_citation":
+            case "animal_group_description":
             case "free_html":
                 return {html: customized.html};
         }

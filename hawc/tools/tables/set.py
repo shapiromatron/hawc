@@ -57,8 +57,8 @@ class DataSourceChoices(Enum):
 class AttributeChoices(Enum):
     FreeHtml = "free_html"
     Rob = "rob"
-    StudyShortCitation = "study__short_citation"
-    AnimalGroupDescription = "animal_group__description"
+    StudyShortCitation = "study_short_citation"
+    AnimalGroupDescription = "animal_group_description"
 
     def get_free_html(self, selection: pd.DataFrame) -> BaseCell:
         # this will be overridden by 'customized' html
@@ -70,13 +70,13 @@ class AttributeChoices(Enum):
         judgment = -1 if values.size == 0 else values[0]
         return JudgmentColorCell(judgment=judgment)
 
-    def get_study__short_citation(self, selection: pd.DataFrame) -> BaseCell:
+    def get_study_short_citation(self, selection: pd.DataFrame) -> BaseCell:
         values = selection["study citation"].dropna().unique()
 
         text = "; ".join(values)
         return GenericCell(quill_text=tag_wrapper(text, "p"))
 
-    def get_animal_group__description(self, selection: pd.DataFrame) -> BaseCell:
+    def get_animal_group_description(self, selection: pd.DataFrame) -> BaseCell:
         values = selection["animal description"].dropna().unique()
 
         text = "; ".join(values)
