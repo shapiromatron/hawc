@@ -180,8 +180,6 @@ class EditSubheaderForm extends Component {
                 </div>
                 <div className="col-md-12">
                     <IntegerInput
-                        minimum={min}
-                        maximum={max}
                         onChange={e => {
                             let value = parseInt(e.target.value),
                                 start =
@@ -191,15 +189,12 @@ class EditSubheaderForm extends Component {
                             store.updateStagedSubheader(shIdx, {start});
                         }}
                         value={subheader.start}
-                        required={true}
                         name="start"
                         label="Start"
                     />
                 </div>
                 <div className="col-md-12">
                     <IntegerInput
-                        minimum={1}
-                        maximum={max - min + 1}
                         onChange={e => {
                             let value = parseInt(e.target.value),
                                 length =
@@ -209,7 +204,6 @@ class EditSubheaderForm extends Component {
                             store.updateStagedSubheader(shIdx, {length});
                         }}
                         value={subheader.length}
-                        required={true}
                         name="length"
                         label="Length"
                     />

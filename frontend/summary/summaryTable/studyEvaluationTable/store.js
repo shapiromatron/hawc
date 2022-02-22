@@ -374,8 +374,16 @@ class StudyEvaluationTableStore {
         return {min, max};
     }
     @action.bound createSubheader() {
-        let last = this.settings.subheaders[this.settings.subheaders.length - 1],
-            start = last == null ? 1 : last.start + last.length,
+        let last = [
+                this.settings.subheaders[this.settings.subheaders.length - 1],
+                this.stagedEdits == null
+                    ? null
+                    : this.stagedEdits.subheaders[this.stagedEdits.subheaders.length - 1],
+            ],
+            start = _.chain(last)
+                .map(d => (d == null ? 1 : d.start + d.length))
+                .max()
+                .value(),
             item = constants.createNewSubheader(start);
         this.settings.subheaders.push(item);
         if (this.stagedEdits != null) {
