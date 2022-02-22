@@ -19,7 +19,7 @@ class DssSubstance(NamedTuple):
         """Fetch a DssTox instance from the actor webservices using a DTXSID.
 
         Args:
-            dtxsid (str): a DTXSID identifer
+            dtxsid (str): a DTXSID identifier
 
         Raises:
             ValueError: if object could not be created

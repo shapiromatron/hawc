@@ -43,7 +43,7 @@ class ReferenceMappingCard extends Component {
                 <div
                     className={nUnmatchedRows > 0 ? "col-md-6 resize-y" : "col-md-12 resize-y"}
                     style={{height: 400}}>
-                    <p className="pull-right text-muted mb-2">
+                    <p className="float-right text-muted mb-2">
                         {nMatchedRows} row(s) which match HAWC reference.
                     </p>
                     {nMatchedRows > 0 ? (
@@ -79,7 +79,7 @@ class ReferenceMappingCard extends Component {
                 </div>
                 {nUnmatchedRows > 0 ? (
                     <div className="col-md-6 resize-y" style={{height: 400}}>
-                        <p className="pull-right text-muted mb-2">
+                        <p className="float-right text-muted mb-2">
                             {nUnmatchedRows} row(s) where a matching HAWC reference cannot be
                             determined.
                         </p>

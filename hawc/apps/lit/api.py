@@ -13,6 +13,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
 from ..assessment.api import (
+    METHODS_NO_PUT,
     AssessmentLevelPermissions,
     AssessmentReadPermissions,
     AssessmentRootedTagTreeViewset,
@@ -381,6 +382,7 @@ class ReferenceViewset(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
+    http_method_names = METHODS_NO_PUT
     serializer_class = serializers.ReferenceSerializer
     permission_classes = (AssessmentLevelPermissions,)
     queryset = models.Reference.objects.all()

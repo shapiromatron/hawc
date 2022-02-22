@@ -44,7 +44,7 @@ def build_tree_node_dict(tree: Dict) -> TreeNodeDict:
     leaves[root["id"]] = TreeNode(id=root["id"], name="assessment-root", parent=None)
 
     # start at root node's children; since we these effectively have no parents
-    for tag in tree[0]["children"]:
+    for tag in tree[0].get("children", []):
         get_leaves(tag, parent_id=root["id"])
 
     return leaves

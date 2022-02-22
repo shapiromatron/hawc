@@ -30,7 +30,9 @@ class TagNode extends Component {
                 <div className={tagClass} onClick={() => handleOnClick(tag)}>
                     <div style={{width: (tag.depth - 1) * 10 + 25}}>
                         {hasChildren ? (
-                            <button className="btn btn-sm pull-right px-2" onClick={toggleExpander}>
+                            <button
+                                className="float-right btn btn-sm px-2"
+                                onClick={toggleExpander}>
                                 <i className={`fa ${expanderIcon}`}></i>
                             </button>
                         ) : null}

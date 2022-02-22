@@ -1,13 +1,12 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h1>Topic model.
 {% if obj_perms.edit and object.can_request_refresh %}
 <a id="refresh-topic-model" class="float-right btn btn-primary" href=".">
   {% if object.has_topic_model %}Request model refresh{% else %}Build model{% endif %}
 </a>
 {% endif %}
-</h1>
+<h2>Topic model.</h2>
 
 {% if obj_perms.edit %}
   {% if object.topic_tsne_refresh_requested %}

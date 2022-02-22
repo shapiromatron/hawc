@@ -62,7 +62,7 @@ class TestImportForm:
                 "title": "demo title",
                 "slug": "demo-title",
                 "description": "",
-                "search_string": "5490558",
+                "search_string": "5490558, 5490558",
             },
             parent=Assessment.objects.get(id=db_keys.assessment_working),
         )
@@ -105,15 +105,12 @@ class TestImportForm:
         # check bad id lists
         bad_search_strings = [
             "-1",
-            "1,1",
         ]
         for bad_search_string in bad_search_strings:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             form = ImportForm(new_payload, parent=parent)
             assert not form.is_valid()
-            assert form.errors == {
-                "search_string": ["At least one positive identifer must exist and must be unique"]
-            }
+            assert form.errors == {"search_string": ["At least one positive identifier must exist"]}
 
     def test_missing_id_in_hero(self, db_keys):
         """
