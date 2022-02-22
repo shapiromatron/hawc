@@ -5214,7 +5214,7 @@
       - key: 319c7
         label: Study citation
         width: 2
-        attribute: study__short_citation
+        attribute: study_short_citation
       - key: bff7d
         label: metric
         width: 1
