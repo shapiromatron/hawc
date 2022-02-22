@@ -63,6 +63,9 @@ class SimpleStudySerializer(StudySerializer):
 
 
 class BulkStudySerializer(serializers.BaseSerializer):
+    class Meta:
+        model = models.Study
+
     def validate(self, data):
         if "reference_ids" in self.initial_data:
 
