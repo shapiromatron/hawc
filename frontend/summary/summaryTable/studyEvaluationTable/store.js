@@ -102,13 +102,13 @@ class StudyEvaluationTableStore {
         this.settings.rows = [];
         this.settings.columns = [];
         this.settings.subheaders = [];
-        this.resetStagedEdits();
     }
     @action.bound commitStagedDataSettings(removeSettings) {
         _.assign(this.settings, this.stagedDataSettings);
         if (removeSettings) {
             this.removeSettings();
         }
+        this.resetStagedEdits();
         this.fetchData();
     }
     @action.bound setEditSubheaderIndex(idx) {
@@ -177,7 +177,7 @@ class StudyEvaluationTableStore {
         }
     }
     @action.bound commitStagedEdits() {
-        this.settings = this.stagedEdits;
+        _.assign(this.settings, this.stagedEdits);
         this.resetStagedEdits();
     }
     @action.bound resetStagedEdits() {
@@ -188,7 +188,7 @@ class StudyEvaluationTableStore {
         this.stagedEdits = null;
     }
     @action.bound setStagedEdits() {
-        this.stagedEdits = _.cloneDeep(this.settings);
+        this.stagedEdits = _.cloneDeep(_.pick(this.settings, ["subheaders", "columns", "rows"]));
     }
     @computed get workingSettings() {
         return this.stagedEdits == null ? this.settings : this.stagedEdits;
@@ -354,8 +354,16 @@ class StudyEvaluationTableStore {
         return {min, max};
     }
     @action.bound createSubheader() {
-        let last = this.settings.subheaders[this.settings.subheaders.length - 1],
-            start = last == null ? 1 : last.start + last.length,
+        let last = [
+                this.settings.subheaders[this.settings.subheaders.length - 1],
+                this.stagedEdits == null
+                    ? null
+                    : this.stagedEdits.subheaders[this.stagedEdits.subheaders.length - 1],
+            ],
+            start = _.chain(last)
+                .map(d => (d == null ? 1 : d.start + d.length))
+                .max()
+                .value(),
             item = constants.createNewSubheader(start);
         this.settings.subheaders.push(item);
         if (this.stagedEdits != null) {

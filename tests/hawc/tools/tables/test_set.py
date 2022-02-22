@@ -36,7 +36,7 @@ class TestAttributeChoices:
         cell = attribute.get_cell(self.empty_df)
         assert cell.judgment == -1
 
-    def test_study__short_citation(self):
+    def test_study_short_citation(self):
         attribute = AttributeChoices.StudyShortCitation
 
         # test valid
@@ -48,7 +48,7 @@ class TestAttributeChoices:
         cell = attribute.get_cell(self.empty_df)
         assert cell.quill_text == "<p></p>"
 
-    def test_animal_group__description(self):
+    def test_animal_group_description(self):
         attribute = AttributeChoices.AnimalGroupDescription
 
         # test valid
@@ -74,13 +74,13 @@ class TestStudyEvaluationTable:
             "columns": [
                 {
                     "label": "Study citation",
-                    "attribute": "study__short_citation",
+                    "attribute": "study_short_citation",
                     "key": "1",
                     "width": 1,
                 },
                 {
                     "label": "Animal description",
-                    "attribute": "animal_group__description",
+                    "attribute": "animal_group_description",
                     "key": "2",
                     "width": 2,
                 },
