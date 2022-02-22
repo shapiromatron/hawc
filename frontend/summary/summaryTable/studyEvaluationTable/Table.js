@@ -456,7 +456,22 @@ class Table extends Component {
                 </thead>
                 <tbody>
                     {workingSettings.rows.map((row, rowIdx) => {
-                        return store.getDataSelection(row.type, row.id).length ? (
+                        return store.getDataSelection(row.type, row.id) == null ? (
+                            <tr key={rowIdx}>
+                                <td colSpan={numColumns}>
+                                    {editable && !editing ? (
+                                        <button
+                                            className="btn btn-sm btn-danger float-right"
+                                            onClick={() => store.deleteRow(rowIdx)}>
+                                            Delete
+                                        </button>
+                                    ) : null}
+                                    <span>
+                                        {row.type} {row.id} not found
+                                    </span>
+                                </td>
+                            </tr>
+                        ) : (
                             <tr
                                 key={rowIdx}
                                 className={
@@ -530,21 +545,6 @@ class Table extends Component {
                                         </td>
                                     );
                                 })}
-                            </tr>
-                        ) : (
-                            <tr key={rowIdx}>
-                                <td colSpan={numColumns}>
-                                    {editable && !editing ? (
-                                        <button
-                                            className="btn btn-sm btn-danger float-right"
-                                            onClick={() => store.deleteRow(rowIdx)}>
-                                            Delete
-                                        </button>
-                                    ) : null}
-                                    <span>
-                                        {row.type} {row.id} not found
-                                    </span>
-                                </td>
                             </tr>
                         );
                     })}

@@ -197,9 +197,10 @@ class StudyEvaluationTableStore {
     // row attributes
     @computed get rowIdChoices() {
         return _.chain(this.dataset.data)
-            .uniqBy("study id")
+            .filter(d => d["type"] == "study")
+            .uniqBy("id")
             .map(d => {
-                return {id: d["study id"], label: d["study citation"]};
+                return {id: d["study_id"], label: d["study_short_citation"]};
             })
             .value();
     }
@@ -265,12 +266,7 @@ class StudyEvaluationTableStore {
 
     // cell content
     getDataSelection(type, id) {
-        switch (type) {
-            case "study":
-                return _.filter(this.dataset.data, d => d["study id"] == id);
-            default:
-                return [];
-        }
+        return _.find(this.dataset.data, d => d["type"] == type && d["id"] == id);
     }
     getRobSelection(studyId, metricId, scoreId) {
         if (scoreId != null) {
@@ -283,22 +279,6 @@ class StudyEvaluationTableStore {
                 d["metric_id"] == metricId &&
                 _.isNil(d["content_type_id"])
         );
-    }
-    concatDataSelection(data, attribute) {
-        switch (attribute) {
-            case "study__short_citation":
-                return _.chain(data)
-                    .map(d => d["study citation"])
-                    .uniq()
-                    .join("; ")
-                    .value();
-            case "animal_group__description":
-                return _.chain(data)
-                    .map(d => d["animal description"])
-                    .uniq()
-                    .join("; ")
-                    .value();
-        }
     }
     getDefaultCellContent(row, col) {
         switch (col.attribute) {
@@ -315,16 +295,16 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study__short_citation": {
+            case "study_short_citation": {
                 let data = this.getDataSelection(row.type, row.id),
-                    text = this.concatDataSelection(data, col.attribute);
+                    text = data["study_short_citation"];
                 return {
                     html: `<p><a href="/study/${row.id}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
                 };
             }
-            case "animal_group__description": {
+            case "animal_group_description": {
                 let data = this.getDataSelection(row.type, row.id),
-                    text = this.concatDataSelection(data, col.attribute);
+                    text = data["animal_group_description"];
                 return {html: `<p>${text}</p>`};
             }
 
@@ -347,8 +327,8 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study__short_citation":
-            case "animal_group__description":
+            case "study_short_citation":
+            case "animal_group_description":
             case "free_html":
                 return {html: customized.html};
         }
@@ -462,7 +442,7 @@ class StudyEvaluationTableStore {
             }
 
             let score = selection[0],
-                study = this.getDataSelection("study", row.id)[0],
+                study = this.getDataSelection(row.type, row.id),
                 config = {
                     display: "all",
                     isForm: false,
@@ -515,8 +495,8 @@ class StudyEvaluationTableStore {
     }
     displayRobAsModal(data, study, config) {
         var modal = new HAWCModal(),
-            title = `<h4><a target="_blank" href="/study/${study["study id"]}">${
-                study["study citation"]
+            title = `<h4><a target="_blank" href="/study/${study["study_id"]}">${
+                study["study_short_citation"]
             }</a>${data["label"] ? `: ${data["label"]}` : ""}</h4>`,
             $content = $('<div class="container-fluid">');
 

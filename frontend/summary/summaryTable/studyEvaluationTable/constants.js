@@ -12,13 +12,13 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
     colAttributeChoices = {
         study: [
             {id: "free_html", label: "Free HTML"},
-            {id: "study__short_citation", label: "Study citation"},
+            {id: "study_short_citation", label: "Study citation"},
             {id: "rob", label: "Evaluation"},
         ],
         ani: [
             {id: "free_html", label: "Free HTML"},
-            {id: "study__short_citation", label: "Study citation"},
-            {id: "animal_group__description", label: "Animal description"},
+            {id: "study_short_citation", label: "Study citation"},
+            {id: "animal_group_description", label: "Animal description"},
             {id: "rob", label: "Evaluation"},
         ],
     },
@@ -28,7 +28,7 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
     createNewColumn = () => {
         return {
             label: "Study citation",
-            attribute: "study__short_citation",
+            attribute: "study_short_citation",
             key: h.randomString(5),
             width: 1,
         };

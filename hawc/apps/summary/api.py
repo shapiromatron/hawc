@@ -15,7 +15,7 @@ from ..assessment.models import Assessment
 from ..common.helper import re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import models, serializers
+from . import models, serializers, table_serializers
 
 
 class UnpublishedFilter(BaseFilterBackend):
@@ -135,6 +135,6 @@ class SummaryTableViewset(AssessmentEditViewset):
 
     @action(detail=False)
     def data(self, request):
-        ser = serializers.SummaryTableDataSerializer(data=request.query_params.dict())
+        ser = table_serializers.SummaryTableDataSerializer(data=request.query_params.dict())
         ser.is_valid(raise_exception=True)
         return Response(ser.get_data())
