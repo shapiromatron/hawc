@@ -553,17 +553,26 @@ class ReferenceExcelUploadForm(forms.Form):
 
 class BulkReferenceStudyExtractForm(forms.Form):
     reference_ids = forms.ModelMultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple, queryset=models.Reference.objects.none()
+        widget=forms.CheckboxSelectMultiple, queryset=models.Reference.objects.none(), required=True
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=[(1, "animal"), (2, "epi"), (3, "epi meta"), (4, "in vitro")],
+        choices=[(1, "Bioassay"), (2, "Epidemiology"), (3, "Epi Meta"), (4, "In Vitro")],
         coerce=int,
     )
 
-    def clean(self):
-        cleaned_data = super().clean()
-        print(cleaned_data, self.errors)
+    def clean_reference_ids(self):
+        data = self.cleaned_data["reference_ids"]
+        print(data)
+        # check that no studies exist for these references
+        # for reference_id in data:
+        #     if models.Reference.objects.get(pk=reference_id).has_study:
+        #         raise forms.ValidationError("A Study has already been created from this Reference.")
+
+        for reference in data:
+            if reference.has_study:
+                raise forms.ValidationError("A Study has already been created from this Reference.")
+        return data
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
@@ -573,23 +582,24 @@ class BulkReferenceStudyExtractForm(forms.Form):
 
     @transaction.atomic
     def bulk_create_studies(self):
-        print("TODO!")
-        return
+        reference_ids = self.cleaned_data["reference_ids"]
 
-        for reference_id in reference_ids:
-            reference = models.Reference.objects.get(pk=reference_id)
+        study_type = self.cleaned_data["study_type"]
+
+        for reference in reference_ids:
+            # reference = models.Reference.objects.get(pk=reference_id)
 
             attrs = {}
-            if study_type == 1:
-                attrs = {"bioassay": True}
+            if study_type.contains(1):
+                attrs.update({"bioassay": True})
 
-            elif study_type == 2:
-                attrs = {"epi": True}
+            if study_type.contains(2):
+                attrs.update({"epi": True})
 
-            elif study_type == 3:
-                attrs = {"epi_meta": True}
+            if study_type.contains(3):
+                attrs.update({"epi_meta": True})
 
-            elif study_type == 4:
-                attrs = {"in_vitro": True}
+            if study_type.contains(4):
+                attrs.update({"in_vitro": True})
 
             Study.save_new_from_reference(reference, attrs)
