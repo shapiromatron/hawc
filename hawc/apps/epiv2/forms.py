@@ -33,7 +33,7 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        text_area_flds = ["age_profile"]
+        text_area_flds = ["age_profile", "comments"]
         for fld in text_area_flds:
             self.fields[fld].widget.attrs["rows"] = 3
 
@@ -52,8 +52,8 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("study_design", 3, "col-md-4")
         helper.add_row("age_description", 3, "col-md-4")
-        helper.add_row("summary", 2, "col-md-6")
-        helper.add_row("countries", 4, "col-md-3")
+        helper.add_row("summary", 4, "col-md-3")
+        helper.add_row("years", 3, "col-md-4")
 
         return helper
 
