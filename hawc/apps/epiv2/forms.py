@@ -98,7 +98,7 @@ class ChemicalForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("name", 2, "col-md-4")
+        helper.add_row("name", 2, "col-md-6")
         return helper
 
 
@@ -121,7 +121,7 @@ class ExposureForm(forms.ModelForm):
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("name", 3, "col-md-3")
+        helper.add_row("name", 3, "col-md-4")
         helper.add_row("measurement_timing", 4, "col-md-3")
         return helper
 
@@ -147,7 +147,7 @@ class ExposureLevelForm(forms.ModelForm):
         helper.form_tag = False
         helper.add_row("name", 4, "col-md-3")
         helper.add_row("central_tendency", 6, "col-md-2")
-        helper.add_row("neg_exposure", 3, ["col-md-3", "col-md-4", "col-md-3"])
+        helper.add_row("neg_exposure", 3, "col-md-4")
         return helper
 
 
@@ -166,7 +166,7 @@ class AdjustmentFactorForm(forms.ModelForm):
     @property
     def helper(self):
         helper = BaseFormHelper(self)
-        helper.add_row("name", 2, "col-md-4")
+        helper.add_row("name", 2, "col-md-6")
         helper.form_tag = False
         return helper
 
@@ -209,7 +209,7 @@ class DataExtractionForm(forms.ModelForm):
         for fld in text_area_flds:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
-        helper.add_row("sub_population", 5, "col-md-2")
+        helper.add_row("sub_population", 5, "col-auto")
         helper.add_row("effect_estimate_type", 3, "col-md-4")
         helper.add_row("exposure_rank", 6, "col-md-2")
         helper.add_row(
