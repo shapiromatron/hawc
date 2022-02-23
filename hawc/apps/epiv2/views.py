@@ -27,7 +27,7 @@ class DesignUpdate(BaseUpdate):
     model = models.Design
     form_class = forms.DesignForm
     template_name = "epiv2/design_update.html"
-    
+
 
 class DesignDetail(BaseDetail):
     model = models.Design
