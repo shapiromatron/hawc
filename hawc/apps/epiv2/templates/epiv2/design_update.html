@@ -37,7 +37,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if chemical %}
+                        {% if object.chemicals.all %}
                             {% for object in object.chemicals.all %}
                                 {% include "epiv2/fragments/chemical_row.html" %}
                             {% endfor %}
@@ -73,7 +73,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if criteria %}
+                        {% if object.criteria.all %}
                             {% for object in object.criteria.all %}
                                 {% include "epiv2/fragments/criteria_row.html" %}
                             {% endfor %}
@@ -115,7 +115,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% if exposures %}
+                {% if object.exposures.all %}
                     {% for object in object.exposures.all %}
                         {% include "epiv2/fragments/exposure_row.html" %}
                     {% endfor %}
@@ -159,7 +159,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% if exposure_levels %}
+                {% if object.exposure_levels.all %}
                     {% for object in object.exposure_levels.all %}
                         {% include "epiv2/fragments/exposurelevel_row.html" %}
                     {% endfor %}
@@ -201,7 +201,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% if outcomes %}
+                {% if object.outcomes.all %}
                     {% for object in object.outcomes.all %}
                         {% include "epiv2/fragments/outcome_row.html" %}
                     {% endfor %}
@@ -238,7 +238,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% if adjustment_factors %}
+                {% if object.adjustment_factors.all %}
                     {% for object in object.adjustment_factors.all %}
                         {% include "epiv2/fragments/adjustment_factor_row.html" %}
                     {% endfor %}
@@ -289,7 +289,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% if data_extractions %}
+                {% if object.data_extractions.all %}
                     {% for object in object.data_extractions.all %}
                         {% include "epiv2/fragments/data_extraction_row.html" %}
                     {% endfor %}
