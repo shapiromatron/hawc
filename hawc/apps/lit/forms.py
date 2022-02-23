@@ -563,7 +563,6 @@ class BulkReferenceStudyExtractForm(forms.Form):
 
     def clean_reference_ids(self):
         data = self.cleaned_data["reference_ids"]
-        print(data)
         # check that no studies exist for these references
         # for reference_id in data:
         #     if models.Reference.objects.get(pk=reference_id).has_study:
@@ -587,19 +586,17 @@ class BulkReferenceStudyExtractForm(forms.Form):
         study_type = self.cleaned_data["study_type"]
 
         for reference in reference_ids:
-            # reference = models.Reference.objects.get(pk=reference_id)
-
             attrs = {}
-            if study_type.contains(1):
+            if 1 in study_type:
                 attrs.update({"bioassay": True})
 
-            if study_type.contains(2):
+            if 2 in study_type:
                 attrs.update({"epi": True})
 
-            if study_type.contains(3):
+            if 3 in study_type:
                 attrs.update({"epi_meta": True})
 
-            if study_type.contains(4):
+            if 4 in study_type:
                 attrs.update({"in_vitro": True})
 
             Study.save_new_from_reference(reference, attrs)
