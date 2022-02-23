@@ -36,23 +36,20 @@
                 {% endfor %}
             </table>
             <div class="col-md-6">
-                <div class="card">
-                    <h6 class="card-header">Create studies from selected references</h6>
-                    <div class="card-body">
-                        <div class="font-weight-normal" id="study-type-select">
-                            <label for="study-type-select">Study Type(s)</label>
-                            <div id="study-type-select" class="align-center">
-                                {% for checkbox in form.study_type %}
-                                    <div class="form-check-inline">
-                                        <p>{{ checkbox.tag }}  {{ checkbox.choice_label }}</p>
-                                    </div>
-                                {% endfor %}
+                <h6>Create studies from selected references</h6>
+                <hr>
+                <div class="font-weight-normal" id="study-type-select">
+                    <label for="study-type-select" class="formsetFieldLabel" data-toggle="tooltip" title="Selected study types will be applied to all created studies.">Study Type(s)&nbsp;<i class="fa fa-question-circle"></i></i></label>
+                    <div id="study-type-select" class="align-center">
+                        {% for checkbox in form.study_type %}
+                            <div class="form-check-inline">
+                                <p>{{ checkbox.tag }}  {{ checkbox.choice_label }}</p>
                             </div>
-                        </div>
-                        {% csrf_token %}
-                        <input type="submit" class="btn btn-primary" value="Create studies">
+                        {% endfor %}
                     </div>
                 </div>
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary" value="Create studies">
             </div>
         </form>
     {% else %}
