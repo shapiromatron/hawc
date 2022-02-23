@@ -336,3 +336,12 @@ class TestReferenceForm:
         form.save()
         ref.refresh_from_db()
         assert ref.get_pubmed_id() == 11778423
+
+
+    @pytest.mark.django_db
+    class TestBulkReferenceStudyExtractForm:
+        def test_success(self, db_keys):
+            assert False
+
+        def test_validation_failures(self, db_keys):
+            assert False
