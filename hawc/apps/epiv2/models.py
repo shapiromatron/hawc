@@ -159,7 +159,7 @@ class Exposure(models.Model):
     )
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
     measurement_type = models.ManyToManyField(
-        MeasurementType, verbose_name="Exposure measurement type", blank=True,
+        MeasurementType, verbose_name="Exposure measurement type",
     )
     biomonitoring_matrix = models.CharField(max_length=128)
     measurement_timing = models.CharField(
