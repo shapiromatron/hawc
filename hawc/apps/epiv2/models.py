@@ -161,7 +161,7 @@ class Exposure(models.Model):
     measurement_type = models.ManyToManyField(
         MeasurementType, verbose_name="Exposure measurement type",
     )
-    biomonitoring_matrix = models.CharField(max_length=128)
+    biomonitoring_matrix = models.CharField(max_length=128, blank=True)
     measurement_timing = models.CharField(
         max_length=128,
         blank=True,
