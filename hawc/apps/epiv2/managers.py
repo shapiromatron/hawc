@@ -1,6 +1,7 @@
 from django.db.models import Prefetch
-from . import models
+
 from ..common.models import BaseManager
+from . import models
 
 
 class AgeProfileManger(BaseManager):
