@@ -35,8 +35,7 @@ class DesignForm(forms.ModelForm):
     def helper(self):
         text_area_flds = ["age_profile"]
         for fld in text_area_flds:
-            widget = self.fields[fld].widget
-            widget.attrs["rows"] = 3
+            self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:
             helper = BaseFormHelper(self)
@@ -119,8 +118,7 @@ class ExposureForm(forms.ModelForm):
     def helper(self):
         text_area_flds = ["measurement_type", "comments"]
         for fld in text_area_flds:
-            widget = self.fields[fld].widget
-            widget.attrs["rows"] = 3
+            self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 3, "col-md-3")
@@ -144,8 +142,7 @@ class ExposureLevelForm(forms.ModelForm):
     def helper(self):
         text_area_flds = ["comments"]
         for fld in text_area_flds:
-            widget = self.fields[fld].widget
-            widget.attrs["rows"] = 3
+            self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 4, "col-md-3")
@@ -210,8 +207,7 @@ class DataExtractionForm(forms.ModelForm):
     def helper(self):
         text_area_flds = ["comments"]
         for fld in text_area_flds:
-            widget = self.fields[fld].widget
-            widget.attrs["rows"] = 3
+            self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.add_row("sub_population", 5, "col-md-2")
         helper.add_row("effect_estimate_type", 3, "col-md-4")
