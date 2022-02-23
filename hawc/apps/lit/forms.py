@@ -563,10 +563,6 @@ class BulkReferenceStudyExtractForm(forms.Form):
 
     def clean_reference_ids(self):
         data = self.cleaned_data["reference_ids"]
-        # check that no studies exist for these references
-        # for reference_id in data:
-        #     if models.Reference.objects.get(pk=reference_id).has_study:
-        #         raise forms.ValidationError("A Study has already been created from this Reference.")
 
         for reference in data:
             if reference.has_study:
