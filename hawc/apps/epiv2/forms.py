@@ -6,6 +6,7 @@ from hawc.apps.epi import lookups
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
 from . import models
+from .lookups import OutcomeByDesignLookup, OutcomeByHealthOutcome
 
 
 class DesignForm(forms.ModelForm):
@@ -157,7 +158,7 @@ class ExposureLevelForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 4, "col-md-3")
-        helper.add_row("central_tendency", 6, "col-md-2")
+        helper.add_row("median", 8, "col-md-2")
         helper.add_row("neg_exposure", 3, ["col-md-3", "col-md-4", "col-md-3"])
         return helper
 
@@ -198,6 +199,15 @@ class OutcomeForm(forms.ModelForm):
         if design:
             self.instance.design = design
 
+        self.fields["endpoint"].widget = selectable.AutoCompleteWidget(
+            lookup_class=OutcomeByDesignLookup, allow_new=True
+        )
+        self.fields["health_outcome"].widget = selectable.AutoCompleteWidget(
+            lookup_class=OutcomeByHealthOutcome, allow_new=True
+        )
+        self.fields["endpoint"].widget.update_query_parameters({"related": design.id})
+        self.fields["health_outcome"].widget.update_query_parameters({"related": design.id})
+
     @property
     def helper(self):
         for fld in list(self.fields.keys()):
@@ -205,7 +215,7 @@ class OutcomeForm(forms.ModelForm):
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
-        helper.add_row("name", 3, "col-md-4")
+        helper.add_row("endpoint", 4, "col-md-3")
         helper.form_tag = False
         return helper
 
@@ -231,7 +241,7 @@ class DataExtractionForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.add_row("sub_population", 5, "col-md-2")
         helper.add_row("effect_estimate_type", 3, "col-md-4")
-        helper.add_row("exposure_rank", 6, "col-md-2")
+        helper.add_row("ci_lcl", 6, "col-md-2")
         helper.add_row(
             "adjustment_factor", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
         )

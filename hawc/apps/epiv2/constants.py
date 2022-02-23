@@ -40,12 +40,10 @@ class EffectEstimateType(models.TextChoices):
     # TODO: include choices for effect estimate type
 
 
-class CentralTendencyType(models.TextChoices):
-    MEDIAN = "MED", "Median"
-    GMEAN = "GME", "Geometric Mean"
-    POINT = "POI", "Point"
-    MEAN = "MEA", "Mean"
-    OTHER = "OTH", "Other"
+class UpperLowerType(models.TextChoices):
+    MX = "MX", "Min/Max"
+    N5 = "N5", "5/95"
+    N9 = "N9", "1/99"
 
 
 class ExposureRoute(models.TextChoices):

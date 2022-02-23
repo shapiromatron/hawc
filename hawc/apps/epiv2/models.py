@@ -206,18 +206,20 @@ class ExposureLevel(models.Model):
     sub_population = models.CharField(
         max_length=128, verbose_name="Sub-population (if relevant)", blank=True
     )
-    central_tendency = models.CharField(max_length=128)
-    central_tendency_type = models.CharField(
-        max_length=128,
-        choices=constants.CentralTendencyType.choices,
-        default=constants.CentralTendencyType.MEDIAN,
-        verbose_name="Central tendency type (median preferred)",
-        blank=True,
-    )
-    minimum = models.FloatField(blank=True, null=True)
+    median = models.FloatField(blank=True, null=True)
+    mean = models.FloatField(blank=True, null=True)
+    lower = models.FloatField(blank=True, null=True)
     percentile25 = models.FloatField(blank=True, null=True)
     percentile75 = models.FloatField(blank=True, null=True)
-    maximum = models.FloatField(blank=True, null=True)
+    upper = models.FloatField(blank=True, null=True)
+    ultype = models.CharField(
+        max_length=128,
+        choices=constants.UpperLowerType.choices,
+        default=constants.UpperLowerType.MX,
+        verbose_name="Upper/lower type",
+        blank=True,
+    )
+    units = models.CharField(max_length=128, blank=True, null=True,)
     neg_exposure = models.FloatField(
         verbose_name="Percent with negligible exposure",
         help_text="e.g., %% below the LOD",
@@ -248,7 +250,7 @@ class ExposureLevel(models.Model):
 class Outcome(models.Model):
     objects = managers.OutcomeManager()
 
-    name = models.CharField(
+    endpoint = models.CharField(
         max_length=64,
         help_text="A unique name for this health outcome that will help you identify it later.",
     )
@@ -260,6 +262,7 @@ class Outcome(models.Model):
         help_text="If multiple cancer types are present, report all types under Cancer.",
         blank=True,
     )
+    comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -270,11 +273,11 @@ class Outcome(models.Model):
         return self.design.get_study()
 
     def __str__(self):
-        return self.name
+        return self.endpoint
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.endpoint = f"{self.endpoint} (2)"
         self.save()
         return self
 
@@ -287,7 +290,7 @@ class AdjustmentFactor(models.Model):
         help_text="A unique name for this adjustment factor that will help you identify it later.",
     )
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="adjustment_factors")
-    description = models.CharField(max_length=128, blank=True)
+    description = models.CharField(max_length=128, blank=True, help_text="Comma separated list",)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -311,10 +314,12 @@ class DataExtraction(models.Model):
     objects = managers.DataExtractionManager()
 
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="data_extractions")
-    sub_population = models.CharField(max_length=64)
+    sub_population = models.CharField(
+        max_length=64, blank=True, help_text="Use N/A if sub population is not relevant"
+    )
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE)
     exposure_level = models.ForeignKey(ExposureLevel, on_delete=models.CASCADE)
-    measurement_timing = models.CharField(max_length=128, blank=True)
+    outcome_measurement_timing = models.CharField(max_length=128, blank=True)
     n = models.PositiveIntegerField(blank=True, null=True)
     effect_estimate_type = models.CharField(
         max_length=128, choices=constants.EffectEstimateType.choices, blank=True
@@ -326,11 +331,11 @@ class DataExtraction(models.Model):
         help_text="Description of the effect estimate with units, including comparison group if applicable",
     )
     effect_estimate = models.FloatField(blank=True, null=True)
+    ci_lcl = models.FloatField(verbose_name="Confidence Interval LCL", blank=True, null=True)
+    ci_ucl = models.FloatField(verbose_name="Confidence Interval UCL", blank=True, null=True)
     exposure_rank = models.PositiveSmallIntegerField(
         default=0, help_text="Rank this comparison group by exposure (lowest exposure group = 1)",
     )
-    ci_lcl = models.FloatField(verbose_name="Confidence Interval LCL", blank=True, null=True)
-    ci_ucl = models.FloatField(verbose_name="Confidence Interval UCL", blank=True, null=True)
     sd_or_se = models.FloatField(
         verbose_name="Standard Deviation or Standard Error", blank=True, null=True
     )
@@ -345,7 +350,7 @@ class DataExtraction(models.Model):
     )
     confidence = models.CharField(max_length=128, verbose_name="Study confidence", blank=True)
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
-    statistical_method = models.CharField(max_length=128, blank=True)
+    statistical_method = models.TextField(blank=True)
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

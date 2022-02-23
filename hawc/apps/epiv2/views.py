@@ -159,7 +159,7 @@ class DesignChildViewset(HtmxViewSet):
                 self.perform_create(request.item, form)
                 template = self.detail_fragment
         else:
-            form = self.form_class()
+            form = self.form_class(parent=request.item.parent)
         context = self.get_context_data(form=form)
         return render(request, template, context)
 

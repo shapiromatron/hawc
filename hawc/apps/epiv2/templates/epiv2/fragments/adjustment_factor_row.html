@@ -1,6 +1,12 @@
+{% load split %}
 <tr hx-target="this" hx-swap="outerHTML" class="adjustmentfactor-{{object.id}}">
     <td>{{object.name}}</td>
-    <td>{{object.description}}</td>
+    <td>
+        {% split object.description ',' as descriptions %}
+            {% for desc in descriptions %}
+                <span class="badge badge-secondary">{{desc}}</span>
+            {% endfor %}
+    </td>
     {% include "epiv2/fragments/_object_row.html" with model="adjustmentfactor" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
