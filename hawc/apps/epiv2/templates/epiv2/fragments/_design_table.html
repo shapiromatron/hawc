@@ -56,16 +56,16 @@
             <td>{{object.participant_n}}</td>
         </tr>
         <tr>
-            <td><b>Comments</b></td>
-            <td>{{object.comments}}</td>
-        </tr>
-        <tr>
             <td><b>Inclusion/Exclusion Criteria</b></td>
             <td>
                 {% for object in object.criteria.all %}
                     {{object.name}}
                 {% endfor %}
             </td>
+        </tr>
+        <tr>
+            <td><b>Comments</b></td>
+            <td>{{object.comments}}</td>
         </tr>
     </tbody>
 </table>
