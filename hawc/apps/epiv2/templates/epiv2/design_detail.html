@@ -32,7 +32,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for object in chemical %}
+                        {% for object in object.chemicals.all %}
                             {% include "epiv2/fragments/chemical_row.html" %}
                         {% empty %}
                             <tr>
@@ -60,7 +60,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for object in criteria %}
+                        {% for object in object.criteria.all %}
                             {% include "epiv2/fragments/criteria_row.html" %}
                         {% empty %}
                         <tr>
@@ -93,7 +93,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in exposures %}
+                {% for object in object.exposures.all %}
                     {% include "epiv2/fragments/exposure_row.html" %}
                 {% empty %}
                 <tr>
@@ -128,7 +128,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in exposure_levels %}
+                {% for object in object.exposure_levels.all %}
                 {% include "epiv2/fragments/exposurelevel_row.html" %}
                 {% empty %}
                 <tr>
@@ -159,7 +159,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in outcomes %}
+                {% for object in object.outcomes.all %}
                 {% include "epiv2/fragments/outcome_row.html" %}
                 {% empty %}
                 <tr>
@@ -190,7 +190,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in adjustment_factors %}
+                {% for object in object.adjustment_factors.all %}
                 {% include "epiv2/fragments/adjustment_factor_row.html" %}
                 {% empty %}
                 <tr>
@@ -233,7 +233,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for object in data_extractions %}
+                {% for object in object.data_extractions.all %}
                 {% include "epiv2/fragments/data_extraction_row.html" %}
                 {% empty %}
                 <tr>

@@ -27,31 +27,10 @@ class DesignUpdate(BaseUpdate):
     model = models.Design
     form_class = forms.DesignForm
     template_name = "epiv2/design_update.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["exposures"] = self.object.exposures.all()
-        context["outcomes"] = self.object.outcomes.all()
-        context["chemical"] = self.object.chemicals.all()
-        context["criteria"] = self.object.criteria.all()
-        context["exposure_levels"] = self.object.exposure_levels.all()
-        context["adjustment_factors"] = self.object.adjustment_factors.all()
-        context["data_extractions"] = self.object.data_extractions.all()
-        return context
-
+    
 
 class DesignDetail(BaseDetail):
     model = models.Design
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["exposures"] = self.object.exposures.all()
-        context["outcomes"] = self.object.outcomes.all()
-        context["chemical"] = self.object.chemicals.all()
-        context["criteria"] = self.object.criteria.all()
-        context["exposure_levels"] = self.object.exposure_levels.all()
-        context["adjustment_factors"] = self.object.adjustment_factors.all()
-        context["data_extractions"] = self.object.data_extractions.all()
-        return context
 
 
 class DesignDelete(BaseDelete):
