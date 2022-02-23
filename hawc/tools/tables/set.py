@@ -90,7 +90,7 @@ class StudyEvaluationTable(BaseTable):
         ser = StudyEvaluationSerializer(
             data={
                 "assessment_id": self.assessment_id,
-                "data_source": self.data_source,
+                "data_source": self.data_source.value,
                 "published_only": self.published_only,
             }
         )
