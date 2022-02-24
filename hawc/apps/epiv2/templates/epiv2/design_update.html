@@ -37,8 +37,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if chemical %}
-                            {% for object in chemical %}
+                        {% if object.chemicals.all %}
+                            {% for object in object.chemicals.all %}
                                 {% include "epiv2/fragments/chemical_row.html" %}
                             {% endfor %}
                             <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
@@ -73,8 +73,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if criteria %}
-                            {% for object in criteria %}
+                        {% if object.criteria.all %}
+                            {% for object in object.criteria.all %}
                                 {% include "epiv2/fragments/criteria_row.html" %}
                             {% endfor %}
                             <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
@@ -115,8 +115,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% if exposures %}
-                    {% for object in exposures %}
+                {% if object.exposures.all %}
+                    {% for object in object.exposures.all %}
                         {% include "epiv2/fragments/exposure_row.html" %}
                     {% endfor %}
                 <tr id="exposure-empty-row" hx-target="this"></tr>
@@ -159,8 +159,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% if exposure_levels %}
-                    {% for object in exposure_levels %}
+                {% if object.exposure_levels.all %}
+                    {% for object in object.exposure_levels.all %}
                         {% include "epiv2/fragments/exposurelevel_row.html" %}
                     {% endfor %}
                     <tr id="exposurelevel-empty-row" hx-target="this"></tr>
@@ -201,8 +201,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% if outcomes %}
-                    {% for object in outcomes %}
+                {% if object.outcomes.all %}
+                    {% for object in object.outcomes.all %}
                         {% include "epiv2/fragments/outcome_row.html" %}
                     {% endfor %}
                     <tr id="outcome-empty-row" hx-target="this"></tr>
@@ -238,8 +238,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% if adjustment_factors %}
-                    {% for object in adjustment_factors %}
+                {% if object.adjustment_factors.all %}
+                    {% for object in object.adjustment_factors.all %}
                         {% include "epiv2/fragments/adjustment_factor_row.html" %}
                     {% endfor %}
                     <tr id="adjustmentfactor-empty-row" hx-target="this"></tr>
@@ -289,8 +289,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% if data_extractions %}
-                    {% for object in data_extractions %}
+                {% if object.data_extractions.all %}
+                    {% for object in object.data_extractions.all %}
                         {% include "epiv2/fragments/data_extraction_row.html" %}
                     {% endfor %}
                     <tr id="dataextraction-empty-row" hx-target="this"></tr>

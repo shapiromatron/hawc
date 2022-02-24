@@ -69,6 +69,7 @@ class Design(models.Model):
         verbose_name="Overall study population N",
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
     )
+    comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -158,9 +159,9 @@ class Exposure(models.Model):
     )
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
     measurement_type = models.ManyToManyField(
-        MeasurementType, verbose_name="Exposure measurement type", blank=True,
+        MeasurementType, verbose_name="Exposure measurement type",
     )
-    biomonitoring_matrix = models.CharField(max_length=128)
+    biomonitoring_matrix = models.CharField(max_length=128, blank=True)
     measurement_timing = models.CharField(
         max_length=128,
         blank=True,

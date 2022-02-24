@@ -1,4 +1,7 @@
+from django.db.models import Prefetch
+
 from ..common.models import BaseManager
+from . import models
 
 
 class AgeProfileManger(BaseManager):
@@ -15,6 +18,31 @@ class MeasurementTypeManager(BaseManager):
 
 class DesignManager(BaseManager):
     assessment_relation = "study__assessment"
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "exposures",
+                "outcomes",
+                "chemicals",
+                "criteria",
+                "adjustment_factors",
+                Prefetch(
+                    "exposure_levels",
+                    queryset=models.ExposureLevel.objects.select_related(
+                        "chemical", "exposure_measurement"
+                    ),
+                ),
+                Prefetch(
+                    "data_extractions",
+                    queryset=models.DataExtraction.objects.select_related(
+                        "adjustment_factor", "outcome", "exposure_level"
+                    ),
+                ),
+            )
+        )
 
 
 class ChemicalManager(BaseManager):
