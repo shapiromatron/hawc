@@ -57,21 +57,21 @@ class DomainTable extends Component {
                             <th>Domain #{domainIndex + 1}</th>
                             <th>{detailedView ? <DetailDomain object={domain} /> : domain.name}</th>
                             <th>
-                                {domainCount > 1 && (
+                                {domainCount > 1 ? (
                                     <button
                                         className="btn btn-info"
                                         onClick={() => moveDomain(domainIndex, false)}>
                                         <i className="fa fa-arrow-up"></i>
                                     </button>
-                                )}
+                                ) : null}
                                 &nbsp;
-                                {domainCount > 1 && (
+                                {domainCount > 1 ? (
                                     <button
                                         className="btn btn-info"
                                         onClick={() => moveDomain(domainIndex, true)}>
                                         <i className="fa fa-arrow-down"></i>
                                     </button>
-                                )}
+                                ) : null}
                             </th>
                             <th>
                                 <a className="btn btn-info" href={domainUpdateUrl(domain.id)}>

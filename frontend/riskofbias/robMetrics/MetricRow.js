@@ -23,21 +23,21 @@ class MetricRow extends Component {
                 <td>&ensp;Metric #{metricIndex + 1}</td>
                 <td>{detailedView ? <DetailMetric object={metric} /> : metric.name}</td>
                 <td>
-                    {metricCount > 1 && (
+                    {metricCount > 1 ? (
                         <button
                             className="btn btn-info"
                             onClick={() => moveMetric(domainIndex, metricIndex, false)}>
                             <i className="fa fa-arrow-up"></i>
                         </button>
-                    )}
+                    ) : null}
                     &nbsp;
-                    {metricCount > 1 && (
+                    {metricCount > 1 ? (
                         <button
                             className="btn btn-info"
                             onClick={() => moveMetric(domainIndex, metricIndex, true)}>
                             <i className="fa fa-arrow-down"></i>
                         </button>
-                    )}
+                    ) : null}
                 </td>
                 <td>
                     <a className="btn btn-info" href={metricUpdateUrl(metric.id)}>
