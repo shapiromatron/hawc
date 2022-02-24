@@ -39,6 +39,9 @@ class SearchSerializer(serializers.ModelSerializer):
             "last_updated",
         )
         read_only_fields = ["slug", "created", "last_updated"]
+        extra_kwargs = {
+            "search_string": {"required": True},
+        }
 
     def validate(self, data):
 
@@ -234,7 +237,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
     def validate_csv(self, value):
         try:
-            df = pd.read_csv(StringIO(value))
+            df = pd.read_csv(StringIO(value)).drop_duplicates()
         except pd.errors.ParserError:
             raise serializers.ValidationError("CSV could not be parsed")
         except pd.errors.EmptyDataError:
@@ -281,15 +284,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if missing:
             raise serializers.ValidationError(f"Reference(s) not found: {missing}")
 
-        # check to make sure we have no duplicates
-        df_nrows = df.shape[0]
-        df = df.drop_duplicates()
-        if df.shape[0] != df_nrows:
-            raise serializers.ValidationError(
-                "CSV contained duplicates; please remove before importing"
-            )
-
-        # success! save dataframe
+        # success! cache dataframe
         self.assessment = self.context["assessment"]
         self.df = df
 
@@ -449,7 +444,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
     def execute(self) -> ResultBase:
 
-        # import missing identifers
+        # import missing identifiers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
 
         # set hero ref

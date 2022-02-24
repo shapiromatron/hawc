@@ -61,7 +61,7 @@ class IVEndpoint {
     }
 
     build_title() {
-        var el = $("<h1>").text(this._title_text());
+        var el = $("<h2>").text(this._title_text());
         if (window.canEdit) {
             var urls = [
                 "Endpoint editing",
@@ -215,11 +215,11 @@ class IVEndpoint {
     displayAsPage($div) {
         $div.append(this.build_title())
             .append(this.build_details_table())
-            .append("<h2>Chemical details</h2>")
+            .append("<h3>Chemical details</h3>")
             .append(this.chemical.build_details_table());
 
         if (this.has_egs()) {
-            $div.append("<h2>Endpoint-group</h2>").append(this.build_eg_table());
+            $div.append("<h3>Endpoint-group</h3>").append(this.build_eg_table());
         }
     }
 }

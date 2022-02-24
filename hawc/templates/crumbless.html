@@ -13,8 +13,6 @@
     {% if extra_branding and flavor == "EPA" %}
     <nav class="nav flex-column pt-3">
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
         <li class="nav-item">
             {% if user.is_authenticated %}
             <a class="nav-link" href="{% url 'portal' %}">Portal</a>
@@ -22,6 +20,8 @@
             <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
             {% endif %}
         </li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
     </nav>
     {% endif %}
 </div>

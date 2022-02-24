@@ -2,9 +2,7 @@
 
 {% block content %}
   <div class="row m-auto">
-    <h1>
-      Welcome, {{ user.get_full_name }}.
-    </h1>
+    <h2>Welcome, {{ user.get_full_name }}.</h2>
     <div class="dropdown ml-auto">
       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Actions
@@ -30,21 +28,21 @@
 
   {% with assessments=user.assessment_pms.all %}
     {% if assessments %}
-      <h2>Assessments you're managing:</h2>
+      <h3>Assessments you're managing:</h3>
       {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
     {% endif %}
   {% endwith %}
 
   {% with assessments=user.assessment_teams.all %}
     {% if assessments %}
-      <h2>Assessments you're a team-member on:</h2>
+      <h3>Assessments you're a team-member on:</h3>
       {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
     {% endif %}
   {% endwith %}
 
   {% with assessments=user.assessment_reviewers.all %}
     {% if assessments %}
-      <h2>Assessments you can review:</h2>
+      <h3>Assessments you can review:</h3>
       {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
     {% endif %}
   {% endwith %}

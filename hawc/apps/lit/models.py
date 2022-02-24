@@ -284,7 +284,8 @@ class Search(models.Model):
 
     @property
     def import_ids(self):
-        return [v.strip() for v in self.search_string_text.split(",")]
+        # convert from string->set->list to remove repeat ids
+        return list(set(v.strip() for v in self.search_string_text.split(",")))
 
     @transaction.atomic
     def run_new_import(self):
@@ -685,7 +686,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         if include_parent:
             appendChildren(tagslist[0], "")
         else:
-            for child in tagslist[0]["children"]:
+            for child in tagslist[0].get("children", []):
                 appendChildren(child, "")
 
         return lst
