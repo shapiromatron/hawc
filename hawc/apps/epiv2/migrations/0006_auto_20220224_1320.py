@@ -6,23 +6,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0005_merge_20220224_0910'),
+        ("epiv2", "0005_merge_20220224_0910"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='exposure',
-            name='biomonitoring_source',
-            field=models.CharField(blank=True, choices=[('PT', 'From participant'), ('ML', 'Maternal'), ('PL', 'Paternal'), ('CD', 'Cord')], max_length=16),
+            model_name="exposure",
+            name="biomonitoring_source",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("PT", "From participant"),
+                    ("ML", "Maternal"),
+                    ("PL", "Paternal"),
+                    ("CD", "Cord"),
+                ],
+                max_length=16,
+            ),
         ),
         migrations.AlterField(
-            model_name='dataextraction',
-            name='sub_population',
-            field=models.CharField(blank=True, help_text='Use N/A if sub population is not relevant', max_length=64),
+            model_name="dataextraction",
+            name="sub_population",
+            field=models.CharField(
+                blank=True, help_text="Use N/A if sub population is not relevant", max_length=64
+            ),
         ),
         migrations.AlterField(
-            model_name='exposure',
-            name='biomonitoring_matrix',
-            field=models.CharField(blank=True, choices=[('BL_PLASMA', 'Blood (portion: Plasma)'), ('BL_WHOLE', 'Blood (portion: Whole blood)'), ('BL_SERUM', 'Blood (portion: Serum)'), ('UR', 'Urine'), ('TE', 'Teeth'), ('NL', 'Nails'), ('SA', 'Saliva'), ('BM', 'Breast milk'), ('SE', 'Semen'), ('FC', 'Feces'), ('CF', 'Cerebrospinal fluid'), ('EB', 'Exhaled breath'), ('OT', 'Other')], max_length=16),
+            model_name="exposure",
+            name="biomonitoring_matrix",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("BL_PLASMA", "Blood (portion: Plasma)"),
+                    ("BL_WHOLE", "Blood (portion: Whole blood)"),
+                    ("BL_SERUM", "Blood (portion: Serum)"),
+                    ("UR", "Urine"),
+                    ("TE", "Teeth"),
+                    ("NL", "Nails"),
+                    ("SA", "Saliva"),
+                    ("BM", "Breast milk"),
+                    ("SE", "Semen"),
+                    ("FC", "Feces"),
+                    ("CF", "Cerebrospinal fluid"),
+                    ("EB", "Exhaled breath"),
+                    ("OT", "Other"),
+                ],
+                max_length=16,
+            ),
         ),
     ]
