@@ -4760,6 +4760,7 @@
     - 1
     countries:
     - 2
+    comments: test
 - model: epiv2.design
   pk: 2
   fields:
@@ -4780,6 +4781,7 @@
     - 1
     countries:
     - 3
+    comments: test 2
 - model: epiv2.chemical
   pk: 1
   fields:
@@ -4879,13 +4881,15 @@
     chemical: 1
     exposure_measurement: 1
     sub_population: without asthma
-    central_tendency: '1.0'
-    central_tendency_type: MED
-    minimum: null
+    mean: 0.0
+    median: 0.0
+    lower: null
     percentile25: 0.8
     percentile75: 1.2
-    maximum: 5.0
+    upper: 5.0
     neg_exposure: 5.0
+    ultype: ''
+    units: ''
     comments: test
     data_location: Table 2
     created: 2022-01-10 21:16:10.379351+00:00
@@ -4898,13 +4902,15 @@
     chemical: 2
     exposure_measurement: 1
     sub_population: without asthma
-    central_tendency: '0.8'
-    central_tendency_type: MED
-    minimum: 0.26
+    mean: 0.0
+    median: 0.0
+    lower: 0.26
     percentile25: 0.6
     percentile75: 1.1
-    maximum: 2.5
+    upper: 2.5
     neg_exposure: 0.0
+    ultype: ''
+    units: ''
     comments: p<0.001 vs children with asthma
     data_location: Table 2
     created: 2022-01-10 21:16:10.384076+00:00
@@ -4917,13 +4923,15 @@
     chemical: 3
     exposure_measurement: 2
     sub_population: all
-    central_tendency: '0.28'
-    central_tendency_type: GME
-    minimum: 0.0
+    mean: 0.0
+    median: 0.0
+    lower: 0.0
     percentile25: 0.22
     percentile75: 0.38
-    maximum: 0.5
+    upper: 0.5
     neg_exposure: 80.0
+    ultype: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:34:38.043650+00:00
@@ -4936,13 +4944,15 @@
     chemical: 3
     exposure_measurement: 3
     sub_population: all
-    central_tendency: '0.28'
-    central_tendency_type: GME
-    minimum: 0.1
+    mean: 0.0
+    median: 0.0
+    lower: 0.1
     percentile25: 0.21
     percentile75: 0.38
-    maximum: 0.6
+    upper: 0.6
     neg_exposure: 81.0
+    ultype: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.133506+00:00
@@ -4955,13 +4965,15 @@
     chemical: 4
     exposure_measurement: 2
     sub_population: all
-    central_tendency: '0.60'
-    central_tendency_type: GME
-    minimum: 0.2
+    mean: 0.0
+    median: 0.0
+    lower: 0.2
     percentile25: 0.46
     percentile75: 0.79
-    maximum: 0.7
+    upper: 0.7
     neg_exposure: 95.0
+    ultype: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.137612+00:00
@@ -4974,13 +4986,15 @@
     chemical: 4
     exposure_measurement: 3
     sub_population: all
-    central_tendency: '1.00'
-    central_tendency_type: GME
-    minimum: 0.3
+    mean: 0.0
+    median: 0.0
+    lower: 0.3
     percentile25: 0.76
     percentile75: 1.24
-    maximum: 0.8
+    upper: 0.8
     neg_exposure: 94.0
+    ultype: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.141816+00:00
@@ -4988,28 +5002,31 @@
 - model: epiv2.outcome
   pk: 1
   fields:
-    name: Asthma within previous year
+    endpoint: Asthma within previous year
     design: 1
     health_outcome: Asthma
     health_outcome_system: IM
+    comments: ''
     created: 2022-01-10 21:16:10.388760+00:00
     last_updated: 2022-01-10 21:16:10.388770+00:00
 - model: epiv2.outcome
   pk: 2
   fields:
-    name: Tetanus antibody concentrations
+    endpoint: Tetanus antibody concentrations
     design: 2
     health_outcome: Vaccine response
     health_outcome_system: IM
+    comments: ''
     created: 2022-01-10 21:41:54.322800+00:00
     last_updated: 2022-01-10 21:41:54.322816+00:00
 - model: epiv2.outcome
   pk: 3
   fields:
-    name: Diphtheria antibody concentrations
+    endpoint: Diphtheria antibody concentrations
     design: 2
     health_outcome: Vaccine response
     health_outcome_system: IM
+    comments: ''
     created: 2022-01-10 21:41:54.327398+00:00
     last_updated: 2022-01-10 21:41:54.327412+00:00
 - model: epiv2.adjustmentfactor
@@ -5060,7 +5077,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5085,7 +5102,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5110,7 +5127,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5135,7 +5152,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5160,7 +5177,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5185,7 +5202,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5210,7 +5227,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5235,7 +5252,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5260,7 +5277,7 @@
     sub_population: Prebooster Age 5
     outcome: 2
     exposure_level: 3
-    measurement_timing: 5 yrs
+    outcome_measurement_timing: 5 yrs
     n: 509
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
@@ -5285,7 +5302,7 @@
     sub_population: Year 7 adjusted for Age 5
     outcome: 2
     exposure_level: 4
-    measurement_timing: 7 yrs
+    outcome_measurement_timing: 7 yrs
     n: 401
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
@@ -5310,7 +5327,7 @@
     sub_population: Prebooster Age 5
     outcome: 3
     exposure_level: 3
-    measurement_timing: 5 yrs
+    outcome_measurement_timing: 5 yrs
     n: 510
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
@@ -5335,7 +5352,7 @@
     sub_population: Postbooster Age 5
     outcome: 3
     exposure_level: 6
-    measurement_timing: 5 yrs
+    outcome_measurement_timing: 5 yrs
     n: 510
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
