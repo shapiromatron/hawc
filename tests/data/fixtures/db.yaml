@@ -4740,6 +4740,42 @@
   pk: 1
   fields:
     description: biomonitoring
+- model: epiv2.measurementtype
+  pk: 2
+  fields:
+    description: air
+- model: epiv2.measurementtype
+  pk: 3
+  fields:
+    description: food
+- model: epiv2.measurementtype
+  pk: 4
+  fields:
+    description: drinking water
+- model: epiv2.measurementtype
+  pk: 5
+  fields:
+    description: occupational
+- model: epiv2.measurementtype
+  pk: 6
+  fields:
+    description: modeled
+- model: epiv2.measurementtype
+  pk: 7
+  fields:
+    description: questionnaire
+- model: epiv2.measurementtype
+  pk: 8
+  fields:
+    description: direct administration - oral
+- model: epiv2.measurementtype
+  pk: 9
+  fields:
+    description: direct administration - inhalation
+- model: epiv2.measurementtype
+  pk: 10
+  fields:
+    description: other
 - model: epiv2.design
   pk: 1
   fields:
@@ -4833,7 +4869,8 @@
   fields:
     name: child serum
     design: 1
-    biomonitoring_matrix: serum
+    biomonitoring_matrix: BL_SERUM
+    biomonitoring_source: PT
     measurement_timing: study enrollment
     exposure_route: UK
     analytic_method: high-performance liquid chromatography with tandem with mass
@@ -4848,7 +4885,8 @@
   fields:
     name: maternal serum
     design: 2
-    biomonitoring_matrix: maternal serum
+    biomonitoring_matrix: BL_SERUM
+    biomonitoring_source: ML
     measurement_timing: parental (32 wks gestation)
     exposure_route: UK
     analytic_method: online solid-phase extraction and analysis, using high-pressure
@@ -4863,7 +4901,8 @@
   fields:
     name: child serum age 5
     design: 2
-    biomonitoring_matrix: serum
+    biomonitoring_matrix: BL_SERUM
+    biomonitoring_source: PT
     measurement_timing: 5 yrs
     exposure_route: UK
     analytic_method: online solid-phase extraction and analysis, using high-pressure

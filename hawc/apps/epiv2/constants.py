@@ -65,3 +65,26 @@ class Significant(models.IntegerChoices):
     NO = 0, "No"
     YES = 1, "Yes"
     NA = 2, "N/A"
+
+
+class BiomonitoringMatrix(models.TextChoices):
+    BL_PLASMA = "BL_PLASMA", "Blood (portion: Plasma)"
+    BL_WHOLE = "BL_WHOLE", "Blood (portion: Whole blood)"
+    BL_SERUM = "BL_SERUM", "Blood (portion: Serum)"
+    UR = "UR", "Urine"
+    TE = "TE", "Teeth"
+    NL = "NL", "Nails"
+    SA = "SA", "Saliva"
+    BM = "BM", "Breast milk"
+    SE = "SE", "Semen"
+    FC = "FC", "Feces"
+    CF = "CF", "Cerebrospinal fluid"
+    EB = "EB", "Exhaled breath"
+    OT = "OT", "Other"
+
+
+class BiomonitoringSource(models.TextChoices):
+    PT = "PT", "From participant"
+    ML = "ML", "Maternal"
+    PL = "PL", "Paternal"
+    CD = "CD", "Cord"
