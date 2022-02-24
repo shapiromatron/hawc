@@ -24,12 +24,6 @@ class AgeProfileSerializer(serializers.ModelSerializer):
         return super().to_internal_value(data)
 
 
-class MeasurementTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.MeasurementType
-        fields = ["description"]
-
-
 class ChemicalSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Chemical
@@ -43,7 +37,6 @@ class CriteriaSerializer(serializers.ModelSerializer):
 
 
 class ExposureSerializer(serializers.ModelSerializer):
-    measurement_type = MeasurementTypeSerializer(many=True, read_only=True)
     exposure_route = FlexibleChoiceField(choices=constants.ExposureRoute.choices)
 
     class Meta:

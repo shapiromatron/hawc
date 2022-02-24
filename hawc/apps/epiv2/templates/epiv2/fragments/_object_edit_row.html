@@ -29,3 +29,12 @@
     </td>
     {% endif %}
 </tr>
+{% if form.instance.id and form.instance.measurement_type == "BM" %}
+{% else %}
+{% block extrajs %}
+<script>
+    document.getElementById("row_id_biomonitoring_matrix_2").setAttribute("style", "display: none;")
+</script>
+{% endblock %}
+{% endif %}
+

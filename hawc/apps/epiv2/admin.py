@@ -65,7 +65,6 @@ class DesignAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Design, DesignAdmin)
 admin.site.register(models.AgeProfile)
-admin.site.register(models.MeasurementType)
 admin.site.register(models.AdjustmentFactor)
 admin.site.register(models.Chemical)
 admin.site.register(models.Criteria)

@@ -46,6 +46,19 @@ class UpperLowerType(models.TextChoices):
     N9 = "N9", "1/99"
 
 
+class MeasurementType(models.TextChoices):
+    BM = "BM", "Biomonitoring"
+    AR = "AR", "Air"
+    FD = "FD", "Food"
+    DW = "DW", "Drinking water"
+    OC = "OC", "Occupational"
+    MD = "MD", "Modeled"
+    QN = "QN", "Questionnaire"
+    DO = "DO", "Direct administration - oral"
+    DI = "DI", "Direct administration - inhalation"
+    OT = "OT", "Other"
+
+
 class ExposureRoute(models.TextChoices):
     IH = "IH", "Inhalation"
     OR = "OR", "Oral"

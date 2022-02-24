@@ -12,10 +12,6 @@ class CriteriaManager(BaseManager):
     assessment_relation = "assessment"
 
 
-class MeasurementTypeManager(BaseManager):
-    assessment_relation = "assessment"
-
-
 class DesignManager(BaseManager):
     assessment_relation = "study__assessment"
 

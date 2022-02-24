@@ -120,9 +120,11 @@ class ExposureForm(forms.ModelForm):
         text_area_flds = ["measurement_type", "comments"]
         for fld in text_area_flds:
             self.fields[fld].widget.attrs["rows"] = 3
+        self.fields["measurement_type"].widget.attrs["onchange"] = "exposureFunction(this.value);"
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("name", 3, "col-md-4")
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("biomonitoring_matrix", 2, "col-md-6")
         helper.add_row("measurement_timing", 4, "col-md-3")
         return helper
 

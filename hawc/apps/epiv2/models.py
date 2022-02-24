@@ -17,15 +17,6 @@ class AgeProfile(models.Model):
         return self.name
 
 
-class MeasurementType(models.Model):
-    objects = managers.MeasurementTypeManager()
-
-    description = models.CharField(max_length=128)
-
-    def __str__(self):
-        return self.description
-
-
 class Design(models.Model):
     objects = managers.DesignManager()
 
@@ -158,8 +149,10 @@ class Exposure(models.Model):
         help_text="A unique name for this exposure that will help you identify it later.",
     )
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
-    measurement_type = models.ManyToManyField(
-        MeasurementType, verbose_name="Exposure measurement type",
+    measurement_type = models.CharField(
+        max_length=2,
+        verbose_name="Exposure measurement type",
+        choices=constants.MeasurementType.choices,
     )
     biomonitoring_matrix = models.CharField(
         max_length=16, choices=constants.BiomonitoringMatrix.choices, blank=True
@@ -378,11 +371,10 @@ class DataExtraction(models.Model):
 
 
 reversion.register(AgeProfile)
-reversion.register(MeasurementType)
 reversion.register(Design, follow=("countries", "criteria", "age_profile"))
 reversion.register(Chemical)
 reversion.register(Criteria)
-reversion.register(Exposure, follow=("measurement_type",))
+reversion.register(Exposure)
 reversion.register(ExposureLevel)
 reversion.register(Outcome)
 reversion.register(AdjustmentFactor)
