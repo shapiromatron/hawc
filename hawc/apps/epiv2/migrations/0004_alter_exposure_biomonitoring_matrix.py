@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0003_alter_exposure_measurement_type'),
+        ("epiv2", "0003_alter_exposure_measurement_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='exposure',
-            name='biomonitoring_matrix',
+            model_name="exposure",
+            name="biomonitoring_matrix",
             field=models.CharField(blank=True, max_length=128),
         ),
     ]

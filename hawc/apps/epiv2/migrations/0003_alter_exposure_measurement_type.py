@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0002_design_comments'),
+        ("epiv2", "0002_design_comments"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='exposure',
-            name='measurement_type',
-            field=models.ManyToManyField(to='epiv2.MeasurementType', verbose_name='Exposure measurement type'),
+            model_name="exposure",
+            name="measurement_type",
+            field=models.ManyToManyField(
+                to="epiv2.MeasurementType", verbose_name="Exposure measurement type"
+            ),
         ),
     ]

@@ -185,16 +185,21 @@ class OutcomeForm(forms.ModelForm):
             self.instance.design = design
 
         self.fields["endpoint"].widget = selectable.AutoCompleteWidget(
-            lookup_class=OutcomeByDesignLookup, allow_new=True
+            lookup_class=OutcomeByDesignLookup,
+            allow_new=True,
+            query_params={"related": self.instance.design.id},
         )
         self.fields["health_outcome"].widget = selectable.AutoCompleteWidget(
-            lookup_class=OutcomeByHealthOutcome, allow_new=True
+            lookup_class=OutcomeByHealthOutcome,
+            allow_new=True,
+            query_params={"related": self.instance.design.id},
         )
-        self.fields["endpoint"].widget.update_query_parameters({"related": design.id})
-        self.fields["health_outcome"].widget.update_query_parameters({"related": design.id})
 
     @property
     def helper(self):
+        text_area_flds = ["comments"]
+        for fld in text_area_flds:
+            self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.add_row("endpoint", 4, "col-md-3")
         helper.form_tag = False
@@ -215,7 +220,7 @@ class DataExtractionForm(forms.ModelForm):
 
     @property
     def helper(self):
-        text_area_flds = ["comments"]
+        text_area_flds = ["comments", "statistical_method"]
         for fld in text_area_flds:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
