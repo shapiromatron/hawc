@@ -377,10 +377,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: measurementtype
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
     model: design
 - model: contenttypes.contenttype
   fields:
@@ -4736,46 +4732,6 @@
   pk: 3
   fields:
     name: Pregnant women
-- model: epiv2.measurementtype
-  pk: 1
-  fields:
-    description: biomonitoring
-- model: epiv2.measurementtype
-  pk: 2
-  fields:
-    description: air
-- model: epiv2.measurementtype
-  pk: 3
-  fields:
-    description: food
-- model: epiv2.measurementtype
-  pk: 4
-  fields:
-    description: drinking water
-- model: epiv2.measurementtype
-  pk: 5
-  fields:
-    description: occupational
-- model: epiv2.measurementtype
-  pk: 6
-  fields:
-    description: modeled
-- model: epiv2.measurementtype
-  pk: 7
-  fields:
-    description: questionnaire
-- model: epiv2.measurementtype
-  pk: 8
-  fields:
-    description: direct administration - oral
-- model: epiv2.measurementtype
-  pk: 9
-  fields:
-    description: direct administration - inhalation
-- model: epiv2.measurementtype
-  pk: 10
-  fields:
-    description: other
 - model: epiv2.design
   pk: 1
   fields:
@@ -4878,8 +4834,7 @@
     comments: ''
     created: 2022-01-10 21:12:17.748634+00:00
     last_updated: 2022-01-10 21:12:17.748644+00:00
-    measurement_type:
-    - 1
+    measurement_type: BM
 - model: epiv2.exposure
   pk: 2
   fields:
@@ -4894,8 +4849,7 @@
     comments: last antenatal exam
     created: 2022-01-10 21:30:38.554898+00:00
     last_updated: 2022-01-10 21:30:38.554911+00:00
-    measurement_type:
-    - 1
+    measurement_type: BM
 - model: epiv2.exposure
   pk: 3
   fields:
@@ -4910,8 +4864,7 @@
     comments: prebooster
     created: 2022-01-10 21:30:38.566082+00:00
     last_updated: 2022-01-10 21:30:38.566092+00:00
-    measurement_type:
-    - 1
+    measurement_type: BM
 - model: epiv2.exposurelevel
   pk: 1
   fields:
