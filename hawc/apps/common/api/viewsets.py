@@ -1,4 +1,3 @@
-from turtle import update
 from django.db import models
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action

@@ -2,7 +2,6 @@ import abc
 import logging
 from typing import Callable, List, Optional
 from urllib.parse import urlparse
-from hawc_client import assessment
 
 import reversion
 from django.contrib import messages
