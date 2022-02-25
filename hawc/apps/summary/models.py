@@ -918,7 +918,7 @@ class Prefilter:
     def setFiltersFromForm(filters, d, visual_type):
         evidence_type = d.get("evidence_type")
 
-        if visual_type == Visual.BIOASSAY_CROSSVIEW:
+        if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             evidence_type = constants.StudyType.BIOASSAY
 
         if d.get("prefilter_system"):
