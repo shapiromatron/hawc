@@ -383,7 +383,9 @@ class TestReferenceForm:
             )
             assert not form.is_valid()
             assert form.errors == {
-                "reference_ids": ["A Study has already been created from this Reference."]
+                "reference_ids": [
+                    f"A Study has already been created from reference #{db_keys.reference_linked}."
+                ]
             }
 
             # reference not in queryset

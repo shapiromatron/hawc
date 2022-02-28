@@ -566,7 +566,9 @@ class BulkReferenceStudyExtractForm(forms.Form):
 
         for reference in data:
             if reference.has_study:
-                raise forms.ValidationError("A Study has already been created from this Reference.")
+                raise forms.ValidationError(
+                    f"A Study has already been created from reference #{reference.id}."
+                )
         return data
 
     def __init__(self, *args, **kwargs):
