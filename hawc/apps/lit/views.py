@@ -497,19 +497,18 @@ class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
-            assessment=self.assessment, reference_qs=self.get_queryset(),
+            assessment=self.assessment,
+            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment),
         )
         return kwargs
-
-    def get_queryset(self):
-        return models.Reference.objects.get_references_ready_for_import(self.assessment)
 
     def get_context_data(self, **kwargs):
         kwargs.update(
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Reference upload"),
-            object_list=self.get_queryset(),
         )
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context["object_list"] = context["form"].fields["reference_ids"].queryset
+        return context
 
     def get_success_url(self):
         return reverse_lazy("lit:ref_list_extract", args=[self.assessment.pk])
