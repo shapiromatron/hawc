@@ -533,7 +533,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name": "Quantitative data extraction",},
+            options={"verbose_name": "Quantitative data extraction"},
         ),
         migrations.CreateModel(
             name="Criteria",
@@ -556,7 +556,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name": "Inclusion/exclusion criteria",},
+            options={"verbose_name": "Inclusion/exclusion criteria"},
         ),
         migrations.AddField(
             model_name="chemical",
