@@ -62,48 +62,6 @@ class SimpleStudySerializer(StudySerializer):
         }
 
 
-class BulkStudySerializer(serializers.BaseSerializer):
-    class Meta:
-        model = models.Study
-
-    def validate(self, data):
-        if "reference_ids" in self.initial_data:
-
-            ref_ids = self.initial_data.get("reference_ids")
-            for ref_id in ref_ids:
-                try:
-                    Reference.objects.get(id=ref_id)
-                except ValueError:
-                    raise serializers.ValidationError("Reference ID must be a number.")
-                except ObjectDoesNotExist:
-                    raise serializers.ValidationError("Reference ID does not exist.")
-
-        study_type = self.initial_data.get("study_type")
-        if study_type >= 0 & study_type <= 4:
-            raise serializers.ValidationError(f"{study_type} is not a valid Study Type")
-
-    def create(self, validated_data):
-        ref_ids = validated_data.get("reference_ids")
-        study_type = validated_data.get("study_type")
-        for ref_id in ref_ids:
-            reference = models.Reference.objects.get(pk=ref_id)
-
-            attrs = {}
-            if study_type == 1:
-                attrs = {"bioassay": True}
-
-            elif study_type == 2:
-                attrs = {"epi": True}
-
-            elif study_type == 3:
-                attrs = {"epi_meta": True}
-
-            elif study_type == 4:
-                attrs = {"in_vitro": True}
-
-            models.Study.save_new_from_reference(reference, attrs)
-
-
 class StudyAssessmentSerializer(serializers.ModelSerializer):
     assessment = AssessmentMiniSerializer(read_only=True)
     url = serializers.CharField(source="get_absolute_url")
