@@ -1,0 +1,23 @@
+TY  - JOUR
+ID  - 1
+AN  - 1234
+ER  -
+
+TY  - JOUR
+ID  - 2
+AN  - abc
+ER  -
+
+TY  - JOUR
+ID  - 3
+AN  - eid=123
+ER  -
+
+TY  - JOUR
+ID  - 4
+ER  -
+
+TY  - JOUR
+ID  - 5
+AN  - null
+ER  -
