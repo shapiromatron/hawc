@@ -35,7 +35,7 @@
                     </tr>
                 {% endfor %}
             </table>
-            <div class="col-md-6">
+            <div class="container">
                 <h6>Create studies from selected references</h6>
                 <hr>
                 <div class="font-weight-normal" id="study-type-select">
@@ -49,7 +49,9 @@
                     </div>
                 </div>
                 {% csrf_token %}
-                <input type="submit" class="btn btn-primary" value="Create studies">
+                <div class="form-actions">
+                    <input type="submit" class="btn btn-primary" value="Create studies">
+                </div>
             </div>
         </form>
     {% else %}
