@@ -557,8 +557,12 @@ class BulkReferenceStudyExtractForm(forms.Form):
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=[(1, "Bioassay"), (2, "Epidemiology"), (3, "Epi Meta"), (4, "In Vitro")],
-        coerce=int,
+        choices=[
+            ("bioassay", "Bioassay"),
+            ("epi", "Epidemiology"),
+            ("epi_meta", "Epi Meta"),
+            ("in_vitro", "In Vitro"),
+        ],
     )
 
     def clean_reference_ids(self):
@@ -585,16 +589,7 @@ class BulkReferenceStudyExtractForm(forms.Form):
 
         for reference in reference_ids:
             attrs = {}
-            if 1 in study_type:
-                attrs.update({"bioassay": True})
-
-            if 2 in study_type:
-                attrs.update({"epi": True})
-
-            if 3 in study_type:
-                attrs.update({"epi_meta": True})
-
-            if 4 in study_type:
-                attrs.update({"in_vitro": True})
+            for st in study_type:
+                attrs.update({st: True})
 
             Study.save_new_from_reference(reference, attrs)

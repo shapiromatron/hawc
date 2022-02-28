@@ -350,7 +350,7 @@ class TestReferenceForm:
             form = BulkReferenceStudyExtractForm(
                 data={
                     "reference_ids": [Reference.objects.get(pk=db_keys.reference_unlinked)],
-                    "study_type": [1, 2, 3, 4],
+                    "study_type": ["bioassay", "epi", "epi_meta", "in_vitro"],
                 },
                 assessment=db_keys.assessment_working,
                 reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
@@ -376,7 +376,7 @@ class TestReferenceForm:
             form = BulkReferenceStudyExtractForm(
                 data={
                     "reference_ids": [Reference.objects.get(pk=db_keys.reference_linked)],
-                    "study_type": [1],
+                    "study_type": ["bioassay"],
                 },
                 assessment=db_keys.assessment_working,
                 reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
@@ -390,11 +390,25 @@ class TestReferenceForm:
 
             # reference not in queryset
             form = BulkReferenceStudyExtractForm(
-                data={"reference_ids": [Reference.objects.get(pk=4)], "study_type": [1]},
+                data={"reference_ids": [Reference.objects.get(pk=4)], "study_type": ["bioassay"]},
                 assessment=db_keys.assessment_working,
                 reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
             )
             assert not form.is_valid()
             assert form.errors == {
                 "reference_ids": ["Select a valid choice. 4 is not one of the available choices."]
+            }
+
+            # invalid study type
+            form = BulkReferenceStudyExtractForm(
+                data={
+                    "reference_ids": [Reference.objects.get(pk=db_keys.reference_unlinked)],
+                    "study_type": ["crazy"],
+                },
+                assessment=db_keys.assessment_working,
+                reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+            )
+            assert not form.is_valid()
+            assert form.errors == {
+                "study_type": ["Select a valid choice. crazy is not one of the available choices."]
             }
