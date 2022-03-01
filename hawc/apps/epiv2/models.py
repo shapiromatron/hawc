@@ -365,7 +365,6 @@ class DataExtraction(models.Model):
 
     def clone(self):
         self.id = None
-        self.sub_population = f"{self.sub_population} (2)"
         self.save()
         return self
 
