@@ -15,80 +15,40 @@
  {% include "epiv2/fragments/_design_table.html" %}
 
 
-<div class="row">
-    <div class="col-sm-6">
-        <div class="card my-3 mx-2">
-            <div class="card-body">
-                <h3 class="card-title">Chemicals
-                    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
-                        hx-target="#chemical-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-                </h3>
-                <table class="table table-condensed table-striped">
-                    <colgroup>
-                        <col style="width: 38%;">
-                        <col style="width: 38%;">
-                        <col style="width: 25%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>DSSTox</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if object.chemicals.all %}
-                            {% for object in object.chemicals.all %}
-                                {% include "epiv2/fragments/chemical_row.html" %}
-                            {% endfor %}
-                            <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
-                        {% else %}
-                            <tr id="chemical-empty-row" hx-target="this">
-                                <td colspan="100%">
-                                    <p class="text-center mb-0">No chemicals added to design.</p>
-                                </td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        <div class="card my-3 mx-2">
-            <div class="card-body">
-                <h3 class="card-title">Criteria
-                    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:criteria-create' object.pk %}"
-                        hx-target="#criteria-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-                </h3>
-                <table class="table table-condensed table-striped">
-                    <colgroup>
-                        <col style="width: 75%;">
-                        <col style="width: 25%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if object.criteria.all %}
-                            {% for object in object.criteria.all %}
-                                {% include "epiv2/fragments/criteria_row.html" %}
-                            {% endfor %}
-                            <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
-                        {% else %}
-                            <tr id="criteria-empty-row" hx-target="this">
-                                <td colspan="100%">
-                                    <p class="text-center mb-0">No criteria added to design.</p>
-                                </td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Chemicals
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
+                hx-target="#chemical-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
+        </h3>
+        <table class="table table-condensed table-striped">
+            <colgroup>
+                <col style="width: 38%;">
+                <col style="width: 38%;">
+                <col style="width: 25%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>DSSTox</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object.chemicals.all %}
+                    {% for object in object.chemicals.all %}
+                        {% include "epiv2/fragments/chemical_row.html" %}
+                    {% endfor %}
+                    <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="chemical-empty-row" hx-target="this">
+                        <td colspan="100%">
+                            <p class="text-center mb-0">No chemicals added to design.</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
     </div>
 </div>
 
