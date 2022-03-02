@@ -395,7 +395,7 @@ class RiskOfBiasAssignmentSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         # there can be one and only one final active
-        if validated_data["final"] and validated_data["active"]:
+        if validated_data.get("final") and validated_data.get("active"):
             models.RiskOfBias.objects.filter(study=validated_data["study"], final=True).update(
                 active=False
             )
