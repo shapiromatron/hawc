@@ -1,12 +1,12 @@
 from django import forms
+from django.urls import reverse
 
 from hawc.apps.common.forms import BaseFormHelper
-from hawc.apps.epi import lookups
+from hawc.apps.epi.lookups import RelatedCountryNameLookup
 
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
-from . import models
-from .lookups import OutcomeByDesignLookup, OutcomeByHealthOutcome
+from . import models, lookups
 
 
 class DesignForm(forms.ModelForm):
@@ -16,9 +16,10 @@ class DesignForm(forms.ModelForm):
 
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
-    # TODO: fix country lookup
-    countries = selectable.AutoCompleteSelectMultipleField(
-        lookups.RelatedCountryNameLookup, required=False
+    countries = selectable.AutoCompleteSelectMultipleField(RelatedCountryNameLookup, required=False)
+
+    criteria = forms.ModelMultipleChoiceField(
+        queryset=None, to_field_name="name", label="Inclusion/exclusion criteria", required=False,
     )
 
     class Meta:
@@ -31,6 +32,7 @@ class DesignForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
+        self.fields["criteria"].queryset = self.instance.criteria
 
     @property
     def helper(self):
@@ -55,6 +57,9 @@ class DesignForm(forms.ModelForm):
         helper.add_row("age_description", 3, "col-md-4")
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("years", 3, "col-md-4")
+        # helper.add_create_btn(
+        #     field_name="criteria", url=reverse("epiv2:criteria-create"), title="Add criteria"
+        # )
 
         return helper
 
@@ -187,12 +192,12 @@ class OutcomeForm(forms.ModelForm):
             self.instance.design = design
 
         self.fields["endpoint"].widget = selectable.AutoCompleteWidget(
-            lookup_class=OutcomeByDesignLookup,
+            lookup_class=lookups.OutcomeByDesignLookup,
             allow_new=True,
             query_params={"related": self.instance.design.id},
         )
         self.fields["health_outcome"].widget = selectable.AutoCompleteWidget(
-            lookup_class=OutcomeByHealthOutcome,
+            lookup_class=lookups.OutcomeByHealthOutcome,
             allow_new=True,
             query_params={"related": self.instance.design.id},
         )
