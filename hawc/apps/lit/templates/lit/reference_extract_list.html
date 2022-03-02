@@ -2,9 +2,7 @@
 
 {% block content %}
     <h3>Included references in literature search/import</h3>
-    <p class="text-muted">The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. You can individually "convert" each reference
-    to a study that allows you to continue with extraction/review, or you can select multiple
-    references via the checkbox and bulk-convert at the bottom of the form.</p>
+    <p class="text-muted">The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. You can individually convert each reference to a study that allows you to continue with extraction/review, or you can select multiple references via the checkbox and bulk-convert at the bottom of the form.</p>
     <p class="text-muted">Select one or more references from the list below:</p>
     {% if object_list.count > 0 %}
         <form method="post">
@@ -34,12 +32,12 @@
                         <td>{{object.year}}</td>
                         <td>{{object.title}}</td>
                         <td>{{object.journal}}</td>
-                        <td><a href="{% url 'study:new_study' object.pk %}">Create study from reference</a></td>
+                        <td><a class="btn btn-sm btn-primary" href="{% url 'study:new_study' object.pk %}"><i class="fa fa-plus mr-1"></i>Convert</a></td>
                     </tr>
                 {% endfor %}
             </table>
             <div>
-                <legend>Create studies from selected references</legend>
+                <h4>Create studies from selected references</h4>
                 <p class="text-muted">Select one more references from the list above, and a study
                     type to apply to these references. These references will be bulk-converted to
                     studies.
