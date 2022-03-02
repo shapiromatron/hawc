@@ -7,10 +7,12 @@ export default function tryWebAppStartup() {
 
     If requirements are not present, noop.
      */
-    const el = document.getElementById("main"),
-        config = document.getElementById("config");
+    const config = document.getElementById("config"),
+        content = config ? JSON.parse(config.textContent) : {},
+        el = content.selector
+            ? document.querySelector(content.selector)
+            : document.getElementById("main");
     if (el && config) {
-        const content = JSON.parse(config.textContent);
         window.app.startup(content.app, app => {
             const func = content.page ? app[content.page] : app;
             func(el, content.data);
