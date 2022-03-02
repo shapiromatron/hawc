@@ -12,7 +12,7 @@ from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2021.12"
+__version__ = "2022.02"
 __all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
@@ -55,3 +55,12 @@ class HawcClient(BaseClient):
         """
 
         self.session.authenticate(email, password)
+
+    def set_authentication_token(self, token: str):
+        """
+        Set authentication token (browser session specific)
+
+        Args:
+            token (str): authentication token from your user profile
+        """
+        self.session.set_authentication_token(token)
