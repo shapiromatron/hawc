@@ -489,7 +489,7 @@ class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
     breadcrumb_active_name = "Prepare for extraction"
     model = Assessment
     form_class = forms.BulkReferenceStudyExtractForm
-    success_message = "References converted to studies!"
+    success_message = "Selected references were successfully converted to studies."
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
@@ -503,11 +503,11 @@ class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
         return kwargs
 
     def get_context_data(self, **kwargs):
-        kwargs.update(
-            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Reference upload"),
-        )
         context = super().get_context_data(**kwargs)
-        context["object_list"] = context["form"].fields["reference_ids"].queryset
+        context.update(
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Convert to study"),
+            object_list=context["form"].fields["references"].queryset,
+        )
         return context
 
     def get_success_url(self):

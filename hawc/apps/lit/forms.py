@@ -552,21 +552,21 @@ class ReferenceExcelUploadForm(forms.Form):
 
 
 class BulkReferenceStudyExtractForm(forms.Form):
-    reference_ids = forms.ModelMultipleChoiceField(
+    references = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple, queryset=models.Reference.objects.none(), required=True
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         choices=[
-            ("bioassay", "Bioassay"),
+            ("bioassay", "Animal bioassay"),
+            ("in_vitro", "In vitro"),
             ("epi", "Epidemiology"),
-            ("epi_meta", "Epi Meta"),
-            ("in_vitro", "In Vitro"),
+            ("epi_meta", "Epidemiology meta-analysis"),
         ],
     )
 
-    def clean_reference_ids(self):
-        data = self.cleaned_data["reference_ids"]
+    def clean_references(self):
+        data = self.cleaned_data["references"]
 
         for reference in data:
             if reference.has_study:
@@ -579,17 +579,12 @@ class BulkReferenceStudyExtractForm(forms.Form):
         self.assessment = kwargs.pop("assessment")
         self.reference_qs = kwargs.pop("reference_qs")
         super().__init__(*args, **kwargs)
-        self.fields["reference_ids"].queryset = self.reference_qs
+        self.fields["references"].queryset = self.reference_qs
 
     @transaction.atomic
     def bulk_create_studies(self):
-        reference_ids = self.cleaned_data["reference_ids"]
-
+        references = self.cleaned_data["references"]
         study_type = self.cleaned_data["study_type"]
-
-        for reference in reference_ids:
-            attrs = {}
-            for st in study_type:
-                attrs.update({st: True})
-
-            Study.save_new_from_reference(reference, attrs)
+        for reference in references:
+            study_attrs = {st: True for st in study_type}
+            Study.save_new_from_reference(reference, study_attrs)

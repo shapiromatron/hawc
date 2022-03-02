@@ -2,15 +2,18 @@
 
 {% block content %}
     <h3>Included references in literature search/import</h3>
-    <p>The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. Select one from the list below:</p>
+    <p class="text-muted">The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. You can individually "convert" each reference
+    to a study that allows you to continue with extraction/review, or you can select multiple
+    references via the checkbox and bulk-convert at the bottom of the form.</p>
+    <p class="text-muted">Select one or more references from the list below:</p>
     {% if object_list.count > 0 %}
         <form method="post">
-            <table class="table table-compressed">
+            <table class="table table-sm">
                 <colgroup>
                     <col style='width:5%'></col>
                     <col style='width:15%'></col>
-                    <col style='width:40%'></col>
                     <col style='width:10%'></col>
+                    <col style='width:40%'></col>
                     <col style='width:20%'></col>
                     <col style='width:10%'></col>
                 </colgroup>
@@ -18,39 +21,50 @@
                     <tr>
                         <th>Select</th>
                         <th>Authors</th>
-                        <th>Title</th>
                         <th>Year</th>
+                        <th>Title</th>
                         <th>Journal</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 {% for object in object_list %}
                     <tr>
-                        <td><input type="checkbox" name="reference_ids" value="{{object.id}}"></td>
+                        <td class="text-center"><input type="checkbox" name="references" value="{{object.id}}"></td>
                         <td>{{object.authors_short}}</td>
-                        <td>{{object.title}}</td>
                         <td>{{object.year}}</td>
+                        <td>{{object.title}}</td>
                         <td>{{object.journal}}</td>
                         <td><a href="{% url 'study:new_study' object.pk %}">Create study from reference</a></td>
                     </tr>
                 {% endfor %}
             </table>
-            <div class="container">
-                <h6>Create studies from selected references</h6>
+            <div>
+                <legend>Create studies from selected references</legend>
+                <p class="text-muted">Select one more references from the list above, and a study
+                    type to apply to these references. These references will be bulk-converted to
+                    studies.
+                </p>
                 <hr>
-                <div class="font-weight-normal" id="study-type-select">
-                    <label for="study-type-select" class="formsetFieldLabel" data-toggle="tooltip" title="Selected study types will be applied to all created studies.">Study Type(s)&nbsp;<i class="fa fa-question-circle"></i></i></label>
-                    <div id="study-type-select" class="align-center">
+                <div id="study-type-select">
+                    <label for="study-type-select">Study Type(s)</label>
+                    {% if form.study_type.errors %}
+                    <div class="alert alert-danger">{{form.study_type.errors}}</div>
+                    {% endif %}
+                    <div id="study-type-select">
                         {% for checkbox in form.study_type %}
                             <div class="form-check-inline">
-                                <p>{{ checkbox.tag }}  {{ checkbox.choice_label }}</p>
+                                <label>{{ checkbox.tag }}  {{ checkbox.choice_label }}</label>
                             </div>
                         {% endfor %}
                     </div>
+                    <p class="text-muted">Selected study types will be applied to all created studies.</p>
                 </div>
                 {% csrf_token %}
+                {% if form.references.errors %}
+                <div class="alert alert-danger">{{form.references.errors}}</div>
+                {% endif %}
                 <div class="form-actions">
-                    <input type="submit" class="btn btn-primary" value="Create studies">
+                    <input type="submit" class="btn btn-primary" value="Convert selected to studies">
                 </div>
             </div>
         </form>

@@ -344,71 +344,72 @@ class TestReferenceForm:
         ref.refresh_from_db()
         assert ref.get_pubmed_id() == 11778423
 
-    @pytest.mark.django_db
-    class TestBulkReferenceStudyExtractForm:
-        def test_success(self, db_keys):
-            form = BulkReferenceStudyExtractForm(
-                data={
-                    "reference_ids": [Reference.objects.get(pk=db_keys.reference_unlinked)],
-                    "study_type": ["bioassay", "epi", "epi_meta", "in_vitro"],
-                },
-                assessment=db_keys.assessment_working,
-                reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
-            )
-            assert form.is_valid() is True
 
-            assert (
-                Study.objects.filter(
-                    bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""
-                ).count()
-                == 0
-            )
-            form.bulk_create_studies()
-            assert (
-                Study.objects.filter(
-                    bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""
-                ).count()
-                == 1
-            )
+@pytest.mark.django_db
+class TestBulkReferenceStudyExtractForm:
+    def test_success(self, db_keys):
+        form = BulkReferenceStudyExtractForm(
+            data={
+                "references": [Reference.objects.get(pk=db_keys.reference_unlinked)],
+                "study_type": ["bioassay", "epi", "epi_meta", "in_vitro"],
+            },
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert form.is_valid() is True
 
-        def test_validation_failures(self, db_keys):
-            # study has already been created
-            form = BulkReferenceStudyExtractForm(
-                data={
-                    "reference_ids": [Reference.objects.get(pk=db_keys.reference_linked)],
-                    "study_type": ["bioassay"],
-                },
-                assessment=db_keys.assessment_working,
-                reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
-            )
-            assert not form.is_valid()
-            assert form.errors == {
-                "reference_ids": [
-                    f"A Study has already been created from reference #{db_keys.reference_linked}."
-                ]
-            }
+        assert (
+            Study.objects.filter(
+                bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""
+            ).count()
+            == 0
+        )
+        form.bulk_create_studies()
+        assert (
+            Study.objects.filter(
+                bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""
+            ).count()
+            == 1
+        )
 
-            # reference not in queryset
-            form = BulkReferenceStudyExtractForm(
-                data={"reference_ids": [Reference.objects.get(pk=4)], "study_type": ["bioassay"]},
-                assessment=db_keys.assessment_working,
-                reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
-            )
-            assert not form.is_valid()
-            assert form.errors == {
-                "reference_ids": ["Select a valid choice. 4 is not one of the available choices."]
-            }
+    def test_validation_failures(self, db_keys):
+        # study has already been created
+        form = BulkReferenceStudyExtractForm(
+            data={
+                "references": [Reference.objects.get(pk=db_keys.reference_linked)],
+                "study_type": ["bioassay"],
+            },
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert not form.is_valid()
+        assert form.errors == {
+            "references": [
+                f"A Study has already been created from reference #{db_keys.reference_linked}."
+            ]
+        }
 
-            # invalid study type
-            form = BulkReferenceStudyExtractForm(
-                data={
-                    "reference_ids": [Reference.objects.get(pk=db_keys.reference_unlinked)],
-                    "study_type": ["crazy"],
-                },
-                assessment=db_keys.assessment_working,
-                reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
-            )
-            assert not form.is_valid()
-            assert form.errors == {
-                "study_type": ["Select a valid choice. crazy is not one of the available choices."]
-            }
+        # reference not in queryset
+        form = BulkReferenceStudyExtractForm(
+            data={"references": [Reference.objects.get(pk=4)], "study_type": ["bioassay"]},
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert not form.is_valid()
+        assert form.errors == {
+            "references": ["Select a valid choice. 4 is not one of the available choices."]
+        }
+
+        # invalid study type
+        form = BulkReferenceStudyExtractForm(
+            data={
+                "references": [Reference.objects.get(pk=db_keys.reference_unlinked)],
+                "study_type": ["crazy"],
+            },
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert not form.is_valid()
+        assert form.errors == {
+            "study_type": ["Select a valid choice. crazy is not one of the available choices."]
+        }
