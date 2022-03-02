@@ -1,9 +1,7 @@
 import json
 import logging
-from pathlib import Path
 from typing import Any, Dict, List
 
-import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -290,11 +288,6 @@ class Error401Response(TemplateResponse):
 class Error401(TemplateView):
     response_class = Error401Response
     template_name = "401.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class Swagger(TemplateView):
-    template_name = "swagger.html"
 
 
 # Assessment Object
@@ -716,53 +709,6 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
                 host=f"//{self.request.get_host()}",
             ),
         )
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminDashboard(TemplateView):
-    template_name = "admin/dashboard.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminAssessmentSize(TemplateView):
-    template_name = "admin/assessment-size.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminMediaPreview(TemplateView):
-    template_name = "admin/media-preview.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        Suffix-specific values were obtained by querying media file extensions:
-
-        ```bash
-        find {settings.MEDIA_ROOT} -type f | grep -o ".[^.]\\+$" | sort | uniq -c
-        ```
-        """
-        context = super().get_context_data(**kwargs)
-        obj = self.request.GET.get("item", "")
-        media = Path(settings.MEDIA_ROOT)
-        context["has_object"] = False
-        resolved = media / obj
-        context["object_name"] = str(Path(obj))
-        if obj and resolved.exists() and media in resolved.parents:
-            root_uri = self.request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
-            uri = resolved.as_uri().replace(media.as_uri(), root_uri)
-            context["has_object"] = True
-            context["object_uri"] = uri
-            context["suffix"] = resolved.suffix.lower()
-            if context["suffix"] in [".csv", ".json", ".ris", ".txt"]:
-                context["object_text"] = resolved.read_text()
-            if context["suffix"] in [".xls", ".xlsx"]:
-                df = pd.read_excel(str(resolved))
-                context["object_html"] = df.to_html(index=False)
-            if context["suffix"] in [".jpg", ".jpeg", ".png", ".tif", ".tiff"]:
-                context["object_image"] = True
-            if context["suffix"] in [".pdf"]:
-                context["object_pdf"] = True
-
-        return context
 
 
 # blog
