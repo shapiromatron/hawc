@@ -256,6 +256,7 @@ class ExternalAuth(SuccessURLAllowedHostsMixin, View):
                 # Set unusable password if only external auth is allowed
                 if settings.AUTH_PROVIDERS == {AuthProvider.external}:
                     user.set_unusable_password()
+                user.email = email  # set email case
                 user.save()
             # Ensure external id in db matches that returned from service
             elif user.external_id != external_id:

@@ -151,7 +151,7 @@
         <td>
           <p><strong>Project manager{{ object.project_manager.all|pluralize }}</strong></p>
           <ul class="mb-0">
-            {% for m in object.project_manager.all %}
+            {% for m in object.project_manager.active %}
               <li>{{ m.get_full_name }}</li>
             {% endfor %}
           </ul>
@@ -159,7 +159,7 @@
         <td>
           <p><strong>Team member{{ object.team_members.all|pluralize }}</strong></p>
           <ul class="mb-0">
-            {% for m in object.team_members.all %}
+            {% for m in object.team_members.active %}
             <li>{{ m.get_full_name }}</li>
             {% empty %}
             <li><i>None assigned</i></li>
@@ -169,7 +169,7 @@
         <td>
           <p><strong>Reviewer{{ object.reviewers.all|pluralize }}</strong></p>
           <ul class="mb-0">
-            {% for m in object.reviewers.all %}
+            {% for m in object.reviewers.active %}
             <li>{{ m.get_full_name }}</li>
             {% empty %}
             <li><i>None assigned</i></li>
