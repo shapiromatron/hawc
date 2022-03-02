@@ -5,7 +5,7 @@ from hawc.apps.common.forms import BaseFormHelper, form_actions_create_or_close
 
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
-from . import models, lookups
+from . import lookups, models
 
 
 class DesignForm(forms.ModelForm):
@@ -16,7 +16,9 @@ class DesignForm(forms.ModelForm):
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
     # TODO: Auto complete still not working yet
-    countries = selectable.AutoCompleteSelectMultipleField(lookup_class=lookups.CountryNameLookup, required=False)
+    countries = selectable.AutoCompleteSelectMultipleField(
+        lookup_class=lookups.CountryNameLookup, required=False
+    )
 
     criteria = forms.ModelMultipleChoiceField(
         queryset=None, to_field_name="name", label="Inclusion/exclusion criteria", required=False,
@@ -58,7 +60,9 @@ class DesignForm(forms.ModelForm):
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("years", 3, "col-md-4")
         helper.add_create_btn(
-            field_name="criteria", url=reverse("epiv2:criteria-create", kwargs={"pk": self.instance.id}), title="Add criteria"
+            field_name="criteria",
+            url=reverse("epiv2:criteria-create", kwargs={"pk": self.instance.id}),
+            title="Add criteria",
         )
 
         return helper

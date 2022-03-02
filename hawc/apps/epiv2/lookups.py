@@ -17,6 +17,7 @@ class OutcomeByHealthOutcome(RelatedDistinctStringLookup):
     distinct_field = "health_outcome"
     related_filter = "design_id"
 
+
 class CountryNameLookup(DistinctStringLookup):
     model = Country
     distinct_field = "name"
