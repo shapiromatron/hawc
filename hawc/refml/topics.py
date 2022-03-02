@@ -80,7 +80,7 @@ def topic_model_tsne(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     tfidf_transformer = TfidfTransformer()
     X_train_tfidf = tfidf_transformer.fit_transform(x_counts)
     n_topics = int(max(min(30, np.sqrt(df.shape[0])), 10))
-    model = NMF(n_components=n_topics, random_state=1, alpha_W=0.1, l1_ratio=0.5, init="nndsvd")
+    model = NMF(n_components=n_topics, random_state=1, l1_ratio=0.5, init="nndsvdar")
     term_maps = model.fit_transform(X_train_tfidf.T)
     nmf_embedded = TSNE(
         n_components=2, perplexity=20, init="random", learning_rate="auto"
