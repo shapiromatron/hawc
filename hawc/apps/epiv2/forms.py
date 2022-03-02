@@ -2,7 +2,6 @@ from django import forms
 from django.urls import reverse
 
 from hawc.apps.common.forms import BaseFormHelper, form_actions_create_or_close
-from hawc.apps.epi.lookups import RelatedCountryNameLookup
 
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
@@ -16,7 +15,8 @@ class DesignForm(forms.ModelForm):
 
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
-    countries = selectable.AutoCompleteSelectMultipleField(RelatedCountryNameLookup, required=False)
+    # TODO: Auto complete still not working yet
+    countries = selectable.AutoCompleteSelectMultipleField(lookup_class=lookups.CountryNameLookup, required=False)
 
     criteria = forms.ModelMultipleChoiceField(
         queryset=None, to_field_name="name", label="Inclusion/exclusion criteria", required=False,
