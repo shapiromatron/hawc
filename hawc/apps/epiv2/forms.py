@@ -1,7 +1,7 @@
 from django import forms
 from django.urls import reverse
 
-from hawc.apps.common.forms import BaseFormHelper
+from hawc.apps.common.forms import BaseFormHelper, form_actions_create_or_close
 from hawc.apps.epi.lookups import RelatedCountryNameLookup
 
 from ..assessment.lookups import DssToxIdLookup
@@ -57,9 +57,9 @@ class DesignForm(forms.ModelForm):
         helper.add_row("age_description", 3, "col-md-4")
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("years", 3, "col-md-4")
-        # helper.add_create_btn(
-        #     field_name="criteria", url=reverse("epiv2:criteria-create"), title="Add criteria"
-        # )
+        helper.add_create_btn(
+            field_name="criteria", url=reverse("epiv2:criteria-create", kwargs={"pk": self.instance.id}), title="Add criteria"
+        )
 
         return helper
 
@@ -78,8 +78,7 @@ class CriteriaForm(forms.ModelForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self)
-        helper.form_tag = False
+        helper = BaseFormHelper(self, form_actions=form_actions_create_or_close())
         helper.add_row("name", 1, "col-md-4")
         return helper
 
