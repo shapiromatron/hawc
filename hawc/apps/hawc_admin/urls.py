@@ -9,7 +9,7 @@ from rest_framework.schemas import get_schema_view
 
 from hawc import __version__
 
-from . import api, views
+from . import api, schema, views
 
 
 def get_admin_urlpatterns(open_api_patterns) -> List:
@@ -45,6 +45,7 @@ def get_admin_urlpatterns(open_api_patterns) -> List:
                         version=__version__,
                         patterns=open_api_patterns,
                         permission_classes=(permissions.IsAdminUser,),
+                        generator_class=schema.CompleteSchemaGenerator,
                     ),
                     name="openapi",
                 ),
