@@ -640,10 +640,12 @@
     version: '1.0'
     cas: ''
     assessment_objective: ''
+    authors: ''
+    creator:
+    - pm@hawcproject.org
     editable: true
-    public: false
+    public_on: null
     hide_from_public_page: false
-    is_public_training_data: false
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -676,10 +678,12 @@
       of content saved in the assessment. This assessment should have example data
       for all data types, and you should be able to create example visualizations
       for all visuals.</p>
+    authors: '<p>The ABC team.</p>'
+    creator:
+    - pm@hawcproject.org
     editable: false
-    public: true
+    public_on: 2020-01-25 14:23:16.288774+00:00
     hide_from_public_page: false
-    is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -709,11 +713,13 @@
     year: 2020
     version: draft
     cas: 58-08-2
-    assessment_objective: '<p>Example the health effects of Chemical C. Drafted by scientists and contractors at US EPA.</p>'
+    authors: '<p>The ABC team.</p>'
+    assessment_objective: <p>Example the health effects of Chemical Y.</p>
+    creator:
+    - pm@hawcproject.org
     editable: true
-    public: true
+    public_on: 2020-04-10 17:45:39.555285+00:00
     hide_from_public_page: true
-    is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true

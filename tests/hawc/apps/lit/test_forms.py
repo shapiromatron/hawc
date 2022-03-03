@@ -6,8 +6,15 @@ from django.forms.models import model_to_dict
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit import constants
-from hawc.apps.lit.forms import ImportForm, LiteratureAssessmentForm, ReferenceForm, RisImportForm
+from hawc.apps.lit.forms import (
+    BulkReferenceStudyExtractForm,
+    ImportForm,
+    LiteratureAssessmentForm,
+    ReferenceForm,
+    RisImportForm,
+)
 from hawc.apps.lit.models import Reference
+from hawc.apps.study.models import Study
 
 
 @pytest.mark.django_db
@@ -62,7 +69,7 @@ class TestImportForm:
                 "title": "demo title",
                 "slug": "demo-title",
                 "description": "",
-                "search_string": "5490558",
+                "search_string": "5490558, 5490558",
             },
             parent=Assessment.objects.get(id=db_keys.assessment_working),
         )
@@ -105,15 +112,12 @@ class TestImportForm:
         # check bad id lists
         bad_search_strings = [
             "-1",
-            "1,1",
         ]
         for bad_search_string in bad_search_strings:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             form = ImportForm(new_payload, parent=parent)
             assert not form.is_valid()
-            assert form.errors == {
-                "search_string": ["At least one positive identifer must exist and must be unique"]
-            }
+            assert form.errors == {"search_string": ["At least one positive identifier must exist"]}
 
     def test_missing_id_in_hero(self, db_keys):
         """
@@ -339,3 +343,73 @@ class TestReferenceForm:
         form.save()
         ref.refresh_from_db()
         assert ref.get_pubmed_id() == 11778423
+
+
+@pytest.mark.django_db
+class TestBulkReferenceStudyExtractForm:
+    def test_success(self, db_keys):
+        form = BulkReferenceStudyExtractForm(
+            data={
+                "references": [Reference.objects.get(pk=db_keys.reference_unlinked)],
+                "study_type": ["bioassay", "epi", "epi_meta", "in_vitro"],
+            },
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert form.is_valid() is True
+
+        assert (
+            Study.objects.filter(
+                bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""
+            ).count()
+            == 0
+        )
+        form.bulk_create_studies()
+        assert (
+            Study.objects.filter(
+                bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""
+            ).count()
+            == 1
+        )
+
+    def test_validation_failures(self, db_keys):
+        # study has already been created
+        form = BulkReferenceStudyExtractForm(
+            data={
+                "references": [Reference.objects.get(pk=db_keys.reference_linked)],
+                "study_type": ["bioassay"],
+            },
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert not form.is_valid()
+        assert form.errors == {
+            "references": [
+                f"A Study has already been created from reference #{db_keys.reference_linked}."
+            ]
+        }
+
+        # reference not in queryset
+        form = BulkReferenceStudyExtractForm(
+            data={"references": [Reference.objects.get(pk=4)], "study_type": ["bioassay"]},
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert not form.is_valid()
+        assert form.errors == {
+            "references": ["Select a valid choice. 4 is not one of the available choices."]
+        }
+
+        # invalid study type
+        form = BulkReferenceStudyExtractForm(
+            data={
+                "references": [Reference.objects.get(pk=db_keys.reference_unlinked)],
+                "study_type": ["crazy"],
+            },
+            assessment=db_keys.assessment_working,
+            reference_qs=Reference.objects.filter(assessment=db_keys.assessment_working),
+        )
+        assert not form.is_valid()
+        assert form.errors == {
+            "study_type": ["Select a valid choice. crazy is not one of the available choices."]
+        }

@@ -38,7 +38,7 @@ class IVExperiment {
     }
 
     build_title() {
-        var el = $("<h1>").text(this.data.name);
+        var el = $("<h2>").text(this.data.name);
         if (window.canEdit) {
             var urls = [
                 "Experiment editing",
@@ -117,7 +117,7 @@ class IVExperiment {
     displayAsPage($div) {
         $div.append(this.build_title())
             .append(this.build_details_table())
-            .append("<h2>Available endpoints</h2>")
+            .append("<h3>Available endpoints</h3>")
             .append(this.build_endpoint_list());
     }
 }

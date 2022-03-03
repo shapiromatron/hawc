@@ -510,7 +510,7 @@ class DosingRegime(models.Model):
         return f"{self.dosed_animals} {self.get_route_of_exposure_display()}"
 
     def get_absolute_url(self):
-        return self.dosed_animals.get_absolute_url()
+        return self.dosed_animals.get_absolute_url() if self.dosed_animals else None
 
     def get_assessment(self):
         return self.dosed_animals.get_assessment()

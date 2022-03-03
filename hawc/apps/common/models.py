@@ -169,10 +169,6 @@ class AssessmentRootMixin:
         Args:
             qs (QuerySet): An ordered queryset, like from `get_assessment_qs`
         """
-        # preconditions; check that we have a name attribute and we don't have a nested_name attribute
-        el = qs.first()
-        assert hasattr(el, "name")
-        assert not hasattr(el, "nested_name")
 
         last_depth = -math.inf
         names: List[str] = []

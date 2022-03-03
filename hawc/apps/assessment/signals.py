@@ -75,4 +75,4 @@ def render_content(sender, instance, *args, **kwargs):
     try:
         instance.rendered_content = to_html(instance.content)
     except Exception:
-        instance.rendered_content = "<h1>Error - myst_parser Parsing error</h1>"
+        instance.rendered_content = "<h2>Error - myst_parser Parsing error</h2>"

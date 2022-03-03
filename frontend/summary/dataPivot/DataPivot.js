@@ -1,3 +1,4 @@
+import _ from "lodash";
 import $ from "$";
 import * as d3 from "d3";
 
@@ -163,14 +164,17 @@ class DataPivot {
     }
 
     static getRowDetails(values) {
-        var unique = new Set(values),
+        var unique_tokens = _.chain(values)
+                .uniq()
+                .map(_.toString) // cast all discrete token values to strings
+                .without("")
+                .sort()
+                .value(),
             numeric = values.filter(v => $.isNumeric(v)),
             range = numeric.length > 0 ? d3.extent(numeric) : undefined;
 
-        unique.delete("");
-        unique.delete("undefined");
         return {
-            unique: Array.from(unique.values()),
+            unique_tokens,
             numeric,
             range,
         };
