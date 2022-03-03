@@ -333,6 +333,7 @@ class AssessmentFullList(ListView):
 class AssessmentPublicList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()

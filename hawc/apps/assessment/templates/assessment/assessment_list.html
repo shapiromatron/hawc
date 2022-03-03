@@ -15,6 +15,7 @@
     </div>
   </div>
   {% include "assessment/_assessment_list_tbl.html" %}
+  {% include "includes/paginator.html" %}
   <p><b>{{object_list.count}}</b> assessments found.</p>
 </div>
 {% endblock content_outer %}
