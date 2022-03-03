@@ -146,7 +146,8 @@ class AssessmentFilterForm(forms.Form):
     def clean_order_by(self):
         order_by = self.cleaned_data["order_by"]
         if order_by == "":
-            raise forms.ValidationError("'' is not valid.")
+            return "-last_updated"
+        return order_by
 
     def get_filters(self):
         query = Q()
