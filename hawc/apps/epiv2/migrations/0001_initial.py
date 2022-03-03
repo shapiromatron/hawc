@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("assessment", "0033_alter_assessment_public_on"),
+        ("assessment", "0032_assessment_epi_version"),
         ("study", "0011_auto_20190416_2035"),
         ("epi", "0018_django31"),
     ]
