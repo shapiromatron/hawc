@@ -20,10 +20,18 @@
       <col style="width: 15%">
     </colgroup>
     <tbody>
-      {% for object in object.criteria.all %}
-       {% include "epiv2/fragments/criteria_row.html" %}
-      {% endfor %}
-      <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
+      {% if object.criteria.all %}
+        {% for object in object.criteria.all %}
+          {% include "epiv2/fragments/criteria_row.html" %}
+        {% endfor %}
+        <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
+      {% else %}
+        <tr id="criteria-empty-row" hx-target="this">
+          <td colspan="100%">
+            <p class="text-center mb-0">No criteria added to design.</p>
+          </td>
+        </tr>
+      {% endif %}
     </tbody>
   </table>
 
