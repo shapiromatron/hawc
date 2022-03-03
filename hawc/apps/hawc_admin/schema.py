@@ -4,11 +4,14 @@ from urllib.parse import urljoin
 from rest_framework.schemas.openapi import SchemaGenerator
 
 
-class OpenAPIGenerator(SchemaGenerator):
+class CompleteSchemaGenerator(SchemaGenerator):
     """
-    This subclass removes permission checks during endpoint determination, since we want all
-    endpoints to be shown and some permission checks will fail without additional query params
-    (AssessmentLevelPermissions)
+    Remove permission checking during endpoint determination.
+
+    Subclass of rest_framework.schemas.openapi.SchemaGenerator; this view for
+    the admin should allow for all endpoints. The current approach fails because
+    of the implementation of hawc.apps.assessment.api.AssessmentLevelPermissions where
+    in list views the `assessment_id` query parameter is required.
     """
 
     def get_schema(self, request=None, public=False):
@@ -23,12 +26,11 @@ class OpenAPIGenerator(SchemaGenerator):
         _, view_endpoints = self._get_paths_and_endpoints(None if public else request)
         for path, method, view in view_endpoints:
 
-            """
-            Permission checks are removed here:
-
-            if not self.has_view_permissions(path, method, view):
-                continue
-            """
+            # ------------------------------------ PATCH START ------------------------------------
+            # https://github.com/encode/django-rest-framework/blob/efc7c1d664e5909f5f1f4d07a7bb70daef1c396e/rest_framework/schemas/openapi.py#L78-L79
+            # if not self.has_view_permissions(path, method, view):
+            #    continue
+            # ------------------------------------ PATCH END   ------------------------------------
 
             operation = view.schema.get_operation(path, method)
             components = view.schema.get_components(path, method)
