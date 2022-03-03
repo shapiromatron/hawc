@@ -10,23 +10,34 @@ const metricUpdateUrl = id => `/rob/metric/${id}/update/`,
 @observer
 class MetricRow extends Component {
     render() {
-        const {domainIndex, metricIndex, metric, moveMetric, detailedView} = this.props;
+        const {
+            domainIndex,
+            metricIndex,
+            metric,
+            moveMetric,
+            detailedView,
+            metricCount,
+        } = this.props;
         return (
             <tr>
                 <td>&ensp;Metric #{metricIndex + 1}</td>
                 <td>{detailedView ? <DetailMetric object={metric} /> : metric.name}</td>
                 <td>
-                    <button
-                        className="btn btn-info"
-                        onClick={() => moveMetric(domainIndex, metricIndex, false)}>
-                        <i className="fa fa-arrow-up"></i>
-                    </button>
+                    {metricCount > 1 ? (
+                        <button
+                            className="btn btn-info"
+                            onClick={() => moveMetric(domainIndex, metricIndex, false)}>
+                            <i className="fa fa-arrow-up"></i>
+                        </button>
+                    ) : null}
                     &nbsp;
-                    <button
-                        className="btn btn-info"
-                        onClick={() => moveMetric(domainIndex, metricIndex, true)}>
-                        <i className="fa fa-arrow-down"></i>
-                    </button>
+                    {metricCount > 1 ? (
+                        <button
+                            className="btn btn-info"
+                            onClick={() => moveMetric(domainIndex, metricIndex, true)}>
+                            <i className="fa fa-arrow-down"></i>
+                        </button>
+                    ) : null}
                 </td>
                 <td>
                     <a className="btn btn-info" href={metricUpdateUrl(metric.id)}>
@@ -48,6 +59,7 @@ MetricRow.propTypes = {
     metric: PropTypes.object.isRequired,
     moveMetric: PropTypes.func.isRequired,
     detailedView: PropTypes.bool.isRequired,
+    metricCount: PropTypes.number.isRequired,
 };
 
 export default MetricRow;
