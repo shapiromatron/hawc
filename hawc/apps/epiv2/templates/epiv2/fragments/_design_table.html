@@ -39,7 +39,7 @@
         <tr>
             <td><b>Countries</b></td>
             <td>{% for object in object.countries.all %}
-                    {{object.name}}
+                    <span class="badge badge-secondary">{{object.name}}</span>
                 {% endfor %}
             </td>
         </tr>
@@ -59,7 +59,7 @@
             <td><b>Inclusion/Exclusion Criteria</b></td>
             <td>
                 {% for object in object.criteria.all %}
-                    {{object.name}}
+                    <span class="badge badge-secondary">{{object.name}}</span>
                 {% endfor %}
             </td>
         </tr>

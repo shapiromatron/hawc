@@ -15,64 +15,33 @@
 
 {% include "epiv2/fragments/_design_table.html" %}
 
-<div class="row">
-    <div class="col-sm-6">
-        <div class="card my-3 mx-2">
-            <div class="card-body">
-                <h3 class="card-title">Chemicals</h3>
-                <table class="table table-condensed table-striped">
-                    <colgroup>
-                        <col style="width: 50%;">
-                        <col style="width: 50%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>DTXSID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for object in object.chemicals.all %}
-                            {% include "epiv2/fragments/chemical_row.html" %}
-                        {% empty %}
-                            <tr>
-                                <td colspan="100%">
-                                    <p class="text-center mb-0">No chemicals added to design.</p>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        <div class="card my-3 mx-2">
-            <div class="card-body">
-                <h3 class="card-title">Criteria</h3>
-                <table class="table table-condensed table-striped">
-                    <colgroup>
-                        <col style="width: 100%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for object in object.criteria.all %}
-                            {% include "epiv2/fragments/criteria_row.html" %}
-                        {% empty %}
-                        <tr>
-                            <td colspan="100%">
-                                <p class="text-center mb-0">No criteria added to design.</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Chemicals</h3>
+        <table class="table table-condensed table-striped">
+            <colgroup>
+                <col style="width: 50%;">
+                <col style="width: 50%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>DTXSID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in object.chemicals.all %}
+                    {% include "epiv2/fragments/chemical_row.html" %}
+                {% empty %}
+                    <tr>
+                        <td colspan="100%">
+                            <p class="text-center mb-0">No chemicals added to design.</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
