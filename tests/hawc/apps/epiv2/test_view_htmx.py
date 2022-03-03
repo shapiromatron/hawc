@@ -14,52 +14,12 @@ class TestDesignChildren:
         client = Client(HTTP_HX_REQUEST="true")
         assert client.login(email="pm@hawcproject.org", password="pw") is True
 
-        initial_crit_count = models.Criteria.objects.count()
         initial_chem_count = models.Chemical.objects.count()
         initial_exposure_count = models.Exposure.objects.count()
         initial_exposurelevel_count = models.ExposureLevel.objects.count()
         initial_outcome_count = models.Outcome.objects.count()
         initial_adjustmentfactor_count = models.AdjustmentFactor.objects.count()
         initial_dataextraction_count = models.DataExtraction.objects.count()
-
-        # criteria create
-        url = reverse("epiv2:criteria-create", args=[design.id])
-        inputs = {
-            "name": "ex criteria",
-        }
-        with assertTemplateUsed("epiv2/fragments/criteria_row.html"):
-            resp = client.post(url, data=inputs)
-            assert resp.status_code == 200
-            assert "<td>ex criteria</td>" in str(resp.content)
-            assert models.Criteria.objects.count() == initial_crit_count + 1
-            criteria = resp.context["object"]
-
-        # criteria clone
-        url = reverse("epiv2:criteria-clone", args=[criteria.id])
-        with assertTemplateUsed("epiv2/fragments/criteria_row.html"):
-            resp = client.post(url, data=inputs)
-            assert resp.status_code == 200
-            assert "<td>ex criteria (2)</td>" in str(resp.content)
-            assert models.Criteria.objects.count() == initial_crit_count + 2
-            criteria_2 = resp.context["object"]
-
-        # criteria read
-        url = reverse("epiv2:criteria-detail", args=[criteria.id])
-        with assertTemplateUsed("epiv2/fragments/criteria_row.html"):
-            resp = client.get(url)
-            assert resp.status_code == 200
-            assert "<td>ex criteria</td>" in str(resp.content)
-            assert models.Criteria.objects.count() == initial_crit_count + 2
-
-        # criteria update
-        url = reverse("epiv2:criteria-update", args=[criteria.id])
-        inputs = {"name": "ex criteria update"}
-        with assertTemplateUsed("epiv2/fragments/criteria_row.html"):
-            resp = client.post(url, data=inputs)
-            assert resp.status_code == 200
-            assert "<td>ex criteria update</td>" in str(resp.content)
-            assert models.Criteria.objects.count() == initial_crit_count + 2
-            assert models.Criteria.objects.get(id=criteria_2.id).name == "ex criteria (2)"
 
         # chemical create
         url = reverse("epiv2:chemical-create", args=[design.id])
@@ -418,14 +378,3 @@ class TestDesignChildren:
             resp = client.post(url)
             assert resp.status_code == 200
             assert models.Chemical.objects.count() == initial_chem_count
-
-        # criteria delete
-        url = reverse("epiv2:criteria-delete", args=[criteria.id])
-        with assertTemplateUsed("epiv2/fragments/_delete_rows.html"):
-            resp = client.post(url)
-            assert resp.status_code == 200
-            assert models.Criteria.objects.count() == initial_crit_count + 1
-            url = reverse("epiv2:criteria-delete", args=[criteria_2.id])
-            resp = client.post(url)
-            assert resp.status_code == 200
-            assert models.Criteria.objects.count() == initial_crit_count

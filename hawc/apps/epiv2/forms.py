@@ -45,6 +45,11 @@ class DesignForm(forms.ModelForm):
         if self.instance.id:
             helper = BaseFormHelper(self)
             helper.form_tag = False
+            helper.add_create_btn(
+                field_name="criteria",
+                url=reverse("epiv2:criteria-create", kwargs={"pk": self.instance.id}),
+                title="Add criteria",
+            )
 
         else:
             inputs = {
@@ -58,12 +63,8 @@ class DesignForm(forms.ModelForm):
         helper.add_row("study_design", 3, "col-md-4")
         helper.add_row("age_description", 3, "col-md-4")
         helper.add_row("summary", 4, "col-md-3")
-        helper.add_row("years", 3, "col-md-4")
-        helper.add_create_btn(
-            field_name="criteria",
-            url=reverse("epiv2:criteria-create", kwargs={"pk": self.instance.id}),
-            title="Add criteria",
-        )
+        helper.add_row("years", 2, "col-md-6")
+        helper.add_row("comments", 2, "col-md-6")
 
         return helper
 
