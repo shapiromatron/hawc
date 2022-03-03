@@ -310,6 +310,7 @@ class AssessmentList(LoginRequiredMixin, ListView):
 class AssessmentFullList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -359,6 +360,7 @@ class AssessmentPublicList(ListView):
             Data can also be downloaded for each individual assessment.
         """
         context["form"] = self.form
+        context["is_public_list"] = True
         return context
 
 
