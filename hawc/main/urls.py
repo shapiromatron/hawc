@@ -14,6 +14,7 @@ import hawc.apps.mgmt.urls
 import hawc.apps.riskofbias.urls
 import hawc.apps.study.urls
 import hawc.apps.summary.urls
+import hawc.apps.vocab.urls
 from hawc.apps.assessment import views
 
 urlpatterns = [
@@ -63,6 +64,7 @@ open_api_patterns = [
     path("rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
     path("study/api/", include(hawc.apps.study.urls.router.urls)),
     path("summary/api/", include(hawc.apps.summary.urls.router.urls)),
+    path("vocab/api/", include(hawc.apps.vocab.urls.router.urls)),
 ]
 urlpatterns += hawc.apps.hawc_admin.urls.get_admin_urlpatterns(open_api_patterns)
 
