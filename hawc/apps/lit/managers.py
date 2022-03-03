@@ -165,7 +165,7 @@ class IdentifiersManager(BaseManager):
     def bulk_create_hero_ids(self, content):
         # sometimes HERO can import two records from a single ID
         deduplicated_content = {item["HEROID"]: item for item in content["success"]}.values()
-        self.bulk_create(
+        return self.bulk_create(
             [
                 apps.get_model("lit", "Identifiers")(
                     database=constants.ReferenceDatabase.HERO,
@@ -186,6 +186,34 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
+    def validate_pubmed_ids(self, pmids: List[int]):
+        # Filter IDs which need to be imported
+        qs = self.filter(
+            database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids
+        ).values_list("unique_id", flat=True)
+        existing_ids = [int(id) for id in qs]
+        remaining_ids = list(set(pmids) - set(existing_ids))
+
+        # Grab Pubmed objects
+        fetch = pubmed.PubMedFetch(remaining_ids)
+
+        return existing_ids, remaining_ids, fetch.get_content()
+
+    def bulk_create_pubmed_ids(self, content):
+        Identifiers = apps.get_model("lit", "Identifiers")
+
+        # Save new Identifier objects
+        return Identifiers.objects.bulk_create(
+            [
+                Identifiers(
+                    unique_id=str(item["PMID"]),
+                    database=constants.ReferenceDatabase.PUBMED,
+                    content=json.dumps(item),
+                )
+                for item in content
+            ]
+        )
+
     def get_pubmed_identifiers(self, pmids: List[int]):
         """Return a queryset of identifiers, one for each PubMed ID. Either get
         or create an identifier, whatever is required
@@ -194,33 +222,10 @@ class IdentifiersManager(BaseManager):
             pmids (List[int]): A list of pubmed identifiers
         """
         #
-        Identifiers = apps.get_model("lit", "Identifiers")
+        _, _, content = self.validate_pubmed_ids(pmids)
+        self.bulk_create_pubmed_ids(content)
 
-        # Filter IDs which need to be imported; we cast to str and back to mirror db fields
-        pmids_str = [str(id) for id in pmids]
-        existing = list(
-            self.filter(
-                database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str
-            ).values_list("unique_id", flat=True)
-        )
-        need_import = [int(id) for id in set(pmids_str) - set(existing)]
-
-        # Grab Pubmed objects
-        fetch = pubmed.PubMedFetch(need_import)
-
-        # Save new Identifier objects
-        Identifiers.objects.bulk_create(
-            [
-                Identifiers(
-                    unique_id=str(item["PMID"]),
-                    database=constants.ReferenceDatabase.PUBMED,
-                    content=json.dumps(item),
-                )
-                for item in fetch.get_content()
-            ]
-        )
-
-        return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str)
+        return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids)
 
 
 class ReferenceQuerySet(models.QuerySet):

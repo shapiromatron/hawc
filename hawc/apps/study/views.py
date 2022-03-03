@@ -106,6 +106,38 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
         self.object.searches.add(search)
 
 
+class IdentifierStudyCreate(
+    EnsurePreparationStartedMixin, TeamMemberOrHigherMixin, MessageMixin, FormView
+):
+
+    success_message = "Study created."
+    template_name = "study/studies_copy.html"
+    form_class = forms.IdentifierStudyForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.assessment)
+        crumbs.append(Breadcrumb(name="Create study from identifier"))
+        context["breadcrumbs"] = crumbs
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["assessment"] = self.assessment
+        return kwargs
+
+    @transaction.atomic
+    def form_valid(self, form):
+        self.object = form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("study:update", kwargs={"pk": self.object.id})
+
+
 class StudyRead(BaseDetail):
     model = models.Study
 

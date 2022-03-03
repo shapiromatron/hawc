@@ -14,6 +14,11 @@ urlpatterns = [
     path("assessment/<int:pk>/", views.StudyList.as_view(), name="list"),
     path("<int:pk>/add-details/", views.StudyCreateFromReference.as_view(), name="new_study"),
     path("assessment/<int:pk>/new-study/", views.ReferenceStudyCreate.as_view(), name="new_ref"),
+    path(
+        "assessment/<int:pk>/new-study-ident/",
+        views.IdentifierStudyCreate.as_view(),
+        name="new_ident",
+    ),
     path("assessment/<int:pk>/copy-studies/", views.StudiesCopy.as_view(), name="studies_copy"),
     path("<int:pk>/", views.StudyRead.as_view(), name="detail"),
     path("<int:pk>/toggle-lock/", views.StudyToggleLock.as_view(), name="toggle-lock"),

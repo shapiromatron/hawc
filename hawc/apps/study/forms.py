@@ -5,7 +5,8 @@ from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, form_actions_apply_filters
-from ..lit.models import Reference
+from ..lit.constants import DOI_EXACT, DOI_EXAMPLE, ReferenceDatabase
+from ..lit.models import Identifiers, Reference
 from . import models
 
 
@@ -144,6 +145,98 @@ class ReferenceStudyForm(BaseStudyForm):
             "cancel_url": reverse("study:list", args=[self.instance.assessment_id]),
         }
         return super().setHelper(inputs)
+
+
+class IdentifierStudyForm(forms.Form):
+    db_type = forms.ChoiceField(
+        label="Database",
+        required=True,
+        choices=[
+            (choice.value, choice.label)
+            for choice in [ReferenceDatabase.PUBMED, ReferenceDatabase.HERO, ReferenceDatabase.DOI]
+        ],
+        help_text="Select which database to use.",
+    )
+    db_id = forms.CharField(label="Database ID", required=True, help_text="Give database ID.",)
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        inputs = {
+            "legend_text": "Create a new study",
+            "help_text": "This is help text",
+            "cancel_url": reverse("study:list", args=[self.assessment.id]),
+        }
+
+        self.helper = BaseFormHelper(self, **inputs)
+        self.helper.add_row("db_type", 2, "col-md-6")
+
+    def clean_db_type(self):
+        db_type = self.cleaned_data["db_type"]
+        return ReferenceDatabase(int(db_type))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # study should be creatable; ie. does not exist
+        if (
+            models.Study.objects.filter(
+                assessment_id=self.assessment,
+                identifiers__database=cleaned_data["db_type"],
+                identifiers__unique_id=str(cleaned_data["db_id"]),
+            ).first()
+            is not None
+        ):
+            raise forms.ValidationError("Study for this assessment and identifier already exists.")
+        # if identifier does not exist, it must be validated
+        cleaned_data["identifier"] = Identifiers.objects.filter(
+            database=cleaned_data["db_type"], unique_id=str(cleaned_data["db_id"])
+        ).first()
+        if cleaned_data["identifier"] is None:
+            try:
+                if cleaned_data["db_type"] == ReferenceDatabase.PUBMED:
+                    _, _, self._identifier_content = Identifiers.objects.validate_pubmed_ids(
+                        [int(cleaned_data["db_id"])]
+                    )
+                elif cleaned_data["db_type"] == ReferenceDatabase.HERO:
+                    _, _, self._identifier_content = Identifiers.objects.validate_valid_hero_ids(
+                        [int(cleaned_data["db_id"])]
+                    )
+                elif cleaned_data["db_type"] == ReferenceDatabase.DOI:
+                    if not DOI_EXACT.fullmatch(cleaned_data["db_id"]):
+                        raise Exception(f'Invalid DOI; should be in format "{DOI_EXAMPLE}"')
+            except Exception:
+                raise forms.ValidationError(
+                    f'Unable to import {cleaned_data["db_type"].label} ID {cleaned_data["db_id"]}.'
+                )
+        return cleaned_data
+
+    def save(self):
+        # if validation failed...
+        if self.errors:
+            raise ValueError(
+                f"The {models.Study._meta.object_name} could not be created because the data didn't validate."
+            )
+        cleaned_data = self.cleaned_data.copy()
+
+        db_type = cleaned_data.pop("db_type")
+        db_id = cleaned_data.pop("db_id")
+
+        if (ident := cleaned_data.pop("identifier")) is None:
+            if db_type == ReferenceDatabase.PUBMED:
+                ident = Identifiers.objects.bulk_create_pubmed_ids(self._identifier_content)[0]
+            elif db_type == ReferenceDatabase.HERO:
+                ident = Identifiers.objects.bulk_create_hero_ids(self._identifier_content)[0]
+            elif db_type == ReferenceDatabase.DOI:
+                ident = Identifiers.objects.create(database=db_type, unique_id=db_id)
+
+        if (
+            ref := Reference.objects.filter(assessment=self.assessment, identifiers=ident).first()
+        ) is None:
+            ref = ident.create_reference(self.assessment)
+            ref.save()
+            ref.identifiers.add(ident)
+
+        return models.Study.save_new_from_reference(ref, cleaned_data)
 
 
 class AttachmentForm(forms.ModelForm):
