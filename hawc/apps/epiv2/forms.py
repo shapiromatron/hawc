@@ -15,7 +15,6 @@ class DesignForm(forms.ModelForm):
 
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
-    # TODO: Auto complete still not working yet
     countries = selectable.AutoCompleteSelectMultipleField(
         lookup_class=lookups.CountryNameLookup, required=False
     )

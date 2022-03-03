@@ -25,3 +25,4 @@ class CountryNameLookup(DistinctStringLookup):
 
 registry.register(OutcomeByDesignLookup)
 registry.register(OutcomeByHealthOutcome)
+registry.register(CountryNameLookup)
