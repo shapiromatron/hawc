@@ -143,6 +143,11 @@ class AssessmentFilterForm(forms.Form):
         helper.add_row("search", 2, ["col-md-8", "col-md-4"])
         return helper
 
+    def clean_order_by(self):
+        order_by = self.cleaned_data["order_by"]
+        if order_by == "":
+            raise forms.ValidationError("'' is not valid.")
+
     def get_filters(self):
         query = Q()
         if name := self.cleaned_data.get("search"):
