@@ -6,13 +6,9 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"jobs", api.JobViewset, basename="jobs")
-router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
 router.register(r"strain", api.StrainViewset, basename="strain")
-router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
 
 
 app_name = "assessment"
@@ -41,14 +37,28 @@ urlpatterns = [
     path("log/<int:pk>/", views.LogDetail.as_view(), name="log_detail",),
     # attachment objects
     path(
-        "<int:pk>/attachment/create/", views.AttachmentCreate.as_view(), name="attachment_create",
+        "attachment/<int:pk>/create/",
+        views.AttachmentViewset.as_view(),
+        {"action": "create"},
+        name="attachment-create",
     ),
-    path("attachment/<int:pk>/", views.AttachmentRead.as_view(), name="attachment_detail",),
     path(
-        "attachment/<int:pk>/update/", views.AttachmentUpdate.as_view(), name="attachment_update",
+        "attachment/<int:pk>/",
+        views.AttachmentViewset.as_view(),
+        {"action": "read"},
+        name="attachment-detail",
     ),
     path(
-        "attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete",
+        "attachment/<int:pk>/update/",
+        views.AttachmentViewset.as_view(),
+        {"action": "update"},
+        name="attachment-update",
+    ),
+    path(
+        "attachment/<int:pk>/delete/",
+        views.AttachmentViewset.as_view(),
+        {"action": "delete"},
+        name="attachment-delete",
     ),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),

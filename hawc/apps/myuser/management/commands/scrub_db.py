@@ -1,3 +1,4 @@
+from random import randint
 from textwrap import dedent
 
 from django.contrib.auth import get_user_model
@@ -43,6 +44,9 @@ class Command(BaseCommand):
             user.first_name = fake.first_name()
             user.last_name = fake.last_name()
             user.email = f"{user.first_name.lower()}.{user.last_name.lower()}@{fake.domain_name()}"
+            user.external_id = (
+                f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1,256)}"
+            )
             user.password = hash_password
             user.save()
 
@@ -56,6 +60,7 @@ class Command(BaseCommand):
         superuser.first_name = "Super"
         superuser.last_name = "Duper"
         superuser.email = "webmaster@hawcproject.org"
+        superuser.external_id = "sudo"
         user.password = hash_password
         superuser.save()
 
@@ -64,7 +69,7 @@ class Command(BaseCommand):
             f"""\
         Rewrite complete!
 
-        - All {num_users} users have randomly generated names and email-addresses.
+        - All {num_users} users have randomly generated names and email addresses.
         - All {num_users} users have passwords set to `password`
         - A superuser has the username `webmaster@hawcproject.org`
         - A superuser has the password `password`

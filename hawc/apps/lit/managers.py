@@ -156,7 +156,7 @@ class IdentifiersManager(BaseManager):
         fetcher = hero.HEROFetch(remaining_ids)
         fetched_content = fetcher.get_content()
         if len(fetched_content["failure"]) > 0:
-            failed_ids = ",".join(str(el) for el in fetched_content["failure"])
+            failed_ids = ", ".join(str(el) for el in fetched_content["failure"])
             raise ValidationError(
                 f"Import failed; the following HERO IDs could not be imported: {failed_ids}"
             )
@@ -243,7 +243,7 @@ class ReferenceManager(BaseManager):
 
     def build_ref_ident_m2m(self, objs):
         # Bulk-create reference-search relationships
-        logger.debug("Starting bulk creation of reference-identifer values")
+        logger.debug("Starting bulk creation of reference-identifier values")
         m2m = self.model.identifiers.through
         objects = [m2m(reference_id=ref_id, identifiers_id=ident_id) for ref_id, ident_id in objs]
         m2m.objects.bulk_create(objects)

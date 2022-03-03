@@ -49,7 +49,7 @@ class TagEditorMain extends Component {
 
         return (
             <div>
-                <h1 className="d-inline-block">{store.config.title}</h1>
+                <h2 className="d-inline-block">{store.config.title}</h2>
                 <button
                     onClick={() => this.setState({showCreate: true})}
                     className="float-right btn btn-primary">

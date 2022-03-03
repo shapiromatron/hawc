@@ -12,7 +12,7 @@ import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
-import {NULL_CASE, OrderChoices} from "./shared";
+import {NULL_CASE, OrderChoices, buildStyleMap} from "./shared";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -541,18 +541,16 @@ class DataPivotVisualization extends D3Plot {
                             break;
 
                         case "discrete-style":
-                            var hash = new Map();
-                            cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
-                            rows.forEach(function(d) {
-                                if (hash.get(d[cf.field_name]) !== NULL_CASE) {
-                                    d._styles[styles] = get_associated_style(
-                                        "symbols",
-                                        hash.get(d[cf.field_name])
-                                    );
+                            var mapping = buildStyleMap(cf);
+                            rows.forEach(d => {
+                                let key = _.toString(d[cf.field_name]),
+                                    value = mapping.get(key);
+                                if (value && value !== NULL_CASE) {
+                                    d._styles[styles] = get_associated_style("symbols", value);
                                 }
                             });
-
                             break;
+
                         default:
                             console.error(`Unrecognized condition_type: ${cf.condition_type}`);
                     }
