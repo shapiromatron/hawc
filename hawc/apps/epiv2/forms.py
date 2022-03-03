@@ -1,7 +1,7 @@
 from django import forms
 from django.urls import reverse
 
-from hawc.apps.common.forms import BaseFormHelper, form_actions_create_or_close
+from hawc.apps.common.forms import BaseFormHelper
 
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
@@ -19,9 +19,7 @@ class DesignForm(forms.ModelForm):
         lookup_class=lookups.CountryNameLookup, required=False
     )
 
-    criteria = forms.ModelMultipleChoiceField(
-        queryset=None, to_field_name="name", label="Inclusion/exclusion criteria", required=False,
-    )
+    criteria = forms.HiddenInput()
 
     class Meta:
         model = models.Design
@@ -33,7 +31,6 @@ class DesignForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
-        self.fields["criteria"].queryset = self.instance.criteria
 
     @property
     def helper(self):
@@ -44,11 +41,6 @@ class DesignForm(forms.ModelForm):
         if self.instance.id:
             helper = BaseFormHelper(self)
             helper.form_tag = False
-            helper.add_create_btn(
-                field_name="criteria",
-                url=reverse("epiv2:criteria-create", kwargs={"pk": self.instance.id}),
-                title="Add criteria",
-            )
 
         else:
             inputs = {
@@ -63,7 +55,7 @@ class DesignForm(forms.ModelForm):
         helper.add_row("age_description", 3, "col-md-4")
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("years", 2, "col-md-6")
-        helper.add_row("comments", 2, "col-md-6")
+        helper.add_row("comments", 1, "col-md-12")
 
         return helper
 
@@ -82,8 +74,9 @@ class CriteriaForm(forms.ModelForm):
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_create_or_close())
+        helper = BaseFormHelper(self)
         helper.add_row("name", 1, "col-md-4")
+        helper.form_tag = False
         return helper
 
 

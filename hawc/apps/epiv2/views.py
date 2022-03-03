@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate, CloseIfSuccessMixin
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
 from ..study.models import Study
 from . import forms, models
 
@@ -121,11 +121,10 @@ class DesignChildViewset(HtmxViewSet):
 
 
 # Criteria viewset
-class CriteriaViewset(CloseIfSuccessMixin, BaseCreate):
+class CriteriaViewset(DesignChildViewset):
     model = models.Criteria
-    parent_model = models.Design
     form_class = forms.CriteriaForm
-    success_message = "Criteria created."
+    detail_fragment = "epiv2/fragments/criteria_row.html"
 
 
 # Chemical viewset

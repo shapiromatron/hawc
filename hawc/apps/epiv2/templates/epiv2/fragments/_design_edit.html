@@ -9,6 +9,25 @@
 {% block content %}
   {% crispy form %}
 {% endblock %}
+<div>
+  <b>Inclusion/Exclusion criteria
+    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:criteria-create' object.pk %}"
+      hx-target="#criteria-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
+  </b>
+  <table class="table table-condensed table-striped table-light my-3">
+    <colgroup>
+      <col style="width: 85%">
+      <col style="width: 15%">
+    </colgroup>
+    <tbody>
+      {% for object in object.criteria.all %}
+       {% include "epiv2/fragments/criteria_row.html" %}
+      {% endfor %}
+      <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
+    </tbody>
+  </table>
+
+</div>
 <div class="d-block container pull-right">
   <div class="pull-right">
 <button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:design-update' object.pk %}"
