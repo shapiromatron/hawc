@@ -193,6 +193,7 @@ class SummaryTable(models.Model):
 
     def get_table(self) -> BaseTable:
         schema_class = self.get_content_schema_class()
+        # ensure the assessment id is from the object; not custom config
         kwargs = {}
         if "assessment_id" in schema_class.schema()["properties"]:
             kwargs["assessment_id"] = self.assessment_id

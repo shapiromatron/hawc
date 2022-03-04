@@ -6,9 +6,9 @@ import Endpoint from "./Endpoint";
 
 const endpointRow = function(endpoint) {
     const link = `<a href="${endpoint.data.url}" target="_blank">${endpoint.data.name}</a>`,
-        detail = $('<i class="fa fa-eye previewModalIcon" title="preview in a modal">').click(() =>
-            endpoint.displayAsModal({complete: true})
-        ),
+        detail = $(
+            '<i class="fa fa-eye previewModalIcon ml-2" title="preview in a modal">'
+        ).click(() => endpoint.displayAsModal({complete: true})),
         ep = $('<span class="previewModalParent">').append(link, detail),
         study = endpoint.data.animal_group.experiment.study,
         experiment = endpoint.data.animal_group.experiment,

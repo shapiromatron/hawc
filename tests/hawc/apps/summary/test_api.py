@@ -387,3 +387,30 @@ class TestSummaryTableViewset:
         resp = rev_client.get(url)
         assert resp.status_code == 400
         assert resp.json() == {"data_source": ['"not a data source" is not a valid choice.']}
+
+    def test_data_unpublished(self, rewrite_data_files: bool):
+        # even with a public assessment, must be part of team to view unpublished data
+        pub = {"assessment_id": 2, "table_type": 2, "data_source": "ani", "published_only": True}
+        unpub = {"assessment_id": 2, "table_type": 2, "data_source": "ani", "published_only": False}
+        base_url = reverse("summary:api:summary-table-data")
+
+        # valid request for team member (or reviewer, pm, admin)
+        team_client = APIClient()
+        assert team_client.login(username="team@hawcproject.org", password="pw") is True
+        pub_client = APIClient()
+        assert pub_client.login(username="public@hawcproject.org", password="pw") is True
+
+        # team member can view all; non-team-member can only view published
+        for (client, data, code) in [
+            (team_client, pub, 200),
+            (team_client, unpub, 200),
+            (pub_client, pub, 200),
+            (pub_client, unpub, 400),
+        ]:
+            url = f"{base_url}?{urlencode(data)}"
+            resp = client.get(url)
+            assert resp.status_code == code
+            if code == 400:
+                assert resp.json() == {
+                    "published_only": ["Must be part of team to view unpublished data."]
+                }

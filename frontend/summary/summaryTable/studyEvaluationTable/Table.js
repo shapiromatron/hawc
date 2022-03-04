@@ -17,7 +17,7 @@ class EditButton extends Component {
     render() {
         const {handleClick} = this.props;
         return (
-            <button className="btn btn-light btn-sm float-right" key={0} onClick={handleClick}>
+            <button className="btn btn-light btn-sm float-right" onClick={handleClick}>
                 <i className="fa fa-edit mr-1"></i>Edit
             </button>
         );
@@ -37,7 +37,7 @@ class EditCellForm extends Component {
         return (
             <>
                 <CheckboxInput
-                    label="Customize?"
+                    label="Customize cell?"
                     onChange={e =>
                         store.updateStagedCell(
                             rowIdx,
@@ -124,12 +124,10 @@ class EditRowForm extends Component {
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
-                            onClick={() => store.commitStagedEdits()}>
+                            onClick={store.commitStagedEdits}>
                             Update
                         </button>
-                        <button
-                            className="btn btn-sm btn-light"
-                            onClick={() => store.resetStagedEdits()}>
+                        <button className="btn btn-sm btn-light" onClick={store.resetStagedEdits}>
                             Cancel
                         </button>
                     </div>
@@ -212,12 +210,10 @@ class EditSubheaderForm extends Component {
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
-                            onClick={() => store.commitStagedEdits()}>
+                            onClick={store.commitStagedEdits}>
                             Update
                         </button>
-                        <button
-                            className="btn btn-sm btn-light"
-                            onClick={() => store.resetStagedEdits()}>
+                        <button className="btn btn-sm btn-light" onClick={store.resetStagedEdits}>
                             Cancel
                         </button>
                     </div>
@@ -246,6 +242,26 @@ class EditColumnForm extends Component {
         return (
             <>
                 <div className="col-md-12">
+                    <SelectInput
+                        choices={colAttributeChoices[store.settings.data_source]}
+                        handleSelect={value => store.updateStagedColumn(colIdx, {attribute: value})}
+                        value={col.attribute}
+                        label="Attribute"
+                    />
+                </div>
+                {col.attribute == "rob" ? (
+                    <div className="col-md-12">
+                        <SelectInput
+                            choices={store.metricIdChoices}
+                            handleSelect={value =>
+                                store.updateStagedColumn(colIdx, {metric_id: parseInt(value)})
+                            }
+                            value={col.metric_id}
+                            label="Metric"
+                        />
+                    </div>
+                ) : null}
+                <div className="col-md-12">
                     <TextInput
                         onChange={e => store.updateStagedColumn(colIdx, {label: e.target.value})}
                         name="label"
@@ -271,34 +287,14 @@ class EditColumnForm extends Component {
                         label="Width"
                     />
                 </div>
-                <div className="col-md-12">
-                    <SelectInput
-                        choices={colAttributeChoices[store.settings.data_source]}
-                        handleSelect={value => store.updateStagedColumn(colIdx, {attribute: value})}
-                        value={col.attribute}
-                        label="Attribute"
-                    />
-                    {col.attribute == "rob" ? (
-                        <SelectInput
-                            choices={store.metricIdChoices}
-                            handleSelect={value =>
-                                store.updateStagedColumn(colIdx, {metric_id: parseInt(value)})
-                            }
-                            value={col.metric_id}
-                            label="Metric"
-                        />
-                    ) : null}
-                </div>
                 <div className="col-md-12 text-center">
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
-                            onClick={() => store.commitStagedEdits()}>
+                            onClick={store.commitStagedEdits}>
                             Update
                         </button>
-                        <button
-                            className="btn btn-sm btn-light"
-                            onClick={() => store.resetStagedEdits()}>
+                        <button className="btn btn-sm btn-light" onClick={store.resetStagedEdits}>
                             Cancel
                         </button>
                     </div>
@@ -397,10 +393,11 @@ class Table extends Component {
         if (store.isFetching) {
             return <Loading />;
         }
+        if (store.datasetError) {
+            return <Alert message={store.datasetError} />;
+        }
         if (!store.hasData) {
-            return (
-                <Alert message="No data are available. Studies must be published and have at least one endpoint to be available for this summary table." />
-            );
+            return <Alert message="No data are available." />;
         }
 
         const {numColumns, workingSettings, editing, editingColumn, editingRow, editIndex} = store;

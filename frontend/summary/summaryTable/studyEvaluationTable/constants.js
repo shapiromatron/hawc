@@ -8,15 +8,15 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
     rowTypeChoices = {study: [{id: "study", label: "Study"}], ani: [{id: "study", label: "Study"}]},
     colAttributeChoices = {
         study: [
-            {id: "free_html", label: "Free HTML"},
             {id: "study_short_citation", label: "Study citation"},
-            {id: "rob", label: "Evaluation"},
+            {id: "rob", label: "Study evaluation"},
+            {id: "free_html", label: "Free text"},
         ],
         ani: [
-            {id: "free_html", label: "Free HTML"},
             {id: "study_short_citation", label: "Study citation"},
             {id: "animal_group_description", label: "Animal description"},
-            {id: "rob", label: "Evaluation"},
+            {id: "rob", label: "Study evaluation"},
+            {id: "free_html", label: "Free text"},
         ],
     },
     createNewRow = studyId => {

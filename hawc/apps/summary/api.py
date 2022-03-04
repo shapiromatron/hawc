@@ -135,6 +135,9 @@ class SummaryTableViewset(AssessmentEditViewset):
 
     @action(detail=False)
     def data(self, request):
-        ser = serializers.SummaryTableDataSerializer(data=request.query_params.dict())
+        ser = serializers.SummaryTableDataSerializer(
+            data=request.query_params.dict(),
+            context={"user_part_of_team": self.assessment.user_is_part_of_team(self.request.user)},
+        )
         ser.is_valid(raise_exception=True)
         return Response(ser.get_data())

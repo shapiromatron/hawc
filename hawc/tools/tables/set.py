@@ -27,26 +27,28 @@ class DataSourceChoices(Enum):
             .fillna("")
             .to_dict(orient="records")
         )
-
-        study_ids = Study.objects.filter(assessment_id=assessment_id, bioassay=True).values_list(
-            "id", flat=True
+        study_ids = Study.objects.filter(
+            assessment_id=assessment_id, bioassay=True, riskofbiases__final=True
+        ).values_list("id", flat=True)
+        rob_data = (
+            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).order_by("id").values()
         )
-        rob_data = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
 
         return {"data": ani_data, "rob": rob_data}
 
     def get_study_data(self, assessment_id: int, published_only: bool) -> Dict:
-        study_filters = {"assessment_id": assessment_id}
+        study_filters = {"assessment_id": assessment_id, "riskofbiases__final": True}
         if published_only:
             study_filters["published"] = True
         study_qs = Study.objects.filter(**study_filters)
         study_df = pd.DataFrame.from_records(study_qs.values("id", "short_citation"))
+        study_ids = study_df.id.tolist()
         study_data = study_df.rename(
             columns={"id": "study id", "short_citation": "study citation"}
         ).to_dict(orient="records")
-
-        study_ids = [r["study id"] for r in study_data]
-        rob_data = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
+        rob_data = (
+            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).order_by("id").values()
+        )
 
         return {"data": study_data, "rob": rob_data}
 

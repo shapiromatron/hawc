@@ -48,16 +48,15 @@ class DataForm extends Component {
                 <div className="row">
                     <div className="col-md-6">
                         <SelectInput
-                            label="Dataset"
+                            label="Select dataset"
                             choices={constants.dataSourceChoices}
                             multiple={false}
-                            handleSelect={value =>
-                                store.updateStagedDataSettings({data_source: value})
-                            }
+                            handleSelect={v => store.updateStagedDataSettings({data_source: v})}
                             value={store.stagedDataSettings.data_source}
                         />
                         <p className="form-text text-muted">
-                            Select the dataset to use.
+                            Select the dataset to use. Data are filtered to only include studies
+                            where at least one final study evaluation exists.
                             {store.settings.data_source != store.stagedDataSettings.data_source ? (
                                 <span className="text-danger">
                                     <br />
@@ -67,25 +66,27 @@ class DataForm extends Component {
                         </p>
                     </div>
                     <div className="col-md-6">
+                        <p className="font-weight-bold mb-0">Column choices selected dataset:</p>
+                        <ul>
+                            {_.map(
+                                constants.colAttributeChoices[store.stagedDataSettings.data_source],
+                                c => (
+                                    <li key={c.id}>{c.label}</li>
+                                )
+                            )}
+                        </ul>
+                    </div>
+                    <div className="col-md-6">
                         <CheckboxInput
-                            label="Published only?"
+                            label="Published studies only"
                             onChange={e =>
                                 store.updateStagedDataSettings({published_only: e.target.checked})
                             }
-                            helpText="Whether to use only published studies."
+                            helpText='Only present data from studies which have been marked as "published" in HAWC. Make sure to change prior to making an assessment public; otherwise users who are not team members will not be able to view this table.'
                             checked={store.stagedDataSettings.published_only}
                         />
                     </div>
                 </div>
-                <p className="font-weight-bold">Column choices for this dataset:</p>
-                <ul>
-                    {_.map(
-                        constants.colAttributeChoices[store.stagedDataSettings.data_source],
-                        c => (
-                            <li key={c.id}>{c.label}</li>
-                        )
-                    )}
-                </ul>
             </div>
         );
     }
