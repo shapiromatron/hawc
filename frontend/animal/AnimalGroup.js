@@ -96,29 +96,19 @@ class AnimalGroup {
             },
             getDoses = function(doses) {
                 if (doses.length === 0) return undefined;
-
                 var grps = _.chain(doses)
                         .sortBy(d => d.dose_group_id)
                         .groupBy(d => d.dose_units.name)
                         .value(),
-                    units = _.keys(grps),
-                    tbl = new BaseTable();
-
-                doses = _.zip.apply(
-                    null,
-                    _.map(_.values(grps), function(d) {
-                        return _.map(d, function(x) {
-                            return x.dose;
-                        });
-                    })
-                );
-
-                tbl.addHeaderRow(units);
-                _.each(doses, function(d) {
-                    tbl.addRow(d);
-                });
-
-                return tbl.getTbl();
+                    list = _.map(_.keys(grps), function(g) {
+                        return [
+                            _.map(grps[g], function(d) {
+                                return ` ${d.dose}`;
+                            }),
+                            ` ${g}`,
+                        ];
+                    });
+                return list;
             },
             getDosedAnimals = function(id_, dosed_animals) {
                 // only show dosed-animals if dosing-regime not applied to these animals
@@ -134,7 +124,7 @@ class AnimalGroup {
             .add_tbody_tr("Number of dose-groups", data.num_dose_groups)
             .add_tbody_tr("Positive control", data.positive_control)
             .add_tbody_tr("Negative control", data.negative_control)
-            .add_tbody_tr("Doses", getDoses(data.doses))
+            .add_tbody_tr_list("Doses", getDoses(data.doses))
             .add_tbody_tr("Description", data.description);
 
         return tbl.get_tbl();
