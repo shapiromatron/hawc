@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import exceptions, serializers
 
@@ -7,8 +7,9 @@ from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import IdLookupMixin
-from ..lit.constants import DOI_EXACT, DOI_EXAMPLE, ReferenceDatabase
-from ..lit.models import Identifiers, Reference
+from ..lit.constants import ReferenceDatabase
+from ..lit.forms import create_external_id, validate_external_id
+from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer, FinalRiskOfBiasSerializer
 from . import models
@@ -110,42 +111,25 @@ class StudyFromIdentifierSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f"Study for this assessment and identifier already exists (study {study.id})"
             )
-        # if identifier does not exist, it must be validated
-        data["identifier"] = Identifiers.objects.filter(
-            database=data["db_type"], unique_id=str(data["db_id"])
-        ).first()
-        if data["identifier"] is None:
-            try:
-                if data["db_type"] == ReferenceDatabase.PUBMED:
-                    _, _, self._identifier_content = Identifiers.objects.validate_pubmed_ids(
-                        [int(data["db_id"])]
-                    )
-                elif data["db_type"] == ReferenceDatabase.HERO:
-                    _, _, self._identifier_content = Identifiers.objects.validate_valid_hero_ids(
-                        [int(data["db_id"])]
-                    )
-                elif data["db_type"] == ReferenceDatabase.DOI:
-                    if not DOI_EXACT.fullmatch(data["db_id"]):
-                        raise Exception(f'Invalid DOI; should be in format "{DOI_EXAMPLE}"')
-            except Exception:
-                raise serializers.ValidationError(
-                    f'Unable to import {data["db_type"].label} ID {data["db_id"]}.'
-                )
+
+        # validate identifier
+        try:
+            data["identifier"], self._identifier_content = validate_external_id(
+                data["db_type"], data["db_id"]
+            )
+        except ValidationError as err:
+            raise serializers.ValidationError(err.message)
+
         return data
 
     @transaction.atomic
     def create(self, validated_data):
         assessment = validated_data.pop("assessment")
         db_type = validated_data.pop("db_type")
-        db_id = validated_data.pop("db_id")
+        validated_data.pop("db_id")
 
         if (ident := validated_data.pop("identifier")) is None:
-            if db_type == ReferenceDatabase.PUBMED:
-                ident = Identifiers.objects.bulk_create_pubmed_ids(self._identifier_content)[0]
-            elif db_type == ReferenceDatabase.HERO:
-                ident = Identifiers.objects.bulk_create_hero_ids(self._identifier_content)[0]
-            elif db_type == ReferenceDatabase.DOI:
-                ident = Identifiers.objects.create(database=db_type, unique_id=db_id)
+            ident = create_external_id(db_type, self._identifier_content)
 
         if (
             ref := Reference.objects.filter(assessment=assessment, identifiers=ident).first()

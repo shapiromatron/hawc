@@ -5,8 +5,9 @@ from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, form_actions_apply_filters
-from ..lit.constants import DOI_EXACT, DOI_EXAMPLE, ReferenceDatabase
-from ..lit.models import Identifiers, Reference
+from ..lit.constants import ReferenceDatabase
+from ..lit.forms import create_external_id, validate_external_id
+from ..lit.models import Reference
 from . import models
 
 
@@ -187,27 +188,12 @@ class IdentifierStudyForm(forms.Form):
             is not None
         ):
             raise forms.ValidationError("Study for this assessment and identifier already exists.")
-        # if identifier does not exist, it must be validated
-        cleaned_data["identifier"] = Identifiers.objects.filter(
-            database=cleaned_data["db_type"], unique_id=str(cleaned_data["db_id"])
-        ).first()
-        if cleaned_data["identifier"] is None:
-            try:
-                if cleaned_data["db_type"] == ReferenceDatabase.PUBMED:
-                    _, _, self._identifier_content = Identifiers.objects.validate_pubmed_ids(
-                        [int(cleaned_data["db_id"])]
-                    )
-                elif cleaned_data["db_type"] == ReferenceDatabase.HERO:
-                    _, _, self._identifier_content = Identifiers.objects.validate_valid_hero_ids(
-                        [int(cleaned_data["db_id"])]
-                    )
-                elif cleaned_data["db_type"] == ReferenceDatabase.DOI:
-                    if not DOI_EXACT.fullmatch(cleaned_data["db_id"]):
-                        raise Exception(f'Invalid DOI; should be in format "{DOI_EXAMPLE}"')
-            except Exception:
-                raise forms.ValidationError(
-                    f'Unable to import {cleaned_data["db_type"].label} ID {cleaned_data["db_id"]}.'
-                )
+
+        # validate identifier
+        cleaned_data["identifier"], self._identifier_content = validate_external_id(
+            cleaned_data["db_type"], cleaned_data["db_id"]
+        )
+
         return cleaned_data
 
     def save(self):
@@ -219,15 +205,10 @@ class IdentifierStudyForm(forms.Form):
         cleaned_data = self.cleaned_data.copy()
 
         db_type = cleaned_data.pop("db_type")
-        db_id = cleaned_data.pop("db_id")
+        cleaned_data.pop("db_id")
 
         if (ident := cleaned_data.pop("identifier")) is None:
-            if db_type == ReferenceDatabase.PUBMED:
-                ident = Identifiers.objects.bulk_create_pubmed_ids(self._identifier_content)[0]
-            elif db_type == ReferenceDatabase.HERO:
-                ident = Identifiers.objects.bulk_create_hero_ids(self._identifier_content)[0]
-            elif db_type == ReferenceDatabase.DOI:
-                ident = Identifiers.objects.create(database=db_type, unique_id=db_id)
+            ident = create_external_id(db_type, self._identifier_content)
 
         if (
             ref := Reference.objects.filter(assessment=self.assessment, identifiers=ident).first()

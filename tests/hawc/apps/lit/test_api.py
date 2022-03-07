@@ -368,12 +368,6 @@ class TestSearchViewset:
         assert resp.status_code == 400
         assert resp.data == {"non_field_errors": ["API currently only supports imports"]}
 
-        # check database
-        new_payload = {**payload, **{"source": 1}}
-        resp = c.post(url, new_payload, format="json")
-        assert resp.status_code == 400
-        assert resp.data == {"non_field_errors": ["API currently only supports HERO imports"]}
-
         # check bad csv
         bad_search_strings = [
             "",
@@ -431,9 +425,7 @@ class TestSearchViewset:
         resp = c.post(url, payload, format="json")
         assert resp.status_code == 400
         assert resp.data == {
-            "non_field_errors": [
-                "Import failed; the following HERO IDs could not be imported: 41589"
-            ]
+            "non_field_errors": ["The following HERO ID(s) could not be imported: 41589"]
         }
 
 

@@ -288,13 +288,23 @@ class Search(models.Model):
         return list(set(v.strip() for v in self.search_string_text.split(",")))
 
     @transaction.atomic
-    def run_new_import(self):
+    def run_new_import(self, content=None):
         if self.source == constants.ReferenceDatabase.PUBMED:
-            pmids = [int(id) for id in self.import_ids]
-            identifiers = Identifiers.objects.get_pubmed_identifiers(pmids)
+            ids = [int(id) for id in self.import_ids]
+            if content is None:
+                # fetch content if not provided
+                content = Identifiers.objects.validate_pubmed_ids(ids)
+            Identifiers.objects.bulk_create_pubmed_ids(content)
+            identifiers = Identifiers.objects.pubmed(ids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.ReferenceDatabase.HERO:
-            raise NotImplementedError()
+            ids = [int(id) for id in self.import_ids]
+            if content is None:
+                # fetch content if not provided
+                content = Identifiers.objects.validate_hero_ids(ids)
+            Identifiers.objects.bulk_create_hero_ids(content)
+            identifiers = Identifiers.objects.hero(ids)
+            Reference.objects.get_hero_references(self, identifiers)
         elif self.source == constants.ReferenceDatabase.RIS:
             # check if importer references are cached on object
             refs = getattr(self, "_references", None)

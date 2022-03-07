@@ -149,7 +149,18 @@ class IdentifiersManager(BaseManager):
         Identifiers.update_pubmed_content(pimdsFetch)
         return refs
 
-    def validate_valid_hero_ids(self, ids: List[int]) -> Tuple[List[int], List[int], Dict]:
+    def validate_hero_ids(self, ids: List[int]) -> Tuple[List[int], List[int], Dict]:
+        # ids must be integers
+        invalid_ids = []
+        for id in ids:
+            try:
+                int(id)
+            except ValueError:
+                invalid_ids.append(id)
+        if invalid_ids:
+            invalid_join = ", ".join(str(id) for id in invalid_ids)
+            raise ValidationError(f"The following HERO ID(s) are not integers: {invalid_join}")
+
         qs = self.hero(ids, allow_missing=True).values_list("unique_id", flat=True)
         existing_ids = [int(id_) for id_ in qs]
         remaining_ids = list(set(ids) - set(existing_ids))
@@ -157,10 +168,8 @@ class IdentifiersManager(BaseManager):
         fetched_content = fetcher.get_content()
         if len(fetched_content["failure"]) > 0:
             failed_ids = ", ".join(str(el) for el in fetched_content["failure"])
-            raise ValidationError(
-                f"Import failed; the following HERO IDs could not be imported: {failed_ids}"
-            )
-        return existing_ids, remaining_ids, fetched_content
+            raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_ids}")
+        return fetched_content
 
     def bulk_create_hero_ids(self, content):
         # sometimes HERO can import two records from a single ID
@@ -186,18 +195,33 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def validate_pubmed_ids(self, pmids: List[int]):
+    def validate_pubmed_ids(self, ids: List[int]):
+        # ids must be integers
+        invalid_ids = []
+        for id in ids:
+            try:
+                int(id)
+            except ValueError:
+                invalid_ids.append(id)
+        if invalid_ids:
+            invalid_join = ", ".join(str(id) for id in invalid_ids)
+            raise ValidationError(f"The following PubMed ID(s) are not integers: {invalid_join}")
+
         # Filter IDs which need to be imported
         qs = self.filter(
-            database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids
+            database=constants.ReferenceDatabase.PUBMED, unique_id__in=ids
         ).values_list("unique_id", flat=True)
         existing_ids = [int(id) for id in qs]
-        remaining_ids = list(set(pmids) - set(existing_ids))
+        remaining_ids = list(set(ids) - set(existing_ids))
 
         # Grab Pubmed objects
         fetch = pubmed.PubMedFetch(remaining_ids)
+        fetched_content = fetch.get_content()
+        if failed_ids := set(remaining_ids) - {int(item["PMID"]) for item in fetched_content}:
+            failed_str = ", ".join(str(id) for id in failed_ids)
+            raise ValidationError(f"The following PubMed ID(s) could not be imported: {failed_str}")
 
-        return existing_ids, remaining_ids, fetch.get_content()
+        return fetched_content
 
     def bulk_create_pubmed_ids(self, content):
         Identifiers = apps.get_model("lit", "Identifiers")
@@ -214,18 +238,15 @@ class IdentifiersManager(BaseManager):
             ]
         )
 
-    def get_pubmed_identifiers(self, pmids: List[int]):
-        """Return a queryset of identifiers, one for each PubMed ID. Either get
-        or create an identifier, whatever is required
+    def pubmed(self, pubmed_ids: List[int], allow_missing=False):
+        qs = self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pubmed_ids)
 
-        Args:
-            pmids (List[int]): A list of pubmed identifiers
-        """
-        #
-        _, _, content = self.validate_pubmed_ids(pmids)
-        self.bulk_create_pubmed_ids(content)
+        if allow_missing is False and qs.count() != len(pubmed_ids):
+            raise ValueError(
+                f"Identifier count ({qs.count()}) does not match ID count ({len(pubmed_ids)})"
+            )
 
-        return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids)
+        return qs
 
 
 class ReferenceQuerySet(models.QuerySet):

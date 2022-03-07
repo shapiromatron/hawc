@@ -135,7 +135,7 @@ class TestImportForm:
         )
         assert form.is_valid() is False
         assert form.errors == {
-            "search_string": ["Import failed; the following HERO IDs could not be imported: 41589"]
+            "search_string": ["The following HERO ID(s) could not be imported: 41589"]
         }
 
 
@@ -265,10 +265,7 @@ class TestReferenceForm:
         # bad pubmed validation check
         form = ReferenceForm(instance=ref, data={**data, "hero_id": -1})
         assert form.is_valid() is False
-        assert (
-            form.errors["hero_id"][0]
-            == "Import failed; the following HERO IDs could not be imported: -1"
-        )
+        assert form.errors["hero_id"][0] == "The following HERO ID(s) could not be imported: -1"
 
         # make sure pubmed is unchanged by default
         form = ReferenceForm(instance=ref, data=data)
@@ -311,7 +308,7 @@ class TestReferenceForm:
         # bad pubmed validation check
         form = ReferenceForm(instance=ref, data={**data, "pubmed_id": -1})
         assert form.is_valid() is False
-        assert form.errors["pubmed_id"][0] == "Invalid PubMed ID: -1"
+        assert form.errors["pubmed_id"][0] == "The following PubMed ID(s) could not be imported: -1"
 
         # make sure pubmed is unchanged by default
         form = ReferenceForm(instance=ref, data=data)

@@ -1,6 +1,6 @@
 import logging
 from io import StringIO
-from typing import List, Union
+from typing import Dict, List, Tuple, Union
 
 import numpy as np
 from django import forms
@@ -150,7 +150,10 @@ class ImportForm(SearchForm):
         ids = self.validate_import_search_string(search_string)
 
         if self.cleaned_data["source"] == constants.ReferenceDatabase.HERO:
-            _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
+            content = models.Identifiers.objects.validate_hero_ids(ids)
+            self._import_data = dict(ids=ids, content=content)
+        elif self.cleaned_data["source"] == constants.ReferenceDatabase.PUBMED:
+            content = models.Identifiers.objects.validate_pubmed_ids(ids)
             self._import_data = dict(ids=ids, content=content)
 
         return search_string
@@ -160,15 +163,7 @@ class ImportForm(SearchForm):
         is_create = self.instance.id is None
         search = super().save(commit=commit)
         if is_create:
-            if search.source == constants.ReferenceDatabase.HERO:
-                # create missing identifiers from import
-                models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
-                # get hero identifiers
-                identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
-                # get or create  reference objects from identifiers
-                models.Reference.objects.get_hero_references(search, identifiers)
-            else:
-                search.run_new_import()
+            search.run_new_import(self._import_data["content"])
         return search
 
 
@@ -329,59 +324,44 @@ class SearchSelectorForm(forms.Form):
         )
 
 
-def check_external_id(
-    assessment: Assessment, db_type: int, id_: Union[str, int]
-) -> models.Identifiers:
-    """Validate that the external ID can be used for a reference in this assessment.
+def validate_external_id(
+    db_type: int, db_id: Union[str, int]
+) -> Tuple[Union[models.Identifiers, None], Union[List, Dict, None]]:
+    identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(db_id)).first()
 
-    This method has a side effect which may create a new identifier; however this identifier object
-    will not be associated with other objects.
-
-    Args:
-        assessment (Assessment): Assessment instance
-        db_type (int): external reference type
-        id_ (int): candidate external ID
-
-    Raises:
-        forms.ValidationError: If the external ID cannot be used
-        ValueError: If we cannot handle this external ID type
-
-    Returns:
-        Identifier: Returns the identifier object which can be used
-    """
-    identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(id_)).first()
     if identifier:
-        # make sure ID doesn't already exist for this assessment
-        existing_reference = identifier.references.filter(assessment=assessment).first()
-        if existing_reference:
+        return identifier, None
+
+    if db_type == constants.ReferenceDatabase.PUBMED:
+        content = models.Identifiers.objects.validate_pubmed_ids([db_id])
+        return None, content
+    elif db_type == constants.ReferenceDatabase.HERO:
+        content = models.Identifiers.objects.validate_hero_ids([db_id])
+        return None, content
+    elif db_type == constants.ReferenceDatabase.DOI:
+        if not constants.DOI_EXACT.fullmatch(db_id):
             raise forms.ValidationError(
-                f"Existing HAWC reference with this ID already exists in this assessment: {existing_reference.id}"
+                f'Invalid DOI; should be in format "{constants.DOI_EXAMPLE}"'
             )
+        return None, {"database": db_type, "unique_id": str(db_id)}
 
     else:
-        # try to make an identifier; if it cannot be made an exception is thrown.
-        if db_type == constants.ReferenceDatabase.PUBMED:
-            identifiers = models.Identifiers.objects.get_pubmed_identifiers([id_])
-            if len(identifiers) == 0:
-                raise forms.ValidationError(f"Invalid PubMed ID: {id_}")
-            identifier = identifiers[0]
+        raise ValueError(f"Unknown database type {db_type}.")
 
-        elif db_type == constants.ReferenceDatabase.HERO:
-            _, _, content = models.Identifiers.objects.validate_valid_hero_ids([id_])
-            models.Identifiers.objects.bulk_create_hero_ids(content)
-            identifier = models.Identifiers.objects.get(database=db_type, unique_id=str(id_))
 
-        elif db_type == constants.ReferenceDatabase.DOI:
-            if not constants.DOI_EXACT.fullmatch(id_):
-                raise forms.ValidationError(
-                    f'Invalid DOI; should be in format "{constants.DOI_EXAMPLE}"'
-                )
-            identifier = models.Identifiers.objects.create(database=db_type, unique_id=str(id_))
+def create_external_id(db_type: int, content=None) -> models.Identifiers:
+    if content is None:
+        raise ValueError("Content needed to create external ID")
 
-        else:
-            raise ValueError(f"Unknown database type {db_type}.")
+    if db_type == constants.ReferenceDatabase.PUBMED:
+        return models.Identifiers.objects.bulk_create_hero_ids(content)[0]
+    elif db_type == constants.ReferenceDatabase.HERO:
+        return models.Identifiers.objects.bulk_create_pubmed_ids(content)[0]
+    elif db_type == constants.ReferenceDatabase.DOI:
+        return models.Identifiers.objects.create(**content)
 
-    return identifier
+    else:
+        raise ValueError(f"Unknown database type {db_type}.")
 
 
 class ReferenceForm(forms.ModelForm):
@@ -445,7 +425,17 @@ class ReferenceForm(forms.ModelForm):
         value = self.cleaned_data[field]
         if self.fields[field].initial != value:
             if value:
-                ident = check_external_id(self.instance.assessment, db_type, value)
+                ident, content = validate_external_id(db_type, value)
+                if ident is None:
+                    ident = create_external_id(db_type, content)
+                else:
+                    existing_ref = ident.references.filter(
+                        assessment=self.instance.assessment
+                    ).first()
+                    if existing_ref:
+                        raise forms.ValidationError(
+                            f"Existing HAWC reference with this ID already exists in this assessment: {existing_ref.id}"
+                        )
                 self._ident_additions.append(ident)
             existing = self.instance.identifiers.filter(database=db_type)
             self._ident_removals.extend(list(existing))
