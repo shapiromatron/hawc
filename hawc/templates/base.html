@@ -17,7 +17,7 @@
       <!-- End Google Tag Manager -->
     {% endif %}
 
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
       <link rel="shortcut icon" href="https://www.epa.gov/sites/all/themes/epa/favicon.ico" type="image/vnd.microsoft.icon" />
     {% else %}
       <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/jqueryui/1.10.3/css/jquery-ui.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/accordions.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/boxes.css' %}" />
@@ -59,7 +59,7 @@
     {% endif %}
 
     {% cache 3600 header %}
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
       {% include 'includes/epa/header.html' %}
     {% endif %}
     {% endcache %}
@@ -93,7 +93,7 @@
     {% endblock content_row_outer %}
 
     {% cache 3600 footer %}
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
       {% include "./includes/epa/footer.html" %}
     {% else %}
       {% include "./includes/base/footer.html" %}
