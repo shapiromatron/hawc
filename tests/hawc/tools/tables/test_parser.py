@@ -6,15 +6,17 @@ from hawc.tools.tables.parser import QuillParser
 
 from . import documents_equal
 
-DATA_PATH = Path(__file__).parent.absolute() / "data"
+FILE_PATH = Path(__file__).parent.absolute() / "data" / "parsed_html.docx"
 
 
 class TestQuillParser:
-    def test_parser(self, quill_html):
+    def test_parser(self, rewrite_data_files: bool, quill_html):
         document = Document()
         parser = QuillParser()
         parser.feed(quill_html, document._body)
-        saved_document = Document(DATA_PATH / "parsed_html.docx")
+        if rewrite_data_files:
+            document.save(FILE_PATH)
+        saved_document = Document(FILE_PATH)
 
         assert documents_equal(document, saved_document)
 
