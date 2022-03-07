@@ -328,6 +328,22 @@ class SearchSelectorForm(forms.Form):
 def validate_external_id(
     db_type: int, db_id: Union[str, int]
 ) -> Tuple[Union[models.Identifiers, None], Union[List, Dict, None]]:
+    """
+    Validates an external ID.
+    If the identifier already exists it is returned as the first part of a tuple.
+    If it does not exist, the content needed to create it is returned as the second part of the tuple.
+
+    Args:
+        db_type (int): Database type
+        db_id (Union[str, int]): Database ID
+
+    Raises:
+        forms.ValidationError: A validation error occurred
+        ValueError: An invalid db_type was provided
+
+    Returns:
+        Tuple[Union[models.Identifiers, None], Union[List, Dict, None]]: Existing identifier, content to create identifier
+    """
     identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(db_id)).first()
 
     if identifier:
@@ -350,7 +366,22 @@ def validate_external_id(
         raise ValueError(f"Unknown database type {db_type}.")
 
 
-def create_external_id(db_type: int, content=None) -> models.Identifiers:
+def create_external_id(db_type: int, content: Union[List, Dict]) -> models.Identifiers:
+    """
+    Creates an identifier with the given content.
+    This works in tandem with validate_external_id, using the content returned from that method call.
+
+    Args:
+        db_type (int): Database type
+        content (Union[List, Dict]): Content used to build the identifier with
+
+    Raises:
+        ValueError: A content of None was provided
+        ValueError: An invalid db_type was provided
+
+    Returns:
+        models.Identifiers: Created identifier
+    """
     if content is None:
         raise ValueError("Content needed to create external ID")
 
