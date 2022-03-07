@@ -310,13 +310,13 @@ class AssessmentList(LoginRequiredMixin, ListView):
 class AssessmentFullList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = super().get_queryset()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -333,14 +333,13 @@ class AssessmentFullList(ListView):
 class AssessmentPublicList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        qs = qs.distinct().order_by(self.form.get_order_by())
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -358,6 +357,7 @@ class AssessmentPublicList(ListView):
             Data can also be downloaded for each individual assessment.
         """
         context["form"] = self.form
+        context["is_public_list"] = True
         return context
 
 
