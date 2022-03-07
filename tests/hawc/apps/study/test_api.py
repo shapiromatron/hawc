@@ -24,12 +24,7 @@ class TestStudyViewset:
         assert len(json.pop("riskofbiases")) == 1
         assert json == {
             "id": 1,
-            "assessment": {
-                "id": 1,
-                "url": "/assessment/1/",
-                "enable_risk_of_bias": True,
-                "name": "Chemical Z",
-            },
+            "assessment": {"id": 1, "url": "/assessment/1/", "enable_risk_of_bias": True, "name": "Chemical Z",},
             "searches": [],
             "identifiers": [
                 {
@@ -119,10 +114,7 @@ class TestStudyViewset:
         data["reference_id"] = db_keys.reference_linked
         response = client.post(url, data)
         assert response.status_code == 400
-        assert (
-            str(response.data[0])
-            == f"Reference ID {db_keys.reference_linked} already linked with a study."
-        )
+        assert str(response.data[0]) == f"Reference ID {db_keys.reference_linked} already linked with a study."
 
     def test_create_valid_requests(self, db_keys):
         # this is a correct request
@@ -143,10 +135,7 @@ class TestStudyViewset:
         # now that it has been create, we should not be able to create it again
         response = client.post(url, data)
         assert response.status_code == 400
-        assert (
-            str(response.data[0])
-            == f"Reference ID {db_keys.reference_unlinked} already linked with a study."
-        )
+        assert str(response.data[0]) == f"Reference ID {db_keys.reference_unlinked} already linked with a study."
 
     def test_create_from_identifier_permissions(self, db_keys):
         url = reverse("study:api:study-create-from-identifier")
@@ -167,6 +156,7 @@ class TestStudyViewset:
         response = client.post(url, data)
         assert response.status_code == 403
 
+    @pytest.mark.vcr
     def test_create_from_identifier_bad_requests(self, db_keys):
         url = reverse("study:api:study-create-from-identifier")
         client = APIClient()
@@ -180,9 +170,7 @@ class TestStudyViewset:
         assert str(response.data["db_id"][0]) == "This field is required."
 
         # study with identifier must not already exist
-        existing_study = Study.objects.filter(
-            assessment_id=db_keys.assessment_working, identifiers__database=2
-        ).first()
+        existing_study = Study.objects.filter(assessment_id=db_keys.assessment_working, identifiers__database=2).first()
         ident = existing_study.identifiers.filter(database=2).first()
         data = {
             "db_type": "HERO",
@@ -200,11 +188,9 @@ class TestStudyViewset:
         data = {"db_type": "PUBMED", "db_id": -1, "assessment_id": db_keys.assessment_working}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert (
-            str(response.data["non_field_errors"][0])
-            == "The following PubMed ID(s) could not be imported: -1"
-        )
+        assert str(response.data["non_field_errors"][0]) == "The following PubMed ID(s) could not be imported: -1"
 
+    @pytest.mark.vcr
     def test_create_from_identifier_valid_requests(self, db_keys):
         url = reverse("study:api:study-create-from-identifier")
         client = APIClient()
@@ -214,11 +200,7 @@ class TestStudyViewset:
         data = {"db_type": "HERO", "db_id": 2199697, "assessment_id": db_keys.assessment_working}
         response = client.post(url, data)
         assert response.status_code == 201
-        assert (
-            Study.objects.get(pk=response.data["id"])
-            .identifiers.filter(database=2, unique_id=str(2199697))
-            .exists()
-        )
+        assert Study.objects.get(pk=response.data["id"]).identifiers.filter(database=2, unique_id=str(2199697)).exists()
 
         # PubMed request with additional fields
         data = {
@@ -231,7 +213,5 @@ class TestStudyViewset:
         assert response.status_code == 201
         assert response.data["bioassay"]
         assert (
-            Study.objects.get(pk=response.data["id"])
-            .identifiers.filter(database=1, unique_id=str(10357793))
-            .exists()
+            Study.objects.get(pk=response.data["id"]).identifiers.filter(database=1, unique_id=str(10357793)).exists()
         )
