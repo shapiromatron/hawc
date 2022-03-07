@@ -66,7 +66,9 @@ class DataForm extends Component {
                         </p>
                     </div>
                     <div className="col-md-6">
-                        <p className="font-weight-bold mb-0">Column choices selected dataset:</p>
+                        <p className="font-weight-bold mb-0">
+                            Column choices for selected dataset:
+                        </p>
                         <ul>
                             {_.map(
                                 constants.colAttributeChoices[store.stagedDataSettings.data_source],
