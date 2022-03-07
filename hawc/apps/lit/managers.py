@@ -150,25 +150,29 @@ class IdentifiersManager(BaseManager):
         return refs
 
     def validate_hero_ids(self, ids: List[int]) -> Tuple[List[int], List[int], Dict]:
-        # ids must be integers
+        # cast all ids to int
         invalid_ids = []
+        _ids = []
         for id in ids:
             try:
-                int(id)
+                _ids.append(int(id))
             except ValueError:
                 invalid_ids.append(id)
         if invalid_ids:
             invalid_join = ", ".join(str(id) for id in invalid_ids)
             raise ValidationError(f"The following HERO ID(s) are not integers: {invalid_join}")
 
-        qs = self.hero(ids, allow_missing=True).values_list("unique_id", flat=True)
-        existing_ids = [int(id_) for id_ in qs]
-        remaining_ids = list(set(ids) - set(existing_ids))
+        # determine which ids do not already exist
+        qs = self.hero(_ids, allow_missing=True).values_list("unique_id", flat=True)
+        existing_ids = [int(id) for id in qs]
+        remaining_ids = list(set(_ids) - set(existing_ids))
+
+        # fetch missing ids
         fetcher = hero.HEROFetch(remaining_ids)
         fetched_content = fetcher.get_content()
         if len(fetched_content["failure"]) > 0:
-            failed_ids = ", ".join(str(el) for el in fetched_content["failure"])
-            raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_ids}")
+            failed_join = ", ".join(str(el) for el in fetched_content["failure"])
+            raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_join}")
         return fetched_content
 
     def bulk_create_hero_ids(self, content):
@@ -196,30 +200,31 @@ class IdentifiersManager(BaseManager):
         return qs
 
     def validate_pubmed_ids(self, ids: List[int]):
-        # ids must be integers
+        # cast all ids to int
         invalid_ids = []
+        _ids = []
         for id in ids:
             try:
-                int(id)
+                _ids.append(int(id))
             except ValueError:
                 invalid_ids.append(id)
         if invalid_ids:
             invalid_join = ", ".join(str(id) for id in invalid_ids)
             raise ValidationError(f"The following PubMed ID(s) are not integers: {invalid_join}")
 
-        # Filter IDs which need to be imported
-        qs = self.filter(
-            database=constants.ReferenceDatabase.PUBMED, unique_id__in=ids
-        ).values_list("unique_id", flat=True)
+        # determine which ids do not already exist
+        qs = self.pubmed(_ids, allow_missing=True).values_list("unique_id", flat=True)
         existing_ids = [int(id) for id in qs]
-        remaining_ids = list(set(ids) - set(existing_ids))
+        remaining_ids = list(set(_ids) - set(existing_ids))
 
-        # Grab Pubmed objects
-        fetch = pubmed.PubMedFetch(remaining_ids)
-        fetched_content = fetch.get_content()
+        # fetch missing ids
+        fetcher = pubmed.PubMedFetch(remaining_ids)
+        fetched_content = fetcher.get_content()
         if failed_ids := set(remaining_ids) - {int(item["PMID"]) for item in fetched_content}:
-            failed_str = ", ".join(str(id) for id in failed_ids)
-            raise ValidationError(f"The following PubMed ID(s) could not be imported: {failed_str}")
+            failed_join = ", ".join(str(id) for id in failed_ids)
+            raise ValidationError(
+                f"The following PubMed ID(s) could not be imported: {failed_join}"
+            )
 
         return fetched_content
 

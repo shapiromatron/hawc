@@ -354,9 +354,9 @@ def create_external_id(db_type: int, content=None) -> models.Identifiers:
         raise ValueError("Content needed to create external ID")
 
     if db_type == constants.ReferenceDatabase.PUBMED:
-        return models.Identifiers.objects.bulk_create_hero_ids(content)[0]
-    elif db_type == constants.ReferenceDatabase.HERO:
         return models.Identifiers.objects.bulk_create_pubmed_ids(content)[0]
+    elif db_type == constants.ReferenceDatabase.HERO:
+        return models.Identifiers.objects.bulk_create_hero_ids(content)[0]
     elif db_type == constants.ReferenceDatabase.DOI:
         return models.Identifiers.objects.create(**content)
 

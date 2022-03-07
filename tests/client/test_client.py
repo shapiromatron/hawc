@@ -693,3 +693,11 @@ class TestClient(LiveServerTestCase, TestCase):
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.study.create(self.db_keys.reference_unlinked)
         assert isinstance(response, dict)
+
+    def test_study_create_from_identifier(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.study.create_from_identifier(
+            db_type="HERO", db_id=2199697, assessment_id=self.db_keys.assessment_client
+        )
+        assert isinstance(response, dict)
