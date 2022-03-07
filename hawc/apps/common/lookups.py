@@ -60,9 +60,24 @@ class RelatedLookup(ModelLookup):
         Returns:
             Any: the desired attribute of the object or child object.
         """
+
+        attr_whitelist = [
+            "endpoint",
+            "animal_group",
+            "experiment",
+            "name",
+            "created",
+            "last_updated",
+            "data_type",
+            "response_units",
+            "observation_time",
+            "system",
+        ]
         obj_ = obj
         try:
             for attr in underscore_path.split("__"):
+                if attr not in attr_whitelist:
+                    raise AttributeError(f"Access to {obj_} attribute is not allowed.")
                 obj_ = getattr(obj_, attr)
         except AttributeError:
             raise AttributeError(f"Element {underscore_path} not found in {obj}")
