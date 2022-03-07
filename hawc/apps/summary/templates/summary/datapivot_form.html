@@ -89,6 +89,9 @@
 
       togglePrefilterSelectorVisibility();
 
+      $("#div_id_caption").one("focusin", (function () {
+        $("#id_evidence_type").focus()
+      }));
     });
   </script>
 {% endblock extrajs %}
