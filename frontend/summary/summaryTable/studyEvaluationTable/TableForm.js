@@ -16,13 +16,13 @@ class TableForm extends Component {
 
         if (!store.hasData) {
             return (
-                <Alert message="No data are available. Studies must be published and have at least one endpoint to be available for this summary table." />
+                <Alert message="No data are available. Check your dataset settings on the 'data' tab." />
             );
         }
 
         return (
             <>
-                <h4>Editing table</h4>
+                <legend>Edit table</legend>
                 <div className="float-right">
                     <button className="btn btn-light mx-1" onClick={store.createSubheader}>
                         <i className="fa fa-plus mr-1"></i>Add subheader
@@ -34,7 +34,6 @@ class TableForm extends Component {
                         <i className="fa fa-plus mr-1"></i>Add row
                     </button>
                 </div>
-                <p className="text-muted">Add and edit rows and columns.</p>
                 <Table store={store} />
             </>
         );

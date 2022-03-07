@@ -24,7 +24,12 @@ class Root extends Component {
             Component = isEditing ? DomainTable : DomainReadOnlyTable;
 
         return store.domains.map((domain, domainIndex) => (
-            <Component key={domain.id} domain={domain} domainIndex={domainIndex} />
+            <Component
+                key={domain.id}
+                domain={domain}
+                domainIndex={domainIndex}
+                domainCount={store.domains.length}
+            />
         ));
     }
 }

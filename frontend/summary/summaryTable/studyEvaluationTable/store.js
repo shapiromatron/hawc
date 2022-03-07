@@ -16,6 +16,7 @@ class StudyEvaluationTableStore {
     @observable isFetchingData = false;
     @observable isFetchingRob = false;
     @observable dataset = null;
+    @observable datasetError = null;
     @observable editColumnIndex = null;
     @observable editIndex = null;
 
@@ -79,8 +80,19 @@ class StudyEvaluationTableStore {
             this.table.assessment,
             this.settings.published_only
         );
+        this.datasetError = null;
         this.isFetchingData = true;
         fetch(url)
+            .then(resp => {
+                if (!resp.ok) {
+                    resp.text().then(d => {
+                        this.datasetError = d;
+                    });
+                    this.isFetchingData = false;
+                    throw new Error("An error occurred in fetching data", resp);
+                }
+                return resp;
+            })
             .then(d => d.json())
             .then(d => {
                 this.dataset = d;
@@ -234,9 +246,7 @@ class StudyEvaluationTableStore {
             .map(d => {
                 return {
                     id: d["score_id"],
-                    label: `${d["score_label"] ? d["score_label"] : "No label"} (${
-                        d["is_default"] ? "default score " : ""
-                    }${d["score_id"]})`,
+                    label: d.score_label ? d.score_label : "No label",
                 };
             })
             .unshift({id: -1, label: "Not measured"})

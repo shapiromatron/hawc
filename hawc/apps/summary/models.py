@@ -193,6 +193,7 @@ class SummaryTable(models.Model):
 
     def get_table(self) -> BaseTable:
         schema_class = self.get_content_schema_class()
+        # ensure the assessment id is from the object; not custom config
         kwargs = {}
         if "assessment_id" in schema_class.schema()["properties"]:
             kwargs["assessment_id"] = self.assessment_id
@@ -928,7 +929,7 @@ class Prefilter:
     def setFiltersFromForm(filters, d, visual_type):
         evidence_type = d.get("evidence_type")
 
-        if visual_type == Visual.BIOASSAY_CROSSVIEW:
+        if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             evidence_type = constants.StudyType.BIOASSAY
 
         if d.get("prefilter_system"):
