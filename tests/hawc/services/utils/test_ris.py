@@ -78,3 +78,13 @@ def test_parsing():
     ref = refs[4]
     ref_json = ref.pop("json")
     assert ref_json["unknown_tag"] == {"JP": ["CRISPR"], "DC": ["Direct Current"]}
+
+
+def test_accession_nuber():
+    fn = DATA_ROOT / "accession-numbers.txt"
+    importer = RisImporter(str(fn))
+    refs = importer.references
+
+    # accession numbers
+    ans = {ref["id"]: ref["accession_number"] for ref in refs}
+    assert ans == {1: "1234", 2: "abc", 3: "123", 4: None, 5: None}

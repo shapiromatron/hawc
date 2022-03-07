@@ -166,7 +166,7 @@ class AnimalGroupTable extends Component {
             return <p>No endpoints are available with dose-response data.</p>;
         }
         return (
-            <table className="table table-condensed table-sm">
+            <table className="table table-sm">
                 {this.renderHeader()}
                 {this.renderBody()}
                 {this.renderFooter()}
