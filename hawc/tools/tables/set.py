@@ -42,7 +42,7 @@ class DataSourceChoices(Enum):
             study_filters["published"] = True
         study_qs = Study.objects.filter(**study_filters)
         study_df = pd.DataFrame.from_records(study_qs.values("id", "short_citation"))
-        study_ids = study_df.id.tolist()
+        study_ids = study_df.id.tolist() if study_df.size > 0 else []
         study_data = study_df.rename(
             columns={"id": "study id", "short_citation": "study citation"}
         ).to_dict(orient="records")
