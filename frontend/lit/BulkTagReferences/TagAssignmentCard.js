@@ -80,7 +80,7 @@ class TagAssignmentCard extends Component {
                     style={{height: 400}}>
                     <p className="float-right text-muted mb-2">{matchedMsg}</p>
                     {nMatchedRows > 0 ? (
-                        <table className="table table-condensed table-sm">
+                        <table className="table table-sm">
                             <thead>
                                 <tr>
                                     <th>Row #</th>
@@ -112,7 +112,7 @@ class TagAssignmentCard extends Component {
                 {nUnmatchedRows > 0 ? (
                     <div className="col-md-6 resize-y" style={{height: 400}}>
                         <p className="float-right text-muted mb-2">{unmatchedMessage}</p>
-                        <table className="table table-condensed table-sm">
+                        <table className="table table-sm">
                             <thead>
                                 <tr>
                                     <th>Row #</th>

@@ -22,11 +22,10 @@ class DomainTable extends Component {
     }
 
     render() {
-        const {store, domainIndex, domain} = this.props,
+        const {store, domainIndex, domain, domainCount} = this.props,
             {detailedView} = this.state,
             {moveDomain} = store,
             btnCaption = detailedView ? "Hide details" : "Show details";
-
         return (
             <>
                 <ActionsButton
@@ -58,17 +57,21 @@ class DomainTable extends Component {
                             <th>Domain #{domainIndex + 1}</th>
                             <th>{detailedView ? <DetailDomain object={domain} /> : domain.name}</th>
                             <th>
-                                <button
-                                    className="btn btn-info"
-                                    onClick={() => moveDomain(domainIndex, false)}>
-                                    <i className="fa fa-arrow-up"></i>
-                                </button>
+                                {domainCount > 1 ? (
+                                    <button
+                                        className="btn btn-info"
+                                        onClick={() => moveDomain(domainIndex, false)}>
+                                        <i className="fa fa-arrow-up"></i>
+                                    </button>
+                                ) : null}
                                 &nbsp;
-                                <button
-                                    className="btn btn-info"
-                                    onClick={() => moveDomain(domainIndex, true)}>
-                                    <i className="fa fa-arrow-down"></i>
-                                </button>
+                                {domainCount > 1 ? (
+                                    <button
+                                        className="btn btn-info"
+                                        onClick={() => moveDomain(domainIndex, true)}>
+                                        <i className="fa fa-arrow-down"></i>
+                                    </button>
+                                ) : null}
                             </th>
                             <th>
                                 <a className="btn btn-info" href={domainUpdateUrl(domain.id)}>
@@ -91,6 +94,7 @@ class DomainTable extends Component {
                                     metric={metric}
                                     moveMetric={store.moveMetric}
                                     detailedView={detailedView}
+                                    metricCount={domain.metrics.length}
                                 />
                             );
                         })}
@@ -105,6 +109,7 @@ DomainTable.propTypes = {
     store: PropTypes.object,
     domainIndex: PropTypes.number.isRequired,
     domain: PropTypes.object.isRequired,
+    domainCount: PropTypes.number.isRequired,
 };
 
 export default DomainTable;
