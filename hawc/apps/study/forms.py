@@ -154,18 +154,17 @@ class IdentifierStudyForm(forms.Form):
         required=True,
         choices=[
             (choice.value, choice.label)
-            for choice in [ReferenceDatabase.PUBMED, ReferenceDatabase.HERO, ReferenceDatabase.DOI]
+            for choice in [ReferenceDatabase.PUBMED, ReferenceDatabase.HERO]
         ],
-        help_text="Select which database to use.",
     )
-    db_id = forms.CharField(label="Database ID", required=True, help_text="Give database ID.",)
+    db_id = forms.CharField(label="Database ID", required=True,)
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         inputs = {
-            "legend_text": "Create a new study",
-            "help_text": "This is help text",
+            "legend_text": "Create a new study from identifier",
+            "help_text": "Create a new study from a given database and ID.",
             "cancel_url": reverse("study:list", args=[self.assessment.id]),
         }
 

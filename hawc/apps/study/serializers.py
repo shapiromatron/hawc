@@ -92,7 +92,7 @@ class VerboseStudySerializer(StudySerializer):
 
 
 class StudyFromIdentifierSerializer(serializers.ModelSerializer):
-    db_type = serializers.ChoiceField(choices=["PUBMED", "HERO", "DOI"], write_only=True)
+    db_type = serializers.ChoiceField(choices=["PUBMED", "HERO"], write_only=True)
     db_id = serializers.CharField(write_only=True)
     assessment_id = serializers.PrimaryKeyRelatedField(
         queryset=Assessment.objects.all(), source="assessment"
