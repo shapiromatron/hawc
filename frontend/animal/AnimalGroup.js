@@ -94,20 +94,19 @@ class AnimalGroup {
                 return duration_observation ? `${duration_observation} days` : undefined;
             },
             getDoses = function(doses) {
-                if (doses.length === 0) return undefined;
-                var grps = _.chain(doses)
-                        .sortBy(d => d.dose_group_id)
-                        .groupBy(d => d.dose_units.name)
-                        .value(),
-                    list = _.map(_.keys(grps), function(g) {
-                        return [
-                            _.map(grps[g], function(d) {
-                                return ` ${d.dose}`;
-                            }),
-                            ` ${g}`,
-                        ];
-                    });
-                return list;
+                if (doses.length === 0) {
+                    return undefined;
+                }
+
+                let grps = _.chain(doses)
+                    .sortBy(d => d.dose_group_id)
+                    .groupBy(d => d.dose_units.name)
+                    .value();
+
+                return _.map(grps, (groups, units) => {
+                    let ds = _.map(groups, d => d.dose.toString()).join(", ");
+                    return `${ds} ${units}`;
+                });
             },
             getDosedAnimals = function(id_, dosed_animals) {
                 // only show dosed-animals if dosing-regime not applied to these animals
