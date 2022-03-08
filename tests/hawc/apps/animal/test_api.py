@@ -337,7 +337,12 @@ class TestAnimalGroupCreateApi:
         animal_group = models.AnimalGroup.objects.get(id=response.json()["id"])
 
         # test relations
-        data.update(dict(siblings_id=animal_group.id, parent_ids=[animal_group.id],))
+        data.update(
+            dict(
+                siblings_id=animal_group.id,
+                parent_ids=[animal_group.id],
+            )
+        )
         response = client.post(url, data, format="json")
         assert response.status_code == 201
         assert models.AnimalGroup.objects.filter(name=data["name"]).count() == 2

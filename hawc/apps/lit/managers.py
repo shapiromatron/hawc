@@ -31,7 +31,10 @@ class ReferenceFilterTagManager(TaggableManager):
                 f"{model.__name__} objects need to have a primary key value before you can access their tags."
             )
         manager = _ReferenceFilterTagManager(
-            through=self.through, model=model, instance=instance, prefetch_cache_name=self.name,
+            through=self.through,
+            model=model,
+            instance=instance,
+            prefetch_cache_name=self.name,
         )
         return manager
 

@@ -12,5 +12,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(model_name="riskofbiasmetric", old_name="metric", new_name="name",),
+        migrations.RenameField(
+            model_name="riskofbiasmetric",
+            old_name="metric",
+            new_name="name",
+        ),
     ]

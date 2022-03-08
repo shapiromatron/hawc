@@ -253,35 +253,35 @@ class IdLookupMixin:
 
 class GetOrCreateMixin:
     """
-    Class to be mixed into serializers which combines get/create functionality
+     Class to be mixed into serializers which combines get/create functionality
 
-   This mixin:
-    1. disables any UniqueTogetherValidators
-    2. overrides create to actually call get_or_create
+    This mixin:
+     1. disables any UniqueTogetherValidators
+     2. overrides create to actually call get_or_create
 
-    The end result is a serializer mixing this in can either lookup or create
-    an element, so that clients can pass the same payload multiple times and get back
-    consistent results (idempotency, more or less).
+     The end result is a serializer mixing this in can either lookup or create
+     an element, so that clients can pass the same payload multiple times and get back
+     consistent results (idempotency, more or less).
 
-    To elaborate, as a use case consider a model like epi.models.Criteria;
-    this contains a unique_together meta restriction on the "assessment"
-    and "description" fields. Or in other words, in the database
-    assessment+description are guaranteed to be unique.
+     To elaborate, as a use case consider a model like epi.models.Criteria;
+     this contains a unique_together meta restriction on the "assessment"
+     and "description" fields. Or in other words, in the database
+     assessment+description are guaranteed to be unique.
 
-    We want to build an API able to support something like a POST
-    { "assessment": 1, "description": "foo" }
-    to the endpoint defined for this. A normal serializer will complain
-    if a criteria with that description already exists, due to the
-    UniqueTogetherValidator firing. If instead we mix this class into
-    the appropriate serializer, we can code things such that the first call
-    will create a criteria with description "foo", and the second
-    call will just fetch the existing one. This makes client construction
-    just a little more straightforward -- rather than having to
-    lookup/check/create-if-needed, clients can just hit one endpoint and
-    get back the same object id every time.
+     We want to build an API able to support something like a POST
+     { "assessment": 1, "description": "foo" }
+     to the endpoint defined for this. A normal serializer will complain
+     if a criteria with that description already exists, due to the
+     UniqueTogetherValidator firing. If instead we mix this class into
+     the appropriate serializer, we can code things such that the first call
+     will create a criteria with description "foo", and the second
+     call will just fetch the existing one. This makes client construction
+     just a little more straightforward -- rather than having to
+     lookup/check/create-if-needed, clients can just hit one endpoint and
+     get back the same object id every time.
 
-    Basic approach taken from https://stackoverflow.com/questions/25026034/
-   """
+     Basic approach taken from https://stackoverflow.com/questions/25026034/
+    """
 
     def run_validators(self, value):
         for validator in self.validators:

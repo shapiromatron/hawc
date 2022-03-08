@@ -39,7 +39,9 @@ elif email_backend == "MAILGUN":
 elif email_backend == "SENDGRID":
     INSTALLED_APPS += ("anymail",)
     EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
-    ANYMAIL = dict(SENDGRID_API_KEY=os.environ["SENDGRID_API_KEY"],)
+    ANYMAIL = dict(
+        SENDGRID_API_KEY=os.environ["SENDGRID_API_KEY"],
+    )
 elif email_backend == "CONSOLE":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:

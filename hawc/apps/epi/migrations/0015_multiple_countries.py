@@ -26,5 +26,8 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(blank=True, to="epi.Country"),
         ),
         migrations.RunPython(migrate_countries_m2m),
-        migrations.RemoveField(model_name="studypopulation", name="country",),
+        migrations.RemoveField(
+            model_name="studypopulation",
+            name="country",
+        ),
     ]

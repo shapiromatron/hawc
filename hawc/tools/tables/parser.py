@@ -90,7 +90,8 @@ class QuillParser(HTMLParser):
         # Create the w:hyperlink tag and add needed values
         hyperlink = docx.oxml.shared.OxmlElement("w:hyperlink")
         hyperlink.set(
-            docx.oxml.shared.qn("r:id"), r_id,
+            docx.oxml.shared.qn("r:id"),
+            r_id,
         )
         hyperlink.append(self._inline._element)
         self._paragraph._p.append(hyperlink)

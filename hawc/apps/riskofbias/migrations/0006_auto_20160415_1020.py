@@ -13,9 +13,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="riskofbias", name="metric",),
-        migrations.RemoveField(model_name="riskofbias", name="notes",),
-        migrations.RemoveField(model_name="riskofbias", name="score",),
+        migrations.RemoveField(
+            model_name="riskofbias",
+            name="metric",
+        ),
+        migrations.RemoveField(
+            model_name="riskofbias",
+            name="notes",
+        ),
+        migrations.RemoveField(
+            model_name="riskofbias",
+            name="score",
+        ),
         migrations.AlterField(
             model_name="riskofbiasscore",
             name="riskofbias",
@@ -45,6 +54,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterModelOptions(
-            name="riskofbias", options={"verbose_name_plural": "Risk of Biases"},
+            name="riskofbias",
+            options={"verbose_name_plural": "Risk of Biases"},
         ),
     ]

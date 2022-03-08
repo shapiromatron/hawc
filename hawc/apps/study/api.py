@@ -17,7 +17,8 @@ from . import models, serializers
 
 
 class Study(
-    mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet,
+    mixins.CreateModelMixin,
+    viewsets.ReadOnlyModelViewSet,
 ):
     assessment_filter_args = "assessment"
     model = models.Study
@@ -40,7 +41,8 @@ class Study(
             return self.model.objects.get_qs(self.assessment)
         else:
             return self.model.objects.prefetch_related(
-                "identifiers", "riskofbiases__scores__overridden_objects__content_object",
+                "identifiers",
+                "riskofbiases__scores__overridden_objects__content_object",
             ).select_related("assessment")
 
     @action(detail=False)

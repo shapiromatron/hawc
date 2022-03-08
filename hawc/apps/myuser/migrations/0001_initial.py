@@ -16,7 +16,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("password", models.CharField(max_length=128, verbose_name="password")),
@@ -34,7 +37,10 @@ class Migration(migrations.Migration):
                         verbose_name="superuser status",
                     ),
                 ),
-                ("email", models.EmailField(unique=True, max_length=254, db_index=True),),
+                (
+                    "email",
+                    models.EmailField(unique=True, max_length=254, db_index=True),
+                ),
                 (
                     "first_name",
                     models.CharField(max_length=30, verbose_name="first name", blank=True),
@@ -97,7 +103,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (

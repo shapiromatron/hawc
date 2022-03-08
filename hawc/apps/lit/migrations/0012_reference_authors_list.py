@@ -169,7 +169,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RenameField(
-            model_name="reference", old_name="authors", new_name="authors_short",
+            model_name="reference",
+            old_name="authors",
+            new_name="authors_short",
         ),
         migrations.AlterField(
             model_name="reference",

@@ -20,10 +20,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="result", name="name", field=models.CharField(blank=True, max_length=256),
+            model_name="result",
+            name="name",
+            field=models.CharField(blank=True, max_length=256),
         ),
         migrations.RunPython(setName, reverse_code=migrations.RunPython.noop),
         migrations.AlterField(
-            model_name="result", name="name", field=models.CharField(max_length=256),
+            model_name="result",
+            name="name",
+            field=models.CharField(max_length=256),
         ),
     ]

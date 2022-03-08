@@ -7,7 +7,8 @@ def update_legacy_values(apps, schema_editor):
 
     Assessment = apps.get_model("assessment", "assessment")
     Assessment.objects.update(
-        modify_uncontrolled_vocabulary=False, vocabulary=None,
+        modify_uncontrolled_vocabulary=False,
+        vocabulary=None,
     )
 
 
@@ -40,6 +41,9 @@ class Migration(migrations.Migration):
                 verbose_name="Controlled vocabulary",
             ),
         ),
-        migrations.AlterModelOptions(name="baseendpoint", options={"ordering": ("id",)},),
+        migrations.AlterModelOptions(
+            name="baseendpoint",
+            options={"ordering": ("id",)},
+        ),
         migrations.RunPython(update_legacy_values, migrations.RunPython.noop),
     ]

@@ -227,7 +227,10 @@ class RisImportForm(SearchForm):
         if fileObj.size > 1024 * 1024 * 10:
             raise forms.ValidationError("Input file must be <10 MB")
 
-        if fileObj.name[-4:] not in (".txt", ".ris",):
+        if fileObj.name[-4:] not in (
+            ".txt",
+            ".ris",
+        ):
             raise forms.ValidationError(self.RIS_EXTENSION)
 
         # convert BytesIO file to StringIO file

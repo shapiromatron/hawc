@@ -22,7 +22,8 @@ urlpatterns = [
     path("", views.Home.as_view(), name="home"),
     path("portal/", views.AssessmentList.as_view(), name="portal"),
     path(
-        "robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+        "robots.txt",
+        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
     path("about/", views.About.as_view(), name="about"),
     path("resources/", views.Resources.as_view(), name="resources"),

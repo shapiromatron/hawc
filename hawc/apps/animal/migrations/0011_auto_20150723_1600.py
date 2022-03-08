@@ -15,11 +15,23 @@ class Migration(migrations.Migration):
     ]
 
     state_operations = [
-        migrations.DeleteModel(name="DoseUnits",),
-        migrations.AlterUniqueTogether(name="strain", unique_together=set([]),),
-        migrations.RemoveField(model_name="strain", name="species",),
-        migrations.DeleteModel(name="Species",),
-        migrations.DeleteModel(name="Strain",),
+        migrations.DeleteModel(
+            name="DoseUnits",
+        ),
+        migrations.AlterUniqueTogether(
+            name="strain",
+            unique_together=set([]),
+        ),
+        migrations.RemoveField(
+            model_name="strain",
+            name="species",
+        ),
+        migrations.DeleteModel(
+            name="Species",
+        ),
+        migrations.DeleteModel(
+            name="Strain",
+        ),
     ]
 
     operations = [migrations.SeparateDatabaseAndState(state_operations=state_operations)]

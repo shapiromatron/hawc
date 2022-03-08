@@ -197,7 +197,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True, url_path="references-download", renderer_classes=PandasRenderers,
+        detail=True,
+        url_path="references-download",
+        renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """

@@ -260,7 +260,8 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
-            back_href=get_referrer(self.request, reverse("portal")), user=self.request.user,
+            back_href=get_referrer(self.request, reverse("portal")),
+            user=self.request.user,
         )
         return kwargs
 

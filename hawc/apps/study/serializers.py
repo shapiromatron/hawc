@@ -91,7 +91,10 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
     class Meta:
         model = models.Study
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = ("id", "short_citation",) + cleanup_fields
+        fields = (
+            "id",
+            "short_citation",
+        ) + cleanup_fields
 
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)

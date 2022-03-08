@@ -191,7 +191,8 @@ class Search(models.Model):
         help_text="Database used to identify literature.",
     )
     title = models.CharField(
-        max_length=128, help_text="A brief-description to describe the identified literature.",
+        max_length=128,
+        help_text="A brief-description to describe the identified literature.",
     )
     slug = models.SlugField(
         verbose_name="URL Name",

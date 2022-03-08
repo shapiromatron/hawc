@@ -91,7 +91,10 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
     meta = obj._meta
     log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
     log = Log.objects.create(
-        assessment_id=assessment_id, user_id=user_id, message=log_message, content_object=obj,
+        assessment_id=assessment_id,
+        user_id=user_id,
+        message=log_message,
+        content_object=obj,
     )
     # Associate log with reversion
     comment = (
@@ -291,14 +294,18 @@ class AssessmentPermissionsMixin:
 class TimeSpentOnPageMixin:
     def get(self, request, *args, **kwargs):
         TimeSpentEditing.set_start_time(
-            self.request.session.session_key, self.request.path,
+            self.request.session.session_key,
+            self.request.path,
         )
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
         response = super().get_success_url()
         TimeSpentEditing.add_time_spent_job(
-            self.request.session.session_key, self.request.path, self.object, self.assessment.id,
+            self.request.session.session_key,
+            self.request.path,
+            self.object,
+            self.assessment.id,
         )
         return response
 

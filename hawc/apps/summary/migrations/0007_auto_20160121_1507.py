@@ -11,5 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="datapivotquery", name="units",),
+        migrations.RemoveField(
+            model_name="datapivotquery",
+            name="units",
+        ),
     ]
