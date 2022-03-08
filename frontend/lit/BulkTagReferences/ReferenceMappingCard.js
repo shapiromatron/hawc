@@ -47,7 +47,7 @@ class ReferenceMappingCard extends Component {
                         {nMatchedRows} row(s) which match HAWC reference.
                     </p>
                     {nMatchedRows > 0 ? (
-                        <table className="table table-condensed table-sm">
+                        <table className="table table-sm">
                             <thead>
                                 <tr>
                                     <th>Row #</th>
@@ -83,7 +83,7 @@ class ReferenceMappingCard extends Component {
                             {nUnmatchedRows} row(s) where a matching HAWC reference cannot be
                             determined.
                         </p>
-                        <table className="table table-condensed table-sm">
+                        <table className="table table-sm">
                             <thead>
                                 <tr>
                                     <th>Row #</th>

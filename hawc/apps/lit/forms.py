@@ -11,6 +11,7 @@ from ...services.utils import ris
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, addPopupLink
 from ..common.helper import read_excel
+from ..study.models import Study
 from . import constants, models
 
 logger = logging.getLogger(__name__)
@@ -548,3 +549,42 @@ class ReferenceExcelUploadForm(forms.Form):
                 '"Full text URL", case sensitive.'
             )
         return fn
+
+
+class BulkReferenceStudyExtractForm(forms.Form):
+    references = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple, queryset=models.Reference.objects.none(), required=True
+    )
+    study_type = forms.TypedMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        choices=[
+            ("bioassay", "Animal bioassay"),
+            ("in_vitro", "In vitro"),
+            ("epi", "Epidemiology"),
+            ("epi_meta", "Epidemiology meta-analysis"),
+        ],
+    )
+
+    def clean_references(self):
+        data = self.cleaned_data["references"]
+
+        for reference in data:
+            if reference.has_study:
+                raise forms.ValidationError(
+                    f"A Study has already been created from reference #{reference.id}."
+                )
+        return data
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        self.reference_qs = kwargs.pop("reference_qs")
+        super().__init__(*args, **kwargs)
+        self.fields["references"].queryset = self.reference_qs
+
+    @transaction.atomic
+    def bulk_create_studies(self):
+        references = self.cleaned_data["references"]
+        study_type = self.cleaned_data["study_type"]
+        for reference in references:
+            study_attrs = {st: True for st in study_type}
+            Study.save_new_from_reference(reference, study_attrs)
