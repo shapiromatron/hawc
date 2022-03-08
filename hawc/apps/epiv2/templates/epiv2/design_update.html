@@ -265,14 +265,15 @@
     </div>
 </div>
 
-<a class="btn btn-m btn-light pull-right mb-3" href="{% url 'epiv2:design_detail' object.pk %}"><i class="fa fa-fw fa-times mr-1"></i>
+<a class="btn btn-m btn-light pull-right mb-3" href="{{object.get_absolute_url}}"><i class="fa fa-fw fa-times mr-1"></i>
 Cancel</a>
+{% endblock %}
 
-<script>
-    function exposureFunction(value) {
-        if (value == "BM") {
-            document.getElementById("row_id_biomonitoring_matrix_2").setAttribute("style", "")
-        }
-    }
+
+{% block extrajs %}
+<script type="text/javascript">
+window.app.startup("epiv2Startup", function(app){
+    app.formStartup(document);
+});
 </script>
 {% endblock %}

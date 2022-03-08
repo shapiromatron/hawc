@@ -1,9 +1,9 @@
 {% load crud_url %}
 {% load crispy_forms_tags %}
-<tr hx-target="this" hx-swap="outerHTML swap:0s" id="{{model}}-empty-row" class="">
+<tr hx-target="this" hx-swap="outerHTML swap:0s" id="{{model}}-empty-row">
     {% if form %}
     <td colspan="100%">
-        <form method="post" class="border my-2 p-2 pb-5 edit-form-background">
+        <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-{{model}}">
             {% crispy form %}
             <div class="form-row pull-right">
                 {% if form.instance.id %}
@@ -27,12 +27,3 @@
     </td>
     {% endif %}
 </tr>
-{% if form.instance.id and form.instance.measurement_type == "BM" %}
-{% else %}
-{% block extrajs %}
-<script>
-    document.getElementById("row_id_biomonitoring_matrix_2").setAttribute("style", "display: none;")
-</script>
-{% endblock %}
-{% endif %}
-

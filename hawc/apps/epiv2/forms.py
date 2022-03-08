@@ -114,7 +114,6 @@ class ExposureForm(forms.ModelForm):
     def helper(self):
         for fld in ["measurement_type", "comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
-        self.fields["measurement_type"].widget.attrs["onchange"] = "exposureFunction(this.value);"
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 2, "col-md-6")
