@@ -78,6 +78,12 @@ class Design(models.Model):
     def get_absolute_url(self):
         return reverse("epiv2:design_detail", args=(self.pk,))
 
+    def get_update_url(self):
+        return reverse("epiv2:design_update", args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse("epiv2:design_delete", args=(self.pk,))
+
     def __str__(self):
         return f"{self.summary}"
 
@@ -324,8 +330,10 @@ class DataExtraction(models.Model):
     sub_population = models.CharField(
         max_length=64, blank=True, help_text="Use N/A if sub population is not relevant"
     )
-    outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE)
-    exposure_level = models.ForeignKey(ExposureLevel, on_delete=models.CASCADE)
+    outcome = models.ForeignKey(Outcome, related_name="outcomes", on_delete=models.CASCADE)
+    exposure_level = models.ForeignKey(
+        ExposureLevel, related_name="exposure_levels", on_delete=models.CASCADE
+    )
     outcome_measurement_timing = models.CharField(max_length=128, blank=True)
     n = models.PositiveIntegerField(blank=True, null=True)
     effect_estimate_type = models.CharField(

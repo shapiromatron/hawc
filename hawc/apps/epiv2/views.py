@@ -17,7 +17,7 @@ class DesignCreate(BaseCreate):
     form_class = forms.DesignForm
 
     def get_success_url(self):
-        return reverse("epiv2:design_update", args=[self.object.id])
+        return self.object.get_update_url()
 
 
 class DesignUpdate(BaseUpdate):

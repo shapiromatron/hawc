@@ -133,6 +133,8 @@ class ExposureLevelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if design:
             self.instance.design = design
+        self.fields["chemical"].queryset = self.instance.design.chemicals.all()
+        self.fields["exposure_measurement"].queryset = self.instance.design.exposures.all()
 
     @property
     def helper(self):
@@ -204,6 +206,8 @@ class DataExtractionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if design:
             self.instance.design = design
+        self.fields["outcome"].queryset = self.instance.design.outcomes.all()
+        self.fields["exposure_level"].queryset = self.instance.design.exposure_levels.all()
 
     @property
     def helper(self):
