@@ -379,6 +379,12 @@ class DataExtraction(models.Model):
     def get_study(self):
         return self.design.get_study()
 
+    def get_estimate_value(self) -> str:
+        value = f"{self.effect_estimate}" if self.effect_estimate is not None else "-"
+        if self.ci_lcl and self.ci_ucl:
+            value += f" [{self.ci_lcl}, {self.ci_ucl}]"
+        return value
+
     def clone(self):
         self.id = None
         self.save()
