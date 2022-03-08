@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     "hawc.apps.bmd",
     "hawc.apps.summary",
     "hawc.apps.mgmt",
+    "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
 )
 
@@ -334,9 +335,6 @@ PM_CAN_MAKE_PUBLIC = True
 
 # are users required to accept a license
 ACCEPT_LICENSE_REQUIRED = True
-
-# add extra branding (EPA flavor only)
-EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
 

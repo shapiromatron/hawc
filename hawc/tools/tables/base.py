@@ -41,9 +41,17 @@ class BaseCell(BaseModel):
 class BaseCellGroup(BaseModel):
     cells: List[BaseCell] = []
 
+    class Config:
+        underscore_attrs_are_private = True
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._setup()
         self._set_cells()
+
+    def _setup(self):
+        # additional setup after pydantic validation goes here
+        pass
 
     def add_offset(self, row=0, column=0):
         for cell in self.cells:
@@ -75,9 +83,6 @@ class BaseTable(BaseCellGroup):
         self.sort_cells()
 
     def validate_cells(self, cells):
-        if len(cells) < 1:
-            raise ValueError("At least one cell is required.")
-
         table_cells = [[False] * self.columns for _ in range(self.rows)]
         for cell in cells:
             try:
@@ -118,6 +123,11 @@ class BaseTable(BaseCellGroup):
                 for table_cell in table_cells[i::columns]:
                     table_cell.width = Inches(width)
         return docx
+
+    @classmethod
+    def get_data(cls, assessment_id: int, **kwargs) -> Dict:
+        # return any queried data needed to build the table
+        return {}
 
     @classmethod
     def get_default_props(cls) -> Dict:
