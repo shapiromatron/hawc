@@ -14,13 +14,17 @@ class RiskOfBiasScore {
             if (!rob.data.author) {
                 _.extend(rob.data, {author: {full_name: ""}});
             }
+            if (rob.study) {
+                _.extend(rob.data, {
+                    study: {
+                        name: rob.study.data.short_citation,
+                        url: rob.study.data.url,
+                    },
+                });
+            }
             return _.extend(rob.data, {
                 domain: rob.data.metric.domain.id,
                 domain_name: rob.data.metric.domain.name,
-                study: {
-                    name: rob.study.data.short_citation,
-                    url: rob.study.data.url,
-                },
                 final: true,
             });
         });

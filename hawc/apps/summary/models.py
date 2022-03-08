@@ -18,6 +18,7 @@ from treebeard.mp_tree import MP_Node
 from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import BaseTable, GenericTable
 from hawc.tools.tables.parser import QuillParser
+from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -126,6 +127,7 @@ class SummaryTable(models.Model):
     TABLE_SCHEMA_MAP = {
         constants.TableType.GENERIC: GenericTable,
         constants.TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
+        constants.TableType.STUDY_EVALUATION: StudyEvaluationTable,
     }
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
@@ -190,7 +192,12 @@ class SummaryTable(models.Model):
         return self.TABLE_SCHEMA_MAP[self.table_type]
 
     def get_table(self) -> BaseTable:
-        return self.get_content_schema_class().parse_obj(self.content)
+        schema_class = self.get_content_schema_class()
+        # ensure the assessment id is from the object; not custom config
+        kwargs = {}
+        if "assessment_id" in schema_class.schema()["properties"]:
+            kwargs["assessment_id"] = self.assessment_id
+        return schema_class.parse_obj(dict(self.content, **kwargs))
 
     @classmethod
     def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
@@ -204,6 +211,10 @@ class SummaryTable(models.Model):
         table = self.get_table()
         docx = table.to_docx(parser=QuillParser(base_url=base_url))
         return ReportExport(docx=docx, filename=self.slug)
+
+    @classmethod
+    def get_data(cls, table_type: int, assessment_id: int, **kwargs):
+        return cls.TABLE_SCHEMA_MAP[table_type].get_data(assessment_id=assessment_id, **kwargs)
 
     def clean(self):
         # make sure table can be built

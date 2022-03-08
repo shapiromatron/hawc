@@ -43,6 +43,7 @@ python -m pip install -U pip
 pip install -r requirements/dev.txt
 yarn --cwd frontend
 manage.py migrate
+manage.py recreate_views
 goto :eof
 
 :build
