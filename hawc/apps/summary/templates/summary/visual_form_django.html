@@ -21,16 +21,12 @@
             new smartTags.SmartTagEditor($('#id_caption'), { submitEl: '#visualForm' });
         })
     });
-</script>
-<script type="text/javascript">
-        $(document).ready(() => {
-            var count = 0;
-            $("#div_id_caption").on("focusin", (function () {
-                if (count < 2) {
-                    $("#id_title").focus()
-                    count++;
-                }
-            }));
-        });
+    var count = 0;
+    $("#div_id_caption").on("focusin", (function () {
+        if (count < 2) {
+            $("#id_title").focus()
+            count++;
+        }
+    }));
 </script>
 {% endblock %}
