@@ -144,7 +144,7 @@ class Migration(migrations.Migration):
                         help_text="Typically available for cohorts. Abbreviations provided in the paper are fine",
                         max_length=64,
                         null=True,
-                        verbose_name="Study name (if applicable",
+                        verbose_name="Study name (if applicable)",
                     ),
                 ),
                 (
@@ -383,7 +383,7 @@ class Migration(migrations.Migration):
                     "neg_exposure",
                     models.FloatField(
                         blank=True,
-                        help_text="e.g., %% below the LOD",
+                        help_text="e.g., % below the LOD",
                         null=True,
                         verbose_name="Percent with negligible exposure",
                     ),

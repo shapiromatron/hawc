@@ -98,7 +98,7 @@
             </thead>
             <tbody>
                 {% for object in object.exposure_levels.all %}
-                {% include "epiv2/fragments/exposurelevel_row.html" %}
+                    {% include "epiv2/fragments/exposurelevel_row.html" %}
                 {% empty %}
                 <tr>
                     <td colspan="100%">
@@ -122,14 +122,14 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Endpoint</th>
                     <th>Health Outcome</th>
                     <th>Health Outcome System</th>
                 </tr>
             </thead>
             <tbody>
                 {% for object in object.outcomes.all %}
-                {% include "epiv2/fragments/outcome_row.html" %}
+                    {% include "epiv2/fragments/outcome_row.html" %}
                 {% empty %}
                 <tr>
                     <td colspan="100%">
@@ -160,7 +160,7 @@
             </thead>
             <tbody>
                 {% for object in object.adjustment_factors.all %}
-                {% include "epiv2/fragments/adjustment_factor_row.html" %}
+                    {% include "epiv2/fragments/adjustment_factor_row.html" %}
                 {% empty %}
                 <tr>
                     <td colspan="100%">
@@ -203,7 +203,7 @@
             </thead>
             <tbody>
                 {% for object in object.data_extractions.all %}
-                {% include "epiv2/fragments/data_extraction_row.html" %}
+                    {% include "epiv2/fragments/data_extraction_row.html" %}
                 {% empty %}
                 <tr>
                     <td colspan="100%">

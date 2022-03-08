@@ -24,7 +24,6 @@ class DesignForm(forms.ModelForm):
     class Meta:
         model = models.Design
         exclude = ("study",)
-        labels = {}
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -34,9 +33,7 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        text_area_flds = ["age_profile", "comments"]
-        for fld in text_area_flds:
-            self.fields[fld].widget.attrs["rows"] = 3
+        self.fields["comments"].widget.attrs["rows"] = 3
 
         if self.instance.id:
             helper = BaseFormHelper(self)
@@ -51,10 +48,9 @@ class DesignForm(forms.ModelForm):
             }
             helper = BaseFormHelper(self, **inputs)
 
-        helper.add_row("study_design", 3, "col-md-4")
-        helper.add_row("age_description", 3, "col-md-4")
-        helper.add_row("summary", 4, "col-md-3")
-        helper.add_row("years", 2, "col-md-6")
+        helper.add_row("study_design", 4, "col-md-3")
+        helper.add_row("sex", 4, "col-md-3")
+        helper.add_row("countries", 4, "col-md-3")
         helper.add_row("comments", 1, "col-md-12")
 
         return helper
@@ -64,7 +60,6 @@ class CriteriaForm(forms.ModelForm):
     class Meta:
         model = models.Criteria
         exclude = ("design",)
-        labels = {}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -84,7 +79,6 @@ class ChemicalForm(forms.ModelForm):
     class Meta:
         model = models.Chemical
         exclude = ("design",)
-        labels = {}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -109,7 +103,6 @@ class ExposureForm(forms.ModelForm):
     class Meta:
         model = models.Exposure
         exclude = ("design",)
-        labels = {}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -119,9 +112,8 @@ class ExposureForm(forms.ModelForm):
 
     @property
     def helper(self):
-        text_area_flds = ["measurement_type", "comments"]
-        for fld in text_area_flds:
-            self.fields[fld].widget.attrs["rows"] = 3
+        self.fields["measurement_type"].widget.attrs["rows"] = 3
+        self.fields["comments"].widget.attrs["rows"] = 3
         self.fields["measurement_type"].widget.attrs["onchange"] = "exposureFunction(this.value);"
         helper = BaseFormHelper(self)
         helper.form_tag = False
@@ -135,7 +127,6 @@ class ExposureLevelForm(forms.ModelForm):
     class Meta:
         model = models.ExposureLevel
         exclude = ("design",)
-        labels = {}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -160,7 +151,6 @@ class AdjustmentFactorForm(forms.ModelForm):
     class Meta:
         model = models.AdjustmentFactor
         exclude = ("design",)
-        labels = {}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -171,7 +161,7 @@ class AdjustmentFactorForm(forms.ModelForm):
     @property
     def helper(self):
         helper = BaseFormHelper(self)
-        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("name", 2, ["col-md-3", "col-md-9"])
         helper.form_tag = False
         return helper
 
@@ -201,9 +191,7 @@ class OutcomeForm(forms.ModelForm):
 
     @property
     def helper(self):
-        text_area_flds = ["comments"]
-        for fld in text_area_flds:
-            self.fields[fld].widget.attrs["rows"] = 3
+        self.fields["comments"].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.add_row("endpoint", 4, "col-md-3")
         helper.form_tag = False
@@ -214,7 +202,6 @@ class DataExtractionForm(forms.ModelForm):
     class Meta:
         model = models.DataExtraction
         exclude = ("design",)
-        labels = {}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -228,11 +215,10 @@ class DataExtractionForm(forms.ModelForm):
         for fld in text_area_flds:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
-        helper.add_row("sub_population", 5, "col-auto")
-        helper.add_row("effect_estimate_type", 3, "col-md-4")
-        helper.add_row("ci_lcl", 6, "col-md-2")
-        helper.add_row(
-            "adjustment_factor", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
-        )
+        helper.add_row("sub_population", 4, "col-md-3")
+        helper.add_row("n", 4, "col-md-3")
+        helper.add_row("ci_lcl", 4, "col-md-3")
+        helper.add_row("pvalue", 4, "col-md-3")
+        helper.add_row("data_location", 3, "col-md-4")
         helper.form_tag = False
         return helper

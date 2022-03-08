@@ -47,14 +47,13 @@ class Design(models.Model):
         max_length=64,
         blank=True,
         null=True,
-        verbose_name="Study name (if applicable",
+        verbose_name="Study name (if applicable)",
         help_text="Typically available for cohorts. Abbreviations provided in the paper are fine",
     )
     countries = models.ManyToManyField(Country, blank=True)
     region = models.CharField(
         max_length=128, blank=True, verbose_name="Other geographic information"
     )
-    # TODO: create regex
     years = models.CharField(max_length=64, verbose_name="Year(s) of data collection", blank=True)
     participant_n = models.PositiveIntegerField(
         verbose_name="Overall study population N",
@@ -221,7 +220,7 @@ class ExposureLevel(models.Model):
     units = models.CharField(max_length=128, blank=True, null=True,)
     neg_exposure = models.FloatField(
         verbose_name="Percent with negligible exposure",
-        help_text="e.g., %% below the LOD",
+        help_text="e.g., % below the LOD",
         blank=True,
         null=True,
     )

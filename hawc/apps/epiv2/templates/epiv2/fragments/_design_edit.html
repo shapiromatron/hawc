@@ -5,7 +5,7 @@
   {% include_ui_theme %}
 {% endblock %}
 <div hx-target="this">
-<form method=post enctype="multipart/form-data" class="border my-2 p-2 pb-5" style="background-color: #D5E6FF;">
+<form method="post" class="border my-2 p-2 pb-5 edit-form-background">
 {% block content %}
   {% crispy form %}
 {% endblock %}
@@ -38,8 +38,7 @@
 </div>
 <div class="d-block container pull-right">
   <div class="pull-right">
-<button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:design-update' object.pk %}"
-  hx-encoding="multipart/form-data">
+<button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:design-update' object.pk %}">
   Save</button>
 <button class="btn btn-sm btn-light" hx-get="{% url 'epiv2:design-detail' object.pk %}">
   <i class="fa fa-fw fa-times mr-1"></i>

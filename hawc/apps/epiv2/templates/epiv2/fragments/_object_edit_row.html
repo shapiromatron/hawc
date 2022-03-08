@@ -3,19 +3,17 @@
 <tr hx-target="this" hx-swap="outerHTML swap:0s" id="{{model}}-empty-row" class="">
     {% if form %}
     <td colspan="100%">
-        <form method=post enctype="multipart/form-data" class="border my-2 p-2 pb-5" style="background-color: #D5E6FF;">
+        <form method="post" class="border my-2 p-2 pb-5 edit-form-background">
             {% crispy form %}
             <div class="form-row pull-right">
                 {% if form.instance.id %}
-                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'update' object.pk %}"
-                    hx-encoding="multipart/form-data">
+                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'update' object.pk %}">
                     Save</button>
                 <button class="btn btn-sm btn-light" hx-get="{% crud_url 'epiv2' model 'detail' object.pk %}">
                     <i class="fa fa-fw fa-times mr-1"></i>
                     Cancel</button>
                 {% else %}
-                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'create' parent.pk %}"
-                    hx-encoding="multipart/form-data">
+                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'create' parent.pk %}">
                     Save
                 </button>
                 <button class="btn btn-sm btn-light" type='button'
