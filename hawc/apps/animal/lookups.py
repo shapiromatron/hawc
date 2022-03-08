@@ -1,3 +1,5 @@
+from typing import Any
+from django.forms import ValidationError
 from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
@@ -123,6 +125,17 @@ class EndpointByStudyLookup(RelatedLookup):
         "animal_group__experiment__name__icontains",
     )
     related_filter = "animal_group__experiment__study"
+    search_fields_choices = {
+        "animal_group__experiment__name",
+        "animal_group__name",
+        "name",
+        "created",
+        "last_updated",
+        "data_type",
+        "response_units",
+        "observation_time",
+        "system",
+    }
 
     def get_item_label(self, obj):
         return " | ".join(
@@ -139,6 +152,9 @@ class EndpointByStudyLookup(RelatedLookup):
         # TODO - investigate if this alters class-state; may have side effects across requests
         # preserve this so we can return a dynamic representation of the Endpoint...
         self.user_specified_search_fields = search_fields.split(",")
+        for f in self.user_specified_search_fields:
+            if f not in self.search_fields_choices:
+                raise ValidationError(f"{f} is not a valid search field choice.")
 
         # TODO - investigate if this alters class-state; may have side effects across requests
         # update the search_fields tuple to match the fields we're going to show...
@@ -148,6 +164,28 @@ class EndpointByStudyLookup(RelatedLookup):
             return super().get_query(request, term).distinct().order_by(order_by)
         else:
             return None
+
+    def get_underscore_field_val(self, obj: Any, underscore_path: str):
+        """
+        Recursively select attributes from objects, given a django queryset underscore path.
+        For example, `related_item__some_field__foo` will return `obj.related_item.some_field.foo`
+
+        Args:
+            obj (Any): An object
+            underscore_path (str): the path to retrieve
+
+        Returns:
+            Any: the desired attribute of the object or child object.
+        """
+
+        obj_ = obj
+        try:
+            for attr in underscore_path.split("__"):
+                obj_ = getattr(obj_, attr)
+        except AttributeError:
+            raise AttributeError(f"Element {underscore_path} not found in {obj}")
+
+        return obj_
 
 
 class EndpointByAssessmentLookup(RelatedLookup):
