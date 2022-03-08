@@ -1,4 +1,5 @@
 from typing import Any
+
 from django.forms import ValidationError
 from django.utils.safestring import mark_safe
 from selectable.registry import registry
