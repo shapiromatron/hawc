@@ -91,7 +91,7 @@ class BaseFormHelper(cf.FormHelper):
             classes = [classes] * numFields
         first = self.layout.index(firstField)
         for i, class_ in enumerate(classes):
-            self[first + i].wrap(cfl.Column, wrapper_class=class_)
+            self[first + i].wrap(cfl.Column, css_class=class_)
         self[first : first + numFields].wrap_together(
             cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
