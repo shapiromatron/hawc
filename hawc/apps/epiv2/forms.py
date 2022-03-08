@@ -10,9 +10,7 @@ from . import lookups, models
 
 class DesignForm(forms.ModelForm):
     CREATE_LEGEND = "Create new study-population"
-
     CREATE_HELP_TEXT = ""
-
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
     countries = selectable.AutoCompleteSelectMultipleField(
@@ -79,16 +77,18 @@ class ChemicalForm(forms.ModelForm):
     class Meta:
         model = models.Chemical
         exclude = ("design",)
+        widgets = {
+            "name": selectable.AutoCompleteWidget(
+                lookup_class=lookups.ChemicalNameLookup, allow_new=True
+            ),
+            "dsstox": selectable.AutoCompleteSelectWidget(lookup_class=DssToxIdLookup),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if design:
             self.instance.design = design
-
-        self.fields["dsstox"].widget = selectable.AutoCompleteSelectWidget(
-            lookup_class=DssToxIdLookup
-        )
 
     @property
     def helper(self):
@@ -112,8 +112,8 @@ class ExposureForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["measurement_type"].widget.attrs["rows"] = 3
-        self.fields["comments"].widget.attrs["rows"] = 3
+        for fld in ["measurement_type", "comments"]:
+            self.fields[fld].widget.attrs["rows"] = 3
         self.fields["measurement_type"].widget.attrs["onchange"] = "exposureFunction(this.value);"
         helper = BaseFormHelper(self)
         helper.form_tag = False
@@ -136,14 +136,14 @@ class ExposureLevelForm(forms.ModelForm):
 
     @property
     def helper(self):
-        text_area_flds = ["comments"]
-        for fld in text_area_flds:
+        for fld in ["comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 4, "col-md-3")
-        helper.add_row("median", 8, "col-md-2")
-        helper.add_row("neg_exposure", 3, "col-md-4")
+        helper.add_row("median", 4, "col-md-3")
+        helper.add_row("lower", 5, "col-md-2")
+        helper.add_row("comments", 2, "col-md-6")
         return helper
 
 
@@ -170,24 +170,20 @@ class OutcomeForm(forms.ModelForm):
     class Meta:
         model = models.Outcome
         exclude = ("design",)
-        labels = {}
+        widgets = {
+            "endpoint": selectable.AutoCompleteWidget(
+                lookup_class=lookups.EndpointLookup, allow_new=True
+            ),
+            "health_outcome": selectable.AutoCompleteWidget(
+                lookup_class=lookups.HealthOutcomeLookup, allow_new=True
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if design:
             self.instance.design = design
-
-        self.fields["endpoint"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.OutcomeByDesignLookup,
-            allow_new=True,
-            query_params={"related": self.instance.design.id},
-        )
-        self.fields["health_outcome"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.OutcomeByHealthOutcome,
-            allow_new=True,
-            query_params={"related": self.instance.design.id},
-        )
 
     @property
     def helper(self):
@@ -211,8 +207,7 @@ class DataExtractionForm(forms.ModelForm):
 
     @property
     def helper(self):
-        text_area_flds = ["comments", "statistical_method"]
-        for fld in text_area_flds:
+        for fld in ["comments", "statistical_method"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.add_row("sub_population", 4, "col-md-3")

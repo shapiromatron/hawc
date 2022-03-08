@@ -2,20 +2,23 @@ from selectable.registry import registry
 
 from hawc.apps.epi.models import Country
 
-from ..common.lookups import DistinctStringLookup, RelatedDistinctStringLookup
+from ..common.lookups import DistinctStringLookup
 from . import models
 
 
-class OutcomeByDesignLookup(RelatedDistinctStringLookup):
+class ChemicalNameLookup(DistinctStringLookup):
+    model = models.Chemical
+    distinct_field = "name"
+
+
+class EndpointLookup(DistinctStringLookup):
     model = models.Outcome
     distinct_field = "endpoint"
-    related_filter = "design_id"
 
 
-class OutcomeByHealthOutcome(RelatedDistinctStringLookup):
+class HealthOutcomeLookup(DistinctStringLookup):
     model = models.Outcome
     distinct_field = "health_outcome"
-    related_filter = "design_id"
 
 
 class CountryNameLookup(DistinctStringLookup):
@@ -23,6 +26,7 @@ class CountryNameLookup(DistinctStringLookup):
     distinct_field = "name"
 
 
-registry.register(OutcomeByDesignLookup)
-registry.register(OutcomeByHealthOutcome)
+registry.register(ChemicalNameLookup)
+registry.register(EndpointLookup)
+registry.register(HealthOutcomeLookup)
 registry.register(CountryNameLookup)

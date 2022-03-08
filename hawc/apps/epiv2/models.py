@@ -86,7 +86,7 @@ class Chemical(models.Model):
     objects = managers.ChemicalManager()
 
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="chemicals")
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=128)
     dsstox = models.ForeignKey(
         DSSTox,
         on_delete=models.CASCADE,
@@ -206,6 +206,13 @@ class ExposureLevel(models.Model):
     )
     median = models.FloatField(blank=True, null=True)
     mean = models.FloatField(blank=True, null=True)
+    units = models.CharField(max_length=128, blank=True, null=True,)
+    neg_exposure = models.FloatField(
+        verbose_name="Percent with negligible exposure",
+        help_text="e.g., % below the LOD",
+        blank=True,
+        null=True,
+    )
     lower = models.FloatField(blank=True, null=True)
     percentile25 = models.FloatField(blank=True, null=True)
     percentile75 = models.FloatField(blank=True, null=True)
@@ -216,13 +223,6 @@ class ExposureLevel(models.Model):
         default=constants.UpperLowerType.MX,
         verbose_name="Upper/lower type",
         blank=True,
-    )
-    units = models.CharField(max_length=128, blank=True, null=True,)
-    neg_exposure = models.FloatField(
-        verbose_name="Percent with negligible exposure",
-        help_text="e.g., % below the LOD",
-        blank=True,
-        null=True,
     )
     comments = models.TextField(verbose_name="Exposure level comments", blank=True)
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
@@ -237,6 +237,16 @@ class ExposureLevel(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_quantitative_value(self):
+        value = "NR"
+        if self.median is not None:
+            value = f"{self.median}"
+        elif self.mean is not None:
+            value = f"{self.mean}"
+        if self.lower is not None and self.upper is not None:
+            value += f" [{self.lower}, {self.upper}]"
+        return value
 
     def clone(self):
         self.id = None
@@ -258,7 +268,6 @@ class Outcome(models.Model):
         max_length=128,
         choices=constants.HealthOutcomeSystem.choices,
         help_text="If multiple cancer types are present, report all types under Cancer.",
-        blank=True,
     )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)

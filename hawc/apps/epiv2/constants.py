@@ -69,9 +69,25 @@ class ExposureRoute(models.TextChoices):
 
 
 class HealthOutcomeSystem(models.TextChoices):
-    RE = "RE", "Reproductive"
+    CA = "CA", "Cancer"
+    CV = "CV", "Cardiovascular"
+    DE = "DE", "Dermal"
+    DV = "DV", "Developmental"
+    EN = "EN", "Endocrine"
+    GI = "GI", "Gastrointestinal"
+    HM = "HM", "Hematologic"
+    HP = "HP", "Hepatic"
     IM = "IM", "Immune"
-    # TODO: include other choices for health outcome system
+    MT = "MT", "Metabolic"
+    MS = "MS", "Multi-System"
+    MU = "MU", "Musculoskeletal"
+    NV = "NV", "Nervous"
+    OC = "OC", "Ocular"
+    RP = "RP", "Reproductive"
+    RS = "RS", "Respiratory"
+    UR = "UR", "Urinary"
+    WB = "WB", "Whole Body"
+    OT = "OT", "Other"
 
 
 class Significant(models.IntegerChoices):
