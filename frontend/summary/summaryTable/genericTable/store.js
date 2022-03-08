@@ -49,9 +49,10 @@ class GenericTableStore {
     @observable editCellErrorText = "";
     @observable showColumnEdit = false;
 
-    constructor(editMode, settings, editRootStore) {
+    constructor(editMode, table, editRootStore) {
         this.editMode = editMode;
-        this.settings = settings;
+        this.table = table;
+        this.settings = table.content;
         this.editRootStore = editRootStore;
         if (editMode && editRootStore) {
             autorun(() => {

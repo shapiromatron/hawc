@@ -161,11 +161,16 @@ class ReferenceParser:
     def _get_accession_number(self):
         number = self.content.get("accession_number", None)
 
-        # extract the Scopus EID
-        if number and isinstance(number, str) and "eid=" in number:
-            m = self.re_scopus_eid.findall(number)
-            if len(m) > 0:
-                number = m[0]
+        if number and isinstance(number, str):
+            number = number.strip()
+            if "eid=" in number:
+                # extract the Scopus EID
+                m = self.re_scopus_eid.findall(number)
+                if len(m) > 0:
+                    number = m[0]
+            elif number.lower() == "null":
+                # sometimes a "null" is returned
+                return None
 
         return number
 
