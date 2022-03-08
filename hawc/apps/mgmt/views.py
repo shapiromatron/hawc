@@ -176,16 +176,3 @@ class TaskDetail(TaskDashboard):
 
     def get_app_config(self, context) -> WebappConfig:
         return task_table_app_config(self, False)
-
-
-class TaskModify(TaskDashboard):
-    template_name = "mgmt/assessment_modify.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
-        context["breadcrumbs"][3] = Breadcrumb(name="Update assignments")
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        return task_table_app_config(self, True)
