@@ -19,7 +19,6 @@ def from_settings(request):
         SERVER_BANNER_COLOR=getattr(settings, "SERVER_BANNER_COLOR", "black"),
         UA_SUPPORTED=is_supported_agent(agent),
         commit=settings.COMMIT,
-        extra_branding=settings.EXTRA_BRANDING,
         flavor=settings.HAWC_FLAVOR,
         has_admin=settings.INCLUDE_ADMIN,
         GTM_ID=settings.GTM_ID,

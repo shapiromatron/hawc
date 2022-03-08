@@ -64,7 +64,10 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
     score = models.ForeignKey(
         "riskofbias.RiskOfBiasScore", on_delete=models.DO_NOTHING, related_name="final_scores",
     )
-    score_score = models.SmallIntegerField(verbose_name="Score")
+    score_label = models.CharField(max_length=128)
+    score_notes = models.TextField()
+    score_score = models.PositiveSmallIntegerField(verbose_name="Score")
+    bias_direction = models.PositiveSmallIntegerField()
     is_default = models.BooleanField()
 
     metric = models.ForeignKey(

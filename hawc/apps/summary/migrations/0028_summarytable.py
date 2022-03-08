@@ -33,7 +33,8 @@ class Migration(migrations.Migration):
                 (
                     "table_type",
                     models.PositiveSmallIntegerField(
-                        choices=[(0, "Generic"), (1, "Evidence Profile")], default=0,
+                        choices=[(0, "Generic"), (1, "Evidence Profile"), (2, "Study Evaluation")],
+                        default=0,
                     ),
                 ),
                 (
