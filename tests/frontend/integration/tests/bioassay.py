@@ -21,10 +21,10 @@ def bioassay(driver, root_url):
     # /animal-group/:id/
     h.go_to(root_url + "/ani/animal-group/1/")
     h.wait_until(h.Text("Dosing regime").exists)
-    assert h.Text("sprague dawley").exists() == True
-    assert h.Text("Oral diet").exists() == True
-    assert h.Text("mg/kg/d").exists() == True
-    assert h.Text("my outcome").exists() == True
+    assert h.Text("sprague dawley").exists()
+    assert h.Text("Oral diet").exists()
+    assert h.Text("0, 10, 100 mg/kg/d").exists()
+    assert h.Text("my outcome").exists()
 
     # /endpoint/:id/
     h.go_to(root_url + "/ani/endpoint/1/")
