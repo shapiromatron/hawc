@@ -368,6 +368,14 @@ def test_riskofbias_create():
     assert resp.status_code == 400
     assert b"No score for metric" in resp.content
 
+    # metric scores submitted that are not required for the given study type
+    extra_metrics = RiskOfBiasMetric.objects.filter(required_animal=False)
+    new_metrics = required_metrics.union(extra_metrics)
+    payload = build_upload_payload(study, pm_author, new_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"not required for this study type" in resp.content
+
     # no default score submitted for a metric
     RiskOfBias.objects.all().delete()
     payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)

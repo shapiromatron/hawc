@@ -1,3 +1,5 @@
+import copy
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.db import transaction
@@ -207,6 +209,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             scores = self.initial_data["scores"]
             required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(study)
             problematic_scores = []
+            extra_scores = set([score["metric_id"] for score in scores])
             for metric in required_metrics:
                 domain = metric.domain
                 # there could be multiple scores for a given metric if there are overrides, so we need to fetch them all
@@ -215,7 +218,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                     for score in scores
                     if "metric_id" in score and score["metric_id"] == metric.id
                 ]
-
+                extra_scores = set(extra_scores) - set(
+                    [score["metric_id"] for score in scores_for_metric]
+                )
                 metric_descriptor = f"'{domain.name}:{metric.name}'"
 
                 if len(scores_for_metric) == 0:
@@ -239,6 +244,12 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 explanation = "; ".join(problematic_scores)
                 raise serializers.ValidationError(
                     f"create failed; study {study_id} had problematic scores ({explanation})"
+                )
+
+            if len(extra_scores) > 0:
+                extra_scores = ", ".join(map(str ,extra_scores))
+                raise serializers.ValidationError(
+                    f"create failed; Metrics {extra_scores} were submitted and are not required for this study type"
                 )
 
             # store the actual metric object we want to create
