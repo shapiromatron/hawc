@@ -13,7 +13,7 @@ class SummaryTableDataSerializer(serializers.Serializer):
 
     def validate(self, data):
         if data["table_type"] == constants.TableType.STUDY_EVALUATION:
-            ser = StudyEvaluationSerializer(data=self.initial_data)
+            ser = StudyEvaluationSerializer(data=self.initial_data, context=self.context)
             ser.is_valid(raise_exception=True)
             data["ser"] = ser
         return data
@@ -101,6 +101,15 @@ class StudyEvaluationSerializer(serializers.Serializer):
     assessment_id = serializers.PrimaryKeyRelatedField(queryset=Assessment.objects.all())
     data_source = serializers.ChoiceField(choices=["study", "ani"])
     published_only = serializers.BooleanField()
+
+    def validate(self, data):
+        # Check permissions for non published data
+        if (
+            data["published_only"] is False
+            and data["assessment_id"].user_is_part_of_team(self.context["request"].user) is False
+        ):
+            raise serializers.ValidationError("Must be part of team to view unpublished data.")
+        return data
 
     @property
     def _id_fields(self):

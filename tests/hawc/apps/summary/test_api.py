@@ -412,5 +412,5 @@ class TestSummaryTableViewset:
             assert resp.status_code == code
             if code == 400:
                 assert resp.json() == {
-                    "published_only": ["Must be part of team to view unpublished data."]
+                    "non_field_errors": ["Must be part of team to view unpublished data."]
                 }

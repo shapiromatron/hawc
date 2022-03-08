@@ -135,6 +135,8 @@ class SummaryTableViewset(AssessmentEditViewset):
 
     @action(detail=False)
     def data(self, request):
-        ser = table_serializers.SummaryTableDataSerializer(data=request.query_params.dict())
+        ser = table_serializers.SummaryTableDataSerializer(
+            data=request.query_params.dict(), context=self.get_serializer_context()
+        )
         ser.is_valid(raise_exception=True)
         return Response(ser.get_data())
