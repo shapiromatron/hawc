@@ -10,4 +10,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         materialized = apps.get_app_config("materialized")
         for mv in materialized.get_models():
+            mv.drop()
             mv.create()
