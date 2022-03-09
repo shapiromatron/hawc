@@ -120,13 +120,6 @@ class DesignChildViewset(HtmxViewSet):
         return context
 
 
-# Criteria viewset
-class CriteriaViewset(DesignChildViewset):
-    model = models.Criteria
-    form_class = forms.CriteriaForm
-    detail_fragment = "epiv2/fragments/criteria_row.html"
-
-
 # Chemical viewset
 class ChemicalViewset(DesignChildViewset):
     model = models.Chemical

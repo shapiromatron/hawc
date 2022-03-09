@@ -26,37 +26,6 @@ urlpatterns = [
         {"action": "update"},
         name="design-update",
     ),
-    # criteria
-    path(
-        "criteria/<int:pk>/create/",
-        views.CriteriaViewset.as_view(),
-        {"action": "create"},
-        name="criteria-create",
-    ),
-    path(
-        "criteria/<int:pk>/",
-        views.CriteriaViewset.as_view(),
-        {"action": "read"},
-        name="criteria-detail",
-    ),
-    path(
-        "criteria/<int:pk>/clone/",
-        views.CriteriaViewset.as_view(),
-        {"action": "clone"},
-        name="criteria-clone",
-    ),
-    path(
-        "criteria/<int:pk>/update/",
-        views.CriteriaViewset.as_view(),
-        {"action": "update"},
-        name="criteria-update",
-    ),
-    path(
-        "criteria/<int:pk>/delete/",
-        views.CriteriaViewset.as_view(),
-        {"action": "delete"},
-        name="criteria-delete",
-    ),
     # chemical
     path(
         "chemical/<int:pk>/create/",

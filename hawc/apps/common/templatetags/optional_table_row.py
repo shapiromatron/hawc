@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from django import template
 from django.utils.html import escape
@@ -8,7 +8,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def optional_table_row(name: str, value: Any) -> Optional[str]:
+def optional_table_row(name: str, value: Any) -> str:
     if value is not None and value != "":
         return mark_safe(f"<tr><th>{name}</th><td>{escape(value)}</td></tr>")
-    return None
+    return ""

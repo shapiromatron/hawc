@@ -19,7 +19,6 @@ class DesignManager(BaseManager):
                 "exposures",
                 "outcomes",
                 "chemicals",
-                "criteria",
                 "adjustment_factors",
                 Prefetch(
                     "exposure_levels",

@@ -5,7 +5,8 @@ from hawc.apps.common.forms import BaseFormHelper
 
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
-from . import lookups, models
+from ..common.forms import ArrayCheckboxSelectMultiple
+from . import constants, lookups, models
 
 
 class DesignForm(forms.ModelForm):
@@ -17,11 +18,10 @@ class DesignForm(forms.ModelForm):
         lookup_class=lookups.CountryNameLookup, required=False
     )
 
-    criteria = forms.HiddenInput()
-
     class Meta:
         model = models.Design
         exclude = ("study",)
+        widgets = {"age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices)}
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -31,7 +31,9 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["comments"].widget.attrs["rows"] = 3
+        for fld in ("criteria", "comments"):
+            self.fields[fld].widget.attrs["class"] = "html5text"
+            self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:
             helper = BaseFormHelper(self)
@@ -49,27 +51,8 @@ class DesignForm(forms.ModelForm):
         helper.add_row("study_design", 4, "col-md-3")
         helper.add_row("sex", 4, "col-md-3")
         helper.add_row("countries", 4, "col-md-3")
-        helper.add_row("comments", 1, "col-md-12")
+        helper.add_row("criteria", 2, "col-md-6")
 
-        return helper
-
-
-class CriteriaForm(forms.ModelForm):
-    class Meta:
-        model = models.Criteria
-        exclude = ("design",)
-
-    def __init__(self, *args, **kwargs):
-        design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-        if design:
-            self.instance.design = design
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self)
-        helper.add_row("name", 1, "col-md-4")
-        helper.form_tag = False
         return helper
 
 

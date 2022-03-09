@@ -15,7 +15,7 @@
         {% optional_table_row "Population summary" object.summary %}
         {% optional_table_row "Study (cohort) name" object.study_name %}
         <tr>
-            <td><b>Countries</b></td>
+            <th>Countries</th>
             <td>{% for object in object.countries.all %}
                     <span class="badge badge-secondary">{{object.name}}</span>
                 {% endfor %}
@@ -25,11 +25,11 @@
         {% optional_table_row "Year(s) of data collection" object.years %}
         {% optional_table_row "Overall study population" object.participant_n %}
         <tr>
-            <td><b>Inclusion/Exclusion Criteria</b></td>
+            <th>Inclusion/Exclusion Criteria</th>
             <td>{{object.criteria|safe}}</td>
         </tr>
         <tr>
-            <td><b>Comments</b></td>
+            <th>Comments</th>
             <td>{{object.comments|safe}}</td>
         </tr>
     </tbody>

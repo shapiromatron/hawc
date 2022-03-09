@@ -51,6 +51,7 @@ class Design(models.Model):
         verbose_name="Overall study population N",
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
     )
+    criteria = models.TextField(blank=True, verbose_name="Inclusion/Exclusion Criteria")
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -76,6 +77,9 @@ class Design(models.Model):
     def get_delete_url(self):
         return reverse("epiv2:design_delete", args=(self.pk,))
 
+    def get_age_profile_display(self):
+        return ", ".join(constants.AgeProfile(ap).label for ap in self.age_profile)
+
     def __str__(self):
         return f"{self.summary}"
 
@@ -94,33 +98,6 @@ class Chemical(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-    def get_assessment(self):
-        return self.design.get_assessment()
-
-    def get_study(self):
-        return self.design.get_study()
-
-    def __str__(self):
-        return self.name
-
-    def clone(self):
-        self.id = None
-        self.name = f"{self.name} (2)"
-        self.save()
-        return self
-
-
-class Criteria(models.Model):
-    objects = managers.CriteriaManager()
-
-    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="criteria")
-    name = models.CharField(max_length=64)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Inclusion/exclusion criteria"
 
     def get_assessment(self):
         return self.design.get_assessment()
@@ -383,9 +360,8 @@ class DataExtraction(models.Model):
         return self
 
 
-reversion.register(Design, follow=("countries", "criteria", "age_profile"))
+reversion.register(Design, follow=("countries",))
 reversion.register(Chemical)
-reversion.register(Criteria)
 reversion.register(Exposure)
 reversion.register(ExposureLevel)
 reversion.register(Outcome)

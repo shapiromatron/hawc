@@ -1,49 +1,15 @@
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
 
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
+{% include_ui_theme %}
 <div hx-target="this">
-<form method="post" class="border my-2 p-2 pb-5 edit-form-background">
-{% block content %}
-  {% crispy form %}
-{% endblock %}
-<div>
-  <b>Inclusion/Exclusion criteria
-    <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:criteria-create' object.pk %}"
-      hx-target="#criteria-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-  </b>
-  <table class="table table-sm table-striped table-light my-3">
-    <colgroup>
-      <col style="width: 85%">
-      <col style="width: 15%">
-    </colgroup>
-    <tbody>
-      {% if object.criteria.all %}
-        {% for object in object.criteria.all %}
-          {% include "epiv2/fragments/criteria_row.html" %}
-        {% endfor %}
-        <tr style="display: none" id="criteria-empty-row" hx-target="this"></tr>
-      {% else %}
-        <tr id="criteria-empty-row" hx-target="this">
-          <td colspan="100%">
-            <p class="text-center mb-0">No criteria available.</p>
-          </td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
-
-</div>
-<div class="d-block container pull-right">
-  <div class="pull-right">
-<button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:design-update' object.pk %}">
-  Save</button>
-<button class="btn btn-sm btn-light" hx-get="{% url 'epiv2:design-detail' object.pk %}">
-  <i class="fa fa-fw fa-times mr-1"></i>
-  Cancel</button>
-  </div>
-</div>
-</form>
+  <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
+    {% crispy form %}
+    <div class="d-block container pull-right">
+      <div class="pull-right">
+        <button class="btn btn-sm btn-info" hx-post="{% url 'epiv2:design-update' object.pk %}">Save</button>
+        <button class="btn btn-sm btn-light" hx-get="{% url 'epiv2:design-detail' object.pk %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
+      </div>
+    </div>
+  </form>
 </div>

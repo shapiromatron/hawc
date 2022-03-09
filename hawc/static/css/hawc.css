@@ -464,17 +464,13 @@ table.bordered td {
     border: 1px solid #dddddd;
 }
 
-/*
-Beta tester
-*/
+/* Beta tester */
 .betatester {
     background-color: #ec744c;
     border-color: #ec744c;
 }
 
-/*
-Package style overrides
-*/
+/* react-datepicker */
 .react-datepicker-wrapper {
     display: block !important;
 }
@@ -504,4 +500,12 @@ Package style overrides
 .htmx-swapping {
     opacity: 0;
     transition: opacity 1s ease-out;
+}
+
+/* quill */
+.ql-editor {
+    background-color: white !important;
+}
+.ql-toolbar {
+    background-color: #E1E7F3 !important;
 }

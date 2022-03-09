@@ -250,3 +250,13 @@ class DownloadPlotForm(forms.Form):
             response = HttpResponse(output, content_type=content_type)
             response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
         return response
+
+
+class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
+    """For use in ArrayField with a CharField with choices"""
+
+    def format_value(self, value) -> List[str]:
+        """Return selected values as a list."""
+        if value is None:
+            return []
+        return value.split(",")

@@ -19,6 +19,15 @@ const exposureFormStartup = function(form) {
 
 export default document => {
     document.body.addEventListener("htmx:load", e => {
+        if (e.target.querySelector(".form-design")) {
+            $(e.target)
+                .find(".html5text")
+                .quillify();
+            $(e.target)
+                .find("#id_study_design")
+                .focus();
+        }
+
         if (e.target.querySelector(".form-exposure")) {
             exposureFormStartup(e.target);
         }

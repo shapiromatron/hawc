@@ -49,7 +49,6 @@ class EffectEstimateType(models.TextChoices):
     MD = "MD", "Mean difference"
 
 
-
 class UpperLowerType(models.TextChoices):
     MX = "MX", "Min/Max"
     N5 = "N5", "5/95"

@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from rest_framework import serializers
 
@@ -12,12 +11,6 @@ class ChemicalSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Chemical
         fields = ["id", "name", "dsstox"]
-
-
-class CriteriaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Criteria
-        fields = ["id", "name"]
 
 
 class ExposureSerializer(serializers.ModelSerializer):
@@ -59,7 +52,6 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     sex = FlexibleChoiceField(choices=constants.Sex.choices)
     countries = StudyPopulationCountrySerializer(many=True)
     chemicals = ChemicalSerializer(many=True, read_only=True)
-    criteria = CriteriaSerializer(many=True, read_only=True)
     exposure = ExposureSerializer(many=True, read_only=True)
     exposure_levels = ExposureLevelSerializer(many=True, read_only=True)
     outcomes = OutcomeSerializer(many=True, read_only=True)

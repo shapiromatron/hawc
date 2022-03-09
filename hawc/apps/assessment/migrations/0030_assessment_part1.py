@@ -157,8 +157,10 @@ class Migration(migrations.Migration):
             model_name="assessment",
             name="public_on",
             field=models.DateTimeField(
-                help_text="The date this assessment was released to be viewed by the general public.",
+                blank=True,
+                help_text="The assessment can be viewed by the general public.",
                 null=True,
+                verbose_name="Public",
             ),
         ),
         migrations.RunPython(set_public_on, unset_public_on),

@@ -13,11 +13,6 @@ class ChemicalInline(admin.TabularInline):
     extra = 0
 
 
-class CriteriaInline(admin.TabularInline):
-    model = models.Criteria
-    extra = 0
-
-
 class DataExtractionInline(admin.TabularInline):
     model = models.DataExtraction
     extra = 0
@@ -53,7 +48,6 @@ class DesignAdmin(admin.ModelAdmin):
         ("study__assessment", admin.RelatedOnlyFieldListFilter),
     )
     inlines = [
-        CriteriaInline,
         ChemicalInline,
         ExposureInline,
         ExposureLevelInline,
@@ -66,7 +60,6 @@ class DesignAdmin(admin.ModelAdmin):
 admin.site.register(models.Design, DesignAdmin)
 admin.site.register(models.AdjustmentFactor)
 admin.site.register(models.Chemical)
-admin.site.register(models.Criteria)
 admin.site.register(models.DataExtraction)
 admin.site.register(models.Exposure)
 admin.site.register(models.ExposureLevel)
