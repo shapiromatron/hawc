@@ -1,4 +1,5 @@
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
@@ -20,3 +21,5 @@ hawc_obtain_auth_token = HawcObtainAuthToken.as_view()
 
 class HawcValidateAuthToken(APIView):
     throttle_classes = (BurstAnon, SustainedAnon)
+    def get(self, request, format=None):
+        return Response(["Auth token is valid."])
