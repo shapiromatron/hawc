@@ -4,9 +4,6 @@ register = template.Library()
 
 
 @register.simple_tag
-def split(string, value):
-    """
-    Splits a string into a list by some value using python's str.split()
-
-    """
-    return string.split(value)
+def split(string, delimiter=","):
+    """Splits a string into a list"""
+    return [item.strip() for item in string.split(delimiter)]

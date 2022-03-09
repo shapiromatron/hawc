@@ -2,7 +2,7 @@
 <tr hx-target="this" hx-swap="outerHTML" class="adjustmentfactor-{{object.id}}">
     <td>{{object.name}}</td>
     <td>
-        {% split object.description ',' as descriptions %}
+        {% split object.description as descriptions %}
             {% for desc in descriptions %}
                 <span class="badge badge-secondary">{{desc}}</span>
             {% endfor %}

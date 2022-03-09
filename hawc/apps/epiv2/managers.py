@@ -4,10 +4,6 @@ from ..common.models import BaseManager
 from . import models
 
 
-class CriteriaManager(BaseManager):
-    assessment_relation = "assessment"
-
-
 class DesignManager(BaseManager):
     assessment_relation = "study__assessment"
 
