@@ -40,6 +40,13 @@ class TestClient(LiveServerTestCase, TestCase):
     #####################
     # HawcSession tests #
     #####################
+    def test_set_authentication_token_fail(self):
+        # invalid token raises 403 error
+        client = HawcClient(self.live_server_url)
+        with pytest.raises(HawcClientException) as err:
+            client.set_authentication_token("123")
+        assert err.value.status_code == 403
+        
 
     ####################
     # BaseClient tests #
