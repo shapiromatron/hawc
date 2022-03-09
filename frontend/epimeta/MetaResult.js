@@ -93,7 +93,7 @@ class MetaResult {
     buildListRow() {
         let link = `<a href="${this.data.url}" target="_blank">${this.data.label}</a>`,
             detail = $(
-                '<i class="fa fa-eye previewModalIcon" title="preview in a modal">'
+                '<i class="fa fa-eye previewModalIcon ml-2" title="preview in a modal">'
             ).click(() => this.displayAsModal({complete: true})),
             endpoint = $('<span class="previewModalParent">').append(link, detail);
 
@@ -116,7 +116,7 @@ class MetaResult {
         var $singleResultsDiv = $("<div>");
         if (this.has_single_results()) {
             $singleResultsDiv
-                .append("<h2>Individual study results</h2>")
+                .append("<h3>Individual study results</h3>")
                 .append(this.build_single_results_table());
         }
         $content.append(this.build_details_table()).append($singleResultsDiv);
@@ -132,7 +132,7 @@ class MetaResult {
         var $singleResultsDiv = $("<div>");
         if (this.has_single_results()) {
             $singleResultsDiv
-                .append("<h2>Individual study results</h2>")
+                .append("<h3>Individual study results</h3>")
                 .append(this.build_single_results_table());
         }
         $el.hide()

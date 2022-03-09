@@ -47,7 +47,7 @@ class Outcome {
     }
 
     build_results_tabs() {
-        var container = $("<div>").append("<h2>Results</h2>"),
+        var container = $("<div>").append("<h3>Results</h3>"),
             tabs = $('<nav class="nav nav-tabs">'),
             content = $('<div class="tab-content">');
 
@@ -87,7 +87,7 @@ class Outcome {
         if (this.data.can_create_sets) {
             var $el = $("<div>"),
                 groups = this.get_unused_comparison_sets();
-            $el.append("<h2>Unused comparison sets</h2>");
+            $el.append("<h3>Unused comparison sets</h3>");
             if (groups.length > 0) {
                 $el.append(HAWCUtils.buildUL(groups, d => `<li>${d.build_link()}</li>`));
             } else {
@@ -100,7 +100,7 @@ class Outcome {
     buildListRow() {
         let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
             detail = $(
-                '<i class="fa fa-eye previewModalIcon" title="preview in a modal">'
+                '<i class="fa fa-eye previewModalIcon ml-2" title="preview in a modal">'
             ).click(() => this.displayAsModal({complete: true})),
             outcome = $('<span class="previewModalParent">').append(link, detail);
 

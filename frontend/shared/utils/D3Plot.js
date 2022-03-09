@@ -487,9 +487,9 @@ class D3Plot {
             .append("foreignObject")
             .attr("id", "embeddedCog")
             .attr("x", this.w + this.padding.right - 20)
-            .attr("y", -this.padding.top + 5)
-            .attr("width", 30)
-            .attr("height", 30);
+            .attr("y", -this.padding.top)
+            .attr("width", 20)
+            .attr("height", 20);
 
         this.cog_button = this.cog
             .append("xhtml:a")
@@ -500,7 +500,7 @@ class D3Plot {
             });
         this.cog_button
             .append("xhtml:i")
-            .attr("class", "fa fa-cog")
+            .attr("class", "fa fa-cog float-right")
             .attr("style", "color: black");
 
         // add menu below div
@@ -588,7 +588,7 @@ class D3Plot {
     }
 
     _toggle_menu_bar() {
-        $(this.menu_div).toggleClass("optionsMenuHidden");
+        $(this.menu_div).toggleClass("hidden");
         $("foreignObject#embeddedCog a").toggleClass("hidden");
     }
 

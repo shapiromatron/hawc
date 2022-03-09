@@ -117,18 +117,21 @@ class LegendSettings {
         this.dp = dp;
         this.container = null;
         this.plot_div = $('<div class="col-md-6">');
-        const vis = d3
-            .select(this.plot_div[0])
-            .append("svg")
-            .attr("role", "image")
-            .attr("aria-label", "A chart legend")
-            .attr("width", "95%")
-            .attr("height", "300px")
-            .attr("class", "d3")
-            .append("g")
-            .attr("transform", "translate(10,10)");
-
-        this.legend = new DataPivotLegend(vis, this.dp.settings.legend, this.dp.settings);
+        const svg = d3
+                .select(this.plot_div[0])
+                .append("svg")
+                .attr("role", "image")
+                .attr("aria-label", "A chart legend")
+                .attr("width", "95%")
+                .attr("height", "300px")
+                .attr("class", "d3"),
+            vis = svg.append("g").attr("transform", "translate(10,10)");
+        this.legend = new DataPivotLegend(
+            svg.node(),
+            vis,
+            this.dp.settings.legend,
+            this.dp.settings
+        );
         this.modal = new LegendModal(this.dp.style_manager);
     }
     render() {

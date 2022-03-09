@@ -11,7 +11,7 @@ class AssessmentManager(BaseManager):
     assessment_relation = "id"
 
     def get_public_assessments(self):
-        return self.filter(public=True, hide_from_public_page=False).order_by("name")
+        return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by("name")
 
     def get_viewable_assessments(self, user, exclusion_id=None, public=False):
         """
@@ -25,7 +25,7 @@ class AssessmentManager(BaseManager):
             else Q(pk__in=[])
         )
         if public:
-            filters |= Q(public=True) & Q(hide_from_public_page=False)
+            filters |= Q(public_on__isnull=False) & Q(hide_from_public_page=False)
         return self.filter(filters).exclude(id=exclusion_id).distinct()
 
     def get_editable_assessments(self, user, exclusion_id=None):
@@ -49,7 +49,9 @@ class AssessmentManager(BaseManager):
         Returns:
             models.QuerySet: An assessment queryset
         """
-        return self.filter(public=True, hide_from_public_page=False).order_by("-last_updated")[:n]
+        return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by(
+            "-public_on"
+        )[:n]
 
 
 class AttachmentManager(BaseManager):

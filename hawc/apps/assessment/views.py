@@ -1,9 +1,7 @@
 import json
 import logging
-from pathlib import Path
 from typing import Any, Dict, List
 
-import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -13,7 +11,6 @@ from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count
-from django.db.models.functions import Lower
 from django.http import (
     Http404,
     HttpRequest,
@@ -295,11 +292,6 @@ class Error401(TemplateView):
     template_name = "401.html"
 
 
-@method_decorator(staff_member_required, name="dispatch")
-class Swagger(TemplateView):
-    template_name = "swagger.html"
-
-
 # Assessment Object
 class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
@@ -320,13 +312,13 @@ class AssessmentList(LoginRequiredMixin, ListView):
 class AssessmentFullList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = super().get_queryset()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -343,14 +335,13 @@ class AssessmentFullList(ListView):
 class AssessmentPublicList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        qs = qs.distinct().order_by(self.form.get_order_by())
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -368,6 +359,7 @@ class AssessmentPublicList(ListView):
             Data can also be downloaded for each individual assessment.
         """
         context["form"] = self.form
+        context["is_public_list"] = True
         return context
 
 
@@ -383,8 +375,12 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
 
     def get_success_url(self):
         self.assessment = self.object
-        response = super().get_success_url()
-        return response
+        return super().get_success_url()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -470,13 +466,18 @@ class AttachmentViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
     model = models.Attachment
-    form_fragment = "assessment/components/attachment_edit_row.html"
-    detail_fragment = "assessment/components/attachment_row.html"
-    list_fragment = "assessment/_attachment_list.html"
+    form_fragment = "assessment/fragments/attachment_edit_row.html"
+    detail_fragment = "assessment/fragments/attachment_row.html"
+    list_fragment = "assessment/fragments/attachment_list.html"
 
-    @action(permission=can_view)
+    @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
-        return render(request, self.detail_fragment, self.get_context_data())
+        if request.is_htmx:
+            return render(request, self.detail_fragment, self.get_context_data())
+        attachment = request.item.object
+        if attachment.publicly_available or request.item.permissions(request.user)["edit"]:
+            return HttpResponseRedirect(attachment.attachment.url)
+        raise Http404()
 
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
@@ -512,22 +513,6 @@ class AttachmentViewset(HtmxViewSet):
             self.perform_delete(request.item)
             return self.str_response()
         return render(request, self.detail_fragment, self.get_context_data())
-
-
-class AttachmentList(BaseList):
-    model = models.Attachment
-    parent_model = models.Assessment
-    parent_template_name = "parent"
-    template_name = "assessment/_attachment_list.html"
-    object_list = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            self.assessment, not context["obj_perms"]["edit"]
-        )
-        context["canEdit"] = context["obj_perms"]["edit"]
-        return context
 
 
 # Dataset views
@@ -726,53 +711,6 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
                 host=f"//{self.request.get_host()}",
             ),
         )
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminDashboard(TemplateView):
-    template_name = "admin/dashboard.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminAssessmentSize(TemplateView):
-    template_name = "admin/assessment-size.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminMediaPreview(TemplateView):
-    template_name = "admin/media-preview.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        Suffix-specific values were obtained by querying media file extensions:
-
-        ```bash
-        find {settings.MEDIA_ROOT} -type f | grep -o ".[^.]\\+$" | sort | uniq -c
-        ```
-        """
-        context = super().get_context_data(**kwargs)
-        obj = self.request.GET.get("item", "")
-        media = Path(settings.MEDIA_ROOT)
-        context["has_object"] = False
-        resolved = media / obj
-        context["object_name"] = str(Path(obj))
-        if obj and resolved.exists() and media in resolved.parents:
-            root_uri = self.request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
-            uri = resolved.as_uri().replace(media.as_uri(), root_uri)
-            context["has_object"] = True
-            context["object_uri"] = uri
-            context["suffix"] = resolved.suffix.lower()
-            if context["suffix"] in [".csv", ".json", ".ris", ".txt"]:
-                context["object_text"] = resolved.read_text()
-            if context["suffix"] in [".xls", ".xlsx"]:
-                df = pd.read_excel(str(resolved))
-                context["object_html"] = df.to_html(index=False)
-            if context["suffix"] in [".jpg", ".jpeg", ".png", ".tif", ".tiff"]:
-                context["object_image"] = True
-            if context["suffix"] in [".pdf"]:
-                context["object_pdf"] = True
-
-        return context
 
 
 # blog

@@ -58,6 +58,9 @@ class HawcLoginView(LoginView):
         return kwargs
 
     def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            next_url = self.get_redirect_url()
+            return HttpResponseRedirect(next_url or settings.LOGIN_REDIRECT_URL)
         if settings.AUTH_PROVIDERS == {AuthProvider.external}:
             url = reverse("user:external_auth")
             next_url = self.get_redirect_url()
@@ -245,13 +248,15 @@ class ExternalAuth(SuccessURLAllowedHostsMixin, View):
         email = metadata.pop("email")
         external_id = metadata.pop("external_id")
         try:
-            user = models.HAWCUser.objects.get(email=email)
+            user = models.HAWCUser.objects.get(email__iexact=email)
             # Save external ID if this is our first access
             if user.external_id is None:
+                user.email = email
                 user.external_id = external_id
                 # Set unusable password if only external auth is allowed
                 if settings.AUTH_PROVIDERS == {AuthProvider.external}:
                     user.set_unusable_password()
+                user.email = email  # set email case
                 user.save()
             # Ensure external id in db matches that returned from service
             elif user.external_id != external_id:

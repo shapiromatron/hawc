@@ -120,7 +120,7 @@ class TestRiskOfBiasAssessmentViewset:
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.post(url, data, format="json")
         assert resp.status_code == 200
-        assert list(resp.data.keys()) == ["log_id", "log_url", "mapping"]
+        assert list(resp.data.keys()) == ["mapping"]
 
         # invalid request
         data["src_assessment_id"] = -1
@@ -367,6 +367,17 @@ def test_riskofbias_create():
     resp = client.post(url, payload, format="json")
     assert resp.status_code == 400
     assert b"No score for metric" in resp.content
+
+    # metric scores submitted that are not required for the given study type
+    extra_metrics = RiskOfBiasMetric.objects.filter(required_animal=False)
+    new_metrics = required_metrics.union(extra_metrics)
+    payload = build_upload_payload(study, pm_author, new_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    extra_ids = ", ".join(map(str, [metric.id for metric in extra_metrics]))
+    assert f"Metrics {extra_ids} were submitted but are not required for this study type" in str(
+        resp.content
+    )
 
     # no default score submitted for a metric
     RiskOfBias.objects.all().delete()

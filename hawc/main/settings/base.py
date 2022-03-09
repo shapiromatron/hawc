@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     "hawc.apps.bmd",
     "hawc.apps.summary",
     "hawc.apps.mgmt",
+    "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
 )
 
@@ -158,7 +159,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.getenv("DJANGO_CACHE_LOCATION"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-        "TIMEOUT": None,
+        "TIMEOUT": 60 * 60 * 24 * 10,  # 10 days
     }
 }
 CACHE_1_HR = 60 * 60
@@ -334,9 +335,6 @@ PM_CAN_MAKE_PUBLIC = True
 
 # are users required to accept a license
 ACCEPT_LICENSE_REQUIRED = True
-
-# add extra branding (EPA flavor only)
-EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
 

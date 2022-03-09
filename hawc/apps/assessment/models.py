@@ -83,8 +83,8 @@ class DSSTox(models.Model):
     def get_dashboard_url(self) -> str:
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
 
-    def get_svg_url(self) -> str:
-        return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=svg"
+    def get_img_url(self) -> str:
+        return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
 
 
 class Assessment(models.Model):
@@ -138,9 +138,19 @@ class Assessment(models.Model):
         """,
     )
     assessment_objective = models.TextField(
-        blank=True,
         help_text="Describe the assessment objective(s), research questions, "
         "or clarification on the purpose of the assessment.",
+    )
+    authors = models.TextField(
+        verbose_name="Assessment authors",
+        help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
+    )
+    creator = models.ForeignKey(
+        HAWCUser,
+        null=True,
+        related_name="created_assessments",
+        on_delete=models.SET_NULL,
+        editable=False,
     )
     project_manager = models.ManyToManyField(
         HAWCUser,
@@ -168,18 +178,16 @@ class Assessment(models.Model):
         default=True,
         help_text="Project-managers and team-members are allowed to edit assessment components.",
     )
-    public = models.BooleanField(
-        default=False, help_text="The assessment can be viewed by the general public."
+    public_on = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Public",
+        help_text="The assessment can be viewed by the general public.",
     )
     hide_from_public_page = models.BooleanField(
         default=False,
         help_text="If public, anyone with a link can view, "
         "but do not show a link on the public-assessment page.",
-    )
-    is_public_training_data = models.BooleanField(
-        default=False,
-        verbose_name="Public training data",
-        help_text="Allows data to be anonymized and made available for machine learning projects. Both assessment ID and user ID will be made anonymous for these purposes.",
     )
     enable_literature_review = models.BooleanField(
         default=True,
@@ -374,25 +382,6 @@ class Assessment(models.Model):
         # refresh materialized views
         refresh_all_mvs(force=True)
 
-    @classmethod
-    def size_df(cls) -> pd.DataFrame:
-        qs = Assessment.objects.all().values("id", "name", "created", "last_updated")
-        df1 = pd.DataFrame(qs).set_index("id")
-        for annotation in [
-            dict(num_references=models.Count("references")),
-            dict(num_studies=models.Count("references__study")),
-            dict(num_ani_endpoints=models.Count("baseendpoint__endpoint")),
-            dict(num_epi_outcomes=models.Count("baseendpoint__outcome")),
-            dict(num_epi_results=models.Count("baseendpoint__outcome__results")),
-            dict(num_invitro_ivendpoints=models.Count("baseendpoint__ivendpoint")),
-            dict(num_datapivots=models.Count("datapivot")),
-            dict(num_viusals=models.Count("visuals")),
-        ]:
-            qs = Assessment.objects.all().values("id").annotate(**annotation)
-            df2 = pd.DataFrame(qs).set_index("id")
-            df1 = df1.merge(df2, left_index=True, right_index=True)
-        return df1.reset_index().sort_values("id")
-
     def pms_and_team_users(self) -> models.QuerySet:
         # return users that are either project managers or team members
         return (
@@ -419,7 +408,7 @@ class Attachment(models.Model):
     title = models.CharField(max_length=128)
     attachment = models.FileField(upload_to="attachment")
     publicly_available = models.BooleanField(default=True)
-    description = models.TextField(blank=True)
+    description = models.TextField()
 
     BREADCRUMB_PARENT = "content_object"
 
@@ -427,13 +416,13 @@ class Attachment(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return self.content_object.get_absolute_url()
+        return reverse("assessment:attachment-detail", args=[self.pk])
 
     def get_edit_url(self):
-        return reverse("assessment:attachment_update", args=[self.pk])
+        return reverse("assessment:attachment-update", args=[self.pk])
 
     def get_delete_url(self):
-        return reverse("assessment:attachment_delete", args=[self.pk])
+        return reverse("assessment:attachment-delete", args=[self.pk])
 
     def get_dict(self):
         return {
@@ -867,9 +856,6 @@ class Job(models.Model):
         self.result = {"error": str(exception)}
         self.status = constants.JobStatus.FAILURE
 
-    def get_detail_url(self):
-        return reverse("assessment:api:jobs-detail", args=(self.task_id,))
-
 
 class Communication(models.Model):
     message = models.TextField()
@@ -934,9 +920,6 @@ class Log(models.Model):
         if self.object_id and self.content_type_id:
             return self.get_object_list_url()
         return self.get_absolute_url()
-
-    def get_api_url(self):
-        return reverse("assessment:api:logs-detail", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment

@@ -1,8 +1,7 @@
-import _ from "lodash";
-import * as d3 from "d3";
-
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import {Patterns} from "./common";
 
 class D3Visualization extends D3Plot {
     constructor(parent, data, options) {
@@ -23,16 +22,6 @@ class D3Visualization extends D3Plot {
 
     processData() {
         return HAWCUtils.abstractMethod();
-    }
-
-    apply_text_styles(obj, styles) {
-        obj = d3.select(obj);
-        _.each(styles, function(v, k) {
-            obj.style(k, v);
-        });
-        if (styles.rotate > 0) {
-            obj.attr("transform", `rotate(${styles.rotate} ${obj.attr("x")},${obj.attr("y")})`);
-        }
     }
 }
 
@@ -263,6 +252,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.3,
             stroke: "#be6a62",
             "stroke-width": 1.5,
+            pattern: Patterns.solid,
         },
         {
             name: "black",
@@ -270,6 +260,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.2,
             stroke: "#000000",
             "stroke-width": 0,
+            pattern: Patterns.solid,
         },
         {
             name: "red",
@@ -277,6 +268,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.2,
             stroke: "#6f0000",
             "stroke-width": 0,
+            pattern: Patterns.solid,
         },
         {
             name: "green",
@@ -284,6 +276,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.2,
             stroke: "#006a1e",
             "stroke-width": 0,
+            pattern: Patterns.solid,
         },
         {
             name: "blue",
@@ -291,6 +284,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.2,
             stroke: "#006dbe",
             "stroke-width": 0,
+            pattern: Patterns.solid,
         },
         {
             name: "orange",
@@ -298,6 +292,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.2,
             stroke: "#dc8f00",
             "stroke-width": 0,
+            pattern: Patterns.solid,
         },
         {
             name: "purple",
@@ -305,6 +300,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.2,
             stroke: "#5e5e5e",
             "stroke-width": 0,
+            pattern: Patterns.solid,
         },
         {
             name: "fuschia",
@@ -312,6 +308,7 @@ D3Visualization.styles = {
             "fill-opacity": 0.2,
             stroke: "#ab006c",
             "stroke-width": 0,
+            pattern: Patterns.solid,
         },
     ],
     texts: [

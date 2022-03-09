@@ -8,7 +8,7 @@ import RoBHeatmap from "./RoBHeatmap";
 
 class RoBBarchart extends RoBHeatmap {
     displayAsPage($el, options) {
-        var title = $("<h1>").text(this.data.title),
+        var title = $("<h2>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),

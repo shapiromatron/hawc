@@ -39,7 +39,7 @@ class ComparisonSet {
         $el.hide()
             .append(this.build_details_div())
             .append(this.build_exposure_table())
-            .append("<h2>Groups</h2>")
+            .append("<h3>Groups</h3>")
             .append(this.build_groups_table())
             .fadeIn();
     }
@@ -49,7 +49,7 @@ class ComparisonSet {
             title = $("<h4>").html(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">')
                 .append(this.build_details_div())
-                .append("<h2>Groups</h2>")
+                .append("<h3>Groups</h3>")
                 .append(this.build_groups_table());
 
         modal
@@ -102,7 +102,7 @@ class ComparisonSet {
     build_exposure_table() {
         if (this.exposure === undefined) return;
         return $("<div>")
-            .append("<h2>Exposure details</h2>")
+            .append("<h3>Exposure details</h3>")
             .append(this.exposure.build_details_table(true));
     }
 

@@ -3,7 +3,7 @@
 {% load hastext %}
 
 {% block content %}
-  <h1 class="d-inline-block">{{object}}</h1>
+  <h2 class="d-inline-block">{{object}}</h2>
   {% if crud == "Read" %}
     <div class="dropdown btn-group float-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -107,62 +107,11 @@
       </tr>
       {% endif %}
 
-      {% if obj_perms.edit %}
-        <tr>
-          <th>Project manager(s)*</th>
-          <td>
-            <ul>
-              {% for m in object.project_manager.all %}
-                <li> {{ m.get_full_name }}</li>
-              {% endfor %}
-            </ul>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Team member(s)*</th>
-          <td>
-            <ul>
-              {% for m in object.team_members.all %}
-                <li> {{ m.get_full_name }}</li>
-              {% endfor %}
-            </ul>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reviewer(s)*</th>
-          <td>
-            <ul>
-              {% for m in object.reviewers.all %}
-                <li> {{ m.get_full_name }}</li>
-              {% endfor %}
-            </ul>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Editable*</th>
-          <td>{{object.editable}}</td>
-        </tr>
-
-        <tr>
-          <th>Public*</th>
-          <td>{{object.public}}</td>
-        </tr>
-
-        <tr>
-          <th>Public training data*</th>
-          <td>{{object.is_public_training_data}}</td>
-        </tr>
-
-        {% if object.public %}
-          <tr>
-            <th>Hidden on public page?*</th>
-            <td>{{object.hide_from_public_page}}</td>
-          </tr>
-        {% endif %}
-
+      {% if object.authors %}
+      <tr>
+        <th>Assessment authors</th>
+        <td>{{object.authors|safe}}</td>
+      </tr>
       {% endif %}
 
       {% if object.conflicts_of_interest %}
@@ -184,32 +133,99 @@
         <th>Vocabulary</th>
         <td>{{object.get_vocabulary_display}}</td>
       </tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+  {% if obj_perms.edit %}
+  <h3>Assessment details for team members*</h3>
+  <table id="assessment_table" class="table table-sm table-striped">
+    <colgroup>
+      <col style="width: 19%;">
+      <col style="width: 27%;">
+      <col style="width: 27%;">
+      <col style="width: 27%;">
+    </colgroup>
+    <tbody>
       <tr>
-        <th>Curator can update vocabulary used</th>
-        <td>{{object.modify_uncontrolled_vocabulary}}</td>
+        <th>Assessment team</th>
+        <td>
+          <p><strong>Project manager{{ object.project_manager.all|pluralize }}</strong></p>
+          <ul class="mb-0">
+            {% for m in object.project_manager.active %}
+              <li>{{ m.get_full_name }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+        <td>
+          <p><strong>Team member{{ object.team_members.all|pluralize }}</strong></p>
+          <ul class="mb-0">
+            {% for m in object.team_members.active %}
+            <li>{{ m.get_full_name }}</li>
+            {% empty %}
+            <li><i>None assigned</i></li>
+            {% endfor %}
+          </ul>
+        </td>
+        <td>
+          <p><strong>Reviewer{{ object.reviewers.all|pluralize }}</strong></p>
+          <ul class="mb-0">
+            {% for m in object.reviewers.active %}
+            <li>{{ m.get_full_name }}</li>
+            {% empty %}
+            <li><i>None assigned</i></li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+
+      <tr>
+        <th>Editable</th>
+        <td colspan="3">{{object.editable|yesno:"Yes,No"}}</td>
+      </tr>
+
+      <tr>
+        <th>Public</th>
+        <td colspan="3">
+          {% if object.public_on %}
+          Yes; published on {{object.public_on|date:"DATE_FORMAT"}}
+          {% else %}
+          No; this assessment is currently private
+          {% endif %}
+        </td>
+      </tr>
+
+      {% if object.public_on %}
+      <tr>
+        <th>Hidden from public assessments page?</th>
+        <td colspan="3">{{object.hide_from_public_page|yesno:"Yes; available if you have the link but hidden from the list page,No; it's available via searching or browsing"|safe}}</td>
       </tr>
       {% endif %}
 
-      {% if obj_perms.edit and internal_communications|hastext %}
       <tr>
-        <th>Internal communications*</th>
-        <td>{{ internal_communications|safe }}</td>
+        <th>Date created</th>
+        <td colspan="3">Created by {{object.creator}} on {{object.created|date:"DATE_FORMAT"}}</td>
+      </tr>
+
+      {% if internal_communications|hastext %}
+      <tr>
+        <th>Internal communications</th>
+        <td colspan="3">{{ internal_communications|safe }}</td>
       </tr>
       {% endif %}
     </tbody>
-    {% if obj_perms.edit %}
     <tfoot>
       <tr>
-        <td colspan="2" class="text-muted">
+        <td colspan="5" class="text-muted">
           * These fields are only shown to assessment team members, even if the assessment is made public.
         </td>
       </tr>
     </tfoot>
-    {% endif %}
   </table>
+  {% endif %}
 
   {% if crud == "Read" %}
-    {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
+    {% include "assessment/fragments/attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
     {% include "assessment/_dataset_list.html" with object_list=datasets %}
   {% endif %}
 
@@ -227,5 +243,14 @@
   });
 </script>
 {% endif %}
-
+<script type="text/javascript">
+  htmx.onLoad(function (target) {
+    // attachment-form events
+    const form = $(target).find('.attachment-form');
+    if (form) {
+      form.find('.html5text').quillify();
+      form.find("#id_title").focus();
+    }
+  });
+</script>
 {% endblock extrajs %}

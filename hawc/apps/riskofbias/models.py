@@ -204,9 +204,7 @@ class RiskOfBiasMetric(models.Model):
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
 
-    study = models.ForeignKey(
-        "study.Study", on_delete=models.CASCADE, related_name="riskofbiases", null=True
-    )
+    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="riskofbiases")
     final = models.BooleanField(default=False, db_index=True)
     author = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="riskofbiases")
     active = models.BooleanField(default=False, db_index=True)

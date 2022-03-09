@@ -40,9 +40,10 @@ class EvidenceProfileTableStore {
     @observable showColumnEdit = false;
     @observable editTabIndex = 0;
 
-    constructor(editMode, settings, editRootStore) {
+    constructor(editMode, table, editRootStore) {
         this.editMode = editMode;
-        this.settings = settings;
+        this.table = table;
+        this.settings = table.content;
         this.editRootStore = editRootStore;
         if (editMode && editRootStore) {
             autorun(() => {
