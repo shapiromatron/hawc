@@ -34,10 +34,20 @@ class AgeProfile(models.TextChoices):
 
 
 class EffectEstimateType(models.TextChoices):
-    OR = "OR", "Odds Ratio"
-    PC = "PC", "Percent Change"
-    OT = "OT", "Other"
-    # TODO: include choices for effect estimate type
+    OR = "OR", "Odds Ratio (OR)"
+    RR = "RR", "Relative Risk Ratio (RR)"
+    AR = "AR", "Absolute Risk %"
+    B = "B", "Regression coeffcient (β)"
+    SMR = "SMR", "Standardized Mortality Ratio (SMR)"
+    SIR = "SIR", "Standardized Incidence Ratio (SIR)"
+    IRR = "IRR", "Incidence Risk Ratio (IRR)"
+    ARR = "ARR", "Absolute Risk Reduction/ Risk difference (ARR or RD)"
+    HR = "HR", "Hazard Ratio (HR)"
+    CM = "CM", "Comparison of Means"
+    SCC = "SCC", "Spearman's Correlation Coefficient"
+    PC = "PC", "Percent change"
+    MD = "MD", "Mean difference"
+
 
 
 class UpperLowerType(models.TextChoices):

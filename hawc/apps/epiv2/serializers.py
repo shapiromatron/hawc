@@ -8,22 +8,6 @@ from ..study.serializers import StudySerializer
 from . import constants, models
 
 
-class AgeProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.AgeProfile
-        fields = ["name"]
-
-    def to_internal_value(self, data):
-        if type(data) is str:
-            try:
-                age_profile = self.Meta.model.objects.get(name__iexact=data)
-                return age_profile
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"'{data}' is not a valid Age profile.")
-
-        return super().to_internal_value(data)
-
-
 class ChemicalSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Chemical
@@ -74,7 +58,6 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     source = FlexibleChoiceField(choices=constants.Source.choices)
     sex = FlexibleChoiceField(choices=constants.Sex.choices)
     countries = StudyPopulationCountrySerializer(many=True)
-    age_profile = AgeProfileSerializer(many=True)
     chemicals = ChemicalSerializer(many=True, read_only=True)
     criteria = CriteriaSerializer(many=True, read_only=True)
     exposure = ExposureSerializer(many=True, read_only=True)

@@ -1,4 +1,5 @@
 import reversion
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.urls import reverse
 
@@ -6,15 +7,6 @@ from ..assessment.models import DSSTox
 from ..epi.models import Country
 from ..study.models import Study
 from . import constants, managers
-
-
-class AgeProfile(models.Model):
-    objects = managers.AgeProfileManger()
-
-    name = models.CharField(unique=True, max_length=128)
-
-    def __str__(self):
-        return self.name
 
 
 class Design(models.Model):
@@ -25,8 +17,8 @@ class Design(models.Model):
         max_length=128, choices=constants.StudyDesign.choices, blank=True
     )
     source = models.CharField(max_length=128, choices=constants.Source.choices, blank=True)
-    age_profile = models.ManyToManyField(
-        AgeProfile,
+    age_profile = ArrayField(
+        models.CharField(max_length=2, choices=constants.AgeProfile.choices),
         blank=True,
         help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
         verbose_name="Population age category",
@@ -337,7 +329,7 @@ class DataExtraction(models.Model):
     outcome_measurement_timing = models.CharField(max_length=128, blank=True)
     n = models.PositiveIntegerField(blank=True, null=True)
     effect_estimate_type = models.CharField(
-        max_length=128, choices=constants.EffectEstimateType.choices, blank=True
+        max_length=3, choices=constants.EffectEstimateType.choices
     )
     effect_description = models.CharField(
         max_length=128,
@@ -345,7 +337,7 @@ class DataExtraction(models.Model):
         verbose_name="Effect estimate description",
         help_text="Description of the effect estimate with units, including comparison group if applicable",
     )
-    effect_estimate = models.FloatField(blank=True, null=True)
+    effect_estimate = models.FloatField()
     ci_lcl = models.FloatField(verbose_name="Confidence Interval LCL", blank=True, null=True)
     ci_ucl = models.FloatField(verbose_name="Confidence Interval UCL", blank=True, null=True)
     exposure_rank = models.PositiveSmallIntegerField(
@@ -391,7 +383,6 @@ class DataExtraction(models.Model):
         return self
 
 
-reversion.register(AgeProfile)
 reversion.register(Design, follow=("countries", "criteria", "age_profile"))
 reversion.register(Chemical)
 reversion.register(Criteria)

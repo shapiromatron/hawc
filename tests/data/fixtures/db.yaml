@@ -369,10 +369,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: ageprofile
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
     model: country
 - model: contenttypes.contenttype
   fields:
@@ -4720,18 +4716,6 @@
     main_finding_support: 3
     created: 2020-05-11 02:23:49.859670+00:00
     last_updated: 2020-05-11 02:23:49.859696+00:00
-- model: epiv2.ageprofile
-  pk: 1
-  fields:
-    name: Children and adolescents <18 yrs
-- model: epiv2.ageprofile
-  pk: 2
-  fields:
-    name: Adults
-- model: epiv2.ageprofile
-  pk: 3
-  fields:
-    name: Pregnant women
 - model: epiv2.design
   pk: 1
   fields:
@@ -4749,7 +4733,7 @@
     created: 2022-01-10 21:12:17.714337+00:00
     last_updated: 2022-01-13 20:38:10.024296+00:00
     age_profile:
-    - 1
+    - AD
     countries:
     - 2
     comments: test

@@ -4,10 +4,6 @@ from ..common.models import BaseManager
 from . import models
 
 
-class AgeProfileManger(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
-
-
 class CriteriaManager(BaseManager):
     assessment_relation = "assessment"
 
