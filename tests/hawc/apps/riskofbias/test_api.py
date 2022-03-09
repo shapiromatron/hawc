@@ -375,7 +375,9 @@ def test_riskofbias_create():
     resp = client.post(url, payload, format="json")
     assert resp.status_code == 400
     extra_ids = ", ".join(map(str, [metric.id for metric in extra_metrics]))
-    assert f"Metrics {extra_ids} were submitted but are not required for this study type" in str(resp.content)
+    assert f"Metrics {extra_ids} were submitted but are not required for this study type" in str(
+        resp.content
+    )
 
     # no default score submitted for a metric
     RiskOfBias.objects.all().delete()
