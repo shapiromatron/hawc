@@ -29,23 +29,31 @@ const getCookie = function(name) {
     sessionid = getCookie("sessionid"),
     csrfSafeMethod = method => /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
 
-$.ajaxSetup({
-    crossDomain: false,
-    beforeSend(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            xhr.setRequestHeader("sessionid", sessionid);
-        }
-    },
-});
-
 d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
         this.parentNode.appendChild(this);
     });
 };
 
+const setupAjax = document => {
+    // htmx
+    document.body.addEventListener("htmx:configRequest", event => {
+        event.detail.headers["X-CSRFToken"] = csrftoken;
+    });
+    // jquery
+    $.ajaxSetup({
+        crossDomain: false,
+        beforeSend(xhr, settings) {
+            if (!csrfSafeMethod(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                xhr.setRequestHeader("sessionid", sessionid);
+            }
+        },
+    });
+};
+
 $(document).ready(() => {
     sidebarStartup();
     tryWebAppStartup();
+    setupAjax(document);
 });

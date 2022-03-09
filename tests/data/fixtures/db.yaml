@@ -5855,6 +5855,53 @@
     published: true
     created: 2021-03-22 20:02:50.190759+00:00
     last_updated: 2021-03-22 20:35:02.445924+00:00
+- model: summary.summarytable
+  pk: 3
+  fields:
+    assessment: 1
+    title: 'Study evaluation #1'
+    slug: Study-Evaluation-1
+    content:
+      rows:
+      - id: 1
+        type: study
+        customized: []
+      - id: 1
+        type: study
+        customized:
+        - key: 319c7
+          html: <p><a href="/study/1" rel="noopener noreferrer" target="_blank">Foo
+            et al.</a> with customizations</p>
+        - key: 8051c
+          score_id: 9
+        - key: bff7d
+          score_id: -1
+      columns:
+      - key: 319c7
+        label: Study citation
+        width: 2
+        attribute: study_short_citation
+      - key: bff7d
+        label: metric
+        width: 1
+        attribute: rob
+        metric_id: 1
+      - key: 8051c
+        label: final domain
+        width: 1
+        attribute: rob
+        metric_id: 2
+      subheaders:
+      - label: Evaluation
+        start: 2
+        length: 2
+      data_source: study
+      assessment_id: -1
+      published_only: false
+    table_type: 2
+    published: true
+    created: 2022-02-16 20:18:39.448462+00:00
+    last_updated: 2022-02-16 20:18:39.448462+00:00
 - model: summary.visual
   pk: 1
   fields:

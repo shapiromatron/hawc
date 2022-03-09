@@ -5,7 +5,11 @@
 
 {% block content_outer %}
 <div class="col-lg-12" >
-  <h2>Public Assessments</h2>
+  {% if is_public_list %}
+    <h2>Public Assessments</h2>
+  {% else %}
+    <h2>Assessments</h2>
+  {% endif %}
   {% if desc %}
   <p>{{desc}}</p>
   {% endif %}
@@ -15,7 +19,8 @@
     </div>
   </div>
   {% include "assessment/_assessment_list_tbl.html" %}
-  <p><b>{{object_list.count}}</b> assessments found.</p>
+  {% include "includes/paginator.html" %}
+  <p>Showing assessments <b>{{page_obj.start_index}}-{{page_obj.end_index}}</b> of <b>{{paginator.count}}</b></p>
 </div>
 {% endblock content_outer %}
 
