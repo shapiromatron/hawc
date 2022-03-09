@@ -36,7 +36,15 @@
     <tbody>
       {% for object in object_list %}
       <tr>
-        <td><a href="{{object.get_absolute_url}}">{{object.title}}</a></td>
+        <td><a href="{{object.get_absolute_url}}">{{object.title}}</a>
+          {% if obj_perms.edit %}
+            {% if object.published %}
+            <i class="float-right fa fa-eye" aria-hidden="true" title="Available to the public"></i>
+            {% else %}
+            <i class="float-right fa fa-eye-slash" aria-hidden="true" title="Not available to the public"></i>
+            {% endif %}
+          {% endif %}
+        </td>
         <td>{{object.get_table_type_display}}</td>
         {% if show_published %}<td>{{object.published}}</td>{% endif %}
         <td>{{object.created|date:"Y-m-d" }}</td>

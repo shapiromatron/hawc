@@ -887,15 +887,21 @@ class PublishedItemsChecklist(HtmxViewSet):
             "study": apps.get_model("study", "Study"),
             "visual": apps.get_model("summary", "Visual"),
             "datapivot": apps.get_model("summary", "DataPivot"),
+            "dataset": apps.get_model("assessment", "Dataset"),
+            "summarytable": apps.get_model("summary", "SummaryTable"),
+            "attachment": apps.get_model("assessment", "Attachment"),
         }
         Model = lookup.get(type)
         if not Model:
             raise Http404()
-        return get_object_or_404(Model.objects.filter(assessment=item.assessment), id=object_id)
+        return get_object_or_404(Model.objects.filter(id=object_id))
 
     @transaction.atomic
     def perform_update(self, request, instance):
-        instance.published = not instance.published
+        if hasattr(instance, "published"):
+            instance.published = not instance.published
+        elif hasattr(instance, "publicly_available"):
+            instance.publicly_available = not instance.publicly_available
         instance.save()
         create_object_log("Updated", instance, request.item.assessment.id, request.user.id)
 
@@ -905,17 +911,30 @@ class PublishedItemsChecklist(HtmxViewSet):
         studies = (
             apps.get_model("study", "Study")
             .objects.filter(assessment=assessment)
-            .order_by(Lower("short_citation"))
+            .order_by("short_citation".lower())
         )
         datapivots = (
             apps.get_model("summary", "DataPivot")
             .objects.filter(assessment=assessment)
-            .order_by(Lower("title"))
+            .order_by("title".lower())
         )
         visuals = (
             apps.get_model("summary", "Visual")
             .objects.filter(assessment=assessment)
-            .order_by("visual_type", Lower("title"))
+            .order_by("visual_type", "title".lower())
+        )
+        datasets = (
+            apps.get_model("assessment", "Dataset")
+            .objects.filter(assessment=assessment)
+            .order_by("name".lower())
+        )
+        summarytables = (
+            apps.get_model("summary", "SummaryTable")
+            .objects.filter(assessment=assessment)
+            .order_by("table_type", "title".lower())
+        )
+        attachments = apps.get_model("assessment", "Attachment").objects.get_attachments(
+            assessment, False
         )
         return {
             "assessment": assessment,
@@ -923,4 +942,7 @@ class PublishedItemsChecklist(HtmxViewSet):
             "studies": studies,
             "datapivots": datapivots,
             "visuals": visuals,
+            "datasets": datasets,
+            "summarytables": summarytables,
+            "attachments": attachments,
         }

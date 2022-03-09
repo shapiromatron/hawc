@@ -71,4 +71,72 @@
         </table>
     </div>
 </div>
+<div class='row'>
+    <div class='col-md-4'>
+        <table class="table table-sm table-bordered">
+            <thread>
+                <tr>
+                    <th>Published</th>
+                    <th>Dataset</th>
+                </tr>
+            </thread>
+            <tbody>
+                {% for dataset in datasets %}
+                <tr>
+                    {% include 'assessment/fragments/publish_item_td.html' with name="dataset" object=dataset %}
+                    <td><a href="{{dataset.get_absolute_url}}">{{dataset}}</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2"><i>No datasets exist.</i></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class='col-md-4'>
+        <table class="table table-sm table-bordered">
+            <thread>
+                <tr>
+                    <th>Published</th>
+                    <th>Summary tables</th>
+                </tr>
+            </thread>
+            <tbody>
+                {% for table in summarytables %}
+                <tr>
+                    {% include 'assessment/fragments/publish_item_td.html' with name="summarytable" object=table %}
+                    <td><a href="{{table.get_absolute_url}}">{{table}}</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2"><i>No summary tables exist.</i></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class='col-md-4'>
+        <table class="table table-sm table-bordered">
+            <thread>
+                <tr>
+                    <th>Published</th>
+                    <th>Assessment Attachments</th>
+                </tr>
+            </thread>
+            <tbody>
+                {% for attachment in attachments %}
+                <tr>
+                    {% include 'assessment/fragments/publish_item_td.html' with name="attachment" object=attachment %}
+                    <td><a href="{{attachment.get_absolute_url}}">{{attachment}}</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2"><i>No attachments exist.</i></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock content %}
