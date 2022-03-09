@@ -122,7 +122,11 @@ class HawcSession:
         Args:
             token (str): authentication token from your user profile
         """
+
+        url = f"{self.root_url}/user/api/token-validate/"        
         self._session.headers.update(Authorization=f"Token {token}")
+        response = self._session.post(url)
+        self._handle_hawc_response(response)
 
     def iter_pages(self, url: str, params: Dict = None) -> Generator:
         """
