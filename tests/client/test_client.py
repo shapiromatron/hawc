@@ -46,7 +46,6 @@ class TestClient(LiveServerTestCase, TestCase):
         with pytest.raises(HawcClientException) as err:
             client.set_authentication_token("123")
         assert err.value.status_code == 403
-        
 
     ####################
     # BaseClient tests #
