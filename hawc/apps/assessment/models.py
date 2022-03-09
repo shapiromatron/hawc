@@ -387,25 +387,6 @@ class Assessment(models.Model):
         # refresh materialized views
         refresh_all_mvs(force=True)
 
-    @classmethod
-    def size_df(cls) -> pd.DataFrame:
-        qs = Assessment.objects.all().values("id", "name", "created", "last_updated")
-        df1 = pd.DataFrame(qs).set_index("id")
-        for annotation in [
-            dict(num_references=models.Count("references")),
-            dict(num_studies=models.Count("references__study")),
-            dict(num_ani_endpoints=models.Count("baseendpoint__endpoint")),
-            dict(num_epi_outcomes=models.Count("baseendpoint__outcome")),
-            dict(num_epi_results=models.Count("baseendpoint__outcome__results")),
-            dict(num_invitro_ivendpoints=models.Count("baseendpoint__ivendpoint")),
-            dict(num_datapivots=models.Count("datapivot")),
-            dict(num_viusals=models.Count("visuals")),
-        ]:
-            qs = Assessment.objects.all().values("id").annotate(**annotation)
-            df2 = pd.DataFrame(qs).set_index("id")
-            df1 = df1.merge(df2, left_index=True, right_index=True)
-        return df1.reset_index().sort_values("id")
-
     def pms_and_team_users(self) -> models.QuerySet:
         # return users that are either project managers or team members
         return (

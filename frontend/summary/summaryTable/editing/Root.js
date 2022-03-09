@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
-import {getEditTableComponent, getViewTableComponent} from "../lookups";
+import {getEditTableComponent, getViewTableComponent, getTableDataComponent} from "../lookups";
 import DjangoForm from "./DjangoForm";
 import FormActions from "shared/components/FormActions";
 
@@ -14,6 +14,7 @@ class Root extends Component {
         const {tableStore, tableObject, isCreate, handleSubmit, cancelUrl} = this.props.store,
             saveBtnText = isCreate ? "Create" : "Update",
             Form = getEditTableComponent(tableObject),
+            Data = getTableDataComponent(tableObject),
             Table = getViewTableComponent(tableObject);
 
         return (
@@ -21,12 +22,18 @@ class Root extends Component {
                 <Tabs>
                     <TabList>
                         <Tab>Overall</Tab>
+                        {Data ? <Tab>Data</Tab> : null}
                         <Tab>Editing</Tab>
                         <Tab>Preview</Tab>
                     </TabList>
                     <TabPanel>
                         <DjangoForm />
                     </TabPanel>
+                    {Data ? (
+                        <TabPanel>
+                            <Data store={tableStore} />
+                        </TabPanel>
+                    ) : null}
                     <TabPanel>
                         <Form store={tableStore} />
                     </TabPanel>

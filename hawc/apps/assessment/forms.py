@@ -125,6 +125,7 @@ class AssessmentForm(forms.ModelForm):
 class AssessmentFilterForm(forms.Form):
     search = forms.CharField(required=False)
 
+    DEFAULT_ORDER_BY = "-last_updated"
     ORDER_BY_CHOICES = [
         ("name", "Name"),
         ("year", "Year, ascending"),
@@ -132,10 +133,7 @@ class AssessmentFilterForm(forms.Form):
         ("last_updated", "Date Updated, ascending"),
         ("-last_updated", "Date Updated, descending"),
     ]
-    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial="-last_updated")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial=DEFAULT_ORDER_BY)
 
     @property
     def helper(self):
@@ -158,9 +156,8 @@ class AssessmentFilterForm(forms.Form):
         return qs.order_by(self.get_order_by())
 
     def get_order_by(self):
-        if self.is_valid():
-            return self.cleaned_data.get("order_by", "-last_updated")
-        return "-last_updated"
+        value = self.cleaned_data.get("order_by") if self.is_valid() else None
+        return value or self.DEFAULT_ORDER_BY
 
 
 class AssessmentAdminForm(forms.ModelForm):
