@@ -1,5 +1,3 @@
-import copy
-
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.db import transaction
@@ -215,7 +213,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             if len(extra_scores) > 0:
                 extra_scores = ", ".join(map(str, extra_scores))
                 raise serializers.ValidationError(
-                    f"Metrics {extra_scores} were submitted and are not required for this study type"
+                    f"Metrics {extra_scores} were submitted but are not required for this study type"
                 )
             for metric in required_metrics:
                 domain = metric.domain
