@@ -60,13 +60,6 @@ urlpatterns = [
         {"action": "delete"},
         name="attachment-delete",
     ),
-    path(
-        "v2/attachment/<int:pk>/delete/",
-        views.AttachmentViewset.as_view(),
-        {"action": "delete"},
-        name="attachment-delete",
-    ),
-    path("<int:pk>/attachments/", views.AttachmentList.as_view(), name="attachment_list"),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),
     path("dataset/<int:pk>/", views.DatasetRead.as_view(), name="dataset_detail"),

@@ -119,6 +119,27 @@ class Study {
         return ul;
     }
 
+    add_attachments_row(div, attachments) {
+        if (attachments.length === 0) return;
+
+        var tbody = div.find("table tbody"),
+            ul = $("<ul>"),
+            tr = $("<tr>").append("<th>Attachments</th>"),
+            td = $("<td>");
+
+        attachments.forEach(function(v) {
+            ul.append(
+                `<li>
+                    <a target="_blank" href="${v.url}">${v.filename}</a>
+                    <a class="btn btn-sm btn-danger float-right" title="Delete" href="${v.url_delete}">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </li>`
+            );
+        });
+        tbody.append(tr.append(td.append(ul)));
+    }
+
     displayAsModal() {
         var modal = new HAWCModal(),
             title = `<h4>${this.build_breadcrumbs()}</h4>`,

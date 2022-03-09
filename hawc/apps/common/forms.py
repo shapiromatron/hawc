@@ -58,7 +58,6 @@ class BaseFormHelper(cf.FormHelper):
         form_actions = self.kwargs.get("form_actions")
 
         cancel_url = self.kwargs.get("cancel_url")
-
         if form_actions is None and cancel_url:
             form_actions = [
                 cfl.Submit("save", self.kwargs.get("submit_text", "Save")),

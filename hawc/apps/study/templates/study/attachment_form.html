@@ -1,18 +1,7 @@
-{% if action == 'create' %}
-{% load crispy_forms_tags %}
-<li id="new_item" style="padding-top: 0.75rem" hx-target="this" hx-swap="outerHTML">
-    <div>
-        <form method=post enctype="multipart/form-data">
-            {% crispy form %}
-            <button class="btn btn-sm btn-info" hx-encoding="multipart/form-data"
-                hx-post="{% url 'study:attachment-create' parent.pk %}">Save</button>
-            <button class="btn btn-sm btn-light" type='button'
-                hx-get="{% url 'study:attachment_list' parent.pk %}"
-                hx-target="#attach_list"
-                >Cancel</button>
-        </form>
-    </div>
-</li>
-{% else %}
-<li id="new_item" style="display:none" hx-target="this" hx-swap="outerHTML"></li>
-{% endif %}
+{% extends 'assessment-rooted.html' %}
+
+{% load add_class %}
+
+{% block content %}
+    {% crispy form %}
+{% endblock %}
