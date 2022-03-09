@@ -1,41 +1,19 @@
+{% load optional_table_row %}
+
 <table class="table table-sm table-striped" hx-target="this" id="design-table">
     <colgroup>
         <col style="width: 20%;">
         <col style="width: 80%;">
     </colgroup>
     <tbody>
-        <tr>
-            <td><b>Study design</b></td>
-            <td>{{object.get_study_design_display}}</td>
-        </tr>
-        <tr>
-            <td><b>Source</b></td>
-            <td>{{object.get_source_display}}</td>
-        </tr>
-        <tr>
-            <td><b>Population age category</b></td>
-            <td>{{object.get_age_profile_display}}</td>
-        </tr>
-        <tr>
-            <td><b>Population age details</b></td>
-            <td>{{object.age_description}}</td>
-        </tr>
-        <tr>
-            <td><b>Sex</b></td>
-            <td>{{object.get_sex_display}}</td>
-        </tr>
-        <tr>
-            <td><b>Population race/ethnicity</b></td>
-            <td>{{object.race}}</td>
-        </tr>
-        <tr>
-            <td><b>Population summary</b></td>
-            <td>{{object.summary}}</td>
-        </tr>
-        <tr>
-            <td><b>Study name</b></td>
-            <td>{{object.study}}</td>
-        </tr>
+        {% optional_table_row "Study design" object.get_study_design_display %}
+        {% optional_table_row "Source" object.get_source_display %}
+        {% optional_table_row "Population age category" object.get_age_profile_display %}
+        {% optional_table_row "Population age details" object.age_description %}
+        {% optional_table_row "Sex" object.get_sex_display %}
+        {% optional_table_row "Population race/ethnicity" object.race %}
+        {% optional_table_row "Population summary" object.summary %}
+        {% optional_table_row "Study (cohort) name" object.study_name %}
         <tr>
             <td><b>Countries</b></td>
             <td>{% for object in object.countries.all %}
@@ -43,29 +21,16 @@
                 {% endfor %}
             </td>
         </tr>
-        <tr>
-            <td><b>Other geographic information</b></td>
-            <td>{{object.region}}</td>
-        </tr>
-        <tr>
-            <td><b>Year(s) of data collection</b></td>
-            <td>{{object.years}}</td>
-        </tr>
-        <tr>
-            <td><b>Overall study population</b></td>
-            <td>{{object.participant_n}}</td>
-        </tr>
+        {% optional_table_row "Other geographic information" object.region %}
+        {% optional_table_row "Year(s) of data collection" object.years %}
+        {% optional_table_row "Overall study population" object.participant_n %}
         <tr>
             <td><b>Inclusion/Exclusion Criteria</b></td>
-            <td>
-                {% for object in object.criteria.all %}
-                    <span class="badge badge-secondary">{{object.name}}</span>
-                {% endfor %}
-            </td>
+            <td>{{object.criteria|safe}}</td>
         </tr>
         <tr>
             <td><b>Comments</b></td>
-            <td>{{object.comments}}</td>
+            <td>{{object.comments|safe}}</td>
         </tr>
     </tbody>
 </table>
