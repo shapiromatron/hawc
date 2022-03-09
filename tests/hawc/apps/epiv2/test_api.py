@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
@@ -23,7 +25,7 @@ class TestDesignApi:
             "region": "northern Taiwan",
             "years": "2009-2010",
             "participant_n": 456,
-            "age_profile": ["Children and adolescents <18 yrs"],
+            "age_profile": ["AD"],
             "countries": ["TW"],
         }
         generic_perm_tester(url, data)
@@ -45,9 +47,11 @@ class TestDesignApi:
             "region": "northern Taiwan",
             "years": "2009-2010",
             "participant_n": 456,
-            "age_profile": ["Children and adolescents <18 yrs"],
+            "age_profile": ["AD"],
             "countries": ["TW"],
         }
+        data2 = deepcopy(data)
+        data2.pop("age_profile")
 
         just_created_design_id = None
 
@@ -87,6 +91,13 @@ class TestDesignApi:
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": data,
+                "post_request_test": design_create_test,
+            },
+            {
+                "desc": "design create; no age_profile",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": data2,
                 "post_request_test": design_create_test,
             },
         )

@@ -168,6 +168,7 @@ class TestDesignChildren:
         inputs = {
             "endpoint": "ex outcome",
             "health_outcome": "ex health outcome",
+            "health_outcome_system": "CA",
         }
         with assertTemplateUsed("epiv2/fragments/outcome_row.html"):
             resp = client.post(url, data=inputs)
@@ -199,6 +200,7 @@ class TestDesignChildren:
         inputs = {
             "endpoint": "ex outcome update",
             "health_outcome": "ex health outcome update",
+            "health_outcome_system": "CA",
         }
         with assertTemplateUsed("epiv2/fragments/outcome_row.html"):
             resp = client.post(url, data=inputs)
@@ -255,6 +257,8 @@ class TestDesignChildren:
             "sub_population": "ex sp",
             "outcome": outcome.id,
             "exposure_level": exposure_level.id,
+            "effect_estimate_type": "OR",
+            "effect_estimate": 1.5,
             "exposure_rank": 1,
             "significant": 2,
             "adjustment_factor": adjust_factor.id,
@@ -295,6 +299,8 @@ class TestDesignChildren:
             "sub_population": "ex sp update",
             "outcome": outcome.id,
             "exposure_level": exposure_level.id,
+            "effect_estimate_type": "OR",
+            "effect_estimate": 2.5,
             "exposure_rank": 4,
             "significant": 1,
             "adjustment_factor": adjust_factor.id,

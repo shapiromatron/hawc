@@ -63,8 +63,10 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     def create(self, validated_data):
         nested_models = [
             "countries",
-            "age_profile",
         ]
+
+        if "age_profile" not in validated_data:
+            validated_data["age_profile"] = []
 
         nested_validated_data = {}
 
@@ -79,9 +81,6 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         # add nested models to the instance
         if countries := nested_validated_data.get("countries"):
             instance.countries.set(countries)
-
-        if age_profile := nested_validated_data.get("age_profile"):
-            instance.age_profile.set(age_profile)
 
         return instance
 

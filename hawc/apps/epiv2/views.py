@@ -1,6 +1,5 @@
 from django.http import HttpRequest
 from django.shortcuts import render
-from django.urls import reverse
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate

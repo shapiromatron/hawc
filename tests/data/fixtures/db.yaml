@@ -4757,7 +4757,8 @@
     - 1
     countries:
     - 3
-    comments: test 2
+    criteria: "<ul><li>cases: asthma diagnosis by physician</li><li>singleton birth</li></ul>"
+    comments: "<p>test comments</p>"
 - model: epiv2.chemical
   pk: 1
   fields:
@@ -4790,20 +4791,6 @@
     dsstox: null
     created: 2022-01-10 21:26:09.671290+00:00
     last_updated: 2022-01-10 21:26:09.671299+00:00
-- model: epiv2.criteria
-  pk: 1
-  fields:
-    design: 1
-    name: 'cases: asthma diagnosis by physician'
-    created: 2022-01-10 21:12:17.736159+00:00
-    last_updated: 2022-01-10 21:12:17.736173+00:00
-- model: epiv2.criteria
-  pk: 2
-  fields:
-    design: 2
-    name: singleton birth
-    created: 2022-01-10 21:26:09.662491+00:00
-    last_updated: 2022-01-10 21:26:09.662504+00:00
 - model: epiv2.exposure
   pk: 1
   fields:

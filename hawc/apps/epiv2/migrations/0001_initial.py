@@ -1,6 +1,6 @@
 import django.contrib.postgres.fields
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -566,7 +566,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name": "Quantitative data extraction",},
+            options={"verbose_name": "Quantitative data extraction"},
         ),
         migrations.AddField(
             model_name="chemical",
