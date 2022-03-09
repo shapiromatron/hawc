@@ -21,9 +21,9 @@ class VocabAdmin(admin.ModelAdmin):
         return qs.select_related("parent")
 
 
-@admin.register(models.Metadata)
-class MetadataAdmin(admin.ModelAdmin):
-    form = forms.MetadataForm
+@admin.register(models.Design)
+class DesignAdmin(admin.ModelAdmin):
+    form = forms.DesignForm
     list_display = ("id", "__str__", "study", "design", "created", "last_updated")
     list_filter = ("design", "habitat")
     search_fields = ("study__short_citation",)
@@ -45,15 +45,14 @@ class CauseAdmin(admin.ModelAdmin):
     form = forms.CauseForm
     list_display = ("id", "__str__", "study", "created", "last_updated")
     search_fields = ("study__short_citation",)
-    inlines = [EffectTabularAdmin]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related("study", "term")
 
 
-class QuantitativeInlineAdmin(admin.TabularInline):
-    model = models.Quantitative
+class ResultInlineAdmin(admin.TabularInline):
+    model = models.Result
     extra = 0
     readonly_fields = (admin_edit_link,)
 
@@ -65,19 +64,19 @@ class QuantitativeInlineAdmin(admin.TabularInline):
 @admin.register(models.Effect)
 class EffectAdmin(admin.ModelAdmin):
     form = forms.EffectForm
-    list_display = ("id", "cause", "term", "created", "last_updated")
-    search_fields = ("cause__study__short_citation",)
-    inlines = [QuantitativeInlineAdmin]
+    list_display = ("id", "study", "term", "created", "last_updated")
+    search_fields = ("study__short_citation",)
+    inlines = [ResultInlineAdmin]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("cause__study", "term")
+        return qs.select_related("study", "term")
 
 
-@admin.register(models.Quantitative)
-class QuantitativeAdmin(admin.ModelAdmin):
-    model = models.Quantitative
-    form = forms.QuantitativeForm
+@admin.register(models.Result)
+class ResultAdmin(admin.ModelAdmin):
+    model = models.Result
+    form = forms.ResultForm
     list_display = (
         "id",
         "effect",
@@ -88,4 +87,4 @@ class QuantitativeAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("effect__cause__study")
+        return qs.select_related("study")

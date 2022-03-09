@@ -10,6 +10,7 @@
 {"pk": 8, "model": "eco.Vocab", "fields": {"category": 1, "value": "Greenhouse"}},
 {"pk": 9, "model": "eco.Vocab", "fields": {"category": 1, "value": "Laboratory"}},
 {"pk": 10, "model": "eco.Vocab", "fields": {"category": 1, "value": "Model"}},
+{"pk": 201, "model": "eco.Vocab", "fields": {"category": 1, "value": "Open-top chamber"}},
 {"pk": 11, "model": "eco.Vocab", "fields": {"category": 1, "value": "Not applicable"}},
 
 {"pk": 12, "model": "eco.Vocab", "fields": {"category": 2, "value": "Terrestrial"}},
@@ -39,6 +40,7 @@
 {"pk": 31, "model": "eco.Vocab", "fields": {"category": 5, "value": "Population"}},
 {"pk": 32, "model": "eco.Vocab", "fields": {"category": 5, "value": "Individual organism"}},
 {"pk": 33, "model": "eco.Vocab", "fields": {"category": 5, "value": "Sub-organismal"}},
+{"pk": 202, "model": "eco.Vocab", "fields": {"category": 5, "value": "Biogeochemical"}},
 {"pk": 199,"model": "eco.Vocab","fields": {"category": 5, "value": "Not applicable"}},
 {"pk": 200,"model": "eco.Vocab","fields": {"category": 5, "value": "Not reported"}},
 
