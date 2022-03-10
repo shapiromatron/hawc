@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 from rest_framework import serializers
 
@@ -80,14 +81,26 @@ class ExperimentSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
 
 class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
+    dose_units = serializers.SerializerMethodField()
+    dose_dict = serializers.SerializerMethodField()
 
     class Meta:
         model = animal_models.AnimalGroup
-        fields = ["id", "experiment_id", "description"]
+        fields = ["id", "experiment_id", "description", "dose_units", "dose_dict"]
         read_only_fields = fields
 
     def get_description(self, obj):
-        return f"{obj.generation}{' ' if obj.generation else ''}{obj.species.name}, {obj.strain.name} ({obj.sex_symbol})"
+        return (
+            f"{obj.generation}{' ' if obj.generation else ''}{obj.species.name}, {obj.strain.name} ({obj.sex_symbol})"
+        )
+
+    def get_dose_units(self, obj):
+        _doses = obj.get_doses_json(False)
+        return [dgs["name"] for dgs in _doses]
+
+    def get_dose_dict(self, obj):
+        _doses = obj.get_doses_json(False)
+        return {dgs["name"]: ", ".join([str(value) for value in dgs["values"]]) for dgs in _doses}
 
 
 class EndpointSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
@@ -102,6 +115,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
     data_source = serializers.ChoiceField(choices=["study", "ani"])
     published_only = serializers.BooleanField()
 
+    """
     def validate(self, data):
         # Check permissions for non published data
         if (
@@ -110,6 +124,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
         ):
             raise serializers.ValidationError("Must be part of team to view unpublished data.")
         return data
+    """
 
     @property
     def _id_fields(self):
@@ -137,7 +152,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
         study_df = pd.DataFrame.from_records(study_ser.data, columns=study_ser.child.fields.keys())
         study_df.insert(0, "type", "study")
         study_df.insert(1, "id", study_df["study_id"])
-        return study_df.convert_dtypes().replace({pd.NA: None})
+        return study_df.convert_dtypes()
 
     def _get_ani_df(self):
         # get study df
@@ -145,50 +160,36 @@ class StudyEvaluationSerializer(serializers.Serializer):
         study_ser = StudySerializer(study_qs, many=True, field_prefix="study_")
         study_df = pd.DataFrame.from_records(study_ser.data, columns=study_ser.child.fields.keys())
         # get experiment df
-        experiment_qs = animal_models.Experiment.objects.filter(
-            study_id__in=study_df["study_id"].values
-        )
+        experiment_qs = animal_models.Experiment.objects.filter(study_id__in=study_df["study_id"].values)
         experiment_ser = ExperimentSerializer(
-            experiment_qs,
-            many=True,
-            field_prefix="experiment_",
-            field_renames={"study_id": "study_id"},
+            experiment_qs, many=True, field_prefix="experiment_", field_renames={"study_id": "study_id"},
         )
-        experiment_df = pd.DataFrame.from_records(
-            experiment_ser.data, columns=experiment_ser.child.fields.keys()
-        )
+        experiment_df = pd.DataFrame.from_records(experiment_ser.data, columns=experiment_ser.child.fields.keys())
         # get animal group df
-        animal_group_qs = animal_models.AnimalGroup.objects.filter(
-            experiment_id__in=experiment_df["experiment_id"].values
-        ).select_related("species", "strain")
+        animal_group_qs = (
+            animal_models.AnimalGroup.objects.filter(experiment_id__in=experiment_df["experiment_id"].values)
+            .select_related("species", "strain", "dosing_regime")
+            .prefetch_related("dosing_regime__doses__dose_units")
+        )
         animal_group_ser = AnimalGroupSerializer(
-            animal_group_qs,
-            many=True,
-            field_prefix="animal_group_",
-            field_renames={"experiment_id": "experiment_id"},
+            animal_group_qs, many=True, field_prefix="animal_group_", field_renames={"experiment_id": "experiment_id"},
         )
-        animal_group_df = pd.DataFrame.from_records(
-            animal_group_ser.data, columns=animal_group_ser.child.fields.keys()
-        )
+        animal_group_df = pd.DataFrame.from_records(animal_group_ser.data, columns=animal_group_ser.child.fields.keys())
         # get endpoint df
         endpoint_qs = animal_models.Endpoint.objects.filter(
             animal_group_id__in=animal_group_df["animal_group_id"].values
         )
         endpoint_ser = EndpointSerializer(
-            endpoint_qs,
-            many=True,
-            field_prefix="endpoint_",
-            field_renames={"animal_group_id": "animal_group_id"},
+            endpoint_qs, many=True, field_prefix="endpoint_", field_renames={"animal_group_id": "animal_group_id"},
         )
-        endpoint_df = pd.DataFrame.from_records(
-            endpoint_ser.data, columns=endpoint_ser.child.fields.keys()
-        )
+        endpoint_df = pd.DataFrame.from_records(endpoint_ser.data, columns=endpoint_ser.child.fields.keys())
         # join dfs
         merged_df = (
             study_df.merge(experiment_df, how="left", on="study_id")
             .merge(animal_group_df, how="left", on="experiment_id")
             .merge(endpoint_df, how="left", on="animal_group_id")
         )
+
         # group dfs by type
         group_dfs = [
             self._group_df(merged_df, "study"),
@@ -198,10 +199,23 @@ class StudyEvaluationSerializer(serializers.Serializer):
         ]
         # combine grouped dfs
         final_df = pd.concat(group_dfs, ignore_index=True)
-        return final_df.convert_dtypes().replace({pd.NA: None})
+        return final_df.convert_dtypes()
 
-    def _foo(self, series: pd.Series):
-        # TODO rename appropriately
+    def _aggregate_custom(self, df, base):
+        if self.validated_data["data_source"] == "ani":
+            # handle doses
+            dose_units = df["animal_group_dose_units"].explode().dropna().unique()
+            all_doses = []
+            for dose_unit in dose_units:
+                doses = df["animal_group_dose_dict"].apply(lambda x: x.get(dose_unit)).dropna().unique()
+                all_doses.append("; ".join(doses))
+            base = base.rename({"animal_group_dose_dict": "animal_group_doses"})
+            base["animal_group_doses"] = "|".join(all_doses)
+            base["animal_group_dose_units"] = "|".join(dose_units)
+            df = df.drop(columns=["animal_group_dose_units", "animal_group_dose_dict"])
+        return df, base
+
+    def _aggregate_series(self, series: pd.Series):
         return "; ".join([str(_) for _ in series.dropna().sort_values().unique()])
 
     def _aggregate_df(self, df):
@@ -210,14 +224,19 @@ class StudyEvaluationSerializer(serializers.Serializer):
         # ids are not aggregated
         df = df.drop(columns=self._id_fields)
 
-        series = df.apply(self._foo, axis=0)
+        # custom aggregation
+        df, base = self._aggregate_custom(df, base)
+
+        # default aggregation
+        series = df.apply(self._aggregate_series, axis=0)
         base.update(series)
         return base
 
     def _group_df(self, df, model):
         ## aggregate
         column = f"{model}_id"
-        df = df.groupby(column, as_index=False).apply(self._aggregate_df)
+        groups = df.groupby(column, as_index=False)
+        df = groups.apply(self._aggregate_df)
         ## add identifying columns
         df.insert(0, "type", model)
         df.insert(1, "id", df[column])
@@ -243,7 +262,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
                 "object_id",
             ],
         )
-        return df.convert_dtypes().replace({pd.NA: None})
+        return df.convert_dtypes()
 
     def _get_df(self):
         data_source = self.validated_data["data_source"]
@@ -256,4 +275,4 @@ class StudyEvaluationSerializer(serializers.Serializer):
         return {"data": self._get_df(), "rob": self._get_rob_df()}
 
     def get_data(self):
-        return {key: df.to_dict(orient="records") for key, df in self.get_dfs().items()}
+        return {key: json.loads(df.to_json(orient="records")) for key, df in self.get_dfs().items()}
