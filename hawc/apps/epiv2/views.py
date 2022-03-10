@@ -27,14 +27,23 @@ class DesignUpdate(BaseUpdate):
     form_class = forms.DesignForm
     template_name = "epiv2/design_update.html"
 
+    def get_queryset(self):
+        return super().get_queryset().complete()
+
 
 class DesignDetail(BaseDetail):
     model = models.Design
+
+    def get_queryset(self):
+        return super().get_queryset().complete()
 
 
 class DesignDelete(BaseDelete):
     success_message = "Study Population deleted."
     model = models.Design
+
+    def get_queryset(self):
+        return super().get_queryset().complete()
 
     def get_success_url(self):
         return self.object.study.get_absolute_url()

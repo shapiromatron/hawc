@@ -116,6 +116,8 @@ class TestDesignChildren:
             "name": "ex exposure level",
             "chemical": chemical.id,
             "exposure_measurement": exposure.id,
+            "variance_type": 0,
+            "ci_type": "Rng",
         }
         with assertTemplateUsed("epiv2/fragments/exposurelevel_row.html"):
             resp = client.post(url, data=inputs)
@@ -152,6 +154,8 @@ class TestDesignChildren:
             "chemical": chemical.id,
             "exposure_measurement": exposure.id,
             "sub_population": "example sub population",
+            "variance_type": 0,
+            "ci_type": "Rng",
         }
         with assertTemplateUsed("epiv2/fragments/exposurelevel_row.html"):
             resp = client.post(url, data=inputs)
@@ -213,6 +217,7 @@ class TestDesignChildren:
         url = reverse("epiv2:adjustmentfactor-create", args=[design.id])
         inputs = {
             "name": "ex adjustment factor",
+            "description": "smoking, drinking",
         }
         with assertTemplateUsed("epiv2/fragments/adjustment_factor_row.html"):
             resp = client.post(url, data=inputs)
@@ -243,6 +248,7 @@ class TestDesignChildren:
         url = reverse("epiv2:adjustmentfactor-update", args=[adjust_factor.id])
         inputs = {
             "name": "ex adjustment factor update",
+            "description": "smoking, drinking, dancing",
         }
         with assertTemplateUsed("epiv2/fragments/adjustment_factor_row.html"):
             resp = client.post(url, data=inputs)
@@ -262,6 +268,8 @@ class TestDesignChildren:
             "exposure_rank": 1,
             "significant": 2,
             "adjustment_factor": adjust_factor.id,
+            "variance_type": 0,
+            "ci_type": "Rng",
         }
         with assertTemplateUsed("epiv2/fragments/data_extraction_row.html"):
             resp = client.post(url, data=inputs)
@@ -304,6 +312,8 @@ class TestDesignChildren:
             "exposure_rank": 4,
             "significant": 1,
             "adjustment_factor": adjust_factor.id,
+            "variance_type": 1,
+            "ci_type": "P95",
         }
         with assertTemplateUsed("epiv2/fragments/data_extraction_row.html"):
             resp = client.post(url, data=inputs)

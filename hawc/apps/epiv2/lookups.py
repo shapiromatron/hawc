@@ -6,6 +6,11 @@ from ..common.lookups import DistinctStringLookup
 from . import models
 
 
+class CountryNameLookup(DistinctStringLookup):
+    model = Country
+    distinct_field = "name"
+
+
 class ChemicalNameLookup(DistinctStringLookup):
     model = models.Chemical
     distinct_field = "name"
@@ -21,12 +26,13 @@ class HealthOutcomeLookup(DistinctStringLookup):
     distinct_field = "health_outcome"
 
 
-class CountryNameLookup(DistinctStringLookup):
-    model = Country
-    distinct_field = "name"
+class ExposureLevelUnitsLookup(DistinctStringLookup):
+    model = models.ExposureLevel
+    distinct_field = "units"
 
 
+registry.register(CountryNameLookup)
 registry.register(ChemicalNameLookup)
 registry.register(EndpointLookup)
 registry.register(HealthOutcomeLookup)
-registry.register(CountryNameLookup)
+registry.register(ExposureLevelUnitsLookup)

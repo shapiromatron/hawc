@@ -43,10 +43,7 @@ class DesignAdmin(admin.ModelAdmin):
         "created",
         "last_updated",
     )
-    list_filters = (
-        "study_design",
-        ("study__assessment", admin.RelatedOnlyFieldListFilter),
-    )
+    list_filter = ("study_design", "created")
     inlines = [
         ChemicalInline,
         ExposureInline,
@@ -55,6 +52,10 @@ class DesignAdmin(admin.ModelAdmin):
         AdjustmentFactorInline,
         DataExtractionInline,
     ]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("study")
 
 
 admin.site.register(models.Design, DesignAdmin)

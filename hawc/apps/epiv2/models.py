@@ -42,11 +42,11 @@ class Design(models.Model):
         verbose_name="Overall study population N",
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
     )
+    years = models.CharField(max_length=32, verbose_name="Year(s) of data collection", blank=True)
     countries = models.ManyToManyField(Country, blank=True)
     region = models.CharField(
         max_length=128, blank=True, verbose_name="Other geographic information"
     )
-    years = models.CharField(max_length=32, verbose_name="Year(s) of data collection", blank=True)
     criteria = models.TextField(blank=True, verbose_name="Inclusion/Exclusion Criteria")
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -54,15 +54,16 @@ class Design(models.Model):
 
     BREADCRUMB_PARENT = "study"
 
+    class Meta:
+        verbose_name = "Study Population"
+        verbose_name_plural = "Study Populations"
+        ordering = ("id",)
+
     def get_assessment(self):
         return self.study.get_assessment()
 
     def get_study(self):
         return self.study
-
-    class Meta:
-        verbose_name = "Study Population"
-        verbose_name_plural = "Study Populations"
 
     def get_absolute_url(self):
         return reverse("epiv2:design_detail", args=(self.pk,))
@@ -102,6 +103,9 @@ class Chemical(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.design.get_assessment()
@@ -152,6 +156,9 @@ class Exposure(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def get_assessment(self):
         return self.design.get_assessment()
 
@@ -183,13 +190,11 @@ class ExposureLevel(models.Model):
     )
     median = models.FloatField(blank=True, null=True)
     mean = models.FloatField(blank=True, null=True)
-    units = models.CharField(max_length=128, blank=True, null=True,)
-    neg_exposure = models.FloatField(
-        verbose_name="Percent with negligible exposure",
-        help_text="e.g., % below the LOD",
-        blank=True,
-        null=True,
+    variance = models.FloatField(blank=True, null=True)
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
     )
+    units = models.CharField(max_length=128, blank=True, null=True)
     ci_lcl = models.FloatField(blank=True, null=True, verbose_name="Lower CI")
     percentile_25 = models.FloatField(blank=True, null=True, verbose_name="25th Percentile")
     percentile_75 = models.FloatField(blank=True, null=True, verbose_name="75th Percentile")
@@ -200,14 +205,19 @@ class ExposureLevel(models.Model):
         default=constants.ConfidenceIntervalType.RNG,
         verbose_name="Confidence interval type",
     )
-    variance = models.FloatField(blank=True, null=True)
-    variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+    neg_exposure = models.FloatField(
+        verbose_name="Percent with negligible exposure",
+        help_text="e.g., % below the LOD",
+        blank=True,
+        null=True,
     )
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
     comments = models.TextField(verbose_name="Exposure level comments", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.design.get_assessment()
@@ -224,8 +234,10 @@ class ExposureLevel(models.Model):
             value = f"{self.median}"
         elif self.mean is not None:
             value = f"{self.mean}"
-        if self.lower is not None and self.upper is not None:
-            value += f" [{self.lower}, {self.upper}]"
+        if self.ci_lcl is not None and self.ci_ucl is not None:
+            value += f" [{self.ci_lcl}, {self.ci_ucl}]"
+        if self.units:
+            value += f" {self.units}"
         return value
 
     def clone(self):
@@ -253,6 +265,9 @@ class Outcome(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def get_assessment(self):
         return self.design.get_assessment()
 
@@ -277,9 +292,12 @@ class AdjustmentFactor(models.Model):
         max_length=32,
         help_text="A unique name for this adjustment factor that will help you identify it later.",
     )
-    description = models.CharField(max_length=128, help_text="Comma separated list",)
+    description = models.CharField(max_length=128, help_text="Comma separated list")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.design.get_assessment()
@@ -309,15 +327,15 @@ class DataExtraction(models.Model):
         max_length=128, blank=True, help_text="Use N/A if sub population is not relevant"
     )
     outcome_measurement_timing = models.CharField(max_length=128, blank=True)
-    n = models.PositiveIntegerField(blank=True, null=True)
+    effect_estimate = models.FloatField()
     effect_estimate_type = models.CharField(
         max_length=3, choices=constants.EffectEstimateType.choices
     )
-    effect_estimate = models.FloatField()
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
     )
+    n = models.PositiveIntegerField(blank=True, null=True)
     ci_lcl = models.FloatField(verbose_name="Lower CI", blank=True, null=True)
     ci_ucl = models.FloatField(verbose_name="Upper CI", blank=True, null=True)
     ci_type = models.CharField(
@@ -332,21 +350,20 @@ class DataExtraction(models.Model):
         choices=constants.Significant.choices,
         default=constants.Significant.NR,
     )
-    effect_description = models.CharField(
-        max_length=128,
-        blank=True,
-        verbose_name="Effect estimate description",
-        help_text="Description of the effect estimate with units, including comparison group if applicable",
-    )
-    exposure_rank = models.PositiveSmallIntegerField(
-        default=0,
-        help_text="Rank this comparison group by exposure (lowest exposure group = 1); used for sorting in visualizations",
-    )
     adjustment_factor = models.ForeignKey(
         AdjustmentFactor, on_delete=models.SET_NULL, blank=True, null=True,
     )
     confidence = models.CharField(max_length=128, verbose_name="Study confidence", blank=True)
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
+    exposure_rank = models.PositiveSmallIntegerField(
+        default=0,
+        help_text="Rank this comparison group by exposure (lowest exposure group = 1); used for sorting in visualizations",
+    )
+    effect_description = models.TextField(
+        blank=True,
+        verbose_name="Effect estimate description",
+        help_text="Description of the effect estimate with units, including comparison group if applicable",
+    )
     statistical_method = models.TextField(blank=True)
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -354,6 +371,7 @@ class DataExtraction(models.Model):
 
     class Meta:
         verbose_name = "Quantitative data extraction"
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.design.get_assessment()

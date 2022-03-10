@@ -48,11 +48,10 @@ class DesignForm(forms.ModelForm):
             }
             helper = BaseFormHelper(self, **inputs)
 
-        helper.add_row("study_design", 4, "col-md-3")
-        helper.add_row("sex", 4, "col-md-3")
-        helper.add_row("countries", 4, "col-md-3")
+        helper.add_row("summary", 4, "col-md-3")
+        helper.add_row("age_profile", 4, "col-md-3")
+        helper.add_row("participant_n", 4, "col-md-3")
         helper.add_row("criteria", 2, "col-md-6")
-
         return helper
 
 
@@ -95,7 +94,7 @@ class ExposureForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["measurement_type", "comments"]:
+        for fld in ["analytic_method", "comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
@@ -109,6 +108,11 @@ class ExposureLevelForm(forms.ModelForm):
     class Meta:
         model = models.ExposureLevel
         exclude = ("design",)
+        widgets = {
+            "units": selectable.AutoCompleteWidget(
+                lookup_class=lookups.ExposureLevelUnitsLookup, allow_new=True
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -125,9 +129,9 @@ class ExposureLevelForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 4, "col-md-3")
-        helper.add_row("median", 4, "col-md-3")
-        helper.add_row("lower", 5, "col-md-2")
-        helper.add_row("comments", 2, "col-md-6")
+        helper.add_row("median", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
+        helper.add_row("ci_lcl", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
+        helper.add_row("neg_exposure", 3, "col-md-4")
         return helper
 
 
@@ -193,13 +197,15 @@ class DataExtractionForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["comments", "statistical_method"]:
+        for fld in ["effect_description", "statistical_method", "comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
-        helper.add_row("sub_population", 4, "col-md-3")
-        helper.add_row("n", 4, "col-md-3")
-        helper.add_row("ci_lcl", 4, "col-md-3")
-        helper.add_row("pvalue", 4, "col-md-3")
-        helper.add_row("data_location", 3, "col-md-4")
+        helper.add_row("outcome", 4, "col-md-3")
+        helper.add_row(
+            "effect_estimate", 5, ["col-md-2", "col-md-3", "col-md-2", "col-md-3", "col-md-2"]
+        )
+        helper.add_row("ci_lcl", 5, ["col-md-2", "col-md-2", "col-md-3", "col-md-2", "col-md-3"])
+        helper.add_row("adjustment_factor", 4, "col-md-3")
+        helper.add_row("effect_description", 3, "col-md-4")
         helper.form_tag = False
         return helper

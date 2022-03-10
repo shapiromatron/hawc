@@ -4796,7 +4796,7 @@
   fields:
     name: child serum
     design: 1
-    biomonitoring_matrix: BL_SERUM
+    biomonitoring_matrix: BLS
     biomonitoring_source: PT
     measurement_timing: study enrollment
     exposure_route: UK
@@ -4811,7 +4811,7 @@
   fields:
     name: maternal serum
     design: 2
-    biomonitoring_matrix: BL_SERUM
+    biomonitoring_matrix: BLS
     biomonitoring_source: ML
     measurement_timing: parental (32 wks gestation)
     exposure_route: UK
@@ -4826,7 +4826,7 @@
   fields:
     name: child serum age 5
     design: 2
-    biomonitoring_matrix: BL_SERUM
+    biomonitoring_matrix: BLS
     biomonitoring_source: PT
     measurement_timing: 5 yrs
     exposure_route: UK
@@ -4846,12 +4846,12 @@
     sub_population: without asthma
     mean: 0.0
     median: 0.0
-    lower: null
-    percentile25: 0.8
-    percentile75: 1.2
-    upper: 5.0
+    ci_lcl: null
+    percentile_25: 0.8
+    percentile_75: 1.2
+    ci_ucl: 5.0
     neg_exposure: 5.0
-    ultype: ''
+    ci_type: ''
     units: ''
     comments: test
     data_location: Table 2
@@ -4867,12 +4867,12 @@
     sub_population: without asthma
     mean: 0.0
     median: 0.0
-    lower: 0.26
-    percentile25: 0.6
-    percentile75: 1.1
-    upper: 2.5
+    ci_lcl: 0.26
+    percentile_25: 0.6
+    percentile_75: 1.1
+    ci_ucl: 2.5
     neg_exposure: 0.0
-    ultype: ''
+    ci_type: ''
     units: ''
     comments: p<0.001 vs children with asthma
     data_location: Table 2
@@ -4888,12 +4888,12 @@
     sub_population: all
     mean: 0.0
     median: 0.0
-    lower: 0.0
-    percentile25: 0.22
-    percentile75: 0.38
-    upper: 0.5
+    ci_lcl: 0.0
+    percentile_25: 0.22
+    percentile_75: 0.38
+    ci_ucl: 0.5
     neg_exposure: 80.0
-    ultype: ''
+    ci_type: ''
     units: ''
     comments: ''
     data_location: Table 2
@@ -4909,12 +4909,12 @@
     sub_population: all
     mean: 0.0
     median: 0.0
-    lower: 0.1
-    percentile25: 0.21
-    percentile75: 0.38
-    upper: 0.6
+    ci_lcl: 0.1
+    percentile_25: 0.21
+    percentile_75: 0.38
+    ci_ucl: 0.6
     neg_exposure: 81.0
-    ultype: ''
+    ci_type: ''
     units: ''
     comments: ''
     data_location: Table 2
@@ -4930,12 +4930,12 @@
     sub_population: all
     mean: 0.0
     median: 0.0
-    lower: 0.2
-    percentile25: 0.46
-    percentile75: 0.79
-    upper: 0.7
+    ci_lcl: 0.2
+    percentile_25: 0.46
+    percentile_75: 0.79
+    ci_ucl: 0.7
     neg_exposure: 95.0
-    ultype: ''
+    ci_type: ''
     units: ''
     comments: ''
     data_location: Table 2
@@ -4951,12 +4951,12 @@
     sub_population: all
     mean: 0.0
     median: 0.0
-    lower: 0.3
-    percentile25: 0.76
-    percentile75: 1.24
-    upper: 0.8
+    ci_lcl: 0.3
+    percentile_25: 0.76
+    percentile_75: 1.24
+    ci_ucl: 0.8
     neg_exposure: 94.0
-    ultype: ''
+    ci_type: ''
     units: ''
     comments: ''
     data_location: Table 2
@@ -5048,8 +5048,9 @@
     exposure_rank: 1
     ci_lcl: null
     ci_ucl: null
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 2
     adjustment_factor: null
     confidence: medium
@@ -5073,8 +5074,9 @@
     exposure_rank: 2
     ci_lcl: 0.58
     ci_ucl: 1.8
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5098,8 +5100,9 @@
     exposure_rank: 3
     ci_lcl: 0.72
     ci_ucl: 2.33
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5123,8 +5126,9 @@
     exposure_rank: 4
     ci_lcl: 1.75
     ci_ucl: 5.94
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 1
     adjustment_factor: 1
     confidence: medium
@@ -5148,8 +5152,9 @@
     exposure_rank: 1
     ci_lcl: null
     ci_ucl: null
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 2
     adjustment_factor: null
     confidence: medium
@@ -5173,8 +5178,9 @@
     exposure_rank: 2
     ci_lcl: 0.68
     ci_ucl: 2.09
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5198,8 +5204,9 @@
     exposure_rank: 3
     ci_lcl: 0.86
     ci_ucl: 2.76
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5223,8 +5230,9 @@
     exposure_rank: 4
     ci_lcl: 1.41
     ci_ucl: 4.65
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 1
     adjustment_factor: 1
     confidence: medium
@@ -5248,8 +5256,9 @@
     exposure_rank: 0
     ci_lcl: -18.5
     ci_ucl: 16.8
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 2
     confidence: medium
@@ -5273,8 +5282,9 @@
     exposure_rank: 0
     ci_lcl: -24.6
     ci_ucl: 1.5
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 5
     confidence: medium
@@ -5298,8 +5308,9 @@
     exposure_rank: 0
     ci_lcl: -35.7
     ci_ucl: -4.8
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 1
     adjustment_factor: 2
     confidence: medium
@@ -5323,8 +5334,9 @@
     exposure_rank: 0
     ci_lcl: -20.6
     ci_ucl: 5.0
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 3
     confidence: medium
