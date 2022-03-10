@@ -65,7 +65,7 @@ class ReferenceFlatComplete(FlatFileExporter):
             if include_parent_tag:
                 printStatus(tags)
             else:
-                for child in tags["children"]:
+                for child in tags.get("children", []):
                     printStatus(child)
             return row
 
@@ -85,7 +85,7 @@ class ReferenceFlatComplete(FlatFileExporter):
                 if include_parent_tag:
                     checkMatch(tagged, tagslist, [])
                 else:
-                    for child in tagslist["children"]:
+                    for child in tagslist.get("children", []):
                         checkMatch(tagged, child, [])
 
             for tag in ref.tags.all():

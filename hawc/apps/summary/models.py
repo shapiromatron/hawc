@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.html import strip_tags
 from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
@@ -19,6 +18,7 @@ from treebeard.mp_tree import MP_Node
 from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import BaseTable, GenericTable
 from hawc.tools.tables.parser import QuillParser
+from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -26,7 +26,6 @@ from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
-    HAWCtoDateString,
     ReportExport,
     SerializerHelper,
     read_excel,
@@ -121,27 +120,6 @@ class SummaryText(MP_Node):
     def get_assessment(self):
         return self.assessment
 
-    @classmethod
-    def build_report(cls, report, assessment):
-        title = "Summary Text: " + HAWCtoDateString(timezone.now())
-        report.doc.add_heading(title, level=1)
-
-        preface = "Preliminary summary-text export in Word (work in progress)"
-        p = report.doc.add_paragraph(preface)
-        p.italic = True
-
-        def print_node(node, depth):
-            report.doc.add_heading(node["data"]["title"], level=depth)
-            report.doc.add_paragraph(strip_tags(node["data"]["text"]))
-            if node.get("children", None):
-                for node in node["children"]:
-                    print_node(node, depth + 1)
-
-        nodes = SummaryText.get_assessment_descendants(assessment.id, json_encode=False)
-        if nodes[0].get("children", None):
-            for node in nodes[0]["children"]:
-                print_node(node, 2)
-
 
 class SummaryTable(models.Model):
     objects = managers.SummaryTableManager()
@@ -149,6 +127,7 @@ class SummaryTable(models.Model):
     TABLE_SCHEMA_MAP = {
         constants.TableType.GENERIC: GenericTable,
         constants.TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
+        constants.TableType.STUDY_EVALUATION: StudyEvaluationTable,
     }
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
@@ -213,7 +192,12 @@ class SummaryTable(models.Model):
         return self.TABLE_SCHEMA_MAP[self.table_type]
 
     def get_table(self) -> BaseTable:
-        return self.get_content_schema_class().parse_obj(self.content)
+        schema_class = self.get_content_schema_class()
+        # ensure the assessment id is from the object; not custom config
+        kwargs = {}
+        if "assessment_id" in schema_class.schema()["properties"]:
+            kwargs["assessment_id"] = self.assessment_id
+        return schema_class.parse_obj(dict(self.content, **kwargs))
 
     @classmethod
     def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
@@ -227,6 +211,10 @@ class SummaryTable(models.Model):
         table = self.get_table()
         docx = table.to_docx(parser=QuillParser(base_url=base_url))
         return ReportExport(docx=docx, filename=self.slug)
+
+    @classmethod
+    def get_data(cls, table_type: int, assessment_id: int, **kwargs):
+        return cls.TABLE_SCHEMA_MAP[table_type].get_data(assessment_id=assessment_id, **kwargs)
 
     def clean(self):
         # make sure table can be built
@@ -941,7 +929,7 @@ class Prefilter:
     def setFiltersFromForm(filters, d, visual_type):
         evidence_type = d.get("evidence_type")
 
-        if visual_type == Visual.BIOASSAY_CROSSVIEW:
+        if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             evidence_type = constants.StudyType.BIOASSAY
 
         if d.get("prefilter_system"):

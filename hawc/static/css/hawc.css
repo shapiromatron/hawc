@@ -344,7 +344,6 @@ div.smart-tag.active {
 }
 .previewModalIcon {
     display: none;
-    padding-left: 1em;
     cursor: pointer;
 }
 
@@ -494,4 +493,17 @@ Package style overrides
     font-size: 0.85em;
     font-weight: 500;
     padding: 0.8333em 0 0;
+}
+
+/* htmx */
+.htmx-swapping {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
+/*
+Utility classes
+*/
+.cursor-pointer {
+    cursor: pointer;
 }

@@ -16,10 +16,8 @@
 
     <nav class="nav flex-column pt-3">
 
-        {% if extra_branding and flavor == "EPA" %}
+        {% if flavor == "EPA" %}
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
         {% endif %}
 
         <li class="nav-item">
@@ -102,6 +100,11 @@
                 <i class="fa fa-angle-double-right"></i>
                 Downloads</a>
         </li>
+
+        {% if flavor == "EPA" %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
+        {% endif %}
 
     </nav>
 </div>

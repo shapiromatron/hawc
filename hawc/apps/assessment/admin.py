@@ -28,28 +28,37 @@ class AssessmentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "__str__",
-        "editable",
-        "public",
+        "public_on",
         "hide_from_public_page",
+        "editable",
         "get_managers",
         "get_team_members",
         "get_reviewers",
+        "creator",
         "created",
         "last_updated",
     )
-    list_filter = ("public", "hide_from_public_page", "editable")
+    list_filter = (
+        "hide_from_public_page",
+        "public_on",
+        "editable",
+        "created",
+    )
     search_fields = (
         "name",
         "project_manager__last_name",
         "team_members__last_name",
         "reviewers__last_name",
+        "creator__last_name",
     )
     actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
     form = forms.AssessmentAdminForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.prefetch_related("project_manager", "team_members", "reviewers")
+        return qs.select_related("creator").prefetch_related(
+            "project_manager", "team_members", "reviewers"
+        )
 
     def delete_orphan_tags(self, request, queryset):
         # Action can only be run on one assessment at a time
@@ -177,11 +186,9 @@ class DoseUnitsAdmin(admin.ModelAdmin):
 
 @admin.register(models.Species)
 class SpeciesAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "name",
-    )
+    list_display = ("id", "name")
     list_display_links = ("name",)
+    search_fields = ("name",)
 
 
 @admin.register(models.Strain)
@@ -190,6 +197,7 @@ class StrainAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "species")
     list_display_links = ("name",)
     list_filter = ("species",)
+    search_fields = ("name",)
 
 
 @admin.register(models.EffectTag)

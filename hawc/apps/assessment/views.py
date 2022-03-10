@@ -1,9 +1,7 @@
 import json
 import logging
-from pathlib import Path
 from typing import Any, Dict, List
 
-import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -12,9 +10,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponseNotAllowed,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.middleware.csrf import get_token
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import HttpResponse, get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -27,6 +31,7 @@ from django.views.generic.edit import CreateView
 from ..common.crumbs import Breadcrumb
 from ..common.forms import DownloadPlotForm
 from ..common.helper import WebappConfig
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -285,11 +290,6 @@ class Error401(TemplateView):
     template_name = "401.html"
 
 
-@method_decorator(staff_member_required, name="dispatch")
-class Swagger(TemplateView):
-    template_name = "swagger.html"
-
-
 # Assessment Object
 class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
@@ -310,13 +310,13 @@ class AssessmentList(LoginRequiredMixin, ListView):
 class AssessmentFullList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = super().get_queryset()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -333,14 +333,13 @@ class AssessmentFullList(ListView):
 class AssessmentPublicList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        qs = qs.distinct().order_by(self.form.get_order_by())
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -358,6 +357,7 @@ class AssessmentPublicList(ListView):
             Data can also be downloaded for each individual assessment.
         """
         context["form"] = self.form
+        context["is_public_list"] = True
         return context
 
 
@@ -373,8 +373,12 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
 
     def get_success_url(self):
         self.assessment = self.object
-        response = super().get_success_url()
-        return response
+        return super().get_success_url()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -455,41 +459,58 @@ class AssessmentDownloads(BaseDetail):
     breadcrumb_active_name = "Downloads"
 
 
-# Attachment views
-class AttachmentCreate(BaseCreate):
-    success_message = "Attachment added."
+# Attachment viewset
+class AttachmentViewset(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
-    parent_template_name = "parent"
     model = models.Attachment
-    form_class = forms.AttachmentForm
+    form_fragment = "assessment/fragments/attachment_edit_row.html"
+    detail_fragment = "assessment/fragments/attachment_row.html"
+    list_fragment = "assessment/fragments/attachment_list.html"
 
+    @action(permission=can_view, htmx_only=False)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        if request.is_htmx:
+            return render(request, self.detail_fragment, self.get_context_data())
+        attachment = request.item.object
+        if attachment.publicly_available or request.item.permissions(request.user)["edit"]:
+            return HttpResponseRedirect(attachment.attachment.url)
+        raise Http404()
 
-class AttachmentRead(BaseDetail):
-    model = models.Attachment
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
-            return HttpResponseRedirect(self.object.attachment.url)
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
         else:
-            return PermissionDenied
+            form = forms.AttachmentForm()
+            template = self.list_fragment
+        context = self.get_context_data(form=form)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            request.item.assessment, False
+        )
+        return render(request, template, context)
 
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.AttachmentForm(data=data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
 
-class AttachmentUpdate(BaseUpdate):
-    success_message = "Assessment updated."
-    model = models.Attachment
-    form_class = forms.AttachmentForm
-
-
-class AttachmentDelete(BaseDelete):
-    success_message = "Attachment deleted."
-    model = models.Attachment
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
-
-    def get_cancel_url(self) -> str:
-        return self.object.content_object.get_absolute_url()
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        return render(request, self.detail_fragment, self.get_context_data())
 
 
 # Dataset views
@@ -688,53 +709,6 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
                 host=f"//{self.request.get_host()}",
             ),
         )
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminDashboard(TemplateView):
-    template_name = "admin/dashboard.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminAssessmentSize(TemplateView):
-    template_name = "admin/assessment-size.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminMediaPreview(TemplateView):
-    template_name = "admin/media-preview.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        Suffix-specific values were obtained by querying media file extensions:
-
-        ```bash
-        find {settings.MEDIA_ROOT} -type f | grep -o ".[^.]\\+$" | sort | uniq -c
-        ```
-        """
-        context = super().get_context_data(**kwargs)
-        obj = self.request.GET.get("item", "")
-        media = Path(settings.MEDIA_ROOT)
-        context["has_object"] = False
-        resolved = media / obj
-        context["object_name"] = str(Path(obj))
-        if obj and resolved.exists() and media in resolved.parents:
-            root_uri = self.request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
-            uri = resolved.as_uri().replace(media.as_uri(), root_uri)
-            context["has_object"] = True
-            context["object_uri"] = uri
-            context["suffix"] = resolved.suffix.lower()
-            if context["suffix"] in [".csv", ".json", ".ris", ".txt"]:
-                context["object_text"] = resolved.read_text()
-            if context["suffix"] in [".xls", ".xlsx"]:
-                df = pd.read_excel(str(resolved))
-                context["object_html"] = df.to_html(index=False)
-            if context["suffix"] in [".jpg", ".jpeg", ".png", ".tif", ".tiff"]:
-                context["object_image"] = True
-            if context["suffix"] in [".pdf"]:
-                context["object_pdf"] = True
-
-        return context
 
 
 # blog

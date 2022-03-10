@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h1 class="d-inline-block">{{object}}</h1>
+    <h2 class="d-inline-block">{{object}}</h2>
     {% if obj_perms.edit %}
       <div class="btn-group dropdown float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -19,7 +19,7 @@
     <div id="objContainer"></div>
 
   {% if crud == "Read" %}
-    <h2>Available animal groups</h2>
+    <h3>Available animal groups</h3>
     {% include "animal/_animal_group_list_tbl.html" with object_list=object.animal_groups.all %}
 
   {% endif %}
