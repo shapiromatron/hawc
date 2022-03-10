@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import json
 import pandas as pd
 from rest_framework import serializers
@@ -75,18 +76,19 @@ class StudySerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
 class ExperimentSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = animal_models.Experiment
-        fields = ["id", "study_id"]
+        fields = ["id", "study_id", "name", "chemical"]
         read_only_fields = fields
 
 
 class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
-    dose_units = serializers.SerializerMethodField()
+    route_of_exposure = serializers.SerializerMethodField()
+    treatment_period = serializers.SerializerMethodField()
     dose_dict = serializers.SerializerMethodField()
 
     class Meta:
         model = animal_models.AnimalGroup
-        fields = ["id", "experiment_id", "description", "dose_units", "dose_dict"]
+        fields = ["id", "experiment_id", "name", "description", "route_of_exposure", "treatment_period", "dose_dict"]
         read_only_fields = fields
 
     def get_description(self, obj):
@@ -94,19 +96,26 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
             f"{obj.generation}{' ' if obj.generation else ''}{obj.species.name}, {obj.strain.name} ({obj.sex_symbol})"
         )
 
-    def get_dose_units(self, obj):
-        _doses = obj.get_doses_json(False)
-        return [dgs["name"] for dgs in _doses]
+    def get_route_of_exposure(self, obj):
+        return obj.dosing_regime.get_route_of_exposure_display()
+
+    def get_treatment_period(self, obj):
+        text = obj.experiment.get_type_display()
+        if "(" in text:
+            text = text[: text.find("(")]
+        if obj.dosing_regime.duration_exposure_text:
+            text = f"{text} ({obj.dosing_regime.duration_exposure_text})"
+        return text
 
     def get_dose_dict(self, obj):
         _doses = obj.get_doses_json(False)
-        return {dgs["name"]: ", ".join([str(value) for value in dgs["values"]]) for dgs in _doses}
+        return OrderedDict((dgs["name"], ", ".join([str(value) for value in dgs["values"]])) for dgs in _doses)
 
 
 class EndpointSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = animal_models.Endpoint
-        fields = ["id", "animal_group_id"]
+        fields = ["id", "animal_group_id", "name", "system", "effect"]
         read_only_fields = fields
 
 
@@ -125,6 +134,12 @@ class StudyEvaluationSerializer(serializers.Serializer):
             raise serializers.ValidationError("Must be part of team to view unpublished data.")
         return data
     """
+
+    @property
+    def _custom_fields(self):
+        # fields that use custom aggregation
+        if self.validated_data["data_source"] == "ani":
+            return ["animal_group_dose_dict"]
 
     @property
     def _id_fields(self):
@@ -195,48 +210,47 @@ class StudyEvaluationSerializer(serializers.Serializer):
             self._group_df(merged_df, "study"),
             self._group_df(merged_df, "experiment"),
             self._group_df(merged_df, "animal_group"),
-            self._group_df(merged_df, "endpoint"),
         ]
         # combine grouped dfs
         final_df = pd.concat(group_dfs, ignore_index=True)
+        # set dose columns
+        _index = final_df.columns.get_loc("animal_group_dose_dict")
+        final_df.insert(
+            _index,
+            "animal_group_dose_units",
+            final_df["animal_group_dose_dict"].transform(lambda x: "|".join(x.keys())),
+        )
+        final_df.insert(
+            _index + 1,
+            "animal_group_doses",
+            final_df["animal_group_dose_dict"].transform(lambda x: "|".join(["; ".join(y) for y in x.values()])),
+        )
+        final_df = final_df.drop(columns=["animal_group_dose_dict"])
+        # return
         return final_df.convert_dtypes()
 
-    def _aggregate_custom(self, df, base):
-        if self.validated_data["data_source"] == "ani":
-            # handle doses
-            dose_units = df["animal_group_dose_units"].explode().dropna().unique()
-            all_doses = []
-            for dose_unit in dose_units:
-                doses = df["animal_group_dose_dict"].apply(lambda x: x.get(dose_unit)).dropna().unique()
-                all_doses.append("; ".join(doses))
-            base = base.rename({"animal_group_dose_dict": "animal_group_doses"})
-            base["animal_group_doses"] = "|".join(all_doses)
-            base["animal_group_dose_units"] = "|".join(dose_units)
-            df = df.drop(columns=["animal_group_dose_units", "animal_group_dose_dict"])
-        return df, base
+    def _aggregate_custom(self, series):
+        if series.name == "animal_group_dose_dict":
+            aggregated_dict = OrderedDict()
+            for dose_dict in series.dropna():
+                for key, value in dose_dict.items():
+                    if key not in aggregated_dict:
+                        aggregated_dict[key] = set()
+                    aggregated_dict[key].add(value)
+            return aggregated_dict
 
-    def _aggregate_series(self, series: pd.Series):
+    def _aggregate(self, series):
+        if series.name in self._custom_fields:
+            return self._aggregate_custom(series)
+        if series.name in self._id_fields:
+            return series.iloc[0]
         return "; ".join([str(_) for _ in series.dropna().sort_values().unique()])
-
-    def _aggregate_df(self, df):
-        base = df.iloc[0]
-
-        # ids are not aggregated
-        df = df.drop(columns=self._id_fields)
-
-        # custom aggregation
-        df, base = self._aggregate_custom(df, base)
-
-        # default aggregation
-        series = df.apply(self._aggregate_series, axis=0)
-        base.update(series)
-        return base
 
     def _group_df(self, df, model):
         ## aggregate
         column = f"{model}_id"
         groups = df.groupby(column, as_index=False)
-        df = groups.apply(self._aggregate_df)
+        df = groups.agg(self._aggregate)
         ## add identifying columns
         df.insert(0, "type", model)
         df.insert(1, "id", df[column])
