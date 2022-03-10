@@ -45,8 +45,8 @@
       </div>
     </div>
     <script type="module">
-      import { Runtime, Inspector } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-      import define from "https://api.observablehq.com/@munnsmunns/epicyclic-gearing.js?v=3";
+      import { Runtime, Inspector } from "{% static 'js/runtime.js' %}";
+      import define from "{% static 'js/epicyclic-gearing.js' %}";
       new Runtime().module(define, name => {
         if (name === "graphic") return new Inspector(document.querySelector("#graphic"));
         return ["update"].includes(name);
