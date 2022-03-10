@@ -1,5 +1,7 @@
 from django.db import models
 
+from ..common.constants import NO_LABEL
+
 
 class Sex(models.TextChoices):
     UNKNOWN = "U", "Not reported"
@@ -49,10 +51,19 @@ class EffectEstimateType(models.TextChoices):
     MD = "MD", "Mean difference"
 
 
-class UpperLowerType(models.TextChoices):
-    MX = "MX", "Min/Max"
-    N5 = "N5", "5/95"
-    N9 = "N9", "1/99"
+class VarianceType(models.IntegerChoices):
+    NONE = 0, NO_LABEL
+    SD = 1, "SD"
+    SE = 2, "SE"
+    SEM = 3, "SEM"
+    GSD = 4, "GSD"
+    OT = 5, "other"
+
+
+class ConfidenceIntervalType(models.TextChoices):
+    RNG = "Rng", "Range [min, max]"
+    P95 = "P95", "5th/95th percentile"
+    P99 = "P99", "1st/99th percentile"
 
 
 class MeasurementType(models.TextChoices):
@@ -103,12 +114,13 @@ class Significant(models.IntegerChoices):
     NO = 0, "No"
     YES = 1, "Yes"
     NA = 2, "N/A"
+    NR = 3, "NR"
 
 
 class BiomonitoringMatrix(models.TextChoices):
-    BL_PLASMA = "BL_PLASMA", "Blood (portion: Plasma)"
-    BL_WHOLE = "BL_WHOLE", "Blood (portion: Whole blood)"
-    BL_SERUM = "BL_SERUM", "Blood (portion: Serum)"
+    BL_PLASMA = "BLP", "Blood (portion: Plasma)"
+    BL_WHOLE = "BLW", "Blood (portion: Whole blood)"
+    BL_SERUM = "BLS", "Blood (portion: Serum)"
     UR = "UR", "Urine"
     TE = "TE", "Teeth"
     NL = "NL", "Nails"
