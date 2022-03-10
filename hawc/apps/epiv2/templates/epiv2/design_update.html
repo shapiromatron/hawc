@@ -1,0 +1,273 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<h2 class="d-inline-block">{{object.summary}}</h2>
+<div class="float-right">
+    <a class="btn btn-sm btn-info" href="#"
+        hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
+        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
+</div>
+
+{% include "epiv2/fragments/_design_table.html" %}
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Chemicals
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
+                hx-target="#chemical-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
+        </h3>
+        <table class="table table-sm table-striped">
+            <colgroup>
+                <col style="width: 43%;">
+                <col style="width: 42%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>DTXSID</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object.chemicals.all %}
+                    {% for object in object.chemicals.all %}
+                        {% include "epiv2/fragments/chemical_row.html" %}
+                    {% endfor %}
+                    <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="chemical-empty-row" hx-target="this">
+                        <td colspan="100%">
+                            <p class="text-center mb-0">No chemicals available. Create one?</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Exposures
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposure-create' object.pk %}"
+                hx-target="#exposure-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
+        </h3>
+
+        <table class="table table-sm table-striped">
+            <colgroup>
+                <col style="width: 28%;">
+                <col style="width: 28%;">
+                <col style="width: 28%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Measurement Type</th>
+                    <th>Measurement Timing</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object.exposures.all %}
+                    {% for object in object.exposures.all %}
+                        {% include "epiv2/fragments/exposure_row.html" %}
+                    {% endfor %}
+                <tr id="exposure-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="exposure-empty-row" hx-target="this">
+                        <td colspan="100%">
+                            <p class="text-center mb-0">No exposures available. Create one?</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Exposure Levels
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}"
+                hx-target="#exposurelevel-empty-row" hx-swap="outerHTML"> <i class="fa fa-plus fa-fw"></i> Create</button>
+        </h3>
+        <table class="table table-sm table-striped">
+            <colgroup>
+                <col style="width: 17%;">
+                <col style="width: 17%;">
+                <col style="width: 17%;">
+                <col style="width: 17%;">
+                <col style="width: 17%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Chemical</th>
+                    <th>Exposure</th>
+                    <th>Central Tendency</th>
+                    <th>Comments</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object.exposure_levels.all %}
+                    {% for object in object.exposure_levels.all %}
+                        {% include "epiv2/fragments/exposurelevel_row.html" %}
+                    {% endfor %}
+                    <tr id="exposurelevel-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="exposurelevel-empty-row" hx-target="this">
+                        <td colspan="100%">
+                            <p class="text-center mb-0">No exposures available. Create one?</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Outcomes
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:outcome-create' object.pk %}"
+                hx-target="#outcome-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
+        </h3>
+
+        <table class="table table-sm table-striped">
+            <colgroup>
+                <col style="width: 28%;">
+                <col style="width: 28%;">
+                <col style="width: 28%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Health Outcome</th>
+                    <th>Health Outcome System</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object.outcomes.all %}
+                    {% for object in object.outcomes.all %}
+                        {% include "epiv2/fragments/outcome_row.html" %}
+                    {% endfor %}
+                    <tr id="outcome-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="outcome-empty-row" hx-target="this">
+                        <td colspan="100%">
+                            <p class="text-center mb-0">No outcomes available. Create one?</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Adjustment Factors
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:adjustmentfactor-create' object.pk %}"
+                hx-target="#adjustmentfactor-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
+        </h3>
+        <table class="table table-sm table-striped">
+            <colgroup>
+                <col style="width: 42.5%;">
+                <col style="width: 42.5%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object.adjustment_factors.all %}
+                    {% for object in object.adjustment_factors.all %}
+                        {% include "epiv2/fragments/adjustment_factor_row.html" %}
+                    {% endfor %}
+                    <tr id="adjustmentfactor-empty-row" hx-target="this"></tr>
+                {% else %}
+                    <tr id="adjustmentfactor-empty-row" hx-target="this">
+                        <td colspan="100%">
+                            <p class="text-center mb-0">No adjustment factors available. Create one?</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Data Extractions
+            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:dataextraction-create' object.pk %}"
+                hx-target="#dataextraction-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
+        </h3>
+        <table class="table table-sm table-striped">
+            <colgroup>
+                <col style="width: 12%;">
+                <col style="width: 11%;">
+                <col style="width: 11%;">
+                <col style="width: 11%;">
+                <col style="width: 4%;">
+                <col style="width: 12%;">
+                <col style="width: 4%;">
+                <col style="width: 4%;">
+                <col style="width: 11%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Sub population</th>
+                    <th>Outcome</th>
+                    <th>Exposure Level</th>
+                    <th>Measurement Timing</th>
+                    <th>N</th>
+                    <th>Effect Estimate</th>
+                    <th>P-Value</th>
+                    <th>Confidence</th>
+                    <th>Comments</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object.data_extractions.all %}
+                    {% for object in object.data_extractions.all %}
+                        {% include "epiv2/fragments/data_extraction_row.html" %}
+                    {% endfor %}
+                    <tr id="dataextraction-empty-row" hx-target="this"></tr>
+                {% else %}
+                <tr id="dataextraction-empty-row" hx-target="this">
+                    <td colspan="100%">
+                        <p class="text-center mb-0">No data extractions available. Create one?</p>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="well text-center">
+    <a class="btn btn-light my-3" href="{{object.get_absolute_url}}"><i class="fa fa-fw fa-times"></i>Cancel</a>
+</div>
+{% endblock %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+window.app.startup("epiv2Startup", function(app){
+    app.formStartup(document);
+});
+</script>
+{% endblock %}

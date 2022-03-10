@@ -1,5 +1,7 @@
 from django.db import models
 
+from ..common.constants import NO_LABEL
+
 
 class Sex(models.TextChoices):
     UNKNOWN = "U", "Not reported"
@@ -34,18 +36,47 @@ class AgeProfile(models.TextChoices):
 
 
 class EffectEstimateType(models.TextChoices):
-    OR = "OR", "Odds Ratio"
-    PC = "PC", "Percent Change"
+    OR = "OR", "Odds Ratio (OR)"
+    RR = "RR", "Relative Risk Ratio (RR)"
+    AR = "AR", "Absolute Risk %"
+    B = "B", "Regression coeffcient (β)"
+    SMR = "SMR", "Standardized Mortality Ratio (SMR)"
+    SIR = "SIR", "Standardized Incidence Ratio (SIR)"
+    IRR = "IRR", "Incidence Risk Ratio (IRR)"
+    ARR = "ARR", "Absolute Risk Reduction/ Risk difference (ARR or RD)"
+    HR = "HR", "Hazard Ratio (HR)"
+    CM = "CM", "Comparison of Means"
+    SCC = "SCC", "Spearman's Correlation Coefficient"
+    PC = "PC", "Percent change"
+    MD = "MD", "Mean difference"
+
+
+class VarianceType(models.IntegerChoices):
+    NONE = 0, NO_LABEL
+    SD = 1, "SD"
+    SE = 2, "SE"
+    SEM = 3, "SEM"
+    GSD = 4, "GSD"
+    OT = 5, "other"
+
+
+class ConfidenceIntervalType(models.TextChoices):
+    RNG = "Rng", "Range [min, max]"
+    P95 = "P95", "5th/95th percentile"
+    P99 = "P99", "1st/99th percentile"
+
+
+class MeasurementType(models.TextChoices):
+    BM = "BM", "Biomonitoring"
+    AR = "AR", "Air"
+    FD = "FD", "Food"
+    DW = "DW", "Drinking water"
+    OC = "OC", "Occupational"
+    MD = "MD", "Modeled"
+    QN = "QN", "Questionnaire"
+    DO = "DO", "Direct administration - oral"
+    DI = "DI", "Direct administration - inhalation"
     OT = "OT", "Other"
-    # TODO: include choices for effect estimate type
-
-
-class CentralTendencyType(models.TextChoices):
-    MEDIAN = "MED", "Median"
-    GMEAN = "GME", "Geometric Mean"
-    POINT = "POI", "Point"
-    MEAN = "MEA", "Mean"
-    OTHER = "OTH", "Other"
 
 
 class ExposureRoute(models.TextChoices):
@@ -58,12 +89,52 @@ class ExposureRoute(models.TextChoices):
 
 
 class HealthOutcomeSystem(models.TextChoices):
-    RE = "RE", "Reproductive"
+    CA = "CA", "Cancer"
+    CV = "CV", "Cardiovascular"
+    DE = "DE", "Dermal"
+    DV = "DV", "Developmental"
+    EN = "EN", "Endocrine"
+    GI = "GI", "Gastrointestinal"
+    HM = "HM", "Hematologic"
+    HP = "HP", "Hepatic"
     IM = "IM", "Immune"
-    # TODO: include other choices for health outcome system
+    MT = "MT", "Metabolic"
+    MS = "MS", "Multi-System"
+    MU = "MU", "Musculoskeletal"
+    NV = "NV", "Nervous"
+    OC = "OC", "Ocular"
+    RP = "RP", "Reproductive"
+    RS = "RS", "Respiratory"
+    UR = "UR", "Urinary"
+    WB = "WB", "Whole Body"
+    OT = "OT", "Other"
 
 
 class Significant(models.IntegerChoices):
     NO = 0, "No"
     YES = 1, "Yes"
     NA = 2, "N/A"
+    NR = 3, "NR"
+
+
+class BiomonitoringMatrix(models.TextChoices):
+    BL_PLASMA = "BLP", "Blood (portion: Plasma)"
+    BL_WHOLE = "BLW", "Blood (portion: Whole blood)"
+    BL_SERUM = "BLS", "Blood (portion: Serum)"
+    UR = "UR", "Urine"
+    TE = "TE", "Teeth"
+    NL = "NL", "Nails"
+    SA = "SA", "Saliva"
+    BM = "BM", "Breast milk"
+    SE = "SE", "Semen"
+    FC = "FC", "Feces"
+    CF = "CF", "Cerebrospinal fluid"
+    EB = "EB", "Exhaled breath"
+    OT = "OT", "Other"
+
+
+class BiomonitoringSource(models.TextChoices):
+    PT = "PT", "From participant"
+    ML = "ML", "Maternal"
+    PL = "PL", "Paternal"
+    CD = "CD", "Cord"

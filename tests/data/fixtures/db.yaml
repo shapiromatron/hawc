@@ -369,15 +369,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: ageprofile
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
     model: country
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
-    model: measurementtype
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
@@ -4724,22 +4716,6 @@
     main_finding_support: 3
     created: 2020-05-11 02:23:49.859670+00:00
     last_updated: 2020-05-11 02:23:49.859696+00:00
-- model: epiv2.ageprofile
-  pk: 1
-  fields:
-    name: Children and adolescents <18 yrs
-- model: epiv2.ageprofile
-  pk: 2
-  fields:
-    name: Adults
-- model: epiv2.ageprofile
-  pk: 3
-  fields:
-    name: Pregnant women
-- model: epiv2.measurementtype
-  pk: 1
-  fields:
-    description: biomonitoring
 - model: epiv2.design
   pk: 1
   fields:
@@ -4757,9 +4733,10 @@
     created: 2022-01-10 21:12:17.714337+00:00
     last_updated: 2022-01-13 20:38:10.024296+00:00
     age_profile:
-    - 1
+    - AD
     countries:
     - 2
+    comments: test
 - model: epiv2.design
   pk: 2
   fields:
@@ -4780,6 +4757,8 @@
     - 1
     countries:
     - 3
+    criteria: "<ul><li>cases: asthma diagnosis by physician</li><li>singleton birth</li></ul>"
+    comments: "<p>test comments</p>"
 - model: epiv2.chemical
   pk: 1
   fields:
@@ -4812,26 +4791,13 @@
     dsstox: null
     created: 2022-01-10 21:26:09.671290+00:00
     last_updated: 2022-01-10 21:26:09.671299+00:00
-- model: epiv2.criteria
-  pk: 1
-  fields:
-    design: 1
-    name: 'cases: asthma diagnosis by physician'
-    created: 2022-01-10 21:12:17.736159+00:00
-    last_updated: 2022-01-10 21:12:17.736173+00:00
-- model: epiv2.criteria
-  pk: 2
-  fields:
-    design: 2
-    name: singleton birth
-    created: 2022-01-10 21:26:09.662491+00:00
-    last_updated: 2022-01-10 21:26:09.662504+00:00
 - model: epiv2.exposure
   pk: 1
   fields:
     name: child serum
     design: 1
-    biomonitoring_matrix: serum
+    biomonitoring_matrix: BLS
+    biomonitoring_source: PT
     measurement_timing: study enrollment
     exposure_route: UK
     analytic_method: high-performance liquid chromatography with tandem with mass
@@ -4839,14 +4805,14 @@
     comments: ''
     created: 2022-01-10 21:12:17.748634+00:00
     last_updated: 2022-01-10 21:12:17.748644+00:00
-    measurement_type:
-    - 1
+    measurement_type: BM
 - model: epiv2.exposure
   pk: 2
   fields:
     name: maternal serum
     design: 2
-    biomonitoring_matrix: maternal serum
+    biomonitoring_matrix: BLS
+    biomonitoring_source: ML
     measurement_timing: parental (32 wks gestation)
     exposure_route: UK
     analytic_method: online solid-phase extraction and analysis, using high-pressure
@@ -4854,14 +4820,14 @@
     comments: last antenatal exam
     created: 2022-01-10 21:30:38.554898+00:00
     last_updated: 2022-01-10 21:30:38.554911+00:00
-    measurement_type:
-    - 1
+    measurement_type: BM
 - model: epiv2.exposure
   pk: 3
   fields:
     name: child serum age 5
     design: 2
-    biomonitoring_matrix: serum
+    biomonitoring_matrix: BLS
+    biomonitoring_source: PT
     measurement_timing: 5 yrs
     exposure_route: UK
     analytic_method: online solid-phase extraction and analysis, using high-pressure
@@ -4869,8 +4835,7 @@
     comments: prebooster
     created: 2022-01-10 21:30:38.566082+00:00
     last_updated: 2022-01-10 21:30:38.566092+00:00
-    measurement_type:
-    - 1
+    measurement_type: BM
 - model: epiv2.exposurelevel
   pk: 1
   fields:
@@ -4879,13 +4844,15 @@
     chemical: 1
     exposure_measurement: 1
     sub_population: without asthma
-    central_tendency: '1.0'
-    central_tendency_type: MED
-    minimum: null
-    percentile25: 0.8
-    percentile75: 1.2
-    maximum: 5.0
+    mean: 0.0
+    median: 0.0
+    ci_lcl: null
+    percentile_25: 0.8
+    percentile_75: 1.2
+    ci_ucl: 5.0
     neg_exposure: 5.0
+    ci_type: ''
+    units: ''
     comments: test
     data_location: Table 2
     created: 2022-01-10 21:16:10.379351+00:00
@@ -4898,13 +4865,15 @@
     chemical: 2
     exposure_measurement: 1
     sub_population: without asthma
-    central_tendency: '0.8'
-    central_tendency_type: MED
-    minimum: 0.26
-    percentile25: 0.6
-    percentile75: 1.1
-    maximum: 2.5
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.26
+    percentile_25: 0.6
+    percentile_75: 1.1
+    ci_ucl: 2.5
     neg_exposure: 0.0
+    ci_type: ''
+    units: ''
     comments: p<0.001 vs children with asthma
     data_location: Table 2
     created: 2022-01-10 21:16:10.384076+00:00
@@ -4917,13 +4886,15 @@
     chemical: 3
     exposure_measurement: 2
     sub_population: all
-    central_tendency: '0.28'
-    central_tendency_type: GME
-    minimum: 0.0
-    percentile25: 0.22
-    percentile75: 0.38
-    maximum: 0.5
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.0
+    percentile_25: 0.22
+    percentile_75: 0.38
+    ci_ucl: 0.5
     neg_exposure: 80.0
+    ci_type: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:34:38.043650+00:00
@@ -4936,13 +4907,15 @@
     chemical: 3
     exposure_measurement: 3
     sub_population: all
-    central_tendency: '0.28'
-    central_tendency_type: GME
-    minimum: 0.1
-    percentile25: 0.21
-    percentile75: 0.38
-    maximum: 0.6
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.1
+    percentile_25: 0.21
+    percentile_75: 0.38
+    ci_ucl: 0.6
     neg_exposure: 81.0
+    ci_type: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.133506+00:00
@@ -4955,13 +4928,15 @@
     chemical: 4
     exposure_measurement: 2
     sub_population: all
-    central_tendency: '0.60'
-    central_tendency_type: GME
-    minimum: 0.2
-    percentile25: 0.46
-    percentile75: 0.79
-    maximum: 0.7
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.2
+    percentile_25: 0.46
+    percentile_75: 0.79
+    ci_ucl: 0.7
     neg_exposure: 95.0
+    ci_type: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.137612+00:00
@@ -4974,13 +4949,15 @@
     chemical: 4
     exposure_measurement: 3
     sub_population: all
-    central_tendency: '1.00'
-    central_tendency_type: GME
-    minimum: 0.3
-    percentile25: 0.76
-    percentile75: 1.24
-    maximum: 0.8
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.3
+    percentile_25: 0.76
+    percentile_75: 1.24
+    ci_ucl: 0.8
     neg_exposure: 94.0
+    ci_type: ''
+    units: ''
     comments: ''
     data_location: Table 2
     created: 2022-01-10 21:39:43.141816+00:00
@@ -4988,28 +4965,31 @@
 - model: epiv2.outcome
   pk: 1
   fields:
-    name: Asthma within previous year
+    endpoint: Asthma within previous year
     design: 1
     health_outcome: Asthma
     health_outcome_system: IM
+    comments: ''
     created: 2022-01-10 21:16:10.388760+00:00
     last_updated: 2022-01-10 21:16:10.388770+00:00
 - model: epiv2.outcome
   pk: 2
   fields:
-    name: Tetanus antibody concentrations
+    endpoint: Tetanus antibody concentrations
     design: 2
     health_outcome: Vaccine response
     health_outcome_system: IM
+    comments: ''
     created: 2022-01-10 21:41:54.322800+00:00
     last_updated: 2022-01-10 21:41:54.322816+00:00
 - model: epiv2.outcome
   pk: 3
   fields:
-    name: Diphtheria antibody concentrations
+    endpoint: Diphtheria antibody concentrations
     design: 2
     health_outcome: Vaccine response
     health_outcome_system: IM
+    comments: ''
     created: 2022-01-10 21:41:54.327398+00:00
     last_updated: 2022-01-10 21:41:54.327412+00:00
 - model: epiv2.adjustmentfactor
@@ -5060,7 +5040,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5068,8 +5048,9 @@
     exposure_rank: 1
     ci_lcl: null
     ci_ucl: null
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 2
     adjustment_factor: null
     confidence: medium
@@ -5085,7 +5066,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5093,8 +5074,9 @@
     exposure_rank: 2
     ci_lcl: 0.58
     ci_ucl: 1.8
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5110,7 +5092,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5118,8 +5100,9 @@
     exposure_rank: 3
     ci_lcl: 0.72
     ci_ucl: 2.33
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5135,7 +5118,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 1
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5143,8 +5126,9 @@
     exposure_rank: 4
     ci_lcl: 1.75
     ci_ucl: 5.94
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 1
     adjustment_factor: 1
     confidence: medium
@@ -5160,7 +5144,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5168,8 +5152,9 @@
     exposure_rank: 1
     ci_lcl: null
     ci_ucl: null
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 2
     adjustment_factor: null
     confidence: medium
@@ -5185,7 +5170,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5193,8 +5178,9 @@
     exposure_rank: 2
     ci_lcl: 0.68
     ci_ucl: 2.09
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5210,7 +5196,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5218,8 +5204,9 @@
     exposure_rank: 3
     ci_lcl: 0.86
     ci_ucl: 2.76
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 1
     confidence: medium
@@ -5235,7 +5222,7 @@
     sub_population: Full population
     outcome: 1
     exposure_level: 2
-    measurement_timing: Concurrent with exposure
+    outcome_measurement_timing: Concurrent with exposure
     n: 114
     effect_estimate_type: OR
     effect_description: OR vs. quartile 1
@@ -5243,8 +5230,9 @@
     exposure_rank: 4
     ci_lcl: 1.41
     ci_ucl: 4.65
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 1
     adjustment_factor: 1
     confidence: medium
@@ -5260,7 +5248,7 @@
     sub_population: Prebooster Age 5
     outcome: 2
     exposure_level: 3
-    measurement_timing: 5 yrs
+    outcome_measurement_timing: 5 yrs
     n: 509
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
@@ -5268,8 +5256,9 @@
     exposure_rank: 0
     ci_lcl: -18.5
     ci_ucl: 16.8
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 2
     confidence: medium
@@ -5285,7 +5274,7 @@
     sub_population: Year 7 adjusted for Age 5
     outcome: 2
     exposure_level: 4
-    measurement_timing: 7 yrs
+    outcome_measurement_timing: 7 yrs
     n: 401
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
@@ -5293,8 +5282,9 @@
     exposure_rank: 0
     ci_lcl: -24.6
     ci_ucl: 1.5
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 5
     confidence: medium
@@ -5310,7 +5300,7 @@
     sub_population: Prebooster Age 5
     outcome: 3
     exposure_level: 3
-    measurement_timing: 5 yrs
+    outcome_measurement_timing: 5 yrs
     n: 510
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
@@ -5318,8 +5308,9 @@
     exposure_rank: 0
     ci_lcl: -35.7
     ci_ucl: -4.8
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 1
     adjustment_factor: 2
     confidence: medium
@@ -5335,7 +5326,7 @@
     sub_population: Postbooster Age 5
     outcome: 3
     exposure_level: 6
-    measurement_timing: 5 yrs
+    outcome_measurement_timing: 5 yrs
     n: 510
     effect_estimate_type: PC
     effect_description: Percent difference per 2-fold increase in exposure
@@ -5343,8 +5334,9 @@
     exposure_rank: 0
     ci_lcl: -20.6
     ci_ucl: 5.0
-    sd_or_se: null
-    pvalue: ''
+    variance: null
+    variance_type: 0
+    p_value: ''
     significant: 0
     adjustment_factor: 3
     confidence: medium

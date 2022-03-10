@@ -14,10 +14,6 @@ class TestEpiV2Models:
             item = Model.objects.first()
             assert item.get_assessment().id == 1
 
-        for Model in [models.Criteria]:
-            item = Model.objects.first()
-            assert item.get_assessment().id == 1
-
         for Model in [models.Exposure]:
             item = Model.objects.first()
             assert item.get_assessment().id == 1
@@ -45,10 +41,6 @@ class TestEpiV2Models:
             assert item.get_study().id == 1
 
         for Model in [models.Chemical]:
-            item = Model.objects.first()
-            assert item.get_study().id == 1
-
-        for Model in [models.Criteria]:
             item = Model.objects.first()
             assert item.get_study().id == 1
 

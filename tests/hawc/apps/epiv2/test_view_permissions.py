@@ -8,7 +8,7 @@ from hawc.apps.epiv2.models import Design
 _successful_post = {
     "study_design": "CC",
     "source": "GP",
-    "age_profile": "1",
+    "age_profile": "AD",
     "age_description": "10-15 yrs",
     "sex": "B",
     "race": "Not specified but likely primarily Asian",
@@ -18,6 +18,8 @@ _successful_post = {
     "region": "northern Taiwan",
     "years": "2009-2010",
     "participant_n": "456",
+    "criteria": "<p>Criteria here.</p>",
+    "comments": "<p>Comments here.</p>",
 }
 
 
@@ -32,7 +34,7 @@ class TestCreatePermissions:
         assert response.status_code == 200
 
         n_designs = Design.objects.count()
-        with assertTemplateUsed("epiv2/design_detail.html"):
+        with assertTemplateUsed("epiv2/design_update.html"):
             response = c.post(url, data=_successful_post, follow=True,)
             assert Design.objects.count() == n_designs + 1
             n_designs += 1
@@ -73,7 +75,7 @@ class TestDetailPermissions:
 
 
 @pytest.mark.django_db
-class TestEditPermissions:
+class TestUpdatePermissions:
     def test_success(self, db_keys):
         clients = ("admin@hawcproject.org", "pm@hawcproject.org")
         for client in clients:

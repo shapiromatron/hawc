@@ -111,7 +111,7 @@
       {% if assessment.epi_version == 1 %}
         {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
       {% elif assessment.epi_version == 2 %}
-        {% include "epiv2/_design_list.html" with object_list=object.designs.all %}
+        {% include "epiv2/fragments/_design_list.html" with object_list=object.designs.all %}
       {% endif %}
     {% endif %}
 

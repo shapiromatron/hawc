@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from rest_framework import serializers
 
@@ -8,42 +7,13 @@ from ..study.serializers import StudySerializer
 from . import constants, models
 
 
-class AgeProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.AgeProfile
-        fields = ["name"]
-
-    def to_internal_value(self, data):
-        if type(data) is str:
-            try:
-                age_profile = self.Meta.model.objects.get(name__iexact=data)
-                return age_profile
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"'{data}' is not a valid Age profile.")
-
-        return super().to_internal_value(data)
-
-
-class MeasurementTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.MeasurementType
-        fields = ["description"]
-
-
 class ChemicalSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Chemical
         fields = ["id", "name", "dsstox"]
 
 
-class CriteriaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Criteria
-        fields = ["id", "name"]
-
-
 class ExposureSerializer(serializers.ModelSerializer):
-    measurement_type = MeasurementTypeSerializer(many=True, read_only=True)
     exposure_route = FlexibleChoiceField(choices=constants.ExposureRoute.choices)
 
     class Meta:
@@ -81,9 +51,7 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     source = FlexibleChoiceField(choices=constants.Source.choices)
     sex = FlexibleChoiceField(choices=constants.Sex.choices)
     countries = StudyPopulationCountrySerializer(many=True)
-    age_profile = AgeProfileSerializer(many=True)
     chemicals = ChemicalSerializer(many=True, read_only=True)
-    criteria = CriteriaSerializer(many=True, read_only=True)
     exposure = ExposureSerializer(many=True, read_only=True)
     exposure_levels = ExposureLevelSerializer(many=True, read_only=True)
     outcomes = OutcomeSerializer(many=True, read_only=True)
@@ -95,8 +63,10 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     def create(self, validated_data):
         nested_models = [
             "countries",
-            "age_profile",
         ]
+
+        if "age_profile" not in validated_data:
+            validated_data["age_profile"] = []
 
         nested_validated_data = {}
 
@@ -111,9 +81,6 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
         # add nested models to the instance
         if countries := nested_validated_data.get("countries"):
             instance.countries.set(countries)
-
-        if age_profile := nested_validated_data.get("age_profile"):
-            instance.age_profile.set(age_profile)
 
         return instance
 

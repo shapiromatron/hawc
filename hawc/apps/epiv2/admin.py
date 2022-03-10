@@ -13,11 +13,6 @@ class ChemicalInline(admin.TabularInline):
     extra = 0
 
 
-class CriteriaInline(admin.TabularInline):
-    model = models.Criteria
-    extra = 0
-
-
 class DataExtractionInline(admin.TabularInline):
     model = models.DataExtraction
     extra = 0
@@ -48,12 +43,8 @@ class DesignAdmin(admin.ModelAdmin):
         "created",
         "last_updated",
     )
-    list_filters = (
-        "study_design",
-        ("study__assessment", admin.RelatedOnlyFieldListFilter),
-    )
+    list_filter = ("study_design", "created")
     inlines = [
-        CriteriaInline,
         ChemicalInline,
         ExposureInline,
         ExposureLevelInline,
@@ -62,13 +53,14 @@ class DesignAdmin(admin.ModelAdmin):
         DataExtractionInline,
     ]
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("study")
+
 
 admin.site.register(models.Design, DesignAdmin)
-admin.site.register(models.AgeProfile)
-admin.site.register(models.MeasurementType)
 admin.site.register(models.AdjustmentFactor)
 admin.site.register(models.Chemical)
-admin.site.register(models.Criteria)
 admin.site.register(models.DataExtraction)
 admin.site.register(models.Exposure)
 admin.site.register(models.ExposureLevel)
