@@ -34,6 +34,13 @@ class Root extends Component {
                         {studies.map(study => (
                             <StudyRow key={study.id} study={study} />
                         ))}
+                        {studies.length === 0 ? (
+                            <tr>
+                                <td colSpan="3">
+                                    <i>No studies are available or meet the search criteria.</i>
+                                </td>
+                            </tr>
+                        ) : null}
                     </tbody>
                     <tfoot>
                         <tr>
