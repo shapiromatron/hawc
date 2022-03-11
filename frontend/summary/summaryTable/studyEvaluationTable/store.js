@@ -170,9 +170,16 @@ class StudyEvaluationTableStore {
         if ("attribute" in value && col.attribute !== value.attribute) {
             if (col.attribute == "rob") {
                 delete col.metric_id;
-            } else if (value.attribute == "rob") {
+            }
+            if (value.attribute == "rob") {
                 let metric = this.metricIdChoices[0];
                 col.metric_id = metric == null ? undefined : metric["id"];
+            }
+            if (col.attribute == "animal_group_doses") {
+                delete col.dose_unit;
+            }
+            if (value.attribute == "animal_group_doses") {
+                col.dose_unit = this.doseUnitChoices[0]["id"];
             }
             this.stagedEdits.rows.forEach(row => {
                 row.customized = _.filter(row.customized, d => d.key != col.key);
@@ -252,10 +259,25 @@ class StudyEvaluationTableStore {
             .unshift({id: -1, label: "Not measured"})
             .value();
     }
+    @computed get doseUnitChoices() {
+        let choices = _.chain(this.dataset.data)
+            .filter(d => d["type"] == "study")
+            .map(d => d["animal_group_dose_units"].split("|"))
+            .flatten()
+            .filter(d => d != "")
+            .uniq()
+            .map(d => {
+                return {id: d, label: d};
+            })
+            .value();
+        return [{id: "", label: "---"}, ...choices];
+    }
     getDefaultColumnLabel(col) {
         switch (col.attribute) {
             case "rob":
                 return _.find(this.metricIdChoices, c => c.id == col.metric_id).label;
+            case "animal_group_doses":
+                return col.dose_unit;
             default:
                 return _.find(
                     constants.colAttributeChoices[this.settings.data_source],
@@ -312,14 +334,38 @@ class StudyEvaluationTableStore {
                     html: `<p><a href="/study/${row.id}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
                 };
             }
-            case "animal_group_description": {
-                let data = this.getDataSelection(row.type, row.id),
-                    text = data["animal_group_description"];
-                return {html: `<p>${text}</p>`};
+            case "animal_group_doses": {
+                let data = this.getDataSelection(row.type, row.id);
+                if (data["animal_group_doses"] == "") {
+                    return {html: "<p></p>"};
+                }
+                let doseUnits = data["animal_group_dose_units"].split("|");
+                if (col.dose_unit == "") {
+                    let doses = data["animal_group_doses"].split("|"),
+                        text = _.chain(doses)
+                            .map((x, i) =>
+                                _.chain(x.split("; "))
+                                    .map(y => `${y} ${doseUnits[i]}`)
+                                    .join("; ")
+                            )
+                            .join("; ");
+                    return {html: `<p>${text}</p>`};
+                } else {
+                    let dosesIndex = _.indexOf(doseUnits, col.dose_unit),
+                        text =
+                            dosesIndex == -1
+                                ? ""
+                                : data["animal_group_doses"].split("|")[dosesIndex];
+                    return {html: `<p>${text}</p>`};
+                }
             }
-
             case "free_html":
                 return {html: "<p></p>"};
+            default: {
+                let data = this.getDataSelection(row.type, row.id),
+                    text = data[col.attribute];
+                return {html: `<p>${text}</p>`};
+            }
         }
     }
     getCustomCellContent(attribute, customized) {

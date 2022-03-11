@@ -260,6 +260,17 @@ class EditColumnForm extends Component {
                             label="Metric"
                         />
                     </div>
+                ) : col.attribute == "animal_group_doses" ? (
+                    <div className="col-md-12">
+                        <SelectInput
+                            choices={store.doseUnitChoices}
+                            handleSelect={value =>
+                                store.updateStagedColumn(colIdx, {dose_unit: value})
+                            }
+                            value={col.dose_unit}
+                            label="Dose Units"
+                        />
+                    </div>
                 ) : null}
                 <div className="col-md-12">
                     <TextInput
@@ -447,7 +458,7 @@ class Table extends Component {
                 </thead>
                 <tbody>
                     {workingSettings.rows.map((row, rowIdx) => {
-                        return store.getDataSelection(row.type, row.id).length ? (
+                        return store.getDataSelection(row.type, row.id) ? (
                             <tr
                                 key={rowIdx}
                                 className={

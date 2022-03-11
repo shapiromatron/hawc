@@ -4,7 +4,10 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
     dataUrl = (table_type, data_source, assessment_id, published_only) =>
         `/summary/api/summary-table/data/?table_type=${table_type}&data_source=${data_source}&assessment_id=${assessment_id}&published_only=${published_only}`,
     robUrl = assessment_id => `/rob/api/assessment/${assessment_id}/settings/`,
-    dataSourceChoices = [{id: "study", label: "Study evaluation"}],
+    dataSourceChoices = [
+        {id: "study", label: "Study evaluation"},
+        {id: "ani", label: "Study evaluation + bioassay"},
+    ],
     rowTypeChoices = {study: [{id: "study", label: "Study"}], ani: [{id: "study", label: "Study"}]},
     colAttributeChoices = {
         study: [
@@ -15,6 +18,7 @@ export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
         ani: [
             {id: "study_short_citation", label: "Study citation"},
             {id: "animal_group_description", label: "Animal description"},
+            {id: "animal_group_doses", label: "Doses"},
             {id: "rob", label: "Study evaluation"},
             {id: "free_html", label: "Free text"},
         ],
