@@ -1,5 +1,5 @@
-import os
 import json
+import os
 from enum import Enum
 
 from pydantic import BaseModel
