@@ -108,8 +108,14 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
         return text
 
     def get_dose_dict(self, obj):
-        _doses = obj.get_doses_json(False)
-        return OrderedDict((dgs["name"], ", ".join([str(value) for value in dgs["values"]])) for dgs in _doses)
+        dose_dict = OrderedDict()
+        dgs = obj.dosing_regime.doses.all()
+        for dg in dgs:
+            if dg.dose_units.name not in dose_dict:
+                dose_dict[dg.dose_units.name] = str(dg.dose)
+            else:
+                dose_dict[dg.dose_units.name] += f", {dg.dose}"
+        return dose_dict
 
 
 class EndpointSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
@@ -183,8 +189,8 @@ class StudyEvaluationSerializer(serializers.Serializer):
         # get animal group df
         animal_group_qs = (
             animal_models.AnimalGroup.objects.filter(experiment_id__in=experiment_df["experiment_id"].values)
-            .select_related("species", "strain", "dosing_regime")
-            .prefetch_related("dosing_regime__doses__dose_units")
+            .select_related("species", "strain", "dosing_regime", "experiment")
+            .prefetch_related("dosing_regime__doses", "dosing_regime__doses__dose_units")
         )
         animal_group_ser = AnimalGroupSerializer(
             animal_group_qs, many=True, field_prefix="animal_group_", field_renames={"experiment_id": "experiment_id"},
