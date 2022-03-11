@@ -2,17 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const PublishedIcon = props => {
-    return props.isPublished ? (
-        <i
-            title="Published (visible to the public)"
-            className="fa fa-fw fa-eye"
-            aria-hidden="true"></i>
-    ) : (
-        <i
-            title="Unpublished (not be visible to the public and in some visualizations)"
-            className="fa fa-fw fa-eye-slash"
-            aria-hidden="true"></i>
-    );
+    const {isPublished, showPublished} = props,
+        icon = isPublished ? "fa-eye" : "fa-eye-slash",
+        title = isPublished
+            ? "Published (visible to the public)"
+            : "Unpublished (not be visible to the public and in some visualizations)";
+
+    if (isPublished && !showPublished) {
+        return null;
+    }
+
+    return <i title={title} className={`fa fa-fw ${icon}`} aria-hidden="true"></i>;
 };
 
 PublishedIcon.propTypes = {
@@ -21,7 +21,7 @@ PublishedIcon.propTypes = {
 };
 
 PublishedIcon.defaultProps = {
-    showActions: true,
+    showPublished: true,
 };
 
 export default PublishedIcon;

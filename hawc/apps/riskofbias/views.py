@@ -271,11 +271,11 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
         return qs
 
     def get_context_data(self, **kwargs):
+        kwargs.update(form=self.form)
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
         context["breadcrumbs"][4] = Breadcrumb(name="Update")
-        context["form"] = self.form
         return context
 
     def get_app_config(self, context) -> WebappConfig:
