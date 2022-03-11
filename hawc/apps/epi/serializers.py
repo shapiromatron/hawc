@@ -283,7 +283,7 @@ class ResultSerializer(serializers.ModelSerializer):
         exclude = ("adjustment_factors",)
 
 
-class OutcomeSerializer(serializers.ModelSerializer):
+class OutcomeSerializer(IdLookupMixin, serializers.ModelSerializer):
     diagnostic = FlexibleChoiceField(choices=constants.Diagnostic.choices)
     study_population = StudyPopulationSerializer()
     can_create_sets = serializers.BooleanField(read_only=True)
@@ -299,9 +299,9 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    exposure = ExposureSerializer()
-    outcome = OutcomeSerializer(read_only=True)
-    study_population = StudyPopulationSerializer()
+    exposure = ExposureSerializer(required=False, allow_null=True)
+    outcome = OutcomeSerializer(required=False, allow_null=True)
+    study_population = StudyPopulationSerializer(required=False, allow_null=True)
     groups = GroupSerializer(many=True, read_only=True)
 
     class Meta:
@@ -310,15 +310,28 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if self.instance is None:
-            # When creating, we will validate that the supplied exposure and study population (both required)
-            # are part of the same assessment
-
-            exposure = attrs["exposure"]
-            study_population = attrs["study_population"]
-            if exposure.get_assessment().id != study_population.get_assessment().id:
+            # make sure all provided values are from the same assessment
+            # can provide either study population or outcome--but not both
+            exposure = attrs.get("exposure", None)
+            study_population = attrs.get("study_population", None)
+            outcome = attrs.get("outcome", None)
+            if exposure and study_population:
+                if exposure.get_assessment().id != study_population.get_assessment().id:
+                    raise serializers.ValidationError(
+                        "Supplied exposure and study_population are part of different assessments."
+                    )
+            elif exposure and outcome:
+                if exposure.get_assessment().id != outcome.get_assessment().id:
+                    raise serializers.ValidationError(
+                        "Supplied exposure and outcome are part of different assessments."
+                    )
+            if outcome and study_population:
                 raise serializers.ValidationError(
-                    "Supplied exposure and study_population are part of different assessments."
+                    "Cannot create a comparison set with both an outcome and study_population"
                 )
+            if outcome is None and study_population is None:
+                raise serializers.ValidationError("Must supply either study_population or outcome")
+
         else:
             # When updating, we will validate that the exposure and study_population (if either are present) are part
             # of the same assessment as the existing ComparisonSet object. (unless we think it'd ever be useful to allow someone
@@ -337,6 +350,11 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
                 exposure = attrs["exposure"]
                 if exposure.get_assessment().id != assessment_id:
                     raise serializers.ValidationError("Supplied exposure is not in the assessment.")
+
+            if "outcome" in attrs:
+                outcome = attrs["outcome"]
+                if outcome.get_assessment().id != assessment_id:
+                    raise serializers.ValidationError("Supplied outcome is not in the assessment.")
 
         return super().validate(attrs)
 
