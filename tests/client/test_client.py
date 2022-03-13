@@ -51,7 +51,7 @@ class TestClient(LiveServerTestCase, TestCase):
         user = HAWCUser.objects.get(email="pm@hawcproject.org")
         token = user.get_api_token().key
         resp = client.set_authentication_token(token)
-        assert resp is True
+        assert resp == {"valid": True}
 
     ####################
     # BaseClient tests #

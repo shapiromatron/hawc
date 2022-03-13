@@ -1,3 +1,5 @@
+from typing import Dict
+
 from .animal import AnimalClient
 from .assessment import AssessmentClient
 from .client import BaseClient
@@ -56,9 +58,9 @@ class HawcClient(BaseClient):
 
         self.session.authenticate(email, password)
 
-    def set_authentication_token(self, token: str) -> bool:
+    def set_authentication_token(self, token: str) -> Dict:
         """
-        Set authentication token (browser session specific); returns True if successful.
+        Set authentication token (browser session specific)
 
         Args:
             token (str): authentication token from your user profile
