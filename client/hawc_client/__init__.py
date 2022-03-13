@@ -55,7 +55,6 @@ class HawcClient(BaseClient):
             email (str): email to authenticate
             password (str): password to authenticate
         """
-
         self.session.authenticate(email, password)
 
     def set_authentication_token(self, token: str) -> Dict:

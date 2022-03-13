@@ -107,7 +107,6 @@ class HawcSession:
             email (str): email to authenticate
             password (str): password to authenticate
         """
-
         url = f"{self.root_url}/user/api/token-auth/"
         data = {"username": email, "password": password}
         response = self._session.post(url, json=data)
@@ -122,7 +121,6 @@ class HawcSession:
         Args:
             token (str): authentication token from your user profile
         """
-
         self._session.headers.update(Authorization=f"Token {token}")
         url = f"{self.root_url}/user/api/validate-token/"
         return self.get(url).json()
