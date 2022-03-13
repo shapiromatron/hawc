@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
+import PublishedIcon from "shared/components/PublishedIcon";
 import CreateNewRob from "./CreateNewRob";
 import RobItem from "./RobItem";
 
@@ -22,6 +23,8 @@ class StudyRow extends Component {
                     <a href={study.url} target="_blank" rel="noreferrer">
                         {study.short_citation}
                     </a>
+                    <br />
+                    <PublishedIcon isPublished={study.published} />
                 </td>
                 {individualReviewsRequired ? (
                     <td>
