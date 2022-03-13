@@ -56,11 +56,11 @@ class HawcClient(BaseClient):
 
         self.session.authenticate(email, password)
 
-    def set_authentication_token(self, token: str):
+    def set_authentication_token(self, token: str) -> bool:
         """
-        Set authentication token (browser session specific)
+        Set authentication token (browser session specific); returns True if successful.
 
         Args:
             token (str): authentication token from your user profile
         """
-        self.session.set_authentication_token(token)
+        return self.session.set_authentication_token(token)

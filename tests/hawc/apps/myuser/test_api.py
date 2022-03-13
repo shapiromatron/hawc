@@ -66,4 +66,4 @@ def test_api_validate_token(db_keys):
     assert factory.login(username="reviewer@hawcproject.org", password="pw") is True
     response = factory.get(url)
     assert response.status_code == 200
-    assert response.json() == ["Auth token is valid."]
+    assert response.json()["valid"] is True

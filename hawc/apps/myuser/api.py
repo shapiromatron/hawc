@@ -25,4 +25,4 @@ class HawcValidateAuthToken(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        return Response(["Auth token is valid."])
+        return Response({"valid": True})

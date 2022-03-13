@@ -40,7 +40,7 @@ if AuthProvider.django in settings.AUTH_PROVIDERS:
         path("password/changed/", views.PasswordChanged.as_view(), name="password_reset_complete",),
         path("<int:pk>/set-password/", views.SetUserPassword.as_view(), name="set_password",),
         path("api/token-auth/", api.hawc_obtain_auth_token, name="api_token_auth"),
-        path("api/token-validate/", api.HawcValidateAuthToken.as_view(), name="api_token_validate"),
+        path("api/validate-token/", api.HawcValidateAuthToken.as_view(), name="api_token_validate"),
     ]
 
 if AuthProvider.external in settings.AUTH_PROVIDERS:

@@ -18,6 +18,7 @@ from hawc.apps.epi.models import (
     StudyPopulation,
 )
 from hawc.apps.lit.models import Reference
+from hawc.apps.myuser.models import HAWCUser
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
@@ -40,12 +41,17 @@ class TestClient(LiveServerTestCase, TestCase):
     #####################
     # HawcSession tests #
     #####################
-    def test_set_authentication_token_fail(self):
+    def test_set_authentication_token(self):
         # invalid token raises 403 error
         client = HawcClient(self.live_server_url)
         with pytest.raises(HawcClientException) as err:
             client.set_authentication_token("123")
         assert err.value.status_code == 403
+
+        user = HAWCUser.objects.get(email="pm@hawcproject.org")
+        token = user.get_api_token().key
+        resp = client.set_authentication_token(token)
+        assert resp is True
 
     ####################
     # BaseClient tests #

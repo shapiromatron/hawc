@@ -115,18 +115,19 @@ class HawcSession:
         token = response.json()["token"]
         self._session.headers.update(Authorization=f"Token {token}")
 
-    def set_authentication_token(self, token: str):
+    def set_authentication_token(self, token: str) -> bool:
         """
-        Set authentication token (browser session specific)
+        Set authentication token (browser session specific); returns True if successful.
 
         Args:
             token (str): authentication token from your user profile
         """
 
-        url = f"{self.root_url}/user/api/token-validate/"
+        url = f"{self.root_url}/user/api/validate-token/"
         self._session.headers.update(Authorization=f"Token {token}")
         response = self._session.get(url)
         self._handle_hawc_response(response)
+        return True
 
     def iter_pages(self, url: str, params: Dict = None) -> Generator:
         """
