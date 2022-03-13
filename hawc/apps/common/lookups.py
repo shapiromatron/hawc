@@ -63,7 +63,6 @@ class RelatedDistinctStringLookup(DistinctStringLookup):
 
 
 class UserSpecifiedRelatedLookup(RelatedLookup):
-    # Return names of endpoints available for a particular study
     search_fields = None  # user choices below instead
     search_fields_choices: Set = set()
     order_by_choices: Set = set()
@@ -76,6 +75,7 @@ class UserSpecifiedRelatedLookup(RelatedLookup):
         if not search_fields:
             raise ValidationError("At least one search field is required")
 
+        # TODO - can we do this without binding request to self?
         request._search_fields = search_fields
         self._current_request = request
         fields = [f"{field}__icontains" for field in search_fields]
@@ -84,13 +84,17 @@ class UserSpecifiedRelatedLookup(RelatedLookup):
     def get_order_by(self, request):
         """Return a valid ordering column, from available choices"""
         order_by = request.GET.get("order_by", "id")
-        if order_by not in self.order_by_choices:
+        test_value = order_by.removeprefix("-")  # check for both forward/reverse orders
+        if test_value not in self.order_by_choices:
             raise ValidationError(f"Invalid order_by: {order_by}")
         return order_by
 
     def get_query(self, request, term):
-        order_by = self.get_order_by(request)
-        return super().get_query(request, term).distinct().order_by(order_by)
+        try:
+            order_by = self.get_order_by(request)
+            return super().get_query(request, term).distinct().order_by(order_by)
+        except ValidationError:
+            return super().get_queryset().none()
 
     def get_item_label(self, obj):
         return " | ".join(

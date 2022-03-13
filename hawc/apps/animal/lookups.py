@@ -1,7 +1,3 @@
-from typing import Any
-
-from django.db.models import Q
-from django.forms import ValidationError
 from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
@@ -134,15 +130,7 @@ class EndpointByStudyLookup(UserSpecifiedRelatedLookup):
         "observation_time",
         "system",
     }
-    order_by_choices = {
-        "id",
-        "name",
-        "-name",
-        "created",
-        "-created",
-        "last_updated",
-        "-last_updated",
-    }
+    order_by_choices = {"id", "name", "created", "last_updated"}
 
 
 class EndpointByAssessmentLookup(RelatedLookup):
