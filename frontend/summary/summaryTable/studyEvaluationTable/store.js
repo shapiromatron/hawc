@@ -214,14 +214,46 @@ class StudyEvaluationTableStore {
     }
 
     // row attributes
-    @computed get rowIdChoices() {
+    @computed get rowTypeChoices() {
         return _.chain(this.dataset.data)
-            .filter(d => d["type"] == "study")
-            .uniqBy("id")
+            .uniqBy("type")
             .map(d => {
-                return {id: d["study_id"], label: d["study_short_citation"]};
+                return {id: d["type"], label: _.capitalize(_.replace(d["type"], "_", " "))};
             })
             .value();
+    }
+    rowIdChoices(row, type) {
+        const data = this.getDataSelection(row["type"], row["id"]);
+        switch (type) {
+            case "study":
+                return _.chain(this.dataset.data)
+                    .filter(d => d["type"] == data["type"])
+                    .uniqBy("study_id")
+                    .map(d => {
+                        return {id: d["study_id"], label: d["study_short_citation"]};
+                    })
+                    .value();
+            case "experiment":
+                return _.chain(this.dataset.data)
+                    .filter(d => d["type"] == data["type"] && d["study_id"] == data["study_id"])
+                    .uniqBy("experiment_id")
+                    .map(d => {
+                        return {id: d["experiment_id"], label: d["experiment_name"]};
+                    })
+                    .value();
+            case "animal_group":
+                return _.chain(this.dataset.data)
+                    .filter(
+                        d =>
+                            d["type"] == data["type"] && d["experiment_id"] == data["experiment_id"]
+                    )
+                    .uniqBy("animal_group_id")
+                    .map(d => {
+                        return {id: d["animal_group_id"], label: d["animal_group_name"]};
+                    })
+                    .value();
+        }
+        return;
     }
 
     // column attributes
@@ -433,13 +465,11 @@ class StudyEvaluationTableStore {
 
     // row updates
     @action.bound createRow() {
-        const rows = this.rowIdChoices;
-        if (rows.length > 0) {
-            const item = constants.createNewRow(rows[0].id);
-            this.settings.rows.push(item);
-            if (this.stagedEdits != null) {
-                this.stagedEdits.rows.push(item);
-            }
+        const data = _.find(this.dataset.data, d => d["type"] == "study"),
+            item = constants.createNewRow(data["id"]);
+        this.settings.rows.push(item);
+        if (this.stagedEdits != null) {
+            this.stagedEdits.rows.push(item);
         }
     }
     @action.bound moveRow(rowIdx, offset) {

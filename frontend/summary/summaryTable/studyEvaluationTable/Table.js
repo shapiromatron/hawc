@@ -11,7 +11,7 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import QuillTextInput from "shared/components/QuillTextInput";
 import IntegerInput from "shared/components/IntegerInput";
 
-import {colAttributeChoices, rowTypeChoices} from "./constants";
+import {colAttributeChoices} from "./constants";
 
 class EditButton extends Component {
     render() {
@@ -100,26 +100,34 @@ EditCellForm.propTypes = {
 class EditRowForm extends Component {
     render() {
         const {store, rowIdx} = this.props,
-            row = store.stagedEdits.rows[rowIdx],
-            idChoices = store.rowIdChoices;
+            row = store.stagedEdits.rows[rowIdx];
         return (
             <>
                 <div className="col-md-12">
                     <SelectInput
-                        choices={rowTypeChoices[store.settings.data_source]}
+                        choices={store.rowTypeChoices}
                         value={row.type}
-                        handleSelect={value => store.updateStagedRow(rowIdx, {type: value})}
+                        handleSelect={value => {
+                            let oldPriority = _.findIndex(
+                                    store.rowTypeChoices,
+                                    c => c.id == row.type
+                                ),
+                                newPriority = _.findIndex(store.rowTypeChoices, c => c.id == value),
+                                id =
+                                    oldPriority > newPriority
+                                        ? store.getDataSelection(row.type, row.id)[`${value}_id`]
+                                        : _.find(
+                                              store.dataset.data,
+                                              d =>
+                                                  d["type"] == value &&
+                                                  d[`${row.type}_id`] == row.id
+                                          )["id"];
+                            return store.updateStagedRow(rowIdx, {type: value, id: parseInt(id)});
+                        }}
                         label="Data type"
                     />
                 </div>
-                <div className="col-md-12">
-                    <SelectInput
-                        choices={idChoices}
-                        value={row.id}
-                        handleSelect={value => store.updateStagedRow(rowIdx, {id: parseInt(value)})}
-                        label="Item"
-                    />
-                </div>
+                {this.renderIdForm()}
                 <div className="col-md-12 text-center">
                     <div className="btn-group">
                         <button
@@ -153,6 +161,70 @@ class EditRowForm extends Component {
                 </div>
             </>
         );
+    }
+
+    renderIdForm() {
+        let inputs = [];
+        const {store, rowIdx} = this.props,
+            row = store.stagedEdits.rows[rowIdx],
+            data = store.getDataSelection(row.type, row.id);
+        switch (row.type) {
+            case "animal_group":
+                inputs.unshift(
+                    <SelectInput
+                        key="animal_group_id"
+                        choices={store.rowIdChoices(row, "animal_group")}
+                        value={data["animal_group_id"]}
+                        handleSelect={value => {
+                            let target = _.find(
+                                store.dataset.data,
+                                d =>
+                                    d["type"] == data["type"] &&
+                                    d["animal_group_id"] == parseInt(value)
+                            );
+                            store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
+                        }}
+                        label="Animal group"
+                    />
+                );
+            // falls through
+            case "experiment":
+                inputs.unshift(
+                    <SelectInput
+                        key="experiment_id"
+                        choices={store.rowIdChoices(row, "experiment")}
+                        value={data["experiment_id"]}
+                        handleSelect={value => {
+                            let target = _.find(
+                                store.dataset.data,
+                                d =>
+                                    d["type"] == data["type"] &&
+                                    d["experiment_id"] == parseInt(value)
+                            );
+                            store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
+                        }}
+                        label="Experiment"
+                    />
+                );
+            // falls through
+            case "study":
+                inputs.unshift(
+                    <SelectInput
+                        key="study_id"
+                        choices={store.rowIdChoices(row, "study")}
+                        value={data["study_id"]}
+                        handleSelect={value => {
+                            let target = _.find(
+                                store.dataset.data,
+                                d => d["type"] == data["type"] && d["study_id"] == parseInt(value)
+                            );
+                            store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
+                        }}
+                        label="Study"
+                    />
+                );
+        }
+        return inputs;
     }
 }
 EditRowForm.propTypes = {
