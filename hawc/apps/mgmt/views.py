@@ -163,7 +163,6 @@ class TaskDetail(TaskDashboard):
                 csrf=get_token(self.request),
                 tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
                 taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
-                taskBulkPatchUrl=reverse("mgmt:api:task-bulk-patch") + f"?assessment_id={a_id}",
                 studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
                 userAutocompleteUrl=reverse(
                     "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
