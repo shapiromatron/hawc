@@ -1,6 +1,6 @@
-from datetime import timedelta
 import json
 import logging
+from datetime import timedelta
 from typing import Any, Dict, List
 
 from django.apps import apps
@@ -669,12 +669,12 @@ class UpdateSession(View):
         if request.POST.get("hideSidebar"):
             request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
         if request.POST.get("refresh"):
-            now = timezone.now()
-            old_date = request.get_expiry_date()
-            if request.session.get_expiry_date() - now < timedelta(minutes=15):
-                request.session.set_expiry(now + timedelta(weeks=1))
-            new_date = request.get_expiry_date()
-            return HttpResponse(f"Session extended from {old_date} to {new_date}.")
+            if request.user.is_authenticated:
+                old_time = request.session.get_expiry_date()
+                # datetime can't be JSONSerialized, so convert timedelta to an int
+                request.session.set_expiry(int(timedelta(weeks=1).total_seconds()))
+                new_time = request.session.get_expiry_date()
+                return HttpResponse(f"Session extended from {old_time} to {new_time}.")
         return HttpResponse(True)
 
 
