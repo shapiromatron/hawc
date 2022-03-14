@@ -1,7 +1,12 @@
 from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
-from ..common.lookups import DistinctStringLookup, RelatedDistinctStringLookup, RelatedLookup
+from ..common.lookups import (
+    DistinctStringLookup,
+    RelatedDistinctStringLookup,
+    RelatedLookup,
+    UserSpecifiedRelatedLookup,
+)
 from . import models
 
 
@@ -109,45 +114,23 @@ class EndpointNameLookup(DistinctStringLookup):
     distinct_field = "name"
 
 
-class EndpointByStudyLookup(RelatedLookup):
+class EndpointByStudyLookup(UserSpecifiedRelatedLookup):
     # Return names of endpoints available for a particular study
     model = models.Endpoint
-    user_specified_search_fields = [
+    related_filter = "animal_group__experiment__study"
+    search_fields = None  # user choices below instead
+    search_fields_choices = {
         "animal_group__experiment__name",
         "animal_group__name",
         "name",
-    ]
-    search_fields = (
-        "name__icontains",
-        "animal_group__name__icontains",
-        "animal_group__experiment__name__icontains",
-    )
-    related_filter = "animal_group__experiment__study"
-
-    def get_item_label(self, obj):
-        return " | ".join(
-            [str(self.get_underscore_field_val(obj, f)) for f in self.user_specified_search_fields]
-        )
-
-    def get_item_value(self, obj):
-        return self.get_item_label(obj)
-
-    def get_query(self, request, term):
-        order_by = request.GET["order_by"]
-        search_fields = request.GET.get("search_fields")
-
-        # TODO - investigate if this alters class-state; may have side effects across requests
-        # preserve this so we can return a dynamic representation of the Endpoint...
-        self.user_specified_search_fields = search_fields.split(",")
-
-        # TODO - investigate if this alters class-state; may have side effects across requests
-        # update the search_fields tuple to match the fields we're going to show...
-        self.search_fields = [f"{field}__icontains" for field in self.user_specified_search_fields]
-
-        if len(self.search_fields) > 0:
-            return super().get_query(request, term).distinct().order_by(order_by)
-        else:
-            return None
+        "created",
+        "last_updated",
+        "data_type",
+        "response_units",
+        "observation_time",
+        "system",
+    }
+    order_by_choices = {"id", "name", "created", "last_updated"}
 
 
 class EndpointByAssessmentLookup(RelatedLookup):
