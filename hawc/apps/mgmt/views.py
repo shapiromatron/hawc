@@ -144,27 +144,6 @@ class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
         )
 
 
-def task_table_app_config(view, edit: bool) -> WebappConfig:
-    a_id = view.assessment.id
-    return WebappConfig(
-        app="mgmtStartup",
-        page="TaskTable",
-        data=dict(
-            assessment_id=a_id,
-            csrf=get_token(view.request),
-            displayAsForm=edit,
-            cancelUrl=reverse("mgmt:assessment_tasks", args=(a_id,)),
-            tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
-            taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
-            taskBulkPatchUrl=reverse("mgmt:api:task-bulk-patch") + f"?assessment_id={a_id}",
-            studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
-            userAutocompleteUrl=reverse(
-                "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
-            ),
-        ),
-    )
-
-
 class TaskDetail(TaskDashboard):
     template_name = "mgmt/assessment_details.html"
 
@@ -175,4 +154,19 @@ class TaskDetail(TaskDashboard):
         return context
 
     def get_app_config(self, context) -> WebappConfig:
-        return task_table_app_config(self, False)
+        a_id = self.assessment.id
+        return WebappConfig(
+            app="mgmtStartup",
+            page="TaskTable",
+            data=dict(
+                assessment_id=a_id,
+                csrf=get_token(self.request),
+                tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
+                taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
+                taskBulkPatchUrl=reverse("mgmt:api:task-bulk-patch") + f"?assessment_id={a_id}",
+                studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
+                userAutocompleteUrl=reverse(
+                    "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
+                ),
+            ),
+        )
