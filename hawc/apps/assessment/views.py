@@ -1,3 +1,4 @@
+from datetime import timedelta
 import json
 import logging
 from typing import Any, Dict, List
@@ -260,7 +261,8 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
-            back_href=get_referrer(self.request, reverse("portal")), user=self.request.user,
+            back_href=get_referrer(self.request, reverse("portal")),
+            user=self.request.user,
         )
         return kwargs
 
@@ -666,6 +668,13 @@ class UpdateSession(View):
             return HttpResponseNotAllowed(["POST"])
         if request.POST.get("hideSidebar"):
             request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
+        if request.POST.get("refresh"):
+            now = timezone.now()
+            old_date = request.get_expiry_date()
+            if request.session.get_expiry_date() - now < timedelta(minutes=15):
+                request.session.set_expiry(now + timedelta(weeks=1))
+            new_date = request.get_expiry_date()
+            return HttpResponse(f"Session extended from {old_date} to {new_date}.")
         return HttpResponse(True)
 
 
