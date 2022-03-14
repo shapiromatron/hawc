@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from docx import Document
 
-from hawc.tools.tables.set import AttributeChoices, StudyEvaluationTable
+from hawc.tools.tables.set import AttributeChoices, Column, StudyEvaluationTable
 
 from . import documents_equal
 
@@ -17,10 +17,10 @@ class TestAttributeChoices:
 
         # returns an empty cell; overridden by customizations
         series = pd.Series({"foo": "foo", "bar": "bar", "free_html": "free_html"})
-        cell = attribute.get_cell(series)
+        cell = attribute.get_cell(Column.construct(), series)
         assert cell.quill_text == "<p></p>"
         series = pd.Series()
-        cell = attribute.get_cell(series)
+        cell = attribute.get_cell(Column.construct(), series)
         assert cell.quill_text == "<p></p>"
 
     def test_rob(self):
@@ -28,20 +28,35 @@ class TestAttributeChoices:
 
         # test with scores
         df = pd.DataFrame({"score_score": [1, 2]})
-        cell = attribute.get_cell(df)
+        cell = attribute.get_cell(Column.construct(), df)
         assert cell.judgment == 1  # uses first value
 
         # test with no scores
         df = pd.DataFrame({"score_score": []})
-        cell = attribute.get_cell(df)
+        cell = attribute.get_cell(Column.construct(), df)
         assert cell.judgment == -1
+
+    def test_animal_group_doses(self):
+        attribute = AttributeChoices.AnimalGroupDoses
+
+        series = pd.Series(
+            {"animal_group_dose_units": "ppm|mg/m3", "animal_group_doses": "0, 1, 10|1, 10, 100"}
+        )
+
+        # show all doses
+        cell = attribute.get_cell(Column.construct(dose_unit=""), series)
+        assert cell.quill_text == "<p>0, 1, 10 ppm; 1, 10, 100 mg/m3</p>"
+
+        # show ppm doses
+        cell = attribute.get_cell(Column.construct(dose_unit="ppm"), series)
+        assert cell.quill_text == "<p>0, 1, 10</p>"
 
     def test_default(self):
         attribute = AttributeChoices.StudyShortCitation
 
         # valid
         series = pd.Series({"study_short_citation": "Foo et al.; Bar et al."})
-        cell = attribute.get_cell(series)
+        cell = attribute.get_cell(Column.construct(), series)
         assert cell.quill_text == "<p>Foo et al.; Bar et al.</p>"
 
 

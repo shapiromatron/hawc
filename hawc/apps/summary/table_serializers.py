@@ -1,5 +1,6 @@
-from collections import OrderedDict
 import json
+from collections import OrderedDict
+
 import pandas as pd
 from rest_framework import serializers
 
@@ -15,7 +16,9 @@ class SummaryTableDataSerializer(serializers.Serializer):
 
     @property
     def cache_key(self):
-        return f"table-type-{self.validated_data['table_type']}-{self.validated_data['ser'].cache_key}"
+        return (
+            f"table-type-{self.validated_data['table_type']}-{self.validated_data['ser'].cache_key}"
+        )
 
     def validate(self, data):
         if data["table_type"] == constants.TableType.STUDY_EVALUATION:
@@ -92,13 +95,19 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = animal_models.AnimalGroup
-        fields = ["id", "experiment_id", "name", "description", "route_of_exposure", "treatment_period", "dose_dict"]
+        fields = [
+            "id",
+            "experiment_id",
+            "name",
+            "description",
+            "route_of_exposure",
+            "treatment_period",
+            "dose_dict",
+        ]
         read_only_fields = fields
 
     def get_description(self, obj):
-        return (
-            f"{obj.generation}{' ' if obj.generation else ''}{obj.species.name}, {obj.strain.name} ({obj.sex_symbol})"
-        )
+        return f"{obj.generation}{' ' if obj.generation else ''}{obj.species.name}, {obj.strain.name} ({obj.sex_symbol})"
 
     def get_route_of_exposure(self, obj):
         return obj.dosing_regime.get_route_of_exposure_display()
@@ -146,9 +155,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
 
     @property
     def cache_key(self):
-        return (
-            f"data-source-{self.validated_data['data_source']}-published-only-{self.validated_data['published_only']}"
-        )
+        return f"data-source-{self.validated_data['data_source']}-published-only-{self.validated_data['published_only']}"
 
     @property
     def _custom_fields(self):
@@ -190,29 +197,48 @@ class StudyEvaluationSerializer(serializers.Serializer):
         study_ser = StudySerializer(study_qs, many=True, field_prefix="study_")
         study_df = pd.DataFrame.from_records(study_ser.data, columns=study_ser.child.fields.keys())
         # get experiment df
-        experiment_qs = animal_models.Experiment.objects.filter(study_id__in=study_df["study_id"].values)
-        experiment_ser = ExperimentSerializer(
-            experiment_qs, many=True, field_prefix="experiment_", field_renames={"study_id": "study_id"},
+        experiment_qs = animal_models.Experiment.objects.filter(
+            study_id__in=study_df["study_id"].values
         )
-        experiment_df = pd.DataFrame.from_records(experiment_ser.data, columns=experiment_ser.child.fields.keys())
+        experiment_ser = ExperimentSerializer(
+            experiment_qs,
+            many=True,
+            field_prefix="experiment_",
+            field_renames={"study_id": "study_id"},
+        )
+        experiment_df = pd.DataFrame.from_records(
+            experiment_ser.data, columns=experiment_ser.child.fields.keys()
+        )
         # get animal group df
         animal_group_qs = (
-            animal_models.AnimalGroup.objects.filter(experiment_id__in=experiment_df["experiment_id"].values)
+            animal_models.AnimalGroup.objects.filter(
+                experiment_id__in=experiment_df["experiment_id"].values
+            )
             .select_related("species", "strain", "dosing_regime", "experiment")
             .prefetch_related("dosing_regime__doses", "dosing_regime__doses__dose_units")
         )
         animal_group_ser = AnimalGroupSerializer(
-            animal_group_qs, many=True, field_prefix="animal_group_", field_renames={"experiment_id": "experiment_id"},
+            animal_group_qs,
+            many=True,
+            field_prefix="animal_group_",
+            field_renames={"experiment_id": "experiment_id"},
         )
-        animal_group_df = pd.DataFrame.from_records(animal_group_ser.data, columns=animal_group_ser.child.fields.keys())
+        animal_group_df = pd.DataFrame.from_records(
+            animal_group_ser.data, columns=animal_group_ser.child.fields.keys()
+        )
         # get endpoint df
         endpoint_qs = animal_models.Endpoint.objects.filter(
             animal_group_id__in=animal_group_df["animal_group_id"].values
         )
         endpoint_ser = EndpointSerializer(
-            endpoint_qs, many=True, field_prefix="endpoint_", field_renames={"animal_group_id": "animal_group_id"},
+            endpoint_qs,
+            many=True,
+            field_prefix="endpoint_",
+            field_renames={"animal_group_id": "animal_group_id"},
         )
-        endpoint_df = pd.DataFrame.from_records(endpoint_ser.data, columns=endpoint_ser.child.fields.keys())
+        endpoint_df = pd.DataFrame.from_records(
+            endpoint_ser.data, columns=endpoint_ser.child.fields.keys()
+        )
         # join dfs
         merged_df = (
             study_df.merge(experiment_df, how="left", on="study_id")
@@ -238,7 +264,9 @@ class StudyEvaluationSerializer(serializers.Serializer):
         final_df.insert(
             _index + 1,
             "animal_group_doses",
-            final_df["animal_group_dose_dict"].transform(lambda x: "|".join(["; ".join(y) for y in x.values()])),
+            final_df["animal_group_dose_dict"].transform(
+                lambda x: "|".join(["; ".join(y) for y in x.values()])
+            ),
         )
         final_df = final_df.drop(columns=["animal_group_dose_dict"])
         # return
@@ -255,6 +283,8 @@ class StudyEvaluationSerializer(serializers.Serializer):
             return aggregated_dict
 
     def _aggregate(self, series):
+        if series.empty:
+            return
         if series.name in self._custom_fields:
             return self._aggregate_custom(series)
         if series.name in self._id_fields:

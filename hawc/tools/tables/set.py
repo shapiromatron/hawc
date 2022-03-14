@@ -47,7 +47,10 @@ class AttributeChoices(Enum):
             doses = selection["animal_group_doses"].split("|")
             if col.dose_unit == "":
                 text = "; ".join(
-                    ["; ".join([f"{_d} {dose_units[i]}" for _d in d.split("; ")]) for i, d in enumerate(doses)]
+                    [
+                        "; ".join([f"{_d} {dose_units[i]}" for _d in d.split("; ")])
+                        for i, d in enumerate(doses)
+                    ]
                 )
             else:
                 try:
@@ -132,7 +135,9 @@ class StudyEvaluationTable(BaseTable):
         cells = []
         for subheader in self.subheaders:
             html = tag_wrapper(subheader.label, "p", "strong")
-            cells.append(GenericCell.parse_args(True, 0, subheader.start - 1, 1, subheader.length, html))
+            cells.append(
+                GenericCell.parse_args(True, 0, subheader.start - 1, 1, subheader.length, html)
+            )
         return BaseCellGroup.construct(cells=cells)
 
     def _columns_group(self):
@@ -147,7 +152,9 @@ class StudyEvaluationTable(BaseTable):
             if "html" in custom:
                 cell.quill_text = custom["html"]
             elif "score_id" in custom:
-                values = self._rob.loc[self._rob["score_id"] == custom["score_id"]]["score_score"].values
+                values = self._rob.loc[self._rob["score_id"] == custom["score_id"]][
+                    "score_score"
+                ].values
                 cell.judgment = -1 if values.size == 0 else values[0]
 
     def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:

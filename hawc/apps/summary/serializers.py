@@ -35,7 +35,9 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         if instance.id != instance.FAKE_INITIAL_ID:
             ret["url"] = instance.get_absolute_url()
-        ret["visual_type"] = instance.get_rob_visual_type_display(instance.get_visual_type_display())
+        ret["visual_type"] = instance.get_rob_visual_type_display(
+            instance.get_visual_type_display()
+        )
         try:
             settings = json.loads(instance.settings)
         except json.JSONDecodeError:
@@ -65,9 +67,13 @@ class VisualSerializer(CollectionVisualSerializer):
         ]:
             ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
 
-        ret["endpoints"] = [SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()]
+        ret["endpoints"] = [
+            SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()
+        ]
 
-        ret["studies"] = [SerializerHelper.get_serialized(d, json=False) for d in instance.get_studies()]
+        ret["studies"] = [
+            SerializerHelper.get_serialized(d, json=False) for d in instance.get_studies()
+        ]
 
         ret["assessment_rob_name"] = instance.assessment.get_rob_name_display()
 
@@ -75,7 +81,9 @@ class VisualSerializer(CollectionVisualSerializer):
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):
-    parent = serializers.PrimaryKeyRelatedField(queryset=models.SummaryText.objects.all(), write_only=True)
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=models.SummaryText.objects.all(), write_only=True
+    )
     sibling = serializers.PrimaryKeyRelatedField(
         queryset=models.SummaryText.objects.all(), write_only=True, required=False, allow_null=True
     )
