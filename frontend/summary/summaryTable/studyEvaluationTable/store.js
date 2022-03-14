@@ -308,7 +308,7 @@ class StudyEvaluationTableStore {
             case "rob":
                 return _.find(this.metricIdChoices, c => c.id == col.metric_id).label;
             case "animal_group_doses":
-                return col.dose_unit;
+                return col.dose_unit == "" ? "Doses" : `Doses (${col.dose_unit})`;
             default:
                 return _.find(
                     constants.colAttributeChoices[this.settings.data_source],

@@ -127,8 +127,8 @@ class EditRowForm extends Component {
                         label="Data type"
                     />
                 </div>
-                {this.renderIdForm()}
-                <div className="col-md-12 text-center">
+                <div className="col-md-12">{this.renderIdForm()}</div>
+                <div className="col-md-12 text-center mb-3">
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
