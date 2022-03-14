@@ -253,7 +253,6 @@ class StudyEvaluationTableStore {
                     })
                     .value();
         }
-        return;
     }
 
     // column attributes
@@ -415,9 +414,7 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study_short_citation":
-            case "animal_group_description":
-            case "free_html":
+            default:
                 return {html: customized.html};
         }
     }
