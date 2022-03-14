@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, viewsets
 from rest_framework.decorators import action
@@ -139,4 +141,9 @@ class SummaryTableViewset(AssessmentEditViewset):
             data=request.query_params.dict(), context=self.get_serializer_context()
         )
         ser.is_valid(raise_exception=True)
-        return Response(ser.get_data())
+        cache_key = f"assessment-{self.assessment.id}-summary-table-{ser.cache_key}"
+        data = cache.get(cache_key)
+        if data is None:
+            data = ser.get_data()
+            cache.set(cache_key, data, settings.CACHE_1_HR)
+        return Response(data)

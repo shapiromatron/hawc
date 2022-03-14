@@ -13,6 +13,10 @@ from . import constants
 class SummaryTableDataSerializer(serializers.Serializer):
     table_type = serializers.ChoiceField(constants.TableType.choices)
 
+    @property
+    def cache_key(self):
+        return f"table-type-{self.validated_data['table_type']}-{self.validated_data['ser'].cache_key}"
+
     def validate(self, data):
         if data["table_type"] == constants.TableType.STUDY_EVALUATION:
             ser = StudyEvaluationSerializer(data=self.initial_data, context=self.context)
@@ -130,16 +134,21 @@ class StudyEvaluationSerializer(serializers.Serializer):
     data_source = serializers.ChoiceField(choices=["study", "ani"])
     published_only = serializers.BooleanField()
 
-    """
     def validate(self, data):
         # Check permissions for non published data
         if (
-            data["published_only"] is False
+            "request" in self.context
+            and data["published_only"] is False
             and data["assessment_id"].user_is_part_of_team(self.context["request"].user) is False
         ):
             raise serializers.ValidationError("Must be part of team to view unpublished data.")
         return data
-    """
+
+    @property
+    def cache_key(self):
+        return (
+            f"data-source-{self.validated_data['data_source']}-published-only-{self.validated_data['published_only']}"
+        )
 
     @property
     def _custom_fields(self):
