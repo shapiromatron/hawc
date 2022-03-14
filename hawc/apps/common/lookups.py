@@ -1,8 +1,9 @@
 import operator
 from functools import reduce
-from typing import Any
+from typing import Any, Set
 
 from django.db.models import Q
+from django.forms import ValidationError
 from selectable.base import ModelLookup
 
 from .helper import tryParseInt
@@ -41,33 +42,14 @@ class RelatedLookup(ModelLookup):
 
     related_filter = None  # filter-string
 
+    def get_search_filter(self, request, term):
+        return [Q(**{field: term}) for field in self.search_fields]
+
     def get_query(self, request, term):
         id_ = tryParseInt(request.GET.get("related"), -1)
-
         qs = self.get_queryset()
-        search_fields = [Q(**{field: term}) for field in self.search_fields]
+        search_fields = self.get_search_filter(request, term)
         return qs.filter(Q(**{self.related_filter: id_}) & reduce(operator.or_, search_fields))
-
-    def get_underscore_field_val(self, obj: Any, underscore_path: str) -> Any:
-        """
-        Recursively select attributes from objects, given a django queryset underscore path.
-        For example, `related_item__some_field__foo` will return `obj.related_item.some_field.foo`
-
-        Args:
-            obj (Any): An object
-            underscore_path (str): the path to retrieve
-
-        Returns:
-            Any: the desired attribute of the object or child object.
-        """
-        obj_ = obj
-        try:
-            for attr in underscore_path.split("__"):
-                obj_ = getattr(obj_, attr)
-        except AttributeError:
-            raise AttributeError(f"Element {underscore_path} not found in {obj}")
-
-        return obj_
 
 
 class RelatedDistinctStringLookup(DistinctStringLookup):
@@ -78,3 +60,57 @@ class RelatedDistinctStringLookup(DistinctStringLookup):
         id_ = tryParseInt(request.GET.get("related"), -1)
 
         return qs.filter(Q(**{self.related_filter: id_}))
+
+
+class UserSpecifiedRelatedLookup(RelatedLookup):
+    search_fields = None  # user choices below instead
+    search_fields_choices: Set = set()
+    order_by_choices: Set = set()
+
+    def get_search_filter(self, request, term):
+        """Return a valid search filter, from the available choices"""
+        search_fields = request.GET.get("search_fields", "").split(",")
+        if any(field not in self.search_fields_choices for field in search_fields):
+            raise ValidationError("Invalid search fields specified")
+        if not search_fields:
+            raise ValidationError("At least one search field is required")
+
+        # TODO - can we do this without binding request to self?
+        request._search_fields = search_fields
+        self._current_request = request
+        fields = [f"{field}__icontains" for field in search_fields]
+        return [Q(**{field: term}) for field in fields]
+
+    def get_order_by(self, request):
+        """Return a valid ordering column, from available choices"""
+        order_by = request.GET.get("order_by", "id")
+        test_value = order_by.removeprefix("-")  # check for both forward/reverse orders
+        if test_value not in self.order_by_choices:
+            raise ValidationError(f"Invalid order_by: {order_by}")
+        return order_by
+
+    def get_query(self, request, term):
+        try:
+            order_by = self.get_order_by(request)
+            return super().get_query(request, term).distinct().order_by(order_by)
+        except ValidationError:
+            return super().get_queryset().none()
+
+    def get_item_label(self, obj):
+        return " | ".join(
+            [self._get_field_label(obj, field) for field in self._current_request._search_fields]
+        )
+
+    def get_item_value(self, obj):
+        return self.get_item_label(obj)
+
+    def _get_field_label(self, obj: Any, path: str) -> str:
+        """Return label for a string-based  django ORM attribute path.
+
+        For example, `related_item__some_field__foo` will return a str based representation
+        of `obj.related_item.some_field.foo`.
+        """
+        item = obj
+        for attribute in path.split("__"):
+            item = getattr(item, attribute)
+        return str(item)
