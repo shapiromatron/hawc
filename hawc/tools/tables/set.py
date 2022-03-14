@@ -25,22 +25,49 @@ class AttributeChoices(Enum):
     Rob = "rob"
     StudyShortCitation = "study_short_citation"
     AnimalGroupDescription = "animal_group_description"
+    AnimalGroupDoses = "animal_group_doses"
+    ExperimentName = "experiment_name"
+    AnimalGroupName = "animal_group_name"
+    AnimalGroupTreatmentPeriod = "animal_group_treatment_period"
+    AnimalGroupRouteOfExposure = "animal_group_route_of_exposure"
+    EndpointSystem = "endpoint_system"
+    EndpointEffect = "endpoint_effect"
+    EndpointName = "endpoint_name"
+    ExperimentChemical = "experiment_chemical"
 
-    def get_free_html(self, selection: pd.Series) -> BaseCell:
+    def get_free_html(self, col, selection: pd.Series) -> BaseCell:
         # this will be overridden by 'customized' html
         return GenericCell()
 
-    def get_rob(self, selection: pd.DataFrame) -> BaseCell:
+    def get_animal_group_doses(self, col, selection: pd.Series) -> BaseCell:
+        if selection["animal_group_doses"] == "":
+            text = ""
+        else:
+            dose_units = selection["animal_group_dose_units"].split("|")
+            doses = selection["animal_group_doses"].split("|")
+            if col.dose_unit == "":
+                text = "; ".join(
+                    ["; ".join([f"{_d} {dose_units[i]}" for _d in d.split("; ")]) for i, d in enumerate(doses)]
+                )
+            else:
+                try:
+                    index = dose_units.index(col.dose_unit)
+                    text = doses[index]
+                except ValueError:
+                    text = ""
+        return GenericCell(quill_text=tag_wrapper(text, "p"))
+
+    def get_rob(self, col, selection: pd.DataFrame) -> BaseCell:
         values = selection["score_score"].values
         judgment = -1 if values.size == 0 else values[0]
         return JudgmentColorCell(judgment=judgment)
 
-    def _get_default(self, selection: pd.Series) -> BaseCell:
+    def _get_default(self, col, selection: pd.Series) -> BaseCell:
         text = selection[self.value]
         return GenericCell(quill_text=tag_wrapper(text, "p"))
 
-    def get_cell(self, selection: Union[pd.DataFrame, pd.Series]) -> BaseCell:
-        return getattr(self, f"get_{self.value}", self._get_default)(selection)
+    def get_cell(self, col, selection: Union[pd.DataFrame, pd.Series]) -> BaseCell:
+        return getattr(self, f"get_{self.value}", self._get_default)(col, selection)
 
 
 class Subheader(BaseModel):
@@ -54,6 +81,7 @@ class Column(BaseModel):
     attribute: AttributeChoices
     width: int = 1
     metric_id: Optional[int]
+    dose_unit: Optional[str]
     key: str
 
 
@@ -104,9 +132,7 @@ class StudyEvaluationTable(BaseTable):
         cells = []
         for subheader in self.subheaders:
             html = tag_wrapper(subheader.label, "p", "strong")
-            cells.append(
-                GenericCell.parse_args(True, 0, subheader.start - 1, 1, subheader.length, html)
-            )
+            cells.append(GenericCell.parse_args(True, 0, subheader.start - 1, 1, subheader.length, html))
         return BaseCellGroup.construct(cells=cells)
 
     def _columns_group(self):
@@ -121,9 +147,7 @@ class StudyEvaluationTable(BaseTable):
             if "html" in custom:
                 cell.quill_text = custom["html"]
             elif "score_id" in custom:
-                values = self._rob.loc[self._rob["score_id"] == custom["score_id"]][
-                    "score_score"
-                ].values
+                values = self._rob.loc[self._rob["score_id"] == custom["score_id"]]["score_score"].values
                 cell.judgment = -1 if values.size == 0 else values[0]
 
     def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:
@@ -151,7 +175,7 @@ class StudyEvaluationTable(BaseTable):
                 continue
             for j, col in enumerate(self.cell_columns):
                 selection = self._get_selection(row, col)
-                cell = col.attribute.get_cell(selection)
+                cell = col.attribute.get_cell(col, selection)
                 self._set_override(cell, row, col)
                 cell.row = i
                 cell.column = j
