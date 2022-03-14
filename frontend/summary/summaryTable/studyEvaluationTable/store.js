@@ -362,31 +362,28 @@ class StudyEvaluationTableStore {
                 let data = this.getDataSelection(row.type, row.id),
                     text = data["study_short_citation"];
                 return {
-                    html: `<p><a href="/study/${row.id}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
+                    html: `<p><a href="/study/${data["study_id"]}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
                 };
             }
             case "animal_group_doses": {
-                let data = this.getDataSelection(row.type, row.id);
+                let data = this.getDataSelection(row.type, row.id),
+                    doseUnits = data["animal_group_dose_units"].split("|"),
+                    doses = data["animal_group_doses"].split("|");
                 if (data["animal_group_doses"] == "") {
                     return {html: "<p></p>"};
                 }
-                let doseUnits = data["animal_group_dose_units"].split("|");
                 if (col.dose_unit == "") {
-                    let doses = data["animal_group_doses"].split("|"),
-                        text = _.chain(doses)
-                            .map((x, i) =>
-                                _.chain(x.split("; "))
-                                    .map(y => `${y} ${doseUnits[i]}`)
-                                    .join("; ")
-                            )
-                            .join("; ");
+                    let text = _.chain(doses)
+                        .map((x, i) =>
+                            _.chain(x.split("; "))
+                                .map(y => `${y} ${doseUnits[i]}`)
+                                .join("; ")
+                        )
+                        .join("; ");
                     return {html: `<p>${text}</p>`};
                 } else {
                     let dosesIndex = _.indexOf(doseUnits, col.dose_unit),
-                        text =
-                            dosesIndex == -1
-                                ? ""
-                                : data["animal_group_doses"].split("|")[dosesIndex];
+                        text = dosesIndex == -1 ? "" : doses[dosesIndex];
                     return {html: `<p>${text}</p>`};
                 }
             }
@@ -523,7 +520,8 @@ class StudyEvaluationTableStore {
     interactiveOnClick(rowIdx, colIdx) {
         let row = this.workingSettings.rows[rowIdx],
             col = this.workingSettings.columns[colIdx],
-            customized = this.getCustomized(rowIdx, col.key);
+            customized = this.getCustomized(rowIdx, col.key),
+            data = this.getDataSelection(row.type, row.id);
         if (col.attribute == "rob") {
             let scoreId = customized == null ? null : customized.score_id,
                 selection = this.getRobSelection(row.id, col.metric_id, scoreId);
@@ -533,7 +531,6 @@ class StudyEvaluationTableStore {
             }
 
             let score = selection[0],
-                study = this.getDataSelection(row.type, row.id),
                 config = {
                     display: "all",
                     isForm: false,
@@ -579,21 +576,21 @@ class StudyEvaluationTableStore {
                         },
                     },
                 };
-            return () => this.displayRobAsModal(_.extend({}, scoreData, robData), study, config);
+            return () => this.displayRobAsModal(_.extend({}, scoreData, robData), data, config);
         } else {
-            return () => Study.displayAsModal(row.id);
+            return () => Study.displayAsModal(data["study_id"]);
         }
     }
-    displayRobAsModal(data, study, config) {
+    displayRobAsModal(robData, data, config) {
         var modal = new HAWCModal(),
-            title = `<h4><a target="_blank" href="/study/${study["study_id"]}">${
-                study["study_short_citation"]
-            }</a>${data["label"] ? `: ${data["label"]}` : ""}</h4>`,
+            title = `<h4><a target="_blank" href="/study/${data["study_id"]}">${
+                data["study_short_citation"]
+            }</a>${robData["label"] ? `: ${robData["label"]}` : ""}</h4>`,
             $content = $('<div class="container-fluid">');
 
         window.setTimeout(function() {
             renderRiskOfBiasDisplay(
-                RiskOfBiasScore.format_for_react([new RiskOfBiasScore(null, data)], config),
+                RiskOfBiasScore.format_for_react([new RiskOfBiasScore(null, robData)], config),
                 $content[0]
             );
         }, 200);

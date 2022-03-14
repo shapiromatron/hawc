@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from ..animal import models as animal_models
 from ..assessment.models import Assessment
+from ..common.serializers import FlexibleFieldsMixin
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
 from . import constants
@@ -31,46 +32,6 @@ class SummaryTableDataSerializer(serializers.Serializer):
         ser = self.validated_data.get("ser")
         if ser is not None:
             return ser.get_data()
-
-
-class FlexibleFieldsMixin:
-    def __init__(self, *args, **kwargs):
-        fields = kwargs.pop("fields", None)
-        field_prefix = kwargs.pop("field_prefix", "")
-        field_renames = kwargs.pop("field_renames", {})
-
-        super().__init__(*args, **kwargs)
-
-        if fields is not None:
-            # Drop any fields that are not specified in the `fields` argument.
-            allowed = set(fields)
-            existing = set(self.fields)
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)
-
-        # TODO validate prefix and renames to make sure theres no clashes with other fields
-
-        if not field_prefix and not field_renames:
-            # If nothing else needs to be done, return
-            return
-
-        # 'fields' is a BindingDict, which has an underlying OrderedDict.
-        # any changes require it to be rebuilt to maintain its order.
-        for field_name in list(self.fields):
-            if field_name in field_renames:
-                # handle renames
-                new_field_name = field_renames[field_name]
-                if field_name == new_field_name:
-                    # special case; assign on the underlying OrderedDict to avoid error on BindingDict __setitem__
-                    self.fields.fields[field_name] = self.fields.pop(field_name)
-                else:
-                    self.fields[new_field_name] = self.fields.pop(field_name)
-            elif field_prefix:
-                # handle prefixes
-                self.fields[field_prefix + field_name] = self.fields.pop(field_name)
-            else:
-                # handle case of no rename or prefix
-                self.fields.fields[field_name] = self.fields.pop(field_name)
 
 
 class StudySerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
@@ -165,6 +126,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
 
     @property
     def _id_fields(self):
+        # id fields, in order of specificity
         if self.validated_data["data_source"] == "ani":
             return ["study_id", "experiment_id", "animal_group_id", "endpoint_id"]
 
@@ -245,7 +207,6 @@ class StudyEvaluationSerializer(serializers.Serializer):
             .merge(animal_group_df, how="left", on="experiment_id")
             .merge(endpoint_df, how="left", on="animal_group_id")
         )
-
         # group dfs by type
         group_dfs = [
             self._group_df(merged_df, "study"),
@@ -269,7 +230,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
             ),
         )
         final_df = final_df.drop(columns=["animal_group_dose_dict"])
-        # return
+        # return df
         return final_df.convert_dtypes()
 
     def _aggregate_custom(self, series):
@@ -284,21 +245,26 @@ class StudyEvaluationSerializer(serializers.Serializer):
 
     def _aggregate(self, series):
         if series.empty:
+            # special case for empty dataset
             return
         if series.name in self._custom_fields:
+            # run any custom aggregations
             return self._aggregate_custom(series)
         if series.name in self._id_fields:
+            # use the first occurence; id fields are handled after aggregation
             return series.iloc[0]
+        # run default aggregation
         return "; ".join([str(_) for _ in series.dropna().sort_values().unique()])
 
     def _group_df(self, df, model):
-        ## aggregate
+        # aggregate
         column = f"{model}_id"
         groups = df.groupby(column, as_index=False)
         df = groups.agg(self._aggregate)
-        ## add identifying columns
+        # add identifying columns
         df.insert(0, "type", model)
         df.insert(1, "id", df[column])
+        # drop irrelevant id fields
         return df.drop(columns=self._id_fields[self._id_fields.index(column) + 1 :])
 
     def _get_rob_df(self):
@@ -334,4 +300,5 @@ class StudyEvaluationSerializer(serializers.Serializer):
         return {"data": self._get_df(), "rob": self._get_rob_df()}
 
     def get_data(self):
+        # load DataFrame's json dump to work around pd.NA being non-JSON serializable
         return {key: json.loads(df.to_json(orient="records")) for key, df in self.get_dfs().items()}

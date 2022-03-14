@@ -46,6 +46,7 @@ class AttributeChoices(Enum):
             dose_units = selection["animal_group_dose_units"].split("|")
             doses = selection["animal_group_doses"].split("|")
             if col.dose_unit == "":
+                # return all of the doses denoted by dose unit
                 text = "; ".join(
                     [
                         "; ".join([f"{_d} {dose_units[i]}" for _d in d.split("; ")])
@@ -53,6 +54,7 @@ class AttributeChoices(Enum):
                     ]
                 )
             else:
+                # return only the doses of col.dose_unit
                 try:
                     index = dose_units.index(col.dose_unit)
                     text = doses[index]

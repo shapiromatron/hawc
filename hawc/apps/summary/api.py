@@ -141,9 +141,11 @@ class SummaryTableViewset(AssessmentEditViewset):
             data=request.query_params.dict(), context=self.get_serializer_context()
         )
         ser.is_valid(raise_exception=True)
+        # get cached value
         cache_key = f"assessment-{self.assessment.id}-summary-table-{ser.cache_key}"
         data = cache.get(cache_key)
         if data is None:
+            # if cached value does not exist, get the data and set the cache
             data = ser.get_data()
             cache.set(cache_key, data, settings.CACHE_1_HR)
         return Response(data)
