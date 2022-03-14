@@ -894,7 +894,12 @@ class PublishedItemsChecklist(HtmxViewSet):
         Model = lookup.get(type)
         if not Model:
             raise Http404()
-        return get_object_or_404(Model.objects.filter(id=object_id))
+        if type == "attachment":
+            return get_object_or_404(
+                Model.objects.filter(object_id=item.assessment.id), id=object_id
+            )
+        else:
+            return get_object_or_404(Model.objects.filter(assessment=item.assessment), id=object_id)
 
     @transaction.atomic
     def perform_update(self, request, instance):
