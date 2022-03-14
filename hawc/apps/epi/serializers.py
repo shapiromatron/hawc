@@ -299,9 +299,9 @@ class OutcomeSerializer(IdLookupMixin, serializers.ModelSerializer):
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    exposure = ExposureSerializer(required=False, allow_null=True)
-    outcome = OutcomeSerializer(required=False, allow_null=True)
-    study_population = StudyPopulationSerializer(required=False, allow_null=True)
+    exposure = ExposureSerializer(required=False)
+    outcome = OutcomeSerializer(required=False)
+    study_population = StudyPopulationSerializer(required=False)
     groups = GroupSerializer(many=True, read_only=True)
 
     class Meta:
@@ -310,8 +310,9 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if self.instance is None:
-            # make sure all provided values are from the same assessment
-            # can provide either study population or outcome--but not both
+            # When creating, we will make sure all provided objects (exposure, outcome, study population) are from the same assessment
+            # Can provide either study population or outcome--but not both
+            # Exposure is no longer required
             exposure = attrs.get("exposure", None)
             study_population = attrs.get("study_population", None)
             outcome = attrs.get("outcome", None)

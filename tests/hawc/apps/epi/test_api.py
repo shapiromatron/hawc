@@ -989,11 +989,11 @@ class TestComparisonSetApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.ComparisonSet.objects.get(id=just_created_comparison_set_id)
 
-        ExposurelessData = self.get_upload_data()
-        ExposurelessData.pop("exposure")
-        ExposurelessOutcome = self.get_upload_data({"outcome": generic_get_any(models.Outcome).id})
-        ExposurelessOutcome.pop("exposure")
-        ExposurelessOutcome.pop("study_population")
+        NoExp = self.get_upload_data()
+        NoExp.pop("exposure")
+        NoExpOrSP = self.get_upload_data({"outcome": generic_get_any(models.Outcome).id})
+        NoExpOrSP.pop("exposure")
+        NoExpOrSP.pop("study_population")
         create_scenarios = (
             {
                 "desc": "basic comparison_set creation",
@@ -1006,14 +1006,14 @@ class TestComparisonSetApi:
                 "desc": "no exposure comparison_set creation",
                 "expected_code": 201,
                 "expected_keys": {"id"},
-                "data": ExposurelessData,
+                "data": NoExp,
                 "post_request_test": comparison_set_lookup_test,
             },
             {
-                "desc": "comparison_set creation with outcome, no exposure",
+                "desc": "comparison_set creation with outcome, no exposure or study pop",
                 "expected_code": 201,
                 "expected_keys": {"id"},
-                "data": ExposurelessOutcome,
+                "data": NoExpOrSP,
                 "post_request_test": comparison_set_lookup_test,
             },
         )
