@@ -138,7 +138,6 @@ class Cause(models.Model):
     level = models.CharField(
         verbose_name="Cause/treatment level",
         max_length=128,
-        blank=True,
         help_text="Type the specific treatment/exposure/dose level or range of levels of the cause measure",
     )
     level_value = models.FloatField(
@@ -155,11 +154,10 @@ class Cause(models.Model):
     duration = models.CharField(
         verbose_name="Cause/treatment duration",
         max_length=100,
-        blank=True,
         help_text="Describe the duration or range of durations of the treatment/exposure",
     )
     duration_value = models.FloatField(
-        verbose_name="Cause/treatment value",
+        verbose_name="Cause/treatment duration value",
         blank=True,
         null=True,
         help_text="Type the numeric value of the specific duration of the treatment/exposure",
@@ -254,6 +252,7 @@ class Effect(models.Model):
 
 class Result(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    design = models.ForeignKey(Design, on_delete=models.CASCADE)
     cause = models.ForeignKey(Cause, on_delete=models.CASCADE)
     effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
     sort_order = models.PositiveSmallIntegerField(
