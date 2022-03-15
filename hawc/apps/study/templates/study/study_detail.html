@@ -45,7 +45,7 @@
               {% if assessment.epi_version == 1 %}
                 <a class="dropdown-item" href="{% url 'epi:sp_create' object.pk %}">Create new study population</a>
                 <a class="dropdown-item" href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a>
-              {% elif assessment.epi_version == 2 %}
+              {% elif assessment.epi_version == 2 and ENABLE_EPI_V2 %}
                 <a class="dropdown-item" href="{% url 'epiv2:design_create' object.pk %}">Create new study population</a>
               {% endif %}
             {% endif %}
@@ -111,7 +111,11 @@
       {% if assessment.epi_version == 1 %}
         {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
       {% elif assessment.epi_version == 2 %}
+        {% if ENABLE_EPI_V2 %}
         {% include "epiv2/fragments/_design_list.html" with object_list=object.designs.all %}
+        {% else %}
+        <div class="alert alert-warning">We're close to release a new epi schema but not ready yet; contact us for details!</div>
+        {% endif %}
       {% endif %}
     {% endif %}
 

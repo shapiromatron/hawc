@@ -8,7 +8,7 @@ from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
-from hawc.constants import AuthProvider
+from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
@@ -41,6 +41,9 @@ ADMIN_URL_PREFIX = os.getenv("ADMIN_URL_PREFIX", "f09ea0b8-c3d5-4ff9-86c4-27f00e
 
 # {PRIME, EPA}
 HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
+
+# Feature flags
+HAWC_FEATURES = FeatureFlags.from_env("HAWC_FEATURE_FLAGS")
 
 # Template processors
 TEMPLATES = [
@@ -123,7 +126,7 @@ INSTALLED_APPS = (
     "hawc.apps.epiv2",
 )
 
-if os.getenv("HAWC_INCLUDE_ECO", "False") == "True":
+if HAWC_FEATURES.ENABLE_ECO:
     INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
 
 
