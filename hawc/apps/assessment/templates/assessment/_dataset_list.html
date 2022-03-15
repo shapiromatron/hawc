@@ -17,12 +17,8 @@
         {% for object in object_list %}
         <tr>
             <td><a href="{{object.get_absolute_url}}">{{object.name}}</a>
-                {% if obj_perms.edit %}
-                {% if object.published %}
-                <i class="float-right fa fa-eye" aria-hidden="true" title="Available to the public"></i>
-                {% else %}
-                <i class="float-right fa fa-eye-slash" aria-hidden="true" title="Not available to the public"></i>
-                {% endif %}
+                {% if obj_perms.edit and not object.published %}
+                <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
                 {% endif %}
             </td>
             <td>{{object.description|safe}}</td>

@@ -2,11 +2,9 @@
     <td>
         <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
         {% if canEdit or permissions.edit %}
-            {% if object.publicly_available %}
-            <i class="float-right fa fa-eye" aria-hidden="true" title="Available to the public"></i>
-            {% else %}
-            <i class="float-right fa fa-eye-slash" aria-hidden="true" title="Not available to the public"></i>
-            {% endif %}
+        {% if not object.publicly_available %}
+            <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+        {% endif %}
         {% endif %}
     </td>
     <td>{{object.description|safe}}</td>
