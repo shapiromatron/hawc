@@ -863,6 +863,14 @@ class PublishedItemsChecklist(HtmxViewSet):
     actions = {"list", "update_item"}
     parent_actions = {"list", "update_item"}
     parent_model = models.Assessment
+    model_lookups = {
+        "study": apps.get_model("study", "Study"),
+        "visual": apps.get_model("summary", "Visual"),
+        "datapivot": apps.get_model("summary", "DataPivot"),
+        "dataset": apps.get_model("assessment", "Dataset"),
+        "summarytable": apps.get_model("summary", "SummaryTable"),
+        "attachment": apps.get_model("assessment", "Attachment"),
+    }
 
     @action(permission=can_edit, htmx_only=False)
     def list(self, request: HttpRequest, *args, **kwargs):
@@ -883,23 +891,11 @@ class PublishedItemsChecklist(HtmxViewSet):
         )
 
     def get_instance(self, item, type: str, object_id: int):
-        lookup = {
-            "study": apps.get_model("study", "Study"),
-            "visual": apps.get_model("summary", "Visual"),
-            "datapivot": apps.get_model("summary", "DataPivot"),
-            "dataset": apps.get_model("assessment", "Dataset"),
-            "summarytable": apps.get_model("summary", "SummaryTable"),
-            "attachment": apps.get_model("assessment", "Attachment"),
-        }
-        Model = lookup.get(type)
+        Model = self.model_lookups.get(type)
         if not Model:
             raise Http404()
-        if type == "attachment":
-            return get_object_or_404(
-                Model.objects.filter(object_id=item.assessment.id), id=object_id
-            )
-        else:
-            return get_object_or_404(Model.objects.filter(assessment=item.assessment), id=object_id)
+        key = "object_id" if type == "attachment" else "assessment_id"
+        return get_object_or_404(Model.objects.filter(**{key: item.assessment.id}), id=object_id)
 
     @transaction.atomic
     def perform_update(self, request, instance):
