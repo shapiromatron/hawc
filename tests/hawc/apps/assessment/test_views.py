@@ -251,10 +251,19 @@ class TestBulkPublishItems:
             resp = pm.post(bad_url)
             assert resp.status_code == 404
 
-        # valid url
+        # check initial state
         assert study.published is False
+
+        # valid url
         resp = pm.post(valid_url)
         assert resp.status_code == 200
         assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
         study.refresh_from_db()
         assert study.published is True
+
+        # check opposite case (and revert state)
+        resp = pm.post(valid_url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
+        study.refresh_from_db()
+        assert study.published is False
