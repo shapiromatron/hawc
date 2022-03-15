@@ -577,7 +577,7 @@ class StudyEvaluationTableStore {
                     },
                 };
             return () => this.displayRobAsModal(_.extend({}, scoreData, robData), data, config);
-        } else {
+        } else if (col.attribute == "study_short_citation") {
             return () => Study.displayAsModal(data["study_id"]);
         }
     }
