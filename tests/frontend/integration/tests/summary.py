@@ -121,7 +121,7 @@ def _check_tables_working(driver, root_url):
     # check summary table
     helium.go_to(root_url + "/summary/assessment/1/tables/")
     helium.wait_until(helium.Text("Available tables").exists)
-    assert len(driver.find_elements_by_css_selector("table tbody tr")) == 2
+    assert len(driver.find_elements_by_css_selector("table tbody tr")) == 3
 
     # check generic table
     helium.go_to(root_url + "/summary/assessment/1/tables/Generic-1/")
@@ -129,6 +129,10 @@ def _check_tables_working(driver, root_url):
 
     # check evidence profile
     helium.go_to(root_url + "/summary/assessment/1/tables/Evidence-Profile-1/")
+    helium.wait_until(helium.S(".summaryTable").exists)
+
+    # check study evaluation
+    helium.go_to(root_url + "/summary/assessment/1/tables/Study-Evaluation-1/")
     helium.wait_until(helium.S(".summaryTable").exists)
 
 

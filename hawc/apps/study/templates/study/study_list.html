@@ -55,7 +55,7 @@
         <td>
           <a href="{% url 'study:detail' study.pk %}">{{ study.short_citation }}</a>
           {% if not study.published %}
-          <i title="Unpublished (not be visible to the public and in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>
+          <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
           {% endif %}
         </td>
         <td>

@@ -55,12 +55,12 @@ class AssessmentManager(BaseManager):
 
 
 class AttachmentManager(BaseManager):
-    def get_attachments(self, obj, isPublic):
+    def get_attachments(self, obj, public_only: bool):
         filters = {
             "content_type": ContentType.objects.get_for_model(obj),
             "object_id": obj.id,
         }
-        if isPublic:
+        if public_only:
             filters["publicly_available"] = True
         return self.filter(**filters)
 
