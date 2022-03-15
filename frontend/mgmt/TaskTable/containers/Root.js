@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
-import FormActions from "shared/components/FormActions";
 
 import TaskTable from "./TaskTable";
 import StudyFilter from "./StudyFilter";
@@ -26,7 +25,6 @@ class Root extends Component {
         }
 
         const {store} = this.props,
-            {displayAsForm, cancelUrl} = store.config,
             taskList = store.taskListByStudy,
             noTasks = taskList.length === 0;
 
@@ -35,10 +33,6 @@ class Root extends Component {
                 <ScrollToErrorBox error={store.error} />
                 <StudyFilter selectFilter={opts => store.filterAndSortStudies(opts)} />
                 {noTasks ? <h4>No studies match the given query.</h4> : <TaskTable />}
-
-                {displayAsForm && !noTasks ? (
-                    <FormActions handleSubmit={store.submitPatches} cancel={cancelUrl} />
-                ) : null}
             </div>
         );
     }

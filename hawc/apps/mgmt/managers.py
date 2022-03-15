@@ -1,11 +1,5 @@
 import logging
-from typing import Dict, List
 
-from django.db import transaction
-from django.db.models import QuerySet
-from rest_framework.serializers import ValidationError
-
-from ..assessment.models import Assessment
 from ..common.models import BaseManager
 from ..study.models import Study
 from . import constants
@@ -113,45 +107,3 @@ class TaskManager(BaseManager):
         task = self.filter(study=study, type=constants.TaskType.ROB).first()
         if task:
             task.stop_if_started()
-
-    @transaction.atomic
-    def update_many(self, assessment: Assessment, values: List[Dict]) -> QuerySet:
-        # make sure all ids are in assessment
-        task_ids = {d.get("id", -1) for d in values}
-        tasks = self.filter(id__in=task_ids, study__assessment=assessment)
-        if tasks.count() != len(values):
-            raise ValidationError(f"{tasks.count()} tasks found; expected {len(values)}")
-
-        # check all valid status
-        valid_statuses = set(constants.TaskStatus.values)
-        statuses = {value["status"] for value in values if "status" in values}
-        if len(statuses - valid_statuses) > 0:
-            raise ValidationError(f"Invalid status codes: {statuses- valid_statuses}")
-
-        # check all valid owners
-        valid_owners = {user.id for user in assessment.pms_and_team_users()}
-        owners = {value["owner"].get("id", -1) for value in values if "owner" in values}
-        if len(owners - valid_owners) > 0:
-            raise ValidationError(f"Invalid owner ids: {owners - valid_owners}")
-
-        # update objects
-        updates = []
-        tasks_dict = {task.id: task for task in tasks}
-        for value_dict in values:
-            task = tasks_dict[value_dict["id"]]
-            if "status" in value_dict:
-                setattr(task, "status", value_dict["status"])
-            if "owner" in value_dict:
-                if value_dict["owner"] is None:
-                    setattr(task, "owner_id", None)
-                else:
-                    setattr(task, "owner_id", value_dict["owner"].get("id", -1))
-            if "due_date" in value_dict:
-                setattr(task, "due_date", value_dict["due_date"])
-            updates.append(task)
-
-        # save to db
-        self.bulk_update(updates, ("status", "owner_id", "due_date"))
-
-        # grab a fresh copy of items from db
-        return self.filter(id__in=task_ids, study__assessment=assessment)
