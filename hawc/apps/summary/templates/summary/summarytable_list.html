@@ -36,7 +36,11 @@
     <tbody>
       {% for object in object_list %}
       <tr>
-        <td><a href="{{object.get_absolute_url}}">{{object.title}}</a></td>
+        <td><a href="{{object.get_absolute_url}}">{{object.title}}</a>
+          {% if obj_perms.edit and not object.published %}
+          <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+          {% endif %}
+        </td>
         <td>{{object.get_table_type_display}}</td>
         {% if show_published %}<td>{{object.published}}</td>{% endif %}
         <td>{{object.created|date:"Y-m-d" }}</td>
