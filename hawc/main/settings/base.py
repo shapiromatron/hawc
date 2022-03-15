@@ -336,9 +336,6 @@ PM_CAN_MAKE_PUBLIC = True
 # are users required to accept a license
 ACCEPT_LICENSE_REQUIRED = True
 
-# add extra branding (EPA flavor only)
-EXTRA_BRANDING = True
-
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
 
 IS_TESTING = False

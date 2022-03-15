@@ -939,7 +939,7 @@ class ExternalSiteForm(VisualForm):
         external_url = self.cleaned_data.get("external_url")
         url = urlparse(external_url)
 
-        # check whitelist
+        # check allowlist
         if url.netloc not in self.VALID_DOMAINS:
             msg = f"{url.netloc} not on the list of accepted domains, please contact webmasters to request additions"
             raise forms.ValidationError(msg)

@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
     <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -8,6 +10,11 @@
         </div>
     </div>
     <h2>Update {{assessment.get_rob_name_display|lower}} assignments</h2>
+    <div class="card">
+        <div class="card-body pb-1">
+            {% crispy form %}
+        </div>
+    </div>
     <div id="main"></div>
     {% include "includes/paginator.html" %}
 {% endblock %}
