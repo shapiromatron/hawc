@@ -945,6 +945,11 @@ class TestComparisonSetApi:
                 "expected_keys": {"study_population"},
                 "data": self.get_upload_data({"study_population": 999}),
             },
+            {
+                "desc": "cant have both study pop and outcome",
+                "expected_code": 400,
+                "data": self.get_upload_data({"outcome": generic_get_any(models.Outcome).id}),
+            },
         )
 
         generic_test_scenarios(client, url, scenarios)
@@ -984,12 +989,31 @@ class TestComparisonSetApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.ComparisonSet.objects.get(id=just_created_comparison_set_id)
 
+        NoExp = self.get_upload_data()
+        NoExp.pop("exposure")
+        NoExpOrSP = self.get_upload_data({"outcome": generic_get_any(models.Outcome).id})
+        NoExpOrSP.pop("exposure")
+        NoExpOrSP.pop("study_population")
         create_scenarios = (
             {
                 "desc": "basic comparison_set creation",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(),
+                "post_request_test": comparison_set_lookup_test,
+            },
+            {
+                "desc": "no exposure comparison_set creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": NoExp,
+                "post_request_test": comparison_set_lookup_test,
+            },
+            {
+                "desc": "comparison_set creation with outcome, no exposure or study pop",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": NoExpOrSP,
                 "post_request_test": comparison_set_lookup_test,
             },
         )
