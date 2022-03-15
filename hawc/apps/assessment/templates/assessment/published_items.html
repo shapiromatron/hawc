@@ -3,10 +3,16 @@
 {% block content %}
 <h2>Modify published items</h2>
 <p class="text-muted">
-    Published or unpublished multiple items in the current assessment. You can modify the published status of an item by changing the status
+    Publish or unpublish multiple items for public visibility in the current assessment. If an item
+    is made published, then if your assessment is public, anyone in the general public can view it.
+    If the item is unpublished, but it cannot be browsed to by viewing content on the site.
+    In some cases, unpublished content may be visible with a direct link, but not always. Reviewers
+    are treated in a similar way as the general public with regards to published content.
 </p>
 <div class='row'>
-    <div class='col-md-6'>
+    <div class='col-md-4'>
+        <h3>Studies</h3>
+        <p class="help-text">View all <a href="{% url 'study:list' assessment.id %}">studies</a>.</p>
         <table class="table table-sm table-bordered">
             <thread>
                 <tr>
@@ -28,7 +34,9 @@
             </tbody>
         </table>
     </div>
-    <div class='col-md-6'>
+    <div class='col-md-4'>
+        <h3>Visuals</h3>
+        <p class="help-text">View all <a href="{% url 'summary:visualization_list' assessment.id %}">visuals</a>.</p>
         <table class="table table-sm table-bordered">
             <thread>
                 <tr>
@@ -70,31 +78,9 @@
             </tbody>
         </table>
     </div>
-</div>
-<div class='row'>
     <div class='col-md-4'>
-        <table class="table table-sm table-bordered">
-            <thread>
-                <tr>
-                    <th>Published</th>
-                    <th>Dataset</th>
-                </tr>
-            </thread>
-            <tbody>
-                {% for dataset in datasets %}
-                <tr>
-                    {% include 'assessment/fragments/publish_item_td.html' with name="dataset" object=dataset %}
-                    <td><a href="{{dataset.get_absolute_url}}">{{dataset}}</a></td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="2"><i>No datasets exist.</i></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class='col-md-4'>
+        <h3>Summary tables</h3>
+        <p class="help-text">View all <a href="{% url 'summary:tables_list' assessment.id %}">tables</a>.</p>
         <table class="table table-sm table-bordered">
             <thread>
                 <tr>
@@ -117,6 +103,32 @@
         </table>
     </div>
     <div class='col-md-4'>
+        <h3>Datasets</h3>
+        <p class="help-text">View all <a href="{{assessment.get_absolute_url}}">datasets</a>.</p>
+        <table class="table table-sm table-bordered">
+            <thread>
+                <tr>
+                    <th>Published</th>
+                    <th>Dataset</th>
+                </tr>
+            </thread>
+            <tbody>
+                {% for dataset in datasets %}
+                <tr>
+                    {% include 'assessment/fragments/publish_item_td.html' with name="dataset" object=dataset %}
+                    <td><a href="{{dataset.get_absolute_url}}">{{dataset}}</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2"><i>No datasets exist.</i></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class='col-md-4'>
+        <h3>Attachments</h3>
+        <p class="help-text">View all <a href="{{assessment.get_absolute_url}}">attachments</a>.</p>
         <table class="table table-sm table-bordered">
             <thread>
                 <tr>
