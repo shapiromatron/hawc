@@ -44,9 +44,10 @@
         </div>
       </div>
     </div>
+    <script src="{% static 'vendor/observablehq/d3.min.js' %}"></script>
     <script type="module">
-      import { Runtime, Inspector } from "{% static 'js/runtime.js' %}";
-      import define from "{% static 'js/epicyclic-gearing.js' %}";
+      import { Runtime, Inspector } from "{% static 'vendor/observablehq/runtime.js' %}";
+      import define from "{% static 'vendor/observablehq/epicyclic-gearing.js' %}";
       new Runtime().module(define, name => {
         if (name === "graphic") return new Inspector(document.querySelector("#graphic"));
         return ["update"].includes(name);
