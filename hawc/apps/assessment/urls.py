@@ -99,6 +99,19 @@ urlpatterns = [
     path(
         "<int:pk>/clean-study-metrics/", views.CleanStudyRoB.as_view(), name="clean_study_metrics",
     ),
+    # published items
+    path(
+        "<int:pk>/published/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "list"},
+        name="bulk-publish",
+    ),
+    path(
+        "<int:pk>/published/<str:type>/<int:object_id>/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "update_item"},
+        name="publish-update",
+    ),
     # api views
     path("api/", include((router.urls, "api"))),
 ]
