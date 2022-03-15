@@ -299,7 +299,7 @@ class FlexibleFieldsMixin:
     Allows several kwargs on serializer construction that affects fields.
 
     Constructor kwargs:
-        fields (List[str]): whitelist of field names to include in serializer
+        fields (List[str]): allowlist of field names to include in serializer
         field_prefix (str): prefix to add to all field names
         field_renames (Dict): mapping of old field names to new field names
     """
