@@ -7,25 +7,19 @@ from django.core import exceptions
 from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
-from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
 
-from ..common.diagnostics import worker_healthcheck
 from ..common.helper import FlatExport, re_digits, tryParseInt
-from ..common.renderers import PandasRenderers, SvgRenderer
+from ..common.renderers import PandasRenderers
 from ..common.views import create_object_log
 from . import models, serializers
-from .actions import media_metadata_report
 
 
 class DisabledPagination(PageNumberPagination):
@@ -489,33 +483,6 @@ class DatasetViewset(AssessmentViewset):
         return Response(export)
 
 
-class AdminDashboardViewset(viewsets.ViewSet):
-
-    permission_classes = (permissions.IsAdminUser,)
-    renderer_classes = (JSONRenderer,)
-
-    @action(detail=False)
-    def growth(self, request):
-        serializer = serializers.GrowthPlotSerializer(data=request.GET)
-        serializer.is_valid(raise_exception=True)
-        fig = serializer.create_figure()
-        return Response(fig.to_dict())
-
-    @method_decorator(cache_page(60 * 60))
-    @action(detail=False, url_path="assessment-size", renderer_classes=PandasRenderers)
-    def assessment_size(self, request):
-        df = models.Assessment.size_df()
-        export = FlatExport(df=df, filename="assessment-size")
-        return Response(export)
-
-    @action(detail=False, renderer_classes=PandasRenderers)
-    def media(self, request):
-        uri = request.build_absolute_uri(location="/")[:-1]
-        df = media_metadata_report(uri)
-        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
-        return Response(export)
-
-
 class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = (permissions.AllowAny,)
     lookup_value_regex = dsstox.RE_DTXSID
@@ -533,30 +500,3 @@ class StrainViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     pagination_class = None
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("species",)
-
-
-class HealthcheckViewset(viewsets.ViewSet):
-    @action(detail=False)
-    def web(self, request):
-        return Response({"healthy": True})
-
-    @action(detail=False)
-    def worker(self, request):
-        is_healthy = worker_healthcheck.healthy()
-        # don't use 5xx email; django logging catches and sends error emails
-        status_code = status.HTTP_200_OK if is_healthy else status.HTTP_400_BAD_REQUEST
-        return Response({"healthy": is_healthy}, status=status_code)
-
-    @action(
-        detail=False,
-        url_path="worker-plot",
-        renderer_classes=(SvgRenderer,),
-        permission_classes=(permissions.IsAdminUser,),
-    )
-    def worker_plot(self, request):
-        ax = worker_healthcheck.plot()
-        return Response(ax)
-
-    @action(detail=False, url_path="worker-stats", permission_classes=(permissions.IsAdminUser,))
-    def worker_stats(self, request):
-        return Response(worker_healthcheck.stats())

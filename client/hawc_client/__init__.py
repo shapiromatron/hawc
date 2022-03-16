@@ -1,3 +1,5 @@
+from typing import Dict
+
 from .animal import AnimalClient
 from .assessment import AssessmentClient
 from .client import BaseClient
@@ -12,7 +14,7 @@ from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2021.12"
+__version__ = "2022.02"
 __all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
@@ -53,5 +55,13 @@ class HawcClient(BaseClient):
             email (str): email to authenticate
             password (str): password to authenticate
         """
-
         self.session.authenticate(email, password)
+
+    def set_authentication_token(self, token: str) -> Dict:
+        """
+        Set authentication token (browser session specific)
+
+        Args:
+            token (str): authentication token from your user profile
+        """
+        return self.session.set_authentication_token(token)

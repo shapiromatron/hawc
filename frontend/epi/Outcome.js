@@ -100,7 +100,7 @@ class Outcome {
     buildListRow() {
         let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
             detail = $(
-                '<i class="fa fa-eye previewModalIcon" title="preview in a modal">'
+                '<i class="fa fa-eye previewModalIcon ml-2" title="preview in a modal">'
             ).click(() => this.displayAsModal({complete: true})),
             outcome = $('<span class="previewModalParent">').append(link, detail);
 

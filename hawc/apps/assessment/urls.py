@@ -6,11 +6,9 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
 router.register(r"strain", api.StrainViewset, basename="strain")
-router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
 
 
 app_name = "assessment"
@@ -100,6 +98,19 @@ urlpatterns = [
     # assessment level study
     path(
         "<int:pk>/clean-study-metrics/", views.CleanStudyRoB.as_view(), name="clean_study_metrics",
+    ),
+    # published items
+    path(
+        "<int:pk>/published/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "list"},
+        name="bulk-publish",
+    ),
+    path(
+        "<int:pk>/published/<str:type>/<int:object_id>/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "update_item"},
+        name="publish-update",
     ),
     # api views
     path("api/", include((router.urls, "api"))),

@@ -33,7 +33,7 @@
     <li class="page-item">
         <select id="quickPageSelector" class="form-control" onchange="location=this.value;">
             {% for n in page_obj.paginator.page_range %}
-            <option {% ifequal page_obj.number n %}selected{% endifequal %} value="?{% url_replace page=n %}">{{ n }}</option>
+            <option {% if page_obj.number == n %}selected{% endif %} value="?{% url_replace page=n %}">{{ n }}</option>
             {% endfor %}
         </select>
     </li>

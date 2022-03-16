@@ -17,7 +17,7 @@ class Root extends Component {
                 <p>
                     <b>Individual reviews required:</b>&nbsp;{number_of_reviewers}
                 </p>
-                <table className="table table-condensed table-sm table-striped">
+                <table className="table table-sm table-striped">
                     <colgroup>
                         <col width="25%" />
                         <col width="37%" />
@@ -34,6 +34,13 @@ class Root extends Component {
                         {studies.map(study => (
                             <StudyRow key={study.id} study={study} />
                         ))}
+                        {studies.length === 0 ? (
+                            <tr>
+                                <td colSpan="3">
+                                    <i>No studies are available or meet the search criteria.</i>
+                                </td>
+                            </tr>
+                        ) : null}
                     </tbody>
                     <tfoot>
                         <tr>

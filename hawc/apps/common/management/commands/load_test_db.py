@@ -73,7 +73,7 @@ class Command(BaseCommand):
                 call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=1)
 
                 self.stdout.write(self.style.HTTP_INFO("Loading database views..."))
-                call_command("create_views", verbosity=1)
+                call_command("recreate_views", verbosity=1)
 
                 self.stdout.write(self.style.HTTP_INFO("Creating files..."))
                 self.write_media_files()

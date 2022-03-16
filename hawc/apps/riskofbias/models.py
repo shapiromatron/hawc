@@ -197,16 +197,15 @@ class RiskOfBiasMetric(models.Model):
         delete_ids = actual_ids - expected_ids
         if delete_ids:
             for metric_id, rob_id in delete_ids:
-                score = RiskOfBiasScore.objects.get(metric=metric_id, riskofbias=rob_id)
-                score.delete()
+                # may be more than one if there are overrides
+                RiskOfBiasScore.objects.filter(metric=metric_id, riskofbias=rob_id).delete()
+                logger.info(f"Study {study.id} change; deleted {metric_id=}; {rob_id=}")
 
 
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
 
-    study = models.ForeignKey(
-        "study.Study", on_delete=models.CASCADE, related_name="riskofbiases", null=True
-    )
+    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="riskofbiases")
     final = models.BooleanField(default=False, db_index=True)
     author = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="riskofbiases")
     active = models.BooleanField(default=False, db_index=True)

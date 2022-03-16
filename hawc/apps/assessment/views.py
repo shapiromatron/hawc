@@ -1,9 +1,7 @@
 import json
 import logging
-from pathlib import Path
 from typing import Any, Dict, List
 
-import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -11,6 +9,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count
 from django.http import (
     Http404,
@@ -47,6 +46,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
     beta_tester_required,
+    create_object_log,
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
@@ -292,11 +292,6 @@ class Error401(TemplateView):
     template_name = "401.html"
 
 
-@method_decorator(staff_member_required, name="dispatch")
-class Swagger(TemplateView):
-    template_name = "swagger.html"
-
-
 # Assessment Object
 class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
@@ -317,13 +312,13 @@ class AssessmentList(LoginRequiredMixin, ListView):
 class AssessmentFullList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = super().get_queryset()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -340,14 +335,13 @@ class AssessmentFullList(ListView):
 class AssessmentPublicList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        qs = qs.distinct().order_by(self.form.get_order_by())
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -365,6 +359,7 @@ class AssessmentPublicList(ListView):
             Data can also be downloaded for each individual assessment.
         """
         context["form"] = self.form
+        context["is_public_list"] = True
         return context
 
 
@@ -718,53 +713,6 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
         )
 
 
-@method_decorator(staff_member_required, name="dispatch")
-class AdminDashboard(TemplateView):
-    template_name = "admin/dashboard.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminAssessmentSize(TemplateView):
-    template_name = "admin/assessment-size.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminMediaPreview(TemplateView):
-    template_name = "admin/media-preview.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        Suffix-specific values were obtained by querying media file extensions:
-
-        ```bash
-        find {settings.MEDIA_ROOT} -type f | grep -o ".[^.]\\+$" | sort | uniq -c
-        ```
-        """
-        context = super().get_context_data(**kwargs)
-        obj = self.request.GET.get("item", "")
-        media = Path(settings.MEDIA_ROOT)
-        context["has_object"] = False
-        resolved = media / obj
-        context["object_name"] = str(Path(obj))
-        if obj and resolved.exists() and media in resolved.parents:
-            root_uri = self.request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
-            uri = resolved.as_uri().replace(media.as_uri(), root_uri)
-            context["has_object"] = True
-            context["object_uri"] = uri
-            context["suffix"] = resolved.suffix.lower()
-            if context["suffix"] in [".csv", ".json", ".ris", ".txt"]:
-                context["object_text"] = resolved.read_text()
-            if context["suffix"] in [".xls", ".xlsx"]:
-                df = pd.read_excel(str(resolved))
-                context["object_html"] = df.to_html(index=False)
-            if context["suffix"] in [".jpg", ".jpeg", ".png", ".tif", ".tiff"]:
-                context["object_image"] = True
-            if context["suffix"] in [".pdf"]:
-                context["object_pdf"] = True
-
-        return context
-
-
 # blog
 @method_decorator(beta_tester_required, name="dispatch")
 class BlogList(ListView):
@@ -909,3 +857,93 @@ class AboutContentTypes(TemplateView):
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context
+
+
+class PublishedItemsChecklist(HtmxViewSet):
+    actions = {"list", "update_item"}
+    parent_actions = {"list", "update_item"}
+    parent_model = models.Assessment
+    model_lookups = {
+        "study": apps.get_model("study", "Study"),
+        "visual": apps.get_model("summary", "Visual"),
+        "datapivot": apps.get_model("summary", "DataPivot"),
+        "dataset": apps.get_model("assessment", "Dataset"),
+        "summarytable": apps.get_model("summary", "SummaryTable"),
+        "attachment": apps.get_model("assessment", "Attachment"),
+    }
+
+    @action(permission=can_edit, htmx_only=False)
+    def list(self, request: HttpRequest, *args, **kwargs):
+        return render(
+            request,
+            "assessment/published_items.html",
+            self.get_list_context_data(self.request.user, self.request.item.assessment),
+        )
+
+    @action(permission=can_edit, methods={"post"})
+    def update_item(self, request: HttpRequest, *args, **kwargs):
+        instance = self.get_instance(request.item, kwargs["type"], kwargs["object_id"])
+        self.perform_update(request, instance)
+        return render(
+            request,
+            "assessment/fragments/publish_item_td.html",
+            {"name": kwargs["type"], "object": instance, "assessment": request.item.assessment},
+        )
+
+    def get_instance(self, item, type: str, object_id: int):
+        Model = self.model_lookups.get(type)
+        if not Model:
+            raise Http404()
+        key = "object_id" if type == "attachment" else "assessment_id"
+        return get_object_or_404(Model.objects.filter(**{key: item.assessment.id}), id=object_id)
+
+    @transaction.atomic
+    def perform_update(self, request, instance):
+        if hasattr(instance, "published"):
+            instance.published = not instance.published
+        elif hasattr(instance, "publicly_available"):
+            instance.publicly_available = not instance.publicly_available
+        instance.save()
+        create_object_log("Updated", instance, request.item.assessment.id, request.user.id)
+
+    def get_list_context_data(self, user, assessment):
+        crumbs = Breadcrumb.build_assessment_crumbs(user, assessment)
+        crumbs.append(Breadcrumb(name="Published items"))
+        studies = (
+            apps.get_model("study", "Study")
+            .objects.filter(assessment=assessment)
+            .order_by("short_citation".lower())
+        )
+        datapivots = (
+            apps.get_model("summary", "DataPivot")
+            .objects.filter(assessment=assessment)
+            .order_by("title".lower())
+        )
+        visuals = (
+            apps.get_model("summary", "Visual")
+            .objects.filter(assessment=assessment)
+            .order_by("visual_type", "title".lower())
+        )
+        datasets = (
+            apps.get_model("assessment", "Dataset")
+            .objects.filter(assessment=assessment)
+            .order_by("name".lower())
+        )
+        summarytables = (
+            apps.get_model("summary", "SummaryTable")
+            .objects.filter(assessment=assessment)
+            .order_by("table_type", "title".lower())
+        )
+        attachments = apps.get_model("assessment", "Attachment").objects.get_attachments(
+            assessment, False
+        )
+        return {
+            "assessment": assessment,
+            "breadcrumbs": crumbs,
+            "studies": studies,
+            "datapivots": datapivots,
+            "visuals": visuals,
+            "datasets": datasets,
+            "summarytables": summarytables,
+            "attachments": attachments,
+        }

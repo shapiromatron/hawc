@@ -478,7 +478,7 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
 
 
 class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
-    edit_check_keys = ["study_population"]
+    edit_check_keys = ["study_population", "outcome"]
     assessment_filter_args = "assessment"  # todo: fix
     model = models.ComparisonSet
     serializer_class = serializers.ComparisonSetSerializer
