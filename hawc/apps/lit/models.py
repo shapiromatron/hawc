@@ -289,6 +289,17 @@ class Search(models.Model):
 
     @transaction.atomic
     def run_new_import(self, content=None):
+        """Execute an import, creating references and identifiers.
+
+        In some cases, content may be provided, where we may validate and process the data. In
+        other cases, we may need to process the data in this method.
+
+        Args:
+            content (optional): existing identifier metadata, if available
+
+        Raises:
+            ValueError: If any error occurs
+        """
         if self.source == constants.ReferenceDatabase.PUBMED:
             ids = [int(id) for id in self.import_ids]
             if content is None:

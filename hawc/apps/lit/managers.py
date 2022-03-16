@@ -150,6 +150,19 @@ class IdentifiersManager(BaseManager):
         return refs
 
     def validate_hero_ids(self, ids: List[int]) -> Dict:
+        """Queries HERO to return a valid list HERO content which doesn't already exist in HAWC.
+
+        Only queries HERO with identifiers which are not already saved in HAWC.
+
+        Args:
+            ids (List[int]): A list of HERO IDs
+
+        Raises:
+            ValidationError: Error if input ids are an invalid format, or HERO cannot find a match
+
+        Returns:
+            Dict: {"success": List[Dict], "failures": List[int]}
+        """
         # cast all ids to int
         invalid_ids = []
         _ids = []
@@ -199,7 +212,20 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def validate_pubmed_ids(self, ids: List[int]):
+    def validate_pubmed_ids(self, ids: List[int]) -> List[Dict]:
+        """Queries Pubmed to return a valid list Pubmed content which doesn't already exist in HAWC.
+
+        Only queries Pubmed with identifiers which are not already saved in HAWC.
+
+        Args:
+            ids (List[int]): A list of PMIDs
+
+        Raises:
+            ValidationError: If any PMIDs are non-numeric or if PubMed is unable to find a PMID.
+
+        Returns:
+            List[Dict]: A list of imported pubmed content
+        """
         # cast all ids to int
         invalid_ids = []
         _ids = []
