@@ -6,7 +6,6 @@ import "react-tabs/style/react-tabs.css";
 import sidebarStartup from "./utils/sidebarStartup";
 import tryWebAppStartup from "./utils/tryWebAppStartup";
 import Quillify from "./utils/Quillify";
-import _ from "lodash";
 
 $.fn.quillify = Quillify;
 
@@ -32,17 +31,16 @@ const getCookie = function (name) {
 
 const checkSession = function () {
     // if session is about to expire, then display a popup to allow a session refresh
-    const SESSION_EXPIRE_WARNING = 900000  // 15 minutes
-    let exp_time = $('meta[name="session_expire_time"]').attr('content')
-    exp_time = Date.parse(exp_time)
+    const SESSION_EXPIRE_WARNING = 900000; // 15 minutes
+    let exp_time = $('meta[name="session_expire_time"]').attr("content");
+    exp_time = Date.parse(exp_time);
 
     if (exp_time - Date.now() < SESSION_EXPIRE_WARNING) {
         if (confirm("Your session will expire in 15 minutes. Click OK to stay logged in.")) {
-            $.post("/update-session/", { refresh: true })
+            $.post("/update-session/", { refresh: true });
         }
     }
-
-}
+};
 
 d3.selection.prototype.moveToFront = function () {
     return this.each(function () {
@@ -71,5 +69,5 @@ $(document).ready(() => {
     sidebarStartup();
     tryWebAppStartup();
     setupAjax(document);
-    setInterval(checkSession, 10000)
+    setInterval(checkSession, 10000);
 });
