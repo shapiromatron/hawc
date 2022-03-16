@@ -149,7 +149,7 @@ class IdentifiersManager(BaseManager):
         Identifiers.update_pubmed_content(pimdsFetch)
         return refs
 
-    def validate_hero_ids(self, ids: List[int]) -> Tuple[List[int], List[int], Dict]:
+    def validate_hero_ids(self, ids: List[int]) -> Dict:
         # cast all ids to int
         invalid_ids = []
         _ids = []

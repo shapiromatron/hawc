@@ -157,7 +157,7 @@ class IdentifierStudyForm(forms.Form):
             for choice in [ReferenceDatabase.PUBMED, ReferenceDatabase.HERO]
         ],
     )
-    db_id = forms.CharField(label="Database ID", required=True,)
+    db_id = forms.CharField(label="Database ID", required=True)
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
@@ -188,7 +188,7 @@ class IdentifierStudyForm(forms.Form):
         ):
             raise forms.ValidationError("Study for this assessment and identifier already exists.")
 
-        # validate identifier
+        # validate identifier; cache content if it doesn't yet exist
         cleaned_data["identifier"], self._identifier_content = validate_external_id(
             cleaned_data["db_type"], cleaned_data["db_id"]
         )
@@ -196,13 +196,7 @@ class IdentifierStudyForm(forms.Form):
         return cleaned_data
 
     def save(self):
-        # if validation failed...
-        if self.errors:
-            raise ValueError(
-                f"The {models.Study._meta.object_name} could not be created because the data didn't validate."
-            )
         cleaned_data = self.cleaned_data.copy()
-
         db_type = cleaned_data.pop("db_type")
         cleaned_data.pop("db_id")
 
