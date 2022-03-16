@@ -66,7 +66,7 @@ class Column(BaseModel):
         return GenericCell(quill_text=tag_wrapper(text, "p"))
 
     def get_cell(self, selection: Union[pd.DataFrame, pd.Series]) -> BaseCell:
-        return getattr(self, f"get_{self.value}", self._get_default)(selection)
+        return getattr(self, f"get_{self.attribute.value}", self._get_default)(selection)
 
 
 class Row(BaseModel):
