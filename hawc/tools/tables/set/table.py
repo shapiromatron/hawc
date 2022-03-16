@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List, Optional, Union
 
 import pandas as pd
@@ -7,72 +6,13 @@ from pydantic import BaseModel, Field, conint
 from hawc.apps.riskofbias.constants import SCORE_SHADES, SCORE_SYMBOLS
 from hawc.apps.summary.table_serializers import StudyEvaluationSerializer
 
-from .base import BaseCell, BaseCellGroup, BaseTable
-from .generic import GenericCell
-from .parser import QuillParser, color_background, tag_wrapper
+from ..base import BaseCell, BaseCellGroup, BaseTable
+from ..generic import GenericCell
+from ..parser import QuillParser, color_background, tag_wrapper
+from .constants import AttributeChoices, DataSourceChoices
 
 NM_SYMBOL = "NM"
 NM_SHADE = "#DFDFDF"
-
-
-class DataSourceChoices(Enum):
-    Animal = "ani"
-    Study = "study"
-
-
-class AttributeChoices(Enum):
-    FreeHtml = "free_html"
-    Rob = "rob"
-    StudyShortCitation = "study_short_citation"
-    AnimalGroupDescription = "animal_group_description"
-    AnimalGroupDoses = "animal_group_doses"
-    ExperimentName = "experiment_name"
-    AnimalGroupName = "animal_group_name"
-    AnimalGroupTreatmentPeriod = "animal_group_treatment_period"
-    AnimalGroupRouteOfExposure = "animal_group_route_of_exposure"
-    EndpointSystem = "endpoint_system"
-    EndpointEffect = "endpoint_effect"
-    EndpointName = "endpoint_name"
-    ExperimentChemical = "experiment_chemical"
-
-    def get_free_html(self, col, selection: pd.Series) -> BaseCell:
-        # this will be overridden by 'customized' html
-        return GenericCell()
-
-    def get_animal_group_doses(self, col, selection: pd.Series) -> BaseCell:
-        if selection["animal_group_doses"] == "":
-            text = ""
-        else:
-            dose_units = selection["animal_group_dose_units"].split("|")
-            doses = selection["animal_group_doses"].split("|")
-            if col.dose_unit == "":
-                # return all of the doses denoted by dose unit
-                text = "; ".join(
-                    [
-                        "; ".join([f"{_d} {dose_units[i]}" for _d in d.split("; ")])
-                        for i, d in enumerate(doses)
-                    ]
-                )
-            else:
-                # return only the doses of col.dose_unit
-                try:
-                    index = dose_units.index(col.dose_unit)
-                    text = doses[index]
-                except ValueError:
-                    text = ""
-        return GenericCell(quill_text=tag_wrapper(text, "p"))
-
-    def get_rob(self, col, selection: pd.DataFrame) -> BaseCell:
-        values = selection["score_score"].values
-        judgment = -1 if values.size == 0 else values[0]
-        return JudgmentColorCell(judgment=judgment)
-
-    def _get_default(self, col, selection: pd.Series) -> BaseCell:
-        text = selection[self.value]
-        return GenericCell(quill_text=tag_wrapper(text, "p"))
-
-    def get_cell(self, col, selection: Union[pd.DataFrame, pd.Series]) -> BaseCell:
-        return getattr(self, f"get_{self.value}", self._get_default)(col, selection)
 
 
 class Subheader(BaseModel):
@@ -88,6 +28,45 @@ class Column(BaseModel):
     metric_id: Optional[int]
     dose_unit: Optional[str]
     key: str
+
+    def get_free_html(self, selection: pd.Series) -> BaseCell:
+        # this will be overridden by 'customized' html
+        return GenericCell()
+
+    def get_animal_group_doses(self, selection: pd.Series) -> BaseCell:
+        if selection["animal_group_doses"] == "":
+            text = ""
+        else:
+            dose_units = selection["animal_group_dose_units"].split("|")
+            doses = selection["animal_group_doses"].split("|")
+            if self.dose_unit == "":
+                # return all of the doses denoted by dose unit
+                text = "; ".join(
+                    [
+                        "; ".join([f"{_d} {dose_units[i]}" for _d in d.split("; ")])
+                        for i, d in enumerate(doses)
+                    ]
+                )
+            else:
+                # return only the doses of col.dose_unit
+                try:
+                    index = dose_units.index(self.dose_unit)
+                    text = doses[index]
+                except ValueError:
+                    text = ""
+        return GenericCell(quill_text=tag_wrapper(text, "p"))
+
+    def get_rob(self, selection: pd.DataFrame) -> BaseCell:
+        values = selection["score_score"].values
+        judgment = -1 if values.size == 0 else values[0]
+        return JudgmentColorCell(judgment=judgment)
+
+    def _get_default(self, selection: pd.Series) -> BaseCell:
+        text = selection[self.attribute.value]
+        return GenericCell(quill_text=tag_wrapper(text, "p"))
+
+    def get_cell(self, selection: Union[pd.DataFrame, pd.Series]) -> BaseCell:
+        return getattr(self, f"get_{self.value}", self._get_default)(selection)
 
 
 class Row(BaseModel):
@@ -184,7 +163,7 @@ class StudyEvaluationTable(BaseTable):
                 continue
             for j, col in enumerate(self.cell_columns):
                 selection = self._get_selection(row, col)
-                cell = col.attribute.get_cell(col, selection)
+                cell = col.get_cell(selection)
                 self._set_override(cell, row, col)
                 cell.row = i
                 cell.column = j
