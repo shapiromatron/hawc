@@ -110,6 +110,7 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
     """
     Create a study and optionally a reference, linked to an existing external database identifier.
     """
+
     form_class = forms.IdentifierStudyForm
 
     def get_success_url(self):

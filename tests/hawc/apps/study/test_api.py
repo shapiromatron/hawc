@@ -192,10 +192,7 @@ class TestStudyViewset:
         }
         response = client.post(url, data)
         assert response.status_code == 400
-        assert (
-            str(response.data["non_field_errors"][0])
-            == "Study for this assessment and identifier already exists (study 1)"
-        )
+        assert response.json() == {"db_id": ["Study already exists; see Foo et al. [1]"]}
 
         # IDs must be valid
         data = {"db_type": "PUBMED", "db_id": -1, "assessment_id": db_keys.assessment_working}

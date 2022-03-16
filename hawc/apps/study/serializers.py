@@ -109,9 +109,8 @@ class StudyFromIdentifierSerializer(serializers.ModelSerializer):
             ).first()
         ) is not None:
             raise serializers.ValidationError(
-                f"Study for this assessment and identifier already exists (study {study.id})"
+                {"db_id": f"Study already exists; see {study} [{study.id}]"}
             )
-
         # validate identifier
         try:
             data["identifier"], self._identifier_content = validate_external_id(
@@ -142,11 +141,7 @@ class StudyFromIdentifierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Study
-        exclude = (
-            "assessment",
-            "searches",
-            "identifiers",
-        )
+        exclude = ("assessment", "searches", "identifiers")
         extra_kwargs = {
             "full_citation": {"required": False},
             "short_citation": {"required": False},
