@@ -32,12 +32,16 @@ const getCookie = function (name) {
 
 const checkSession = function () {
     // if session is about to expire, then display a popup to allow a session refresh
-    console.log(getCookie("sessionid"))
-    console.log(exp_date)
-    // if exp_date within 15 mins of Date.now()
-    if (confirm("Your session is about to expire. Click OK to refresh the session")) {
-        $.post("/update-session/", { refresh: true })
+    const SESSION_EXPIRE_WARNING = 900000  // 15 minutes
+    let exp_time = $('meta[name="session_expire_time"]').attr('content')
+    exp_time = Date.parse(exp_time)
+
+    if (exp_time - Date.now() < SESSION_EXPIRE_WARNING) {
+        if (confirm("Your session will expire in 15 minutes. Click OK to stay logged in.")) {
+            $.post("/update-session/", { refresh: true })
+        }
     }
+
 }
 
 d3.selection.prototype.moveToFront = function () {
@@ -67,5 +71,5 @@ $(document).ready(() => {
     sidebarStartup();
     tryWebAppStartup();
     setupAjax(document);
-    // setInterval(checkSession, 60000)
+    setInterval(checkSession, 10000)
 });
