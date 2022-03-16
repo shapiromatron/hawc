@@ -5,7 +5,6 @@
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
         <a class="dropdown-item" href="{% url 'mgmt:assessment_tasks' assessment.pk %}">Task list</a>
-        <a class="dropdown-item" href="{% url 'mgmt:assessment_modify' assessment.pk %}">Modify tasks</a>
         <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
     </div>
   </div>

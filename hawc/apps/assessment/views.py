@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count
 from django.http import (
     Http404,
@@ -45,6 +46,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
     beta_tester_required,
+    create_object_log,
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
@@ -855,3 +857,93 @@ class AboutContentTypes(TemplateView):
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context
+
+
+class PublishedItemsChecklist(HtmxViewSet):
+    actions = {"list", "update_item"}
+    parent_actions = {"list", "update_item"}
+    parent_model = models.Assessment
+    model_lookups = {
+        "study": apps.get_model("study", "Study"),
+        "visual": apps.get_model("summary", "Visual"),
+        "datapivot": apps.get_model("summary", "DataPivot"),
+        "dataset": apps.get_model("assessment", "Dataset"),
+        "summarytable": apps.get_model("summary", "SummaryTable"),
+        "attachment": apps.get_model("assessment", "Attachment"),
+    }
+
+    @action(permission=can_edit, htmx_only=False)
+    def list(self, request: HttpRequest, *args, **kwargs):
+        return render(
+            request,
+            "assessment/published_items.html",
+            self.get_list_context_data(self.request.user, self.request.item.assessment),
+        )
+
+    @action(permission=can_edit, methods={"post"})
+    def update_item(self, request: HttpRequest, *args, **kwargs):
+        instance = self.get_instance(request.item, kwargs["type"], kwargs["object_id"])
+        self.perform_update(request, instance)
+        return render(
+            request,
+            "assessment/fragments/publish_item_td.html",
+            {"name": kwargs["type"], "object": instance, "assessment": request.item.assessment},
+        )
+
+    def get_instance(self, item, type: str, object_id: int):
+        Model = self.model_lookups.get(type)
+        if not Model:
+            raise Http404()
+        key = "object_id" if type == "attachment" else "assessment_id"
+        return get_object_or_404(Model.objects.filter(**{key: item.assessment.id}), id=object_id)
+
+    @transaction.atomic
+    def perform_update(self, request, instance):
+        if hasattr(instance, "published"):
+            instance.published = not instance.published
+        elif hasattr(instance, "publicly_available"):
+            instance.publicly_available = not instance.publicly_available
+        instance.save()
+        create_object_log("Updated", instance, request.item.assessment.id, request.user.id)
+
+    def get_list_context_data(self, user, assessment):
+        crumbs = Breadcrumb.build_assessment_crumbs(user, assessment)
+        crumbs.append(Breadcrumb(name="Published items"))
+        studies = (
+            apps.get_model("study", "Study")
+            .objects.filter(assessment=assessment)
+            .order_by("short_citation".lower())
+        )
+        datapivots = (
+            apps.get_model("summary", "DataPivot")
+            .objects.filter(assessment=assessment)
+            .order_by("title".lower())
+        )
+        visuals = (
+            apps.get_model("summary", "Visual")
+            .objects.filter(assessment=assessment)
+            .order_by("visual_type", "title".lower())
+        )
+        datasets = (
+            apps.get_model("assessment", "Dataset")
+            .objects.filter(assessment=assessment)
+            .order_by("name".lower())
+        )
+        summarytables = (
+            apps.get_model("summary", "SummaryTable")
+            .objects.filter(assessment=assessment)
+            .order_by("table_type", "title".lower())
+        )
+        attachments = apps.get_model("assessment", "Attachment").objects.get_attachments(
+            assessment, False
+        )
+        return {
+            "assessment": assessment,
+            "breadcrumbs": crumbs,
+            "studies": studies,
+            "datapivots": datapivots,
+            "visuals": visuals,
+            "datasets": datasets,
+            "summarytables": summarytables,
+            "attachments": attachments,
+        }

@@ -5,9 +5,11 @@ from django.conf import settings
 from django.core.cache import cache
 from django.test.client import Client
 from django.urls import reverse
+from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.study.models import Study
 
 
 def has_redis():
@@ -208,3 +210,60 @@ class TestDownloadPlot:
         assert client.get(url).status_code == 405
         resp = client.post(url, self._get_valid_payload(svg_data))
         assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+class TestBulkPublishItems:
+    def test_list(self):
+        url = reverse("assessment:bulk-publish", args=(1,))
+
+        anon = Client()
+        pm = Client()
+        assert pm.login(username="pm@hawcproject.org", password="pw") is True
+
+        resp = anon.get(url)
+        assert resp.status_code == 403
+
+        resp = pm.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/published_items.html")
+
+    def test_updates_item(self):
+        anon = Client(HTTP_HX_REQUEST="true")
+        pm = Client(HTTP_HX_REQUEST="true")
+        assert pm.login(username="pm@hawcproject.org", password="pw") is True
+
+        # valid case
+        assessment_id = 1
+        study = Study.objects.filter(assessment=assessment_id).first()
+        bad_study = Study.objects.filter(assessment=2).first()
+        valid_url = reverse("assessment:publish-update", args=(assessment_id, "study", study.id))
+
+        # permissions check
+        resp = anon.post(valid_url)
+        assert resp.status_code == 403
+
+        # invalid url; study doesn't belong to assessment
+        for bad_url in [
+            reverse("assessment:publish-update", args=(assessment_id, "--invalid--", study.id)),
+            reverse("assessment:publish-update", args=(assessment_id, "study", bad_study.id)),
+        ]:
+            resp = pm.post(bad_url)
+            assert resp.status_code == 404
+
+        # check initial state
+        assert study.published is False
+
+        # valid url
+        resp = pm.post(valid_url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
+        study.refresh_from_db()
+        assert study.published is True
+
+        # check opposite case (and revert state)
+        resp = pm.post(valid_url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
+        study.refresh_from_db()
+        assert study.published is False
