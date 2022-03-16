@@ -8,7 +8,6 @@ import PopoverTextSpan from "shared/components/PopoverTextSpan";
 
 import {TASK_TYPES, TASK_TYPE_DESCRIPTIONS} from "../constants";
 import EditableTask from "../components/EditableTask";
-import TaskForm from "../components/TaskForm";
 
 import "./Root.css";
 
@@ -17,7 +16,7 @@ import "./Root.css";
 class TaskTable extends Component {
     render() {
         const {store} = this.props,
-            {displayAsForm, userAutocompleteUrl} = store.config,
+            {userAutocompleteUrl} = store.config,
             taskList = store.taskListByStudy,
             headers = _.zip(_.values(TASK_TYPES), _.values(TASK_TYPE_DESCRIPTIONS));
 
@@ -66,19 +65,11 @@ class TaskTable extends Component {
                                 {tasks.map(task => {
                                     return (
                                         <td key={task.id}>
-                                            {displayAsForm ? (
-                                                <TaskForm
-                                                    task={task}
-                                                    autocompleteUrl={userAutocompleteUrl}
-                                                    onFormChange={store.addStagedPatch}
-                                                />
-                                            ) : (
-                                                <EditableTask
-                                                    task={task}
-                                                    userAutocompleteUrl={userAutocompleteUrl}
-                                                    handleSubmit={data => store.patchTask(data)}
-                                                />
-                                            )}
+                                            <EditableTask
+                                                task={task}
+                                                userAutocompleteUrl={userAutocompleteUrl}
+                                                handleSubmit={data => store.patchTask(data)}
+                                            />
                                         </td>
                                     );
                                 })}

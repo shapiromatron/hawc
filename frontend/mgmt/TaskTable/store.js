@@ -77,30 +77,6 @@ class MgmtTaskTableStore {
             }
         });
     }
-    @action.bound addStagedPatch(patch) {
-        this.stagedPatches[patch.id] = patch;
-    }
-    @action.bound submitPatches() {
-        const url = this.config.taskBulkPatchUrl,
-            patches = toJS(this.stagedPatches),
-            payload = _.values(patches),
-            opts = h.fetchPost(this.config.csrf, payload, "PATCH");
-
-        if (payload.length === 0) {
-            this.handleCancel();
-            return;
-        }
-        fetch(url, opts).then(response => {
-            if (response.ok) {
-                this.handleCancel();
-            } else {
-                response.json().then(json => this.setError(json));
-            }
-        });
-    }
-    @action.bound handleCancel() {
-        window.location.href = this.config.cancelUrl;
-    }
 
     @computed get taskListByStudy() {
         const {sortBy, orderBy, studyTypeFilters} = this.filters;
