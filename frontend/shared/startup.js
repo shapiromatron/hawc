@@ -39,13 +39,13 @@ const checkSession = function () {
     exp_time = Date.parse(exp_time);
 
     if (exp_time - Date.now() < SESSION_EXPIRE_WARNING) {
-        clearInterval(intervalID) // prevents multiple popups stacking on top of each other
+        clearInterval(intervalID); // prevents multiple popups stacking on top of each other
         if (confirm("Your session will expire in 15 minutes. Click OK to stay logged in.")) {
             $.post("/update-session/", { refresh: true }).done(response => {
                 $('meta[name="session_expire_time"]').attr("content", response.new_expiry_time);
             });
         }
-        intervalID = setInterval(checkSession, INTERVAL_MS)
+        intervalID = setInterval(checkSession, INTERVAL_MS);
     }
 };
 
