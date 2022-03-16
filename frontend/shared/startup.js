@@ -29,15 +29,18 @@ const getCookie = function (name) {
     sessionid = getCookie("sessionid"),
     csrfSafeMethod = method => /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
 
+var show_message = true;
+
 const checkSession = function () {
     // if session is about to expire, then display a popup to allow a session refresh
     const SESSION_EXPIRE_WARNING = 900000; // 15 minutes
     let exp_time = $('meta[name="session_expire_time"]').attr("content");
     exp_time = Date.parse(exp_time);
 
-    if (exp_time - Date.now() < SESSION_EXPIRE_WARNING) {
+    if (show_message && exp_time - Date.now() < SESSION_EXPIRE_WARNING) {
+        show_message = false; // prevents multiple popups stacking on top of each other
         if (confirm("Your session will expire in 15 minutes. Click OK to stay logged in.")) {
-            $.post("/update-session/", { refresh: true });
+            response = $.post("/update-session/", { refresh: true });
         }
     }
 };
