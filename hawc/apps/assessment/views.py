@@ -261,8 +261,7 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
-            back_href=get_referrer(self.request, reverse("portal")),
-            user=self.request.user,
+            back_href=get_referrer(self.request, reverse("portal")), user=self.request.user,
         )
         return kwargs
 
@@ -674,7 +673,11 @@ class UpdateSession(View):
                 # datetime can't be JSONSerialized, so convert timedelta to an int
                 request.session.set_expiry(int(timedelta(weeks=1).total_seconds()))
                 new_time = request.session.get_expiry_date()
-                return HttpResponse(f"Session extended from {old_time} to {new_time}.")
+                data = {
+                    "message": f"Session extended from {old_time} to {new_time}.",
+                    "new_expiry_time": new_time,
+                }
+                return JsonResponse(data)
         return HttpResponse(True)
 
 

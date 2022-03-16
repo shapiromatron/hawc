@@ -40,8 +40,11 @@ const checkSession = function () {
     if (show_message && exp_time - Date.now() < SESSION_EXPIRE_WARNING) {
         show_message = false; // prevents multiple popups stacking on top of each other
         if (confirm("Your session will expire in 15 minutes. Click OK to stay logged in.")) {
-            response = $.post("/update-session/", { refresh: true });
+            $.post("/update-session/", { refresh: true }).done(response => {
+                $('meta[name="session_expire_time"]').attr("content", response.new_expiry_time);
+            });
         }
+        show_message = true;
     }
 };
 
@@ -72,5 +75,5 @@ $(document).ready(() => {
     sidebarStartup();
     tryWebAppStartup();
     setupAjax(document);
-    setInterval(checkSession, 10000);
+    setInterval(checkSession, 60000);
 });
