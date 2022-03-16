@@ -296,7 +296,8 @@ class GetOrCreateMixin:
 
 class FlexibleFieldsMixin:
     """
-    Allows several kwargs on serializer construction that affects fields.
+    Allows manipulation of fields on serializer instances.
+    This mixin is primarily meant for serailization and not deserialization.
 
     Constructor kwargs:
         fields (List[str]): allowlist of field names to include in serializer

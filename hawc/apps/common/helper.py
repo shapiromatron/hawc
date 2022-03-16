@@ -6,7 +6,7 @@ import uuid
 from collections import OrderedDict, defaultdict
 from datetime import timedelta
 from math import inf
-from typing import Any, Dict, List, NamedTuple, Optional, Set
+from typing import Any, Dict, List, NamedTuple, Optional, Set, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -115,6 +115,14 @@ def try_parse_list_ints(val: str = None) -> List[int]:
         return [int(item) for item in val.split(",")]
     except ValueError:
         return []
+
+
+def int_or_float(val: float) -> Union[int, float]:
+    """
+    Tries to cast val to int without loss.
+    If unable to, it returns the original float.
+    """
+    return int(val) if int(val) == val else val
 
 
 def create_uuid(id: int) -> str:

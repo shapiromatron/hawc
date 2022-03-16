@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from ..animal import models as animal_models
 from ..assessment.models import Assessment
+from ..common.helper import int_or_float
 from ..common.serializers import FlexibleFieldsMixin
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
@@ -86,9 +87,9 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
         dgs = obj.dosing_regime.doses.all()
         for dg in dgs:
             if dg.dose_units.name not in dose_dict:
-                dose_dict[dg.dose_units.name] = str(dg.dose)
+                dose_dict[dg.dose_units.name] = str(int_or_float(dg.dose))
             else:
-                dose_dict[dg.dose_units.name] += f", {dg.dose}"
+                dose_dict[dg.dose_units.name] += f", {int_or_float(dg.dose)}"
         return dose_dict
 
 
@@ -111,7 +112,9 @@ class StudyEvaluationSerializer(serializers.Serializer):
             and data["published_only"] is False
             and data["assessment_id"].user_is_part_of_team(self.context["request"].user) is False
         ):
-            raise serializers.ValidationError("Must be part of team to view unpublished data.")
+            raise serializers.ValidationError(
+                {"published_only": "Must be part of team to view unpublished data."}
+            )
         return data
 
     @property
@@ -270,6 +273,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
     def _get_rob_df(self):
         study_ids = Study.objects.filter(**self._study_filters).values_list("id", flat=True)
         rob_values = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
+        # specify the columns in case rob_values is empty; this is needed when building the report
         df = pd.DataFrame(
             rob_values,
             columns=[

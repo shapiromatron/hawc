@@ -11,7 +11,7 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import QuillTextInput from "shared/components/QuillTextInput";
 import IntegerInput from "shared/components/IntegerInput";
 
-import {colAttributeChoices} from "./constants";
+import {colAttributeChoices, COL_ATTRIBUTE, ROW_TYPE} from "./constants";
 
 class EditButton extends Component {
     render() {
@@ -48,7 +48,7 @@ class EditCellForm extends Component {
                     checked={customized != null}
                 />
                 {customized != null
-                    ? col.attribute == "rob"
+                    ? col.attribute == COL_ATTRIBUTE.ROB.id
                         ? this.renderRobForm()
                         : this.renderTextForm()
                     : null}
@@ -59,8 +59,9 @@ class EditCellForm extends Component {
         const {rowIdx, colIdx, store} = this.props,
             col = store.stagedEdits.columns[colIdx],
             row = store.stagedEdits.rows[rowIdx],
+            data = store.getDataSelection(row.type, row.id),
             customized = _.find(row.customized, d => d.key == col.key),
-            choices = store.scoreIdChoices(row.id, col.metric_id);
+            choices = store.scoreIdChoices(data["study_id"], col.metric_id);
         return (
             <SelectInput
                 choices={choices}
@@ -100,19 +101,17 @@ EditCellForm.propTypes = {
 class EditRowForm extends Component {
     render() {
         const {store, rowIdx} = this.props,
-            row = store.stagedEdits.rows[rowIdx];
+            row = store.stagedEdits.rows[rowIdx],
+            rowTypeChoices = store.rowTypeChoices(row);
         return (
             <>
                 <div className="col-md-12">
                     <SelectInput
-                        choices={store.rowTypeChoices}
+                        choices={rowTypeChoices}
                         value={row.type}
                         handleSelect={value => {
-                            let oldPriority = _.findIndex(
-                                    store.rowTypeChoices,
-                                    c => c.id == row.type
-                                ),
-                                newPriority = _.findIndex(store.rowTypeChoices, c => c.id == value),
+                            let oldPriority = _.findIndex(rowTypeChoices, c => c.id == row.type),
+                                newPriority = _.findIndex(rowTypeChoices, c => c.id == value),
                                 id =
                                     oldPriority > newPriority
                                         ? store.getDataSelection(row.type, row.id)[`${value}_id`]
@@ -163,66 +162,41 @@ class EditRowForm extends Component {
         );
     }
 
+    renderIdInput(type) {
+        const {store, rowIdx} = this.props,
+            row = store.stagedEdits.rows[rowIdx],
+            data = store.getDataSelection(row.type, row.id),
+            typeField = `${type.id}_id`;
+        return (
+            <SelectInput
+                key={`${type.id}_input`}
+                choices={store.rowIdChoices(row, type.id)}
+                value={data[typeField]}
+                handleSelect={value => {
+                    let target = _.find(
+                        store.dataset.data,
+                        d => d["type"] == data["type"] && d[typeField] == parseInt(value)
+                    );
+                    store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
+                }}
+                label={type.label}
+            />
+        );
+    }
+
     renderIdForm() {
         let inputs = [];
         const {store, rowIdx} = this.props,
-            row = store.stagedEdits.rows[rowIdx],
-            data = store.getDataSelection(row.type, row.id);
+            row = store.stagedEdits.rows[rowIdx];
         switch (row.type) {
-            case "animal_group":
-                inputs.unshift(
-                    <SelectInput
-                        key="animal_group_id"
-                        choices={store.rowIdChoices(row, "animal_group")}
-                        value={data["animal_group_id"]}
-                        handleSelect={value => {
-                            let target = _.find(
-                                store.dataset.data,
-                                d =>
-                                    d["type"] == data["type"] &&
-                                    d["animal_group_id"] == parseInt(value)
-                            );
-                            store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
-                        }}
-                        label="Animal group"
-                    />
-                );
+            case ROW_TYPE.ANIMAL_GROUP.id:
+                inputs.unshift(this.renderIdInput(ROW_TYPE.ANIMAL_GROUP));
             // falls through
-            case "experiment":
-                inputs.unshift(
-                    <SelectInput
-                        key="experiment_id"
-                        choices={store.rowIdChoices(row, "experiment")}
-                        value={data["experiment_id"]}
-                        handleSelect={value => {
-                            let target = _.find(
-                                store.dataset.data,
-                                d =>
-                                    d["type"] == data["type"] &&
-                                    d["experiment_id"] == parseInt(value)
-                            );
-                            store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
-                        }}
-                        label="Experiment"
-                    />
-                );
+            case ROW_TYPE.EXPERIMENT.id:
+                inputs.unshift(this.renderIdInput(ROW_TYPE.EXPERIMENT));
             // falls through
-            case "study":
-                inputs.unshift(
-                    <SelectInput
-                        key="study_id"
-                        choices={store.rowIdChoices(row, "study")}
-                        value={data["study_id"]}
-                        handleSelect={value => {
-                            let target = _.find(
-                                store.dataset.data,
-                                d => d["type"] == data["type"] && d["study_id"] == parseInt(value)
-                            );
-                            store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
-                        }}
-                        label="Study"
-                    />
-                );
+            case ROW_TYPE.STUDY.id:
+                inputs.unshift(this.renderIdInput(ROW_TYPE.STUDY));
         }
         return inputs;
     }
@@ -321,7 +295,7 @@ class EditColumnForm extends Component {
                         label="Attribute"
                     />
                 </div>
-                {col.attribute == "rob" ? (
+                {col.attribute == COL_ATTRIBUTE.ROB.id ? (
                     <div className="col-md-12">
                         <SelectInput
                             choices={store.metricIdChoices}
@@ -332,7 +306,7 @@ class EditColumnForm extends Component {
                             label="Metric"
                         />
                     </div>
-                ) : col.attribute == "animal_group_doses" ? (
+                ) : col.attribute == COL_ATTRIBUTE.ANIMAL_GROUP_DOSES ? (
                     <div className="col-md-12">
                         <SelectInput
                             choices={store.doseUnitChoices}
@@ -546,7 +520,7 @@ class Table extends Component {
                                             className={`previewModalParent${
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? " bg-light"
-                                                    : col.attribute == "rob"
+                                                    : col.attribute == COL_ATTRIBUTE.ROB.id
                                                     ? " text-center align-middle cursor-pointer"
                                                     : ""
                                             }`}
@@ -557,7 +531,7 @@ class Table extends Component {
                                             }
                                             onClick={
                                                 (editable && store.editingCell(rowIdx, colIdx)) ||
-                                                col.attribute != "rob"
+                                                col.attribute != COL_ATTRIBUTE.ROB.id
                                                     ? null
                                                     : store.interactiveOnClick(rowIdx, colIdx)
                                             }>
@@ -588,7 +562,7 @@ class Table extends Component {
                                                 />
                                             ) : null}
                                             {(editable && store.editingCell(rowIdx, colIdx)) ||
-                                            col.attribute == "rob"
+                                            col.attribute == COL_ATTRIBUTE.ROB.id
                                                 ? null
                                                 : this.getInteractiveIcon(rowIdx, colIdx)}
                                             <span
