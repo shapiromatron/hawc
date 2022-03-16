@@ -505,13 +505,7 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_lit_import_pubmed(self):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
-        pubmed_ids = [
-            10357793,
-            20358181,
-            6355494,
-            8998951,
-            3383337,
-        ]
+        pubmed_ids = [10357793, 20358181, 6355494, 8998951, 3383337]
         response = client.lit.import_pubmed(
             assessment_id=self.db_keys.assessment_client,
             title="PubMed import",
