@@ -300,9 +300,8 @@ class StudyEvaluationTableStore {
     @computed get doseUnitChoices() {
         let choices = _.chain(this.dataset.data)
             .filter(d => d["type"] == constants.ROW_TYPE.STUDY.id)
-            .map(d => d["animal_group_dose_units"].split("|"))
+            .map(d => _.keys(d[constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id]))
             .flatten()
-            .filter(d => d != "")
             .uniq()
             .map(d => {
                 return {id: d, label: d};
@@ -375,23 +374,19 @@ class StudyEvaluationTableStore {
             }
             case constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id: {
                 let data = this.getDataSelection(row.type, row.id),
-                    doseUnits = data["animal_group_dose_units"].split("|"),
-                    doses = data["animal_group_doses"].split("|");
-                if (data["animal_group_doses"] == "") {
-                    return {html: "<p></p>"};
-                }
+                    doses = data[col.attribute];
                 if (col.dose_unit == "") {
-                    let text = _.chain(doses)
-                        .map((x, i) =>
-                            _.chain(x.split("; "))
-                                .map(y => `${y} ${doseUnits[i]}`)
-                                .join("; ")
+                    let text = _.chain(_.entries(doses))
+                        .map(([k, v]) =>
+                            _.join(
+                                _.map(v, _v => `${_v} ${k}`),
+                                "; "
+                            )
                         )
                         .join("; ");
                     return {html: `<p>${text}</p>`};
                 } else {
-                    let dosesIndex = _.indexOf(doseUnits, col.dose_unit),
-                        text = dosesIndex == -1 ? "" : doses[dosesIndex];
+                    let text = _.join(doses[col.dose_unit], "; ");
                     return {html: `<p>${text}</p>`};
                 }
             }

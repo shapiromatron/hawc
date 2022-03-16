@@ -351,13 +351,13 @@ class TestSummaryTableViewset:
         assert json.loads(fn.read_text()) == data
 
     def test_data(self, rewrite_data_files: bool):
-        data = {"assessment_id": 1, "table_type": 2, "data_source": "ani", "published_only": True}
-        missing_data = {"assessment_id": 1, "table_type": 2, "published_only": True}
+        data = {"assessment_id": 1, "table_type": 2, "data_source": "ani", "published_only": False}
+        missing_data = {"assessment_id": 1, "table_type": 2, "published_only": False}
         invalid_data = {
             "assessment_id": 1,
             "table_type": 2,
             "data_source": "not a data source",
-            "published_only": True,
+            "published_only": False,
         }
 
         base_url = reverse("summary:api:summary-table-data")
@@ -388,7 +388,7 @@ class TestSummaryTableViewset:
         assert resp.status_code == 400
         assert resp.json() == {"data_source": ['"not a data source" is not a valid choice.']}
 
-    def test_data_unpublished(self, rewrite_data_files: bool):
+    def test_data_permissions(self, rewrite_data_files: bool):
         # even with a public assessment, must be part of team to view unpublished data
         pub = {"assessment_id": 2, "table_type": 2, "data_source": "ani", "published_only": True}
         unpub = {"assessment_id": 2, "table_type": 2, "data_source": "ani", "published_only": False}
@@ -412,5 +412,5 @@ class TestSummaryTableViewset:
             assert resp.status_code == code
             if code == 400:
                 assert resp.json() == {
-                    "non_field_errors": ["Must be part of team to view unpublished data."]
+                    "published_only": ["Must be part of team to view unpublished data."]
                 }

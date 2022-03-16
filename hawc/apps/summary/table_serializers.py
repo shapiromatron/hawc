@@ -55,7 +55,7 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
     route_of_exposure = serializers.SerializerMethodField()
     treatment_period = serializers.SerializerMethodField()
-    dose_dict = serializers.SerializerMethodField()
+    doses = serializers.SerializerMethodField()
 
     class Meta:
         model = animal_models.AnimalGroup
@@ -66,7 +66,7 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
             "description",
             "route_of_exposure",
             "treatment_period",
-            "dose_dict",
+            "doses",
         ]
         read_only_fields = fields
 
@@ -84,7 +84,7 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
             text = f"{text} ({obj.dosing_regime.duration_exposure_text})"
         return text
 
-    def get_dose_dict(self, obj):
+    def get_doses(self, obj):
         dose_dict = OrderedDict()
         dgs = obj.dosing_regime.doses.all()
         for dg in dgs:
@@ -130,7 +130,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
     def _custom_fields(self):
         # fields that use custom aggregation
         if self.validated_data["data_source"] == DataSourceChoices.Animal:
-            return ["animal_group_dose_dict"]
+            return ["animal_group_doses"]
 
     @property
     def _id_fields(self):
@@ -223,26 +223,11 @@ class StudyEvaluationSerializer(serializers.Serializer):
         ]
         # combine grouped dfs
         final_df = pd.concat(group_dfs, ignore_index=True)
-        # set dose columns
-        _index = final_df.columns.get_loc("animal_group_dose_dict")
-        final_df.insert(
-            _index,
-            "animal_group_dose_units",
-            final_df["animal_group_dose_dict"].transform(lambda x: "|".join(x.keys())),
-        )
-        final_df.insert(
-            _index + 1,
-            "animal_group_doses",
-            final_df["animal_group_dose_dict"].transform(
-                lambda x: "|".join(["; ".join(y) for y in x.values()])
-            ),
-        )
-        final_df = final_df.drop(columns=["animal_group_dose_dict"])
         # return df
         return final_df.convert_dtypes()
 
     def _aggregate_custom(self, series):
-        if series.name == "animal_group_dose_dict":
+        if series.name == "animal_group_doses":
             aggregated_dict = OrderedDict()
             for dose_dict in series.dropna():
                 for key, value in dose_dict.items():

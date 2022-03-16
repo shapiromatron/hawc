@@ -306,7 +306,7 @@ class EditColumnForm extends Component {
                             label="Metric"
                         />
                     </div>
-                ) : col.attribute == COL_ATTRIBUTE.ANIMAL_GROUP_DOSES ? (
+                ) : col.attribute == COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id ? (
                     <div className="col-md-12">
                         <SelectInput
                             choices={store.doseUnitChoices}

@@ -4,7 +4,8 @@ import pandas as pd
 import pytest
 from docx import Document
 
-from hawc.tools.tables.set import AttributeChoices, Column, StudyEvaluationTable
+from hawc.tools.tables.set.constants import AttributeChoices
+from hawc.tools.tables.set.table import Column, StudyEvaluationTable
 
 from . import documents_equal
 
@@ -14,49 +15,54 @@ FILE_PATH = Path(__file__).parent.absolute() / "data" / "set_report.docx"
 class TestAttributeChoices:
     def test_free_html(self):
         attribute = AttributeChoices.FreeHtml
+        col = Column.construct(attribute=attribute)
 
         # returns an empty cell; overridden by customizations
         series = pd.Series({"foo": "foo", "bar": "bar", "free_html": "free_html"})
-        cell = attribute.get_cell(Column.construct(), series)
+        cell = col.get_cell(series)
         assert cell.quill_text == "<p></p>"
         series = pd.Series()
-        cell = attribute.get_cell(Column.construct(), series)
+        cell = col.get_cell(series)
         assert cell.quill_text == "<p></p>"
 
     def test_rob(self):
         attribute = AttributeChoices.Rob
+        col = Column.construct(attribute=attribute)
 
         # test with scores
         df = pd.DataFrame({"score_score": [1, 2]})
-        cell = attribute.get_cell(Column.construct(), df)
+        cell = col.get_cell(df)
         assert cell.judgment == 1  # uses first value
 
         # test with no scores
         df = pd.DataFrame({"score_score": []})
-        cell = attribute.get_cell(Column.construct(), df)
+        cell = col.get_cell(df)
         assert cell.judgment == -1
 
     def test_animal_group_doses(self):
         attribute = AttributeChoices.AnimalGroupDoses
 
         series = pd.Series(
-            {"animal_group_dose_units": "ppm|mg/m3", "animal_group_doses": "0, 1, 10|1, 10, 100"}
+            {"animal_group_doses": {"ppm": ["0, 1, 10", "1, 10, 100"], "mg/m3": ["1, 10, 100"]}}
         )
 
         # show all doses
-        cell = attribute.get_cell(Column.construct(dose_unit=""), series)
-        assert cell.quill_text == "<p>0, 1, 10 ppm; 1, 10, 100 mg/m3</p>"
+        col = Column.construct(attribute=attribute, dose_unit="")
+        cell = col.get_cell(series)
+        assert cell.quill_text == "<p>0, 1, 10 ppm; 1, 10, 100 ppm; 1, 10, 100 mg/m3</p>"
 
         # show ppm doses
-        cell = attribute.get_cell(Column.construct(dose_unit="ppm"), series)
-        assert cell.quill_text == "<p>0, 1, 10</p>"
+        col = Column.construct(attribute=attribute, dose_unit="ppm")
+        cell = col.get_cell(series)
+        assert cell.quill_text == "<p>0, 1, 10; 1, 10, 100</p>"
 
     def test_default(self):
         attribute = AttributeChoices.StudyShortCitation
+        col = Column.construct(attribute=attribute)
 
         # valid
         series = pd.Series({"study_short_citation": "Foo et al.; Bar et al."})
-        cell = attribute.get_cell(Column.construct(), series)
+        cell = col.get_cell(series)
         assert cell.quill_text == "<p>Foo et al.; Bar et al.</p>"
 
 

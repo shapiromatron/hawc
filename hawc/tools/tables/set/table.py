@@ -34,26 +34,16 @@ class Column(BaseModel):
         return GenericCell()
 
     def get_animal_group_doses(self, selection: pd.Series) -> BaseCell:
-        if selection["animal_group_doses"] == "":
-            text = ""
+        doses = selection[self.attribute.value]
+        if self.dose_unit == "":
+            # return all of the doses denoted by dose unit
+            text = "; ".join(["; ".join([f"{_v} {k}" for _v in v]) for k, v in doses.items()])
         else:
-            dose_units = selection["animal_group_dose_units"].split("|")
-            doses = selection["animal_group_doses"].split("|")
-            if self.dose_unit == "":
-                # return all of the doses denoted by dose unit
-                text = "; ".join(
-                    [
-                        "; ".join([f"{_d} {dose_units[i]}" for _d in d.split("; ")])
-                        for i, d in enumerate(doses)
-                    ]
-                )
-            else:
-                # return only the doses of col.dose_unit
-                try:
-                    index = dose_units.index(self.dose_unit)
-                    text = doses[index]
-                except ValueError:
-                    text = ""
+            # return only the doses of col.dose_unit
+            try:
+                text = "; ".join(doses[self.dose_unit])
+            except KeyError:
+                text = ""
         return GenericCell(quill_text=tag_wrapper(text, "p"))
 
     def get_rob(self, selection: pd.DataFrame) -> BaseCell:
