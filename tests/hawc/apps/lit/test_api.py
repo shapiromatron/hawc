@@ -11,6 +11,8 @@ from rest_framework.test import APIClient
 from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
 
+from ..test_utils import check_details_of_last_log_entry
+
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
@@ -153,6 +155,7 @@ class TestLiteratureAssessmentViewset:
         # good payload
         response = c.post(url, good_payload, format="json")
         assert response.status_code == 200
+        check_details_of_last_log_entry(db_keys.assessment_working, "Updated (tagtree replace)")
         data = response.json()["tree"]
         assert data[0]["id"] > 0
         assert data[0]["data"]["name"] == "This is required"
@@ -473,6 +476,7 @@ class TestHEROApis:
         assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 204
+        check_details_of_last_log_entry(assessment_id, "Updated (HERO replacements)")
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
         assert (
@@ -524,6 +528,7 @@ class TestHEROApis:
         assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url)
         assert response.status_code == 204
+        check_details_of_last_log_entry(assessment_id, "Updated (HERO metadata)")
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
         assert updated_reference.title == "Early lung events following low-dose asbestos exposure"
