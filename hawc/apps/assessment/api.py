@@ -4,6 +4,7 @@ from typing import Optional
 
 from django.apps import apps
 from django.core import exceptions
+from django.db import transaction
 from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
@@ -170,6 +171,7 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.model.objects.all()
 
+    @transaction.atomic
     def perform_create(self, serializer):
         super().perform_create(serializer)
         create_object_log(
@@ -179,6 +181,7 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
             self.request.user.id,
         )
 
+    @transaction.atomic
     def perform_update(self, serializer):
         super().perform_update(serializer)
         create_object_log(
@@ -188,6 +191,7 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
             self.request.user.id,
         )
 
+    @transaction.atomic
     def perform_destroy(self, instance):
         create_object_log("Deleted", instance, instance.get_assessment().id, self.request.user.id)
         super().perform_destroy(instance)
@@ -222,6 +226,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         self.check_editing_permission(request)
         return super().create(request, *args, **kwargs)
 
+    @transaction.atomic
     def perform_create(self, serializer):
         super().perform_create(serializer)
         create_object_log(
@@ -231,6 +236,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
             self.request.user.id,
         )
 
+    @transaction.atomic
     def perform_update(self, serializer):
         super().perform_update(serializer)
         create_object_log(
@@ -240,17 +246,21 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
             self.request.user.id,
         )
 
+    @transaction.atomic
     def perform_destroy(self, instance):
         create_object_log("Deleted", instance, instance.get_assessment().id, self.request.user.id)
         super().perform_destroy(instance)
 
+    @transaction.atomic
     @action(detail=True, methods=("patch",))
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
         self.assessment = instance.get_assessment()
         self.check_editing_permission(request)
         instance.moveWithinSiblingsToIndex(request.data["newIndex"])
-        create_object_log("Updated", instance, instance.get_assessment().id, self.request.user.id)
+        create_object_log(
+            "Updated (moved)", instance, instance.get_assessment().id, self.request.user.id
+        )
         return Response({"status": True})
 
     def check_editing_permission(self, request):

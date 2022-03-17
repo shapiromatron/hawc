@@ -182,6 +182,7 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
             .prefetch_related("study__searches", "study__identifiers")
         )
 
+    @transaction.atomic
     def perform_create(self, serializer):
         # permissions check
         user_can_edit_object(serializer.study, self.request.user, raise_exception=True)
@@ -192,7 +193,6 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
             serializer.instance.get_assessment().id,
             self.request.user.id,
         )
-        return None
 
 
 class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
@@ -246,6 +246,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     def get_queryset(self):
         return self.model.objects.optimized_qs()
 
+    @transaction.atomic
     def perform_create(self, serializer):
         super().perform_create(serializer)
         create_object_log(

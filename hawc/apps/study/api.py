@@ -1,3 +1,4 @@
+from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
@@ -59,6 +60,7 @@ class Study(
         # permissions check not here; see serializer validation
         return super().create(request)
 
+    @transaction.atomic
     def perform_create(self, serializer):
         super().perform_create(serializer)
         create_object_log(

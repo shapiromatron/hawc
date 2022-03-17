@@ -1,6 +1,6 @@
 import abc
 import logging
-from typing import Callable, List, Optional
+from typing import Any, Callable, Iterable, List, Optional
 from urllib.parse import urlparse
 
 import reversion
@@ -81,6 +81,8 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
     """
     Create an object log for a given object and associate a reversion instance if it exists.
 
+    Calling this method should be wrapped in a transaction.
+
     Args:
         verb (str): the action being performed
         obj (Any): the object
@@ -101,7 +103,18 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
     reversion.set_comment(comment)
 
 
-def bulk_create_object_log(verb: str, obj_list, user_id: int):
+def bulk_create_object_log(verb: str, obj_list: Iterable[Any], user_id: int):
+    """
+    Create an object log for each item in list and  associate a reversion instance if it exists.
+
+    Calling this method should be wrapped in a transaction.
+
+    Args:
+        verb (str): the action being performed
+        obj_list (Any): an iterable of
+        assessment_id (int): the object assessment id
+        user_id (int): the user id
+    """
     objects = []
     for obj in obj_list:
         # Log action
@@ -119,14 +132,15 @@ def bulk_create_object_log(verb: str, obj_list, user_id: int):
     logs = Log.objects.bulk_create(objects)
 
     # Associate log with reversion
+    log_ids = ",".join(map(str, [log.id for log in logs]))
     for log in logs:
         comment = (
-            f"{reversion.get_comment()}, Log {log.id}"
+            f"{reversion.get_comment()}, Logs {log_ids}"
             if reversion.get_comment()
-            else f"Log {log.id}"
+            else f"Logs {log_ids}"
         )
         audit_logger.info(
-            f"[{log.id}] assessment-{log.get_assessment().id} user-{user_id} {log.message}"
+            f"[bulk {log_ids}] assessment-{logs[0].get_assessment().id} user-{user_id}"
         )
         reversion.set_comment(comment)
 
