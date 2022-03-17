@@ -22,6 +22,11 @@ const checkSession = function() {
                     // confirmed request; cancel this interval check and make request
                     clearInterval(checkId); // prevent popup stacking on top of each other
                     $.post("/update-session/", {refresh: true}).done(response => {
+                        // session update failed; go home
+                        if (response.new_expiry_time === null) {
+                            window.location = "/";
+                            return;
+                        }
                         setExpireTime(response.new_expiry_time);
                         checkId = setInterval(check, CHECK_INTERVAL_MS);
                     });

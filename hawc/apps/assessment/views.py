@@ -672,14 +672,20 @@ class UpdateSession(View):
             hide_status = self.isTruthy(request, "hideSidebar")
             request.session["hideSidebar"] = hide_status
             response = {"hideSidebar": hide_status}
-        elif request.POST.get("refresh") and request.user.is_authenticated:
-            old_time = request.session.get_expiry_date().isoformat()
-            request.session.set_expiry(settings.SESSION_COOKIE_AGE)
-            new_time = request.session.get_expiry_date().isoformat()
-            response = {
-                "message": f"Session extended from {old_time} to {new_time}.",
-                "new_expiry_time": new_time,
-            }
+        if request.POST.get("refresh"):
+            if request.user.is_authenticated:
+                old_time = request.session.get_expiry_date().isoformat()
+                request.session.set_expiry(None)  # use the global session expiry policy
+                new_time = request.session.get_expiry_date().isoformat()
+                response = {
+                    "message": f"Session extended from {old_time} to {new_time}.",
+                    "new_expiry_time": new_time,
+                }
+            else:
+                response = {
+                    "message": "Session not renewed.",
+                    "new_expiry_time": None,
+                }
         return JsonResponse(response)
 
 
