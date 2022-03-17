@@ -105,13 +105,14 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
 
 def bulk_create_object_log(verb: str, obj_list: Iterable[Any], user_id: int):
     """
-    Create an object log for each item in list and  associate a reversion instance if it exists.
+    Create an object log for each item modified in list.
 
-    Calling this method should be wrapped in a transaction.
+    Calling this method should be wrapped in a transaction. Does not associate a reversion; bulk
+    updates are not typically tracked in reversions.
 
     Args:
         verb (str): the action being performed
-        obj_list (Any): an iterable of
+        obj_list (Any): an iterable of an object type
         assessment_id (int): the object assessment id
         user_id (int): the user id
     """
@@ -129,20 +130,7 @@ def bulk_create_object_log(verb: str, obj_list: Iterable[Any], user_id: int):
                 content_object=obj,
             )
         )
-    logs = Log.objects.bulk_create(objects)
-
-    # Associate log with reversion
-    log_ids = ",".join(map(str, [log.id for log in logs]))
-    for log in logs:
-        comment = (
-            f"{reversion.get_comment()}, Logs {log_ids}"
-            if reversion.get_comment()
-            else f"Logs {log_ids}"
-        )
-        audit_logger.info(
-            f"[bulk {log_ids}] assessment-{logs[0].get_assessment().id} user-{user_id}"
-        )
-        reversion.set_comment(comment)
+    Log.objects.bulk_create(objects)
 
 
 class MessageMixin:
