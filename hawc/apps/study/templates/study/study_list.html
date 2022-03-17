@@ -11,6 +11,7 @@
       <div class="dropdown-menu dropdown-menu-right">
           <span class="dropdown-header">Study editing</span>
           <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Create new</a>
+          <a class="dropdown-item" href="{% url 'study:create_from_identifier' assessment.pk %}">Create from identifier</a>
           {% comment %}
           <a class="dropdown-item" href="{% url 'study:studies_copy' assessment.pk %}">Copy studies</a>
           {% endcomment %}

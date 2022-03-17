@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from .client import BaseClient
 
@@ -44,3 +44,22 @@ class StudyClient(BaseClient):
 
         url = f"{self.session.root_url}/study/api/study/"
         return self.session.post(url, data).json()
+
+    def create_from_identifier(
+        self, db_type: str, db_id: Union[str, int], assessment_id: int, **kwargs
+    ) -> Dict:
+        """
+        Creates a study using the given identifier.
+        The identifier and reference are also created as needed.
+
+        Args:
+            db_type (str): Database type (HERO, PUBMED, DOI)
+            db_id (Union[str,int]): Database ID
+            assessment_id (int): Assessment ID to create the study under
+
+        Returns:
+            Dict: JSON of the created study
+        """
+        payload = {"db_type": db_type, "db_id": db_id, "assessment_id": assessment_id, **kwargs}
+        url = f"{self.session.root_url}/study/api/study/create-from-identifier/"
+        return self.session.post(url, payload).json()
