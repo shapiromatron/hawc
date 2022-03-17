@@ -667,20 +667,20 @@ class UpdateSession(View):
     def post(self, request, *args, **kwargs):
         if not request.is_ajax():
             return HttpResponseNotAllowed(["POST"])
+        response = {}
         if request.POST.get("hideSidebar"):
-            request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
-        if request.POST.get("refresh"):
-            if request.user.is_authenticated:
-                old_time = request.session.get_expiry_date()
-                # datetime can't be JSONSerialized, so convert timedelta to an int
-                request.session.set_expiry(int(timedelta(weeks=1).total_seconds()))
-                new_time = request.session.get_expiry_date()
-                data = {
-                    "message": f"Session extended from {old_time} to {new_time}.",
-                    "new_expiry_time": new_time,
-                }
-                return JsonResponse(data)
-        return HttpResponse(True)
+            hide_status = self.isTruthy(request, "hideSidebar")
+            request.session["hideSidebar"] = hide_status
+            response = {"hideSidebar": hide_status}
+        elif request.POST.get("refresh") and request.user.is_authenticated:
+            old_time = request.session.get_expiry_date().isoformat()
+            request.session.set_expiry(settings.SESSION_COOKIE_AGE)
+            new_time = request.session.get_expiry_date().isoformat()
+            response = {
+                "message": f"Session extended from {old_time} to {new_time}.",
+                "new_expiry_time": new_time,
+            }
+        return JsonResponse(response)
 
 
 @method_decorator(csrf_exempt, name="dispatch")

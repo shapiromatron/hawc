@@ -9,7 +9,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
-    <meta name="session_expire_time" content="{{session_expire_time}}" />
+    {% if session_expire_time %}<meta name="session_expire_time" content="{{session_expire_time}}" />{% endif %}
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
 
     {% if GTM_ID %}
