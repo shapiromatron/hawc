@@ -495,9 +495,22 @@ class TestClient(LiveServerTestCase, TestCase):
         ]
         response = client.lit.import_hero(
             assessment_id=self.db_keys.assessment_client,
-            title="Title",
+            title="HERO import",
             description="Description",
             ids=hero_ids,
+        )
+        assert isinstance(response, dict)
+
+    @pytest.mark.vcr
+    def test_lit_import_pubmed(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        pubmed_ids = [10357793, 20358181, 6355494, 8998951, 3383337]
+        response = client.lit.import_pubmed(
+            assessment_id=self.db_keys.assessment_client,
+            title="PubMed import",
+            description="Description",
+            ids=pubmed_ids,
         )
         assert isinstance(response, dict)
 
@@ -684,4 +697,12 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.study.create(self.db_keys.reference_unlinked)
+        assert isinstance(response, dict)
+
+    def test_study_create_from_identifier(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.study.create_from_identifier(
+            db_type="HERO", db_id=2199697, assessment_id=self.db_keys.assessment_client
+        )
         assert isinstance(response, dict)

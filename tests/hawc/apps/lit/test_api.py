@@ -312,6 +312,7 @@ class TestSearchViewset:
         c = APIClient()
         assert c.login(email="team@hawcproject.org", password="pw") is True
 
+        # HERO import
         payload = {
             "assessment": db_keys.assessment_working,
             "search_type": "i",
@@ -319,6 +320,18 @@ class TestSearchViewset:
             "title": "demo title",
             "description": "",
             "search_string": "5490558",
+        }
+        resp = c.post(url, payload, format="json")
+        assert resp.status_code == 201
+
+        # PubMed import
+        payload = {
+            "assessment": db_keys.assessment_working,
+            "search_type": "i",
+            "source": 1,
+            "title": "demo title 1",
+            "description": "",
+            "search_string": "19425233",
         }
         resp = c.post(url, payload, format="json")
         assert resp.status_code == 201
@@ -372,10 +385,12 @@ class TestSearchViewset:
         assert resp.data == {"non_field_errors": ["API currently only supports imports"]}
 
         # check database
-        new_payload = {**payload, **{"source": 1}}
+        new_payload = {**payload, **{"source": 3}}
         resp = c.post(url, new_payload, format="json")
         assert resp.status_code == 400
-        assert resp.data == {"non_field_errors": ["API currently only supports HERO imports"]}
+        assert resp.data == {
+            "non_field_errors": ["API currently only supports PubMed/HERO imports"]
+        }
 
         # check bad csv
         bad_search_strings = [
@@ -419,24 +434,19 @@ class TestSearchViewset:
         c = APIClient()
         assert c.login(email="team@hawcproject.org", password="pw") is True
 
-        # check that the "GET" method is disabled
-        assert c.get(url).status_code == 405
-
-        # check success!
+        # check missing id
         payload = {
             "assessment": db_keys.assessment_working,
             "search_type": "i",
             "source": 2,
-            "title": "demo title 1",
+            "title": "demo title 2",
             "description": "",
             "search_string": "41589",
         }
         resp = c.post(url, payload, format="json")
         assert resp.status_code == 400
         assert resp.data == {
-            "non_field_errors": [
-                "Import failed; the following HERO IDs could not be imported: 41589"
-            ]
+            "non_field_errors": ["The following HERO ID(s) could not be imported: 41589"]
         }
 
 

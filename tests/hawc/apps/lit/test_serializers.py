@@ -212,8 +212,7 @@ class TestReferenceReplaceHeroIdSerializer:
         serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
         assert serializer.is_valid() is False
         assert (
-            serializer.errors["replace"][0]
-            == "Import failed; the following HERO IDs could not be imported: -1"
+            serializer.errors["replace"][0] == "The following HERO ID(s) could not be imported: -1"
         )
 
     def test_bad_reference_id(self, db_keys):

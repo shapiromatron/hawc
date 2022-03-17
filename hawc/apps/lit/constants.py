@@ -1,4 +1,5 @@
 import re
+from typing import List, Tuple
 
 from django.db import models
 
@@ -13,6 +14,13 @@ class ReferenceDatabase(models.IntegerChoices):
     WOS = 5, "Web of Science"
     SCOPUS = 6, "Scopus"
     EMBASE = 7, "Embase"
+
+    @classmethod
+    def import_choices(cls) -> List[Tuple[int, str]]:
+        return [
+            (choice.value, choice.label)
+            for choice in [ReferenceDatabase.PUBMED, ReferenceDatabase.HERO]
+        ]
 
 
 class SearchType(models.TextChoices):

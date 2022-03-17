@@ -4,10 +4,10 @@ from collections import Counter
 from io import StringIO
 from typing import List
 
-import django.core.exceptions
 import pandas as pd
 from celery import chain
 from celery.result import ResultBase
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.template.defaultfilters import slugify
@@ -59,32 +59,45 @@ class SearchSerializer(serializers.ModelSerializer):
         if data["search_type"] != constants.SearchType.IMPORT:
             raise serializers.ValidationError("API currently only supports imports")
 
-        if data["source"] != constants.ReferenceDatabase.HERO:
-            raise serializers.ValidationError("API currently only supports HERO imports")
-
-        if data["search_type"] == constants.SearchType.IMPORT:
-            ids = forms.ImportForm.validate_import_search_string(data["search_string"])
-            self.validate_import_ids_exist(data, ids)
+        ids = forms.ImportForm.validate_import_search_string(data["search_string"])
+        self.validate_import_ids_exist(data, ids)
 
         return data
 
     def validate_import_ids_exist(self, data, ids: List[int]):
-        if data["source"] == constants.ReferenceDatabase.HERO:
-            _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
-            self._import_data = dict(ids=ids, content=content)
-        else:
-            raise NotImplementedError()
+        try:
+            if data["source"] == constants.ReferenceDatabase.HERO:
+                content = models.Identifiers.objects.validate_hero_ids(ids)
+                self._import_data = dict(ids=ids, content=content)
+            elif data["source"] == constants.ReferenceDatabase.PUBMED:
+                content = models.Identifiers.objects.validate_pubmed_ids(ids)
+                self._import_data = dict(ids=ids, content=content)
+            else:
+                raise serializers.ValidationError("API currently only supports PubMed/HERO imports")
+        except ValidationError as err:
+            raise serializers.ValidationError(err.message)
 
     @transaction.atomic
     def create(self, validated_data):
         # create search object
         search = models.Search.objects.create(**validated_data)
-        # create missing identifiers from import
-        models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
-        # get hero identifiers
-        identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
-        # get or create  reference objects from identifiers
-        models.Reference.objects.get_hero_references(search, identifiers)
+
+        # create identifiers/references
+        if validated_data["source"] == constants.ReferenceDatabase.HERO:
+            # create missing identifiers from import
+            models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
+            # get hero identifiers
+            identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
+            # get or create reference objects from identifiers
+            models.Reference.objects.get_hero_references(search, identifiers)
+        elif validated_data["source"] == constants.ReferenceDatabase.PUBMED:
+            # create missing identifiers from import
+            models.Identifiers.objects.bulk_create_pubmed_ids(self._import_data["content"])
+            # get pubmed identifiers
+            identifiers = models.Identifiers.objects.pubmed(self._import_data["ids"])
+            # get or create reference objects from identifiers
+            models.Reference.objects.get_pubmed_references(search, identifiers)
+
         return search
 
 
@@ -434,10 +447,8 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         # make sure all HERO IDs are valid; and save response from HERO if needed
         try:
-            _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
-                self.hero_ids
-            )
-        except django.core.exceptions.ValidationError as err:
+            self.fetched_content = models.Identifiers.objects.validate_hero_ids(self.hero_ids)
+        except ValidationError as err:
             raise serializers.ValidationError(err.args[0])
 
         return replace

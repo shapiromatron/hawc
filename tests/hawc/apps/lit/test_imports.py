@@ -192,7 +192,7 @@ class TestHero:
             response,
             "form",
             "search_string",
-            "Import failed; the following HERO IDs could not be imported: 99999999",
+            "The following HERO ID(s) could not be imported: 99999999",
         )
         assert models.Search.objects.count() == initial_searches
 

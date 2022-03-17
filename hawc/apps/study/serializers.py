@@ -1,10 +1,14 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import transaction
 from rest_framework import exceptions, serializers
 
+from ..assessment.models import Assessment
 from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import IdLookupMixin
+from ..lit.constants import ReferenceDatabase
+from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer, FinalRiskOfBiasSerializer
@@ -85,6 +89,63 @@ class VerboseStudySerializer(StudySerializer):
     class Meta:
         model = models.Study
         fields = "__all__"
+
+
+class StudyFromIdentifierSerializer(serializers.ModelSerializer):
+    db_type = serializers.ChoiceField(choices=["PUBMED", "HERO"], write_only=True)
+    db_id = serializers.CharField(write_only=True)
+    assessment_id = serializers.PrimaryKeyRelatedField(
+        queryset=Assessment.objects.all(), source="assessment"
+    )
+
+    def validate(self, data):
+        data["db_type"] = ReferenceDatabase[data["db_type"]]
+        # study should be creatable; ie. does not exist
+        if (
+            study := models.Study.objects.filter(
+                assessment_id=data["assessment"],
+                identifiers__database=data["db_type"],
+                identifiers__unique_id=str(data["db_id"]),
+            ).first()
+        ) is not None:
+            raise serializers.ValidationError(
+                {"db_id": f"Study already exists; see {study} [{study.id}]"}
+            )
+        # validate identifier
+        try:
+            data["identifier"], self._identifier_content = validate_external_id(
+                data["db_type"], data["db_id"]
+            )
+        except ValidationError as err:
+            raise serializers.ValidationError(err.message)
+
+        return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        assessment = validated_data.pop("assessment")
+        db_type = validated_data.pop("db_type")
+        validated_data.pop("db_id")
+
+        if (ident := validated_data.pop("identifier")) is None:
+            ident = create_external_id(db_type, self._identifier_content)
+
+        if (
+            ref := Reference.objects.filter(assessment=assessment, identifiers=ident).first()
+        ) is None:
+            ref = ident.create_reference(assessment)
+            ref.save()
+            ref.identifiers.add(ident)
+
+        return models.Study.save_new_from_reference(ref, validated_data)
+
+    class Meta:
+        model = models.Study
+        exclude = ("assessment", "searches", "identifiers")
+        extra_kwargs = {
+            "full_citation": {"required": False},
+            "short_citation": {"required": False},
+        }
 
 
 class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
