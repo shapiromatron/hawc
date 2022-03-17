@@ -6,6 +6,7 @@ import "react-tabs/style/react-tabs.css";
 import sidebarStartup from "./utils/sidebarStartup";
 import tryWebAppStartup from "./utils/tryWebAppStartup";
 import Quillify from "./utils/Quillify";
+import checkSession from "./utils/checkSession";
 
 $.fn.quillify = Quillify;
 
@@ -28,26 +29,6 @@ const getCookie = function(name) {
     csrftoken = getCookie("csrftoken"),
     sessionid = getCookie("sessionid"),
     csrfSafeMethod = method => /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
-
-var intervalID;
-const INTERVAL_MS = 60000;
-
-const checkSession = function() {
-    // if session is about to expire, then display a popup to allow a session refresh
-    const SESSION_EXPIRE_WARNING = 900000; // 15 minutes
-    let exp_time = $('meta[name="session_expire_time"]').attr("content");
-    exp_time = Date.parse(exp_time);
-
-    if (exp_time - Date.now() < SESSION_EXPIRE_WARNING) {
-        clearInterval(intervalID); // prevents multiple popups stacking on top of each other
-        if (confirm("Your session will expire in 15 minutes. Click OK to stay logged in.")) {
-            $.post("/update-session/", {refresh: true}).done(response => {
-                $('meta[name="session_expire_time"]').attr("content", response.new_expiry_time);
-            });
-        }
-        intervalID = setInterval(checkSession, INTERVAL_MS);
-    }
-};
 
 d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
@@ -76,5 +57,5 @@ $(document).ready(() => {
     sidebarStartup();
     tryWebAppStartup();
     setupAjax(document);
-    intervalID = setInterval(checkSession, INTERVAL_MS);
+    checkSession();
 });
