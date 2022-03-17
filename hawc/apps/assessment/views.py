@@ -1,6 +1,5 @@
 import json
 import logging
-from datetime import timedelta
 from typing import Any, Dict, List
 
 from django.apps import apps
@@ -20,7 +19,7 @@ from django.http import (
     JsonResponse,
 )
 from django.middleware.csrf import get_token
-from django.shortcuts import HttpResponse, get_object_or_404, render
+from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
