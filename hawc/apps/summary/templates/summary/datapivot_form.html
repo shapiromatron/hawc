@@ -30,7 +30,10 @@
       });
 
       window.app.startup("smartTagsStartup", function(smartTags){
-          new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});
+          new smartTags.SmartTagEditor(
+            $('#id_caption'),
+            {submitEl: '#dataPivotForm', takeFocusEl: "#id_evidence_type"}
+          );
       })
 
       var togglePrefilterSelectorVisibility = function(d){
@@ -88,10 +91,6 @@
       }).trigger('change');
 
       togglePrefilterSelectorVisibility();
-
-      $("#div_id_caption").one("focusin", (function () {
-        $("#id_evidence_type").focus()
-      }));
     });
   </script>
 {% endblock extrajs %}

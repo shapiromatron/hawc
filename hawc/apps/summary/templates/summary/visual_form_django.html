@@ -18,15 +18,11 @@
         });
         {% endif %}
         window.app.startup("smartTagsStartup", function (smartTags) {
-            new smartTags.SmartTagEditor($('#id_caption'), { submitEl: '#visualForm' });
+            new smartTags.SmartTagEditor(
+                $('#id_caption'),
+                {submitEl: '#visualForm', takeFocusEl: "#id_title"}
+            );
         })
     });
-    var count = 0;
-    $("#div_id_caption").on("focusin", (function () {
-        if (count < 2) {
-            $("#id_title").focus()
-            count++;
-        }
-    }));
 </script>
 {% endblock %}
