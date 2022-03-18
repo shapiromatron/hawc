@@ -6,6 +6,7 @@ import "react-tabs/style/react-tabs.css";
 import sidebarStartup from "./utils/sidebarStartup";
 import tryWebAppStartup from "./utils/tryWebAppStartup";
 import Quillify from "./utils/Quillify";
+import checkSession from "./utils/checkSession";
 
 $.fn.quillify = Quillify;
 
@@ -56,4 +57,5 @@ $(document).ready(() => {
     sidebarStartup();
     tryWebAppStartup();
     setupAjax(document);
+    checkSession();
 });
