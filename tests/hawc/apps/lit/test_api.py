@@ -11,6 +11,8 @@ from rest_framework.test import APIClient
 from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
 
+from ..test_utils import check_details_of_last_log_entry
+
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
@@ -153,6 +155,7 @@ class TestLiteratureAssessmentViewset:
         # good payload
         response = c.post(url, good_payload, format="json")
         assert response.status_code == 200
+        check_details_of_last_log_entry(db_keys.assessment_working, "Updated (tagtree replace)")
         data = response.json()["tree"]
         assert data[0]["id"] > 0
         assert data[0]["data"]["name"] == "This is required"
@@ -309,6 +312,7 @@ class TestSearchViewset:
         c = APIClient()
         assert c.login(email="team@hawcproject.org", password="pw") is True
 
+        # HERO import
         payload = {
             "assessment": db_keys.assessment_working,
             "search_type": "i",
@@ -316,6 +320,18 @@ class TestSearchViewset:
             "title": "demo title",
             "description": "",
             "search_string": "5490558",
+        }
+        resp = c.post(url, payload, format="json")
+        assert resp.status_code == 201
+
+        # PubMed import
+        payload = {
+            "assessment": db_keys.assessment_working,
+            "search_type": "i",
+            "source": 1,
+            "title": "demo title 1",
+            "description": "",
+            "search_string": "19425233",
         }
         resp = c.post(url, payload, format="json")
         assert resp.status_code == 201
@@ -369,10 +385,12 @@ class TestSearchViewset:
         assert resp.data == {"non_field_errors": ["API currently only supports imports"]}
 
         # check database
-        new_payload = {**payload, **{"source": 1}}
+        new_payload = {**payload, **{"source": 3}}
         resp = c.post(url, new_payload, format="json")
         assert resp.status_code == 400
-        assert resp.data == {"non_field_errors": ["API currently only supports HERO imports"]}
+        assert resp.data == {
+            "non_field_errors": ["API currently only supports PubMed/HERO imports"]
+        }
 
         # check bad csv
         bad_search_strings = [
@@ -416,24 +434,19 @@ class TestSearchViewset:
         c = APIClient()
         assert c.login(email="team@hawcproject.org", password="pw") is True
 
-        # check that the "GET" method is disabled
-        assert c.get(url).status_code == 405
-
-        # check success!
+        # check missing id
         payload = {
             "assessment": db_keys.assessment_working,
             "search_type": "i",
             "source": 2,
-            "title": "demo title 1",
+            "title": "demo title 2",
             "description": "",
             "search_string": "41589",
         }
         resp = c.post(url, payload, format="json")
         assert resp.status_code == 400
         assert resp.data == {
-            "non_field_errors": [
-                "Import failed; the following HERO IDs could not be imported: 41589"
-            ]
+            "non_field_errors": ["The following HERO ID(s) could not be imported: 41589"]
         }
 
 
@@ -473,6 +486,7 @@ class TestHEROApis:
         assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 204
+        check_details_of_last_log_entry(assessment_id, "Updated (HERO replacements)")
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
         assert (
@@ -524,6 +538,7 @@ class TestHEROApis:
         assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url)
         assert response.status_code == 204
+        check_details_of_last_log_entry(assessment_id, "Updated (HERO metadata)")
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
         assert updated_reference.title == "Early lung events following low-dose asbestos exposure"

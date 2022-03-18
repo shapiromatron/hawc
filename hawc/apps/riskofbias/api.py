@@ -280,7 +280,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     def perform_destroy(self, instance):
         if instance.is_default:
             raise PermissionDenied("Cannot delete a default risk of bias score")
-        instance.delete()
+        super().perform_destroy(instance)
 
 
 class ScoreCleanupViewset(CleanupFieldsBaseViewSet):
