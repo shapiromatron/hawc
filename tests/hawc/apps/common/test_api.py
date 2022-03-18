@@ -9,6 +9,8 @@ from hawc.apps.common.api import user_can_edit_object
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
+from ..test_utils import check_details_of_last_log_entry
+
 
 @pytest.mark.django_db
 class TestCleanupFieldsBaseViewSet:
@@ -148,6 +150,7 @@ class TestCleanupFieldsBaseViewSet:
         )
         assert resp.status_code == 204
         assert Study.objects.get(id=study_id).short_citation == new_short_citation
+        check_details_of_last_log_entry(study_id, "Updated study.study")
 
 
 @pytest.mark.django_db

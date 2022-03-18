@@ -8,6 +8,8 @@ from rest_framework.test import APIClient
 
 from hawc.apps.animal import forms, models
 
+from ..test_utils import check_details_of_last_log_entry
+
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
@@ -244,6 +246,7 @@ class TestExperimentCreateApi:
         response = client.post(url, data)
         assert response.status_code == 201
         assert len(models.Experiment.objects.filter(name="Experiment name")) == 2
+        check_details_of_last_log_entry(response.data["id"], "Created animal.experiment")
 
 
 @pytest.mark.django_db
@@ -341,6 +344,7 @@ class TestAnimalGroupCreateApi:
         response = client.post(url, data, format="json")
         assert response.status_code == 201
         assert models.AnimalGroup.objects.filter(name=data["name"]).count() == 2
+        check_details_of_last_log_entry(response.data["id"], "Created animal.animalgroup")
 
         animal_group_2 = models.AnimalGroup.objects.get(id=response.json()["id"])
         assert animal_group_2.siblings == animal_group
@@ -371,6 +375,7 @@ class TestAnimalGroupCreateApi:
         response = client.post(url, data, format="json")
 
         assert response.status_code == 201
+        check_details_of_last_log_entry(response.data["id"], "Created animal.animalgroup")
 
         animal_groups = models.AnimalGroup.objects.filter(name="Animal group name")
         assert len(animal_groups) == 1
@@ -501,6 +506,7 @@ class TestEndpointCreateApi:
         response = client.post(url, data)
         assert response.status_code == 201
         assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
+        check_details_of_last_log_entry(response.data["id"], "Created animal.endpoint")
 
     def test_endpoint_groups_create(self, db_keys):
         url = reverse("animal:api:endpoint-list")
