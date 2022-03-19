@@ -168,11 +168,18 @@ class StudyEvaluationTableStore {
         let col = this.stagedEdits.columns[colIdx],
             isDefaultLabel = col.label == this.getDefaultColumnLabel(col);
         if ("attribute" in value && col.attribute !== value.attribute) {
-            if (col.attribute == "rob") {
+            if (col.attribute == constants.COL_ATTRIBUTE.ROB.id) {
                 delete col.metric_id;
-            } else if (value.attribute == "rob") {
+            }
+            if (value.attribute == constants.COL_ATTRIBUTE.ROB.id) {
                 let metric = this.metricIdChoices[0];
                 col.metric_id = metric == null ? undefined : metric["id"];
+            }
+            if (col.attribute == constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id) {
+                delete col.dose_unit;
+            }
+            if (value.attribute == constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id) {
+                col.dose_unit = this.doseUnitChoices[0]["id"];
             }
             this.stagedEdits.rows.forEach(row => {
                 row.customized = _.filter(row.customized, d => d.key != col.key);
@@ -207,13 +214,52 @@ class StudyEvaluationTableStore {
     }
 
     // row attributes
-    @computed get rowIdChoices() {
-        return _.chain(this.dataset.data)
-            .uniqBy("study id")
-            .map(d => {
-                return {id: d["study id"], label: d["study citation"]};
-            })
-            .value();
+    rowTypeChoices(row) {
+        // filter type choices down to whats achievable with the current row type/id
+        let choices = constants.rowTypeChoices[this.settings.data_source],
+            currentIndex = _.findIndex(choices, c => c.id == row.type),
+            endIndex = _.findIndex(
+                choices,
+                c =>
+                    _.find(
+                        this.dataset.data,
+                        d => d["type"] == c.id && d[`${row.type}_id`] == row.id
+                    ) == null,
+                currentIndex + 1
+            );
+        return endIndex == -1 ? choices : choices.slice(0, endIndex);
+    }
+    rowIdChoices(row, type) {
+        const data = this.getDataSelection(row.type, row.id);
+        switch (type) {
+            case constants.ROW_TYPE.STUDY.id:
+                return _.chain(this.dataset.data)
+                    .filter(d => d["type"] == data["type"])
+                    .uniqBy("study_id")
+                    .map(d => {
+                        return {id: d["study_id"], label: d["study_short_citation"]};
+                    })
+                    .value();
+            case constants.ROW_TYPE.EXPERIMENT.id:
+                return _.chain(this.dataset.data)
+                    .filter(d => d["type"] == data["type"] && d["study_id"] == data["study_id"])
+                    .uniqBy("experiment_id")
+                    .map(d => {
+                        return {id: d["experiment_id"], label: d["experiment_name"]};
+                    })
+                    .value();
+            case constants.ROW_TYPE.ANIMAL_GROUP.id:
+                return _.chain(this.dataset.data)
+                    .filter(
+                        d =>
+                            d["type"] == data["type"] && d["experiment_id"] == data["experiment_id"]
+                    )
+                    .uniqBy("animal_group_id")
+                    .map(d => {
+                        return {id: d["animal_group_id"], label: d["animal_group_name"]};
+                    })
+                    .value();
+        }
     }
 
     // column attributes
@@ -251,10 +297,24 @@ class StudyEvaluationTableStore {
             .unshift({id: -1, label: "Not measured"})
             .value();
     }
+    @computed get doseUnitChoices() {
+        let choices = _.chain(this.dataset.data)
+            .filter(d => d["type"] == constants.ROW_TYPE.STUDY.id)
+            .map(d => _.keys(d[constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id]))
+            .flatten()
+            .uniq()
+            .map(d => {
+                return {id: d, label: d};
+            })
+            .value();
+        return [{id: "", label: "---"}, ...choices];
+    }
     getDefaultColumnLabel(col) {
         switch (col.attribute) {
-            case "rob":
+            case constants.COL_ATTRIBUTE.ROB.id:
                 return _.find(this.metricIdChoices, c => c.id == col.metric_id).label;
+            case constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id:
+                return col.dose_unit == "" ? "Doses" : `Doses (${col.dose_unit})`;
             default:
                 return _.find(
                     constants.colAttributeChoices[this.settings.data_source],
@@ -268,19 +328,14 @@ class StudyEvaluationTableStore {
         return _.find(this.workingSettings.rows[rowIdx].customized, d => d.key == colKey);
     }
     getDefaultCustomized(row, col) {
-        return col.attribute == "rob"
+        return col.attribute == constants.COL_ATTRIBUTE.ROB.id
             ? {key: col.key, score_id: -1}
             : {key: col.key, html: this.getDefaultCellContent(row, col).html};
     }
 
     // cell content
     getDataSelection(type, id) {
-        switch (type) {
-            case "study":
-                return _.filter(this.dataset.data, d => d["study id"] == id);
-            default:
-                return [];
-        }
+        return _.find(this.dataset.data, d => d["type"] == type && d["id"] == id);
     }
     getRobSelection(studyId, metricId, scoreId) {
         if (scoreId != null) {
@@ -294,27 +349,12 @@ class StudyEvaluationTableStore {
                 _.isNil(d["content_type_id"])
         );
     }
-    concatDataSelection(data, attribute) {
-        switch (attribute) {
-            case "study_short_citation":
-                return _.chain(data)
-                    .map(d => d["study citation"])
-                    .uniq()
-                    .join("; ")
-                    .value();
-            case "animal_group_description":
-                return _.chain(data)
-                    .map(d => d["animal description"])
-                    .uniq()
-                    .join("; ")
-                    .value();
-        }
-    }
     getDefaultCellContent(row, col) {
         switch (col.attribute) {
-            case "rob": {
-                let data = this.getRobSelection(row.id, col.metric_id),
-                    judgment = data.length ? data[0]["score_score"] : -1;
+            case constants.COL_ATTRIBUTE.ROB.id: {
+                let data = this.getDataSelection(row.type, row.id),
+                    robData = this.getRobSelection(data["study_id"], col.metric_id),
+                    judgment = robData.length ? robData[0]["score_score"] : -1;
                 return judgment == -1
                     ? constants.NM
                     : {
@@ -325,28 +365,45 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study_short_citation": {
+            case constants.COL_ATTRIBUTE.STUDY_SHORT_CITATION.id: {
                 let data = this.getDataSelection(row.type, row.id),
-                    text = this.concatDataSelection(data, col.attribute);
+                    text = data[col.attribute];
                 return {
-                    html: `<p><a href="/study/${row.id}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
+                    html: `<p><a href="/study/${data["study_id"]}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
                 };
             }
-            case "animal_group_description": {
+            case constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id: {
                 let data = this.getDataSelection(row.type, row.id),
-                    text = this.concatDataSelection(data, col.attribute);
+                    doses = data[col.attribute];
+                if (col.dose_unit == "") {
+                    let text = _.chain(_.entries(doses))
+                        .map(([k, v]) =>
+                            _.join(
+                                _.map(v, _v => `${_v} ${k}`),
+                                "; "
+                            )
+                        )
+                        .join("; ");
+                    return {html: `<p>${text}</p>`};
+                } else {
+                    let text = _.join(doses[col.dose_unit], "; ");
+                    return {html: `<p>${text}</p>`};
+                }
+            }
+            case constants.COL_ATTRIBUTE.FREE_HTML.id:
+                return {html: "<p></p>"};
+            default: {
+                let data = this.getDataSelection(row.type, row.id),
+                    text = data[col.attribute];
                 return {html: `<p>${text}</p>`};
             }
-
-            case "free_html":
-                return {html: "<p></p>"};
         }
     }
     getCustomCellContent(attribute, customized) {
         switch (attribute) {
-            case "rob": {
-                let data = this.getRobSelection(null, null, customized.score_id),
-                    judgment = data.length ? data[0]["score_score"] : -1;
+            case constants.COL_ATTRIBUTE.ROB.id: {
+                let robData = this.getRobSelection(null, null, customized.score_id),
+                    judgment = robData.length ? robData[0]["score_score"] : -1;
                 return judgment == -1
                     ? constants.NM
                     : {
@@ -357,9 +414,7 @@ class StudyEvaluationTableStore {
                           html: this.robSettings.score_metadata.symbols[judgment],
                       };
             }
-            case "study_short_citation":
-            case "animal_group_description":
-            case "free_html":
+            default:
                 return {html: customized.html};
         }
     }
@@ -407,13 +462,11 @@ class StudyEvaluationTableStore {
 
     // row updates
     @action.bound createRow() {
-        const rows = this.rowIdChoices;
-        if (rows.length > 0) {
-            const item = constants.createNewRow(rows[0].id);
-            this.settings.rows.push(item);
-            if (this.stagedEdits != null) {
-                this.stagedEdits.rows.push(item);
-            }
+        const data = _.find(this.dataset.data, d => d["type"] == constants.ROW_TYPE.STUDY.id),
+            item = constants.createNewRow(data["id"]);
+        this.settings.rows.push(item);
+        if (this.stagedEdits != null) {
+            this.stagedEdits.rows.push(item);
         }
     }
     @action.bound moveRow(rowIdx, offset) {
@@ -470,17 +523,17 @@ class StudyEvaluationTableStore {
     interactiveOnClick(rowIdx, colIdx) {
         let row = this.workingSettings.rows[rowIdx],
             col = this.workingSettings.columns[colIdx],
-            customized = this.getCustomized(rowIdx, col.key);
-        if (col.attribute == "rob") {
+            customized = this.getCustomized(rowIdx, col.key),
+            data = this.getDataSelection(row.type, row.id);
+        if (col.attribute == constants.COL_ATTRIBUTE.ROB.id) {
             let scoreId = customized == null ? null : customized.score_id,
-                selection = this.getRobSelection(row.id, col.metric_id, scoreId);
+                selection = this.getRobSelection(data["study_id"], col.metric_id, scoreId);
 
             if (!selection.length) {
                 return null;
             }
 
             let score = selection[0],
-                study = this.getDataSelection("study", row.id)[0],
                 config = {
                     display: "all",
                     isForm: false,
@@ -526,21 +579,21 @@ class StudyEvaluationTableStore {
                         },
                     },
                 };
-            return () => this.displayRobAsModal(_.extend({}, scoreData, robData), study, config);
-        } else {
-            return () => Study.displayAsModal(row.id);
+            return () => this.displayRobAsModal(_.extend({}, scoreData, robData), data, config);
+        } else if (col.attribute == constants.COL_ATTRIBUTE.STUDY_SHORT_CITATION.id) {
+            return () => Study.displayAsModal(data["study_id"]);
         }
     }
-    displayRobAsModal(data, study, config) {
+    displayRobAsModal(robData, data, config) {
         var modal = new HAWCModal(),
-            title = `<h4><a target="_blank" href="/study/${study["study id"]}">${
-                study["study citation"]
-            }</a>${data["label"] ? `: ${data["label"]}` : ""}</h4>`,
+            title = `<h4><a target="_blank" href="/study/${data["study_id"]}">${
+                data["study_short_citation"]
+            }</a>${robData["label"] ? `: ${robData["label"]}` : ""}</h4>`,
             $content = $('<div class="container-fluid">');
 
         window.setTimeout(function() {
             renderRiskOfBiasDisplay(
-                RiskOfBiasScore.format_for_react([new RiskOfBiasScore(null, data)], config),
+                RiskOfBiasScore.format_for_react([new RiskOfBiasScore(null, robData)], config),
                 $content[0]
             );
         }, 200);

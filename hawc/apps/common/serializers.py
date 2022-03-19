@@ -294,6 +294,54 @@ class GetOrCreateMixin:
         return instance
 
 
+class FlexibleFieldsMixin:
+    """
+    Allows manipulation of fields on serializer instances.
+    This mixin is primarily meant for serailization and not deserialization.
+
+    Constructor kwargs:
+        fields (List[str]): allowlist of field names to include in serializer
+        field_prefix (str): prefix to add to all field names
+        field_renames (Dict): mapping of old field names to new field names
+    """
+
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop("fields", None)
+        field_prefix = kwargs.pop("field_prefix", "")
+        field_renames = kwargs.pop("field_renames", {})
+
+        super().__init__(*args, **kwargs)
+
+        if fields is not None:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
+        if not field_prefix and not field_renames:
+            # If nothing else needs to be done, return
+            return
+
+        # 'fields' is a BindingDict, which has an underlying OrderedDict.
+        # any changes require it to be rebuilt to maintain its order.
+        for field_name in list(self.fields):
+            if field_name in field_renames:
+                # handle renames
+                new_field_name = field_renames[field_name]
+                if field_name == new_field_name:
+                    # special case; assign on the underlying OrderedDict to avoid error on BindingDict __setitem__
+                    self.fields.fields[field_name] = self.fields.pop(field_name)
+                else:
+                    self.fields[new_field_name] = self.fields.pop(field_name)
+            elif field_prefix:
+                # handle prefixes
+                self.fields[field_prefix + field_name] = self.fields.pop(field_name)
+            else:
+                # handle case of no rename or prefix
+                self.fields.fields[field_name] = self.fields.pop(field_name)
+
+
 class BulkSerializer(serializers.ListSerializer):
     """
     Bulk create/update serializer for many = True
