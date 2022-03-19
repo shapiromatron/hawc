@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
@@ -14,6 +15,7 @@ from ..assessment.api import (
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet
 from ..common.helper import re_digits
+from ..common.views import create_object_log
 from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models, serializers
 
@@ -61,6 +63,16 @@ class Study(
     def create(self, request):
         # permissions check not here; see serializer validation
         return super().create(request)
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.get_assessment().id,
+            self.request.user.id,
+        )
 
     @action(detail=True, url_path="all-rob")
     def rob(self, request, pk: int):

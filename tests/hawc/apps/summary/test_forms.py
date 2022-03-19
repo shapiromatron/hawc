@@ -31,7 +31,7 @@ def test_ExternalSiteForm(db_keys):
         "external_url_query_args": [":showVizHome=no", ":embed=y"],
     }
 
-    # make sure our site whitelist works
+    # make sure our site allowlist works
     for url in [
         "google.com",
         "http://google.com",

@@ -11,7 +11,7 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import QuillTextInput from "shared/components/QuillTextInput";
 import IntegerInput from "shared/components/IntegerInput";
 
-import {colAttributeChoices, rowTypeChoices} from "./constants";
+import {colAttributeChoices, COL_ATTRIBUTE, ROW_TYPE} from "./constants";
 
 class EditButton extends Component {
     render() {
@@ -48,7 +48,7 @@ class EditCellForm extends Component {
                     checked={customized != null}
                 />
                 {customized != null
-                    ? col.attribute == "rob"
+                    ? col.attribute == COL_ATTRIBUTE.ROB.id
                         ? this.renderRobForm()
                         : this.renderTextForm()
                     : null}
@@ -59,8 +59,9 @@ class EditCellForm extends Component {
         const {rowIdx, colIdx, store} = this.props,
             col = store.stagedEdits.columns[colIdx],
             row = store.stagedEdits.rows[rowIdx],
+            data = store.getDataSelection(row.type, row.id),
             customized = _.find(row.customized, d => d.key == col.key),
-            choices = store.scoreIdChoices(row.id, col.metric_id);
+            choices = store.scoreIdChoices(data["study_id"], col.metric_id);
         return (
             <SelectInput
                 choices={choices}
@@ -101,26 +102,32 @@ class EditRowForm extends Component {
     render() {
         const {store, rowIdx} = this.props,
             row = store.stagedEdits.rows[rowIdx],
-            idChoices = store.rowIdChoices;
+            rowTypeChoices = store.rowTypeChoices(row);
         return (
             <>
                 <div className="col-md-12">
                     <SelectInput
-                        choices={rowTypeChoices[store.settings.data_source]}
+                        choices={rowTypeChoices}
                         value={row.type}
-                        handleSelect={value => store.updateStagedRow(rowIdx, {type: value})}
+                        handleSelect={value => {
+                            let oldPriority = _.findIndex(rowTypeChoices, c => c.id == row.type),
+                                newPriority = _.findIndex(rowTypeChoices, c => c.id == value),
+                                id =
+                                    oldPriority > newPriority
+                                        ? store.getDataSelection(row.type, row.id)[`${value}_id`]
+                                        : _.find(
+                                              store.dataset.data,
+                                              d =>
+                                                  d["type"] == value &&
+                                                  d[`${row.type}_id`] == row.id
+                                          )["id"];
+                            return store.updateStagedRow(rowIdx, {type: value, id: parseInt(id)});
+                        }}
                         label="Data type"
                     />
                 </div>
-                <div className="col-md-12">
-                    <SelectInput
-                        choices={idChoices}
-                        value={row.id}
-                        handleSelect={value => store.updateStagedRow(rowIdx, {id: parseInt(value)})}
-                        label="Item"
-                    />
-                </div>
-                <div className="col-md-12 text-center">
+                <div className="col-md-12">{this.renderIdForm()}</div>
+                <div className="col-md-12 text-center mb-3">
                     <div className="btn-group">
                         <button
                             className="btn btn-sm btn-primary"
@@ -153,6 +160,45 @@ class EditRowForm extends Component {
                 </div>
             </>
         );
+    }
+
+    renderIdInput(type) {
+        const {store, rowIdx} = this.props,
+            row = store.stagedEdits.rows[rowIdx],
+            data = store.getDataSelection(row.type, row.id),
+            typeField = `${type.id}_id`;
+        return (
+            <SelectInput
+                key={`${type.id}_input`}
+                choices={store.rowIdChoices(row, type.id)}
+                value={data[typeField]}
+                handleSelect={value => {
+                    let target = _.find(
+                        store.dataset.data,
+                        d => d["type"] == data["type"] && d[typeField] == parseInt(value)
+                    );
+                    store.updateStagedRow(rowIdx, {id: parseInt(target["id"])});
+                }}
+                label={type.label}
+            />
+        );
+    }
+
+    renderIdForm() {
+        let inputs = [];
+        const {store, rowIdx} = this.props,
+            row = store.stagedEdits.rows[rowIdx];
+        switch (row.type) {
+            case ROW_TYPE.ANIMAL_GROUP.id:
+                inputs.unshift(this.renderIdInput(ROW_TYPE.ANIMAL_GROUP));
+            // falls through
+            case ROW_TYPE.EXPERIMENT.id:
+                inputs.unshift(this.renderIdInput(ROW_TYPE.EXPERIMENT));
+            // falls through
+            case ROW_TYPE.STUDY.id:
+                inputs.unshift(this.renderIdInput(ROW_TYPE.STUDY));
+        }
+        return inputs;
     }
 }
 EditRowForm.propTypes = {
@@ -249,7 +295,7 @@ class EditColumnForm extends Component {
                         label="Attribute"
                     />
                 </div>
-                {col.attribute == "rob" ? (
+                {col.attribute == COL_ATTRIBUTE.ROB.id ? (
                     <div className="col-md-12">
                         <SelectInput
                             choices={store.metricIdChoices}
@@ -258,6 +304,17 @@ class EditColumnForm extends Component {
                             }
                             value={col.metric_id}
                             label="Metric"
+                        />
+                    </div>
+                ) : col.attribute == COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id ? (
+                    <div className="col-md-12">
+                        <SelectInput
+                            choices={store.doseUnitChoices}
+                            handleSelect={value =>
+                                store.updateStagedColumn(colIdx, {dose_unit: value})
+                            }
+                            value={col.dose_unit}
+                            label="Dose Units"
                         />
                     </div>
                 ) : null}
@@ -447,7 +504,7 @@ class Table extends Component {
                 </thead>
                 <tbody>
                     {workingSettings.rows.map((row, rowIdx) => {
-                        return store.getDataSelection(row.type, row.id).length ? (
+                        return store.getDataSelection(row.type, row.id) ? (
                             <tr
                                 key={rowIdx}
                                 className={
@@ -463,7 +520,7 @@ class Table extends Component {
                                             className={`previewModalParent${
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? " bg-light"
-                                                    : col.attribute == "rob"
+                                                    : col.attribute == COL_ATTRIBUTE.ROB.id
                                                     ? " text-center align-middle cursor-pointer"
                                                     : ""
                                             }`}
@@ -474,7 +531,7 @@ class Table extends Component {
                                             }
                                             onClick={
                                                 (editable && store.editingCell(rowIdx, colIdx)) ||
-                                                col.attribute != "rob"
+                                                col.attribute != COL_ATTRIBUTE.ROB.id
                                                     ? null
                                                     : store.interactiveOnClick(rowIdx, colIdx)
                                             }>
@@ -505,7 +562,7 @@ class Table extends Component {
                                                 />
                                             ) : null}
                                             {(editable && store.editingCell(rowIdx, colIdx)) ||
-                                            col.attribute == "rob"
+                                            col.attribute == COL_ATTRIBUTE.ROB.id
                                                 ? null
                                                 : this.getInteractiveIcon(rowIdx, colIdx)}
                                             <span
