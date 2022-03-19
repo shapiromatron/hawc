@@ -58,6 +58,7 @@ class SummaryJudgementCell(BaseCell):
     human_relevance: str
     cross_stream_coherence: str
     susceptibility: str
+    other: str
 
     hide_content: bool
 
@@ -83,6 +84,8 @@ class SummaryJudgementCell(BaseCell):
         text += self.cross_stream_coherence
         text += tag_wrapper("\nSusceptible populations and lifestages:", "p", "em")
         text += self.susceptibility
+        text += tag_wrapper("\nOther inferences:", "p", "em")
+        text += self.other
         parser.feed(text, block)
         if self.judgement != SummaryJudgementChoices.NoJudgement:
             for paragraph in block.paragraphs[0:2]:
@@ -476,6 +479,7 @@ class EvidenceProfileTable(BaseTable):
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",
                 "susceptibility": "<p></p>",
+                "other": "<p></p>",
                 "hide_content": False,
             },
         }

@@ -11,6 +11,7 @@
       <div class="dropdown-menu dropdown-menu-right">
           <span class="dropdown-header">Study editing</span>
           <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Create new</a>
+          <a class="dropdown-item" href="{% url 'study:create_from_identifier' assessment.pk %}">Create from identifier</a>
           {% comment %}
           <a class="dropdown-item" href="{% url 'study:studies_copy' assessment.pk %}">Copy studies</a>
           {% endcomment %}
@@ -54,7 +55,7 @@
         <td>
           <a href="{% url 'study:detail' study.pk %}">{{ study.short_citation }}</a>
           {% if not study.published %}
-          <i title="Unpublished (not be visible to the public and in some visualizations)" class="fa fa-eye-slash" aria-hidden="true"></i>
+          <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
           {% endif %}
         </td>
         <td>

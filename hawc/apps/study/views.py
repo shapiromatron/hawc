@@ -107,6 +107,17 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
         self.object.searches.add(search)
 
 
+class IdentifierStudyCreate(ReferenceStudyCreate):
+    """
+    Create a study and optionally a reference, linked to an existing external database identifier.
+    """
+
+    form_class = forms.IdentifierStudyForm
+
+    def get_success_url(self):
+        return reverse_lazy("study:update", args=(self.object.id,))
+
+
 class StudyRead(BaseDetail):
     model = models.Study
 

@@ -107,7 +107,6 @@ class HawcSession:
             email (str): email to authenticate
             password (str): password to authenticate
         """
-
         url = f"{self.root_url}/user/api/token-auth/"
         data = {"username": email, "password": password}
         response = self._session.post(url, json=data)
@@ -115,7 +114,7 @@ class HawcSession:
         token = response.json()["token"]
         self._session.headers.update(Authorization=f"Token {token}")
 
-    def set_authentication_token(self, token: str):
+    def set_authentication_token(self, token: str) -> Dict:
         """
         Set authentication token (browser session specific)
 
@@ -123,6 +122,8 @@ class HawcSession:
             token (str): authentication token from your user profile
         """
         self._session.headers.update(Authorization=f"Token {token}")
+        url = f"{self.root_url}/user/api/validate-token/"
+        return self.get(url).json()
 
     def iter_pages(self, url: str, params: Dict = None) -> Generator:
         """

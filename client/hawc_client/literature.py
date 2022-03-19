@@ -10,6 +10,33 @@ class LiteratureClient(BaseClient):
     Client class for literature requests.
     """
 
+    def _import(
+        self, source: int, assessment_id: int, title: str, description: str, ids: List[int]
+    ) -> Dict:
+        """
+        Imports a list of IDs as literature references for the given assessment.
+
+        Args:
+            source (int): Database source (1 for PubMed, 2 for HERO)
+            assessment_id (int): Assessment ID
+            title (str): Title of import
+            description (str): Description of import
+            ids (List[int]): IDs
+
+        Returns:
+            Dict: JSON response
+        """
+        payload = {
+            "assessment": assessment_id,
+            "search_type": "i",
+            "source": source,
+            "title": title,
+            "description": description,
+            "search_string": ",".join(str(id_) for id_ in ids),
+        }
+        url = f"{self.session.root_url}/lit/api/search/"
+        return self.session.post(url, payload).json()
+
     def import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
         """
         Imports a list of HERO IDs as literature references for the given assessment.
@@ -23,16 +50,24 @@ class LiteratureClient(BaseClient):
         Returns:
             Dict: JSON response
         """
-        payload = {
-            "assessment": assessment_id,
-            "search_type": "i",
-            "source": 2,
-            "title": title,
-            "description": description,
-            "search_string": ",".join(str(id_) for id_ in ids),
-        }
-        url = f"{self.session.root_url}/lit/api/search/"
-        return self.session.post(url, payload).json()
+        return self._import(2, assessment_id, title, description, ids)
+
+    def import_pubmed(
+        self, assessment_id: int, title: str, description: str, ids: List[int]
+    ) -> Dict:
+        """
+        Imports a list of PubMed IDs as literature references for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+            title (str): Title of import
+            description (str): Description of import
+            ids (List[int]): PubMed IDs
+
+        Returns:
+            Dict: JSON response
+        """
+        return self._import(1, assessment_id, title, description, ids)
 
     def tags(self, assessment_id: int) -> pd.DataFrame:
         """

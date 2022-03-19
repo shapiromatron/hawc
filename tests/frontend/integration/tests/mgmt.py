@@ -13,8 +13,8 @@ def mgmt(driver, root_url):
     assert len(driver.find_elements_by_css_selector("div.barTask")) == 4
     assert len(driver.find_elements_by_css_selector("div.barUser")) == 1
 
-    # /mgmt/assessment/:id/update/
-    h.go_to(root_url + "/mgmt/assessment/1/update/")
+    # /mgmt/assessment/:id/details/
+    h.go_to(root_url + "/mgmt/assessment/1/details/")
     h.wait_until(h.Text("Sort studies by").exists)
     assert len(driver.find_elements_by_css_selector(".taskStudyRow")) == 1
 

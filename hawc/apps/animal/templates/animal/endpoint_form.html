@@ -128,6 +128,9 @@
             new animal.EditEndpoint(settings);
           },
         });
+      $("#div_id_endpoint_notes").one("focusin", function () {
+        $("input.form-control").first().focus()
+      });
     });
   });
   </script>
