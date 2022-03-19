@@ -5,6 +5,8 @@ from rest_framework.test import APIClient
 
 from hawc.apps.study.models import Study
 
+from ..test_utils import check_details_of_last_log_entry
+
 
 @pytest.mark.django_db
 class TestStudyViewset:
@@ -136,6 +138,7 @@ class TestStudyViewset:
         assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
+        check_details_of_last_log_entry(response.data["id"], "Created study.study")
 
         assert response.data["short_citation"] == data["short_citation"]
         assert response.data["full_citation"] == data["full_citation"]
