@@ -35,7 +35,11 @@ class TestCreatePermissions:
 
         n_designs = Design.objects.count()
         with assertTemplateUsed("epiv2/design_update.html"):
-            response = c.post(url, data=_successful_post, follow=True,)
+            response = c.post(
+                url,
+                data=_successful_post,
+                follow=True,
+            )
             assert Design.objects.count() == n_designs + 1
             n_designs += 1
             assert response.status_code == 200
@@ -91,7 +95,10 @@ class TestUpdatePermissions:
             # check post updates `epiv2_design`
             with assertTemplateUsed("epiv2/design_detail.html"):
                 response = c.post(
-                    reverse("epiv2:design_update", kwargs={"pk": db_keys.epiv2_design},),
+                    reverse(
+                        "epiv2:design_update",
+                        kwargs={"pk": db_keys.epiv2_design},
+                    ),
                     data=_successful_post,
                     follow=True,
                 )
@@ -102,13 +109,22 @@ class TestUpdatePermissions:
 
         view = "epiv2:design_update"
         with assertTemplateUsed("403.html"):
-            response = c.get(reverse(view, kwargs={"pk": db_keys.epiv2_design},), follow=True)
+            response = c.get(
+                reverse(
+                    view,
+                    kwargs={"pk": db_keys.epiv2_design},
+                ),
+                follow=True,
+            )
             assert response.status_code == 403
 
         # check POST
         with assertTemplateUsed("403.html"):
             response = c.post(
-                reverse("epiv2:design_update", kwargs={"pk": db_keys.epiv2_design},),
+                reverse(
+                    "epiv2:design_update",
+                    kwargs={"pk": db_keys.epiv2_design},
+                ),
                 {"name": "foo manchu"},
             )
             assert response.status_code == 403

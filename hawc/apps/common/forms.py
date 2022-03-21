@@ -52,7 +52,8 @@ class BaseFormHelper(cf.FormHelper):
 
         if "help_text" in self.kwargs:
             layout.insert(
-                1, cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
+                1,
+                cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
             )
 
         form_actions = self.kwargs.get("form_actions")
@@ -197,7 +198,13 @@ class AdderLayout(cfl.Field):
         super().__init__(*args, **kwargs)
 
     def render(
-        self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs,
+        self,
+        form,
+        form_style,
+        context,
+        template_pack=TEMPLATE_PACK,
+        extra_context=None,
+        **kwargs,
     ):
         if extra_context is None:
             extra_context = {}

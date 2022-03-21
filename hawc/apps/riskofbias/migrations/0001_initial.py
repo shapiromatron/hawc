@@ -25,7 +25,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("object_id", models.PositiveIntegerField()),
@@ -58,7 +61,8 @@ class Migration(migrations.Migration):
                 (
                     "content_type",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="contenttypes.ContentType",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.ContentType",
                     ),
                 ),
             ],
@@ -73,7 +77,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("name", models.CharField(max_length=128)),
@@ -97,14 +104,18 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("metric", models.CharField(max_length=256)),
                 (
                     "description",
                     models.TextField(
-                        blank=True, help_text="HTML text describing scoring of this field.",
+                        blank=True,
+                        help_text="HTML text describing scoring of this field.",
                     ),
                 ),
                 (
@@ -146,10 +157,12 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterUniqueTogether(
-            name="riskofbiasdomain", unique_together=set([("assessment", "name")]),
+            name="riskofbiasdomain",
+            unique_together=set([("assessment", "name")]),
         ),
         migrations.AlterUniqueTogether(
-            name="riskofbias", unique_together=set([("content_type", "object_id", "metric")]),
+            name="riskofbias",
+            unique_together=set([("content_type", "object_id", "metric")]),
         ),
     ]
 

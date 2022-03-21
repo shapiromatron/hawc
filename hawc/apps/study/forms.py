@@ -150,7 +150,9 @@ class ReferenceStudyForm(BaseStudyForm):
 
 class IdentifierStudyForm(forms.Form):
     db_type = forms.ChoiceField(
-        label="Database", required=True, choices=ReferenceDatabase.import_choices(),
+        label="Database",
+        required=True,
+        choices=ReferenceDatabase.import_choices(),
     )
     db_id = forms.CharField(label="Database ID", required=True)
 

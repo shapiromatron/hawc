@@ -15,7 +15,9 @@ class Migration(migrations.Migration):
             model_name="endpoint",
             name="effect_subtype",
             field=models.CharField(
-                help_text=b"Effect subtype, using common-vocabulary", max_length=128, blank=True,
+                help_text=b"Effect subtype, using common-vocabulary",
+                max_length=128,
+                blank=True,
             ),
         ),
     ]

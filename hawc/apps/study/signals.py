@@ -19,7 +19,8 @@ def invalidate_caches_study(sender, instance, **kwargs):
 
     if instance.bioassay:
         SerializerHelper.clear_cache(
-            apps.get_model("animal", "Endpoint"), {"animal_group__experiment__study": instance.id},
+            apps.get_model("animal", "Endpoint"),
+            {"animal_group__experiment__study": instance.id},
         )
 
     if instance.epi:
@@ -29,7 +30,8 @@ def invalidate_caches_study(sender, instance, **kwargs):
 
     if instance.in_vitro:
         SerializerHelper.clear_cache(
-            apps.get_model("invitro", "ivendpoint"), {"experiment__study_id": instance.id},
+            apps.get_model("invitro", "ivendpoint"),
+            {"experiment__study_id": instance.id},
         )
 
     if instance.epi_meta:

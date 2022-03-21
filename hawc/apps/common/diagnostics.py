@@ -47,7 +47,11 @@ def diagnostic_cache(modeladmin, request, queryset):
 def diagnostic_email(modeladmin, request, queryset):
     to_email = request.user.email
     send_mail(
-        "Test email", "Test message", settings.DEFAULT_FROM_EMAIL, [to_email], fail_silently=False,
+        "Test email",
+        "Test message",
+        settings.DEFAULT_FROM_EMAIL,
+        [to_email],
+        fail_silently=False,
     )
     message = f"Attempted to send email to {to_email}"
     modeladmin.message_user(request, message)

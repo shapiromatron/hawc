@@ -22,15 +22,21 @@ def _replace_column(text: str, existing: str, replacement: str) -> str:
         .replace(f'"high_field_name": "{existing}"', f'"high_field_name":"{replacement}"')
         .replace(f'"field_name":"{existing}"', f'"field_name":"{replacement}"')
         .replace(f'"field_name": "{existing}"', f'"field_name":"{replacement}"')
-        .replace(f'"error_low_field_name":"{existing}"', f'"error_low_field_name":"{replacement}"',)
         .replace(
-            f'"error_low_field_name": "{existing}"', f'"error_low_field_name":"{replacement}"',
+            f'"error_low_field_name":"{existing}"',
+            f'"error_low_field_name":"{replacement}"',
         )
         .replace(
-            f'"error_high_field_name":"{existing}"', f'"error_high_field_name":"{replacement}"',
+            f'"error_low_field_name": "{existing}"',
+            f'"error_low_field_name":"{replacement}"',
         )
         .replace(
-            f'"error_high_field_name": "{existing}"', f'"error_high_field_name":"{replacement}"',
+            f'"error_high_field_name":"{existing}"',
+            f'"error_high_field_name":"{replacement}"',
+        )
+        .replace(
+            f'"error_high_field_name": "{existing}"',
+            f'"error_high_field_name":"{replacement}"',
         )
     )
 

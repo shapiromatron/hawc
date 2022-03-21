@@ -71,7 +71,9 @@ class EpiAssessmentMetadata(BaseApiAction):
         return metadata
 
     def outcome_metadata(self):
-        return dict(diagnostic=dict(constants.Diagnostic.choices),)
+        return dict(
+            diagnostic=dict(constants.Diagnostic.choices),
+        )
 
     def study_population_metadata(self):
         metadata = dict(

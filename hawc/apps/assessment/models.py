@@ -43,7 +43,9 @@ class NoelNames(NamedTuple):
 
 class DSSTox(models.Model):
     dtxsid = models.CharField(
-        max_length=80, primary_key=True, verbose_name="DSSTox substance identifier (DTXSID)",
+        max_length=80,
+        primary_key=True,
+        verbose_name="DSSTox substance identifier (DTXSID)",
     )
     content = models.JSONField(default=dict)
 
@@ -228,7 +230,8 @@ class Assessment(models.Model):
         '"smart-tags" which link to other data in HAWC.',
     )
     conflicts_of_interest = models.TextField(
-        blank=True, help_text="Describe any conflicts of interest by the assessment-team.",
+        blank=True,
+        help_text="Describe any conflicts of interest by the assessment-team.",
     )
     funding_source = models.TextField(
         blank=True, help_text="Describe the funding-source(s) for this assessment."
@@ -335,10 +338,18 @@ class Assessment(models.Model):
 
     def get_noel_names(self):
         if self.noel_name == constants.NoelName.NEL:
-            return NoelNames("NEL", "LEL", "No effect level", "Lowest effect level",)
+            return NoelNames(
+                "NEL",
+                "LEL",
+                "No effect level",
+                "Lowest effect level",
+            )
         elif self.noel_name == constants.NoelName.NOEL:
             return NoelNames(
-                "NOEL", "LOEL", "No observed effect level", "Lowest observed effect level",
+                "NOEL",
+                "LOEL",
+                "No observed effect level",
+                "Lowest observed effect level",
             )
         elif self.noel_name == constants.NoelName.NOAEL:
             return NoelNames(
@@ -358,14 +369,20 @@ class Assessment(models.Model):
         for Model, filters in [
             (apps.get_model("animal", "Endpoint"), dict(assessment_id=self.id)),
             (apps.get_model("epi", "Outcome"), dict(assessment_id=self.id)),
-            (apps.get_model("epimeta", "MetaProtocol"), dict(study__assessment_id=self.id),),
+            (
+                apps.get_model("epimeta", "MetaProtocol"),
+                dict(study__assessment_id=self.id),
+            ),
             (
                 apps.get_model("epimeta", "MetaResult"),
                 dict(protocol__study__assessment_id=self.id),
             ),
             (apps.get_model("invitro", "IVEndpoint"), dict(assessment_id=self.id)),
             (apps.get_model("mgmt", "Task"), dict(study__assessment_id=self.id)),
-            (apps.get_model("riskofbias", "RiskOfBias"), dict(study__assessment_id=self.id),),
+            (
+                apps.get_model("riskofbias", "RiskOfBias"),
+                dict(study__assessment_id=self.id),
+            ),
             (apps.get_model("summary", "Visual"), dict(assessment_id=self.id)),
         ]:
             ids = list(Model.objects.filter(**filters).values_list("id", flat=True))
@@ -473,7 +490,9 @@ class Species(models.Model):
     objects = managers.SpeciesManager()
 
     name = models.CharField(
-        max_length=30, help_text="Enter species in singular (ex: Mouse, not Mice)", unique=True,
+        max_length=30,
+        help_text="Enter species in singular (ex: Mouse, not Mice)",
+        unique=True,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

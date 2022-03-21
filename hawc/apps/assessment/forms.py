@@ -413,7 +413,9 @@ class DatasetForm(forms.ModelForm):
         required=False,
     )
     revision_data = forms.FileField(
-        label="Dataset", help_text=models.DatasetRevision.data.field.help_text, required=False,
+        label="Dataset",
+        help_text=models.DatasetRevision.data.field.help_text,
+        required=False,
     )
     revision_excel_worksheet_name = forms.CharField(
         max_length=64,
@@ -493,7 +495,9 @@ class DatasetForm(forms.ModelForm):
             df = None
             try:
                 df = models.DatasetRevision.try_read_df(
-                    revision_data, suffix, revision_excel_worksheet_name,
+                    revision_data,
+                    suffix,
+                    revision_excel_worksheet_name,
                 )
             except ValueError:
                 self.add_error(
@@ -549,7 +553,12 @@ class LogFilterForm(forms.Form):
         required=False,
         help_text="The HAWC ID for the item which was modified; can often be found in the URL or in data exports",
     )
-    content_type = forms.IntegerField(min_value=1, label="Data type", initial=None, required=False,)
+    content_type = forms.IntegerField(
+        min_value=1,
+        label="Data type",
+        initial=None,
+        required=False,
+    )
     before = forms.DateField(
         required=False,
         label="Modified before",

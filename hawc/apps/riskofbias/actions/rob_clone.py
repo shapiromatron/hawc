@@ -205,6 +205,7 @@ class BulkRobCopyAction(BaseApiAction):
 
         # log the src to dst mapping
         Log.objects.create(
-            assessment_id=self.inputs.dst_assessment_id, message=json.dumps(src_to_dst),
+            assessment_id=self.inputs.dst_assessment_id,
+            message=json.dumps(src_to_dst),
         )
         return {"mapping": src_to_dst}

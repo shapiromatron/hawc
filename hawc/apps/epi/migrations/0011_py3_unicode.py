@@ -121,7 +121,9 @@ class Migration(migrations.Migration):
             model_name="exposure",
             name="n",
             field=models.PositiveIntegerField(
-                blank=True, help_text="Individuals where outcome was measured", null=True,
+                blank=True,
+                help_text="Individuals where outcome was measured",
+                null=True,
             ),
         ),
         migrations.AlterField(
@@ -160,7 +162,10 @@ class Migration(migrations.Migration):
             model_name="exposure",
             name="variance",
             field=models.FloatField(
-                blank=True, help_text="Variance estimate", null=True, verbose_name="Variance",
+                blank=True,
+                help_text="Variance estimate",
+                null=True,
+                verbose_name="Variance",
             ),
         ),
         migrations.AlterField(
@@ -249,14 +254,16 @@ class Migration(migrations.Migration):
             model_name="groupnumericaldescriptions",
             name="is_calculated",
             field=models.BooleanField(
-                default=False, help_text="Was value calculated/estimated from literature?",
+                default=False,
+                help_text="Was value calculated/estimated from literature?",
             ),
         ),
         migrations.AlterField(
             model_name="groupnumericaldescriptions",
             name="lower_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "---"), (1, "lower limit"), (2, "5% CI"), (3, "other")], default=0,
+                choices=[(0, "---"), (1, "lower limit"), (2, "5% CI"), (3, "other")],
+                default=0,
             ),
         ),
         migrations.AlterField(
@@ -283,14 +290,16 @@ class Migration(migrations.Migration):
             model_name="groupnumericaldescriptions",
             name="upper_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "---"), (1, "upper limit"), (2, "95% CI"), (3, "other")], default=0,
+                choices=[(0, "---"), (1, "upper limit"), (2, "95% CI"), (3, "other")],
+                default=0,
             ),
         ),
         migrations.AlterField(
             model_name="groupnumericaldescriptions",
             name="variance_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "---"), (1, "SD"), (2, "SEM"), (3, "GSD"), (4, "other")], default=0,
+                choices=[(0, "---"), (1, "SD"), (2, "SEM"), (3, "GSD"), (4, "other")],
+                default=0,
             ),
         ),
         migrations.AlterField(
@@ -304,7 +313,8 @@ class Migration(migrations.Migration):
             model_name="groupresult",
             name="is_main_finding",
             field=models.BooleanField(
-                help_text="Is this the main-finding for this outcome?", verbose_name="Main finding",
+                help_text="Is this the main-finding for this outcome?",
+                verbose_name="Main finding",
             ),
         ),
         migrations.AlterField(
@@ -345,7 +355,9 @@ class Migration(migrations.Migration):
             model_name="groupresult",
             name="n",
             field=models.PositiveIntegerField(
-                blank=True, help_text="Individuals in group where outcome was measured", null=True,
+                blank=True,
+                help_text="Individuals in group where outcome was measured",
+                null=True,
             ),
         ),
         migrations.AlterField(
@@ -437,7 +449,9 @@ class Migration(migrations.Migration):
             model_name="outcome",
             name="effect_subtype",
             field=models.CharField(
-                blank=True, help_text="Effect subtype, using common-vocabulary", max_length=128,
+                blank=True,
+                help_text="Effect subtype, using common-vocabulary",
+                max_length=128,
             ),
         ),
         migrations.AlterField(
@@ -534,7 +548,8 @@ class Migration(migrations.Migration):
             model_name="result",
             name="metric_description",
             field=models.TextField(
-                blank=True, help_text="Add additional text describing the metric used, if needed.",
+                blank=True,
+                help_text="Add additional text describing the metric used, if needed.",
             ),
         ),
         migrations.AlterField(
@@ -560,7 +575,10 @@ class Migration(migrations.Migration):
                 choices=[
                     (0, "not reported or calculated"),
                     (1, "appears to be adequately powered (sample size met)"),
-                    (2, "somewhat underpowered (sample size is 75% to <100% of recommended)",),
+                    (
+                        2,
+                        "somewhat underpowered (sample size is 75% to <100% of recommended)",
+                    ),
                     (3, "underpowered (sample size is 50 to <75% required)"),
                     (4, "severely underpowered (sample size is <50% required)"),
                 ],

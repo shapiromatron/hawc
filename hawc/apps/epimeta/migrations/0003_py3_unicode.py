@@ -105,7 +105,8 @@ class Migration(migrations.Migration):
             model_name="metaresult",
             name="lower_ci",
             field=models.FloatField(
-                help_text="Numerical value for lower-confidence interval", verbose_name="Lower CI",
+                help_text="Numerical value for lower-confidence interval",
+                verbose_name="Lower CI",
             ),
         ),
         migrations.AlterField(
@@ -119,7 +120,8 @@ class Migration(migrations.Migration):
             model_name="metaresult",
             name="upper_ci",
             field=models.FloatField(
-                help_text="Numerical value for upper-confidence interval", verbose_name="Upper CI",
+                help_text="Numerical value for upper-confidence interval",
+                verbose_name="Upper CI",
             ),
         ),
         migrations.AlterField(
@@ -164,7 +166,9 @@ class Migration(migrations.Migration):
             model_name="singleresult",
             name="n",
             field=models.PositiveIntegerField(
-                blank=True, help_text="Enter the number of observations for this result", null=True,
+                blank=True,
+                help_text="Enter the number of observations for this result",
+                null=True,
             ),
         ),
         migrations.AlterField(

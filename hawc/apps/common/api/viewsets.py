@@ -12,7 +12,9 @@ from .permissions import CleanupFieldsPermissions, user_can_edit_object
 
 
 class CleanupFieldsBaseViewSet(
-    ListUpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet,
+    ListUpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
     """
     Base Viewset for bulk updating text fields.

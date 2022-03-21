@@ -29,7 +29,9 @@ class DataPivotEndpoint(FlatFileExporter):
         else:
             study_ids = set(self.queryset.values_list("experiment__study_id", flat=True))
             self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
-                self.queryset.first().assessment_id, study_ids, "invitro",
+                self.queryset.first().assessment_id,
+                study_ids,
+                "invitro",
             )
 
         header = [
@@ -208,7 +210,9 @@ class DataPivotEndpointGroup(FlatFileExporter):
         else:
             study_ids = set(self.queryset.values_list("experiment__study_id", flat=True))
             self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
-                self.queryset.first().assessment_id, study_ids, "invitro",
+                self.queryset.first().assessment_id,
+                study_ids,
+                "invitro",
             )
 
         header = [

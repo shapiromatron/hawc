@@ -34,7 +34,9 @@ class Design(models.Model):
         verbose_name="Population age category",
     )
     age_description = models.CharField(
-        max_length=128, blank=True, verbose_name="Population age details",
+        max_length=128,
+        blank=True,
+        verbose_name="Population age details",
     )
     sex = models.CharField(default=constants.Sex.BOTH, max_length=1, choices=constants.Sex.choices)
     race = models.CharField(max_length=128, blank=True, verbose_name="Population race/ethnicity")
@@ -351,7 +353,10 @@ class DataExtraction(models.Model):
         default=constants.Significant.NR,
     )
     adjustment_factor = models.ForeignKey(
-        AdjustmentFactor, on_delete=models.SET_NULL, blank=True, null=True,
+        AdjustmentFactor,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
     confidence = models.CharField(max_length=128, verbose_name="Study confidence", blank=True)
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)

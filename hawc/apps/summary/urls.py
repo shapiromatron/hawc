@@ -15,9 +15,15 @@ urlpatterns = [
     # API
     path("api/", include((router.urls, "api"))),
     # SUMMARY-TEXT
-    path("assessment/<int:pk>/summaries/", views.SummaryTextList.as_view(), name="list",),
     path(
-        "assessment/<int:pk>/summaries/modify/", views.SummaryTextModify.as_view(), name="create",
+        "assessment/<int:pk>/summaries/",
+        views.SummaryTextList.as_view(),
+        name="list",
+    ),
+    path(
+        "assessment/<int:pk>/summaries/modify/",
+        views.SummaryTextModify.as_view(),
+        name="create",
     ),
     # SUMMARY TABLES
     path("assessment/<int:pk>/tables/", views.SummaryTableList.as_view(), name="tables_list"),
@@ -31,7 +37,11 @@ urlpatterns = [
         views.SummaryTableCreate.as_view(),
         name="tables_create",
     ),
-    path("assessment/<int:pk>/tables/copy/", views.SummaryTableCopy.as_view(), name="tables_copy",),
+    path(
+        "assessment/<int:pk>/tables/copy/",
+        views.SummaryTableCopy.as_view(),
+        name="tables_copy",
+    ),
     path(
         "assessment/<int:pk>/tables/<slug:slug>/",
         views.SummaryTableDetail.as_view(),
@@ -79,7 +89,9 @@ urlpatterns = [
         name="visualization_create_tester",
     ),
     path(
-        "visual/<int:pk>/", views.VisualizationByIdDetail.as_view(), name="visualization_detail_id",
+        "visual/<int:pk>/",
+        views.VisualizationByIdDetail.as_view(),
+        name="visualization_detail_id",
     ),
     path(
         "visual/assessment/<int:pk>/<slug:slug>/",
@@ -117,7 +129,11 @@ urlpatterns = [
         views.DataPivotCopyAsNewSelector.as_view(),
         name="dp_copy_selector",
     ),
-    path("data-pivot/<int:pk>/", views.DataPivotByIdDetail.as_view(), name="dp_detail_id",),
+    path(
+        "data-pivot/<int:pk>/",
+        views.DataPivotByIdDetail.as_view(),
+        name="dp_detail_id",
+    ),
     path(
         "data-pivot/assessment/<int:pk>/<slug:slug>/",
         views.DataPivotDetail.as_view(),

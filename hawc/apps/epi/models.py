@@ -471,7 +471,8 @@ class Outcome(BaseEndpoint):
         effects = list(self.effects.all().order_by("id"))
         children = list(
             itertools.chain(
-                self.comparison_sets.all().order_by("id"), self.results.all().order_by("id"),
+                self.comparison_sets.all().order_by("id"),
+                self.results.all().order_by("id"),
             )
         )
 
@@ -665,7 +666,8 @@ class Group(models.Model):
         blank=True,
     )
     comments = models.TextField(
-        blank=True, help_text="Provide additional group or extraction details if necessary",
+        blank=True,
+        help_text="Provide additional group or extraction details if necessary",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -754,7 +756,8 @@ class Exposure(models.Model):
         StudyPopulation, on_delete=models.CASCADE, related_name="exposures"
     )
     name = models.CharField(
-        max_length=128, help_text="Name of chemical exposure; use abbreviation. Ex. PFNA; DEHP",
+        max_length=128,
+        help_text="Name of chemical exposure; use abbreviation. Ex. PFNA; DEHP",
     )
     dtxsid = models.ForeignKey(
         DSSTox,
@@ -997,7 +1000,8 @@ class CentralTendency(models.Model):
         blank=True, null=True, verbose_name="Upper range", help_text="Numerical value"
     )
     description = models.TextField(
-        blank=True, help_text="Provide additional exposure or extraction details if necessary",
+        blank=True,
+        help_text="Provide additional exposure or extraction details if necessary",
     )
 
     @property
@@ -1230,7 +1234,10 @@ class Result(models.Model):
         + "<span class='optional'>Enter result, if available (ex: p=0.015, p≤0.05, n.s., etc.)</span>",
     )
     adjustment_factors = models.ManyToManyField(
-        AdjustmentFactor, through=ResultAdjustmentFactor, related_name="outcomes", blank=True,
+        AdjustmentFactor,
+        through=ResultAdjustmentFactor,
+        related_name="outcomes",
+        blank=True,
     )
     estimate_type = models.PositiveSmallIntegerField(
         choices=constants.EstimateType.choices,

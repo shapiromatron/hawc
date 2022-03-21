@@ -151,7 +151,10 @@ class RegisterForm(PasswordForm):
     def helper(self):
         login_url = reverse("user:login")
         helper = BaseFormHelper(
-            self, legend_text="Create an account", cancel_url=login_url, submit_text="Create",
+            self,
+            legend_text="Create an account",
+            cancel_url=login_url,
+            submit_text="Create",
         )
         helper.add_row("first_name", 2, "col-6")
         helper.add_row("password1", 2, "col-6")

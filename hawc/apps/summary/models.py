@@ -172,13 +172,31 @@ class SummaryTable(models.Model):
         return reverse("summary:api:summary-table-list") + f"?assessment_id={assessment_id}"
 
     def get_absolute_url(self):
-        return reverse("summary:tables_detail", args=(self.assessment_id, self.slug,))
+        return reverse(
+            "summary:tables_detail",
+            args=(
+                self.assessment_id,
+                self.slug,
+            ),
+        )
 
     def get_update_url(self):
-        return reverse("summary:tables_update", args=(self.assessment_id, self.slug,))
+        return reverse(
+            "summary:tables_update",
+            args=(
+                self.assessment_id,
+                self.slug,
+            ),
+        )
 
     def get_delete_url(self):
-        return reverse("summary:tables_delete", args=(self.assessment_id, self.slug,))
+        return reverse(
+            "summary:tables_delete",
+            args=(
+                self.assessment_id,
+                self.slug,
+            ),
+        )
 
     def get_api_url(self):
         return reverse("summary:api:summary-table-detail", args=(self.id,))
@@ -278,7 +296,9 @@ class Visual(models.Model):
         help_text="For assessments marked for public viewing, mark visual to be viewable by public",
     )
     sort_order = models.CharField(
-        max_length=40, choices=constants.SortOrder.choices, default=constants.SortOrder.SC,
+        max_length=40,
+        choices=constants.SortOrder.choices,
+        default=constants.SortOrder.SC,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -819,12 +839,16 @@ class DataPivotQuery(DataPivot):
 
         elif self.evidence_type == constants.StudyType.EPI:
             exporter = OutcomeDataPivot(
-                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
+                qs,
+                assessment=self.assessment,
+                filename=f"{self.assessment}-epi",
             )
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             exporter = MetaResultFlatDataPivot(
-                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
+                qs,
+                assessment=self.assessment,
+                filename=f"{self.assessment}-epi",
             )
 
         elif self.evidence_type == constants.StudyType.IN_VITRO:
@@ -837,7 +861,9 @@ class DataPivotQuery(DataPivot):
 
             # generate export
             exporter = Exporter(
-                qs, assessment=self.assessment, filename=f"{self.assessment}-invitro",
+                qs,
+                assessment=self.assessment,
+                filename=f"{self.assessment}-invitro",
             )
 
         return exporter

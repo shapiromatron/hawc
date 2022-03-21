@@ -111,9 +111,18 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
     serializer_class = serializers.StudyPopulationSerializer
 
     criteria_categories = (
-        ("inclusion_criteria", "I",),
-        ("exclusion_criteria", "E",),
-        ("confounding_criteria", "C",),
+        (
+            "inclusion_criteria",
+            "I",
+        ),
+        (
+            "exclusion_criteria",
+            "E",
+        ),
+        (
+            "confounding_criteria",
+            "C",
+        ),
     )
 
     def get_queryset(self, *args, **kwargs):
@@ -144,8 +153,10 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
                 criteria_ids_to_create_for_type = [x for x in self.request.data[data_key]]
 
                 if not post_initial_create:
-                    existing_study_pop_criteria_for_type = models.StudyPopulationCriteria.objects.filter(
-                        study_population=self.get_object(), criteria_type=type_code
+                    existing_study_pop_criteria_for_type = (
+                        models.StudyPopulationCriteria.objects.filter(
+                            study_population=self.get_object(), criteria_type=type_code
+                        )
                     )
 
                     for existing_study_pop_criteria in existing_study_pop_criteria_for_type:
@@ -353,7 +364,16 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
     model = models.Result
     serializer_class = serializers.ResultSerializer
 
-    factor_categories = (("factors_applied", True,), ("factors_considered", False,))
+    factor_categories = (
+        (
+            "factors_applied",
+            True,
+        ),
+        (
+            "factors_considered",
+            False,
+        ),
+    )
 
     def process_adjustment_factor_association(self, serializer, result_id, post_initial_create):
         """

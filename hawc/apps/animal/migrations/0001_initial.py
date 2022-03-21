@@ -20,7 +20,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("name", models.CharField(max_length=100)),
@@ -58,7 +61,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -150,7 +156,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("dose_group_id", models.PositiveSmallIntegerField()),
@@ -170,13 +179,19 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("units", models.CharField(unique=True, max_length=20)),
                 ("administered", models.BooleanField(default=False)),
                 ("converted", models.BooleanField(default=False)),
-                ("hed", models.BooleanField(default=False, verbose_name=b"Human Equivalent Dose"),),
+                (
+                    "hed",
+                    models.BooleanField(default=False, verbose_name=b"Human Equivalent Dose"),
+                ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
@@ -189,7 +204,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -307,7 +325,9 @@ class Migration(migrations.Migration):
                 (
                     "system",
                     models.CharField(
-                        help_text=b"Relevant biological system", max_length=128, blank=True,
+                        help_text=b"Relevant biological system",
+                        max_length=128,
+                        blank=True,
                     ),
                 ),
                 (
@@ -322,7 +342,9 @@ class Migration(migrations.Migration):
                 (
                     "effect",
                     models.CharField(
-                        help_text=b"Effect, using common-vocabulary", max_length=128, blank=True,
+                        help_text=b"Effect, using common-vocabulary",
+                        max_length=128,
+                        blank=True,
                     ),
                 ),
                 (
@@ -384,7 +406,8 @@ class Migration(migrations.Migration):
                 (
                     "variance_type",
                     models.PositiveSmallIntegerField(
-                        default=0, choices=[(0, b"NA"), (1, b"SD"), (2, b"SE"), (3, b"NR")],
+                        default=0,
+                        choices=[(0, b"NA"), (1, b"SD"), (2, b"SE"), (3, b"NR")],
                     ),
                 ),
                 (
@@ -399,7 +422,9 @@ class Migration(migrations.Migration):
                 (
                     "NOEL",
                     models.SmallIntegerField(
-                        default=-999, help_text=b"No observed effect level", verbose_name=b"NOEL",
+                        default=-999,
+                        help_text=b"No observed effect level",
+                        verbose_name=b"NOEL",
                     ),
                 ),
                 (
@@ -413,7 +438,9 @@ class Migration(migrations.Migration):
                 (
                     "FEL",
                     models.SmallIntegerField(
-                        default=-999, help_text=b"Frank effect level", verbose_name=b"FEL",
+                        default=-999,
+                        help_text=b"Frank effect level",
+                        verbose_name=b"FEL",
                     ),
                 ),
                 (
@@ -453,7 +480,10 @@ class Migration(migrations.Migration):
                             (1, b"N/A, no effects detected"),
                             (2, b"yes, visual appearance of monotonicity but no trend"),
                             (3, b"yes, monotonic and significant trend"),
-                            (4, b"yes, visual appearance of non-monotonic but no trend",),
+                            (
+                                4,
+                                b"yes, visual appearance of non-monotonic but no trend",
+                            ),
                             (5, b"yes, non-monotonic and significant trend"),
                             (6, b"no pattern"),
                             (7, b"unclear"),
@@ -534,7 +564,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("dose_group_id", models.IntegerField()),
@@ -584,7 +617,8 @@ class Migration(migrations.Migration):
                 (
                     "significant",
                     models.BooleanField(
-                        default=False, verbose_name=b"Statistically significant from control",
+                        default=False,
+                        verbose_name=b"Statistically significant from control",
                     ),
                 ),
                 (
@@ -617,7 +651,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -755,7 +792,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("response", models.FloatField()),
@@ -777,7 +817,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -833,7 +876,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -856,7 +902,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("name", models.CharField(max_length=30)),
@@ -873,7 +922,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -899,7 +951,10 @@ class Migration(migrations.Migration):
                         validators=[django.core.validators.MinValueValidator(1)],
                     ),
                 ),
-                ("description", models.TextField(verbose_name=b"Justification", blank=True),),
+                (
+                    "description",
+                    models.TextField(verbose_name=b"Justification", blank=True),
+                ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
@@ -918,7 +973,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -944,7 +1002,10 @@ class Migration(migrations.Migration):
                         validators=[django.core.validators.MinValueValidator(1)],
                     ),
                 ),
-                ("description", models.TextField(verbose_name=b"Justification", blank=True),),
+                (
+                    "description",
+                    models.TextField(verbose_name=b"Justification", blank=True),
+                ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
@@ -958,14 +1019,20 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(
-            name="uncertaintyfactorrefval", unique_together=set([("reference_value", "uf_type")]),
+            name="uncertaintyfactorrefval",
+            unique_together=set([("reference_value", "uf_type")]),
         ),
         migrations.AlterUniqueTogether(
-            name="uncertaintyfactorendpoint", unique_together=set([("endpoint", "uf_type")]),
+            name="uncertaintyfactorendpoint",
+            unique_together=set([("endpoint", "uf_type")]),
         ),
-        migrations.AlterUniqueTogether(name="strain", unique_together=set([("species", "name")]),),
         migrations.AlterUniqueTogether(
-            name="referencevalue", unique_together=set([("assessment", "type", "units")]),
+            name="strain",
+            unique_together=set([("species", "name")]),
+        ),
+        migrations.AlterUniqueTogether(
+            name="referencevalue",
+            unique_together=set([("assessment", "type", "units")]),
         ),
         migrations.AddField(
             model_name="dosegroup",

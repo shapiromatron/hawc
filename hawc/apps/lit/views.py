@@ -217,7 +217,9 @@ class SearchQuery(BaseUpdate):
 
     def get_object(self, **kwargs):
         obj = get_object_or_404(
-            self.model, slug=self.kwargs.get(self.slug_url_kwarg), assessment=self.kwargs.get("pk"),
+            self.model,
+            slug=self.kwargs.get(self.slug_url_kwarg),
+            assessment=self.kwargs.get("pk"),
         )
         return super().get_object(object=obj)
 
