@@ -4,7 +4,10 @@ from hawc.apps.animal.exports import EndpointFlatDataPivot, get_significance_and
 
 def test_get_significance_and_direction():
     # no data
-    resp = get_significance_and_direction(DataType.CONTINUOUS, [],)
+    resp = get_significance_and_direction(
+        DataType.CONTINUOUS,
+        [],
+    )
     assert resp == []
 
     # continuous

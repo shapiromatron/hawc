@@ -83,7 +83,9 @@ class Metadata(models.Model):
         related_name="+",
     )
     climate_as_reported = models.TextField(
-        verbose_name="Climate as reported", blank=True, help_text="Copy and paste from article",
+        verbose_name="Climate as reported",
+        blank=True,
+        help_text="Copy and paste from article",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -144,7 +146,8 @@ class Cause(models.Model):
         help_text="Type any other useful information not captured in other fields",
     )
     as_reported = models.TextField(
-        verbose_name="Cause as reported", help_text="Copy and paste 1-2 sentences from article",
+        verbose_name="Cause as reported",
+        help_text="Copy and paste 1-2 sentences from article",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -211,7 +214,8 @@ class Effect(models.Model):
         help_text="Type any other useful information not captured in other fields",
     )
     as_reported = models.TextField(
-        verbose_name="Effect as reported", help_text="Copy and paste 1-2 sentences from article",
+        verbose_name="Effect as reported",
+        help_text="Copy and paste 1-2 sentences from article",
     )
     modifying_factors = models.CharField(
         verbose_name="Modifying factors",
@@ -232,7 +236,9 @@ class Effect(models.Model):
 class Quantitative(models.Model):
     effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
     sort_order = models.PositiveSmallIntegerField(
-        verbose_name="Sort order", help_text="Sort order of a multiple responses", default=0,
+        verbose_name="Sort order",
+        help_text="Sort order of a multiple responses",
+        default=0,
     )
     cause_level = models.CharField(
         verbose_name="Treatment level",

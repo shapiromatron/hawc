@@ -13,7 +13,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="assessment", name="enable_comments",),
+        migrations.RemoveField(
+            model_name="assessment",
+            name="enable_comments",
+        ),
         migrations.AlterField(
             model_name="assessment",
             name="reviewers",

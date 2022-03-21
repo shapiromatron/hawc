@@ -8,11 +8,11 @@ from django.db import migrations
 
 def validateCTCount(model):
     """
-     If this fails, investigate database and remove non-study fields
-     (if appropriate):
+    If this fails, investigate database and remove non-study fields
+    (if appropriate):
 
-        SELECT * FROM riskofbias_riskofbias WHERE content_type_id!=29
-        DELETE FROM riskofbias_riskofbias WHERE content_type_id!=29
+       SELECT * FROM riskofbias_riskofbias WHERE content_type_id!=29
+       DELETE FROM riskofbias_riskofbias WHERE content_type_id!=29
     """
     model_ct = model.objects.distinct("content_type_id")
     if model_ct.count() > 1:

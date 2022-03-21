@@ -12,6 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="singleresult", options={"ordering": ("exposure_name",)},
+            name="singleresult",
+            options={"ordering": ("exposure_name",)},
         ),
     ]

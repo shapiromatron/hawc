@@ -17,6 +17,14 @@ urlpatterns = [
         name="user_assessment_assignments",
     ),
     # assessment-level views
-    path("assessment/<int:pk>/", views.TaskDashboard.as_view(), name="assessment_dashboard",),
-    path("assessment/<int:pk>/details/", views.TaskDetail.as_view(), name="assessment_tasks",),
+    path(
+        "assessment/<int:pk>/",
+        views.TaskDashboard.as_view(),
+        name="assessment_dashboard",
+    ),
+    path(
+        "assessment/<int:pk>/details/",
+        views.TaskDetail.as_view(),
+        name="assessment_tasks",
+    ),
 ]

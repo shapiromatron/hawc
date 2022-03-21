@@ -79,7 +79,9 @@ class SummaryTextModify(BaseCreate):
         return WebappConfig(
             app="summaryTextStartup",
             data=dict(
-                assessment_id=self.assessment.id, editMode=True, csrf=get_token(self.request),
+                assessment_id=self.assessment.id,
+                editMode=True,
+                csrf=get_token(self.request),
             ),
         )
 
@@ -140,7 +142,11 @@ class SummaryTableCreateSelector(BaseCreate):
 
     def form_valid(self, form):
         url = reverse(
-            "summary:tables_create", args=(form.assessment.id, form.cleaned_data["table_type"],)
+            "summary:tables_create",
+            args=(
+                form.assessment.id,
+                form.cleaned_data["table_type"],
+            ),
         )
         return HttpResponseRedirect(url)
 

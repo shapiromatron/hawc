@@ -27,7 +27,9 @@ class Migration(migrations.Migration):
         # assessment changes
         migrations.RenameModel(old_name="BMD_Assessment_Settings", new_name="AssessmentSettings"),
         migrations.RenameField(
-            model_name="AssessmentSettings", old_name="BMDS_version", new_name="version",
+            model_name="AssessmentSettings",
+            old_name="BMDS_version",
+            new_name="version",
         ),
         migrations.AlterField(
             model_name="assessmentsettings",
@@ -55,8 +57,14 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(updateAssessmentVersion, reverse_code=undoAssessmentVersion),
         # logic changes
-        migrations.RemoveField(model_name="logicfield", name="function_name",),
-        migrations.RemoveField(model_name="logicfield", name="logic_id",),
+        migrations.RemoveField(
+            model_name="logicfield",
+            name="function_name",
+        ),
+        migrations.RemoveField(
+            model_name="logicfield",
+            name="logic_id",
+        ),
         migrations.AlterField(
             model_name="logicfield",
             name="assessment",
@@ -67,7 +75,10 @@ class Migration(migrations.Migration):
                 to="assessment.Assessment",
             ),
         ),
-        migrations.AlterModelOptions(name="logicfield", options={"ordering": ("id",)},),
+        migrations.AlterModelOptions(
+            name="logicfield",
+            options={"ordering": ("id",)},
+        ),
         # session changes
         migrations.CreateModel(
             name="Session",
@@ -75,7 +86,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 (
@@ -118,11 +132,25 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "BMD sessions",
             },
         ),
-        migrations.RemoveField(model_name="bmd_session", name="dose_units",),
-        migrations.RemoveField(model_name="bmd_session", name="endpoint",),
-        migrations.RemoveField(model_name="bmd_session", name="selected_model",),
-        migrations.RemoveField(model_name="bmd_model_run", name="BMD_session",),
-        migrations.DeleteModel(name="BMD_session",),
+        migrations.RemoveField(
+            model_name="bmd_session",
+            name="dose_units",
+        ),
+        migrations.RemoveField(
+            model_name="bmd_session",
+            name="endpoint",
+        ),
+        migrations.RemoveField(
+            model_name="bmd_session",
+            name="selected_model",
+        ),
+        migrations.RemoveField(
+            model_name="bmd_model_run",
+            name="BMD_session",
+        ),
+        migrations.DeleteModel(
+            name="BMD_session",
+        ),
         # model settings
         migrations.CreateModel(
             name="Model",
@@ -130,18 +158,27 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("model_id", models.PositiveSmallIntegerField()),
                 ("bmr_id", models.PositiveSmallIntegerField()),
                 ("name", models.CharField(max_length=25)),
-                ("overrides", django.contrib.postgres.fields.jsonb.JSONField(default=dict),),
+                (
+                    "overrides",
+                    django.contrib.postgres.fields.jsonb.JSONField(default=dict),
+                ),
                 ("date_executed", models.DateTimeField(null=True)),
                 ("execution_error", models.BooleanField(default=False)),
                 ("dfile", models.TextField(blank=True)),
                 ("outfile", models.TextField(blank=True)),
-                ("output", django.contrib.postgres.fields.jsonb.JSONField(default=dict),),
+                (
+                    "output",
+                    django.contrib.postgres.fields.jsonb.JSONField(default=dict),
+                ),
                 ("plot", models.ImageField(blank=True, upload_to=b"bmds_plot")),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
@@ -156,7 +193,9 @@ class Migration(migrations.Migration):
             ],
             options={"ordering": ("model_id", "bmr_id"), "get_latest_by": "created"},
         ),
-        migrations.DeleteModel(name="BMD_model_run",),
+        migrations.DeleteModel(
+            name="BMD_model_run",
+        ),
         # selected model
         migrations.CreateModel(
             name="SelectedModel",
@@ -164,7 +203,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("notes", models.TextField(blank=True)),
@@ -181,7 +223,9 @@ class Migration(migrations.Migration):
                 (
                     "model",
                     models.ForeignKey(
-                        null=True, on_delete=django.db.models.deletion.CASCADE, to="bmd.Model",
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="bmd.Model",
                     ),
                 ),
             ],

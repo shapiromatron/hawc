@@ -41,7 +41,8 @@ def test_study_forms(db_keys):
     assert c.login(username="admin@hawcproject.org", password="pw") is True
 
     response = c.post(
-        reverse("study:new_ref", kwargs={"pk": db_keys.assessment_final}), study_dict,
+        reverse("study:new_ref", kwargs={"pk": db_keys.assessment_final}),
+        study_dict,
     )
     pk = re.findall(r"/study/(\d+)/$", response["location"])
     pk = int(pk[0])

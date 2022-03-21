@@ -14,10 +14,18 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name="riskofbias",
-            options={"ordering": ("final", "id",), "verbose_name_plural": "Risk of Biases"},
+            options={
+                "ordering": (
+                    "final",
+                    "id",
+                ),
+                "verbose_name_plural": "Risk of Biases",
+            },
         ),
         migrations.RenameField(
-            model_name="riskofbias", old_name="conflict_resolution", new_name="final",
+            model_name="riskofbias",
+            old_name="conflict_resolution",
+            new_name="final",
         ),
         migrations.AlterField(
             model_name="riskofbias",

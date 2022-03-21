@@ -107,5 +107,8 @@ class Migration(migrations.Migration):
                 related_name="entities", through="vocab.EntityTermRelation", to="vocab.Term"
             ),
         ),
-        migrations.AlterUniqueTogether(name="entity", unique_together={("ontology", "uid")},),
+        migrations.AlterUniqueTogether(
+            name="entity",
+            unique_together={("ontology", "uid")},
+        ),
     ]

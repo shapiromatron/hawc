@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="timespentediting", options={"verbose_name_plural": "Time spent editing models"},
+            name="timespentediting",
+            options={"verbose_name_plural": "Time spent editing models"},
         ),
         migrations.AlterField(
             model_name="assessment",
@@ -38,7 +39,8 @@ class Migration(migrations.Migration):
             model_name="assessment",
             name="conflicts_of_interest",
             field=models.TextField(
-                blank=True, help_text="Describe any conflicts of interest by the assessment-team.",
+                blank=True,
+                help_text="Describe any conflicts of interest by the assessment-team.",
             ),
         ),
         migrations.AlterField(
@@ -102,7 +104,8 @@ class Migration(migrations.Migration):
             model_name="assessment",
             name="funding_source",
             field=models.TextField(
-                blank=True, help_text="Describe the funding-source(s) for this assessment.",
+                blank=True,
+                help_text="Describe the funding-source(s) for this assessment.",
             ),
         ),
         migrations.AlterField(
@@ -135,7 +138,8 @@ class Migration(migrations.Migration):
             model_name="assessment",
             name="public",
             field=models.BooleanField(
-                default=False, help_text="The assessment can be viewed by the general public.",
+                default=False,
+                help_text="The assessment can be viewed by the general public.",
             ),
         ),
         migrations.AlterField(
@@ -181,7 +185,9 @@ class Migration(migrations.Migration):
             field=models.FileField(upload_to="attachment"),
         ),
         migrations.AlterField(
-            model_name="attachment", name="description", field=models.TextField(),
+            model_name="attachment",
+            name="description",
+            field=models.TextField(),
         ),
         migrations.AlterField(
             model_name="baseendpoint",

@@ -11,7 +11,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="log", name="content", field=models.JSONField(default=dict),
+            model_name="log",
+            name="content",
+            field=models.JSONField(default=dict),
         ),
         migrations.AddField(
             model_name="log",
@@ -23,7 +25,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="log", name="object_id", field=models.IntegerField(null=True),
+            model_name="log",
+            name="object_id",
+            field=models.IntegerField(null=True),
         ),
         migrations.RemoveField(model_name="log", name="last_updated"),
     ]

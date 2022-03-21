@@ -19,7 +19,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("description", models.TextField()),
@@ -38,7 +41,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("name", models.CharField(max_length=256)),
@@ -54,7 +60,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("code", models.CharField(max_length=2, blank=True)),
@@ -68,7 +77,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("description", models.TextField()),
@@ -87,7 +99,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("name", models.CharField(unique=True, max_length=64)),
@@ -102,7 +117,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -115,14 +133,23 @@ class Migration(migrations.Migration):
                 ("dermal", models.BooleanField(default=False)),
                 ("oral", models.BooleanField(default=False)),
                 ("in_utero", models.BooleanField(default=False)),
-                ("iv", models.BooleanField(default=False, verbose_name=b"Intravenous (IV)"),),
+                (
+                    "iv",
+                    models.BooleanField(default=False, verbose_name=b"Intravenous (IV)"),
+                ),
                 ("unknown_route", models.BooleanField(default=False)),
                 (
                     "measured",
                     models.CharField(max_length=128, verbose_name=b"What was measured", blank=True),
                 ),
-                ("metric", models.CharField(max_length=128, verbose_name=b"Measurement Metric"),),
-                ("metric_description", models.TextField(verbose_name=b"Measurement Description"),),
+                (
+                    "metric",
+                    models.CharField(max_length=128, verbose_name=b"Measurement Metric"),
+                ),
+                (
+                    "metric_description",
+                    models.TextField(verbose_name=b"Measurement Description"),
+                ),
                 (
                     "analytical_method",
                     models.TextField(
@@ -132,7 +159,9 @@ class Migration(migrations.Migration):
                 (
                     "sampling_period",
                     models.CharField(
-                        help_text=b"Exposure sampling period", max_length=128, blank=True,
+                        help_text=b"Exposure sampling period",
+                        max_length=128,
+                        blank=True,
                     ),
                 ),
                 (
@@ -167,7 +196,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("group_id", models.PositiveSmallIntegerField()),
@@ -229,7 +261,8 @@ class Migration(migrations.Migration):
                 (
                     "comments",
                     models.TextField(
-                        help_text=b"Any other comments related to this group", blank=True,
+                        help_text=b"Any other comments related to this group",
+                        blank=True,
                     ),
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),
@@ -250,7 +283,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -281,7 +317,8 @@ class Migration(migrations.Migration):
                 (
                     "is_calculated",
                     models.BooleanField(
-                        default=False, help_text=b"Was value calculated/estimated from literature?",
+                        default=False,
+                        help_text=b"Was value calculated/estimated from literature?",
                     ),
                 ),
                 ("variance", models.FloatField(null=True, blank=True)),
@@ -323,7 +360,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -337,7 +377,9 @@ class Migration(migrations.Migration):
                 (
                     "estimate",
                     models.FloatField(
-                        help_text=b"Central tendency estimate for group", null=True, blank=True,
+                        help_text=b"Central tendency estimate for group",
+                        null=True,
+                        blank=True,
                     ),
                 ),
                 (
@@ -442,13 +484,17 @@ class Migration(migrations.Migration):
                 (
                     "system",
                     models.CharField(
-                        help_text=b"Relevant biological system", max_length=128, blank=True,
+                        help_text=b"Relevant biological system",
+                        max_length=128,
+                        blank=True,
                     ),
                 ),
                 (
                     "effect",
                     models.CharField(
-                        help_text=b"Effect, using common-vocabulary", max_length=128, blank=True,
+                        help_text=b"Effect, using common-vocabulary",
+                        max_length=128,
+                        blank=True,
                     ),
                 ),
                 (
@@ -486,7 +532,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -531,7 +580,9 @@ class Migration(migrations.Migration):
                 (
                     "prevalence_incidence",
                     models.CharField(
-                        max_length=128, verbose_name=b"Overall incidence prevalence", blank=True,
+                        max_length=128,
+                        verbose_name=b"Overall incidence prevalence",
+                        blank=True,
                     ),
                 ),
                 (
@@ -547,7 +598,10 @@ class Migration(migrations.Migration):
                                 b"somewhat underpowered (sample size is 75% to <100% of recommended)",
                             ),
                             (3, b"underpowered (sample size is 50 to <75% required)"),
-                            (4, b"severely underpowered (sample size is <50% required)",),
+                            (
+                                4,
+                                b"severely underpowered (sample size is <50% required)",
+                            ),
                         ],
                     ),
                 ),
@@ -610,7 +664,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("included_in_final_model", models.BooleanField(default=True)),
@@ -636,7 +693,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("metric", models.CharField(unique=True, max_length=128)),
@@ -681,7 +741,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("name", models.CharField(max_length=256)),
@@ -750,7 +813,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -884,9 +950,11 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterUniqueTogether(
-            name="criteria", unique_together=set([("assessment", "description")]),
+            name="criteria",
+            unique_together=set([("assessment", "description")]),
         ),
         migrations.AlterUniqueTogether(
-            name="adjustmentfactor", unique_together=set([("assessment", "description")]),
+            name="adjustmentfactor",
+            unique_together=set([("assessment", "description")]),
         ),
     ]

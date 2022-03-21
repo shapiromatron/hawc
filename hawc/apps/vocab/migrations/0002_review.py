@@ -29,7 +29,9 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name="entitytermrelation", name="notes", field=models.TextField(blank=True),
+            model_name="entitytermrelation",
+            name="notes",
+            field=models.TextField(blank=True),
         ),
         migrations.AlterField(
             model_name="entitytermrelation",

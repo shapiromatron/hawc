@@ -209,7 +209,9 @@ class Migration(migrations.Migration):
             model_name="endpoint",
             name="LOEL",
             field=models.SmallIntegerField(
-                default=-999, help_text="Lowest observed effect level", verbose_name="LOEL",
+                default=-999,
+                help_text="Lowest observed effect level",
+                verbose_name="LOEL",
             ),
         ),
         migrations.AlterField(
@@ -220,7 +222,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="endpoint", name="additional_fields", field=models.TextField(default="{}"),
+            model_name="endpoint",
+            name="additional_fields",
+            field=models.TextField(default="{}"),
         ),
         migrations.AlterField(
             model_name="endpoint",
@@ -277,7 +281,8 @@ class Migration(migrations.Migration):
             model_name="endpoint",
             name="diagnostic",
             field=models.TextField(
-                blank=True, help_text="Diagnostic or method used to measure endpoint (if relevant)",
+                blank=True,
+                help_text="Diagnostic or method used to measure endpoint (if relevant)",
             ),
         ),
         migrations.AlterField(
@@ -291,7 +296,9 @@ class Migration(migrations.Migration):
             model_name="endpoint",
             name="effect_subtype",
             field=models.CharField(
-                blank=True, help_text="Effect subtype, using common-vocabulary", max_length=128,
+                blank=True,
+                help_text="Effect subtype, using common-vocabulary",
+                max_length=128,
             ),
         ),
         migrations.AlterField(
@@ -387,7 +394,8 @@ class Migration(migrations.Migration):
             model_name="endpoint",
             name="power_notes",
             field=models.TextField(
-                blank=True, help_text="Power of study-design to detect change from control",
+                blank=True,
+                help_text="Power of study-design to detect change from control",
             ),
         ),
         migrations.AlterField(
@@ -438,7 +446,9 @@ class Migration(migrations.Migration):
             model_name="endpoint",
             name="trend_value",
             field=models.FloatField(
-                blank=True, help_text="Numerical result for trend-test, if available", null=True,
+                blank=True,
+                help_text="Numerical result for trend-test, if available",
+                null=True,
             ),
         ),
         migrations.AlterField(

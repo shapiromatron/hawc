@@ -119,7 +119,9 @@ def tsne_to_scatterplot(data: pd.DataFrame) -> go.Figure:
         )
     )
     fig.update_layout(
-        autosize=True, plot_bgcolor="white", margin=dict(l=20, r=20, t=20, b=20),  # noqa: E741
+        autosize=True,
+        plot_bgcolor="white",
+        margin=dict(l=20, r=20, t=20, b=20),  # noqa: E741
     )
     fig.update_xaxes(showticklabels=False)
     fig.update_yaxes(showticklabels=False)
