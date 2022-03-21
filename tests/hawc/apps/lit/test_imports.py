@@ -235,7 +235,8 @@ class TestHero:
 
         # Run PubMed Query
         url_run_query = reverse(
-            "lit:search_query", kwargs={"pk": assessment_pk, "slug": pm_data["slug"]},
+            "lit:search_query",
+            kwargs={"pk": assessment_pk, "slug": pm_data["slug"]},
         )
         response = client.get(url_run_query)
         assert response.status_code in [200, 302]

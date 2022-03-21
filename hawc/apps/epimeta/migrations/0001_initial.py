@@ -19,14 +19,21 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
-                ("name", models.CharField(max_length=128, verbose_name=b"Protocol name"),),
+                (
+                    "name",
+                    models.CharField(max_length=128, verbose_name=b"Protocol name"),
+                ),
                 (
                     "protocol_type",
                     models.PositiveSmallIntegerField(
-                        default=0, choices=[(0, b"Meta-analysis"), (1, b"Pooled-analysis")],
+                        default=0,
+                        choices=[(0, b"Meta-analysis"), (1, b"Pooled-analysis")],
                     ),
                 ),
                 (
@@ -44,13 +51,17 @@ class Migration(migrations.Migration):
                 (
                     "lit_search_start_date",
                     models.DateField(
-                        null=True, verbose_name=b"Literature search start-date", blank=True,
+                        null=True,
+                        verbose_name=b"Literature search start-date",
+                        blank=True,
                     ),
                 ),
                 (
                     "lit_search_end_date",
                     models.DateField(
-                        null=True, verbose_name=b"Literature search end-date", blank=True,
+                        null=True,
+                        verbose_name=b"Literature search end-date",
+                        blank=True,
                     ),
                 ),
                 (
@@ -73,13 +84,17 @@ class Migration(migrations.Migration):
                 (
                     "exclusion_criteria",
                     models.ManyToManyField(
-                        related_name="meta_exclusion_criteria", to="epi.Criteria", blank=True,
+                        related_name="meta_exclusion_criteria",
+                        to="epi.Criteria",
+                        blank=True,
                     ),
                 ),
                 (
                     "inclusion_criteria",
                     models.ManyToManyField(
-                        related_name="meta_inclusion_criteria", to="epi.Criteria", blank=True,
+                        related_name="meta_inclusion_criteria",
+                        to="epi.Criteria",
+                        blank=True,
                     ),
                 ),
                 (
@@ -97,7 +112,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("label", models.CharField(max_length=128)),
@@ -173,7 +191,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (

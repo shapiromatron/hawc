@@ -19,13 +19,31 @@ urlpatterns = [
         views.MetaProtocolCreate.as_view(),
         name="protocol_create",
     ),
-    path("protocol/<int:pk>/", views.MetaProtocolDetail.as_view(), name="protocol_detail",),
-    path("protocol/<int:pk>/update/", views.MetaProtocolUpdate.as_view(), name="protocol_update",),
-    path("protocol/<int:pk>/delete/", views.MetaProtocolDelete.as_view(), name="protocol_delete",),
-    # result views
-    path("assessment/<int:pk>/results/", views.MetaResultList.as_view(), name="result_list",),
     path(
-        "protocol/<int:pk>/result/create/", views.MetaResultCreate.as_view(), name="result_create",
+        "protocol/<int:pk>/",
+        views.MetaProtocolDetail.as_view(),
+        name="protocol_detail",
+    ),
+    path(
+        "protocol/<int:pk>/update/",
+        views.MetaProtocolUpdate.as_view(),
+        name="protocol_update",
+    ),
+    path(
+        "protocol/<int:pk>/delete/",
+        views.MetaProtocolDelete.as_view(),
+        name="protocol_delete",
+    ),
+    # result views
+    path(
+        "assessment/<int:pk>/results/",
+        views.MetaResultList.as_view(),
+        name="result_list",
+    ),
+    path(
+        "protocol/<int:pk>/result/create/",
+        views.MetaResultCreate.as_view(),
+        name="result_create",
     ),
     path(
         "protocol/<int:pk>/result/copy-as-new-selector/",
@@ -33,6 +51,14 @@ urlpatterns = [
         name="result_copy_selector",
     ),
     path("result/<int:pk>/", views.MetaResultDetail.as_view(), name="result_detail"),
-    path("result/<int:pk>/update/", views.MetaResultUpdate.as_view(), name="result_update",),
-    path("result/<int:pk>/delete/", views.MetaResultDelete.as_view(), name="result_delete",),
+    path(
+        "result/<int:pk>/update/",
+        views.MetaResultUpdate.as_view(),
+        name="result_update",
+    ),
+    path(
+        "result/<int:pk>/delete/",
+        views.MetaResultDelete.as_view(),
+        name="result_delete",
+    ),
 ]

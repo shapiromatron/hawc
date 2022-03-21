@@ -46,7 +46,8 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterUniqueTogether(
-            name="selectedmodel", unique_together={("endpoint", "dose_units")},
+            name="selectedmodel",
+            unique_together={("endpoint", "dose_units")},
         ),
         migrations.RunPython(set_dose_units, migrations.RunPython.noop),
     ]

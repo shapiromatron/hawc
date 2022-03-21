@@ -18,7 +18,9 @@ router.register(
 )
 router.register(r"outcome-cleanup", api.OutcomeCleanup, basename="outcome-cleanup")
 router.register(
-    r"studypopulation-cleanup", api.StudyPopulationCleanup, basename="studypopulation-cleanup",
+    r"studypopulation-cleanup",
+    api.StudyPopulationCleanup,
+    basename="studypopulation-cleanup",
 )
 router.register(r"exposure-cleanup", api.ExposureCleanup, basename="exposure-cleanup")
 router.register(r"metadata", api.Metadata, basename="metadata")
@@ -61,7 +63,11 @@ urlpatterns = [
         views.StudyPopulationCopyAsNewSelector.as_view(),
         name="sp_copy_selector",
     ),
-    path("study-population/<int:pk>/", views.StudyPopulationDetail.as_view(), name="sp_detail",),
+    path(
+        "study-population/<int:pk>/",
+        views.StudyPopulationDetail.as_view(),
+        name="sp_detail",
+    ),
     path(
         "study-population/<int:pk>/update/",
         views.StudyPopulationUpdate.as_view(),
@@ -73,17 +79,33 @@ urlpatterns = [
         name="sp_delete",
     ),
     # Exposure
-    path("study/<int:pk>/exposure/create/", views.ExposureCreate.as_view(), name="exp_create",),
+    path(
+        "study/<int:pk>/exposure/create/",
+        views.ExposureCreate.as_view(),
+        name="exp_create",
+    ),
     path(
         "study/<int:pk>/exposure/copy-as-new-selector/",
         views.ExposureCopyAsNewSelector.as_view(),
         name="exp_copy_selector",
     ),
     path("exposure/<int:pk>/", views.ExposureDetail.as_view(), name="exp_detail"),
-    path("exposure/<int:pk>/update/", views.ExposureUpdate.as_view(), name="exp_update",),
-    path("exposure/<int:pk>/delete/", views.ExposureDelete.as_view(), name="exp_delete",),
+    path(
+        "exposure/<int:pk>/update/",
+        views.ExposureUpdate.as_view(),
+        name="exp_update",
+    ),
+    path(
+        "exposure/<int:pk>/delete/",
+        views.ExposureDelete.as_view(),
+        name="exp_delete",
+    ),
     # Outcome
-    path("assessment/<int:pk>/outcomes/", views.OutcomeList.as_view(), name="outcome_list",),
+    path(
+        "assessment/<int:pk>/outcomes/",
+        views.OutcomeList.as_view(),
+        name="outcome_list",
+    ),
     path(
         "study-population/<int:pk>/outcome/create/",
         views.OutcomeCreate.as_view(),
@@ -95,18 +117,38 @@ urlpatterns = [
         name="outcome_copy_selector",
     ),
     path("outcome/<int:pk>/", views.OutcomeDetail.as_view(), name="outcome_detail"),
-    path("outcome/<int:pk>/update/", views.OutcomeUpdate.as_view(), name="outcome_update",),
-    path("outcome/<int:pk>/delete/", views.OutcomeDelete.as_view(), name="outcome_delete",),
+    path(
+        "outcome/<int:pk>/update/",
+        views.OutcomeUpdate.as_view(),
+        name="outcome_update",
+    ),
+    path(
+        "outcome/<int:pk>/delete/",
+        views.OutcomeDelete.as_view(),
+        name="outcome_delete",
+    ),
     # Results
-    path("outcome/<int:pk>/result/create/", views.ResultCreate.as_view(), name="result_create",),
+    path(
+        "outcome/<int:pk>/result/create/",
+        views.ResultCreate.as_view(),
+        name="result_create",
+    ),
     path(
         "outcome/<int:pk>/result/copy-as-new-selector/",
         views.ResultCopyAsNewSelector.as_view(),
         name="result_copy_selector",
     ),
     path("result/<int:pk>/", views.ResultDetail.as_view(), name="result_detail"),
-    path("result/<int:pk>/update/", views.ResultUpdate.as_view(), name="result_update",),
-    path("result/<int:pk>/delete/", views.ResultDelete.as_view(), name="result_delete",),
+    path(
+        "result/<int:pk>/update/",
+        views.ResultUpdate.as_view(),
+        name="result_update",
+    ),
+    path(
+        "result/<int:pk>/delete/",
+        views.ResultDelete.as_view(),
+        name="result_delete",
+    ),
     # Comparison set
     path(
         "study-population/<int:pk>/comparison-set/create/",
@@ -128,9 +170,21 @@ urlpatterns = [
         views.ComparisonSetOutcomeCopySelector.as_view(),
         name="cs_outcome_copy_selector",
     ),
-    path("comparison-set/<int:pk>/", views.ComparisonSetDetail.as_view(), name="cs_detail",),
-    path("comparison-set/<int:pk>/update/", views.ComparisonSetUpdate.as_view(), name="cs_update",),
-    path("comparison-set/<int:pk>/delete/", views.ComparisonSetDelete.as_view(), name="cs_delete",),
+    path(
+        "comparison-set/<int:pk>/",
+        views.ComparisonSetDetail.as_view(),
+        name="cs_detail",
+    ),
+    path(
+        "comparison-set/<int:pk>/update/",
+        views.ComparisonSetUpdate.as_view(),
+        name="cs_update",
+    ),
+    path(
+        "comparison-set/<int:pk>/delete/",
+        views.ComparisonSetDelete.as_view(),
+        name="cs_delete",
+    ),
     # Groups (in comparison set)
     path("group/<int:pk>/", views.GroupDetail.as_view(), name="g_detail"),
     path("group/<int:pk>/update/", views.GroupUpdate.as_view(), name="g_update"),

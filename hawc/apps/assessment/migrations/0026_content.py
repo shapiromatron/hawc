@@ -31,7 +31,8 @@ class Migration(migrations.Migration):
                 (
                     "content_type",
                     models.PositiveIntegerField(
-                        choices=[(1, "Homepage"), (2, "About"), (3, "Resources")], unique=True,
+                        choices=[(1, "Homepage"), (2, "About"), (3, "Resources")],
+                        unique=True,
                     ),
                 ),
                 ("template", models.TextField()),

@@ -509,7 +509,9 @@ class OutcomeFilterForm(forms.Form):
     )
 
     metric_units = forms.ModelChoiceField(queryset=DoseUnits.objects.all(), required=False)
-    order_by = forms.ChoiceField(choices=ORDER_BY_CHOICES,)
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
+    )
     paginate_by = forms.IntegerField(
         label="Items per page", min_value=10, initial=25, max_value=500, required=False
     )
@@ -818,7 +820,9 @@ class ResultForm(forms.ModelForm):
         objs.extend(
             [
                 models.ResultAdjustmentFactor(
-                    adjustment_factor=af, result=self.instance, included_in_final_model=True,
+                    adjustment_factor=af,
+                    result=self.instance,
+                    included_in_final_model=True,
                 )
                 for af in applied
             ]
@@ -829,7 +833,9 @@ class ResultForm(forms.ModelForm):
         objs.extend(
             [
                 models.ResultAdjustmentFactor(
-                    adjustment_factor=af, result=self.instance, included_in_final_model=False,
+                    adjustment_factor=af,
+                    result=self.instance,
+                    included_in_final_model=False,
                 )
                 for af in considered
             ]
@@ -875,12 +881,14 @@ class ResultForm(forms.ModelForm):
         helper.add_row("resulttags", 1, "col-md-6")
 
         url = reverse(
-            "assessment:effect_tag_create", kwargs={"pk": self.instance.outcome.assessment_id},
+            "assessment:effect_tag_create",
+            kwargs={"pk": self.instance.outcome.assessment_id},
         )
         helper.add_create_btn("resulttags", url, "Add new result tag")
 
         url = reverse(
-            "epi:adjustmentfactor_create", kwargs={"pk": self.instance.outcome.assessment_id},
+            "epi:adjustmentfactor_create",
+            kwargs={"pk": self.instance.outcome.assessment_id},
         )
         helper.add_create_btn("factors_applied", url, "Add new adjustment factor")
         helper.add_create_btn("factors_considered", url, "Add new adjustment factor")
@@ -939,7 +947,10 @@ class BaseGroupResultFormset(BaseModelFormSet):
         self.result = kwargs.pop("result", None)
         super().__init__(**kwargs)
         self.form = partial(
-            self.form, study_population=study_population, outcome=outcome, result=self.result,
+            self.form,
+            study_population=study_population,
+            outcome=outcome,
+            result=self.result,
         )
 
     def clean(self):

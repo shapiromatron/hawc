@@ -421,7 +421,9 @@ class IVEndpointFilterForm(forms.Form):
 
     dose_units = forms.ModelChoiceField(queryset=DoseUnits.objects.all(), required=False)
 
-    order_by = forms.ChoiceField(choices=ORDER_BY_CHOICES,)
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
+    )
 
     paginate_by = forms.IntegerField(
         label="Items per page", min_value=10, initial=25, max_value=500, required=False

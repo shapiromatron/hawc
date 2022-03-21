@@ -161,7 +161,9 @@ class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user, "Change password", [get_profile_breadcrumb()],
+            self.request.user,
+            "Change password",
+            [get_profile_breadcrumb()],
         )
         return context
 
@@ -212,13 +214,13 @@ class ExternalAuth(SuccessURLAllowedHostsMixin, View):
         raise NotImplementedError("Deployment specific; requires implementation")
 
     def mail_bad_headers(self, request):
-        """ Mail admins when headers don't return valid user metadata """
+        """Mail admins when headers don't return valid user metadata"""
         subject = "[External auth]: Bad headers"
         body = f"External authentication failed with the following headers:\n{pformat(request.headers._store)}"
         mail_admins(subject, body)
 
     def mail_bad_auth(self, email, external_id):
-        """ Mail admins when the email / external id pair clashes with user in database """
+        """Mail admins when the email / external id pair clashes with user in database"""
         subject = "[External auth]: Invalid credentials"
         body = dedent(
             f"""\

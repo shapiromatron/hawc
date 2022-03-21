@@ -12,7 +12,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="datapivotupload", name="file",),
+        migrations.RemoveField(
+            model_name="datapivotupload",
+            name="file",
+        ),
         migrations.AlterField(
             model_name="datapivotupload",
             name="excel_file",

@@ -52,10 +52,12 @@ class Migration(migrations.Migration):
             preserve_default=False,
         ),
         migrations.AlterModelOptions(
-            name="riskofbiasdomain", options={"ordering": ("assessment", "sort_order")},
+            name="riskofbiasdomain",
+            options={"ordering": ("assessment", "sort_order")},
         ),
         migrations.AlterModelOptions(
-            name="riskofbiasmetric", options={"ordering": ("domain", "sort_order")},
+            name="riskofbiasmetric",
+            options={"ordering": ("domain", "sort_order")},
         ),
         migrations.RunPython(set_default_sort_order, reverse_code=migrations.RunPython.noop),
     ]

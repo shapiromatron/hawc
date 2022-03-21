@@ -8,6 +8,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="assessment", name="public",),
-        migrations.RemoveField(model_name="assessment", name="is_public_training_data",),
+        migrations.RemoveField(
+            model_name="assessment",
+            name="public",
+        ),
+        migrations.RemoveField(
+            model_name="assessment",
+            name="is_public_training_data",
+        ),
     ]

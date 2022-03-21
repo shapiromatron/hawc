@@ -30,6 +30,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(name="baseendpoint", options={"ordering": ("id",)},),
+        migrations.AlterModelOptions(
+            name="baseendpoint",
+            options={"ordering": ("id",)},
+        ),
         migrations.RunPython(check_sort, reverse_code=migrations.RunPython.noop),
     ]

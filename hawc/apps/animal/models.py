@@ -721,7 +721,9 @@ class Endpoint(BaseEndpoint):
         default=constants.ObservationTimeUnits.NR, choices=constants.ObservationTimeUnits.choices
     )
     observation_time_text = models.CharField(
-        max_length=64, blank=True, help_text='Text for reported observation time (ex: "60-90 PND")',
+        max_length=64,
+        blank=True,
+        help_text='Text for reported observation time (ex: "60-90 PND")',
     )
     data_location = models.CharField(
         max_length=128,
@@ -980,7 +982,9 @@ class Endpoint(BaseEndpoint):
             DoseGroup.objects.filter(
                 dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
             )
-            .select_related("dose_regime__dosed_animals__experiment__study",)
+            .select_related(
+                "dose_regime__dosed_animals__experiment__study",
+            )
             .values_list(*values.keys())
             .distinct("dose_regime__dosed_animals__experiment__study_id", "dose_units__id")
             .order_by()
@@ -1279,7 +1283,8 @@ class Endpoint(BaseEndpoint):
 
     def copy_across_assessments(self, cw):
         children = chain(
-            list(self.groups.all().order_by("id")), list(self.bmd_sessions.all().order_by("id")),
+            list(self.groups.all().order_by("id")),
+            list(self.bmd_sessions.all().order_by("id")),
         )
         effects = list(self.effects.all().order_by("id"))
 
@@ -1334,7 +1339,7 @@ class ConfidenceIntervalsMixin:
             return None
 
     def getStdev(self, variance_type=None):
-        """ Return the stdev of an endpoint-group, given the variance type. """
+        """Return the stdev of an endpoint-group, given the variance type."""
         if not hasattr(self, "_stdev"):
 
             # don't hit DB unless we need to

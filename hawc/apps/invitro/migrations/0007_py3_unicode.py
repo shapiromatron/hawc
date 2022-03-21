@@ -105,7 +105,9 @@ class Migration(migrations.Migration):
             model_name="ivendpoint",
             name="LOEL",
             field=models.SmallIntegerField(
-                default=-999, help_text="Lowest observed effect level", verbose_name="LOEL",
+                default=-999,
+                help_text="Lowest observed effect level",
+                verbose_name="LOEL",
             ),
         ),
         migrations.AlterField(
@@ -116,7 +118,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="ivendpoint", name="additional_fields", field=models.TextField(default="{}"),
+            model_name="ivendpoint",
+            name="additional_fields",
+            field=models.TextField(default="{}"),
         ),
         migrations.AlterField(
             model_name="ivendpoint",
@@ -146,7 +150,8 @@ class Migration(migrations.Migration):
             model_name="ivendpoint",
             name="endpoint_notes",
             field=models.TextField(
-                blank=True, help_text="Any additional notes regarding the endpoint itself",
+                blank=True,
+                help_text="Any additional notes regarding the endpoint itself",
             ),
         ),
         migrations.AlterField(
@@ -322,7 +327,9 @@ class Migration(migrations.Migration):
             model_name="ivexperiment",
             name="control_notes",
             field=models.CharField(
-                blank=True, help_text="Additional details related to controls", max_length=256,
+                blank=True,
+                help_text="Additional details related to controls",
+                max_length=256,
             ),
         ),
         migrations.AlterField(
@@ -352,21 +359,26 @@ class Migration(migrations.Migration):
             model_name="ivexperiment",
             name="negative_control",
             field=models.CharField(
-                blank=True, help_text="Negative control chemical or other notes", max_length=128,
+                blank=True,
+                help_text="Negative control chemical or other notes",
+                max_length=128,
             ),
         ),
         migrations.AlterField(
             model_name="ivexperiment",
             name="positive_control",
             field=models.CharField(
-                blank=True, help_text="Positive control chemical or other notes", max_length=128,
+                blank=True,
+                help_text="Positive control chemical or other notes",
+                max_length=128,
             ),
         ),
         migrations.AlterField(
             model_name="ivexperiment",
             name="serum",
             field=models.CharField(
-                help_text="Percent serum, serum-type, and/or description", max_length=128,
+                help_text="Percent serum, serum-type, and/or description",
+                max_length=128,
             ),
         ),
         migrations.AlterField(
@@ -381,7 +393,9 @@ class Migration(migrations.Migration):
             model_name="ivexperiment",
             name="vehicle_control",
             field=models.CharField(
-                blank=True, help_text="Vehicle control chemical or other notes", max_length=128,
+                blank=True,
+                help_text="Vehicle control chemical or other notes",
+                max_length=128,
             ),
         ),
     ]

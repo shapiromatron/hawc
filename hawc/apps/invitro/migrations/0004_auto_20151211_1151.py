@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
             model_name="ivexperiment",
             name="serum",
             field=models.CharField(
-                help_text=b"Percent serum, serum-type, and/or description", max_length=128,
+                help_text=b"Percent serum, serum-type, and/or description",
+                max_length=128,
             ),
         ),
     ]

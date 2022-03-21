@@ -12,12 +12,36 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="exposure", name="estimate",),
-        migrations.RemoveField(model_name="exposure", name="estimate_type",),
-        migrations.RemoveField(model_name="exposure", name="lower_ci",),
-        migrations.RemoveField(model_name="exposure", name="lower_range",),
-        migrations.RemoveField(model_name="exposure", name="upper_ci",),
-        migrations.RemoveField(model_name="exposure", name="upper_range",),
-        migrations.RemoveField(model_name="exposure", name="variance",),
-        migrations.RemoveField(model_name="exposure", name="variance_type",),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="estimate",
+        ),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="estimate_type",
+        ),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="lower_ci",
+        ),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="lower_range",
+        ),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="upper_ci",
+        ),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="upper_range",
+        ),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="variance",
+        ),
+        migrations.RemoveField(
+            model_name="exposure",
+            name="variance_type",
+        ),
     ]

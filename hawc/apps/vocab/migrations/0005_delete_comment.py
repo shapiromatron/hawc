@@ -8,5 +8,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.DeleteModel(name="Comment",),
+        migrations.DeleteModel(
+            name="Comment",
+        ),
     ]

@@ -19,7 +19,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("unique_id", models.IntegerField()),
@@ -41,7 +44,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("results", models.TextField(blank=True)),
@@ -60,7 +66,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("title", models.TextField(blank=True)),
@@ -102,7 +111,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("path", models.CharField(unique=True, max_length=255)),
@@ -120,7 +132,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("content_object", models.ForeignKey(to="lit.Reference", on_delete=models.CASCADE)),
@@ -142,7 +157,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -202,7 +220,8 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(
-            name="search", unique_together=set([("assessment", "slug"), ("assessment", "title")]),
+            name="search",
+            unique_together=set([("assessment", "slug"), ("assessment", "title")]),
         ),
         migrations.AddField(
             model_name="reference",
@@ -229,6 +248,7 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
-            name="identifiers", unique_together=set([("database", "unique_id")]),
+            name="identifiers",
+            unique_together=set([("database", "unique_id")]),
         ),
     ]

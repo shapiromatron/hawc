@@ -12,8 +12,20 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="animalgroup", name="duration_observation",),
-        migrations.RemoveField(model_name="experiment", name="diet",),
-        migrations.RemoveField(model_name="experiment", name="litter_effect_notes",),
-        migrations.RemoveField(model_name="experiment", name="litter_effects",),
+        migrations.RemoveField(
+            model_name="animalgroup",
+            name="duration_observation",
+        ),
+        migrations.RemoveField(
+            model_name="experiment",
+            name="diet",
+        ),
+        migrations.RemoveField(
+            model_name="experiment",
+            name="litter_effect_notes",
+        ),
+        migrations.RemoveField(
+            model_name="experiment",
+            name="litter_effects",
+        ),
     ]
