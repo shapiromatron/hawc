@@ -16,6 +16,9 @@ const startup = (name, cb) => {
         case "epiStartup":
             import("./epi/index.js").then(app => cb(app.default));
             break;
+        case "epiv2Startup":
+            import("./epiv2/index.js").then(app => cb(app.default));
+            break;
         case "epiMetaStartup":
             import("./epimeta/index.js").then(app => cb(app.default));
             break;

@@ -92,7 +92,7 @@ class BaseFormHelper(cf.FormHelper):
             classes = [classes] * numFields
         first = self.layout.index(firstField)
         for i, class_ in enumerate(classes):
-            self[first + i].wrap(cfl.Column, wrapper_class=class_)
+            self[first + i].wrap(cfl.Column, css_class=class_)
         self[first : first + numFields].wrap_together(
             cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
@@ -257,3 +257,13 @@ class DownloadPlotForm(forms.Form):
             response = HttpResponse(output, content_type=content_type)
             response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
         return response
+
+
+class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
+    """For use in ArrayField with a CharField with choices"""
+
+    def format_value(self, value) -> List[str]:
+        """Return selected values as a list."""
+        if value is None:
+            return []
+        return value.split(",")

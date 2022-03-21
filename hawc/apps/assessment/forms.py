@@ -39,6 +39,7 @@ class AssessmentForm(forms.ModelForm):
             "enable_risk_of_bias",
             "enable_bmd",
             "enable_summary_text",
+            "epi_version",
         )
         model = models.Assessment
         widgets = {
@@ -188,11 +189,14 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_risk_of_bias",
             "enable_bmd",
             "enable_summary_text",
+            "epi_version",
         )
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if not settings.HAWC_FEATURES.ENABLE_EPI_V2:
+            self.fields["epi_version"].disabled = True
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"

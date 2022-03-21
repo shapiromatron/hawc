@@ -21,6 +21,7 @@ _successful_post = {
     "team_members_1": ("1", "2"),
     "reviewers_0": ("1",),
     "reviewers_1": ("1",),
+    "epi_version": ("1",),
     "dtxsids_0": ("DTXSID7020970",),
     "dtxsids_1": ("DTXSID7020970",),
 }

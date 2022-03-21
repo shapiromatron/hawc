@@ -368,6 +368,42 @@
     model: task
 - model: contenttypes.contenttype
   fields:
+    app_label: epiv2
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: design
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: chemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: criteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: exposure
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: exposurelevel
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: outcome
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: adjustmentfactor
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: dataextraction
+- model: contenttypes.contenttype
+  fields:
     app_label: eco
     model: country
 - model: contenttypes.contenttype
@@ -667,6 +703,7 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+    epi_version: 1
 - model: assessment.assessment
   pk: 2
   fields:
@@ -706,6 +743,7 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+    epi_version: 1
 - model: assessment.assessment
   pk: 3
   fields:
@@ -741,6 +779,7 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
+    epi_version: 1
 - model: assessment.attachment
   pk: 3
   fields:
@@ -4390,6 +4429,16 @@
   fields:
     code: JP
     name: Japan
+- model: epi.country
+  pk: 2
+  fields:
+    code: TW
+    name: Taiwan
+- model: epi.country
+  pk: 3
+  fields:
+    code: DK
+    name: Denmark
 - model: epi.adjustmentfactor
   pk: 1
   fields:
@@ -4667,6 +4716,635 @@
     main_finding_support: 3
     created: 2020-05-11 02:23:49.859670+00:00
     last_updated: 2020-05-11 02:23:49.859696+00:00
+- model: epiv2.design
+  pk: 1
+  fields:
+    study: 1
+    study_design: CC
+    source: GP
+    age_description: 10-15 yrs
+    sex: B
+    race: Not specified but likely primarily Asian
+    summary: Case-control study of asthma in children
+    study_name: Genetic and Biomarkers study for Childhood Asthma
+    region: northern Taiwan
+    years: 2009-2010
+    participant_n: 456
+    created: 2022-01-10 21:12:17.714337+00:00
+    last_updated: 2022-01-13 20:38:10.024296+00:00
+    age_profile:
+    - AD
+    countries:
+    - 2
+    comments: test
+- model: epiv2.design
+  pk: 2
+  fields:
+    study: 1
+    study_design: CO
+    source: GP
+    age_description: Birth to 7 years
+    sex: B
+    race: not specified but primarily White region
+    summary: Birth cohort in Faroe Islands with follow-up at 5 and 7 years
+    study_name: Faroe birth cohort
+    region: Faroe Islands
+    years: Enrollment 1997-2000
+    participant_n: 587
+    created: 2022-01-10 21:26:09.641642+00:00
+    last_updated: 2022-01-13 20:37:57.529050+00:00
+    age_profile:
+    - 1
+    countries:
+    - 3
+    criteria: "<ul><li>cases: asthma diagnosis by physician</li><li>singleton birth</li></ul>"
+    comments: "<p>test comments</p>"
+- model: epiv2.chemical
+  pk: 1
+  fields:
+    design: 1
+    name: PFDA
+    dsstox: null
+    created: 2022-01-10 21:12:17.740624+00:00
+    last_updated: 2022-01-10 21:12:17.740635+00:00
+- model: epiv2.chemical
+  pk: 2
+  fields:
+    design: 1
+    name: PFNA
+    dsstox: null
+    created: 2022-01-10 21:12:17.744413+00:00
+    last_updated: 2022-01-10 21:12:17.744423+00:00
+- model: epiv2.chemical
+  pk: 3
+  fields:
+    design: 2
+    name: PFDA
+    dsstox: null
+    created: 2022-01-10 21:26:09.667425+00:00
+    last_updated: 2022-01-10 21:26:09.667434+00:00
+- model: epiv2.chemical
+  pk: 4
+  fields:
+    design: 2
+    name: PFNA
+    dsstox: null
+    created: 2022-01-10 21:26:09.671290+00:00
+    last_updated: 2022-01-10 21:26:09.671299+00:00
+- model: epiv2.exposure
+  pk: 1
+  fields:
+    name: child serum
+    design: 1
+    biomonitoring_matrix: BLS
+    biomonitoring_source: PT
+    measurement_timing: study enrollment
+    exposure_route: UK
+    analytic_method: high-performance liquid chromatography with tandem with mass
+      spectrometry
+    comments: ''
+    created: 2022-01-10 21:12:17.748634+00:00
+    last_updated: 2022-01-10 21:12:17.748644+00:00
+    measurement_type: BM
+- model: epiv2.exposure
+  pk: 2
+  fields:
+    name: maternal serum
+    design: 2
+    biomonitoring_matrix: BLS
+    biomonitoring_source: ML
+    measurement_timing: parental (32 wks gestation)
+    exposure_route: UK
+    analytic_method: online solid-phase extraction and analysis, using high-pressure
+      liquid chromatography with tandem mass spectrometry
+    comments: last antenatal exam
+    created: 2022-01-10 21:30:38.554898+00:00
+    last_updated: 2022-01-10 21:30:38.554911+00:00
+    measurement_type: BM
+- model: epiv2.exposure
+  pk: 3
+  fields:
+    name: child serum age 5
+    design: 2
+    biomonitoring_matrix: BLS
+    biomonitoring_source: PT
+    measurement_timing: 5 yrs
+    exposure_route: UK
+    analytic_method: online solid-phase extraction and analysis, using high-pressure
+      liquid chromatography with tandem mass spectrometry
+    comments: prebooster
+    created: 2022-01-10 21:30:38.566082+00:00
+    last_updated: 2022-01-10 21:30:38.566092+00:00
+    measurement_type: BM
+- model: epiv2.exposurelevel
+  pk: 1
+  fields:
+    name: PFDA child serum
+    design: 1
+    chemical: 1
+    exposure_measurement: 1
+    sub_population: without asthma
+    mean: 0.0
+    median: 0.0
+    ci_lcl: null
+    percentile_25: 0.8
+    percentile_75: 1.2
+    ci_ucl: 5.0
+    neg_exposure: 5.0
+    ci_type: ''
+    units: ''
+    comments: test
+    data_location: Table 2
+    created: 2022-01-10 21:16:10.379351+00:00
+    last_updated: 2022-01-10 21:16:10.379365+00:00
+- model: epiv2.exposurelevel
+  pk: 2
+  fields:
+    name: PFNA child serum
+    design: 1
+    chemical: 2
+    exposure_measurement: 1
+    sub_population: without asthma
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.26
+    percentile_25: 0.6
+    percentile_75: 1.1
+    ci_ucl: 2.5
+    neg_exposure: 0.0
+    ci_type: ''
+    units: ''
+    comments: p<0.001 vs children with asthma
+    data_location: Table 2
+    created: 2022-01-10 21:16:10.384076+00:00
+    last_updated: 2022-01-10 21:16:10.384110+00:00
+- model: epiv2.exposurelevel
+  pk: 3
+  fields:
+    name: PFDA maternal serum
+    design: 2
+    chemical: 3
+    exposure_measurement: 2
+    sub_population: all
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.0
+    percentile_25: 0.22
+    percentile_75: 0.38
+    ci_ucl: 0.5
+    neg_exposure: 80.0
+    ci_type: ''
+    units: ''
+    comments: ''
+    data_location: Table 2
+    created: 2022-01-10 21:34:38.043650+00:00
+    last_updated: 2022-01-10 21:39:43.128782+00:00
+- model: epiv2.exposurelevel
+  pk: 4
+  fields:
+    name: PFDA child 5
+    design: 2
+    chemical: 3
+    exposure_measurement: 3
+    sub_population: all
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.1
+    percentile_25: 0.21
+    percentile_75: 0.38
+    ci_ucl: 0.6
+    neg_exposure: 81.0
+    ci_type: ''
+    units: ''
+    comments: ''
+    data_location: Table 2
+    created: 2022-01-10 21:39:43.133506+00:00
+    last_updated: 2022-01-10 21:39:43.133517+00:00
+- model: epiv2.exposurelevel
+  pk: 5
+  fields:
+    name: PFNA maternal serum
+    design: 2
+    chemical: 4
+    exposure_measurement: 2
+    sub_population: all
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.2
+    percentile_25: 0.46
+    percentile_75: 0.79
+    ci_ucl: 0.7
+    neg_exposure: 95.0
+    ci_type: ''
+    units: ''
+    comments: ''
+    data_location: Table 2
+    created: 2022-01-10 21:39:43.137612+00:00
+    last_updated: 2022-01-10 21:39:43.137622+00:00
+- model: epiv2.exposurelevel
+  pk: 6
+  fields:
+    name: PFNA child 5
+    design: 2
+    chemical: 4
+    exposure_measurement: 3
+    sub_population: all
+    mean: 0.0
+    median: 0.0
+    ci_lcl: 0.3
+    percentile_25: 0.76
+    percentile_75: 1.24
+    ci_ucl: 0.8
+    neg_exposure: 94.0
+    ci_type: ''
+    units: ''
+    comments: ''
+    data_location: Table 2
+    created: 2022-01-10 21:39:43.141816+00:00
+    last_updated: 2022-01-10 21:39:43.141827+00:00
+- model: epiv2.outcome
+  pk: 1
+  fields:
+    endpoint: Asthma within previous year
+    design: 1
+    health_outcome: Asthma
+    health_outcome_system: IM
+    comments: ''
+    created: 2022-01-10 21:16:10.388760+00:00
+    last_updated: 2022-01-10 21:16:10.388770+00:00
+- model: epiv2.outcome
+  pk: 2
+  fields:
+    endpoint: Tetanus antibody concentrations
+    design: 2
+    health_outcome: Vaccine response
+    health_outcome_system: IM
+    comments: ''
+    created: 2022-01-10 21:41:54.322800+00:00
+    last_updated: 2022-01-10 21:41:54.322816+00:00
+- model: epiv2.outcome
+  pk: 3
+  fields:
+    endpoint: Diphtheria antibody concentrations
+    design: 2
+    health_outcome: Vaccine response
+    health_outcome_system: IM
+    comments: ''
+    created: 2022-01-10 21:41:54.327398+00:00
+    last_updated: 2022-01-10 21:41:54.327412+00:00
+- model: epiv2.adjustmentfactor
+  pk: 1
+  fields:
+    name: A
+    design: 1
+    description: age, sex, BMI, parental education, ETS exposure, month of survey
+    created: 2022-01-10 21:16:10.393576+00:00
+    last_updated: 2022-01-10 21:16:10.393587+00:00
+- model: epiv2.adjustmentfactor
+  pk: 2
+  fields:
+    name: A
+    design: 2
+    description: age, sex
+    created: 2022-01-10 21:41:54.332000+00:00
+    last_updated: 2022-01-10 21:41:54.332017+00:00
+- model: epiv2.adjustmentfactor
+  pk: 3
+  fields:
+    name: B
+    design: 2
+    description: age, sex, time since vaccination, booster type
+    created: 2022-01-10 21:41:54.336562+00:00
+    last_updated: 2022-01-10 21:41:54.336577+00:00
+- model: epiv2.adjustmentfactor
+  pk: 4
+  fields:
+    name: C
+    design: 2
+    description: age, sex, booster type
+    created: 2022-01-10 21:41:54.340708+00:00
+    last_updated: 2022-01-10 21:41:54.340720+00:00
+- model: epiv2.adjustmentfactor
+  pk: 5
+  fields:
+    name: D
+    design: 2
+    description: age, sex, booster type, child's specific antibody concentrations
+      at 5 years
+    created: 2022-01-10 21:41:54.345186+00:00
+    last_updated: 2022-01-10 21:41:54.345198+00:00
+- model: epiv2.dataextraction
+  pk: 1
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.0
+    exposure_rank: 1
+    ci_lcl: null
+    ci_ucl: null
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 2
+    adjustment_factor: null
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: reference, p-trend <0.001
+    created: 2022-01-10 21:18:05.442039+00:00
+    last_updated: 2022-01-10 21:22:42.511191+00:00
+- model: epiv2.dataextraction
+  pk: 2
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.02
+    exposure_rank: 2
+    ci_lcl: 0.58
+    ci_ucl: 1.8
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 0
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: ''
+    created: 2022-01-10 21:18:05.446161+00:00
+    last_updated: 2022-01-13 17:31:45.166735+00:00
+- model: epiv2.dataextraction
+  pk: 3
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.3
+    exposure_rank: 3
+    ci_lcl: 0.72
+    ci_ucl: 2.33
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 0
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: ''
+    created: 2022-01-10 21:18:05.449764+00:00
+    last_updated: 2022-01-13 17:31:45.330298+00:00
+- model: epiv2.dataextraction
+  pk: 4
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 1
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 3.22
+    exposure_rank: 4
+    ci_lcl: 1.75
+    ci_ucl: 5.94
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 1
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: ''
+    created: 2022-01-10 21:18:05.453394+00:00
+    last_updated: 2022-01-13 17:31:45.373797+00:00
+- model: epiv2.dataextraction
+  pk: 5
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.0
+    exposure_rank: 1
+    ci_lcl: null
+    ci_ucl: null
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 2
+    adjustment_factor: null
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: reference, p-trend=0.001
+    created: 2022-01-10 21:18:05.457140+00:00
+    last_updated: 2022-01-10 21:22:42.527813+00:00
+- model: epiv2.dataextraction
+  pk: 6
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.19
+    exposure_rank: 2
+    ci_lcl: 0.68
+    ci_ucl: 2.09
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 0
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: ''
+    created: 2022-01-10 21:18:05.460901+00:00
+    last_updated: 2022-01-13 17:31:45.412605+00:00
+- model: epiv2.dataextraction
+  pk: 7
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 1.54
+    exposure_rank: 3
+    ci_lcl: 0.86
+    ci_ucl: 2.76
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 0
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: ''
+    created: 2022-01-10 21:18:05.464462+00:00
+    last_updated: 2022-01-13 17:31:45.446933+00:00
+- model: epiv2.dataextraction
+  pk: 8
+  fields:
+    design: 1
+    sub_population: Full population
+    outcome: 1
+    exposure_level: 2
+    outcome_measurement_timing: Concurrent with exposure
+    n: 114
+    effect_estimate_type: OR
+    effect_description: OR vs. quartile 1
+    effect_estimate: 2.56
+    exposure_rank: 4
+    ci_lcl: 1.41
+    ci_ucl: 4.65
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 1
+    adjustment_factor: 1
+    confidence: medium
+    data_location: Table 3
+    statistical_method: Logistic regression
+    comments: ''
+    created: 2022-01-10 21:18:05.468642+00:00
+    last_updated: 2022-01-13 17:31:45.496401+00:00
+- model: epiv2.dataextraction
+  pk: 9
+  fields:
+    design: 2
+    sub_population: Prebooster Age 5
+    outcome: 2
+    exposure_level: 3
+    outcome_measurement_timing: 5 yrs
+    n: 509
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -2.5
+    exposure_rank: 0
+    ci_lcl: -18.5
+    ci_ucl: 16.8
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 0
+    adjustment_factor: 2
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: test
+    created: 2022-01-10 21:44:55.946716+00:00
+    last_updated: 2022-01-13 17:32:54.027252+00:00
+- model: epiv2.dataextraction
+  pk: 10
+  fields:
+    design: 2
+    sub_population: Year 7 adjusted for Age 5
+    outcome: 2
+    exposure_level: 4
+    outcome_measurement_timing: 7 yrs
+    n: 401
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -12.5
+    exposure_rank: 0
+    ci_lcl: -24.6
+    ci_ucl: 1.5
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 0
+    adjustment_factor: 5
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: preferred outcome
+    created: 2022-01-10 21:44:55.951328+00:00
+    last_updated: 2022-01-13 17:32:54.031518+00:00
+- model: epiv2.dataextraction
+  pk: 11
+  fields:
+    design: 2
+    sub_population: Prebooster Age 5
+    outcome: 3
+    exposure_level: 3
+    outcome_measurement_timing: 5 yrs
+    n: 510
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -21.7
+    exposure_rank: 0
+    ci_lcl: -35.7
+    ci_ucl: -4.8
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 1
+    adjustment_factor: 2
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: a different endpoint the same PFAS
+    created: 2022-01-10 21:44:55.955074+00:00
+    last_updated: 2022-01-13 17:32:54.035581+00:00
+- model: epiv2.dataextraction
+  pk: 12
+  fields:
+    design: 2
+    sub_population: Postbooster Age 5
+    outcome: 3
+    exposure_level: 6
+    outcome_measurement_timing: 5 yrs
+    n: 510
+    effect_estimate_type: PC
+    effect_description: Percent difference per 2-fold increase in exposure
+    effect_estimate: -8.7
+    exposure_rank: 0
+    ci_lcl: -20.6
+    ci_ucl: 5.0
+    variance: null
+    variance_type: 0
+    p_value: ''
+    significant: 0
+    adjustment_factor: 3
+    confidence: medium
+    data_location: Table 3
+    statistical_method: linear regression
+    comments: testing another PFAS
+    created: 2022-01-10 21:44:55.958967+00:00
+    last_updated: 2022-01-13 17:32:54.039436+00:00
 - model: invitro.ivchemical
   pk: 1
   fields:

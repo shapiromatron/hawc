@@ -266,6 +266,11 @@ class Assessment(models.Model):
         this option until you like to "freeze" your assessment, and then this can be unchecked, if
         needed.""",
     )
+    epi_version = models.PositiveSmallIntegerField(
+        choices=constants.EpiVersion.choices,
+        default=constants.EpiVersion.V2,
+        help_text="Data extraction schema used for epidemiology studies",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
