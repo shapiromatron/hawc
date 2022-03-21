@@ -22,7 +22,9 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name="riskofbias", name="active", field=models.BooleanField(default=True),
+            model_name="riskofbias",
+            name="active",
+            field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
             model_name="riskofbias",

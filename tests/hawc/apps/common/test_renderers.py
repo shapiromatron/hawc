@@ -77,7 +77,8 @@ def test_xlsx_renderer(basic_export):
 
     # Datetimes with timezones are incompatible with Excel. Make sure that the renderer can handle DataFrames with timezoned datetimes.
     df = pd.DataFrame(
-        data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]], columns=["count", "when"],
+        data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]],
+        columns=["count", "when"],
     )
     df.loc[:, "when"] = df.when.astype("datetime64")
 

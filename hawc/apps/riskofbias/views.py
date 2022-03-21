@@ -29,7 +29,8 @@ from . import forms, models
 def get_breadcrumb_rob_setting(assessment, update: bool = False) -> Breadcrumb:
     if update:
         return Breadcrumb(
-            name="Update", url=reverse("riskofbias:arob_update", args=(assessment.id,)),
+            name="Update",
+            url=reverse("riskofbias:arob_update", args=(assessment.id,)),
         )
     else:
         return Breadcrumb(
@@ -297,7 +298,10 @@ class RobNumberReviewsUpdate(BaseUpdate):
     template_name = "riskofbias/reviewers_form.html"
 
     def get_object(self, **kwargs):
-        obj = get_object_or_404(self.model, assessment=self.kwargs.get("pk"),)
+        obj = get_object_or_404(
+            self.model,
+            assessment=self.kwargs.get("pk"),
+        )
         obj = super().get_object(object=obj)
         if not self.assessment.user_can_edit_assessment(self.request.user):
             raise PermissionDenied()

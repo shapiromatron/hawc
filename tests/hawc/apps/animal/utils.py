@@ -8,7 +8,10 @@ def build_experiments_for_permission_testing(obj):
     build_studies_for_permission_testing(obj)
 
     obj.experiment_working = models.Experiment.objects.create(
-        study=obj.study_working, name="experiment name", type="Ac", description="No description.",
+        study=obj.study_working,
+        name="experiment name",
+        type="Ac",
+        description="No description.",
     )
 
     obj.experiment_final = models.Experiment.objects.create(
@@ -119,7 +122,10 @@ def build_dose_groups(obj):
         for i in range(4):
             dgs.append(
                 models.DoseGroup(
-                    dose_regime=regime, dose_units=obj.dose_units, dose_group_id=i, dose=i * 50.0,
+                    dose_regime=regime,
+                    dose_units=obj.dose_units,
+                    dose_group_id=i,
+                    dose=i * 50.0,
                 )
             )
     models.DoseGroup.objects.bulk_create(dgs)

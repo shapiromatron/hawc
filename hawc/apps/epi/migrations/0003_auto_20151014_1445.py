@@ -12,6 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="groupresult", options={"ordering": ("result", "group__group_id")},
+            name="groupresult",
+            options={"ordering": ("result", "group__group_id")},
         ),
     ]

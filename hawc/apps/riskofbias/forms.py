@@ -163,7 +163,9 @@ class RiskOfBiasCopyForm(forms.Form):
 
 class RiskOfBiasLoadApproachForm(forms.Form):
     rob_type = forms.TypedChoiceField(
-        label="Select an approach", choices=RobApproach.choices, coerce=int,
+        label="Select an approach",
+        choices=RobApproach.choices,
+        coerce=int,
     )
 
     def __init__(self, *args, **kwargs):

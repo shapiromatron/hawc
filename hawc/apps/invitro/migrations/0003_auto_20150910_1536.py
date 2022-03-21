@@ -11,7 +11,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="ivexperiment", name="cell_line",),
+        migrations.RemoveField(
+            model_name="ivexperiment",
+            name="cell_line",
+        ),
         migrations.AddField(
             model_name="ivcelltype",
             name="culture_type",

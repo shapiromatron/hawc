@@ -45,5 +45,8 @@ class QuantitativeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.id is None:
-            for field, value, in self.instance.default_related().items():
+            for (
+                field,
+                value,
+            ) in self.instance.default_related().items():
                 self.fields[field].initial = value

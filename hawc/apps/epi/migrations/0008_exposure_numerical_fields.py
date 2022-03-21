@@ -57,7 +57,9 @@ class Migration(migrations.Migration):
             model_name="exposure",
             name="n",
             field=models.PositiveIntegerField(
-                blank=True, help_text=b"Individuals where outcome was measured", null=True,
+                blank=True,
+                help_text=b"Individuals where outcome was measured",
+                null=True,
             ),
         ),
         migrations.AddField(
@@ -84,7 +86,10 @@ class Migration(migrations.Migration):
             model_name="exposure",
             name="variance",
             field=models.FloatField(
-                blank=True, help_text=b"Variance estimate", null=True, verbose_name=b"Variance",
+                blank=True,
+                help_text=b"Variance estimate",
+                null=True,
+                verbose_name=b"Variance",
             ),
         ),
         migrations.AddField(

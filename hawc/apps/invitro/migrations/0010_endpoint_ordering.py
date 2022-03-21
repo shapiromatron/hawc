@@ -10,5 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(name="ivendpoint", options={"ordering": ("id",)},),
+        migrations.AlterModelOptions(
+            name="ivendpoint",
+            options={"ordering": ("id",)},
+        ),
     ]

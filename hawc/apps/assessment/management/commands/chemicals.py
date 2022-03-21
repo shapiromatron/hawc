@@ -22,7 +22,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--refresh", action="store_true", help="Refresh existing DSSTox",
+            "--refresh",
+            action="store_true",
+            help="Refresh existing DSSTox",
         )
 
     def _refresh(self):

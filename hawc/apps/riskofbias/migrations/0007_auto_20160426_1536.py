@@ -43,7 +43,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 ("number_of_reviewers", models.PositiveSmallIntegerField(default=1)),
@@ -57,5 +60,8 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
-        migrations.RunPython(runMigration, reverse_code=migrations.RunPython.noop,),
+        migrations.RunPython(
+            runMigration,
+            reverse_code=migrations.RunPython.noop,
+        ),
     ]

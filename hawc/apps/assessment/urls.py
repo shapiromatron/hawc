@@ -25,8 +25,16 @@ urlpatterns = [
         name="modules_update",
     ),
     path("<int:pk>/delete/", views.AssessmentDelete.as_view(), name="delete"),
-    path("<int:pk>/downloads/", views.AssessmentDownloads.as_view(), name="downloads",),
-    path("<int:pk>/logs/", views.AssessmentLogList.as_view(), name="assessment_logs",),
+    path(
+        "<int:pk>/downloads/",
+        views.AssessmentDownloads.as_view(),
+        name="downloads",
+    ),
+    path(
+        "<int:pk>/logs/",
+        views.AssessmentLogList.as_view(),
+        name="assessment_logs",
+    ),
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
     # log object
     path(
@@ -34,7 +42,11 @@ urlpatterns = [
         views.LogObjectList.as_view(),
         name="log_object_list",
     ),
-    path("log/<int:pk>/", views.LogDetail.as_view(), name="log_detail",),
+    path(
+        "log/<int:pk>/",
+        views.LogDetail.as_view(),
+        name="log_detail",
+    ),
     # attachment objects
     path(
         "attachment/<int:pk>/create/",
@@ -67,10 +79,16 @@ urlpatterns = [
     path("dataset/<int:pk>/delete/", views.DatasetDelete.as_view(), name="dataset_delete"),
     # species
     path(
-        "assessment/<int:pk>/species/create/", views.SpeciesCreate.as_view(), name="species_create",
+        "assessment/<int:pk>/species/create/",
+        views.SpeciesCreate.as_view(),
+        name="species_create",
     ),
     # strain
-    path("assessment/<int:pk>/strain/create/", views.StrainCreate.as_view(), name="strain_create",),
+    path(
+        "assessment/<int:pk>/strain/create/",
+        views.StrainCreate.as_view(),
+        name="strain_create",
+    ),
     # dose units
     path(
         "assessment/<int:pk>/dose-units/create/",
@@ -78,9 +96,17 @@ urlpatterns = [
         name="dose_units_create",
     ),
     # dtxsid
-    path("dtxsid/create/", views.DSSToxCreate.as_view(), name="dtxsid_create",),
+    path(
+        "dtxsid/create/",
+        views.DSSToxCreate.as_view(),
+        name="dtxsid_create",
+    ),
     # endpoint objects
-    path("<int:pk>/endpoints/", views.BaseEndpointList.as_view(), name="endpoint_list",),
+    path(
+        "<int:pk>/endpoints/",
+        views.BaseEndpointList.as_view(),
+        name="endpoint_list",
+    ),
     path(
         "<int:pk>/clean-extracted-data/",
         views.CleanExtractedData.as_view(),
@@ -97,7 +123,9 @@ urlpatterns = [
     path("close-window/", views.CloseWindow.as_view(), name="close_window"),
     # assessment level study
     path(
-        "<int:pk>/clean-study-metrics/", views.CleanStudyRoB.as_view(), name="clean_study_metrics",
+        "<int:pk>/clean-study-metrics/",
+        views.CleanStudyRoB.as_view(),
+        name="clean_study_metrics",
     ),
     # published items
     path(

@@ -40,7 +40,9 @@ class IVChemical(models.Model):
     cas_notes = models.CharField(max_length=256, verbose_name="CAS determination notes")
     source = models.CharField(max_length=128, verbose_name="Source of chemical")
     purity = models.CharField(
-        max_length=32, verbose_name="Chemical purity", help_text="Ex: >99%, not-reported, etc.",
+        max_length=32,
+        verbose_name="Chemical purity",
+        help_text="Ex: >99%, not-reported, etc.",
     )
     purity_confirmed = models.BooleanField(
         default=False, verbose_name="Purity experimentally confirmed"
@@ -158,7 +160,8 @@ class IVExperiment(models.Model):
         "cell-line, transient transfected cell-line, etc.)",
     )
     dosing_notes = models.TextField(
-        blank=True, help_text="Notes describing dosing-protocol, including duration-details",
+        blank=True,
+        help_text="Notes describing dosing-protocol, including duration-details",
     )
     metabolic_activation = models.CharField(
         max_length=2,
@@ -281,7 +284,8 @@ class IVEndpoint(BaseEndpoint):
     )
     assay_type = models.CharField(max_length=128)
     short_description = models.CharField(
-        max_length=128, help_text="Short (<128 character) description of effect & measurement",
+        max_length=128,
+        help_text="Short (<128 character) description of effect & measurement",
     )
     effect = models.CharField(max_length=128, help_text="Effect, using common-vocabulary")
     data_location = models.CharField(
@@ -397,7 +401,10 @@ class IVEndpoint(BaseEndpoint):
 
     def copy_across_assessments(self, cw):
         children = list(
-            itertools.chain(self.groups.all().order_by("id"), self.benchmarks.all().order_by("id"),)
+            itertools.chain(
+                self.groups.all().order_by("id"),
+                self.benchmarks.all().order_by("id"),
+            )
         )
         effects = list(self.effects.all().order_by("id"))
         old_id = self.id
@@ -452,10 +459,16 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
         max_length=2, default=constants.Significance.NR, choices=constants.Significance.choices
     )
     cytotoxicity_observed = models.BooleanField(
-        default=None, choices=constants.OBSERVATION_CHOICES, null=True, blank=True,
+        default=None,
+        choices=constants.OBSERVATION_CHOICES,
+        null=True,
+        blank=True,
     )
     precipitation_observed = models.BooleanField(
-        default=None, choices=constants.OBSERVATION_CHOICES, null=True, blank=True,
+        default=None,
+        choices=constants.OBSERVATION_CHOICES,
+        null=True,
+        blank=True,
     )
 
     COPY_NAME = "ivendpoint_groups"

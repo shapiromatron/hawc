@@ -13,9 +13,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="riskofbiasdomain", name="description", field=models.TextField(),
+            model_name="riskofbiasdomain",
+            name="description",
+            field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name="riskofbiasscore", name="notes", field=models.TextField(blank=True),
+            model_name="riskofbiasscore",
+            name="notes",
+            field=models.TextField(blank=True),
         ),
     ]

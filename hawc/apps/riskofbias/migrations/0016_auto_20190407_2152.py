@@ -54,6 +54,8 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="riskofbiasdomain", name="description", field=models.TextField(blank=True),
+            model_name="riskofbiasdomain",
+            name="description",
+            field=models.TextField(blank=True),
         ),
     ]

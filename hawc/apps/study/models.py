@@ -46,7 +46,9 @@ class Study(Reference):
         help_text="Study contains animal bioassay data",
     )
     epi = models.BooleanField(
-        verbose_name="Epidemiology", default=False, help_text="Study contains epidemiology data",
+        verbose_name="Epidemiology",
+        default=False,
+        help_text="Study contains epidemiology data",
     )
     epi_meta = models.BooleanField(
         verbose_name="Epidemiology meta-analysis",
@@ -107,7 +109,8 @@ class Study(Reference):
         help_text="This field is often left blank, but used to add comments on data extraction or other general comments. This field is displayed if an assessment is made public.",
     )
     editable = models.BooleanField(
-        default=True, help_text="Project-managers and team-members are allowed to edit this study.",
+        default=True,
+        help_text="Project-managers and team-members are allowed to edit this study.",
     )
 
     COPY_NAME = "studies"
@@ -406,7 +409,11 @@ class Study(Reference):
     def optimized_for_serialization(self):
         return (
             self.__class__.objects.filter(id=self.id)
-            .prefetch_related("identifiers", "searches", "riskofbiases__scores__metric__domain",)
+            .prefetch_related(
+                "identifiers",
+                "searches",
+                "riskofbiases__scores__metric__domain",
+            )
             .first()
         )
 

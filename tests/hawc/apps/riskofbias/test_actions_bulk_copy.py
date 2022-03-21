@@ -39,7 +39,10 @@ class TestBulkRobCopyAction:
                 dict(dst_author_id=None, author_mode=BulkCopyAuthor.OVERWRITE),
                 "dst_author_id required when author_mode overwrite.",
             ),
-            (dict(dst_author_id=-1, author_mode=BulkCopyAuthor.OVERWRITE), "Author not found.",),
+            (
+                dict(dst_author_id=-1, author_mode=BulkCopyAuthor.OVERWRITE),
+                "Author not found.",
+            ),
         ]
         for overrides, error_msg in invalid_datasets:
             data = self._valid_arguments()

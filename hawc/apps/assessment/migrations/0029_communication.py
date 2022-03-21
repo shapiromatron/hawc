@@ -34,6 +34,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AlterUniqueTogether(
-            name="communication", unique_together={("content_type_id", "object_id")},
+            name="communication",
+            unique_together={("content_type_id", "object_id")},
         ),
     ]

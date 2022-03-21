@@ -84,19 +84,22 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=lit_signals.invalidate_tag_cache, sender=lit_models.ReferenceFilterTag,
+            receiver=lit_signals.invalidate_tag_cache,
+            sender=lit_models.ReferenceFilterTag,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_rob_metrics, sender=rob_models.RiskOfBiasDomain,
+            receiver=rob_signals.invalidate_caches_rob_metrics,
+            sender=rob_models.RiskOfBiasDomain,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_rob_metrics, sender=rob_models.RiskOfBiasMetric,
+            receiver=rob_signals.invalidate_caches_rob_metrics,
+            sender=rob_models.RiskOfBiasMetric,
         )
         is True
     )
@@ -108,13 +111,15 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.update_study_type_metrics, sender=rob_models.RiskOfBiasMetric,
+            receiver=rob_signals.update_study_type_metrics,
+            sender=rob_models.RiskOfBiasMetric,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=bmd_signals.invalidate_outcome_cache, sender=bmd_models.SelectedModel,
+            receiver=bmd_signals.invalidate_outcome_cache,
+            sender=bmd_models.SelectedModel,
         )
         is True
     )
@@ -142,13 +147,15 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.AnimalGroup,
+            receiver=ani_signals.invalidate_endpoint_cache,
+            sender=ani_models.AnimalGroup,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.DosingRegime,
+            receiver=ani_signals.invalidate_endpoint_cache,
+            sender=ani_models.DosingRegime,
         )
         is True
     )
@@ -160,31 +167,36 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.EndpointGroup,
+            receiver=ani_signals.invalidate_endpoint_cache,
+            sender=ani_models.EndpointGroup,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_risk_of_bias, sender=rob_models.RiskOfBias,
+            receiver=rob_signals.invalidate_caches_risk_of_bias,
+            sender=rob_models.RiskOfBias,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_risk_of_bias, sender=rob_models.RiskOfBiasScore,
+            receiver=rob_signals.invalidate_caches_risk_of_bias,
+            sender=rob_models.RiskOfBiasScore,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.StudyPopulation,
+            receiver=epi_signals.invalidate_outcome_cache,
+            sender=epi_models.StudyPopulation,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.ComparisonSet,
+            receiver=epi_signals.invalidate_outcome_cache,
+            sender=epi_models.ComparisonSet,
         )
         is True
     )
@@ -270,7 +282,8 @@ def clone_assessment(
     lit_models.Search.build_default(new_assessment)
 
     cw["iv-endpoint-categories"] = iv_models.IVEndpointCategory.copy_tags(
-        old_assessment.id, new_assessment.id,
+        old_assessment.id,
+        new_assessment.id,
     )
 
     # copy rob logic
