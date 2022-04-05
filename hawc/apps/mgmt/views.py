@@ -67,7 +67,7 @@ class RobTaskMixin:
 
     def get_review_studies(self):
         Study = apps.get_model("study", "Study")
-        study_qs = Study.objects.filter(id__in=self.get_study_ids())
+        study_qs = Study.objects.filter(id__in=self.get_study_ids()).select_related("assessment")
         study_ser = StudyAssessmentSerializer(study_qs, many=True)
         # must cast to list to circumvent error when included in pydantic model
         return list(study_ser.data)
