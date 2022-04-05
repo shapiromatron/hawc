@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 
 class RobTaskRow extends Component {
     render() {
-        const {assessment} = this.props.task.scores[0].metric.domain,
-            {study_name, study_id, url_edit} = this.props.task.scores[0],
-            robText = this.props.task.final ? "Edit final review" : "Edit review";
+        const {task, study} = this.props,
+            {assessment} = study,
+            robText = task.final ? "Edit final review" : "Edit review";
 
         return (
             <tr>
@@ -15,10 +15,10 @@ class RobTaskRow extends Component {
                     </td>
                 ) : null}
                 <td>
-                    <a href={`/study/${study_id}/`}>{study_name}</a>
+                    <a href={`/study/${study.id}/`}>{study.short_citation}</a>
                 </td>
                 <td>
-                    <a className="btn btn-light" href={url_edit}>
+                    <a className="btn btn-light" href={`/rob/${task.id}/update/`}>
                         <i className="fa fa-edit" /> {robText}
                     </a>
                 </td>
@@ -28,6 +28,7 @@ class RobTaskRow extends Component {
 }
 RobTaskRow.propTypes = {
     task: PropTypes.object.isRequired,
+    study: PropTypes.object.isRequired,
     showAssessment: PropTypes.bool.isRequired,
 };
 

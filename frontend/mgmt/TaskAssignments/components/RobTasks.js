@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
@@ -5,7 +7,7 @@ import RobTaskRow from "./RobTaskRow";
 
 class RobTasks extends Component {
     render() {
-        const {tasks, showAssessment} = this.props,
+        const {tasks, studies, showAssessment} = this.props,
             hasTasks = this.props.tasks.length > 0;
         return (
             <div>
@@ -25,9 +27,17 @@ class RobTasks extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {tasks.map((task, i) => (
-                                <RobTaskRow showAssessment={showAssessment} task={task} key={i} />
-                            ))}
+                            {tasks.map((task, i) => {
+                                let study = _.find(studies, s => s.id == task.study);
+                                return (
+                                    <RobTaskRow
+                                        showAssessment={showAssessment}
+                                        task={task}
+                                        study={study}
+                                        key={i}
+                                    />
+                                );
+                            })}
                         </tbody>
                     </table>
                 ) : (
@@ -41,6 +51,7 @@ class RobTasks extends Component {
 }
 RobTasks.propTypes = {
     tasks: PropTypes.array,
+    studies: PropTypes.array,
     showAssessment: PropTypes.bool,
 };
 
