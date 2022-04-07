@@ -47,27 +47,16 @@ class RobTaskMixin:
     def get_rob_queryset(self, RiskOfBias):
         raise NotImplementedError("Abstract method; requires implementation")
 
-    def set_study_ids(self, rob_qs: None):
-        if rob_qs is None:
-            RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
-            rob_qs = self.get_rob_queryset(RiskOfBias)
-        self._study_ids = rob_qs.values_list("study_id", flat=True)
-
-    def get_study_ids(self):
-        if not hasattr(self, "_study_ids"):
-            self.set_study_ids()
-        return self._study_ids
-
     def get_review_tasks(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
-        self.set_study_ids(rob_tasks)
+        self._study_ids = rob_tasks.values_list("study_id", flat=True)
         filtered_tasks = [rob for rob in rob_tasks if rob.is_complete is False]
         return RiskOfBias.get_qs_json(filtered_tasks, json_encode=False)
 
     def get_review_studies(self):
         Study = apps.get_model("study", "Study")
-        study_qs = Study.objects.filter(id__in=self.get_study_ids()).select_related("assessment")
+        study_qs = Study.objects.filter(id__in=self._study_ids).select_related("assessment")
         study_ser = StudyAssessmentSerializer(study_qs, many=True)
         # must cast to list to circumvent error when included in pydantic model
         return list(study_ser.data)
