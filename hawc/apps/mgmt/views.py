@@ -8,6 +8,7 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin, WebappMixin
+from ..study.serializers import StudyAssessmentSerializer
 from . import models
 
 
@@ -49,8 +50,16 @@ class RobTaskMixin:
     def get_review_tasks(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
+        self._study_ids = rob_tasks.values_list("study_id", flat=True)
         filtered_tasks = [rob for rob in rob_tasks if rob.is_complete is False]
         return RiskOfBias.get_qs_json(filtered_tasks, json_encode=False)
+
+    def get_review_studies(self):
+        Study = apps.get_model("study", "Study")
+        study_qs = Study.objects.filter(id__in=self._study_ids).select_related("assessment")
+        study_ser = StudyAssessmentSerializer(study_qs, many=True)
+        # must cast to list to circumvent error when included in pydantic model
+        return list(study_ser.data)
 
     def get_app_config(self, context) -> WebappConfig:
         assessment_id = self.assessment.id if hasattr(self, "assessment") else None
@@ -67,6 +76,7 @@ class RobTaskMixin:
                 "csrf": get_token(self.request),
                 "user": self.request.user.id,
                 "rob_tasks": self.get_review_tasks(),
+                "rob_studies": self.get_review_studies(),
                 "tasks": {
                     "submit_url": reverse("mgmt:api:task-list"),
                     "url": task_url,
@@ -81,7 +91,7 @@ class RobTaskMixin:
         )
 
 
-class UserAssignments(WebappMixin, RobTaskMixin, LoginRequiredMixin, ListView):
+class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     model = models.Task
     template_name = "mgmt/user_assignments.html"
 
