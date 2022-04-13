@@ -21,6 +21,7 @@ from ..common.views import (
     TimeSpentOnPageMixin,
     get_referrer,
 )
+from ..study.forms import StudyFilterForm
 from ..study.models import Study
 from . import forms, models
 
@@ -28,7 +29,8 @@ from . import forms, models
 def get_breadcrumb_rob_setting(assessment, update: bool = False) -> Breadcrumb:
     if update:
         return Breadcrumb(
-            name="Update", url=reverse("riskofbias:arob_update", args=(assessment.id,)),
+            name="Update",
+            url=reverse("riskofbias:arob_update", args=(assessment.id,)),
         )
     else:
         return Breadcrumb(
@@ -247,6 +249,7 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
     model = Study
     template_name = "riskofbias/rob_assignment_update.html"
     paginate_by = 25
+    form_class = StudyFilterForm
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -259,11 +262,17 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
             .filter(assessment=self.assessment)
             .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
         )
-        if not self.assessment.user_can_edit_assessment(self.request.user):
+        can_edit = self.assessment.user_can_edit_assessment(self.request.user)
+        if not can_edit:
             raise PermissionDenied()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial, can_edit=can_edit)
+        if self.form.is_valid():
+            qs = qs.filter(self.form.get_query())
         return qs
 
     def get_context_data(self, **kwargs):
+        kwargs.update(form=self.form)
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
@@ -289,7 +298,10 @@ class RobNumberReviewsUpdate(BaseUpdate):
     template_name = "riskofbias/reviewers_form.html"
 
     def get_object(self, **kwargs):
-        obj = get_object_or_404(self.model, assessment=self.kwargs.get("pk"),)
+        obj = get_object_or_404(
+            self.model,
+            assessment=self.kwargs.get("pk"),
+        )
         obj = super().get_object(object=obj)
         if not self.assessment.user_can_edit_assessment(self.request.user):
             raise PermissionDenied()

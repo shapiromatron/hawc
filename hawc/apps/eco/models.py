@@ -256,7 +256,9 @@ class Result(models.Model):
     cause = models.ForeignKey(Cause, on_delete=models.CASCADE)
     effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
     sort_order = models.PositiveSmallIntegerField(
-        verbose_name="Sort order", help_text="Sort order of a multiple responses", default=0,
+        verbose_name="Sort order",
+        help_text="Sort order of a multiple responses",
+        default=0,
     )
     relationship_direction = models.IntegerField(
         choices=ChangeTrajectory.choices,

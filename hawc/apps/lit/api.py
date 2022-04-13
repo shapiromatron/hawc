@@ -28,6 +28,7 @@ from ..common.api import (
 from ..common.helper import FlatExport, re_digits, read_excel, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
+from ..common.views import create_object_log
 from . import exports, models, serializers
 
 
@@ -68,6 +69,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             serializer = serializers.ReferenceTreeSerializer(data=request.data, context=context)
             serializer.is_valid(raise_exception=True)
             serializer.update()
+            create_object_log(
+                "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
+            )
         return Response(serializer.data)
 
     @action(detail=True, pagination_class=PaginationWithCount)
@@ -197,7 +201,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True, url_path="references-download", renderer_classes=PandasRenderers,
+        detail=True,
+        url_path="references-download",
+        renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """
@@ -248,6 +254,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         )
         serializer.is_valid(raise_exception=True)
         serializer.execute()
+        create_object_log(
+            "Updated (HERO replacements)", assessment, assessment.id, self.request.user.id
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @transaction.atomic
@@ -264,6 +273,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         assessment = self.get_object()
         models.Reference.update_hero_metadata(assessment.id)
+        create_object_log(
+            "Updated (HERO metadata)", assessment, assessment.id, self.request.user.id
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(

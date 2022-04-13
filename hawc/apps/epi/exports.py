@@ -47,7 +47,9 @@ class OutcomeDataPivot(FlatFileExporter):
         else:
             outcome_ids = set(self.queryset.values_list("id", flat=True))
             self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
-                self.queryset.first().assessment_id, outcome_ids, "epi",
+                self.queryset.first().assessment_id,
+                outcome_ids,
+                "epi",
             )
 
         headers = [

@@ -26,7 +26,10 @@ class UserCreationTests(TestCase):
         )
         self.assertFormError(response, "form", "email", "Enter a valid email address.")
         self.assertFormError(
-            response, "form", "license_v2_accepted", _accept_license_error,
+            response,
+            "form",
+            "license_v2_accepted",
+            _accept_license_error,
         )
         self.assertFormError(
             response,

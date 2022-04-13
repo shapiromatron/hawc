@@ -52,7 +52,8 @@ class BaseFormHelper(cf.FormHelper):
 
         if "help_text" in self.kwargs:
             layout.insert(
-                1, cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
+                1,
+                cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
             )
 
         form_actions = self.kwargs.get("form_actions")
@@ -91,7 +92,7 @@ class BaseFormHelper(cf.FormHelper):
             classes = [classes] * numFields
         first = self.layout.index(firstField)
         for i, class_ in enumerate(classes):
-            self[first + i].wrap(cfl.Column, wrapper_class=class_)
+            self[first + i].wrap(cfl.Column, css_class=class_)
         self[first : first + numFields].wrap_together(
             cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
@@ -197,7 +198,13 @@ class AdderLayout(cfl.Field):
         super().__init__(*args, **kwargs)
 
     def render(
-        self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs,
+        self,
+        form,
+        form_style,
+        context,
+        template_pack=TEMPLATE_PACK,
+        extra_context=None,
+        **kwargs,
     ):
         if extra_context is None:
             extra_context = {}
@@ -250,3 +257,13 @@ class DownloadPlotForm(forms.Form):
             response = HttpResponse(output, content_type=content_type)
             response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
         return response
+
+
+class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
+    """For use in ArrayField with a CharField with choices"""
+
+    def format_value(self, value) -> List[str]:
+        """Return selected values as a list."""
+        if value is None:
+            return []
+        return value.split(",")

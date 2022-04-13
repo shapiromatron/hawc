@@ -27,8 +27,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="riskofbiasassessment", name="default_questions",),
-        migrations.RemoveField(model_name="riskofbiasassessment", name="responses",),
+        migrations.RemoveField(
+            model_name="riskofbiasassessment",
+            name="default_questions",
+        ),
+        migrations.RemoveField(
+            model_name="riskofbiasassessment",
+            name="responses",
+        ),
         migrations.AddField(
             model_name="riskofbiasmetric",
             name="responses",

@@ -21,6 +21,7 @@ _successful_post = {
     "team_members_1": ("1", "2"),
     "reviewers_0": ("1",),
     "reviewers_1": ("1",),
+    "epi_version": ("1",),
     "dtxsids_0": ("DTXSID7020970",),
     "dtxsids_1": ("DTXSID7020970",),
 }
@@ -103,7 +104,10 @@ class TestEditPermissions:
             # check post updates `assessment_working`
             with assertTemplateUsed("assessment/assessment_detail.html"):
                 response = c.post(
-                    reverse("assessment:update", kwargs={"pk": db_keys.assessment_working},),
+                    reverse(
+                        "assessment:update",
+                        kwargs={"pk": db_keys.assessment_working},
+                    ),
                     data=_successful_post,
                     follow=True,
                 )
@@ -112,7 +116,10 @@ class TestEditPermissions:
             # check post updates `assessment_final`
             with assertTemplateUsed("assessment/assessment_detail.html"):
                 response = c.post(
-                    reverse("assessment:update", kwargs={"pk": db_keys.assessment_final},),
+                    reverse(
+                        "assessment:update",
+                        kwargs={"pk": db_keys.assessment_final},
+                    ),
                     data=_successful_post,
                     follow=True,
                 )
@@ -138,7 +145,8 @@ class TestEditPermissions:
                 # check POST
                 with assertTemplateUsed("403.html"):
                     response = c.post(
-                        reverse("assessment:update", args=(pk,)), {"name": "foo manchu"},
+                        reverse("assessment:update", args=(pk,)),
+                        {"name": "foo manchu"},
                     )
                     assert response.status_code == 403
 
@@ -172,14 +180,16 @@ class TestDeletePermissions:
                 # check POST
                 with assertTemplateUsed("403.html"):
                     response = c.post(
-                        reverse("assessment:update", args=(pk,)), {"name": "foo manchu"},
+                        reverse("assessment:update", args=(pk,)),
+                        {"name": "foo manchu"},
                     )
                     assert response.status_code == 403
 
     def _test_delete_client_success(self, c, db_keys):
         with assertTemplateUsed("assessment/assessment_home.html"):
             response = c.post(
-                reverse("assessment:delete", args=(db_keys.assessment_working,)), follow=True,
+                reverse("assessment:delete", args=(db_keys.assessment_working,)),
+                follow=True,
             )
             assert response.status_code == 200
 

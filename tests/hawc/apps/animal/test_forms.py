@@ -114,7 +114,8 @@ class TestEndpointForm:
         # litter_effect_notes
         data = baseline_data.copy()
         data.update(
-            litter_effects="O", litter_effect_notes="",
+            litter_effects="O",
+            litter_effect_notes="",
         )
         form = forms.EndpointForm(
             data, parent=animal_group, assessment=animal_group.get_assessment()

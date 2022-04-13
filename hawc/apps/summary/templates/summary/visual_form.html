@@ -76,7 +76,10 @@
 
       if (config.visual_type !== 6) {
         window.app.startup("smartTagsStartup", function (smartTags) {
-          new smartTags.SmartTagEditor($('#id_caption'), { submitEl: '#visualForm' });
+          new smartTags.SmartTagEditor(
+            $('#id_caption'),
+            {submitEl: '#visualForm', takeFocusEl: "#id_title"}
+          );
         });
 
         {% if crud == "Create" %}

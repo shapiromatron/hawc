@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="riskofbiasscore", options={"ordering": ("metric", "id")},
+            name="riskofbiasscore",
+            options={"ordering": ("metric", "id")},
         ),
         migrations.AlterField(
             model_name="riskofbias",

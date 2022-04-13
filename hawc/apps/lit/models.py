@@ -191,7 +191,8 @@ class Search(models.Model):
         help_text="Database used to identify literature.",
     )
     title = models.CharField(
-        max_length=128, help_text="A brief-description to describe the identified literature.",
+        max_length=128,
+        help_text="A brief-description to describe the identified literature.",
     )
     slug = models.SlugField(
         verbose_name="URL Name",
@@ -288,13 +289,34 @@ class Search(models.Model):
         return list(set(v.strip() for v in self.search_string_text.split(",")))
 
     @transaction.atomic
-    def run_new_import(self):
+    def run_new_import(self, content=None):
+        """Execute an import, creating references and identifiers.
+
+        In some cases, content may be provided, where we may validate and process the data. In
+        other cases, we may need to process the data in this method.
+
+        Args:
+            content (optional): existing identifier metadata, if available
+
+        Raises:
+            ValueError: If any error occurs
+        """
         if self.source == constants.ReferenceDatabase.PUBMED:
-            pmids = [int(id) for id in self.import_ids]
-            identifiers = Identifiers.objects.get_pubmed_identifiers(pmids)
+            ids = [int(id) for id in self.import_ids]
+            if content is None:
+                # fetch content if not provided
+                content = Identifiers.objects.validate_pubmed_ids(ids)
+            Identifiers.objects.bulk_create_pubmed_ids(content)
+            identifiers = Identifiers.objects.pubmed(ids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.ReferenceDatabase.HERO:
-            raise NotImplementedError()
+            ids = [int(id) for id in self.import_ids]
+            if content is None:
+                # fetch content if not provided
+                content = Identifiers.objects.validate_hero_ids(ids)
+            Identifiers.objects.bulk_create_hero_ids(content)
+            identifiers = Identifiers.objects.hero(ids)
+            Reference.objects.get_hero_references(self, identifiers)
         elif self.source == constants.ReferenceDatabase.RIS:
             # check if importer references are cached on object
             refs = getattr(self, "_references", None)

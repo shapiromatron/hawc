@@ -225,7 +225,10 @@ class SVGConverter:
 
     def _to_html(self):
         # return rendered html absolute filepath
-        context = dict(svg=self.svg, css=Styles.for_html,)
+        context = dict(
+            svg=self.svg,
+            css=Styles.for_html,
+        )
         html = render_to_string("rasterize.html", context).encode("UTF-8")
         fn = self.get_tempfile(suffix=".html")
         with open(fn, "wb") as f:

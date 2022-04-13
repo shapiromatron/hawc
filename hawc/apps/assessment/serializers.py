@@ -71,8 +71,10 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
             parent = self.Meta.model.get_assessment_root(assessment_id)
         elif parent_id > 0:
             checkParent = self.Meta.model.objects.filter(id=parent_id).first()
-            if checkParent and checkParent.get_root().name == self.Meta.model.get_assessment_root_name(
-                assessment_id
+            if (
+                checkParent
+                and checkParent.get_root().name
+                == self.Meta.model.get_assessment_root_name(assessment_id)
             ):
                 parent = checkParent
 

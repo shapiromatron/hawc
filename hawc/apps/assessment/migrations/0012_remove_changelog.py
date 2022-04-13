@@ -12,5 +12,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.DeleteModel(name="ChangeLog",),
+        migrations.DeleteModel(
+            name="ChangeLog",
+        ),
     ]

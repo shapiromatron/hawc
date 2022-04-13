@@ -366,8 +366,7 @@ label {
     font-weight: bold;
 }
 
-/*
-Table-sorting
+/* Table-sorting
 https://github.com/tristen/tablesort/blob/HEAD/tablesort.css
 */
 th[role=columnheader]:not(.no-sort) {
@@ -415,9 +414,7 @@ table th.sort-header a {
     text-decoration: none;
 }
 
-/*
-Print styling
-*/
+/* Print styling */
 @media print {
     .no-print {
         display: none !important;
@@ -425,9 +422,7 @@ Print styling
     }
 }
 
-/*
-Risk of Bias
-*/
+/* Risk of Bias */
 .rob_footer {
     border-top: none !important;
 }
@@ -463,17 +458,7 @@ table.bordered td {
     border: 1px solid #dddddd;
 }
 
-/*
-Beta tester
-*/
-.betatester {
-    background-color: #ec744c;
-    border-color: #ec744c;
-}
-
-/*
-Package style overrides
-*/
+/* react-datepicker */
 .react-datepicker-wrapper {
     display: block !important;
 }
@@ -481,7 +466,6 @@ Package style overrides
 .react-datepicker__input-container {
     display: block !important;
 }
-
 
 /* base header/footer */
 .base-footer-div {
@@ -495,15 +479,30 @@ Package style overrides
     padding: 0.8333em 0 0;
 }
 
+.edit-form-background {
+    background-color: #D5E6FF;
+}
+
 /* htmx */
 .htmx-swapping {
     opacity: 0;
     transition: opacity 1s ease-out;
 }
 
-/*
-Utility classes
-*/
+/* quill */
+.ql-editor {
+    background-color: white !important;
+}
+.ql-toolbar {
+    background-color: #E1E7F3 !important;
+}
+
+/* Utility classes */
 .cursor-pointer {
     cursor: pointer;
+}
+
+.betatester {
+    background-color: #ec744c;
+    border-color: #ec744c;
 }

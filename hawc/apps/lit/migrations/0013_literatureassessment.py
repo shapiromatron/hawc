@@ -17,7 +17,8 @@ def build_lit_assessments(apps, schema_editor):
         )
 
         LiteratureAssessment.objects.create(
-            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
+            assessment=assessment,
+            extraction_tag_id=extraction_tag.id if extraction_tag else None,
         )
 
 

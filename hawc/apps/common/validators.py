@@ -67,7 +67,7 @@ def valid_url(url_str: str) -> bool:
 
 def validate_hyperlinks(html: str) -> str:
     """
-    Validate that our hyperlinks are on the whitelist of acceptable link locations.
+    Validate that our hyperlinks are on the allowlist of acceptable link locations.
 
     This will be overly restrictive, but can be relaxed as requests are added.
 

@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
@@ -106,6 +107,17 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
         self.object.searches.add(search)
 
 
+class IdentifierStudyCreate(ReferenceStudyCreate):
+    """
+    Create a study and optionally a reference, linked to an existing external database identifier.
+    """
+
+    form_class = forms.IdentifierStudyForm
+
+    def get_success_url(self):
+        return reverse_lazy("study:update", args=(self.object.id,))
+
+
 class StudyRead(BaseDetail):
     model = models.Study
 
@@ -118,6 +130,7 @@ class StudyRead(BaseDetail):
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
         context["internal_communications"] = self.object.get_communications()
+        context["ENABLE_EPI_V2"] = settings.HAWC_FEATURES.ENABLE_EPI_V2
         return context
 
 

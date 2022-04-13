@@ -13,9 +13,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="datapivot", name="caption", field=models.TextField(blank=True, default=""),
+            model_name="datapivot",
+            name="caption",
+            field=models.TextField(blank=True, default=""),
         ),
         migrations.AlterField(
-            model_name="visual", name="caption", field=models.TextField(blank=True),
+            model_name="visual",
+            name="caption",
+            field=models.TextField(blank=True),
         ),
     ]

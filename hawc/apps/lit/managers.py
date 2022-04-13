@@ -31,7 +31,10 @@ class ReferenceFilterTagManager(TaggableManager):
                 f"{model.__name__} objects need to have a primary key value before you can access their tags."
             )
         manager = _ReferenceFilterTagManager(
-            through=self.through, model=model, instance=instance, prefetch_cache_name=self.name,
+            through=self.through,
+            model=model,
+            instance=instance,
+            prefetch_cache_name=self.name,
         )
         return manager
 
@@ -149,23 +152,49 @@ class IdentifiersManager(BaseManager):
         Identifiers.update_pubmed_content(pimdsFetch)
         return refs
 
-    def validate_valid_hero_ids(self, ids: List[int]) -> Tuple[List[int], List[int], Dict]:
-        qs = self.hero(ids, allow_missing=True).values_list("unique_id", flat=True)
-        existing_ids = [int(id_) for id_ in qs]
-        remaining_ids = list(set(ids) - set(existing_ids))
+    def validate_hero_ids(self, ids: List[int]) -> Dict:
+        """Queries HERO to return a valid list HERO content which doesn't already exist in HAWC.
+
+        Only queries HERO with identifiers which are not already saved in HAWC.
+
+        Args:
+            ids (List[int]): A list of HERO IDs
+
+        Raises:
+            ValidationError: Error if input ids are an invalid format, or HERO cannot find a match
+
+        Returns:
+            Dict: {"success": List[Dict], "failures": List[int]}
+        """
+        # cast all ids to int
+        invalid_ids = []
+        _ids = []
+        for id in ids:
+            try:
+                _ids.append(int(id))
+            except ValueError:
+                invalid_ids.append(id)
+        if invalid_ids:
+            invalid_join = ", ".join(str(id) for id in invalid_ids)
+            raise ValidationError(f"The following HERO ID(s) are not integers: {invalid_join}")
+
+        # determine which ids do not already exist
+        qs = self.hero(_ids, allow_missing=True).values_list("unique_id", flat=True)
+        existing_ids = [int(id) for id in qs]
+        remaining_ids = list(set(_ids) - set(existing_ids))
+
+        # fetch missing ids
         fetcher = hero.HEROFetch(remaining_ids)
         fetched_content = fetcher.get_content()
         if len(fetched_content["failure"]) > 0:
-            failed_ids = ", ".join(str(el) for el in fetched_content["failure"])
-            raise ValidationError(
-                f"Import failed; the following HERO IDs could not be imported: {failed_ids}"
-            )
-        return existing_ids, remaining_ids, fetched_content
+            failed_join = ", ".join(str(el) for el in fetched_content["failure"])
+            raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_join}")
+        return fetched_content
 
     def bulk_create_hero_ids(self, content):
         # sometimes HERO can import two records from a single ID
         deduplicated_content = {item["HEROID"]: item for item in content["success"]}.values()
-        self.bulk_create(
+        return self.bulk_create(
             [
                 apps.get_model("lit", "Identifiers")(
                     database=constants.ReferenceDatabase.HERO,
@@ -186,41 +215,72 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def get_pubmed_identifiers(self, pmids: List[int]):
-        """Return a queryset of identifiers, one for each PubMed ID. Either get
-        or create an identifier, whatever is required
+    def validate_pubmed_ids(self, ids: List[int]) -> List[Dict]:
+        """Queries Pubmed to return a valid list Pubmed content which doesn't already exist in HAWC.
+
+        Only queries Pubmed with identifiers which are not already saved in HAWC.
 
         Args:
-            pmids (List[int]): A list of pubmed identifiers
+            ids (List[int]): A list of PMIDs
+
+        Raises:
+            ValidationError: If any PMIDs are non-numeric or if PubMed is unable to find a PMID.
+
+        Returns:
+            List[Dict]: A list of imported pubmed content
         """
-        #
+        # cast all ids to int
+        invalid_ids = []
+        _ids = []
+        for id in ids:
+            try:
+                _ids.append(int(id))
+            except ValueError:
+                invalid_ids.append(id)
+        if invalid_ids:
+            invalid_join = ", ".join(str(id) for id in invalid_ids)
+            raise ValidationError(f"The following PubMed ID(s) are not integers: {invalid_join}")
+
+        # determine which ids do not already exist
+        qs = self.pubmed(_ids, allow_missing=True).values_list("unique_id", flat=True)
+        existing_ids = [int(id) for id in qs]
+        remaining_ids = list(set(_ids) - set(existing_ids))
+
+        # fetch missing ids
+        fetcher = pubmed.PubMedFetch(remaining_ids)
+        fetched_content = fetcher.get_content()
+        if failed_ids := set(remaining_ids) - {int(item["PMID"]) for item in fetched_content}:
+            failed_join = ", ".join(str(id) for id in failed_ids)
+            raise ValidationError(
+                f"The following PubMed ID(s) could not be imported: {failed_join}"
+            )
+
+        return fetched_content
+
+    def bulk_create_pubmed_ids(self, content):
         Identifiers = apps.get_model("lit", "Identifiers")
 
-        # Filter IDs which need to be imported; we cast to str and back to mirror db fields
-        pmids_str = [str(id) for id in pmids]
-        existing = list(
-            self.filter(
-                database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str
-            ).values_list("unique_id", flat=True)
-        )
-        need_import = [int(id) for id in set(pmids_str) - set(existing)]
-
-        # Grab Pubmed objects
-        fetch = pubmed.PubMedFetch(need_import)
-
         # Save new Identifier objects
-        Identifiers.objects.bulk_create(
+        return Identifiers.objects.bulk_create(
             [
                 Identifiers(
                     unique_id=str(item["PMID"]),
                     database=constants.ReferenceDatabase.PUBMED,
                     content=json.dumps(item),
                 )
-                for item in fetch.get_content()
+                for item in content
             ]
         )
 
-        return self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pmids_str)
+    def pubmed(self, pubmed_ids: List[int], allow_missing=False):
+        qs = self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pubmed_ids)
+
+        if allow_missing is False and qs.count() != len(pubmed_ids):
+            raise ValueError(
+                f"Identifier count ({qs.count()}) does not match ID count ({len(pubmed_ids)})"
+            )
+
+        return qs
 
 
 class ReferenceQuerySet(models.QuerySet):

@@ -32,3 +32,6 @@ BMD_HOST = "http://example.com"  # optional; used for BMD module
 
 # SET HAWC FLAVOR (see docs)
 HAWC_FLAVOR = "PRIME"
+
+# override feature flags
+HAWC_FEATURES.THIS_IS_AN_EXAMPLE = True

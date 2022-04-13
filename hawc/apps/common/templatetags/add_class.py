@@ -10,7 +10,7 @@ class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
 @register.filter
 def add_class(value, css_class):
     """http://djangosnippets.org/snippets/2253/
-    Example call: {{field.name|add_class:"col-md-4"}} """
+    Example call: {{field.name|add_class:"col-md-4"}}"""
     string = str(value)
     match = class_re.search(string)
     if match:

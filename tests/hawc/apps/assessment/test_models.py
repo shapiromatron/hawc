@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.test.client import RequestFactory
 
@@ -39,6 +40,7 @@ class TestContent:
     def test_rendered_page(self):
         rf = RequestFactory()
         request = rf.get("/")
+        request.user = AnonymousUser()
         page = models.Content.rendered_page(models.ContentTypeChoices.HOMEPAGE, request, {})
         assert page == "<h1>Welcome to HAWC</h1>"
         page = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, request, {})
@@ -48,6 +50,7 @@ class TestContent:
     def test_cache_lifecycle(self):
         rf = RequestFactory()
         request = rf.get("/")
+        request.user = AnonymousUser()
         page = models.Content.objects.get(content_type=models.ContentTypeChoices.HOMEPAGE)
         page.template = "<h1>Hello {{name}}!</h1>"
         page.save()

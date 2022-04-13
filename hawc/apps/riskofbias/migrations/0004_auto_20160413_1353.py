@@ -19,7 +19,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 (
@@ -50,11 +53,21 @@ class Migration(migrations.Migration):
             name="riskofbias",
             options={"ordering": ("metric",), "verbose_name_plural": "Risk of Biases"},
         ),
-        migrations.AlterUniqueTogether(name="riskofbias", unique_together=set([]),),
-        migrations.RemoveField(model_name="riskofbias", name="content_type",),
-        migrations.RemoveField(model_name="riskofbias", name="object_id",),
+        migrations.AlterUniqueTogether(
+            name="riskofbias",
+            unique_together=set([]),
+        ),
+        migrations.RemoveField(
+            model_name="riskofbias",
+            name="content_type",
+        ),
+        migrations.RemoveField(
+            model_name="riskofbias",
+            name="object_id",
+        ),
         migrations.AlterModelOptions(
-            name="riskofbias", options={"verbose_name_plural": "Risk of Biases"},
+            name="riskofbias",
+            options={"verbose_name_plural": "Risk of Biases"},
         ),
         migrations.AlterField(
             model_name="riskofbias",
