@@ -138,18 +138,18 @@ class Cause(models.Model):
     level = models.CharField(
         verbose_name="Cause/treatment level",
         max_length=128,
-        help_text="Type the specific treatment/exposure/dose level or range of levels of the cause measure",
+        help_text="Describe the specific treatment/exposure/dose level or range of levels of the cause measure",
     )
     level_value = models.FloatField(
         verbose_name="Cause/treatment value",
         blank=True,
         null=True,
-        help_text="Type the numeric value of the specific treatment/exposure/dose level of the cause measure",
+        help_text="Type the the specific treatment/exposure/dose level (if applicable)",
     )
     level_units = models.CharField(
         verbose_name="Cause/treatment level units",
         max_length=100,
-        help_text="Enter the units of the specific treatment/exposure/dose level of the cause measure",
+        help_text="Type the units associated with the cause value term",
     )
     duration = models.CharField(
         verbose_name="Cause/treatment duration",
