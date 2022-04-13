@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Q
 
+from taggit.managers import TaggableManager
+
 from ..epi.models import Country
 from ..study.models import Study
 from .constants import ChangeTrajectory, VocabCategories
@@ -53,7 +55,11 @@ class Design(models.Model):
         help_text="Select the setting in which evidence was generated",
         related_name="+",
     )
-    country = models.ManyToManyField(Country, help_text="Select one or more countries")
+    country = models.ManyToManyField(
+        Country,
+        help_text="Select one or more countries",
+        related_name="country",  # is this a good related name?
+    )
     state = models.ManyToManyField(
         State, blank=True, help_text="Select one or more states, if applicable."
     )
@@ -240,6 +246,10 @@ class Effect(models.Model):
         verbose_name="Effect as reported",
         help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
+    modifying_factors = TaggableManager(
+        verbose_name="Modifying factors",
+        help_text="Type a comma-separated list of any modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -270,16 +280,11 @@ class Result(models.Model):
         blank=True,
         help_text="Describe the relationship in 1-2 sentences",
     )
-    modifying_factors = models.CharField(
-        verbose_name="Modifying factors",
-        max_length=256,
-        blank=True,
-        help_text="Type one or more factors that affect the relationship between selected cause and effect",
-    )
     modifying_factors_comment = models.TextField(
         verbose_name="Modifying factors comment",
+        max_length=256,
         blank=True,
-        help_text="Describe how modifying factor(s) affect the relationship in 1-2 sentences",
+        help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
     )
     sample_size = models.IntegerField(
         verbose_name="Sample size",
