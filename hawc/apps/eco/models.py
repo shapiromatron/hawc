@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models import Q
-
 from taggit.managers import TaggableManager
 
 from ..epi.models import Country
