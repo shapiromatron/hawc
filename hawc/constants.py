@@ -12,7 +12,7 @@ class AuthProvider(str, Enum):
 
 class FeatureFlags(BaseModel):
     THIS_IS_AN_EXAMPLE: bool = True
-    ENABLE_ECO: bool = True
+    ENABLE_ECO: bool = False
     ENABLE_EPI_V2: bool = False
 
     @classmethod
