@@ -10,7 +10,7 @@ class DesignForm(forms.ModelForm):
         model = models.Design
         widgets = {
             "study": autocomplete(models.Design, "study"),
-            "country": autocomplete(models.Design, "country", multi=True),
+            "countries": autocomplete(models.Design, "countries", multi=True),
             "state": autocomplete(models.Design, "state", multi=True),
             "ecoregion": autocomplete(models.Design, "ecoregion", multi=True),
         }

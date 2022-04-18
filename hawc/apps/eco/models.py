@@ -54,10 +54,10 @@ class Design(models.Model):
         help_text="Select the setting in which evidence was generated",
         related_name="+",
     )
-    country = models.ManyToManyField(
+    countries = models.ManyToManyField(
         Country,
         help_text="Select one or more countries",
-        related_name="country",  # is this a good related name?
+        related_name="eco_designs",
     )
     state = models.ManyToManyField(
         State, blank=True, help_text="Select one or more states, if applicable."

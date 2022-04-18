@@ -215,10 +215,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "country",
+                    "countries",
                     models.ManyToManyField(
                         help_text="Select one or more countries",
-                        related_name="country",
+                        related_name="eco_designs",
                         to="epi.Country",
                     ),
                 ),

@@ -185,7 +185,12 @@ class Migration(migrations.Migration):
                 ("comments", models.TextField(blank=True)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("countries", models.ManyToManyField(blank=True, to="epi.Country")),
+                (
+                    "countries",
+                    models.ManyToManyField(
+                        blank=True, to="epi.Country", related_name="epiv2_designs"
+                    ),
+                ),
                 (
                     "study",
                     models.ForeignKey(
