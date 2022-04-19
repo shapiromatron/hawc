@@ -5,13 +5,8 @@ var page = require('webpage').create(),
     output = system.args[2],
     renderTimeout = 500,
     pageEvalGetSvgSize = function() {
-        var d = document.querySelector('svg').getBoundingClientRect();
-        return {
-            top: d.top,
-            height: d.height,
-            left: d.left,
-            width: d.width,
-        };
+        var svg = document.querySelector('svg');
+        return svg ? svg.getBoundingClientRect() : { top: 0, left: 0, height: 5, width: 5 };
     },
     renderAndExit = function() {
         // Wait for animations, after viewport size change
@@ -21,37 +16,37 @@ var page = require('webpage').create(),
         }, renderTimeout);
     },
     getPdf = function() {
-        var svg = page.evaluate(pageEvalGetSvgSize);
+        var bb = page.evaluate(pageEvalGetSvgSize);
 
         page.viewportSize = {
-            height: 2 * svg.top + svg.height,
-            width: 2 * svg.left + svg.width,
+            height: 2 * bb.top + bb.height,
+            width: 2 * bb.left + bb.width,
         };
 
         page.paperSize = {
-            height: 20 + 2 * svg.top + svg.height + 'px',
-            width: 10 + 2 * svg.left + svg.width + 'px',
+            height: 20 + 2 * bb.top + bb.height + 'px',
+            width: 10 + 2 * bb.left + bb.width + 'px',
             margin: '5px',
         };
 
         renderAndExit();
     },
     getRasterization = function() {
-        var svg = page.evaluate(pageEvalGetSvgSize),
+        var bb = page.evaluate(pageEvalGetSvgSize),
             zoomFactor = 3;
 
         page.zoomFactor = zoomFactor;
 
         page.clipRect = {
-            top: svg.top,
-            height: svg.height * zoomFactor + 15,
-            left: svg.left,
-            width: svg.width * zoomFactor + 15,
+            top: bb.top,
+            height: bb.height * zoomFactor + 15,
+            left: bb.left,
+            width: bb.width * zoomFactor + 15,
         };
 
         page.viewportSize = {
-            height: 2 * svg.top + svg.height * zoomFactor,
-            width: 2 * svg.left + svg.width * zoomFactor,
+            height: 2 * bb.top + bb.height * zoomFactor,
+            width: 2 * bb.left + bb.width * zoomFactor,
         };
 
         renderAndExit();

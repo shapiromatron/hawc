@@ -69,14 +69,16 @@ class HawcStyles:
 Styles = HawcStyles()
 
 
+RE_SVG = re.compile(r"<svg.*?>.+?</svg>", re.DOTALL)
+
+
 class SVGConverter:
-    def __init__(self, svg, url: str, width: int, height: int):
+    def __init__(self, svg: str, url: str, width: int, height: int):
         self.url = url
         self.width = width
         self.height = height
         self.tempfns = []
-        svg = self.decode_svg(svg)
-        self.svg = parse.unquote(svg, encoding="ISO-8859-1")
+        self.svg = svg
 
     @classmethod
     def decode_svg(cls, svg) -> str:
@@ -86,10 +88,10 @@ class SVGConverter:
             svg: base64 encoded svg
 
         Raises:
-            ValueError: If data cannot be decoded
+            ValueError: If data cannot be decoded or is invalid SVG
         """
         try:
-            return (
+            decoded = (
                 base64.b64decode(svg)
                 .decode("utf8")
                 .replace("%u", "\\u")
@@ -97,7 +99,14 @@ class SVGConverter:
                 .decode("unicode-escape")
             )
         except (binascii.Error, ValueError, UnicodeDecodeError):
-            raise ValueError("Invalid base64 encoded SVG")
+            raise ValueError("Invalid base64 encoding")
+
+        # ensure svg-like
+        unquoted = parse.unquote(decoded, encoding="ISO-8859-1")
+        if not RE_SVG.fullmatch(unquoted):
+            raise ValueError("Invalid SVG")
+
+        return unquoted
 
     def to_svg(self):
         svg = self.svg
@@ -243,6 +252,5 @@ class SVGConverter:
         try:
             commands = shlex.split(" ".join([settings.PHANTOMJS_PATH, rasterize, html_fn, out_fn]))
             subprocess.run(commands, env=phantomjs_env, check=True)
-            logger.info("Conversion successful")
         except subprocess.CalledProcessError as err:
             logger.error(err, exc_info=True)

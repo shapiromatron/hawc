@@ -235,12 +235,11 @@ class DownloadPlotForm(forms.Form):
     height = forms.FloatField()
 
     def clean_svg(self):
-        data = self.cleaned_data["svg"]
         try:
-            SVGConverter.decode_svg(data)
+            svg = SVGConverter.decode_svg(self.cleaned_data["svg"])
         except ValueError as err:
             raise forms.ValidationError(str(err))
-        return data
+        return svg
 
     def process(self, url: str) -> HttpResponse:
         extension = self.cleaned_data["output"]
@@ -252,7 +251,7 @@ class DownloadPlotForm(forms.Form):
             int(self.cleaned_data["height"] * 5),
         )
         response = HttpResponse("<p>An error in processing occurred.</p>")
-        output = task.get(timeout=90)
+        output = task.get(timeout=60)
         if output:
             response = HttpResponse(output, content_type=content_type)
             response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
