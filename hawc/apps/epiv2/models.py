@@ -45,7 +45,11 @@ class Design(models.Model):
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
     )
     years = models.CharField(max_length=32, verbose_name="Year(s) of data collection", blank=True)
-    countries = models.ManyToManyField(Country, blank=True)
+    countries = models.ManyToManyField(
+        Country,
+        blank=True,
+        related_name="epiv2_designs",
+    )
     region = models.CharField(
         max_length=128, blank=True, verbose_name="Other geographic information"
     )

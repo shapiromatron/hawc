@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from ..common.admin import admin_edit_link
 from . import forms, models
 
 
@@ -21,9 +20,9 @@ class VocabAdmin(admin.ModelAdmin):
         return qs.select_related("parent")
 
 
-@admin.register(models.Metadata)
-class MetadataAdmin(admin.ModelAdmin):
-    form = forms.MetadataForm
+@admin.register(models.Design)
+class DesignAdmin(admin.ModelAdmin):
+    form = forms.DesignForm
     list_display = ("id", "__str__", "study", "design", "created", "last_updated")
     list_filter = ("design", "habitat")
     search_fields = ("study__short_citation",)
@@ -33,59 +32,51 @@ class MetadataAdmin(admin.ModelAdmin):
         return qs.select_related("study", "design")
 
 
-class EffectTabularAdmin(admin.StackedInline):
-    model = models.Effect
-    form = forms.EffectForm
-    extra = 0
-    readonly_fields = (admin_edit_link,)
-
-
 @admin.register(models.Cause)
 class CauseAdmin(admin.ModelAdmin):
     form = forms.CauseForm
     list_display = ("id", "__str__", "study", "created", "last_updated")
+    list_filter = (("study", admin.RelatedOnlyFieldListFilter),)
     search_fields = ("study__short_citation",)
-    inlines = [EffectTabularAdmin]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related("study", "term")
 
 
-class QuantitativeInlineAdmin(admin.TabularInline):
-    model = models.Quantitative
-    extra = 0
-    readonly_fields = (admin_edit_link,)
-
-    @admin.display(description="Detailed edit link")
-    def edit_link(self, instance):
-        return admin_edit_link(instance)
-
-
 @admin.register(models.Effect)
 class EffectAdmin(admin.ModelAdmin):
     form = forms.EffectForm
-    list_display = ("id", "cause", "term", "created", "last_updated")
-    search_fields = ("cause__study__short_citation",)
-    inlines = [QuantitativeInlineAdmin]
+    list_display = ("id", "study", "term", "created", "last_updated")
+    list_filter = (("study", admin.RelatedOnlyFieldListFilter),)
+    search_fields = ("study__short_citation",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("cause__study", "term")
+        return qs.select_related("study", "term")
 
 
-@admin.register(models.Quantitative)
-class QuantitativeAdmin(admin.ModelAdmin):
-    model = models.Quantitative
-    form = forms.QuantitativeForm
+@admin.register(models.Result)
+class ResultAdmin(admin.ModelAdmin):
+    model = models.Result
+    form = forms.ResultForm
     list_display = (
         "id",
+        "study",
+        "design",
+        "cause",
         "effect",
         "sort_order",
         "created",
         "last_updated",
     )
+    list_filter = (
+        ("study", admin.RelatedOnlyFieldListFilter),
+        ("design", admin.RelatedOnlyFieldListFilter),
+        ("cause", admin.RelatedOnlyFieldListFilter),
+        ("effect", admin.RelatedOnlyFieldListFilter),
+    )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("effect__cause__study")
+        return qs.select_related("study", "design", "cause", "effect")
