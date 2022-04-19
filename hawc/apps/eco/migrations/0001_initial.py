@@ -463,7 +463,6 @@ class Migration(migrations.Migration):
                     models.TextField(
                         blank=True,
                         help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
-                        max_length=256,
                         verbose_name="Modifying factors comment",
                     ),
                 ),
@@ -533,15 +532,21 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "cause",
-                    models.ForeignKey(on_delete=models.deletion.CASCADE, to="eco.cause"),
+                    models.ForeignKey(
+                        on_delete=models.deletion.CASCADE, to="eco.cause", related_name="results"
+                    ),
                 ),
                 (
                     "design",
-                    models.ForeignKey(on_delete=models.deletion.CASCADE, to="eco.design"),
+                    models.ForeignKey(
+                        on_delete=models.deletion.CASCADE, to="eco.design", related_name="results"
+                    ),
                 ),
                 (
                     "effect",
-                    models.ForeignKey(on_delete=models.deletion.CASCADE, to="eco.effect"),
+                    models.ForeignKey(
+                        on_delete=models.deletion.CASCADE, to="eco.effect", related_name="results"
+                    ),
                 ),
                 (
                     "measure_type",
@@ -567,7 +572,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "study",
-                    models.ForeignKey(on_delete=models.deletion.CASCADE, to="study.study"),
+                    models.ForeignKey(
+                        on_delete=models.deletion.CASCADE,
+                        to="study.study",
+                        related_name="eco_results",
+                    ),
                 ),
                 (
                     "variability",

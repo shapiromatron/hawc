@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from ..common.admin import admin_edit_link
 from . import forms, models
 
 
@@ -33,17 +32,11 @@ class DesignAdmin(admin.ModelAdmin):
         return qs.select_related("study", "design")
 
 
-class EffectTabularAdmin(admin.StackedInline):
-    model = models.Effect
-    form = forms.EffectForm
-    extra = 0
-    readonly_fields = (admin_edit_link,)
-
-
 @admin.register(models.Cause)
 class CauseAdmin(admin.ModelAdmin):
     form = forms.CauseForm
     list_display = ("id", "__str__", "study", "created", "last_updated")
+    list_filter = (("study", admin.RelatedOnlyFieldListFilter),)
     search_fields = ("study__short_citation",)
 
     def get_queryset(self, request):
@@ -51,22 +44,12 @@ class CauseAdmin(admin.ModelAdmin):
         return qs.select_related("study", "term")
 
 
-class ResultInlineAdmin(admin.TabularInline):
-    model = models.Result
-    extra = 0
-    readonly_fields = (admin_edit_link,)
-
-    @admin.display(description="Detailed edit link")
-    def edit_link(self, instance):
-        return admin_edit_link(instance)
-
-
 @admin.register(models.Effect)
 class EffectAdmin(admin.ModelAdmin):
     form = forms.EffectForm
     list_display = ("id", "study", "term", "created", "last_updated")
+    list_filter = (("study", admin.RelatedOnlyFieldListFilter),)
     search_fields = ("study__short_citation",)
-    inlines = [ResultInlineAdmin]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -79,12 +62,21 @@ class ResultAdmin(admin.ModelAdmin):
     form = forms.ResultForm
     list_display = (
         "id",
+        "study",
+        "design",
+        "cause",
         "effect",
         "sort_order",
         "created",
         "last_updated",
     )
+    list_filter = (
+        ("study", admin.RelatedOnlyFieldListFilter),
+        ("design", admin.RelatedOnlyFieldListFilter),
+        ("cause", admin.RelatedOnlyFieldListFilter),
+        ("effect", admin.RelatedOnlyFieldListFilter),
+    )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("study")
+        return qs.select_related("study", "design", "cause", "effect")

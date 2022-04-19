@@ -166,7 +166,7 @@ class Cause(models.Model):
         blank=True,
         null=True,
         help_text="Type the numeric value of the specific duration of the treatment/exposure",
-    )  # BR suggestion
+    )
     duration_units = models.CharField(
         verbose_name="Cause/treatment duration units",
         max_length=100,
@@ -260,10 +260,10 @@ class Effect(models.Model):
 
 
 class Result(models.Model):
-    study = models.ForeignKey(Study, on_delete=models.CASCADE)
-    design = models.ForeignKey(Design, on_delete=models.CASCADE)
-    cause = models.ForeignKey(Cause, on_delete=models.CASCADE)
-    effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="eco_results")
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="results")
+    cause = models.ForeignKey(Cause, on_delete=models.CASCADE, related_name="results")
+    effect = models.ForeignKey(Effect, on_delete=models.CASCADE, related_name="results")
     sort_order = models.PositiveSmallIntegerField(
         verbose_name="Sort order",
         help_text="Sort order of a multiple responses",
@@ -281,7 +281,6 @@ class Result(models.Model):
     )
     modifying_factors_comment = models.TextField(
         verbose_name="Modifying factors comment",
-        max_length=256,
         blank=True,
         help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
     )
