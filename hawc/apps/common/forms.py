@@ -8,8 +8,8 @@ from django import forms
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from . import selectable, tasks, validators
 from ...services.utils.rasterize import SVGConverter
+from . import selectable, tasks, validators
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 

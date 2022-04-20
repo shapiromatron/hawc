@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 from datetime import datetime
 from io import BytesIO
+from typing import Optional
 from urllib import parse
 
 from django.conf import settings
@@ -74,11 +75,10 @@ RE_SVG = re.compile(r"<svg.*?>.+?</svg>", re.DOTALL)
 
 class SVGConverter:
     def __init__(self, svg: str, url: str, width: int, height: int):
+        self.svg = svg
         self.url = url
         self.width = width
         self.height = height
-        self.tempfns = []
-        self.svg = svg
 
     @classmethod
     def decode_svg(cls, svg) -> str:
@@ -119,37 +119,36 @@ class SVGConverter:
         # inserting CDATA using a python etree, we use a regex instead
         return "".join([svg[:insertion_point], Styles.for_svg, svg[insertion_point:]])
 
-    def _rasterize_png(self):
-        # rasterize png and return filename
-        png = self.get_tempfile(suffix=".png")
-        self._rasterize(png)
-        return png
+    def to_png(self) -> Optional[bytes]:
+        return self._rasterize(suffix=".png")
 
-    def to_png(self):
-        content = None
-        try:
-            png = self._rasterize_png()
-            with open(png, "rb") as f:
-                content = f.read()
-        except Exception as e:
-            logger.error(e, exc_info=True)
-        finally:
-            self.cleanup()
-        return content
+    def to_pdf(self) -> Optional[bytes]:
+        return self._rasterize(suffix=".pdf")
 
-    def to_pdf(self):
-        logger.info("Converting svg -> html -> pdf")
-        content = None
-        try:
-            pdf = self.get_tempfile(suffix=".pdf")
-            self._rasterize(pdf)
-            with open(pdf, "rb") as f:
-                content = f.read()
-        except Exception as e:
-            logger.error(e, exc_info=True)
-        finally:
-            self.cleanup()
-        return content
+    def to_pptx(self) -> Optional[bytes]:
+        logger.info("Converting svg -> html -> png -> pptx")
+
+        # convert to png
+        png = self.to_png()
+        if png is None:
+            return None
+
+        # create blank presentation slide layout
+        pres = Presentation()
+        blank_slidelayout = pres.slide_layouts[6]
+        slide = pres.slides.add_slide(blank_slidelayout)
+
+        self._pptx_add_title(slide)
+        self._pptx_add_url(slide)
+        self._pptx_add_png(slide, BytesIO(png))
+        self._pptx_add_hawc_logo(slide)
+
+        # save as object
+        content = BytesIO()
+        pres.save(content)
+        content.seek(0)
+
+        return content.read()
 
     def _pptx_add_title(self, slide):
         txBox = slide.shapes.add_textbox(Inches(0.5), Inches(0.25), Inches(9), Inches(0.5))
@@ -191,66 +190,29 @@ class SVGConverter:
         top = Inches(6.65)
         width = Inches(1.4)
         height = Inches(0.8)
-        logo_location = os.path.join(settings.STATICFILES_DIRS[0], "img/HAWC-120.png")
+        logo_location = os.path.join(settings.STATICFILES_DIRS[0], "img/HAWC-400.png")
         slide.shapes.add_picture(logo_location, left, top, width, height)
 
-    def to_pptx(self):
-        logger.info("Converting svg -> html -> png -> pptx")
-        content = None
-        try:
-            # convert to png
-            png_fn = self._rasterize_png()
-
-            # create blank presentation slide layout
-            pres = Presentation()
-            blank_slidelayout = pres.slide_layouts[6]
-            slide = pres.slides.add_slide(blank_slidelayout)
-
-            self._pptx_add_title(slide)
-            self._pptx_add_url(slide)
-            self._pptx_add_png(slide, png_fn)
-            self._pptx_add_hawc_logo(slide)
-
-            # save as object
-            content = BytesIO()
-            pres.save(content)
-            content.seek(0)
-
-        except Exception as e:
-            logger.error(e, exc_info=True)
-        finally:
-            self.cleanup()
-
-        return content
-
-    def get_tempfile(self, prefix="hawc-", suffix=".txt"):
-        _, fn = tempfile.mkstemp(prefix=prefix, suffix=suffix)
-        self.tempfns.append(fn)
-        return fn
-
-    def cleanup(self):
-        for fn in self.tempfns:
-            os.remove(fn)
-
-    def _to_html(self):
+    def _to_html(self, f):
         # return rendered html absolute filepath
-        context = dict(
-            svg=self.svg,
-            css=Styles.for_html,
-        )
+        context = dict(svg=self.svg, css=Styles.for_html)
         html = render_to_string("rasterize.html", context).encode("UTF-8")
-        fn = self.get_tempfile(suffix=".html")
-        with open(fn, "wb") as f:
-            f.write(html)
-        return fn
+        f.write(html)
 
-    def _rasterize(self, out_fn):
+    def _rasterize(self, suffix) -> Optional[bytes]:
         phantomjs_env = os.environ.copy()
         phantomjs_env.update(settings.PHANTOMJS_ENV)
         rasterize = str(settings.PROJECT_PATH / "static/js/rasterize.js")
-        html_fn = self._to_html()
-        try:
-            commands = shlex.split(" ".join([settings.PHANTOMJS_PATH, rasterize, html_fn, out_fn]))
-            subprocess.run(commands, env=phantomjs_env, check=True)
-        except subprocess.CalledProcessError as err:
-            logger.error(err, exc_info=True)
+        with (
+            tempfile.NamedTemporaryFile("wb", prefix="hawc-", suffix=".html") as input,
+            tempfile.NamedTemporaryFile("rb", prefix="hawc-", suffix=suffix) as output,
+        ):
+            self._to_html(input)
+            try:
+                commands = shlex.split(
+                    " ".join([settings.PHANTOMJS_PATH, rasterize, input.name, output.name])
+                )
+                subprocess.run(commands, env=phantomjs_env, check=True)
+                return output.read()
+            except subprocess.CalledProcessError as err:
+                logger.error(err, exc_info=True)
