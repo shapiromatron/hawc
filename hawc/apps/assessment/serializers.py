@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from django.apps import apps
+from django.core.cache import cache
 from plotly.subplots import make_subplots
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
@@ -197,3 +198,39 @@ class StrainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Strain
         fields = "__all__"
+
+
+from uuid import uuid4
+
+from rest_framework.exceptions import ValidationError
+
+from ...services.utils.rasterize import SVGConverter
+from ..common import tasks
+
+
+class PlotRasterizeSerializer(serializers.Serializer):
+    CROSSWALK = {
+        "svg": tasks.convert_to_svg,
+        "png": tasks.convert_to_png,
+        "pdf": tasks.convert_to_pdf,
+        "pptx": tasks.convert_to_pptx,
+    }
+    output = serializers.ChoiceField(
+        choices=(("svg", "svg"), ("png", "png"), ("pdf", "pdf"), ("pptx", "pptx"))
+    )
+    svg = serializers.CharField()
+    width = serializers.IntegerField()  # CHANGED TO INT; make sure that is the case in JS
+    height = serializers.IntegerField()  # CHANGED TO INT; make sure that is the case in JS
+
+    def validate_svg(self, data):
+        try:
+            svg = SVGConverter.decode_svg(data)
+        except ValueError as err:
+            raise ValidationError(err)
+        return svg
+
+    def process(self, url: str, key: str):
+        cache.set(key, url, 5)
+        data = self.validated_data
+        task = self.CROSSWALK[data["output"]]
+        task.delay(key, data["svg"], url, data["width"] * 5, data["height"] * 5)

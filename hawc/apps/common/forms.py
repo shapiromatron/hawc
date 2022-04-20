@@ -1,4 +1,5 @@
 from typing import Any, List, Tuple, Union
+from uuid import uuid4
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
@@ -214,48 +215,6 @@ class AdderLayout(cfl.Field):
 
 class CustomURLField(forms.URLField):
     default_validators = [validators.CustomURLValidator()]
-
-
-class DownloadPlotForm(forms.Form):
-    CROSSWALK = {
-        "svg": (tasks.convert_to_svg, "image/svg+xml"),
-        "png": (tasks.convert_to_png, "application/png"),
-        "pdf": (tasks.convert_to_pdf, "application/pdf"),
-        "pptx": (
-            tasks.convert_to_pptx,
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ),
-    }
-
-    output = forms.ChoiceField(
-        choices=(("svg", "svg"), ("png", "png"), ("pdf", "pdf"), ("pptx", "pptx"))
-    )
-    svg = forms.CharField()
-    width = forms.FloatField()
-    height = forms.FloatField()
-
-    def clean_svg(self):
-        try:
-            svg = SVGConverter.decode_svg(self.cleaned_data["svg"])
-        except ValueError as err:
-            raise forms.ValidationError(str(err))
-        return svg
-
-    def process(self, url: str) -> HttpResponse:
-        extension = self.cleaned_data["output"]
-        handler, content_type = self.CROSSWALK[extension]
-        task = handler.delay(
-            self.cleaned_data["svg"],
-            url,
-            int(self.cleaned_data["width"] * 5),
-            int(self.cleaned_data["height"] * 5),
-        )
-        response = HttpResponse("<p>An error in processing occurred.</p>")
-        output = task.get(timeout=60)
-        if output:
-            response = HttpResponse(output, content_type=content_type)
-            response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
-        return response
 
 
 class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):

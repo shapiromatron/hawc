@@ -4,9 +4,11 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.utils.timezone import now
 from rest_framework.authtoken.models import Token
 
+from .constants import MimeType
 from ...services.utils.rasterize import SVGConverter
 
 logger = get_task_logger(__name__)
@@ -34,29 +36,40 @@ def destroy_old_api_tokens():
     qs.delete()
 
 
+IMAGE_TIMEOUT = 60
+
+
 @shared_task
-def convert_to_svg(svg, url, width, height):
+def convert_to_svg(key, svg, url, width, height):
     logger.info("Converting svg -> [css]+svg")
     conv = SVGConverter(svg, url, width, height)
-    return conv.to_svg()
+    data = conv.to_svg()
+    if data:
+        cache.set(key, {"data": data, "extension": "svg", "mime": MimeType.svg}, IMAGE_TIMEOUT)
 
 
 @shared_task
-def convert_to_png(svg, url, width, height):
+def convert_to_png(key, svg, url, width, height):
     logger.info("Converting svg -> html -> png")
     conv = SVGConverter(svg, url, width, height)
-    return conv.to_png()
+    data = conv.to_png()
+    if data:
+        cache.set(key, {"data": data, "extension": "png", "mime": MimeType.png}, IMAGE_TIMEOUT)
 
 
 @shared_task
-def convert_to_pdf(svg, url, width, height):
+def convert_to_pdf(key, svg, url, width, height):
     logger.info("Converting svg -> html -> pdf")
     conv = SVGConverter(svg, url, width, height)
-    return conv.to_pdf()
+    data = conv.to_pdf()
+    if data:
+        cache.set(key, {"data": data, "extension": "pdf", "mime": MimeType.pdf}, IMAGE_TIMEOUT)
 
 
 @shared_task
-def convert_to_pptx(svg, url, width, height):
+def convert_to_pptx(key, svg, url, width, height):
     logger.info("Converting svg -> html -> png -> pptx")
     conv = SVGConverter(svg, url, width, height)
-    return conv.to_pptx()
+    data = conv.to_pptx()
+    if data:
+        cache.set(key, {"data": data, "extension": "pptx", "mime": MimeType.pptx}, IMAGE_TIMEOUT)

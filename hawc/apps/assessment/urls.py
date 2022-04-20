@@ -9,6 +9,7 @@ router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
 router.register(r"strain", api.StrainViewset, basename="strain")
+router.register(r"rasterize", api.PlotRasterizerViewset, basename="rasterize")
 
 
 app_name = "assessment"
@@ -119,7 +120,6 @@ urlpatterns = [
     ),
     # helper functions
     path("content-types/", views.AboutContentTypes.as_view(), name="content_types"),
-    path("download-plot/", views.DownloadPlot.as_view(), name="download_plot"),
     path("close-window/", views.CloseWindow.as_view(), name="close_window"),
     # assessment level study
     path(

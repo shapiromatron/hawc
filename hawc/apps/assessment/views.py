@@ -25,12 +25,10 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
 from ..common.crumbs import Breadcrumb
-from ..common.forms import DownloadPlotForm
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
@@ -687,20 +685,6 @@ class UpdateSession(View):
                     "new_expiry_time": None,
                 }
         return JsonResponse(response)
-
-
-@method_decorator(csrf_exempt, name="dispatch")
-class DownloadPlot(FormView):
-    form_class = DownloadPlotForm
-    http_method_names = ["post"]
-
-    def form_invalid(self, form: DownloadPlotForm):
-        # intentionally don't provide helpful data
-        return JsonResponse({"valid": False}, status=400)
-
-    def form_valid(self, form: DownloadPlotForm):
-        url = get_referrer(self.request, "/<unknown>/")
-        return form.process(url)
 
 
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
