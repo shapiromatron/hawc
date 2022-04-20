@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from rest_framework.authtoken.models import Token
 
-from .svg import SVGConverter
+from ...services.utils.rasterize import SVGConverter
 
 logger = get_task_logger(__name__)
 

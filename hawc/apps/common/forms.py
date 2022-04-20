@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 
 from . import selectable, tasks, validators
-from .svg import SVGConverter
+from ...services.utils.rasterize import SVGConverter
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 

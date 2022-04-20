@@ -6,7 +6,7 @@ from shutil import which
 
 import pytest
 
-from hawc.apps.common.svg import SVGConverter
+from hawc.services.utils.rasterize import SVGConverter
 
 DATA_PATH = Path(__file__).parent.absolute() / "data"
 
