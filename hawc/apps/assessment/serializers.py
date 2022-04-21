@@ -1,12 +1,15 @@
+from typing import Dict
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from django.apps import apps
-from django.core.cache import cache
 from plotly.subplots import make_subplots
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, ValidationError
 
+from ...services.utils.rasterize import SVGConverter
+from ..common.tasks import rasterize
 from . import models
 
 
@@ -200,21 +203,7 @@ class StrainSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-from uuid import uuid4
-
-from rest_framework.exceptions import ValidationError
-
-from ...services.utils.rasterize import SVGConverter
-from ..common import tasks
-
-
 class PlotRasterizeSerializer(serializers.Serializer):
-    CROSSWALK = {
-        "svg": tasks.convert_to_svg,
-        "png": tasks.convert_to_png,
-        "pdf": tasks.convert_to_pdf,
-        "pptx": tasks.convert_to_pptx,
-    }
     output = serializers.ChoiceField(
         choices=(("svg", "svg"), ("png", "png"), ("pdf", "pdf"), ("pptx", "pptx"))
     )
@@ -230,7 +219,7 @@ class PlotRasterizeSerializer(serializers.Serializer):
         return svg
 
     def process(self, url: str, key: str):
-        cache.set(key, url, 5)
-        data = self.validated_data
-        task = self.CROSSWALK[data["output"]]
-        task.delay(key, data["svg"], url, data["width"] * 5, data["height"] * 5)
+        data: Dict = self.validated_data
+        rasterize.delay(
+            key, data["svg"], data["output"], url, data["width"] * 5, data["height"] * 5
+        )

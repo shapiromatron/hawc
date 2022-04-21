@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import h from "shared/utils/helpers";
-import {saveAs} from "file-saver";
 
 const getSvgObject = function(svgElement) {
         // save svg and css styles to this document as a blob.
@@ -26,23 +25,31 @@ const getSvgObject = function(svgElement) {
         svg_object.blob = new Blob(svg_object.source, {type: "text/xml"});
         return svg_object;
     },
+    downloadBlob = (blob, contentDisposition) => {
+        // https://stackoverflow.com/a/42274086/906385
+        const url = window.URL.createObjectURL(blob),
+            a = document.createElement("a"),
+            filename = /filename="(.+?)"/.exec(contentDisposition);
+        a.href = url;
+        a.download = filename ? filename[1] : "download.txt";
+        a.className = "hidden";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    },
     pollForResult = url => {
-        console.log(url);
-
-        // if it's json; set timeout, if its something else, download
-
-        // const fetchResult = () => {
-        //     fetch(url, h.fetchGet)
-        //         .then(response => response.json())
-        //         .then(d => {
-        //             if (d.status === "ok") {
-        //                 const blob = new Blob([d.data.data], {type: d.data.mime});
-        //                 return saveAs(blob);
-        //             }
-        //             setTimeout(fetchResult, 5000);
-        //         });
-        // };
-        // fetchResult();
+        const fetchResult = () => {
+            fetch(url, h.fetchGet).then(response => {
+                console.log("fetch");
+                const contentType = response.headers.get("content-type"),
+                    contentDisposition = response.headers.get("content-disposition");
+                if (contentType == "application/json") {
+                    return setTimeout(fetchResult, 5000);
+                }
+                response.blob().then(blob => downloadBlob(blob, contentDisposition));
+            });
+        };
+        fetchResult();
     },
     rasterize = (svg, format) => {
         const blob = getSvgObject(svg),
