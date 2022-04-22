@@ -46,7 +46,7 @@ const getSvgObject = function(svgElement) {
         const blob = getSvgObject(svg),
             payload = {
                 output: format,
-                svg: btoa(escape(blob.source[0])),
+                svg: blob.source,
                 width: blob.width,
                 height: blob.height,
             },
@@ -57,7 +57,7 @@ const getSvgObject = function(svgElement) {
             "POST",
             null,
             payload,
-            d => pollForResult(d.url),
+            d => setTimeout(() => pollForResult(d.url), 5000),
             err => console.error(err),
             err => console.error(err)
         );
