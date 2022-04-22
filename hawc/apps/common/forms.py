@@ -1,16 +1,13 @@
 from typing import Any, List, Tuple, Union
-from uuid import uuid4
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
-from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from ...services.utils.rasterize import SVGConverter
-from . import selectable, tasks, validators
+from . import selectable, validators
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 

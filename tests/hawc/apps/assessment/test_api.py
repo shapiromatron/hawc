@@ -102,3 +102,43 @@ class TestDssToxViewset:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
+
+
+# TODO - add
+# @pytest.mark.django_db
+# class TestDownloadPlot:
+#     def _get_valid_payload(self, svg_data):
+#         return {"output": "svg", "svg": svg_data[0].decode(), "width": 240, "height": 240}
+
+#     def test_invalid(self, svg_data):
+#         client = Client()
+#         url = reverse("assessment:download_plot")
+
+#         # GET is invalid
+#         assert client.get(url).status_code == 405
+
+#         # empty POST is invalid
+#         resp = client.post(url, {})
+#         assert resp.status_code == 400
+#         assert resp.json() == {"valid": False}
+
+#         # incorrect POST is invalid
+#         data = self._get_valid_payload(svg_data)
+#         data["output"] = "invalid"
+#         resp = client.post(url, data)
+#         assert resp.status_code == 400
+#         assert resp.json() == {"valid": False}
+
+#         # test incorrect svg encoding
+#         data = self._get_valid_payload(svg_data)
+#         data["svg"] = "💥"
+#         resp = client.post(url, data)
+#         assert resp.status_code == 400
+#         assert resp.json() == {"valid": False}
+
+#     def test_valid(self, svg_data):
+#         client = Client()
+#         url = reverse("assessment:download_plot")
+#         assert client.get(url).status_code == 405
+#         resp = client.post(url, self._get_valid_payload(svg_data))
+#         assert resp.status_code == 200

@@ -40,7 +40,6 @@ const getSvgObject = function(svgElement) {
     pollForResult = url => {
         const fetchResult = () => {
             fetch(url, h.fetchGet).then(response => {
-                console.log("fetch");
                 const contentType = response.headers.get("content-type"),
                     contentDisposition = response.headers.get("content-disposition");
                 if (contentType == "application/json") {
