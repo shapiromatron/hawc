@@ -1,3 +1,6 @@
+import base64
+from copy import copy
+
 import pytest
 from django.conf import settings
 from django.urls import reverse
@@ -104,41 +107,48 @@ class TestDssToxViewset:
         assert resp.json()["dtxsid"] == dtxsid
 
 
-# TODO - add
-# @pytest.mark.django_db
-# class TestDownloadPlot:
-#     def _get_valid_payload(self, svg_data):
-#         return {"output": "svg", "svg": svg_data[0].decode(), "width": 240, "height": 240}
+@pytest.mark.django_db
+class TestDownloadPlot:
+    def _get_valid_payload(self, svg_data):
+        return {
+            "output": "svg",
+            "svg": base64.encodebytes(svg_data[0].encode()).decode(),
+            "width": svg_data[2],
+            "height": svg_data[3],
+        }
 
-#     def test_invalid(self, svg_data):
-#         client = Client()
-#         url = reverse("assessment:download_plot")
+    def test_valid(self, svg_data):
+        payload = self._get_valid_payload(svg_data)
+        client = APIClient()
+        url = reverse("assessment:api:rasterize-list")
+        resp = client.post(url, payload)
+        assert resp.status_code == 202
+        assert "url" in resp.json()
 
-#         # GET is invalid
-#         assert client.get(url).status_code == 405
+    def test_invalid(self, svg_data):
+        payload = self._get_valid_payload(svg_data)
+        client = APIClient()
+        url = reverse("assessment:api:rasterize-list")
 
-#         # empty POST is invalid
-#         resp = client.post(url, {})
-#         assert resp.status_code == 400
-#         assert resp.json() == {"valid": False}
+        # GET is invalid
+        resp = client.get(url).status_code == 405
 
-#         # incorrect POST is invalid
-#         data = self._get_valid_payload(svg_data)
-#         data["output"] = "invalid"
-#         resp = client.post(url, data)
-#         assert resp.status_code == 400
-#         assert resp.json() == {"valid": False}
+        # partial POST is invalid
+        partial = copy(payload)
+        partial.pop("svg")
+        resp = client.post(url, partial)
+        assert resp.status_code == 400
+        assert resp.json() == {"svg": ["This field is required."]}
 
-#         # test incorrect svg encoding
-#         data = self._get_valid_payload(svg_data)
-#         data["svg"] = "💥"
-#         resp = client.post(url, data)
-#         assert resp.status_code == 400
-#         assert resp.json() == {"valid": False}
-
-#     def test_valid(self, svg_data):
-#         client = Client()
-#         url = reverse("assessment:download_plot")
-#         assert client.get(url).status_code == 405
-#         resp = client.post(url, self._get_valid_payload(svg_data))
-#         assert resp.status_code == 200
+        # incorrect POST is invalid
+        for svg in [
+            "invalid",
+            "<p>Not SVG</p>",
+            base64.encodebytes(b"invalid").decode(),
+            base64.encodebytes(b"<p>Not SVG</p>").decode(),
+        ]:
+            partial = copy(payload)
+            partial["svg"] = svg
+            resp = client.post(url, partial)
+            assert resp.status_code == 400
+            assert resp.json() == {"svg": ["Invalid SVG"]}

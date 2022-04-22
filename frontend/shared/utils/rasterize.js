@@ -3,27 +3,19 @@ import h from "shared/utils/helpers";
 
 const getSvgObject = function(svgElement) {
         // save svg and css styles to this document as a blob.
-        // Adapted from SVG-Crowbar: http://nytimes.github.com/svg-crowbar/
+        // Adapted from SVG-Crowbar: https://nytimes.github.io/svg-crowbar/
         // Removed CSS style-grabbing components as this behavior was unreliable.
-        const get_selected_svg = function(svg) {
-                svg.attr("version", "1.1");
-                svg.attr("xmlns", d3.namespaces.svg);
-                var source = new XMLSerializer().serializeToString(svg.node()),
-                    rect = svg.node().getBoundingClientRect();
-                return {
-                    width: Math.ceil(rect.width),
-                    height: Math.ceil(rect.height),
-                    classes: svg.attr("class"),
-                    id: svg.attr("id"),
-                    childElementCount: svg.node().childElementCount,
-                    source: [source],
-                };
-            },
-            svg = d3.select(svgElement),
-            svg_object = get_selected_svg(svg);
+        const svg = d3.select(svgElement),
+            rect = svg.node().getBoundingClientRect();
 
-        svg_object.blob = new Blob(svg_object.source, {type: "text/xml"});
-        return svg_object;
+        svg.attr("version", "1.1");
+        svg.attr("xmlns", d3.namespaces.svg);
+
+        return {
+            width: Math.ceil(rect.width),
+            height: Math.ceil(rect.height),
+            source: btoa(escape(new XMLSerializer().serializeToString(svgElement))),
+        };
     },
     downloadBlob = (blob, contentDisposition) => {
         // https://stackoverflow.com/a/42274086/906385

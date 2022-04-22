@@ -99,7 +99,7 @@ class SVGConverter:
                 .decode("unicode-escape")
             )
         except (binascii.Error, ValueError, UnicodeDecodeError):
-            raise ValueError("Invalid base64 encoding")
+            raise ValueError("Invalid SVG")
 
         # ensure svg-like
         unquoted = parse.unquote(decoded, encoding="ISO-8859-1")
@@ -194,7 +194,6 @@ class SVGConverter:
         slide.shapes.add_picture(logo_location, left, top, width, height)
 
     def _to_html(self, f):
-        # return rendered html absolute filepath
         context = dict(svg=self.svg, css=Styles.for_html)
         html = render_to_string("rasterize.html", context).encode("UTF-8")
         f.write(html)

@@ -193,3 +193,11 @@ def set_chrome_driver(request, chrome_driver):
 @pytest.fixture
 def set_firefox_driver(request, firefox_driver):
     request.cls.driver = firefox_driver
+
+
+@pytest.fixture
+def svg_data():
+    svg = """<svg width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="80" height="80" style="fill:red;stroke-width:3;stroke:blue" />
+        </svg>"""
+    return (svg, "/test/", 240, 240)

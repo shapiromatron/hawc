@@ -208,8 +208,8 @@ class PlotRasterizeSerializer(serializers.Serializer):
         choices=(("svg", "svg"), ("png", "png"), ("pdf", "pdf"), ("pptx", "pptx"))
     )
     svg = serializers.CharField()
-    width = serializers.IntegerField()  # CHANGED TO INT; make sure that is the case in JS
-    height = serializers.IntegerField()  # CHANGED TO INT; make sure that is the case in JS
+    width = serializers.IntegerField(min_value=10)
+    height = serializers.IntegerField(min_value=10)
 
     def validate_svg(self, data):
         try:
