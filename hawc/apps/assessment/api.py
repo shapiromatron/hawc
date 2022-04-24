@@ -1,14 +1,12 @@
 import logging
 from pathlib import Path
 from typing import Optional
-from uuid import uuid4
 
 from django.apps import apps
 from django.core import exceptions
-from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Count
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
@@ -18,11 +16,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
+from hawc.services.utils.rasterize import Styles
 
-from ..common.constants import MimeType
 from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
-from ..common.views import create_object_log, get_referrer
+from ..common.views import create_object_log
 from . import models, serializers
 
 
@@ -520,28 +518,6 @@ class PlotRasterizerViewset(viewsets.ViewSet):
     authentication_classes = []
     permission_classes = [permissions.AllowAny]
 
-    def create(self, request):
-        serializer = serializers.PlotRasterizeSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        key = f"hawc-download-{uuid4()}"
-        url = get_referrer(request, "/<unknown>/")
-        serializer.process(url, key)
-        return Response(
-            {"url": reverse("assessment:api:rasterize-detail", args=(key,))},
-            status=status.HTTP_202_ACCEPTED,
-        )
-
-    def retrieve(self, request, pk: str):
-        if not pk.startswith("hawc-download-"):
-            raise Http404()
-        data = cache.get(pk)
-        if not data:
-            raise Http404()
-        response = HttpResponse(data["data"], content_type=getattr(MimeType, data["extension"]))
-        response["Content-Disposition"] = f'attachment; filename="download.{data["extension"]}"'
-        return response
-
-
-class FixedRenderer:
-    def __init__(self, response):
-        self.response = response
+    @action(detail=False)
+    def svg(self, request):
+        return Response({"template": Styles.for_svg})

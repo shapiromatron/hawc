@@ -544,14 +544,8 @@ class D3Plot {
                 ).append(
                     $('<div class="dropdown-menu dropdown-menu-right">').append(
                         $(
-                            '<button class="dropdown-item"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a SVG</button>'
+                            '<button class="dropdown-item"><i class="fa fa-fw fa-file-code-o"></i>&nbsp;Download as a SVG</button>'
                         ).on("click", () => handleClick("svg")),
-                        $(
-                            '<button class="dropdown-item"><i class="fa fa-fw fa-file-powerpoint-o"></i>&nbsp;Download as a PPTX</button>'
-                        ).on("click", () => handleClick("pptx")),
-                        $(
-                            '<button class="dropdown-item"><i class="fa fa-fw fa-file-pdf-o"></i>&nbsp;Download as a PDF</button>'
-                        ).on("click", () => handleClick("pdf")),
                         $(
                             '<button class="dropdown-item"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a PNG</button>'
                         ).on("click", () => handleClick("png"))

@@ -1,23 +1,6 @@
 import * as d3 from "d3";
-import h from "shared/utils/helpers";
 
-const getSvgObject = function(svgElement) {
-        // save svg and css styles to this document as a blob.
-        // Adapted from SVG-Crowbar: https://nytimes.github.io/svg-crowbar/
-        // Removed CSS style-grabbing components as this behavior was unreliable.
-        const svg = d3.select(svgElement),
-            rect = svg.node().getBoundingClientRect();
-
-        svg.attr("version", "1.1");
-        svg.attr("xmlns", d3.namespaces.svg);
-
-        return {
-            width: Math.ceil(rect.width),
-            height: Math.ceil(rect.height),
-            source: btoa(escape(new XMLSerializer().serializeToString(svgElement))),
-        };
-    },
-    downloadBlob = (blob, contentDisposition) => {
+const downloadBlob = (blob, contentDisposition) => {
         // https://stackoverflow.com/a/42274086/906385
         const url = window.URL.createObjectURL(blob),
             a = document.createElement("a"),
@@ -29,38 +12,62 @@ const getSvgObject = function(svgElement) {
         a.click();
         a.remove();
     },
-    pollForResult = url => {
-        const fetchResult = () => {
-            fetch(url, h.fetchGet).then(response => {
-                const contentType = response.headers.get("content-type"),
-                    contentDisposition = response.headers.get("content-disposition");
-                if (contentType == "application/json") {
-                    return setTimeout(fetchResult, 5000);
-                }
-                response.blob().then(blob => downloadBlob(blob, contentDisposition));
+    getSvgString = (svgElement, cb) => {
+        const url = "/assessment/api/rasterize/svg/";
+        fetch(url)
+            .then(resp => resp.json())
+            .then(d => {
+                const svg = d3.select(svgElement);
+                svg.attr("version", "1.1");
+                svg.attr("xmlns", d3.namespaces.svg);
+                const svgStr = new XMLSerializer()
+                    .serializeToString(svgElement)
+                    .replace(/<svg.*?>/, `$&${d.template}`);
+                cb(svgStr);
             });
-        };
-        fetchResult();
     },
-    rasterize = (svg, format) => {
-        const blob = getSvgObject(svg),
-            payload = {
-                output: format,
-                svg: blob.source,
-                width: blob.width,
-                height: blob.height,
-            },
-            url = "/assessment/api/rasterize/";
+    toSvg = svgElement => {
+        getSvgString(svgElement, svgStr => {
+            const blob = new Blob([svgStr], {type: "image/svg+xml"});
+            downloadBlob(blob, 'attachment; filename="download.svg"');
+        });
+    },
+    toPng = svgElement => {
+        getSvgString(svgElement, svgStr => {
+            const canvas = document.createElement("canvas"),
+                ctx = canvas.getContext("2d"),
+                bb = svgElement.getBoundingClientRect(),
+                img = document.createElement("img"),
+                height = Math.ceil(bb.height * 5),
+                width = Math.ceil(bb.width * 5);
 
-        h.handleSubmit(
-            url,
-            "POST",
-            null,
-            payload,
-            d => setTimeout(() => pollForResult(d.url), 5000),
-            err => console.error(err),
-            err => console.error(err)
-        );
+            canvas.height = height;
+            canvas.width = width;
+
+            img.setAttribute(
+                "src",
+                "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgStr)))
+            );
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(
+                    blob => downloadBlob(blob, 'attachment; filename="download.png"'),
+                    "image/png"
+                );
+            };
+        });
+    },
+    rasterize = (svgElement, format) => {
+        switch (format) {
+            case "svg":
+                toSvg(svgElement);
+                break;
+            case "png":
+                toPng(svgElement);
+                break;
+            default:
+                throw `Invalid format ${format}`;
+        }
     };
 
 export default rasterize;

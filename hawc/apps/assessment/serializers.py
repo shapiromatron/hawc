@@ -1,15 +1,11 @@
-from typing import Dict
-
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from django.apps import apps
 from plotly.subplots import make_subplots
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.exceptions import ParseError
 
-from ...services.utils.rasterize import SVGConverter
-from ..common.tasks import rasterize
 from . import models
 
 
@@ -201,25 +197,3 @@ class StrainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Strain
         fields = "__all__"
-
-
-class PlotRasterizeSerializer(serializers.Serializer):
-    output = serializers.ChoiceField(
-        choices=(("svg", "svg"), ("png", "png"), ("pdf", "pdf"), ("pptx", "pptx"))
-    )
-    svg = serializers.CharField()
-    width = serializers.IntegerField(min_value=10)
-    height = serializers.IntegerField(min_value=10)
-
-    def validate_svg(self, data):
-        try:
-            svg = SVGConverter.decode_svg(data)
-        except ValueError as err:
-            raise ValidationError(err)
-        return svg
-
-    def process(self, url: str, key: str):
-        data: Dict = self.validated_data
-        rasterize.delay(
-            key, data["svg"], data["output"], url, data["width"] * 5, data["height"] * 5
-        )
