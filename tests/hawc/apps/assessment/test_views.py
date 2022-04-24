@@ -228,3 +228,12 @@ class TestBulkPublishItems:
         assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
         study.refresh_from_db()
         assert study.published is False
+
+
+class TestRasterizeCss:
+    def test_check_success(self):
+        url = reverse("css-rasterize")
+        client = Client()
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert resp.json()["template"].startswith('<defs><style type="text/css">')

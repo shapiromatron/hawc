@@ -1,6 +1,3 @@
-import base64
-from copy import copy
-
 import pytest
 from django.conf import settings
 from django.urls import reverse

@@ -28,6 +28,7 @@ from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
+from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
@@ -685,6 +686,12 @@ class UpdateSession(View):
                     "new_expiry_time": None,
                 }
         return JsonResponse(response)
+
+
+@method_decorator(cache_page(60 * 60), name="dispatch")
+class RasterizeCss(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({"template": get_styles_svg_definition()})
 
 
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):

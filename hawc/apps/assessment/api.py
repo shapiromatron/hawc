@@ -16,7 +16,6 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
-from hawc.services.utils.rasterize import Styles
 
 from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
@@ -511,13 +510,3 @@ class StrainViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     pagination_class = None
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("species",)
-
-
-class PlotRasterizerViewset(viewsets.ViewSet):
-
-    authentication_classes = []
-    permission_classes = [permissions.AllowAny]
-
-    @action(detail=False)
-    def svg(self, request):
-        return Response({"template": Styles.for_svg})

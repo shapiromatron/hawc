@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 
-const downloadBlob = (blob, contentDisposition) => {
+const URL_TEMPLATES = "/rasterize/",
+    downloadBlob = (blob, contentDisposition) => {
         // https://stackoverflow.com/a/42274086/906385
         const url = window.URL.createObjectURL(blob),
             a = document.createElement("a"),
@@ -13,8 +14,7 @@ const downloadBlob = (blob, contentDisposition) => {
         a.remove();
     },
     getSvgString = (svgElement, cb) => {
-        const url = "/assessment/api/rasterize/svg/";
-        fetch(url)
+        fetch(URL_TEMPLATES)
             .then(resp => resp.json())
             .then(d => {
                 const svg = d3.select(svgElement);
