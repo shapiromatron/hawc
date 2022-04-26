@@ -96,7 +96,7 @@ class ExposureForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["analytic_method", "comments"]:
+        for fld in ["measurement_method", "comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False

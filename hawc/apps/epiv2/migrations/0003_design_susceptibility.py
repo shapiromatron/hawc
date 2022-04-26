@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0002_auto_20220426_1258'),
+        ("epiv2", "0002_auto_20220426_1258"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='design',
-            name='susceptibility',
-            field=models.TextField(blank=True, verbose_name='Susceptibility'),
+            model_name="design",
+            name="susceptibility",
+            field=models.TextField(blank=True, verbose_name="Susceptibility"),
         ),
     ]

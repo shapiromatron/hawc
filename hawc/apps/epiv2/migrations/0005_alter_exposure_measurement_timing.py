@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0004_alter_exposure_measurement_timing'),
+        ("epiv2", "0004_alter_exposure_measurement_timing"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='exposure',
-            name='measurement_timing',
-            field=models.CharField(help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"', max_length=256, verbose_name='Timing of exposure measurement'),
+            model_name="exposure",
+            name="measurement_timing",
+            field=models.CharField(
+                help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
+                max_length=256,
+                verbose_name="Timing of exposure measurement",
+            ),
         ),
     ]

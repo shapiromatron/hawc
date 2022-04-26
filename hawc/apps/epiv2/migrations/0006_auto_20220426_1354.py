@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0005_alter_exposure_measurement_timing'),
+        ("epiv2", "0005_alter_exposure_measurement_timing"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='exposure',
-            name='analytic_method',
+            model_name="exposure",
+            name="analytic_method",
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='measurement_method',
-            field=models.TextField(blank=True, verbose_name='Exposure measurement method'),
+            model_name="exposure",
+            name="measurement_method",
+            field=models.TextField(blank=True, verbose_name="Exposure measurement method"),
         ),
     ]

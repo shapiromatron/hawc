@@ -6,18 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0001_initial'),
+        ("epiv2", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='design',
-            old_name='years',
-            new_name='years_enrolled',
+            model_name="design",
+            old_name="years",
+            new_name="years_enrolled",
         ),
         migrations.AddField(
-            model_name='design',
-            name='years_followup',
-            field=models.CharField(blank=True, max_length=32, verbose_name='Year(s) or length of follow-up'),
+            model_name="design",
+            name="years_followup",
+            field=models.CharField(
+                blank=True, max_length=32, verbose_name="Year(s) or length of follow-up"
+            ),
         ),
     ]

@@ -156,6 +156,7 @@ class Exposure(models.Model):
     )
     measurement_timing = models.CharField(
         max_length=256,
+        blank=True,
         verbose_name="Timing of exposure measurement",
         help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
     )
