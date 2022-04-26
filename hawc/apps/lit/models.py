@@ -280,6 +280,7 @@ class Search(models.Model):
             pubmed = PubMedQuery(search=self)
             results_dictionary = pubmed.run_new_query(prior_query)
             self.create_new_references(results_dictionary)
+            self.delete_old_references(results_dictionary)
         else:
             raise Exception("Search functionality disabled")
 
@@ -396,6 +397,18 @@ class Search(models.Model):
             # finally, remove temporary identifier used for re-query after bulk_create
             logger.debug("Removing block-id from created references")
             refs.update(block_id=None)
+
+    def delete_old_references(self, results):
+        """Conservatively delete results which were removed in the most recent search.
+
+        Only delete references that meet the following criteria:
+
+        1. were "removed" in the latest result set
+        2. are not associated in any other searches
+        3. do not have any tags applied
+        """
+        if results["removed"]:
+            raise NotImplementedError("TODO")
 
     @property
     def date_last_run(self):
