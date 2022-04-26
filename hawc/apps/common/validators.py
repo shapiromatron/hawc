@@ -3,7 +3,7 @@ from typing import Sequence
 from urllib import parse
 
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
+from django.core.validators import RegexValidator, URLValidator
 from django.utils.encoding import force_str
 
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
@@ -127,3 +127,9 @@ def validate_exact_ids(expected_ids: Sequence[int], ids: Sequence[int], name: st
     if extra:
         ids = ", ".join([str(v) for v in sorted(extra)])
         raise ValidationError(f"Extra ID(s) in {name}: {ids}")
+
+
+class NumericTextValidator(RegexValidator):
+    # alternative: r"^[<,≤,≥,>]? (?:LOD|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
+    regex = r"^[<,≤,≥,>]? ?(?:LOD|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
+    message = 'Must be number-like, including {<,≤,≥,>,LOD} e.g., "≤ 1.0e-4 LOD"'

@@ -58,11 +58,13 @@ class VarianceType(models.IntegerChoices):
     SE = 2, "SE"
     SEM = 3, "SEM"
     GSD = 4, "GSD"
-    OT = 5, "other"
+    IQR = 5, "IQR (interquartile range)"
+    OT = 6, "other"
 
 
 class ConfidenceIntervalType(models.TextChoices):
     RNG = "Rng", "Range [min, max]"
+    P90 = "P90", "10th/90th percentile"
     P95 = "P95", "5th/95th percentile"
     P99 = "P99", "1st/99th percentile"
 

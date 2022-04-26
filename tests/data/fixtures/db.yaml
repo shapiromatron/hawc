@@ -4850,11 +4850,11 @@
     sub_population: without asthma
     mean: 0.0
     median: 0.0
-    ci_lcl: null
-    percentile_25: 0.8
-    percentile_75: 1.2
-    ci_ucl: 5.0
-    neg_exposure: 5.0
+    ci_lcl: "< LOD"
+    percentile_25: "0.8"
+    percentile_75: "1.2"
+    ci_ucl: "5.0"
+    neg_exposure: "5%"
     ci_type: ''
     units: ''
     comments: test
@@ -4871,11 +4871,11 @@
     sub_population: without asthma
     mean: 0.0
     median: 0.0
-    ci_lcl: 0.26
-    percentile_25: 0.6
-    percentile_75: 1.1
-    ci_ucl: 2.5
-    neg_exposure: 0.0
+    ci_lcl: "<0.26"
+    percentile_25: "0.6"
+    percentile_75: "1.1"
+    ci_ucl: "2.5e+3"
+    neg_exposure: ""
     ci_type: ''
     units: ''
     comments: p<0.001 vs children with asthma
@@ -4892,11 +4892,11 @@
     sub_population: all
     mean: 0.0
     median: 0.0
-    ci_lcl: 0.0
-    percentile_25: 0.22
-    percentile_75: 0.38
-    ci_ucl: 0.5
-    neg_exposure: 80.0
+    ci_lcl: "0.0"
+    percentile_25: "0.22"
+    percentile_75: "0.38"
+    ci_ucl: "0.5"
+    neg_exposure: "80"
     ci_type: ''
     units: ''
     comments: ''
@@ -4913,11 +4913,11 @@
     sub_population: all
     mean: 0.0
     median: 0.0
-    ci_lcl: 0.1
-    percentile_25: 0.21
-    percentile_75: 0.38
-    ci_ucl: 0.6
-    neg_exposure: 81.0
+    ci_lcl: "0.1"
+    percentile_25: "0.21"
+    percentile_75: "0.38"
+    ci_ucl: "0.6"
+    neg_exposure: "81%"
     ci_type: ''
     units: ''
     comments: ''
@@ -4932,13 +4932,13 @@
     chemical: 4
     exposure_measurement: 2
     sub_population: all
-    mean: 0.0
-    median: 0.0
-    ci_lcl: 0.2
-    percentile_25: 0.46
-    percentile_75: 0.79
-    ci_ucl: 0.7
-    neg_exposure: 95.0
+    mean: null
+    median: null
+    ci_lcl: "0.2"
+    percentile_25: "0.46"
+    percentile_75: "0.79"
+    ci_ucl: "0.7"
+    neg_exposure: "95%"
     ci_type: ''
     units: ''
     comments: ''
@@ -4955,11 +4955,11 @@
     sub_population: all
     mean: 0.0
     median: 0.0
-    ci_lcl: 0.3
-    percentile_25: 0.76
-    percentile_75: 1.24
-    ci_ucl: 0.8
-    neg_exposure: 94.0
+    ci_lcl: ""
+    percentile_25: "0.76"
+    percentile_75: "1.24"
+    ci_ucl: ""
+    neg_exposure: ""
     ci_type: ''
     units: ''
     comments: ''

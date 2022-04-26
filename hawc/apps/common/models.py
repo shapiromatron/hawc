@@ -489,3 +489,7 @@ def apply_flavored_help_text(app_name: str):
 
 def get_model_copy_name(instance: models.Model) -> str:
     return getattr(instance, "COPY_NAME", instance._meta.db_table)
+
+
+class NumericTextField(models.CharField):
+    validators = [validators.NumericTextValidator()]

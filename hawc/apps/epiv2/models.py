@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 
 from ..assessment.models import DSSTox
+from ..common.models import NumericTextField
 from ..epi.models import Country
 from ..study.models import Study
 from . import constants, managers
@@ -204,24 +205,26 @@ class ExposureLevel(models.Model):
     mean = models.FloatField(blank=True, null=True)
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+        choices=constants.VarianceType.choices,
+        default=constants.VarianceType.NONE,
+        verbose_name="Type of variance estimate",
     )
     units = models.CharField(max_length=128, blank=True, null=True)
-    ci_lcl = models.FloatField(blank=True, null=True, verbose_name="Lower CI")
-    percentile_25 = models.FloatField(blank=True, null=True, verbose_name="25th Percentile")
-    percentile_75 = models.FloatField(blank=True, null=True, verbose_name="75th Percentile")
-    ci_ucl = models.FloatField(blank=True, null=True, verbose_name="Upper CI")
+    ci_lcl = NumericTextField(max_length=16, blank=True, verbose_name="Lower bound")
+    percentile_25 = NumericTextField(max_length=16, blank=True, verbose_name="25th Percentile")
+    percentile_75 = NumericTextField(max_length=16, blank=True, verbose_name="75th Percentile")
+    ci_ucl = NumericTextField(max_length=16, blank=True, verbose_name="Upper bound")
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
         default=constants.ConfidenceIntervalType.RNG,
-        verbose_name="Confidence interval type",
+        verbose_name="Lower/upper bound type",
     )
-    neg_exposure = models.FloatField(
+    neg_exposure = models.CharField(
         verbose_name="Percent with negligible exposure",
         help_text="e.g., % below the LOD",
         blank=True,
-        null=True,
+        max_length=64,
     )
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
     comments = models.TextField(verbose_name="Exposure level comments", blank=True)
@@ -345,16 +348,18 @@ class DataExtraction(models.Model):
     )
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+        choices=constants.VarianceType.choices,
+        default=constants.VarianceType.NONE,
+        verbose_name="Type of variance estimate",
     )
     n = models.PositiveIntegerField(blank=True, null=True)
-    ci_lcl = models.FloatField(verbose_name="Lower CI", blank=True, null=True)
-    ci_ucl = models.FloatField(verbose_name="Upper CI", blank=True, null=True)
+    ci_lcl = models.FloatField(verbose_name="Lower bound", blank=True, null=True)
+    ci_ucl = models.FloatField(verbose_name="Upper bound", blank=True, null=True)
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
         default=constants.ConfidenceIntervalType.RNG,
-        verbose_name="Confidence interval type",
+        verbose_name="Lower/upper bound type",
     )
     p_value = models.CharField(verbose_name="p-value", max_length=8, blank=True)
     significant = models.PositiveSmallIntegerField(
