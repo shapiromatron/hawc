@@ -99,6 +99,7 @@ class Migration(migrations.Migration):
                             ("RT", "Randomized controlled trial"),
                             ("NT", "Non-randomized controlled trial"),
                             ("CS", "Cross-sectional"),
+                            ("EC", "Ecological"),
                             ("OT", "Other"),
                         ],
                         max_length=2,
