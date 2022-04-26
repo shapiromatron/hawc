@@ -343,43 +343,50 @@ class DataExtraction(models.Model):
         max_length=128, blank=True, help_text="Use N/A if sub population is not relevant"
     )
     outcome_measurement_timing = models.CharField(max_length=128, blank=True)
-    effect_estimate = models.FloatField()
     effect_estimate_type = models.CharField(
         max_length=3, choices=constants.EffectEstimateType.choices
     )
-    variance = models.FloatField(blank=True, null=True)
-    variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices,
-        default=constants.VarianceType.NONE,
-        verbose_name="Type of variance estimate",
-    )
-    n = models.PositiveIntegerField(blank=True, null=True)
+    effect_estimate = models.FloatField()
     ci_lcl = models.FloatField(verbose_name="Lower bound", blank=True, null=True)
     ci_ucl = models.FloatField(verbose_name="Upper bound", blank=True, null=True)
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
-        default=constants.ConfidenceIntervalType.RNG,
+        default=constants.ConfidenceIntervalType.P95,
         verbose_name="Lower/upper bound type",
     )
+    variance_type = models.PositiveSmallIntegerField(
+        choices=constants.VarianceType.choices,
+        default=constants.VarianceType.NONE,
+        verbose_name="Type of variance estimate",
+    )
+    variance = models.FloatField(blank=True, null=True)
+    n = models.PositiveIntegerField(blank=True, null=True)
     p_value = models.CharField(verbose_name="p-value", max_length=8, blank=True)
     significant = models.PositiveSmallIntegerField(
         verbose_name="Statistically Significant",
         choices=constants.Significant.choices,
         default=constants.Significant.NR,
     )
-    adjustment_factor = models.ForeignKey(
+    exposure_transform = models.CharField(
+        max_length=32, blank=True, null=True, choices=constants.DataTransforms.choices
+    )
+    outcome_transform = models.CharField(
+        max_length=32, blank=True, null=True, choices=constants.DataTransforms.choices
+    )
+    exposure_rank = models.PositiveSmallIntegerField(
+        default=0,
+        help_text="Rank this comparison group by exposure (lowest exposure group = 1); used for sorting in visualizations",
+    )
+    factors = models.ForeignKey(
         AdjustmentFactor,
+        verbose_name="Adjustment factors",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
     confidence = models.CharField(max_length=128, verbose_name="Study confidence", blank=True)
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
-    exposure_rank = models.PositiveSmallIntegerField(
-        default=0,
-        help_text="Rank this comparison group by exposure (lowest exposure group = 1); used for sorting in visualizations",
-    )
     effect_description = models.TextField(
         blank=True,
         verbose_name="Effect estimate description",

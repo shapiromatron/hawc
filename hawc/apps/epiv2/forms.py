@@ -199,6 +199,7 @@ class DataExtractionForm(forms.ModelForm):
             self.instance.design = design
         self.fields["outcome"].queryset = self.instance.design.outcomes.all()
         self.fields["exposure_level"].queryset = self.instance.design.exposure_levels.all()
+        self.fields["factors"].queryset = self.instance.design.adjustment_factors.all()
 
     @property
     def helper(self):
@@ -207,10 +208,13 @@ class DataExtractionForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.add_row("outcome", 4, "col-md-3")
         helper.add_row(
-            "effect_estimate", 5, ["col-md-2", "col-md-3", "col-md-2", "col-md-3", "col-md-2"]
+            "effect_estimate_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
         )
-        helper.add_row("ci_lcl", 5, ["col-md-2", "col-md-2", "col-md-3", "col-md-2", "col-md-3"])
-        helper.add_row("adjustment_factor", 4, "col-md-3")
+        helper.add_row(
+            "variance_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
+        )
+        helper.add_row("exposure_transform", 3, "col-md-4")
+        helper.add_row("factors", 3, "col-md-4")
         helper.add_row("effect_description", 3, "col-md-4")
         helper.form_tag = False
         return helper

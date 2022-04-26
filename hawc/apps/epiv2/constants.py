@@ -141,3 +141,17 @@ class BiomonitoringSource(models.TextChoices):
     ML = "ML", "Maternal"
     PL = "PL", "Paternal"
     CD = "CD", "Cord"
+
+
+class DataTransforms(models.TextChoices):
+    NA = "N/A", "N/A"
+    NR = "NR", "NR"
+    LOGXPLUS1 = "log(x+1)", "log(x+1)"
+    LOG10 = "log10", "log10"
+    LOG2 = "log2", "log2"
+    LN = "ln", "ln"
+    LOG = "log (unspecified basis)", "log (unspecified basis)"
+    ZSCORE = "z-score", "z-score"
+    SQUARED = "squared", "squared"
+    CUBIC = "cubic", "cubic"
+    OTHER = "other", "other"

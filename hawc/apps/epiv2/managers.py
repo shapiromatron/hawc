@@ -20,7 +20,7 @@ class DesignQuerySet(QuerySet):
             Prefetch(
                 "data_extractions",
                 queryset=models.DataExtraction.objects.select_related(
-                    "adjustment_factor", "outcome", "exposure_level"
+                    "factors", "outcome", "exposure_level"
                 ),
             ),
         )
