@@ -5002,6 +5002,7 @@
     name: A
     design: 1
     description: age, sex, BMI, parental education, ETS exposure, month of survey
+    comments: <p>Example</p>
     created: 2022-01-10 21:16:10.393576+00:00
     last_updated: 2022-01-10 21:16:10.393587+00:00
 - model: epiv2.adjustmentfactor
@@ -5010,6 +5011,7 @@
     name: A
     design: 2
     description: age, sex
+    comments: <p>Example</p>
     created: 2022-01-10 21:41:54.332000+00:00
     last_updated: 2022-01-10 21:41:54.332017+00:00
 - model: epiv2.adjustmentfactor
@@ -5018,6 +5020,7 @@
     name: B
     design: 2
     description: age, sex, time since vaccination, booster type
+    comments: <p>Example</p>
     created: 2022-01-10 21:41:54.336562+00:00
     last_updated: 2022-01-10 21:41:54.336577+00:00
 - model: epiv2.adjustmentfactor
@@ -5026,6 +5029,7 @@
     name: C
     design: 2
     description: age, sex, booster type
+    comments: ""
     created: 2022-01-10 21:41:54.340708+00:00
     last_updated: 2022-01-10 21:41:54.340720+00:00
 - model: epiv2.adjustmentfactor
@@ -5035,6 +5039,7 @@
     design: 2
     description: age, sex, booster type, child's specific antibody concentrations
       at 5 years
+    comments: ""
     created: 2022-01-10 21:41:54.345186+00:00
     last_updated: 2022-01-10 21:41:54.345198+00:00
 - model: epiv2.dataextraction

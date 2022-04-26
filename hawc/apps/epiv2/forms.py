@@ -141,6 +141,7 @@ class AdjustmentFactorForm(forms.ModelForm):
     class Meta:
         model = models.AdjustmentFactor
         exclude = ("design",)
+        widgets = {"description": forms.Textarea}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -151,7 +152,9 @@ class AdjustmentFactorForm(forms.ModelForm):
     @property
     def helper(self):
         helper = BaseFormHelper(self)
-        helper.add_row("name", 2, ["col-md-3", "col-md-9"])
+        for fld in ["description", "comments"]:
+            self.fields[fld].widget.attrs["rows"] = 3
+        helper.add_row("name", 3, "col-md-4")
         helper.form_tag = False
         return helper
 

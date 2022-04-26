@@ -307,7 +307,8 @@ class AdjustmentFactor(models.Model):
         max_length=32,
         help_text="A unique name for this adjustment factor that will help you identify it later.",
     )
-    description = models.CharField(max_length=128, help_text="Comma separated list")
+    description = models.CharField(max_length=256, help_text="Comma separated list")
+    comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
