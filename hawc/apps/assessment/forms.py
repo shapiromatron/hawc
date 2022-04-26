@@ -14,7 +14,7 @@ from django.urls import reverse, reverse_lazy
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
-from ..common.helper import tryParseInt
+from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
 from ..myuser.lookups import HAWCUserLookup
@@ -333,7 +333,7 @@ class DSSToxForm(forms.ModelForm):
         helper = BaseFormHelper(
             self,
             legend_text="Import new DSSTox substance",
-            help_text="""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the <a href="https://comptox.epa.gov/dashboard">Chemistry dashboard</a>.""",
+            help_text=f"""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the {new_window_a('https://comptox.epa.gov/dashboard', 'Chemistry dashboard')}.""",
             form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
@@ -580,7 +580,7 @@ class LogFilterForm(forms.Form):
         url = reverse("assessment:content_types")
         self.fields[
             "content_type"
-        ].help_text = f"""Data <a target="_blank" href="{url}">content type</a>; by filtering by data types below the content type can also be set."""
+        ].help_text = f"""Data {new_window_a(url, "content type")}; by filtering by data types below the content type can also be set."""
 
     @property
     def helper(self):
