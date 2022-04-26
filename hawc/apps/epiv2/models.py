@@ -44,7 +44,7 @@ class Design(models.Model):
         verbose_name="Overall study population N",
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
     )
-    years = models.CharField(max_length=32, verbose_name="Year(s) of data collection", blank=True)
+    years = models.CharField(max_length=32, verbose_name="Year(s) of enrollment", blank=True)
     countries = models.ManyToManyField(
         Country,
         blank=True,

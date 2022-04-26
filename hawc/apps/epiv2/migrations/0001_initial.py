@@ -170,7 +170,7 @@ class Migration(migrations.Migration):
                 (
                     "years",
                     models.CharField(
-                        blank=True, max_length=32, verbose_name="Year(s) of data collection"
+                        blank=True, max_length=32, verbose_name="Year(s) of enrollment"
                     ),
                 ),
                 (
