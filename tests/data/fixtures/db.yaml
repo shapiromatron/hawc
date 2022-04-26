@@ -4804,7 +4804,7 @@
     biomonitoring_source: PT
     measurement_timing: study enrollment
     exposure_route: UK
-    analytic_method: high-performance liquid chromatography with tandem with mass
+    measurement_method: high-performance liquid chromatography with tandem with mass
       spectrometry
     comments: ''
     created: 2022-01-10 21:12:17.748634+00:00
@@ -4819,7 +4819,7 @@
     biomonitoring_source: ML
     measurement_timing: parental (32 wks gestation)
     exposure_route: UK
-    analytic_method: online solid-phase extraction and analysis, using high-pressure
+    measurement_method: online solid-phase extraction and analysis, using high-pressure
       liquid chromatography with tandem mass spectrometry
     comments: last antenatal exam
     created: 2022-01-10 21:30:38.554898+00:00
@@ -4834,7 +4834,7 @@
     biomonitoring_source: PT
     measurement_timing: 5 yrs
     exposure_route: UK
-    analytic_method: online solid-phase extraction and analysis, using high-pressure
+    measurement_method: online solid-phase extraction and analysis, using high-pressure
       liquid chromatography with tandem mass spectrometry
     comments: prebooster
     created: 2022-01-10 21:30:38.566082+00:00

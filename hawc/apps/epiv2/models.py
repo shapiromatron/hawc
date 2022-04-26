@@ -155,15 +155,14 @@ class Exposure(models.Model):
         max_length=2, choices=constants.BiomonitoringSource.choices, blank=True
     )
     measurement_timing = models.CharField(
-        max_length=128,
-        blank=True,
+        max_length=256,
         verbose_name="Timing of exposure measurement",
         help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
     )
     exposure_route = models.CharField(
         max_length=2, choices=constants.ExposureRoute.choices, blank=True
     )
-    analytic_method = models.TextField(blank=True)
+    measurement_method = models.TextField(blank=True, verbose_name="Exposure measurement method")
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
