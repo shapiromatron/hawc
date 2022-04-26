@@ -4728,7 +4728,8 @@
     summary: Case-control study of asthma in children
     study_name: Genetic and Biomarkers study for Childhood Asthma
     region: northern Taiwan
-    years: 2009-2010
+    years_enrolled: 2009-2010
+    years_followup: ""
     participant_n: 456
     created: 2022-01-10 21:12:17.714337+00:00
     last_updated: 2022-01-13 20:38:10.024296+00:00
@@ -4736,7 +4737,8 @@
     - AD
     countries:
     - 2
-    comments: test
+    susceptibility: <p>None noted</p>
+    comments: <p>test</p>
 - model: epiv2.design
   pk: 2
   fields:
@@ -4749,7 +4751,8 @@
     summary: Birth cohort in Faroe Islands with follow-up at 5 and 7 years
     study_name: Faroe birth cohort
     region: Faroe Islands
-    years: Enrollment 1997-2000
+    years_enrolled: Enrollment 1997-2000
+    years_followup: Follow up 2005-2010
     participant_n: 587
     created: 2022-01-10 21:26:09.641642+00:00
     last_updated: 2022-01-13 20:37:57.529050+00:00
@@ -4758,6 +4761,7 @@
     countries:
     - 3
     criteria: "<ul><li>cases: asthma diagnosis by physician</li><li>singleton birth</li></ul>"
+    susceptibility: <p>None noted</p>
     comments: "<p>test comments</p>"
 - model: epiv2.chemical
   pk: 1

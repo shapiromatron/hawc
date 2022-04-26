@@ -1,3 +1,4 @@
+{% load hastext %}
 {% load optional_table_row %}
 
 <table class="table table-sm table-striped" hx-target="this" id="design-table">
@@ -22,15 +23,26 @@
             </td>
         </tr>
         {% optional_table_row "Other geographic information" object.region %}
-        {% optional_table_row "Year(s) of enrollment" object.years %}
+        {% optional_table_row "Year(s) of enrollment" object.years_enrolled %}
+        {% optional_table_row "Year(s) or length of follow-up" object.years_followup %}
         {% optional_table_row "Overall study population" object.participant_n %}
+        {% if object.criteria|hastext %}
         <tr>
             <th>Inclusion/Exclusion Criteria</th>
             <td>{{object.criteria|safe}}</td>
         </tr>
+        {% endif %}
+        {% if object.susceptibility|hastext %}
+        <tr>
+            <th>Susceptibility</th>
+            <td>{{object.susceptibility|safe}}</td>
+        </tr>
+        {% endif %}
+        {% if object.comments|hastext %}
         <tr>
             <th>Comments</th>
             <td>{{object.comments|safe}}</td>
         </tr>
+        {% endif %}
     </tbody>
 </table>

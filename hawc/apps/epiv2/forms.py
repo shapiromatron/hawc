@@ -31,7 +31,7 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("criteria", "comments"):
+        for fld in ("criteria", "susceptibility", "comments"):
             self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
 
@@ -50,8 +50,10 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
-        helper.add_row("participant_n", 4, "col-md-3")
-        helper.add_row("criteria", 2, "col-md-6")
+        helper.add_row(
+            "participant_n", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
+        )
+        helper.add_row("criteria", 3, "col-md-4")
         return helper
 
 

@@ -44,7 +44,12 @@ class Design(models.Model):
         verbose_name="Overall study population N",
         help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
     )
-    years = models.CharField(max_length=32, verbose_name="Year(s) of enrollment", blank=True)
+    years_enrolled = models.CharField(
+        max_length=32, verbose_name="Year(s) of enrollment", blank=True
+    )
+    years_followup = models.CharField(
+        max_length=32, verbose_name="Year(s) or length of follow-up", blank=True
+    )
     countries = models.ManyToManyField(
         Country,
         blank=True,
@@ -54,6 +59,7 @@ class Design(models.Model):
         max_length=128, blank=True, verbose_name="Other geographic information"
     )
     criteria = models.TextField(blank=True, verbose_name="Inclusion/Exclusion Criteria")
+    susceptibility = models.TextField(blank=True, verbose_name="Susceptibility")
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
