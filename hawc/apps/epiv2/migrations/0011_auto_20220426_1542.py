@@ -6,18 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0010_alter_adjustmentfactor_description'),
+        ("epiv2", "0010_alter_adjustmentfactor_description"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='dataextraction',
-            old_name='adjustment_factor',
-            new_name='factors',
+            model_name="dataextraction",
+            old_name="adjustment_factor",
+            new_name="factors",
         ),
         migrations.AlterField(
-            model_name='dataextraction',
-            name='ci_type',
-            field=models.CharField(choices=[('Rng', 'Range [min, max]'), ('P90', '10th/90th percentile'), ('P95', '5th/95th percentile'), ('P99', '1st/99th percentile')], default='P95', max_length=3, verbose_name='Lower/upper bound type'),
+            model_name="dataextraction",
+            name="ci_type",
+            field=models.CharField(
+                choices=[
+                    ("Rng", "Range [min, max]"),
+                    ("P90", "10th/90th percentile"),
+                    ("P95", "5th/95th percentile"),
+                    ("P99", "1st/99th percentile"),
+                ],
+                default="P95",
+                max_length=3,
+                verbose_name="Lower/upper bound type",
+            ),
         ),
     ]

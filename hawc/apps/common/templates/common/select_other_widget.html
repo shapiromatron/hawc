@@ -1,0 +1,15 @@
+{% spaceless %}
+{% for widget in widget.subwidgets %}
+{% include widget.template_name %}
+{% endfor %}
+<script id="{{widget.name}}-{{widget.uuid}}">
+$(document).ready(()=>{
+    const div = $("#{{widget.name}}-{{widget.uuid}}").closest('div'),
+        select = div.find('select'),
+        input = div.find('input');
+    select.on('change', function(e) {
+        (e.target.value === "other")? input.show(): input.hide();
+    }).trigger('change')
+});
+</script>
+{% endspaceless %}

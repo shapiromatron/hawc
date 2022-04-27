@@ -6,6 +6,7 @@ from hawc.apps.common.forms import BaseFormHelper
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
 from ..common.forms import ArrayCheckboxSelectMultiple
+from ..common.widgets import SelectOtherWidget
 from . import constants, lookups, models
 
 
@@ -191,6 +192,10 @@ class DataExtractionForm(forms.ModelForm):
     class Meta:
         model = models.DataExtraction
         exclude = ("design",)
+        widgets = {
+            "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
+            "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)

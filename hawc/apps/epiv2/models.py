@@ -368,12 +368,8 @@ class DataExtraction(models.Model):
         choices=constants.Significant.choices,
         default=constants.Significant.NR,
     )
-    exposure_transform = models.CharField(
-        max_length=32, blank=True, null=True, choices=constants.DataTransforms.choices
-    )
-    outcome_transform = models.CharField(
-        max_length=32, blank=True, null=True, choices=constants.DataTransforms.choices
-    )
+    exposure_transform = models.CharField(max_length=32, blank=True)
+    outcome_transform = models.CharField(max_length=32, blank=True)
     exposure_rank = models.PositiveSmallIntegerField(
         default=0,
         help_text="Rank this comparison group by exposure (lowest exposure group = 1); used for sorting in visualizations",
