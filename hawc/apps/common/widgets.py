@@ -19,9 +19,9 @@ class SelectOtherWidget(MultiWidget):
     OTHER = "other"
 
     def __init__(self, choices, attrs=None):
-        self.attrs = attrs
         if attrs is None:
             attrs = {}
+        self.attrs = attrs
         attrs.update(required=False)
         self.choices = choices
         widgets = [
@@ -41,14 +41,18 @@ class SelectOtherWidget(MultiWidget):
 
     def value_from_datadict(self, data, files, name):
         controlled, free_text = super().value_from_datadict(data, files, name)
-        if controlled == self.OTHER:
-            return free_text
+        if controlled is None and free_text is None:
+            return None
         elif controlled != self.OTHER:
             in_choices = any(controlled == v[0] for v in self.choices)
             if not in_choices:
                 raise ValidationError("Value not found")
             return controlled
-        return None
+        elif controlled == self.OTHER:
+            if free_text:
+                return free_text
+            if not free_text and self.attrs.get("required") is True:
+                raise ValidationError("Value required.")
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)

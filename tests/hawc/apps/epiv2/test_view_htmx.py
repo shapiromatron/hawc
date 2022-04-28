@@ -267,7 +267,7 @@ class TestDesignChildren:
             "effect_estimate": 1.5,
             "exposure_rank": 1,
             "significant": 2,
-            "adjustment_factor": adjust_factor.id,
+            "factors": adjust_factor.id,
             "variance_type": 0,
             "ci_type": "Rng",
         }
@@ -311,7 +311,7 @@ class TestDesignChildren:
             "effect_estimate": 2.5,
             "exposure_rank": 4,
             "significant": 1,
-            "adjustment_factor": adjust_factor.id,
+            "factors": adjust_factor.id,
             "variance_type": 1,
             "ci_type": "P95",
         }
