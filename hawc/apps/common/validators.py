@@ -131,5 +131,5 @@ def validate_exact_ids(expected_ids: Sequence[int], ids: Sequence[int], name: st
 
 class NumericTextValidator(RegexValidator):
     # alternative: r"^[<,≤,≥,>]? (?:LOD|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
-    regex = r"^[<,≤,≥,>]? ?(?:LOD|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
-    message = 'Must be number-like, including {<,≤,≥,>,LOD} e.g., "≤ 1.0e-4 LOD"'
+    regex = r"^[<,≤,≥,>]? ?(?:LOD|LOQ|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
+    message = "Must be number-like, including {<,≤,≥,>,LOD,LOQ} (ex: 3.4, 1.2E-5, < LOD)"
