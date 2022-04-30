@@ -6,7 +6,7 @@ from hawc.apps.common.forms import BaseFormHelper
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
 from ..common.forms import ArrayCheckboxSelectMultiple
-from ..common.widgets import SelectOtherWidget
+from ..common.widgets import SelectOtherWidget, SelectMultipleOtherWidget
 from . import constants, lookups, models
 
 
@@ -88,6 +88,11 @@ class ExposureForm(forms.ModelForm):
     class Meta:
         model = models.Exposure
         exclude = ("design",)
+        widgets = {
+            "measurement_type": SelectMultipleOtherWidget(
+                choices=constants.MeasurementType.choices
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)

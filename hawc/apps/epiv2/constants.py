@@ -40,7 +40,7 @@ class EffectEstimateType(models.TextChoices):
     OR = "OR", "Odds Ratio (OR)"
     RR = "RR", "Relative Risk Ratio (RR)"
     AR = "AR", "Absolute Risk %"
-    B = "B", "Regression coeffcient (β)"
+    B = "B", "Regression coefficient (β)"
     SMR = "SMR", "Standardized Mortality Ratio (SMR)"
     SIR = "SIR", "Standardized Incidence Ratio (SIR)"
     IRR = "IRR", "Incidence Risk Ratio (IRR)"
@@ -70,16 +70,16 @@ class ConfidenceIntervalType(models.TextChoices):
 
 
 class MeasurementType(models.TextChoices):
-    BM = "BM", "Biomonitoring"
-    AR = "AR", "Air"
-    FD = "FD", "Food"
-    DW = "DW", "Drinking water"
-    OC = "OC", "Occupational"
-    MD = "MD", "Modeled"
-    QN = "QN", "Questionnaire"
-    DO = "DO", "Direct administration - oral"
-    DI = "DI", "Direct administration - inhalation"
-    OT = "OT", "Other"
+    BM = "Biomonitoring", "Biomonitoring"
+    AR = "Air", "Air"
+    FD = "Food", "Food"
+    DW = "Drinking water", "Drinking water"
+    OC = "Occupational", "Occupational"
+    MD = "Modeled", "Modeled"
+    QN = "Questionnaire", "Questionnaire"
+    DO = "Direct administration - oral", "Direct administration - oral"
+    DI = "Direct administration - inhalation", "Direct administration - inhalation"
+    OT = "other", "other"
 
 
 class ExposureRoute(models.TextChoices):

@@ -1,7 +1,15 @@
 from random import randint
+from typing import Type
 
 from django.forms import ValidationError
-from django.forms.widgets import CheckboxInput, MultiWidget, Select, TextInput
+from django.forms.widgets import (
+    CheckboxInput,
+    MultiWidget,
+    Select,
+    TextInput,
+    ChoiceWidget,
+    SelectMultiple,
+)
 from django.utils import timezone
 
 
@@ -12,20 +20,20 @@ class DateCheckboxInput(CheckboxInput):
         return timezone.now() if value else None
 
 
-class SelectOtherWidget(MultiWidget):
+class ChoiceOtherWidget(MultiWidget):
     """A widget for using a selected value, or specifying custom"""
 
-    template_name = "common/select_other_widget.html"
-    OTHER = "other"
+    choice_widget: Type[ChoiceWidget]
 
-    def __init__(self, choices, attrs=None):
+    def __init__(self, choices, other_choice: str = "other", attrs=None):
         if attrs is None:
             attrs = {}
+        self.other_choice = other_choice
         self.attrs = attrs
         attrs.update(required=False)
         self.choices = choices
         widgets = [
-            Select(choices=choices, attrs={**attrs, "required": False}),
+            self.choice_widget(choices=choices, attrs={**attrs, "required": False}),
             TextInput(attrs=attrs),
         ]
         super().__init__(widgets, attrs)
@@ -36,25 +44,37 @@ class SelectOtherWidget(MultiWidget):
             if in_choices:
                 return [value, ""]
             else:
-                return [self.OTHER, value]
+                return [self.other_choice, value]
         return [None, ""]
 
     def value_from_datadict(self, data, files, name):
         controlled, free_text = super().value_from_datadict(data, files, name)
         if controlled is None and free_text is None:
             return None
-        elif controlled != self.OTHER:
+        elif controlled != self.other_choice:
             in_choices = any(controlled == v[0] for v in self.choices)
             if not in_choices:
                 raise ValidationError("Value not found")
             return controlled
-        elif controlled == self.OTHER:
+        elif controlled == self.other_choice:
             if free_text:
                 return free_text
-            if not free_text and self.attrs.get("required") is True:
+            elif self.attrs.get("required") is True:
                 raise ValidationError("Value required.")
+            else:
+                return None
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
-        ctx["widget"].update(uuid=randint(1, 1000))
+        ctx["widget"].update(jsid=randint(1, 10000), other_choice=self.other_choice)
         return ctx
+
+
+class SelectOtherWidget(ChoiceOtherWidget):
+    choice_widget = Select
+    template_name = "common/select_other_widget.html"
+
+
+class SelectMultipleOtherWidget(ChoiceOtherWidget):
+    choice_widget = SelectMultiple
+    template_name = "common/select_other_widget.html"

@@ -4809,7 +4809,7 @@
     comments: ''
     created: 2022-01-10 21:12:17.748634+00:00
     last_updated: 2022-01-10 21:12:17.748644+00:00
-    measurement_type: BM
+    measurement_type: BM # TODO CHANGE
 - model: epiv2.exposure
   pk: 2
   fields:
@@ -4824,7 +4824,7 @@
     comments: last antenatal exam
     created: 2022-01-10 21:30:38.554898+00:00
     last_updated: 2022-01-10 21:30:38.554911+00:00
-    measurement_type: BM
+    measurement_type: BM # TODO CHANGE
 - model: epiv2.exposure
   pk: 3
   fields:
@@ -4839,7 +4839,7 @@
     comments: prebooster
     created: 2022-01-10 21:30:38.566082+00:00
     last_updated: 2022-01-10 21:30:38.566092+00:00
-    measurement_type: BM
+    measurement_type: BM # TODO CHANGE
 - model: epiv2.exposurelevel
   pk: 1
   fields:

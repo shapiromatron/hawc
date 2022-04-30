@@ -145,10 +145,8 @@ class Exposure(models.Model):
     )
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
     measurement_type = models.CharField(
-        max_length=2,
-        verbose_name="Exposure measurement type",
-        choices=constants.MeasurementType.choices,
-    )
+        max_length=256, verbose_name="Exposure measurement types"
+    )  # TODO - change?
     biomonitoring_matrix = models.CharField(
         max_length=3, choices=constants.BiomonitoringMatrix.choices, blank=True
     )
