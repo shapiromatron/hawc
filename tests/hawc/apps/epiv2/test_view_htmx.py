@@ -70,7 +70,7 @@ class TestDesignChildren:
         url = reverse("epiv2:exposure-create", args=[design.id])
         inputs = {
             "name": "ex exposure",
-            "measurement_type": ["Food"],
+            "measurement_type_0": ["Food"],
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposure_row.html")
@@ -101,7 +101,7 @@ class TestDesignChildren:
         url = reverse("epiv2:exposure-update", args=[exposure.id])
         inputs = {
             "name": "ex exposure update",
-            "measurement_type": ["Drinking water"],
+            "measurement_type_0": ["Drinking water"],
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposure_row.html")
@@ -260,7 +260,7 @@ class TestDesignChildren:
         # data extraction create
         url = reverse("epiv2:dataextraction-create", args=[design_id])
         inputs = {
-            "sub_population": "ex sp",
+            "group": "ex sp",
             "outcome": outcome.id,
             "exposure_level": exposure_level.id,
             "effect_estimate_type": "OR",
@@ -304,7 +304,7 @@ class TestDesignChildren:
         # data extraction update
         url = reverse("epiv2:dataextraction-update", args=[data_extract.id])
         inputs = {
-            "sub_population": "ex sp update",
+            "group": "ex sp update",
             "outcome": outcome.id,
             "exposure_level": exposure_level.id,
             "effect_estimate_type": "OR",
