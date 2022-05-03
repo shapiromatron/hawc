@@ -144,9 +144,12 @@ class Exposure(models.Model):
         help_text="A unique name for this exposure that will help you identify it later.",
     )
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
-    measurement_type = models.CharField(
-        max_length=256, verbose_name="Exposure measurement types"
-    )  # TODO - change?
+    measurement_type = ArrayField(
+        models.CharField(max_length=64),
+        blank=True,
+        help_text="Select all that apply.",
+        verbose_name="Exposure measurement types",
+    )
     biomonitoring_matrix = models.CharField(
         max_length=3, choices=constants.BiomonitoringMatrix.choices, blank=True
     )
@@ -365,6 +368,12 @@ class DataExtraction(models.Model):
         verbose_name="Statistically Significant",
         choices=constants.Significant.choices,
         default=constants.Significant.NR,
+    )
+    group = models.CharField(
+        max_length=128,
+        blank=True,
+        verbose_name="Results group",
+        help_text="""If a set of results are linked (e.g., results for categories of exposure), each one is entered as a separate entry in the form. This field should be used to link the results. All linked results should have the same value for this field, and it should be unique to those results. The text can be descriptive (e.g., "Quartiles for PFNA and Asthma incidence") or a dummy variable ("Group 1").""",
     )
     exposure_transform = models.CharField(max_length=32, blank=True)
     outcome_transform = models.CharField(max_length=32, blank=True)

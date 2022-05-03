@@ -4809,7 +4809,8 @@
     comments: ''
     created: 2022-01-10 21:12:17.748634+00:00
     last_updated: 2022-01-10 21:12:17.748644+00:00
-    measurement_type: BM # TODO CHANGE
+    measurement_type:
+    - Biomonitoring
 - model: epiv2.exposure
   pk: 2
   fields:
@@ -4824,7 +4825,8 @@
     comments: last antenatal exam
     created: 2022-01-10 21:30:38.554898+00:00
     last_updated: 2022-01-10 21:30:38.554911+00:00
-    measurement_type: BM # TODO CHANGE
+    measurement_type:
+    - Biomonitoring
 - model: epiv2.exposure
   pk: 3
   fields:
@@ -4839,7 +4841,8 @@
     comments: prebooster
     created: 2022-01-10 21:30:38.566082+00:00
     last_updated: 2022-01-10 21:30:38.566092+00:00
-    measurement_type: BM # TODO CHANGE
+    measurement_type:
+    - Biomonitoring
 - model: epiv2.exposurelevel
   pk: 1
   fields:
@@ -5061,6 +5064,7 @@
     variance_type: 0
     p_value: ''
     significant: 2
+    group: "Group 1"
     exposure_transform: log10
     outcome_transform: log2
     factors: null
@@ -5089,6 +5093,7 @@
     variance_type: 0
     p_value: ''
     significant: 0
+    group: "Group 1"
     exposure_transform: log10
     outcome_transform: log2
     factors: 1
@@ -5117,6 +5122,7 @@
     variance_type: 0
     p_value: ''
     significant: 0
+    group: "Group 1"
     exposure_transform: log10
     outcome_transform: log2
     factors: 1
@@ -5145,6 +5151,7 @@
     variance_type: 0
     p_value: ''
     significant: 1
+    group: "Group 1"
     exposure_transform: log10
     outcome_transform: log2
     factors: 1
@@ -5173,6 +5180,7 @@
     variance_type: 0
     p_value: ''
     significant: 2
+    group: "Group 2"
     factors: null
     confidence: medium
     data_location: Table 3
@@ -5199,6 +5207,7 @@
     variance_type: 0
     p_value: ''
     significant: 0
+    group: "Group 2"
     factors: 1
     confidence: medium
     data_location: Table 3
@@ -5225,6 +5234,7 @@
     variance_type: 0
     p_value: ''
     significant: 0
+    group: "Group 2"
     factors: 1
     confidence: medium
     data_location: Table 3
@@ -5251,6 +5261,7 @@
     variance_type: 0
     p_value: ''
     significant: 1
+    group: "Group 2"
     factors: 1
     confidence: medium
     data_location: Table 3
@@ -5277,6 +5288,7 @@
     variance_type: 0
     p_value: ''
     significant: 0
+    group: ""
     factors: 2
     confidence: medium
     data_location: Table 3
@@ -5303,6 +5315,7 @@
     variance_type: 0
     p_value: ''
     significant: 0
+    group: ""
     factors: 5
     confidence: medium
     data_location: Table 3
@@ -5329,6 +5342,7 @@
     variance_type: 0
     p_value: ''
     significant: 1
+    group: ""
     factors: 2
     confidence: medium
     data_location: Table 3
@@ -5355,6 +5369,7 @@
     variance_type: 0
     p_value: ''
     significant: 0
+    group: ""
     factors: 3
     confidence: medium
     data_location: Table 3

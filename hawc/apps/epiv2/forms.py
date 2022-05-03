@@ -6,7 +6,7 @@ from hawc.apps.common.forms import BaseFormHelper
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
 from ..common.forms import ArrayCheckboxSelectMultiple
-from ..common.widgets import SelectOtherWidget, SelectMultipleOtherWidget
+from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from . import constants, lookups, models
 
 
@@ -223,7 +223,7 @@ class DataExtractionForm(forms.ModelForm):
         helper.add_row(
             "variance_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
         )
-        helper.add_row("exposure_transform", 3, "col-md-4")
+        helper.add_row("group", 4, "col-md-3")
         helper.add_row("factors", 3, "col-md-4")
         helper.add_row("effect_description", 3, "col-md-4")
         helper.form_tag = False
