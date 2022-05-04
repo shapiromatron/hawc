@@ -72,7 +72,7 @@ def test_validate_exact_ids():
 
 def test_numeric_text_validator():
     validator = NumericTextValidator()
-    for value in ["1", "-3.2E-7", "< 1e-4", "<3", "> 4", "< LOD"]:
+    for value in ["1", "-3.2E-7", "< 1e-4", "<3", "> 4", "< LOD", "<LOQ"]:
         assert validator(value) is None
 
     for value in ["non-numeric", "< 3.2 LOD", "<", "<<2", "1 2", "e-4"]:
