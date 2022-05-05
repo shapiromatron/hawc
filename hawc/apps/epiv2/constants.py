@@ -67,6 +67,7 @@ class ConfidenceIntervalType(models.TextChoices):
     P90 = "P90", "10th/90th percentile"
     P95 = "P95", "5th/95th percentile"
     P99 = "P99", "1st/99th percentile"
+    OTHER = "Oth", "Other"
 
 
 class MeasurementType(models.TextChoices):

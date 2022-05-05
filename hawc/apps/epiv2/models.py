@@ -228,7 +228,8 @@ class ExposureLevel(models.Model):
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
         default=constants.VarianceType.NONE,
-        verbose_name="Specify which measure of variation was reported from list",
+        verbose_name="Type of variance estimate",
+        help_text="Specify which measure of variation was reported from list",
     )
     units = models.CharField(max_length=128, blank=True, null=True)
     ci_lcl = NumericTextField(
@@ -261,7 +262,7 @@ class ExposureLevel(models.Model):
         default=constants.ConfidenceIntervalType.RNG,
         verbose_name="Lower/upper interval type",
     )
-    neg_exposure = models.CharField(
+    negligible_exposure = models.CharField(
         verbose_name="Percent with negligible exposure",
         help_text="Enter the percent of the population without measureable exposure. For biomarkers and other lab results, this will generally be the percent below the LOD or LOQ. Occupational studies may report the percent unexposed. The field is free text so elaboration on the meaning of the number can be provided.",
         blank=True,
@@ -291,7 +292,10 @@ class ExposureLevel(models.Model):
         elif self.mean is not None:
             value = f"{self.mean}"
         if self.ci_lcl and self.ci_ucl:
-            value += f" [{self.ci_lcl}, {self.ci_ucl}]"
+            if value == default_value:
+                value = f"{self.ci_lcl} - {self.ci_ucl}"
+            else:
+                value += f" [{self.ci_lcl}, {self.ci_ucl}]"
         if value != default_value and self.units:
             value += f" {self.units}"
         return value
@@ -420,6 +424,7 @@ class DataExtraction(models.Model):
         choices=constants.VarianceType.choices,
         default=constants.VarianceType.NONE,
         verbose_name="Type of variance estimate",
+        help_text="Specify which measure of variation was reported from list",
     )
     variance = models.FloatField(blank=True, null=True)
     n = models.PositiveIntegerField(blank=True, null=True)

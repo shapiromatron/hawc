@@ -703,7 +703,7 @@
     - - team@hawcproject.org
     reviewers:
     - - reviewer@hawcproject.org
-    epi_version: 1
+    epi_version: 2
 - model: assessment.assessment
   pk: 2
   fields:
@@ -1715,7 +1715,7 @@
   fields:
     reference_ptr: 1
     bioassay: true
-    epi: false
+    epi: true
     epi_meta: false
     in_vitro: false
     short_citation: Foo et al.
@@ -4857,7 +4857,7 @@
     percentile_25: "0.8"
     percentile_75: "1.2"
     ci_ucl: "5.0"
-    neg_exposure: "5%"
+    negligible_exposure: "5%"
     ci_type: ''
     units: ''
     comments: test
@@ -4878,7 +4878,7 @@
     percentile_25: "0.6"
     percentile_75: "1.1"
     ci_ucl: "2.5e+3"
-    neg_exposure: ""
+    negligible_exposure: ""
     ci_type: ''
     units: ''
     comments: p<0.001 vs children with asthma
@@ -4899,7 +4899,7 @@
     percentile_25: "0.22"
     percentile_75: "0.38"
     ci_ucl: "0.5"
-    neg_exposure: "80"
+    negligible_exposure: "80"
     ci_type: ''
     units: ''
     comments: ''
@@ -4920,7 +4920,7 @@
     percentile_25: "0.21"
     percentile_75: "0.38"
     ci_ucl: "0.6"
-    neg_exposure: "81%"
+    negligible_exposure: "81%"
     ci_type: ''
     units: ''
     comments: ''
@@ -4941,7 +4941,7 @@
     percentile_25: "0.46"
     percentile_75: "0.79"
     ci_ucl: "0.7"
-    neg_exposure: "95%"
+    negligible_exposure: "95%"
     ci_type: ''
     units: ''
     comments: ''
@@ -4962,7 +4962,7 @@
     percentile_25: "0.76"
     percentile_75: "1.24"
     ci_ucl: ""
-    neg_exposure: ""
+    negligible_exposure: ""
     ci_type: ''
     units: ''
     comments: ''
@@ -5005,7 +5005,7 @@
     name: A
     design: 1
     description: age, sex, BMI, parental education, ETS exposure, month of survey
-    comments: <p>Example</p>
+    comments: Example
     created: 2022-01-10 21:16:10.393576+00:00
     last_updated: 2022-01-10 21:16:10.393587+00:00
 - model: epiv2.adjustmentfactor
@@ -5014,7 +5014,7 @@
     name: A
     design: 2
     description: age, sex
-    comments: <p>Example</p>
+    comments: Example
     created: 2022-01-10 21:41:54.332000+00:00
     last_updated: 2022-01-10 21:41:54.332017+00:00
 - model: epiv2.adjustmentfactor
@@ -5023,7 +5023,7 @@
     name: B
     design: 2
     description: age, sex, time since vaccination, booster type
-    comments: <p>Example</p>
+    comments: Example
     created: 2022-01-10 21:41:54.336562+00:00
     last_updated: 2022-01-10 21:41:54.336577+00:00
 - model: epiv2.adjustmentfactor

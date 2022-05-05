@@ -7,13 +7,11 @@ from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
-from ..assessment.models import Assessment, BaseEndpoint
+from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootedTagTree
 from ..study.models import Study
 from . import constants, managers
-
-from ..assessment.models import DSSTox
 
 
 class IVChemical(models.Model):

@@ -142,7 +142,7 @@ class ExposureLevelForm(forms.ModelForm):
         helper.add_row("name", 4, "col-md-3")
         helper.add_row("median", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
         helper.add_row("ci_lcl", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
-        helper.add_row("neg_exposure", 3, "col-md-4")
+        helper.add_row("negligible_exposure", 3, "col-md-4")
         return helper
 
 
