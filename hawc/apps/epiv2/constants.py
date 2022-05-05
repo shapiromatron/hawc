@@ -88,7 +88,7 @@ class ExposureRoute(models.TextChoices):
     DE = "DE", "Dermal"
     IU = "IU", "In utero"
     IV = "IV", "Intravenous"
-    UK = "UK", "Unknown/Total"
+    UNKNOWN = "UK", "Unknown/Total"
 
 
 class HealthOutcomeSystem(models.TextChoices):

@@ -492,4 +492,5 @@ def get_model_copy_name(instance: models.Model) -> str:
 
 
 class NumericTextField(models.CharField):
+    generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
     validators = [validators.NumericTextValidator()]

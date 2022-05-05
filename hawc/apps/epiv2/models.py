@@ -17,16 +17,20 @@ class Design(models.Model):
     summary = models.CharField(
         max_length=128,
         verbose_name="Population Summary",
-        help_text="Breifly describe the study population (e.g., Women undergoing fertility treatment).",
+        help_text="Briefly describe the study population. Try to capture anything outside a typical general population samples (e.g.,people with a specific health condition, specific environments [e.g., assisted living facility, farmers, etc.], exposure scenario, etc. This field may be used in visualizations as a summary of the study, so it is important to be consistent within the assessment.",
     )
     study_name = models.CharField(
         max_length=128,
         blank=True,
         null=True,
         verbose_name="Study name (if applicable)",
-        help_text="Typically available for cohorts. Abbreviations provided in the paper are fine",
+        help_text="Study name assigned by authors. Typically available for cohorts.",
     )
-    study_design = models.CharField(max_length=2, choices=constants.StudyDesign.choices, blank=True)
+    study_design = models.CharField(
+        max_length=2,
+        choices=constants.StudyDesign.choices,
+        help_text='Select the most appropriate design from the list. If more than one study design applies (e.g., a cohort with cross-sectional analyses of baseline measures), can either a) select one design ("cohort") and clarify different timing in remaining extraction or b) select "other" and provide details in comments.',
+    )
     source = models.CharField(max_length=2, choices=constants.Source.choices, blank=True)
     age_profile = ArrayField(
         models.CharField(max_length=2, choices=constants.AgeProfile.choices),
@@ -43,7 +47,7 @@ class Design(models.Model):
     race = models.CharField(max_length=128, blank=True, verbose_name="Population race/ethnicity")
     participant_n = models.PositiveIntegerField(
         verbose_name="Overall study population N",
-        help_text="Enter the total number of participants enrolled in the study (after exclusions).\nNote: Sample size for specific result can be extracted in qualitative data extraction",
+        help_text="Enter the total number of participants enrolled in the study (after exclusions). Note: Sample size for specific result can be extracted in qualitative data extraction",
     )
     years_enrolled = models.CharField(
         max_length=32, verbose_name="Year(s) of enrollment", blank=True
@@ -60,7 +64,11 @@ class Design(models.Model):
         max_length=128, blank=True, verbose_name="Other geographic information"
     )
     criteria = models.TextField(blank=True, verbose_name="Inclusion/Exclusion Criteria")
-    susceptibility = models.TextField(blank=True, verbose_name="Susceptibility")
+    susceptibility = models.TextField(
+        blank=True,
+        verbose_name="Susceptibility",
+        help_text="Note whether the study presents information for potentially susceptible or vulnerable populations or sub-populations, such as pregnant women or residents of environmental justice communities.",
+    )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -147,7 +155,7 @@ class Exposure(models.Model):
     measurement_type = ArrayField(
         models.CharField(max_length=64),
         blank=True,
-        help_text="Select all that apply.",
+        help_text='Select the most appropriate type from the list. If a study includes multiples exposure measurement types but they are analyzed with outcomes separately, create a separate entry for each. If more than one type are combined for analysis with an outcome, you can select multiple options from the list. "Occupational" should be used when the exposure is based on job duties, etc. (i.e., not occupational exposure measured by biomarkers or air).',
         verbose_name="Exposure measurement types",
     )
     biomonitoring_matrix = models.CharField(
@@ -160,12 +168,19 @@ class Exposure(models.Model):
         max_length=256,
         blank=True,
         verbose_name="Timing of exposure measurement",
-        help_text='If timing is based on something other than age, specify the timing (e.g., start of employment at Factory A). If cross-sectional, enter "cross-sectional"',
+        help_text='Enter age or other timing (e.g., start of employment, baseline). If cross-sectional, enter "cross-sectional".',
     )
     exposure_route = models.CharField(
-        max_length=2, choices=constants.ExposureRoute.choices, blank=True
+        max_length=2,
+        choices=constants.ExposureRoute.choices,
+        default=constants.ExposureRoute.UNKNOWN,
+        help_text='Select the most appropriate route. In most cases, biomarkers will be "Unknown/Total" unless a clear exposure source is known.',
     )
-    measurement_method = models.TextField(blank=True, verbose_name="Exposure measurement method")
+    measurement_method = models.TextField(
+        blank=True,
+        verbose_name="Exposure measurement method",
+        help_text="Briefly state the method used to measure exposure (e.g., laboratory analytic method, job exposure matrix, etc.)",
+    )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -197,10 +212,19 @@ class ExposureLevel(models.Model):
         help_text="A unique name for this exposure level that will help you identify it later.",
     )
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposure_levels")
-    chemical = models.ForeignKey(Chemical, on_delete=models.CASCADE)
-    exposure_measurement = models.ForeignKey(Exposure, on_delete=models.CASCADE)
+    chemical = models.ForeignKey(
+        Chemical, on_delete=models.CASCADE, help_text="Select from chemicals entered above."
+    )
+    exposure_measurement = models.ForeignKey(
+        Exposure,
+        on_delete=models.CASCADE,
+        help_text="Select from exposure measurement entered above.",
+    )
     sub_population = models.CharField(
-        max_length=128, verbose_name="Sub-population", blank=True, help_text="(if relevant)"
+        max_length=128,
+        verbose_name="Sub-population",
+        blank=True,
+        help_text="Specify if the exposure levels are reported for a sub-group within the study population (e.g., by case or exposure status, sex, etc.)",
     )
     median = models.FloatField(blank=True, null=True)
     mean = models.FloatField(blank=True, null=True)
@@ -208,22 +232,42 @@ class ExposureLevel(models.Model):
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
         default=constants.VarianceType.NONE,
-        verbose_name="Type of variance estimate",
+        verbose_name="Specify which measure of variation was reported from list",
     )
     units = models.CharField(max_length=128, blank=True, null=True)
-    ci_lcl = NumericTextField(max_length=16, blank=True, verbose_name="Lower bound")
-    percentile_25 = NumericTextField(max_length=16, blank=True, verbose_name="25th Percentile")
-    percentile_75 = NumericTextField(max_length=16, blank=True, verbose_name="75th Percentile")
-    ci_ucl = NumericTextField(max_length=16, blank=True, verbose_name="Upper bound")
+    ci_lcl = NumericTextField(
+        max_length=16,
+        blank=True,
+        verbose_name="Lower interval",
+        help_text=f"Lower value of whichever range is selected in Lower/Upper interval type. {NumericTextField.generic_help_text}",
+    )
+    percentile_25 = NumericTextField(
+        max_length=16,
+        blank=True,
+        verbose_name="25th Percentile",
+        help_text=NumericTextField.generic_help_text,
+    )
+    percentile_75 = NumericTextField(
+        max_length=16,
+        blank=True,
+        verbose_name="75th Percentile",
+        help_text=NumericTextField.generic_help_text,
+    )
+    ci_ucl = NumericTextField(
+        max_length=16,
+        blank=True,
+        verbose_name="Upper interval",
+        help_text=f"Upper value of whichever range is selected in Lower/Upper interval type. {NumericTextField.generic_help_text}",
+    )
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
         default=constants.ConfidenceIntervalType.RNG,
-        verbose_name="Lower/upper bound type",
+        verbose_name="Lower/upper interval type",
     )
     neg_exposure = models.CharField(
         verbose_name="Percent with negligible exposure",
-        help_text="e.g., % below the LOD",
+        help_text="Enter the percent of the population without measureable exposure. For biomarkers and other lab results, this will generally be the percent below the LOD or LOQ. Occupational studies may report the percent unexposed. The field is free text so elaboration on the meaning of the number can be provided.",
         blank=True,
         max_length=64,
     )
@@ -269,13 +313,16 @@ class Outcome(models.Model):
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="outcomes")
     endpoint = models.CharField(
         max_length=128,
-        help_text="A unique name for this health outcome that will help you identify it later.",
+        help_text="A unique name for the health effect being measured. The endpoint is generally more specific than the outcome (e.g., cholesterol, asthma within the previous year). Use controlled vocabulary when available.",
     )
-    health_outcome = models.CharField(max_length=128)
+    health_outcome = models.CharField(
+        max_length=128,
+        help_text="The outcome is generally broader than the endpoint (e.g., serum lipids, asthma). However, if there is not a finer categorization, they may be the same. Use controlled vocabulary when available.",
+    )
     health_outcome_system = models.CharField(
         max_length=2,
         choices=constants.HealthOutcomeSystem.choices,
-        help_text="If multiple cancer types are present, report all types under Cancer.",
+        help_text="Select the system from the drop down. Use controlled vocabulary when available. If multiple cancer types are present, report all types under Cancer.",
     )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -306,9 +353,12 @@ class AdjustmentFactor(models.Model):
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="adjustment_factors")
     name = models.CharField(
         max_length=32,
-        help_text="A unique name for this adjustment factor that will help you identify it later.",
+        help_text='A unique name for this adjustment set that will help you identify it later. It may be descriptive or a dummy variable ("A").',
     )
-    description = models.CharField(max_length=256, help_text="Comma separated list")
+    description = models.CharField(
+        max_length=256,
+        help_text='Enter the list of covariates in the model, separated by commas. These can be brief and ideally entered uniformly across studies when possible. Additional detail can be added in the comments or in study evaluation (e.g., enter "smoking" for consistency instead of "pack-years")',
+    )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -336,14 +386,28 @@ class DataExtraction(models.Model):
     objects = managers.DataExtractionManager()
 
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="data_extractions")
-    outcome = models.ForeignKey(Outcome, related_name="outcomes", on_delete=models.CASCADE)
+    outcome = models.ForeignKey(
+        Outcome,
+        related_name="outcomes",
+        on_delete=models.CASCADE,
+        help_text="Select from endpoints entered above",
+    )
     exposure_level = models.ForeignKey(
-        ExposureLevel, related_name="exposure_levels", on_delete=models.CASCADE
+        ExposureLevel,
+        related_name="exposure_levels",
+        on_delete=models.CASCADE,
+        help_text="Select from exposure levels entered above",
     )
     sub_population = models.CharField(
-        max_length=128, blank=True, help_text="Use N/A if sub population is not relevant"
+        max_length=128,
+        blank=True,
+        help_text="Specify if the result is specific to a sub-group within the study population. Leave blank if the result applies to the full population.",
     )
-    outcome_measurement_timing = models.CharField(max_length=128, blank=True)
+    outcome_measurement_timing = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text='Enter age or other timing (e.g., X years follow-up) for measurement of outcome. If cross-sectional, enter "cross-sectional".',
+    )
     effect_estimate_type = models.CharField(
         max_length=3, choices=constants.EffectEstimateType.choices
     )
@@ -373,29 +437,38 @@ class DataExtraction(models.Model):
         max_length=128,
         blank=True,
         verbose_name="Results group",
-        help_text="""If a set of results are linked (e.g., results for categories of exposure), each one is entered as a separate entry in the form. This field should be used to link the results. All linked results should have the same value for this field, and it should be unique to those results. The text can be descriptive (e.g., "Quartiles for PFNA and Asthma incidence") or a dummy variable ("Group 1").""",
+        help_text='If a set of results are linked (e.g., results for categories of exposure), each one is entered as a separate entry in the form. This field should be used to link the results. All linked results should have the same value for this field, and it should be unique to those results. The text can be descriptive (e.g., "Quartiles for PFNA and Asthma incidence") or a dummy variable ("Group 1").',
     )
     exposure_transform = models.CharField(max_length=32, blank=True)
     outcome_transform = models.CharField(max_length=32, blank=True)
     exposure_rank = models.PositiveSmallIntegerField(
         default=0,
-        help_text="Rank this comparison group by exposure (lowest exposure group = 1); used for sorting in visualizations",
+        help_text="If a set of results are linked, use this field to order them (helpful for sorting in visualizations). Rank the comparison groups in the order you would want them to appear (e.g., lowest exposure group=1).",
     )
     factors = models.ForeignKey(
         AdjustmentFactor,
         verbose_name="Adjustment factors",
+        help_text="Select from adjustment sets entered above",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
-    confidence = models.CharField(max_length=128, verbose_name="Study confidence", blank=True)
+    confidence = models.CharField(
+        max_length=128,
+        verbose_name="Study confidence",
+        blank=True,
+        help_text="Enter the overall study confidence rating for the specific endpoint being extracted",
+    )
     data_location = models.CharField(max_length=128, help_text="e.g., table number", blank=True)
     effect_description = models.TextField(
         blank=True,
         verbose_name="Effect estimate description",
-        help_text="Description of the effect estimate with units, including comparison group if applicable",
+        help_text="Description of the effect estimate with units, including the comparison being made (e.g., beta for IQR increase, OR for Q2 vs Q1)",
     )
-    statistical_method = models.TextField(blank=True)
+    statistical_method = models.TextField(
+        blank=True,
+        help_text="Briefly describe the statistical analysis method (e.g., logistic regression).",
+    )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

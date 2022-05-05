@@ -134,7 +134,10 @@ class ExposureLevelForm(forms.ModelForm):
     def helper(self):
         for fld in ["comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
-        helper = BaseFormHelper(self)
+        helper = BaseFormHelper(
+            self,
+            help_text="The exposure levels entered in this subform will be linked to a specific result below. If exposure levels are reported separately for sub-populations (e.g., exposed and unexposed) and results are also reported separately, create a separate entry for each sub-population. If exposure levels are reported separately but results are reported for the full population, only one entry will be linked to the result, so information on the remaining sub-group may be captured in the comment field.",
+        )
         helper.form_tag = False
         helper.add_row("name", 4, "col-md-3")
         helper.add_row("median", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
