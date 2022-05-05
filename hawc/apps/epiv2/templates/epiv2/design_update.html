@@ -1,4 +1,5 @@
 {% extends 'assessment-rooted.html' %}
+{% load bs4 %}
 
 {% block content %}
 <h2 class="d-inline-block">{{object.summary}}</h2>
@@ -12,35 +13,19 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Chemicals
-            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:chemical-create' object.pk %}"
-                hx-target="#chemical-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-        </h3>
+        {% url 'epiv2:chemical-create' object.pk as chemical_create %}
+        {% include "epiv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-empty-row" %}
         <table class="table table-sm table-striped">
-            <colgroup>
-                <col style="width: 43%;">
-                <col style="width: 42%;">
-                <col style="width: 15%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>DTXSID</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
+            {% bs4_colgroup '43,42,15' %}
+            {% bs4_thead 'Name,DTXSID,Edit' %}
             <tbody>
                 {% if object.chemicals.all %}
                     {% for object in object.chemicals.all %}
                         {% include "epiv2/fragments/chemical_row.html" %}
                     {% endfor %}
-                    <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="chemical-empty-row" text="" %}
                 {% else %}
-                    <tr id="chemical-empty-row" hx-target="this">
-                        <td colspan="100%">
-                            <p class="text-center mb-0">No chemicals available. Create one?</p>
-                        </td>
-                    </tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="chemical-empty-row" text="chemicals" %}
                 {% endif %}
             </tbody>
         </table>
@@ -49,38 +34,19 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Exposure Measurements
-            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposure-create' object.pk %}"
-                hx-target="#exposure-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-        </h3>
-
+        {% url 'epiv2:exposure-create' object.pk as exposure_create %}
+        {% include "epiv2/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target="#exposure-empty-row" %}
         <table class="table table-sm table-striped">
-            <colgroup>
-                <col style="width: 28%;">
-                <col style="width: 28%;">
-                <col style="width: 28%;">
-                <col style="width: 15%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Measurement Type</th>
-                    <th>Measurement Timing</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
+            {% bs4_colgroup '29,28,28,15' %}
+            {% bs4_thead 'Name,Measurement Type, Measurement Timing,Edit' %}
             <tbody>
                 {% if object.exposures.all %}
                     {% for object in object.exposures.all %}
                         {% include "epiv2/fragments/exposure_row.html" %}
                     {% endfor %}
-                <tr id="exposure-empty-row" hx-target="this"></tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="exposure-empty-row" text="" %}
                 {% else %}
-                    <tr id="exposure-empty-row" hx-target="this">
-                        <td colspan="100%">
-                            <p class="text-center mb-0">No exposure measurements available. Create one?</p>
-                        </td>
-                    </tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="exposure-empty-row" text="exposure measurements" %}
                 {% endif %}
             </tbody>
         </table>
@@ -89,41 +55,19 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Exposure Levels
-            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:exposurelevel-create' object.pk %}"
-                hx-target="#exposurelevel-empty-row" hx-swap="outerHTML"> <i class="fa fa-plus fa-fw"></i> Create</button>
-        </h3>
+        {% url 'epiv2:exposurelevel-create' object.pk as exposurelevel_create %}
+        {% include "epiv2/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target="#exposurelevel-empty-row" %}
         <table class="table table-sm table-striped">
-            <colgroup>
-                <col style="width: 17%;">
-                <col style="width: 17%;">
-                <col style="width: 17%;">
-                <col style="width: 17%;">
-                <col style="width: 17%;">
-                <col style="width: 15%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Chemical</th>
-                    <th>Exposure</th>
-                    <th>Central Tendency</th>
-                    <th>Comments</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
+            {% bs4_colgroup '17,17,17,17,17,15' %}
+            {% bs4_thead 'Name,Chemical,Exposure,Central Tendency,Comments,Edit' %}
             <tbody>
                 {% if object.exposure_levels.all %}
                     {% for object in object.exposure_levels.all %}
                         {% include "epiv2/fragments/exposurelevel_row.html" %}
                     {% endfor %}
-                    <tr id="exposurelevel-empty-row" hx-target="this"></tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="exposurelevel-empty-row" text="" %}
                 {% else %}
-                    <tr id="exposurelevel-empty-row" hx-target="this">
-                        <td colspan="100%">
-                            <p class="text-center mb-0">No exposures available. Create one?</p>
-                        </td>
-                    </tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="exposurelevel-empty-row" text="exposure levels" %}
                 {% endif %}
             </tbody>
         </table>
@@ -132,38 +76,19 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Outcomes
-            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:outcome-create' object.pk %}"
-                hx-target="#outcome-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-        </h3>
-
+        {% url 'epiv2:outcome-create' object.pk as outcome_create %}
+        {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-empty-row" %}
         <table class="table table-sm table-striped">
-            <colgroup>
-                <col style="width: 28%;">
-                <col style="width: 28%;">
-                <col style="width: 28%;">
-                <col style="width: 15%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Endpoint</th>
-                    <th>Health Outcome</th>
-                    <th>Health Outcome System</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
+            {% bs4_colgroup '29,28,28,15' %}
+            {% bs4_thead 'Endpoint,Health Outcome,Health Outcome System,Edit' %}
             <tbody>
                 {% if object.outcomes.all %}
                     {% for object in object.outcomes.all %}
                         {% include "epiv2/fragments/outcome_row.html" %}
                     {% endfor %}
-                    <tr id="outcome-empty-row" hx-target="this"></tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="outcome-empty-row" text="" %}
                 {% else %}
-                    <tr id="outcome-empty-row" hx-target="this">
-                        <td colspan="100%">
-                            <p class="text-center mb-0">No outcomes available. Create one?</p>
-                        </td>
-                    </tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="outcome-empty-row" text="outcomes" %}
                 {% endif %}
             </tbody>
         </table>
@@ -172,37 +97,19 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Adjustment Factors
-            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:adjustmentfactor-create' object.pk %}"
-                hx-target="#adjustmentfactor-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-        </h3>
+        {% url 'epiv2:adjustmentfactor-create' object.pk as adjustmentfactor_create %}
+        {% include "epiv2/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target="#adjustmentfactor-empty-row" %}
         <table class="table table-sm table-striped">
-            <colgroup>
-                <col style="width: 20%;">
-                <col style="width: 40%;">
-                <col style="width: 25%;">
-                <col style="width: 15%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Comments</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
+            {% bs4_colgroup '20,40,25,15' %}
+            {% bs4_thead 'Name,Description,Comments,Edit' %}
             <tbody>
                 {% if object.adjustment_factors.all %}
                     {% for object in object.adjustment_factors.all %}
                         {% include "epiv2/fragments/adjustment_factor_row.html" %}
                     {% endfor %}
-                    <tr id="adjustmentfactor-empty-row" hx-target="this"></tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="adjustmentfactor-empty-row" text="" %}
                 {% else %}
-                    <tr id="adjustmentfactor-empty-row" hx-target="this">
-                        <td colspan="100%">
-                            <p class="text-center mb-0">No adjustment factors available. Create one?</p>
-                        </td>
-                    </tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="adjustmentfactor-empty-row" text="adjustment factors" %}
                 {% endif %}
             </tbody>
         </table>
@@ -211,47 +118,19 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Data Extractions
-            <button class="btn btn-sm btn-info pull-right" hx-get="{% url 'epiv2:dataextraction-create' object.pk %}"
-                hx-target="#dataextraction-empty-row" hx-swap="outerHTML"><i class="fa fa-plus fa-fw"></i> Create</button>
-        </h3>
+        {% url 'epiv2:dataextraction-create' object.pk as dataextraction_create %}
+        {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
         <table class="table table-sm table-striped">
-            <colgroup>
-                <col style="width: 13%;">
-                <col style="width: 13%;">
-                <col style="width: 13%;">
-                <col style="width: 13%;">
-                <col style="width: 5%;">
-                <col style="width: 12%;">
-                <col style="width: 5%;">
-                <col style="width: 13%;">
-                <col style="width: 13%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Group</th>
-                    <th>Outcome</th>
-                    <th>Exposure Level</th>
-                    <th>Measurement Timing</th>
-                    <th>N</th>
-                    <th>Effect Estimate</th>
-                    <th>Confidence</th>
-                    <th>Comments</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
+            {% bs4_colgroup '13,13,13,13,5,12,5,13,13' %}
+            {% bs4_thead 'Group,Outcome,Exposure Level,Measurement Timing,N,Effect Estimate,Confidence,Comments,Edit' %}
             <tbody>
                 {% if object.data_extractions.all %}
                     {% for object in object.data_extractions.all %}
                         {% include "epiv2/fragments/data_extraction_row.html" %}
                     {% endfor %}
-                    <tr id="dataextraction-empty-row" hx-target="this"></tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="" %}
                 {% else %}
-                <tr id="dataextraction-empty-row" hx-target="this">
-                    <td colspan="100%">
-                        <p class="text-center mb-0">No data extractions available. Create one?</p>
-                    </td>
-                </tr>
+                    {% include "epiv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="extractions" %}
                 {% endif %}
             </tbody>
         </table>

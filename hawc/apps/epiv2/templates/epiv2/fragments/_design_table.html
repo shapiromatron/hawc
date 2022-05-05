@@ -15,6 +15,8 @@
         {% optional_table_row "Population race/ethnicity" object.race %}
         {% optional_table_row "Population summary" object.summary %}
         {% optional_table_row "Study (cohort) name" object.study_name %}
+        {% optional_table_row "Year(s) of enrollment" object.years_enrolled %}
+        {% optional_table_row "Year(s) or length of follow-up" object.years_followup %}
         <tr>
             <th>Countries</th>
             <td>{% for object in object.countries.all %}
@@ -23,9 +25,7 @@
             </td>
         </tr>
         {% optional_table_row "Other geographic information" object.region %}
-        {% optional_table_row "Year(s) of enrollment" object.years_enrolled %}
-        {% optional_table_row "Year(s) or length of follow-up" object.years_followup %}
-        {% optional_table_row "Overall study population" object.participant_n %}
+        {% optional_table_row "Study population N" object.participant_n %}
         {% if object.criteria|hastext %}
         <tr>
             <th>Inclusion/Exclusion Criteria</th>

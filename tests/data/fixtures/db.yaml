@@ -4757,7 +4757,7 @@
     created: 2022-01-10 21:26:09.641642+00:00
     last_updated: 2022-01-13 20:37:57.529050+00:00
     age_profile:
-    - 1
+    - AD
     countries:
     - 3
     criteria: "<ul><li>cases: asthma diagnosis by physician</li><li>singleton birth</li></ul>"

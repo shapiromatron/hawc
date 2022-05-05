@@ -288,15 +288,15 @@ class ExposureLevel(models.Model):
     def __str__(self):
         return self.name
 
-    def get_quantitative_value(self):
-        value = "NR"
+    def exposure_html(self):
+        default_value = value = "-"
         if self.median is not None:
             value = f"{self.median}"
         elif self.mean is not None:
             value = f"{self.mean}"
-        if self.ci_lcl is not None and self.ci_ucl is not None:
+        if self.ci_lcl and self.ci_ucl:
             value += f" [{self.ci_lcl}, {self.ci_ucl}]"
-        if self.units:
+        if value != default_value and self.units:
             value += f" {self.units}"
         return value
 
