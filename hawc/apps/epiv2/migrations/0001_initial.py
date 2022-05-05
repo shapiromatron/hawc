@@ -747,7 +747,7 @@ class Migration(migrations.Migration):
             name="dsstox",
             field=models.ForeignKey(
                 blank=True,
-                help_text='\n        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>\n        substance identifier (recommended). When using an identifier, chemical name and CASRN are\n        standardized using the DTXSID.\n        ',
+                help_text='<a rel="noopener noreferrer" target="_blank" href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DssTox</a> substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the DTXSID.',
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 to="assessment.dsstox",

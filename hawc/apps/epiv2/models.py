@@ -116,11 +116,7 @@ class Chemical(models.Model):
         blank=True,
         null=True,
         verbose_name="DSSTox substance identifier",
-        help_text="""
-        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        substance identifier (recommended). When using an identifier, chemical name and CASRN are
-        standardized using the DTXSID.
-        """,
+        help_text=DSSTox.help_text(),
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
