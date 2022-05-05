@@ -71,6 +71,7 @@ class TestDesignChildren:
         inputs = {
             "name": "ex exposure",
             "measurement_type_0": ["Food"],
+            "exposure_route": "OR",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposure_row.html")
@@ -102,6 +103,7 @@ class TestDesignChildren:
         inputs = {
             "name": "ex exposure update",
             "measurement_type_0": ["Drinking water"],
+            "exposure_route": "OR",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposure_row.html")
