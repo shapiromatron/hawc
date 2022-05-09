@@ -47,14 +47,14 @@ class BaseFormHelper(cf.FormHelper):
     def build_default_layout(self, form):
         layout = cfl.Layout(*list(form.fields.keys()))
 
-        if "legend_text" in self.kwargs:
-            layout.insert(0, cfl.HTML(f"<legend>{self.kwargs['legend_text']}</legend>"))
-
         if "help_text" in self.kwargs:
             layout.insert(
-                1,
+                0,
                 cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
             )
+
+        if "legend_text" in self.kwargs:
+            layout.insert(0, cfl.HTML(f"<legend>{self.kwargs['legend_text']}</legend>"))
 
         form_actions = self.kwargs.get("form_actions")
 
