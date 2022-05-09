@@ -24,10 +24,7 @@ class Migration(migrations.Migration):
                 related_name="ivchemicals",
                 to="assessment.DSSTox",
                 verbose_name="DSSTox substance identifier (DTXSID)",
-                help_text="""
-        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        substance identifier (recommended). When using an identifier, name is standardized using the DTXSID.
-        """,
+                help_text='<a rel="noopener noreferrer" target="_blank" href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DssTox</a> substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the DTXSID.',
             ),
         ),
         migrations.RunPython(casrn_to_dtxsid, migrations.RunPython.noop),

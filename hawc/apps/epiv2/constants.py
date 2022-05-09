@@ -19,6 +19,7 @@ class StudyDesign(models.TextChoices):
     RT = "RT", "Randomized controlled trial"
     NT = "NT", "Non-randomized controlled trial"
     CS = "CS", "Cross-sectional"
+    EC = "EC", "Ecological"
     OT = "OT", "Other"
 
 
@@ -39,7 +40,7 @@ class EffectEstimateType(models.TextChoices):
     OR = "OR", "Odds Ratio (OR)"
     RR = "RR", "Relative Risk Ratio (RR)"
     AR = "AR", "Absolute Risk %"
-    B = "B", "Regression coeffcient (β)"
+    B = "B", "Regression coefficient (β)"
     SMR = "SMR", "Standardized Mortality Ratio (SMR)"
     SIR = "SIR", "Standardized Incidence Ratio (SIR)"
     IRR = "IRR", "Incidence Risk Ratio (IRR)"
@@ -57,26 +58,29 @@ class VarianceType(models.IntegerChoices):
     SE = 2, "SE"
     SEM = 3, "SEM"
     GSD = 4, "GSD"
-    OT = 5, "other"
+    IQR = 5, "IQR (interquartile range)"
+    OT = 6, "other"
 
 
 class ConfidenceIntervalType(models.TextChoices):
     RNG = "Rng", "Range [min, max]"
+    P90 = "P90", "10th/90th percentile"
     P95 = "P95", "5th/95th percentile"
     P99 = "P99", "1st/99th percentile"
+    OTHER = "Oth", "Other"
 
 
 class MeasurementType(models.TextChoices):
-    BM = "BM", "Biomonitoring"
-    AR = "AR", "Air"
-    FD = "FD", "Food"
-    DW = "DW", "Drinking water"
-    OC = "OC", "Occupational"
-    MD = "MD", "Modeled"
-    QN = "QN", "Questionnaire"
-    DO = "DO", "Direct administration - oral"
-    DI = "DI", "Direct administration - inhalation"
-    OT = "OT", "Other"
+    BM = "Biomonitoring", "Biomonitoring"
+    AR = "Air", "Air"
+    FD = "Food", "Food"
+    DW = "Drinking water", "Drinking water"
+    OC = "Occupational", "Occupational"
+    MD = "Modeled", "Modeled"
+    QN = "Questionnaire", "Questionnaire"
+    DO = "Direct administration - oral", "Direct administration - oral"
+    DI = "Direct administration - inhalation", "Direct administration - inhalation"
+    OT = "other", "other"
 
 
 class ExposureRoute(models.TextChoices):
@@ -85,7 +89,7 @@ class ExposureRoute(models.TextChoices):
     DE = "DE", "Dermal"
     IU = "IU", "In utero"
     IV = "IV", "Intravenous"
-    UK = "UK", "Unknown/Total"
+    UNKNOWN = "UK", "Unknown/Total"
 
 
 class HealthOutcomeSystem(models.TextChoices):
@@ -138,3 +142,18 @@ class BiomonitoringSource(models.TextChoices):
     ML = "ML", "Maternal"
     PL = "PL", "Paternal"
     CD = "CD", "Cord"
+
+
+class DataTransforms(models.TextChoices):
+    NONE = "", "---"
+    NA = "N/A", "N/A"
+    NR = "NR", "NR"
+    LOGXPLUS1 = "log(x+1)", "log(x+1)"
+    LOG10 = "log10", "log10"
+    LOG2 = "log2", "log2"
+    LN = "ln", "ln"
+    LOG = "log (unspecified basis)", "log (unspecified basis)"
+    ZSCORE = "z-score", "z-score"
+    SQUARED = "squared", "squared"
+    CUBIC = "cubic", "cubic"
+    OTHER = "other", "other"

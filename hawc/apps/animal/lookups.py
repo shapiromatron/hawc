@@ -1,6 +1,7 @@
 from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
+from ..common.helper import new_window_a
 from ..common.lookups import (
     DistinctStringLookup,
     RelatedDistinctStringLookup,
@@ -169,7 +170,7 @@ class EndpointIdByAssessmentLookup(EndpointByAssessmentLookup):
 
 class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
     def get_item_value(self, obj):
-        return f'<a href="{obj.get_absolute_url()}" target="_blank">{self.get_item_label(obj)}</a>'
+        return new_window_a(obj.get_absolute_url(), self.get_item_label(obj))
 
 
 registry.register(ExperimentByStudyLookup)
