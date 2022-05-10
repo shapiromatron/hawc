@@ -50,6 +50,7 @@ urlpatterns = [
     path("404/", views.Error404.as_view(), name="404"),
     path("500/", views.Error500.as_view(), name="500"),
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
+    path("rasterize/", views.RasterizeCss.as_view(), name="css-rasterize"),
     path("selectable/", include("selectable.urls")),
 ]
 
