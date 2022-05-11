@@ -39,6 +39,7 @@ class Vocab(models.Model):
 
 
 class Design(models.Model):
+    name = models.CharField(blank=True)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     design = models.ForeignKey(
         Vocab,
@@ -104,9 +105,11 @@ class Design(models.Model):
 
 
 class Cause(models.Model):
+    name = models.CharField(blank=True)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
+        verbose_name="Cause term",
         limit_choices_to={"category": VocabCategories.CAUSE_TERM},
         on_delete=models.CASCADE,
         related_name="+",
@@ -114,6 +117,7 @@ class Cause(models.Model):
     )
     measure = models.ForeignKey(
         Vocab,
+        verbose_name="Cause measure",
         limit_choices_to={"category": VocabCategories.CAUSE_MEASURE},
         on_delete=models.CASCADE,
         related_name="+",
@@ -193,6 +197,7 @@ class Cause(models.Model):
 
 
 class Effect(models.Model):
+    name = models.CharField(blank=True)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
@@ -245,10 +250,6 @@ class Effect(models.Model):
         verbose_name="Effect as reported",
         help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
-    modifying_factors = TaggableManager(
-        verbose_name="Modifying factors",
-        help_text="Type a comma-separated list of any modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
-    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -260,7 +261,6 @@ class Effect(models.Model):
 
 
 class Result(models.Model):
-    study = models.ForeignKey(Study, on_delete=models.CASCADE)
     design = models.ForeignKey(Design, on_delete=models.CASCADE)
     cause = models.ForeignKey(Cause, on_delete=models.CASCADE)
     effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
@@ -278,6 +278,10 @@ class Result(models.Model):
         verbose_name="Relationship comment",
         blank=True,
         help_text="Describe the relationship in 1-2 sentences",
+    )
+    modifying_factors = TaggableManager(
+        verbose_name="Modifying factors",
+        help_text="Type a comma-separated list of any modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
     )
     modifying_factors_comment = models.TextField(
         verbose_name="Modifying factors comment",
@@ -298,6 +302,8 @@ class Result(models.Model):
         on_delete=models.CASCADE,
         related_name="+",
         help_text="Select one response measure type",
+        blank=True,
+        null=True,
     )
     measure_value = models.FloatField(
         verbose_name="Response measure value",
