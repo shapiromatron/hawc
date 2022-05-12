@@ -17,7 +17,7 @@ class State(models.Model):
 
 class Vocab(models.Model):
     category = models.IntegerField(choices=VocabCategories.choices)
-    value = models.CharField(max_length=100)
+    value = models.CharField(max_length=128)
     parent = models.ForeignKey(
         "self",
         blank=True,
@@ -39,7 +39,7 @@ class Vocab(models.Model):
 
 
 class Design(models.Model):
-    name = models.CharField(blank=True, max_length=100)
+    name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     design = models.ForeignKey(
         Vocab,
@@ -105,7 +105,7 @@ class Design(models.Model):
 
 
 class Cause(models.Model):
-    name = models.CharField(blank=True, max_length=100)
+    name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
@@ -124,11 +124,6 @@ class Cause(models.Model):
         help_text="Add help text - autocomplete field?",
     )
     measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
-    units = models.CharField(
-        verbose_name="Cause units",
-        max_length=100,
-        help_text="Type the unit associated with the cause term. autocomplete?",
-    )
     bio_org = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.BIO_ORG},
@@ -140,7 +135,7 @@ class Cause(models.Model):
     )
     species = models.CharField(
         verbose_name="Cause/treatment species",
-        max_length=100,
+        max_length=128,
         blank=True,
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
@@ -157,12 +152,12 @@ class Cause(models.Model):
     )
     level_units = models.CharField(
         verbose_name="Cause/treatment level units",
-        max_length=100,
+        max_length=128,
         help_text="Type the units associated with the cause value term",
     )
     duration = models.CharField(
         verbose_name="Cause/treatment duration",
-        max_length=100,
+        max_length=128,
         help_text="Describe the duration or range of durations of the treatment/exposure",
     )
     duration_value = models.FloatField(
@@ -173,7 +168,7 @@ class Cause(models.Model):
     )  # BR suggestion
     duration_units = models.CharField(
         verbose_name="Cause/treatment duration units",
-        max_length=100,
+        max_length=128,
         blank=True,
         help_text="Type the unit associated with the cause duration term. Autocomplete.",
     )
@@ -197,7 +192,7 @@ class Cause(models.Model):
 
 
 class Effect(models.Model):
-    name = models.CharField(blank=True, max_length=100)
+    name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
@@ -216,18 +211,18 @@ class Effect(models.Model):
     )
     measure_detail = models.CharField(
         verbose_name="Effect measure detail",
-        max_length=100,
+        max_length=128,
         blank=True,
         help_text="Add help-text. autocomplete?",
     )
     units = models.CharField(
         verbose_name="Effect units",
-        max_length=100,
+        max_length=128,
         help_text="Type the unit associated with the effect term. autocomplete?",
     )
     species = models.CharField(
         verbose_name="Effect species",
-        max_length=100,
+        max_length=128,
         blank=True,
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
