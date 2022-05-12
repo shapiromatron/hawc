@@ -39,7 +39,7 @@ class Vocab(models.Model):
 
 
 class Design(models.Model):
-    name = models.CharField(blank=True)
+    name = models.CharField(blank=True, max_length=100)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     design = models.ForeignKey(
         Vocab,
@@ -105,7 +105,7 @@ class Design(models.Model):
 
 
 class Cause(models.Model):
-    name = models.CharField(blank=True)
+    name = models.CharField(blank=True, max_length=100)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
@@ -197,7 +197,7 @@ class Cause(models.Model):
 
 
 class Effect(models.Model):
-    name = models.CharField(blank=True)
+    name = models.CharField(blank=True, max_length=100)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
@@ -367,9 +367,9 @@ class Result(models.Model):
 
     def __str__(self):
         if self.measure_type:
-            return f"{self.study} | {self.cause.term.value} |{self.effect.term.value} | {self.measure_type.value}"
+            return f"{self.cause.study} | {self.cause.term.value} |{self.effect.term.value} | {self.measure_type.value}"
         else:
-            return f"{self.study} | {self.cause.term.value} | {self.effect.term.value}"
+            return f"{self.cause.study} | {self.cause.term.value} | {self.effect.term.value}"
 
     def default_related(self):
         return {

@@ -87,4 +87,4 @@ class ResultAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("study")
+        return qs.select_related("design", "cause", "effect")

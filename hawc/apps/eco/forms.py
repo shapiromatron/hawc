@@ -41,7 +41,6 @@ class ResultForm(forms.ModelForm):
         fields = "__all__"
         model = models.Result
         widgets = {
-            "study": autocomplete(models.Result, "study"),
             "cause": autocomplete(models.Result, "cause"),
             "effect": autocomplete(models.Result, "effect"),
         }
