@@ -169,6 +169,11 @@ def url_query(path: str, query: Dict) -> str:
     return f"{path}?{q.urlencode()}"
 
 
+def new_window_a(href: str, text: str) -> str:
+    # assumes href and text are safe strings
+    return f'<a rel="noopener noreferrer" target="_blank" href="{href}">{text}</a>'
+
+
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
     """
     Modified to return a float instead of a string.

@@ -16,6 +16,7 @@ urlpatterns = [
         views.AcceptNewLicense.as_view(),
         name="accept-license",
     ),
+    path("api/validate-token/", api.HawcValidateAuthToken.as_view(), name="api_token_validate"),
 ]
 
 if AuthProvider.django in settings.AUTH_PROVIDERS:
@@ -58,7 +59,6 @@ if AuthProvider.django in settings.AUTH_PROVIDERS:
             name="set_password",
         ),
         path("api/token-auth/", api.hawc_obtain_auth_token, name="api_token_auth"),
-        path("api/validate-token/", api.HawcValidateAuthToken.as_view(), name="api_token_validate"),
     ]
 
 if AuthProvider.external in settings.AUTH_PROVIDERS:

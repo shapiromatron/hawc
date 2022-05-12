@@ -22,7 +22,7 @@ from reversion import revisions as reversion
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a, read_excel
 from ..common.models import get_private_data_storage
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
@@ -80,7 +80,11 @@ class DSSTox(models.Model):
 
     @property
     def verbose_link(self) -> str:
-        return f"<a href={self.get_dashboard_url()}>{self.dtxsid}</a>: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+        return f"{new_window_a(self.get_dashboard_url(), self.dtxsid)}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+
+    @classmethod
+    def help_text(cls) -> str:
+        return f'{new_window_a("https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database", "DssTox")} substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the DTXSID.'
 
     def get_dashboard_url(self) -> str:
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"

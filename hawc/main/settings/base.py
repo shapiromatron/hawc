@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 from datetime import datetime
@@ -210,10 +209,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
 
-
-# Phantom JS settings
-PHANTOMJS_ENV = json.loads(os.getenv("PHANTOMJS_ENV", "{}"))
-PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH", "phantomjs")
 
 # Logging configuration
 LOGGING = {
