@@ -41,15 +41,7 @@ class ResultForm(forms.ModelForm):
         fields = "__all__"
         model = models.Result
         widgets = {
+            "design": autocomplete(models.Result, "design"),
             "cause": autocomplete(models.Result, "cause"),
             "effect": autocomplete(models.Result, "effect"),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.id is None:
-            for (
-                field,
-                value,
-            ) in self.instance.default_related().items():
-                self.fields[field].initial = value

@@ -1,7 +1,12 @@
 import pytest
 from django.core.exceptions import ValidationError
 
-from hawc.apps.common.validators import validate_exact_ids, validate_html_tags, validate_hyperlinks
+from hawc.apps.common.validators import (
+    NumericTextValidator,
+    validate_exact_ids,
+    validate_html_tags,
+    validate_hyperlinks,
+)
 
 
 def test_validate_html_tags():
@@ -63,3 +68,13 @@ def test_validate_exact_ids():
         validate_exact_ids([1, 2], [2], "foo")
     with pytest.raises(ValidationError, match=r"Extra ID\(s\) in foo: 3"):
         validate_exact_ids([1, 2], [1, 2, 3], "foo")
+
+
+def test_numeric_text_validator():
+    validator = NumericTextValidator()
+    for value in ["1", "-3.2E-7", "< 1e-4", "<3", "> 4", "< LOD", "<LOQ"]:
+        assert validator(value) is None
+
+    for value in ["non-numeric", "< 3.2 LOD", "<", "<<2", "1 2", "e-4"]:
+        with pytest.raises(ValidationError, match="Must be number-like"):
+            validator(value)

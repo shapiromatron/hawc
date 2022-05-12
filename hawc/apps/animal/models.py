@@ -80,11 +80,7 @@ class Experiment(models.Model):
         on_delete=models.SET_NULL,
         verbose_name="DSSTox substance identifier (DTXSID)",
         related_name="experiments",
-        help_text="""
-        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        substance identifier (recommended). When using an identifier, chemical name and CASRN are
-        standardized using the DTXSID.
-        """,
+        help_text=DSSTox.help_text(),
     )
     chemical_source = models.CharField(
         max_length=128, verbose_name="Source of chemical", blank=True

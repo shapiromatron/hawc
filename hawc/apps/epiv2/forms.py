@@ -6,6 +6,7 @@ from hawc.apps.common.forms import BaseFormHelper
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
 from ..common.forms import ArrayCheckboxSelectMultiple
+from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from . import constants, lookups, models
 
 
@@ -31,7 +32,7 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("criteria", "comments"):
+        for fld in ("criteria", "susceptibility", "comments"):
             self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
 
@@ -50,8 +51,10 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
-        helper.add_row("participant_n", 4, "col-md-3")
-        helper.add_row("criteria", 2, "col-md-6")
+        helper.add_row(
+            "participant_n", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
+        )
+        helper.add_row("criteria", 3, "col-md-4")
         return helper
 
 
@@ -85,6 +88,11 @@ class ExposureForm(forms.ModelForm):
     class Meta:
         model = models.Exposure
         exclude = ("design",)
+        widgets = {
+            "measurement_type": SelectMultipleOtherWidget(
+                choices=constants.MeasurementType.choices
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -94,7 +102,7 @@ class ExposureForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["analytic_method", "comments"]:
+        for fld in ["measurement_method", "comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
@@ -126,12 +134,15 @@ class ExposureLevelForm(forms.ModelForm):
     def helper(self):
         for fld in ["comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
-        helper = BaseFormHelper(self)
+        helper = BaseFormHelper(
+            self,
+            help_text="The exposure levels entered in this subform will be linked to a specific result below. If exposure levels are reported separately for sub-populations (e.g., exposed and unexposed) and results are also reported separately, create a separate entry for each sub-population. If exposure levels are reported separately but results are reported for the full population, only one entry will be linked to the result, so information on the remaining sub-group may be captured in the comment field.",
+        )
         helper.form_tag = False
         helper.add_row("name", 4, "col-md-3")
         helper.add_row("median", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
         helper.add_row("ci_lcl", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
-        helper.add_row("neg_exposure", 3, "col-md-4")
+        helper.add_row("negligible_exposure", 3, "col-md-4")
         return helper
 
 
@@ -139,6 +150,7 @@ class AdjustmentFactorForm(forms.ModelForm):
     class Meta:
         model = models.AdjustmentFactor
         exclude = ("design",)
+        widgets = {"description": forms.Textarea}
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -149,7 +161,9 @@ class AdjustmentFactorForm(forms.ModelForm):
     @property
     def helper(self):
         helper = BaseFormHelper(self)
-        helper.add_row("name", 2, ["col-md-3", "col-md-9"])
+        for fld in ["description", "comments"]:
+            self.fields[fld].widget.attrs["rows"] = 3
+        helper.add_row("name", 3, "col-md-4")
         helper.form_tag = False
         return helper
 
@@ -186,6 +200,10 @@ class DataExtractionForm(forms.ModelForm):
     class Meta:
         model = models.DataExtraction
         exclude = ("design",)
+        widgets = {
+            "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
+            "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -194,6 +212,7 @@ class DataExtractionForm(forms.ModelForm):
             self.instance.design = design
         self.fields["outcome"].queryset = self.instance.design.outcomes.all()
         self.fields["exposure_level"].queryset = self.instance.design.exposure_levels.all()
+        self.fields["factors"].queryset = self.instance.design.adjustment_factors.all()
 
     @property
     def helper(self):
@@ -202,10 +221,13 @@ class DataExtractionForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.add_row("outcome", 4, "col-md-3")
         helper.add_row(
-            "effect_estimate", 5, ["col-md-2", "col-md-3", "col-md-2", "col-md-3", "col-md-2"]
+            "effect_estimate_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
         )
-        helper.add_row("ci_lcl", 5, ["col-md-2", "col-md-2", "col-md-3", "col-md-2", "col-md-3"])
-        helper.add_row("adjustment_factor", 4, "col-md-3")
+        helper.add_row(
+            "variance_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
+        )
+        helper.add_row("group", 4, "col-md-3")
+        helper.add_row("factors", 3, "col-md-4")
         helper.add_row("effect_description", 3, "col-md-4")
         helper.form_tag = False
         return helper

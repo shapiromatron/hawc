@@ -2,6 +2,7 @@ import $ from "$";
 import * as d3 from "d3";
 
 import h from "shared/utils/helpers";
+import rasterize from "./rasterize";
 
 // Generic parent for all d3.js visualizations
 class D3Plot {
@@ -536,38 +537,21 @@ class D3Plot {
     }
 
     _add_download_buttons() {
-        var plot = this,
-            group = $('<div class="dropdown float-right btn-group"></div>'),
-            dropdown = $(
-                '<a title="Download figure" class="btn btn-sm dropdown-toggle ml-1" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-download"></i></a>'
-            ),
-            dropdown_div = $('<div class="dropdown-menu dropdown-menu-right">'),
-            svg = $(
-                '<a class="dropdown-item" href="#"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a SVG</a>'
-            ).on("click", function(e) {
-                e.preventDefault();
-                plot._download_image({format: "svg"});
-            }),
-            pptx = $(
-                '<a class="dropdown-item" href="#"><i class="fa fa-fw fa-file-powerpoint-o"></i>&nbsp;Download as a PPTX</a>'
-            ).on("click", function(e) {
-                e.preventDefault();
-                plot._download_image({format: "pptx"});
-            }),
-            png = $(
-                '<a class="dropdown-item" href="#"><i class="fa fa-fw fa-file-pdf-o"></i>&nbsp;Download as a PNG</a>'
-            ).on("click", function(e) {
-                e.preventDefault();
-                plot._download_image({format: "png"});
-            }),
-            pdf = $(
-                '<a class="dropdown-item" href="#"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a PDF</a>'
-            ).on("click", function(e) {
-                e.preventDefault();
-                plot._download_image({format: "pdf"});
-            });
-        dropdown_div.append(svg, pptx, png, pdf);
-        group.append(dropdown, dropdown_div);
+        const handleClick = fmt => rasterize(this.svg, fmt),
+            group = $('<div class="dropdown float-right btn-group">').append(
+                $(
+                    '<button title="Download figure" class="btn btn-sm dropdown-toggle ml-1" data-toggle="dropdown"><i class="fa fa-fw fa-download"></i></button>'
+                ).append(
+                    $('<div class="dropdown-menu dropdown-menu-right">').append(
+                        $(
+                            '<button class="dropdown-item"><i class="fa fa-fw fa-file-code-o"></i>&nbsp;Download as a SVG</button>'
+                        ).on("click", () => handleClick("svg")),
+                        $(
+                            '<button class="dropdown-item"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a PNG</button>'
+                        ).on("click", () => handleClick("png"))
+                    )
+                )
+            );
         this.menu_div.append(group);
     }
 
@@ -590,48 +574,6 @@ class D3Plot {
     _toggle_menu_bar() {
         $(this.menu_div).toggleClass("hidden");
         $("foreignObject#embeddedCog a").toggleClass("hidden");
-    }
-
-    _download_image(options) {
-        var svg_blob = this._save_to_svg(),
-            form = $(
-                '<form style="display: none;" action="/assessment/download-plot/" method="post"></form>'
-            ).html([
-                `<input name="height" value="${svg_blob.height}">`,
-                `<input name="width" value="${svg_blob.width}">`,
-                `<input name="svg" value="${btoa(escape(svg_blob.source[0]))}">`,
-                `<input name="output" value="${options.format}">`,
-            ]);
-        form.appendTo("body").submit();
-    }
-
-    _save_to_svg() {
-        // save svg and css styles to this document as a blob.
-        // Adapted from SVG-Crowbar: http://nytimes.github.com/svg-crowbar/
-        // Removed CSS style-grabbing components as this behavior was unreliable.
-
-        function get_selected_svg(svg) {
-            svg.attr("version", "1.1");
-            svg.attr("xmlns", d3.namespaces.svg);
-            var source = new XMLSerializer().serializeToString(svg.node()),
-                rect = svg.node().getBoundingClientRect();
-            return {
-                top: rect.top,
-                left: rect.left,
-                width: rect.width,
-                height: rect.height,
-                classes: svg.attr("class"),
-                id: svg.attr("id"),
-                childElementCount: svg.node().childElementCount,
-                source: [source],
-            };
-        }
-
-        var svg = d3.select(this.svg),
-            svg_object = get_selected_svg(svg);
-
-        svg_object.blob = new Blob(svg_object.source, {type: "text/xml"});
-        return svg_object;
     }
 }
 
