@@ -1,0 +1,15 @@
+<!-- {% load split %} -->
+<tr hx-target="this" hx-swap="outerHTML" class="result-{{object.id}}">
+    <td>{{object.cause}}</td>
+    <td>{{object.effect }}</td>
+    <td>{{object.measure_type }}</td>
+    <td> {{object.modifying_factors}}
+
+    </td>
+    <td>{{object.description }}</td>
+    <td>{{object.derived_value }}</td>
+    {% include "eco/fragments/_object_row.html" with model="result" %}
+</tr>
+{% if action == 'create' or action == 'clone' %}
+<tr style="display: none" id="result-empty-row" hx-target="this"></tr>
+{% endif %}

@@ -1,0 +1,20 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block content %}
+  {% crispy form %}
+{% endblock %}
+
+{% block extrajs %}
+
+  <script type="text/javascript">
+    $('.html5text').quillify();
+    //$("#id_study_design").focus();
+  </script>
+{% endblock extrajs %}

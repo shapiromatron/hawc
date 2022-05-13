@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from django.urls import reverse
 from taggit.managers import TaggableManager
 
 from ..epi.models import Country
@@ -96,12 +97,32 @@ class Design(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "study"
+
     class Meta:
         verbose_name = "Ecological Design"
         verbose_name_plural = "Ecological Designs"
 
     def __str__(self):
         return f"{self.study} - ecological design"
+
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
+
+    def get_assessment(self):
+        return self.study.get_assessment()
+
+    def get_absolute_url(self):
+        return reverse("eco:design_detail", args=(self.pk,))
+
+    def get_update_url(self):
+        return reverse("eco:design_update", args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse("eco:design_delete", args=(self.pk,))
 
 
 class Cause(models.Model):
@@ -187,6 +208,15 @@ class Cause(models.Model):
     class Meta:
         verbose_name = "Cause/Treatment"
 
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
+
+    def get_assessment(self):
+        return self.study.get_assessment()
+
     def __str__(self):
         return f"{self.study} | {self.term.value}"
 
@@ -250,6 +280,15 @@ class Effect(models.Model):
 
     class Meta:
         verbose_name = "Effect/Response"
+
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
+
+    def get_assessment(self):
+        return self.study.get_assessment()
 
     def __str__(self):
         return f"{self.study} | {self.term.value}"
@@ -365,6 +404,15 @@ class Result(models.Model):
             return f"{self.cause.study} | {self.cause.term.value} |{self.effect.term.value} | {self.measure_type.value}"
         else:
             return f"{self.cause.study} | {self.cause.term.value} | {self.effect.term.value}"
+
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
+
+    def get_assessment(self):
+        return self.design.study.get_assessment()
 
     def default_related(self):
         return {

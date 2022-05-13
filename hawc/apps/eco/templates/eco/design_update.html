@@ -1,0 +1,77 @@
+{% extends 'assessment-rooted.html' %}
+{% load bs4 %}
+
+{% block content %}
+<h2 class="d-inline-block">{{object.name}}</h2>
+<div class="float-right">
+    <a class="btn btn-sm btn-info" href="#" hx-get="{% url 'eco:design-update' object.pk %}" hx-target="#design-table"
+        hx-swap="outerHTML">
+        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
+</div>
+
+{% include "eco/fragments/_design_table.html" %}
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'eco:result-create' object.pk as result_create %}
+        {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '10,15,15,15,15,15,15' %}
+            {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value,Edit' %}
+            <tbody>
+                {% if results %}
+                    {% for object in results %}
+                        {% include "eco/fragments/result_row.html" %}
+                    {% endfor %}
+                    {% include "eco/fragments/_create_one.html" with id="result-empty-row" text="" %}
+                {% else %}
+                    {% include "eco/fragments/_create_one.html" with id="result-empty-row" text="results" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'eco:cause-create' object.pk as cause_create %}
+        {% include "eco/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target="#cause-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '10,15,15,15,15,15,15' %}
+            {% bs4_thead 'Name,Term,Measure,Measure Detail,Species,Comment,Edit' %}
+            <tbody>
+                {% if causes %}
+                    {% for object in causes %}
+                        {% include "eco/fragments/cause_row.html" %}
+                    {% endfor %}
+                    {% include "eco/fragments/_create_one.html" with id="cause-empty-row" text="" %}
+                {% else %}
+                    {% include "eco/fragments/_create_one.html" with id="cause-empty-row" text="causes" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'eco:effect-create' object.pk as effect_create %}
+        {% include "eco/fragments/_create_card.html" with title="Effects" hx_get=effect_create hx_target="#effect-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '10,15,15,15,15,15,15' %}
+            {% bs4_thead 'Name,Term,Measure,Measure Detail,Species,Comment,Edit' %}
+            <tbody>
+                {% if effects %}
+                    {% for object in effects %}
+                        {% include "eco/fragments/effect_row.html" %}
+                    {% endfor %}
+                    {% include "eco/fragments/_create_one.html" with id="effect-empty-row" text="" %}
+                {% else %}
+                    {% include "eco/fragments/_create_one.html" with id="effect-empty-row" text="effects" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% load hastext %}
+{% load optional_table_row %}
+
+<table class="table table-sm table-strioed" hx-target="this" id="design-table">
+    <colgroup>
+        <col style="width: 20%;">
+        <col style="width: 80%;">
+    </colgroup>
+    <tbody>
+        {% optional_table_row "Name" object.name %}
+        {% optional_table_row "Design" object.get_design_display %}
+        {% optional_table_row "Study" object.study %}
+        {% optional_table_row "Study setting" object.study_setting %}
+        <tr>
+            <th>Countries</th>
+            <td>{% for object in object.country.all %}
+                <span class="badge badge-secondary">{{object.name}}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>State(s)</th>
+            <td>{% for object in object.state.all %}
+                <span class="badge badge-secondary">{{object.name}}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>Ecoregion(s)</th>
+            <td>{% for object in object.ecoregion.all %}
+                <span class="badge badge-secondary">{{object}}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        {% optional_table_row "Habitat" object.habitat %}
+        {% optional_table_row "Habitat as reported" object.habitat_as_reported|safe %}
+        <tr>
+            <th>Climate</th>
+            <td>{% for object in object.climate.all %}
+                <span class="badge badge-secondary">{{object}}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        {% optional_table_row "Climate as reported" object.climate_as_reported|safe %}
+        {% optional_table_row "Created" object.created|date:"Y-m-d" %}
+        {% optional_table_row "Last updated" object.last_updated|date:"Y-m-d" %}
+    </tbody>
+</table>

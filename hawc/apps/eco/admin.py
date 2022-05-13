@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from hawc.apps.common.admin import admin_edit_link
+
 from . import forms, models
 
 
@@ -51,8 +53,9 @@ class ResultInlineAdmin(admin.TabularInline):
 
     @admin.display(description="Detailed edit link")
     def edit_link(self, instance):
+        return admin_edit_link(instance)
 
-      
+
 @admin.register(models.Effect)
 class EffectAdmin(admin.ModelAdmin):
     form = forms.EffectForm
@@ -71,7 +74,6 @@ class ResultAdmin(admin.ModelAdmin):
     form = forms.ResultForm
     list_display = (
         "id",
-        "study",
         "design",
         "cause",
         "effect",
