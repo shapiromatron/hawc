@@ -15,5 +15,6 @@ class RelatedEffectLookup(RelatedDistinctStringLookup):
     distinct_field = "name"
     related_filter = "study__assessment_id"
 
+
 registry.register(RelatedCauseLookup)
 registry.register(RelatedEffectLookup)
