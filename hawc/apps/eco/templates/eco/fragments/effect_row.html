@@ -4,7 +4,7 @@
     <td>{{object.measure }}</td>
     <td>{{object.measure_detail }}</td>
     <td>{{object.species }}</td>
-    <td>{{object.comment }}</td>
+    <td>{{object.comment|safe }}</td>
     {% include "eco/fragments/_object_row.html" with model="effect" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}

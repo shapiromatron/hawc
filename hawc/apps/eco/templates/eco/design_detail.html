@@ -20,10 +20,10 @@
     <div class="card-body">
         <h3 class="card-title">Results</h3>
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '10,15,15,15,15,15,15' %}
-            {% bs4_thead 'Name,Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value' %}
+            {% bs4_colgroup '20,15,15,15,20,15' %}
+            {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value' %}
             <tbody>
-                {% for object in results %}
+                {% for object in object.results.all %}
                     {% include "eco/fragments/result_row.html" %}
                 {% empty %}
                     {% bs4_fullrow 'No results available.' %}
@@ -37,10 +37,10 @@
     <div class="card-body">
         <h3 class="card-title">Causes</h3>
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '10,15,15,15,15,15,15' %}
-            {% bs4_thead 'Name,Term,Measure,Measure Detail,Bio. Organization,Species,Comment' %}
+            {% bs4_colgroup '15,20,15,15,15,20' %}
+            {% bs4_thead 'Name,Term,Measure,Measure Detail,Species,Comment' %}
             <tbody>
-                {% for object in results %}
+                {% for object in object.causes.all %}
                 {% include "eco/fragments/cause_row.html" %}
                 {% empty %}
                 {% bs4_fullrow 'No causes available.' %}
@@ -54,10 +54,10 @@
     <div class="card-body">
         <h3 class="card-title">Effects</h3>
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '10,15,15,15,15,15,15' %}
-            {% bs4_thead 'Name,Term,Measure,Measure Detail,Bio. Organization,Species,Comment' %}
+            {% bs4_colgroup '15,20,15,15,15,20' %}
+            {% bs4_thead 'Name,Term,Measure,Measure Detail,Species,Comment' %}
             <tbody>
-                {% for object in effects %}
+                {% for object in object.effects.all %}
                 {% include "eco/fragments/effect_row.html" %}
                 {% empty %}
                 {% bs4_fullrow 'No effects available.' %}

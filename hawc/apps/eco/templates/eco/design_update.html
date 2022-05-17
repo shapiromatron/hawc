@@ -16,7 +16,7 @@
         {% url 'eco:result-create' object.pk as result_create %}
         {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-empty-row" %}
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '10,15,15,15,15,15,15' %}
+            {% bs4_colgroup '15,15,10,15,15,15,15' %}
             {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value,Edit' %}
             <tbody>
                 {% if results %}
@@ -75,3 +75,9 @@
 </div>
 
 {% endblock %}
+{% block extrajs %}
+
+<script type="text/javascript">
+    $('.html5text').quillify();
+</script>
+{% endblock extrajs %}

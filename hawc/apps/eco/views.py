@@ -59,6 +59,15 @@ class DesignDelete(BaseDelete):
     success_message = "Study Population deleted."
     model = models.Design
 
+    def get_context_data(self, **kwargs):
+        design_id = self.kwargs.pop("pk")
+        context = super().get_context_data(**kwargs)
+        study_id = self.object.study_id
+        context["causes"] = models.Cause.objects.filter(study=study_id)
+        context["effects"] = models.Effect.objects.filter(study=study_id)
+        context["results"] = models.Result.objects.filter(design=design_id)
+        return context
+
     def get_success_url(self):
         return self.object.study.get_absolute_url()
 

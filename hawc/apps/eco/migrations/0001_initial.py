@@ -554,10 +554,10 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "modifying_factors",
-                    taggit.managers.TaggableManager(
+                    models.CharField(
+                        default="",
                         help_text="Type a comma-separated list of any modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
-                        through="taggit.TaggedItem",
-                        to="taggit.Tag",
+                        max_length=256,
                         verbose_name="Modifying factors",
                     ),
                 ),

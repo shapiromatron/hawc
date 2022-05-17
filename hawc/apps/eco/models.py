@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
-from taggit.managers import TaggableManager
 
 from ..epi.models import Country
 from ..study.models import Study
@@ -295,7 +294,7 @@ class Effect(models.Model):
 
 
 class Result(models.Model):
-    design = models.ForeignKey(Design, on_delete=models.CASCADE)
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="results")
     cause = models.ForeignKey(Cause, on_delete=models.CASCADE)
     effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
     sort_order = models.PositiveSmallIntegerField(
@@ -313,8 +312,10 @@ class Result(models.Model):
         blank=True,
         help_text="Describe the relationship in 1-2 sentences",
     )
-    modifying_factors = TaggableManager(
+    modifying_factors = models.CharField(
         verbose_name="Modifying factors",
+        max_length=256,
+        default="",
         help_text="Type a comma-separated list of any modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
     )
     modifying_factors_comment = models.TextField(

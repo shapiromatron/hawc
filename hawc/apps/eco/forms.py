@@ -2,14 +2,15 @@ from django import forms
 
 from hawc.apps.common.forms import BaseFormHelper
 
+from ..common import selectable
 from ..common.admin import autocomplete
-from . import models
+from . import lookups, models
 
 
 class DesignForm(forms.ModelForm):
-    CREATE_LEGEND = "Create new study-population"
+    CREATE_LEGEND = "Create new study design"
     CREATE_HELP_TEXT = ""
-    UPDATE_HELP_TEXT = "Update an existing study-population."
+    UPDATE_HELP_TEXT = "Update an existing study design."
 
     class Meta:
         exclude = ("study",)
@@ -56,22 +57,22 @@ class CauseForm(forms.ModelForm):
         exclude = ("study",)
         model = models.Cause
         widgets = {
-            "study": autocomplete(models.Cause, "study"),
             "term": autocomplete(models.Cause, "term"),
             "measure": autocomplete(models.Cause, "measure"),
         }
 
     def __init__(self, *args, **kwargs):
-        study = kwargs.pop("parent", None).study
+        design = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        if study:
-            self.instance.study = study
+        if design:
+            self.instance.study = design.study
 
     @property
     def helper(self):
-        for fld in ("measure_detail", "comment", "as_reported"):
+        for fld in ("comment", "as_reported"):
             self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
+        self.fields["measure_detail"].widget.attrs["rows"] = 3
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
@@ -85,15 +86,12 @@ class EffectForm(forms.ModelForm):
     class Meta:
         exclude = ("study",)
         model = models.Effect
-        widgets = {
-            "study": autocomplete(models.Effect, "study"),
-        }
 
     def __init__(self, *args, **kwargs):
-        study = kwargs.pop("parent", None).study
+        design = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        if study:
-            self.instance.study = study
+        if design:
+            self.instance.study = design.study
 
     @property
     def helper(self):
@@ -110,18 +108,20 @@ class EffectForm(forms.ModelForm):
 
 
 class ResultForm(forms.ModelForm):
+
+    cause = selectable.AutoCompleteSelectWidget(lookup_class=lookups.RelatedCauseLookup)
+
+    effect = selectable.AutoCompleteSelectWidget(lookup_class=lookups.RelatedEffectLookup)
+
     class Meta:
         exclude = ("design",)
         model = models.Result
-        widgets = {
-            "design": autocomplete(models.Result, "design"),
-            "cause": autocomplete(models.Result, "cause"),
-            "effect": autocomplete(models.Result, "effect"),
-        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
+        self.fields["cause"].required = True
+        self.fields["effect"].required = True
         if design:
             self.instance.design = design
 
