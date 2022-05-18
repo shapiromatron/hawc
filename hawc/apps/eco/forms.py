@@ -56,10 +56,6 @@ class CauseForm(forms.ModelForm):
     class Meta:
         exclude = ("study",)
         model = models.Cause
-        widgets = {
-            "term": autocomplete(models.Cause, "term"),
-            "measure": autocomplete(models.Cause, "measure"),
-        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
