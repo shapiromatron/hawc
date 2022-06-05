@@ -1,0 +1,22 @@
+<div hx-target="this" hx-swap="outerHTML">
+    {% if lines %}
+    <div id="lines"></div>
+    <script>
+        Plotly.newPlot(document.getElementById("lines"), {{ lines.to_json | safe }});
+    </script>
+    {% endif %}
+
+    <p>&nbsp;</p>
+
+    {% if boxplot %}
+    <div id="boxplot"></div>
+    <script>
+        Plotly.newPlot(document.getElementById("boxplot"), {{ boxplot.to_json | safe }});
+    </script>
+    {% endif %}
+
+    <p>&nbsp;</p>
+
+    <h2>Punch card</h2>
+    {{punchcard.to_html|safe}}
+</div>
