@@ -407,8 +407,41 @@ class Search(models.Model):
         2. are not associated in any other searches
         3. do not have any tags applied
         """
+        RefSearchM2M = Reference.searches.through
+        
+        logger.debug("Removing untagged references not associated with other searches")
         if results["removed"]:
-            raise NotImplementedError("TODO")
+            removed_str = [str(id) for id in results["removed"]]
+            removed_ids = (
+                Reference.objects.filter(
+                    assessment=self.assessment, identifiers__unique_id__in=removed_str
+                )
+                .exclude(
+                    referencetags__gt=0
+                )
+                .values_list("pk")
+                .order_by("pk")
+            )
+            ids_count = removed_ids.count()
+            if ids_count > 0:
+                refs_in_other_searches = (
+                    RefSearchM2M.objects.filter(
+                       reference_id__in=removed_ids,   
+                    )               
+                    .exclude(  
+                       search_id = self.pk
+                    )
+                    .values_list("reference_id")
+                    .order_by("reference_id")
+                    .distinct()
+                )
+                comparison = set(removed_ids).difference(set(refs_in_other_searches))
+
+                if comparison.sum() == set():
+                    pass
+                else:
+                    for id in comparison:
+                        Reference.objects.all().filter(id).delete()
 
     @property
     def date_last_run(self):
