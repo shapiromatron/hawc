@@ -35,7 +35,10 @@ class AnimalGroupManager(BaseManager):
         """
         qs = (
             self.filter(experiment__study__assessment_id=assessment_id)
-            .annotate(min_n=Min("endpoints__groups__n"), max_n=Max("endpoints__groups__n"),)
+            .annotate(
+                min_n=Min("endpoints__groups__n"),
+                max_n=Max("endpoints__groups__n"),
+            )
             .values_list(
                 "id",
                 "species__name",
@@ -133,7 +136,11 @@ class EndpointManager(BaseManager):
                 "animal_group__experiment",
                 "animal_group__experiment__study",
             )
-            .prefetch_related("groups", "effects", "animal_group__dosed_animals__doses",)
+            .prefetch_related(
+                "groups",
+                "effects",
+                "animal_group__dosed_animals__doses",
+            )
         )
 
     def get_system_choices(self, assessment_id):
@@ -351,7 +358,8 @@ class EndpointManager(BaseManager):
 
         # create data frame report
         df = pd.DataFrame(
-            data=endpoint_export_data, columns=list(endpoint_export_columns.values()),
+            data=endpoint_export_data,
+            columns=list(endpoint_export_columns.values()),
         )
 
         return df

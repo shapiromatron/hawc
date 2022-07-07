@@ -8,6 +8,7 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin, WebappMixin
+from ..study.serializers import StudyAssessmentSerializer
 from . import models
 
 
@@ -49,8 +50,16 @@ class RobTaskMixin:
     def get_review_tasks(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
+        self._study_ids = rob_tasks.values_list("study_id", flat=True)
         filtered_tasks = [rob for rob in rob_tasks if rob.is_complete is False]
         return RiskOfBias.get_qs_json(filtered_tasks, json_encode=False)
+
+    def get_review_studies(self):
+        Study = apps.get_model("study", "Study")
+        study_qs = Study.objects.filter(id__in=self._study_ids).select_related("assessment")
+        study_ser = StudyAssessmentSerializer(study_qs, many=True)
+        # must cast to list to circumvent error when included in pydantic model
+        return list(study_ser.data)
 
     def get_app_config(self, context) -> WebappConfig:
         assessment_id = self.assessment.id if hasattr(self, "assessment") else None
@@ -67,6 +76,7 @@ class RobTaskMixin:
                 "csrf": get_token(self.request),
                 "user": self.request.user.id,
                 "rob_tasks": self.get_review_tasks(),
+                "rob_studies": self.get_review_studies(),
                 "tasks": {
                     "submit_url": reverse("mgmt:api:task-list"),
                     "url": task_url,
@@ -81,7 +91,7 @@ class RobTaskMixin:
         )
 
 
-class UserAssignments(WebappMixin, RobTaskMixin, LoginRequiredMixin, ListView):
+class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     model = models.Task
     template_name = "mgmt/user_assignments.html"
 
@@ -144,27 +154,6 @@ class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
         )
 
 
-def task_table_app_config(view, edit: bool) -> WebappConfig:
-    a_id = view.assessment.id
-    return WebappConfig(
-        app="mgmtStartup",
-        page="TaskTable",
-        data=dict(
-            assessment_id=a_id,
-            csrf=get_token(view.request),
-            displayAsForm=edit,
-            cancelUrl=reverse("mgmt:assessment_tasks", args=(a_id,)),
-            tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
-            taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
-            taskBulkPatchUrl=reverse("mgmt:api:task-bulk-patch") + f"?assessment_id={a_id}",
-            studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
-            userAutocompleteUrl=reverse(
-                "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
-            ),
-        ),
-    )
-
-
 class TaskDetail(TaskDashboard):
     template_name = "mgmt/assessment_details.html"
 
@@ -175,17 +164,18 @@ class TaskDetail(TaskDashboard):
         return context
 
     def get_app_config(self, context) -> WebappConfig:
-        return task_table_app_config(self, False)
-
-
-class TaskModify(TaskDashboard):
-    template_name = "mgmt/assessment_modify.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
-        context["breadcrumbs"][3] = Breadcrumb(name="Update assignments")
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        return task_table_app_config(self, True)
+        a_id = self.assessment.id
+        return WebappConfig(
+            app="mgmtStartup",
+            page="TaskTable",
+            data=dict(
+                assessment_id=a_id,
+                csrf=get_token(self.request),
+                tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
+                taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
+                studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
+                userAutocompleteUrl=reverse(
+                    "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
+                ),
+            ),
+        )

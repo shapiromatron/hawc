@@ -207,6 +207,14 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             scores = self.initial_data["scores"]
             required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(study)
             problematic_scores = []
+            extra_scores = set([score["metric_id"] for score in scores]) - set(
+                [metric.id for metric in required_metrics]
+            )
+            if len(extra_scores) > 0:
+                extra_scores = ", ".join(map(str, extra_scores))
+                raise serializers.ValidationError(
+                    f"Metrics {extra_scores} were submitted but are not required for this study type"
+                )
             for metric in required_metrics:
                 domain = metric.domain
                 # there could be multiple scores for a given metric if there are overrides, so we need to fetch them all
@@ -215,7 +223,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                     for score in scores
                     if "metric_id" in score and score["metric_id"] == metric.id
                 ]
-
                 metric_descriptor = f"'{domain.name}:{metric.name}'"
 
                 if len(scores_for_metric) == 0:
@@ -395,7 +402,7 @@ class RiskOfBiasAssignmentSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         # there can be one and only one final active
-        if validated_data["final"] and validated_data["active"]:
+        if validated_data.get("final") and validated_data.get("active"):
             models.RiskOfBias.objects.filter(study=validated_data["study"], final=True).update(
                 active=False
             )

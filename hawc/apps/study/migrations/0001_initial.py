@@ -19,7 +19,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("attachment", models.FileField(upload_to=b"study-attachment")),
@@ -137,7 +140,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("object_id", models.PositiveIntegerField()),
@@ -174,7 +180,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("name", models.CharField(max_length=128)),
@@ -199,14 +208,18 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("metric", models.CharField(max_length=256)),
                 (
                     "description",
                     models.TextField(
-                        help_text=b"HTML text describing scoring of this field.", blank=True,
+                        help_text=b"HTML text describing scoring of this field.",
+                        blank=True,
                     ),
                 ),
                 (
@@ -240,7 +253,8 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(
-            name="studyqualitydomain", unique_together=set([("assessment", "name")]),
+            name="studyqualitydomain",
+            unique_together=set([("assessment", "name")]),
         ),
         migrations.AddField(
             model_name="studyquality",
@@ -251,7 +265,8 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
-            name="studyquality", unique_together=set([("content_type", "object_id", "metric")]),
+            name="studyquality",
+            unique_together=set([("content_type", "object_id", "metric")]),
         ),
         migrations.AddField(
             model_name="attachment",

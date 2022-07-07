@@ -1,4 +1,3 @@
-import json
 import logging
 import math
 from typing import Dict, List, Set, Tuple
@@ -17,7 +16,6 @@ from treebeard.mp_tree import MP_Node
 
 from . import forms, validators
 from .flavors import help_text as help_text_flavors
-from .helper import HAWCDjangoJSONEncoder
 
 _private_storage = FileSystemStorage(location=str(settings.PRIVATE_DATA_ROOT))
 logger = logging.getLogger(__name__)
@@ -171,10 +169,6 @@ class AssessmentRootMixin:
         Args:
             qs (QuerySet): An ordered queryset, like from `get_assessment_qs`
         """
-        # preconditions; check that we have a name attribute and we don't have a nested_name attribute
-        el = qs.first()
-        assert hasattr(el, "name")
-        assert not hasattr(el, "nested_name")
 
         last_depth = -math.inf
         names: List[str] = []
@@ -217,7 +211,7 @@ class AssessmentRootMixin:
         return cls.objects.filter(id__in=ids)
 
     @classmethod
-    def get_all_tags(cls, assessment_id, json_encode=True):
+    def get_all_tags(cls, assessment_id):
         """
         Get all tags for the selected assessment.
         """
@@ -236,11 +230,7 @@ class AssessmentRootMixin:
                 logger.info("ReferenceFilterTag cleanup successful.")
             cache.set(key, tags)
             logger.info(f"cache set: {key}")
-
-        if json_encode:
-            return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
-        else:
-            return tags
+        return tags
 
     @classmethod
     def clean_orphans(cls):
@@ -263,7 +253,8 @@ class AssessmentRootMixin:
                     f'{name} "{orphan.name}" {orphan.id} is orphaned [path={orphan.path}]. Deleting.'
                 )
                 cursor.execute(
-                    f"DELETE FROM {cls._meta.db_table} WHERE id = %s", [orphan.id],
+                    f"DELETE FROM {cls._meta.db_table} WHERE id = %s",
+                    [orphan.id],
                 )
             cursor.close()
 
@@ -364,7 +355,7 @@ class AssessmentRootMixin:
         root_node.delete()
         cls.load_bulk(complete_tree, parent=None, keep_ids=False)
         cls.clear_cache(assessment_id)
-        return cls.get_all_tags(assessment_id, json_encode=False)
+        return cls.get_all_tags(assessment_id)
 
     @classmethod
     @transaction.atomic
@@ -498,3 +489,8 @@ def apply_flavored_help_text(app_name: str):
 
 def get_model_copy_name(instance: models.Model) -> str:
     return getattr(instance, "COPY_NAME", instance._meta.db_table)
+
+
+class NumericTextField(models.CharField):
+    generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
+    validators = [validators.NumericTextValidator()]

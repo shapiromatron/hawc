@@ -7,7 +7,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
-from ..assessment.models import Assessment, BaseEndpoint
+from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootedTagTree
 from ..study.models import Study
@@ -21,16 +21,13 @@ class IVChemical(models.Model):
     name = models.CharField(max_length=128)
     cas = models.CharField(max_length=40, blank=True, verbose_name="Chemical identifier (CAS)")
     dtxsid = models.ForeignKey(
-        "assessment.DSSTox",
+        DSSTox,
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name="ivchemicals",
         verbose_name="DSSTox substance identifier (DTXSID)",
-        help_text="""
-        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        substance identifier (recommended). When using an identifier, name is standardized using the DTXSID.
-        """,
+        help_text=DSSTox.help_text(),
     )
     cas_inferred = models.BooleanField(
         default=False,
@@ -40,7 +37,9 @@ class IVChemical(models.Model):
     cas_notes = models.CharField(max_length=256, verbose_name="CAS determination notes")
     source = models.CharField(max_length=128, verbose_name="Source of chemical")
     purity = models.CharField(
-        max_length=32, verbose_name="Chemical purity", help_text="Ex: >99%, not-reported, etc.",
+        max_length=32,
+        verbose_name="Chemical purity",
+        help_text="Ex: >99%, not-reported, etc.",
     )
     purity_confirmed = models.BooleanField(
         default=False, verbose_name="Purity experimentally confirmed"
@@ -158,7 +157,8 @@ class IVExperiment(models.Model):
         "cell-line, transient transfected cell-line, etc.)",
     )
     dosing_notes = models.TextField(
-        blank=True, help_text="Notes describing dosing-protocol, including duration-details",
+        blank=True,
+        help_text="Notes describing dosing-protocol, including duration-details",
     )
     metabolic_activation = models.CharField(
         max_length=2,
@@ -281,7 +281,8 @@ class IVEndpoint(BaseEndpoint):
     )
     assay_type = models.CharField(max_length=128)
     short_description = models.CharField(
-        max_length=128, help_text="Short (<128 character) description of effect & measurement",
+        max_length=128,
+        help_text="Short (<128 character) description of effect & measurement",
     )
     effect = models.CharField(max_length=128, help_text="Effect, using common-vocabulary")
     data_location = models.CharField(
@@ -397,7 +398,10 @@ class IVEndpoint(BaseEndpoint):
 
     def copy_across_assessments(self, cw):
         children = list(
-            itertools.chain(self.groups.all().order_by("id"), self.benchmarks.all().order_by("id"),)
+            itertools.chain(
+                self.groups.all().order_by("id"),
+                self.benchmarks.all().order_by("id"),
+            )
         )
         effects = list(self.effects.all().order_by("id"))
         old_id = self.id
@@ -452,10 +456,16 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
         max_length=2, default=constants.Significance.NR, choices=constants.Significance.choices
     )
     cytotoxicity_observed = models.BooleanField(
-        default=None, choices=constants.OBSERVATION_CHOICES, null=True, blank=True,
+        default=None,
+        choices=constants.OBSERVATION_CHOICES,
+        null=True,
+        blank=True,
     )
     precipitation_observed = models.BooleanField(
-        default=None, choices=constants.OBSERVATION_CHOICES, null=True, blank=True,
+        default=None,
+        choices=constants.OBSERVATION_CHOICES,
+        null=True,
+        blank=True,
     )
 
     COPY_NAME = "ivendpoint_groups"

@@ -11,5 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="assessment", name="enable_reference_values",),
+        migrations.RemoveField(
+            model_name="assessment",
+            name="enable_reference_values",
+        ),
     ]

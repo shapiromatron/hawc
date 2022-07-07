@@ -9,7 +9,13 @@ import RobTasks from "../components/RobTasks";
 class RobRoot extends Component {
     render() {
         const store = this.props.robStore;
-        return <RobTasks tasks={store.config.rob_tasks} showAssessment={store.showAssessment} />;
+        return (
+            <RobTasks
+                tasks={store.config.rob_tasks}
+                studies={store.config.rob_studies}
+                showAssessment={store.showAssessment}
+            />
+        );
     }
 }
 

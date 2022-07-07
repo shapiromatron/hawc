@@ -3,6 +3,10 @@ from django.test.client import Client
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from hawc.apps.study.models import Study
+
+from ..test_utils import check_details_of_last_log_entry
+
 
 @pytest.mark.django_db
 class TestStudyViewset:
@@ -50,7 +54,7 @@ class TestStudyViewset:
             "last_updated": "2020-02-27T14:14:41.479008-06:00",
             "block_id": None,
             "bioassay": True,
-            "epi": False,
+            "epi": True,
             "epi_meta": False,
             "in_vitro": False,
             "short_citation": "Foo et al.",
@@ -134,6 +138,7 @@ class TestStudyViewset:
         assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
+        check_details_of_last_log_entry(response.data["id"], "Created study.study")
 
         assert response.data["short_citation"] == data["short_citation"]
         assert response.data["full_citation"] == data["full_citation"]
@@ -144,4 +149,91 @@ class TestStudyViewset:
         assert (
             str(response.data[0])
             == f"Reference ID {db_keys.reference_unlinked} already linked with a study."
+        )
+
+    def test_create_from_identifier_permissions(self, db_keys):
+        url = reverse("study:api:study-create-from-identifier")
+        data = {
+            "db_type": "Short citation.",
+            "db_id": 1,
+            "assessment_id": db_keys.assessment_working,
+        }
+
+        # reviewers shouldn't be able to create
+        client = APIClient()
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        response = client.post(url, data)
+        assert response.status_code == 403
+
+        # public shouldn't be able to create
+        client = APIClient()
+        response = client.post(url, data)
+        assert response.status_code == 403
+
+    @pytest.mark.vcr
+    def test_create_from_identifier_bad_requests(self, db_keys):
+        url = reverse("study:api:study-create-from-identifier")
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        # payload must have db_type and db_id
+        data = {"assessment_id": db_keys.assessment_working}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert str(response.data["db_type"][0]) == "This field is required."
+        assert str(response.data["db_id"][0]) == "This field is required."
+
+        # study with identifier must not already exist
+        existing_study = Study.objects.filter(
+            assessment_id=db_keys.assessment_working, identifiers__database=2
+        ).first()
+        ident = existing_study.identifiers.filter(database=2).first()
+        data = {
+            "db_type": "HERO",
+            "db_id": ident.unique_id,
+            "assessment_id": db_keys.assessment_working,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"db_id": ["Study already exists; see Foo et al. [1]"]}
+
+        # IDs must be valid
+        data = {"db_type": "PUBMED", "db_id": -1, "assessment_id": db_keys.assessment_working}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert (
+            str(response.data["non_field_errors"][0])
+            == "The following PubMed ID(s) could not be imported: -1"
+        )
+
+    @pytest.mark.vcr
+    def test_create_from_identifier_valid_requests(self, db_keys):
+        url = reverse("study:api:study-create-from-identifier")
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        # HERO request
+        data = {"db_type": "HERO", "db_id": 2199697, "assessment_id": db_keys.assessment_working}
+        response = client.post(url, data)
+        assert response.status_code == 201
+        assert (
+            Study.objects.get(pk=response.data["id"])
+            .identifiers.filter(database=2, unique_id=str(2199697))
+            .exists()
+        )
+
+        # PubMed request with additional fields
+        data = {
+            "db_type": "PUBMED",
+            "db_id": 10357793,
+            "assessment_id": db_keys.assessment_working,
+            "bioassay": True,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 201
+        assert response.data["bioassay"]
+        assert (
+            Study.objects.get(pk=response.data["id"])
+            .identifiers.filter(database=1, unique_id=str(10357793))
+            .exists()
         )

@@ -11,5 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(name="strain", unique_together=set([("species", "name")]),),
+        migrations.AlterUniqueTogether(
+            name="strain",
+            unique_together=set([("species", "name")]),
+        ),
     ]

@@ -18,7 +18,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -53,7 +56,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("model_name", models.CharField(max_length=25)),
@@ -64,7 +70,10 @@ class Migration(migrations.Migration):
                 ("outputs", models.TextField(blank=True)),
                 ("d3_plotting", models.TextField(blank=True)),
                 ("runtime_error", models.BooleanField(default=False)),
-                ("plot", models.ImageField(null=True, upload_to=b"bmds_plot", blank=True),),
+                (
+                    "plot",
+                    models.ImageField(null=True, upload_to=b"bmds_plot", blank=True),
+                ),
                 ("option_id", models.PositiveSmallIntegerField()),
                 ("bmr_id", models.PositiveSmallIntegerField()),
                 ("override", models.PositiveSmallIntegerField(default=99)),
@@ -79,7 +88,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (
@@ -130,7 +142,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),

@@ -6,12 +6,9 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"jobs", api.JobViewset, basename="jobs")
-router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
-router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
+router.register(r"strain", api.StrainViewset, basename="strain")
 
 
 app_name = "assessment"
@@ -28,8 +25,16 @@ urlpatterns = [
         name="modules_update",
     ),
     path("<int:pk>/delete/", views.AssessmentDelete.as_view(), name="delete"),
-    path("<int:pk>/downloads/", views.AssessmentDownloads.as_view(), name="downloads",),
-    path("<int:pk>/logs/", views.AssessmentLogList.as_view(), name="assessment_logs",),
+    path(
+        "<int:pk>/downloads/",
+        views.AssessmentDownloads.as_view(),
+        name="downloads",
+    ),
+    path(
+        "<int:pk>/logs/",
+        views.AssessmentLogList.as_view(),
+        name="assessment_logs",
+    ),
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
     # log object
     path(
@@ -37,17 +42,35 @@ urlpatterns = [
         views.LogObjectList.as_view(),
         name="log_object_list",
     ),
-    path("log/<int:pk>/", views.LogDetail.as_view(), name="log_detail",),
+    path(
+        "log/<int:pk>/",
+        views.LogDetail.as_view(),
+        name="log_detail",
+    ),
     # attachment objects
     path(
-        "<int:pk>/attachment/create/", views.AttachmentCreate.as_view(), name="attachment_create",
+        "attachment/<int:pk>/create/",
+        views.AttachmentViewset.as_view(),
+        {"action": "create"},
+        name="attachment-create",
     ),
-    path("attachment/<int:pk>/", views.AttachmentRead.as_view(), name="attachment_detail",),
     path(
-        "attachment/<int:pk>/update/", views.AttachmentUpdate.as_view(), name="attachment_update",
+        "attachment/<int:pk>/",
+        views.AttachmentViewset.as_view(),
+        {"action": "read"},
+        name="attachment-detail",
     ),
     path(
-        "attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete",
+        "attachment/<int:pk>/update/",
+        views.AttachmentViewset.as_view(),
+        {"action": "update"},
+        name="attachment-update",
+    ),
+    path(
+        "attachment/<int:pk>/delete/",
+        views.AttachmentViewset.as_view(),
+        {"action": "delete"},
+        name="attachment-delete",
     ),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),
@@ -56,11 +79,16 @@ urlpatterns = [
     path("dataset/<int:pk>/delete/", views.DatasetDelete.as_view(), name="dataset_delete"),
     # species
     path(
-        "assessment/<int:pk>/species/create/", views.SpeciesCreate.as_view(), name="species_create",
+        "assessment/<int:pk>/species/create/",
+        views.SpeciesCreate.as_view(),
+        name="species_create",
     ),
     # strain
-    path("strains/", views.getStrains.as_view(), name="get_strains"),
-    path("assessment/<int:pk>/strain/create/", views.StrainCreate.as_view(), name="strain_create",),
+    path(
+        "assessment/<int:pk>/strain/create/",
+        views.StrainCreate.as_view(),
+        name="strain_create",
+    ),
     # dose units
     path(
         "assessment/<int:pk>/dose-units/create/",
@@ -68,9 +96,17 @@ urlpatterns = [
         name="dose_units_create",
     ),
     # dtxsid
-    path("dtxsid/create/", views.DSSToxCreate.as_view(), name="dtxsid_create",),
+    path(
+        "dtxsid/create/",
+        views.DSSToxCreate.as_view(),
+        name="dtxsid_create",
+    ),
     # endpoint objects
-    path("<int:pk>/endpoints/", views.BaseEndpointList.as_view(), name="endpoint_list",),
+    path(
+        "<int:pk>/endpoints/",
+        views.BaseEndpointList.as_view(),
+        name="endpoint_list",
+    ),
     path(
         "<int:pk>/clean-extracted-data/",
         views.CleanExtractedData.as_view(),
@@ -83,11 +119,25 @@ urlpatterns = [
     ),
     # helper functions
     path("content-types/", views.AboutContentTypes.as_view(), name="content_types"),
-    path("download-plot/", views.DownloadPlot.as_view(), name="download_plot"),
     path("close-window/", views.CloseWindow.as_view(), name="close_window"),
     # assessment level study
     path(
-        "<int:pk>/clean-study-metrics/", views.CleanStudyRoB.as_view(), name="clean_study_metrics",
+        "<int:pk>/clean-study-metrics/",
+        views.CleanStudyRoB.as_view(),
+        name="clean_study_metrics",
+    ),
+    # published items
+    path(
+        "<int:pk>/published/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "list"},
+        name="bulk-publish",
+    ),
+    path(
+        "<int:pk>/published/<str:type>/<int:object_id>/",
+        views.PublishedItemsChecklist.as_view(),
+        {"action": "update_item"},
+        name="publish-update",
     ),
     # api views
     path("api/", include((router.urls, "api"))),

@@ -11,7 +11,15 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="individualanimal", name="endpoint_group",),
-        migrations.RemoveField(model_name="endpoint", name="individual_animal_data",),
-        migrations.DeleteModel(name="IndividualAnimal",),
+        migrations.RemoveField(
+            model_name="individualanimal",
+            name="endpoint_group",
+        ),
+        migrations.RemoveField(
+            model_name="endpoint",
+            name="individual_animal_data",
+        ),
+        migrations.DeleteModel(
+            name="IndividualAnimal",
+        ),
     ]

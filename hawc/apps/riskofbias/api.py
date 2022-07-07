@@ -224,11 +224,10 @@ class RiskOfBias(AssessmentEditViewset):
 
     @action(detail=True, methods=("patch",))
     def update_v2(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
         instance = self.get_object()
         kw = {"context": self.get_serializer_context()}
         serializer = serializers.RiskOfBiasAssignmentSerializer(
-            instance, data=request.data, partial=partial, **kw
+            instance, data=request.data, partial=True, **kw
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
@@ -281,7 +280,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     def perform_destroy(self, instance):
         if instance.is_default:
             raise PermissionDenied("Cannot delete a default risk of bias score")
-        instance.delete()
+        super().perform_destroy(instance)
 
 
 class ScoreCleanupViewset(CleanupFieldsBaseViewSet):

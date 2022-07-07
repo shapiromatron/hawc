@@ -5,11 +5,9 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
-from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from . import selectable, tasks, validators
-from .svg import SVGConverter
+from . import selectable, validators
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
@@ -47,13 +45,14 @@ class BaseFormHelper(cf.FormHelper):
     def build_default_layout(self, form):
         layout = cfl.Layout(*list(form.fields.keys()))
 
-        if "legend_text" in self.kwargs:
-            layout.insert(0, cfl.HTML(f"<legend>{self.kwargs['legend_text']}</legend>"))
-
         if "help_text" in self.kwargs:
             layout.insert(
-                1, cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
+                0,
+                cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
             )
+
+        if "legend_text" in self.kwargs:
+            layout.insert(0, cfl.HTML(f"<legend>{self.kwargs['legend_text']}</legend>"))
 
         form_actions = self.kwargs.get("form_actions")
 
@@ -91,7 +90,7 @@ class BaseFormHelper(cf.FormHelper):
             classes = [classes] * numFields
         first = self.layout.index(firstField)
         for i, class_ in enumerate(classes):
-            self[first + i].wrap(cfl.Column, wrapper_class=class_)
+            self[first + i].wrap(cfl.Column, css_class=class_)
         self[first : first + numFields].wrap_together(
             cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
@@ -197,7 +196,13 @@ class AdderLayout(cfl.Field):
         super().__init__(*args, **kwargs)
 
     def render(
-        self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs,
+        self,
+        form,
+        form_style,
+        context,
+        template_pack=TEMPLATE_PACK,
+        extra_context=None,
+        **kwargs,
     ):
         if extra_context is None:
             extra_context = {}
@@ -209,44 +214,11 @@ class CustomURLField(forms.URLField):
     default_validators = [validators.CustomURLValidator()]
 
 
-class DownloadPlotForm(forms.Form):
-    CROSSWALK = {
-        "svg": (tasks.convert_to_svg, "image/svg+xml"),
-        "png": (tasks.convert_to_png, "application/png"),
-        "pdf": (tasks.convert_to_pdf, "application/pdf"),
-        "pptx": (
-            tasks.convert_to_pptx,
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ),
-    }
+class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
+    """For use in ArrayField with a CharField with choices"""
 
-    output = forms.ChoiceField(
-        choices=(("svg", "svg"), ("png", "png"), ("pdf", "pdf"), ("pptx", "pptx"))
-    )
-    svg = forms.CharField()
-    width = forms.FloatField()
-    height = forms.FloatField()
-
-    def clean_svg(self):
-        data = self.cleaned_data["svg"]
-        try:
-            SVGConverter.decode_svg(data)
-        except ValueError as err:
-            raise forms.ValidationError(str(err))
-        return data
-
-    def process(self, url: str) -> HttpResponse:
-        extension = self.cleaned_data["output"]
-        handler, content_type = self.CROSSWALK[extension]
-        task = handler.delay(
-            self.cleaned_data["svg"],
-            url,
-            int(self.cleaned_data["width"] * 5),
-            int(self.cleaned_data["height"] * 5),
-        )
-        response = HttpResponse("<p>An error in processing occurred.</p>")
-        output = task.get(timeout=90)
-        if output:
-            response = HttpResponse(output, content_type=content_type)
-            response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
-        return response
+    def format_value(self, value) -> List[str]:
+        """Return selected values as a list."""
+        if value is None:
+            return []
+        return value.split(",")

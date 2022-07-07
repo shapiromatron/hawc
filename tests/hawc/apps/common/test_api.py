@@ -9,6 +9,8 @@ from hawc.apps.common.api import user_can_edit_object
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
+from ..test_utils import check_details_of_last_log_entry
+
 
 @pytest.mark.django_db
 class TestCleanupFieldsBaseViewSet:
@@ -126,6 +128,17 @@ class TestCleanupFieldsBaseViewSet:
         assert resp.status_code == 403
         assert Study.objects.get(id=study_id).short_citation != new_short_citation
 
+        # check too long
+        study_id = db_keys.study_working
+        resp = client.patch(
+            url + f"?assessment_id={db_keys.assessment_working}&ids={study_id}",
+            json.dumps({"short_citation": "a" * 500}),
+            content_type="application/json",
+            **{"HTTP_X_CUSTOM_BULK_OPERATION": "true"},
+        )
+        assert resp.status_code == 400
+        assert "value too long" in resp.json()["detail"]
+
         # finally, check success
         study_id = db_keys.study_working
         assert Study.objects.get(id=study_id).short_citation != new_short_citation
@@ -137,6 +150,7 @@ class TestCleanupFieldsBaseViewSet:
         )
         assert resp.status_code == 204
         assert Study.objects.get(id=study_id).short_citation == new_short_citation
+        check_details_of_last_log_entry(study_id, "Updated study.study")
 
 
 @pytest.mark.django_db

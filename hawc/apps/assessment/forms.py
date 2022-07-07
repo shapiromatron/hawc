@@ -14,7 +14,9 @@ from django.urls import reverse, reverse_lazy
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
+from ..common.widgets import DateCheckboxInput
 from ..myuser.lookups import HAWCUserLookup
 from ..myuser.models import HAWCUser
 from . import lookups, models
@@ -30,17 +32,26 @@ class AssessmentForm(forms.ModelForm):
 
     class Meta:
         exclude = (
+            "creator",
             "enable_literature_review",
             "enable_project_management",
             "enable_data_extraction",
             "enable_risk_of_bias",
             "enable_bmd",
             "enable_summary_text",
+            "epi_version",
         )
         model = models.Assessment
+        widgets = {
+            "public_on": DateCheckboxInput,
+        }
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+        if self.instance.id is None:
+            self.instance.creator = self.user
+            self.fields["project_manager"].initial = [self.user]
 
         self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=lookups.DssToxIdLookup
@@ -54,9 +65,10 @@ class AssessmentForm(forms.ModelForm):
         self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
+
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
-            for field in ("editable", "public", "hide_from_public_page"):
+            for field in ("editable", "public_on", "hide_from_public_page"):
                 self.fields[field].disabled = True
                 self.fields[field].help_text += help_text
 
@@ -100,11 +112,11 @@ class AssessmentForm(forms.ModelForm):
 
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("cas", 2, "col-md-6")
+        helper.add_row("assessment_objective", 2, "col-md-6")
         helper.add_row("project_manager", 3, "col-md-4")
-        helper.add_row("editable", 4, "col-md-3")
+        helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
-        helper.add_row("noel_name", 2, "col-md-6")
-        helper.add_row("vocabulary", 2, "col-md-6")
+        helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
@@ -113,6 +125,7 @@ class AssessmentForm(forms.ModelForm):
 class AssessmentFilterForm(forms.Form):
     search = forms.CharField(required=False)
 
+    DEFAULT_ORDER_BY = "-last_updated"
     ORDER_BY_CHOICES = [
         ("name", "Name"),
         ("year", "Year, ascending"),
@@ -120,10 +133,7 @@ class AssessmentFilterForm(forms.Form):
         ("last_updated", "Date Updated, ascending"),
         ("-last_updated", "Date Updated, descending"),
     ]
-    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial="-last_updated")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial=DEFAULT_ORDER_BY)
 
     @property
     def helper(self):
@@ -135,7 +145,9 @@ class AssessmentFilterForm(forms.Form):
     def get_filters(self):
         query = Q()
         if name := self.cleaned_data.get("search"):
-            query &= Q(name__icontains=name) | Q(year=name)
+            if name_int := tryParseInt(name):
+                query &= Q(year=name_int)
+            query |= Q(name__icontains=name)
         return query
 
     def get_queryset(self, qs):
@@ -144,9 +156,8 @@ class AssessmentFilterForm(forms.Form):
         return qs.order_by(self.get_order_by())
 
     def get_order_by(self):
-        if self.is_valid():
-            return self.cleaned_data.get("order_by", "-last_updated")
-        return "-last_updated"
+        value = self.cleaned_data.get("order_by") if self.is_valid() else None
+        return value or self.DEFAULT_ORDER_BY
 
 
 class AssessmentAdminForm(forms.ModelForm):
@@ -178,11 +189,14 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_risk_of_bias",
             "enable_bmd",
             "enable_summary_text",
+            "epi_version",
         )
         model = models.Assessment
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if not settings.HAWC_FEATURES.ENABLE_EPI_V2:
+            self.fields["epi_version"].disabled = True
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"
@@ -220,21 +234,11 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
-        if self.instance.id:
-            inputs = {"legend_text": f"Update {self.instance}"}
-        else:
-            inputs = {"legend_text": "Create new attachment"}
-        inputs["cancel_url"] = self.instance.get_absolute_url()
-
-        helper = BaseFormHelper(self, **inputs)
-
+        self.fields["description"].widget.attrs["class"] = "html5text"
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("title", 2, "col-md-6")
+        helper.add_row("publicly_available", 2, "col-md-6")
         return helper
 
 
@@ -329,7 +333,7 @@ class DSSToxForm(forms.ModelForm):
         helper = BaseFormHelper(
             self,
             legend_text="Import new DSSTox substance",
-            help_text="""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the <a href="https://comptox.epa.gov/dashboard">Chemistry dashboard</a>.""",
+            help_text=f"""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the {new_window_a('https://comptox.epa.gov/dashboard', 'Chemistry dashboard')}.""",
             form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
@@ -409,7 +413,9 @@ class DatasetForm(forms.ModelForm):
         required=False,
     )
     revision_data = forms.FileField(
-        label="Dataset", help_text=models.DatasetRevision.data.field.help_text, required=False,
+        label="Dataset",
+        help_text=models.DatasetRevision.data.field.help_text,
+        required=False,
     )
     revision_excel_worksheet_name = forms.CharField(
         max_length=64,
@@ -489,7 +495,9 @@ class DatasetForm(forms.ModelForm):
             df = None
             try:
                 df = models.DatasetRevision.try_read_df(
-                    revision_data, suffix, revision_excel_worksheet_name,
+                    revision_data,
+                    suffix,
+                    revision_excel_worksheet_name,
                 )
             except ValueError:
                 self.add_error(
@@ -545,7 +553,12 @@ class LogFilterForm(forms.Form):
         required=False,
         help_text="The HAWC ID for the item which was modified; can often be found in the URL or in data exports",
     )
-    content_type = forms.IntegerField(min_value=1, label="Data type", initial=None, required=False,)
+    content_type = forms.IntegerField(
+        min_value=1,
+        label="Data type",
+        initial=None,
+        required=False,
+    )
     before = forms.DateField(
         required=False,
         label="Modified before",
@@ -567,7 +580,7 @@ class LogFilterForm(forms.Form):
         url = reverse("assessment:content_types")
         self.fields[
             "content_type"
-        ].help_text = f"""Data <a target="_blank" href="{url}">content type</a>; by filtering by data types below the content type can also be set."""
+        ].help_text = f"""Data {new_window_a(url, "content type")}; by filtering by data types below the content type can also be set."""
 
     @property
     def helper(self):

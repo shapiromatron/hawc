@@ -5,9 +5,11 @@ from django.conf import settings
 from django.core.cache import cache
 from django.test.client import Client
 from django.urls import reverse
+from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.study.models import Study
 
 
 def has_redis():
@@ -172,39 +174,66 @@ class TestContactUsPage:
 
 
 @pytest.mark.django_db
-class TestDownloadPlot:
-    def _get_valid_payload(self, svg_data):
-        return {"output": "svg", "svg": svg_data[0].decode(), "width": 240, "height": 240}
+class TestBulkPublishItems:
+    def test_list(self):
+        url = reverse("assessment:bulk-publish", args=(1,))
 
-    def test_invalid(self, svg_data):
-        client = Client()
-        url = reverse("assessment:download_plot")
+        anon = Client()
+        pm = Client()
+        assert pm.login(username="pm@hawcproject.org", password="pw") is True
 
-        # GET is invalid
-        assert client.get(url).status_code == 405
+        resp = anon.get(url)
+        assert resp.status_code == 403
 
-        # empty POST is invalid
-        resp = client.post(url, {})
-        assert resp.status_code == 400
-        assert resp.json() == {"valid": False}
-
-        # incorrect POST is invalid
-        data = self._get_valid_payload(svg_data)
-        data["output"] = "invalid"
-        resp = client.post(url, data)
-        assert resp.status_code == 400
-        assert resp.json() == {"valid": False}
-
-        # test incorrect svg encoding
-        data = self._get_valid_payload(svg_data)
-        data["svg"] = "💥"
-        resp = client.post(url, data)
-        assert resp.status_code == 400
-        assert resp.json() == {"valid": False}
-
-    def test_valid(self, svg_data):
-        client = Client()
-        url = reverse("assessment:download_plot")
-        assert client.get(url).status_code == 405
-        resp = client.post(url, self._get_valid_payload(svg_data))
+        resp = pm.get(url)
         assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/published_items.html")
+
+    def test_updates_item(self):
+        anon = Client(HTTP_HX_REQUEST="true")
+        pm = Client(HTTP_HX_REQUEST="true")
+        assert pm.login(username="pm@hawcproject.org", password="pw") is True
+
+        # valid case
+        assessment_id = 1
+        study = Study.objects.filter(assessment=assessment_id).first()
+        bad_study = Study.objects.filter(assessment=2).first()
+        valid_url = reverse("assessment:publish-update", args=(assessment_id, "study", study.id))
+
+        # permissions check
+        resp = anon.post(valid_url)
+        assert resp.status_code == 403
+
+        # invalid url; study doesn't belong to assessment
+        for bad_url in [
+            reverse("assessment:publish-update", args=(assessment_id, "--invalid--", study.id)),
+            reverse("assessment:publish-update", args=(assessment_id, "study", bad_study.id)),
+        ]:
+            resp = pm.post(bad_url)
+            assert resp.status_code == 404
+
+        # check initial state
+        assert study.published is False
+
+        # valid url
+        resp = pm.post(valid_url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
+        study.refresh_from_db()
+        assert study.published is True
+
+        # check opposite case (and revert state)
+        resp = pm.post(valid_url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
+        study.refresh_from_db()
+        assert study.published is False
+
+
+class TestRasterizeCss:
+    def test_check_success(self):
+        url = reverse("css-rasterize")
+        client = Client()
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert resp.json()["template"].startswith('<defs><style type="text/css">')

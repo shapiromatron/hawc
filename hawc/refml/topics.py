@@ -49,7 +49,7 @@ def textwrapper(text: str) -> str:
 
 
 def _get_nmf_topics(term_map, vectorizer, n_top_words: int = 10) -> pd.DataFrame:
-    feat_names = vectorizer.get_feature_names()
+    feat_names = vectorizer.get_feature_names_out()
     words = []
     for i in range(term_map.shape[1]):
         words_ids = term_map[:, i].argsort()[-n_top_words:][::-1]
@@ -80,9 +80,11 @@ def topic_model_tsne(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     tfidf_transformer = TfidfTransformer()
     X_train_tfidf = tfidf_transformer.fit_transform(x_counts)
     n_topics = int(max(min(30, np.sqrt(df.shape[0])), 10))
-    model = NMF(n_components=n_topics, random_state=1, alpha=0.1, l1_ratio=0.5, init="nndsvd")
+    model = NMF(n_components=n_topics, random_state=1, l1_ratio=0.5, init="nndsvdar")
     term_maps = model.fit_transform(X_train_tfidf.T)
-    nmf_embedded = TSNE(n_components=2, perplexity=20).fit_transform(model.components_.T)
+    nmf_embedded = TSNE(
+        n_components=2, perplexity=20, init="random", learning_rate="auto"
+    ).fit_transform(model.components_.T)
     df.drop(columns=["text"], inplace=True)
 
     df.loc[:, "max_topic"] = model.components_.argmax(axis=0)
@@ -117,7 +119,9 @@ def tsne_to_scatterplot(data: pd.DataFrame) -> go.Figure:
         )
     )
     fig.update_layout(
-        autosize=True, plot_bgcolor="white", margin=dict(l=20, r=20, t=20, b=20),  # noqa: E741
+        autosize=True,
+        plot_bgcolor="white",
+        margin=dict(l=20, r=20, t=20, b=20),  # noqa: E741
     )
     fig.update_xaxes(showticklabels=False)
     fig.update_yaxes(showticklabels=False)

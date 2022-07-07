@@ -1,9 +1,7 @@
 import json
 import logging
-from pathlib import Path
 from typing import Any, Dict, List
 
-import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -11,22 +9,29 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponseNotAllowed,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.middleware.csrf import get_token
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
+from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
-from ..common.forms import DownloadPlotForm
 from ..common.helper import WebappConfig
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -40,6 +45,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
     beta_tester_required,
+    create_object_log,
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
@@ -255,7 +261,8 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
-            back_href=get_referrer(self.request, reverse("portal")), user=self.request.user,
+            back_href=get_referrer(self.request, reverse("portal")),
+            user=self.request.user,
         )
         return kwargs
 
@@ -285,11 +292,6 @@ class Error401(TemplateView):
     template_name = "401.html"
 
 
-@method_decorator(staff_member_required, name="dispatch")
-class Swagger(TemplateView):
-    template_name = "swagger.html"
-
-
 # Assessment Object
 class AssessmentList(LoginRequiredMixin, ListView):
     model = models.Assessment
@@ -310,13 +312,13 @@ class AssessmentList(LoginRequiredMixin, ListView):
 class AssessmentFullList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = super().get_queryset()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -333,14 +335,13 @@ class AssessmentFullList(ListView):
 class AssessmentPublicList(ListView):
     model = models.Assessment
     form_class = forms.AssessmentFilterForm
+    paginate_by = 50
 
     def get_queryset(self):
         qs = self.model.objects.get_public_assessments()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
         self.form = self.form_class(data=initial)
-        qs = self.form.get_queryset(qs)
-        qs = qs.distinct().order_by(self.form.get_order_by())
-        return qs
+        return self.form.get_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -358,6 +359,7 @@ class AssessmentPublicList(ListView):
             Data can also be downloaded for each individual assessment.
         """
         context["form"] = self.form
+        context["is_public_list"] = True
         return context
 
 
@@ -373,8 +375,12 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
 
     def get_success_url(self):
         self.assessment = self.object
-        response = super().get_success_url()
-        return response
+        return super().get_success_url()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -455,41 +461,58 @@ class AssessmentDownloads(BaseDetail):
     breadcrumb_active_name = "Downloads"
 
 
-# Attachment views
-class AttachmentCreate(BaseCreate):
-    success_message = "Attachment added."
+# Attachment viewset
+class AttachmentViewset(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
-    parent_template_name = "parent"
     model = models.Attachment
-    form_class = forms.AttachmentForm
+    form_fragment = "assessment/fragments/attachment_edit_row.html"
+    detail_fragment = "assessment/fragments/attachment_row.html"
+    list_fragment = "assessment/fragments/attachment_list.html"
 
+    @action(permission=can_view, htmx_only=False)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        if request.is_htmx:
+            return render(request, self.detail_fragment, self.get_context_data())
+        attachment = request.item.object
+        if attachment.publicly_available or request.item.permissions(request.user)["edit"]:
+            return HttpResponseRedirect(attachment.attachment.url)
+        raise Http404()
 
-class AttachmentRead(BaseDetail):
-    model = models.Attachment
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
-            return HttpResponseRedirect(self.object.attachment.url)
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.AttachmentForm(request.POST, request.FILES, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
         else:
-            return PermissionDenied
+            form = forms.AttachmentForm()
+            template = self.list_fragment
+        context = self.get_context_data(form=form)
+        context["object_list"] = models.Attachment.objects.get_attachments(
+            request.item.assessment, False
+        )
+        return render(request, template, context)
 
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.AttachmentForm(data=data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
 
-class AttachmentUpdate(BaseUpdate):
-    success_message = "Assessment updated."
-    model = models.Attachment
-    form_class = forms.AttachmentForm
-
-
-class AttachmentDelete(BaseDelete):
-    success_message = "Attachment deleted."
-    model = models.Attachment
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
-
-    def get_cancel_url(self) -> str:
-        return self.object.content_object.get_absolute_url()
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        return render(request, self.detail_fragment, self.get_context_data())
 
 
 # Dataset views
@@ -532,19 +555,6 @@ class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = "assessment"
     model = models.EffectTag
     form_class = forms.EffectTagForm
-
-
-class getStrains(TemplateView):
-    # Return the valid strains for the requested species in JSON
-
-    def get(self, request, *args, **kwargs):
-        strains = []
-        try:
-            sp = models.Species.objects.get(pk=request.GET.get("species"))
-            strains = list(models.Strain.objects.filter(species=sp).values("id", "name"))
-        except Exception:
-            pass
-        return HttpResponse(json.dumps(strains), content_type="application/json")
 
 
 class SpeciesCreate(CloseIfSuccessMixin, BaseCreate):
@@ -656,23 +666,32 @@ class UpdateSession(View):
     def post(self, request, *args, **kwargs):
         if not request.is_ajax():
             return HttpResponseNotAllowed(["POST"])
+        response = {}
         if request.POST.get("hideSidebar"):
-            request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
-        return HttpResponse(True)
+            hide_status = self.isTruthy(request, "hideSidebar")
+            request.session["hideSidebar"] = hide_status
+            response = {"hideSidebar": hide_status}
+        if request.POST.get("refresh"):
+            if request.user.is_authenticated:
+                old_time = request.session.get_expiry_date().isoformat()
+                request.session.set_expiry(None)  # use the global session expiry policy
+                new_time = request.session.get_expiry_date().isoformat()
+                response = {
+                    "message": f"Session extended from {old_time} to {new_time}.",
+                    "new_expiry_time": new_time,
+                }
+            else:
+                response = {
+                    "message": "Session not renewed.",
+                    "new_expiry_time": None,
+                }
+        return JsonResponse(response)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class DownloadPlot(FormView):
-    form_class = DownloadPlotForm
-    http_method_names = ["post"]
-
-    def form_invalid(self, form: DownloadPlotForm):
-        # intentionally don't provide helpful data
-        return JsonResponse({"valid": False}, status=400)
-
-    def form_valid(self, form: DownloadPlotForm):
-        url = get_referrer(self.request, "/<unknown>/")
-        return form.process(url)
+@method_decorator(cache_page(60 * 60), name="dispatch")
+class RasterizeCss(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({"template": get_styles_svg_definition()})
 
 
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
@@ -701,53 +720,6 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
                 host=f"//{self.request.get_host()}",
             ),
         )
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminDashboard(TemplateView):
-    template_name = "admin/dashboard.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminAssessmentSize(TemplateView):
-    template_name = "admin/assessment-size.html"
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class AdminMediaPreview(TemplateView):
-    template_name = "admin/media-preview.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        Suffix-specific values were obtained by querying media file extensions:
-
-        ```bash
-        find {settings.MEDIA_ROOT} -type f | grep -o ".[^.]\\+$" | sort | uniq -c
-        ```
-        """
-        context = super().get_context_data(**kwargs)
-        obj = self.request.GET.get("item", "")
-        media = Path(settings.MEDIA_ROOT)
-        context["has_object"] = False
-        resolved = media / obj
-        context["object_name"] = str(Path(obj))
-        if obj and resolved.exists() and media in resolved.parents:
-            root_uri = self.request.build_absolute_uri(location=settings.MEDIA_URL[:-1])
-            uri = resolved.as_uri().replace(media.as_uri(), root_uri)
-            context["has_object"] = True
-            context["object_uri"] = uri
-            context["suffix"] = resolved.suffix.lower()
-            if context["suffix"] in [".csv", ".json", ".ris", ".txt"]:
-                context["object_text"] = resolved.read_text()
-            if context["suffix"] in [".xls", ".xlsx"]:
-                df = pd.read_excel(str(resolved))
-                context["object_html"] = df.to_html(index=False)
-            if context["suffix"] in [".jpg", ".jpeg", ".png", ".tif", ".tiff"]:
-                context["object_image"] = True
-            if context["suffix"] in [".pdf"]:
-                context["object_pdf"] = True
-
-        return context
 
 
 # blog
@@ -894,3 +866,93 @@ class AboutContentTypes(TemplateView):
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context
+
+
+class PublishedItemsChecklist(HtmxViewSet):
+    actions = {"list", "update_item"}
+    parent_actions = {"list", "update_item"}
+    parent_model = models.Assessment
+    model_lookups = {
+        "study": apps.get_model("study", "Study"),
+        "visual": apps.get_model("summary", "Visual"),
+        "datapivot": apps.get_model("summary", "DataPivot"),
+        "dataset": apps.get_model("assessment", "Dataset"),
+        "summarytable": apps.get_model("summary", "SummaryTable"),
+        "attachment": apps.get_model("assessment", "Attachment"),
+    }
+
+    @action(permission=can_edit, htmx_only=False)
+    def list(self, request: HttpRequest, *args, **kwargs):
+        return render(
+            request,
+            "assessment/published_items.html",
+            self.get_list_context_data(self.request.user, self.request.item.assessment),
+        )
+
+    @action(permission=can_edit, methods={"post"})
+    def update_item(self, request: HttpRequest, *args, **kwargs):
+        instance = self.get_instance(request.item, kwargs["type"], kwargs["object_id"])
+        self.perform_update(request, instance)
+        return render(
+            request,
+            "assessment/fragments/publish_item_td.html",
+            {"name": kwargs["type"], "object": instance, "assessment": request.item.assessment},
+        )
+
+    def get_instance(self, item, type: str, object_id: int):
+        Model = self.model_lookups.get(type)
+        if not Model:
+            raise Http404()
+        key = "object_id" if type == "attachment" else "assessment_id"
+        return get_object_or_404(Model.objects.filter(**{key: item.assessment.id}), id=object_id)
+
+    @transaction.atomic
+    def perform_update(self, request, instance):
+        if hasattr(instance, "published"):
+            instance.published = not instance.published
+        elif hasattr(instance, "publicly_available"):
+            instance.publicly_available = not instance.publicly_available
+        instance.save()
+        create_object_log("Updated", instance, request.item.assessment.id, request.user.id)
+
+    def get_list_context_data(self, user, assessment):
+        crumbs = Breadcrumb.build_assessment_crumbs(user, assessment)
+        crumbs.append(Breadcrumb(name="Published items"))
+        studies = (
+            apps.get_model("study", "Study")
+            .objects.filter(assessment=assessment)
+            .order_by("short_citation".lower())
+        )
+        datapivots = (
+            apps.get_model("summary", "DataPivot")
+            .objects.filter(assessment=assessment)
+            .order_by("title".lower())
+        )
+        visuals = (
+            apps.get_model("summary", "Visual")
+            .objects.filter(assessment=assessment)
+            .order_by("visual_type", "title".lower())
+        )
+        datasets = (
+            apps.get_model("assessment", "Dataset")
+            .objects.filter(assessment=assessment)
+            .order_by("name".lower())
+        )
+        summarytables = (
+            apps.get_model("summary", "SummaryTable")
+            .objects.filter(assessment=assessment)
+            .order_by("table_type", "title".lower())
+        )
+        attachments = apps.get_model("assessment", "Attachment").objects.get_attachments(
+            assessment, False
+        )
+        return {
+            "assessment": assessment,
+            "breadcrumbs": crumbs,
+            "studies": studies,
+            "datapivots": datapivots,
+            "visuals": visuals,
+            "datasets": datasets,
+            "summarytables": summarytables,
+            "attachments": attachments,
+        }

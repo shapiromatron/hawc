@@ -21,7 +21,10 @@ def splitRobScore(apps, schema_editor):
         new_rob = RiskOfBias.objects.create(study=study)
         for rob in old_robs:
             RiskOfBiasScore.objects.create(
-                riskofbias=new_rob, metric=rob.metric, score=rob.score, notes=rob.notes,
+                riskofbias=new_rob,
+                metric=rob.metric,
+                score=rob.score,
+                notes=rob.notes,
             )
             rob.delete()
 

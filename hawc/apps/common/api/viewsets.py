@@ -5,13 +5,16 @@ from rest_framework.response import Response
 
 from ...assessment.api import DisabledPagination
 from ..exceptions import ClassConfigurationException
+from ..views import bulk_create_object_log
 from .filters import CleanupBulkIdFilter
 from .mixins import ListUpdateModelMixin
 from .permissions import CleanupFieldsPermissions, user_can_edit_object
 
 
 class CleanupFieldsBaseViewSet(
-    ListUpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet,
+    ListUpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
     """
     Base Viewset for bulk updating text fields.
@@ -48,8 +51,12 @@ class CleanupFieldsBaseViewSet(
             {"text_cleanup_fields": cleanup_fields, "term_field_mapping": TERM_FIELD_MAPPING}
         )
 
+    def partial_update_bulk(self, request, *args, **kwargs):
+        return super().partial_update_bulk(request, *args, **kwargs)
+
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
+        bulk_create_object_log("Updated", queryset, self.request.user.id)
         queryset.model.delete_caches(ids)
 
 

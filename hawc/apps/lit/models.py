@@ -28,7 +28,7 @@ from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -191,7 +191,8 @@ class Search(models.Model):
         help_text="Database used to identify literature.",
     )
     title = models.CharField(
-        max_length=128, help_text="A brief-description to describe the identified literature.",
+        max_length=128,
+        help_text="A brief-description to describe the identified literature.",
     )
     slug = models.SlugField(
         verbose_name="URL Name",
@@ -284,16 +285,38 @@ class Search(models.Model):
 
     @property
     def import_ids(self):
-        return [v.strip() for v in self.search_string_text.split(",")]
+        # convert from string->set->list to remove repeat ids
+        return list(set(v.strip() for v in self.search_string_text.split(",")))
 
     @transaction.atomic
-    def run_new_import(self):
+    def run_new_import(self, content=None):
+        """Execute an import, creating references and identifiers.
+
+        In some cases, content may be provided, where we may validate and process the data. In
+        other cases, we may need to process the data in this method.
+
+        Args:
+            content (optional): existing identifier metadata, if available
+
+        Raises:
+            ValueError: If any error occurs
+        """
         if self.source == constants.ReferenceDatabase.PUBMED:
-            pmids = [int(id) for id in self.import_ids]
-            identifiers = Identifiers.objects.get_pubmed_identifiers(pmids)
+            ids = [int(id) for id in self.import_ids]
+            if content is None:
+                # fetch content if not provided
+                content = Identifiers.objects.validate_pubmed_ids(ids)
+            Identifiers.objects.bulk_create_pubmed_ids(content)
+            identifiers = Identifiers.objects.pubmed(ids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.ReferenceDatabase.HERO:
-            raise NotImplementedError()
+            ids = [int(id) for id in self.import_ids]
+            if content is None:
+                # fetch content if not provided
+                content = Identifiers.objects.validate_hero_ids(ids)
+            Identifiers.objects.bulk_create_hero_ids(content)
+            identifiers = Identifiers.objects.hero(ids)
+            Reference.objects.get_hero_references(self, identifiers)
         elif self.source == constants.ReferenceDatabase.RIS:
             # check if importer references are cached on object
             refs = getattr(self, "_references", None)
@@ -414,26 +437,6 @@ class Search(models.Model):
         for pubmed_query in pubmed_queries:
             dicts.append(pubmed_query.to_dict())
         return dicts
-
-    def get_all_reference_tags(self, json_encode=True):
-        ref_objs = list(
-            ReferenceTags.objects.filter(content_object__in=self.references.all())
-            .annotate(reference_id=models.F("content_object_id"))
-            .values("reference_id", "tag_id")
-        )
-        if json_encode:
-            return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
-        else:
-            return ref_objs
-
-    def get_references_with_tag(self, tag=None, descendants=False):
-        if tag is None:
-            return self.references_untagged
-        else:
-            tag_ids = [tag.id]
-            if descendants:
-                tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
-            return self.references.filter(tags__in=tag_ids).distinct("pk")
 
     @property
     def references_count(self):
@@ -705,7 +708,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         if include_parent:
             appendChildren(tagslist[0], "")
         else:
-            for child in tagslist[0]["children"]:
+            for child in tagslist[0].get("children", []):
                 appendChildren(child, "")
 
         return lst

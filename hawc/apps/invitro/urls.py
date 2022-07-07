@@ -21,27 +21,63 @@ urlpatterns = [
         views.ExperimentCreate.as_view(),
         name="experiment_create",
     ),
-    path("experiment/<int:pk>/", views.ExperimentDetail.as_view(), name="experiment_detail",),
     path(
-        "experiment/<int:pk>/update/", views.ExperimentUpdate.as_view(), name="experiment_update",
+        "experiment/<int:pk>/",
+        views.ExperimentDetail.as_view(),
+        name="experiment_detail",
     ),
     path(
-        "experiment/<int:pk>/delete/", views.ExperimentDelete.as_view(), name="experiment_delete",
+        "experiment/<int:pk>/update/",
+        views.ExperimentUpdate.as_view(),
+        name="experiment_update",
+    ),
+    path(
+        "experiment/<int:pk>/delete/",
+        views.ExperimentDelete.as_view(),
+        name="experiment_delete",
     ),
     # chemical
     path(
-        "study/<int:pk>/create-chemical/", views.ChemicalCreate.as_view(), name="chemical_create",
+        "study/<int:pk>/create-chemical/",
+        views.ChemicalCreate.as_view(),
+        name="chemical_create",
     ),
-    path("chemical/<int:pk>/", views.ChemicalDetail.as_view(), name="chemical_detail",),
-    path("chemical/<int:pk>/update/", views.ChemicalUpdate.as_view(), name="chemical_update",),
-    path("chemical/<int:pk>/delete/", views.ChemicalDelete.as_view(), name="chemical_delete",),
+    path(
+        "chemical/<int:pk>/",
+        views.ChemicalDetail.as_view(),
+        name="chemical_detail",
+    ),
+    path(
+        "chemical/<int:pk>/update/",
+        views.ChemicalUpdate.as_view(),
+        name="chemical_update",
+    ),
+    path(
+        "chemical/<int:pk>/delete/",
+        views.ChemicalDelete.as_view(),
+        name="chemical_delete",
+    ),
     # cell types
     path(
-        "study/<int:pk>/create-cell-type/", views.CellTypeCreate.as_view(), name="celltype_create",
+        "study/<int:pk>/create-cell-type/",
+        views.CellTypeCreate.as_view(),
+        name="celltype_create",
     ),
-    path("cell-type/<int:pk>/", views.CellTypeDetail.as_view(), name="celltype_detail",),
-    path("cell-type/<int:pk>/update/", views.CellTypeUpdate.as_view(), name="celltype_update",),
-    path("cell-type/<int:pk>/delete/", views.CellTypeDelete.as_view(), name="celltype_delete",),
+    path(
+        "cell-type/<int:pk>/",
+        views.CellTypeDetail.as_view(),
+        name="celltype_detail",
+    ),
+    path(
+        "cell-type/<int:pk>/update/",
+        views.CellTypeUpdate.as_view(),
+        name="celltype_update",
+    ),
+    path(
+        "cell-type/<int:pk>/delete/",
+        views.CellTypeDelete.as_view(),
+        name="celltype_delete",
+    ),
     # endpoint categories
     path(
         "assessment/<int:pk>/endpoint-categories/update/",
@@ -49,14 +85,30 @@ urlpatterns = [
         name="endpointcategory_update",
     ),
     # endpoint
-    path("assessment/<int:pk>/endpoints/", views.EndpointList.as_view(), name="endpoint_list",),
+    path(
+        "assessment/<int:pk>/endpoints/",
+        views.EndpointList.as_view(),
+        name="endpoint_list",
+    ),
     path(
         "experiment/<int:pk>/create-endpoint/",
         views.EndpointCreate.as_view(),
         name="endpoint_create",
     ),
-    path("endpoint/<int:pk>/", views.EndpointDetail.as_view(), name="endpoint_detail",),
-    path("endpoint/<int:pk>/update/", views.EndpointUpdate.as_view(), name="endpoint_update",),
-    path("endpoint/<int:pk>/delete/", views.EndpointDelete.as_view(), name="endpoint_delete",),
+    path(
+        "endpoint/<int:pk>/",
+        views.EndpointDetail.as_view(),
+        name="endpoint_detail",
+    ),
+    path(
+        "endpoint/<int:pk>/update/",
+        views.EndpointUpdate.as_view(),
+        name="endpoint_update",
+    ),
+    path(
+        "endpoint/<int:pk>/delete/",
+        views.EndpointDelete.as_view(),
+        name="endpoint_delete",
+    ),
     path("api/", include((router.urls, "api"))),
 ]

@@ -22,7 +22,7 @@ from reversion import revisions as reversion
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a, read_excel
 from ..common.models import get_private_data_storage
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
@@ -43,7 +43,9 @@ class NoelNames(NamedTuple):
 
 class DSSTox(models.Model):
     dtxsid = models.CharField(
-        max_length=80, primary_key=True, verbose_name="DSSTox substance identifier (DTXSID)",
+        max_length=80,
+        primary_key=True,
+        verbose_name="DSSTox substance identifier (DTXSID)",
     )
     content = models.JSONField(default=dict)
 
@@ -78,13 +80,17 @@ class DSSTox(models.Model):
 
     @property
     def verbose_link(self) -> str:
-        return f"<a href={self.get_dashboard_url()}>{self.dtxsid}</a>: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+        return f"{new_window_a(self.get_dashboard_url(), self.dtxsid)}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+
+    @classmethod
+    def help_text(cls) -> str:
+        return f'{new_window_a("https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database", "DssTox")} substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the DTXSID.'
 
     def get_dashboard_url(self) -> str:
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
 
-    def get_svg_url(self) -> str:
-        return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=svg"
+    def get_img_url(self) -> str:
+        return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
 
 
 class Assessment(models.Model):
@@ -138,9 +144,19 @@ class Assessment(models.Model):
         """,
     )
     assessment_objective = models.TextField(
-        blank=True,
         help_text="Describe the assessment objective(s), research questions, "
         "or clarification on the purpose of the assessment.",
+    )
+    authors = models.TextField(
+        verbose_name="Assessment authors",
+        help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
+    )
+    creator = models.ForeignKey(
+        HAWCUser,
+        null=True,
+        related_name="created_assessments",
+        on_delete=models.SET_NULL,
+        editable=False,
     )
     project_manager = models.ManyToManyField(
         HAWCUser,
@@ -168,18 +184,16 @@ class Assessment(models.Model):
         default=True,
         help_text="Project-managers and team-members are allowed to edit assessment components.",
     )
-    public = models.BooleanField(
-        default=False, help_text="The assessment can be viewed by the general public."
+    public_on = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Public",
+        help_text="The assessment can be viewed by the general public.",
     )
     hide_from_public_page = models.BooleanField(
         default=False,
         help_text="If public, anyone with a link can view, "
         "but do not show a link on the public-assessment page.",
-    )
-    is_public_training_data = models.BooleanField(
-        default=False,
-        verbose_name="Public training data",
-        help_text="Allows data to be anonymized and made available for machine learning projects. Both assessment ID and user ID will be made anonymous for these purposes.",
     )
     enable_literature_review = models.BooleanField(
         default=True,
@@ -220,7 +234,8 @@ class Assessment(models.Model):
         '"smart-tags" which link to other data in HAWC.',
     )
     conflicts_of_interest = models.TextField(
-        blank=True, help_text="Describe any conflicts of interest by the assessment-team.",
+        blank=True,
+        help_text="Describe any conflicts of interest by the assessment-team.",
     )
     funding_source = models.TextField(
         blank=True, help_text="Describe the funding-source(s) for this assessment."
@@ -255,6 +270,11 @@ class Assessment(models.Model):
         this option until you like to "freeze" your assessment, and then this can be unchecked, if
         needed.""",
     )
+    epi_version = models.PositiveSmallIntegerField(
+        choices=constants.EpiVersion.choices,
+        default=constants.EpiVersion.V2,
+        help_text="Data extraction schema used for epidemiology studies",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -288,11 +308,7 @@ class Assessment(models.Model):
 
     def user_permissions(self, user):
         perms = self.get_permissions()
-        return {
-            "view": perms.can_view_object(user),
-            "edit": perms.can_edit_object(user),
-            "edit_assessment": perms.can_edit_assessment(user),
-        }
+        return perms.to_dict(user)
 
     def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
         if perms is None:
@@ -326,10 +342,18 @@ class Assessment(models.Model):
 
     def get_noel_names(self):
         if self.noel_name == constants.NoelName.NEL:
-            return NoelNames("NEL", "LEL", "No effect level", "Lowest effect level",)
+            return NoelNames(
+                "NEL",
+                "LEL",
+                "No effect level",
+                "Lowest effect level",
+            )
         elif self.noel_name == constants.NoelName.NOEL:
             return NoelNames(
-                "NOEL", "LOEL", "No observed effect level", "Lowest observed effect level",
+                "NOEL",
+                "LOEL",
+                "No observed effect level",
+                "Lowest observed effect level",
             )
         elif self.noel_name == constants.NoelName.NOAEL:
             return NoelNames(
@@ -349,14 +373,20 @@ class Assessment(models.Model):
         for Model, filters in [
             (apps.get_model("animal", "Endpoint"), dict(assessment_id=self.id)),
             (apps.get_model("epi", "Outcome"), dict(assessment_id=self.id)),
-            (apps.get_model("epimeta", "MetaProtocol"), dict(study__assessment_id=self.id),),
+            (
+                apps.get_model("epimeta", "MetaProtocol"),
+                dict(study__assessment_id=self.id),
+            ),
             (
                 apps.get_model("epimeta", "MetaResult"),
                 dict(protocol__study__assessment_id=self.id),
             ),
             (apps.get_model("invitro", "IVEndpoint"), dict(assessment_id=self.id)),
             (apps.get_model("mgmt", "Task"), dict(study__assessment_id=self.id)),
-            (apps.get_model("riskofbias", "RiskOfBias"), dict(study__assessment_id=self.id),),
+            (
+                apps.get_model("riskofbias", "RiskOfBias"),
+                dict(study__assessment_id=self.id),
+            ),
             (apps.get_model("summary", "Visual"), dict(assessment_id=self.id)),
         ]:
             ids = list(Model.objects.filter(**filters).values_list("id", flat=True))
@@ -377,25 +407,6 @@ class Assessment(models.Model):
 
         # refresh materialized views
         refresh_all_mvs(force=True)
-
-    @classmethod
-    def size_df(cls) -> pd.DataFrame:
-        qs = Assessment.objects.all().values("id", "name", "created", "last_updated")
-        df1 = pd.DataFrame(qs).set_index("id")
-        for annotation in [
-            dict(num_references=models.Count("references")),
-            dict(num_studies=models.Count("references__study")),
-            dict(num_ani_endpoints=models.Count("baseendpoint__endpoint")),
-            dict(num_epi_outcomes=models.Count("baseendpoint__outcome")),
-            dict(num_epi_results=models.Count("baseendpoint__outcome__results")),
-            dict(num_invitro_ivendpoints=models.Count("baseendpoint__ivendpoint")),
-            dict(num_datapivots=models.Count("datapivot")),
-            dict(num_viusals=models.Count("visuals")),
-        ]:
-            qs = Assessment.objects.all().values("id").annotate(**annotation)
-            df2 = pd.DataFrame(qs).set_index("id")
-            df1 = df1.merge(df2, left_index=True, right_index=True)
-        return df1.reset_index().sort_values("id")
 
     def pms_and_team_users(self) -> models.QuerySet:
         # return users that are either project managers or team members
@@ -423,7 +434,7 @@ class Attachment(models.Model):
     title = models.CharField(max_length=128)
     attachment = models.FileField(upload_to="attachment")
     publicly_available = models.BooleanField(default=True)
-    description = models.TextField(blank=True)
+    description = models.TextField()
 
     BREADCRUMB_PARENT = "content_object"
 
@@ -431,13 +442,13 @@ class Attachment(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return self.content_object.get_absolute_url()
+        return reverse("assessment:attachment-detail", args=[self.pk])
 
     def get_edit_url(self):
-        return reverse("assessment:attachment_update", args=[self.pk])
+        return reverse("assessment:attachment-update", args=[self.pk])
 
     def get_delete_url(self):
-        return reverse("assessment:attachment_delete", args=[self.pk])
+        return reverse("assessment:attachment-delete", args=[self.pk])
 
     def get_dict(self):
         return {
@@ -483,7 +494,9 @@ class Species(models.Model):
     objects = managers.SpeciesManager()
 
     name = models.CharField(
-        max_length=30, help_text="Enter species in singular (ex: Mouse, not Mice)", unique=True,
+        max_length=30,
+        help_text="Enter species in singular (ex: Mouse, not Mice)",
+        unique=True,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -871,9 +884,6 @@ class Job(models.Model):
         self.result = {"error": str(exception)}
         self.status = constants.JobStatus.FAILURE
 
-    def get_detail_url(self):
-        return reverse("assessment:api:jobs-detail", args=(self.task_id,))
-
 
 class Communication(models.Model):
     message = models.TextField()
@@ -938,9 +948,6 @@ class Log(models.Model):
         if self.object_id and self.content_type_id:
             return self.get_object_list_url()
         return self.get_absolute_url()
-
-    def get_api_url(self):
-        return reverse("assessment:api:logs-detail", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment

@@ -3,11 +3,10 @@ from typing import Dict, List
 
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
@@ -58,7 +57,7 @@ class LitOverview(BaseList):
             ).count()
         context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
         context["config"] = {
-            "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id),
             "assessment_id": self.assessment.id,
             "referenceYearHistogramUrl": reverse(
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
@@ -218,7 +217,9 @@ class SearchQuery(BaseUpdate):
 
     def get_object(self, **kwargs):
         obj = get_object_or_404(
-            self.model, slug=self.kwargs.get(self.slug_url_kwarg), assessment=self.kwargs.get("pk"),
+            self.model,
+            slug=self.kwargs.get(self.slug_url_kwarg),
+            assessment=self.kwargs.get("pk"),
         )
         return super().get_object(object=obj)
 
@@ -242,26 +243,6 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
     form_class = forms.TagReferenceForm
     template_name = "lit/reference_tag.html"
 
-    def post(self, request, *args, **kwargs):
-        if not self.request.is_ajax():
-            raise Http404
-        response = self.update_reference_tags()
-        return HttpResponse(json.dumps(response), content_type="application/json")
-
-    def update_reference_tags(self):
-        # find reference, check that the assessment is the same as the one we
-        # have permissions-checked for, and if so, update reference-tags
-        response = {"status": "fail"}
-        pk = tryParseInt(self.request.POST.get("pk"), -1)
-        ref = models.Reference.objects.filter(pk=pk, assessment=self.assessment).first()
-        if ref:
-            tag_pks = self.request.POST.getlist("tags[]", [])
-            ref.tags.set(tag_pks)
-            ref.last_updated = timezone.now()
-            ref.save()
-            response["status"] = "success"
-        return response
-
     def get_ref_qs_filters(self) -> Dict:
         raise NotImplementedError("Subclass requires implementation")
 
@@ -282,7 +263,7 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
             app="litStartup",
             page="startupTagReferences",
             data=dict(
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
                 refs=[ref.to_dict() for ref in refs],
                 csrf=get_token(self.request),
             ),
@@ -368,27 +349,24 @@ class TagByUntagged(TagReferences):
         return dict(tags=self.object.pk)
 
     def get_context_data(self, **kwargs):
-        self.qs_reference = models.Reference.objects.get_untagged_references(self.assessment)
+        self.qs_reference = self.assessment.references.all().untagged()
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][3] = Breadcrumb(name="Tag untagged references")
         return context
 
 
 def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
+    qs = search.references.all() if search else assessment.references.all()
     return WebappConfig(
         app="litStartup",
         page="startupReferenceList",
         data=dict(
             assessment_id=assessment.id,
             search_id=search.id if search else None,
-            tags=models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False),
-            references=models.Reference.objects.get_full_assessment_json(
-                assessment, json_encode=False
-            ),
+            tags=models.ReferenceFilterTag.get_all_tags(assessment.id),
+            references=models.Reference.objects.tag_pairs(qs),
             canEdit=permissions["edit"],
-            untaggedReferenceCount=models.Reference.objects.get_untagged_references(
-                assessment
-            ).count(),
+            untaggedReferenceCount=qs.untagged().count(),
         ),
     )
 
@@ -415,6 +393,24 @@ class SearchRefList(BaseDetail):
         return _get_reference_list(self.assessment, context["obj_perms"], self.object)
 
 
+def _get_viz_app_startup(view, context, search=None) -> WebappConfig:
+    title = f'"{search}" Literature Tagtree' if search else f"{view.assessment}: Literature Tagtree"
+    qs = search.references.all() if search else view.assessment.references.all()
+    return WebappConfig(
+        app="litStartup",
+        page="startupTagTreeViz",
+        data=dict(
+            can_edit=context["obj_perms"]["edit"],
+            assessment_id=view.assessment.id,
+            assessment_name=str(view.assessment),
+            search_id=search.id if search else None,
+            tags=models.ReferenceFilterTag.get_all_tags(view.assessment.id),
+            title=title,
+            references=models.Reference.objects.tag_pairs(qs),
+        ),
+    )
+
+
 class SearchTagsVisualization(BaseDetail):
     model = models.Search
     template_name = "lit/reference_visual.html"
@@ -429,13 +425,12 @@ class SearchTagsVisualization(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["object_type"] = "search"
-        context["ref_objs"] = self.object.get_all_reference_tags()
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["objectType"] = self.model.__name__
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         context["breadcrumbs"].append(Breadcrumb(name="Visualization"))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_viz_app_startup(self, context, search=self.object)
 
 
 class RefList(BaseList):
@@ -491,20 +486,50 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return reverse_lazy("lit:overview", args=[self.assessment.pk])
 
 
-class RefListExtract(BaseList):
-    parent_model = Assessment
-    model = models.Reference
-    crud = "Update"  # update-level permission required despite list-view
+class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
     template_name = "lit/reference_extract_list.html"
     breadcrumb_active_name = "Prepare for extraction"
+    model = Assessment
+    form_class = forms.BulkReferenceStudyExtractForm
+    success_message = "Selected references were successfully converted to studies."
 
-    def get_queryset(self):
-        return self.model.objects.get_references_ready_for_import(self.assessment)
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.model, pk=kwargs["pk"])
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(
+            assessment=self.assessment,
+            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment),
+        )
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        context.update(
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Convert to study"),
+            object_list=context["form"].fields["references"].queryset,
+        )
         return context
+
+    def get_success_url(self):
+        return reverse_lazy("lit:ref_list_extract", args=[self.assessment.pk])
+
+    def form_valid(self, form):
+        form.bulk_create_studies()
+        return super().form_valid(form)
+
+
+def _get_ref_app_startup(view, context) -> WebappConfig:
+    return WebappConfig(
+        app="litStartup",
+        page="startupReferenceDetail",
+        data={
+            "tags": models.ReferenceFilterTag.get_all_tags(view.assessment.id),
+            "reference": view.object.to_dict(),
+            "canEdit": context["obj_perms"]["edit"],
+        },
+    )
 
 
 class RefDetail(BaseDetail):
@@ -516,17 +541,7 @@ class RefDetail(BaseDetail):
         return context
 
     def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="litStartup",
-            page="startupReferenceDetail",
-            data={
-                "tags": models.ReferenceFilterTag.get_all_tags(
-                    self.assessment.id, json_encode=False
-                ),
-                "reference": self.object.to_dict(),
-                "canEdit": context["obj_perms"]["edit"],
-            },
-        )
+        return _get_ref_app_startup(self, context)
 
 
 class RefEdit(BaseUpdate):
@@ -556,10 +571,11 @@ class RefDelete(BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["object_json"] = self.object.to_json()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_ref_app_startup(self, context)
 
 
 class RefSearch(BaseDetail):
@@ -579,44 +595,10 @@ class RefSearch(BaseDetail):
             data=dict(
                 assessment_id=self.assessment.id,
                 canEdit=context["obj_perms"]["edit"],
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
                 csrf=get_token(self.request),
             ),
         )
-
-
-class RefsByTagJSON(BaseDetail):
-    model = Assessment
-
-    def get_context_data(self, **kwargs):
-        response = {"status": "success", "refs": []}
-        search_id = self.request.GET.get("search_id", None)
-        if search_id is not None:
-            search_id = int(search_id)
-
-        tag_id = self.kwargs.get("tag_id", None)
-        tag = None
-        if tag_id != "untagged":
-            tag = models.ReferenceFilterTag.get_tags_in_assessment(
-                self.assessment.id, [int(tag_id)]
-            )[0]
-
-        if search_id:
-            search = models.Search.objects.get(id=search_id)
-            qs = search.get_references_with_tag(tag=tag, descendants=True)
-        elif tag:
-            qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
-        else:
-            qs = models.Reference.objects.get_untagged_references(self.assessment)
-
-        response["refs"] = [
-            ref.to_dict()
-            for ref in qs.select_related("study").prefetch_related("searches", "identifiers")
-        ]
-        self.response = response
-
-    def render_to_response(self, context, **response_kwargs):
-        return HttpResponse(json.dumps(self.response), content_type="application/json")
 
 
 class RefVisualization(BaseDetail):
@@ -626,12 +608,11 @@ class RefVisualization(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["object_type"] = "reference"
-        context["ref_objs"] = models.Reference.objects.get_full_assessment_json(self.assessment)
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["objectType"] = self.model.__name__
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return _get_viz_app_startup(self, context)
 
 
 class RefTopicModel(BaseDetail):
@@ -656,20 +637,6 @@ class RefTopicModel(BaseDetail):
             )
         )
         return context
-
-
-class TagsJSON(BaseDetail):
-    model = Assessment
-
-    def get_object(self, **kwargs):
-        pk = tryParseInt(self.request.GET.get("pk"), -1)
-        obj = get_object_or_404(self.model, pk=pk)
-        return super().get_object(object=obj)
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(self.object.id)
-        return HttpResponse(json.dumps(tags), content_type="application/json")
 
 
 class TagsUpdate(WebappMixin, ProjectManagerOrHigherMixin, DetailView):

@@ -74,7 +74,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="datapivotquery", name="prefilters", field=models.TextField(default="{}"),
+            model_name="datapivotquery",
+            name="prefilters",
+            field=models.TextField(default="{}"),
         ),
         migrations.AlterField(
             model_name="datapivotquery",
@@ -103,7 +105,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="summarytext", name="text", field=models.TextField(default=""),
+            model_name="summarytext",
+            name="text",
+            field=models.TextField(default=""),
         ),
         migrations.AlterField(
             model_name="visual",
@@ -116,10 +120,14 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="visual", name="prefilters", field=models.TextField(default="{}"),
+            model_name="visual",
+            name="prefilters",
+            field=models.TextField(default="{}"),
         ),
         migrations.AlterField(
-            model_name="visual", name="settings", field=models.TextField(default="{}"),
+            model_name="visual",
+            name="settings",
+            field=models.TextField(default="{}"),
         ),
         migrations.AlterField(
             model_name="visual",

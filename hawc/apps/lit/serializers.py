@@ -4,10 +4,10 @@ from collections import Counter
 from io import StringIO
 from typing import List
 
-import django.core.exceptions
 import pandas as pd
 from celery import chain
 from celery.result import ResultBase
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.template.defaultfilters import slugify
@@ -39,6 +39,9 @@ class SearchSerializer(serializers.ModelSerializer):
             "last_updated",
         )
         read_only_fields = ["slug", "created", "last_updated"]
+        extra_kwargs = {
+            "search_string": {"required": True},
+        }
 
     def validate(self, data):
 
@@ -56,32 +59,45 @@ class SearchSerializer(serializers.ModelSerializer):
         if data["search_type"] != constants.SearchType.IMPORT:
             raise serializers.ValidationError("API currently only supports imports")
 
-        if data["source"] != constants.ReferenceDatabase.HERO:
-            raise serializers.ValidationError("API currently only supports HERO imports")
-
-        if data["search_type"] == constants.SearchType.IMPORT:
-            ids = forms.ImportForm.validate_import_search_string(data["search_string"])
-            self.validate_import_ids_exist(data, ids)
+        ids = forms.ImportForm.validate_import_search_string(data["search_string"])
+        self.validate_import_ids_exist(data, ids)
 
         return data
 
     def validate_import_ids_exist(self, data, ids: List[int]):
-        if data["source"] == constants.ReferenceDatabase.HERO:
-            _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
-            self._import_data = dict(ids=ids, content=content)
-        else:
-            raise NotImplementedError()
+        try:
+            if data["source"] == constants.ReferenceDatabase.HERO:
+                content = models.Identifiers.objects.validate_hero_ids(ids)
+                self._import_data = dict(ids=ids, content=content)
+            elif data["source"] == constants.ReferenceDatabase.PUBMED:
+                content = models.Identifiers.objects.validate_pubmed_ids(ids)
+                self._import_data = dict(ids=ids, content=content)
+            else:
+                raise serializers.ValidationError("API currently only supports PubMed/HERO imports")
+        except ValidationError as err:
+            raise serializers.ValidationError(err.message)
 
     @transaction.atomic
     def create(self, validated_data):
         # create search object
         search = models.Search.objects.create(**validated_data)
-        # create missing identifiers from import
-        models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
-        # get hero identifiers
-        identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
-        # get or create  reference objects from identifiers
-        models.Reference.objects.get_hero_references(search, identifiers)
+
+        # create identifiers/references
+        if validated_data["source"] == constants.ReferenceDatabase.HERO:
+            # create missing identifiers from import
+            models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
+            # get hero identifiers
+            identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
+            # get or create reference objects from identifiers
+            models.Reference.objects.get_hero_references(search, identifiers)
+        elif validated_data["source"] == constants.ReferenceDatabase.PUBMED:
+            # create missing identifiers from import
+            models.Identifiers.objects.bulk_create_pubmed_ids(self._import_data["content"])
+            # get pubmed identifiers
+            identifiers = models.Identifiers.objects.pubmed(self._import_data["ids"])
+            # get or create reference objects from identifiers
+            models.Reference.objects.get_pubmed_references(search, identifiers)
+
         return search
 
 
@@ -99,7 +115,7 @@ class IdentifiersSerializer(serializers.ModelSerializer):
 
 class ReferenceQuerySerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False, allow_null=True)
-    db_id = serializers.IntegerField(required=False, allow_null=True)
+    db_id = serializers.CharField(required=False, allow_blank=True)
     year = serializers.IntegerField(required=False, allow_null=True)
     title = serializers.CharField(required=False, allow_blank=True)
     authors = serializers.CharField(required=False, allow_blank=True)
@@ -127,8 +143,8 @@ class ReferenceQuerySerializer(serializers.Serializer):
         query = Q()
         if "id" in self.data and self.data["id"] is not None:
             query &= Q(id=self.data["id"])
-        if "db_id" in self.data and self.data["db_id"] is not None:
-            query &= Q(identifiers__unique_id=self.data["db_id"])
+        if db_id := self.data.get("db_id", ""):
+            query &= Q(identifiers__unique_id__icontains=db_id)
         if "year" in self.data and self.data["year"] is not None:
             query &= Q(year=self.data["year"])
         if "title" in self.data:
@@ -234,7 +250,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
     def validate_csv(self, value):
         try:
-            df = pd.read_csv(StringIO(value))
+            df = pd.read_csv(StringIO(value)).drop_duplicates()
         except pd.errors.ParserError:
             raise serializers.ValidationError("CSV could not be parsed")
         except pd.errors.EmptyDataError:
@@ -281,15 +297,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if missing:
             raise serializers.ValidationError(f"Reference(s) not found: {missing}")
 
-        # check to make sure we have no duplicates
-        df_nrows = df.shape[0]
-        df = df.drop_duplicates()
-        if df.shape[0] != df_nrows:
-            raise serializers.ValidationError(
-                "CSV contained duplicates; please remove before importing"
-            )
-
-        # success! save dataframe
+        # success! cache dataframe
         self.assessment = self.context["assessment"]
         self.df = df
 
@@ -439,17 +447,15 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         # make sure all HERO IDs are valid; and save response from HERO if needed
         try:
-            _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
-                self.hero_ids
-            )
-        except django.core.exceptions.ValidationError as err:
+            self.fetched_content = models.Identifiers.objects.validate_hero_ids(self.hero_ids)
+        except ValidationError as err:
             raise serializers.ValidationError(err.args[0])
 
         return replace
 
     def execute(self) -> ResultBase:
 
-        # import missing identifers
+        # import missing identifiers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
 
         # set hero ref

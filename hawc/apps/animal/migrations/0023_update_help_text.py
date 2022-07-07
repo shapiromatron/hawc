@@ -17,7 +17,9 @@ class Migration(migrations.Migration):
             model_name="animalgroup",
             name="animal_source",
             field=models.CharField(
-                blank=True, help_text="Source from where animals were acquired", max_length=128,
+                blank=True,
+                help_text="Source from where animals were acquired",
+                max_length=128,
             ),
         ),
         migrations.AlterField(

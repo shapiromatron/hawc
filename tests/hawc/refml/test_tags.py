@@ -6,7 +6,7 @@ from hawc.refml import tags
 
 @pytest.mark.django_db
 def test_build_tree_node_dict(db_keys):
-    tree = models.ReferenceFilterTag.get_all_tags(db_keys.assessment_final, json_encode=False)
+    tree = models.ReferenceFilterTag.get_all_tags(db_keys.assessment_final)
     node_dict = tags.build_tree_node_dict(tree)
 
     root = models.ReferenceFilterTag.get_assessment_root(db_keys.assessment_final)
@@ -18,7 +18,7 @@ def test_build_tree_node_dict(db_keys):
 
 @pytest.mark.django_db
 def test_create_df(db_keys):
-    tree = models.ReferenceFilterTag.get_all_tags(db_keys.assessment_final, json_encode=False)
+    tree = models.ReferenceFilterTag.get_all_tags(db_keys.assessment_final)
     tag_qs = models.ReferenceTags.objects.assessment_qs(db_keys.assessment_final)
 
     node_dict = tags.build_tree_node_dict(tree)

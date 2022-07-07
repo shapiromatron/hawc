@@ -21,7 +21,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
                 (
@@ -47,7 +50,10 @@ class Migration(migrations.Migration):
                         verbose_name="Central estimate type",
                     ),
                 ),
-                ("variance", models.FloatField(blank=True, null=True, verbose_name="Variance"),),
+                (
+                    "variance",
+                    models.FloatField(blank=True, null=True, verbose_name="Variance"),
+                ),
                 (
                     "variance_type",
                     models.PositiveSmallIntegerField(
@@ -65,13 +71,19 @@ class Migration(migrations.Migration):
                 (
                     "lower_ci",
                     models.FloatField(
-                        blank=True, help_text="Numerical value", null=True, verbose_name="Lower CI",
+                        blank=True,
+                        help_text="Numerical value",
+                        null=True,
+                        verbose_name="Lower CI",
                     ),
                 ),
                 (
                     "upper_ci",
                     models.FloatField(
-                        blank=True, help_text="Numerical value", null=True, verbose_name="Upper CI",
+                        blank=True,
+                        help_text="Numerical value",
+                        null=True,
+                        verbose_name="Upper CI",
                     ),
                 ),
                 (
@@ -249,7 +261,8 @@ class Migration(migrations.Migration):
             model_name="group",
             name="comments",
             field=models.TextField(
-                blank=True, help_text="Provide additional group or extraction details if necessary",
+                blank=True,
+                help_text="Provide additional group or extraction details if necessary",
             ),
         ),
         migrations.AlterField(
@@ -313,7 +326,10 @@ class Migration(migrations.Migration):
             model_name="group",
             name="participant_n",
             field=models.PositiveIntegerField(
-                blank=True, help_text="Ex. 1400", null=True, verbose_name="Participant N",
+                blank=True,
+                help_text="Ex. 1400",
+                null=True,
+                verbose_name="Participant N",
             ),
         ),
         migrations.AlterField(
@@ -505,7 +521,9 @@ class Migration(migrations.Migration):
             model_name="outcome",
             name="system",
             field=models.CharField(
-                blank=True, help_text="Primary biological system affected", max_length=128,
+                blank=True,
+                help_text="Primary biological system affected",
+                max_length=128,
             ),
         ),
         migrations.AlterField(
@@ -556,7 +574,8 @@ class Migration(migrations.Migration):
             model_name="result",
             name="dose_response_details",
             field=models.TextField(
-                blank=True, help_text="<span class='help-text-notes optional'>Optional</span>",
+                blank=True,
+                help_text="<span class='help-text-notes optional'>Optional</span>",
             ),
         ),
         migrations.AlterField(
@@ -611,7 +630,10 @@ class Migration(migrations.Migration):
                 choices=[
                     (0, "not reported or calculated"),
                     (1, "appears to be adequately powered (sample size met)"),
-                    (2, "somewhat underpowered (sample size is 75% to <100% of recommended)",),
+                    (
+                        2,
+                        "somewhat underpowered (sample size is 75% to <100% of recommended)",
+                    ),
                     (3, "underpowered (sample size is 50 to <75% required)"),
                     (4, "severely underpowered (sample size is <50% required)"),
                 ],
@@ -623,14 +645,16 @@ class Migration(migrations.Migration):
             model_name="result",
             name="statistical_power_details",
             field=models.TextField(
-                blank=True, help_text="<span class='help-text-notes optional'>Optional</span>",
+                blank=True,
+                help_text="<span class='help-text-notes optional'>Optional</span>",
             ),
         ),
         migrations.AlterField(
             model_name="result",
             name="statistical_test_results",
             field=models.TextField(
-                blank=True, help_text="<span class='help-text-notes optional'>Optional</span>",
+                blank=True,
+                help_text="<span class='help-text-notes optional'>Optional</span>",
             ),
         ),
         migrations.AlterField(

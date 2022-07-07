@@ -1,0 +1,3 @@
+const EXPOSURE_BIOMONITORING = "Biomonitoring";
+
+export {EXPOSURE_BIOMONITORING};

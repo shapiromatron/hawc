@@ -144,10 +144,12 @@ class MetaResult(models.Model):
     estimate = models.FloatField()
     heterogeneity = models.CharField(max_length=256, blank=True)
     lower_ci = models.FloatField(
-        verbose_name="Lower CI", help_text="Numerical value for lower-confidence interval",
+        verbose_name="Lower CI",
+        help_text="Numerical value for lower-confidence interval",
     )
     upper_ci = models.FloatField(
-        verbose_name="Upper CI", help_text="Numerical value for upper-confidence interval",
+        verbose_name="Upper CI",
+        help_text="Numerical value for upper-confidence interval",
     )
     ci_units = models.FloatField(
         blank=True,
@@ -310,7 +312,8 @@ class MetaResult(models.Model):
             )
             for pro in study["protocols"]:
                 pro["results"] = sorted(
-                    list(pro["results"].values()), key=lambda obj: (obj["label"].lower()),
+                    list(pro["results"].values()),
+                    key=lambda obj: (obj["label"].lower()),
                 )
                 pro["statistical_methods"] = list(pro["statistical_methods"].values())
                 for obj in pro["statistical_methods"]:
@@ -359,7 +362,9 @@ class SingleResult(models.Model):
         "each result (leave-blank for pooled analyses)",
     )
     n = models.PositiveIntegerField(
-        blank=True, null=True, help_text="Enter the number of observations for this result",
+        blank=True,
+        null=True,
+        help_text="Enter the number of observations for this result",
     )
     estimate = models.FloatField(
         blank=True,

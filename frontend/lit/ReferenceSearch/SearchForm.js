@@ -26,15 +26,12 @@ class SearchForm extends Component {
                         />
                     </div>
                     <div className="form-group col-lg-3">
-                        <IntegerInput
-                            minimum={1}
+                        <TextInput
                             name="id_db"
                             label="External identifier"
-                            helpText="Pubmed ID, HERO ID, etc."
+                            helpText="Pubmed ID, DOI, HERO ID, etc."
                             value={searchForm.db_id}
-                            onChange={e =>
-                                changeSearchTerm("db_id", parseInt(e.target.value) || "")
-                            }
+                            onChange={e => changeSearchTerm("db_id", e.target.value)}
                         />
                     </div>
                     <div className="form-group col-lg-3">

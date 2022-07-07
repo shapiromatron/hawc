@@ -103,3 +103,11 @@ def test_read_excel():
     )
     df = helper.read_excel(iris_xlsx_fn)
     assert not df.empty
+
+
+def test_int_or_float():
+    assert helper.int_or_float(0.0) == 0
+    assert helper.int_or_float(1.0) == 1
+    assert helper.int_or_float(3.14) == 3.14
+    assert helper.int_or_float(1.00001) == 1.00001
+    assert helper.int_or_float(123456.0) == 123456

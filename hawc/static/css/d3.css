@@ -16,7 +16,7 @@ svg {
     line-height: 20px;
 }
 
-.options_menu {
+.optionsMenu {
     background-color: #eee;
     border: thin solid black;
     height: 42px; /* btn-sm are about 30px tall */

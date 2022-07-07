@@ -46,7 +46,8 @@ def change_num_dg(sender, instance, **kwargs):
 
     # get endpoints associated with this dosing-regime
     endpoints = models.Endpoint.objects.filter(
-        animal_group__dosing_regime=instance, data_extracted=True,
+        animal_group__dosing_regime=instance,
+        data_extracted=True,
     )
 
     # no changes required if we have no endpoints

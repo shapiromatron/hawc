@@ -4,10 +4,11 @@ from django.db import migrations, models
 
 def set_dose_units(apps, schema_editor):
     SelectedModel = apps.get_model("bmd", "selectedmodel")
+    Session = apps.get_model("bmd", "session")
     updates = []
     for sm in SelectedModel.objects.all():
         if sm.model is None:
-            sess = SelectedModel.objects.filter(endpoint_id=sm.endpoint_id).latest()
+            sess = Session.objects.filter(endpoint_id=sm.endpoint_id).latest()
         else:
             sess = sm.model.session
         sm.dose_units_id = sess.dose_units_id
@@ -45,7 +46,8 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterUniqueTogether(
-            name="selectedmodel", unique_together={("endpoint", "dose_units")},
+            name="selectedmodel",
+            unique_together={("endpoint", "dose_units")},
         ),
         migrations.RunPython(set_dose_units, migrations.RunPython.noop),
     ]

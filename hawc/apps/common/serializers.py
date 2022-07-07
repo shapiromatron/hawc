@@ -253,35 +253,35 @@ class IdLookupMixin:
 
 class GetOrCreateMixin:
     """
-    Class to be mixed into serializers which combines get/create functionality
+     Class to be mixed into serializers which combines get/create functionality
 
-   This mixin:
-    1. disables any UniqueTogetherValidators
-    2. overrides create to actually call get_or_create
+    This mixin:
+     1. disables any UniqueTogetherValidators
+     2. overrides create to actually call get_or_create
 
-    The end result is a serializer mixing this in can either lookup or create
-    an element, so that clients can pass the same payload multiple times and get back
-    consistent results (idempotency, more or less).
+     The end result is a serializer mixing this in can either lookup or create
+     an element, so that clients can pass the same payload multiple times and get back
+     consistent results (idempotency, more or less).
 
-    To elaborate, as a use case consider a model like epi.models.Criteria;
-    this contains a unique_together meta restriction on the "assessment"
-    and "description" fields. Or in other words, in the database
-    assessment+description are guaranteed to be unique.
+     To elaborate, as a use case consider a model like epi.models.Criteria;
+     this contains a unique_together meta restriction on the "assessment"
+     and "description" fields. Or in other words, in the database
+     assessment+description are guaranteed to be unique.
 
-    We want to build an API able to support something like a POST
-    { "assessment": 1, "description": "foo" }
-    to the endpoint defined for this. A normal serializer will complain
-    if a criteria with that description already exists, due to the
-    UniqueTogetherValidator firing. If instead we mix this class into
-    the appropriate serializer, we can code things such that the first call
-    will create a criteria with description "foo", and the second
-    call will just fetch the existing one. This makes client construction
-    just a little more straightforward -- rather than having to
-    lookup/check/create-if-needed, clients can just hit one endpoint and
-    get back the same object id every time.
+     We want to build an API able to support something like a POST
+     { "assessment": 1, "description": "foo" }
+     to the endpoint defined for this. A normal serializer will complain
+     if a criteria with that description already exists, due to the
+     UniqueTogetherValidator firing. If instead we mix this class into
+     the appropriate serializer, we can code things such that the first call
+     will create a criteria with description "foo", and the second
+     call will just fetch the existing one. This makes client construction
+     just a little more straightforward -- rather than having to
+     lookup/check/create-if-needed, clients can just hit one endpoint and
+     get back the same object id every time.
 
-    Basic approach taken from https://stackoverflow.com/questions/25026034/
-   """
+     Basic approach taken from https://stackoverflow.com/questions/25026034/
+    """
 
     def run_validators(self, value):
         for validator in self.validators:
@@ -292,6 +292,54 @@ class GetOrCreateMixin:
     def create(self, validated_data, *args, **kwargs):
         instance, created = self.Meta.model.objects.get_or_create(**validated_data)
         return instance
+
+
+class FlexibleFieldsMixin:
+    """
+    Allows manipulation of fields on serializer instances.
+    This mixin is primarily meant for serailization and not deserialization.
+
+    Constructor kwargs:
+        fields (List[str]): allowlist of field names to include in serializer
+        field_prefix (str): prefix to add to all field names
+        field_renames (Dict): mapping of old field names to new field names
+    """
+
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop("fields", None)
+        field_prefix = kwargs.pop("field_prefix", "")
+        field_renames = kwargs.pop("field_renames", {})
+
+        super().__init__(*args, **kwargs)
+
+        if fields is not None:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
+        if not field_prefix and not field_renames:
+            # If nothing else needs to be done, return
+            return
+
+        # 'fields' is a BindingDict, which has an underlying OrderedDict.
+        # any changes require it to be rebuilt to maintain its order.
+        for field_name in list(self.fields):
+            if field_name in field_renames:
+                # handle renames
+                new_field_name = field_renames[field_name]
+                if field_name == new_field_name:
+                    # special case; assign on the underlying OrderedDict to avoid error on BindingDict __setitem__
+                    self.fields.fields[field_name] = self.fields.pop(field_name)
+                else:
+                    self.fields[new_field_name] = self.fields.pop(field_name)
+            elif field_prefix:
+                # handle prefixes
+                self.fields[field_prefix + field_name] = self.fields.pop(field_name)
+            else:
+                # handle case of no rename or prefix
+                self.fields.fields[field_name] = self.fields.pop(field_name)
 
 
 class BulkSerializer(serializers.ListSerializer):

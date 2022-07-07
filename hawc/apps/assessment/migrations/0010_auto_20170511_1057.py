@@ -12,6 +12,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="reporttemplate", name="assessment",),
-        migrations.DeleteModel(name="ReportTemplate",),
+        migrations.RemoveField(
+            model_name="reporttemplate",
+            name="assessment",
+        ),
+        migrations.DeleteModel(
+            name="ReportTemplate",
+        ),
     ]

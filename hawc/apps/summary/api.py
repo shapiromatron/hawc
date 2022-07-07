@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, viewsets
 from rest_framework.decorators import action
@@ -15,7 +17,7 @@ from ..assessment.models import Assessment
 from ..common.helper import re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import models, serializers
+from . import models, serializers, table_serializers
 
 
 class UnpublishedFilter(BaseFilterBackend):
@@ -125,9 +127,25 @@ class SummaryTableViewset(AssessmentEditViewset):
     model = models.SummaryTable
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
     serializer_class = serializers.SummaryTableSerializer
+    list_actions = ["list", "data"]
 
     @action(detail=True, renderer_classes=(DocxRenderer,))
     def docx(self, request, pk):
         obj = self.get_object()
         report = obj.to_docx(base_url=request._current_scheme_host)
         return Response(report)
+
+    @action(detail=False)
+    def data(self, request):
+        ser = table_serializers.SummaryTableDataSerializer(
+            data=request.query_params.dict(), context=self.get_serializer_context()
+        )
+        ser.is_valid(raise_exception=True)
+        # get cached value
+        cache_key = f"assessment-{self.assessment.id}-summary-table-{ser.cache_key}"
+        data = cache.get(cache_key)
+        if data is None:
+            # if cached value does not exist, get the data and set the cache
+            data = ser.get_data()
+            cache.set(cache_key, data, settings.CACHE_1_HR)
+        return Response(data)

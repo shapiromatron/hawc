@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from taggit.managers import TaggableManager
 
 from ..epi.models import Country
 from ..study.models import Study
@@ -37,8 +38,8 @@ class Vocab(models.Model):
             return self.value
 
 
-class Metadata(models.Model):
-    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="eco_metadata")
+class Design(models.Model):
+    study = models.ForeignKey(Study, on_delete=models.CASCADE)
     design = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.TYPE},
@@ -53,7 +54,11 @@ class Metadata(models.Model):
         help_text="Select the setting in which evidence was generated",
         related_name="+",
     )
-    country = models.ManyToManyField(Country, help_text="Select one or more countries")
+    countries = models.ManyToManyField(
+        Country,
+        help_text="Select one or more countries",
+        related_name="eco_designs",
+    )
     state = models.ManyToManyField(
         State, blank=True, help_text="Select one or more states, if applicable."
     )
@@ -74,7 +79,7 @@ class Metadata(models.Model):
     habitat_as_reported = models.TextField(
         verbose_name="Habitat as reported",
         blank=True,
-        help_text="Copy and paste 1-2 sentences from article",
+        help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
     climate = models.ManyToManyField(
         Vocab,
@@ -83,17 +88,19 @@ class Metadata(models.Model):
         related_name="+",
     )
     climate_as_reported = models.TextField(
-        verbose_name="Climate as reported", blank=True, help_text="Copy and paste from article",
+        verbose_name="Climate as reported",
+        blank=True,
+        help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Ecological metadata"
-        verbose_name_plural = "Ecological metadata"
+        verbose_name = "Ecological Design"
+        verbose_name_plural = "Ecological Designs"
 
     def __str__(self):
-        return f"{self.study} - ecological metadata"
+        return f"{self.study} - ecological design"
 
 
 class Cause(models.Model):
@@ -128,23 +135,52 @@ class Cause(models.Model):
         on_delete=models.CASCADE,
     )
     species = models.CharField(
-        verbose_name="Cause species",
+        verbose_name="Cause/treatment species",
         max_length=100,
         blank=True,
         help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
-    trajectory = models.IntegerField(
-        choices=ChangeTrajectory.choices,
-        verbose_name="Cause trajectory",
-        help_text="Select qualitative description of how the cause measure changes, if applicable",
+    level = models.CharField(
+        verbose_name="Cause/treatment level",
+        max_length=128,
+        help_text="Describe the specific treatment/exposure/dose level or range of levels of the cause measure",
+    )
+    level_value = models.FloatField(
+        verbose_name="Cause/treatment value",
+        blank=True,
+        null=True,
+        help_text="Type the the specific treatment/exposure/dose level (if applicable)",
+    )
+    level_units = models.CharField(
+        verbose_name="Cause/treatment level units",
+        max_length=100,
+        help_text="Type the units associated with the cause value term",
+    )
+    duration = models.CharField(
+        verbose_name="Cause/treatment duration",
+        max_length=100,
+        help_text="Describe the duration or range of durations of the treatment/exposure",
+    )
+    duration_value = models.FloatField(
+        verbose_name="Cause/treatment duration value",
+        blank=True,
+        null=True,
+        help_text="Type the numeric value of the specific duration of the treatment/exposure",
+    )
+    duration_units = models.CharField(
+        verbose_name="Cause/treatment duration units",
+        max_length=100,
+        blank=True,
+        help_text="Type the unit associated with the cause duration term. Autocomplete.",
     )
     comment = models.TextField(
-        verbose_name="Cause comment",
+        verbose_name="Cause/treatment comment",
         blank=True,
         help_text="Type any other useful information not captured in other fields",
     )
     as_reported = models.TextField(
-        verbose_name="Cause as reported", help_text="Copy and paste 1-2 sentences from article",
+        verbose_name="Cause/treatment as reported",
+        help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -157,7 +193,7 @@ class Cause(models.Model):
 
 
 class Effect(models.Model):
-    cause = models.OneToOneField(Cause, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
         Vocab,
         verbose_name="Effect term",
@@ -184,6 +220,12 @@ class Effect(models.Model):
         max_length=100,
         help_text="Type the unit associated with the effect term. autocomplete?",
     )
+    species = models.CharField(
+        verbose_name="Effect species",
+        max_length=100,
+        blank=True,
+        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
+    )
     bio_org = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.BIO_ORG},
@@ -194,30 +236,18 @@ class Effect(models.Model):
         on_delete=models.CASCADE,
         related_name="+",
     )
-    species = models.CharField(
-        verbose_name="Effect species",
-        max_length=100,
-        blank=True,
-        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
-    )
-    trajectory = models.IntegerField(
-        choices=ChangeTrajectory.choices,
-        verbose_name="Effect trajectory",
-        help_text="Select qualitative description of how the effect measure changes in response to the cause trajectory, if applicable",
-    )
     comment = models.TextField(
         verbose_name="Effect comment",
         blank=True,
         help_text="Type any other useful information not captured in other fields",
     )
     as_reported = models.TextField(
-        verbose_name="Effect as reported", help_text="Copy and paste 1-2 sentences from article",
+        verbose_name="Effect as reported",
+        help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
-    modifying_factors = models.CharField(
+    modifying_factors = TaggableManager(
         verbose_name="Modifying factors",
-        max_length=256,
-        blank=True,
-        help_text="Comma-separated list of one or more factors that affect the relationship between the cause and effect. Autocomplete/tags?",
+        help_text="Type a comma-separated list of any modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -226,29 +256,33 @@ class Effect(models.Model):
         verbose_name = "Effect/Response"
 
     def __str__(self):
-        return f"{self.cause.study} | {self.term.value}"
+        return f"{self.study} | {self.term.value}"
 
 
-class Quantitative(models.Model):
-    effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
+class Result(models.Model):
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="eco_results")
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="results")
+    cause = models.ForeignKey(Cause, on_delete=models.CASCADE, related_name="results")
+    effect = models.ForeignKey(Effect, on_delete=models.CASCADE, related_name="results")
     sort_order = models.PositiveSmallIntegerField(
-        verbose_name="Sort order", help_text="Sort order of a multiple responses", default=0,
+        verbose_name="Sort order",
+        help_text="Sort order of a multiple responses",
+        default=0,
     )
-    cause_level = models.CharField(
-        verbose_name="Treatment level",
-        max_length=128,
-        help_text="Type the specific treatment/exposure/dose level of the cause measure",
+    relationship_direction = models.IntegerField(
+        choices=ChangeTrajectory.choices,
+        verbose_name="Direction of relationship",
+        help_text="Select the direction of the relationship between selected cause and effect",
     )
-    cause_level_value = models.FloatField(
-        verbose_name="Treatment value",
+    relationship_comment = models.TextField(
+        verbose_name="Relationship comment",
         blank=True,
-        null=True,
-        help_text="Type the numeric value of the specific treatment/exposure/dose level of the cause measure",
+        help_text="Describe the relationship in 1-2 sentences",
     )
-    cause_level_units = models.CharField(
-        verbose_name="Treatment units",
-        max_length=100,
-        help_text="Enter the units of the specific treatment/exposure/dose level of the cause measure",
+    modifying_factors_comment = models.TextField(
+        verbose_name="Modifying factors comment",
+        blank=True,
+        help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
     )
     sample_size = models.IntegerField(
         verbose_name="Sample size",
@@ -273,7 +307,7 @@ class Quantitative(models.Model):
     description = models.TextField(
         verbose_name="Response measure description",
         blank=True,
-        help_text="Type any other useful information not captured in other fields",
+        help_text="Describe any other useful information about the response measure not captured in other fields",
     )
     variability = models.ForeignKey(
         Vocab,
@@ -319,18 +353,16 @@ class Quantitative(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Quantitative response"
-        verbose_name_plural = "Quantitative responses"
+        verbose_name = "Result"
+        verbose_name_plural = "Results"
         unique_together = (("effect", "sort_order"),)
         ordering = ("effect", "sort_order")
 
     def __str__(self):
         if self.measure_type:
-            return (
-                f"{self.effect.cause.study} | {self.effect.term.value} | {self.measure_type.value}"
-            )
+            return f"{self.study} | {self.cause.term.value} |{self.effect.term.value} | {self.measure_type.value}"
         else:
-            return f"{self.effect.cause.study} | {self.effect.term.value}"
+            return f"{self.study} | {self.cause.term.value} | {self.effect.term.value}"
 
     def default_related(self):
         return {

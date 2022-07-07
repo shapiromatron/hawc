@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 from datetime import datetime
@@ -8,7 +7,7 @@ from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
-from hawc.constants import AuthProvider
+from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
@@ -38,9 +37,13 @@ MANAGERS = ADMINS
 
 # add randomness to url prefix to prevent easy access
 ADMIN_URL_PREFIX = os.getenv("ADMIN_URL_PREFIX", "f09ea0b8-c3d5-4ff9-86c4-27f00e8f643d")
+ADMIN_ROOT = os.environ.get("ADMIN_ROOT", "")
 
 # {PRIME, EPA}
 HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
+
+# Feature flags
+HAWC_FEATURES = FeatureFlags.from_env("HAWC_FEATURE_FLAGS")
 
 # Template processors
 TEMPLATES = [
@@ -93,6 +96,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.humanize",
     "django.contrib.postgres",
+    "django_filters",
     # External apps
     "rest_framework",
     "rest_framework.authtoken",
@@ -117,10 +121,12 @@ INSTALLED_APPS = (
     "hawc.apps.bmd",
     "hawc.apps.summary",
     "hawc.apps.mgmt",
+    "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
+    "hawc.apps.epiv2",
 )
 
-if os.getenv("HAWC_INCLUDE_ECO", "False") == "True":
+if HAWC_FEATURES.ENABLE_ECO:
     INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
 
 
@@ -157,7 +163,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.getenv("DJANGO_CACHE_LOCATION"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-        "TIMEOUT": None,
+        "TIMEOUT": 60 * 60 * 24 * 10,  # 10 days
     }
 }
 CACHE_1_HR = 60 * 60
@@ -204,10 +210,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
 
-
-# Phantom JS settings
-PHANTOMJS_ENV = json.loads(os.getenv("PHANTOMJS_ENV", "{}"))
-PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH", "phantomjs")
 
 # Logging configuration
 LOGGING = {
@@ -333,9 +335,6 @@ PM_CAN_MAKE_PUBLIC = True
 
 # are users required to accept a license
 ACCEPT_LICENSE_REQUIRED = True
-
-# add extra branding (EPA flavor only)
-EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
 

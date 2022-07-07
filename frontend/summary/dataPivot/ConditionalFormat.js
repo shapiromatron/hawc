@@ -6,7 +6,7 @@ import HAWCModal from "shared/utils/HAWCModal";
 
 import DataPivot from "./DataPivot";
 import DataPivotVisualization from "./DataPivotVisualization";
-import {NULL_CASE} from "./shared";
+import {NULL_CASE, buildStyleMap} from "./shared";
 
 class _DataPivot_settings_conditionalFormat {
     constructor(parent, data, settings) {
@@ -284,23 +284,23 @@ class _DataPivot_settings_conditional {
                 vals = DataPivot.getRowDetails(arr);
 
             if (conditionType.val() === "discrete-style") {
-                // make map of current values
-                var hash = new Map();
-                values.discrete_styles.forEach(v => hash.set(v.key, v.style));
-
-                vals.unique.forEach(function(v) {
-                    var style = dp.style_manager
-                        .add_select(parent.settings.type, hash.get(v), true)
-                        .data("key", v);
-                    self.discrete_styles.push(style);
-                    add_input_row(discrete, `Style for <kbd>${v}</kbd>:`, style);
-                });
-
-                if (vals.unique.length === 0) {
+                // exit early if there are no tokens
+                if (vals.unique_tokens.length === 0) {
                     discrete.append(
                         "<p><i>The selected condition field contains no non-null values. Please select another field.</i></p>"
                     );
+                    return;
                 }
+
+                // build rows for all unique items; tokens must be a string
+                let mapping = buildStyleMap(values);
+                vals.unique_tokens.forEach(v => {
+                    var select = dp.style_manager
+                        .add_select(parent.settings.type, mapping.get(v), true)
+                        .data("key", v);
+                    self.discrete_styles.push(select);
+                    add_input_row(discrete, `Style for <kbd>${v}</kbd>:`, select);
+                });
             } else {
                 var txt = `Selected items in <i>${fieldName.val()}</i> `;
                 if (vals.range) {

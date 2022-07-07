@@ -1,7 +1,7 @@
 {% load static %}
 
 {% block navbar_outer %}
-{% if extra_branding and flavor == "EPA" %}
+{% if flavor == "EPA" %}
 <nav class="navbar hawc-header justify-content-between">
     <h2>
         <a href="{% url 'home' %}">Health Assessment Workspace Collaborative (HAWC)</a>
@@ -17,7 +17,7 @@
 {% else %}
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
     <a class="ml-3 navbar-brand" href="{% url 'home' %}">
-        <img alt="The website logo" src="{% static 'img/HAWC-40.png' %}">
+        <img alt="The website logo" src="{% static 'img/HAWC-400.png' %}"  width="68" />
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

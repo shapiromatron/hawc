@@ -146,21 +146,20 @@ class AnimalGroupForm(ModelForm):
         # for lifestage assessed/exposed, use a select widget. Manually add in
         # previously saved values that don't conform to the lifestage choices
         lifestage_dict = dict(constants.Lifestage.choices)
-
         if self.instance.lifestage_exposed in lifestage_dict:
             le_choices = constants.Lifestage.choices
         else:
-            le_choices = (
+            le_choices = [
                 (self.instance.lifestage_exposed, self.instance.lifestage_exposed),
-            ) + constants.Lifestage.choices
+            ] + constants.Lifestage.choices
         self.fields["lifestage_exposed"].widget = forms.Select(choices=le_choices)
 
         if self.instance.lifestage_assessed in lifestage_dict:
             la_choices = constants.Lifestage.choices
         else:
-            la_choices = (
+            la_choices = [
                 (self.instance.lifestage_assessed, self.instance.lifestage_assessed),
-            ) + constants.Lifestage.choices
+            ] + constants.Lifestage.choices
         self.fields["lifestage_assessed"].widget = forms.Select(choices=la_choices)
 
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
@@ -350,7 +349,10 @@ def dosegroup_formset_factory(groups, num_dose_groups):
         data[f"form-{i}-dose"] = str(v.get("dose", ""))
 
     FS = modelformset_factory(
-        models.DoseGroup, form=DoseGroupForm, formset=BaseDoseGroupFormSet, extra=len(groups),
+        models.DoseGroup,
+        form=DoseGroupForm,
+        formset=BaseDoseGroupFormSet,
+        extra=len(groups),
     )
 
     return FS(data)
@@ -498,7 +500,8 @@ class EndpointForm(ModelForm):
                 widget.attrs["class"] = "form-control"
 
         helper.layout.insert(
-            helper.find_layout_idx_for_field_name("name"), cfl.Div(id="vocab"),
+            helper.find_layout_idx_for_field_name("name"),
+            cfl.Div(id="vocab"),
         )
         helper.add_row("name", 1, "col-md-12")
         helper.add_row("system", 4, "col-md-3")
@@ -685,7 +688,10 @@ class BaseEndpointGroupFormSet(BaseModelFormSet):
 
 
 EndpointGroupFormSet = modelformset_factory(
-    models.EndpointGroup, form=EndpointGroupForm, formset=BaseEndpointGroupFormSet, extra=0,
+    models.EndpointGroup,
+    form=EndpointGroupForm,
+    formset=BaseEndpointGroupFormSet,
+    extra=0,
 )
 
 
@@ -753,11 +759,17 @@ class EndpointFilterForm(forms.Form):
     )
 
     species = selectable.AutoCompleteSelectField(
-        label="Species", lookup_class=SpeciesLookup, help_text="ex: Mouse", required=False,
+        label="Species",
+        lookup_class=SpeciesLookup,
+        help_text="ex: Mouse",
+        required=False,
     )
 
     strain = selectable.AutoCompleteSelectField(
-        label="Strain", lookup_class=StrainLookup, help_text="ex: B6C3F1", required=False,
+        label="Strain",
+        lookup_class=StrainLookup,
+        help_text="ex: B6C3F1",
+        required=False,
     )
 
     sex = forms.MultipleChoiceField(
@@ -768,7 +780,9 @@ class EndpointFilterForm(forms.Form):
     )
 
     data_extracted = forms.ChoiceField(
-        choices=((True, "Yes"), (False, "No"), (None, "All data")), initial=None, required=False,
+        choices=((True, "Yes"), (False, "No"), (None, "All data")),
+        initial=None,
+        required=False,
     )
 
     name = forms.CharField(
@@ -815,7 +829,9 @@ class EndpointFilterForm(forms.Form):
 
     dose_units = forms.ModelChoiceField(queryset=DoseUnits.objects.all(), required=False)
 
-    order_by = forms.ChoiceField(choices=ORDER_BY_CHOICES,)
+    order_by = forms.ChoiceField(
+        choices=ORDER_BY_CHOICES,
+    )
 
     paginate_by = forms.IntegerField(
         label="Items per page", min_value=10, initial=25, max_value=500, required=False
@@ -828,7 +844,13 @@ class EndpointFilterForm(forms.Form):
 
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(assessment.id)
         for field in self.fields:
-            if field not in ("sex", "data_extracted", "dose_units", "order_by", "paginate_by",):
+            if field not in (
+                "sex",
+                "data_extracted",
+                "dose_units",
+                "order_by",
+                "paginate_by",
+            ):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
         for i, (k, v) in enumerate(self.fields["order_by"].choices):

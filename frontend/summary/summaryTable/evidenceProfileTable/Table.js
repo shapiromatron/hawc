@@ -85,6 +85,7 @@ class SummaryCell extends Component {
                     label="Susceptible populations and lifestages"
                     html={summary_judgement.susceptibility}
                 />
+                <TextBlock label="Other inferences" html={summary_judgement.other} />
             </td>
         );
     }

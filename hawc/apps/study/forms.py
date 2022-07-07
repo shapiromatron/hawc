@@ -5,6 +5,8 @@ from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, form_actions_apply_filters
+from ..lit.constants import ReferenceDatabase
+from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
 from . import models
 
@@ -144,6 +146,65 @@ class ReferenceStudyForm(BaseStudyForm):
             "cancel_url": reverse("study:list", args=[self.instance.assessment_id]),
         }
         return super().setHelper(inputs)
+
+
+class IdentifierStudyForm(forms.Form):
+    db_type = forms.ChoiceField(
+        label="Database",
+        required=True,
+        choices=ReferenceDatabase.import_choices(),
+    )
+    db_id = forms.CharField(label="Database ID", required=True)
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
+        self.assessment = kwargs.pop("parent")
+        super().__init__(*args, **kwargs)
+        inputs = {
+            "legend_text": "Create a new study from identifier",
+            "help_text": "Create a new study from a given database and ID.",
+            "cancel_url": reverse("study:list", args=[self.assessment.id]),
+        }
+        self.helper = BaseFormHelper(self, **inputs)
+        self.helper.add_row("db_type", 2, ["col-md-4", "col-md-8"])
+
+    def clean_db_type(self):
+        return ReferenceDatabase(int(self.cleaned_data["db_type"]))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # study with this identifier should not already exist
+        existing = models.Study.objects.filter(
+            assessment_id=self.assessment,
+            identifiers__database=cleaned_data["db_type"],
+            identifiers__unique_id=str(cleaned_data["db_id"]),
+        ).first()
+        if existing is not None:
+            raise forms.ValidationError({"db_id": f"Study already exists; see {existing}"})
+
+        # validate identifier; cache content if it doesn't yet exist
+        cleaned_data["identifier"], self._identifier_content = validate_external_id(
+            cleaned_data["db_type"], cleaned_data["db_id"]
+        )
+
+        return cleaned_data
+
+    def save(self):
+        cleaned_data = self.cleaned_data.copy()
+        db_type = cleaned_data.pop("db_type")
+        cleaned_data.pop("db_id")
+
+        if (ident := cleaned_data.pop("identifier")) is None:
+            ident = create_external_id(db_type, self._identifier_content)
+
+        if (
+            ref := Reference.objects.filter(assessment=self.assessment, identifiers=ident).first()
+        ) is None:
+            ref = ident.create_reference(self.assessment)
+            ref.save()
+            ref.identifiers.add(ident)
+
+        return models.Study.save_new_from_reference(ref, cleaned_data)
 
 
 class AttachmentForm(forms.ModelForm):

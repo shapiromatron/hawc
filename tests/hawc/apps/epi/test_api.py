@@ -7,18 +7,12 @@ from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 from rest_framework.test import APIClient
 
-from hawc.apps.assessment.models import Assessment, DoseUnits, Log
+from hawc.apps.assessment.models import Assessment, DoseUnits
 from hawc.apps.epi import constants, models
 
+from ..test_utils import check_details_of_last_log_entry
+
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
-
-
-def check_details_of_last_log_entry(obj_id: int, start_of_msg: str):
-    """
-    retrieve the latest log entry and check that the object_id/message look right.
-    """
-    log_entry = Log.objects.latest("id")
-    assert log_entry.object_id == int(obj_id) and log_entry.message.startswith(start_of_msg)
 
 
 @pytest.mark.django_db
@@ -945,6 +939,11 @@ class TestComparisonSetApi:
                 "expected_keys": {"study_population"},
                 "data": self.get_upload_data({"study_population": 999}),
             },
+            {
+                "desc": "cant have both study pop and outcome",
+                "expected_code": 400,
+                "data": self.get_upload_data({"outcome": generic_get_any(models.Outcome).id}),
+            },
         )
 
         generic_test_scenarios(client, url, scenarios)
@@ -984,12 +983,31 @@ class TestComparisonSetApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.ComparisonSet.objects.get(id=just_created_comparison_set_id)
 
+        NoExp = self.get_upload_data()
+        NoExp.pop("exposure")
+        NoExpOrSP = self.get_upload_data({"outcome": generic_get_any(models.Outcome).id})
+        NoExpOrSP.pop("exposure")
+        NoExpOrSP.pop("study_population")
         create_scenarios = (
             {
                 "desc": "basic comparison_set creation",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(),
+                "post_request_test": comparison_set_lookup_test,
+            },
+            {
+                "desc": "no exposure comparison_set creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": NoExp,
+                "post_request_test": comparison_set_lookup_test,
+            },
+            {
+                "desc": "comparison_set creation with outcome, no exposure or study pop",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": NoExpOrSP,
                 "post_request_test": comparison_set_lookup_test,
             },
         )
@@ -1562,7 +1580,7 @@ class TestMetadataApi:
         client = APIClient()
 
         # Public should NOT be able to view the version for private assessments
-        private_assessment = Assessment.objects.filter(public=False).first()
+        private_assessment = Assessment.objects.filter(public_on__isnull=True).first()
         assert private_assessment is not None
         url = reverse("epi:api:metadata-detail", args=(private_assessment.id,))
         resp = client.get(url)

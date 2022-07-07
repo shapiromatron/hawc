@@ -9,6 +9,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
+    {% if session_expire_time %}<meta name="session_expire_time" content="{{session_expire_time}}" />{% endif %}
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
 
     {% if GTM_ID %}
@@ -17,7 +18,7 @@
       <!-- End Google Tag Manager -->
     {% endif %}
 
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
       <link rel="shortcut icon" href="https://www.epa.gov/sites/all/themes/epa/favicon.ico" type="image/vnd.microsoft.icon" />
     {% else %}
       <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
@@ -33,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/jqueryui/1.10.3/css/jquery-ui.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/accordions.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/boxes.css' %}" />
@@ -45,8 +46,8 @@
     {% block extrastyle %}{% endblock %}
 
   </head>
-  <body class="html">
 
+  <body class="html">
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
       <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{GTM_ID}}" height="0" width="0"
@@ -59,7 +60,7 @@
     {% endif %}
 
     {% cache 3600 header %}
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
       {% include 'includes/epa/header.html' %}
     {% endif %}
     {% endcache %}
@@ -93,7 +94,7 @@
     {% endblock content_row_outer %}
 
     {% cache 3600 footer %}
-    {% if extra_branding and flavor == "EPA" %}
+    {% if flavor == "EPA" %}
       {% include "./includes/epa/footer.html" %}
     {% else %}
       {% include "./includes/base/footer.html" %}
@@ -104,6 +105,7 @@
     <script type="text/javascript" src="{% static 'vendor/popper.js/1.16.1/umd/popper.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.5.3/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/jqueryui/1.10.3/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/htmx/1.6.1/htmx.min.js' %}"></script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
   </body>

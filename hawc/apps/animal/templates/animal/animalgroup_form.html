@@ -62,7 +62,7 @@ $(document).ready(function() {
                         }
                     }
                 $.get(
-                    '{% url "assessment:get_strains" %}',
+                    '{% url "assessment:api:strain-list" %}',
                     {species: $('#id_species').val()},
                     update_strain_opts
                 );
@@ -150,6 +150,7 @@ $(document).ready(function() {
     {% if crud == "Create" %}
     dosingRegimeSetup();
     {% endif %}
+    $('#id_name').focus();
 });
 </script>
 {% endblock extrajs %}

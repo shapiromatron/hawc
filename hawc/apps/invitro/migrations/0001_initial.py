@@ -20,7 +20,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("benchmark", models.CharField(max_length=32)),
@@ -35,7 +38,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("species", models.CharField(max_length=64)),
@@ -75,14 +81,19 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("name", models.CharField(max_length=128)),
                 (
                     "cas",
                     models.CharField(
-                        max_length=40, verbose_name=b"Chemical identifier (CAS)", blank=True,
+                        max_length=40,
+                        verbose_name=b"Chemical identifier (CAS)",
+                        blank=True,
                     ),
                 ),
                 (
@@ -97,7 +108,10 @@ class Migration(migrations.Migration):
                     "cas_notes",
                     models.CharField(max_length=256, verbose_name=b"CAS determination notes"),
                 ),
-                ("source", models.CharField(max_length=128, verbose_name=b"Source of chemical"),),
+                (
+                    "source",
+                    models.CharField(max_length=128, verbose_name=b"Source of chemical"),
+                ),
                 (
                     "purity",
                     models.CharField(
@@ -205,7 +219,9 @@ class Migration(migrations.Migration):
                 (
                     "NOEL",
                     models.SmallIntegerField(
-                        default=-999, help_text=b"No observed effect level", verbose_name=b"NOEL",
+                        default=-999,
+                        help_text=b"No observed effect level",
+                        verbose_name=b"NOEL",
                     ),
                 ),
                 (
@@ -225,7 +241,10 @@ class Migration(migrations.Migration):
                             (1, b"N/A, no effects detected"),
                             (2, b"yes, visual appearance of monotonicity but no trend"),
                             (3, b"yes, monotonic and significant trend"),
-                            (4, b"yes, visual appearance of non-monotonic but no trend",),
+                            (
+                                4,
+                                b"yes, visual appearance of non-monotonic but no trend",
+                            ),
                             (5, b"yes, non-monotonic and significant trend"),
                             (6, b"no pattern"),
                             (7, b"unclear"),
@@ -281,7 +300,8 @@ class Migration(migrations.Migration):
                 (
                     "endpoint_notes",
                     models.TextField(
-                        help_text=b"Any additional notes regarding the endpoint itself", blank=True,
+                        help_text=b"Any additional notes regarding the endpoint itself",
+                        blank=True,
                     ),
                 ),
                 (
@@ -301,7 +321,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("path", models.CharField(unique=True, max_length=255)),
@@ -318,7 +341,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 ("dose_group_id", models.PositiveSmallIntegerField()),
@@ -407,7 +433,10 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
                     ),
                 ),
                 (

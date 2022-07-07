@@ -58,6 +58,7 @@ class SummaryJudgementCell(BaseCell):
     human_relevance: str
     cross_stream_coherence: str
     susceptibility: str
+    other: str
 
     hide_content: bool
 
@@ -65,12 +66,16 @@ class SummaryJudgementCell(BaseCell):
         if self.judgement == SummaryJudgementChoices.NoJudgement:
             return ""
         if self.judgement == SummaryJudgementChoices.Custom:
-            return tag_wrapper(self.custom_judgement_icon, "p",) + tag_wrapper(
-                self.custom_judgement_label, "p", "em"
-            )
+            return tag_wrapper(
+                self.custom_judgement_icon,
+                "p",
+            ) + tag_wrapper(self.custom_judgement_label, "p", "em")
         icon = SummaryJudgementTexts[self.judgement.name].value[0]
         label = SummaryJudgementTexts[self.judgement.name].value[1]
-        return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
+        return tag_wrapper(
+            icon,
+            "p",
+        ) + tag_wrapper(label, "p", "em")
 
     def to_docx(self, parser: QuillParser, block):
         text = ""
@@ -83,6 +88,8 @@ class SummaryJudgementCell(BaseCell):
         text += self.cross_stream_coherence
         text += tag_wrapper("\nSusceptible populations and lifestages:", "p", "em")
         text += self.susceptibility
+        text += tag_wrapper("\nOther inferences:", "p", "em")
+        text += self.other
         parser.feed(text, block)
         if self.judgement != SummaryJudgementChoices.NoJudgement:
             for paragraph in block.paragraphs[0:2]:
@@ -198,12 +205,16 @@ class JudgementCell(BaseCell):
         if self.judgement == JudgementChoices.NoJudgement:
             return ""
         if self.judgement == JudgementChoices.Custom:
-            return tag_wrapper(self.custom_judgement_icon, "p",) + tag_wrapper(
-                self.custom_judgement_label, "p", "em"
-            )
+            return tag_wrapper(
+                self.custom_judgement_icon,
+                "p",
+            ) + tag_wrapper(self.custom_judgement_label, "p", "em")
         icon = JudgementTexts[self.judgement.name].value[0]
         label = JudgementTexts[self.judgement.name].value[1]
-        return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
+        return tag_wrapper(
+            icon,
+            "p",
+        ) + tag_wrapper(label, "p", "em")
 
     def to_docx(self, parser: QuillParser, block):
         text = self.judgement_html() + self.description
@@ -320,7 +331,14 @@ class MechanisticGroup(BaseCellGroup):
         text3 = tag_wrapper("Judgment(s) and rationale", "p", "strong")
         return [
             GenericCell.parse_args(True, 1, 0, 1, 1, text1),
-            GenericCell.parse_args(True, 1, 1, 1, 3, text2,),
+            GenericCell.parse_args(
+                True,
+                1,
+                1,
+                1,
+                3,
+                text2,
+            ),
             GenericCell.parse_args(True, 1, 4, 1, 1, text3),
         ]
 
@@ -380,7 +398,7 @@ class EvidenceProfileTable(BaseTable):
         hide_evidence = self.exposed_human.hide_content and self.animal.hide_content
 
         if not (hide_evidence and self.mechanistic.hide_content):
-            text = tag_wrapper("Evidence Summary and Interpretation", "h1")
+            text = tag_wrapper("Evidence Summary and Interpretation", "h2")
             cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
         rows = 1
 
@@ -401,7 +419,7 @@ class EvidenceProfileTable(BaseTable):
             rows = self.mechanistic.rows
 
         if not self.summary_judgement.hide_content:
-            text = tag_wrapper("Inferences and Summary Judgment", "h1")
+            text = tag_wrapper("Inferences and Summary Judgment", "h2")
             if hide_evidence and self.mechanistic.hide_content:
                 cells.append(GenericCell.parse_args(True, 0, 0, 1, 1, text))
                 self.summary_judgement.row = 1
@@ -476,6 +494,7 @@ class EvidenceProfileTable(BaseTable):
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",
                 "susceptibility": "<p></p>",
+                "other": "<p></p>",
                 "hide_content": False,
             },
         }

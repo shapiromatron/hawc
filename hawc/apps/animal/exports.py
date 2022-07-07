@@ -196,7 +196,9 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         else:
             endpoint_ids = set(self.queryset.values_list("id", flat=True))
             self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
-                self.queryset.first().assessment_id, endpoint_ids, "animal",
+                self.queryset.first().assessment_id,
+                endpoint_ids,
+                "animal",
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()
@@ -300,7 +302,8 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 ser["animal_group"]["sex"],
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"].lower(),
                 get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
+                    ser["animal_group"]["experiment"],
+                    ser["animal_group"]["dosing_regime"],
                 ),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
                 ser["id"],
@@ -375,7 +378,9 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         else:
             endpoint_ids = set(self.queryset.values_list("id", flat=True))
             self.rob_headers, self.rob_data = FinalRiskOfBiasScore.get_dp_export(
-                self.queryset.first().assessment_id, endpoint_ids, "animal",
+                self.queryset.first().assessment_id,
+                endpoint_ids,
+                "animal",
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()
@@ -443,7 +448,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
     def _get_bmd_values(bmds, preferred_units):
         # only return BMD values if they're in the preferred units
         for bmd in bmds:
-            if bmd["dose_units_id"] in preferred_units:
+            # return first match
+            if bmd["dose_units_id"] in preferred_units and bmd["model"] is not None:
                 return [bmd["model"]["output"]["BMD"], bmd["model"]["output"]["BMDL"]]
         return [None, None]
 
@@ -521,7 +527,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 ser["animal_group"]["sex"],
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"].lower(),
                 get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
+                    ser["animal_group"]["experiment"],
+                    ser["animal_group"]["dosing_regime"],
                 ),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
                 ser["id"],
@@ -680,7 +687,8 @@ class EndpointSummary(FlatFileExporter):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"],
                 get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
+                    ser["animal_group"]["experiment"],
+                    ser["animal_group"]["dosing_regime"],
                 ),
                 ser["animal_group"]["species"],
                 ser["animal_group"]["strain"],
