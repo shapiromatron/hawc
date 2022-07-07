@@ -83,6 +83,10 @@ class Dashboard(View):
             {"form": form, "assessment": assessment, "fig": fig},
         )
 
+    def daily_changes(self, request: HttpRequest, *args, **kwargs):
+        data = methods.daily_changes()
+        return render(request, "admin/fragments/changes.html", data)
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class MediaPreview(TemplateView):
