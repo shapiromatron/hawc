@@ -201,6 +201,13 @@ On Mac/Linux; if you have tmux installed, there's a one-line command to start th
     # use the bundled dev `tmux` dev environment
     make dev
 
+On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short command to start the database
+
+.. code-block:: bash
+
+    # start postgres db (if pgdata folder is located in %HOMEPATH%\dev)
+    make startdb
+
 Visual Studio Code
 ------------------
 

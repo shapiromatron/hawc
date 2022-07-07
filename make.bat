@@ -37,7 +37,7 @@ echo.  format-py         modify python code using black and show flake8 issues
 echo.  lint-js           check for javascript formatting issues
 echo.  format-js         modify javascript code if possible using linters and formatters
 echo.  loc               generate lines of code report
-echo.  startdb           start postgres db
+echo.  startdb           start postgres db (if pgdata folder is located in %HOMEPATH%\dev)
 goto :eof
 
 :sync-dev
@@ -112,6 +112,6 @@ goto :eof
 cloc --exclude-dir=migrations,node_modules,public,private,vendor,venv --exclude-ext=json,yaml,svg,toml,ini --vcs=git --counted loc-files.txt .
 goto :eof
 
-:startdb  (start postgres database)
+:startdb
 pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 goto :eof
