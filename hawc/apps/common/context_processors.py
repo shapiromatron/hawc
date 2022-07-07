@@ -15,6 +15,7 @@ def from_settings(request):
     agent = request.headers.get("user-agent", "chrome")  # assume supported
     expire = request.session.get_expiry_date().isoformat() if request.user.is_authenticated else ""
     return dict(
+        ADMIN_ROOT=settings.ADMIN_ROOT,
         SERVER_ROLE=server_role,
         SERVER_BANNER_COLOR=getattr(settings, "SERVER_BANNER_COLOR", "black"),
         UA_SUPPORTED=is_supported_agent(agent),

@@ -5,6 +5,7 @@ from . import models
 
 @admin.register(models.Experiment)
 class ExperimentAdmin(admin.ModelAdmin):
+    raw_id_fields = ("study", "dtxsid")
     list_display = (
         "id",
         "study",
@@ -35,7 +36,7 @@ class AnimalGroupAdmin(admin.ModelAdmin):
     )
     list_filter = ("species", "strain", "sex", "experiment__study__assessment_id")
     search_fields = ("name",)
-    raw_id_fields = ("experiment", "species", "strain", "dosing_regime", "siblings")
+    raw_id_fields = ("experiment", "species", "strain", "parents", "dosing_regime", "siblings")
 
 
 class DoseGroupInline(admin.TabularInline):
@@ -61,6 +62,7 @@ class DosingRegimeAdmin(admin.ModelAdmin):
     )
     list_select_related = ("dosed_animals",)
     search_fields = ("dosed_animals__name",)
+    raw_id_fields = ("dosed_animals",)
     inlines = (DoseGroupInline,)
 
 

@@ -40,6 +40,3 @@ venv/
 # keep folders; not contents
 hawc/static/bundles/*
 !hawc/static/bundles/.gitkeep
-
-compose/app/fonts/*
-!compose/app/fonts/.gitkeep
