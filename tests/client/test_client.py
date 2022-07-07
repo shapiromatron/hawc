@@ -700,13 +700,15 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_metrics(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.metrics(self.db_keys.assessment_client)
-        assert isinstance(response, pd.DataFrame) and response.shape[0] > 0
+        df = client.riskofbias.metrics(self.db_keys.assessment_client)
+        assert isinstance(df, pd.DataFrame) and df.shape == (11, 14)
 
     def test_riskofbias_reviews(self):
         client = HawcClient(self.live_server_url)
         response = client.riskofbias.reviews(self.db_keys.assessment_final)
         assert isinstance(response, list) and len(response) > 0
+        assert len(response) == 6
+        assert response[0]["scores"][0]["score_symbol"] == "++"
 
     #######################
     # SummaryClient tests #
@@ -729,8 +731,9 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_study_list(self):
         client = HawcClient(self.live_server_url)
-        response = client.study.studies(self.db_keys.assessment_client)
-        assert isinstance(response, pd.DataFrame) and response.shape[0] > 0
+        df = client.study.studies(self.db_keys.assessment_client)
+        assert isinstance(df, pd.DataFrame) and df.shape == (1, 28)
+        assert df.short_citation.values == ["Yoshida R and Ogawa Y 2000"]
 
     def test_study_create_from_identifier(self):
         client = HawcClient(self.live_server_url)
