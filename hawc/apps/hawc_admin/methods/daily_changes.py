@@ -19,7 +19,7 @@ def _get_df(Model, freq: str, field: str) -> pd.DataFrame:
     return pd.DataFrame(data=qs)
 
 
-def changes():
+def daily_changes():
     df = _get_df(Revision, "day", "date_created")
     df["weekday"] = df.date.dt.day_name()
     df["weekofyear"] = df.date.dt.weekofyear

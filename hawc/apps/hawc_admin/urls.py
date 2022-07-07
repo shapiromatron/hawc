@@ -87,9 +87,9 @@ def get_admin_urlpatterns(open_api_patterns) -> List:
                     name="admin_dashboard_assessment_size",
                 ),
                 path(
-                    f"{admin_url}/dashboard/changes/",
+                    f"{admin_url}/dashboard/daily-changes/",
                     views.Dashboard.as_view(),
-                    {"action": "changes"},
+                    {"action": "daily_changes"},
                     name="admin_dashboard_changes",
                 ),
                 # media preview
