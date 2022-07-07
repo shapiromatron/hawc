@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 
-from hawc.apps.lit.models import Reference, ReferenceFilterTag
+from hawc.apps.lit.models import Reference, ReferenceFilterTag, Search
 
 
 @pytest.mark.django_db
@@ -60,3 +60,55 @@ class TestReference:
 
         data = ref.to_json()
         assert isinstance(data, str)
+
+
+@pytest.mark.vcr
+@pytest.mark.django_db
+class TestSearch:
+    def test_delete_old_references(self):
+        prior_search = Search.objects.first()
+        tag = ReferenceFilterTag.objects.first()
+
+        def create_search():
+            s = Search.objects.create(
+                assessment_id=1,
+                title="test",
+                slug="test",
+                search_type="s",
+                source=1,
+                search_string="burritos school lunch",
+            )
+            # create a new search; ensure it returns 3 references
+            # https://pubmed.ncbi.nlm.nih.gov/?term=burritos+school+lunch
+            assert s.references.count() == 0
+            s.run_new_query()
+            assert s.references.count() == 3
+
+            # now narrow the search; it will return fewer results that may need to be deleted
+            # https://pubmed.ncbi.nlm.nih.gov/?term=burritos+school+lunch+gastrointestinal
+            s.search_string = "burritos school lunch gastrointestinal"
+            s.save()
+
+            return s
+
+        # narrow search; confirm that references are deleted
+        search = create_search()
+        search.run_new_query()
+        assert search.references.count() == 2
+        search.delete()
+
+        # confirm tag guard works
+        search = create_search()
+        for ref in search.references.all():
+            ref.tags.add(tag)
+        search.run_new_query()
+        assert search.references.count() == 3
+        search.delete()
+
+        # confirm search guard works
+        search = create_search()
+        for ref in search.references.all():
+            ref.searches.add(prior_search)
+        search.run_new_query()
+        assert search.references.count() == 3
+        search.delete()

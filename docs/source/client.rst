@@ -13,7 +13,7 @@ from a HAWC instance. To install the client (requires Python ≥ 3.9):
 
 .. code-block:: bash
 
-    pip install hawc-client
+    python -m pip install -U hawc-client
 
 Using a notebook or python shell:
 
@@ -51,6 +51,21 @@ Client tutorials for common operations are below:
 .. _`Tagging references`:                   https://github.com/shapiromatron/hawc/blob/master/scripts/client/lit-tagging-references.ipynb
 .. _`Adding evaluations`:                   https://github.com/shapiromatron/hawc/blob/master/scripts/client/rob-evaluations.ipynb
 .. _`Creating bioassay data`:               https://github.com/shapiromatron/hawc/blob/master/scripts/client/bioassay-crud.ipynb
+
+Changelog
+~~~~~~~~~
+
+July 2022 (`2022-07`_)
+**********************
+
+.. _`2022-07`: https://pypi.org/project/hawc-client/2022.7/
+
+* Added ``client.study.studies`` to return dataframe of studies for an assessment
+* Added new parameter, ``invert``, to the ``client.animal.endpoints``
+    * When invert is False (default), returns a list of endpoints with parent data nested
+    * When invert is True, returns a list of studies, with child data nested
+* Added ``client.riskofbias.metrics`` to return a dataframe of metrics for an assessment
+* Added ``client.riskofbias.reviews`` to return a list of reviews for an assessment
 
 R HAWC client
 -------------
