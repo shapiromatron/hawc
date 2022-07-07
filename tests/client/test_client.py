@@ -86,16 +86,25 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_animal_endpoints(self):
         client = HawcClient(self.live_server_url)
 
-        # TODO - fix tests - use different assessment w/ data or investigate?
-        response = client.animal.endpoints(self.db_keys.assessment_client)
+        # list of endpoints
+        response = client.animal.endpoints(2)
         assert isinstance(response, list)
-        assert response[0].get("animal_group") is not None
-        assert response[0].get("experiments") is None
+        assert len(response) == 3
+        assert response[0]["name"] == "Water T maze (learning error)"
+        assert (
+            response[0]["animal_group"]["experiment"]["study"]["short_citation"]
+            == "Biesemeier JA et al. 2011"
+        )
 
-        response = client.animal.endpoints(self.db_keys.assessment_client, invert=True)
+        # list of studies
+        response = client.animal.endpoints(2, invert=True)
         assert isinstance(response, list)
-        assert response[0].get("animal_group") is None
-        assert len(response[0].get("experiments")) > 0
+        assert len(response) == 1
+        assert (
+            response[0]["experiments"][0]["animal_groups"][0]["endpoints"][0]["name"]
+            == "Water T maze (learning error)"
+        )
+        assert response[0]["short_citation"] == "Biesemeier JA et al. 2011"
 
     def test_animal_create(self):
         """
