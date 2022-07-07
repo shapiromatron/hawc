@@ -268,7 +268,7 @@ class RiskOfBias(models.Model):
         """
         return all(
             [
-                len(strip_tags(score.notes)) > 0
+                len(strip_tags(score.notes).strip()) > 0
                 for score in self.scores.all()
                 if score.score not in constants.NA_SCORES
             ]
