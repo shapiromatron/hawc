@@ -766,10 +766,7 @@ class Exposure(models.Model):
         on_delete=models.SET_NULL,
         verbose_name="DSSTox substance identifier (DTXSID)",
         related_name="exposures",
-        help_text="""
-        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        substance identifier (recommended).
-        """,
+        help_text=DSSTox.help_text(),
     )
 
     # for help_text for these fields, see ROUTE_HELP_TEXT

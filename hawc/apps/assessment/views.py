@@ -25,12 +25,11 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
+from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
-from ..common.forms import DownloadPlotForm
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
@@ -689,18 +688,10 @@ class UpdateSession(View):
         return JsonResponse(response)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class DownloadPlot(FormView):
-    form_class = DownloadPlotForm
-    http_method_names = ["post"]
-
-    def form_invalid(self, form: DownloadPlotForm):
-        # intentionally don't provide helpful data
-        return JsonResponse({"valid": False}, status=400)
-
-    def form_valid(self, form: DownloadPlotForm):
-        url = get_referrer(self.request, "/<unknown>/")
-        return form.process(url)
+@method_decorator(cache_page(60 * 60), name="dispatch")
+class RasterizeCss(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({"template": get_styles_svg_definition()})
 
 
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):

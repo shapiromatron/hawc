@@ -17,5 +17,8 @@ else
     echo "not modifying database..."
 fi
 
+# drop/rebuild materialized views
+manage.py recreate_views
+
 # succcessful exit for healthchecks
 exit 0

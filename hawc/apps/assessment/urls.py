@@ -119,7 +119,6 @@ urlpatterns = [
     ),
     # helper functions
     path("content-types/", views.AboutContentTypes.as_view(), name="content_types"),
-    path("download-plot/", views.DownloadPlot.as_view(), name="download_plot"),
     path("close-window/", views.CloseWindow.as_view(), name="close_window"),
     # assessment level study
     path(

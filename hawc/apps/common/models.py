@@ -489,3 +489,8 @@ def apply_flavored_help_text(app_name: str):
 
 def get_model_copy_name(instance: models.Model) -> str:
     return getattr(instance, "COPY_NAME", instance._meta.db_table)
+
+
+class NumericTextField(models.CharField):
+    generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
+    validators = [validators.NumericTextValidator()]

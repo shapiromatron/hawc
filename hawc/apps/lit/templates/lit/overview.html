@@ -81,7 +81,7 @@
   </div>
 
   {% if assessment.enable_data_extraction and need_import_count > 0 %}
-    <div class="alert alert-warning">
+    <div class="alert alert-warning mt-3">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>New references marked for inclusion.</b><br>
       <p>{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>

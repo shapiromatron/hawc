@@ -7,7 +7,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
-from ..assessment.models import Assessment, BaseEndpoint
+from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootedTagTree
 from ..study.models import Study
@@ -21,16 +21,13 @@ class IVChemical(models.Model):
     name = models.CharField(max_length=128)
     cas = models.CharField(max_length=40, blank=True, verbose_name="Chemical identifier (CAS)")
     dtxsid = models.ForeignKey(
-        "assessment.DSSTox",
+        DSSTox,
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name="ivchemicals",
         verbose_name="DSSTox substance identifier (DTXSID)",
-        help_text="""
-        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        substance identifier (recommended). When using an identifier, name is standardized using the DTXSID.
-        """,
+        help_text=DSSTox.help_text(),
     )
     cas_inferred = models.BooleanField(
         default=False,

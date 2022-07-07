@@ -54,7 +54,7 @@ class TestStudyViewset:
             "last_updated": "2020-02-27T14:14:41.479008-06:00",
             "block_id": None,
             "bioassay": True,
-            "epi": False,
+            "epi": True,
             "epi_meta": False,
             "in_vitro": False,
             "short_citation": "Foo et al.",
