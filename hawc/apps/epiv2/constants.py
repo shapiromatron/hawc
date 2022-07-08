@@ -128,6 +128,7 @@ class BiomonitoringMatrix(models.TextChoices):
     UR = "UR", "Urine"
     TE = "TE", "Teeth"
     NL = "NL", "Nails"
+    HR = "HR", "Hair"
     SA = "SA", "Saliva"
     BM = "BM", "Breast milk"
     SE = "SE", "Semen"
