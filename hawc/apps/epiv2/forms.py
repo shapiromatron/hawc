@@ -10,7 +10,6 @@ from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from . import constants, lookups, models
 
 
-# TODO: validate variance estimate, lower/upper interval type and lower/upper bound type based on other fields not being filled out
 class DesignForm(forms.ModelForm):
     CREATE_LEGEND = "Create new study-population"
     CREATE_HELP_TEXT = ""
@@ -131,6 +130,23 @@ class ExposureLevelForm(forms.ModelForm):
         self.fields["chemical"].queryset = self.instance.design.chemicals.all()
         self.fields["exposure_measurement"].queryset = self.instance.design.exposures.all()
 
+    def clean_variance_type(self):
+        data = self.cleaned_data["variance_type"]
+        variance = self.cleaned_data["variance"]
+        if variance and data == constants.VarianceType.NONE:
+            raise ValueError("A Variance Type must be selected when a value is given for Variance.")
+        return data
+
+    def clean_ci_type(self):
+        data = self.cleaned_data["ci_type"]
+        upper = self.cleaned_data["ci_ucl"]
+        lower = self.cleaned_data["ci_lcl"]
+        if (upper or lower) and data == constants.ConfidenceIntervalType.NONE:
+            raise ValueError(
+                "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
+            )
+        return data
+
     @property
     def helper(self):
         for fld in ["comments"]:
@@ -214,6 +230,23 @@ class DataExtractionForm(forms.ModelForm):
         self.fields["outcome"].queryset = self.instance.design.outcomes.all()
         self.fields["exposure_level"].queryset = self.instance.design.exposure_levels.all()
         self.fields["factors"].queryset = self.instance.design.adjustment_factors.all()
+
+    def clean_variance_type(self):
+        data = self.cleaned_data["variance_type"]
+        variance = self.cleaned_data["variance"]
+        if variance and data == constants.VarianceType.NONE:
+            raise ValueError("A Variance Type must be selected when a value is given for Variance.")
+        return data
+
+    def clean_ci_type(self):
+        data = self.cleaned_data["ci_type"]
+        upper = self.cleaned_data["ci_ucl"]
+        lower = self.cleaned_data["ci_lcl"]
+        if (upper or lower) and data == constants.ConfidenceIntervalType.NONE:
+            raise ValueError(
+                "A Lower/Upper Bound Type must be selected when a value is given for the Lower or Upper bound."
+            )
+        return data
 
     @property
     def helper(self):
