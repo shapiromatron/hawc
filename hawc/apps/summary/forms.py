@@ -1040,7 +1040,7 @@ class DataPivotForm(forms.ModelForm):
 class DataPivotUploadForm(DataPivotForm):
     class Meta:
         model = models.DataPivotUpload
-        exclude = ("assessment",)
+        widgets = {"assessment": forms.HiddenInput}
 
     def clean(self):
         cleaned_data = super().clean()
@@ -1082,6 +1082,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     class Meta:
         model = models.DataPivotQuery
         fields = (
+            "assessment",
             "evidence_type",
             "export_style",
             "title",
@@ -1093,6 +1094,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             "published_only",
             "prefilters",
         )
+        widgets = {"assessment": forms.HiddenInput}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
