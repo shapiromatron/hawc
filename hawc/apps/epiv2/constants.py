@@ -63,6 +63,7 @@ class VarianceType(models.IntegerChoices):
 
 
 class ConfidenceIntervalType(models.TextChoices):
+    NONE = "NA", NO_LABEL
     RNG = "Rng", "Range [min, max]"
     P90 = "P90", "10th/90th percentile"
     P95 = "P95", "5th/95th percentile"

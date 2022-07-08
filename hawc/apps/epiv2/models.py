@@ -31,10 +31,9 @@ class Design(models.Model):
         choices=constants.StudyDesign.choices,
         help_text='Select the most appropriate design from the list. If more than one study design applies (e.g., a cohort with cross-sectional analyses of baseline measures), can either a) select one design ("cohort") and clarify different timing in remaining extraction or b) select "other" and provide details in comments.',
     )
-    source = models.CharField(max_length=2, choices=constants.Source.choices, blank=True)
+    source = models.CharField(max_length=2, choices=constants.Source.choices)
     age_profile = ArrayField(
         models.CharField(max_length=2, choices=constants.AgeProfile.choices),
-        blank=True,
         help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
         verbose_name="Population age category",
     )
@@ -150,7 +149,6 @@ class Exposure(models.Model):
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
     measurement_type = ArrayField(
         models.CharField(max_length=64),
-        blank=True,
         help_text='Select the most appropriate type from the list. If a study includes multiples exposure measurement types but they are analyzed with outcomes separately, create a separate entry for each. If more than one type are combined for analysis with an outcome, you can select multiple options from the list. "Occupational" should be used when the exposure is based on job duties, etc. (i.e., not occupational exposure measured by biomarkers or air).',
         verbose_name="Exposure measurement types",
     )
@@ -259,7 +257,7 @@ class ExposureLevel(models.Model):
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
-        default=constants.ConfidenceIntervalType.RNG,
+        default=constants.ConfidenceIntervalType.NONE,
         verbose_name="Lower/upper interval type",
     )
     negligible_exposure = models.CharField(
@@ -420,6 +418,7 @@ class DataExtraction(models.Model):
         default=constants.ConfidenceIntervalType.P95,
         verbose_name="Lower/upper bound type",
     )
+    units = models.CharField(max_length=128, blank=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
         default=constants.VarianceType.NONE,

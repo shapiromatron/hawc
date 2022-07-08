@@ -10,6 +10,7 @@ from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from . import constants, lookups, models
 
 
+# TODO: validate variance estimate, lower/upper interval type and lower/upper bound type based on other fields not being filled out
 class DesignForm(forms.ModelForm):
     CREATE_LEGEND = "Create new study-population"
     CREATE_HELP_TEXT = ""
@@ -220,9 +221,7 @@ class DataExtractionForm(forms.ModelForm):
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.add_row("outcome", 4, "col-md-3")
-        helper.add_row(
-            "effect_estimate_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
-        )
+        helper.add_row("effect_estimate_type", 6, "col-md-2")
         helper.add_row(
             "variance_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
         )
