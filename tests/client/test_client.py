@@ -85,8 +85,26 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_animal_endpoints(self):
         client = HawcClient(self.live_server_url)
-        response = client.animal.endpoints(self.db_keys.assessment_client)
+
+        # list of endpoints
+        response = client.animal.endpoints(2)
         assert isinstance(response, list)
+        assert len(response) == 3
+        assert response[0]["name"] == "Water T maze (learning error)"
+        assert (
+            response[0]["animal_group"]["experiment"]["study"]["short_citation"]
+            == "Biesemeier JA et al. 2011"
+        )
+
+        # list of studies
+        response = client.animal.endpoints(2, invert=True)
+        assert isinstance(response, list)
+        assert len(response) == 1
+        assert (
+            response[0]["experiments"][0]["animal_groups"][0]["endpoints"][0]["name"]
+            == "Water T maze (learning error)"
+        )
+        assert response[0]["short_citation"] == "Biesemeier JA et al. 2011"
 
     def test_animal_create(self):
         """
@@ -680,6 +698,18 @@ class TestClient(LiveServerTestCase, TestCase):
 
         assert isinstance(rob, dict) and rob["id"] > 0
 
+    def test_riskofbias_metrics(self):
+        client = HawcClient(self.live_server_url)
+        df = client.riskofbias.metrics(self.db_keys.assessment_client)
+        assert isinstance(df, pd.DataFrame) and df.shape == (11, 14)
+
+    def test_riskofbias_reviews(self):
+        client = HawcClient(self.live_server_url)
+        response = client.riskofbias.reviews(self.db_keys.assessment_final)
+        assert isinstance(response, list) and len(response) > 0
+        assert len(response) == 6
+        assert response[0]["scores"][0]["score_symbol"] == "++"
+
     #######################
     # SummaryClient tests #
     #######################
@@ -698,6 +728,12 @@ class TestClient(LiveServerTestCase, TestCase):
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.study.create(self.db_keys.reference_unlinked)
         assert isinstance(response, dict)
+
+    def test_study_list(self):
+        client = HawcClient(self.live_server_url)
+        df = client.study.studies(self.db_keys.assessment_client)
+        assert isinstance(df, pd.DataFrame) and df.shape == (1, 28)
+        assert df.short_citation.values == ["Yoshida R and Ogawa Y 2000"]
 
     def test_study_create_from_identifier(self):
         client = HawcClient(self.live_server_url)

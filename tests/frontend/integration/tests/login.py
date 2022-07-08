@@ -17,7 +17,7 @@ def login(driver, root_url):
     # invalid password check
     msg = "Please enter a correct email and password."
     assert h.Text(msg).exists() is False
-    h.write("webmaster@hawcproject.org", into="Email*")
+    h.write("admin@hawcproject.org", into="Email*")
     h.write("not my password", into="Password*")
 
     # changed to target the specific login button in the form seems

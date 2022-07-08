@@ -1,0 +1,1064 @@
+interactions:
+- request:
+    body: db=pubmed&term=burritos+school+lunch&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7YRh/C4LLRR1MCAAAA//8DACAZX0DgAAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:03 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B747134ED9EA5000038875B427975.1.1.m_1
+      NCBI-SID:
+      - 5A4DD68D73664540_9C44SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=5A4DD68D73664540_9C44SID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:04 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGxG8h3zi/NK7EzttGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnbGB
+        ibmxiYWFjT6QAxEyNLMwM7U0MEURMjE0MDczhAiBSIgRAAAAAP//sgkpSswrzkksAQZgcCrQEUh8
+        OwUQsHErys+1yynNS86w0QezIcIh+XZKYFGlaN/UYA+FkNSi3OJYBf8gBZiwY06Ogltmak5KcayN
+        PlA5WJs+sgW4bCtOzsjPz8GwDiJcjGkhXALJSiQJYpwCAAAA//9C4aGHBDDgk7PtwM4AWgqSVYBx
+        7JJKi4oyS/KL0ewASUE8BBKyQ0gCfQUWAUtCYt7QDJYGwIKuFQU5+Smpdn42+jAmxLkIu7G4A2vo
+        YDoEIYnNIcYWJuaGWB0TSaZjKAkVUwtj0kPGP8DOP8hGH0jhdRolLjM1MgQCcwqdBqTcg/xDA5AF
+        HP1c8DkdM7+RGMEWlpbUiF2sGZyUEDQ3MDWhcfChyaPmb3B+tgksTS2qRC4EsOVlBaChChrUKXs0
+        oYYRXW5q2uhjOJILWHyjVSUAAAAA//8DAMSYBwcIBwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:03 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322C88677B2496D500003F758008FB07.1.1.m_1
+      NCBI-SID:
+      - 75C38501F732DDF9_C9ECSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=75C38501F732DDF9_C9ECSID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:04 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '9'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=30473488&id=16865905&id=16410761
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '114'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAJxR0U7CMBR99ytqn2V3HUTFdDXK9jDDkAiS8GTmdiNNupZ0Hcrf2w2yBB996T1t
+        z7k955Y//tSKHNA20uiYsiCk5FFc8evkdbbeLlOybD9rrJ6sk6XCFTqyfH+eZzNCRwCLeQ6QrJOO
+        lA+kG8IaR14K3Rb2SKKQTQHSBSV059y+eQCoXBVoVQda7oIvcwBdfkrY9++Aad0ZfrBpyEIWeDb1
+        hv76EJcngnsDSmqcSVc4n4WsfG2bmOZpMs8WKSWv3xptTL1p6sV5lpDNEJuKcTi5G0/u7zl0V4In
+        hcOZqfcKHVaCb7GwIgqjkEMPeW6024mQcTghLzgKNuHQ1W69kHfbNzzI5r+9BvE5bz9yU6GK6dJK
+        7UapwtJZo2Xp072Y1upCCZ6tVguSNY1eH/d4plIRRSwaRbd3EYeOMPA9sUXiJ4iVn6Zs65hm2qHV
+        6EV8Y1Rbo2BsyuGMea8QY9+nB92fdG5PGX8BAAD//5RX607bSBR+lVGklYoUElDpBSkbyQRT0oaE
+        xaYVP8f2JJ6u48nOjIHwRn2N7ovtd8YXnBC26R+wJ3POdy7fuXhIud/y8W3jY7+522/DDwehtMhn
+        dcbUnNlUMC/miViu6XVaWC1dinmesHOJCCMkZtAvBeHzzIsijYA5Igw/O2En5m6T05s3Ggua8Jaq
+        gjhVKmOTIo9T5udW//tDGHYm5koLB+7NER02pjQvRV4Rr7L4UvDMpusuuyzyhdCHF1oI9kUmBuZY
+        uoToHPUG/Q3EwTVfyLyyqmL09SIfnpweHZ6cIpitM0SwddmfqNg9gtf+OCnzvZKyw77yTCZ30z87
+        d51h0KT+zfHHg7fHpx/eHYKGLeFXNCVqSxNsR3W+73/vfUckenDmY+/otHd0dLqlzouM1Ty2z0+h
+        eLRswiMi75k3+vLpZnY7Pe8Mw19G7c3l5cUX78CFjhWrBPRJmLEwgGtcsYrJPNaCG+FSkNdMAY/+
+        KWC8dQQyZVqXgDI99IkikUgrfnDaGVpQrJY4Sfm9YHMVFyg8ttJyybXMoCFnc11I6xhwLxbC8igT
+        plvCgQZtrIdUoVgdVNcJrDIYzR64sYKS3wrJ7gDNzj77o3D81Ud8FBOPfIn0szjlCI+Bu7U3mSOp
+        KEn60hSCNvCUzoygXoGwGMYdgUu/5QaN9zLu3A/Gn6ad4bkwsZYrK+/R/TOVLyQFlcJOmITOs/WT
+        zBfsuPeBLWWWUaFU9hyW9iDGGz4454RcpLbxCqQSCwXHzF7WXXs34Xg0vvamYdAP/DAcTz8Ry4hS
+        S5kkSEwZPOPCY90PKRCbY0k9hhU64k2cEwkgCS7it2/cpHDKVtMGvs+1WrZH3zFxsvV+wt4cv2dL
+        6oCGRc+N5Phdffh6Rg72cvrKG0/Z7DYcza58duV7we2NH3SG092lIHiLNFV418ROxo0RhogftdMH
+        IiMkiYCKeM002dWFvNCLNUMuDdSWNK/OVvDFCH0PWVRazTsHkKBvayLzFkReLCNIkXFtIpChjYEN
+        YyBZsWg/SgShF44DsMKbMG/qTe4CP2DX/s3F7AZ7QmdIIxtVbso2LvNExmVrWGlxWNavMnYzLzvb
+        TGHIF87QSaKqR5OabzKL1SOe7YM6NJz0MCuwLj1ImzK0lNVKq0d0mma+8fKqTOAtWiOGMacyw10n
+        hzQVS4KilGCRg/E8J5sdo7fuFPn2rdLMgFsotukDx+jftKHH/ip4bmu6vCjE51Q40mRGbSX2/3Tv
+        kzGw93YSgsHlrN0MfZfavHbtlBm5yOVcxrCWbml17+4ReXaw9hWSMkhpnmVo+5rR/4aDZSJF0mNh
+        CUl/XsF0jI0UMvobyIRoeMYTDIqo0GCUqkeGfHrizo+XTYukUoWejpcHGadV5msFJNXuaD12AYHt
+        gt3WS1lMsTK13UtEOViNg4ypPWiMthKuttuxOFcbgvWomqsCN1/YQ0Of+Cg2GGYaPEeik5M/ulWP
+        3hn71jikuY9ErJQuJ1xbZ8NV16bNSsSkAJap5Hdny2g2HU1ug/Fs+mpv3Zxm3Z1e8nsuM1ofuhsT
+        uq6z1qQuXUyq+SBfrJzlxFipTIJoiIPClrD34Hrh8kit1ppm7zhHustyHTaH7OcP9123x1beow+V
+        TJq0TKSfGWzdtDPncY95KDCn0DAtqA5QXoP+TuxnA5GPwqZKT+APqz+xqqW0+mljUR1MsGtNOb5W
+        rtST0IN+8z5ALQj3NOGFFvmg3xwMxjmcQSEMJ/hcqJ9hhNP/C5zPKs0xQXYinas85+xsJ9T52e9j
+        XatE88j8vd6JdoW1YyfUVY30HwAAAP//zFlLk5pAEP4rlIfkkigM8qpYVFmp2nUrunFXPeRIYBbZ
+        KBCQpMyvTzczyMPR4MomuaiMzNc9PTPd/XW3l/QYwREUShkDkiMUMxaKGZQbiPihnzk+tWnoIzp/
+        GuXHhrEIZCDs5cagtLqDHBRYyJCYvQNj5IQqJ5jVt09OB9qv9exHOIFOAjd2kcXoPd5J91H4ftVf
+        9KXb6Mfb3UV4ugivxGLY8/4ERgS4zRG2eL4u5MwSfjBiVuP9Bes266xbqVcWiFpUFiqQ5dOBeBa0
+        HK4heoQMnNLeXoVYHmBuI8XLyoaLOcuxgG+X/43uN1tA+J5RoIbAHzVDtbAOUh3OixbTIPwGHqpZ
+        qiiGD5h1HXntZ5F9TenOvoNT3hgCNdM1cEwgJz6zamUArMN5TJTgQeb7KcvEUnvSzHmOkmUUBy5e
+        DXD7Yw/jnwtOGMxZm5irV4FtIYPoQ1Mg4+M62HgdwGtElwXwN3Tr4E25Hl9TROrfYGSdJ/QJAjbm
+        m8eSHjBePkFEOKA9yKiuyOBxuodQtol88Gm1eS9SmJBTCi8wI7tAW1VVBFAb6gfphsXnN5Dpf5Ce
+        M2AWcYIh3qVHSxBjG7LexAavnOKhTjG+cmggTRSCO3g/z0FffK15dGIOBWti1RlpvoG0ol71amur
+        f7UeUxbt0STbOqFgn1+Ar2hCfCxidYBvKqohwJ9WSy28kHW9NJ0MZUskDRPaLhZDLNFiZp24IsXU
+        DZHzKPPTeZ4jX3G5v1x+uS+2kWVoZ1YB/B+StKwLcxHNEDlCXvrmF74Dj/gXjKaoqiryWgteIXq1
+        6PM/uToFkk+Bq5NYtnhLIz9x4jVmiyUJ/NMxqj6xrOkT3f+MEi/nYEVf7fOStdb4f8dLz4NrEHoZ
+        EDkwIn/vzISzzYA2ANMaBW8zg5/7Q0mv1ZxmXb0yaVCxVJm1Fllp0cSEBNyxRxN4J8JcmrVTeX8M
+        CXTRy0yoS+Hye5VU32g02Kx6qi8XqX4N84wIx3VpvKuJMM+KUMilIlh/tz1dMbiACeT6tj4a5N+j
+        WQCbRG1YIP/VXoEt24XeyVZsoxOrda0Ankj66/UtMKgeqYJRMiXsOMah3wAAAP//Ks5A6W1C5WB9
+        Tc8UlK6nZ4oCfGYRGoeIaXO4GqzKMzNxTj7i1Qiad8Q+1wgAAAD//6xa227jNhD9Fb4EcACt40vs
+        2FigaLJNu90iadGgaF8ZmVIIU6QhSs56v75nhpQi20o2WeTNpkjOhXMjz0SssbP67IDrs65znR20
+        C7xv98B4vpjPlqPZy90Do/mBJy32j3n8hu6BI2R9fy/6/Pruge+3DIym88mH0WTx3/dbBpodY4/A
+        /Khd4OLZdoFDBX2pzQ/0C/B77qZ0VRONn20MiPdT94aegJudr5CvXe0JKMYCueZH5lwiqzlIrpDc
+        iRFtjFWegTSXakaq+Xm8fZr39WZjtGLg0dXtm3h8Nwb/yNSFf22HwHi+HH1YvNAg0I/D//QrPYX/
+        mVaOQLfxcnnRsnPDr1cYWiQRG32lwAVuJY0wKT1g4PIf3uzB2ZoEdgSnbKTdictWH0PxO9yOck8R
+        WQFdKbwutJFlS1u4NMUKtQqP/cTWrSuh11/k2lWyBTEyZ4x7JGCF9ak8Jkt6/E5NTVhaw8BVh4F/
+        FYZRnzBGgCuutlsSLg8hoepAWwwzeBhIqpp+jz0uGm4Toak00NlOOMIujsTxCb3s02nAqL6FfaMi
+        AyQA4rQOdslFspD3WMrTUll7FQCUfUZbGdUGiwpNRatOA8TqCYlQdqtLZ/nybvYXB6IGVEpJmaNd
+        xcfTlZEOJ6VOiwDmZgz44acltvD1AfWihOIx737lCjaRFBa9ISgE/2E0eSJcKVZaliVmR2gjmD/E
+        GM8PzGEoPhE9pqUDKsKYyqrBfaKK+Wmyh9/Z6LxFiyPcIrNMFKrR597mHwnzDYxTbbcrUB0XPthx
+        kFEMLiYnp0+SisF8Qf8P5RWD2TmNN1KLwYT/Ewut8IPx/OQ0nCbykmbrS+v7cKIbijgBYp3ORKED
+        yBLnreqyRYEaH6SZc/EwFNeSKbZB5wApNbuj+NRsMXArFNoR4p8M5x/FcnZC/pFFSyTXL7fSJGI8
+        nJN3nA8np+xE0ebpZHCIT1GDPbDrv15tlY0HFkC53kjUGaSYkGUU2KkbgdonsClsJVmORlCTI0D9
+        8cEJKrhaoXnn6tGJ2pbKsKjB/QntYxSqIrjQGBnPt5ArFbTxiLOpRGbg6gTLBkvJqIHF5jB7ndHT
+        5ipBMM9zDoR5kPJpQ2iskuwctFRVrTvmUNJQ/K18barQY2AYR7YETLJ5I+4iMqh7ma79kWPuuW3k
+        m+Tb4tLE7RY3rXZI9KbpZkMwLJN7sglaiquFNAZcEqCsTMRIA2gIubkVgIzTP0CyY9tMWg85YpSu
+        tY1+onIQjrvZhBngcBZ7QSAIhVqOw5X7SnBmScOsM2FdRb65pSTcY8DVg4bWoQO+VPudXUESBMob
+        TBThFo9tcAKNpWsfSBq9VthPfaWDCMLdK2arifGI3LnqdKh4TYb7yKB0Jzk2Fk7NBJTCWGWNnjhz
+        hCzQ9KO1muMw5IqCWsz4sozol0TK6ZpthGv1ts2GPyGpkvs5C+bpqLu2LazCUMlr2zPRTTZECICH
+        I0tgZZuo1tY9hgDjU6RXy4B/beNw3vQ3BAY9ZQG6KpOuN7KsQrNMqL3YGVSYydUODiuHL8AOoF+E
+        LcNkKJDYiJ+ztxSxaDmCpd8BBL6rlLY4vrwXyryGC9hn4NnrPXj2MkMUCLViAJ86A/zSAV1bFcHw
+        EOMNfvnQQ3FVSmS5BAMozGPsvgpFQFTKzS510Gq7JBG3Murok6LIy8cC0hwrUI0+TQzfQ6NGHIWO
+        cOV0Yeu/KEjYkO0vKwo6SI6/KVfmWorpaDqdJuKfu8uhUKSNIepdTPfO/gzPkUNHqusKu/cv6OJ1
+        iPJnBS8vn0PKL83qGUi+H1V+kdQfstyAv35CK1m8F53PTq3JQvvReMSX90LjUZxL63rJ3MJ7esnc
+        vp3Mnau/9QvzRVkUETBDcAJPh6noXqJffkC4O40I6Pt1qPJI5n8AAAD//6I4CL2LStNxrAfxzixK
+        wr5wwpt0e9yBbe3SCryBiD3kyFmjAfQR9oDzSAWVbMFYbfIIJielp6XlJmLPur6ZwD5Nao6CN/ao
+        IiMMvRNTirAvcXFMSknN0Q1KrAJ2DX2xZ+MgMuKsCNiyy8Tuu4BE0DoqYFGJ3boA4pOiM7CPCiq+
+        yyBmOEEaZArhwPoaVHe6A9NNAWiJBYqqQbCOBvv6FOqtH0EalsGxdMTc3MDY0sQEz8IRtAGrAVk4
+        QttFHYam2BceOOeD25tUmw42MDG0xJjJAi36hzYt/GEN3yGxTgVzUg627MMZuelJ7FyhgTHG7Gkk
+        AAAA///Mmr8OwiAQh9/FvZVTOMri6qZJN1eTDp1MNDE+vtD6h8BZSnokPgGXAy6X3/etdmNo0t84
+        PBX4WbAds9fLuX8xSYbexErMKanE5B+jFSUX7Ic4cdhc7eyczWpljMltzV7wNZfWStIasEsjl3FU
+        WkEpalUIg4oYZQRV9iO3BZd4SFxi9rBEAVR7ji7kat2X53ApoKGedtvZlz2GOveOby47dSPSHT4I
+        O3lADPWX0umQ64Y0R09ATVMC64YFBLhtw11AiHULNaA81f3izFlwVm5Brd8L16NCU+va8aj/obMS
+        hEbIpLMBhMcMOivMJNBno7O+/Q1KqqpBsBvvEwAA//8ifVe3qSn6LK0h8bO0oG4gsu+MkVaE4Jmy
+        9fUNDwIPUydlpsD2qOYCqw/IDpry1NTsnEqFolTQ4nksc7gAAAAA///knNtv2jAUxv8VP3YSQVxC
+        Bdrbyra+VJqmSn0O1AykXFAuVPvvd75zbMfJUgZtyTrtBVAA5/j4gv39/CFTFMrgIvAAmvWAL33X
+        +zOIbhWXO3CD1+DNtgi9ztKiSvaWyzBAqKFAEECMjtbbivYWZTFQlNRpQA/hqbh3HnCXOhP23lOk
+        r6plqVLQT8M9wMUMbjUMAW1FKXiscmxgv+hVbpyvVL27iF+E0KohCzdSoJYa6jE79igumbzs8cOr
+        u+W3W4FjRafQLtHWrNkAIEfSD2yfXP0U8d2zzwl58ACsWEq7GYeBhvymhW6FR90EkDjywD6/BoGt
+        byQHAA1VaIEQi4g5TZnABw93uCQ3GtKxxeePG7C/Ck2Y2A7v2ZwRR2NrjouAcIGQ18+NijR5s6mG
+        +7QXGXxq+BHSniWxhmutUQF6zA1U8WJJHfQWA+EjHIUtbsYcs8aMguYcozWwCQR8x0g4UrRNciBp
+        vaWacAsJgrsHMJK0qkdeM62o/m143mBaG1iDQQAFLcrpCJOGkV//tNnNh9hlHpkYpDycekh/4H8D
+        orTaUI+pcqrEyeh2CIU/3mErm6O/CGBkMzN/Vsf6wC/oWeN/CRiKsqk4s/jJHtOknkf3x9ZvwP2Q
+        VvVFQb8hakWBYowhMZTLNa7BdwlEUWrbpbz2d3UcKnPIMttsoKNRB6QxVcXURai4pyh3qUy1Focr
+        MyoViXncTC7eqEHdzxqz5hrumWYMveLMDlmm0WD6mHnqEHcJ4/YShJDSpKkVMeNxYJTiPRVrkmHk
+        Omlf3Ro3ztE48BAljKg08xl0KriMveG/e1FfTsBaMuLpkEhd3SxvPvx/OuSRpcVzquR8NAkni2Oq
+        5DhcBJPxYvYXVcnxYtq1S/1Eg+ktrGYXdrL1KUb2JIjNOpWJmiFbsntBTewFKt51V9Bf2+vJ9xj7
+        xZW4cNRhQ+nQyhpLg/cklv1rylJrdz3vXVk6dl6/D2XpjRLQh7JkpZg/+wWSZDYbjaNpt4z0CwAA
+        //8iYhgJAAAA//9C44NODQQAAAD//wMAAF2GYPBQAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:05 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B747134ED9EA5000048875DFB6DD3.1.1.m_3
+      NCBI-SID:
+      - AAD510F815AC00CD_E77BSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=AAD510F815AC00CD_E77BSID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:05 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: db=pubmed&term=burritos+school+lunch+gastrointestinal&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7IRh/C4LLRR1MCAAAA//8DAGEC0y7gAAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:05 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B747134ED9EA5000049876098606F.1.1.m_1
+      NCBI-SID:
+      - F2D103565C9DEBC8_E8F0SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=F2D103565C9DEBC8_E8F0SID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:06 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch+gastrointestinal&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '121'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGxG8h3zi/NK7EzstGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGZ
+        hZmppYGpjT6QAxMyMTQwNzOECIFIiHoAAAAA//+yCSlKzCvOSSwBhlZwKtBGJL6dAgjYuBXl59ql
+        JxaXFOVn5pWkFpdk5iXm2OiDhSEqQvLtlFIy00FSZakKxZXFJam5StG+qcEeCiGpRbnFsQr+QQoa
+        CCVK0Y45OQpumak5KUA5Rz8XBSWYJiQJTZAuLOYi6wWpQHcaigobfaDjwI7UR/YZLm/mlOYlZ8D8
+        BgAAAP//zFbBTsMwDL3zFTuyU5cmWVKpyg3tRrdJHLgyJoE2qajdJPh73ISspTHZvBZELmlttX55
+        tvN8Opu1Bgfy5uuj1ZuXsgypdOY6DHhy9ClwjougJJGEQzFtdsbCgKCNd+JfzNOxql4PZd2L0bjc
+        gRqTaZ1wKmuxTlfNbO7r2hrv3t/25fPW3OeJf3Rw29gIDpSdEEjrxIBwLRRDwTxeCWYIK1JzOjPF
+        0hTrPIEtCm0IMpkyWGogNNgW6+Jh2TVAy8egh/1GTLDOsjGyizY4hUE1k+Lv6YtexdRWSVUmZ3oM
+        NvHrn9otmWCcXpJYf4RyQsTCYakfuDmT4G4GsQzHWzuqidQSFVzy8W+fc6JMgSjmmsn0l/uo5/+u
+        k1YX89VxW310xRTTRDvO3I6j4dOvn108f/gP/ukwNs2TgMMbGEZ7U/AnAAAA//8DADRPqXzDCwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:05 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B747134ED9EA500005787617E7716.1.1.m_1
+      NCBI-SID:
+      - 5E2E2B7CA0ECB387_15FESID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=5E2E2B7CA0ECB387_15FESID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:06 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '9'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: db=pubmed&term=burritos+school+lunch&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7YRh/C4LLRR1MCAAAA//8DACAZX0DgAAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:06 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322C88677B2496D500003A7587756E1A.1.1.m_1
+      NCBI-SID:
+      - 37933B946734F87C_1576SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=37933B946734F87C_1576SID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:06 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '1'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGxG8h3zi/NK7EzttGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnbGB
+        ibmxiYWFjT6QAxEyNLMwM7U0MEURMjE0MDczhAiBSIgRAAAAAP//sgkpSswrzkksAQZgcCrQEUh8
+        OwUQsHErys+1yynNS86w0QezIcIh+XZKYFGlaN/UYA+FkNSi3OJYBf8gBZiwY06Ogltmak5KcayN
+        PlA5WJs+sgW4bCtOzsjPz8GwDiJcjGkhXALJSiQJYpwCAAAA//9C4aGHBDDgk7PtwM4AWgqSVYBx
+        7JJKi4oyS/KL0ewASUE8BBKyQ0gCfQUWAUtCYt7QDJYGwIKuFQU5+Smpdn42+jAmxLkIu7G4A2vo
+        YDoEIYnNIcYWJuaGWB0TSaZjKAkVUwtj0kPGP8DOP8hGH0jhdRolLjM1MgQCcwqdBqTcg/xDA5AF
+        HP1c8DkdM7+RGMEWlpbUiF2sGZyUEDQ3MDWhcfChyaPmb3B+tgksTS2qRC4EsOVlBaChChrUKXs0
+        oYYRXW5q2uhjOJILWHyjVSUAAAAA//8DAMSYBwcIBwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:06 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322C88677B2496D500005B758879C44B.1.1.m_1
+      NCBI-SID:
+      - 21E238C5C7AAE4E5_02DBSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=21E238C5C7AAE4E5_02DBSID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:07 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: db=pubmed&term=burritos+school+lunch+gastrointestinal&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7IRh/C4LLRR1MCAAAA//8DAGEC0y7gAAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:07 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322C88677B2496D500005D7589ABCCA7.1.1.m_1
+      NCBI-SID:
+      - 3076CAA352148F04_9BD7SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=3076CAA352148F04_9BD7SID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:07 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '1'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch+gastrointestinal&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '121'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGxG8h3zi/NK7EzstGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGZ
+        hZmppYGpjT6QAxMyMTQwNzOECIFIiHoAAAAA//+yCSlKzCvOSSwBhlZwKtBGJL6dAgjYuBXl59ql
+        JxaXFOVn5pWkFpdk5iXm2OiDhSEqQvLtlFIy00FSZakKxZXFJam5StG+qcEeCiGpRbnFsQr+QQoa
+        CCVK0Y45OQpumak5KUA5Rz8XBSWYJiQJTZAuLOYi6wWpQHcaigobfaDjwI7UR/YZLm/mlOYlZ8D8
+        BgAAAP//zFbBTsMwDL3zFTuyU5cmWVKpyg3tRrdJHLgyJoE2qajdJPh73ISspTHZvBZELmlttX55
+        tvN8Opu1Bgfy5uuj1ZuXsgypdOY6DHhy9ClwjougJJGEQzFtdsbCgKCNd+JfzNOxql4PZd2L0bjc
+        gRqTaZ1wKmuxTlfNbO7r2hrv3t/25fPW3OeJf3Rw29gIDpSdEEjrxIBwLRRDwTxeCWYIK1JzOjPF
+        0hTrPIEtCm0IMpkyWGogNNgW6+Jh2TVAy8egh/1GTLDOsjGyizY4hUE1k+Lv6YtexdRWSVUmZ3oM
+        NvHrn9otmWCcXpJYf4RyQsTCYakfuDmT4G4GsQzHWzuqidQSFVzy8W+fc6JMgSjmmsn0l/uo5/+u
+        k1YX89VxW310xRTTRDvO3I6j4dOvn108f/gP/ukwNs2TgMMbGEZ7U/AnAAAA//8DADRPqXzDCwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:07 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B747134ED9EA50000578765F5C113.1.1.m_1
+      NCBI-SID:
+      - A731B61C2BACEC10_1411SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=A731B61C2BACEC10_1411SID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:07 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: db=pubmed&term=burritos+school+lunch&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7YRh/C4LLRR1MCAAAA//8DACAZX0DgAAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:07 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322C88677B2496D5000045758C3AD079.1.1.m_1
+      NCBI-SID:
+      - B71AC7C1C4C48442_2C2CSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=B71AC7C1C4C48442_2C2CSID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:08 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '1'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGxG8h3zi/NK7EzttGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnbGB
+        ibmxiYWFjT6QAxEyNLMwM7U0MEURMjE0MDczhAiBSIgRAAAAAP//sgkpSswrzkksAQZgcCrQEUh8
+        OwUQsHErys+1yynNS86w0QezIcIh+XZKYFGlaN/UYA+FkNSi3OJYBf8gBZiwY06Ogltmak5KcayN
+        PlA5WJs+sgW4bCtOzsjPz8GwDiJcjGkhXALJSiQJYpwCAAAA//9C4aGHBDDgk7PtwM4AWgqSVYBx
+        7JJKi4oyS/KL0ewASUE8BBKyQ0gCfQUWAUtCYt7QDJYGwIKuFQU5+Smpdn42+jAmxLkIu7G4A2vo
+        YDoEIYnNIcYWJuaGWB0TSaZjKAkVUwtj0kPGP8DOP8hGH0jhdRolLjM1MgQCcwqdBqTcg/xDA5AF
+        HP1c8DkdM7+RGMEWlpbUiF2sGZyUEDQ3MDWhcfChyaPmb3B+tgksTS2qRC4EsOVlBaChChrUKXs0
+        oYYRXW5q2uhjOJILWHyjVSUAAAAA//8DAMSYBwcIBwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:08 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322C88677B2496D500002C758D135A2E.1.1.m_1
+      NCBI-SID:
+      - 72EAC5B6B41DAFA9_D49CSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=72EAC5B6B41DAFA9_D49CSID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:08 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: db=pubmed&term=burritos+school+lunch+gastrointestinal&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7IRh/C4LLRR1MCAAAA//8DAGEC0y7gAAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:07 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322C88677B2496D5000055758E2DC823.1.1.m_1
+      NCBI-SID:
+      - 03D05BE9943E65FA_99B0SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=03D05BE9943E65FA_99B0SID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:08 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '1'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch+gastrointestinal&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '121'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.27.1
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGxG8h3zi/NK7EzstGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGZ
+        hZmppYGpjT6QAxMyMTQwNzOECIFIiHoAAAAA//+yCSlKzCvOSSwBhlZwKtBGJL6dAgjYuBXl59ql
+        JxaXFOVn5pWkFpdk5iXm2OiDhSEqQvLtlFIy00FSZakKxZXFJam5StG+qcEeCiGpRbnFsQr+QQoa
+        CCVK0Y45OQpumak5KUA5Rz8XBSWYJiQJTZAuLOYi6wWpQHcaigobfaDjwI7UR/YZLm/mlOYlZ8D8
+        BgAAAP//zFbBTsMwDL3zFTuyU5cmWVKpyg3tRrdJHLgyJoE2qajdJPh73ISspTHZvBZELmlttX55
+        tvN8Opu1Bgfy5uuj1ZuXsgypdOY6DHhy9ClwjougJJGEQzFtdsbCgKCNd+JfzNOxql4PZd2L0bjc
+        gRqTaZ1wKmuxTlfNbO7r2hrv3t/25fPW3OeJf3Rw29gIDpSdEEjrxIBwLRRDwTxeCWYIK1JzOjPF
+        0hTrPIEtCm0IMpkyWGogNNgW6+Jh2TVAy8egh/1GTLDOsjGyizY4hUE1k+Lv6YtexdRWSVUmZ3oM
+        NvHrn9otmWCcXpJYf4RyQsTCYakfuDmT4G4GsQzHWzuqidQSFVzy8W+fc6JMgSjmmsn0l/uo5/+u
+        k1YX89VxW310xRTTRDvO3I6j4dOvn108f/gP/ukwNs2TgMMbGEZ7U/AnAAAA//8DADRPqXzDCwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 07 Jul 2022 16:23:08 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B747134ED9EA50000268769E7DA62.1.1.m_1
+      NCBI-SID:
+      - AE3D19CCD4E8EB29_74EDSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=AE3D19CCD4E8EB29_74EDSID; domain=.nih.gov; path=/; expires=Fri, 07
+        Jul 2023 16:23:08 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-Test-Test:
+      - test42
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1
