@@ -62,6 +62,7 @@ class SearchForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.instance.search_type = "s"
         if assessment:
+            self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice

@@ -562,6 +562,7 @@ class VisualForm(forms.ModelForm):
             self.fields["settings"].widget.attrs["rows"] = 2
         if assessment:
             self.instance.assessment = assessment
+            self.fields["assessment"].initial = assessment.id
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
         if self.instance.visual_type not in [
@@ -1005,6 +1006,7 @@ class DataPivotForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
+            self.fields["assessment"].initial = assessment
         self.helper = self.setHelper()
         self.fields["settings"].widget.attrs["rows"] = 2
 

@@ -25,6 +25,7 @@ def test_ExternalSiteForm(db_keys):
     )
     assert form.is_valid()
     assert form.cleaned_data == {
+        "assessment": assessment.id,
         "title": "title",
         "slug": "slug",
         "caption": "",
