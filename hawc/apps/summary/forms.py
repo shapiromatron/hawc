@@ -1038,10 +1038,11 @@ class DataPivotForm(forms.ModelForm):
 
 
 class DataPivotUploadForm(DataPivotForm):
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
     class Meta:
         model = models.DataPivotUpload
         fields = "__all__"
-        widgets = {"assessment": forms.HiddenInput}
 
     def clean(self):
         cleaned_data = super().clean()
@@ -1077,10 +1078,9 @@ class DataPivotUploadForm(DataPivotForm):
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
     prefilter_include = ("study", "bioassay", "epi", "invitro", "effect_tags")
-
-    # TODO: add test that confirms this was fixed
 
     class Meta:
         model = models.DataPivotQuery
@@ -1097,7 +1097,6 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             "published_only",
             "prefilters",
         )
-        widgets = {"assessment": forms.HiddenInput}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
