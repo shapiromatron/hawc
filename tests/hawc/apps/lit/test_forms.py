@@ -62,7 +62,6 @@ class TestImportForm:
     """
 
     def test_success(self, db_keys):
-        parent = Assessment.objects.get(id=db_keys.assessment_working)
         form = ImportForm(
             {
                 "search_type": "i",
@@ -72,7 +71,7 @@ class TestImportForm:
                 "description": "",
                 "search_string": "5490558, 5490558",
             },
-            parent=parent,
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
         )
         assert form.is_valid()
 
