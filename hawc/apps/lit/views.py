@@ -74,6 +74,15 @@ class SearchCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     template_name = "lit/search_copy_selector.html"
     form_class = forms.SearchSelectorForm
 
+    def get_success_url(self, form):
+        search = form.cleaned_data["searches"]
+        url = (
+            reverse("lit:search_new", kwargs={"pk": self.assessment.pk})
+            if search.search_type == constants.SearchType.SEARCH
+            else reverse("lit:import_new", kwargs={"pk": self.assessment.pk})
+        )
+        return f"{url}?initial={search.pk}"
+
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
 
@@ -89,6 +98,9 @@ class SearchCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         kwargs["user"] = self.request.user
         kwargs["assessment"] = self.assessment
         return kwargs
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(self.get_success_url(form))
 
 
 class SearchNew(BaseCreate):
