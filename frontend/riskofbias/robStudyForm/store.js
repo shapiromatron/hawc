@@ -142,7 +142,7 @@ class RobFormStore extends StudyRobStore {
     @action.bound cancelSubmitScores() {
         window.location.href = this.config.cancelUrl;
     }
-    @action.bound submitScores() {
+    @action.bound submitScores(redirect) {
         const payload = {
                 id: this.config.riskofbias.id,
                 scores: this.editableScores.map(score => {
@@ -171,9 +171,9 @@ class RobFormStore extends StudyRobStore {
         this.error = null;
         return fetch(url, opts)
             .then(response => {
-                if (response.ok) {
+                if (response.ok && redirect) {
                     window.location.href = this.config.cancelUrl;
-                } else {
+                } else if (!response.ok) {
                     response.text().then(text => {
                         this.error = text;
                     });

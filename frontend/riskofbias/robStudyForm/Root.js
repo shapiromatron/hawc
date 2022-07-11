@@ -30,12 +30,18 @@ class Root extends Component {
                     <div className="well">
                         <Completeness number={store.numIncompleteScores} />
                         <button
-                            className="btn btn-primary space"
+                            className="btn btn-primary mr-3"
                             type="button"
-                            onClick={store.submitScores}>
-                            Save changes
+                            onClick={() => store.submitScores(false)}>
+                            Save and continue editing
                         </button>
-                        <button className="ml-3 btn btn-light" onClick={store.cancelSubmitScores}>
+                        <button
+                            className="btn btn-primary mr-3"
+                            type="button"
+                            onClick={() => store.submitScores(true)}>
+                            Save and return
+                        </button>
+                        <button className="btn btn-light" onClick={store.cancelSubmitScores}>
                             Cancel
                         </button>
                     </div>
