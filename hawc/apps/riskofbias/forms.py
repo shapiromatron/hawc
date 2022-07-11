@@ -29,20 +29,23 @@ class RobTextForm(forms.ModelForm):
 
 
 class RoBDomainForm(forms.ModelForm):
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
     class Meta:
         model = models.RiskOfBiasDomain
         fields = (
             "name",
             "is_overall_confidence",
             "description",
+            "assessment",
         )
-        exclude = ("assessment",)
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
+            self.fields["assessment"].initial = assessment
 
     @property
     def helper(self):
