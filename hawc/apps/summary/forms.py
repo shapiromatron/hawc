@@ -458,9 +458,11 @@ class SummaryTextForm(forms.ModelForm):
 
 
 class SummaryTableForm(forms.ModelForm):
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
     class Meta:
         model = models.SummaryTable
-        exclude = ("assessment", "table_type")
+        exclude = ("table_type",)
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
@@ -546,9 +548,11 @@ class SummaryTableCopySelectorForm(forms.Form):
 
 
 class VisualForm(forms.ModelForm):
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "prefilters")
+        exclude = ("visual_type", "prefilters")
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)

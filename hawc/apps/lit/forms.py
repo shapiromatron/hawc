@@ -43,6 +43,7 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
 
 class SearchForm(forms.ModelForm):
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
     title_str = "Literature Search"
     help_text = (
@@ -54,7 +55,7 @@ class SearchForm(forms.ModelForm):
 
     class Meta:
         model = models.Search
-        fields = ("source", "title", "slug", "description", "search_string")
+        fields = ("assessment", "source", "title", "slug", "description", "search_string")
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
