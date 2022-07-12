@@ -921,6 +921,8 @@ class DataPivotVisualization extends D3Plot {
                 applyStyles(self.svg, this, d._styles.barchartErrorBar);
             });
 
+        // TODO - implemented custom stdev here!
+
         // show error-bar tails or exit early
         if (!barchart.error_show_tails) {
             return;

@@ -202,6 +202,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()
+        # TODO - add this here too?!
         headers = [
             "study id",
             "study name",
