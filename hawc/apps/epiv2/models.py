@@ -354,7 +354,7 @@ class AdjustmentFactor(models.Model):
         help_text='A unique name for this adjustment set that will help you identify it later. It may be descriptive or a dummy variable ("A").',
     )
     description = models.CharField(
-        max_length=256,
+        max_length=512,
         help_text='Enter the list of covariates in the model, separated by commas. These can be brief and ideally entered uniformly across studies when possible. Additional detail can be added in the comments or in study evaluation (e.g., enter "smoking" for consistency instead of "pack-years")',
     )
     comments = models.TextField(blank=True)
