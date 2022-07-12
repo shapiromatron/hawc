@@ -4197,7 +4197,7 @@
     label: base
     score: 16
     bias_direction: 2
-    notes: <p>Fine, but subsets are imprortant</p>
+    notes: <p>Fine, but subsets are important</p>
 - model: riskofbias.riskofbiasscore
   pk: 7
   fields:

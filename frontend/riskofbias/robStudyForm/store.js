@@ -27,11 +27,15 @@ class RobFormStore extends StudyRobStore {
         return _.find(this.activeRobs, {id: this.config.riskofbias.id});
     }
     @computed get numIncompleteScores() {
-        return this.editableScores.filter(score => {
-            return (
-                _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
-            );
-        }).length;
+        /*
+        A review is complete if all scores either:
+        1) have a score not equal to NR (default score when created)
+        2) have an NR score, but notes were added
+        */
+        const isIncomplete = score => {
+            return _.includes(NR_KEYS, score.score) && !h.hasInnerText(score.notes);
+        };
+        return this.editableScores.filter(isIncomplete).length;
     }
 
     updateRobScore(score, riskofbias, overrideOptions) {
