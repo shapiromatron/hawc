@@ -134,11 +134,13 @@ class ReferenceParser:
             )
         return self._formatted
 
-    def get_year(self, value) -> Optional[int]:
+    def get_year(self, value: Optional[str]) -> Optional[int]:
         if value is not None:
+            if value.strip() == "":
+                return None
             try:
                 return int(value)
-            except (TypeError, ValueError):
+            except ValueError:
                 raise ValueError(f"Invalid year: {value}")
 
     def get_doi(self, val) -> Optional[str]:

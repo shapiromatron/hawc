@@ -239,12 +239,12 @@ class RisImportForm(SearchForm):
             f.seek(0)
             fileObj.seek(0)
             try:
-                references = ris.RisImporter(f).references
+                self._references = ris.RisImporter(f).references
             except ValueError as err:
                 raise forms.ValidationError(str(err))
 
         # ensure at least one reference exists
-        if len(references) == 0:
+        if len(self._references) == 0:
             raise forms.ValidationError(self.NO_REFERENCES)
 
         return fileObj

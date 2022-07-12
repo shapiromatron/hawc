@@ -209,8 +209,18 @@ class TestRisImportForm:
 
     def test_year(self, db_keys):
         base_text = (Path(__file__).parent / "data/single_ris.txt").read_text()
-        for replace in ("PY  - abc\n", "PY  - \n"):
-            text = re.sub("PY  - 2009\r?\n", replace, base_text)
+        year_re = "PY  - 2009\r?\n"
+
+        # valid, but cast to None
+        for replace in ("PY  - \n", "PY  -   \n", ""):
+            text = re.sub(year_re, replace, base_text)
+            form = self._create_form(db_keys, SimpleUploadedFile("test.ris", text.encode()))
+            assert form.is_valid()
+            assert form._references[0]["year"] is None
+
+        # invalid
+        for replace in ("PY  - abc\n", "PY  - 2009-2010\n"):
+            text = re.sub(year_re, replace, base_text)
             form = self._create_form(db_keys, SimpleUploadedFile("test.ris", text.encode()))
             assert form.is_valid() is False
             assert "Invalid year:" in form.errors["import_file"][0]
