@@ -48,7 +48,7 @@ class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
             username (str, optional): User to login as; defaults to "admin@hawcproject.org"
         """
 
-        page.locator('a:has-text("Login")').click()
+        page.locator('a.nav-link:has-text("Login")').click()
         page.locator('input[name="username"]').fill(username)
         page.locator('input[name="password"]').fill("pw")
         page.locator('input:has-text("Login")').click()
