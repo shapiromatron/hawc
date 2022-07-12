@@ -880,7 +880,25 @@ class DataPivotVisualization extends D3Plot {
             barchart = this.settings.barchart,
             self = this,
             barHeight = d3.min(this.row_heights, d => d.max - d.min) - barPadding * 2,
-            lineMidpoint = barHeight * 0.5 + barPadding;
+            lineMidpoint = barHeight * 0.5 + barPadding,
+            getLowXValue = d => {
+                if (barchart.error_low_field_name == "stdev") {
+                    return x(
+                        d3.max([d[barchart.field_name] - d[barchart.error_low_field_name], 0])
+                    );
+                } else {
+                    return x(d[barchart.error_low_field_name]);
+                }
+            },
+            getHighXValue = d => {
+                if (barchart.error_high_field_name == "stdev") {
+                    return x(
+                        d3.max([d[barchart.field_name] + d[barchart.error_high_field_name], 0])
+                    );
+                } else {
+                    return x(d[barchart.error_high_field_name]);
+                }
+            };
 
         bars_g
             .selectAll()
@@ -913,8 +931,8 @@ class DataPivotVisualization extends D3Plot {
             .data(datarows)
             .enter()
             .append("svg:line")
-            .attr("x1", d => x(d[barchart.error_low_field_name]))
-            .attr("x2", d => x(d[barchart.error_high_field_name]))
+            .attr("x1", getLowXValue)
+            .attr("x2", getHighXValue)
             .attr("y1", d => this.row_heights[d._dp_index].min + lineMidpoint)
             .attr("y2", d => this.row_heights[d._dp_index].min + lineMidpoint)
             .each(function(d) {
@@ -932,8 +950,8 @@ class DataPivotVisualization extends D3Plot {
             .data(datarows)
             .enter()
             .append("svg:line")
-            .attr("x1", d => x(d[barchart.error_low_field_name]))
-            .attr("x2", d => x(d[barchart.error_low_field_name]))
+            .attr("x1", getLowXValue)
+            .attr("x2", getLowXValue)
             .attr("y1", d => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
             .attr("y2", d => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
             .each(function(d) {
@@ -945,8 +963,8 @@ class DataPivotVisualization extends D3Plot {
             .data(datarows)
             .enter()
             .append("svg:line")
-            .attr("x1", d => x(d[barchart.error_high_field_name]))
-            .attr("x2", d => x(d[barchart.error_high_field_name]))
+            .attr("x1", getHighXValue)
+            .attr("x2", getHighXValue)
             .attr("y1", d => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
             .attr("y2", d => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
             .each(function(d) {
