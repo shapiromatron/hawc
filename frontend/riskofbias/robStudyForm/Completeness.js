@@ -3,27 +3,31 @@ import PropTypes from "prop-types";
 
 class Completeness extends Component {
     render() {
-        let display =
-            this.props.number > 0 ? (
-                <div className="alert alert-danger">
-                    <p className="mb-0">{this.props.number} note(s) still need input.</p>
+        const {number} = this.props,
+            className = number > 0 ? "alert alert-danger" : "alert alert-success",
+            message =
+                number === 0
+                    ? "All items complete! Ready to submit."
+                    : number === 1
+                    ? "1 item still needs input:"
+                    : `${number} items still need input:`;
+        return (
+            <div className={className}>
+                <p>{message}</p>
+                {number > 0 ? (
                     <ul>
                         <li>
-                            Notes are required the &quot;Not reported&quot; judgment is selected.
+                            Notes are required if the &quot;Not reported&quot; judgment is selected.
                         </li>
                         <li>
                             It is recommended, but not required, to add notes for all other
-                            judgments (except for &quot;Not applicable&quot; which is
+                            judgments (except for &quot;Not applicable&quot;, which is
                             self-explanatory)
                         </li>
                     </ul>
-                </div>
-            ) : (
-                <div className="alert alert-success">
-                    <p className="mb-0">All items complete! Ready to submit.</p>
-                </div>
-            );
-        return display;
+                ) : null}
+            </div>
+        );
     }
 }
 
