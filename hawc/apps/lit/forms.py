@@ -171,8 +171,6 @@ class ImportForm(SearchForm):
 class RisImportForm(SearchForm):
 
     RIS_EXTENSION = 'File must have an ".ris" or ".txt" file-extension'
-    DOI_TOO_LONG = "DOI field too long on one or more references (length > 256)"
-    ID_MISSING = "ID field not found for all references"
     UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
     NO_REFERENCES = "RIS formatted incorrectly; contains 0 references"
 
@@ -222,10 +220,7 @@ class RisImportForm(SearchForm):
         if fileObj.size > 1024 * 1024 * 10:
             raise forms.ValidationError("Input file must be <10 MB")
 
-        if fileObj.name[-4:] not in (
-            ".txt",
-            ".ris",
-        ):
+        if fileObj.name[-4:] not in (".txt", ".ris"):
             raise forms.ValidationError(self.RIS_EXTENSION)
 
         # convert BytesIO file to StringIO file
@@ -244,21 +239,13 @@ class RisImportForm(SearchForm):
             f.seek(0)
             fileObj.seek(0)
             try:
-                references = [ref for ref in ris.RisImporter(f).references]
-            except KeyError as err:
-                if "id" in err.args:
-                    raise forms.ValidationError(self.ID_MISSING)
-                else:
-                    raise err
+                references = ris.RisImporter(f).references
+            except ValueError as err:
+                raise forms.ValidationError(str(err))
 
         # ensure at least one reference exists
         if len(references) == 0:
             raise forms.ValidationError(self.NO_REFERENCES)
-
-        # ensure the maximum DOI length < 256
-        doi_lengths = [len(ref.get("doi", "")) for ref in references if ref.get("doi") is not None]
-        if doi_lengths and max(doi_lengths) > 256:
-            raise forms.ValidationError(self.DOI_TOO_LONG)
 
         return fileObj
 

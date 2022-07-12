@@ -56,6 +56,7 @@ class RisImporter:
 
 
 class ReferenceParser:
+    ID_MISSING = "ID field not found for all references"
 
     PLACEHOLDER_TEXT = "<ADD>"
 
@@ -107,29 +108,50 @@ class ReferenceParser:
         self.content = content
 
     def format(self):
+        """Format RIS annotations for processing in HAWC
+
+        Raises:
+            ValueError: if data is in incorrect format
+
+        Returns:
+            Dictionary of reference metadata; saved to self._formatted
+        """
         if not hasattr(self, "_formatted"):
             self._formatted = dict(
                 authors_short=self._get_authors_short(),
                 authors=self._authors,
                 title=self._get_field(self.TITLE_FIELDS, self.PLACEHOLDER_TEXT),
-                year=self._get_field(self.YEAR_FIELDS, None),
+                year=self.get_year(self._get_field(self.YEAR_FIELDS, None)),
                 citation=self._get_citation(),
                 abstract=self._get_field(self.ABSTRACT_FIELDS, ""),
                 PMID=self._get_pmid(),
-                doi=self.content.get("doi", None),
+                doi=self.get_doi(self.content.get("doi")),
                 accession_number=self._get_accession_number(),
                 accession_db=self.content.get("name_of_database", None),
                 reference_type=self.content.get("type_of_reference", None),
-                id=self._try_int(self.content["id"]),
+                id=self.get_id(self.content.get("id")),
                 json=self.content,
             )
         return self._formatted
 
-    def _try_int(self, val):
+    def get_year(self, value) -> Optional[int]:
+        if value is not None:
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                raise ValueError(f"Invalid year: {value}")
+
+    def get_doi(self, val) -> Optional[str]:
+        doi = self.content.get("doi", None)
+        if doi and len(doi) > 256:
+            raise ValueError(f"DOI too long: {doi}")
+        return doi
+
+    def get_id(self, val) -> int:
         try:
             return int(val)
-        except Exception:
-            return val
+        except (TypeError, ValueError):
+            raise ValueError(self.ID_MISSING)
 
     def _get_field(self, fields, default):
         for fld in fields:
