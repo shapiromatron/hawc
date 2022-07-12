@@ -171,9 +171,13 @@ class RobFormStore extends StudyRobStore {
         this.error = null;
         return fetch(url, opts)
             .then(response => {
-                if (response.ok && redirect) {
-                    window.location.href = this.config.cancelUrl;
-                } else if (!response.ok) {
+                if (response.ok) {
+                    if (redirect) {
+                        window.location.href = this.config.cancelUrl;
+                    } else {
+                        this.setChangedSavedDiv();
+                    }
+                } else {
                     response.text().then(text => {
                         this.error = text;
                     });
@@ -182,6 +186,13 @@ class RobFormStore extends StudyRobStore {
             .catch(error => {
                 this.error = error;
             });
+    }
+    @observable changedSavedDiv = false;
+    @action.bound setChangedSavedDiv() {
+        this.changedSavedDiv = true;
+        setTimeout(() => {
+            this.changedSavedDiv = false;
+        }, 2000);
     }
     @action.bound createScoreOverride(payload) {
         let url = `${this.config.riskofbias.scores_url}?assessment_id=${this.config.assessment_id}`,
