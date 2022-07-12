@@ -25,7 +25,7 @@ from ..common.api import (
     OncePerMinuteThrottle,
     PaginationWithCount,
 )
-from ..common.helper import FlatExport, re_digits, read_excel, tryParseInt
+from ..common.helper import FlatExport, re_digits, read_excel
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
@@ -69,9 +69,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             serializer = serializers.ReferenceTreeSerializer(data=request.data, context=context)
             serializer.is_valid(raise_exception=True)
             serializer.update()
-            create_object_log(
-                "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
-            )
+            create_object_log("Updated (tagtree replace)", assessment, assessment.id, self.request.user.id)
         return Response(serializer.data)
 
     @action(detail=True, pagination_class=PaginationWithCount)
@@ -86,22 +84,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             - untagged: include untagged references (default None)
         """
         assessment = self.get_object()
-        qs = assessment.references.all()
-
-        if search_id := tryParseInt(request.query_params.get("search_id")):
-            qs = qs.filter(searches=search_id)
-
-        if "untagged" in request.query_params:
-            qs = qs.untagged()
-        elif tag_id := tryParseInt(request.query_params.get("tag_id")):
-            if tag := models.ReferenceFilterTag.objects.filter(id=tag_id).first():
-                qs = qs.with_tag(tag=tag, descendants=True)
-
-        qs = (
-            qs.select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
-            .order_by("id")
-        )
+        ref_filters = serializers.FilterReferences.from_drf(request.query_params, assessment_id=assessment.pk)
+        qs = ref_filters.get_queryset()
 
         if "all" in request.query_params:
             serializer = serializers.ReferenceSerializer(qs, many=True)
@@ -135,9 +119,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
 
         if self.request.method == "POST":
-            serializer = serializers.BulkReferenceTagSerializer(
-                data=request.data, context={"assessment": instance}
-            )
+            serializer = serializers.BulkReferenceTagSerializer(data=request.data, context={"assessment": instance})
             serializer.is_valid(raise_exception=True)
             serializer.bulk_create_tags()
 
@@ -150,9 +132,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
         # get all the years for a given assessment
         years = list(
-            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list(
-                "year", flat=True
-            )
+            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list("year", flat=True)
         )
         payload = {}
         if len(years) > 0:
@@ -212,9 +192,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         assessment = self.get_object()
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(assessment)
-            .prefetch_related("identifiers")
-            .order_by("id"),
+            models.Reference.objects.get_qs(assessment).prefetch_related("identifiers").order_by("id"),
             filename=f"references-{assessment}",
             assessment=assessment,
             tags=tags,
@@ -249,14 +227,10 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         inner list. Each inner list contains the reference ID and the new HERO ID, respectively.
         """
         assessment = self.get_object()
-        serializer = serializers.ReferenceReplaceHeroIdSerializer(
-            data=request.data, context={"assessment": assessment}
-        )
+        serializer = serializers.ReferenceReplaceHeroIdSerializer(data=request.data, context={"assessment": assessment})
         serializer.is_valid(raise_exception=True)
         serializer.execute()
-        create_object_log(
-            "Updated (HERO replacements)", assessment, assessment.id, self.request.user.id
-        )
+        create_object_log("Updated (HERO replacements)", assessment, assessment.id, self.request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @transaction.atomic
@@ -273,9 +247,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         assessment = self.get_object()
         models.Reference.update_hero_metadata(assessment.id)
-        create_object_log(
-            "Updated (HERO metadata)", assessment, assessment.id, self.request.user.id
-        )
+        create_object_log("Updated (HERO metadata)", assessment, assessment.id, self.request.user.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
@@ -289,9 +261,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         if not assessment.user_can_view_object(request.user):
             raise exceptions.PermissionDenied()
 
-        serializer = serializers.ReferenceQuerySerializer(
-            data=request.data, context={"assessment": assessment}
-        )
+        serializer = serializers.ReferenceQuerySerializer(data=request.data, context={"assessment": assessment})
 
         resp = []
         if serializer.is_valid(raise_exception=True):
