@@ -4,7 +4,6 @@ from playwright.sync_api import expect
 from .common import PlaywrightTestCase
 
 
-@pytest.mark.vcr
 @pytest.mark.django_db
 class TestBioassay(PlaywrightTestCase):
     def test_bioassay(self):
