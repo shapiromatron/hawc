@@ -107,10 +107,6 @@ jobs:
     needs: [backend, frontend]
     runs-on: ubuntu-20.04
 
-    container:
-      image: python:3.9-slim
-      options: --network-alias container
-
     services:
       postgres:
         image: postgres:12-alpine
@@ -122,36 +118,22 @@ jobs:
         - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      selenium-server:
-        # ERR_INSUFFICIENT_RESOURCES is raised if Chrome is used,
-        # so we use Firefox instead. Chrome can only handle so many
-        # async requests, and since the developmental webpack does not
-        # take into consideration these restrictions and  it isn't being
-        # served locally, there are errors.
-        # Similar issue with relevant answer:
-        # https://community.atlassian.com/t5/Jira-questions/Im-getting-Failed-to-load-resource-net-ERR-INSUFFICIENT/qaq-p/1153027
-        # Developmental webpack:
-        # https://webpack.js.org/configuration/mode/#mode-development
-        image: selenium/standalone-firefox:latest
-        ports:
-        - 4444:4444
-
     env:
-      DJANGO_DB_HOST: postgres
+      DJANGO_DB_HOST: localhost
       DJANGO_DB_NAME: hawc
-      DJANGO_DB_PORT: 5432
       DJANGO_DB_PW: password
       DJANGO_DB_USER: hawc
       HAWC_INTEGRATION_TESTS: 1
-      BROWSER: firefox
-      LIVESERVER_HOST: container
+      LIVESERVER_HOST: localhost
       LIVESERVER_PORT: 8000
       PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-      SELENIUM_HOST: selenium-server
-      SELENIUM_PORT: 4444
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        architecture: 'x64'
     - name: try to restore pip cache
       uses: actions/cache@v2
       with:
@@ -169,17 +151,19 @@ jobs:
         pip install -U pip
         pip install -r requirements/dev.txt
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
-    - name: run selenium tests
+    - name: run integration tests
       id: test
       continue-on-error: true
       run: |
-        py.test -sv tests/frontend/integration/
-    - name: run selenium tests (retry)
+        playwright install --with-deps chromium
+        LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
+    - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        py.test -sv tests/frontend/integration/
+        playwright install --with-deps chromium
+        LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
     - name: set status
       if: always()
       run: |
