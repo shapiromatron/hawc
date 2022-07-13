@@ -156,14 +156,14 @@ jobs:
       continue-on-error: true
       run: |
         playwright install --with-deps chromium
-        LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
+        LLR_INTEGRATION_TESTS=1 py.test -sv tests/frontend/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
         playwright install --with-deps chromium
-        LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
+        LLR_INTEGRATION_TESTS=1 py.test -sv tests/frontend/integration/
     - name: set status
       if: always()
       run: |
