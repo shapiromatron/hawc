@@ -119,7 +119,7 @@ def test_xlsx_renderer(basic_export):
     )
     df2 = pd.read_excel(BytesIO(response))
     assert df2.to_dict(orient="records") == [{"test": "test--test"}]
-    assert resp_obj["Content-Disposition"] == "attachment; filename=test.xlsx"
+    assert resp_obj["Content-Disposition"] == "attachment; filename=name.xlsx"
 
 
 def test_xlsx_response_error(basic_export):
