@@ -50,6 +50,7 @@ class EffectEstimateType(models.TextChoices):
     SCC = "SCC", "Spearman's Correlation Coefficient"
     PC = "PC", "Percent change"
     MD = "MD", "Mean difference"
+    OT = "other", "other"
 
 
 class VarianceType(models.IntegerChoices):

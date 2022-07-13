@@ -220,6 +220,7 @@ class DataExtractionForm(forms.ModelForm):
         widgets = {
             "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
+            "effect_estimate_type": SelectOtherWidget(choices=constants.EffectEstimateType.choices),
         }
 
     def __init__(self, *args, **kwargs):

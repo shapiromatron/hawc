@@ -407,7 +407,7 @@ class DataExtraction(models.Model):
         help_text='Enter age or other timing (e.g., X years follow-up) for measurement of outcome. If cross-sectional, enter "cross-sectional".',
     )
     effect_estimate_type = models.CharField(
-        max_length=3, choices=constants.EffectEstimateType.choices
+        max_length=128, blank=True,
     )
     effect_estimate = models.FloatField()
     ci_lcl = models.FloatField(verbose_name="Lower bound", blank=True, null=True)
