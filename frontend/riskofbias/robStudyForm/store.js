@@ -142,7 +142,7 @@ class RobFormStore extends StudyRobStore {
     @action.bound cancelSubmitScores() {
         window.location.href = this.config.cancelUrl;
     }
-    @action.bound submitScores() {
+    @action.bound submitScores(redirect) {
         const payload = {
                 id: this.config.riskofbias.id,
                 scores: this.editableScores.map(score => {
@@ -172,7 +172,11 @@ class RobFormStore extends StudyRobStore {
         return fetch(url, opts)
             .then(response => {
                 if (response.ok) {
-                    window.location.href = this.config.cancelUrl;
+                    if (redirect) {
+                        window.location.href = this.config.cancelUrl;
+                    } else {
+                        this.setChangedSavedDiv();
+                    }
                 } else {
                     response.text().then(text => {
                         this.error = text;
@@ -182,6 +186,13 @@ class RobFormStore extends StudyRobStore {
             .catch(error => {
                 this.error = error;
             });
+    }
+    @observable changedSavedDiv = false;
+    @action.bound setChangedSavedDiv() {
+        this.changedSavedDiv = true;
+        setTimeout(() => {
+            this.changedSavedDiv = false;
+        }, 2000);
     }
     @action.bound createScoreOverride(payload) {
         let url = `${this.config.riskofbias.scores_url}?assessment_id=${this.config.assessment_id}`,
