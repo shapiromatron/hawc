@@ -881,24 +881,8 @@ class DataPivotVisualization extends D3Plot {
             self = this,
             barHeight = d3.min(this.row_heights, d => d.max - d.min) - barPadding * 2,
             lineMidpoint = barHeight * 0.5 + barPadding,
-            getLowXValue = d => {
-                if (barchart.error_low_field_name == "stdev") {
-                    return x(
-                        d3.max([d[barchart.field_name] - d[barchart.error_low_field_name], 0])
-                    );
-                } else {
-                    return x(d[barchart.error_low_field_name]);
-                }
-            },
-            getHighXValue = d => {
-                if (barchart.error_high_field_name == "stdev") {
-                    return x(
-                        d3.max([d[barchart.field_name] + d[barchart.error_high_field_name], 0])
-                    );
-                } else {
-                    return x(d[barchart.error_high_field_name]);
-                }
-            };
+            relativeErrors = _.includes(["stdev"], barchart.error_low_field_name),
+            lineData = null;
 
         bars_g
             .selectAll()
@@ -909,7 +893,7 @@ class DataPivotVisualization extends D3Plot {
             .attr("y", d => this.row_heights[d._dp_index].min + barPadding)
             .attr("width", d => Math.abs(x(barXStart) - x(d[barchart.field_name])))
             .attr("height", barHeight)
-            .style("cursor", d => (barchart._dpe_key ? "pointer" : "auto"))
+            .style("cursor", barchart._dpe_key ? "pointer" : "auto")
             .on("click", (event, d) => {
                 if (barchart._dpe_key) {
                     this.dpe.render_plottip(barchart, d);
@@ -926,20 +910,34 @@ class DataPivotVisualization extends D3Plot {
         ) {
             return;
         }
+
+        lineData = datarows.map(d => {
+            const xMin = relativeErrors
+                    ? d[barchart.field_name] - d[barchart.error_low_field_name]
+                    : d[barchart.error_low_field_name],
+                xMax = relativeErrors
+                    ? d[barchart.field_name] + d[barchart.error_high_field_name]
+                    : d[barchart.error_high_field_name];
+            return {
+                xLow: x(d3.max([xMin, 0])),
+                xHigh: x(d3.max([xMax, 0])),
+                y: this.row_heights[d._dp_index].min,
+                styles: d._styles.barchartErrorBar,
+            };
+        });
+
         errorbars_g
             .selectAll()
-            .data(datarows)
+            .data(lineData)
             .enter()
             .append("svg:line")
-            .attr("x1", getLowXValue)
-            .attr("x2", getHighXValue)
-            .attr("y1", d => this.row_heights[d._dp_index].min + lineMidpoint)
-            .attr("y2", d => this.row_heights[d._dp_index].min + lineMidpoint)
+            .attr("x1", d => d.xLow)
+            .attr("x2", d => d.xHigh)
+            .attr("y1", d => d.y + lineMidpoint)
+            .attr("y2", d => d.y + lineMidpoint)
             .each(function(d) {
-                applyStyles(self.svg, this, d._styles.barchartErrorBar);
+                applyStyles(self.svg, this, d.styles);
             });
-
-        // TODO - implemented custom stdev here!
 
         // show error-bar tails or exit early
         if (!barchart.error_show_tails) {
@@ -947,28 +945,28 @@ class DataPivotVisualization extends D3Plot {
         }
         errorbars_g
             .selectAll()
-            .data(datarows)
+            .data(lineData)
             .enter()
             .append("svg:line")
-            .attr("x1", getLowXValue)
-            .attr("x2", getLowXValue)
-            .attr("y1", d => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
-            .attr("y2", d => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
+            .attr("x1", d => d.xLow)
+            .attr("x2", d => d.xLow)
+            .attr("y1", d => d.y + lineMidpoint - barPadding)
+            .attr("y2", d => d.y + lineMidpoint + barPadding)
             .each(function(d) {
-                applyStyles(self.svg, this, d._styles.barchartErrorBar);
+                applyStyles(self.svg, this, d.styles);
             });
 
         errorbars_g
             .selectAll()
-            .data(datarows)
+            .data(lineData)
             .enter()
             .append("svg:line")
-            .attr("x1", getHighXValue)
-            .attr("x2", getHighXValue)
-            .attr("y1", d => this.row_heights[d._dp_index].min + lineMidpoint - barPadding)
-            .attr("y2", d => this.row_heights[d._dp_index].min + lineMidpoint + barPadding)
+            .attr("x1", d => d.xHigh)
+            .attr("x2", d => d.xHigh)
+            .attr("y1", d => d.y + lineMidpoint - barPadding)
+            .attr("y2", d => d.y + lineMidpoint + barPadding)
             .each(function(d) {
-                applyStyles(self.svg, this, d._styles.barchartErrorBar);
+                applyStyles(self.svg, this, d.styles);
             });
     }
 
