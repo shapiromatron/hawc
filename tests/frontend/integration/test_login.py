@@ -32,6 +32,7 @@ class TestLogin(PlaywrightTestCase):
         # confirm correct login
         page.locator('input[name="username"]').fill("admin@hawcproject.org")
         page.locator('input[name="password"]').fill("pw")
+        page.locator('input:has-text("Login")').click()
         expect(page).to_have_url(self.live_server_url + "/portal/")
 
         # confirm logout

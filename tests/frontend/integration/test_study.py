@@ -19,10 +19,10 @@ class TestStudy(PlaywrightTestCase):
 
         # /study/:id/
         page.goto(self.live_server_url + "/study/7/")
-        expect(page.locator("text=Animal bioassay")).to_be_visible()
-        expect(page.locator("text=Biesemeier JA et al. 2011")).to_be_visible()
+        expect(page.locator('td:has-text("Animal bioassay")')).to_be_visible()
+        expect(page.locator('li:has-text("Biesemeier JA et al. 2011")')).to_be_visible()
 
         expect(page.locator("#study_details")).not_to_have_count(0)
         expect(page.locator("table")).not_to_have_count(0)
         expect(page.locator("svg")).not_to_have_count(0)
-        expect(page.locator("th >> text=Data type(s)")).to_have_count(4)
+        expect(page.locator("th >> text=Data type(s)")).to_be_visible()

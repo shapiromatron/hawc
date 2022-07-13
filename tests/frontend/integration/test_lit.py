@@ -20,19 +20,19 @@ class TestLiterature(PlaywrightTestCase):
         page.locator("text=View By Tag").click()
         expect(page).to_have_url(self.live_server_url + "/lit/assessment/2/references/")
         expect(page.locator("text=Human Study (2)")).to_be_visible()
-        expect(page.locator("#reference_detail_div")).not_to_have_count(0)
+        expect(page.locator("#references_detail_div")).not_to_have_count(0)
         page.locator("text=Human Study (2)").click()
         expect(page.locator(".referenceDetail")).to_have_count(2)
 
         # /lit/assessment/:id/references/visualization/
         page.goto(self.live_server_url + "/lit/assessment/2/references/visualization/")
         expect(page.locator("svg")).not_to_have_count(0)
-        expect(page.locator("svg.tagnode")).to_have_count(3)
+        expect(page.locator("svg >> .tagnode")).to_have_count(3)
 
         # /lit/assessment/:id/references/search/
         page.goto(self.live_server_url + "/lit/assessment/2/references/search/")
-        page.locator("input[name=Authors]").fill("Kawana")
-        page.locator("text=Search").click()
+        page.locator("input[name=authors]").fill("Kawana")
+        page.locator("#searchCollapser >> text=Search").click()
         expect(page.locator("text=1 references found.")).to_be_visible()
 
         # /lit/assessment/:id/tag/untagged/
