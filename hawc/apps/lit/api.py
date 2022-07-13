@@ -315,7 +315,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             raise ValidationError({"file": "File extension must be .xlsx"})
 
         try:
-            df = pd.read_excel(file_)
+            df = pd.read_excel(file_, engine="openpyxl")
         except (BadZipFile, ValueError):
             raise ParseError({"file": "Unable to parse excel file"})
 

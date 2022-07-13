@@ -64,92 +64,99 @@ def test_json_renderer(basic_export):
     assert json.loads(response) == [{"a.1": 1, "a.2": 2}, {"a.1": 3, "a.2": 4}]
 
 
-def test_xlsx_renderer(basic_export):
-    resp_obj = Response()
-    assert "Content-Disposition" not in resp_obj
+class TestXlsxRenderer:
+    def test_success(self, basic_export):
+        resp_obj = Response()
+        assert "Content-Disposition" not in resp_obj
 
-    response = renderers.PandasXlsxRenderer().render(
-        data=basic_export, renderer_context={"response": resp_obj}
-    )
-    df2 = pd.read_excel(BytesIO(response))
-    assert df2.to_dict(orient="records") == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
-    assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
-
-    # Datetimes with timezones are incompatible with Excel. Make sure that the renderer can handle DataFrames with timezoned datetimes.
-    df = pd.DataFrame(
-        data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]],
-        columns=["count", "when"],
-    )
-    df.loc[:, "when"] = df.when.astype("datetime64")
-
-    def check_is_close(df1: pd.DataFrame, df2: pd.DataFrame) -> bool:
-        return all(
-            [
-                df1["count"].equals(df2["count"]),
-                bool(((df2["when"] - df1["when"]).dt.total_seconds().abs() < 0.1).all()),
-            ]
+        response = renderers.PandasXlsxRenderer().render(
+            data=basic_export, renderer_context={"response": resp_obj}
         )
+        df2 = pd.read_excel(BytesIO(response))
+        assert df2.to_dict(orient="records") == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
+        assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
 
-    # naive datetime
-    response = renderers.PandasXlsxRenderer().render(
-        data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
-    )
-    df2 = pd.read_excel(BytesIO(response))
-    assert check_is_close(df, df2) is True
+    def test_datetimes(self, basic_export):
+        resp_obj = Response()
+        assert "Content-Disposition" not in resp_obj
 
-    # with timezone
-    df.loc[:, "when"] = df.when.dt.tz_localize(tz="US/Eastern")
-    response = renderers.PandasXlsxRenderer().render(
-        data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
-    )
-    df2 = pd.read_excel(BytesIO(response))
+        # Datetimes with timezones are incompatible with Excel. Make sure that the renderer can handle DataFrames with timezoned datetimes.
+        df = pd.DataFrame(
+            data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]],
+            columns=["count", "when"],
+        )
+        df.loc[:, "when"] = df.when.astype("datetime64")
 
-    # this should be incorrect initially without a timezone
-    with pytest.raises(TypeError):
-        check_is_close(df, df2)
+        def check_is_close(df1: pd.DataFrame, df2: pd.DataFrame) -> bool:
+            return all(
+                [
+                    df1["count"].equals(df2["count"]),
+                    bool(((df2["when"] - df1["when"]).dt.total_seconds().abs() < 0.1).all()),
+                ]
+            )
 
-    # with appropriate cast, success!
-    df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
-    assert check_is_close(df, df2) is True
+        # naive datetime
+        response = renderers.PandasXlsxRenderer().render(
+            data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
+        )
+        df2 = pd.read_excel(BytesIO(response))
+        assert check_is_close(df, df2) is True
 
-    # ensure IllegalCharacterError are properly caught
-    df3 = pd.DataFrame(data=[["test-\x02-test"]], columns=["test"])
-    response = renderers.PandasXlsxRenderer().render(
-        data=FlatExport(df3, "name"), renderer_context={"response": resp_obj}
-    )
-    df2 = pd.read_excel(BytesIO(response))
-    assert df2.to_dict(orient="records") == [{"test": "test--test"}]
-    assert resp_obj["Content-Disposition"] == "attachment; filename=name.xlsx"
+        # with timezone
+        df.loc[:, "when"] = df.when.dt.tz_localize(tz="US/Eastern")
+        response = renderers.PandasXlsxRenderer().render(
+            data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
+        )
+        df2 = pd.read_excel(BytesIO(response))
 
+        # this should be incorrect initially without a timezone
+        with pytest.raises(TypeError):
+            check_is_close(df, df2)
 
-def test_xlsx_response_error(basic_export):
-    request_exception = MethodNotAllowed(method="POST")
-    response = Response(
-        data={"detail": str(request_exception)}, status=request_exception.status_code
-    )
-    # these properties are usually set by the view;
-    # we will set them manually
-    response.accepted_renderer = renderers.PandasXlsxRenderer()
-    response.accepted_media_type = response.accepted_renderer.media_type
-    response.renderer_context = {"response": response}
-    response.render()
-    # the rendered content should be a binary JSON with the exception details
-    assert response.rendered_content == b'{"detail": "Method \\"POST\\" not allowed."}'
+        # with appropriate cast, success!
+        df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
+        assert check_is_close(df, df2) is True
 
+    def test_invalid_chars(self):
+        resp_obj = Response()
+        assert "Content-Disposition" not in resp_obj
 
-def test_xlsx_options_request():
-    """
-    Make sure that sending an OPTIONS to an xlsx-style export doesn't result in server error.
+        # ensure IllegalCharacterError are properly caught
+        df3 = pd.DataFrame(data=[["test-\x02-test"]], columns=["test"])
+        response = renderers.PandasXlsxRenderer().render(
+            data=FlatExport(df3, "name"), renderer_context={"response": resp_obj}
+        )
+        df2 = pd.read_excel(BytesIO(response))
+        assert df2.to_dict(orient="records") == [{"test": "test--test"}]
+        assert resp_obj["Content-Disposition"] == "attachment; filename=name.xlsx"
 
-    This test was added based on security scan; please don't remove.
-    """
-    # We will pass in an OPTIONS request to the renderer context
-    factory = APIRequestFactory()
-    request = factory.options(r"\path")
-    # The response data from an OPTIONS request is type dict
-    data = {"dummy": "data"}
-    response = renderers.PandasXlsxRenderer().render(
-        data=data, renderer_context={"response": Response(), "request": request}
-    )
-    # The renderered response should be a JSON string of the passed in data
-    assert response == '{"dummy": "data"}'
+    def test_response_error(self):
+        request_exception = MethodNotAllowed(method="POST")
+        response = Response(
+            data={"detail": str(request_exception)}, status=request_exception.status_code
+        )
+        # these properties are usually set by the view;
+        # we will set them manually
+        response.accepted_renderer = renderers.PandasXlsxRenderer()
+        response.accepted_media_type = response.accepted_renderer.media_type
+        response.renderer_context = {"response": response}
+        response.render()
+        # the rendered content should be a binary JSON with the exception details
+        assert response.rendered_content == b'{"detail": "Method \\"POST\\" not allowed."}'
+
+    def test_options_request(self):
+        """
+        Make sure that sending an OPTIONS to an xlsx-style export doesn't result in server error.
+
+        This test was added based on security scan; please don't remove.
+        """
+        # We will pass in an OPTIONS request to the renderer context
+        factory = APIRequestFactory()
+        request = factory.options(r"\path")
+        # The response data from an OPTIONS request is type dict
+        data = {"dummy": "data"}
+        response = renderers.PandasXlsxRenderer().render(
+            data=data, renderer_context={"response": Response(), "request": request}
+        )
+        # The renderered response should be a JSON string of the passed in data
+        assert response == '{"dummy": "data"}'
