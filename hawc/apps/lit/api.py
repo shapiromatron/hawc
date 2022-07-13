@@ -80,10 +80,12 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get references for an assessment
 
         Args (via GET parameters):
-            - search_id: Search object id; if provided, gets references within a search
-            - tag_id: Tag object id; if provided, gets references with tag
-            - all: include references; no pagination (default None)
-            - untagged: include untagged references (default None)
+            - search_id: gets references within a given search
+            - tag_id: gets references with a given tagTag object id; if provided, gets references with tag
+            - all: fetch all references without pagination (default False)
+            - untagged: include untagged references (default False)
+            - required_tags: requires references to have at least one of the given tags
+            - pruned_tags: prunes references with any of the given tags if they no longer belong in the subtree without said tag
         """
         assessment = self.get_object()
         ref_filters = serializers.FilterReferences.from_drf(
