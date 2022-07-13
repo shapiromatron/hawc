@@ -285,7 +285,7 @@ class EditColumnForm extends Component {
     render() {
         const {store, colIdx} = this.props,
             col = store.stagedEdits.columns[colIdx];
-            const width_input = col.width;
+        const width_input = col.width;
         return (
             <>
                 <div className="col-md-12">
@@ -337,12 +337,12 @@ class EditColumnForm extends Component {
                                     value >= 1 && value <= 20
                                         ? value
                                         : store.settings.columns[colIdx].width;
-                            const width_input = value
                             store.updateStagedColumn(colIdx, {width});
                         }}
                         value={width_input}
                         name="width"
                         label="Width"
+                        helpText="Number between 1 and 20"
                     />
                 </div>
                 <div className="col-md-12 text-center">
