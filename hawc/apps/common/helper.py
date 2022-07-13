@@ -31,6 +31,8 @@ def read_excel(*args, **kwargs):
     """
     We use openpyxl as the engine since the default xlrd is no longer maintained.
     """
+    # TODO - remove this - this is now the default
+    # https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
     kwargs.update(engine="openpyxl")
     return pd.read_excel(*args, **kwargs)
 

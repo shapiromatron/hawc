@@ -112,6 +112,15 @@ def test_xlsx_renderer(basic_export):
     df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
     assert check_is_close(df, df2) is True
 
+    # ensure IllegalCharacterError are properly caught
+    df3 = pd.DataFrame(data=[["test-\x02-test"]], columns=["test"])
+    response = renderers.PandasXlsxRenderer().render(
+        data=FlatExport(df3, "name"), renderer_context={"response": resp_obj}
+    )
+    df2 = read_excel(BytesIO(response))
+    assert df2.to_dict(orient="records") == [{"test": "test--test"}]
+    assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
+
 
 def test_xlsx_response_error(basic_export):
     request_exception = MethodNotAllowed(method="POST")
