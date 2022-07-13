@@ -342,7 +342,7 @@ class EditColumnForm extends Component {
                         value={width_input}
                         name="width"
                         label="Width"
-                        helpText="Number between 1 and 20"
+                        helpPopup="Number between 1 and 20"
                     />
                 </div>
                 <div className="col-md-12 text-center">
