@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
 from hawc.apps.common import renderers
-from hawc.apps.common.helper import FlatExport, read_excel
+from hawc.apps.common.helper import FlatExport
 
 
 @pytest.fixture
@@ -71,7 +71,7 @@ def test_xlsx_renderer(basic_export):
     response = renderers.PandasXlsxRenderer().render(
         data=basic_export, renderer_context={"response": resp_obj}
     )
-    df2 = read_excel(BytesIO(response))
+    df2 = pd.read_excel(BytesIO(response))
     assert df2.to_dict(orient="records") == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
     assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
 
@@ -94,7 +94,7 @@ def test_xlsx_renderer(basic_export):
     response = renderers.PandasXlsxRenderer().render(
         data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
     )
-    df2 = read_excel(BytesIO(response))
+    df2 = pd.read_excel(BytesIO(response))
     assert check_is_close(df, df2) is True
 
     # with timezone
@@ -102,7 +102,7 @@ def test_xlsx_renderer(basic_export):
     response = renderers.PandasXlsxRenderer().render(
         data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
     )
-    df2 = read_excel(BytesIO(response))
+    df2 = pd.read_excel(BytesIO(response))
 
     # this should be incorrect initially without a timezone
     with pytest.raises(TypeError):
@@ -117,9 +117,9 @@ def test_xlsx_renderer(basic_export):
     response = renderers.PandasXlsxRenderer().render(
         data=FlatExport(df3, "name"), renderer_context={"response": resp_obj}
     )
-    df2 = read_excel(BytesIO(response))
+    df2 = pd.read_excel(BytesIO(response))
     assert df2.to_dict(orient="records") == [{"test": "test--test"}]
-    assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
+    assert resp_obj["Content-Disposition"] == "attachment; filename=test.xlsx"
 
 
 def test_xlsx_response_error(basic_export):

@@ -25,7 +25,7 @@ from ..common.api import (
     OncePerMinuteThrottle,
     PaginationWithCount,
 )
-from ..common.helper import FlatExport, re_digits, read_excel, tryParseInt
+from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
@@ -315,7 +315,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             raise ValidationError({"file": "File extension must be .xlsx"})
 
         try:
-            df = read_excel(file_)
+            df = pd.read_excel(file_)
         except (BadZipFile, ValueError):
             raise ParseError({"file": "Unable to parse excel file"})
 
