@@ -60,7 +60,7 @@ class IntegerInput extends Component {
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
-                {this.props.helpPopup ? <HelpTextPopup content={this.props.helpPopup} /> : null }
+                {this.props.helpPopup ? <HelpTextPopup content={this.props.helpPopup} /> : null}
                 {this.renderField(fieldClass, fieldId)}
                 {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
