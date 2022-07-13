@@ -29,15 +29,35 @@ class Root extends Component {
                     })}
                     <div className="well">
                         <Completeness number={store.numIncompleteScores} />
-                        <button
-                            className="btn btn-primary space"
-                            type="button"
-                            onClick={store.submitScores}>
-                            Save changes
-                        </button>
-                        <button className="ml-3 btn btn-light" onClick={store.cancelSubmitScores}>
-                            Cancel
-                        </button>
+                        {store.changedSavedDiv ? (
+                            <div className="alert alert-info">
+                                <p className="mb-0">
+                                    <i className="fa fa-save mr-2" />
+                                    Changes saved!
+                                </p>
+                            </div>
+                        ) : null}
+                        <div className="d-flex justify-content-between">
+                            <button
+                                className="btn btn-primary"
+                                type="button"
+                                onClick={() => store.submitScores(false)}>
+                                Save and continue editing
+                            </button>
+                            <div>
+                                <button
+                                    className="btn btn-light mr-3"
+                                    onClick={store.cancelSubmitScores}>
+                                    Cancel
+                                </button>
+                                <button
+                                    className="btn btn-primary"
+                                    type="button"
+                                    onClick={() => store.submitScores(true)}>
+                                    Save and return
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
