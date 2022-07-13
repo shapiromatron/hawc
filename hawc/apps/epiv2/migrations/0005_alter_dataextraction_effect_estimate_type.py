@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epiv2', '0004_alter_adjustmentfactor_description'),
+        ("epiv2", "0004_alter_adjustmentfactor_description"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dataextraction',
-            name='effect_estimate_type',
+            model_name="dataextraction",
+            name="effect_estimate_type",
             field=models.CharField(blank=True, max_length=128),
         ),
     ]
