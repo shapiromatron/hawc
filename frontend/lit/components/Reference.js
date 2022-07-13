@@ -126,7 +126,7 @@ class Reference extends Component {
                 ) : null}
                 {data.has_study ? (
                     <p className="my-1">
-                        <strong>HAWC study extraction:&nbsp;</strong>
+                        <strong>HAWC study details:&nbsp;</strong>
                         <a href={reference.get_study_url()}>{data.study_short_citation}</a>
                     </p>
                 ) : null}
