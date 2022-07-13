@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
-import HelpTextPopup from "./HelpTextPopup";
+
 
 class IntegerInput extends Component {
     constructor(props) {
