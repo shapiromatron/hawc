@@ -8,7 +8,7 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -99,12 +99,16 @@ class IdentifiersManager(BaseManager):
             if ident:
                 ident.update(content=content)
             else:
-                ident = self.create(database=constants.ReferenceDatabase.RIS, unique_id=id_, content=content)
+                ident = self.create(
+                    database=constants.ReferenceDatabase.RIS, unique_id=id_, content=content
+                )
             ids.append(ident)
 
             # create DOI identifier
             if doi := get_doi_from_identifier(ident):
-                ident, _ = self.get_or_create(database=constants.ReferenceDatabase.DOI, unique_id=doi)
+                ident, _ = self.get_or_create(
+                    database=constants.ReferenceDatabase.DOI, unique_id=doi
+                )
                 ids.append(ident)
 
             # create PMID identifier
@@ -112,7 +116,9 @@ class IdentifiersManager(BaseManager):
             if ref["PMID"] is not None or db == "nlm":
                 id_ = ref["PMID"] or ref["accession_number"]
                 if id_ is not None:
-                    ident = self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id=str(id_)).first()
+                    ident = self.filter(
+                        database=constants.ReferenceDatabase.PUBMED, unique_id=str(id_)
+                    ).first()
                     if not ident:
                         ident = self.create(
                             database=constants.ReferenceDatabase.PUBMED,
@@ -123,7 +129,11 @@ class IdentifiersManager(BaseManager):
                     ids.append(ident)
 
             # create other accession identifiers
-            if db is not None and ref["accession_number"] is not None and ref["accession_number"] != "":
+            if (
+                db is not None
+                and ref["accession_number"] is not None
+                and ref["accession_number"] != ""
+            ):
                 db_id = None
                 if db == "wos":
                     db_id = constants.ReferenceDatabase.WOS
@@ -199,7 +209,9 @@ class IdentifiersManager(BaseManager):
         qs = self.filter(database=constants.ReferenceDatabase.HERO, unique_id__in=hero_ids)
 
         if allow_missing is False and qs.count() != len(hero_ids):
-            raise ValueError(f"Identifier count ({qs.count()}) does not match ID count ({len(hero_ids)})")
+            raise ValueError(
+                f"Identifier count ({qs.count()}) does not match ID count ({len(hero_ids)})"
+            )
 
         return qs
 
@@ -239,7 +251,9 @@ class IdentifiersManager(BaseManager):
         fetched_content = fetcher.get_content()
         if failed_ids := set(remaining_ids) - {int(item["PMID"]) for item in fetched_content}:
             failed_join = ", ".join(str(id) for id in failed_ids)
-            raise ValidationError(f"The following PubMed ID(s) could not be imported: {failed_join}")
+            raise ValidationError(
+                f"The following PubMed ID(s) could not be imported: {failed_join}"
+            )
 
         return fetched_content
 
@@ -262,7 +276,9 @@ class IdentifiersManager(BaseManager):
         qs = self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pubmed_ids)
 
         if allow_missing is False and qs.count() != len(pubmed_ids):
-            raise ValueError(f"Identifier count ({qs.count()}) does not match ID count ({len(pubmed_ids)})")
+            raise ValueError(
+                f"Identifier count ({qs.count()}) does not match ID count ({len(pubmed_ids)})"
+            )
 
         return qs
 
@@ -277,27 +293,40 @@ class ReferenceQuerySet(models.QuerySet):
             tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
         return self.filter(tags__in=tag_ids).distinct("pk")
 
-    def with_tags(self, tags, descendants: bool = False):
+    def require_tags(self, tags):
         """
-        Include references that contain all of the given tags
-        """
-        if descendants:
-            tag_ids = [[tag.pk, *tag.get_descendants().values_list("pk", flat=True)] for tag in tags]
-        else:
-            tag_ids = tags.values_list("pk")
-        return self.filter(**{"tags__in": ids for ids in tag_ids}).distinct("pk")
+        Filter references by any of the given tags.
 
-    def without_tags(self, tags, descendants: bool = False):
+        Mirrors the filtering done in tagtree visuals.
+
+        Args:
+            tags: Required tags.
         """
-        Remove references that contain any of the given tags
+        query = Q()
+        for tag in tags:
+            query |= Q(tags__in=[tag, *tag.get_descendants()])
+        return self.filter(query).distinct("pk")
+
+    def prune_tags(self, root_tag, pruned_tags):
         """
-        tag_ids = tags.values_list("pk", flat=True)
-        if descendants:
-            descendant_ids = [
-                descendant_id for tag in tags for descendant_id in tag.get_descendants().values_list("pk", flat=True)
-            ]
-            tag_ids.extend(descendant_ids)
-        return self.exclude(**{"tags": id for id in tag_ids}).distinct("pk")
+        Only prune references if they are tagged by given tags and are not tagged elsewhere
+        under a given root tag.
+
+        Mirrors the pruning done in tagtree visuals.
+
+        Args:
+            root_tag: Place to being pruning; used to determine references that should remain
+            even if tagged by a pruned tag.
+            pruned_tags: Tags to prune.
+        """
+        all_tags = [root_tag, *root_tag.get_descendants()]
+        safe_tags = [
+            tag for tag in all_tags if all([tag.pk != pruned_tag.pk for pruned_tag in pruned_tags])
+        ]
+        query = Q(tags__in=[tag.pk for tag in pruned_tags]) & ~Q(
+            tags__in=[tag.pk for tag in safe_tags]
+        )
+        return self.exclude(query).distinct("pk")
 
 
 class ReferenceManager(BaseManager):
@@ -357,7 +386,11 @@ class ReferenceManager(BaseManager):
         # Get references which already existing and are tied to this identifier
         # but are not associated with the current search and save this search
         # as well to this Reference.
-        refs = self.get_qs(search.assessment).filter(identifiers__in=identifiers).exclude(searches=search)
+        refs = (
+            self.get_qs(search.assessment)
+            .filter(identifiers__in=identifiers)
+            .exclude(searches=search)
+        )
         self.build_ref_search_m2m(refs, search)
 
         # get references associated with these identifiers, and get a subset of
@@ -390,7 +423,9 @@ class ReferenceManager(BaseManager):
 
             Identifiers = apps.get_model("lit", "Identifiers")
             if doi := get_doi_from_identifier(identifier):
-                doi_id, _ = Identifiers.objects.get_or_create(unique_id=doi, database=constants.ReferenceDatabase.DOI)
+                doi_id, _ = Identifiers.objects.get_or_create(
+                    unique_id=doi, database=constants.ReferenceDatabase.DOI
+                )
                 ref.identifiers.add(doi_id)
             ref.searches.add(search)
             ref.identifiers.add(identifier)
@@ -423,7 +458,11 @@ class ReferenceManager(BaseManager):
         # Get references which already existing and are tied to this identifier
         # but are not associated with the current search and save this search
         # as well to this Reference.
-        refs = self.get_qs(search.assessment).filter(identifiers__in=identifiers).exclude(searches=search)
+        refs = (
+            self.get_qs(search.assessment)
+            .filter(identifiers__in=identifiers)
+            .exclude(searches=search)
+        )
         self.build_ref_search_m2m(refs, search)
 
         # Get any references already are associated with these identifiers
@@ -483,7 +522,11 @@ class ReferenceManager(BaseManager):
 
         cw = {}
         validator = URLValidator()
-        existing = self.get_qs(assessment_id).filter(id__in=df["HAWC ID"].unique()).values_list("id", "full_text_url")
+        existing = (
+            self.get_qs(assessment_id)
+            .filter(id__in=df["HAWC ID"].unique())
+            .values_list("id", "full_text_url")
+        )
         for obj in existing:
             cw[obj[0]] = obj[1]
         df.apply(fn, axis=1)
@@ -570,7 +613,11 @@ class ReferenceManager(BaseManager):
             data[hawc_id]["doi_id"] = doi_id
 
         # create a dataframe
-        df = pd.DataFrame.from_dict(data, orient="index").reset_index().rename(columns={"index": "reference_id"})
+        df = (
+            pd.DataFrame.from_dict(data, orient="index")
+            .reset_index()
+            .rename(columns={"index": "reference_id"})
+        )
 
         # set missing columns
         for col in ["hero_id", "pubmed_id", "doi_id"]:
@@ -623,7 +670,15 @@ class ReferenceManager(BaseManager):
         # build full citation column
         # TODO - replace `ref_full_citation`?
         df1["full citation"] = (
-            (df1.authors + "|" + df1.year.fillna(-999).astype(int).astype(str) + "|" + df1.title + "|" + df1.journal)
+            (
+                df1.authors
+                + "|"
+                + df1.year.fillna(-999).astype(int).astype(str)
+                + "|"
+                + df1.title
+                + "|"
+                + df1.journal
+            )
             .str.replace(r"-999", "", regex=True)  # remove flag number
             .str.replace(r"^\|+|\|+$", "", regex=True)  # remove pipes at beginning/end
             .str.replace("|", ". ", regex=False)  # change pipes to periods
@@ -633,13 +688,17 @@ class ReferenceManager(BaseManager):
         tag_qs = ReferenceTags.objects.assessment_qs(assessment_id)
         node_dict = refmltags.build_tree_node_dict(tree)
         df2 = (
-            refmltags.create_df(tag_qs, node_dict).rename(columns={"ref_id": "reference id"}).set_index("reference id")
+            refmltags.create_df(tag_qs, node_dict)
+            .rename(columns={"ref_id": "reference id"})
+            .set_index("reference id")
         )
 
         return df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
 
     def hero_references(self, assessment_id: int) -> QuerySet:
-        return self.assessment_qs(assessment_id).filter(identifiers__database=constants.ReferenceDatabase.HERO)
+        return self.assessment_qs(assessment_id).filter(
+            identifiers__database=constants.ReferenceDatabase.HERO
+        )
 
 
 class ReferenceTagsManager(BaseManager):
@@ -659,7 +718,9 @@ class ReferenceTagsManager(BaseManager):
         df = pd.DataFrame(columns=["reference_id", "tag_id"])
         if qs.count() > 0:
             df = pd.DataFrame(data=list(qs))
-            df = df.rename(columns=dict(content_object_id="reference_id")).sort_values(by=["reference_id", "tag_id"])
+            df = df.rename(columns=dict(content_object_id="reference_id")).sort_values(
+                by=["reference_id", "tag_id"]
+            )
         return df
 
     def get_assessment_qs(self, assessment_id: int):

@@ -29,17 +29,22 @@ class ReferenceListStore {
             .then(res => res.json())
             .then(res => {
                 this.currentPage = res;
-                let expected_references = new Set(tag.get_references_deep()),
-                    refs = Reference.sortedArray(res.results, tag.tree);
-                this.formattedReferences = refs.filter(ref => expected_references.has(ref.data.id));
+                this.formattedReferences = Reference.sortedArray(res.results, tag.tree);
             });
     }
 
     @action.bound fetchFirstPage() {
-        let url = `/lit/api/assessment/${this.settings.assessment_id}/references/`;
+        let url = `/lit/api/assessment/${this.settings.assessment_id}/references/`,
+            {search_id, required_tags, pruned_tags} = this.settings;
         url += `?tag_id=${this.settings.tag_id}`;
-        if (this.settings.search_id) {
-            url += `&search_id=${this.settings.search_id}`;
+        if (search_id) {
+            url += `&search_id=${search_id}`;
+        }
+        if (required_tags && required_tags.length > 0) {
+            url += `&required_tags=${required_tags.join(",")}`;
+        }
+        if (pruned_tags && pruned_tags.length > 0) {
+            url += `&pruned_tags=${pruned_tags.join(",")}`;
         }
         this.fetchPage(url);
     }
@@ -85,6 +90,8 @@ PaginatedReferenceList.propTypes = {
         tag_id: PropTypes.number.isRequired,
         search_id: PropTypes.number,
         tag: PropTypes.object.isRequired,
+        required_tags: PropTypes.array.isRequired,
+        pruned_tags: PropTypes.array.isRequired,
     }),
     canEdit: PropTypes.bool,
 };

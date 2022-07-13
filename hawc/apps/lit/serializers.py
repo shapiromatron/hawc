@@ -3,7 +3,6 @@ import logging
 from collections import Counter
 from io import StringIO
 from typing import List
-from pydantic import validator, root_validator, Field
 
 import pandas as pd
 from celery import chain
@@ -13,13 +12,14 @@ from django.db import transaction
 from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from pydantic import Field, root_validator, validator
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
-from ..common.serializers import validate_jsonschema, PydanticDrfSerializer
+from ..common.serializers import PydanticDrfSerializer, validate_jsonschema
 from . import constants, exports, forms, models, tasks
 
 logger = logging.getLogger(__name__)
@@ -164,7 +164,11 @@ class ReferenceQuerySerializer(serializers.Serializer):
             for tag in tags:
                 tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
                 qs = qs.filter(tags__in=tag_ids)
-        qs = qs.filter(query).select_related("study").prefetch_related("searches", "identifiers")[:100]
+        qs = (
+            qs.filter(query)
+            .select_related("study")
+            .prefetch_related("searches", "identifiers")[:100]
+        )
         return [ref.to_dict() for ref in qs]
 
 
@@ -256,7 +260,9 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         # ensure columns are expected
         expected_columns = ["reference_id", "tag_id"]
         if df.columns.tolist() != expected_columns:
-            raise serializers.ValidationError(f"Invalid column headers; expecting \"{','.join(expected_columns)}\"")
+            raise serializers.ValidationError(
+                f"Invalid column headers; expecting \"{','.join(expected_columns)}\""
+            )
 
         # ensure we have some data
         if df.shape[0] == 0:
@@ -267,19 +273,27 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
         # ensure that all references are from this assessment
         assessments = (
-            models.Reference.objects.filter(id__in=unique_refs).values_list("assessment_id", flat=True).distinct()
+            models.Reference.objects.filter(id__in=unique_refs)
+            .values_list("assessment_id", flat=True)
+            .distinct()
         )
         if len(assessments) != 1 or assessments[0] != expected_assessment_id:
-            raise serializers.ValidationError(f"All reference ids are not from assessment {expected_assessment_id}")
+            raise serializers.ValidationError(
+                f"All reference ids are not from assessment {expected_assessment_id}"
+            )
 
         # ensure that all tags are from this assessment
         expected_tag_ids = models.ReferenceFilterTag.get_descendants_pks(expected_assessment_id)
         additional_tags = set(df.tag_id.unique()) - set(expected_tag_ids)
         if len(additional_tags) > 0:
-            raise serializers.ValidationError(f"All tag ids are not from assessment {expected_assessment_id}")
+            raise serializers.ValidationError(
+                f"All tag ids are not from assessment {expected_assessment_id}"
+            )
 
         # ensure all references exist
-        founds_refs = set(models.Reference.objects.filter(id__in=unique_refs).values_list("id", flat=True))
+        founds_refs = set(
+            models.Reference.objects.filter(id__in=unique_refs).values_list("id", flat=True)
+        )
         missing = set(unique_refs) - set(founds_refs)
         if missing:
             raise serializers.ValidationError(f"Reference(s) not found: {missing}")
@@ -301,9 +315,9 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         existing = set()
         if operation == "append":
             existing = set(
-                models.ReferenceTags.objects.filter(content_object__assessment_id=assessment_id).values_list(
-                    "tag_id", "content_object_id"
-                )
+                models.ReferenceTags.objects.filter(
+                    content_object__assessment_id=assessment_id
+                ).values_list("tag_id", "content_object_id")
             )
 
         if operation == "replace":
@@ -354,7 +368,9 @@ class ReferenceSerializer(serializers.ModelSerializer):
         return ret
 
     def validate_tags(self, value):
-        valid_tags = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id).filter(id__in=value)
+        valid_tags = models.ReferenceFilterTag.get_assessment_qs(
+            self.instance.assessment_id
+        ).filter(id__in=value)
         if valid_tags.count() != len(value):
             raise serializers.ValidationError("All tag ids are not from this assessment")
         return value
@@ -400,16 +416,22 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         # make sure references are part of the assessment
         ref_assessment_ids = set(ref.assessment_id for ref in references)
         if len(ref_assessment_ids) != 1:
-            raise serializers.ValidationError(f"Reference IDs from multiple assessments: {ref_assessment_ids}")
+            raise serializers.ValidationError(
+                f"Reference IDs from multiple assessments: {ref_assessment_ids}"
+            )
 
         if list(ref_assessment_ids)[0] != assessment.id:
-            raise serializers.ValidationError(f"Reference IDs not all from assessment {assessment.id}.")
+            raise serializers.ValidationError(
+                f"Reference IDs not all from assessment {assessment.id}."
+            )
 
         # make sure HERO IDs are unique for all references in an assessment
 
         # get hero ids for unmodified references
         references_diff = (
-            models.Reference.objects.hero_references(assessment.id).difference(references).values_list("id", flat=True)
+            models.Reference.objects.hero_references(assessment.id)
+            .difference(references)
+            .values_list("id", flat=True)
         )
         existing_hero_ids = [
             int(id_)
@@ -420,7 +442,9 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         hero_counts = Counter(itertools.chain(existing_hero_ids, self.hero_ids))
         duplicates = [key for key, count in hero_counts.items() if count > 1]
         if len(duplicates) > 0:
-            raise serializers.ValidationError(f"Duplicate HERO IDs in assessment: {list(duplicates)}")
+            raise serializers.ValidationError(
+                f"Duplicate HERO IDs in assessment: {list(duplicates)}"
+            )
 
         # make sure all HERO IDs are valid; and save response from HERO if needed
         try:
@@ -450,7 +474,9 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
 class ReferenceTagExportSerializer(serializers.Serializer):
     nested = serializers.ChoiceField(choices=[("t", "true"), ("f", "false")], default="t")
-    exporter = serializers.ChoiceField(choices=[("base", "base"), ("table-builder", "table builder")], default="base")
+    exporter = serializers.ChoiceField(
+        choices=[("base", "base"), ("table-builder", "table builder")], default="base"
+    )
     _exporters = {
         "base": exports.ReferenceFlatComplete,
         "table-builder": exports.TableBuilderFormat,
@@ -508,8 +534,14 @@ class FilterReferences(PydanticDrfSerializer):
     @root_validator
     def check_constraints(cls, values):
         # untagged and tag_id/required_tags/pruned_tags are mutually exclusive
-        if values.get("untagged") and any([values.get(_) for _ in ["tag_id", "required_tags", "pruned_tags"]]):
+        if values.get("untagged") and any(
+            [values.get(_) for _ in ["tag", "required_tags", "pruned_tags"]]
+        ):
             raise ValueError("Do not combine 'untagged' with other tag filters")
+        if any([values.get(_) for _ in ["required_tags", "pruned_tags"]]) and not values.get("tag"):
+            raise ValueError(
+                "'required_tags' and 'pruned_tags' require a root 'tag_id' to function correctly."
+            )
         return values
 
     def get_queryset(self):
@@ -518,10 +550,14 @@ class FilterReferences(PydanticDrfSerializer):
             qs = qs.filter(searches=self.search)
         if self.untagged:
             qs = qs.untagged()
-        else:
-            required_tags = [self.tag, *self.required_tags] if self.tag else self.required_tags
-            if required_tags:
-                qs = qs.with_tags(required_tags, descendants=True)
+        elif self.tag:
+            qs = qs.with_tag(self.tag, descendants=True)
+            if self.required_tags:
+                qs = qs.require_tags(self.required_tags)
             if self.pruned_tags:
-                qs = qs.without_tags(self.pruned_tags, descendants=True)
-        return qs.select_related("study").prefetch_related("searches", "identifiers", "tags").order_by("id")
+                qs = qs.prune_tags(self.tag, self.pruned_tags)
+        return (
+            qs.select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
+            .order_by("id")
+        )

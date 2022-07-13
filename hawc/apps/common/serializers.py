@@ -2,11 +2,11 @@ from collections import defaultdict
 from typing import Any, Dict, List, Tuple, Type, Union
 
 import jsonschema
-from pydantic import BaseModel
-from pydantic import ValidationError as PydanticError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.utils import timezone
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.request import QueryDict
@@ -370,11 +370,15 @@ class BulkSerializer(serializers.ListSerializer):
 
         if not isinstance(data, list):
             message = self.error_messages["not_a_list"].format(input_type=type(data).__name__)
-            raise serializers.ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="not_a_list")
+            raise serializers.ValidationError(
+                {api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="not_a_list"
+            )
 
         if not self.allow_empty and len(data) == 0:
             message = self.error_messages["empty"]
-            raise serializers.ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="empty")
+            raise serializers.ValidationError(
+                {api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="empty"
+            )
 
         ret = []
         errors = []
@@ -409,7 +413,9 @@ class BulkSerializer(serializers.ListSerializer):
         instance_ids = set([obj.id for obj in self.instance])
         invalid_data_ids = data_ids - instance_ids
         if invalid_data_ids:
-            raise serializers.ValidationError(f"Invalid 'id's: {', '.join([str(_) for _ in invalid_data_ids])}.")
+            raise serializers.ValidationError(
+                f"Invalid 'id's: {', '.join([str(_) for _ in invalid_data_ids])}."
+            )
 
     def validate_create(self, data):
         """
