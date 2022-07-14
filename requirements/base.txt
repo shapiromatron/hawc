@@ -29,8 +29,8 @@ myst-parser==0.16.1
 
 # computational
 numpy==1.22.2
-pandas==1.4.1
-  openpyxl==3.0.9
+pandas==1.4.3
+  openpyxl==3.0.10
 plotly==5.6.0
 pyarrow==7.0.0
 scipy==1.8.0

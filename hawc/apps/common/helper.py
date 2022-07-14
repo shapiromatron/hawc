@@ -27,14 +27,6 @@ from rest_framework.renderers import JSONRenderer
 logger = logging.getLogger(__name__)
 
 
-def read_excel(*args, **kwargs):
-    """
-    We use openpyxl as the engine since the default xlrd is no longer maintained.
-    """
-    kwargs.update(engine="openpyxl")
-    return pd.read_excel(*args, **kwargs)
-
-
 def rename_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Rename column headers inplace to ensure no header names are duplicated.
 

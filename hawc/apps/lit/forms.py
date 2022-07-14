@@ -3,6 +3,7 @@ from io import StringIO
 from typing import Dict, List, Tuple, Union
 
 import numpy as np
+import pandas as pd
 from django import forms
 from django.db import transaction
 from django.urls import reverse, reverse_lazy
@@ -10,7 +11,6 @@ from django.urls import reverse, reverse_lazy
 from ...services.utils import ris
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, addPopupLink
-from ..common.helper import read_excel
 from ..study.models import Study
 from . import constants, models
 
@@ -559,7 +559,7 @@ class ReferenceExcelUploadForm(forms.Form):
             )
 
         try:
-            df = read_excel(fn.file)
+            df = pd.read_excel(fn.file)
             df = df[["HAWC ID", "Full text URL"]]
             df["Full text URL"].fillna("", inplace=True)
             assert df["HAWC ID"].dtype == np.int64

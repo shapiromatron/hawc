@@ -2,6 +2,7 @@ import json
 from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
+import pandas as pd
 from django import forms
 from django.db.models import Q
 from django.urls import reverse
@@ -13,7 +14,6 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import selectable
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
-from ..common.helper import read_excel
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
@@ -1065,7 +1065,7 @@ class DataPivotUploadForm(DataPivotForm):
             else:
                 worksheet_name = wb.sheetnames[0]
 
-            df = read_excel(excel_file, sheet_name=worksheet_name)
+            df = pd.read_excel(excel_file, sheet_name=worksheet_name)
 
             # check data
             if df.shape[0] < 2:
