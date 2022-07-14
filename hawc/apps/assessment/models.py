@@ -22,7 +22,7 @@ from reversion import revisions as reversion
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a, read_excel
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a
 from ..common.models import get_private_data_storage
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
@@ -796,7 +796,7 @@ class DatasetRevision(models.Model):
         """
         kwargs = {}
         if suffix == ".xlsx":
-            func = read_excel
+            func = pd.read_excel
             if worksheet_name:
                 kwargs["sheet_name"] = worksheet_name
         elif suffix in [".csv", ".tsv"]:

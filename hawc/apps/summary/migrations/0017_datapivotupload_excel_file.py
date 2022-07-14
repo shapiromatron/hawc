@@ -10,8 +10,6 @@ import pandas as pd
 from django.conf import settings
 from django.db import migrations
 
-from hawc.apps.common.helper import read_excel
-
 
 def _read_tsv(fn: str, encoding: str) -> Optional[pd.DataFrame]:
     try:
@@ -22,7 +20,7 @@ def _read_tsv(fn: str, encoding: str) -> Optional[pd.DataFrame]:
 
 def _read_excel(fn: str) -> Optional[pd.DataFrame]:
     try:
-        return read_excel(fn)
+        return pd.read_excel(fn)
     except Exception:
         return None
 
