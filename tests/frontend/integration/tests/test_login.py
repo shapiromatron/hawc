@@ -3,7 +3,7 @@ import re
 import pytest
 from playwright.sync_api import expect
 
-from .common import PlaywrightTestCase
+from ..common import PlaywrightTestCase
 
 
 @pytest.mark.django_db
