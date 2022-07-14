@@ -20,9 +20,9 @@ class TestRoB(PlaywrightTestCase):
 
         # /rob/assessment/:id/study-assignments/
         page.goto(self.live_server_url + "/rob/assessment/1/study-assignments/")
+        expect(page.locator("text=Foo et al.")).to_be_visible()
         assert page.locator("tr").count() >= 3
         assert page.locator("td").count() >= 4
-        expect(page.locator("text=Foo et al.")).to_be_visible()
 
         # /rob/assessment/1/study-assignments/update/
         page.goto(self.live_server_url + "/rob/assessment/1/study-assignments/update/")

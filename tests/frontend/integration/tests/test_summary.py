@@ -103,7 +103,7 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("iframe")).not_to_have_count(0)
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/rob-heatmap/")
-        expect(page.locator("text=rob-heatmap")).to_be_visible()
+        expect(page.locator("h2:has-text('rob-heatmap')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .legend")).not_to_have_count(0)
 
@@ -113,12 +113,12 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("svg >> .tagnode")).to_have_count(4)
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/exploratory-heatmap/")
-        expect(page.locator("text=exploratory-heatmap")).to_be_visible()
+        expect(page.locator("h2:has-text('exploratory-heatmap')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         assert page.locator("svg.d3 >> g >> rect").count() > 5
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/bioassay-aggregation/")
-        expect(page.locator("text=bioassay-aggregation")).to_be_visible()
+        expect(page.locator("h2:has-text('bioassay-aggregation')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         assert page.locator("svg.d3 >> g >> circle").count() > 5
 
