@@ -4,7 +4,7 @@ from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, form_actions_apply_filters
+from ..common.forms import BaseFormHelper, QuillField, form_actions_apply_filters
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
@@ -38,6 +38,7 @@ class BaseStudyForm(forms.ModelForm):
             "summary",
             "published",
         )
+        field_classes = {"summary": QuillField, "internal_communications": QuillField}
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
@@ -63,9 +64,6 @@ class BaseStudyForm(forms.ModelForm):
                 widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
-
-        for fld in ("summary", "internal_communications"):
-            self.fields[fld].widget.attrs["class"] += " html5text"
 
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")

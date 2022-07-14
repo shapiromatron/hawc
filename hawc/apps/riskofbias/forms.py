@@ -4,7 +4,7 @@ from django.conf import settings
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, QuillField
 from . import models
 from .actions import RobApproach, clone_approach, load_approach
 
@@ -13,10 +13,7 @@ class RobTextForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasAssessment
         fields = ("help_text",)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["help_text"].widget.attrs["class"] = "html5text"
+        field_classes = {"help_text": QuillField}
 
     @property
     def helper(self):
@@ -37,6 +34,7 @@ class RoBDomainForm(forms.ModelForm):
             "description",
         )
         exclude = ("assessment",)
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -58,7 +56,7 @@ class RoBDomainForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} domain."
 
         helper = BaseFormHelper(self, **inputs)
-        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
+        helper["description"].wrap(cfl.Field, css_class="col-md-12")
         helper.add_row("name", 2, "col-md-6")
         return helper
 
@@ -78,6 +76,7 @@ class RoBMetricForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasMetric
         exclude = ("domain", "hide_description", "sort_order")
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         domain = kwargs.pop("parent", None)
@@ -100,7 +99,6 @@ class RoBMetricForm(forms.ModelForm):
         else:
             inputs["legend_text"] = f"Create new {rob_name} metric"
             inputs["help_text"] = f"Create a new {rob_name} metric."
-        self.fields["description"].widget.attrs.update({"class": "html5text"})
         helper = BaseFormHelper(self, **inputs)
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("description", 2, ["col-md-8", "col-md-4"])

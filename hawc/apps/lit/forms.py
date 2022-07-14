@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, addPopupLink
+from ..common.forms import BaseFormHelper, QuillField, addPopupLink
 from ..common.helper import read_excel
 from ..study.models import Study
 from . import constants, models
@@ -55,6 +55,7 @@ class SearchForm(forms.ModelForm):
     class Meta:
         model = models.Search
         fields = ("source", "title", "slug", "description", "search_string")
+        field_classes = {"description": QuillField, "search_string": QuillField}
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -64,12 +65,8 @@ class SearchForm(forms.ModelForm):
             self.instance.assessment = assessment
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice
-        self.fields["description"].widget.attrs["rows"] = 3
-        self.fields["description"].widget.attrs["class"] = "html5text"
         if "search_string" in self.fields:
-            self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
-            self.fields["search_string"].widget.attrs["class"] = "html5text"
 
     @property
     def helper(self):
