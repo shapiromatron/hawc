@@ -1,6 +1,9 @@
 from random import randint
 from typing import List, Type
 
+import bleach
+from bleach.css_sanitizer import CSSSanitizer
+from django.conf import settings
 from django.forms import ValidationError
 from django.forms.widgets import (
     CheckboxInput,
@@ -8,6 +11,7 @@ from django.forms.widgets import (
     MultiWidget,
     Select,
     SelectMultiple,
+    Textarea,
     TextInput,
 )
 from django.utils import timezone
@@ -107,3 +111,42 @@ class SelectOtherWidget(ChoiceOtherWidget):
 class SelectMultipleOtherWidget(ChoiceOtherWidget):
     choice_widget = SelectMultiple
     template_name = "common/select_other_widget.html"
+
+
+class QuillWidget(Textarea):
+    """
+    Uses the Quill text editor for input.
+    Cleaning is done to remove invalid styles and tags; all inner text is kept.
+    """
+
+    class Media:
+        js = (f"{settings.STATIC_URL}js/quilltext.js",)
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        class_name = attrs.get("class")
+        attrs["class"] = class_name + " quilltext" if class_name else "quilltext"
+        return attrs
+
+    def value_from_datadict(self, data, files, name):
+        value = data.get(name)
+        if value:
+            tags = [
+                "span",
+                "a",
+                "blockquote",
+                "sub",
+                "sup",
+                "strong",
+                "em",
+                "u",
+                "s",
+                "ol",
+                "ul",
+                "li",
+            ]
+            attrs = {"*": ["style"], "a": ["href", "rel", "target"]}
+            css_sanitizer = CSSSanitizer(allowed_css_properties=["color", "background-color"])
+            return bleach.clean(
+                value, tags=tags, attributes=attrs, css_sanitizer=css_sanitizer, strip=True
+            )

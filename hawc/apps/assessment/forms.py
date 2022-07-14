@@ -13,7 +13,12 @@ from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    form_actions_apply_filters,
+    form_actions_create_or_close,
+)
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
@@ -44,6 +49,9 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
+        }
+        field_classes = {
+            "assessment_objective": QuillField,
         }
 
     def __init__(self, *args, **kwargs):
@@ -88,7 +96,6 @@ class AssessmentForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
             inputs = {

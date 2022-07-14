@@ -7,7 +7,7 @@ from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
 from django.template.loader import render_to_string
 
-from . import selectable, validators
+from . import selectable, validators, widgets
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
@@ -222,3 +222,21 @@ class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         if value is None:
             return []
         return value.split(",")
+
+
+class QuillField(forms.CharField):
+    """
+    Quill text editor input.
+    Cleans HTML and validates urls.
+    """
+
+    widget = widgets.QuillWidget
+
+    def __init__(self, *args, **kwargs):
+        # Force use of Quill widget
+        kwargs["widget"] = self.widget
+        super().__init__(*args, **kwargs)
+
+    def validate(self, value):
+        super().validate(value)
+        validators.validate_hyperlinks(value)
