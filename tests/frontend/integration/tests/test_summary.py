@@ -98,7 +98,7 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("svg >> .y_gridlines")).not_to_have_count(0)
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/embedded-tableau/")
-        expect(page.locator("text=embedded-tableau")).to_be_visible()
+        expect(page.locator("h2:has-text('embedded-tableau')")).to_be_visible()
         expect(page.locator(".tableauPlaceholder >> iframe")).to_be_visible()
         expect(page.locator("iframe")).not_to_have_count(0)
 
@@ -108,7 +108,7 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("svg >> .legend")).not_to_have_count(0)
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/tagtree/")
-        expect(page.locator("text='Human Study'")).to_be_visible()
+        expect(page.locator("h2:has-text('Human Study')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .tagnode")).to_have_count(4)
 
