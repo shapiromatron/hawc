@@ -92,6 +92,9 @@ class SearchForm(forms.ModelForm):
 
 
 class ImportForm(SearchForm):
+    class Meta(SearchForm.Meta):
+        field_classes = {"description": QuillField}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["source"].choices = [(1, "PubMed"), (2, "HERO")]
@@ -101,7 +104,6 @@ class ImportForm(SearchForm):
                 "search_string"
             ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
             self.fields["search_string"].label = "ID List"
-            self.fields["search_string"].widget.attrs.pop("class")
         else:
             self.fields.pop("search_string")
 
