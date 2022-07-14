@@ -261,18 +261,18 @@ class RiskOfBias(models.Model):
         self.save()
 
     @property
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """
-        The rich text editor used for notes input adds HTML tags even if input
-        is empty, so HTML needs to be stripped out.
+        A review is complete if all scores either:
+        1) have a score not equal to NR (default score when created)
+        2) have an NR score, but notes were added
         """
-        return all(
-            [
-                len(strip_tags(score.notes).strip()) > 0
-                for score in self.scores.all()
-                if score.score not in constants.NA_SCORES
-            ]
-        )
+        incomplete = [
+            item
+            for item in self.scores.all()
+            if item.score in constants.NR_SCORES and len(strip_tags(item.notes).strip()) == 0
+        ]
+        return len(incomplete) == 0
 
     @property
     def study_reviews_complete(self):

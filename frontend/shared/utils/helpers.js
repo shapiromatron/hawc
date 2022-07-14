@@ -311,7 +311,7 @@ const helpers = {
         // wrap text with html tag to ensure it is a valid jQuery selector expression
         // then return whether there is text content
         return (
-            $(`<p>${text}</p>`)
+            $(`<div>${text}</div>`)
                 .text()
                 .trim().length > 0
         );
