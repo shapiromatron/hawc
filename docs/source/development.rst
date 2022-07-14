@@ -184,6 +184,12 @@ the same commands.
     make test
     make test-js
 
+    # run integration tests
+    make test-integration
+
+    # run integration tests with a visible chrome window and debugger
+    make test-integration-debug
+
     # lint code (show changes required) - all, javascript-only, or python-only
     make lint
     make lint-js
