@@ -1,3 +1,4 @@
+from crispy_forms import layout as cfl
 from django import forms
 from django.db.models import Q
 from django.forms.widgets import TextInput
@@ -70,9 +71,21 @@ class BaseStudyForm(forms.ModelForm):
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        helper.add_row("bioassay", 4, "col-md-3")
+        helper.add_row("bioassay", 4, ["col-md-3 pl-3", "col-md-3", "col-md-3", "col-md-3 pr-3"])
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
+        type_idx = helper.find_layout_idx_for_field_name("bioassay")
+        helper.layout.insert(
+            type_idx,
+            cfl.HTML(
+                """
+            <b>Study Type(s)</b>
+            <p class="text-muted">Select the type of data contained in this study. The fields for
+            study evaluation, risk of bias, or data extraction may change depending on the study type.
+            Please note that data may be lost or modified if these values are changed after creation of the study.</p>
+        """
+            ),
+        )
         return helper
 
     def save(self, commit=True):
