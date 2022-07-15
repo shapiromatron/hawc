@@ -309,18 +309,24 @@ class Outcome(models.Model):
     objects = managers.OutcomeManager()
 
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="outcomes")
-    endpoint = models.CharField(
-        max_length=128,
-        help_text="A unique name for the health effect being measured. The endpoint is generally more specific than the outcome (e.g., cholesterol, asthma within the previous year). Use controlled vocabulary when available.",
-    )
-    health_outcome = models.CharField(
-        max_length=128,
-        help_text="The outcome is generally broader than the endpoint (e.g., serum lipids, asthma). However, if there is not a finer categorization, they may be the same. Use controlled vocabulary when available.",
-    )
-    health_outcome_system = models.CharField(
+    system = models.CharField(
         max_length=2,
         choices=constants.HealthOutcomeSystem.choices,
-        help_text="Select the system from the drop down. Use controlled vocabulary when available. If multiple cancer types are present, report all types under Cancer.",
+        help_text="Select the most relevant system from the drop down menu. If more than one system is applicable refer to assessment team instructions. Use controlled vocabulary when available.",
+    )
+    effect = models.CharField(
+        max_length=128,
+        help_text="The health effect of interest. Effect is generally broader than the Endpoint/Outcome and may represent multiple endpoints (e.g., Serum lipids, Asthma, Cognition). However, if there is not a finer categorization, they may be the same. Use controlled vocabulary when available.",
+    )
+    effect_detail = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Optional. If additional specification to the Effect is needed, it can be entered here (e.g., IQ).",
+    )
+    endpoint = models.CharField(
+        verbose_name="Endpoint/Outcome",
+        max_length=128,
+        help_text="A unique name for the specific endpoint/outcome being measured. The endpoint is generally more specific than the effect (e.g., total cholesterol, incident asthma within the previous year, WISC-IV full scale). Use controlled vocabulary when available.",
     )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)

@@ -193,8 +193,11 @@ class OutcomeForm(forms.ModelForm):
             "endpoint": selectable.AutoCompleteWidget(
                 lookup_class=lookups.EndpointLookup, allow_new=True
             ),
-            "health_outcome": selectable.AutoCompleteWidget(
-                lookup_class=lookups.HealthOutcomeLookup, allow_new=True
+            "effect": selectable.AutoCompleteWidget(
+                lookup_class=lookups.EffectLookup, allow_new=True
+            ),
+            "effect_detail": selectable.AutoCompleteWidget(
+                lookup_class=lookups.EffectDetailLookup, allow_new=True
             ),
         }
 
@@ -208,7 +211,7 @@ class OutcomeForm(forms.ModelForm):
     def helper(self):
         self.fields["comments"].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
-        helper.add_row("endpoint", 4, "col-md-3")
+        helper.add_row("system", 4, "col-md-3")
         helper.form_tag = False
         return helper
 
@@ -221,6 +224,9 @@ class DataExtractionForm(forms.ModelForm):
             "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "effect_estimate_type": SelectOtherWidget(choices=constants.EffectEstimateType.choices),
+            "units": selectable.AutoCompleteWidget(
+                lookup_class=lookups.DataExtractionUnitsLookup, allow_new=True
+            ),
         }
 
     def __init__(self, *args, **kwargs):

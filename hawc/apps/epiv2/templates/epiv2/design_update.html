@@ -79,8 +79,8 @@
         {% url 'epiv2:outcome-create' object.pk as outcome_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-empty-row" %}
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '29,28,28,15' %}
-            {% bs4_thead 'Endpoint,Health Outcome,Health Outcome System,Edit' %}
+            {% bs4_colgroup '22,21,21,21,15' %}
+            {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome,Edit' %}
             <tbody>
                 {% if object.outcomes.all %}
                     {% for object in object.outcomes.all %}

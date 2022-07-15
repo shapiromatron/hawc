@@ -4974,8 +4974,8 @@
   fields:
     endpoint: Asthma within previous year
     design: 1
-    health_outcome: Asthma
-    health_outcome_system: IM
+    effect: Asthma
+    system: IM
     comments: ''
     created: 2022-01-10 21:16:10.388760+00:00
     last_updated: 2022-01-10 21:16:10.388770+00:00
@@ -4984,8 +4984,8 @@
   fields:
     endpoint: Tetanus antibody concentrations
     design: 2
-    health_outcome: Vaccine response
-    health_outcome_system: IM
+    effect: Vaccine response
+    system: IM
     comments: ''
     created: 2022-01-10 21:41:54.322800+00:00
     last_updated: 2022-01-10 21:41:54.322816+00:00
@@ -4994,8 +4994,8 @@
   fields:
     endpoint: Diphtheria antibody concentrations
     design: 2
-    health_outcome: Vaccine response
-    health_outcome_system: IM
+    effect: Vaccine response
+    system: IM
     comments: ''
     created: 2022-01-10 21:41:54.327398+00:00
     last_updated: 2022-01-10 21:41:54.327412+00:00
