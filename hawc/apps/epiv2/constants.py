@@ -37,19 +37,22 @@ class AgeProfile(models.TextChoices):
 
 
 class EffectEstimateType(models.TextChoices):
-    OR = "OR", "Odds Ratio (OR)"
-    RR = "RR", "Relative Risk Ratio (RR)"
-    AR = "AR", "Absolute Risk %"
-    B = "B", "Regression coefficient (β)"
-    SMR = "SMR", "Standardized Mortality Ratio (SMR)"
-    SIR = "SIR", "Standardized Incidence Ratio (SIR)"
-    IRR = "IRR", "Incidence Risk Ratio (IRR)"
-    ARR = "ARR", "Absolute Risk Reduction/ Risk difference (ARR or RD)"
-    HR = "HR", "Hazard Ratio (HR)"
-    CM = "CM", "Comparison of Means"
-    SCC = "SCC", "Spearman's Correlation Coefficient"
-    PC = "PC", "Percent change"
-    MD = "MD", "Mean difference"
+    OR = "Odds Ratio (OR)", "Odds Ratio (OR)"
+    RR = "Relative Risk Ratio (RR)", "Relative Risk Ratio (RR)"
+    AR = "Absolute Risk %", "Absolute Risk %"
+    B = "Regression coefficient (β)", "Regression coefficient (β)"
+    SMR = "Standardized Mortality Ratio (SMR)", "Standardized Mortality Ratio (SMR)"
+    SIR = "Standardized Incidence Ratio (SIR)", "Standardized Incidence Ratio (SIR)"
+    IRR = "Incidence Risk Ratio (IRR)", "Incidence Risk Ratio (IRR)"
+    ARR = (
+        "Absolute Risk Reduction/ Risk difference (ARR or RD)",
+        "Absolute Risk Reduction/ Risk difference (ARR or RD)",
+    )
+    HR = "Hazard Ratio (HR)", "Hazard Ratio (HR)"
+    CM = "Comparison of Means", "Comparison of Means"
+    SCC = "Spearman's Correlation Coefficient", "Spearman's Correlation Coefficient"
+    PC = "Percent change", "Percent change"
+    MD = "Mean difference", "Mean difference"
     OT = "other", "other"
 
 
