@@ -5,3 +5,7 @@
 {% block content %}
     {% crispy form %}
 {% endblock %}
+
+{% block extrajs %}
+    {{ form.media }}
+{% endblock extrajs %}
