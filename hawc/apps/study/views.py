@@ -1,5 +1,4 @@
 from django.apps import apps
-from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
