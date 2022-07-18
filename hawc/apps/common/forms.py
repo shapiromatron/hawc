@@ -237,6 +237,12 @@ class QuillField(forms.CharField):
         kwargs["widget"] = self.widget
         super().__init__(*args, **kwargs)
 
+    def to_python(self, value):
+        value = super().to_python(value)
+        if value:
+            return validators.clean_html(value)
+
     def validate(self, value):
         super().validate(value)
-        validators.validate_hyperlinks(value)
+        if value:
+            validators.validate_hyperlinks(value)

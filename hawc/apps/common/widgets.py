@@ -1,8 +1,6 @@
 from random import randint
 from typing import List, Type
 
-import bleach
-from bleach.css_sanitizer import CSSSanitizer
 from django.conf import settings
 from django.forms import ValidationError
 from django.forms.widgets import (
@@ -127,26 +125,3 @@ class QuillWidget(Textarea):
         class_name = attrs.get("class")
         attrs["class"] = class_name + " quilltext" if class_name else "quilltext"
         return attrs
-
-    def value_from_datadict(self, data, files, name):
-        value = data.get(name)
-        if value:
-            tags = [
-                "span",
-                "a",
-                "blockquote",
-                "sub",
-                "sup",
-                "strong",
-                "em",
-                "u",
-                "s",
-                "ol",
-                "ul",
-                "li",
-            ]
-            attrs = {"*": ["style"], "a": ["href", "rel", "target"]}
-            css_sanitizer = CSSSanitizer(allowed_css_properties=["color", "background-color"])
-            return bleach.clean(
-                value, tags=tags, attributes=attrs, css_sanitizer=css_sanitizer, strip=True
-            )
