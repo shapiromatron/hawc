@@ -4,6 +4,7 @@ import os
 from operator import methodcaller
 from typing import Dict, List
 
+import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -28,7 +29,6 @@ from ..common.helper import (
     HAWCDjangoJSONEncoder,
     ReportExport,
     SerializerHelper,
-    read_excel,
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
@@ -711,7 +711,7 @@ class DataPivotUpload(DataPivot):
 
     def get_dataset(self) -> FlatExport:
         worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
-        df = read_excel(self.excel_file.file, sheet_name=worksheet_name)
+        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
         filename = os.path.splitext(os.path.basename(self.excel_file.file.name))[0]
         return FlatExport(df=df, filename=filename)
 
