@@ -2,10 +2,20 @@ from typing import Dict, List
 
 from docx import Document as create_document
 from docx.document import Document
+from docx.enum.section import WD_ORIENT
 from docx.shared import Inches
 from pydantic import BaseModel, conint
 
 from .parser import QuillParser
+
+
+def to_landscape(document):
+    # change docx from portrait to landscape
+    section = document.sections[0]
+    new_width, new_height = section.page_height, section.page_width
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width = new_width
+    section.page_height = new_height
 
 
 class BaseCell(BaseModel):
@@ -97,11 +107,13 @@ class BaseTable(BaseCellGroup):
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
 
-    def to_docx(self, parser: QuillParser = None, docx: Document = None):
+    def to_docx(self, parser: QuillParser = None, docx: Document = None, landscape: bool = True):
         if parser is None:
             parser = QuillParser()
         if docx is None:
             docx = create_document()
+        if landscape:
+            to_landscape(docx)
         table = docx.add_table(rows=self.rows, cols=self.columns)
         table_cells = table._cells
         table.style = "Table Grid"
