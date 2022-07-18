@@ -70,8 +70,8 @@
     <div class="card-body">
         <h3 class="card-title">Outcomes</h3>
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '33,33,34' %}
-            {% bs4_thead 'Endpoint,Health Outcome,Health Outcome System' %}
+            {% bs4_colgroup '22,21,21,21,15' %}
+            {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome,Edit' %}
             <tbody>
                 {% for object in object.outcomes.all %}
                     {% include "epiv2/fragments/outcome_row.html" %}
