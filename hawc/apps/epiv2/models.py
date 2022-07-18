@@ -289,11 +289,6 @@ class ExposureLevel(models.Model):
             value = f"{self.median}"
         elif self.mean is not None:
             value = f"{self.mean}"
-        if self.ci_lcl and self.ci_ucl:
-            if value == default_value:
-                value = f"{self.ci_lcl} - {self.ci_ucl}"
-            else:
-                value += f" [{self.ci_lcl}, {self.ci_ucl}]"
         if value != default_value and self.units:
             value += f" {self.units}"
         return value
