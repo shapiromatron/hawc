@@ -542,52 +542,45 @@ class ReferenceManager(BaseManager):
         Returns:
             pd.DataFrame: A pandas dataframe
         """
-        qs = qs.prefetch_related("identifiers")
+        # TODO - one row per reference, even if there are no identifiers for that reference
+        # TODO - check 1170 and empty case
+        # TODO - 500 on empty project http://127.0.0.1:8000/lit/api/assessment/100500298/reference-ids/
+        # TODO - nan?http://127.0.0.1:8000/lit/api/assessment/100500295/reference-ids/
 
-        captured = {
-            None,
-            constants.ReferenceDatabase.HERO,
-            constants.ReferenceDatabase.PUBMED,
-            constants.ReferenceDatabase.DOI,
+        qs = qs.prefetch_related("identifiers").values_list(
+            "id", "identifiers__database", "identifiers__unique_id"
+        )
+        mapping = {
+            "id": "reference_id",
+            constants.ReferenceDatabase.PUBMED: "pubmed_id",
+            constants.ReferenceDatabase.HERO: "hero_id",
+            constants.ReferenceDatabase.DOI: "doi",
         }
-        diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
-        if diff:
-            logger.warning(f"Missing some identifier IDs from id export: {diff}")
 
-        data = defaultdict(dict)
-
-        # capture HERO ids
-        heros = qs.filter(identifiers__database=constants.ReferenceDatabase.HERO).values_list(
-            "id", "identifiers__unique_id"
-        )
-        for hawc_id, hero_id in heros:
-            data[hawc_id]["hero_id"] = int(hero_id)
-
-        # capture PUBMED ids
-        pubmeds = qs.filter(identifiers__database=constants.ReferenceDatabase.PUBMED).values_list(
-            "id", "identifiers__unique_id"
-        )
-        for hawc_id, pubmed_id in pubmeds:
-            data[hawc_id]["pubmed_id"] = int(pubmed_id)
-
-        # capture DOI ids
-        dois = qs.filter(identifiers__database=constants.ReferenceDatabase.DOI).values_list(
-            "id", "identifiers__unique_id"
-        )
-        for hawc_id, doi_id in dois:
-            data[hawc_id]["doi_id"] = doi_id
-
-        # create a dataframe
-        df = (
-            pd.DataFrame.from_dict(data, orient="index")
-            .reset_index()
-            .rename(columns={"index": "reference_id"})
-        )
+        df = pd.DataFrame(data=qs, columns=["id", "database", "external_id"])
+        has_data = df.shape[0]
+        if has_data:
+            df = (
+                df.set_index("id")
+                .pivot(columns="database", values="external_id")
+                .fillna("")
+                .reset_index()
+                .rename(columns=mapping)
+                .rename_axis(None, axis=1)
+                .sort_values("reference_id")
+            )
 
         # set missing columns
-        for col in ["hero_id", "pubmed_id", "doi_id"]:
-            if col not in df.columns:
-                df[col] = None
+        for name in mapping.values():
+            if name not in df.columns.values:
+                df[name] = None
+
+        # drop other columns (ie, cases where only reference_id exists)
+        df = df[["reference_id", "pubmed_id", "hero_id", "doi"]]
+
+        # coerce int fields from string to int
+        for field in ("pubmed_id", "hero_id"):
+            df[field] = pd.to_numeric(df[field], errors="coerce", downcast="unsigned")
 
         return df
 
