@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.http import QueryDict
@@ -22,6 +23,7 @@ from docx.document import Document
 from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter
 from pydantic import BaseModel as PydanticModel
+from pydantic import ValidationError as PydanticError
 from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
@@ -411,3 +413,23 @@ def event_plot(series: pd.Series) -> Axes:
 
     plt.tight_layout()
     return ax
+
+
+class PydanticToDjangoError:
+    def __init__(self, include_field=True, field=None, msg=None, drf=False):
+        self.include_field = include_field
+        self.field = field if field is not None else "non_field_errors" if drf else "__all__"
+        self.msg = msg
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if isinstance(exc_value, PydanticError):
+            if self.msg is None:
+                # create error msg from pydantic error
+                self.msg = [
+                    f"{'->'.join([str(_) for _ in e['loc']])}: {e['msg']}"
+                    for e in exc_value.errors()
+                ]
+            raise ValidationError({self.field: self.msg} if self.include_field else self.msg)
