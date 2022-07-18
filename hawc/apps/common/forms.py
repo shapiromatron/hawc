@@ -239,8 +239,7 @@ class QuillField(forms.CharField):
 
     def to_python(self, value):
         value = super().to_python(value)
-        if value:
-            return validators.clean_html(value)
+        return validators.clean_html(value) if value else value
 
     def validate(self, value):
         super().validate(value)
