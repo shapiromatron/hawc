@@ -15,8 +15,9 @@ class StudyAdmin(admin.ModelAdmin):
         "title",
         "published",
         "editable",
+        "is_deleted",
         "created",
     )
-    list_filter = ("published", "assessment_id")
+    list_filter = ("published", "is_deleted", "assessment_id")
     raw_id_fields = ("searches", "identifiers")
     search_fields = ("short_citation", "year", "title", "study_identifier")

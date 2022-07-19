@@ -6,11 +6,14 @@ from ..common.models import BaseManager
 class StudyManager(BaseManager):
     assessment_relation = "assessment"
 
-    def published(self, assessment_id=None):
-        return self.get_qs(assessment_id).filter(published=True)
+    def assessment_qs(self, assessment_id):
+        return super().assessment_qs(assessment_id).filter(is_deleted=False)
 
-    def get_choices(self, assessment_id=None):
-        return self.get_qs(assessment_id).values_list("id", "short_citation")
+    def published(self, assessment_id):
+        return self.assessment_qs(assessment_id).filter(published=True)
+
+    def get_choices(self, assessment_id):
+        return self.assessment_qs(assessment_id).values_list("id", "short_citation")
 
     def rob_scores(self, assessment_id=None):
         return (

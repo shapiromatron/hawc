@@ -1384,7 +1384,7 @@ class Result(models.Model):
             return "|".join(sorted(items))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment_id, "epi": True}
+        filters: Dict[str, Any] = {"epi": True}
         if published_only:
             filters["published"] = True
         columns = {
@@ -1392,7 +1392,12 @@ class Result(models.Model):
             "short_citation": "study citation",
             "study_identifier": "study identifier",
         }
-        qs = Study.objects.filter(**filters).values_list(*columns.keys()).order_by("id")
+        qs = (
+            Study.objects.assessment_qs(assessment_id)
+            .filter(**filters)
+            .values_list(*columns.keys())
+            .order_by("id")
+        )
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies

@@ -2,7 +2,6 @@ from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -30,10 +29,10 @@ class StudyList(BaseList):
     form_class = forms.StudyFilterForm
 
     def get_query(self, qs, perms):
-        query = Q(assessment=self.assessment)
+        qs = self.model.objects.assessment_qs(self.assessment)
         if not perms["edit"]:
-            query &= Q(published=True)
-        return qs.filter(query)
+            qs = qs.filter(published=True)
+        return qs
 
     def get_queryset(self):
         perms = super().get_obj_perms()

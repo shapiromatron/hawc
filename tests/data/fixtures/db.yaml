@@ -1729,6 +1729,7 @@
     published: false
     summary: ''
     editable: true
+    is_deleted: false
 - model: study.study
   pk: 4
   fields:
@@ -1748,6 +1749,7 @@
     published: true
     summary: ''
     editable: true
+    is_deleted: false
 - model: study.study
   pk: 5
   fields:
@@ -1772,6 +1774,7 @@
       rgb(249, 249, 249);">not</strong><span style="background-color: rgb(249, 249,
       249);">&nbsp;extract diarrhea, vulnerability to catch colds)</span></p>'
     editable: true
+    is_deleted: false
 - model: study.study
   pk: 6
   fields:
@@ -1796,6 +1799,7 @@
       5,</li><li>TMBPA (called BTM), BPC (called BPRO), BPAF (called BHF), BPAP (called
       BDP)</li></ul><p><br></p>
     editable: true
+    is_deleted: false
 - model: study.study
   pk: 7
   fields:
@@ -1826,6 +1830,7 @@
     summary: <p>Adapted from <a href="https://hawcproject.org/study/173483/" rel="noopener
       noreferrer" target="_blank">https://hawcproject.org/study/173483/</a></p>
     editable: true
+    is_deleted: false
 - model: study.study
   pk: 8
   fields:
@@ -1851,6 +1856,7 @@
     summary: <p>Adapted from <a href="https://hawcproject.org/study/41226/" rel="noopener
       noreferrer" target="_blank">https://hawcproject.org/study/41226/</a>.</p>
     editable: true
+    is_deleted: false
 - model: animal.experiment
   pk: 1
   fields:

@@ -503,7 +503,13 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
         self.permission_check_user_can_edit()
         success_url = self.get_success_url()
         self.create_log(self.object)
-        self.object.delete()
+        if hasattr(self.object, "is_deleted"):
+            # soft delete
+            self.object.is_deleted = True
+            self.object.save()
+        else:
+            # hard delete
+            self.object.delete()
         self.send_message()
         return HttpResponseRedirect(success_url)
 

@@ -112,6 +112,7 @@ class Study(Reference):
         default=True,
         help_text="Project-managers and team-members are allowed to edit this study.",
     )
+    is_deleted = models.BooleanField(default=False)
 
     COPY_NAME = "studies"
     BREADCRUMB_PARENT = "assessment"
