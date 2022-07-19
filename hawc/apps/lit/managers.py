@@ -1,6 +1,5 @@
 import json
 import logging
-from collections import defaultdict
 from typing import Dict, List, Tuple
 
 import pandas as pd
@@ -542,45 +541,29 @@ class ReferenceManager(BaseManager):
         Returns:
             pd.DataFrame: A pandas dataframe
         """
-        # TODO - one row per reference, even if there are no identifiers for that reference
-        # TODO - check 1170 and empty case
-        # TODO - 500 on empty project http://127.0.0.1:8000/lit/api/assessment/100500298/reference-ids/
-        # TODO - nan?http://127.0.0.1:8000/lit/api/assessment/100500295/reference-ids/
 
-        qs = qs.prefetch_related("identifiers").values_list(
-            "id", "identifiers__database", "identifiers__unique_id"
-        )
-        mapping = {
-            "id": "reference_id",
-            constants.ReferenceDatabase.PUBMED: "pubmed_id",
-            constants.ReferenceDatabase.HERO: "hero_id",
-            constants.ReferenceDatabase.DOI: "doi",
+        ids = qs.order_by("id").values_list("id", flat=True)
+        pubmed_ids = {
+            id: val
+            for id, val in qs.filter(identifiers__database=constants.ReferenceDatabase.PUBMED)
+            .annotate(int_id=Cast("identifiers__unique_id", models.IntegerField()))
+            .values_list("id", "int_id")
+        }
+        hero_ids = {
+            id: val
+            for id, val in qs.filter(identifiers__database=constants.ReferenceDatabase.HERO)
+            .annotate(int_id=Cast("identifiers__unique_id", models.IntegerField()))
+            .values_list("id", "int_id")
+        }
+        doi_ids = {
+            id: val
+            for id, val in qs.filter(
+                identifiers__database=constants.ReferenceDatabase.DOI
+            ).values_list("id", "identifiers__unique_id")
         }
 
-        df = pd.DataFrame(data=qs, columns=["id", "database", "external_id"])
-        has_data = df.shape[0]
-        if has_data:
-            df = (
-                df.set_index("id")
-                .pivot(columns="database", values="external_id")
-                .fillna("")
-                .reset_index()
-                .rename(columns=mapping)
-                .rename_axis(None, axis=1)
-                .sort_values("reference_id")
-            )
-
-        # set missing columns
-        for name in mapping.values():
-            if name not in df.columns.values:
-                df[name] = None
-
-        # drop other columns (ie, cases where only reference_id exists)
-        df = df[["reference_id", "pubmed_id", "hero_id", "doi"]]
-
-        # coerce int fields from string to int
-        for field in ("pubmed_id", "hero_id"):
-            df[field] = pd.to_numeric(df[field], errors="coerce", downcast="unsigned")
+        data = [(id, pubmed_ids.get(id), hero_ids.get(id), doi_ids.get(id)) for id in ids]
+        df = pd.DataFrame(data, columns="reference_id pubmed_id hero_id doi".split())
 
         return df
 
