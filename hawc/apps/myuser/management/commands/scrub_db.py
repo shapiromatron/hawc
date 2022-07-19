@@ -3,6 +3,7 @@ from textwrap import dedent
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
@@ -33,6 +34,13 @@ class Command(BaseCommand):
             if input("".join(message)) != "yes":
                 raise CommandError("Scrubbing user data cancelled.")
 
+        self.update_site()
+        self.update_users()
+
+    def update_site(self):
+        Site.objects.update(domain="127.0.0.1:8001", name="localhost")
+
+    def update_users(self):
         fake = Faker()
         Faker.seed(555)
 
