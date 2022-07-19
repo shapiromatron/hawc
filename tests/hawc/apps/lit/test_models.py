@@ -1,8 +1,8 @@
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 
-from hawc.apps.study.models import Study
 from hawc.apps.lit.models import Reference, ReferenceFilterTag, Search
+from hawc.apps.study.models import Study
 
 
 @pytest.mark.django_db
