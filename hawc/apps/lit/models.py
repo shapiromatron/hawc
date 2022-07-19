@@ -406,6 +406,7 @@ class Search(models.Model):
         1. were "removed" in the latest result set
         2. are not associated in any other searches
         3. do not have any tags applied
+        4. do not have any studies  # TODO - write test!
         """
         if results["removed"]:
             ids = [str(id) for id in results["removed"]]
@@ -422,10 +423,16 @@ class Search(models.Model):
                 .annotate(nsearches=models.Count("searches"))
                 .filter(nsearches=1)
             )
-            n = no_searches.count()
+            # filter references where studies exist
+            _ids = no_searches.values_list("id", flat=True)
+            Study = apps.get_model("study", "Study")
+            no_studies = no_searches.exclude(id__in=Study.objects.filter(id__in=_ids))
+
+            # remove candidate deletions
+            n = no_studies.count()
             if n > 0:
                 logger.info(f"Removing {n} references from search {self.id}")
-                no_searches.delete()
+                no_studies.delete()
 
     def studies(self) -> models.QuerySet:
         Study = apps.get_model("study", "study")
