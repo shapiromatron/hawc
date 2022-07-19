@@ -204,14 +204,24 @@ class SearchDelete(BaseDelete):
         return reverse_lazy("lit:overview", kwargs={"pk": self.assessment.pk})
 
     def get_delete_notes(self) -> str:
-        notes = "This will remove all the references for this assessment, from this search-query/import string.<br>"
+        notes = "All references from this search-query/import string will be removed from the assessment. <br>"
+
+        num_studies = self.object.studies().count()
+        notes += f"<br><b>{num_studies} studies with extracted content and/or study evaluations may be deleted</b>. "
+        if num_studies > 0:
+            notes += "This may affect the following studies: "
+            notes += ", ".join(
+                [
+                    f"<a href='{study.get_absolute_url()}'>{study.pk}</a>"
+                    for study in self.object.studies()
+                ]
+            )
+            notes += ". "
+        notes += "Data-extractions and existing visualizations will not show content from deleted studies.</b>"
 
         num_refs = self.object.references_count
         num_tagged = self.object.references_tagged_count
-        notes += f"<br><b>There are currently {num_refs} references ({num_tagged} with tags) which may be deleted.</b> References will be deleted if this reference was only imported with the this single search/import (they are kept if they are included in another search/import).<br>"
-
-        num_studies = self.object.studies().count()
-        notes += f"<br><b>This will remove {num_studies} studies where content was extracted from these references</b>. Content may include data-extractions, study evaluations, and they will not appear in existing visualizations if removed.</b>"
+        notes += f"<br><b>{num_refs} references ({num_tagged} with tags) may be deleted.</b> References solely imported from this search/import will be deleted (they are kept if they are included in another search/import).<br>"
 
         return notes
 
