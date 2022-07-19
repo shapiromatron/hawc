@@ -24,7 +24,7 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Study
-        fields = "__all__"
+        exclude = ("is_deleted",)
 
 
 class SimpleStudySerializer(StudySerializer):
@@ -58,6 +58,7 @@ class SimpleStudySerializer(StudySerializer):
         exclude = (
             "searches",
             "identifiers",
+            "is_deleted",
         )
         extra_kwargs = {
             "assessment": {"required": False},
@@ -85,10 +86,6 @@ class VerboseStudySerializer(StudySerializer):
 
     def get_riskofbiases(self, study):
         return FinalRiskOfBiasSerializer(study.get_final_qs(), many=True).data
-
-    class Meta:
-        model = models.Study
-        fields = "__all__"
 
 
 class StudyFromIdentifierSerializer(serializers.ModelSerializer):
@@ -141,7 +138,7 @@ class StudyFromIdentifierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Study
-        exclude = ("assessment", "searches", "identifiers")
+        exclude = ("assessment", "searches", "identifiers", "is_deleted")
         extra_kwargs = {
             "full_citation": {"required": False},
             "short_citation": {"required": False},
