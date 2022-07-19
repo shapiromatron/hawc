@@ -37,6 +37,7 @@ MANAGERS = ADMINS
 
 # add randomness to url prefix to prevent easy access
 ADMIN_URL_PREFIX = os.getenv("ADMIN_URL_PREFIX", "f09ea0b8-c3d5-4ff9-86c4-27f00e8f643d")
+ADMIN_ROOT = os.environ.get("ADMIN_ROOT", "")
 
 # {PRIME, EPA}
 HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
@@ -170,8 +171,8 @@ CACHE_10_MIN = 60 * 10
 
 # Email settings
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[HAWC] ")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@hawcproject.org")
-SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "webmaster@hawcproject.org")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "admin@hawcproject.org")
+SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "admin@hawcproject.org")
 
 # External page handlers
 EXTERNAL_CONTACT_US = os.getenv("HAWC_EXTERNAL_CONTACT_US", "")

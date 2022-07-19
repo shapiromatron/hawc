@@ -23,7 +23,7 @@ The public website is currently available on `<https://hawcproject.org>`_, thoug
    :maxdepth: 2
 
    development
-   api
+   client
    database
    deployment
    stats

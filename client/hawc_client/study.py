@@ -1,5 +1,7 @@
 from typing import Dict, Optional, Union
 
+import pandas as pd
+
 from .client import BaseClient
 
 
@@ -44,6 +46,18 @@ class StudyClient(BaseClient):
 
         url = f"{self.session.root_url}/study/api/study/"
         return self.session.post(url, data).json()
+
+    def studies(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves all studies for the given assessment.
+        Args:
+            assessment_id (int): Assessment ID
+        Returns:
+            pd.DataFrame: A dataframe for a study
+        """
+        url = f"{self.session.root_url}/study/api/study/?assessment_id={assessment_id}"
+        response_json = self.session.get(url).json()
+        return pd.DataFrame(response_json)
 
     def create_from_identifier(
         self, db_type: str, db_id: Union[str, int], assessment_id: int, **kwargs
