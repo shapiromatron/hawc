@@ -203,9 +203,22 @@ class SearchDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("lit:overview", kwargs={"pk": self.assessment.pk})
 
+    def get_delete_notes(self) -> str:
+        notes = "This will remove all the references for this assessment, from this search-query/import string.<br>"
+
+        num_refs = self.object.references_count
+        num_tagged = self.object.references_tagged_count
+        notes += f"<br><b>There are currently {num_refs} references ({num_tagged} with tags) which may be deleted.</b> References will be deleted if this reference was only imported with the this single search/import (they are kept if they are included in another search/import).<br>"
+
+        num_studies = self.object.studies().count()
+        notes += f"<br><b>This will remove {num_studies} studies where content was extracted from these references</b>. Content may include data-extractions, study evaluations, and they will not appear in existing visualizations if removed.</b>"
+
+        return notes
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        context["delete_notes"] = self.get_delete_notes()
         return context
 
 

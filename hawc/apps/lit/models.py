@@ -427,6 +427,11 @@ class Search(models.Model):
                 logger.info(f"Removing {n} references from search {self.id}")
                 no_searches.delete()
 
+    def studies(self) -> models.QuerySet:
+        Study = apps.get_model("study", "study")
+        ids = self.references.values_list("id", flat=True)
+        return Study.objects.filter(id__in=ids)
+
     @property
     def date_last_run(self):
         if (
