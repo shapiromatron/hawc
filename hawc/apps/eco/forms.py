@@ -3,7 +3,6 @@ from django import forms
 from hawc.apps.common.forms import BaseFormHelper
 
 from ..common import selectable
-from ..common.admin import autocomplete
 from . import lookups, models
 
 
@@ -16,9 +15,13 @@ class DesignForm(forms.ModelForm):
         exclude = ("study",)
         model = models.Design
         widgets = {
-            "country": autocomplete(models.Design, "country", multi=True),
-            "state": autocomplete(models.Design, "state", multi=True),
-            "ecoregion": autocomplete(models.Design, "ecoregion", multi=True),
+            "country": selectable.AutoCompleteSelectMultipleWidget(
+                lookup_class=lookups.CountryLookup
+            ),
+            "state": selectable.AutoCompleteSelectMultipleWidget(lookup_class=lookups.StateLookup),
+            "ecoregion": selectable.AutoCompleteSelectMultipleWidget(
+                lookup_class=lookups.EcoregionLookup
+            ),
         }
 
     def __init__(self, *args, **kwargs):
