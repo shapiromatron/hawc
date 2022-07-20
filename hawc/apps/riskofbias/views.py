@@ -209,6 +209,7 @@ class RobAssignmentList(TeamMemberOrHigherMixin, BaseList):
     parent_model = Assessment
     model = Study
     template_name = "riskofbias/rob_assignment_list.html"
+    form_class = forms.RoBStudyFilterForm
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -223,9 +224,14 @@ class RobAssignmentList(TeamMemberOrHigherMixin, BaseList):
         )
         if not self.assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
+        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
+        self.form = self.form_class(data=initial, can_edit=True, assessment=self.assessment)
+        if self.form.is_valid():
+            qs = qs.filter(self.form.get_query())
         return qs
 
     def get_context_data(self, **kwargs):
+        kwargs.update(form=self.form)
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(
