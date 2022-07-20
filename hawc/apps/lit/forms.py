@@ -329,6 +329,16 @@ class SearchSelectorForm(forms.Form):
             submit_text="Copy selected as new",
         )
 
+    def get_success_url(self):
+        search = self.cleaned_data["searches"]
+        pattern = (
+            "lit:search_new"
+            if search.search_type == constants.SearchType.SEARCH
+            else "lit:import_new"
+        )
+        url = reverse(pattern, args=(self.assessment.pk,))
+        return f"{url}?initial={search.pk}"
+
 
 def validate_external_id(
     db_type: int, db_id: Union[str, int]
