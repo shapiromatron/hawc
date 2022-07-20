@@ -1,9 +1,9 @@
-<b>All references and studies which were exclusively included from this search-query/import will also be removed.</b>
+<b>All references and studies that were exclusively included from this search-query/import will be removed.</b>
 <br><br>
 {% with studies=object.sole_studies %}
-<b>{{studies|length}} studies with extracted content and/or study evaluations will also be deleted</b>.
+<b>{{studies|length}} studies—including their extracted content and/or study evaluations—will be deleted</b>.
 {% if studies|length > 0 %}
-    This will delete the following studies: {% for study in studies %}<a href='{{study.get_absolute_url}}'>{{study}}</a>{% if not forloop.last %}, {% endif %}{% endfor %}. If these studies are deleted, they will also impact tables and visualizations using them.
+    This will delete the following studies: {% for study in studies %}<a href='{{study.get_absolute_url}}'>{{study}}</a>{% if not forloop.last %}; {% endif %}{% endfor %}. This will also impact any tables or visualizations using these studies.
 {% endif %}
 {% endwith %}
 <br><br>
