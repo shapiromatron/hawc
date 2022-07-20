@@ -6,6 +6,7 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
+from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
@@ -203,31 +204,12 @@ class SearchDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("lit:overview", kwargs={"pk": self.assessment.pk})
 
-    def get_delete_notes(self) -> str:
-        notes = "All references from this search-query/import string will be removed from the assessment.<br>"
-
-        num_studies = self.object.studies().count()
-        notes += f"<br><b>{num_studies} studies with extracted content and/or study evaluations may be deleted</b>. "
-        if num_studies > 0:
-            notes += "This may affect the following studies: "
-            notes += ", ".join(
-                [
-                    f"<a href='{study.get_absolute_url()}'>{study}</a>"
-                    for study in self.object.studies()
-                ]
-            )
-            notes += ". If these studies are deleted, they will also impact tables and visualizations using them.</b><br>"
-
-        num_refs = self.object.references_count
-        num_tagged = self.object.references_tagged_count
-        notes += f"<br><b>{num_refs} references ({num_tagged} with tags) may be deleted.</b> References exclusively imported from this search/import will be deleted.<br>"
-
-        return notes
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
-        context["delete_notes"] = self.get_delete_notes()
+        context["delete_notes"] = loader.render_to_string(
+            "lit/_delete_search_warning.html", context, self.request
+        )
         return context
 
 
