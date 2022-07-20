@@ -261,9 +261,14 @@ class Search(models.Model):
         return self.assessment
 
     def delete(self, **kwargs):
-        ref_ids = list(self.references.all().values_list("id", flat=True))
+        # cascade delete references which no longer relate to any searches
+        orphans = self.sole_references()
+        if orphans.count() > 0:
+            logger.info(
+                f"Removed {orphans.count()} orphan references from assessment {self.assessment_id}"
+            )
+            orphans.delete()
         super().delete(**kwargs)
-        Reference.objects.delete_orphans(assessment_id=self.assessment_id, ref_ids=ref_ids)
 
     @property
     def search_string_text(self):
@@ -406,7 +411,7 @@ class Search(models.Model):
         1. were "removed" in the latest result set
         2. are not associated in any other searches
         3. do not have any tags applied
-        4. do not have any studies  # TODO - write test!
+        4. do not have any studies
         """
         if results["removed"]:
             ids = [str(id) for id in results["removed"]]
@@ -438,6 +443,20 @@ class Search(models.Model):
         Study = apps.get_model("study", "study")
         ids = self.references.values_list("id", flat=True)
         return Study.objects.filter(id__in=ids)
+
+    def sole_studies(self) -> models.QuerySet:
+        """Studies associated with this and only this search."""
+        Study = apps.get_model("study", "study")
+        ids = self.sole_references().values_list("id", flat=True)
+        return Study.objects.filter(id__in=ids)
+
+    def sole_references(self) -> models.QuerySet:
+        """References associated with this and only this search."""
+        return (
+            Reference.objects.filter(id__in=self.references.all())
+            .annotate(n_searches=models.Count("searches"))
+            .filter(n_searches=1)
+        )
 
     @property
     def date_last_run(self):

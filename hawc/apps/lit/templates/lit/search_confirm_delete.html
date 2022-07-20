@@ -2,5 +2,5 @@
 
 {% block content %}
   {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="search/import" notes=delete_notes|safe confirm=True %}
+  {% include "hawc/_delete_block.html" with name="search/import" notes=delete_notes confirm=True %}
 {% endblock content %}
