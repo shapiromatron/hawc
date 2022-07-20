@@ -284,6 +284,9 @@ class IdentifiersManager(BaseManager):
 
 
 class ReferenceQuerySet(models.QuerySet):
+    def tagged(self):
+        return self.annotate(tag_count=models.Count("tags")).exclude(tag_count=0)
+
     def untagged(self):
         return self.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
 
@@ -314,25 +317,6 @@ class ReferenceManager(BaseManager):
         m2m = self.model.searches.through
         objects = [m2m(reference_id=ref.id, search_id=search.id) for ref in refs]
         m2m.objects.bulk_create(objects)
-
-    def delete_orphans(self, assessment_id: int, ref_ids: List[int]):
-        """
-        Remove orphan references (references with no associated searches). Note that this only
-        searches in a given space of reference ids.
-
-        Args:
-            assessment_id (int): the assessment to search
-            ref_ids (List[int]): list of references to check if orphaned
-        """
-        orphans = (
-            self.get_qs(assessment_id)
-            .filter(id__in=ref_ids)
-            .only("id")
-            .annotate(searches_count=models.Count("searches"))
-            .filter(searches_count=0)
-        )
-        logger.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
-        orphans.delete()
 
     def tag_pairs(self, qs):
         # get reference tag pairs
