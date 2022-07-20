@@ -32,6 +32,7 @@ class BaseFormHelper(cf.FormHelper):
 
     error_text_inline = False
     use_custom_control = True
+    include_media = False
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
