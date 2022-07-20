@@ -2,11 +2,12 @@ from django.conf import settings
 from django.urls import path, re_path
 
 from ...constants import AuthProvider
-from . import api, views
+from . import api, views, autocomplete
 
 app_name = "user"
 
 urlpatterns = [
+    path("autocomplete/", autocomplete.UserAutocomplete.as_view(), name="autocomplete"),
     path("login/", views.HawcLoginView.as_view(), name="login"),
     path("logout/", views.HawcLogoutView.as_view(), name="logout"),
     path("profile/", views.ProfileDetail.as_view(), name="settings"),

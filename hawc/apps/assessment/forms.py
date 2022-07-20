@@ -1,5 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
+from dal import autocomplete
 
 from django import forms
 from django.conf import settings
@@ -44,6 +45,12 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
+            "project_manager": autocomplete.ModelSelect2Multiple(
+                url="user:autocomplete",
+                attrs={
+                    "data-theme": "bootstrap",
+                },
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -53,18 +60,9 @@ class AssessmentForm(forms.ModelForm):
             self.instance.creator = self.user
             self.fields["project_manager"].initial = [self.user]
 
-        self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=lookups.DssToxIdLookup
-        )
-        self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["team_members"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
+        self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(lookup_class=lookups.DssToxIdLookup)
+        self.fields["team_members"].widget = AutoCompleteSelectMultipleWidget(lookup_class=HAWCUserLookup)
+        self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(lookup_class=HAWCUserLookup)
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
@@ -165,18 +163,12 @@ class AssessmentAdminForm(forms.ModelForm):
         fields = "__all__"
         model = models.Assessment
         widgets = {
-            "dtxsids": AutocompleteSelectMultiple(
-                models.Assessment._meta.get_field("dtxsids"), admin.site
-            ),
+            "dtxsids": AutocompleteSelectMultiple(models.Assessment._meta.get_field("dtxsids"), admin.site),
             "project_manager": AutocompleteSelectMultiple(
                 models.Assessment._meta.get_field("project_manager"), admin.site
             ),
-            "team_members": AutocompleteSelectMultiple(
-                models.Assessment._meta.get_field("team_members"), admin.site
-            ),
-            "reviewers": AutocompleteSelectMultiple(
-                models.Assessment._meta.get_field("reviewers"), admin.site
-            ),
+            "team_members": AutocompleteSelectMultiple(models.Assessment._meta.get_field("team_members"), admin.site),
+            "reviewers": AutocompleteSelectMultiple(models.Assessment._meta.get_field("reviewers"), admin.site),
         }
 
 
@@ -197,9 +189,7 @@ class AssessmentModulesForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not settings.HAWC_FEATURES.ENABLE_EPI_V2:
             self.fields["epi_version"].disabled = True
-        self.fields[
-            "enable_risk_of_bias"
-        ].label = f"Enable {self.instance.get_rob_name_display().lower()}"
+        self.fields["enable_risk_of_bias"].label = f"Enable {self.instance.get_rob_name_display().lower()}"
 
     @property
     def helper(self):
@@ -298,9 +288,7 @@ class DoseUnitsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        self.fields["name"].widget = AutoCompleteWidget(
-            lookup_class=lookups.DoseUnitsLookup, allow_new=True
-        )
+        self.fields["name"].widget = AutoCompleteWidget(lookup_class=lookups.DoseUnitsLookup, allow_new=True)
 
     @property
     def helper(self):
@@ -352,9 +340,7 @@ class EffectTagForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent")
         super().__init__(*args, **kwargs)
-        self.fields["name"].widget = AutoCompleteWidget(
-            lookup_class=lookups.EffectTagLookup, allow_new=True
-        )
+        self.fields["name"].widget = AutoCompleteWidget(lookup_class=lookups.EffectTagLookup, allow_new=True)
 
     @property
     def helper(self):
@@ -569,9 +555,7 @@ class LogFilterForm(forms.Form):
         label="Modified After",
         widget=forms.widgets.DateInput(attrs={"type": "date"}),
     )
-    on = forms.DateField(
-        required=False, label="Modified On", widget=forms.widgets.DateInput(attrs={"type": "date"})
-    )
+    on = forms.DateField(required=False, label="Modified On", widget=forms.widgets.DateInput(attrs={"type": "date"}))
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment")
