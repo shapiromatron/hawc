@@ -91,6 +91,9 @@ class SearchCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         kwargs["assessment"] = self.assessment
         return kwargs
 
+    def form_valid(self, form):
+        return HttpResponseRedirect(form.get_success_url())
+
 
 class SearchNew(BaseCreate):
     success_message = "Search created."
