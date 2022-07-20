@@ -283,7 +283,9 @@ class SearchModelChoiceField(forms.ModelChoiceField):
 
 class SearchSelectorForm(forms.Form):
 
-    searches = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
+    searches = SearchModelChoiceField(
+        queryset=models.Search.objects.all().select_related("assessment"), empty_label=None
+    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -313,6 +315,16 @@ class SearchSelectorForm(forms.Form):
             cancel_url=reverse("lit:overview", args=(self.assessment.id,)),
             submit_text="Copy selected as new",
         )
+
+    def get_success_url(self):
+        search = self.cleaned_data["searches"]
+        pattern = (
+            "lit:search_new"
+            if search.search_type == constants.SearchType.SEARCH
+            else "lit:import_new"
+        )
+        url = reverse(pattern, args=(self.assessment.pk,))
+        return f"{url}?initial={search.pk}"
 
 
 def validate_external_id(
