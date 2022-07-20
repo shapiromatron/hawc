@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, form_actions_apply_filters
 from ..myuser.models import HAWCUser
 from ..study.forms import StudyFilterForm
 from . import models
@@ -212,3 +212,10 @@ class RoBStudyFilterForm(StudyFilterForm):
         if user := self.cleaned_data.get("assigned_user"):
             query &= Q(riskofbiases__author=user, riskofbiases__active=True)
         return query
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
+        helper.form_method = "GET"
+        helper.add_row("citation", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-2"])
+        return helper
