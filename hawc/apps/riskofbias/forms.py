@@ -200,6 +200,7 @@ class RoBStudyFilterForm(StudyFilterForm):
         initial=None,
         required=False,
         help_text="A user with active study evaluation assignments",
+        empty_label="<All>",
     )
 
     def __init__(self, *args, **kwargs):
@@ -217,5 +218,5 @@ class RoBStudyFilterForm(StudyFilterForm):
     def helper(self):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
-        helper.add_row("citation", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-2"])
+        helper.add_row("citation", 5, ["col-md-4", "col-md-2", "col-md-2", "col-md-2", "col-md-2"])
         return helper
