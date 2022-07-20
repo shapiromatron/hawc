@@ -296,7 +296,9 @@ class SearchModelChoiceField(forms.ModelChoiceField):
 
 class SearchSelectorForm(forms.Form):
 
-    searches = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
+    searches = SearchModelChoiceField(
+        queryset=models.Search.objects.all().select_related("assessment"), empty_label=None
+    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
