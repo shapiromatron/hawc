@@ -165,6 +165,8 @@ class TestLiteratureAssessmentViewset:
         assert data[2]["children"][0]["data"]["name"] == "nested"
 
     def test_reference_ids(self, db_keys):
+        # create new reference w/ no external identifiers; should also be included
+        models.Reference.objects.create(id=9999, assessment_id=db_keys.assessment_final)
         url = reverse("lit:api:assessment-reference-ids", kwargs=dict(pk=db_keys.assessment_final))
         c = APIClient()
         assert c.login(email="pm@hawcproject.org", password="pw") is True
@@ -173,12 +175,13 @@ class TestLiteratureAssessmentViewset:
             {
                 "reference_id": 5,
                 "pubmed_id": 11778423,
-                "doi_id": "10.1093/milmed/166.suppl_2.23",
                 "hero_id": None,
+                "doi": "10.1093/milmed/166.suppl_2.23",
             },
-            {"reference_id": 6, "pubmed_id": 15907334, "doi_id": None, "hero_id": None},
-            {"reference_id": 7, "pubmed_id": 21284075, "doi_id": None, "hero_id": None},
-            {"reference_id": 8, "pubmed_id": 24004895, "doi_id": None, "hero_id": None},
+            {"reference_id": 6, "pubmed_id": 15907334, "hero_id": None, "doi": None},
+            {"reference_id": 7, "pubmed_id": 21284075, "hero_id": None, "doi": None},
+            {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None, "doi": None},
+            {"reference_id": 9999, "pubmed_id": None, "hero_id": None, "doi": None},
         ]
 
     def test_reference_search(self, db_keys):
