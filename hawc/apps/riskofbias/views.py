@@ -21,7 +21,6 @@ from ..common.views import (
     TimeSpentOnPageMixin,
     get_referrer,
 )
-from ..study.forms import StudyFilterForm
 from ..study.models import Study
 from . import forms, models
 
@@ -249,7 +248,7 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
     model = Study
     template_name = "riskofbias/rob_assignment_update.html"
     paginate_by = 25
-    form_class = StudyFilterForm
+    form_class = forms.RoBStudyFilterForm
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -266,7 +265,7 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseList):
         if not can_edit:
             raise PermissionDenied()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
-        self.form = self.form_class(data=initial, can_edit=can_edit)
+        self.form = self.form_class(data=initial, can_edit=can_edit, assessment=self.assessment)
         if self.form.is_valid():
             qs = qs.filter(self.form.get_query())
         return qs

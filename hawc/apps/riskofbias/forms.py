@@ -1,10 +1,13 @@
 from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
+from django.db.models import Q
 from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper
+from ..myuser.models import HAWCUser
+from ..study.forms import StudyFilterForm
 from . import models
 from .actions import RobApproach, clone_approach, load_approach
 
@@ -189,3 +192,23 @@ class RiskOfBiasLoadApproachForm(forms.Form):
     def evaluate(self):
         rob_type = RobApproach(self.cleaned_data["rob_type"])
         load_approach(self.assessment.id, rob_type, self.user.id)
+
+
+class RoBStudyFilterForm(StudyFilterForm):
+    assigned_user = forms.ModelChoiceField(
+        queryset=HAWCUser.objects.all(),
+        initial=None,
+        required=False,
+        help_text="A user with active study evaluation assignments",
+    )
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        self.fields["assigned_user"].queryset = assessment.pms_and_team_users()
+
+    def get_query(self):
+        query = super().get_query()
+        if user := self.cleaned_data.get("assigned_user"):
+            query &= Q(riskofbiases__author=user, riskofbiases__active=True)
+        return query
