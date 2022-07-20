@@ -38,7 +38,7 @@ class Command(BaseCommand):
         self.update_users()
 
     def update_site(self):
-        Site.objects.update(domain="127.0.0.1:8001", name="localhost")
+        Site.objects.update(domain="127.0.0.1:8000", name="localhost")
 
     def update_users(self):
         fake = Faker()
