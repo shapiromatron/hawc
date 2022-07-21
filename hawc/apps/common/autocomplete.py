@@ -1,8 +1,7 @@
 from dal import autocomplete
-
-from django.utils.encoding import force_str
-from django.urls import reverse_lazy
 from django.http import Http404
+from django.urls import reverse_lazy
+from django.utils.encoding import force_str
 
 
 class BaseAutocomplete(autocomplete.Select2QuerySetView):
@@ -27,7 +26,9 @@ class AutocompleteRegistry:
 
     def validate(self, lookup):
         if not issubclass(lookup, BaseAutocomplete):
-            raise ValueError("Registered autocompletes must inherit from the BaseAutocomplete class")
+            raise ValueError(
+                "Registered autocompletes must inherit from the BaseAutocomplete class"
+            )
 
     def register(self, lookup):
         self.validate(lookup)
