@@ -13,6 +13,7 @@ if /I %1 == lint-js goto :lint-js
 if /I %1 == format-js goto :format-js
 if /I %1 == test goto :test
 if /I %1 == test-integration goto :test-integration
+if /I %1 == test-integration-debug goto :test-integration-debug
 if /I %1 == test-refresh goto :test-refresh
 if /I %1 == test-js goto :test-js
 if /I %1 == coverage goto :coverage
@@ -27,6 +28,7 @@ echo.  build             build python wheel
 echo.  build-pex         build pex bundle (mac/linux only)
 echo.  test              run python tests
 echo.  test-integration  run integration tests (requires npm run start)
+echo.  test-integration-debug   run integration tests in debug mode (requires npm run start)
 echo.  test-refresh      removes mock requests and runs python tests
 echo.  test-js           run javascript tests
 echo.  coverage          run coverage and create html report
@@ -90,7 +92,17 @@ py.test
 goto :eof
 
 :test-integration
-HAWC_INTEGRATION_TESTS=1 SHOW_BROWSER=1 BROWSER="firefox" py.test -s tests/frontend/integration/
+playwright install --with-deps chromium
+set HAWC_INTEGRATION_TESTS=1
+set PWDEBUG=0
+py.test -sv tests/integration/
+goto :eof
+
+:test-integration-debug
+playwright install --with-deps chromium
+set HAWC_INTEGRATION_TESTS=1
+set PWDEBUG=1
+py.test -sv tests/integration/
 goto :eof
 
 :test-refresh

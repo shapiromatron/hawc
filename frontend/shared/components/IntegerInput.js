@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
+import HelpTextPopup from "./HelpTextPopup";
 
 class IntegerInput extends Component {
     constructor(props) {
@@ -59,6 +60,7 @@ class IntegerInput extends Component {
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
+                {this.props.helpPopup ? <HelpTextPopup content={this.props.helpPopup} /> : null}
                 {this.renderField(fieldClass, fieldId)}
                 {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
@@ -72,6 +74,7 @@ IntegerInput.defaultProps = {
 };
 IntegerInput.propTypes = {
     helpText: PropTypes.string,
+    helpPopup: PropTypes.string,
     id: PropTypes.string,
     label: PropTypes.string,
     maximum: PropTypes.number,

@@ -6,6 +6,7 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
+from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
@@ -89,6 +90,9 @@ class SearchCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         kwargs["user"] = self.request.user
         kwargs["assessment"] = self.assessment
         return kwargs
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(form.get_success_url())
 
 
 class SearchNew(BaseCreate):
@@ -206,6 +210,9 @@ class SearchDelete(BaseDelete):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        context["delete_notes"] = loader.render_to_string(
+            "lit/_delete_search_warning.html", context, self.request
+        )
         return context
 
 

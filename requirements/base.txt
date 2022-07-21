@@ -20,7 +20,7 @@ celery==5.2.3
 
 # utilities
 jsonschema==4.4.0
-lxml==4.8.0
+lxml==4.9.1
 psycopg2-binary==2.9.3
 redis==4.1.4
 requests==2.27.1
