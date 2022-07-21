@@ -309,4 +309,7 @@ class PubMedParser:
     @classmethod
     def _get_doi(cls, tree: ET.Element, search_string) -> Optional[str]:
         doi = tree.find(search_string)
-        return doi.lower() if doi else None
+        if doi is not None:
+            return doi.text.lower()
+        else:
+            return None
