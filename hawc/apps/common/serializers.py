@@ -16,7 +16,7 @@ from .helper import get_id_from_choices
 def validate_pydantic(
     pydantic_class: Type[pydantic.BaseModel], field: str, data: Any
 ) -> pydantic.BaseModel:
-    """Validation helper to validate a field to a pydnatic model.
+    """Validation helper to validate a field to a pydantic model.
 
     Args:
         pydantic_class (pydantic.BaseModel): A Pydantic base class
