@@ -1,10 +1,8 @@
-import pytest
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
 
 
-@pytest.mark.django_db
 class TestLiterature(PlaywrightTestCase):
     def test_literature(self):
         page = self.browser.new_page()

@@ -24,8 +24,7 @@ class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
     port = int(os.environ.get("LIVESERVER_PORT", 0))
 
     @pytest.fixture(autouse=True)
-    def set_playwright(self, playwright, browser):
-        self.playwright = playwright
+    def set_playwright(self, browser):
         self.browser = browser
 
     def login_and_goto_url(
