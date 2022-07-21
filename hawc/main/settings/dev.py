@@ -2,6 +2,8 @@
 
 from .base import *
 
+HAWC_FLAVOR = "EPA"
+
 DEBUG = True
 
 SERVER_ROLE = "dev"

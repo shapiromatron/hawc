@@ -1,8 +1,10 @@
-from dal import autocomplete
-
+from ..common.autocomplete import BaseAutocomplete, registry
 from . import models
 
 
-class UserAutocomplete(autocomplete.Select2QuerySetView):
+class UserAutocomplete(BaseAutocomplete):
     model = models.HAWCUser
     search_fields = ["first_name", "last_name"]
+
+
+registry.register(UserAutocomplete)

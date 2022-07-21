@@ -16,6 +16,7 @@ import hawc.apps.study.urls
 import hawc.apps.summary.urls
 import hawc.apps.vocab.urls
 from hawc.apps.assessment import views
+from hawc.apps.common.autocomplete import get_autocomplete
 
 urlpatterns = [
     # Portal
@@ -52,6 +53,7 @@ urlpatterns = [
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
     path("rasterize/", views.RasterizeCss.as_view(), name="css-rasterize"),
     path("selectable/", include("selectable.urls")),
+    path("autocomplete/<str:autocomplete_name>/", get_autocomplete, name="autocomplete"),
 ]
 
 # add admin patterns

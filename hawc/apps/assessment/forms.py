@@ -19,6 +19,7 @@ from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
 from ..myuser.lookups import HAWCUserLookup
+from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
 from . import lookups, models
 
@@ -46,10 +47,8 @@ class AssessmentForm(forms.ModelForm):
         widgets = {
             "public_on": DateCheckboxInput,
             "project_manager": autocomplete.ModelSelect2Multiple(
-                url="user:autocomplete",
-                attrs={
-                    "data-theme": "bootstrap",
-                },
+                url=UserAutocomplete.url(),
+                attrs={"data-theme": "bootstrap"},
             ),
         }
 
