@@ -3,12 +3,14 @@ import os
 import pytest
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import TestCase
-from playwright.sync_api import Page, sync_playwright
+from playwright.sync_api import Page
 
-SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
+RUN_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is not None
+if RUN_INTEGRATION:
+    os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 
-@pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
+@pytest.mark.skipif(not RUN_INTEGRATION, reason="integration test")
 class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
     """
     We use a single class that inherits from both StaticLiveServerTestCase and TestCase
@@ -21,20 +23,10 @@ class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
     host = os.environ.get("LIVESERVER_HOST", "localhost")
     port = int(os.environ.get("LIVESERVER_PORT", 0))
 
-    @classmethod
-    def setUpClass(cls):
-        # https://docs.djangoproject.com/en/3.2/topics/async/#async-safety
-        # https://github.com/mxschmitt/python-django-playwright/blob/4d2235f4fadc66d88eed7b9cbc8d156c20575ad0/test_login.py
-        os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
-        super().setUpClass()
-        cls.playwright = sync_playwright().start()
-        cls.browser = cls.playwright.chromium.launch()
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        cls.browser.close()
-        cls.playwright.stop()
+    @pytest.fixture(autouse=True)
+    def set_playwright(self, playwright, browser):
+        self.playwright = playwright
+        self.browser = browser
 
     def login_and_goto_url(
         self, page: Page, url: str = "", username: str = "admin@hawcproject.org"
