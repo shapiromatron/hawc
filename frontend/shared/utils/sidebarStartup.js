@@ -6,6 +6,7 @@ const toggleSidebarCollapse = function(isCollapsed, submit) {
             .data("collapsed", isCollapsed)
             .toggleClass("sidebar-collapsed", isCollapsed);
         $("#toggle-sidebar").html(toggleText);
+        $(".sidebar-link-holder").toggleClass("hidden");
 
         if (submit) {
             const url = $("#sidebar-container").data("url");
