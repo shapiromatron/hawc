@@ -32,7 +32,6 @@ class BaseFormHelper(cf.FormHelper):
 
     error_text_inline = False
     use_custom_control = True
-    include_media = False
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -92,7 +91,9 @@ class BaseFormHelper(cf.FormHelper):
         first = self.layout.index(firstField)
         for i, class_ in enumerate(classes):
             self[first + i].wrap(cfl.Column, css_class=class_)
-        self[first : first + numFields].wrap_together(cfl.Row, id=f"row_id_{firstField}_{numFields}")
+        self[first : first + numFields].wrap_together(
+            cfl.Row, id=f"row_id_{firstField}_{numFields}"
+        )
 
     def find_layout_idx_for_field_name(self, field_name):
         idx = 0
@@ -177,7 +178,9 @@ class TdLayout(cfl.LayoutObject):
 
     def render(self, form, form_style, context, **kwargs):
         fields = self.get_rendered_fields(form, form_style, context, **kwargs)
-        return render_to_string(self.template, {"td": self, "fields": fields, "form_style": form_style})
+        return render_to_string(
+            self.template, {"td": self, "fields": fields, "form_style": form_style}
+        )
 
 
 class AdderLayout(cfl.Field):
