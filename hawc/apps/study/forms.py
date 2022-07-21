@@ -71,18 +71,18 @@ class BaseStudyForm(forms.ModelForm):
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        helper.add_row("bioassay", 4, ["col-md-3 pl-3", "col-md-3", "col-md-3", "col-md-3 pr-3"])
+        helper.add_row("bioassay", 4, ["col-md-3", "col-md-3", "col-md-3", "col-md-3"])
         helper.add_row("coi_reported", 2, "col-md-6")
+        helper.add_row("funding_source", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
-        type_idx = helper.find_layout_idx_for_field_name("bioassay")
+        study_type_idx = helper.find_layout_idx_for_field_name("bioassay")
+        helper.layout[study_type_idx].css_class = "px-3"
         helper.layout.insert(
-            type_idx,
+            study_type_idx,
             cfl.HTML(
-                """
-            <b>Study Type(s)</b>
-            <p class="text-muted">Select the type of data contained in this study. The fields for
-            study evaluation, risk of bias, or data extraction may change depending on the study type.
-            Please note that data may be lost or modified if these values are changed after creation of the study.</p>
+                """<div class="form-row">
+            <p class="mb-2"><b>Study Type(s)</b></p>
+            <p class="text-muted">Select the type(s) of data contained in this study. Study evaluation and data extraction fields will change depending on the selection. Modifying values after proceeding with study evaluation and/or data extraction may cause data to be removed.</p></div>
         """
             ),
         )
