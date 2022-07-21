@@ -106,6 +106,7 @@ class IdentifiersManager(BaseManager):
 
             # create DOI identifier
             if doi := get_doi_from_identifier(ident):
+                doi = doi.lower()
                 ident, _ = self.get_or_create(
                     database=constants.ReferenceDatabase.DOI, unique_id=doi
                 )
