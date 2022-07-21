@@ -339,9 +339,9 @@ class EditColumnForm extends Component {
                             store.updateStagedColumn(colIdx, {width});
                         }}
                         value={col.width}
-                        required={true}
                         name="width"
                         label="Width"
+                        helpPopup="Number between 1 and 20"
                     />
                 </div>
                 <div className="col-md-12 text-center">

@@ -11,29 +11,3 @@
 {% block content %}
   {% crispy form %}
 {% endblock content %}
-
-{% block extrajs %}
-  {{ form.media }}
-  <script type="text/javascript">
-    $(document).ready(function(){
-        var printf = window.app.HAWCUtils.printf,
-            isSearch = function(txt){
-            return (txt.search('{Search}')>=0);
-        };
-
-        $("#submit-id-save").on('click', function(e){
-            e.preventDefault();
-            var val = parseInt($('#id_searches').val()),
-                txt = $('#id_searches option:selected').text(),
-                search_url = "{% url 'lit:search_new' assessment.pk %}",
-                import_url = "{% url 'lit:import_new' assessment.pk %}";
-
-            if (val){
-                const root = (isSearch(txt)) ? search_url : import_url,
-                  url = printf("{0}?initial={1}", root, val);
-                window.location = url;
-            }
-        });
-    });
-  </script>
-{% endblock extrajs %}
