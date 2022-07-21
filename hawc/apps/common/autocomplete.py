@@ -1,7 +1,8 @@
 from dal import autocomplete
 from django.http import Http404
-from django.urls import reverse_lazy
 from django.utils.encoding import force_str
+
+from .helper import reverse_with_query_lazy
 
 
 class BaseAutocomplete(autocomplete.Select2QuerySetView):
@@ -15,9 +16,9 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         return f"{app_name}-{class_name}"
 
     @classmethod
-    def url(cls):
+    def url(cls, **kwargs):
         # must lazily reverse url to prevent circular imports
-        return reverse_lazy("autocomplete", args=[cls.name()])
+        return reverse_with_query_lazy("autocomplete", args=[cls.name()], query=kwargs)
 
 
 class AutocompleteRegistry:
