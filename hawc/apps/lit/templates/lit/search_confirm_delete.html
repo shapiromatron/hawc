@@ -2,5 +2,5 @@
 
 {% block content %}
   {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="search/import" notes="This will remove all the references for this assessment, from this search-query/import string.<br><br><b>If a reference found in this search/import was also found in other searches/imports, it will not be removed.</b><br><br>This may also remove all data which was extracted from these references as well, including risk of bias/study evaluation, endpoints, and BMD modeling." %}
+  {% include "hawc/_delete_block.html" with name="search/import" notes=delete_notes confirm=True %}
 {% endblock content %}
