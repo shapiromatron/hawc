@@ -150,19 +150,18 @@ jobs:
       run: |
         pip install -U pip
         pip install -r requirements/dev.txt
+        playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test
       continue-on-error: true
       run: |
-        playwright install --with-deps chromium
         LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        playwright install --with-deps chromium
         LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
     - name: set status
       if: always()
