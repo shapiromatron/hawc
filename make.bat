@@ -95,14 +95,14 @@ goto :eof
 playwright install --with-deps chromium
 set HAWC_INTEGRATION_TESTS=1
 set PWDEBUG=0
-py.test -sv tests/frontend/integration/
+py.test -sv tests/integration/
 goto :eof
 
 :test-integration-debug
 playwright install --with-deps chromium
 set HAWC_INTEGRATION_TESTS=1
 set PWDEBUG=1
-py.test -sv tests/frontend/integration/
+py.test -sv tests/integration/
 goto :eof
 
 :test-refresh
