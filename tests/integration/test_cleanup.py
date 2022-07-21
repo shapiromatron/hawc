@@ -5,7 +5,7 @@ from .common import PlaywrightTestCase
 
 class TestCleanup(PlaywrightTestCase):
     def test_cleanup(self):
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # /assessment/:id/clean-extracted-data/

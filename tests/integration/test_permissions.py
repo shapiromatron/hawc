@@ -15,7 +15,7 @@ class TestPermissions(PlaywrightTestCase):
         edit_url = self.live_server_url + assessment_url + "update/"
 
         # check w/o authentication we can view the public url
-        page = self.browser.new_page()
+        page = self.page
         page.goto(detail_url)
         expect(page.locator("h2 >> text=Chemical Y (2020)")).to_be_visible()
 

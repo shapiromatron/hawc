@@ -5,7 +5,7 @@ from .common import PlaywrightTestCase
 
 class TestEpi(PlaywrightTestCase):
     def test_epi(self):
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # /study-population/:id/

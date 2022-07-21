@@ -10,7 +10,7 @@ class TestSummary(PlaywrightTestCase):
         """
         Assert we have a list of built-in exploratory heatmap tables and they render.
         """
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # /assessment/:id/endpoints/
@@ -35,7 +35,7 @@ class TestSummary(PlaywrightTestCase):
         - a data pivot summary page
         - a risk of bias heatmap can be rendered
         """
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # /summary/assessment/2/visuals/
@@ -66,7 +66,7 @@ class TestSummary(PlaywrightTestCase):
         """
         Tests to ensure all visual types are displayed.
         """
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # visual id should redirect to slug url
@@ -124,7 +124,7 @@ class TestSummary(PlaywrightTestCase):
         """
         Tests to ensure all visual types are displayed.
         """
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # check summary table
@@ -150,7 +150,7 @@ class TestSummary(PlaywrightTestCase):
         """
         Tests to ensure that modals on visuals are working correctly.
         """
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # check study display modal

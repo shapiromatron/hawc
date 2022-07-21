@@ -24,8 +24,8 @@ class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
     port = int(os.environ.get("LIVESERVER_PORT", 0))
 
     @pytest.fixture(autouse=True)
-    def set_playwright(self, browser):
-        self.browser = browser
+    def set_page(self, page: Page):
+        self.page: Page = page
 
     def login_and_goto_url(
         self, page: Page, url: str = "", username: str = "admin@hawcproject.org"

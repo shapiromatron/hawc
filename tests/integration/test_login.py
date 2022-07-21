@@ -10,7 +10,7 @@ class TestLogin(PlaywrightTestCase):
         """
         expect( that we're able to login/logout successfully and an errors are displayed as expected.
         """
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         expect(page.locator("a >> text=Login")).to_be_visible()

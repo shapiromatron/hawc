@@ -5,7 +5,7 @@ from .common import PlaywrightTestCase
 
 class TestInvitro(PlaywrightTestCase):
     def test_invitro(self):
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # /in-vitro/assessment/:id/endpoint-categories/update/

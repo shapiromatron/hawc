@@ -5,7 +5,7 @@ from .common import PlaywrightTestCase
 
 class TestBioassay(PlaywrightTestCase):
     def test_bioassay(self):
-        page = self.browser.new_page()
+        page = self.page
         page.goto(self.live_server_url)
 
         # /experiment/:id/
