@@ -1,6 +1,5 @@
 import json
 import logging
-from collections import defaultdict
 from typing import Dict, List, Tuple
 
 import pandas as pd
@@ -284,6 +283,9 @@ class IdentifiersManager(BaseManager):
 
 
 class ReferenceQuerySet(models.QuerySet):
+    def tagged(self):
+        return self.annotate(tag_count=models.Count("tags")).exclude(tag_count=0)
+
     def untagged(self):
         return self.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
 
@@ -349,25 +351,6 @@ class ReferenceManager(BaseManager):
         m2m = self.model.searches.through
         objects = [m2m(reference_id=ref.id, search_id=search.id) for ref in refs]
         m2m.objects.bulk_create(objects)
-
-    def delete_orphans(self, assessment_id: int, ref_ids: List[int]):
-        """
-        Remove orphan references (references with no associated searches). Note that this only
-        searches in a given space of reference ids.
-
-        Args:
-            assessment_id (int): the assessment to search
-            ref_ids (List[int]): list of references to check if orphaned
-        """
-        orphans = (
-            self.get_qs(assessment_id)
-            .filter(id__in=ref_ids)
-            .only("id")
-            .annotate(searches_count=models.Count("searches"))
-            .filter(searches_count=0)
-        )
-        logger.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
-        orphans.delete()
 
     def tag_pairs(self, qs):
         # get reference tag pairs
@@ -577,52 +560,29 @@ class ReferenceManager(BaseManager):
         Returns:
             pd.DataFrame: A pandas dataframe
         """
-        qs = qs.prefetch_related("identifiers")
 
-        captured = {
-            None,
-            constants.ReferenceDatabase.HERO,
-            constants.ReferenceDatabase.PUBMED,
-            constants.ReferenceDatabase.DOI,
+        ids = qs.order_by("id").values_list("id", flat=True)
+        pubmed_ids = {
+            id: val
+            for id, val in qs.filter(identifiers__database=constants.ReferenceDatabase.PUBMED)
+            .annotate(int_id=Cast("identifiers__unique_id", models.IntegerField()))
+            .values_list("id", "int_id")
         }
-        diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
-        if diff:
-            logger.warning(f"Missing some identifier IDs from id export: {diff}")
+        hero_ids = {
+            id: val
+            for id, val in qs.filter(identifiers__database=constants.ReferenceDatabase.HERO)
+            .annotate(int_id=Cast("identifiers__unique_id", models.IntegerField()))
+            .values_list("id", "int_id")
+        }
+        doi_ids = {
+            id: val
+            for id, val in qs.filter(
+                identifiers__database=constants.ReferenceDatabase.DOI
+            ).values_list("id", "identifiers__unique_id")
+        }
 
-        data = defaultdict(dict)
-
-        # capture HERO ids
-        heros = qs.filter(identifiers__database=constants.ReferenceDatabase.HERO).values_list(
-            "id", "identifiers__unique_id"
-        )
-        for hawc_id, hero_id in heros:
-            data[hawc_id]["hero_id"] = int(hero_id)
-
-        # capture PUBMED ids
-        pubmeds = qs.filter(identifiers__database=constants.ReferenceDatabase.PUBMED).values_list(
-            "id", "identifiers__unique_id"
-        )
-        for hawc_id, pubmed_id in pubmeds:
-            data[hawc_id]["pubmed_id"] = int(pubmed_id)
-
-        # capture DOI ids
-        dois = qs.filter(identifiers__database=constants.ReferenceDatabase.DOI).values_list(
-            "id", "identifiers__unique_id"
-        )
-        for hawc_id, doi_id in dois:
-            data[hawc_id]["doi_id"] = doi_id
-
-        # create a dataframe
-        df = (
-            pd.DataFrame.from_dict(data, orient="index")
-            .reset_index()
-            .rename(columns={"index": "reference_id"})
-        )
-
-        # set missing columns
-        for col in ["hero_id", "pubmed_id", "doi_id"]:
-            if col not in df.columns:
-                df[col] = None
+        data = [(id, pubmed_ids.get(id), hero_ids.get(id), doi_ids.get(id)) for id in ids]
+        df = pd.DataFrame(data, columns="reference_id pubmed_id hero_id doi".split())
 
         return df
 

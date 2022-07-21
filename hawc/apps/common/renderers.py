@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from django.utils.text import slugify
 from matplotlib.axes import Axes
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+from openpyxl.utils.exceptions import IllegalCharacterError
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer
 from rest_framework.response import Response
@@ -137,6 +139,15 @@ class PandasXlsxRenderer(PandasBaseRenderer):
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     format = "xlsx"
 
+    def _clean_df(self, df: pd.DataFrame):
+        """Clean data frame to remove illegal characters, such as "\x02", inplace.
+
+        Args:
+            df (pd.DataFrame): the input dataframe
+        """
+        for col in df.select_dtypes(include="object"):
+            df.loc[:, col] = df.loc[:, col].str.replace(ILLEGAL_CHARACTERS_RE, "")
+
     def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
         response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
 
@@ -150,7 +161,11 @@ class PandasXlsxRenderer(PandasBaseRenderer):
         with pd.ExcelWriter(
             f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
         ) as writer:
-            df.to_excel(writer, index=False)
+            try:
+                df.to_excel(writer, index=False)
+            except IllegalCharacterError:
+                self._clean_df(df)
+                df.to_excel(writer, index=False)
         return f.getvalue()
 
 
