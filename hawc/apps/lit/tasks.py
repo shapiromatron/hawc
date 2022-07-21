@@ -164,7 +164,7 @@ def schedule_topic_model_reruns():
 
 
 @shared_task
-def rerun_topic_model(assessment_id):
+def rerun_topic_model(assessment_id: int):
     logger.info(f"Topic model rerun reqest scheduled for assessment {assessment_id}")
 
     # rerun a topic model

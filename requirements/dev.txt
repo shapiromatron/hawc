@@ -13,12 +13,12 @@ faker==13.3.0
 
 # tests
 coverage==6.3.2
-selenium==3.141.0
 pytest==7.0.1
 pytest-django==4.5.2
 vcrpy==4.1.1
 pytest-vcr==1.0.2
-helium==3.0.8
+playwright==1.22.0
+pytest-playwright==0.3.0
 
 # docs
 Sphinx==4.4.0
