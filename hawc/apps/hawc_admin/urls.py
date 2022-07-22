@@ -14,14 +14,15 @@ from . import api, schema, views
 
 def get_admin_urlpatterns(open_api_patterns) -> List:
     """Return a list of admin patterns for inclusion. If Admin is not included via a
-    django setting; healthchecks are still included, but nothing else.
+    django setting; healthchecks and debugging are still included, but nothing else.
     """
 
     admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
 
-    # always include API for healthchecks
+    # always include API for healthchecks/debugging
     router = DefaultRouter()
     router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
+    router.register(r"debug", api.DebugViewset, basename="debug")
     if settings.INCLUDE_ADMIN:
         router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
         open_api_patterns.append(path(f"{admin_url}/api/", include(router.urls)))

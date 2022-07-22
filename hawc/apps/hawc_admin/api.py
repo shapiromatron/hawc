@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
+from ..common.api import OncePerMinuteThrottle
 from ..common.diagnostics import worker_healthcheck
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers, SvgRenderer
@@ -48,3 +49,12 @@ class HealthcheckViewset(viewsets.ViewSet):
     @action(detail=False, url_path="worker-stats", permission_classes=(permissions.IsAdminUser,))
     def worker_stats(self, request):
         return Response(worker_healthcheck.stats())
+
+
+class DebugViewset(viewsets.ViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+
+    @action(detail=False, throttle_classes=(OncePerMinuteThrottle,))
+    def throttle(self, request):
+        throttle = self.get_throttles()[0]
+        return Response({"ident": throttle.get_ident(request)})
