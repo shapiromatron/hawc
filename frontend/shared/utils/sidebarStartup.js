@@ -17,6 +17,11 @@ const toggleSidebarCollapse = function(isCollapsed, submit) {
         if (document.getElementById("sidebar-container") === null) {
             return;
         }
+        if ($("#sidebar-container").data("collapsed") == 'empty') {
+            if ($(document).width() < 500) {
+                toggleSidebarCollapse(true, false)
+            }
+        }
         $("#toggle-sidebar").click(() => {
             toggleSidebarCollapse(!$("#sidebar-container").data("collapsed"), true);
         });

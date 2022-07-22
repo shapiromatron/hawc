@@ -2,12 +2,10 @@
 
 {% block sidebar_outer %}
 <div id="sidebar-container" class="sidebar {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
-    data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
-
+    data-collapsed="{{request.session.hideSidebar|yesno:"true,false,empty"}}" data-url="{% url 'update_session' %}">
     <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
         <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
     </a>
-
     {% if flavor == "EPA" %}
     <div class="sidebar-link-holder dropdown {{request.session.hideSidebar|yesno:' ,hidden'}} px-1">
         <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true"
