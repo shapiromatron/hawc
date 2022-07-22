@@ -2,17 +2,12 @@
 
 
 from django.db import migrations
+from django.db.models import F, Func
 
 
 def set_doi_lowercase(apps, schema_editor):
     Identifiers = apps.get_model("lit", "Identifiers")
-    doi_ids = Identifiers.objects.filter(database=4)
-    updates = []
-    for ident in doi_ids:
-        ident.unique_id = ident.unique_id.lower()
-        updates.append(ident)
-
-    Identifiers.objects.bulk_update(updates, ["unique_id"])
+    Identifiers.objects.filter(database=4).update(unique_id=Func(F("unique_id"), function="LOWER"))
 
 
 class Migration(migrations.Migration):
