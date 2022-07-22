@@ -295,7 +295,7 @@ class ReferenceQuerySet(models.QuerySet):
             tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
         return self.filter(tags__in=tag_ids).distinct("pk")
 
-    def require_tags(self, tags):
+    def require_tags(self, tags, lazy: bool = True):
         """
         Filter references by any of the given tags.
 
@@ -303,11 +303,17 @@ class ReferenceQuerySet(models.QuerySet):
 
         Args:
             tags: Required tags.
+            lazy: Do not evaluate the queryset (intersection can cause issues downstream)
         """
-        query = Q()
+
+        matches = []
         for tag in tags:
-            query |= Q(tags__in=[tag, *tag.get_descendants()])
-        return self.filter(query).distinct("pk")
+            matches.append(self.filter(tags__in=[tag, *tag.get_descendants()]))
+        qs = self.intersection(*matches)
+        if lazy:
+            return qs
+        ids = list(qs.values_list("id", flat=True))
+        return self.filter(id__in=ids)
 
     def prune_tags(self, root_tag, pruned_tags):
         """
