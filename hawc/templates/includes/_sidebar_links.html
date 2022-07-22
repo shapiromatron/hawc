@@ -10,6 +10,7 @@
     {% endif %}
 </li>
 
+{% if assessment %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'assessment:detail' assessment.pk %}">
         <i class="fa fa-angle-right"></i>
@@ -82,7 +83,7 @@
         <i class="fa fa-angle-double-right"></i>
         Downloads</a>
 </li>
-
+{% endif %}
 {% if flavor == "EPA" %}
 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
 <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>

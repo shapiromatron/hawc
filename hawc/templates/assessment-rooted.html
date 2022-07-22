@@ -12,11 +12,11 @@
         <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
     </a>
 
-    <div class="sidebar-link-holder dropdown {{request.session.hideSidebar|yesno:' ,hidden'}}">
+    <div class="sidebar-link-holder dropdown {{request.session.hideSidebar|yesno:' ,hidden'}} px-1">
         <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i class="fa fa-bars" title="View assessment"></i>
         </button>
-        <div class="dropdown-menu bg-dark" aria-labelledby="assessmentToggleMenu">
+        <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
             {% include "includes/_sidebar_links.html" %}
         </div>
     </div>
