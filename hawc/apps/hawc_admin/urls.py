@@ -21,7 +21,6 @@ def get_admin_urlpatterns(open_api_patterns) -> List:
 
     # always include API for healthchecks
     router = DefaultRouter()
-    router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
     if settings.INCLUDE_ADMIN:
         router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
         open_api_patterns.append(path(f"{admin_url}/api/", include(router.urls)))

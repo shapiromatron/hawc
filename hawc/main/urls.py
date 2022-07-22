@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 import hawc.apps.animal.urls
 import hawc.apps.assessment.urls
 import hawc.apps.bmd.urls
+import hawc.apps.common.urls
 import hawc.apps.epi.urls
 import hawc.apps.epimeta.urls
 import hawc.apps.hawc_admin.urls
@@ -70,6 +71,10 @@ open_api_patterns = [
     path("vocab/api/", include(hawc.apps.vocab.urls.router.urls)),
 ]
 urlpatterns += hawc.apps.hawc_admin.urls.get_admin_urlpatterns(open_api_patterns)
+
+# add healthcheck patterns
+healthcheck = [path("", include(hawc.apps.common.urls.router.urls))]
+urlpatterns += healthcheck
 
 # only for DEBUG, want to use static server otherwise
 if settings.DEBUG:
