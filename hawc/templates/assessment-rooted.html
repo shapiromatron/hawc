@@ -8,13 +8,13 @@
 {% block sidebar_outer %}
 {% get request.session "hideSidebar" as hideSidebar %}
 <div id="sidebar-container" class="sidebar {{hideSidebar|yesno:'sidebar-collapsed, '}}"
-    data-collapsed="{{hideSidebar|yesno:"true,false,empty"}}" data-url="{% url 'update_session' %}">
+    data-collapsed="{{hideSidebar|yesno:"true,false,unset"}}" data-url="{% url 'update_session' %}">
     <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
         <i class="fa fa-2x {{hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
     </a>
     <div class="sidebar-link-holder dropdown {{hideSidebar|yesno:' ,hidden'}} px-1">
         <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="fa fa-bars" title="View assessment"></i>
+            <i class="fa fa-bars" title="Mobile navigation panel"></i>
         </button>
         <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
             {% include "includes/_sidebar_links.html" %}

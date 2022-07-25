@@ -1,4 +1,6 @@
-const toggleSidebarCollapse = function(isCollapsed, submit) {
+// xs breakpoint: https://getbootstrap.com/docs/4.6/layout/overview/#containers
+const XS_BREAKPOINT = 576,
+    toggleSidebarCollapse = function(isCollapsed, submit) {
         const toggleText = isCollapsed
             ? "<i class='fa fa-2x fa-angle-double-right'/>"
             : "<i class='fa fa-2x fa-angle-double-left' />";
@@ -17,13 +19,15 @@ const toggleSidebarCollapse = function(isCollapsed, submit) {
         if (document.getElementById("sidebar-container") === null) {
             return;
         }
-        if ($("#sidebar-container").data("collapsed") == "empty") {
-            if ($(document).width() < 500) {
+        if ($("#sidebar-container").data("collapsed") == "unset") {
+            if ($(document).width() < XS_BREAKPOINT) {
                 toggleSidebarCollapse(true, true);
             }
         }
-        $("#toggle-sidebar").click(() => {
-            toggleSidebarCollapse(!$("#sidebar-container").data("collapsed"), true);
+        $("#toggle-sidebar").click(e => {
+            const isCollapsed = $("#sidebar-container").hasClass("sidebar-collapsed");
+            e.preventDefault();
+            toggleSidebarCollapse(!isCollapsed, true);
         });
     };
 
