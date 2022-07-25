@@ -14,7 +14,7 @@ from . import api, schema, views
 
 def get_admin_urlpatterns(open_api_patterns) -> List:
     """Return a list of admin patterns for inclusion. If Admin is not included via a
-    django setting; healthchecks and debugging are still included, but nothing else.
+    django setting; diagnostic endpoints are still included, but nothing else.
     """
 
     admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
