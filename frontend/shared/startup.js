@@ -54,8 +54,8 @@ const setupAjax = document => {
 };
 
 $(document).ready(() => {
-    sidebarStartup();
     tryWebAppStartup();
     setupAjax(document);
+    sidebarStartup();
     checkSession();
 });

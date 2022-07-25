@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
+{% load get %}
 
 {% block sidebar_outer %}
-<div id="sidebar-container" class="sidebar {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
-    data-collapsed="{{request.session.hideSidebar|yesno:"true,false,empty"}}" data-url="{% url 'update_session' %}">
+{% get request.session "hideSidebar" as hideSidebar %}
+<div id="sidebar-container" class="sidebar {{hideSidebar|yesno:'sidebar-collapsed, '}}"
+    data-collapsed="{{hideSidebar|yesno:"true,false,empty"}}" data-url="{% url 'update_session' %}">
     <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
-        <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
+        <i class="fa fa-2x {{hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
     </a>
     {% if flavor == "EPA" %}
-    <div class="sidebar-link-holder dropdown {{request.session.hideSidebar|yesno:' ,hidden'}} px-1">
+    <div class="sidebar-link-holder dropdown {{hideSidebar|yesno:' ,hidden'}} px-1">
         <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="true">
             <i class="fa fa-bars" title="View assessment"></i>
