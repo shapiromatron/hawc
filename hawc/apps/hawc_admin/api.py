@@ -29,4 +29,4 @@ class DiagnosticViewset(viewsets.ViewSet):
     @action(detail=False, throttle_classes=(FivePerMinuteThrottle,))
     def throttle(self, request):
         throttle = self.get_throttles()[0]
-        return Response({"ident": throttle.get_ident(request)})
+        return Response({"identity": throttle.get_ident(request)})
