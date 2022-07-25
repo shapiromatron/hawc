@@ -27,8 +27,7 @@ class HeatmapDatastore {
     @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
-        this.getDetailUrl = this.getDetailUrl.bind(this);
-        this.modal = new HAWCModal();
+        // basic initialization, enough for bound checking
         this.settings = settings;
         this.dataset = applyRowFilters(
             dataset,
@@ -36,11 +35,17 @@ class HeatmapDatastore {
             settings.filtersLogic,
             settings.filtersQuery
         );
-        this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
-        this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
         this.totals = this.setTotals();
+    }
+
+    initialize() {
+        // further initialization for full store use
+        this.getDetailUrl = this.getDetailUrl.bind(this);
+        this.modal = new HAWCModal();
+        this.dpe = new DataPivotExtension();
+        this.filterWidgetState = this.setFilterWidgetState();
         this.extensions = this.setDataExtensions();
         this.setColorScale();
     }

@@ -17,16 +17,28 @@ import {NULL_VALUE} from "./constants";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 
 const startupHeatmapAppRender = function(el, settings, datastore, options) {
-        const store = new HeatmapDatastore(settings, datastore, options);
-        try {
+        const store = new HeatmapDatastore(settings, datastore),
+            cols = store.scales.x.filter((d, i) =>
+                settings.compress_x ? store.totals.x[i] > 0 : true
+            ).length,
+            rows = store.scales.y.filter((d, i) =>
+                settings.compress_y ? store.totals.y[i] > 0 : true
+            ).length;
+        if (cols * rows > 1000) {
+            ReactDOM.render(
+                <div className="alert alert-danger" role="alert">
+                    <i className="fa fa-exclamation-circle"></i>&nbsp;Table too large
+                </div>,
+                el
+            );
+        } else {
+            store.initialize();
             ReactDOM.render(
                 <Provider store={store}>
                     <ExploreHeatmapComponent options={options} />
                 </Provider>,
                 el
             );
-        } catch (err) {
-            ReactDOM.render(<p>An error occurred</p>, el);
         }
     },
     getErrorDiv = function() {
