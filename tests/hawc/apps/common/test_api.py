@@ -176,7 +176,7 @@ def test_user_can_edit_object(db_keys):
 class TestHealthcheckViewset:
     def test_web(self):
         client = APIClient()
-        url = reverse("healthcheck-web")
+        url = reverse("common:api:healthcheck-web")
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json() == {"healthy": True}
@@ -184,7 +184,7 @@ class TestHealthcheckViewset:
     @pytest.mark.skipif(not has_redis(), reason="skip; redis cache required")
     def test_worker(self):
         client = APIClient()
-        url = reverse("healthcheck-worker")
+        url = reverse("common:api:healthcheck-worker")
 
         # no data; should be an error
         resp = client.get(url)
@@ -200,7 +200,7 @@ class TestHealthcheckViewset:
     @pytest.mark.skipif(not has_redis(), reason="skip; redis cache required")
     def test_worker_plot(self):
         client = APIClient()
-        url = reverse("healthcheck-worker-plot")
+        url = reverse("common:api:healthcheck-worker-plot")
 
         # failure - not admin
         resp = client.get(url)
