@@ -35,9 +35,12 @@ if len(_admin_names) > 0 and len(_admin_emails) > 0:
     ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
 MANAGERS = ADMINS
 
-# add randomness to url prefix to prevent easy access
+# add randomness to admin url
 ADMIN_URL_PREFIX = os.getenv("ADMIN_URL_PREFIX", "f09ea0b8-c3d5-4ff9-86c4-27f00e8f643d")
 ADMIN_ROOT = os.environ.get("ADMIN_ROOT", "")
+
+# add randomness to healthcheck url
+HEALTHCHECK_URL_PREFIX = os.getenv("HEALTHCHECK_URL_PREFIX", "4df02970-c4f8-4e16-8a75-e9eaf4dabac7")
 
 # {PRIME, EPA}
 HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
@@ -67,7 +70,6 @@ TEMPLATES = [
     },
 ]
 
-
 # Middleware
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -82,7 +84,6 @@ MIDDLEWARE = (
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
 )
-
 
 # Install applications
 INSTALLED_APPS = (
@@ -129,7 +130,6 @@ INSTALLED_APPS = (
 if HAWC_FEATURES.ENABLE_ECO:
     INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
 
-
 # DB settings
 DATABASES = {
     "default": {
@@ -145,17 +145,14 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Celery settings
-CELERY_ACCEPT_CONTENT = ("json", "pickle")
 CELERY_BROKER_URL = os.getenv("DJANGO_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("DJANGO_CELERY_RESULT_BACKEND")
 CELERY_RESULT_EXPIRES = 60 * 60 * 5  # 5 hours
-CELERY_RESULT_SERIALIZER = "pickle"
 CELERY_TASK_ACKS_LATE = True
 CELERY_TASK_SOFT_TIME_LIMIT = 660
 CELERY_TASK_TIME_LIMIT = 600
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 10
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
-
 
 # Cache settings
 CACHES = {
@@ -204,12 +201,10 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 
-
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
-
 
 # Logging configuration
 LOGGING = {
@@ -283,7 +278,6 @@ def get_git_commit() -> Commit:
 GIT_COMMIT_FILE = PROJECT_PATH / "gitcommit.json"
 COMMIT = get_git_commit()
 
-
 # Google Tag Manager settings
 GTM_ID = os.getenv("GTM_ID")
 
@@ -297,7 +291,6 @@ BMDS_TOKEN = os.getenv("BMDS_TOKEN", "token")
 
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
-
 
 # Django rest framework settings
 REST_FRAMEWORK = {
