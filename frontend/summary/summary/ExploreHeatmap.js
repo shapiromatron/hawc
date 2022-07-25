@@ -59,7 +59,7 @@ class ExploreHeatmapComponent extends Component {
         if (!store.hasDataset) {
             return (
                 <div className="alert alert-danger">
-                    <p className="pb-0">
+                    <p className="mb-0">
                         <i className="fa fa-exclamation-circle"></i>&nbsp;No data are available.
                     </p>
                 </div>
@@ -70,7 +70,7 @@ class ExploreHeatmapComponent extends Component {
             const {n_rows, n_cols, n_cells, maxCells} = this.props.store;
             return (
                 <div className="alert alert-danger" role="alert">
-                    <p className="pb-0">
+                    <p className="mb-0">
                         <i className="fa fa-exclamation-circle"></i>&nbsp;This heatmap is too large
                         and cannot be rendered. Using the settings specified, the current heatmap
                         will have {n_rows} rows, {n_cols} columns, and {n_cells} cells. Please
