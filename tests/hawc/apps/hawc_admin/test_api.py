@@ -39,3 +39,26 @@ class TestAdminDashboardViewset:
         assert resp.status_code == 200
         header = resp.content.decode().split("\n")[0]
         assert header == "name,extension,full_path,hash,uri,media_preview,size_mb,created,modified"
+
+
+@pytest.mark.django_db
+class TestAdminDiagnosticViewset:
+    def test_throttgle(self):
+        client = APIClient()
+
+        # failure - not admin
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        url = reverse("api:diagnostic-throttle")
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+        # success - admin
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        url = reverse("api:diagnostic-throttle")
+        for i in range(5):
+            resp = client.get(url)
+            assert "identity" in resp.data
+
+        # success- throttled (>5/min)
+        resp = client.get(url)
+        assert resp.status_code == 429
