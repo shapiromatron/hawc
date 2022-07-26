@@ -1,0 +1,23 @@
+{% if object_list.count > 0 %}
+<h3>Assessment Values</h3>
+<table class="table table-sm table-striped">
+    <colgroup>
+        <col style="width: 50%;">
+        <col style="width: 50%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Value</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>{{object.value}}</td>
+            <td>{{object.comments}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

@@ -10,4 +10,4 @@ class AssessmentvaluesConfig(AppConfig):
         from ..common.models import apply_flavored_help_text
 
         apply_flavored_help_text(self.name)
-        from . import signals  # noqa: F401
+        # from . import signals  # noqa: F401

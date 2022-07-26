@@ -412,6 +412,7 @@ class AssessmentRead(BaseDetail):
             if context["obj_perms"]["edit"]
             else context["object"].datasets.filter(published=True)
         )
+        context["assessment_values"] = context["object"].values_list.all()
         return context
 
 
