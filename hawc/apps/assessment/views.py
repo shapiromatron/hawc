@@ -462,6 +462,36 @@ class AssessmentDownloads(BaseDetail):
     breadcrumb_active_name = "Downloads"
 
 
+# Assessment Values views
+class AssessmentValuesCreate(BaseCreate):
+    model = models.AssessmentValues
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValuesForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentValuesUpdate(BaseUpdate):
+    model = models.AssessmentValues
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValuesForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentValuesDetail(BaseDetail):
+    model = models.AssessmentValues
+
+
+class AssessmentValuesDelete(BaseDelete):
+    model = models.AssessmentValues
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
 # Attachment viewset
 class AttachmentViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}

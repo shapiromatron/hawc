@@ -32,7 +32,6 @@ urlpatterns = [
     # Apps
     path("user/", include("hawc.apps.myuser.urls")),
     path("assessment/", include("hawc.apps.assessment.urls")),
-    path("assessment-values/", include("hawc.apps.assessmentvalues.urls")),
     path("study/", include("hawc.apps.study.urls")),
     path("ani/", include("hawc.apps.animal.urls")),
     path("epi/", include("hawc.apps.epi.urls")),
