@@ -133,7 +133,7 @@ class ExposureLevelForm(forms.ModelForm):
     def clean_variance_type(self):
         data = self.cleaned_data["variance_type"]
         variance = self.cleaned_data.get("variance")
-        if variance and data == constants.VarianceType.NONE:
+        if variance and data == constants.VarianceType.NA:
             raise forms.ValidationError(
                 "A Variance Type must be selected when a value is given for Variance."
             )
@@ -143,7 +143,7 @@ class ExposureLevelForm(forms.ModelForm):
         data = self.cleaned_data["ci_type"]
         upper = self.cleaned_data.get("ci_ucl")
         lower = self.cleaned_data.get("ci_lcl")
-        if (upper or lower) and data == constants.ConfidenceIntervalType.NONE:
+        if (upper or lower) and data == constants.ConfidenceIntervalType.NA:
             raise forms.ValidationError(
                 "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
             )
@@ -243,7 +243,7 @@ class DataExtractionForm(forms.ModelForm):
     def clean_variance_type(self):
         data = self.cleaned_data["variance_type"]
         variance = self.cleaned_data.get("variance")
-        if variance and data == constants.VarianceType.NONE:
+        if variance and data == constants.VarianceType.NA:
             raise forms.ValidationError(
                 "A Variance Type must be selected when a value is given for Variance."
             )
@@ -253,7 +253,7 @@ class DataExtractionForm(forms.ModelForm):
         data = self.cleaned_data["ci_type"]
         upper = self.cleaned_data.get("ci_ucl")
         lower = self.cleaned_data.get("ci_lcl")
-        if (upper or lower) and data == constants.ConfidenceIntervalType.NONE:
+        if (upper or lower) and data == constants.ConfidenceIntervalType.NA:
             raise forms.ValidationError(
                 "A Lower/Upper Bound Type must be selected when a value is given for the Lower or Upper bound."
             )

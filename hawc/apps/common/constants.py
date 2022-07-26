@@ -1,2 +1,2 @@
 NO_LABEL = "---"
-NONE = "N/A"
+NA = "N/A"

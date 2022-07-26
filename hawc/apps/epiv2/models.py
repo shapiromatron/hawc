@@ -225,7 +225,7 @@ class ExposureLevel(models.Model):
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
-        default=constants.VarianceType.NONE,
+        default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )
@@ -257,7 +257,7 @@ class ExposureLevel(models.Model):
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
-        default=constants.ConfidenceIntervalType.NONE,
+        default=constants.ConfidenceIntervalType.NA,
         verbose_name="Lower/upper interval type",
     )
     negligible_exposure = models.CharField(
@@ -423,7 +423,7 @@ class DataExtraction(models.Model):
     units = models.CharField(max_length=128, blank=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
-        default=constants.VarianceType.NONE,
+        default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )

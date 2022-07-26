@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..common.constants import NONE
+from ..common.constants import NA
 
 
 class Sex(models.TextChoices):
@@ -57,7 +57,7 @@ class EffectEstimateType(models.TextChoices):
 
 
 class VarianceType(models.IntegerChoices):
-    NONE = 0, NONE
+    NA = 0, NA
     SD = 1, "SD"
     SE = 2, "SE"
     SEM = 3, "SEM"
@@ -67,7 +67,7 @@ class VarianceType(models.IntegerChoices):
 
 
 class ConfidenceIntervalType(models.TextChoices):
-    NONE = "NA", NONE
+    NA = "NA", NA
     RNG = "Rng", "Range [min, max]"
     P90 = "P90", "10th/90th percentile"
     P95 = "P95", "5th/95th percentile"
