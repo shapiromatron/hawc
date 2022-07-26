@@ -137,6 +137,7 @@ class AssessmentValuesForm(forms.ModelForm):
         assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if assessment:
+            self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
 
     @property

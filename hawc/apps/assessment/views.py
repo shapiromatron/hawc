@@ -464,6 +464,7 @@ class AssessmentDownloads(BaseDetail):
 
 # Assessment Values views
 class AssessmentValuesCreate(BaseCreate):
+    success_message = "Assessment Value created."
     model = models.AssessmentValues
     parent_model = models.Assessment
     form_class = forms.AssessmentValuesForm
@@ -473,6 +474,7 @@ class AssessmentValuesCreate(BaseCreate):
 
 
 class AssessmentValuesUpdate(BaseUpdate):
+    success_message = "Assessment Value updated."
     model = models.AssessmentValues
     parent_model = models.Assessment
     form_class = forms.AssessmentValuesForm
