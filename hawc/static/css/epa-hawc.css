@@ -29,7 +29,7 @@
     color: black !important;
     font-weight: bold;
 }
-.sidebar .nav-item .nav-link{
+.sidebar .nav-item .nav-link {
     color: black !important;
     font-weight: normal;
 }
@@ -44,5 +44,11 @@
     border-top: 0;
 }
 .sidebar .bg-primary {
+    background-color: white !important;
+}
+.sidebar-link-holder .btn {
+    color: black !important;
+}
+.sidebar-link-holder .dropdown-menu {
     background-color: white !important;
 }
