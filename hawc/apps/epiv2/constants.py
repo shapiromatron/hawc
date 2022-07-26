@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..common.constants import NO_LABEL
+from ..common.constants import NA, NR
 
 
 class Sex(models.TextChoices):
@@ -37,23 +37,27 @@ class AgeProfile(models.TextChoices):
 
 
 class EffectEstimateType(models.TextChoices):
-    OR = "OR", "Odds Ratio (OR)"
-    RR = "RR", "Relative Risk Ratio (RR)"
-    AR = "AR", "Absolute Risk %"
-    B = "B", "Regression coefficient (β)"
-    SMR = "SMR", "Standardized Mortality Ratio (SMR)"
-    SIR = "SIR", "Standardized Incidence Ratio (SIR)"
-    IRR = "IRR", "Incidence Risk Ratio (IRR)"
-    ARR = "ARR", "Absolute Risk Reduction/ Risk difference (ARR or RD)"
-    HR = "HR", "Hazard Ratio (HR)"
-    CM = "CM", "Comparison of Means"
-    SCC = "SCC", "Spearman's Correlation Coefficient"
-    PC = "PC", "Percent change"
-    MD = "MD", "Mean difference"
+    OR = "Odds Ratio (OR)", "Odds Ratio (OR)"
+    RR = "Relative Risk Ratio (RR)", "Relative Risk Ratio (RR)"
+    AR = "Absolute Risk %", "Absolute Risk %"
+    B = "Regression coefficient (β)", "Regression coefficient (β)"
+    SMR = "Standardized Mortality Ratio (SMR)", "Standardized Mortality Ratio (SMR)"
+    SIR = "Standardized Incidence Ratio (SIR)", "Standardized Incidence Ratio (SIR)"
+    IRR = "Incidence Risk Ratio (IRR)", "Incidence Risk Ratio (IRR)"
+    ARR = (
+        "Absolute Risk Reduction/ Risk difference (ARR or RD)",
+        "Absolute Risk Reduction/ Risk difference (ARR or RD)",
+    )
+    HR = "Hazard Ratio (HR)", "Hazard Ratio (HR)"
+    CM = "Comparison of Means", "Comparison of Means"
+    SCC = "Spearman's Correlation Coefficient", "Spearman's Correlation Coefficient"
+    PC = "Percent change", "Percent change"
+    MD = "Mean difference", "Mean difference"
+    OT = "other", "other"
 
 
 class VarianceType(models.IntegerChoices):
-    NONE = 0, NO_LABEL
+    NA = 0, NA
     SD = 1, "SD"
     SE = 2, "SE"
     SEM = 3, "SEM"
@@ -63,6 +67,7 @@ class VarianceType(models.IntegerChoices):
 
 
 class ConfidenceIntervalType(models.TextChoices):
+    NA = "NA", NA
     RNG = "Rng", "Range [min, max]"
     P90 = "P90", "10th/90th percentile"
     P95 = "P95", "5th/95th percentile"
@@ -117,7 +122,7 @@ class HealthOutcomeSystem(models.TextChoices):
 class Significant(models.IntegerChoices):
     NO = 0, "No"
     YES = 1, "Yes"
-    NA = 2, "N/A"
+    NA = 2, NA
     NR = 3, "NR"
 
 
@@ -128,6 +133,7 @@ class BiomonitoringMatrix(models.TextChoices):
     UR = "UR", "Urine"
     TE = "TE", "Teeth"
     NL = "NL", "Nails"
+    HR = "HR", "Hair"
     SA = "SA", "Saliva"
     BM = "BM", "Breast milk"
     SE = "SE", "Semen"
@@ -145,9 +151,9 @@ class BiomonitoringSource(models.TextChoices):
 
 
 class DataTransforms(models.TextChoices):
-    NONE = "", "---"
-    NA = "N/A", "N/A"
-    NR = "NR", "NR"
+    NONE = "", "<none>"
+    NA = NA, NA
+    NR = NR, NR
     LOGXPLUS1 = "log(x+1)", "log(x+1)"
     LOG10 = "log10", "log10"
     LOG2 = "log2", "log2"
