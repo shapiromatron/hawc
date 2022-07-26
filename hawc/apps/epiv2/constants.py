@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..common.constants import NA
+from ..common.constants import NA, NR
 
 
 class Sex(models.TextChoices):
@@ -122,7 +122,7 @@ class HealthOutcomeSystem(models.TextChoices):
 class Significant(models.IntegerChoices):
     NO = 0, "No"
     YES = 1, "Yes"
-    NA = 2, "N/A"
+    NA = 2, NA
     NR = 3, "NR"
 
 
@@ -151,9 +151,9 @@ class BiomonitoringSource(models.TextChoices):
 
 
 class DataTransforms(models.TextChoices):
-    NONE = "", "---"
-    NA = "N/A", "N/A"
-    NR = "NR", "NR"
+    NONE = "", "<None>"
+    NA = NA, NA
+    NR = NR, NR
     LOGXPLUS1 = "log(x+1)", "log(x+1)"
     LOG10 = "log10", "log10"
     LOG2 = "log2", "log2"
