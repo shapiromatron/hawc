@@ -121,8 +121,8 @@
         {% url 'epiv2:dataextraction-create' object.pk as dataextraction_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '13,13,13,13,5,12,5,13,13' %}
-            {% bs4_thead 'Group,Outcome,Exposure Level,Measurement Timing,N,Effect Estimate,Confidence,Comments,Edit' %}
+            {% bs4_colgroup '12,12,12,12,11,5,11,12,13' %}
+            {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments' %}
             <tbody>
                 {% if object.data_extractions.all %}
                     {% for object in object.data_extractions.all %}

@@ -130,21 +130,22 @@ class ExposureLevelForm(forms.ModelForm):
         self.fields["chemical"].queryset = self.instance.design.chemicals.all()
         self.fields["exposure_measurement"].queryset = self.instance.design.exposures.all()
 
-    def clean_variance_type(self):
-        data = self.cleaned_data["variance_type"]
-        variance = self.cleaned_data.get("variance")
-        if variance and data == constants.VarianceType.NA:
-            msg = "A Variance Type must be selected when a value is given for Variance."
-            raise forms.ValidationError(msg)
-        return data
+    def clean(self):
+        data = super().clean()
 
-    def clean_ci_type(self):
-        data = self.cleaned_data["ci_type"]
-        upper = self.cleaned_data.get("ci_ucl")
-        lower = self.cleaned_data.get("ci_lcl")
-        if (upper or lower) and data == constants.ConfidenceIntervalType.NA:
+        variance_type = data["variance_type"]
+        variance = data["variance"]
+        if variance and variance_type == constants.VarianceType.NA:
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            self.add_error("variance_type", msg)
+
+        ci_type = data["ci_type"]
+        upper = data["ci_ucl"]
+        lower = data["ci_lcl"]
+        if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
             msg = "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
-            raise forms.ValidationError(msg)
+            self.add_error("ci_type", msg)
+
         return data
 
     @property
@@ -241,21 +242,22 @@ class DataExtractionForm(forms.ModelForm):
         self.fields["exposure_level"].queryset = self.instance.design.exposure_levels.all()
         self.fields["factors"].queryset = self.instance.design.adjustment_factors.all()
 
-    def clean_variance_type(self):
-        data = self.cleaned_data["variance_type"]
-        variance = self.cleaned_data.get("variance")
-        if variance and data == constants.VarianceType.NA:
-            msg = "A Variance Type must be selected when a value is given for Variance."
-            raise forms.ValidationError(msg)
-        return data
+    def clean(self):
+        data = super().clean()
 
-    def clean_ci_type(self):
-        data = self.cleaned_data["ci_type"]
-        upper = self.cleaned_data.get("ci_ucl")
-        lower = self.cleaned_data.get("ci_lcl")
-        if (upper or lower) and data == constants.ConfidenceIntervalType.NA:
+        variance_type = data["variance_type"]
+        variance = data["variance"]
+        if variance and variance_type == constants.VarianceType.NA:
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            self.add_error("variance_type", msg)
+
+        ci_type = data["ci_type"]
+        upper = data["ci_ucl"]
+        lower = data["ci_lcl"]
+        if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
             msg = "A Lower/Upper Bound Type must be selected when a value is given for the Lower or Upper bound."
-            raise forms.ValidationError(msg)
+            self.add_error("ci_type", msg)
+
         return data
 
     @property

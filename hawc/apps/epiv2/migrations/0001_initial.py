@@ -375,7 +375,7 @@ class Migration(migrations.Migration):
                             ("WB", "Whole Body"),
                             ("OT", "Other"),
                         ],
-                        help_text="Select the most relevant system from the drop down menu. If more than one system is applicable refer to assessment team instructions. Use controlled vocabulary when available.",
+                        help_text="Select the most relevant system from the drop down menu. If more than one system is applicable refer to assessment team instructions.",
                         max_length=2,
                     ),
                 ),

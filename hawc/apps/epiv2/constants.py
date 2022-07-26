@@ -151,7 +151,7 @@ class BiomonitoringSource(models.TextChoices):
 
 
 class DataTransforms(models.TextChoices):
-    NONE = "", "<None>"
+    NONE = "", "<none>"
     NA = NA, NA
     NR = NR, NR
     LOGXPLUS1 = "log(x+1)", "log(x+1)"
