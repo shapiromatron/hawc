@@ -441,12 +441,12 @@ class DataExtraction(models.Model):
         verbose_name="Results group",
         help_text='If a set of results are linked (e.g., results for categories of exposure), each one is entered as a separate entry in the form. This field should be used to link the results. All linked results should have the same value for this field, and it should be unique to those results. The text can be descriptive (e.g., "Quartiles for PFNA and Asthma incidence") or a dummy variable ("Group 1").',
     )
-    exposure_transform = models.CharField(max_length=32, blank=True)
-    outcome_transform = models.CharField(max_length=32, blank=True)
     exposure_rank = models.PositiveSmallIntegerField(
         default=0,
         help_text="If a set of results are linked, use this field to order them (helpful for sorting in visualizations). Rank the comparison groups in the order you would want them to appear (e.g., lowest exposure group=1).",
     )
+    exposure_transform = models.CharField(max_length=32, blank=True)
+    outcome_transform = models.CharField(max_length=32, blank=True)
     factors = models.ForeignKey(
         AdjustmentFactor,
         verbose_name="Adjustment factors",

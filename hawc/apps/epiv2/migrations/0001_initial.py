@@ -644,8 +644,6 @@ class Migration(migrations.Migration):
                         verbose_name="Results group",
                     ),
                 ),
-                ("exposure_transform", models.CharField(blank=True, max_length=32)),
-                ("outcome_transform", models.CharField(blank=True, max_length=32)),
                 (
                     "exposure_rank",
                     models.PositiveSmallIntegerField(
@@ -653,6 +651,8 @@ class Migration(migrations.Migration):
                         help_text="If a set of results are linked, use this field to order them (helpful for sorting in visualizations). Rank the comparison groups in the order you would want them to appear (e.g., lowest exposure group=1).",
                     ),
                 ),
+                ("exposure_transform", models.CharField(blank=True, max_length=32)),
+                ("outcome_transform", models.CharField(blank=True, max_length=32)),
                 (
                     "confidence",
                     models.CharField(
