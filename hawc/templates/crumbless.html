@@ -1,24 +1,17 @@
 {% extends 'base.html' %}
-{% load get %}
 
 {% block sidebar_outer %}
-{% get request.session "hideSidebar" as hideSidebar %}
-<div id="sidebar-container" class="sidebar {{hideSidebar|yesno:'sidebar-collapsed, '}}"
-    data-collapsed="{{hideSidebar|yesno:"true,false,unset"}}" data-url="{% url 'update_session' %}">
-    <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
-        <i class="fa fa-2x {{hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
-    </a>
+<div class="sidebar">
     {% if flavor == "EPA" %}
-    <div class="sidebar-link-holder dropdown {{hideSidebar|yesno:' ,hidden'}} px-1">
-        <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="true">
+    <div class="dropdown d-block d-lg-none px-1 pt-3">
+        <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i class="fa fa-bars" title="Mobile navigation panel"></i>
         </button>
         <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
             {% include "includes/_sidebar_links.html" %}
         </div>
     </div>
-    <nav class="nav flex-column pt-3">
+    <nav class="nav flex-column pt-3 d-none d-lg-block">
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
         <li class="nav-item">
             {% if user.is_authenticated %}
