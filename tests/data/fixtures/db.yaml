@@ -4858,7 +4858,7 @@
     percentile_75: "1.2"
     ci_ucl: "5.0"
     negligible_exposure: "5%"
-    ci_type: ''
+    ci_type: P95
     units: ''
     comments: test
     data_location: Table 2
@@ -4879,7 +4879,7 @@
     percentile_75: "1.1"
     ci_ucl: "2.5e+3"
     negligible_exposure: ""
-    ci_type: ''
+    ci_type: P95
     units: ''
     comments: p<0.001 vs children with asthma
     data_location: Table 2
@@ -4900,7 +4900,7 @@
     percentile_75: "0.38"
     ci_ucl: "0.5"
     negligible_exposure: "80"
-    ci_type: ''
+    ci_type: P95
     units: ''
     comments: ''
     data_location: Table 2
@@ -4921,7 +4921,7 @@
     percentile_75: "0.38"
     ci_ucl: "0.6"
     negligible_exposure: "81%"
-    ci_type: ''
+    ci_type: P95
     units: ''
     comments: ''
     data_location: Table 2
@@ -4942,7 +4942,7 @@
     percentile_75: "0.79"
     ci_ucl: "0.7"
     negligible_exposure: "95%"
-    ci_type: ''
+    ci_type: P95
     units: ''
     comments: ''
     data_location: Table 2
@@ -4963,7 +4963,7 @@
     percentile_75: "1.24"
     ci_ucl: ""
     negligible_exposure: ""
-    ci_type: ''
+    ci_type: P95
     units: ''
     comments: ''
     data_location: Table 2
