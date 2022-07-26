@@ -134,9 +134,8 @@ class ExposureLevelForm(forms.ModelForm):
         data = self.cleaned_data["variance_type"]
         variance = self.cleaned_data.get("variance")
         if variance and data == constants.VarianceType.NA:
-            raise forms.ValidationError(
-                "A Variance Type must be selected when a value is given for Variance."
-            )
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            raise forms.ValidationError(msg)
         return data
 
     def clean_ci_type(self):
@@ -144,9 +143,8 @@ class ExposureLevelForm(forms.ModelForm):
         upper = self.cleaned_data.get("ci_ucl")
         lower = self.cleaned_data.get("ci_lcl")
         if (upper or lower) and data == constants.ConfidenceIntervalType.NA:
-            raise forms.ValidationError(
-                "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
-            )
+            msg = "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
+            raise forms.ValidationError(msg)
         return data
 
     @property
@@ -226,6 +224,9 @@ class DataExtractionForm(forms.ModelForm):
             "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "effect_estimate_type": SelectOtherWidget(choices=constants.EffectEstimateType.choices),
+            "confidence": selectable.AutoCompleteWidget(
+                lookup_class=lookups.DataExtractionConfidenceLookup, allow_new=True
+            ),
             "units": selectable.AutoCompleteWidget(
                 lookup_class=lookups.DataExtractionUnitsLookup, allow_new=True
             ),
@@ -244,9 +245,8 @@ class DataExtractionForm(forms.ModelForm):
         data = self.cleaned_data["variance_type"]
         variance = self.cleaned_data.get("variance")
         if variance and data == constants.VarianceType.NA:
-            raise forms.ValidationError(
-                "A Variance Type must be selected when a value is given for Variance."
-            )
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            raise forms.ValidationError(msg)
         return data
 
     def clean_ci_type(self):
@@ -254,9 +254,8 @@ class DataExtractionForm(forms.ModelForm):
         upper = self.cleaned_data.get("ci_ucl")
         lower = self.cleaned_data.get("ci_lcl")
         if (upper or lower) and data == constants.ConfidenceIntervalType.NA:
-            raise forms.ValidationError(
-                "A Lower/Upper Bound Type must be selected when a value is given for the Lower or Upper bound."
-            )
+            msg = "A Lower/Upper Bound Type must be selected when a value is given for the Lower or Upper bound."
+            raise forms.ValidationError(msg)
         return data
 
     @property

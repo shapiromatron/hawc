@@ -16,9 +16,9 @@ class ChemicalNameLookup(DistinctStringLookup):
     distinct_field = "name"
 
 
-class EndpointLookup(DistinctStringLookup):
-    model = models.Outcome
-    distinct_field = "endpoint"
+class ExposureLevelUnitsLookup(DistinctStringLookup):
+    model = models.ExposureLevel
+    distinct_field = "units"
 
 
 class EffectLookup(DistinctStringLookup):
@@ -31,14 +31,19 @@ class EffectDetailLookup(DistinctStringLookup):
     distinct_field = "effect_detail"
 
 
-class ExposureLevelUnitsLookup(DistinctStringLookup):
-    model = models.ExposureLevel
-    distinct_field = "units"
+class EndpointLookup(DistinctStringLookup):
+    model = models.Outcome
+    distinct_field = "endpoint"
 
 
 class DataExtractionUnitsLookup(DistinctStringLookup):
     model = models.DataExtraction
     distinct_field = "units"
+
+
+class DataExtractionConfidenceLookup(DistinctStringLookup):
+    model = models.DataExtraction
+    distinct_field = "confidence"
 
 
 registry.register(CountryNameLookup)
@@ -48,3 +53,4 @@ registry.register(EffectLookup)
 registry.register(EffectDetailLookup)
 registry.register(ExposureLevelUnitsLookup)
 registry.register(DataExtractionUnitsLookup)
+registry.register(DataExtractionConfidenceLookup)
