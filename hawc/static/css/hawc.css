@@ -28,8 +28,8 @@
     width: 230px;
     background-color: #323a45;
 }
-/* s/md breakpoint: https://getbootstrap.com/docs/4.6/layout/overview/#containers */
-@media only screen and (max-width: 768px) {
+/* md/lg breakpoint: https://getbootstrap.com/docs/4.6/layout/overview/#containers */
+@media only screen and (max-width: 992px) {
     .sidebar {
         width: 50px;
     }

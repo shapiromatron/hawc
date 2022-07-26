@@ -4,7 +4,7 @@
 {% block sidebar_outer %}
 <div class="sidebar">
     {% if flavor == "EPA" %}
-    <div class="dropdown d-block d-md-none px-1 pt-3">
+    <div class="dropdown d-block d-lg-none px-1 pt-3">
         <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i class="fa fa-bars" title="Mobile navigation panel"></i>
         </button>
@@ -12,7 +12,7 @@
             {% include "includes/_sidebar_links.html" %}
         </div>
     </div>
-    <nav class="nav flex-column pt-3 d-none d-md-block">
+    <nav class="nav flex-column pt-3 d-none d-lg-block">
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
         <li class="nav-item">
             {% if user.is_authenticated %}
