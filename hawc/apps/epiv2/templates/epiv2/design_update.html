@@ -2,7 +2,7 @@
 {% load bs4 %}
 
 {% block content %}
-<h2 class="d-inline-block">{{object.summary}}</h2>
+<h2 class="d-inline-block">Update {{object.summary}}</h2>
 <div class="float-right">
     <a class="btn btn-sm btn-primary" href="#"
         hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
