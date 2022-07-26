@@ -1,6 +1,6 @@
 /* Header */
 #search-box {
-  margin-top: 0px;
+    margin-top: 0px;
 }
 
 /* Top nav */
@@ -13,17 +13,7 @@
 
 /* Sidebar  */
 .sidebar {
-    width: 230px;
     background-color: #ffffff;
-}
-.sidebar-collapsed {
-    width: 50px;
-}
-.sidebar-collapsed .nav {
-    opacity: 0;
-}
-#toggle-sidebar, #toggle-sidebar:hover {
-    color: black !important;
 }
 .sidebar .nav-item.nav-link {
     color: black !important;
@@ -46,9 +36,9 @@
 .sidebar .bg-primary {
     background-color: white !important;
 }
-.sidebar-link-holder .btn {
+.sidebar .btn {
     color: black !important;
 }
-.sidebar-link-holder .dropdown-menu {
+.sidebar .dropdown-menu {
     background-color: white !important;
 }
