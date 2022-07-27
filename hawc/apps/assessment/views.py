@@ -493,6 +493,9 @@ class AssessmentValuesDelete(BaseDelete):
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()
 
+    def get_cancel_url(self):
+        return self.object.assessment.get_absolute_url()
+
 
 # Attachment viewset
 class AttachmentViewset(HtmxViewSet):
