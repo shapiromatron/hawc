@@ -89,8 +89,9 @@ const increaseFactors = [
         Users provide descriptive text in html using a wysiwyg editor. We update the text provided
         to inject the header-text if available, as well as the help-text popup, if available.
         */
-        const {content} = props,
-            _factors = increaseFactors.concat(decreaseFactors),
+        const {content, increase} = props,
+            factorMap = new Map(content.factors.map(e => [e.key, e])),
+            factors = increase ? increaseFactors : decreaseFactors,
             injectText = (block, injectionText) =>
                 h.addOuterTag(block, "p").replace(/^<p>/gm, `<p>${injectionText}`),
             injectPopup = (block, factorType, factor) => {
@@ -110,15 +111,17 @@ const increaseFactors = [
 
         return (
             <td>
-                {content.factors.length > 0 ? (
+                {factorMap.size > 0 ? (
                     <ul>
-                        {content.factors.map((factor, index) => {
-                            let factorType = _factors.find(_factor => _factor.key == factor.key),
-                                dashText =
+                        {factors.map((factorType, index) => {
+                            let factor = factorMap.get(factorType.key);
+                            if (factor == undefined) {
+                                return null;
+                            }
+                            let dashText =
                                     h.hasInnerText(factor.short_description) > 0 ? " - " : "",
                                 labelText = `<em>${factorType.label}</em>${dashText}`,
                                 html = factor.short_description;
-
                             // prefix label if it exists
                             if (factorType.displayLabel) {
                                 html = injectText(factor.short_description, labelText);
@@ -146,6 +149,7 @@ FactorsForm.propTypes = {
 };
 FactorsCell.propTypes = {
     content: PropTypes.object.isRequired,
+    increase: PropTypes.bool.isRequired,
 };
 
 export {FactorsForm, FactorsCell};

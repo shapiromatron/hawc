@@ -154,6 +154,28 @@ class FactorType(IntEnum):
     DownOther = -100
 
 
+CERTAIN_FACTORS = [
+    FactorType.UpConsistency,
+    FactorType.UpDoseGradient,
+    FactorType.UpCoherence,
+    FactorType.UpEffect,
+    FactorType.UpPlausible,
+    FactorType.UpConfidence,
+    FactorType.UpOther,
+]
+
+UNCERTAIN_FACTORS = [
+    FactorType.NoFactors,
+    FactorType.DownConsistency,
+    FactorType.DownImprecision,
+    FactorType.DownCoherence,
+    FactorType.DownImplausible,
+    FactorType.DownConfidence,
+    FactorType.DownInterpretation,
+    FactorType.DownOther,
+]
+
+
 class Factor(BaseModel):
     key: FactorType
     short_description: str
@@ -175,6 +197,18 @@ class FactorsCell(BaseCell):
     factors: List[Factor]
     text: str
 
+    @property
+    def factor_types(self):
+        raise NotImplementedError()
+
+    def sorted_factors(self):
+        factor_map = {factor.key: factor for factor in self.factors}
+        return [
+            factor_map.get(factor_type)
+            for factor_type in self.factor_types
+            if factor_type in factor_map
+        ]
+
     def to_docx(self, parser: QuillParser, block):
         factors = [factor.to_html() for factor in self.factors]
         text = ""
@@ -187,9 +221,17 @@ class FactorsCell(BaseCell):
 class CertainFactorsCell(FactorsCell):
     column: int = 2
 
+    @property
+    def factor_types(self):
+        return CERTAIN_FACTORS
+
 
 class UncertainFactorsCell(FactorsCell):
     column: int = 3
+
+    @property
+    def factor_types(self):
+        return UNCERTAIN_FACTORS
 
 
 class JudgementCell(BaseCell):

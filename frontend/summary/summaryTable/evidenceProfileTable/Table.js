@@ -27,8 +27,8 @@ const subTitleStyle = {backgroundColor: "#f5f5f5"},
                 <td>
                     <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
-                <FactorsCell content={row.certain_factors} />
-                <FactorsCell content={row.uncertain_factors} />
+                <FactorsCell content={row.certain_factors} increase={true} />
+                <FactorsCell content={row.uncertain_factors} increase={false} />
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
                         <Judgement
