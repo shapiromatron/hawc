@@ -236,8 +236,6 @@ class AssessmentModulesForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not settings.HAWC_FEATURES.ENABLE_EPI_V2:
-            self.fields["epi_version"].disabled = True
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"

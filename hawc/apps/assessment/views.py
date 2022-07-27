@@ -700,10 +700,6 @@ class UpdateSession(View):
         if not request.is_ajax():
             return HttpResponseNotAllowed(["POST"])
         response = {}
-        if request.POST.get("hideSidebar"):
-            hide_status = self.isTruthy(request, "hideSidebar")
-            request.session["hideSidebar"] = hide_status
-            response = {"hideSidebar": hide_status}
         if request.POST.get("refresh"):
             if request.user.is_authenticated:
                 old_time = request.session.get_expiry_date().isoformat()
