@@ -432,6 +432,9 @@ class AssessmentValues(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def get_assessment(self):
+        return self.assessment
+
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
