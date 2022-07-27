@@ -7,19 +7,31 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0032_assessment_epi_version'),
+        ("assessment", "0032_assessment_epi_version"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AssessmentValues',
+            name="AssessmentValues",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.FloatField()),
-                ('comments', models.TextField(blank=True)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-                ('assessment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='values_list', to='assessment.assessment')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("value", models.FloatField()),
+                ("comments", models.TextField(blank=True)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "assessment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="values_list",
+                        to="assessment.assessment",
+                    ),
+                ),
             ],
         ),
     ]
