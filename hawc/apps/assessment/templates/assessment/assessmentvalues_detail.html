@@ -5,29 +5,35 @@
 <h3>Assessment Value for {{object.assessment}}</h3>
 <table class="table table-sm table-striped">
     <colgroup>
+        {% if obj_perms.edit %}
         <col style="width: 30%;">
         <col style="width: 50%;">
         <col style="width: 20%;">
+        {% else %}
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+        {% endif %}
+
     </colgroup>
     <thead>
         <tr>
             <th>Value</th>
             <th>Comments</th>
-            <th>Actions</th>
+            {% if obj_perms.edit %}<th>Actions</th>{% endif %}
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>{{object.value}}</td>
             <td>{{object.comments}}</td>
+            {% if obj_perms.edit %}
             <td>
-                {% if obj_perms.edit %}
                 <a class="btn btn-sm btn-info" href="{% url 'assessment:values-update' object.pk %}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                 <a class="btn btn-sm btn-danger" href="{% url 'assessment:values-delete' object.pk %}">
                     <i class="fa fa-trash" aria-hidden="true"></i></a>
-                {% endif %}
             </td>
+            {% endif %}
         </tr>
     </tbody>
 </table>
