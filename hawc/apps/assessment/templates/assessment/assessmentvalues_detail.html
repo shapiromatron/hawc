@@ -2,38 +2,29 @@
 
 {% block content %}
 {% if crud == "Read" %}
+<div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+        {% if obj_perms.edit %}
+        <a class="dropdown-item" href="{% url 'assessment:values-update' object.pk %}">Update value</a>
+        <a class="dropdown-item" href="{% url 'assessment:values-delete' object.pk %}">Delete value</a>
+        {% endif %}
+    </div>
+</div>
 <h3>Assessment Value for {{object.assessment}}</h3>
 <table class="table table-sm table-striped">
     <colgroup>
-        {% if obj_perms.edit %}
-        <col style="width: 30%;">
-        <col style="width: 50%;">
         <col style="width: 20%;">
-        {% else %}
-        <col style="width: 30%;">
-        <col style="width: 70%;">
-        {% endif %}
-
+        <col style="width: 80%;">
     </colgroup>
-    <thead>
-        <tr>
-            <th>Value</th>
-            <th>Comments</th>
-            {% if obj_perms.edit %}<th>Actions</th>{% endif %}
-        </tr>
-    </thead>
     <tbody>
         <tr>
+            <td>Value</td>
             <td>{{object.value}}</td>
+        </tr>
+        <tr>
+            <td>Comments</td>
             <td>{{object.comments}}</td>
-            {% if obj_perms.edit %}
-            <td>
-                <a class="btn btn-sm btn-info" href="{% url 'assessment:values-update' object.pk %}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-                <a class="btn btn-sm btn-danger" href="{% url 'assessment:values-delete' object.pk %}">
-                    <i class="fa fa-trash" aria-hidden="true"></i></a>
-            </td>
-            {% endif %}
         </tr>
     </tbody>
 </table>
