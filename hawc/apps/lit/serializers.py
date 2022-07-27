@@ -555,7 +555,7 @@ class FilterReferences(PydanticDrfSerializer):
             if self.required_tags:
                 qs = qs.require_tags(self.required_tags)
             if self.pruned_tags:
-                qs = qs.prune_tags(self.tag, self.pruned_tags)
+                qs = qs.prune_tags(self.tag, self.pruned_tags, descendants=True)
         return (
             qs.select_related("study")
             .prefetch_related("searches", "identifiers", "tags")
