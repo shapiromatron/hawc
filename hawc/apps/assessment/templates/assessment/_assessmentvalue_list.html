@@ -19,10 +19,12 @@
             <td>{{object.value}}</td>
             <td>{{object.comments}}</td>
             <td>
+                {% if obj_perms.edit %}
                 <a class="btn btn-sm btn-info" href="{% url 'assessment:values-update' object.pk %}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                 <a class="btn btn-sm btn-danger" href="{% url 'assessment:values-delete' object.pk %}">
                     <i class="fa fa-trash" aria-hidden="true"></i></a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
