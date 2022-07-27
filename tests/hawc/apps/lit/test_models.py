@@ -2,6 +2,7 @@ import pytest
 from django.core.exceptions import ObjectDoesNotExist
 
 from hawc.apps.lit.models import Reference, ReferenceFilterTag, Search
+from hawc.apps.study.models import Study
 
 
 @pytest.mark.django_db
@@ -109,6 +110,14 @@ class TestSearch:
         search = create_search()
         for ref in search.references.all():
             ref.searches.add(prior_search)
+        search.run_new_query()
+        assert search.references.count() == 3
+        search.delete()
+
+        # confirm study guard works
+        search = create_search()
+        for ref in search.references.all():
+            Study.save_new_from_reference(ref, {})
         search.run_new_query()
         assert search.references.count() == 3
         search.delete()

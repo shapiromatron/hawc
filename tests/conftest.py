@@ -3,15 +3,11 @@ import os
 from pathlib import Path
 from typing import NamedTuple
 
-import helium
 import pytest
 from django.core.management import call_command
 from django.db import connections
-from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 CI = os.environ.get("CI") == "true"
-SHOW_BROWSER = bool(os.environ.get("SHOW_BROWSER", None))
 
 
 class UserCredential(NamedTuple):
@@ -113,83 +109,3 @@ def rewrite_data_files():
     A test exists in CI to ensure that this flag is set to False on commit.
     """
     return False
-
-
-def _get_driver(browser: str, CI: bool):
-    """
-    Returns the web-driver depending on the specified environment
-
-    Args:
-        browser (str): "firefox" or "chrome"
-        CI (bool): if we're in the CI environment
-
-    Raises:
-        ValueError: if configuration is invalid
-    """
-    command_executor = None
-    if CI:
-        host = os.environ["SELENIUM_HOST"]
-        port = os.environ["SELENIUM_PORT"]
-        command_executor = f"http://{host}:{port}/wd/hub"
-
-    if browser == "firefox":
-        options = webdriver.FirefoxOptions()
-        if CI:
-            options.headless = True
-            driver = webdriver.Remote(
-                command_executor=command_executor,
-                desired_capabilities=DesiredCapabilities.FIREFOX,
-                options=options,
-            )
-            helium.set_driver(driver)
-            return driver
-        else:
-            return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
-    elif browser == "chrome":
-        options = webdriver.ChromeOptions()
-        # prevent navbar from collapsing
-        options.add_argument("--window-size=1920,1080")
-        if CI:
-            options.add_experimental_option("excludeSwitches", ["enable-logging"])
-            options.add_argument("--headless")
-            driver = webdriver.Remote(
-                command_executor=command_executor,
-                desired_capabilities=DesiredCapabilities.CHROME,
-                options=options,
-            )
-            helium.set_driver(driver)
-            return driver
-        else:
-            return helium.start_chrome(options=options, headless=not SHOW_BROWSER)
-    else:
-        raise ValueError(f"Unknown config: {browser} / {CI}")
-
-
-@pytest.fixture(scope="session")
-def chrome_driver():
-    driver = _get_driver("chrome", CI)
-    try:
-        yield driver
-    finally:
-        driver.quit()
-
-
-@pytest.fixture(scope="session")
-def firefox_driver():
-    driver = _get_driver("firefox", CI)
-    # prevent navbar from collapsing
-    driver.set_window_size(1920, 1080)
-    try:
-        yield driver
-    finally:
-        driver.quit()
-
-
-@pytest.fixture
-def set_chrome_driver(request, chrome_driver):
-    request.cls.driver = chrome_driver
-
-
-@pytest.fixture
-def set_firefox_driver(request, firefox_driver):
-    request.cls.driver = firefox_driver

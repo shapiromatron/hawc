@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
     {% if obj_perms.edit_assessment %}
     <div class="dropdown btn-group float-right">
@@ -10,6 +12,11 @@
     </div>
     {% endif %}
     <h2>{{assessment.get_rob_name_display}} assignments</h2>
+    <div class="card">
+        <div class="card-body pb-1">
+            {% crispy form %}
+        </div>
+    </div>
     <div id="main"></div>
 {% endblock %}
 

@@ -184,6 +184,12 @@ the same commands.
     make test
     make test-js
 
+    # run integration tests
+    make test-integration
+
+    # run integration tests with a visible chrome window and debugger
+    make test-integration-debug
+
     # lint code (show changes required) - all, javascript-only, or python-only
     make lint
     make lint-js
@@ -453,49 +459,44 @@ Asynchronous tasks will not be executed by celery workers instead of the main th
 Integration tests
 ~~~~~~~~~~~~~~~~~
 
-Integration tests use selenium and Firefox or Chrome for for testing. By default, integration tests are skipped. Firefox appears to be more stable based on initial investigation for these tests To run, you'll need to set a few environment variables.
+Integration tests use playwright_. By default, integration tests are skipped when running pytest locally by default, but are always executed in github actions. To run:
+
+.. _playwright: https://playwright.dev/python/
 
 On mac/linux:
 
 .. code-block:: bash
 
-    export HAWC_INTEGRATION_TESTS=1
-    export SHOW_BROWSER=1            # or 0 for headless
-    export BROWSER="firefox"         # or "chrome"
+    # to run all
+    make test-integration-debug
 
-    py.test -sv tests/frontend/integration/ --pdb
+    # or a custom method to run a single test
+    export HAWC_INTEGRATION_TESTS=1
+    py.test -sv tests/integration/test_login.py --pdb
 
 On windows:
 
 .. code-block:: batch
 
+    :: to run all
+    make test-integration-debug
+
+    :: or a custom method to run a single test
     set HAWC_INTEGRATION_TESTS=1
-    set SHOW_BROWSER=1            # or 0 for headless
-    set BROWSER=firefox           # or chrome
-
-    py.test -sv tests/frontend/integration/ --pdb
+    py.test -sv tests/integration/ --pdb
 
 
-When writing these tests, it's often easiest to write the tests in an interactive scripting environment like ipython or jupyter. This allows you to interact with the DOM and the requests much easier than manually re-running tests as they're written. An example session:
+When editing integration tests, use the interactive mode to capture user operations:
 
-.. code-block:: python
+.. code-block:: bash
 
-    import helium as h
-    from selenium.webdriver import FirefoxOptions
+    make test-integration-debug
 
-    driver = h.start_firefox(headless=False)
-    driver.set_window_size(1920, 1080)
+    # use set instead of export on windows
+    export HAWC_INTEGRATION_TESTS=1
+    export PWDEBUG=1
+    py.test -sv tests/integration/test_login.py --pdb
 
-    h.go_to("https://hawcproject.org")
-    h.click("Login")
-    assert "/user/login/" in driver.current_url
-
-    # ... keep coding here, use introspection in python as well as debugger tools for testing...
-
-    # cleanup
-    driver.close()
-
-Then, transfer the interactive potions into unit-tests...
 
 Materialized views and reporting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
