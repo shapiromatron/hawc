@@ -19,6 +19,9 @@ import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 const startupHeatmapAppRender = function(el, settings, datastore, options) {
         const store = new HeatmapDatastore(settings, datastore, options);
         try {
+            if (store.withinRenderableBounds) {
+                store.initialize();
+            }
             ReactDOM.render(
                 <Provider store={store}>
                     <ExploreHeatmapComponent options={options} />
@@ -40,8 +43,7 @@ const startupHeatmapAppRender = function(el, settings, datastore, options) {
 class ExploreHeatmapComponent extends Component {
     componentDidMount() {
         const {store} = this.props,
-            {settings} = store,
-            id = h.hashString(JSON.stringify(settings)),
+            id = store.settingsHash,
             el = document.getElementById(id),
             tooltipEl = document.getElementById(`tooltip-${id}`);
 
@@ -51,12 +53,31 @@ class ExploreHeatmapComponent extends Component {
     }
     render() {
         const {store} = this.props,
-            {dataset, settings} = store,
-            id = h.hashString(JSON.stringify(settings)),
-            hasFilters = settings.filter_widgets.length > 0;
+            id = store.settingsHash,
+            hasFilters = store.settings.filter_widgets.length > 0;
 
-        if (dataset === null || dataset.length === 0) {
-            return <div className="alert alert-danger">No data are available.</div>;
+        if (!store.hasDataset) {
+            return (
+                <div className="alert alert-danger">
+                    <p className="mb-0">
+                        <i className="fa fa-exclamation-circle"></i>&nbsp;No data are available.
+                    </p>
+                </div>
+            );
+        }
+
+        if (!store.withinRenderableBounds) {
+            const {n_rows, n_cols, n_cells, maxCells} = this.props.store;
+            return (
+                <div className="alert alert-danger" role="alert">
+                    <p className="mb-0">
+                        <i className="fa fa-exclamation-circle"></i>&nbsp;This heatmap is too large
+                        and cannot be rendered. Using the settings specified, the current heatmap
+                        will have {n_rows} rows, {n_cols} columns, and {n_cells} cells. Please
+                        change the settings to have fewer than {maxCells} cells.
+                    </p>
+                </div>
+            );
         }
 
         return (

@@ -15,7 +15,7 @@
 </td>
 {% elif permissions.edit or obj_perms.edit and crud == "Update" %}
 <td>
-    <button class="btn btn-sm btn-info" hx-get="{% crud_url 'epiv2' model 'update' object.pk %}">
+    <button class="btn btn-sm btn-primary" hx-get="{% crud_url 'epiv2' model 'update' object.pk %}">
         <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
     <button class="btn btn-sm btn-danger" hx-get="{% crud_url 'epiv2' model 'delete' object.pk %}">
         <i class="fa fa-trash" aria-hidden="true"></i></button>

@@ -35,9 +35,12 @@ if len(_admin_names) > 0 and len(_admin_emails) > 0:
     ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
 MANAGERS = ADMINS
 
-# add randomness to url prefix to prevent easy access
+# add randomness to admin url
 ADMIN_URL_PREFIX = os.getenv("ADMIN_URL_PREFIX", "f09ea0b8-c3d5-4ff9-86c4-27f00e8f643d")
 ADMIN_ROOT = os.environ.get("ADMIN_ROOT", "")
+
+# add randomness to healthcheck url
+HEALTHCHECK_URL_PREFIX = os.getenv("HEALTHCHECK_URL_PREFIX", "4df02970-c4f8-4e16-8a75-e9eaf4dabac7")
 
 # {PRIME, EPA}
 HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")

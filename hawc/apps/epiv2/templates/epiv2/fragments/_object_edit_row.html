@@ -4,16 +4,19 @@
     {% if form %}
     <td colspan="100%">
         <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-{{model}}">
+            <div class="d-flex justify-content-end">
+                {% include "common/scientific_pulldown.html" %}
+            </div>
             {% crispy form %}
             <div class="form-row pull-right">
                 {% if form.instance.id %}
-                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'update' object.pk %}">
+                <button class="btn btn-sm btn-primary" hx-post="{% crud_url 'epiv2' model 'update' object.pk %}">
                     Save</button>
                 <button class="btn btn-sm btn-light" hx-get="{% crud_url 'epiv2' model 'detail' object.pk %}">
                     <i class="fa fa-fw fa-times mr-1"></i>
                     Cancel</button>
                 {% else %}
-                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'epiv2' model 'create' parent.pk %}">
+                <button class="btn btn-sm btn-primary" hx-post="{% crud_url 'epiv2' model 'create' parent.pk %}">
                     Save
                 </button>
                 <button class="btn btn-sm btn-light" type='button'
