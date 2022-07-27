@@ -121,18 +121,20 @@ class SummaryCell(BaseCell):
 class FactorLabel(Enum):
     NoFactors = "No factors noted"
     UpConsistency = "Consistency"
-    UpDoseGradient = "Dose - response gradient"
-    UpCoherence = "Coherence of effects"
+    UpDoseGradient = "Dose-response gradient"
+    UpCoherence = "Coherence"
     UpEffect = "Large or concerning magnitude of effect"
     UpPlausible = "Mechanistic evidence providing plausibility"
-    UpConfidence = "Medium or high confidence studies"
+    UpConfidence = "All studies are medium or high confidence"
     UpOther = ""
     DownConsistency = "Unexplained inconsistency"
     DownImprecision = "Imprecision"
     DownCoherence = "Lack of expected coherence"
     DownImplausible = "Evidence demonstrating implausibility"
-    DownConfidence = "Low confidence studies"
+    DownConfidence = "All/Mostly low confidence studies"
     DownInterpretation = "Interpretation limitations"
+    DownSignificance = "Concerns about biological significance"
+    DownMeasures = "Indirect outcome measures"
     DownOther = ""
 
 
@@ -151,27 +153,29 @@ class FactorType(IntEnum):
     DownImplausible = -50
     DownConfidence = -60
     DownInterpretation = -70
+    DownSignificance = -80
+    DownMeasures = -90
     DownOther = -100
 
 
 CERTAIN_FACTORS = [
+    FactorType.NoFactors,
+    FactorType.UpConfidence,
     FactorType.UpConsistency,
     FactorType.UpDoseGradient,
-    FactorType.UpCoherence,
     FactorType.UpEffect,
-    FactorType.UpPlausible,
-    FactorType.UpConfidence,
+    FactorType.UpCoherence,
     FactorType.UpOther,
 ]
 
 UNCERTAIN_FACTORS = [
     FactorType.NoFactors,
+    FactorType.DownConfidence,
     FactorType.DownConsistency,
     FactorType.DownImprecision,
+    FactorType.DownSignificance,
+    FactorType.DownMeasures,
     FactorType.DownCoherence,
-    FactorType.DownImplausible,
-    FactorType.DownConfidence,
-    FactorType.DownInterpretation,
     FactorType.DownOther,
 ]
 
@@ -201,6 +205,7 @@ class FactorsCell(BaseCell):
     def factor_types(self):
         raise NotImplementedError()
 
+    @property
     def sorted_factors(self):
         factor_map = {factor.key: factor for factor in self.factors}
         return [
@@ -210,7 +215,7 @@ class FactorsCell(BaseCell):
         ]
 
     def to_docx(self, parser: QuillParser, block):
-        factors = [factor.to_html() for factor in self.factors]
+        factors = [factor.to_html() for factor in self.sorted_factors]
         text = ""
         if len(factors):
             text = ul_wrapper(factors)
