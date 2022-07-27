@@ -31,10 +31,9 @@ class Design(models.Model):
         choices=constants.StudyDesign.choices,
         help_text='Select the most appropriate design from the list. If more than one study design applies (e.g., a cohort with cross-sectional analyses of baseline measures), can either a) select one design ("cohort") and clarify different timing in remaining extraction or b) select "other" and provide details in comments.',
     )
-    source = models.CharField(max_length=2, choices=constants.Source.choices, blank=True)
+    source = models.CharField(max_length=2, choices=constants.Source.choices)
     age_profile = ArrayField(
         models.CharField(max_length=2, choices=constants.AgeProfile.choices),
-        blank=True,
         help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
         verbose_name="Population age category",
     )
@@ -150,7 +149,6 @@ class Exposure(models.Model):
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
     measurement_type = ArrayField(
         models.CharField(max_length=64),
-        blank=True,
         help_text='Select the most appropriate type from the list. If a study includes multiples exposure measurement types but they are analyzed with outcomes separately, create a separate entry for each. If more than one type are combined for analysis with an outcome, you can select multiple options from the list. "Occupational" should be used when the exposure is based on job duties, etc. (i.e., not occupational exposure measured by biomarkers or air).',
         verbose_name="Exposure measurement types",
     )
@@ -227,7 +225,7 @@ class ExposureLevel(models.Model):
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
-        default=constants.VarianceType.NONE,
+        default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )
@@ -259,7 +257,7 @@ class ExposureLevel(models.Model):
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
-        default=constants.ConfidenceIntervalType.RNG,
+        default=constants.ConfidenceIntervalType.NA,
         verbose_name="Lower/upper interval type",
     )
     negligible_exposure = models.CharField(
@@ -291,11 +289,6 @@ class ExposureLevel(models.Model):
             value = f"{self.median}"
         elif self.mean is not None:
             value = f"{self.mean}"
-        if self.ci_lcl and self.ci_ucl:
-            if value == default_value:
-                value = f"{self.ci_lcl} - {self.ci_ucl}"
-            else:
-                value += f" [{self.ci_lcl}, {self.ci_ucl}]"
         if value != default_value and self.units:
             value += f" {self.units}"
         return value
@@ -311,18 +304,24 @@ class Outcome(models.Model):
     objects = managers.OutcomeManager()
 
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="outcomes")
-    endpoint = models.CharField(
-        max_length=128,
-        help_text="A unique name for the health effect being measured. The endpoint is generally more specific than the outcome (e.g., cholesterol, asthma within the previous year). Use controlled vocabulary when available.",
-    )
-    health_outcome = models.CharField(
-        max_length=128,
-        help_text="The outcome is generally broader than the endpoint (e.g., serum lipids, asthma). However, if there is not a finer categorization, they may be the same. Use controlled vocabulary when available.",
-    )
-    health_outcome_system = models.CharField(
+    system = models.CharField(
         max_length=2,
         choices=constants.HealthOutcomeSystem.choices,
-        help_text="Select the system from the drop down. Use controlled vocabulary when available. If multiple cancer types are present, report all types under Cancer.",
+        help_text="Select the most relevant system from the drop down menu. If more than one system is applicable refer to assessment team instructions.",
+    )
+    effect = models.CharField(
+        max_length=128,
+        help_text="The health effect of interest. Effect is generally broader than the Endpoint/Outcome and may represent multiple endpoints (e.g., Serum lipids, Asthma, Cognition). However, if there is not a finer categorization, they may be the same. Use controlled vocabulary when available.",
+    )
+    effect_detail = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Optional. If additional specification to the Effect is needed, it can be entered here (e.g., IQ).",
+    )
+    endpoint = models.CharField(
+        verbose_name="Endpoint/Outcome",
+        max_length=128,
+        help_text="A unique name for the specific endpoint/outcome being measured. The endpoint is generally more specific than the effect (e.g., total cholesterol, incident asthma within the previous year, WISC-IV full scale). Use controlled vocabulary when available.",
     )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -356,7 +355,7 @@ class AdjustmentFactor(models.Model):
         help_text='A unique name for this adjustment set that will help you identify it later. It may be descriptive or a dummy variable ("A").',
     )
     description = models.CharField(
-        max_length=256,
+        max_length=512,
         help_text='Enter the list of covariates in the model, separated by commas. These can be brief and ideally entered uniformly across studies when possible. Additional detail can be added in the comments or in study evaluation (e.g., enter "smoking" for consistency instead of "pack-years")',
     )
     comments = models.TextField(blank=True)
@@ -409,7 +408,8 @@ class DataExtraction(models.Model):
         help_text='Enter age or other timing (e.g., X years follow-up) for measurement of outcome. If cross-sectional, enter "cross-sectional".',
     )
     effect_estimate_type = models.CharField(
-        max_length=3, choices=constants.EffectEstimateType.choices
+        max_length=128,
+        blank=True,
     )
     effect_estimate = models.FloatField()
     ci_lcl = models.FloatField(verbose_name="Lower bound", blank=True, null=True)
@@ -420,9 +420,10 @@ class DataExtraction(models.Model):
         default=constants.ConfidenceIntervalType.P95,
         verbose_name="Lower/upper bound type",
     )
+    units = models.CharField(max_length=128, blank=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
-        default=constants.VarianceType.NONE,
+        default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )
@@ -440,12 +441,12 @@ class DataExtraction(models.Model):
         verbose_name="Results group",
         help_text='If a set of results are linked (e.g., results for categories of exposure), each one is entered as a separate entry in the form. This field should be used to link the results. All linked results should have the same value for this field, and it should be unique to those results. The text can be descriptive (e.g., "Quartiles for PFNA and Asthma incidence") or a dummy variable ("Group 1").',
     )
-    exposure_transform = models.CharField(max_length=32, blank=True)
-    outcome_transform = models.CharField(max_length=32, blank=True)
     exposure_rank = models.PositiveSmallIntegerField(
         default=0,
         help_text="If a set of results are linked, use this field to order them (helpful for sorting in visualizations). Rank the comparison groups in the order you would want them to appear (e.g., lowest exposure group=1).",
     )
+    exposure_transform = models.CharField(max_length=32, blank=True)
+    outcome_transform = models.CharField(max_length=32, blank=True)
     factors = models.ForeignKey(
         AdjustmentFactor,
         verbose_name="Adjustment factors",
