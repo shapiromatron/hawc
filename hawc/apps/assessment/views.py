@@ -412,7 +412,6 @@ class AssessmentRead(BaseDetail):
             if context["obj_perms"]["edit"]
             else context["object"].datasets.filter(published=True)
         )
-        context["assessment_values"] = context["object"].values_list.all()
         return context
 
 
@@ -465,7 +464,7 @@ class AssessmentDownloads(BaseDetail):
 # Assessment Values views
 class AssessmentValuesCreate(BaseCreate):
     success_message = "Assessment Value created."
-    model = models.AssessmentValues
+    model = models.Values
     parent_model = models.Assessment
     form_class = forms.AssessmentValuesForm
 
@@ -475,7 +474,7 @@ class AssessmentValuesCreate(BaseCreate):
 
 class AssessmentValuesUpdate(BaseUpdate):
     success_message = "Assessment Value updated."
-    model = models.AssessmentValues
+    model = models.Values
     parent_model = models.Assessment
     form_class = forms.AssessmentValuesForm
 
@@ -484,11 +483,11 @@ class AssessmentValuesUpdate(BaseUpdate):
 
 
 class AssessmentValuesDetail(BaseDetail):
-    model = models.AssessmentValues
+    model = models.Values
 
 
 class AssessmentValuesDelete(BaseDelete):
-    model = models.AssessmentValues
+    model = models.Values
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()

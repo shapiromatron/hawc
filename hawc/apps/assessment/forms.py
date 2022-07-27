@@ -130,7 +130,7 @@ class AssessmentValuesForm(forms.ModelForm):
     assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
     class Meta:
-        model = models.AssessmentValues
+        model = models.Values
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):

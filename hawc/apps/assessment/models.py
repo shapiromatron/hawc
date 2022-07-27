@@ -425,7 +425,7 @@ class Assessment(models.Model):
         Communication.set_message(self, text)
 
 
-class AssessmentValues(models.Model):
+class Values(models.Model):
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values_list")
     value = models.FloatField()
     comments = models.TextField(blank=True)
