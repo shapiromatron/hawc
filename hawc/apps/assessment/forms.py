@@ -146,7 +146,11 @@ class AssessmentValuesForm(forms.ModelForm):
         self.fields["comments"].widget.attrs["rows"] = 3
 
         if self.instance.id:
-            helper = BaseFormHelper(self, help_text=self.UPDATE_HELP_TEXT)
+            helper = BaseFormHelper(
+                self,
+                help_text=self.UPDATE_HELP_TEXT,
+                cancel_url=self.instance.assessment.get_absolute_url(),
+            )
 
         else:
             helper = BaseFormHelper(

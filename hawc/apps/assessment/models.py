@@ -432,8 +432,13 @@ class AssessmentValues(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
     def get_assessment(self):
         return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("assessment:values-detail", args=[self.pk])
 
 
 class Attachment(models.Model):
