@@ -1,6 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
+{% if crud == "Read" %}
 <h3>Assessment Value for {{object.assessment}}</h3>
 <table class="table table-sm table-striped">
     <colgroup>
@@ -30,4 +31,5 @@
         </tr>
     </tbody>
 </table>
+{% endif %}
 {% endblock %}
