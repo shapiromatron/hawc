@@ -434,6 +434,9 @@ class Values(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
+    class Meta:
+        verbose_name_plural = "values"
+
     def get_assessment(self):
         return self.assessment
 

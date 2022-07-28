@@ -140,6 +140,13 @@ class AssessmentAdmin(admin.ModelAdmin):
     migrate_terms.short_description = "Migrate endpoint terms"
 
 
+@admin.register(models.Values)
+class ValuesAdmin(admin.ModelAdmin):
+    list_display = ("id", "assessment", "value", "comments")
+    list_filter = ("assessment",)
+    search_fields = ("assessment", "value", "comments")
+
+
 @admin.register(models.Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
     list_select_related = ("content_type",)
