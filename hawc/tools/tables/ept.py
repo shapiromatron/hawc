@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
-from .parser import QuillParser, tag_wrapper, ul_wrapper
+from .parser import QuillParser, strip_enclosing_tag, strip_tags, tag_wrapper, ul_wrapper
 
 
 class JudgementTexts(Enum):
@@ -191,14 +191,13 @@ class Factor(BaseModel):
 
     def to_html(self):
         label = FactorLabel[self.key.name].value
+        short_description = strip_enclosing_tag(self.short_description, "p")
         if label:
-            if self.short_description.startswith("<p>"):
-                # same logic as in Factors.js; insert label into user-specified content
-                replacement_header = f"<p>{tag_wrapper(label, 'em')} - "
-                return self.short_description.replace("<p>", replacement_header, 1)
-            return tag_wrapper(label, "em") + " - " + self.short_description
+            if strip_tags(short_description).strip():
+                return f"{tag_wrapper(label, 'em')} - {short_description}"
+            return tag_wrapper(label, "em")
         else:
-            return self.short_description
+            return short_description
 
 
 class FactorsCell(BaseCell):
