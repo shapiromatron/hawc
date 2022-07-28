@@ -75,17 +75,23 @@ class SummaryCell extends Component {
                     judgement={summary_judgement}
                     summary={true}
                 />
-                <TextBlock label="Primary basis" html={summary_judgement.description} />
-                <TextBlock label="Human relevance" html={summary_judgement.human_relevance} />
+                <TextBlock
+                    label="Human relevance of findings in animals"
+                    html={summary_judgement.human_relevance}
+                />
                 <TextBlock
                     label="Cross-stream coherence"
                     html={summary_judgement.cross_stream_coherence}
                 />
                 <TextBlock
-                    label="Susceptible populations and lifestages"
+                    label="Potential susceptibility"
                     html={summary_judgement.susceptibility}
                 />
-                <TextBlock label="Other inferences" html={summary_judgement.other} />
+                <TextBlock label="Biological plausibility" html={summary_judgement.plausibility} />
+                <TextBlock
+                    label="Other critical inferences (e.g., ADME, or other supplemental information)"
+                    html={summary_judgement.other}
+                />
             </td>
         );
     }

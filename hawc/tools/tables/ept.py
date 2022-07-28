@@ -54,10 +54,10 @@ class SummaryJudgementCell(BaseCell):
     custom_judgement_icon: str = ""
     custom_judgement_label: str = ""
 
-    description: str
     human_relevance: str
     cross_stream_coherence: str
     susceptibility: str
+    plausibility: str
     other: str
 
     hide_content: bool
@@ -80,15 +80,19 @@ class SummaryJudgementCell(BaseCell):
     def to_docx(self, parser: QuillParser, block):
         text = ""
         text += self.judgement_html()
-        text += tag_wrapper("\nPrimary basis:", "p", "em")
-        text += self.description
-        text += tag_wrapper("\nHuman relevance:", "p", "em")
+        text += tag_wrapper("\nHuman relevance of findings in animals:", "p", "em")
         text += self.human_relevance
         text += tag_wrapper("\nCross-stream coherence:", "p", "em")
         text += self.cross_stream_coherence
-        text += tag_wrapper("\nSusceptible populations and lifestages:", "p", "em")
+        text += tag_wrapper("\nPotential susceptibility:", "p", "em")
         text += self.susceptibility
-        text += tag_wrapper("\nOther inferences:", "p", "em")
+        text += tag_wrapper("\nBiological plausibility:", "p", "em")
+        text += self.plausibility
+        text += tag_wrapper(
+            "\nOther critical inferences (e.g., ADME, or other supplemental information):",
+            "p",
+            "em",
+        )
         text += self.other
         parser.feed(text, block)
         if self.judgement != SummaryJudgementChoices.NoJudgement:
@@ -486,7 +490,7 @@ class EvidenceProfileTable(BaseTable):
     def get_default_props(cls):
         return {
             "exposed_human": {
-                "title": "Evidence from studies of exposed humans",
+                "title": "Evidence from human studies",
                 "rows": [
                     {
                         "summary": {"findings": "<p></p>"},
@@ -537,10 +541,10 @@ class EvidenceProfileTable(BaseTable):
                 "judgement": SummaryJudgementChoices.Inadequate,
                 "custom_judgement_icon": "",
                 "custom_judgement_label": "",
-                "description": "<p></p>",
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",
                 "susceptibility": "<p></p>",
+                "plausibility": "<p></p>",
                 "other": "<p></p>",
                 "hide_content": False,
             },
