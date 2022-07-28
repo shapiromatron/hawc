@@ -228,7 +228,7 @@
   {% if crud == "Read" %}
     {% include "assessment/fragments/attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
     {% include "assessment/_dataset_list.html" with object_list=datasets %}
-    {% include "assessment/_values_list.html" with object_list=object.values_list.all %}
+    {% include "assessment/_values_list.html" with object_list=object.values.all %}
   {% endif %}
 
 {% endblock content %}

@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                     "assessment",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="values_list",
+                        related_name="values",
                         to="assessment.assessment",
                     ),
                 ),

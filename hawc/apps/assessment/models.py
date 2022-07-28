@@ -426,7 +426,7 @@ class Assessment(models.Model):
 
 
 class Values(models.Model):
-    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values_list")
+    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
     value = models.FloatField()
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -1054,7 +1054,7 @@ class Content(models.Model):
 
 
 reversion.register(DSSTox)
-reversion.register(Assessment)
+reversion.register(Assessment, follow=["values"])
 reversion.register(EffectTag)
 reversion.register(Species)
 reversion.register(Strain)
