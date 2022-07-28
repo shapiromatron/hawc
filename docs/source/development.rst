@@ -468,7 +468,7 @@ On mac/linux:
 .. code-block:: bash
 
     # to run all
-    make test-integration-debug
+    make test-integration
 
     # or a custom method to run a single test
     export INTEGRATION_TESTS=1
