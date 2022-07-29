@@ -142,6 +142,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
 @admin.register(models.Values)
 class ValuesAdmin(admin.ModelAdmin):
+    list_select_related = ("assessment",)
     list_display = ("id", "assessment", "value", "comments")
     list_filter = ("assessment",)
     search_fields = ("assessment", "value", "comments")
