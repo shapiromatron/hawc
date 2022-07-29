@@ -13,12 +13,10 @@ from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common import autocomplete
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
-from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.lookups import HAWCUserLookup
 from ..myuser.models import HAWCUser
 from . import lookups, models
@@ -46,9 +44,6 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
-            "project_manager": autocomplete.AutocompleteSelectMultipleWidget(
-                url=UserAutocomplete.url(),
-            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -60,6 +55,9 @@ class AssessmentForm(forms.ModelForm):
 
         self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=lookups.DssToxIdLookup
+        )
+        self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
+            lookup_class=HAWCUserLookup
         )
         self.fields["team_members"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
@@ -197,8 +195,6 @@ class AssessmentModulesForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not settings.HAWC_FEATURES.ENABLE_EPI_V2:
-            self.fields["epi_version"].disabled = True
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"
