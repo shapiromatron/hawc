@@ -1,5 +1,5 @@
 from django.utils import timezone
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -8,6 +8,8 @@ from ..common.api import FivePerMinuteThrottle
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from .actions import media_metadata_report
+
+from . import serializers
 
 
 class DashboardViewset(viewsets.ViewSet):
@@ -30,3 +32,15 @@ class DiagnosticViewset(viewsets.ViewSet):
     def throttle(self, request):
         throttle = self.get_throttles()[0]
         return Response({"identity": throttle.get_ident(request)})
+
+
+class ReportsViewset(viewsets.ViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+
+    @action(
+        detail=False, renderer_classes=PandasRenderers, throttle_classes=(FivePerMinuteThrottle,)
+    )
+    def values(self, request):
+        """Gets all value data accross all assessments."""
+        export = serializers.ValuesExportOptions.build_export()
+        return Response(export, status=status.HTTP_200_OK)

@@ -425,11 +425,6 @@ class Assessment(models.Model):
     def set_communications(self, text: str):
         Communication.set_message(self, text)
 
-    def get_values_df(self) -> pd.DataFrame:
-        values_dict = self.values.values()
-        df = pd.DataFrame(data=values_dict)
-        return df
-
 
 class Values(models.Model):
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
@@ -448,6 +443,22 @@ class Values(models.Model):
 
     def get_absolute_url(self):
         return reverse("assessment:values-detail", args=[self.pk])
+
+    @classmethod
+    def get_df(cls) -> pd.DataFrame:
+        """Get a dataframe of all Assessment Values in HAWC.
+        """
+        # TODO: possibly include more assessment metadata? use kwargs for included/excluded columns?
+        mapping: dict[str, str] = {
+            "id": "id",
+            "assessment": "assessment_id",
+            "assessment__name": "assessment_name",
+            "value": "value",
+            "comments": "value_comments",
+        }
+        data = cls.objects.values_list(*list(mapping.keys()))
+        df = pd.DataFrame(data=data, columns=list(mapping.values()))
+        return df
 
 
 class Attachment(models.Model):
@@ -1063,7 +1074,8 @@ class Content(models.Model):
 
 
 reversion.register(DSSTox)
-reversion.register(Assessment, follow=["values"])
+reversion.register(Assessment)
+reversion.register(Values)
 reversion.register(EffectTag)
 reversion.register(Species)
 reversion.register(Strain)
