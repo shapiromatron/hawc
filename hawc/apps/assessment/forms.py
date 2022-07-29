@@ -1,7 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
 
-from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -14,6 +13,7 @@ from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common import autocomplete
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
@@ -46,9 +46,8 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
-            "project_manager": autocomplete.ModelSelect2Multiple(
+            "project_manager": autocomplete.AutocompleteSelectMultipleWidget(
                 url=UserAutocomplete.url(),
-                attrs={"data-theme": "bootstrap"},
             ),
         }
 

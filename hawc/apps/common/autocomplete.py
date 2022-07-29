@@ -1,16 +1,20 @@
 from dal import autocomplete
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.utils.encoding import force_str
 
 from .helper import reverse_with_query_lazy
 
 
 class BaseAutocomplete(autocomplete.Select2QuerySetView):
-    # AJAX only? `request.is_ajax()`
-    # Other permissions?
+    def dispatch(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            return HttpResponseForbidden("AJAX required")
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden("Authentication required")
+        return super().dispatch(request, *args, **kwargs)
 
     @classmethod
-    def name(cls):
+    def registry_key(cls):
         app_name = cls.__module__.split(".")[-2].lower()
         class_name = cls.__name__.lower()
         return f"{app_name}-{class_name}"
@@ -18,7 +22,24 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
     @classmethod
     def url(cls, **kwargs):
         # must lazily reverse url to prevent circular imports
-        return reverse_with_query_lazy("autocomplete", args=[cls.name()], query=kwargs)
+        return reverse_with_query_lazy("autocomplete", args=[cls.registry_key()], query=kwargs)
+
+
+class BootstrapMixin:
+    def __init__(self, *args, **kwargs):
+        # add bootstrap theme to attrs
+        attrs = kwargs.get("attrs", {})
+        attrs["data-theme"] = "bootstrap"
+        kwargs["attrs"] = attrs
+        super().__init__(*args, **kwargs)
+
+
+class AutocompleteSelectWidget(BootstrapMixin, autocomplete.ModelSelect2):
+    pass
+
+
+class AutocompleteSelectMultipleWidget(BootstrapMixin, autocomplete.ModelSelect2Multiple):
+    pass
 
 
 class AutocompleteRegistry:
@@ -33,23 +54,28 @@ class AutocompleteRegistry:
 
     def register(self, lookup):
         self.validate(lookup)
-        name = force_str(lookup.name())
-        if name in self._registry:
-            raise KeyError(f"The name {name} is already registered")
-        self._registry[name] = lookup
+        key = force_str(lookup.registry_key())
+        if key in self._registry:
+            raise KeyError(f"The key {key} is already registered")
+        self._registry[key] = lookup
 
     def unregister(self, lookup):
         self.validate(lookup)
-        name = force_str(lookup.name())
-        if name not in self._registry:
-            raise KeyError(f"The name {name} is not registered")
-        del self._registry[name]
+        key = force_str(lookup.registry_key())
+        if key not in self._registry:
+            raise KeyError(f"The key {key} is not registered")
+        del self._registry[key]
 
     def get(self, key):
         return self._registry.get(key, None)
 
 
 registry = AutocompleteRegistry()
+
+
+def register(Cls):
+    registry.register(Cls)
+    return Cls
 
 
 def get_autocomplete(request, autocomplete_name):

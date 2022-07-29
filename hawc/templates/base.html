@@ -32,6 +32,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.5.3/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/jqueryui/1.10.3/css/jquery-ui.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/select2-bootstrap.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     {% if flavor == "EPA" %}
@@ -108,6 +109,5 @@
     <script type="text/javascript" src="{% static 'vendor/htmx/1.6.1/htmx.min.js' %}"></script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css">
   </body>
 </html>

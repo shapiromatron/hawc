@@ -417,6 +417,17 @@ def event_plot(series: pd.Series) -> Axes:
 
 
 def reverse_with_query(*args, query: dict, **kwargs):
+    """
+    Performs Django's `reverse` and appends a query string.
+
+    Args:
+        *args: Arguments for Django's `reverse`
+        **kwargs: Named arguments for Django's `reverse`
+        query (dict): Dictionary to build query string from
+
+    Returns:
+        str: reversed url with query string
+    """
     url = reverse(*args, **kwargs)
     query = urlencode(query)
     query = f"?{query}" if query else query
