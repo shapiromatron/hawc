@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 
+from treebeard.mp_tree import MP_Node
+
 from ..epi.models import Country
 from ..study.models import Study
 from .constants import ChangeTrajectory, VocabCategories
@@ -424,3 +426,15 @@ class Result(models.Model):
                 category=VocabCategories.STATISTICAL, value="Not applicable"
             ),
         }
+
+
+class NestedTerm(MP_Node):
+    type_choices = (("CE", "cause/effect"),)
+
+    name = models.CharField(max_length=128)
+    type = models.CharField(choices=type_choices, max_length=2, default="CE")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    notes = models.TextField(blank=True)
+
+    node_order_by = ["name"]
