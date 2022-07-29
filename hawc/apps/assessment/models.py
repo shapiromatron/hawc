@@ -1,6 +1,7 @@
 import json
 import logging
 import uuid
+import pandas as pd
 from typing import Any, Dict, List, NamedTuple
 
 import pandas as pd
@@ -423,6 +424,11 @@ class Assessment(models.Model):
 
     def set_communications(self, text: str):
         Communication.set_message(self, text)
+
+    def get_values_df(self) -> pd.DataFrame:
+        values_dict = self.values.values()
+        df = pd.DataFrame(data=values_dict)
+        return df
 
 
 class Values(models.Model):
