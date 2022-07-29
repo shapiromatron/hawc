@@ -2,9 +2,9 @@
 {% load bs4 %}
 
 {% block content %}
-<h2 class="d-inline-block">{{object.summary}}</h2>
+<h2 class="d-inline-block">Update {{object.summary}}</h2>
 <div class="float-right">
-    <a class="btn btn-sm btn-info" href="#"
+    <a class="btn btn-sm btn-primary" href="#"
         hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
 </div>
@@ -79,8 +79,8 @@
         {% url 'epiv2:outcome-create' object.pk as outcome_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-empty-row" %}
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '29,28,28,15' %}
-            {% bs4_thead 'Endpoint,Health Outcome,Health Outcome System,Edit' %}
+            {% bs4_colgroup '22,21,21,21,15' %}
+            {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome,Edit' %}
             <tbody>
                 {% if object.outcomes.all %}
                     {% for object in object.outcomes.all %}
@@ -121,8 +121,8 @@
         {% url 'epiv2:dataextraction-create' object.pk as dataextraction_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '13,13,13,13,5,12,5,13,13' %}
-            {% bs4_thead 'Group,Outcome,Exposure Level,Measurement Timing,N,Effect Estimate,Confidence,Comments,Edit' %}
+            {% bs4_colgroup '12,12,12,12,11,5,11,12,13' %}
+            {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments' %}
             <tbody>
                 {% if object.data_extractions.all %}
                     {% for object in object.data_extractions.all %}

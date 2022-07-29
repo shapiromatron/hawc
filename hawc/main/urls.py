@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 import hawc.apps.animal.urls
 import hawc.apps.assessment.urls
 import hawc.apps.bmd.urls
+import hawc.apps.common.urls
 import hawc.apps.epi.urls
 import hawc.apps.epimeta.urls
 import hawc.apps.hawc_admin.urls
@@ -33,6 +34,7 @@ urlpatterns = [
     # Apps
     path("user/", include("hawc.apps.myuser.urls")),
     path("assessment/", include("hawc.apps.assessment.urls")),
+    path("common/", include("hawc.apps.common.urls")),
     path("study/", include("hawc.apps.study.urls")),
     path("ani/", include("hawc.apps.animal.urls")),
     path("epi/", include("hawc.apps.epi.urls")),
@@ -45,15 +47,16 @@ urlpatterns = [
     path("rob/", include("hawc.apps.riskofbias.urls")),
     path("mgmt/", include("hawc.apps.mgmt.urls")),
     path("vocab/", include("hawc.apps.vocab.urls")),
+    # common functionality
+    path("update-session/", views.UpdateSession.as_view(), name="update_session"),
+    path("rasterize/", views.RasterizeCss.as_view(), name="css-rasterize"),
+    path("selectable/", include("selectable.urls")),
+    path("autocomplete/<str:autocomplete_name>/", get_autocomplete, name="autocomplete"),
     # Error-pages
     path("401/", views.Error401.as_view(), name="401"),
     path("403/", views.Error403.as_view(), name="403"),
     path("404/", views.Error404.as_view(), name="404"),
     path("500/", views.Error500.as_view(), name="500"),
-    path("update-session/", views.UpdateSession.as_view(), name="update_session"),
-    path("rasterize/", views.RasterizeCss.as_view(), name="css-rasterize"),
-    path("selectable/", include("selectable.urls")),
-    path("autocomplete/<str:autocomplete_name>/", get_autocomplete, name="autocomplete"),
 ]
 
 # add admin patterns
@@ -61,6 +64,7 @@ open_api_patterns = [
     path("ani/api/", include(hawc.apps.animal.urls.router.urls)),
     path("assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
     path("bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
+    path("common/api/", include(hawc.apps.common.urls.router.urls)),
     path("epi/api/", include(hawc.apps.epi.urls.router.urls)),
     path("epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
     path("in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),

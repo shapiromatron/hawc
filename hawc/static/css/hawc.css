@@ -28,17 +28,17 @@
     width: 230px;
     background-color: #323a45;
 }
+/* md/lg breakpoint: https://getbootstrap.com/docs/4.6/layout/overview/#containers */
+@media only screen and (max-width: 992px) {
+    .sidebar {
+        width: 50px;
+    }
+}
 .sidebar a {
     color: #f8f9fa!important;
 }
 .sidebar .nav {
     font-weight: bold;
-}
-.sidebar-collapsed {
-    width: 50px;
-}
-.sidebar-collapsed .nav {
-    opacity: 0;
 }
 /* end sidebar */
 
