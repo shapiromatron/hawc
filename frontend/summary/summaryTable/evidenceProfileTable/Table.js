@@ -104,15 +104,13 @@ SummaryCell.propTypes = {
 class EpidemiologyEvidenceRows extends Component {
     render() {
         const {numEpiJudgementRowSpan} = this.props.store,
-            {exposed_human} = this.props.store.settings,
-            show_summary = !this.props.store.settings.summary_judgement.hide_content;
+            {exposed_human} = this.props.store.settings;
         return (
             <>
                 <tr>
                     <th colSpan={5} style={subTitleStyle}>
                         {exposed_human.title}
                     </th>
-                    {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
                 {exposed_human.rows.length == 0 ? NoDataRow(exposed_human.no_content_text) : null}
                 {exposed_human.rows.map((row, index) => (
@@ -136,17 +134,13 @@ EpidemiologyEvidenceRows.propTypes = {
 class AnimalEvidenceRows extends Component {
     render() {
         const {numAniJudgementRowSpan} = this.props.store,
-            {animal} = this.props.store.settings,
-            show_summary =
-                !this.props.store.settings.summary_judgement.hide_content &&
-                this.props.store.settings.exposed_human.hide_content;
+            {animal} = this.props.store.settings;
         return (
             <>
                 <tr>
                     <th colSpan={5} style={subTitleStyle}>
                         {animal.title}
                     </th>
-                    {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
                 {animal.rows.length == 0 ? NoDataRow(animal.no_content_text) : null}
                 {animal.rows.map((row, index) => (
@@ -186,7 +180,7 @@ class MechanisticEvidenceRows extends Component {
                 <tr>
                     <th>{mechanistic.col_header_1}</th>
                     <th colSpan={3}>Summary of key findings and interpretation</th>
-                    <th>Judgment(s) and rationale</th>
+                    <th>Evidence Synthesis Judgment(s)</th>
                 </tr>
                 {mechanistic.rows.length == 0 ? NoDataRow(mechanistic.no_content_text) : null}
                 {mechanistic.rows.map((row, index) => {
@@ -266,25 +260,24 @@ class Table extends Component {
                 <thead>
                     <tr>
                         {hide_evidence ? null : (
-                            <th colSpan={5}>Evidence Summary and Interpretation</th>
+                            <th colSpan={5}>Evidence Synthesis (Strength of Evidence) Judgments</th>
                         )}
                         {summary_judgement.hide_content ? null : (
-                            <th rowSpan={exposed_human.hide_content && animal.hide_content ? 1 : 2}>
-                                Inferences and Summary Judgment
-                            </th>
+                            <th>Inferences and Summary Judgment</th>
                         )}
                     </tr>
+                </thead>
+                <tbody>
                     {exposed_human.hide_content && animal.hide_content ? null : (
                         <tr>
-                            <th>Studies, outcomes, and confidence</th>
+                            <th>Studies</th>
                             <th>Summary of key findings</th>
                             <th>Factors that increase certainty</th>
                             <th>Factors that decrease certainty</th>
-                            <th>Judgment(s) and rationale</th>
+                            <th>Evidence Synthesis Judgment(s)</th>
+                            <SummaryCell store={store} />
                         </tr>
                     )}
-                </thead>
-                <tbody>
                     {exposed_human.hide_content ? null : <EpidemiologyEvidenceRows store={store} />}
                     {animal.hide_content ? null : <AnimalEvidenceRows store={store} />}
                     {mechanistic.hide_content ? null : <MechanisticEvidenceRows store={store} />}

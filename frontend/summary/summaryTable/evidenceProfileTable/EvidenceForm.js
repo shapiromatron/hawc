@@ -56,7 +56,7 @@ const EvidenceForm = observer(props => {
                         <thead>
                             <tr>
                                 <th>
-                                    Studies, outcomes, and confidence
+                                    Studies
                                     <HelpTextPopup
                                         title="Help-text"
                                         content="List references (optional: include hyperlinks to other HAWC visualizations) informing the outcome(s). If it makes sense to do so, summarize confidence in same free text space."
@@ -84,7 +84,7 @@ const EvidenceForm = observer(props => {
                                     />
                                 </th>
                                 <th>
-                                    Judgment(s) and rationale
+                                    Evidence Synthesis Judgment(s)
                                     <HelpTextPopup
                                         title="Help-text"
                                         content={`${HELP_TEXT.IRIS_HANDBOOK} Summarize any important interpretations, and the primary basis for the judgment(s)`}

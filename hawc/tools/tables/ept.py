@@ -14,7 +14,7 @@ class JudgementTexts(Enum):
     Moderate = ("⊕⊕⊙", "Moderate")
     Slight = ("⊕⊙⊙", "Slight")
     Indeterminate = ("⊙⊙⊙", "Indeterminate")
-    NoEffect = ("⊝⊝⊝", "Evidence of no effect")
+    NoEffect = ("⊝⊝⊝", "Compelling evidence of no effect")
 
 
 class SummaryJudgementTexts(Enum):
@@ -378,7 +378,7 @@ class MechanisticGroup(BaseCellGroup):
     def column_headers(self):
         text1 = tag_wrapper(self.col_header_1, "p", "strong")
         text2 = tag_wrapper("Summary of key findings and interpretation", "p", "strong")
-        text3 = tag_wrapper("Judgment(s) and rationale", "p", "strong")
+        text3 = tag_wrapper("Evidence Synthesis Judgment(s)", "p", "strong")
         return [
             GenericCell.parse_args(True, 1, 0, 1, 1, text1),
             GenericCell.parse_args(
@@ -426,9 +426,7 @@ class EvidenceProfileTable(BaseTable):
     @property
     def column_headers(self):
         return [
-            GenericCell.parse_args(
-                True, 1, 0, 1, 1, tag_wrapper("Studies, outcomes, and confidence", "p", "strong")
-            ),
+            GenericCell.parse_args(True, 1, 0, 1, 1, tag_wrapper("Studies", "p", "strong")),
             GenericCell.parse_args(
                 True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")
             ),
@@ -439,7 +437,7 @@ class EvidenceProfileTable(BaseTable):
                 True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 4, 1, 1, tag_wrapper("Judgment(s) and rationale", "p", "strong")
+                True, 1, 4, 1, 1, tag_wrapper("Evidence Synthesis Judgment(s)", "p", "strong")
             ),
         ]
 
@@ -448,7 +446,7 @@ class EvidenceProfileTable(BaseTable):
         hide_evidence = self.exposed_human.hide_content and self.animal.hide_content
 
         if not (hide_evidence and self.mechanistic.hide_content):
-            text = tag_wrapper("Evidence Summary and Interpretation", "h2")
+            text = tag_wrapper("Evidence Synthesis (Strength of Evidence) Judgments", "h2")
             cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
         rows = 1
 
@@ -476,11 +474,10 @@ class EvidenceProfileTable(BaseTable):
                 self.summary_judgement.column = 0
                 cells.append(self.summary_judgement)
             else:
-                header_row_span = 2 if not hide_evidence else 1
-                cells.append(GenericCell.parse_args(True, 0, 5, header_row_span, 1, text))
-                self.summary_judgement.row = header_row_span
+                cells.append(GenericCell.parse_args(True, 0, 5, 1, 1, text))
+                self.summary_judgement.row = 1
                 self.summary_judgement.column = 5
-                self.summary_judgement.row_span = rows - header_row_span
+                self.summary_judgement.row_span = rows - 1
                 cells.append(self.summary_judgement)
 
         self.cells = cells
