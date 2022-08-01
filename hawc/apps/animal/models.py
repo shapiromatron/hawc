@@ -1008,16 +1008,19 @@ class Endpoint(BaseEndpoint):
                 "vocabulary": assessment.vocabulary,
                 "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
-                    "system": form.initial.get("system", ""),
-                    "organ": form.initial.get("organ", ""),
-                    "effect": form.initial.get("effect", ""),
-                    "effect_subtype": form.initial.get("effect_subtype", ""),
-                    "name": form.initial.get("name", ""),
-                    "system_term_id": form.initial.get("system_term", None),
-                    "organ_term_id": form.initial.get("organ_term", None),
-                    "effect_term_id": form.initial.get("effect_term", None),
-                    "effect_subtype_term_id": form.initial.get("effect_subtype_term", None),
-                    "name_term_id": form.initial.get("name_term", None),
+                    field: form[field].value()
+                    for field in [
+                        "system",
+                        "organ",
+                        "effect",
+                        "effect_subtype",
+                        "name",
+                        "system_term_id",
+                        "organ_term_id",
+                        "effect_term_id",
+                        "effect_subtype_term_id",
+                        "name_term_id",
+                    ]
                 },
             }
         )
