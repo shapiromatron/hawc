@@ -104,7 +104,6 @@ const IntegrationForm = observer(props => {
                 <div className="col-md-6">
                     <QuillTextInput
                         label="Plausibility"
-                        helpText="TODO"
                         value={summary_judgement.plausibility}
                         onChange={value =>
                             store.updateValue("summary_judgement.plausibility", value)
