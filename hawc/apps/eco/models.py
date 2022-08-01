@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
-
 from treebeard.mp_tree import MP_Node
 
 from ..epi.models import Country

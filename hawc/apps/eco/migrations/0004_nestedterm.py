@@ -6,25 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('eco', '0003_auto_20220719_1256'),
+        ("eco", "0003_auto_20220719_1256"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NestedTerm',
+            name="NestedTerm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('path', models.CharField(max_length=255, unique=True)),
-                ('depth', models.PositiveIntegerField()),
-                ('numchild', models.PositiveIntegerField(default=0)),
-                ('name', models.CharField(max_length=128)),
-                ('type', models.CharField(choices=[('CE', 'cause/effect')], default='CE', max_length=2)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-                ('notes', models.TextField(blank=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("path", models.CharField(max_length=255, unique=True)),
+                ("depth", models.PositiveIntegerField()),
+                ("numchild", models.PositiveIntegerField(default=0)),
+                ("name", models.CharField(max_length=128)),
+                (
+                    "type",
+                    models.CharField(choices=[("CE", "cause/effect")], default="CE", max_length=2),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                ("notes", models.TextField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]
