@@ -6,10 +6,14 @@ from . import models
 
 class DesignQuerySet(QuerySet):
     def complete(self):
-        return self.prefetch_related(
+        return self.select_related("study").prefetch_related(
+            "countries",
             "exposures",
             "outcomes",
-            "chemicals",
+            Prefetch(
+                "chemicals",
+                queryset=models.Chemical.objects.select_related("dsstox"),
+            ),
             "adjustment_factors",
             Prefetch(
                 "exposure_levels",

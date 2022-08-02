@@ -9,6 +9,7 @@ const URL_TEMPLATES = "/rasterize/",
         a.href = url;
         a.download = filename ? filename[1] : "download.txt";
         a.className = "hidden";
+        a.target = "_blank";
         document.body.appendChild(a);
         a.click();
         a.remove();

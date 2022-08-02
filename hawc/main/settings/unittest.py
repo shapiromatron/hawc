@@ -8,7 +8,7 @@ from .dev import *  # noqa
 
 DEBUG = True
 
-# remove toolbar for selenium tests
+# remove toolbar for integration tests
 INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]
 MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in middleware]
 
