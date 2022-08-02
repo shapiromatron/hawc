@@ -16,6 +16,18 @@ class State(models.Model):
         return self.name
 
 
+class NestedTerm(MP_Node):
+    type_choices = (("CE", "cause/effect"),)
+
+    name = models.CharField(max_length=128)
+    type = models.CharField(choices=type_choices, max_length=2, default="CE")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    notes = models.TextField(blank=True)
+
+    node_order_by = ["name"]
+
+
 class Vocab(models.Model):
     category = models.IntegerField(choices=VocabCategories.choices)
     value = models.CharField(max_length=128)
@@ -128,13 +140,18 @@ class Design(models.Model):
 class Cause(models.Model):
     name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    # term = models.ForeignKey(
+    #     Vocab,
+    #     verbose_name="Cause term",
+    #     limit_choices_to={"category": VocabCategories.CAUSE_TERM},
+    #     on_delete=models.CASCADE,
+    #     related_name="+",
+    #     help_text="Add help text - autocomplete field?",
+    # )
     term = models.ForeignKey(
-        Vocab,
-        verbose_name="Cause term",
-        limit_choices_to={"category": VocabCategories.CAUSE_TERM},
+        NestedTerm,
+        related_name="causes",
         on_delete=models.CASCADE,
-        related_name="+",
-        help_text="Add help text - autocomplete field?",
     )
     measure = models.ForeignKey(
         Vocab,
@@ -225,12 +242,18 @@ class Effect(models.Model):
     name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
-        Vocab,
-        verbose_name="Effect term",
-        limit_choices_to={"category": VocabCategories.EFFECT_TERM},
+        NestedTerm,
+        related_name="effects",
         on_delete=models.CASCADE,
-        related_name="+",
     )
+    # Leaving in old term
+    # term = models.ForeignKey(
+    #     Vocab,
+    #     verbose_name="Effect term",
+    #     limit_choices_to={"category": VocabCategories.EFFECT_TERM},
+    #     on_delete=models.CASCADE,
+    #     related_name="+",
+    # )
     measure = models.ForeignKey(
         Vocab,
         verbose_name="Effect measure",
@@ -425,15 +448,3 @@ class Result(models.Model):
                 category=VocabCategories.STATISTICAL, value="Not applicable"
             ),
         }
-
-
-class NestedTerm(MP_Node):
-    type_choices = (("CE", "cause/effect"),)
-
-    name = models.CharField(max_length=128)
-    type = models.CharField(choices=type_choices, max_length=2, default="CE")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    notes = models.TextField(blank=True)
-
-    node_order_by = ["name"]

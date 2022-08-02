@@ -56,6 +56,13 @@ class DesignForm(forms.ModelForm):
 
 
 class CauseForm(forms.ModelForm):
+
+    term = selectable.AutoCompleteSelectField(
+        label="Cause Term",
+        lookup_class=lookups.NestedTermLookup,
+        required=False,
+    )
+
     class Meta:
         exclude = ("study",)
         model = models.Cause
@@ -82,6 +89,13 @@ class CauseForm(forms.ModelForm):
 
 
 class EffectForm(forms.ModelForm):
+
+    term = selectable.AutoCompleteSelectField(
+        label="Effect Term",
+        lookup_class=lookups.NestedTermLookup,
+        required=False,
+    )
+
     class Meta:
         exclude = ("study",)
         model = models.Effect

@@ -36,8 +36,21 @@ class EcoregionLookup(ModelLookup):
         return super().get_queryset().filter(category=constants.VocabCategories.ECOREGION)
 
 
+class NestedTermLookup(ModelLookup):
+    model = models.NestedTerm
+    search_fields = ("name__icontains",)
+
+    def get_item_label(self, obj):
+        path = ""
+        for node in obj.get_ancestors():
+            path += f"{node.name} > "
+        path += f"{obj.name}"
+        return path
+
+
 registry.register(RelatedCauseLookup)
 registry.register(RelatedEffectLookup)
 registry.register(CountryLookup)
 registry.register(StateLookup)
 registry.register(EcoregionLookup)
+registry.register(NestedTermLookup)
