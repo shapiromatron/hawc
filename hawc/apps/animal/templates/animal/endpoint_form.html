@@ -117,7 +117,6 @@
     const settings = window.app.getConfig();
     window.app.startup("animalStartup", function (animal) {
       animal.startupEndpointForm(document.getElementById("vocab"), settings.vocabulary);
-      // ^ where the script is called (not sure how the initial data is passed in)
       $("#row_id_name_1").remove();
       $("#row_id_system_4").remove();
       $("#row_id_name_term_5").remove();

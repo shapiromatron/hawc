@@ -5,8 +5,6 @@ import h from "shared/utils/helpers";
 
 const fields = ["system", "organ", "effect", "effect_subtype", "name"];
 
-// here's where the vocabulary/endpoint name form is created
-
 class EndpointFormStore {
     @observable config = null;
     @observable useControlledVocabulary = null;
