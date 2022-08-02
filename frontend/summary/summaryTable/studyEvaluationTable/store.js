@@ -236,6 +236,7 @@ class StudyEvaluationTableStore {
                 return _.chain(this.dataset.data)
                     .filter(d => d["type"] == data["type"])
                     .uniqBy("study_id")
+                    .sortBy("study_short_citation")
                     .map(d => {
                         return {id: d["study_id"], label: d["study_short_citation"]};
                     })
@@ -244,6 +245,7 @@ class StudyEvaluationTableStore {
                 return _.chain(this.dataset.data)
                     .filter(d => d["type"] == data["type"] && d["study_id"] == data["study_id"])
                     .uniqBy("experiment_id")
+                    .sortBy("experiment_name")
                     .map(d => {
                         return {id: d["experiment_id"], label: d["experiment_name"]};
                     })
@@ -255,6 +257,7 @@ class StudyEvaluationTableStore {
                             d["type"] == data["type"] && d["experiment_id"] == data["experiment_id"]
                     )
                     .uniqBy("animal_group_id")
+                    .sortBy("animal_group_name")
                     .map(d => {
                         return {id: d["animal_group_id"], label: d["animal_group_name"]};
                     })
@@ -272,16 +275,23 @@ class StudyEvaluationTableStore {
             .uniqBy("metric_id")
             .map(d => {
                 let metricSettings = _.find(
-                    this.robSettings.metrics,
-                    s => s["id"] == d["metric_id"]
-                );
+                        this.robSettings.metrics,
+                        s => s["id"] == d["metric_id"]
+                    ),
+                    domainSettings = _.find(
+                        this.robSettings.domains,
+                        s => s["id"] == metricSettings["domain_id"]
+                    );
                 return {
                     id: d["metric_id"],
                     label: metricSettings["use_short_name"]
                         ? metricSettings["short_name"]
                         : metricSettings["name"],
+                    domainSortOrder: domainSettings["sort_order"],
+                    metricSortOrder: metricSettings["sort_order"],
                 };
             })
+            .sortBy(["domainSortOrder", "metricSortOrder"])
             .value();
     }
     scoreIdChoices(studyId, metricId) {
