@@ -434,7 +434,13 @@ class PydanticToDjangoError:
         Django/DRF ValidationError if pydantic ValidationError is raised within the context.
     """
 
-    def __init__(self, include_field=True, field=None, msg=None, drf=False):
+    def __init__(
+        self,
+        include_field: bool = True,
+        field: Optional[str] = None,
+        msg: Optional[str] = None,
+        drf: bool = False,
+    ):
         self.include_field = include_field
         self.field = field if field is not None else "non_field_errors" if drf else "__all__"
         self.msg = msg
