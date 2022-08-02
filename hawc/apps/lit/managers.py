@@ -7,7 +7,7 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -294,6 +294,63 @@ class ReferenceQuerySet(models.QuerySet):
         if descendants:
             tag_ids.extend(list(tag.get_descendants().values_list("pk", flat=True)))
         return self.filter(tags__in=tag_ids).distinct("pk")
+
+    def require_tags(self, required_tags, intersection: bool = False, descendants: bool = False):
+        """
+        Filter references by the given tags.
+
+        Args:
+            required_tags (list[ReferenceFilterTag]): Tags to require.
+            intersection (bool, optional): Whether all of the tags should be required, or any. Defaults to False.
+            descendants (bool, optional): Whether to include descendants under required tags. Defaults to False.
+        """
+        if not required_tags:
+            return self
+
+        if descendants:
+            # keep tags and their descendants together; needed if intersection is True
+            required_tags = [[tag, *tag.get_descendants()] for tag in required_tags]
+        else:
+            required_tags = [[tag] for tag in required_tags]
+
+        if intersection:
+            query = Q(tags__in=required_tags[0])
+            for tags in required_tags[1:]:
+                query &= Q(tags__in=tags)
+        else:
+            query = Q(tags__in=[tag for tags in required_tags for tag in tags])
+
+        return self.filter(query).distinct("pk")
+
+    def prune_tags(self, root_tag, pruned_tags, descendants: bool = False):
+        """
+        Only prune references if they are tagged by given tags and are not tagged elsewhere
+        under a given root tag.
+
+        Args:
+            root_tag (ReferenceFilterTag): Place to begin pruning; used to determine references that should remain
+            even if tagged by a pruned tag.
+            pruned_tags (list[ReferenceFilterTag]): Tags to prune.
+            descendants (bool, optional): Whether to include descendants under pruned tags. Defaults to False.
+        """
+        if not pruned_tags:
+            return self
+
+        if descendants:
+            pruned_tags = [
+                tag
+                for tags in [[tag, *tag.get_descendants()] for tag in pruned_tags]
+                for tag in tags
+            ]
+
+        all_tags = [root_tag, *root_tag.get_descendants()]
+        safe_tags = [
+            tag for tag in all_tags if all([tag.pk != pruned_tag.pk for pruned_tag in pruned_tags])
+        ]
+        query = Q(tags__in=[tag.pk for tag in pruned_tags]) & ~Q(
+            tags__in=[tag.pk for tag in safe_tags]
+        )
+        return self.exclude(query).distinct("pk")
 
 
 class ReferenceManager(BaseManager):

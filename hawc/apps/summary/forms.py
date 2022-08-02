@@ -790,7 +790,7 @@ class TagtreeForm(VisualForm):
         coerce=int,
         choices=[],
         label="Filter references by tags",
-        help_text="Filter which references are displayed by selecting required tags. If a tag is selected, only references which have this tag will be displayed.<br><br><i>This field is optional; if no tags are selected, all references will be displayed.</i>",
+        help_text="Filter which references are displayed by selecting required tags. If tags are selected, only references which have one or more of these tags (not including descendants) will be displayed.<br><br><i>This field is optional; if no tags are selected, all references will be displayed.</i>",
         required=False,
     )
     pruned_tags = forms.TypedMultipleChoiceField(
