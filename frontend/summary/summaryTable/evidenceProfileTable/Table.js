@@ -263,7 +263,7 @@ class Table extends Component {
                             <th colSpan={5}>Evidence Synthesis (Strength of Evidence) Judgments</th>
                         )}
                         {summary_judgement.hide_content ? null : (
-                            <th>Inferences and Summary Judgment</th>
+                            <th>Evidence Integration (Weight of Evidence) Judgment(s)</th>
                         )}
                     </tr>
                 </thead>

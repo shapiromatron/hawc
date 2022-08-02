@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
-from .parser import QuillParser, strip_enclosing_tag, strip_tags, tag_wrapper, ul_wrapper
+from .parser import QuillParser, has_inner_text, strip_enclosing_tag, tag_wrapper, ul_wrapper
 
 
 class JudgementTexts(Enum):
@@ -80,20 +80,25 @@ class SummaryJudgementCell(BaseCell):
     def to_docx(self, parser: QuillParser, block):
         text = ""
         text += self.judgement_html()
-        text += tag_wrapper("\nHuman relevance of findings in animals:", "p", "em")
-        text += self.human_relevance
-        text += tag_wrapper("\nCross-stream coherence:", "p", "em")
-        text += self.cross_stream_coherence
-        text += tag_wrapper("\nPotential susceptibility:", "p", "em")
-        text += self.susceptibility
-        text += tag_wrapper("\nBiological plausibility:", "p", "em")
-        text += self.plausibility
-        text += tag_wrapper(
-            "\nOther critical inferences (e.g., ADME, or other supplemental information):",
-            "p",
-            "em",
-        )
-        text += self.other
+        if has_inner_text(self.human_relevance):
+            text += tag_wrapper("\nHuman relevance of findings in animals:", "p", "em")
+            text += self.human_relevance
+        if has_inner_text(self.cross_stream_coherence):
+            text += tag_wrapper("\nCross-stream coherence:", "p", "em")
+            text += self.cross_stream_coherence
+        if has_inner_text(self.susceptibility):
+            text += tag_wrapper("\nPotential susceptibility:", "p", "em")
+            text += self.susceptibility
+        if has_inner_text(self.plausibility):
+            text += tag_wrapper("\nBiological plausibility:", "p", "em")
+            text += self.plausibility
+        if has_inner_text(self.other):
+            text += tag_wrapper(
+                "\nOther critical inferences (e.g., ADME, or other supplemental information):",
+                "p",
+                "em",
+            )
+            text += self.other
         parser.feed(text, block)
         if self.judgement != SummaryJudgementChoices.NoJudgement:
             for paragraph in block.paragraphs[0:2]:
@@ -193,7 +198,7 @@ class Factor(BaseModel):
         label = FactorLabel[self.key.name].value
         short_description = strip_enclosing_tag(self.short_description, "p")
         if label:
-            if strip_tags(short_description).strip():
+            if has_inner_text(short_description):
                 return f"{tag_wrapper(label, 'em')} - {short_description}"
             return tag_wrapper(label, "em")
         else:
@@ -467,7 +472,7 @@ class EvidenceProfileTable(BaseTable):
             rows = self.mechanistic.rows
 
         if not self.summary_judgement.hide_content:
-            text = tag_wrapper("Inferences and Summary Judgment", "h2")
+            text = tag_wrapper("Evidence Integration (Weight of Evidence) Judgment(s)", "h2")
             if hide_evidence and self.mechanistic.hide_content:
                 cells.append(GenericCell.parse_args(True, 0, 0, 1, 1, text))
                 self.summary_judgement.row = 1

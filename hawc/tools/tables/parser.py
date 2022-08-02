@@ -20,6 +20,12 @@ def strip_tags(text: str):
 def strip_enclosing_tag(text: str, tag: str):
     if text.startswith(f"<{tag}>") and text.endswith(f"</{tag}>"):
         return text[2 + len(tag) : -(3 + len(tag))]
+    return text
+
+
+def has_inner_text(text: str):
+    # check for inner text by removing tags and whitespace
+    return bool(strip_tags(text).strip())
 
 
 def ul_wrapper(texts: list[str]):
