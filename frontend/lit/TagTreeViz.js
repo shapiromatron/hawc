@@ -152,7 +152,12 @@ class TagTreeViz extends D3Plot {
                     .addFooter("")
                     .show({maxWidth: 1200});
 
-                tag.renderPaginatedReferenceList(div.get(0), self.stateStore.options.can_edit);
+                tag.renderPaginatedReferenceList(
+                    div.get(0),
+                    self.stateStore.options.can_edit,
+                    self.stateStore.options.required_tags,
+                    self.stateStore.options.pruned_tags
+                );
             },
             update = function(event, source) {
                 var duration = event && event.altKey ? 5000 : 500,
