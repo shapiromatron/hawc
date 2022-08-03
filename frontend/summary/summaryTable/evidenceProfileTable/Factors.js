@@ -9,7 +9,7 @@ import CheckboxInput from "shared/components/CheckboxInput";
 
 const increaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
-        {key: 70, label: "All studies are medium or high confidence", displayLabel: true},
+        {key: 70, label: "Most studies are medium or high confidence", displayLabel: true},
         {key: 20, label: "Consistency", displayLabel: true},
         {key: 30, label: "Dose-response gradient", displayLabel: true},
         {key: 50, label: "Large or concerning magnitude of effect", displayLabel: true},
@@ -18,7 +18,7 @@ const increaseFactors = [
     ],
     decreaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
-        {key: -60, label: "All/Mostly low confidence studies", displayLabel: true},
+        {key: -60, label: "Most studies are low confidence", displayLabel: true},
         {key: -20, label: "Unexplained inconsistency", displayLabel: true},
         {key: -30, label: "Imprecision", displayLabel: true},
         {key: -80, label: "Concerns about biological significance", displayLabel: true},
