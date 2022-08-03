@@ -12,13 +12,14 @@ from django.db import transaction
 from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from pydantic import Field, root_validator, validator
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
-from ..common.serializers import validate_jsonschema
+from ..common.serializers import PydanticDrfSerializer, validate_jsonschema
 from . import constants, exports, forms, models, tasks
 
 logger = logging.getLogger(__name__)
@@ -486,3 +487,77 @@ class ReferenceTagExportSerializer(serializers.Serializer):
 
     def include_descendants(self):
         return self.validated_data["nested"] == "t"
+
+
+class FilterReferences(PydanticDrfSerializer):
+    assessment_id: int  # no db validation required; done by viewset
+    search: int = Field(None, alias="search_id")
+    tag: int = Field(None, alias="tag_id")
+    untagged: bool = False
+    required_tags: list[int] = []
+    pruned_tags: list[int] = []
+
+    @validator("untagged", pre=True)
+    def validate_untagged_presence(cls, v):
+        # if untagged is passed in as a query param without value, assume its True
+        return v == "" or v
+
+    @validator("search")
+    def validate_search_id(cls, v):
+        try:
+            return models.Search.objects.get(pk=v)
+        except models.Search.DoesNotExist:
+            raise ValueError("Invalid search id")
+
+    @validator("tag")
+    def validate_tag_id(cls, v):
+        try:
+            return models.ReferenceFilterTag.objects.get(pk=v)
+        except models.ReferenceFilterTag.DoesNotExist:
+            raise ValueError("Invalid tag id")
+
+    @validator("required_tags", "pruned_tags", pre=True)
+    def str_to_list(cls, v):
+        if not isinstance(v, str):
+            raise ValueError("Expected a comma-delimited list of ids")
+        return [_.strip() for _ in v.split(",")]
+
+    @validator("required_tags", "pruned_tags")
+    def validate_tag_ids(cls, v):
+        tags = models.ReferenceFilterTag.objects.filter(pk__in=v)
+        matched_tag_ids = tags.values_list("pk", flat=True)
+        missing_tag_ids = set(v) - set(matched_tag_ids)
+        if missing_tag_ids:
+            raise ValueError(f"Invalid tag ids: {', '.join([str(_) for _ in missing_tag_ids])}")
+        return tags
+
+    @root_validator
+    def check_constraints(cls, values):
+        # untagged and tag_id/required_tags/pruned_tags are mutually exclusive
+        if values.get("untagged") and any(
+            [values.get(_) for _ in ["tag", "required_tags", "pruned_tags"]]
+        ):
+            raise ValueError("Do not combine 'untagged' with other tag filters")
+        if any([values.get(_) for _ in ["required_tags", "pruned_tags"]]) and not values.get("tag"):
+            raise ValueError(
+                "'required_tags' and 'pruned_tags' require a root 'tag_id' to function correctly."
+            )
+        return values
+
+    def get_queryset(self):
+        qs = models.Reference.objects.filter(assessment_id=self.assessment_id)
+        if self.search is not None:
+            qs = qs.filter(searches=self.search)
+        if self.untagged:
+            qs = qs.untagged()
+        elif self.tag:
+            qs = qs.with_tag(self.tag, descendants=True)
+            if self.required_tags:
+                qs = qs.require_tags(self.required_tags)
+            if self.pruned_tags:
+                qs = qs.prune_tags(self.tag, self.pruned_tags, descendants=True)
+        return (
+            qs.select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
+            .order_by("id")
+        )
