@@ -27,6 +27,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
+from reversion.models import Version
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
@@ -790,9 +791,12 @@ class LogObjectList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["first_log"] = self.first_log
-        context["assessment"] = self.assessment
-        context["breadcrumbs"] = self.get_breadcrumbs()
+        context.update(
+            first_log=self.first_log,
+            assessment=self.assessment,
+            breadcrumbs=self.get_breadcrumbs(),
+            audit_logs=Version.objects.get_for_object(self.first_log.content_object),
+        )
         return context
 
 

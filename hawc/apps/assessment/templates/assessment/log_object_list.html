@@ -64,4 +64,6 @@
 
 {% include 'assessment/_logs_note.html' %}
 
+<h3>Audit Logs</h3>
+{% for log in audit_logs %}{{log.id}},&nbsp;{% empty %}-{% endfor %}
 {% endblock content %}

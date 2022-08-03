@@ -2,6 +2,8 @@
 Twitter Bootstrap 4 - helper methods
 """
 from django import template
+from django.contrib.contenttypes.models import ContentType
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -40,3 +42,10 @@ def bs4_fullrow(text: str, tr_attrs: str = "") -> str:
     return mark_safe(
         f'<tr {tr_attrs}><td colspan="100%"><p class="text-center mb-0">{text}</p></td></tr>'
     )
+
+
+@register.simple_tag()
+def audit_url(object):
+    # todo move somewhere else
+    ct = ContentType.objects.get_for_model(object.__class__)
+    return reverse("assessment:log_object_list", args=(ct.pk, object.pk))
