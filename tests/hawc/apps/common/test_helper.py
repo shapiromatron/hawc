@@ -2,6 +2,10 @@ import time
 from io import StringIO
 
 import pandas as pd
+import pytest
+from django.core.exceptions import ValidationError as DjangoValidationError
+from pydantic import BaseModel
+from rest_framework.serializers import ValidationError as DRFValidationError
 
 from hawc.apps.common import helper
 
@@ -101,3 +105,46 @@ def test_int_or_float():
     assert helper.int_or_float(3.14) == 3.14
     assert helper.int_or_float(1.00001) == 1.00001
     assert helper.int_or_float(123456.0) == 123456
+
+
+class ChildSchema(BaseModel):
+    integer: int
+
+
+class Schema(BaseModel):
+    string: str
+    children: list[ChildSchema]
+
+
+class TestPydanticToDjangoError:
+    bad_obj = {"children": [{"integer": "test"}, {}]}
+    err_messages = [
+        "string: field required",
+        "children->0->integer: value is not a valid integer",
+        "children->1->integer: field required",
+    ]
+
+    def test_django_error(self):
+        with pytest.raises(DjangoValidationError) as err:
+            with helper.PydanticToDjangoError(drf=False):
+                Schema.parse_obj(self.bad_obj)
+        assert err.value.args[0] == {"__all__": self.err_messages}
+
+    def test_drf_error(self):
+        with pytest.raises(DRFValidationError) as err:
+            with helper.PydanticToDjangoError(drf=True):
+                Schema.parse_obj(self.bad_obj)
+        assert err.value.args[0] == {"non_field_errors": self.err_messages}
+
+    def test_fields(self):
+        # don't include a field; useful for field in form validation
+        with pytest.raises(DjangoValidationError) as err:
+            with helper.PydanticToDjangoError(include_field=False):
+                Schema.parse_obj(self.bad_obj)
+        assert err.value.args[0] == self.err_messages
+
+        # specify the field; useful for form validation
+        with pytest.raises(DjangoValidationError) as err:
+            with helper.PydanticToDjangoError(field="field"):
+                Schema.parse_obj(self.bad_obj)
+        assert err.value.args[0] == {"field": self.err_messages}
