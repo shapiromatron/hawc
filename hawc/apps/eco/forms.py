@@ -78,12 +78,12 @@ class CauseForm(forms.ModelForm):
         for fld in ("comment", "as_reported"):
             self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
-        self.fields["measure_detail"].widget.attrs["rows"] = 3
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("name", 6, "col-md-2")
-        helper.add_row("level", 6, "col-md-2")
+        helper.add_row("name", 2, ["col-md-4", "col-md-8"])
+        helper.add_row("bio_org", 4, "col-md-3")
+        helper.add_row("level_units", 4, "col-md-3")
         helper.add_row("comment", 2, "col-md-6")
         return helper
 
@@ -114,9 +114,9 @@ class EffectForm(forms.ModelForm):
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("name", 3, "col-md-4")
-        helper.add_row("measure_detail", 3, "col-md-4")
-        helper.add_row("bio_org", 3, "col-md-4")
+        helper.add_row("name", 2, ["col-md-4", "col-md-8"])
+        helper.add_row("units", 3, "col-md-4")
+        helper.add_row("comment", 2, "col-md-6")
         return helper
 
 
@@ -141,12 +141,12 @@ class ResultForm(forms.ModelForm):
     @property
     def helper(self):
         for fld in ("relationship_comment", "modifying_factors_comment", "description"):
-            self.fields[fld].widget.attrs["class"] = "html5text"
-            self.fields[fld].widget.attrs["rows"] = 3
+            self.fields[fld].widget.attrs["rows"] = 2
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("cause", 6, "col-md-2")
-        helper.add_row("modifying_factors_comment", 6, "col-md-2")
+        helper.add_row("cause", 4, "col-md-3")
+        helper.add_row("relationship_comment", 4, "col-md-3")
+        helper.add_row("measure_type", 4, "col-md-3")
         helper.add_row("low_variability", 5, "col-md-2")
         return helper

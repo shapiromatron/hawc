@@ -140,28 +140,11 @@ class Design(models.Model):
 class Cause(models.Model):
     name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
-    # term = models.ForeignKey(
-    #     Vocab,
-    #     verbose_name="Cause term",
-    #     limit_choices_to={"category": VocabCategories.CAUSE_TERM},
-    #     on_delete=models.CASCADE,
-    #     related_name="+",
-    #     help_text="Add help text - autocomplete field?",
-    # )
     term = models.ForeignKey(
         NestedTerm,
         related_name="causes",
         on_delete=models.CASCADE,
     )
-    measure = models.ForeignKey(
-        Vocab,
-        verbose_name="Cause measure",
-        limit_choices_to={"category": VocabCategories.CAUSE_MEASURE},
-        on_delete=models.CASCADE,
-        related_name="+",
-        help_text="Add help text - autocomplete field?",
-    )
-    measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
     bio_org = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.BIO_ORG},
@@ -235,7 +218,7 @@ class Cause(models.Model):
         return self.study.get_assessment()
 
     def __str__(self):
-        return f"{self.study} | {self.term.value}"
+        return f"{self.study} | {self.term.name}"
 
 
 class Effect(models.Model):
@@ -245,28 +228,6 @@ class Effect(models.Model):
         NestedTerm,
         related_name="effects",
         on_delete=models.CASCADE,
-    )
-    # Leaving in old term
-    # term = models.ForeignKey(
-    #     Vocab,
-    #     verbose_name="Effect term",
-    #     limit_choices_to={"category": VocabCategories.EFFECT_TERM},
-    #     on_delete=models.CASCADE,
-    #     related_name="+",
-    # )
-    measure = models.ForeignKey(
-        Vocab,
-        verbose_name="Effect measure",
-        limit_choices_to={"category": VocabCategories.EFFECT_MEASURE},
-        on_delete=models.CASCADE,
-        related_name="+",
-        help_text="Add help-text. autocomplete?",
-    )
-    measure_detail = models.CharField(
-        verbose_name="Effect measure detail",
-        max_length=128,
-        blank=True,
-        help_text="Add help-text. autocomplete?",
     )
     units = models.CharField(
         verbose_name="Effect units",
@@ -314,7 +275,7 @@ class Effect(models.Model):
         return self.study.get_assessment()
 
     def __str__(self):
-        return f"{self.study} | {self.term.value}"
+        return f"{self.study} | {self.term.name}"
 
 
 class Result(models.Model):

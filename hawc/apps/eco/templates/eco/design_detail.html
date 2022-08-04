@@ -4,7 +4,7 @@
 {% block content %}
 <h2 class="d-inline-block">{{object.name}}</h2>
 {% if obj_perms.edit and crud == "Read" %}
-<div class="dropdown btn-group float-right">
+<div class="dropdown btn-group float-right pb-2">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
         <span class="dropdown-header">Study design editing</span>
@@ -23,7 +23,7 @@
             {% bs4_colgroup '20,15,15,15,20,15' %}
             {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value' %}
             <tbody>
-                {% for object in object.results.all %}
+                {% for object in results %}
                     {% include "eco/fragments/result_row.html" %}
                 {% empty %}
                     {% bs4_fullrow 'No results available.' %}
@@ -38,9 +38,9 @@
         <h3 class="card-title">Causes</h3>
         <table class="table table-sm table-striped">
             {% bs4_colgroup '15,20,15,15,15,20' %}
-            {% bs4_thead 'Name,Term,Measure,Measure Detail,Species,Comment' %}
+            {% bs4_thead 'Name,Term,Species,Level,Level Units,Comment' %}
             <tbody>
-                {% for object in object.causes.all %}
+                {% for object in causes %}
                 {% include "eco/fragments/cause_row.html" %}
                 {% empty %}
                 {% bs4_fullrow 'No causes available.' %}
@@ -55,9 +55,9 @@
         <h3 class="card-title">Effects</h3>
         <table class="table table-sm table-striped">
             {% bs4_colgroup '15,20,15,15,15,20' %}
-            {% bs4_thead 'Name,Term,Measure,Measure Detail,Species,Comment' %}
+            {% bs4_thead 'Name,Term,Species,Units,As Reported,Comment' %}
             <tbody>
-                {% for object in object.effects.all %}
+                {% for object in effects %}
                 {% include "eco/fragments/effect_row.html" %}
                 {% empty %}
                 {% bs4_fullrow 'No effects available.' %}

@@ -47,6 +47,13 @@ class NestedTermLookup(ModelLookup):
         path += f"{obj.name}"
         return path
 
+    def get_item_value(self, obj):
+        path = ""
+        for node in obj.get_ancestors():
+            path += f"{node.name} > "
+        path += f"{obj.name}"
+        return path
+
 
 registry.register(RelatedCauseLookup)
 registry.register(RelatedEffectLookup)
