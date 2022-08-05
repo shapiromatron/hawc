@@ -1,7 +1,6 @@
 import json
 import logging
 import uuid
-import pandas as pd
 from typing import Any, Dict, List, NamedTuple
 
 import pandas as pd
@@ -427,8 +426,91 @@ class Assessment(models.Model):
 
 
 class Values(models.Model):
+    # TODO: set defaults
+    # TODO: should any of these fields actually belong to the assessment model?
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
-    value = models.FloatField()
+    assessment_type = models.CharField(
+        max_length=64,
+        help_text="Name the product line relevant to this chemical evaluation.",
+        choices=constants.AssessmentType.choices,
+    )
+    chemical_name = models.CharField(max_length=128)
+    cas = models.CharField(max_length=128, verbose_name="CAS No.")
+    milestone = models.CharField(
+        max_length=64,
+        verbose_name="Milestone Fields/History Field",
+        choices=constants.Milestone.choices,
+        help_text="If relevant, insert high-level project management milestones for this assessment.",
+        blank=True,
+    )
+    pr_type = models.CharField(
+        max_length=64,
+        verbose_name="Peer Review Type",
+        choices=constants.PRType.choices,
+        help_text="Define the method by which this assessment was externally reviewed.",
+    )
+    organ_system = models.CharField(
+        max_length=128,
+        help_text="Identify the organ system of concern (e.g., Hepatic, Nervous, Reproductive).",
+    )
+    evaluation_type = models.CharField(
+        max_length=32,
+        choices=constants.EvaluationType.choices,
+        help_text="Select the type of chemical evaluation that was conducted.",
+    )
+    value_type = models.CharField(
+        max_length=32,
+        choices=constants.ValueType.choices,
+        help_text="Select the type of toxicity value that was derived.",
+    )
+    value = models.FloatField(null=True) # TODO: spreadsheet says this is not required??
+    value_unit = models.CharField(max_length=64, blank=True)
+    basis = models.TextField(
+        blank=True,
+        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022).",
+    )
+    pod_value = models.FloatField(null=True)
+    pod_unit = models.CharField(max_length=64, blank=True)
+    published = models.DateField(verbose_name="Date Published", blank=True)
+    uncertainty = models.FloatField(
+        null=True,
+        verbose_name="Composite Uncertainty Factor",
+    )
+    confidence = models.TextField(
+        blank=True,
+        choices=constants.Confidence.choices,
+        help_text="Select the overall study level confidence.",
+    )
+    species_studied = models.CharField(max_length=64, blank=True)
+    duration = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text="Describe the duration of the study selected to support the derivation of the toxicity value.",
+    )
+    study = models.ForeignKey(
+        apps.get_model("study", "Study"),
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="HAWC Study",
+        related_name="assessment_values",
+    )
+    tumor_type = models.CharField(
+        verbose_name="Tumor Type/Cancer",
+        max_length=64,
+        blank=True,
+        help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site).",
+    )
+    extrapolation_method = models.CharField(
+        max_length=512,
+        blank=True,
+        help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk).",
+    )
+    evidence = models.CharField(
+        verbose_name="Evidence Characterization",
+        blank=True,  # spreasheet says required = TRUE, but help text says "if applicable"
+        max_length=512,
+        help_text="If applicable, describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
+    )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -446,8 +528,7 @@ class Values(models.Model):
 
     @classmethod
     def get_df(cls) -> pd.DataFrame:
-        """Get a dataframe of all Assessment Values in HAWC.
-        """
+        """Get a dataframe of all Assessment Values in HAWC."""
         # TODO: possibly include more assessment metadata? use kwargs for included/excluded columns?
         mapping: dict[str, str] = {
             "id": "id",
