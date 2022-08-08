@@ -433,6 +433,7 @@ class Values(models.Model):
         max_length=64,
         help_text="Name the product line relevant to this chemical evaluation.",
         choices=constants.AssessmentType.choices,
+        default=constants.AssessmentType.OTHER,
     )
     chemical_name = models.CharField(max_length=128)
     cas = models.CharField(max_length=128, verbose_name="CAS No.")
@@ -448,6 +449,7 @@ class Values(models.Model):
         verbose_name="Peer Review Type",
         choices=constants.PRType.choices,
         help_text="Define the method by which this assessment was externally reviewed.",
+        default=constants.PRType.NONE,
     )
     organ_system = models.CharField(
         max_length=128,
@@ -457,11 +459,13 @@ class Values(models.Model):
         max_length=32,
         choices=constants.EvaluationType.choices,
         help_text="Select the type of chemical evaluation that was conducted.",
+        default=constants.EvaluationType.CANCER,
     )
     value_type = models.CharField(
         max_length=32,
         choices=constants.ValueType.choices,
         help_text="Select the type of toxicity value that was derived.",
+        default=constants.ValueType.NONE,
     )
     value = models.FloatField(null=True)  # TODO: spreadsheet says this is not required??
     value_unit = models.CharField(max_length=64, blank=True)
@@ -471,7 +475,7 @@ class Values(models.Model):
     )
     pod_value = models.FloatField(null=True)
     pod_unit = models.CharField(max_length=64, blank=True)
-    published = models.DateField(verbose_name="Date Published", blank=True)
+    published = models.DateField(verbose_name="Date Published", null=True, blank=True)
     uncertainty = models.FloatField(
         null=True,
         verbose_name="Composite Uncertainty Factor",
