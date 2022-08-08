@@ -55,6 +55,12 @@
               <span class="dropdown-header">Epidemiology meta-analysis editing</span>
               <a class="dropdown-item" href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a>
             {% endif %}
+
+            {% if object.eco %}
+              <div class="dropdown-divider"></div>
+              <span class="dropdown-header">Ecology editing</span>
+              <a class="dropdown-item" href="{% url 'eco:design_create' object.pk %}">Create new study design</a>
+            {% endif %}
           {% endif %}
       </div>
     </div>
@@ -122,6 +128,11 @@
     {% if study.epi_meta %}
       <h3>Available epidemiological meta-analyses</h3>
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
+    {% endif %}
+
+    {% if study.eco %}
+      <h3>Available ecology designs</h3>
+      {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
     {% endif %}
 
   {% endif %}

@@ -53,7 +53,11 @@ class Vocab(models.Model):
 
 class Design(models.Model):
     name = models.CharField(blank=True, max_length=128)
-    study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    study = models.ForeignKey(
+        Study,
+        on_delete=models.CASCADE,
+        related_name="eco_designs",
+    )
     design = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.TYPE},
@@ -116,7 +120,7 @@ class Design(models.Model):
         verbose_name_plural = "Ecological Designs"
 
     def __str__(self):
-        return f"{self.study} - ecological design"
+        return f"{self.study} - {self.name} - ecological design"
 
     def clone(self):
         self.id = None
@@ -218,7 +222,7 @@ class Cause(models.Model):
         return self.study.get_assessment()
 
     def __str__(self):
-        return f"{self.study} | {self.term.name}"
+        return f"{self.study} | {self.term.name} | {self.name}"
 
 
 class Effect(models.Model):
@@ -275,7 +279,7 @@ class Effect(models.Model):
         return self.study.get_assessment()
 
     def __str__(self):
-        return f"{self.study} | {self.term.name}"
+        return f"{self.study} | {self.term.name} | {self.name}"
 
 
 class Result(models.Model):
@@ -387,9 +391,9 @@ class Result(models.Model):
 
     def __str__(self):
         if self.measure_type:
-            return f"{self.cause.study} | {self.cause.term.value} |{self.effect.term.value} | {self.measure_type.value}"
+            return f"{self.cause.study} | {self.cause.term.name} |{self.effect.term.name} | {self.measure_type.value}"
         else:
-            return f"{self.cause.study} | {self.cause.term.value} | {self.effect.term.value}"
+            return f"{self.cause.study} | {self.cause.term.name} | {self.effect.term.name}"
 
     def clone(self):
         self.id = None

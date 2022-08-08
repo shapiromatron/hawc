@@ -11,11 +11,23 @@ class RelatedCauseLookup(RelatedDistinctStringLookup):
     distinct_field = "name"
     related_filter = "study__assessment_id"
 
+    def get_item_label(self, item):
+        return f"{item.term.name} | {item.name}"
+
+    def get_item_value(self, item):
+        return f"{item.term.name} | {item.name}"
+
 
 class RelatedEffectLookup(RelatedDistinctStringLookup):
     model = models.Effect
     distinct_field = "name"
     related_filter = "study__assessment_id"
+
+    def get_item_label(self, obj):
+        return f"{obj.term.name} | {obj.name}"
+
+    def get_item_value(self, obj):
+        return f"{obj.term.name} | {obj.name}"
 
 
 class CountryLookup(ModelLookup):
