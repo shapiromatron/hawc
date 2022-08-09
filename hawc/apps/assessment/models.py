@@ -467,7 +467,7 @@ class Values(models.Model):
         help_text="Select the type of toxicity value that was derived.",
         default=constants.ValueType.NONE,
     )
-    value = models.FloatField(null=True)  # TODO: spreadsheet says this is not required??
+    value = models.FloatField(null=True)  # TODO: Not required if "No Value" selected for value type
     value_unit = models.CharField(max_length=64, blank=True)
     basis = models.TextField(
         blank=True,
@@ -524,6 +524,9 @@ class Values(models.Model):
 
     class Meta:
         verbose_name_plural = "values"
+
+    def __str__(self):
+        return f"Values for {self.assessment}"
 
     def get_assessment(self):
         return self.assessment

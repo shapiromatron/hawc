@@ -150,7 +150,7 @@ class AssessmentValuesForm(forms.ModelForm):
             helper = BaseFormHelper(
                 self,
                 help_text=self.UPDATE_HELP_TEXT,
-                cancel_url=self.instance.assessment.get_absolute_url(),
+                cancel_url=self.instance.get_absolute_url(),
             )
 
         else:

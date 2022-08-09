@@ -28,12 +28,12 @@ class EpiVersion(models.IntegerChoices):
 
 
 class AssessmentType(models.TextChoices):
-    IRIS = "IRIS"
-    PPRTV = "PPRTV"
-    TSCA = "TSCA"
-    RE = "RE"
-    OW_HESD = "OW HESD"
-    OTHER = "Other"
+    IRIS = "IRIS", "IRIS"
+    PPRTV = "PPRTV", "PPRTV"
+    TSCA = "TSCA", "TSCA"
+    RE = "RE", "RE"
+    OW_HESD = "OW HESD", "OW HESD"
+    OTHER = "Other", "Other"
 
 
 class Milestone(models.TextChoices):
