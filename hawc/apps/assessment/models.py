@@ -475,7 +475,7 @@ class Values(models.Model):
     )
     pod_value = models.FloatField(null=True)
     pod_unit = models.CharField(max_length=64, blank=True)
-    published = models.DateField(verbose_name="Date Published", null=True, blank=True)
+    # published = models.DateField(verbose_name="Date Published", null=True, blank=True)
     uncertainty = models.FloatField(
         null=True,
         verbose_name="Composite Uncertainty Factor",
