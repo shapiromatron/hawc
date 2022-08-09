@@ -9,29 +9,39 @@ from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
-from ..assessment.lookups import DssToxIdLookup, EffectTagLookup, SpeciesLookup, StrainLookup
+from ..assessment.autocomplete import (
+    DSSToxAutocomplete,
+    EffectTagAutocomplete,
+    SpeciesAutocomplete,
+    StrainAutocomplete,
+)
+from ..assessment.lookups import EffectTagLookup
 from ..assessment.models import DoseUnits
 from ..common import selectable
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
-from ..study.lookups import AnimalStudyLookup
+from ..common.autocomplete import (
+    AutocompleteChoiceField,
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+)
+from ..common.forms import BaseFormHelper, CopyAsNewSelectorFormV2, form_actions_apply_filters
+from ..study.autocomplete import StudyAutocomplete
 from ..vocab.constants import VocabularyNamespace
-from . import constants, lookups, models
+from . import autocomplete, constants, lookups, models
 
 
 class ExperimentForm(ModelForm):
     class Meta:
         model = models.Experiment
         exclude = ("study",)
+        widgets = {
+            "dtxsid": AutocompleteSelectWidget(url=DSSToxAutocomplete.url()),
+        }
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
-
-        self.fields["dtxsid"].widget = selectable.AutoCompleteSelectWidget(
-            lookup_class=DssToxIdLookup
-        )
 
         self.fields["chemical"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.ExpChemicalLookup, allow_new=True
@@ -125,9 +135,10 @@ class ExperimentForm(ModelForm):
         return self.cleaned_data.get("purity_qualifier", "")
 
 
-class ExperimentSelectorForm(CopyAsNewSelectorForm):
+class ExperimentSelectorForm(CopyAsNewSelectorFormV2):
     label = "Experiment"
-    lookup_class = lookups.ExperimentByStudyLookup
+    parent_field = "study_id"
+    autocomplete_class = autocomplete.ExperimentAutocomplete
 
 
 class AnimalGroupForm(ModelForm):
@@ -226,9 +237,10 @@ class AnimalGroupForm(ModelForm):
         return cleaned_data
 
 
-class AnimalGroupSelectorForm(CopyAsNewSelectorForm):
+class AnimalGroupSelectorForm(CopyAsNewSelectorFormV2):
     label = "Animal group"
-    lookup_class = lookups.AnimalGroupByExperimentLookup
+    parent_field = "experiment_id"
+    autocomplete_class = autocomplete.AnimalGroupAutocomplete
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):
@@ -359,14 +371,6 @@ def dosegroup_formset_factory(groups, num_dose_groups):
 
 
 class EndpointForm(ModelForm):
-
-    effects = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=EffectTagLookup,
-        required=False,
-        help_text="Any additional descriptive-tags used to categorize the outcome",
-        label="Additional tags",
-    )
-
     class Meta:
         model = models.Endpoint
         fields = (
@@ -413,12 +417,18 @@ class EndpointForm(ModelForm):
             "organ_term": forms.HiddenInput,
             "effect_term": forms.HiddenInput,
             "effect_subtype_term": forms.HiddenInput,
+            "effects": AutocompleteSelectMultipleWidget(url=EffectTagAutocomplete.url()),
         }
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop("parent", None)
         assessment = kwargs.pop("assessment", None)
         super().__init__(*args, **kwargs)
+
+        self.fields["effects"].label = "Additional tags"
+        self.fields[
+            "effects"
+        ].help_text = "Any additional descriptive-tags used to categorize the outcome"
 
         self.fields["NOEL"].widget = forms.Select()
         self.fields["LOEL"].widget = forms.Select()
@@ -695,9 +705,10 @@ EndpointGroupFormSet = modelformset_factory(
 )
 
 
-class EndpointSelectorForm(CopyAsNewSelectorForm):
+class EndpointSelectorForm(CopyAsNewSelectorFormV2):
     label = "Endpoint"
-    lookup_class = lookups.EndpointByStudyLookup
+    parent_field = "animal_group__experiment__study_id"
+    autocomplete_class = autocomplete.EndpointAutocomplete
 
 
 class UploadFileForm(forms.Form):
@@ -723,9 +734,9 @@ class EndpointFilterForm(forms.Form):
         ("animal_group__experiment__chemical", "chemical"),
     ]
 
-    studies = selectable.AutoCompleteSelectMultipleField(
+    studies = AutocompleteChoiceField(
+        autocomplete_view=StudyAutocomplete,
         label="Study reference",
-        lookup_class=AnimalStudyLookup,
         help_text="ex: Smith et al. 2010",
         required=False,
     )
@@ -758,16 +769,16 @@ class EndpointFilterForm(forms.Form):
         required=False,
     )
 
-    species = selectable.AutoCompleteSelectField(
+    species = AutocompleteChoiceField(
+        autocomplete_view=SpeciesAutocomplete,
         label="Species",
-        lookup_class=SpeciesLookup,
         help_text="ex: Mouse",
         required=False,
     )
 
-    strain = selectable.AutoCompleteSelectField(
+    strain = AutocompleteChoiceField(
+        autocomplete_view=StrainAutocomplete,
         label="Strain",
-        lookup_class=StrainLookup,
         help_text="ex: B6C3F1",
         required=False,
     )
@@ -842,9 +853,19 @@ class EndpointFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         noel_names = assessment.get_noel_names()
 
+        self.fields["studies"].set_filters({"assessment_id": assessment.id, "bioassay": True})
+        self.fields["species"].set_filters(
+            {"animalgroup__experiment__study__assessment_id": assessment.id}
+        )
+        self.fields["strain"].set_filters(
+            {"animalgroup__experiment__study__assessment_id": assessment.id}
+        )
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(assessment.id)
         for field in self.fields:
             if field not in (
+                "studies",
+                "species",
+                "strain",
                 "sex",
                 "data_extracted",
                 "dose_units",

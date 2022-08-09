@@ -1,16 +1,118 @@
 from dal import autocomplete
+from django.forms import ModelChoiceField, ModelMultipleChoiceField
 from django.http import Http404, HttpResponseForbidden
 from django.utils.encoding import force_str
+from django.utils.module_loading import autodiscover_modules
 
 from .helper import reverse_with_query_lazy
 
 
+class AutocompleteFieldMixin:
+    def __init__(self, autocomplete_view, filters: dict = None, *args, **kwargs):
+        filters = filters or {}
+        kwargs["queryset"] = autocomplete_view.get_base_queryset(filters)
+        # determine the widget to use
+        if isinstance(self, ModelChoiceField):
+            Widget = AutocompleteSelectWidget
+        elif isinstance(self, ModelMultipleChoiceField):
+            Widget = AutocompleteSelectMultipleWidget
+        else:
+            raise NotImplementedError()
+        kwargs["widget"] = Widget(url=autocomplete_view.url(**filters))
+        self.autocomplete_view = autocomplete_view
+        return super().__init__(*args, **kwargs)
+
+    def set_filters(self, filters):
+        self.queryset = self.autocomplete_view.get_base_queryset(filters)
+        self.widget.url = self.autocomplete_view.url(**filters)
+
+
+class AutocompleteChoiceField(AutocompleteFieldMixin, ModelChoiceField):
+    pass
+
+
+class AutocompleteMultipleChoiceField(AutocompleteFieldMixin, ModelMultipleChoiceField):
+    pass
+
+
 class BaseAutocomplete(autocomplete.Select2QuerySetView):
+    filter_fields = []
+    order_by = ""
+    order_direction = ""
+
+    def get_field(self, obj):
+        return getattr(obj, self.field)
+
+    def get_field_result(self, obj):
+        return {
+            "id": self.get_field(obj),
+            "text": self.get_field(obj),
+            "selected_text": self.get_field(obj),
+        }
+
+    def get_result(self, obj):
+        return {
+            "id": self.get_result_value(obj),
+            "text": self.get_result_label(obj),
+            "selected_text": self.get_selected_result_label(obj),
+        }
+
+    def get_results(self, context):
+        return [
+            self.get_field_result(obj) if self.field else self.get_result(obj)
+            for obj in context["object_list"]
+        ]
+
+    def update_qs(self, qs):
+        return qs
+
+    @classmethod
+    def get_base_queryset(cls, filters: dict = None):
+        """
+        Gets the base queryset to perform searches on
+
+        Args:
+            filters (dict, optional): Field/value pairings to filter queryset on, as long as fields are in class property filter_fields
+
+        Returns:
+            QuerySet: Base queryset
+        """
+        filters = filters or {}
+        filters = {key: filters[key] for key in filters if key in cls.filter_fields}
+        qs = cls.model.objects.all()
+        return qs.filter(**filters)
+
+    def get_queryset(self):
+        # get base queryset
+        qs = self.get_base_queryset(self.request.GET)
+
+        # check forwarded values for search_fields
+        self.search_fields = self.forwarded.get("search_fields") or self.search_fields
+
+        # perform search
+        qs = self.get_search_results(qs, self.q)
+
+        if self.field:
+            # order by field and get distinct
+            qs = qs.order_by(self.field).distinct(self.field)
+        else:
+            # check forwarded values for ordering
+            self.order_by = self.forwarded.get("order_by") or self.order_by
+            self.order_direction = self.forwarded.get("order_direction") or self.order_direction
+            if self.order_by:
+                qs = qs.order_by(self.order_direction + self.order_by)
+
+        return qs
+
     def dispatch(self, request, *args, **kwargs):
         if not request.is_ajax():
-            return HttpResponseForbidden("AJAX required")
+            pass
+            # return HttpResponseForbidden("AJAX required")
         if not request.user.is_authenticated:
             return HttpResponseForbidden("Authentication required")
+        self.field = request.GET.get("field", "")
+        if self.field:
+            self.search_fields = [self.field]
         return super().dispatch(request, *args, **kwargs)
 
     @classmethod
@@ -25,11 +127,27 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         return reverse_with_query_lazy("autocomplete", args=[cls.registry_key()], query=kwargs)
 
 
+class SearchLabelMixin:
+    """
+    Constructs autocomplete labels by using values from the search_fields
+    """
+
+    def get_result_label(self, result):
+        labels = []
+        for path in self.search_fields:
+            item = result
+            for attribute in path.split("__"):
+                item = getattr(item, attribute)
+            labels.append(str(item))
+        return " | ".join(labels)
+
+
 class BootstrapMixin:
     def __init__(self, *args, **kwargs):
         # add bootstrap theme to attrs
         attrs = kwargs.get("attrs", {})
         attrs["data-theme"] = "bootstrap"
+        attrs["data-width"] = "100%"
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)
 
@@ -40,6 +158,20 @@ class AutocompleteSelectWidget(BootstrapMixin, autocomplete.ModelSelect2):
 
 class AutocompleteSelectMultipleWidget(BootstrapMixin, autocomplete.ModelSelect2Multiple):
     pass
+
+
+# TODO remove or tailor it better for char field choices
+class FoobarWidget(BootstrapMixin, autocomplete.Select2):
+    def __init__(self, *args, **kwargs):
+        # add tags to attrs
+        attrs = kwargs.get("attrs", {})
+        attrs["data-tags"] = 1
+        attrs["data-token-separators"] = "null"
+        kwargs["attrs"] = attrs
+        super().__init__(*args, **kwargs)
+
+    def filter_choices_to_render(self, selected_choices):
+        self.choices = [[choice, choice] for choice in selected_choices]
 
 
 class AutocompleteRegistry:
@@ -84,3 +216,8 @@ def get_autocomplete(request, autocomplete_name):
         raise Http404(f"Autocomplete {autocomplete_name} not found")
 
     return autocomplete_cls.as_view()(request)
+
+
+def autodiscover():
+    # Attempt to import the autocomplete modules.
+    autodiscover_modules("autocomplete", register_to=registry)

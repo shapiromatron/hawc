@@ -7,7 +7,7 @@ from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
 from django.template.loader import render_to_string
 
-from . import selectable, validators
+from . import autocomplete, selectable, validators
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
@@ -137,6 +137,30 @@ class CopyAsNewSelectorForm(forms.Form):
             widget=selectable.AutoComboboxSelectWidget,
         )
         fld.widget.update_query_parameters({"related": parent_id})
+        fld.widget.attrs["class"] = "col-md-10"
+        self.fields["selector"] = fld
+
+
+class CopyAsNewSelectorFormV2(forms.Form):
+    label = None
+    parent_field = None
+    autocomplete_class = None
+
+    def __init__(self, *args, **kwargs):
+        parent_id = kwargs.pop("parent_id")
+        super().__init__(*args, **kwargs)
+        self.setupSelector(parent_id)
+
+    @property
+    def helper(self):
+        return BaseFormHelper(self)
+
+    def setupSelector(self, parent_id):
+        filters = {self.parent_field: parent_id}
+        fld = autocomplete.AutocompleteChoiceField(
+            autocomplete_view=self.autocomplete_class, filters=filters, label=self.label
+        )
+        fld.widget.forward = ["search_fields", "order_by", "order_direction"]
         fld.widget.attrs["class"] = "col-md-10"
         self.fields["selector"] = fld
 
