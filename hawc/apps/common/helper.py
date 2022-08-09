@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.http import QueryDict
@@ -25,7 +26,9 @@ from docx.document import Document
 from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter
 from pydantic import BaseModel as PydanticModel
+from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
+from rest_framework.serializers import ValidationError as DRFValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -435,3 +438,48 @@ def reverse_with_query(*args, query: dict, **kwargs):
 
 
 reverse_with_query_lazy = lazy(reverse_with_query, str)
+
+
+class PydanticToDjangoError:
+    """
+    Context manager to catch pydantic errors and return an appropriate Django/DRF error.
+
+    Has parameters that allow it to be used in several different situations, including:
+        For Django: form validation, form field-level validation, model clean methods
+        For DRF: viewset validation, serializer validation
+
+    Args:
+        include_field (bool): Whether to include a field for the error dict. False can be used for field in form validation, where an error dict is not expected.
+        field (str): Field name to associate with error. Defaults to appropriate Django/DRF root field.
+        msg (str): Message to use when constructing error. Defaults to a stringified version of the pydantic error.
+        drf (bool): Whether to return a DRF error or Django error.
+
+    Raises:
+        Django/DRF ValidationError if pydantic ValidationError is raised within the context.
+    """
+
+    def __init__(
+        self,
+        include_field: bool = True,
+        field: Optional[str] = None,
+        msg: Optional[str] = None,
+        drf: bool = False,
+    ):
+        self.include_field = include_field
+        self.field = field if field is not None else "non_field_errors" if drf else "__all__"
+        self.msg = msg
+        self.drf = drf
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if isinstance(exc_value, PydanticValidationError):
+            if self.msg is None:
+                # create error msg from pydantic error
+                self.msg = [
+                    f"{'->'.join([str(_) for _ in e['loc']])}: {e['msg']}"
+                    for e in exc_value.errors()
+                ]
+            ValidationError = DRFValidationError if self.drf else DjangoValidationError
+            raise ValidationError({self.field: self.msg} if self.include_field else self.msg)
