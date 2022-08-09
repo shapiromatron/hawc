@@ -142,8 +142,9 @@ class AssessmentValuesForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["comments"].widget.attrs["class"] = "html5text"
-        self.fields["comments"].widget.attrs["rows"] = 3
+        for fld in ["comments", "basis"]:
+            self.fields[fld].widget.attrs["class"] = "html5text"
+            self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:
             helper = BaseFormHelper(
@@ -159,6 +160,12 @@ class AssessmentValuesForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
+        helper.add_row("assessment_type", 3, "col-md-4")
+        helper.add_row("milestone", 4, "col-md-3")
+        helper.add_row("value_type", 3, "col-md-4")
+        helper.add_row("basis", 3, "col-md-4")
+        helper.add_row("uncertainty", 6, "col-md-2")
+        helper.add_row("evidence", 2, "col-md-6")
 
         return helper
 
