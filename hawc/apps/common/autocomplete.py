@@ -148,6 +148,7 @@ class BootstrapMixin:
         attrs = kwargs.get("attrs", {})
         attrs["data-theme"] = "bootstrap"
         attrs["data-width"] = "100%"
+        attrs["data-allow-clear"] = "false"
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)
 

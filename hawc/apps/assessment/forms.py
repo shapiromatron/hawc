@@ -13,13 +13,14 @@ from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.autocomplete import AutocompleteSelectMultipleWidget
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
-from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
+from ..common.selectable import AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
-from ..myuser.lookups import HAWCUserLookup
+from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
-from . import lookups, models
+from . import autocomplete, lookups, models
 
 
 class AssessmentForm(forms.ModelForm):
@@ -44,6 +45,10 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
+            "dtxsids": AutocompleteSelectMultipleWidget(url=autocomplete.DSSToxAutocomplete.url()),
+            "project_manager": AutocompleteSelectMultipleWidget(url=UserAutocomplete.url()),
+            "team_members": AutocompleteSelectMultipleWidget(url=UserAutocomplete.url()),
+            "reviewers": AutocompleteSelectMultipleWidget(url=UserAutocomplete.url()),
         }
 
     def __init__(self, *args, **kwargs):
@@ -52,19 +57,6 @@ class AssessmentForm(forms.ModelForm):
         if self.instance.id is None:
             self.instance.creator = self.user
             self.fields["project_manager"].initial = [self.user]
-
-        self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=lookups.DssToxIdLookup
-        )
-        self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["team_members"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
