@@ -56,10 +56,11 @@ dev: ## Start development environment
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-docs: ## Generate Sphinx HTML documentation, including API docs
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+docs: ## Build documentation
+	cd docs; mkdocs build --strict
+
+docs-serve: ## Generate documentation
+	cd docs; mkdocs serve -a localhost:8010
 
 loc: ## Generate lines of code report
 	@cloc \

@@ -21,8 +21,7 @@ playwright==1.22.0
 pytest-playwright==0.3.0
 
 # docs
-Sphinx==4.4.0
-sphinx-rtd-theme==1.0.0
+mkdocs-material==8.3.9
 
 # distribution tools
 wheel==0.37.1
