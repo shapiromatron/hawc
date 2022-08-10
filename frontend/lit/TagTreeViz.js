@@ -38,6 +38,9 @@ class VizState {
     @observable options = null;
 
     constructor(options) {
+        // wip: http://127.0.0.1:8000/lit/assessment/100500299/references/visualization/
+        options.showCounts = false; // todo bubble up
+        options.showLegend = false; // todo bubble up
         this.options = options;
     }
 
@@ -105,7 +108,8 @@ class TagTreeViz extends D3Plot {
     }
 
     draw_visualization() {
-        var i = 0,
+        var options = this.stateStore.options,
+            i = 0,
             vis = this.vis,
             diagonal = d3
                 .linkHorizontal()
@@ -211,14 +215,16 @@ class TagTreeViz extends D3Plot {
                         HAWCUtils.wrapText(this, 170);
                     });
 
-                nodeEnter
-                    .append("svg:text")
-                    .attr("x", 0)
-                    .attr("dy", "3.5px")
-                    .attr("class", "node_value")
-                    .attr("text-anchor", "middle")
-                    .text(d => d.data.numReferencesDeep)
-                    .style("fill-opacity", 1e-6);
+                if (options.showCounts) {
+                    nodeEnter
+                        .append("svg:text")
+                        .attr("x", 0)
+                        .attr("dy", "3.5px")
+                        .attr("class", "node_value")
+                        .attr("text-anchor", "middle")
+                        .text(d => d.data.numReferencesDeep)
+                        .style("fill-opacity", 1e-6);
+                }
 
                 // Transition nodes to their new position.
                 var nodeUpdate = nodeEnter.merge(node);
@@ -289,6 +295,9 @@ class TagTreeViz extends D3Plot {
             };
 
         this.add_title();
+        if (options.showLegend) {
+            this.add_legend();
+        }
         treeNode.x0 = this.h / 2;
         treeNode.y0 = 0;
 
@@ -296,10 +305,25 @@ class TagTreeViz extends D3Plot {
             .scalePow()
             .exponent(0.5)
             .domain([0, treeNode.data.numReferencesDeep])
-            .range([this.minimum_radius, this.maximum_radius]);
+            .range(
+                options.showCounts
+                    ? [this.minimum_radius, this.maximum_radius]
+                    : [
+                          d3.mean([this.maximum_radius, this.minimum_radius]),
+                          d3.mean([this.maximum_radius, this.minimum_radius]),
+                      ]
+            );
 
         treeNode.children.forEach(toggleAll);
         update(null, treeNode);
+    }
+
+    add_legend() {
+        this.vis
+            .append("svg:text")
+            .attr("x", 5)
+            .attr("y", 5)
+            .html("I'm a lumberjack");
     }
 }
 
