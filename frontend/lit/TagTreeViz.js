@@ -41,6 +41,7 @@ class VizState {
         // wip: http://127.0.0.1:8000/lit/assessment/100500299/references/visualization/
         options.showCounts = false; // todo bubble up
         options.showLegend = true; // todo bubble up
+        options.nodeOffsets = {}; // todo bubble up
         options.legendPosition = {x: 25, y: 25}; // todo bubble up
         this.options = options;
     }
@@ -200,7 +201,13 @@ class TagTreeViz extends D3Plot {
                             toggle(d);
                             update(event, d);
                         }
-                    });
+                    })
+                    .call(
+                        HAWCUtils.updateDragLocationTransform(function(x, y) {
+                            var p = d3.select(this);
+                            console.log(this, p.data()[0].data.id, x, y);
+                        })
+                    );
 
                 nodeEnter
                     .append("svg:circle")

@@ -140,7 +140,7 @@ class HAWCUtils {
 
     static updateDragLocationXY(setDragCB) {
         // a new drag location, requires binding to d3.drag,
-        // and requires a _.partial injection of th settings module.
+        // and requires a _.partial injection of the settings module.
         return d3.drag().on("drag", function(event) {
             var p = d3.select(this),
                 x = parseInt(parseInt(p.attr("x"), 10) + event.dx, 10),
