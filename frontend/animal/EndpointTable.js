@@ -43,9 +43,9 @@ class EndpointTable {
     hasData(val) {
         return _.chain(this.endpoint.data.groups)
             .map(function(d) {
-                return d[val]
+                return d[val];
             })
-            .some((x) => x != null)
+            .some(x => x != null)
             .value();
     }
 
@@ -92,7 +92,7 @@ class EndpointTable {
             default:
                 throw "Unknown data type.";
         }
-        this.hasTreatment = this.hasData("treatment_effect")
+        this.hasTreatment = this.hasData("treatment_effect");
         if (this.hasTreatment) tr.append("<th>Treatment Related Effect</th>");
 
         this.number_columns = tr.children().length;
