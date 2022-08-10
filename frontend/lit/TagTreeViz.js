@@ -40,12 +40,16 @@ class VizState {
     constructor(options) {
         // wip: http://127.0.0.1:8000/lit/assessment/100500299/references/visualization/
         options.showCounts = false; // todo bubble up
-        options.showLegend = false; // todo bubble up
+        options.showLegend = true; // todo bubble up
+        options.legendPosition = {x: 25, y: 25}; // todo bubble up
         this.options = options;
     }
 
     @action.bound changeOption(key, value) {
         this.options[key] = value;
+    }
+    @action.bound updateLegendPosition(x, y) {
+        this.options.legendPosition = {x, y};
     }
 }
 
@@ -319,11 +323,53 @@ class TagTreeViz extends D3Plot {
     }
 
     add_legend() {
-        this.vis
-            .append("svg:text")
-            .attr("x", 5)
-            .attr("y", 5)
-            .html("I'm a lumberjack");
+        // create a new g.legend_group object on the main svg graphic
+        const store = this.stateStore,
+            legendPosition = store.options.legendPosition,
+            buff = 5,
+            data = [
+                {fill: "lightsteelblue", text: "Has additional sub-tagging"},
+                {fill: "white", text: "No additional sub-tagging"},
+            ];
+
+        const g = d3
+            .select(this.svg)
+            .append("g")
+            .attr("transform", `translate(${legendPosition.x}, ${legendPosition.y})`)
+            .attr("cursor", "pointer")
+            .call(HAWCUtils.updateDragLocationTransform(store.updateLegendPosition));
+
+        // Add color rectangles
+        g.append("g")
+            .attr("class", "tagnode")
+            .selectAll("svg.circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", 10)
+            .attr("cy", (d, i) => 10 + i * 25)
+            .attr("r", 10)
+            .style("fill", d => d.fill);
+
+        // Add text label
+        g.append("g")
+            .selectAll("svg.text.labels")
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("x", 25)
+            .attr("y", (d, i) => 10 + i * 25)
+            .attr("dy", "3.5px")
+            .text(d => d.text);
+
+        // // add bounding-rectangle around legend
+        const dim = g.node().getBBox();
+        g.insert("svg:rect", ":first-child")
+            .attr("class", "legend")
+            .attr("x", -buff)
+            .attr("y", -buff)
+            .attr("height", dim.height + 2 * buff)
+            .attr("width", dim.width + 2 * buff);
     }
 }
 
