@@ -152,8 +152,8 @@ class LitterEffect(models.TextChoices):
 
 class TreatmentEffect(models.IntegerChoices):
     NR = 0, "not reported"
-    YI = 1, "yes, increase"
-    YD = 2, "yes, decrease"
+    YI = 1, "yes ↑"
+    YD = 2, "yes ↓"
     Y = 3, "yes"
     N = 4, "no"
 
