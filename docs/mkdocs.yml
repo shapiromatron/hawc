@@ -1,12 +1,18 @@
 site_name: HAWC Documentation
+repo_url: https://github.com/shapiromatron/hawc
+repo_name: shapiromatron/hawc
+edit_uri: ""
 theme:
   name: material
   favicon: static/img/favicon-128.png
   logo: static/img/favicon-128.png
+  icon:
+    repo: fontawesome/brands/github
   palette:
     primary: blue
     accent: cyan
   features:
+    - navigation.instant
     - navigation.tracking
 nav:
   - index.md
