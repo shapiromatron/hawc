@@ -229,6 +229,7 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret["hasVariance"] = instance.hasVariance
         ret["isReported"] = instance.isReported
+        ret["treatment_effect"] = instance.get_treatment_effect_display()
         return ret
 
     def validate(self, data):

@@ -40,6 +40,15 @@ class EndpointTable {
             .value();
     }
 
+    hasData(val) {
+        return _.chain(this.endpoint.data.groups)
+            .map(function(d) {
+                return d[val]
+            })
+            .some((x) => x != null)
+            .value();
+    }
+
     build_header() {
         var self = this,
             d = this.endpoint.data,
@@ -83,6 +92,8 @@ class EndpointTable {
             default:
                 throw "Unknown data type.";
         }
+        this.hasTreatment = this.hasData("treatment_effect")
+        if (this.hasTreatment) tr.append("<th>Treatment Related Effect</th>");
 
         this.number_columns = tr.children().length;
         this.thead = $("<thead>").append(tr);
@@ -113,6 +124,7 @@ class EndpointTable {
                     `<td>${self.endpoint._dichotomous_percent_change_incidence(v)}%</td>`
                 );
             }
+            if (self.hasTreatment) tr.append(`<td>${v.treatment_effect || " --- "}</td>`);
             self.tbody.append(tr);
         });
     }

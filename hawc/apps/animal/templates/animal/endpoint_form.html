@@ -56,6 +56,7 @@
                 <th class="p_only">Low CI (%)</th>
                 <th class="p_only">High CI (%)</th>
                 <th>Significance<br>Level<br>(if significant)</th>
+                <th>Treatment Related Effect</th>
               </tr>
             </thead>
             <tbody>
@@ -77,6 +78,7 @@
                   <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-danger"}}</th>
                   <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-danger"}}</th>
                   <td>{{form.significance_level}}</td>
+                  <td>{{form.treatment_effect}}</td>
                 </tr>
               {% endfor %}
             </tbody>

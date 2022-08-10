@@ -1505,6 +1505,14 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         default=None,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Statistical significance level",
+        help_text="Enter statistical significance level for the effect. Typically this is as presented in the study. Indicate in the results comment field if it is based on statistical analysis conducted by the assessment team",
+    )
+    treatment_effect = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        default=None,
+        choices=constants.TreatmentEffect.choices,
+        help_text="Expert judgement based report of treatment related effects (add direction if known). Use when statistical analysis not available. In results comments, indicate whether it was author judgment or assessment team judgement",
     )
 
     COPY_NAME = "groups"
