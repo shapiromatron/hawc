@@ -20,6 +20,7 @@ from ..assessment.models import DoseUnits
 from ..common import selectable
 from ..common.autocomplete import (
     AutocompleteChoiceField,
+    AutocompleteMultipleChoiceField,
     AutocompleteSelectMultipleWidget,
     AutocompleteSelectWidget,
 )
@@ -734,7 +735,7 @@ class EndpointFilterForm(forms.Form):
         ("animal_group__experiment__chemical", "chemical"),
     ]
 
-    studies = AutocompleteChoiceField(
+    studies = AutocompleteMultipleChoiceField(
         autocomplete_view=StudyAutocomplete,
         label="Study reference",
         help_text="ex: Smith et al. 2010",

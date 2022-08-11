@@ -19,7 +19,7 @@ class AnimalGroupAutocomplete(BaseAutocomplete):
 @register
 class EndpointAutocomplete(SearchLabelMixin, BaseAutocomplete):
     model = models.Endpoint
-    filter_fields = ["study_id"]
+    filter_fields = ["animal_group__experiment__study_id"]
 
     @classmethod
     def get_base_queryset(cls, filters: dict = None):

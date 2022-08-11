@@ -12,10 +12,10 @@ class AutocompleteFieldMixin:
         filters = filters or {}
         kwargs["queryset"] = autocomplete_view.get_base_queryset(filters)
         # determine the widget to use
-        if isinstance(self, ModelChoiceField):
-            Widget = AutocompleteSelectWidget
-        elif isinstance(self, ModelMultipleChoiceField):
+        if isinstance(self, ModelMultipleChoiceField):
             Widget = AutocompleteSelectMultipleWidget
+        elif isinstance(self, ModelChoiceField):
+            Widget = AutocompleteSelectWidget
         else:
             raise NotImplementedError()
         kwargs["widget"] = Widget(url=autocomplete_view.url(**filters))
@@ -148,7 +148,6 @@ class BootstrapMixin:
         attrs = kwargs.get("attrs", {})
         attrs["data-theme"] = "bootstrap"
         attrs["data-width"] = "100%"
-        attrs["data-allow-clear"] = "false"
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)
 
@@ -158,7 +157,11 @@ class AutocompleteSelectWidget(BootstrapMixin, autocomplete.ModelSelect2):
 
 
 class AutocompleteSelectMultipleWidget(BootstrapMixin, autocomplete.ModelSelect2Multiple):
-    pass
+    def __init__(self, *args, **kwargs):
+        attrs = kwargs.get("attrs", {})
+        attrs["data-allow-clear"] = "false"
+        kwargs["attrs"] = attrs
+        super().__init__(*args, **kwargs)
 
 
 # TODO remove or tailor it better for char field choices
