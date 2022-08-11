@@ -2,6 +2,10 @@
     "help_text": "<p>Study evaluations are performed on an endpoint/outcome-specific basis. For each evaluation domain, core and prompting questions are provided to guide the reviewer in assessing different aspects of study design and conduct related to reporting, risk of bias and study sensitivity. For some domains (see below), additional outcome- or chemical-specific refinements to the criteria used to answer the questions should be developed <em>a priori</em> by reviewers. Each domain receives a judgment of <em>Good</em>, <em>Adequate</em>, <em>Deficient</em>, <em>Not Reported</em> or <em>Critically Deficient</em> accompanied by the rationale and primary study-specific information supporting the judgment.&nbsp;Once all domains are evaluated, a confidence rating of <em>High</em>, <em>Medium</em>, or <em>Low</em> confidence or <em>Uninformative</em> is assigned for each endpoint/outcome from the study.&nbsp;The overall confidence rating should, to the extent possible, reflect interpretations of the potential influence on the results (including the direction and/or magnitude of influence) across all domains.&nbsp;The rationale supporting the overall confidence rating should be documented clearly and consistently, including a brief description of any important strengths and/or limitations that were identified and their potential impact on the overall confidence.</p><p>Domain judgments and overall ratings for all individual endpoints/outcomes can be captured by a single (default) response, or you can create override responses assigned to individual endpoints, outcomes, or results; provide a descriptive label to describe which components the score refers to. Each response must have a single default score; when selecting the default representative rating for the domains and overall rating (i.e., the drop-down selection with the associated color code), it is typically most appropriate to select the judgment that best represents the study overall.</p><ul><li>Follow <a href='https://hawcprd.epa.gov/assessment/100000039/' target='_blank'><strong>this link</strong></a> to see attachments that contain example answers to the animal study evaluation domains.</li><li>Follow <a href='https://hawcprd.epa.gov/assessment/100000039/' target='_blank'><strong>this link</strong></a> to see attachments that contain example prompting and follow-up questions for epidemiological studies.</li></ul><p><em>It may be helpful to have these documents open when conducting reviews.</em></p>",
     "domains": [
         {
+        "name": "Allocation",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 1,
         "metrics": [
             {
                 "name": "Allocation",
@@ -16,12 +20,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Allocation",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 1,
     },
     {
+        "name": "Confounding (animal)",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 2,
         "metrics": [
             {
                 "name": "Confounding",
@@ -36,12 +40,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Confounding (animal)",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 2,
     },
     {
+        "name": "Observational bias/blinding",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 3,
         "metrics": [
             {
                 "name": "Observational bias/blinding",
@@ -56,12 +60,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Observational bias/blinding",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 3,
     },
     {
+        "name": "Attrition",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 4,
         "metrics": [
             {
                 "name": "Attrition",
@@ -76,12 +80,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Attrition",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 4,
     },
     {
+        "name": "Chemical administration and characterization",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 5,
         "metrics": [
             {
                 "name": "Chemical administration and characterization",
@@ -96,12 +100,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Chemical administration and characterization",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 5,
     },
     {
+        "name": "Endpoint measurement",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 6,
         "metrics": [
             {
                 "name": "Endpoint measurement",
@@ -116,12 +120,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Endpoint measurement",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 6,
     },
     {
+        "name": "Results presentation",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 7,
         "metrics": [
             {
                 "name": "Results presentation",
@@ -136,12 +140,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Results presentation",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 7,
     },
     {
+        "name": "Selective reporting (animal)",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 8,
         "metrics": [
             {
                 "name": "Selective reporting",
@@ -156,12 +160,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Selective reporting (animal)",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 8,
     },
     {
+        "name": "Sensitivity (animal)",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 9,
         "metrics": [
             {
                 "name": "Sensitivity",
@@ -176,12 +180,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Sensitivity (animal)",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 9,
     },
     {
+        "name": "Overall confidence (animal)",
+        "description": "",
+        "is_overall_confidence": true,
+        "sort_order": 10,
         "metrics": [
             {
                 "name": "Overall confidence",
@@ -196,12 +200,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Overall confidence (animal)",
-        "description": "",
-        "is_overall_confidence": true,
-        "sort_order": 10,
     },
     {
+        "name": "Participant selection",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 11,
         "metrics": [
             {
                 "name": "Participant selection",
@@ -216,12 +220,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Participant selection",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 11,
     },
     {
+        "name": "Exposure measurement",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 12,
         "metrics": [
             {
                 "name": "Exposure measurement",
@@ -236,12 +240,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Exposure measurement",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 12,
     },
     {
+        "name": "Outcome ascertainment",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 13,
         "metrics": [
             {
                 "name": "Outcome ascertainment",
@@ -256,12 +260,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Outcome ascertainment",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 13,
     },
     {
+        "name": "Confounding (epi)",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 14,
         "metrics": [
             {
                 "name": "Confounding",
@@ -276,12 +280,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Confounding (epi)",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 14,
     },
     {
+        "name": "Analysis",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 15,
         "metrics": [
             {
                 "name": "Analysis",
@@ -296,12 +300,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Analysis",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 15,
     },
     {
+        "name": "Sensitivity (epi)",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 16,
         "metrics": [
             {
                 "name": "Sensitivity",
@@ -316,12 +320,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Sensitivity (epi)",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 16,
     },
     {
+        "name": "Selective reporting (epi)",
+        "description": "",
+        "is_overall_confidence": false,
+        "sort_order": 17,
         "metrics": [
             {
                 "name": "Selective reporting",
@@ -336,12 +340,12 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Selective reporting (epi)",
-        "description": "",
-        "is_overall_confidence": false,
-        "sort_order": 17,
     },
     {
+        "name": "Overall confidence (epi)",
+        "description": "",
+        "is_overall_confidence": true,
+        "sort_order": 18,
         "metrics": [
             {
                 "name": "Overall confidence",
@@ -356,10 +360,6 @@
                 "sort_order": 1,
             }
         ],
-        "name": "Overall confidence (epi)",
-        "description": "",
-        "is_overall_confidence": true,
-        "sort_order": 18,
     }
     ]
 }
