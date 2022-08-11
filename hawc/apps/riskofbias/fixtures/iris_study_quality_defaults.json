@@ -5,7 +5,7 @@
         "name": "Allocation",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 1,
+
         "metrics": [
             {
                 "name": "Allocation",
@@ -16,16 +16,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Confounding (animal)",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 2,
+
         "metrics": [
             {
                 "name": "Confounding",
@@ -36,16 +36,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Observational bias/blinding",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 3,
+
         "metrics": [
             {
                 "name": "Observational bias/blinding",
@@ -56,16 +56,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Attrition",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 4,
+
         "metrics": [
             {
                 "name": "Attrition",
@@ -76,16 +76,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Chemical administration and characterization",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 5,
+
         "metrics": [
             {
                 "name": "Chemical administration and characterization",
@@ -96,16 +96,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Endpoint measurement",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 6,
+
         "metrics": [
             {
                 "name": "Endpoint measurement",
@@ -116,16 +116,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Results presentation",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 7,
+
         "metrics": [
             {
                 "name": "Results presentation",
@@ -136,16 +136,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Selective reporting (animal)",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 8,
+
         "metrics": [
             {
                 "name": "Selective reporting",
@@ -156,16 +156,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Sensitivity (animal)",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 9,
+
         "metrics": [
             {
                 "name": "Sensitivity",
@@ -176,16 +176,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Overall confidence (animal)",
         "description": "",
         "is_overall_confidence": true,
-        "sort_order": 10,
+
         "metrics": [
             {
                 "name": "Overall confidence",
@@ -196,16 +196,16 @@
                 "required_epi": false,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Participant selection",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 11,
+
         "metrics": [
             {
                 "name": "Participant selection",
@@ -216,16 +216,16 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": true,
-                "sort_order": 1,
+                "use_short_name": true
+
             }
-        ],
+        ]
     },
     {
         "name": "Exposure measurement",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 12,
+
         "metrics": [
             {
                 "name": "Exposure measurement",
@@ -236,16 +236,16 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": true,
-                "sort_order": 1,
+                "use_short_name": true
+
             }
-        ],
+        ]
     },
     {
         "name": "Outcome ascertainment",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 13,
+
         "metrics": [
             {
                 "name": "Outcome ascertainment",
@@ -256,16 +256,16 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": true,
-                "sort_order": 1,
+                "use_short_name": true
+
             }
-        ],
+        ]
     },
     {
         "name": "Confounding (epi)",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 14,
+
         "metrics": [
             {
                 "name": "Confounding",
@@ -276,16 +276,16 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Analysis",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 15,
+
         "metrics": [
             {
                 "name": "Analysis",
@@ -296,16 +296,16 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Sensitivity (epi)",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 16,
+
         "metrics": [
             {
                 "name": "Sensitivity",
@@ -316,16 +316,16 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Selective reporting (epi)",
         "description": "",
         "is_overall_confidence": false,
-        "sort_order": 17,
+
         "metrics": [
             {
                 "name": "Selective reporting",
@@ -336,16 +336,16 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     },
     {
         "name": "Overall confidence (epi)",
         "description": "",
         "is_overall_confidence": true,
-        "sort_order": 18,
+
         "metrics": [
             {
                 "name": "Overall confidence",
@@ -356,10 +356,10 @@
                 "required_epi": true,
                 "required_invitro": false,
                 "hide_description": false,
-                "use_short_name": false,
-                "sort_order": 1,
+                "use_short_name": false
+
             }
-        ],
+        ]
     }
     ]
 }
