@@ -425,10 +425,8 @@ class Assessment(models.Model):
         Communication.set_message(self, text)
 
 
-class Values(models.Model):
-    # TODO: set defaults
-    # TODO: should any of these fields actually belong to the assessment model?
-    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
+class AssessmentDetails(models.Model):
+    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="details")
     assessment_type = models.CharField(
         max_length=64,
         help_text="Name the product line relevant to this chemical evaluation.",
@@ -451,6 +449,26 @@ class Values(models.Model):
         help_text="Define the method by which this assessment was externally reviewed.",
         default=constants.PRType.NONE,
     )
+    epa_report = models.IntegerField(
+        verbose_name="EPA Report Number",
+        null=True,
+    )
+    rapid_stics = models.IntegerField(
+        verbose_name="RAPID/STICS Number",
+        null=True,
+    )
+    file_link = models.URLField(
+        verbose_name="Link to File Assessments",
+        blank=True,
+    )
+    hero_link = models.URLField(
+        verbose_name="Link to HERO Project Page",
+        blank=True,
+    )
+
+
+class Values(models.Model):
+    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
     organ_system = models.CharField(
         max_length=128,
         help_text="Identify the organ system of concern (e.g., Hepatic, Nervous, Reproductive).",
