@@ -6,10 +6,11 @@ from django.forms.models import modelformset_factory
 from django.urls import reverse
 
 from ..common import selectable
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
-from ..epi.lookups import AdjustmentFactorLookup, CriteriaLookup
-from ..study.lookups import EpimetaStudyLookup
-from . import lookups, models
+from ..common.autocomplete import AutocompleteMultipleChoiceField
+from ..common.forms import BaseFormHelper, CopyAsNewSelectorFormV2, form_actions_apply_filters
+from ..epi.autocomplete import AdjustmentFactorAutocomplete, CriteriaAutocomplete
+from ..study.autocomplete import StudyAutocomplete
+from . import autocomplete, lookups, models
 
 
 class MetaProtocolForm(forms.ModelForm):
@@ -26,12 +27,12 @@ class MetaProtocolForm(forms.ModelForm):
 
     UPDATE_HELP_TEXT = "Update an existing meta-protocol"
 
-    inclusion_criteria = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=CriteriaLookup, required=False
+    inclusion_criteria = AutocompleteMultipleChoiceField(
+        autocomplete_class=CriteriaAutocomplete, required=False
     )
 
-    exclusion_criteria = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=CriteriaLookup, required=False
+    exclusion_criteria = AutocompleteMultipleChoiceField(
+        autocomplete_class=CriteriaAutocomplete, required=False
     )
 
     CRITERION_FIELDS = [
@@ -48,11 +49,11 @@ class MetaProtocolForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
-        self.fields["inclusion_criteria"].widget.update_query_parameters(
-            {"related": self.instance.study.assessment_id}
+        self.fields["inclusion_criteria"].set_filters(
+            {"assessment_id": self.instance.study.assessment_id}
         )
-        self.fields["exclusion_criteria"].widget.update_query_parameters(
-            {"related": self.instance.study.assessment_id}
+        self.fields["exclusion_criteria"].set_filters(
+            {"assessment_id": self.instance.study.assessment_id}
         )
 
     @property
@@ -101,9 +102,9 @@ class MetaResultForm(forms.ModelForm):
 
     UPDATE_HELP_TEXT = "Update an existing meta-result"
 
-    adjustment_factors = selectable.AutoCompleteSelectMultipleField(
+    adjustment_factors = AutocompleteMultipleChoiceField(
         help_text="All factors which were included in final model",
-        lookup_class=AdjustmentFactorLookup,
+        autocomplete_class=AdjustmentFactorAutocomplete,
         required=False,
     )
 
@@ -127,7 +128,7 @@ class MetaResultForm(forms.ModelForm):
         if parent:
             self.instance.protocol = parent
 
-        self.fields["adjustment_factors"].widget.update_query_parameters({"related": assessment.id})
+        self.fields["adjustment_factors"].set_filters({"assessment_id": assessment.id})
         self.fields["health_outcome"].widget.update_query_parameters({"related": assessment.id})
         self.fields["exposure_name"].widget.update_query_parameters({"related": assessment.id})
 
@@ -180,9 +181,9 @@ class MetaResultFilterForm(forms.Form):
         ("exposure", "exposure"),
     )
 
-    studies = selectable.AutoCompleteSelectMultipleField(
+    studies = AutocompleteMultipleChoiceField(
         label="Study reference",
-        lookup_class=EpimetaStudyLookup,
+        autocomplete_class=StudyAutocomplete,
         help_text="ex: Smith et al. 2010",
         required=False,
     )
@@ -226,8 +227,9 @@ class MetaResultFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
+        self.fields["studies"].set_filters({"assessment_id": assessment.id, "epi_meta": True})
         for field in self.fields:
-            if field not in ("order_by", "paginate_by"):
+            if field not in ("studies", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
     @property
@@ -309,6 +311,7 @@ SingleResultFormset = modelformset_factory(
 )
 
 
-class MetaResultSelectorForm(CopyAsNewSelectorForm):
+class MetaResultSelectorForm(CopyAsNewSelectorFormV2):
     label = "Meta Result"
-    lookup_class = lookups.MetaResultByProtocolLookup
+    parent_field = "protocol_id"
+    autocomplete_class = autocomplete.MetaResultAutocomplete

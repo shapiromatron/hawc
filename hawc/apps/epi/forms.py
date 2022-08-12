@@ -781,13 +781,13 @@ class ResultForm(forms.ModelForm):
     ADJUSTMENT_FIELDS = ["factors_applied", "factors_considered"]
 
     factors_applied = AutocompleteMultipleChoiceField(
-        autocomplete_class=autocomplete.AdjustmentFactorLookup,
+        autocomplete_class=autocomplete.AdjustmentFactorAutocomplete,
         help_text="All adjustment factors included in final statistical model",
         required=False,
     )
 
     factors_considered = AutocompleteMultipleChoiceField(
-        autocomplete_class=autocomplete.AdjustmentFactorLookup,
+        autocomplete_class=autocomplete.AdjustmentFactorAutocomplete,
         label="Adjustment factors considered",
         help_text=models.OPTIONAL_NOTE,
         required=False,

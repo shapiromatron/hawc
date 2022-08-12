@@ -38,7 +38,7 @@ class ComparisonSetAutocomplete(BaseAutocomplete):
 
 
 @register
-class AdjustmentFactorLookup(BaseAutocomplete):
+class AdjustmentFactorAutocomplete(BaseAutocomplete):
     model = models.AdjustmentFactor
     search_fields = ["description"]
     filter_fields = ["assessment_id"]
