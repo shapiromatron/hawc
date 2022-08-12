@@ -509,14 +509,13 @@ class Values(models.Model):
         blank=True,
         help_text="Describe the duration of the study selected to support the derivation of the toxicity value.",
     )
-    # TODO: figure out how to avoid circular imports/models aren't loaded yet
-    # study = models.ForeignKey(
-    #     apps.get_model("study", "Study"),
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     verbose_name="HAWC Study",
-    #     related_name="assessment_values",
-    # )
+    study = models.ForeignKey(
+        "study.Study",
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="HAWC Study",
+        related_name="assessment_values",
+    )
     tumor_type = models.CharField(
         verbose_name="Tumor Type/Cancer",
         max_length=64,
