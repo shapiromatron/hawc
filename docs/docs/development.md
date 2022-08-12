@@ -16,7 +16,7 @@ When writing code for HAWC, there are a few requirements for code acceptance. We
 - Javascript code must comply with eslint formatters
 - All unit-test (currently in python-only) must pass; please write test when contributing new code
 
-See the `Useful utilities`_ below for more details on how to automatically lint/format your code.
+See the `Useful utilities` below for more details on how to automatically lint/format your code.
 
 ## Environment setup
 
@@ -150,9 +150,8 @@ If you navigate to [localhost](http://127.0.0.1:8000/) and see a website, you're
 
 ### Useful utilities
 
-There are a number of helpful utility commands available from the command line. Depending on the
-OS, they're either available in the ``Makefile`` or ``make.bat``, but they can be called using
-the same commands.
+There are a number of helpful utility commands available from the command line.
+A full list of these commands is located in the ``Makefile`` or ``make.bat`` (depending on the OS), but they are called using the same commands.
 
 ```bash
 # run unit tests
@@ -190,7 +189,200 @@ On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short 
 make startdb
 ```
 
-## Visual Studio Code
+## Local Settings
+### Django settings inheritance
+
+HAWC settings are structured according to the django settings framework. Within ``hawc/main/settings``, there are a number of settings files that inherit using the following pattern:
+
+```text
+            -------------------
+            |  HAWC SETTINGS  |
+            -------------------
+                    |
+                    |
+                -----------
+                | base.py |
+                -----------
+                /        \
+                /          \
+    --------------       ----------        ------------
+    | staging.py |       | dev.py |  <---  | local.py |
+    --------------       ----------        ------------
+            |                  |             (applied to dev.py,
+            |                  |                 if file exists)
+    -----------------    ---------------
+    | production.py |    | unittest.py |
+    -----------------    ---------------
+```
+
+To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make any changes to this file to configure your local environment. Notably, it can control which database is used and the "flavor" of HAWC (see "More Settings").
+
+
+## Testing HAWC
+
+#### The test database
+
+A test database is automatically loaded each time you run the unit tests; it contains simplistic data for every model in HAWC.
+
+This makes the test database useful when writing new features. There are multiple users you can use, each with their own global and assessment-level permissions. If you have the test database loaded in, you can log in using the credentials below:
+
+ Role                | Email                    | Password
+---------------------|--------------------------|----------
+ **Administrator**   | admin@hawcproject.org    | pw
+ **Project manager** | pm@hawcproject.org       | pw
+ **Team member**     | team@hawcproject.org     | pw
+ **Reviewer**        | reviewer@hawcproject.org | pw
+
+As new features are added, adding and changing content in the test database will be required to test these features. Instructions for loading and dumping are described below.
+
+### Test database
+
+Follow the instructions below to generate a test database.
+
+```bash title="Mac/Linux"
+# specify that we're using the unit-test settings
+export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
+
+# load existing test
+createdb hawc-fixture
+manage.py load_test_db
+
+# now make edits to the database using the GUI or via command line
+
+# export database
+manage.py dump_test_db
+```
+
+```batch title="Windows"
+:: specify that we're using the unit-test settings
+set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
+
+:: load existing test
+createdb -T template0 -E UTF8 hawc-fixture
+manage.py load_test_db
+
+:: now make edits to the database using the GUI or via command line
+
+:: export database
+manage.py dump_test_db
+```
+
+If tests aren't working after the database has changed (ie., migrated); try dropping the test-database with the command ``dropdb hawc-test``.
+
+Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
+
+
+### Loading a database dump
+
+If you have a database dump saved locally, you can load that in instead. If you have multiple databases, you can switch them on the fly in your local.py settings (see Django Settings Inheritance below).
+
+```bash
+
+# add hawc superuser
+createuser hawc --superuser --no-password
+
+# create new database owned by a hawc user
+createdb -O hawc hawc
+
+# load gzipped database
+gunzip -c "db_dump.sql.gz" | psql -U hawc -d hawc
+```
+
+### Creating a database dump
+
+Here's how to create a database dump:
+
+```bash
+# anonymize data
+manage.py scrub_db
+
+# dump in gzipped format
+pg_dump -U hawc hawc | gzip > db_dump.sql.gz
+```
+
+
+### Mocking external resources in tests
+
+When writing tests for code that accesses external resources (e.g., data from PubMed API endpoints), the ``vcr`` python package is used to save "cassettes" of expected responses for faster tests and stability in case external resources are intermittently offline. These cassettes can be rebuilt by running ``make test-refresh``, which will delete the ``cassettes`` directory and run the python test suite, which will recreate the cassettes based on actual responses.
+
+If a test uses an external resource, ensure that it is decorated with ``@pytest.mark.vcr`` to generate a cassette; see our current tests suite for examples.
+
+To run tests without using the cassettes and making the network requests, use:
+
+```bash
+py.test --disable-vcr
+```
+
+### Testing celery application
+
+The following requires ``redis-cli`` and ``docker-compose``.
+
+To test asynchronous functionality in development, modify your ``hawc/main/settings/local.py``:
+
+```python
+CELERY_BROKER_URL = "redis://:default-password@localhost:6379/1"
+CELERY_RESULT_BACKEND = "redis://:default-password@localhost:6379/2"
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_TASK_EAGER_PROPAGATES = False
+```
+
+Then, create the example docker container and start a celery worker instance:
+
+```bash
+# build container
+docker-compose -f compose/dc-build.yml --project-directory . build redis
+docker-compose -f compose/dc-build.yml --project-directory . up -d redis
+
+# check redis is up and can be pinged successfully
+redis-cli -h localhost -a default-password ping
+
+# start workers
+celery --app=hawc.main.celery worker --loglevel=INFO
+celery --app=hawc.main.celery beat --loglevel=INFO
+
+# stop redis when you're done
+docker-compose -f compose/dc-build.yml --project-directory . down
+```
+
+Asynchronous tasks will not be executed by celery workers instead of the main thread.
+
+### Integration tests
+
+While the standard tests check that the backend views and models interact as designed, integration testing checks whether the frontend of HAWC functions in a browser as intended. These tests use [playwright](https://playwright.dev/python/). By default, integration tests are skipped when running pytest locally by default, but are always executed in github actions. To run:
+
+```bash title="Mac/Linux"
+# to run all
+make test-integration-debug
+
+# or a custom method to run a single test
+export HAWC_INTEGRATION_TESTS=1
+py.test -sv tests/integration/test_login.py --pdb
+```
+
+```batch title="Windows"
+:: to run all
+make test-integration-debug
+
+:: or a custom method to run a single test
+set HAWC_INTEGRATION_TESTS=1
+py.test -sv tests/integration/ --pdb
+```
+
+By default, the integration tests run in "headless" mode, or without a browser being shown. When editing integration tests, use the interactive mode to capture user operations:
+
+```bash
+make test-integration-debug
+
+# use set instead of export on windows
+export HAWC_INTEGRATION_TESTS=1
+export PWDEBUG=1
+py.test -sv tests/integration/test_login.py --pdb
+```
+
+
+## More settings
+
+### Visual Studio Code
 
 [Visual Studio Code]( https://code.visualstudio.com/) is the recommended editor for this project. Recommended extensions include:
 
@@ -198,7 +390,7 @@ make startdb
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
 
-When using the recommended settings below, your python and javascript code should automatically format whenever you save to fix most, but not all requirements. In addition, you should have pretty good autocompletion. Python type annotations are enabled with warnings, but not enforced; this may change as we continue to annotate the existing codebase.
+When using the recommended settings below, your python and javascript code should automatically format whenever you save to fix most, but not all requirements. In addition, you should have pretty good autocompletion. Python type annotations are enabled with warnings, but not enforced; this may change as we continue to annotate the existing codebase. You can add these settings to your overall VSCode settings.json file, or create a [workspace](https://code.visualstudio.com/docs/editor/workspaces) for HAWC and add it to the workspace settings.json file.
 
 ```json
 {
@@ -245,35 +437,6 @@ When using the recommended settings below, your python and javascript code shoul
 }
 ```
 
-## More settings
-
-### Django settings inheritance
-
-Settings are defined using the django settings framework. Within the ``hawc/main/settings``, there are a number of settings files that inherit using the following pattern:
-
-```text
-            -------------------
-            |  HAWC SETTINGS  |
-            -------------------
-                    |
-                    |
-                -----------
-                | base.py |
-                -----------
-                /        \
-                /          \
-    --------------       ----------        ------------
-    | staging.py |       | dev.py |  <---  | local.py |
-    --------------       ----------        ------------
-            |                  |             (applied to dev.py,
-            |                  |                 if file exists)
-    -----------------    ---------------
-    | production.py |    | unittest.py |
-    -----------------    ---------------
-```
-
-To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make any changes to this file to configure your local environment.
-
 ### HAWC flavors
 
 Currently HAWC has two possible application "flavors", where the application is slightly different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR`` variable at ``hawc/main/settings/local.py``.
@@ -283,159 +446,6 @@ Possible values include:
 - PRIME (default application; as hosted at <https://hawcproject.org>)
 - EPA (EPA application; as hosted at EPA)
 
-### Test database
-
-Loading a database dump:
-
-```bash
-
-# add hawc superuser
-createuser hawc --superuser --no-password
-
-# create new database owned by a hawc user
-createdb -O hawc hawc
-
-# load gzipped database
-gunzip -c "db_dump.sql.gz" | psql -U hawc -d hawc
-```
-
-### Creating a database dump
-
-Here's how to create a database dump:
-
-```bash
-# anonymize data
-manage.py scrub_db
-
-# dump in gzipped format
-pg_dump -U hawc hawc | gzip > db_dump.sql.gz
-```
-
-#### The test database
-
-A test database is loaded to run unit tests.
-
-The test database can be useful when writing new feature as well. If you use the database for feature development, there are multiple users you can use, with their global and assessment-level permissions, emails, and passwords below:
-
- Role                | Email                    | Password
----------------------|--------------------------|----------
- **Administrator**   | admin@hawcproject.org    | pw
- **Project manager** | pm@hawcproject.org       | pw
- **Team member**     | team@hawcproject.org     | pw
- **Reviewer**        | reviewer@hawcproject.org | pw
-
-As new features are added, adding and changing content in the test-database will be required to test these features. Instructions for loading and dumping are described below.
-
-
-```bash title="Mac/Linux"
-# specify that we're using the unit-test settings
-export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
-
-# load existing test
-createdb hawc-fixture
-manage.py load_test_db
-
-# now make edits to the database using the GUI or via command line
-
-# export database
-manage.py dump_test_db
-```
-
-```batch title="Windows"
-:: specify that we're using the unit-test settings
-set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
-
-:: load existing test
-createdb -T template0 -E UTF8 hawc-fixture
-manage.py load_test_db
-
-:: now make edits to the database using the GUI or via command line
-
-:: export database
-manage.py dump_test_db
-```
-
-If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb hawc-test``.
-
-Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
-
-### Mocking external resources in tests
-
-When writing tests that require accessing external resources, the ``vcr`` python package is used to save "cassettes" of expected responses to allow faster tests and stability in case external resources are intermittently offline. These cassettes can be rebuilt by running ``make test-refresh``, which will delete the ``cassettes`` directory and run the python test suite, which in turn recreates the cassettes based on actual responses.
-
-If a test uses an external resource, ensure that it is decorated with ``@pytest.mark.vcr`` to generate a cassette; see our current tests suite for examples.
-
-To run tests without using the cassettes and making the network requests, use:
-
-```bash
-py.test --disable-vcr
-```
-
-### Testing celery application
-
-The following requires ``redis-cli`` and ``docker-compose``.
-
-To test asynchronous functionality in development, modify your ``hawc/main/settings/local.py``:
-
-```python
-CELERY_BROKER_URL = "redis://:default-password@localhost:6379/1"
-CELERY_RESULT_BACKEND = "redis://:default-password@localhost:6379/2"
-CELERY_TASK_ALWAYS_EAGER = False
-CELERY_TASK_EAGER_PROPAGATES = False
-```
-
-Then, create the example docker container and start a celery worker instance:
-
-```bash
-# build container
-docker-compose -f compose/dc-build.yml --project-directory . build redis
-docker-compose -f compose/dc-build.yml --project-directory . up -d redis
-
-# check redis is up and can be pinged successfully
-redis-cli -h localhost -a default-password ping
-
-# start workers
-celery --app=hawc.main.celery worker --loglevel=INFO
-celery --app=hawc.main.celery beat --loglevel=INFO
-
-# stop redis when you're done
-docker-compose -f compose/dc-build.yml --project-directory . down
-```
-
-Asynchronous tasks will not be executed by celery workers instead of the main thread.
-
-### Integration tests
-
-Integration tests use [playwright](https://playwright.dev/python/). By default, integration tests are skipped when running pytest locally by default, but are always executed in github actions. To run:
-
-```bash title="Mac/Linux"
-# to run all
-make test-integration-debug
-
-# or a custom method to run a single test
-export HAWC_INTEGRATION_TESTS=1
-py.test -sv tests/integration/test_login.py --pdb
-```
-
-```batch title="Windows"
-:: to run all
-make test-integration-debug
-
-:: or a custom method to run a single test
-set HAWC_INTEGRATION_TESTS=1
-py.test -sv tests/integration/ --pdb
-```
-
-When editing integration tests, use the interactive mode to capture user operations:
-
-```bash
-make test-integration-debug
-
-# use set instead of export on windows
-export HAWC_INTEGRATION_TESTS=1
-export PWDEBUG=1
-py.test -sv tests/integration/test_login.py --pdb
-```
 
 ### Materialized views
 
