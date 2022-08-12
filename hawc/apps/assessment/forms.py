@@ -13,7 +13,7 @@ from django.urls import reverse, reverse_lazy
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import AutocompleteSelectMultipleWidget
+from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteWidget
@@ -45,15 +45,25 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
-            "dtxsids": AutocompleteSelectMultipleWidget(url=autocomplete.DSSToxAutocomplete.url()),
-            "project_manager": AutocompleteSelectMultipleWidget(url=UserAutocomplete.url()),
-            "team_members": AutocompleteSelectMultipleWidget(url=UserAutocomplete.url()),
-            "reviewers": AutocompleteSelectMultipleWidget(url=UserAutocomplete.url()),
         }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+
+        self.fields["dtxsids"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=autocomplete.DSSToxAutocomplete
+        )
+        self.fields["project_manager"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=UserAutocomplete
+        )
+        self.fields["team_members"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=UserAutocomplete
+        )
+        self.fields["reviewers"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=UserAutocomplete
+        )
+
         if self.instance.id is None:
             self.instance.creator = self.user
             self.fields["project_manager"].initial = [self.user]

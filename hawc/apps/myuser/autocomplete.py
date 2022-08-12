@@ -22,3 +22,6 @@ class UserAutocomplete(BaseAutocomplete):
     def get_queryset(self):
         # only get active user choices
         return super().get_queryset().filter(is_active=True)
+
+    def get_result_label(self, result):
+        return str(result) if result.is_active else "<inactive user>"

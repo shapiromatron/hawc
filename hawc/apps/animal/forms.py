@@ -35,7 +35,7 @@ class ExperimentForm(ModelForm):
         model = models.Experiment
         exclude = ("study",)
         widgets = {
-            "dtxsid": AutocompleteSelectWidget(url=DSSToxAutocomplete.url()),
+            "dtxsid": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
         }
 
     def __init__(self, *args, **kwargs):
@@ -418,7 +418,7 @@ class EndpointForm(ModelForm):
             "organ_term": forms.HiddenInput,
             "effect_term": forms.HiddenInput,
             "effect_subtype_term": forms.HiddenInput,
-            "effects": AutocompleteSelectMultipleWidget(url=EffectTagAutocomplete.url()),
+            "effects": AutocompleteSelectMultipleWidget(autocomplete_class=EffectTagAutocomplete),
         }
 
     def __init__(self, *args, **kwargs):
@@ -736,7 +736,7 @@ class EndpointFilterForm(forms.Form):
     ]
 
     studies = AutocompleteMultipleChoiceField(
-        autocomplete_view=StudyAutocomplete,
+        autocomplete_class=StudyAutocomplete,
         label="Study reference",
         help_text="ex: Smith et al. 2010",
         required=False,
@@ -771,14 +771,14 @@ class EndpointFilterForm(forms.Form):
     )
 
     species = AutocompleteChoiceField(
-        autocomplete_view=SpeciesAutocomplete,
+        autocomplete_class=SpeciesAutocomplete,
         label="Species",
         help_text="ex: Mouse",
         required=False,
     )
 
     strain = AutocompleteChoiceField(
-        autocomplete_view=StrainAutocomplete,
+        autocomplete_class=StrainAutocomplete,
         label="Strain",
         help_text="ex: B6C3F1",
         required=False,

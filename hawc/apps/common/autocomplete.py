@@ -6,33 +6,7 @@ from django.utils.module_loading import autodiscover_modules
 
 from .helper import reverse_with_query_lazy
 
-
-class AutocompleteFieldMixin:
-    def __init__(self, autocomplete_view, filters: dict = None, *args, **kwargs):
-        filters = filters or {}
-        kwargs["queryset"] = autocomplete_view.get_base_queryset(filters)
-        # determine the widget to use
-        if isinstance(self, ModelMultipleChoiceField):
-            Widget = AutocompleteSelectMultipleWidget
-        elif isinstance(self, ModelChoiceField):
-            Widget = AutocompleteSelectWidget
-        else:
-            raise NotImplementedError()
-        kwargs["widget"] = Widget(url=autocomplete_view.url(**filters))
-        self.autocomplete_view = autocomplete_view
-        return super().__init__(*args, **kwargs)
-
-    def set_filters(self, filters):
-        self.queryset = self.autocomplete_view.get_base_queryset(filters)
-        self.widget.url = self.autocomplete_view.url(**filters)
-
-
-class AutocompleteChoiceField(AutocompleteFieldMixin, ModelChoiceField):
-    pass
-
-
-class AutocompleteMultipleChoiceField(AutocompleteFieldMixin, ModelMultipleChoiceField):
-    pass
+## Views
 
 
 class BaseAutocomplete(autocomplete.Select2QuerySetView):
@@ -142,30 +116,42 @@ class SearchLabelMixin:
         return " | ".join(labels)
 
 
-class BootstrapMixin:
-    def __init__(self, *args, **kwargs):
+## Widgets
+
+
+class AutocompleteWidgetMixin:
+    def __init__(self, autocomplete_class: BaseAutocomplete, filters: dict = None, *args, **kwargs):
+        # set url and choices
+        self.autocomplete_class = autocomplete_class
+        filters = filters or {}
+        kwargs["url"] = autocomplete_class.url(**filters)
+        kwargs["choices"] = autocomplete_class.get_base_queryset(filters)
+
         # add bootstrap theme to attrs
         attrs = kwargs.get("attrs", {})
         attrs["data-theme"] = "bootstrap"
         attrs["data-width"] = "100%"
         kwargs["attrs"] = attrs
+
         super().__init__(*args, **kwargs)
 
 
-class AutocompleteSelectWidget(BootstrapMixin, autocomplete.ModelSelect2):
+class AutocompleteSelectWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect2):
     pass
 
 
-class AutocompleteSelectMultipleWidget(BootstrapMixin, autocomplete.ModelSelect2Multiple):
+class AutocompleteSelectMultipleWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect2Multiple):
     def __init__(self, *args, **kwargs):
+        # remove ability to delete all selections at once
         attrs = kwargs.get("attrs", {})
         attrs["data-allow-clear"] = "false"
         kwargs["attrs"] = attrs
+
         super().__init__(*args, **kwargs)
 
 
 # TODO remove or tailor it better for char field choices
-class FoobarWidget(BootstrapMixin, autocomplete.Select2):
+class FoobarWidget(AutocompleteWidgetMixin, autocomplete.Select2):
     def __init__(self, *args, **kwargs):
         # add tags to attrs
         attrs = kwargs.get("attrs", {})
@@ -176,6 +162,43 @@ class FoobarWidget(BootstrapMixin, autocomplete.Select2):
 
     def filter_choices_to_render(self, selected_choices):
         self.choices = [[choice, choice] for choice in selected_choices]
+
+
+## Form fields
+class AutocompleteFieldMixin:
+    def __init__(self, autocomplete_class: BaseAutocomplete, filters: dict = None, *args, **kwargs):
+        self.autocomplete_class = autocomplete_class
+        filters = filters or {}
+        kwargs["queryset"] = autocomplete_class.get_base_queryset(filters)
+
+        # use the same labels for initial values that are used by autocomplete
+        self.label_from_instance = autocomplete_class().get_result_label
+
+        # determine the widget to use
+        if isinstance(self, ModelMultipleChoiceField):
+            Widget = AutocompleteSelectMultipleWidget
+        elif isinstance(self, ModelChoiceField):
+            Widget = AutocompleteSelectWidget
+        else:
+            raise NotImplementedError()
+        kwargs["widget"] = Widget(autocomplete_class=autocomplete_class, filters=filters)
+
+        return super().__init__(*args, **kwargs)
+
+    def set_filters(self, filters):
+        self.queryset = self.autocomplete_class.get_base_queryset(filters)
+        self.widget.url = self.autocomplete_class.url(**filters)
+
+
+class AutocompleteChoiceField(AutocompleteFieldMixin, ModelChoiceField):
+    pass
+
+
+class AutocompleteMultipleChoiceField(AutocompleteFieldMixin, ModelMultipleChoiceField):
+    pass
+
+
+## Other
 
 
 class AutocompleteRegistry:

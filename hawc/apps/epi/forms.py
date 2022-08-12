@@ -98,15 +98,15 @@ class StudyPopulationForm(forms.ModelForm):
     }
 
     inclusion_criteria = AutocompleteMultipleChoiceField(
-        autocomplete_view=autocomplete.CriteriaAutocomplete, required=False
+        autocomplete_class=autocomplete.CriteriaAutocomplete, required=False
     )
 
     exclusion_criteria = AutocompleteMultipleChoiceField(
-        autocomplete_view=autocomplete.CriteriaAutocomplete, required=False
+        autocomplete_class=autocomplete.CriteriaAutocomplete, required=False
     )
 
     confounding_criteria = AutocompleteMultipleChoiceField(
-        autocomplete_view=autocomplete.CriteriaAutocomplete, required=False
+        autocomplete_class=autocomplete.CriteriaAutocomplete, required=False
     )
 
     class Meta:
@@ -269,7 +269,7 @@ class ExposureForm(forms.ModelForm):
     class Meta:
         model = models.Exposure
         exclude = ("study_population",)
-        widgets = {"dtxsid": AutocompleteSelectWidget(url=DSSToxAutocomplete.url())}
+        widgets = {"dtxsid": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete)}
 
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop("parent", None)
@@ -355,7 +355,9 @@ class OutcomeForm(forms.ModelForm):
         model = models.Outcome
         exclude = ("assessment", "study_population")
         labels = {"summary": "Comments"}
-        widgets = {"effects": AutocompleteSelectMultipleWidget(url=EffectTagAutocomplete.url())}
+        widgets = {
+            "effects": AutocompleteSelectMultipleWidget(autocomplete_class=EffectTagAutocomplete)
+        }
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment", None)
@@ -426,7 +428,7 @@ class OutcomeFilterForm(forms.Form):
     )
 
     studies = AutocompleteMultipleChoiceField(
-        autocomplete_view=StudyAutocomplete,
+        autocomplete_class=StudyAutocomplete,
         label="Study reference",
         help_text="ex: Smith et al. 2010",
         required=False,
@@ -779,13 +781,13 @@ class ResultForm(forms.ModelForm):
     ADJUSTMENT_FIELDS = ["factors_applied", "factors_considered"]
 
     factors_applied = AutocompleteMultipleChoiceField(
-        autocomplete_view=autocomplete.AdjustmentFactorLookup,
+        autocomplete_class=autocomplete.AdjustmentFactorLookup,
         help_text="All adjustment factors included in final statistical model",
         required=False,
     )
 
     factors_considered = AutocompleteMultipleChoiceField(
-        autocomplete_view=autocomplete.AdjustmentFactorLookup,
+        autocomplete_class=autocomplete.AdjustmentFactorLookup,
         label="Adjustment factors considered",
         help_text=models.OPTIONAL_NOTE,
         required=False,
@@ -794,7 +796,9 @@ class ResultForm(forms.ModelForm):
     class Meta:
         model = models.Result
         exclude = ("outcome", "adjustment_factors")
-        widgets = {"resulttags": AutocompleteSelectMultipleWidget(url=EffectTagAutocomplete.url())}
+        widgets = {
+            "resulttags": AutocompleteSelectMultipleWidget(autocomplete_class=EffectTagAutocomplete)
+        }
 
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop("parent", None)

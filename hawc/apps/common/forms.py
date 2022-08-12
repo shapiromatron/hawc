@@ -158,7 +158,7 @@ class CopyAsNewSelectorFormV2(forms.Form):
     def setupSelector(self, parent_id):
         filters = {self.parent_field: parent_id}
         fld = autocomplete.AutocompleteChoiceField(
-            autocomplete_view=self.autocomplete_class, filters=filters, label=self.label
+            autocomplete_class=self.autocomplete_class, filters=filters, label=self.label
         )
         fld.widget.forward = ["search_fields", "order_by", "order_direction"]
         fld.widget.attrs["class"] = "col-md-10"
