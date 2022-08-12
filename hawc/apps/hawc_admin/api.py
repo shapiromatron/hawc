@@ -37,9 +37,7 @@ class DiagnosticViewset(viewsets.ViewSet):
 class ReportsViewset(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
-    @action(
-        detail=False, renderer_classes=PandasRenderers, throttle_classes=(FivePerMinuteThrottle,)
-    )
+    @action(detail=False, renderer_classes=PandasRenderers)
     def values(self, request):
         """Gets all value data accross all assessments."""
         export = serializers.ValuesExportOptions.build_export()

@@ -426,7 +426,7 @@ class Assessment(models.Model):
 
 
 class AssessmentDetails(models.Model):
-    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="details")
+    assessment = models.OneToOneField(Assessment, models.CASCADE, related_name="details")
     assessment_type = models.CharField(
         max_length=64,
         help_text="Name the product line relevant to this chemical evaluation.",
