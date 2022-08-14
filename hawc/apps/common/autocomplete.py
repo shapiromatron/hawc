@@ -121,11 +121,9 @@ class SearchLabelMixin:
 
 class AutocompleteWidgetMixin:
     def __init__(self, autocomplete_class: BaseAutocomplete, filters: dict = None, *args, **kwargs):
-        # set url and choices
-        self.autocomplete_class = autocomplete_class
+        # set url
         filters = filters or {}
         kwargs["url"] = autocomplete_class.url(**filters)
-        kwargs["choices"] = autocomplete_class.get_base_queryset(filters)
 
         # add bootstrap theme to attrs
         attrs = kwargs.get("attrs", {})
