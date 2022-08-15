@@ -127,8 +127,8 @@ class AutocompleteWidgetMixin:
 
         # add bootstrap theme to attrs
         attrs = kwargs.get("attrs", {})
-        attrs["data-theme"] = "bootstrap"
-        attrs["data-width"] = "100%"
+        attrs.setdefault("data-theme", "bootstrap")
+        attrs.setdefault("data-width", "100%")
         kwargs["attrs"] = attrs
 
         super().__init__(*args, **kwargs)
@@ -142,7 +142,7 @@ class AutocompleteSelectMultipleWidget(AutocompleteWidgetMixin, autocomplete.Mod
     def __init__(self, *args, **kwargs):
         # remove ability to delete all selections at once
         attrs = kwargs.get("attrs", {})
-        attrs["data-allow-clear"] = "false"
+        attrs.setdefault("data-allow-clear", "false")
         kwargs["attrs"] = attrs
 
         super().__init__(*args, **kwargs)

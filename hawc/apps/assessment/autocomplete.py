@@ -3,6 +3,12 @@ from . import models
 
 
 @register
+class AssessmentAutocomplete(BaseAutocomplete):
+    model = models.Assessment
+    search_fields = ["name"]
+
+
+@register
 class DSSToxAutocomplete(BaseAutocomplete):
     model = models.DSSTox
     search_fields = ["dtxsid", "content__preferredName", "content__casrn"]

@@ -12,10 +12,10 @@ from django.forms import ModelForm
 from django.urls import reverse
 
 from ...constants import AuthProvider
-from ..assessment import lookups
+from ..assessment.autocomplete import AssessmentAutocomplete
+from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper
 from ..common.helper import url_query
-from ..common.selectable import AutoCompleteSelectMultipleField
 from . import models
 
 _PASSWORD_HELP = (
@@ -347,14 +347,14 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
 class AdminUserForm(PasswordForm):
 
-    project_manager = AutoCompleteSelectMultipleField(
-        lookup_class=lookups.AssessmentLookup, label="Project manager", required=False
+    project_manager = AutocompleteMultipleChoiceField(
+        autocomplete_class=AssessmentAutocomplete, label="Project manager", required=False
     )
-    team_member = AutoCompleteSelectMultipleField(
-        lookup_class=lookups.AssessmentLookup, label="Team member", required=False
+    team_member = AutocompleteMultipleChoiceField(
+        autocomplete_class=AssessmentAutocomplete, label="Team member", required=False
     )
-    reviewer = AutoCompleteSelectMultipleField(
-        lookup_class=lookups.AssessmentLookup, label="Reviewer", required=False
+    reviewer = AutocompleteMultipleChoiceField(
+        autocomplete_class=AssessmentAutocomplete, label="Reviewer", required=False
     )
 
     class Meta:
@@ -382,6 +382,10 @@ class AdminUserForm(PasswordForm):
                 "password2",
             ):
                 self.fields[field].disabled = True
+
+        self.fields["project_manager"].widget.attrs["data-theme"] = "default"
+        self.fields["team_member"].widget.attrs["data-theme"] = "default"
+        self.fields["reviewer"].widget.attrs["data-theme"] = "default"
 
         if self.instance.id:
             self.fields["password1"].required = False
