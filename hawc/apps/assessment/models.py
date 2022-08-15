@@ -471,6 +471,11 @@ class AssessmentDetails(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
+    def __str__(self):
+        return f"Additional Details for {self.assessment}"
+
     def get_assessment(self):
         return self.assessment
 

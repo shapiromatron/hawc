@@ -24,7 +24,8 @@
           Add an attachment</button>
           <a class="dropdown-item" href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a>
           {% if object.details %}
-            <a class="dropdown-item" href="{% url 'assessment:details-update' object.pk %}">Update additional details</a>
+            <a class="dropdown-item" href="{% url 'assessment:details-update' object.details.pk %}">Update additional details</a>
+            <a class="dropdown-item" href="{% url 'assessment:details-delete' object.details.pk %}">Delete additional details</a>
           {% else %}
             <a class="dropdown-item" href="{% url 'assessment:details-create' object.pk %}">Add additional details</a>
           {% endif %}

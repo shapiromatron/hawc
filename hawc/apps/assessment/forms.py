@@ -132,7 +132,6 @@ class AssessmentDetailsForm(forms.ModelForm):
     class Meta:
         model = models.AssessmentDetails
         fields = "__all__"
-        widgets = {"extra_metadata": forms.Textarea}
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
