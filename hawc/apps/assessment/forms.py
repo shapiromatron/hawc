@@ -182,6 +182,17 @@ class AssessmentValuesForm(forms.ModelForm):
             self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
 
+    def clean(self):
+        cleaned_data = super().clean()
+        value = cleaned_data.get("value")
+        value_type = cleaned_data.get("value_type")
+        if value is None and value_type != "No Value":
+            self.add_error("value", 'Value is required unless Value Type is "No Value".')
+        if value_type == "No Value" and value:
+            self.add_error(
+                "value_type", '"No Value" is not a valid Value Type when a Value is given.'
+            )
+
     @property
     def helper(self):
         for fld in ["comments", "basis"]:
