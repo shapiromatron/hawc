@@ -467,7 +467,9 @@ class AssessmentDetails(models.Model):
         verbose_name="Link to QA Tracking Page",
         blank=True,
     )
-    extra_metadata = models.JSONField(blank=True)  # TODO: validate json is flat key(str):value(str)
+    extra_metadata = models.JSONField(
+        blank=True, default=constants.default_metadata
+    )  # TODO: validate json is flat key(str):value(str)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -562,7 +564,7 @@ class Values(models.Model):
         help_text="If applicable, describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
     )
     comments = models.TextField(blank=True)
-    extra_metadata = models.JSONField(blank=True)
+    extra_metadata = models.JSONField(blank=True, default=constants.default_metadata)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

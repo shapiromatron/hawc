@@ -76,3 +76,7 @@ class Confidence(models.TextChoices):
     HIGH = "HI", "High"
     MEDIUM = "MED", "Medium"
     LOW = "LOW", "Low"
+
+
+def default_metadata() -> dict:
+    return dict(key="value")
