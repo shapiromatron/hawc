@@ -512,6 +512,7 @@ class Values(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
+        related_name="values_set_pod",
     )
     # published = models.DateField(verbose_name="Date Published", null=True, blank=True)
     uncertainty = models.FloatField(
