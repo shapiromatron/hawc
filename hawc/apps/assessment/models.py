@@ -427,46 +427,47 @@ class Assessment(models.Model):
 
 class AssessmentDetails(models.Model):
     assessment = models.OneToOneField(Assessment, models.CASCADE, related_name="details")
-    assessment_type = models.CharField(
+    project_type = models.CharField(
         max_length=64,
         help_text="Name the product line relevant to this chemical evaluation.",
-        choices=constants.AssessmentType.choices,
-        default=constants.AssessmentType.OTHER,
     )
-    chemical_name = models.CharField(max_length=128)
-    cas = models.CharField(max_length=128, verbose_name="CAS No.")
-    milestone = models.CharField(
+    project_status = models.CharField(
         max_length=64,
-        verbose_name="Milestone Fields/History Field",
         choices=constants.Milestone.choices,
         help_text="If relevant, insert high-level project management milestones for this assessment.",
         blank=True,
     )
-    pr_type = models.CharField(
+    pr_status = models.CharField(
         max_length=64,
-        verbose_name="Peer Review Type",
+        verbose_name="Peer Review Status",
         choices=constants.PRType.choices,
-        help_text="Define the method by which this assessment was externally reviewed.",
+        help_text="Define the method by which this assessment was externally reviewed.",  # TODO: modify help_text
         default=constants.PRType.NONE,
     )
-    epa_report = models.IntegerField(
-        verbose_name="EPA Report Number",
+    report_number = models.IntegerField(
+        help_text="eg., EPA report number",
         blank=True,
         null=True,
     )
-    rapid_stics = models.IntegerField(
-        verbose_name="RAPID/STICS Number",
+    qa_id = models.IntegerField(
+        verbose_name="QA Tracking ID",
         blank=True,
         null=True,
     )
-    file_link = models.URLField(
-        verbose_name="Link to File Assessments",
+    qa_link = models.URLField(
+        verbose_name="Link to QA Tracking Page",
         blank=True,
     )
-    hero_link = models.URLField(
-        verbose_name="Link to HERO Project Page",
+    docs_link = models.URLField(
+        verbose_name="Link to External Document Page",
         blank=True,
     )
+    project_link = models.URLField(
+        verbose_name="Link to External Page",
+        help_text="eg., HERO Project page",
+        blank=True,
+    )
+    extra_metadata = models.JSONField(blank=True)
 
     def get_assessment(self):
         return self.assessment
