@@ -215,12 +215,12 @@ HAWC settings are structured according to the django settings framework. Within 
     -----------------    ---------------
 ```
 
-To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make any changes to this file to configure your local environment. Notably, it can control which database is used and the "flavor" of HAWC (see "More Settings").
+To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make changes to this file to configure your local environment, such as which database is used or the "flavor" of HAWC (see "More Settings").
 
 
 ## Testing HAWC
 
-#### The test database
+### The test database
 
 A test database is automatically loaded each time you run the unit tests; it contains simplistic data for every model in HAWC.
 
@@ -235,7 +235,7 @@ This makes the test database useful when writing new features. There are multipl
 
 As new features are added, adding and changing content in the test database will be required to test these features. Instructions for loading and dumping are described below.
 
-### Test database
+#### Generating the test database
 
 Follow the instructions below to generate a test database.
 
@@ -274,7 +274,7 @@ Some tests compare large exports on disk to ensure the generated output is the s
 
 ### Loading a database dump
 
-If you have a database dump saved locally, you can load that in instead. If you have multiple databases, you can switch them on the fly in your local.py settings (see Django Settings Inheritance below).
+If you have a database dump saved locally, you can load that in instead. If you have multiple databases, you can switch them on the fly in your local.py settings (see Django Settings Inheritance above).
 
 ```bash
 
@@ -467,25 +467,6 @@ manage.py refresh_views
 ```
 
 You may need to do this periodically if your data is stale.
-
-### Distributing HAWC clients
-
-The Python HAWC client can be packaged for easy distribution.
-
-```bash
-# install dependencies
-pip install twine wheel
-
-# change to client path
-cd client
-
-# build packages; these can be distributed directly
-make build
-
-# or can be uploaded to pypi
-make upload-testpypi
-make upload-pypi
-```
 
 ### Lines of code
 
