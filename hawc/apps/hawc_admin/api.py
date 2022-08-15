@@ -7,9 +7,8 @@ from rest_framework.response import Response
 from ..common.api import FivePerMinuteThrottle
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
-from .actions import media_metadata_report
-
 from . import serializers
+from .actions import media_metadata_report
 
 
 class DashboardViewset(viewsets.ViewSet):

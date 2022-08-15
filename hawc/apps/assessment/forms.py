@@ -132,6 +132,7 @@ class AssessmentDetailsForm(forms.ModelForm):
     class Meta:
         model = models.AssessmentDetails
         fields = "__all__"
+        widgets = {"extra_metadata": forms.Textarea}
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -142,6 +143,7 @@ class AssessmentDetailsForm(forms.ModelForm):
 
     @property
     def helper(self):
+        self.fields["extra_metadata"].widget.attrs["rows"] = 3
         if self.instance.id:
             helper = BaseFormHelper(
                 self,
@@ -156,9 +158,9 @@ class AssessmentDetailsForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
-        helper.add_row("assessment_type", 3, "col-md-4")
-        helper.add_row("milestone", 4, "col-md-3")
-        helper.add_row("file_link", 2, "col-md-6")
+        helper.add_row("project_type", 3, "col-md-4")
+        helper.add_row("report_number", 3, "col-md-4")
+        helper.add_row("qa_id", 2, "col-md-6")
 
         return helper
 

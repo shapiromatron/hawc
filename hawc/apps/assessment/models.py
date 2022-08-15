@@ -449,15 +449,6 @@ class AssessmentDetails(models.Model):
         blank=True,
         null=True,
     )
-    qa_id = models.IntegerField(
-        verbose_name="QA Tracking ID",
-        blank=True,
-        null=True,
-    )
-    qa_link = models.URLField(
-        verbose_name="Link to QA Tracking Page",
-        blank=True,
-    )
     docs_link = models.URLField(
         verbose_name="Link to External Document Page",
         blank=True,
@@ -465,6 +456,15 @@ class AssessmentDetails(models.Model):
     project_link = models.URLField(
         verbose_name="Link to External Page",
         help_text="eg., HERO Project page",
+        blank=True,
+    )
+    qa_id = models.IntegerField(
+        verbose_name="QA Tracking ID",
+        blank=True,
+        null=True,
+    )
+    qa_link = models.URLField(
+        verbose_name="Link to QA Tracking Page",
         blank=True,
     )
     extra_metadata = models.JSONField(blank=True)  # TODO: validate json is flat key(str):value(str)

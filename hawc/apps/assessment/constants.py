@@ -37,13 +37,13 @@ class AssessmentType(models.TextChoices):
 
 
 class Milestone(models.TextChoices):
-    SCOPING = "Scoping"
-    PROBLEM_FORM = "Problem Formulation"
-    INTERNAL_R = "Internal Review"
-    INTERAGENCY_R = "Interagency Review"
-    PUBLIC_COMMENT = "Public Comment"
-    EXTERNAL_PR = "External Peer Review"
-    FINAL = "Final"
+    SCOPING = "Scoping", "Scoping"
+    PROBLEM_FORM = "Problem Formulation", "Problem Formulation"
+    INTERNAL_R = "Internal Review", "Internal Review"
+    INTERAGENCY_R = "Interagency Review", "Interagency Review"
+    PUBLIC_COMMENT = "Public Comment", "Public Comment"
+    EXTERNAL_PR = "External Peer Review", "External Peer Review"
+    FINAL = "Final", "Final"
 
 
 class PRType(models.TextChoices):
