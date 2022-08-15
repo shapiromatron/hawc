@@ -19,8 +19,17 @@ class AnimalGroupAutocomplete(BaseAutocomplete):
 @register
 class EndpointAutocomplete(SearchLabelMixin, BaseAutocomplete):
     model = models.Endpoint
-    filter_fields = ["animal_group__experiment__study_id"]
+    search_fields = [
+        "animal_group__experiment__study__short_citation",
+        "animal_group__experiment__name",
+        "animal_group__name",
+        "name",
+    ]
+    filter_fields = [
+        "animal_group__experiment__study_id",
+        "animal_group__experiment__study__assessment_id",
+    ]
 
     @classmethod
     def get_base_queryset(cls, filters: dict = None):
-        return super().get_base_queryset(filters).select_related("animal_group__experiment")
+        return super().get_base_queryset(filters).select_related("animal_group__experiment__study")
