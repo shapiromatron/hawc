@@ -467,7 +467,9 @@ class AssessmentDetails(models.Model):
         help_text="eg., HERO Project page",
         blank=True,
     )
-    extra_metadata = models.JSONField(blank=True)
+    extra_metadata = models.JSONField(blank=True)  # TODO: validate json is flat key(str):value(str)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def get_assessment(self):
         return self.assessment
@@ -478,7 +480,7 @@ class AssessmentDetails(models.Model):
 
 class Values(models.Model):
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
-    organ_system = models.CharField(
+    system = models.CharField(
         max_length=128,
         help_text="Identify the organ system of concern (e.g., Hepatic, Nervous, Reproductive).",
     )
@@ -489,19 +491,28 @@ class Values(models.Model):
         default=constants.EvaluationType.CANCER,
     )
     value_type = models.CharField(
-        max_length=32,
-        choices=constants.ValueType.choices,
-        help_text="Select the type of toxicity value that was derived.",
-        default=constants.ValueType.NONE,
+        max_length=64,
+        help_text="Enter the type of toxicity value that was derived.",
     )
     value = models.FloatField(null=True)  # TODO: Not required if "No Value" selected for value type
-    value_unit = models.CharField(max_length=64, blank=True)
+    value_unit = models.ForeignKey(
+        "assessment.DoseUnits",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     basis = models.TextField(
         blank=True,
         help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022).",
     )
-    pod_value = models.FloatField(null=True)
-    pod_unit = models.CharField(max_length=64, blank=True)
+    pod_value = models.FloatField(verbose_name="POD Value", null=True)
+    pod_unit = models.ForeignKey(
+        "assessment.DoseUnits",
+        verbose_name="POD Unit",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     # published = models.DateField(verbose_name="Date Published", null=True, blank=True)
     uncertainty = models.FloatField(
         null=True,
@@ -521,9 +532,9 @@ class Values(models.Model):
     study = models.ForeignKey(
         "study.Study",
         on_delete=models.SET_NULL,
+        blank=True,
         null=True,
         verbose_name="HAWC Study",
-        related_name="assessment_values",
     )
     tumor_type = models.CharField(
         verbose_name="Tumor Type/Cancer",
@@ -543,6 +554,7 @@ class Values(models.Model):
         help_text="If applicable, describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
     )
     comments = models.TextField(blank=True)
+    extra_metadata = models.JSONField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
