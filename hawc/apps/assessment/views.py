@@ -478,9 +478,6 @@ class AssessmentValuesUpdate(BaseUpdate):
     parent_model = models.Assessment
     form_class = forms.AssessmentValuesForm
 
-    def get_success_url(self):
-        return self.object.assessment.get_absolute_url()
-
 
 class AssessmentValuesDetail(BaseDetail):
     model = models.Values
@@ -488,6 +485,38 @@ class AssessmentValuesDetail(BaseDetail):
 
 class AssessmentValuesDelete(BaseDelete):
     model = models.Values
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+# Assessment Details views
+class AssessmentDetailsCreate(BaseCreate):
+    success_message = "Assessment Value created."
+    model = models.AssessmentDetails
+    parent_model = models.Assessment
+    form_class = forms.AssessmentDetailsForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentDetailsUpdate(BaseUpdate):
+    success_message = "Assessment Value updated."
+    model = models.AssessmentDetails
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValuesForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentDetailsDetail(BaseDetail):
+    model = models.AssessmentDetails
+
+
+class AssessmentDetailsDelete(BaseDelete):
+    model = models.AssessmentDetails
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()

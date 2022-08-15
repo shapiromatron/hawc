@@ -122,6 +122,47 @@ class AssessmentForm(forms.ModelForm):
         return helper
 
 
+class AssessmentDetailsForm(forms.ModelForm):
+    CREATE_LEGEND = "Add additional Assessment details"
+    CREATE_HELP_TEXT = ""
+    UPDATE_HELP_TEXT = "Update additional details for this Assessment."
+
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
+    class Meta:
+        model = models.AssessmentDetails
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if assessment:
+            self.fields["assessment"].initial = assessment
+            self.instance.assessment = assessment
+
+    @property
+    def helper(self):
+        if self.instance.id:
+            helper = BaseFormHelper(
+                self,
+                help_text=self.UPDATE_HELP_TEXT,
+                cancel_url=self.instance.get_absolute_url(),
+            )
+
+        else:
+            helper = BaseFormHelper(
+                self,
+                legend_text=self.CREATE_LEGEND,
+                help_text=self.CREATE_HELP_TEXT,
+                cancel_url=self.instance.assessment.get_absolute_url(),
+            )
+        helper.add_row("assessment_type", 3, "col-md-4")
+        helper.add_row("milestone", 4, "col-md-3")
+        helper.add_row("file_link", 2, "col-md-6")
+
+        return helper
+
+
 class AssessmentValuesForm(forms.ModelForm):
     CREATE_LEGEND = "Create Assessment values"
     CREATE_HELP_TEXT = ""
@@ -160,8 +201,7 @@ class AssessmentValuesForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
-        helper.add_row("assessment_type", 3, "col-md-4")
-        helper.add_row("milestone", 4, "col-md-3")
+        helper.add_row("organ_system", 2, "col-md-6")
         helper.add_row("value_type", 3, "col-md-4")
         helper.add_row("basis", 3, "col-md-4")
         helper.add_row("uncertainty", 6, "col-md-2")

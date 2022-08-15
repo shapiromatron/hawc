@@ -466,6 +466,12 @@ class AssessmentDetails(models.Model):
         blank=True,
     )
 
+    def get_assessment(self):
+        return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("assessment:details-detail", args=[self.pk])
+
 
 class Values(models.Model):
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")

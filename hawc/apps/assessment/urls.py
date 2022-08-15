@@ -36,6 +36,23 @@ urlpatterns = [
         name="assessment_logs",
     ),
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
+    # assessment details
+    path(
+        "extra-details/<int:pk>/new/",
+        views.AssessmentDetailsCreate.as_view(),
+        name="details-create",
+    ),
+    path("extra-details/<int:pk>/", views.AssessmentDetailsDetail.as_view(), name="details-detail"),
+    path(
+        "extra-details/<int:pk>/update/",
+        views.AssessmentDetailsUpdate.as_view(),
+        name="details-update",
+    ),
+    path(
+        "extra-details/<int:pk>/delete/",
+        views.AssessmentDetailsDelete.as_view(),
+        name="details-delete",
+    ),
     # assessment values
     path("values/<int:pk>/new/", views.AssessmentValuesCreate.as_view(), name="values-create"),
     path("values/<int:pk>/", views.AssessmentValuesDetail.as_view(), name="values-detail"),
