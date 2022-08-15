@@ -19,65 +19,65 @@
     </colgroup>
     <tbody>
         <tr>
-            <td>System</td>
+            <th>System</th>
             <td>{{object.system}}</td>
         </tr>
         <tr>
-            <td>Evaluation Type</td>
+            <th>Evaluation Type</th>
             <td>{{object.get_evaluation_type_display}}</td>
         </tr>
         <tr>
-            <td>Value Type</td>
+            <th>Value Type</th>
             <td>{{object.value_type}}</td>
         </tr>
         <tr>
-            <td>Value</td>
+            <th>Value</th>
             <td>{{object.value}} {{object.value_unit}}</td>
         </tr>
         <tr>
-            <td>Basis</td>
+            <th>Basis</th>
             <td>{{object.basis}}</td>
         </tr>
         <tr>
-            <td>POD Value</td>
+            <th>POD Value</th>
             <td>{{object.pod_value}} {{object.pod_unit}}</td>
         </tr>
         <tr>
-            <td>Composite Uncertainty Factor</td>
+            <th>Composite Uncertainty Factor</th>
             <td>{{object.uncertainty}}</td>
         </tr>
         <tr>
-            <td>Confidence</td>
+            <th>Confidence</th>
             <td>{{object.get_confidence_display}}</td>
         </tr>
         <tr>
-            <td>Species Studied</td>
+            <th>Species Studied</th>
             <td>{{object.species_studied}}</td>
         </tr>
         <tr>
-            <td>Duration</td>
+            <th>Duration</th>
             <td>{{object.duration}}</td>
         </tr>
         {% if object.study %}
         <tr>
-            <td>HAWC Study</td>
+            <th>HAWC Study</th>
             <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
         </tr>
         {% endif %}
         <tr>
-            <td>Tumor Type/Cancer</td>
+            <th>Tumor Type/Cancer</th>
             <td>{{object.tumor_type}}</td>
         </tr>
         <tr>
-            <td>Extrapolation Method</td>
+            <th>Extrapolation Method</th>
             <td>{{object.extrapolation_method}}</td>
         </tr>
         <tr>
-            <td>Evidence Characterization</td>
+            <th>Evidence Characterization</th>
             <td>{{object.evidence}}</td>
         </tr>
         <tr>
-            <td>Comments</td>
+            <th>Comments</th>
             <td>{{object.comments}}</td>
         </tr>
     </tbody>
