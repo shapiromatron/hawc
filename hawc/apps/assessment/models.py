@@ -499,7 +499,9 @@ class Values(models.Model):
         max_length=64,
         help_text="Enter the type of toxicity value that was derived.",
     )
-    value = models.FloatField(null=True)  # TODO: Not required if "No Value" selected for value type
+    value = models.FloatField(
+        blank=True, null=True
+    )  # TODO: Not required if "No Value" selected for value type
     value_unit = models.ForeignKey(
         "assessment.DoseUnits",
         on_delete=models.SET_NULL,

@@ -187,6 +187,7 @@ class AssessmentValuesForm(forms.ModelForm):
         for fld in ["comments", "basis"]:
             self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
+        self.fields["extra_metadata"].widget.attrs["rows"] = 3
 
         if self.instance.id:
             helper = BaseFormHelper(
@@ -202,11 +203,12 @@ class AssessmentValuesForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
-        helper.add_row("organ_system", 2, "col-md-6")
+        helper.add_row("system", 2, "col-md-6")
         helper.add_row("value_type", 3, "col-md-4")
         helper.add_row("basis", 3, "col-md-4")
         helper.add_row("uncertainty", 6, "col-md-2")
-        helper.add_row("evidence", 2, "col-md-6")
+        helper.add_row("extrapolation_method", 2, "col-md-6")
+        helper.add_row("comments", 2, "col-md-6")
 
         return helper
 

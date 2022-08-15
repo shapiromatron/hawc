@@ -2,9 +2,11 @@
 <h3>Assessment Values</h3>
 <table class="table table-sm table-striped">
     <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 30%;">
-        <col style="width: 40%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
     </colgroup>
     <thead>
         <tr>
@@ -19,7 +21,7 @@
         {% for object in object_list %}
         <tr>
             <td><a href="{% url 'assessment:values-detail' object.pk %}">{{object.system}}</a></td>
-            <td>{{object.evaluation_type}}</td>
+            <td>{{object.get_evaluation_type_display}}</td>
             <td>{{object.value_type}}</td>
             <td>{{object.value}} {{object.value_units}}</td>
             <td>{{object.comments}}</td>

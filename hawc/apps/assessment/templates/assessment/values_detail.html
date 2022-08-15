@@ -19,12 +19,12 @@
     </colgroup>
     <tbody>
         <tr>
-            <td>Organ System</td>
-            <td>{{object.organ_system}}</td>
+            <td>System</td>
+            <td>{{object.system}}</td>
         </tr>
         <tr>
             <td>Evaluation Type</td>
-            <td>{{object.evaluation_type}}</td>
+            <td>{{object.get_evaluation_type_display}}</td>
         </tr>
         <tr>
             <td>Value Type</td>
@@ -39,7 +39,7 @@
             <td>{{object.basis}}</td>
         </tr>
         <tr>
-            <td>Pod Value</td>
+            <td>POD Value</td>
             <td>{{object.pod_value}} {{object.pod_unit}}</td>
         </tr>
         <tr>
@@ -48,7 +48,7 @@
         </tr>
         <tr>
             <td>Confidence</td>
-            <td>{{object.confidence}}</td>
+            <td>{{object.get_confidence_display}}</td>
         </tr>
         <tr>
             <td>Species Studied</td>
@@ -58,8 +58,14 @@
             <td>Duration</td>
             <td>{{object.duration}}</td>
         </tr>
+        {% if object.study %}
         <tr>
-            <td>Tumor Type</td>
+            <td>HAWC Study</td>
+            <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Tumor Type/Cancer</td>
             <td>{{object.tumor_type}}</td>
         </tr>
         <tr>
