@@ -1,0 +1,7 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+{% if crud == "Read" %}
+    {% include "assessment/_details_fragment.html" %}
+{% endif %}
+{% endblock %}

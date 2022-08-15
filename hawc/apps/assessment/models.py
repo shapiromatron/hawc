@@ -451,10 +451,12 @@ class AssessmentDetails(models.Model):
     )
     epa_report = models.IntegerField(
         verbose_name="EPA Report Number",
+        blank=True,
         null=True,
     )
     rapid_stics = models.IntegerField(
         verbose_name="RAPID/STICS Number",
+        blank=True,
         null=True,
     )
     file_link = models.URLField(
