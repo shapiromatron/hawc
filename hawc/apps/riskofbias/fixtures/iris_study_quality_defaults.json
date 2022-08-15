@@ -165,24 +165,6 @@
         ]
     },
     {
-        "name": "Overall confidence (animal)",
-        "description": "",
-        "is_overall_confidence": true,
-        "metrics": [
-            {
-                "name": "Overall confidence",
-                "short_name": "",
-                "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Considering the identified strengths and limitations, what is the overall confidence rating for the endpoint(s)/outcome(s) of interest?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Were concerns (i.e.,&nbsp;limitations or uncertainties) related to the risk of bias or sensitivity identified?</li><li>If yes, what is their expected impact on the overall interpretation of the reliability and validity of the study results, including (when possible) interpretations of impacts on the magnitude or direction of the reported effects?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>The overall confidence rating considers the likely impact of the noted concerns (i.e.,&nbsp;limitations or uncertainties) in reporting, bias and sensitivity on the results.</p><p>Reviewers should mark studies that are rated lower than high confidence only due to low sensitivity (i.e.,&nbsp;bias towards the null) for additional consideration during evidence synthesis.&nbsp;If the study is otherwise well conducted and an effect is observed, it may increase the strength of evidence judgment.</p><p><u>A confidence rating and rationale should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.&nbsp;&nbsp;</u></p><ul><li><strong>High confidence:</strong> No notable deficiencies or concerns identified; the potential for bias is unlikely or minimal, and the study used sensitive methodology.&nbsp;<em>High</em> confidence studies generally reflect judgments of good across all or most evaluation domains.</li><li><strong>Medium confidence:</strong> Possible deficiencies or concerns are identified, but the limitations are unlikely to have a significant impact on the study results or their interpretation.&nbsp;Generally, <em>medium</em> confidence studies include <em>adequate</em> or <em>good</em> judgments across most domains, with the impact of any identified limitation not being judged as severe.</li><li><strong>Low confidence:</strong> Deficiencies or concerns are identified, and the potential for bias or inadequate sensitivity is expected to have a significant impact on the study results or their interpretation.&nbsp;Typically, <em>low</em> confidence studies have a <em>deficient</em> evaluation for one or more domains, although some <em>medium</em> confidence studies may have a <em>deficient</em> rating in domain(s) considered to have less influence on the magnitude or direction of effect estimates.</li><li><strong>Uninformative:</strong> Serious flaw(s) are judged to make the study results uninterpretable for use in the assessment.&nbsp;Studies with <em>critically deficient</em> judgments in any evaluation domain are almost always rated <em>uninformative</em>.&nbsp;Studies with multiple <em>deficient </em>judgments across domains may also be considered <em>uninformative.</em>&nbsp;&nbsp;</li></ul>",
-                "responses": 3,
-                "required_animal": true,
-                "required_epi": false,
-                "required_invitro": false,
-                "hide_description": false,
-                "use_short_name": false
-            }
-        ]
-    },
-    {
         "name": "Participant selection",
         "description": "",
         "is_overall_confidence": false,
@@ -312,22 +294,34 @@
         ]
     },
     {
-        "name": "Overall confidence (epi)",
+        "name": "Overall Study Confidence",
         "description": "",
         "is_overall_confidence": true,
         "metrics": [
             {
-                "name": "Overall confidence",
-                "short_name": "",
+                "name": "Overall confidence (animal)",
+                "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Considering the identified strengths and limitations, what is the overall confidence rating for the endpoint(s)/outcome(s) of interest?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Were concerns (i.e.,&nbsp;limitations or uncertainties) related to the risk of bias or sensitivity identified?</li><li>If yes, what is their expected impact on the overall interpretation of the reliability and validity of the study results, including (when possible) interpretations of impacts on the magnitude or direction of the reported effects?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>The overall confidence rating considers the likely impact of the noted concerns (i.e.,&nbsp;limitations or uncertainties) in reporting, bias and sensitivity on the results.</p><p>Reviewers should mark studies that are rated lower than high confidence only due to low sensitivity (i.e.,&nbsp;bias towards the null) for additional consideration during evidence synthesis.&nbsp;If the study is otherwise well conducted and an effect is observed, it may increase the strength of evidence judgment.</p><p><u>A confidence rating and rationale should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.&nbsp;&nbsp;</u></p><ul><li><strong>High confidence:</strong> No notable deficiencies or concerns identified; the potential for bias is unlikely or minimal, and the study used sensitive methodology.&nbsp;<em>High</em> confidence studies generally reflect judgments of good across all or most evaluation domains.</li><li><strong>Medium confidence:</strong> Possible deficiencies or concerns are identified, but the limitations are unlikely to have a significant impact on the study results or their interpretation.&nbsp;Generally, <em>medium</em> confidence studies include <em>adequate</em> or <em>good</em> judgments across most domains, with the impact of any identified limitation not being judged as severe.</li><li><strong>Low confidence:</strong> Deficiencies or concerns are identified, and the potential for bias or inadequate sensitivity is expected to have a significant impact on the study results or their interpretation.&nbsp;Typically, <em>low</em> confidence studies have a <em>deficient</em> evaluation for one or more domains, although some <em>medium</em> confidence studies may have a <em>deficient</em> rating in domain(s) considered to have less influence on the magnitude or direction of effect estimates.</li><li><strong>Uninformative:</strong> Serious flaw(s) are judged to make the study results uninterpretable for use in the assessment.&nbsp;Studies with <em>critically deficient</em> judgments in any evaluation domain are almost always rated <em>uninformative</em>.&nbsp;Studies with multiple <em>deficient </em>judgments across domains may also be considered <em>uninformative.</em>&nbsp;&nbsp;</li></ul>",
+                "required_animal": true,
+                "required_epi": false,
+                "required_invitro": false,
+                "short_name": "Overall confidence",
+                "hide_description": false,
+                "use_short_name": true,
+                "responses": 3
+            },
+            {
+                "name": "Overall confidence (epi)",
                 "description": "<p><strong>Elements to include:</strong></p><ul><li>Study confidence&nbsp;rating&nbsp;of&nbsp;high confidence, medium confidence, low confidence, or uninformative&nbsp;&nbsp;</li><li>Summary of the main concerns or strengths&nbsp;from one or more study evaluation domains&nbsp;that drove the&nbsp;study confidence rating.&nbsp;&nbsp;</li><li>Other&nbsp;information or explanation&nbsp;(as needed) to&nbsp;elucidate&nbsp;the rationale&nbsp;behind&nbsp;the&nbsp;overall&nbsp;study confidence rating&nbsp;chosen for the study.&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>High confidence: Well-conducted [study type] study with many strengths including [LIST]. There was minimal concern for bias and sufficient study sensitivity to detect associations if they exist.</li><li>Medium confidence: The study was adequately conducted to determine associations with the health outcome(s) of interest [OPTIONAL: with several strengths including (LIST; e.g., sufficient exposure contrast and statistical power)]. [OPTIONAL: There is some decrease in overall confidence due to (LIST; e.g., uncertainty regarding the potential for exposure misclassification, residual confounding concern, and limited data on loss to follow-up in the cohort)]. Identified limitations are not expected to have substantial impact on results.</li><li>Low confidence: This [study type] study had limitations including [LIST], which have the potential to substantially impact results. (OPTIONAL: However, there were some study strengths such as [LIST] that could be considered in evidence synthesis.)</li><li>Uninformative: Multiple deficient, or at least one critically deficient rating [LIST] in the above domains rendered this study uninformative.</li></ul>",
-                "responses": 3,
                 "required_animal": false,
                 "required_epi": true,
                 "required_invitro": false,
+                "short_name": "Overall confidence",
                 "hide_description": false,
-                "use_short_name": false
+                "use_short_name": true,
+                "responses": 3
             }
         ]
     }
     ]
+
 }
