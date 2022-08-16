@@ -140,6 +140,17 @@ class AssessmentDetailsForm(forms.ModelForm):
             self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
 
+    def clean_extra_metadata(self):
+        extra_metadata = self.cleaned_data["extra_metadata"]
+        if not extra_metadata:
+            return dict()
+        for key, value in extra_metadata.items():
+            if type(key) != str or type(value) != str:
+                raise forms.ValidationError(
+                    "Extra metadata must be a dictionary of string key and value pairs. Lists and nested dictionaries are not valid."
+                )
+        return extra_metadata
+
     @property
     def helper(self):
         self.fields["extra_metadata"].widget.attrs["rows"] = 3
@@ -169,18 +180,26 @@ class AssessmentValuesForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update values for this Assessment."
 
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
-
     class Meta:
         model = models.Values
-        fields = "__all__"
+        exclude = ["assessment"]
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if assessment:
-            self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
+
+    def clean_extra_metadata(self):
+        extra_metadata = self.cleaned_data["extra_metadata"]
+        if not extra_metadata:
+            return dict()
+        for key, value in extra_metadata.items():
+            if type(key) != str or type(value) != str:
+                raise forms.ValidationError(
+                    "Extra metadata must be a dictionary of string key and value pairs. Lists and nested dictionaries are not valid."
+                )
+        return extra_metadata
 
     def clean(self):
         cleaned_data = super().clean()

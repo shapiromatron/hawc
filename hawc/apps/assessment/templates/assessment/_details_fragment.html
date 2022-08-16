@@ -33,5 +33,12 @@
             <th>Link to QA Tracking Page</th>
             <td>{{object.qa_link}}</td>
         </tr>
+        {% for key, value in object.extra_metadata.items %}
+        <tr>
+            <th>{{key}}</th>
+            <td>{{value}}</td>
+        </tr>
+        {% empty %}
+        {% endfor %}
     </tbody>
 </table>

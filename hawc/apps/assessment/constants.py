@@ -78,5 +78,5 @@ class Confidence(models.TextChoices):
     LOW = "LOW", "Low"
 
 
-def default_metadata() -> dict:
+def default_metadata() -> dict[str, str]:
     return dict(key="value")
