@@ -23,7 +23,11 @@
         </tr>
         <tr>
             <th>Link to External Document Page</th>
-            <td>{{object.docs_link}}</td>
+            <td><a href="{{object.docs_link}}">{{object.docs_link}}</a></td>
+        </tr>
+        <tr>
+            <th>Link to External Page</th>
+            <td><a href="{{object.project_link}}">{{object.project_link}}</a></td>
         </tr>
         <tr>
             <th>QA Tracking ID</th>
@@ -31,7 +35,7 @@
         </tr>
         <tr>
             <th>Link to QA Tracking Page</th>
-            <td>{{object.qa_link}}</td>
+            <td><a href="{{object.qa_link}}">{{object.qa_link}}</a></td>
         </tr>
         {% for key, value in object.extra_metadata.items %}
         <tr>
