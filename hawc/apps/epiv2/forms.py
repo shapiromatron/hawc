@@ -3,10 +3,12 @@ from django.urls import reverse
 
 from hawc.apps.common.forms import BaseFormHelper
 
-from ..assessment.lookups import DssToxIdLookup
+from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common import selectable
+from ..common.autocomplete import AutocompleteMultipleChoiceField, AutocompleteSelectWidget
 from ..common.forms import ArrayCheckboxSelectMultiple
 from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
+from ..epi.autocomplete import CountryAutocomplete
 from . import constants, lookups, models
 
 
@@ -15,8 +17,8 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
-    countries = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=lookups.CountryNameLookup, required=False
+    countries = AutocompleteMultipleChoiceField(
+        autocomplete_class=CountryAutocomplete, required=False
     )
 
     class Meta:
@@ -66,7 +68,7 @@ class ChemicalForm(forms.ModelForm):
             "name": selectable.AutoCompleteWidget(
                 lookup_class=lookups.ChemicalNameLookup, allow_new=True
             ),
-            "dsstox": selectable.AutoCompleteSelectWidget(lookup_class=DssToxIdLookup),
+            "dsstox": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
         }
 
     def __init__(self, *args, **kwargs):

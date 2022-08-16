@@ -49,3 +49,9 @@ class ResultAutocomplete(BaseAutocomplete):
     model = models.Result
     search_fields = ["metric__metric", "comparison_set__name"]
     filter_fields = ["outcome_id"]
+
+
+@register
+class CountryAutocomplete(BaseAutocomplete):
+    model = models.Country
+    search_fields = ["name"]
