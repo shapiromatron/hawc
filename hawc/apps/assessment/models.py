@@ -426,6 +426,7 @@ class Assessment(models.Model):
 
 
 class AssessmentDetails(models.Model):
+    objects = managers.AssessmentDetailsManager()
     assessment = models.OneToOneField(Assessment, models.CASCADE, related_name="details")
     project_type = models.CharField(
         max_length=64,
@@ -467,7 +468,7 @@ class AssessmentDetails(models.Model):
         verbose_name="Link to QA Tracking Page",
         blank=True,
     )
-    extra_metadata = models.JSONField(default=constants.default_metadata)
+    extra_metadata = models.JSONField(blank=True, default=constants.default_metadata)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -484,6 +485,7 @@ class AssessmentDetails(models.Model):
 
 
 class Values(models.Model):
+    objects = managers.ValuesManager()
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
     system = models.CharField(
         max_length=128,

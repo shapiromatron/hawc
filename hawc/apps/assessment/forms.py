@@ -10,6 +10,7 @@ from django.core.mail import mail_admins
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
+from hawc.apps.study.models import Study
 
 from hawc.services.epa.dsstox import DssSubstance
 
@@ -189,6 +190,7 @@ class AssessmentValuesForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
+        self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
 
     def clean_extra_metadata(self):
         extra_metadata = self.cleaned_data["extra_metadata"]

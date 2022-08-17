@@ -140,3 +140,11 @@ class TimeSpentEditingManager(BaseManager):
 
 class DatasetManager(BaseManager):
     assessment_relation = "assessment"
+
+
+class ValuesManager(BaseManager):
+    assessment_relation = "assessment"
+
+
+class AssessmentDetailsManager(BaseManager):
+    assessment_relation = "assessment"
