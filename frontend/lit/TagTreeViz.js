@@ -8,7 +8,7 @@ import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {observer} from "mobx-react";
-import {action, observable} from "mobx";
+import {action, observable, toJS} from "mobx";
 import PropTypes from "prop-types";
 
 @observer
@@ -41,8 +41,8 @@ class VizState {
         // wip: http://127.0.0.1:8000/lit/assessment/100500299/references/visualization/
         options.showCounts = false; // todo bubble up
         options.showLegend = true; // todo bubble up
-        options.nodeOffsets = {}; // todo bubble up
         options.legendPosition = {x: 25, y: 25}; // todo bubble up
+        options.nodePositions = {};
         this.options = options;
     }
 
@@ -51,6 +51,9 @@ class VizState {
     }
     @action.bound updateLegendPosition(x, y) {
         this.options.legendPosition = {x, y};
+    }
+    @action.bound updateDragLocation(id, x, y) {
+        this.options.nodePositions[id] = [x, y];
     }
 }
 
@@ -114,6 +117,7 @@ class TagTreeViz extends D3Plot {
 
     draw_visualization() {
         var options = this.stateStore.options,
+            store = this.stateStore,
             i = 0,
             vis = this.vis,
             diagonal = d3
@@ -205,7 +209,7 @@ class TagTreeViz extends D3Plot {
                     .call(
                         HAWCUtils.updateDragLocationTransform(function(x, y) {
                             var p = d3.select(this);
-                            console.log(this, p.data()[0].data.id, x, y);
+                            store.updateDragLocation(p.data()[0].data.id, x, y);
                         })
                     );
 
