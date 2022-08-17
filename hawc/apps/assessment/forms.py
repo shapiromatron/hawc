@@ -10,8 +10,8 @@ from django.core.mail import mail_admins
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
-from hawc.apps.study.models import Study
 
+from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
