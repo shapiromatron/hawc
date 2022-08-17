@@ -1,3 +1,36 @@
+[project]
+name = "hawc"
+description = "A content management system for human health assessments."
+readme = "README.rst"
+authors = [
+  {name = "Andy Shapiro", email="shapiromatron@gmail.com"}
+]
+maintainers = [
+  {name = "HAWC Development Team"}
+]
+license = {file = "LICENSE"}
+classifiers = [
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.9"
+]
+requires-python = ">=3.9"
+dynamic = ["version"]
+
+[project.scripts]
+hawc = "hawc:manage"
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["hawc"]
+license-files = ["LICENSE"]
+
+[tool.setuptools.dynamic]
+version = {attr = "hawc.__version__"}
+
+
 [tool.black]
 line-length = 100
 target-version = ['py36', 'py37', 'py38']
@@ -20,6 +53,7 @@ exclude = '''
 )/
 '''
 
+
 [tool.coverage.run]
 omit = [
   "*migrations*",
@@ -31,6 +65,7 @@ omit = [
   "./venv/*",
   "*/bmds/*",
 ]
+
 
 [tool.isort]
 atomic = true

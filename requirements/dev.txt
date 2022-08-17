@@ -25,6 +25,7 @@ Sphinx==4.4.0
 sphinx-rtd-theme==1.0.0
 
 # distribution tools
+build==0.8.0
 wheel==0.37.1
 pex==2.1.43; platform_system != "Windows"
 
