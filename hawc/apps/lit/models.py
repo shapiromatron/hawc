@@ -20,9 +20,9 @@ from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
+from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
-from reversion import revisions as reversion
 
 from ...refml import topics
 from ...services.nih import pubmed
@@ -197,7 +197,8 @@ class Search(models.Model):
     )
     slug = models.SlugField(
         verbose_name="URL Name",
-        help_text="The URL (web address) used to describe this object " "(no spaces or special-characters).",
+        help_text="The URL (web address) used to describe this object "
+        "(no spaces or special-characters).",
     )
     description = models.TextField(
         blank=True,
@@ -226,7 +227,9 @@ class Search(models.Model):
     @property
     def is_manual_import(self):
         # special case- created when assessment is created
-        return self.search_type == constants.SearchType.IMPORT and self.slug == self.MANUAL_IMPORT_SLUG
+        return (
+            self.search_type == constants.SearchType.IMPORT and self.slug == self.MANUAL_IMPORT_SLUG
+        )
 
     def clean(self):
         # unique_together constraint checked above;
@@ -235,9 +238,19 @@ class Search(models.Model):
         errors = {}
         if self.pk:
             pk_exclusion["pk"] = self.pk
-        if Search.objects.filter(assessment=self.assessment, title=self.title).exclude(**pk_exclusion).count() > 0:
+        if (
+            Search.objects.filter(assessment=self.assessment, title=self.title)
+            .exclude(**pk_exclusion)
+            .count()
+            > 0
+        ):
             errors["title"] = ASSESSMENT_UNIQUE_MESSAGE
-        if Search.objects.filter(assessment=self.assessment, slug=self.slug).exclude(**pk_exclusion).count() > 0:
+        if (
+            Search.objects.filter(assessment=self.assessment, slug=self.slug)
+            .exclude(**pk_exclusion)
+            .count()
+            > 0
+        ):
             errors["slug"] = ASSESSMENT_UNIQUE_MESSAGE
         if errors:
             raise ValidationError(errors)
@@ -252,7 +265,9 @@ class Search(models.Model):
         # cascade delete references which no longer relate to any searches
         orphans = self.sole_references()
         if orphans.count() > 0:
-            logger.info(f"Removed {orphans.count()} orphan references from assessment {self.assessment_id}")
+            logger.info(
+                f"Removed {orphans.count()} orphan references from assessment {self.assessment_id}"
+            )
             orphans.delete()
         super().delete(**kwargs)
 
@@ -334,7 +349,9 @@ class Search(models.Model):
         # it, just associate the current reference with this search.
         added_str = [str(id) for id in results["added"]]
         ref_ids = (
-            Reference.objects.filter(assessment=self.assessment, identifiers__unique_id__in=added_str)
+            Reference.objects.filter(
+                assessment=self.assessment, identifiers__unique_id__in=added_str
+            )
             .exclude(searches=self)
             .values_list("pk", flat=True)
         )
@@ -368,7 +385,9 @@ class Search(models.Model):
             logger.debug(f"Completed bulk creation of {len(refs)} references")
 
             # re-query to get the objects back with PKs
-            refs = Reference.objects.filter(assessment=self.assessment, block_id=block_id).order_by("pk")
+            refs = Reference.objects.filter(assessment=self.assessment, block_id=block_id).order_by(
+                "pk"
+            )
 
             # associate identifiers with each
             ref_searches = []
@@ -442,7 +461,10 @@ class Search(models.Model):
 
     @property
     def date_last_run(self):
-        if self.source == constants.ReferenceDatabase.PUBMED and self.search_type == constants.SearchType.SEARCH:
+        if (
+            self.source == constants.ReferenceDatabase.PUBMED
+            and self.search_type == constants.SearchType.SEARCH
+        ):
             try:
                 return PubMedQuery.objects.filter(search=self).latest().query_date
             except Exception:
@@ -484,7 +506,12 @@ class Search(models.Model):
 
     @property
     def references_tagged_count(self):
-        return self.references.all().annotate(tag_count=models.Count("tags")).filter(tag_count__gt=0).count()
+        return (
+            self.references.all()
+            .annotate(tag_count=models.Count("tags"))
+            .filter(tag_count__gt=0)
+            .count()
+        )
 
     @property
     def fraction_tagged(self):
@@ -562,7 +589,9 @@ class PubMedQuery(models.Model):
             start_index = int(i * block_size)
             end_index = min(int(i * block_size + block_size), ids_to_add_len)
             logger.debug(f"Building from {start_index} to {end_index}")
-            fetch = pubmed.PubMedFetch(id_list=ids_to_add[start_index:end_index], retmax=int(block_size))
+            fetch = pubmed.PubMedFetch(
+                id_list=ids_to_add[start_index:end_index], retmax=int(block_size)
+            )
             identifiers = []
             for item in fetch.get_content():
                 identifiers.append(
@@ -594,7 +623,9 @@ class PubMedQuery(models.Model):
 class Identifiers(models.Model):
     objects = managers.IdentifiersManager()
 
-    unique_id = models.CharField(max_length=256, db_index=True)  # DOI has no limit; we make this relatively large
+    unique_id = models.CharField(
+        max_length=256, db_index=True
+    )  # DOI has no limit; we make this relatively large
     database = models.IntegerField(choices=constants.ReferenceDatabase.choices)
     content = models.TextField()
     url = models.URLField(blank=True)
@@ -748,7 +779,9 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
 
-    tag = models.ForeignKey(ReferenceFilterTag, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_items")
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_items"
+    )
     content_object = models.ForeignKey("Reference", on_delete=models.CASCADE)
 
 
@@ -757,11 +790,15 @@ class Reference(models.Model):
 
     objects = managers.ReferenceManager()
 
-    assessment = models.ForeignKey("assessment.Assessment", on_delete=models.CASCADE, related_name="references")
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="references"
+    )
     searches = models.ManyToManyField(Search, blank=False, related_name="references")
     identifiers = models.ManyToManyField(Identifiers, blank=True, related_name="references")
     title = models.TextField(blank=True)
-    authors_short = models.TextField(blank=True, help_text='Short-text for to display (eg., "Smith et al.")')
+    authors_short = models.TextField(
+        blank=True, help_text='Short-text for to display (eg., "Smith et al.")'
+    )
     authors = models.TextField(
         blank=True,
         help_text='The complete, comma separated authors list, (eg., "Smith JD, Tom JF, McFarlen PD")',
@@ -772,7 +809,8 @@ class Reference(models.Model):
     tags = managers.ReferenceFilterTagManager(through=ReferenceTags, blank=True)
     full_text_url = CustomURLField(
         blank=True,
-        help_text="Link to full-text URL from journal site (may require increased " "access privileges to view)",
+        help_text="Link to full-text URL from journal site (may require increased "
+        "access privileges to view)",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -831,7 +869,9 @@ class Reference(models.Model):
         ids = list(cls.objects.filter(assessment_id=assessment_id).values_list("id", flat=True))
         SerializerHelper.delete_caches(cls, ids)
         if delete_study_cache:
-            apps.get_model("study", "Study").delete_cache(assessment_id, delete_reference_cache=False)
+            apps.get_model("study", "Study").delete_cache(
+                assessment_id, delete_reference_cache=False
+            )
 
     @classmethod
     def update_hero_metadata(cls, assessment_id: int) -> ResultBase:
@@ -953,7 +993,9 @@ class Reference(models.Model):
         n_doi_initial = qs_dois.count()
 
         qs_no_doi = (
-            qs.only("id").exclude(identifiers__database=constants.ReferenceDatabase.DOI).prefetch_related("identifiers")
+            qs.only("id")
+            .exclude(identifiers__database=constants.ReferenceDatabase.DOI)
+            .prefetch_related("identifiers")
         )
 
         new_doi_relations = []
@@ -975,7 +1017,9 @@ class Reference(models.Model):
         doi_creates = []
         for doi, _ in new_doi_relations:
             if doi not in existing_dois:
-                doi_creates.append(Identifiers(database=constants.ReferenceDatabase.DOI, unique_id=doi))
+                doi_creates.append(
+                    Identifiers(database=constants.ReferenceDatabase.DOI, unique_id=doi)
+                )
                 existing_dois[doi] = -1  # set temporary value until after bulk_create
 
         created = Identifiers.objects.bulk_create(doi_creates)
@@ -995,7 +1039,9 @@ class Reference(models.Model):
             logger.write(
                 f"{n_doi_initial:8} -> {n_doi:8} references with a DOI (+{n_doi-n_doi_initial}; {n_doi/n:.0%} have DOI)"
             )
-            logger.write(f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)")
+            logger.write(
+                f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
+            )
 
 
 reversion.register(Reference)
