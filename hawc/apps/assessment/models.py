@@ -581,8 +581,8 @@ class Values(models.Model):
         return reverse("assessment:values-detail", args=[self.pk])
 
     @classmethod
-    def get_df(cls) -> pd.DataFrame:
-        """Get a dataframe of all Assessment Values in HAWC."""
+    def get_df(cls, queryset: models.QuerySet) -> pd.DataFrame:
+        """Get a dataframe of Assessment Values from given Queryset of Values."""
         # TODO: possibly include more assessment metadata? use kwargs for included/excluded columns?
         mapping: dict[str, str] = {
             "id": "id",
@@ -611,7 +611,7 @@ class Values(models.Model):
             "evidence": "evidence_characterization",
             "comments": "value_comments",
         }
-        data = cls.objects.values_list(*list(mapping.keys()))
+        data = queryset.values_list(*list(mapping.keys()))
         df = pd.DataFrame(data=data, columns=list(mapping.values()))
         return df
 

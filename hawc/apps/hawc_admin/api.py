@@ -4,6 +4,9 @@ from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
+from hawc.apps.assessment.exports import ValuesListExport
+from hawc.apps.assessment.models import Values
+
 from ..common.api import FivePerMinuteThrottle
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
@@ -39,5 +42,7 @@ class ReportsViewset(viewsets.ViewSet):
     @action(detail=False, renderer_classes=PandasRenderers)
     def values(self, request):
         """Gets all value data accross all assessments."""
-        export = serializers.ValuesExportOptions.build_export()
+        export = ValuesListExport(
+            queryset=Values.objects.all(), filename="hawc-assessment-values"
+        ).build_export()
         return Response(export, status=status.HTTP_200_OK)
