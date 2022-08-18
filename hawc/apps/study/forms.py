@@ -139,6 +139,7 @@ class ReferenceStudyForm(BaseStudyForm):
             "in_vitro",
             "epi",
             "epi_meta",
+            "eco",
             "coi_reported",
             "coi_details",
             "funding_source",

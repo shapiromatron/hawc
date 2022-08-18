@@ -11,18 +11,13 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update an existing study design."
 
+    country = selectable.AutoCompleteSelectMultipleWidget(lookup_class=lookups.CountryLookup)
+    state = selectable.AutoCompleteSelectMultipleWidget(lookup_class=lookups.StateLookup)
+    ecoregion = selectable.AutoCompleteSelectMultipleWidget(lookup_class=lookups.EcoregionLookup)
+
     class Meta:
         exclude = ("study",)
         model = models.Design
-        widgets = {
-            "country": selectable.AutoCompleteSelectMultipleWidget(
-                lookup_class=lookups.CountryLookup
-            ),
-            "state": selectable.AutoCompleteSelectMultipleWidget(lookup_class=lookups.StateLookup),
-            "ecoregion": selectable.AutoCompleteSelectMultipleWidget(
-                lookup_class=lookups.EcoregionLookup
-            ),
-        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)

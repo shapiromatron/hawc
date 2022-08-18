@@ -33,10 +33,11 @@
   <table id="mainTbl" class="table table-sm table-striped">
     <colgroup>
       <col style="width: 25%;">
-      <col style="width: 45%;">
+      <col style="width: 40%;">
       <col style="width: 7%;">
-      <col style="width: 8%;">
-      <col style="width: 8%;">
+      <col style="width: 7%;">
+      <col style="width: 7%;">
+      <col style="width: 7%;">
       <col style="width: 7%;">
     </colgroup>
     <thead>
@@ -47,6 +48,7 @@
         <th>Epidemiology</th>
         <th>Epi. meta-analysis</th>
         <th>In vitro</th>
+        <th>Ecology</th>
       </tr>
     </thead>
     <tbody>
@@ -71,7 +73,7 @@
           {% endfor %}
         </td>
         {% for type in study.STUDY_TYPE_FIELDS %}
-            <td class="{% cycle study.bioassay study.epi study.epi_meta study.in_vitro as data_type %}">
+            <td class="{% cycle study.bioassay study.epi study.epi_meta study.in_vitro study.eco as data_type %}">
               {% if data_type %}
               <i class="fa fa-check"></i>
               {% else %}

@@ -58,6 +58,8 @@ class Keys:
 
         self.epiv2_design = 1
 
+        self.eco_design = 4
+
 
 _keys = Keys()
 

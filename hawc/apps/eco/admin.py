@@ -1,4 +1,5 @@
 from django.contrib import admin
+from treebeard.admin import TreeAdmin
 
 from hawc.apps.common.admin import admin_edit_link
 
@@ -82,7 +83,6 @@ class ResultAdmin(admin.ModelAdmin):
         "last_updated",
     )
     list_filter = (
-        ("study", admin.RelatedOnlyFieldListFilter),
         ("design", admin.RelatedOnlyFieldListFilter),
         ("cause", admin.RelatedOnlyFieldListFilter),
         ("effect", admin.RelatedOnlyFieldListFilter),
@@ -91,3 +91,8 @@ class ResultAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related("design", "cause", "effect")
+
+
+@admin.register(models.NestedTerm)
+class NestedTermAdmin(TreeAdmin):
+    pass

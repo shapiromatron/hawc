@@ -1,3 +1,4 @@
+import reversion
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
@@ -5,6 +6,7 @@ from treebeard.mp_tree import MP_Node
 
 from ..epi.models import Country
 from ..study.models import Study
+from . import managers
 from .constants import ChangeTrajectory, VocabCategories
 
 
@@ -52,6 +54,8 @@ class Vocab(models.Model):
 
 
 class Design(models.Model):
+    objects = managers.DesignManager()
+
     name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(
         Study,
@@ -131,6 +135,9 @@ class Design(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
+    def get_study(self):
+        return self.study
+
     def get_absolute_url(self):
         return reverse("eco:design_detail", args=(self.pk,))
 
@@ -142,6 +149,8 @@ class Design(models.Model):
 
 
 class Cause(models.Model):
+    objects = managers.CauseManager()
+
     name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
@@ -221,11 +230,16 @@ class Cause(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
+    def get_study(self):
+        return self.study
+
     def __str__(self):
         return f"{self.study} | {self.term.name} | {self.name}"
 
 
 class Effect(models.Model):
+    objects = managers.EffectManager()
+
     name = models.CharField(blank=True, max_length=128)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     term = models.ForeignKey(
@@ -278,11 +292,16 @@ class Effect(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
+    def get_study(self):
+        return self.study
+
     def __str__(self):
         return f"{self.study} | {self.term.name} | {self.name}"
 
 
 class Result(models.Model):
+    objects = managers.ResultManager()
+
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="results")
     cause = models.ForeignKey(Cause, on_delete=models.CASCADE)
     effect = models.ForeignKey(Effect, on_delete=models.CASCADE)
@@ -397,12 +416,15 @@ class Result(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.sort_order = self.sort_order + 1
         self.save()
         return self
 
     def get_assessment(self):
         return self.design.study.get_assessment()
+
+    def get_study(self):
+        return self.design.study
 
     def default_related(self):
         return {
@@ -413,3 +435,10 @@ class Result(models.Model):
                 category=VocabCategories.STATISTICAL, value="Not applicable"
             ),
         }
+
+
+reversion.register(Design, follow=("country",))
+reversion.register(Cause)
+reversion.register(Effect)
+reversion.register(Result)
+reversion.register(NestedTerm)
