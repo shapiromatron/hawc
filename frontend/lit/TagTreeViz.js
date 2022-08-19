@@ -41,6 +41,8 @@ class VizState {
         // wip: http://127.0.0.1:8000/lit/assessment/100500299/references/visualization/
         options.nodeOffsets = {}; // todo bubble up
         options.legendPosition = {x: 25, y: 25}; // todo bubble up
+        options.showLegend = options.show_legend;
+        options.showCounts = options.show_counts;
         options.nodePositions = {};
         this.options = options;
     }

@@ -14,8 +14,8 @@ def add_legend_settings(apps, schema_editor):
         except json.JSONDecodeError:
             continue
 
-        settings["showLegend"] = True
-        settings["showCounts"] = True
+        settings["show_legend"] = True
+        settings["show_counts"] = True
         visual.settings = json.dumps(settings)
         visual.save()
 
@@ -29,8 +29,8 @@ def remove_legend_settings(apps, schema_editor):
         except json.JSONDecodeError:
             continue
 
-        settings.pop("showLegend", None)
-        settings.pop("showCounts", None)
+        settings.pop("show_legend", None)
+        settings.pop("show_counts", None)
         visual.settings = json.dumps(settings)
         visual.save()
 
