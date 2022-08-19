@@ -8,7 +8,7 @@ import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {observer} from "mobx-react";
-import {action, observable, toJS} from "mobx";
+import {action, observable} from "mobx";
 import PropTypes from "prop-types";
 
 @observer
