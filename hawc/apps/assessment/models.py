@@ -557,7 +557,7 @@ class Values(models.Model):
     )
     evidence = models.CharField(
         verbose_name="Evidence Characterization",
-        blank=True,  # TODO: spreadsheet says required = TRUE, but help text says "if applicable"
+        blank=True,
         max_length=512,
         help_text="If applicable, describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
     )

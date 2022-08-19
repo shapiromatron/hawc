@@ -10,7 +10,6 @@ from hawc.apps.assessment.models import Values
 from ..common.api import FivePerMinuteThrottle
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
-from . import serializers
 from .actions import media_metadata_report
 
 

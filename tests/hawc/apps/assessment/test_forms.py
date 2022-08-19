@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from hawc.apps.assessment.forms import DatasetForm, LogFilterForm
+from hawc.apps.assessment.forms import AssessmentValuesForm, DatasetForm, LogFilterForm
 from hawc.apps.assessment.models import Assessment, Dataset, DatasetRevision
 
 IRIS_DATA_CSV = (
@@ -167,3 +167,52 @@ class TestLogFilterForm:
         form = LogFilterForm(data=dict(object_id=999), assessment=assess)
         assert form.is_valid()
         assert len(form.filters()) == 1
+
+
+@pytest.mark.django_db
+class TestAssessmentValuesForm:
+    def test_errors(self, db_keys):
+        valid_data = {
+            "system": "nervous",
+            "evaluation_type": "CANCER",
+            "value_type": "No Value",
+            "value": None,
+            "value_unit": None,
+            "basis": "",
+            "pod_value": 5.0,
+            "pod_unit": 2,
+            "uncertainty": 8.0,
+            "confidence": "",
+            "species_studied": "",
+            "duration": "",
+            "study": None,
+            "tumor_type": "big",
+            "extrapolation_method": "very carefully",
+            "evidence": "strong evidence",
+            "comments": "",
+            "extra_metadata": "",
+        }
+        form = AssessmentValuesForm(
+            data=valid_data, parent=Assessment.objects.get(id=db_keys.assessment_working)
+        )
+        assert form.is_valid()
+
+        # Value should not be None
+        data = valid_data.update({"value_type": "OSF"})
+        form = AssessmentValuesForm(
+            data=data, parent=Assessment.objects.get(id=db_keys.assessment_working)
+        )
+        assert form.is_valid() is False
+        assert form.errors == {"value": ['Value is required unless Value Type is "No Value".']}
+        # Value type should not be No Value
+        data = valid_data.update({"value": 0.5})
+        form = AssessmentValuesForm(
+            data=data, parent=Assessment.objects.get(id=db_keys.assessment_working)
+        )
+        assert form.is_valid() is False
+        assert form.errors == {
+            "value_type": ['"No Value" is not a valid Value Type when a Value is given.']
+        }
+        # Cancer fields aren't filled out
+        # Noncancer field isn't filled out
+        # Extra metadata is dict[str, str]

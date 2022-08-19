@@ -10,6 +10,7 @@ from django.core.mail import mail_admins
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
+from hawc.apps.assessment import constants
 
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
@@ -213,6 +214,19 @@ class AssessmentValuesForm(forms.ModelForm):
             self.add_error(
                 "value_type", '"No Value" is not a valid Value Type when a Value is given.'
             )
+        evaluation_type = cleaned_data.get("evaluation_type")
+        if evaluation_type != constants.EvaluationType.NONCANCER:
+            for field in ["tumor_type", "extrapolation_method", "evidence"]:
+                if not cleaned_data.get(field):
+                    self.add_error(
+                        field, "This field is required when Cancer is the selected evaluation type."
+                    )
+        if evaluation_type != constants.EvaluationType.CANCER:
+            if not cleaned_data.get("uncertainty"):
+                self.add_error(
+                    "uncertainty",
+                    "This field is required when Noncancer is the selected evaluation type.",
+                )
 
     @property
     def helper(self):
