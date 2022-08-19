@@ -39,8 +39,6 @@ class VizState {
 
     constructor(options) {
         // wip: http://127.0.0.1:8000/lit/assessment/100500299/references/visualization/
-        options.showCounts = false; // todo bubble up
-        options.showLegend = true; // todo bubble up
         options.nodeOffsets = {}; // todo bubble up
         options.legendPosition = {x: 25, y: 25}; // todo bubble up
         this.options = options;
