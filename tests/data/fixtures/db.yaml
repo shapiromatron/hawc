@@ -6410,25 +6410,6 @@
   pk: 1
   fields:
     name: example eco design
-    study: 9
-    design: 1
-    study_setting: 6
-    habitat: 16
-    habitat_as_reported: ''
-    climate_as_reported: ''
-    created: 2022-08-17 15:48:41.192088+00:00
-    last_updated: 2022-08-18 16:36:07.670847+00:00
-    country:
-    - 3
-    state: []
-    ecoregion:
-    - 110
-    climate:
-    - 108
-- model: eco.design
-  pk: 4
-  fields:
-    name: example eco design
     study: 1
     design: 1
     study_setting: 6
@@ -6445,10 +6426,10 @@
     climate:
     - 104
 - model: eco.cause
-  pk: 3
+  pk: 1
   fields:
-    name: cause update
-    study: 9
+    name: cause
+    study: 1
     term: 1794
     bio_org: 29
     species: ''
@@ -6462,29 +6443,11 @@
     as_reported: <p><strong>Cause/treatment as reported</strong></p>
     created: 2022-08-17 16:20:31.982792+00:00
     last_updated: 2022-08-17 18:21:25.677256+00:00
-- model: eco.cause
-  pk: 5
-  fields:
-    name: cause
-    study: 4
-    term: 1794
-    bio_org: 29
-    species: ''
-    level: level
-    level_value: null
-    level_units: g
-    duration: '2'
-    duration_value: null
-    duration_units: ''
-    comment: ''
-    as_reported: <p><strong>Cause/treatment as reported</strong></p>
-    created: 2022-08-18 17:45:46.546859+00:00
-    last_updated: 2022-08-18 17:45:46.546859+00:00
 - model: eco.effect
-  pk: 13
+  pk: 1
   fields:
     name: effect
-    study: 9
+    study: 1
     term: 1794
     units: g
     species: ''
@@ -6494,10 +6457,10 @@
     created: 2022-08-17 16:20:14.052436+00:00
     last_updated: 2022-08-17 16:20:14.052436+00:00
 - model: eco.effect
-  pk: 14
+  pk: 1
   fields:
     name: effect
-    study: 4
+    study: 1
     term: 1794
     units: g
     species: ''
@@ -6507,11 +6470,11 @@
     created: 2022-08-18 17:45:57.467950+00:00
     last_updated: 2022-08-18 17:45:57.467950+00:00
 - model: eco.result
-  pk: 2
+  pk: 1
   fields:
     design: 1
-    cause: 3
-    effect: 13
+    cause: 1
+    effect: 1
     sort_order: 0
     relationship_direction: 0
     relationship_comment: ''
@@ -6529,29 +6492,6 @@
     derived_value: null
     created: 2022-08-17 16:20:45.453359+00:00
     last_updated: 2022-08-17 18:52:22.777238+00:00
-- model: eco.result
-  pk: 3
-  fields:
-    design: 4
-    cause: 5
-    effect: 14
-    sort_order: 0
-    relationship_direction: 0
-    relationship_comment: ''
-    modifying_factors: no,factors
-    modifying_factors_comment: ''
-    sample_size: null
-    measure_type: null
-    measure_value: null
-    description: ''
-    variability: 94
-    low_variability: null
-    upper_variability: null
-    statistical_sig_type: 99
-    statistical_sig_value: null
-    derived_value: 2.0
-    created: 2022-08-18 17:52:28.299094+00:00
-    last_updated: 2022-08-18 17:52:28.299094+00:00
 - model: epi.criteria
   pk: 1
   fields:

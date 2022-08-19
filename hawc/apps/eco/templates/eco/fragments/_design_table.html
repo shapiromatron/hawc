@@ -35,7 +35,7 @@
         {% optional_table_row "Habitat" object.habitat %}
         {% if object.habitat_as_reported|hastext %}
         <tr>
-            <th>Inclusion/Exclusion Criteria</th>
+            <th>Habitat as reported</th>
             <td>{{object.habitat_as_reported|safe}}</td>
         </tr>
         {% endif %}
@@ -48,7 +48,7 @@
         </tr>
         {% if object.climate_as_reported|hastext %}
         <tr>
-            <th>Inclusion/Exclusion Criteria</th>
+            <th>Climate as reported</th>
             <td>{{object.climate_as_reported|safe}}</td>
         </tr>
         {% endif %}
