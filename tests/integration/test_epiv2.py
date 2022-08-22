@@ -111,7 +111,6 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator("text=Group 3").click()
 
         # Check that changes are reflected on detail page
-        page.pause()
         page.locator("#epiv2-page-cancel").click()
         expect(page.locator("text=460")).to_be_visible()
         expect(page.locator("text=water >> nth=0")).to_be_visible()
