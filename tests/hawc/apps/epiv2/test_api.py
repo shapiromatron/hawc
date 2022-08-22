@@ -84,20 +84,12 @@ class TestDesignApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.Design.objects.get(id=just_created_design_id)
 
-        # TODO: add scenarios for create/update for a child model
         create_scenarios = (
             {
                 "desc": "design create",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": data,
-                "post_request_test": design_create_test,
-            },
-            {
-                "desc": "design create; no age_profile",
-                "expected_code": 201,
-                "expected_keys": {"id"},
-                "data": data2,
                 "post_request_test": design_create_test,
             },
         )

@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block sidebar_outer %}
-<div id="sidebar-container" class="sidebar {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
-    data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
-
-    {% if user.is_authenticated %}
-    <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
-        <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
-    </a>
-    {% endif %}
-
+<div class="sidebar">
     {% if flavor == "EPA" %}
-    <nav class="nav flex-column pt-3">
+    <div class="dropdown d-block d-lg-none px-1 pt-3">
+        <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <i class="fa fa-bars" title="Mobile navigation panel"></i>
+        </button>
+        <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
+            {% include "includes/_sidebar_links.html" %}
+        </div>
+    </div>
+    <nav class="nav flex-column pt-3 d-none d-lg-block">
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
         <li class="nav-item">
             {% if user.is_authenticated %}
