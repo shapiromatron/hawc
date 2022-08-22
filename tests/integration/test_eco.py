@@ -82,11 +82,14 @@ class TestEco(PlaywrightTestCase):
         expect(page.locator('span:has-text("none")').nth(1)).to_be_visible()
         # Delete copy
         page.locator("#result-delete").nth(2).click()
-        page.locator("text=Confirm").click()
-        page.locator("#design-page-cancel").click()
+        page.locator("#result-confirm-del").click()
 
         # Expect page changes
+        page.locator("#design-page-cancel").click()
         expect(page.locator("text=habitat update")).to_be_visible()
         expect(page.locator("text=new cause").nth(1)).to_be_visible()
         expect(page.locator("text=new effect").nth(1)).to_be_visible()
-        expect(page.locator('span:has-text("none")').nth(1)).to_be_visible()
+        expect(page.locator('span:has-text("none")')).to_be_visible()
+        expect(page.locator("#result-tbody > tr")).to_have_count(2)
+        expect(page.locator("#cause-tbody > tr")).to_have_count(2)
+        expect(page.locator("#effect-tbody > tr")).to_have_count(2)
