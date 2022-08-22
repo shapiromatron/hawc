@@ -12,8 +12,7 @@ class AuthProvider(str, Enum):
 
 class FeatureFlags(BaseModel):
     THIS_IS_AN_EXAMPLE: bool = True
-    ENABLE_ECO: bool = True
-    ENABLE_EPI_V2: bool = False
+    ENABLE_ECO: bool = False
 
     @classmethod
     def from_env(cls, variable) -> "FeatureFlags":

@@ -6947,9 +6947,12 @@
     exposure_measurement: 1
     sub_population: without asthma
     median: 0.0
-    mean: 0.0
-    variance: null
-    variance_type: 0
+    ci_lcl: "< LOD"
+    percentile_25: "0.8"
+    percentile_75: "1.2"
+    ci_ucl: "5.0"
+    negligible_exposure: "5%"
+    ci_type: P95
     units: ''
     ci_lcl: < LOD
     percentile_25: '0.8'
@@ -6970,9 +6973,12 @@
     exposure_measurement: 1
     sub_population: without asthma
     median: 0.0
-    mean: 0.0
-    variance: null
-    variance_type: 0
+    ci_lcl: "<0.26"
+    percentile_25: "0.6"
+    percentile_75: "1.1"
+    ci_ucl: "2.5e+3"
+    negligible_exposure: ""
+    ci_type: P95
     units: ''
     ci_lcl: <0.26
     percentile_25: '0.6'
@@ -6993,9 +6999,12 @@
     exposure_measurement: 2
     sub_population: all
     median: 0.0
-    mean: 0.0
-    variance: null
-    variance_type: 0
+    ci_lcl: "0.0"
+    percentile_25: "0.22"
+    percentile_75: "0.38"
+    ci_ucl: "0.5"
+    negligible_exposure: "80"
+    ci_type: P95
     units: ''
     ci_lcl: '0.0'
     percentile_25: '0.22'
@@ -7016,9 +7025,12 @@
     exposure_measurement: 3
     sub_population: all
     median: 0.0
-    mean: 0.0
-    variance: null
-    variance_type: 0
+    ci_lcl: "0.1"
+    percentile_25: "0.21"
+    percentile_75: "0.38"
+    ci_ucl: "0.6"
+    negligible_exposure: "81%"
+    ci_type: P95
     units: ''
     ci_lcl: '0.1'
     percentile_25: '0.21'
@@ -7039,9 +7051,12 @@
     exposure_measurement: 2
     sub_population: all
     median: null
-    mean: null
-    variance: null
-    variance_type: 0
+    ci_lcl: "0.2"
+    percentile_25: "0.46"
+    percentile_75: "0.79"
+    ci_ucl: "0.7"
+    negligible_exposure: "95%"
+    ci_type: P95
     units: ''
     ci_lcl: '0.2'
     percentile_25: '0.46'
@@ -7062,9 +7077,12 @@
     exposure_measurement: 3
     sub_population: all
     median: 0.0
-    mean: 0.0
-    variance: null
-    variance_type: 0
+    ci_lcl: ""
+    percentile_25: "0.76"
+    percentile_75: "1.24"
+    ci_ucl: ""
+    negligible_exposure: ""
+    ci_type: P95
     units: ''
     ci_lcl: ''
     percentile_25: '0.76'
@@ -7080,9 +7098,8 @@
   pk: 1
   fields:
     design: 1
-    endpoint: Asthma within previous year
-    health_outcome: Asthma
-    health_outcome_system: IM
+    effect: Asthma
+    system: IM
     comments: ''
     created: 2022-01-10 21:16:10.388760+00:00
     last_updated: 2022-01-10 21:16:10.388770+00:00
@@ -7090,9 +7107,8 @@
   pk: 2
   fields:
     design: 2
-    endpoint: Tetanus antibody concentrations
-    health_outcome: Vaccine response
-    health_outcome_system: IM
+    effect: Vaccine response
+    system: IM
     comments: ''
     created: 2022-01-10 21:41:54.322800+00:00
     last_updated: 2022-01-10 21:41:54.322816+00:00
@@ -7100,9 +7116,8 @@
   pk: 3
   fields:
     design: 2
-    endpoint: Diphtheria antibody concentrations
-    health_outcome: Vaccine response
-    health_outcome_system: IM
+    effect: Vaccine response
+    system: IM
     comments: ''
     created: 2022-01-10 21:41:54.327398+00:00
     last_updated: 2022-01-10 21:41:54.327412+00:00
@@ -7160,7 +7175,9 @@
     exposure_level: 1
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 1.0
     ci_lcl: null
     ci_ucl: null
@@ -7190,7 +7207,9 @@
     exposure_level: 1
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 1.02
     ci_lcl: 0.58
     ci_ucl: 1.8
@@ -7220,7 +7239,9 @@
     exposure_level: 1
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 1.3
     ci_lcl: 0.72
     ci_ucl: 2.33
@@ -7250,7 +7271,9 @@
     exposure_level: 1
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 3.22
     ci_lcl: 1.75
     ci_ucl: 5.94
@@ -7280,7 +7303,9 @@
     exposure_level: 2
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 1.0
     ci_lcl: null
     ci_ucl: null
@@ -7310,7 +7335,9 @@
     exposure_level: 2
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 1.19
     ci_lcl: 0.68
     ci_ucl: 2.09
@@ -7340,7 +7367,9 @@
     exposure_level: 2
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 1.54
     ci_lcl: 0.86
     ci_ucl: 2.76
@@ -7370,7 +7399,9 @@
     exposure_level: 2
     sub_population: Full population
     outcome_measurement_timing: Concurrent with exposure
-    effect_estimate_type: OR
+    n: 114
+    effect_estimate_type: Odds Ratio (OR)
+    effect_description: OR vs. quartile 1
     effect_estimate: 2.56
     ci_lcl: 1.41
     ci_ucl: 4.65
@@ -7400,7 +7431,9 @@
     exposure_level: 3
     sub_population: Prebooster Age 5
     outcome_measurement_timing: 5 yrs
-    effect_estimate_type: PC
+    n: 509
+    effect_estimate_type: Percent change
+    effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -2.5
     ci_lcl: -18.5
     ci_ucl: 16.8
@@ -7430,7 +7463,9 @@
     exposure_level: 4
     sub_population: Year 7 adjusted for Age 5
     outcome_measurement_timing: 7 yrs
-    effect_estimate_type: PC
+    n: 401
+    effect_estimate_type: Percent change
+    effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -12.5
     ci_lcl: -24.6
     ci_ucl: 1.5
@@ -7460,7 +7495,9 @@
     exposure_level: 3
     sub_population: Prebooster Age 5
     outcome_measurement_timing: 5 yrs
-    effect_estimate_type: PC
+    n: 510
+    effect_estimate_type: Percent change
+    effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -21.7
     ci_lcl: -35.7
     ci_ucl: -4.8
@@ -7490,7 +7527,9 @@
     exposure_level: 6
     sub_population: Postbooster Age 5
     outcome_measurement_timing: 5 yrs
-    effect_estimate_type: PC
+    n: 510
+    effect_estimate_type: Percent change
+    effect_description: Percent difference per 2-fold increase in exposure
     effect_estimate: -8.7
     ci_lcl: -20.6
     ci_ucl: 5.0

@@ -173,8 +173,8 @@ class TestDesignChildren:
         url = reverse("epiv2:outcome-create", args=[design.id])
         inputs = {
             "endpoint": "ex outcome",
-            "health_outcome": "ex health outcome",
-            "health_outcome_system": "CA",
+            "effect": "ex health outcome",
+            "system": "CA",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/outcome_row.html")
@@ -205,8 +205,8 @@ class TestDesignChildren:
         url = reverse("epiv2:outcome-update", args=[outcome.id])
         inputs = {
             "endpoint": "ex outcome update",
-            "health_outcome": "ex health outcome update",
-            "health_outcome_system": "CA",
+            "effect": "ex health outcome update",
+            "system": "CA",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/outcome_row.html")

@@ -84,7 +84,7 @@ class DSSTox(models.Model):
 
     @classmethod
     def help_text(cls) -> str:
-        return f'{new_window_a("https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database", "DssTox")} substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the DTXSID.'
+        return f'{new_window_a("https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database", "DssTox")} substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the <a href="https://comptox.epa.gov/dashboard/" rel="noopener noreferrer" target="_blank">DTXSID</a>.'
 
     def get_dashboard_url(self) -> str:
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
