@@ -7,16 +7,16 @@
             {% crispy form %}
             <div class="form-row pull-right">
                 {% if form.instance.id %}
-                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'eco' model 'update' object.pk %}">
+                <button id="{{model}}-save" class="btn btn-sm btn-info" hx-post="{% crud_url 'eco' model 'update' object.pk %}">
                     Save</button>
-                <button class="btn btn-sm btn-light" hx-get="{% crud_url 'eco' model 'detail' object.pk %}">
+                <button id="{{model}}-cancel" class="btn btn-sm btn-light" hx-get="{% crud_url 'eco' model 'detail' object.pk %}">
                     <i class="fa fa-fw fa-times mr-1"></i>
                     Cancel</button>
                 {% else %}
-                <button class="btn btn-sm btn-info" hx-post="{% crud_url 'eco' model 'create' parent.pk %}">
+                <button id="{{model}}-save" class="btn btn-sm btn-info" hx-post="{% crud_url 'eco' model 'create' parent.pk %}">
                     Save
                 </button>
-                <button class="btn btn-sm btn-light" type='button'
+                <button id="{{model}}-cancel" class="btn btn-sm btn-light" type='button'
                     onclick="this.parentNode.parentNode.parentNode.setAttribute('style', 'display: none')"><i
                         class="fa fa-fw fa-times mr-1"></i>
                     Cancel</button>

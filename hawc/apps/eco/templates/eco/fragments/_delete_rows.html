@@ -1,5 +1,5 @@
 <script>
-    elements = document.getElementsByClassName("{{attribute}}-{{id}}")
+    elements = document.getElementsByName("#{{attribute}}-{{id}}")
     while (elements.length > 0){
         elements[0].parentNode.removeChild(elements[0]);
     }

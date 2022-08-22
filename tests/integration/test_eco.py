@@ -21,15 +21,13 @@ class TestEco(PlaywrightTestCase):
         page.locator('a:has-text("Update")').click()
 
         # Update study design
-        page.locator("text=Update design").click()
+        page.locator("#design-update").click()
         page.locator('textarea[name="habitat_as_reported"]').click()
         page.locator('textarea[name="habitat_as_reported"]').fill("habitat update")
         page.locator("text=Save").click()
 
         # Create new Cause
-        page.locator("text=Causes Create >> button").click()
-        page.locator('input[name="name"]').click()
-        page.keyboard.type("new cause", delay=100)
+        page.locator("#cause-create").click()
         page.locator('input[name="term_0"]').click()
         page.locator('input[name="term_0"]').fill("term")
         page.locator('span:has-text("term")').click()
@@ -42,15 +40,15 @@ class TestEco(PlaywrightTestCase):
         page.locator('input[name="name"]').fill("new cause")
         page.locator("#div_id_as_reported > div > .ql-container > .ql-editor").click()
         page.keyboard.type("cause as reported")
-        page.locator("#cause-empty-row >> text=Save").click()
+        page.locator("#cause-save").click()
         # Copy cause
-        page.locator("text=new cause term 2 g >> button").nth(2).click()
-        page.locator("text=new cause (2)").click()
+        page.locator("#cause-2 >> #cause-clone").click()
+        expect(page.locator("text=new cause (2)")).to_be_visible()
         # Delete new cause
-        page.locator("text=new cause (2) term 2 g >> button").nth(1).click()
-        page.locator("text=Confirm").click()
+        page.locator("#cause-3 >> #cause-delete").click()
+        page.locator("#cause-confirm-del").click()
         # Create effect
-        page.locator("text=Effects Create >> button").click()
+        page.locator("#effect-create").click()
         page.locator('input[name="name"]').click()
         page.locator('input[name="name"]').fill("new effect")
         page.locator('input[name="term_0"]').click()
@@ -60,15 +58,15 @@ class TestEco(PlaywrightTestCase):
         page.locator('input[name="units"]').fill("g")
         page.locator("#div_id_as_reported > div > .ql-container > .ql-editor").click()
         page.keyboard.type("effect as reported")
-        page.locator("#effect-empty-row >> text=Save").click()
+        page.locator("#effect-save").click()
         # Copy effect
-        page.locator("text=new effect term g >> button").nth(2).click()
-        page.locator("text=new effect (2)").click()
+        page.locator("#effect-2 >> #effect-clone").click()
+        expect(page.locator("text=new effect (2)")).to_be_visible()
         # Delete copied effect
-        page.locator("text=new effect (2) term >> button").nth(1).click()
-        page.locator("text=Confirm").click()
+        page.locator("#effect-3 >> #effect-delete").click()
+        page.locator("#effect-confirm-del").click()
         # Create result
-        page.locator("text=Results Create >> button").click()
+        page.locator("#result-create").click()
         page.locator('select[name="cause"]').select_option("2")
         page.locator('select[name="effect"]').select_option("2")
         page.locator('input[name="sort_order"]').click()
@@ -77,11 +75,13 @@ class TestEco(PlaywrightTestCase):
         page.locator('input[name="modifying_factors"]').fill("none")
         page.locator('select[name="variability"]').select_option("94")
         page.locator('select[name="statistical_sig_type"]').select_option("99")
-        page.locator("text=Save").click()
-        page.locator("text=new cause").first.click()
-        page.locator("text=new cause new effect 0 none None >> button").nth(2).click()
+        page.locator("#result-save").click()
+        expect(page.locator('span:has-text("none")')).to_be_visible()
+        # Copy result
+        page.locator("#result-2 >> #result-clone").click()
+        expect(page.locator("#result-3")).to_be_visible()
         # Delete copy
-        page.locator(".result-3 > td:nth-child(7) > .btn.btn-sm.btn-danger").click()
+        page.locator("#result-3 >> #result-delete").click()
         page.locator("text=Confirm").click()
         page.locator("#design-page-cancel").click()
 
