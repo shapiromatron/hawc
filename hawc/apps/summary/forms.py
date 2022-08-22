@@ -823,13 +823,13 @@ class TagtreeForm(VisualForm):
     )
     show_legend = forms.BooleanField(
         label="Show Legend",
-        help_text="Show a legend to describe what the node types indicate",
+        help_text="Describes what each node type indicates",
         initial=True,
         required=False,
     )
     show_counts = forms.BooleanField(
         label="Show Node Counts",
-        help_text="Show the counts for each node type and scale the nodes accordingly",
+        help_text="Display the count for each node and scale size accordingly",
         initial=True,
         required=False,
     )
