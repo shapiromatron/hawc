@@ -425,12 +425,20 @@ class Assessment(models.Model):
         Communication.set_message(self, text)
 
 
+class ProjectType(models.Model):
+    name = models.CharField(max_length=64)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
 class AssessmentDetails(models.Model):
     objects = managers.AssessmentDetailsManager()
     assessment = models.OneToOneField(Assessment, models.CASCADE, related_name="details")
-    project_type = models.CharField(
-        max_length=64,
+    project_type = models.ForeignKey(
+        "assessment.ProjectType",
         help_text="Name the product line relevant to this chemical evaluation.",
+        on_delete=models.SET_NULL,
+        null=True,
     )
     project_status = models.CharField(
         max_length=64,
@@ -487,8 +495,8 @@ class AssessmentDetails(models.Model):
 class Values(models.Model):
     objects = managers.ValuesManager()
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
-    system = models.CharField(
-        max_length=128,
+    system = models.ManyToManyField(
+        "assessment.System",
         help_text="Identify the organ system of concern (e.g., Hepatic, Nervous, Reproductive).",
     )
     evaluation_type = models.CharField(
@@ -532,10 +540,14 @@ class Values(models.Model):
         choices=constants.Confidence.choices,
         help_text="Select the overall study level confidence.",
     )
-    species_studied = models.CharField(max_length=64, blank=True)
-    duration = models.CharField(
-        max_length=64,
+    species_studied = models.ForeignKey(
+        "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
+    )
+    duration = models.ForeignKey(
+        "assessment.Duration",
+        on_delete=models.SET_NULL,
         blank=True,
+        null=True,
         help_text="Describe the duration of the study selected to support the derivation of the toxicity value.",
     )
     study = models.ForeignKey(
@@ -545,21 +557,27 @@ class Values(models.Model):
         null=True,
         verbose_name="HAWC Study",
     )
-    tumor_type = models.CharField(
+    tumor_type = models.ForeignKey(
+        "assessment.TumorType",
         verbose_name="Tumor Type/Cancer",
-        max_length=64,
+        on_delete=models.SET_NULL,
         blank=True,
+        null=True,
         help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site).",
     )
-    extrapolation_method = models.CharField(
-        max_length=512,
+    extrapolation_method = models.ForeignKey(
+        "assessment.ExtrapolationMethod",
+        on_delete=models.SET_NULL,
         blank=True,
+        null=True,
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk).",
     )
-    evidence = models.CharField(
+    evidence = models.ForeignKey(
+        "assessment.EvidenceCharacterization",
         verbose_name="Evidence Characterization",
         blank=True,
-        max_length=512,
+        null=True,
+        on_delete=models.SET_NULL,
         help_text="If applicable, describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
     )
     comments = models.TextField(blank=True)
@@ -1227,6 +1245,36 @@ class Content(models.Model):
             html = Template(content.template).render(context)
             cache.set(key, html, settings.CACHE_10_MIN)
         return html
+
+
+class System(models.Model):
+    name = models.CharField(max_length=128)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
+class Duration(models.Model):
+    name = models.CharField(max_length=128)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
+class TumorType(models.Model):
+    name = models.CharField(max_length=128)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
+class ExtrapolationMethod(models.Model):
+    name = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
+class EvidenceCharacterization(models.Model):
+    name = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
 
 reversion.register(DSSTox)

@@ -15,7 +15,7 @@ from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import AutocompleteMultipleChoiceField
+from ..common.autocomplete import AutocompleteChoiceField, AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteWidget
@@ -144,6 +144,10 @@ class AssessmentDetailsForm(forms.ModelForm):
             self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
 
+        self.fields["project_type"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.ProjectTypeAutocomplete
+        )
+
     def clean_extra_metadata(self):
         extra_metadata = self.cleaned_data["extra_metadata"]
         if not extra_metadata:
@@ -194,6 +198,31 @@ class AssessmentValuesForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
         self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
+
+        self.fields["system"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=autocomplete.SystemAutocomplete
+        )
+        self.fields["value_unit"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.DoseUnitsAutocomplete
+        )
+        self.fields["pod_unit"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.DoseUnitsAutocomplete
+        )
+        self.fields["species"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.SpeciesAutocomplete
+        )
+        self.fields["duration"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.DurationAutocomplete
+        )
+        self.fields["tumor_type"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.TumorTypeAutocomplete
+        )
+        self.fields["extrapolation_method"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.ExtrapolationMethodAutocomplete
+        )
+        self.fields["evidence"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.EvidenceAutocomplete
+        )
 
     def clean_extra_metadata(self):
         extra_metadata = self.cleaned_data["extra_metadata"]

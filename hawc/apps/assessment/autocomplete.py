@@ -48,3 +48,45 @@ class StrainAutocomplete(BaseAutocomplete):
     @classmethod
     def get_base_queryset(cls, filters: dict = None):
         return super().get_base_queryset(filters).distinct()
+
+
+@register
+class ProjectTypeAutocomplete(BaseAutocomplete):
+    model = models.ProjectType
+    search_fields = ["name"]
+
+
+@register
+class SystemAutocomplete(BaseAutocomplete):
+    model = models.System
+    search_fields = ["name"]
+
+
+@register
+class DurationAutocomplete(BaseAutocomplete):
+    model = models.Duration
+    search_fields = ["name"]
+
+
+@register
+class TumorTypeAutocomplete(BaseAutocomplete):
+    model = models.TumorType
+    search_fields = ["name"]
+
+
+@register
+class ExtrapolationMethodAutocomplete(BaseAutocomplete):
+    model = models.ExtrapolationMethod
+    search_fields = ["name"]
+
+
+@register
+class EvidenceAutocomplete(BaseAutocomplete):
+    model = models.EvidenceCharacterization
+    search_fields = ["name"]
+
+
+@register
+class DoseUnitsAutocomplete(BaseAutocomplete):
+    model = models.DoseUnits
+    search_fields = ["name"]
