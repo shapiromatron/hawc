@@ -4,7 +4,7 @@
 {% block content %}
 <h2 class="d-inline-block">Update {{object.summary}}</h2>
 <div class="float-right">
-    <a class="btn btn-sm btn-primary" href="#"
+    <a id="design-update" class="btn btn-sm btn-primary" href="#"
         hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
 </div>
@@ -121,8 +121,8 @@
         {% url 'epiv2:dataextraction-create' object.pk as dataextraction_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '12,12,12,12,11,5,11,12,13' %}
-            {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments' %}
+            {% bs4_colgroup '12,12,12,12,6,6,6,12,12,10' %}
+            {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments,Edit' %}
             <tbody>
                 {% if object.data_extractions.all %}
                     {% for object in object.data_extractions.all %}
@@ -138,7 +138,7 @@
 </div>
 
 <div class="well text-center">
-    <a class="btn btn-light my-3" href="{{object.get_absolute_url}}"><i class="fa fa-fw fa-times"></i>Cancel</a>
+    <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="epiv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
 </div>
 {% endblock %}
 
