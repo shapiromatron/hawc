@@ -5,7 +5,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import TestCase
 from playwright.sync_api import Page
 
-RUN_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is not None
+RUN_INTEGRATION = os.environ.get("INTEGRATION_TESTS") is not None
 if RUN_INTEGRATION:
     os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 

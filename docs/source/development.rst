@@ -468,10 +468,10 @@ On mac/linux:
 .. code-block:: bash
 
     # to run all
-    make test-integration-debug
+    make test-integration
 
     # or a custom method to run a single test
-    export HAWC_INTEGRATION_TESTS=1
+    export INTEGRATION_TESTS=1
     py.test -sv tests/integration/test_login.py --pdb
 
 On windows:
@@ -482,7 +482,7 @@ On windows:
     make test-integration-debug
 
     :: or a custom method to run a single test
-    set HAWC_INTEGRATION_TESTS=1
+    set INTEGRATION_TESTS=1
     py.test -sv tests/integration/ --pdb
 
 
@@ -493,7 +493,7 @@ When editing integration tests, use the interactive mode to capture user operati
     make test-integration-debug
 
     # use set instead of export on windows
-    export HAWC_INTEGRATION_TESTS=1
+    export INTEGRATION_TESTS=1
     export PWDEBUG=1
     py.test -sv tests/integration/test_login.py --pdb
 
