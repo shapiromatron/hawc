@@ -69,7 +69,7 @@ _.extend(RoBBarchartForm, {
             type: IntegerField,
             name: "padding_right",
             label: "Plot padding-right (px)",
-            def: 25,
+            def: 350,
             tab: "overall",
         },
         {
@@ -130,9 +130,8 @@ _.extend(RoBBarchartForm, {
             type: IntegerField,
             name: "legend_x",
             label: "Legend x-location (px)",
-            def: -1,
-            helpText:
-                "Set to -1 to be at the left, or 9999 to be at the right (or any value inbetween)",
+            def: 9999,
+            helpText: "Absolute location of legend; set 9999 to default",
             tab: "legend",
         },
         {
@@ -140,8 +139,7 @@ _.extend(RoBBarchartForm, {
             name: "legend_y",
             label: "Legend y-location (px)",
             def: 9999,
-            helpText:
-                "Set to -1 to be at the top, or 9999 to be at the bottom (or any value inbetween)",
+            helpText: "Absolute location of legend; set 9999 to default",
             tab: "legend",
         },
     ],

@@ -82,7 +82,7 @@ _.extend(RoBHeatmapForm, {
             type: IntegerField,
             name: "padding_right",
             label: "Plot padding-right (px)",
-            def: 10,
+            def: 350,
             tab: "overall",
         },
         {
@@ -167,8 +167,8 @@ _.extend(RoBHeatmapForm, {
             type: IntegerField,
             name: "legend_x",
             label: "Legend x-location (px)",
-            def: -1,
-            helpText: "Set to -1 to be at the left, or 9999 to be at the right",
+            def: 9999,
+            helpText: "Absolute location of legend; set 9999 to default",
             tab: "legend",
         },
         {
@@ -176,7 +176,7 @@ _.extend(RoBHeatmapForm, {
             name: "legend_y",
             label: "Legend y-location (px)",
             def: 9999,
-            helpText: "Set to -1 to be at the top, or 9999 to be at the bottom",
+            helpText: "Absolute location of legend; set 9999 to default",
             tab: "legend",
         },
     ],

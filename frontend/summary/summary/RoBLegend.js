@@ -13,6 +13,8 @@ import {
     COLLAPSED_NR_FIELDS_DESCRIPTION,
 } from "riskofbias/constants";
 
+const DEFAULT = 9999;
+
 class RoBLegend {
     constructor(svg, data, footnotes, options) {
         this.svg = svg;
@@ -62,13 +64,13 @@ class RoBLegend {
 
     render() {
         const {legend_x, legend_y} = this.settings,
-            {dev} = this.options;
+            {dev, default_x, default_y} = this.options;
 
         let svg = d3.select(this.svg),
             svgW = parseInt(svg.attr("width"), 10),
             svgH = parseInt(svg.attr("height"), 10),
-            x = legend_x,
-            y = legend_y,
+            x = legend_x === DEFAULT && default_x ? default_x : legend_x,
+            y = legend_y === DEFAULT && default_y ? default_y : legend_y,
             width = 22,
             half_width = width / 2,
             buff = 5,
@@ -77,8 +79,8 @@ class RoBLegend {
             cursor = dev ? "pointer" : "auto",
             drag = dev
                 ? HAWCUtils.updateDragLocationTransform((x, y) => {
-                      this.settings.legend_x = parseInt(x, 10);
-                      this.settings.legend_y = parseInt(y, 10);
+                      this.settings.legend_x = parseInt(x);
+                      this.settings.legend_y = parseInt(y);
                   })
                 : function() {},
             fields = this.get_data(),
