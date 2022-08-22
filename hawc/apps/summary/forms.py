@@ -883,7 +883,9 @@ class TagtreeForm(VisualForm):
                 width=self.cleaned_data["width"],
                 height=self.cleaned_data["height"],
                 show_legend=self.cleaned_data["show_legend"],
+                legend_position={"x": 25, "y": 25},
                 show_counts=self.cleaned_data["show_counts"],
+                node_offsets={},
             )
         )
         return super().save(commit)

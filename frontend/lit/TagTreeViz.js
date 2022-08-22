@@ -21,11 +21,62 @@ class VizOptions extends Component {
     render() {
         const {store} = this.props;
         return (
-            <CheckboxInput
-                label={"Hide tags with no references"}
-                onChange={e => store.changeOption("hide_empty_tag_nodes", e.target.checked)}
-                checked={store.options.hide_empty_tag_nodes}
-            />
+            <div className="row">
+                <div className="col-md-12">
+                    <p className="form-text text-muted">
+                        Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view
+                        references associated with an node (except root-node).
+                    </p>
+                </div>
+                <div id="accordionExample" className="accordion col-md-12">
+                    <div className="card">
+                        <div className="card-header" id="headingOne">
+                            <button
+                                className="btn btn-link btn-block text-left"
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#collapseOne"
+                                aria-expanded="true"
+                                aria-controls="collapseOne">
+                                Customize
+                            </button>
+                        </div>
+                        <div
+                            id="collapseOne"
+                            className="collapse"
+                            aria-labelledby="headingOne"
+                            data-parent="#accordionExample">
+                            <div className="card-body">
+                                <CheckboxInput
+                                    label={"Hide tags with no references"}
+                                    onChange={e =>
+                                        store.changeOption("hide_empty_tag_nodes", e.target.checked)
+                                    }
+                                    checked={store.options.hide_empty_tag_nodes}
+                                />
+                                <CheckboxInput
+                                    label={"Show legend"}
+                                    onChange={e => {
+                                        store.updateLegendPosition(25, 25);
+                                        store.changeOption("show_legend", e.target.checked);
+                                    }}
+                                    checked={store.options.show_legend}
+                                />
+                                <CheckboxInput
+                                    label={"Show counts"}
+                                    onChange={e =>
+                                        store.changeOption("show_counts", e.target.checked)
+                                    }
+                                    checked={store.options.show_counts}
+                                />
+                                <p className="text-muted my-2">
+                                    Customize the current visual. Changes are not saved.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }
@@ -38,23 +89,19 @@ class VizState {
     @observable options = null;
 
     constructor(options) {
-        // wip: http://127.0.0.1:8000/lit/assessment/100500299/references/visualization/
-        options.nodeOffsets = {}; // todo bubble up
-        options.legendPosition = {x: 25, y: 25}; // todo bubble up
-        options.showLegend = options.show_legend;
-        options.showCounts = options.show_counts;
-        options.nodePositions = {};
         this.options = options;
+        // todo - alt-drag nodes and redraw? w/ node offsets?
+        // todo - show assessment name for root node?
     }
 
     @action.bound changeOption(key, value) {
         this.options[key] = value;
     }
     @action.bound updateLegendPosition(x, y) {
-        this.options.legendPosition = {x, y};
+        this.options.legend_position = {x, y};
     }
     @action.bound updateDragLocation(id, x, y) {
-        this.options.nodePositions[id] = [x, y];
+        this.options.node_offsets[id] = [x, y];
     }
 }
 
@@ -231,7 +278,7 @@ class TagTreeViz extends D3Plot {
                         HAWCUtils.wrapText(this, 170);
                     });
 
-                if (options.showCounts) {
+                if (options.show_counts) {
                     nodeEnter
                         .append("svg:text")
                         .attr("x", 0)
@@ -311,7 +358,7 @@ class TagTreeViz extends D3Plot {
             };
 
         this.add_title();
-        if (options.showLegend) {
+        if (options.show_legend) {
             this.add_legend();
         }
         treeNode.x0 = this.h / 2;
@@ -322,7 +369,7 @@ class TagTreeViz extends D3Plot {
             .exponent(0.5)
             .domain([0, treeNode.data.numReferencesDeep])
             .range(
-                options.showCounts
+                options.show_counts
                     ? [this.minimum_radius, this.maximum_radius]
                     : [
                           d3.mean([this.maximum_radius, this.minimum_radius]),
@@ -337,7 +384,7 @@ class TagTreeViz extends D3Plot {
     add_legend() {
         // create a new g.legend_group object on the main svg graphic
         const store = this.stateStore,
-            legendPosition = store.options.legendPosition,
+            legendPosition = store.options.legend_position,
             buff = 5,
             data = [
                 {fill: "lightsteelblue", text: "Has additional sub-tagging"},
