@@ -11,9 +11,9 @@ _successful_post = {
     "study_setting": "6",
     "country": "2",
     "ecoregion": "110",
-    "habitat": "16",
+    "habitat": "12",
     "habitat_as_reported": "habitat here",
-    "climate": "108",
+    "climate": "103",
     "climate_as_reported": "climate here",
 }
 
