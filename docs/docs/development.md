@@ -355,7 +355,7 @@ While the standard tests check that the backend views and models interact as des
 make test-integration-debug
 
 # or a custom method to run a single test
-export HAWC_INTEGRATION_TESTS=1
+export INTEGRATION_TESTS=1
 py.test -sv tests/integration/test_login.py --pdb
 ```
 
@@ -364,7 +364,7 @@ py.test -sv tests/integration/test_login.py --pdb
 make test-integration-debug
 
 :: or a custom method to run a single test
-set HAWC_INTEGRATION_TESTS=1
+set INTEGRATION_TESTS=1
 py.test -sv tests/integration/ --pdb
 ```
 
@@ -374,7 +374,7 @@ By default, the integration tests run in "headless" mode, or without a browser b
 make test-integration-debug
 
 # use set instead of export on windows
-export HAWC_INTEGRATION_TESTS=1
+export INTEGRATION_TESTS=1
 export PWDEBUG=1
 py.test -sv tests/integration/test_login.py --pdb
 ```
