@@ -89,4 +89,4 @@ class TestEco(PlaywrightTestCase):
         expect(page.locator("text=habitat update")).to_be_visible()
         expect(page.locator("text=new cause").nth(1)).to_be_visible()
         expect(page.locator("text=new effect").nth(1)).to_be_visible()
-        expect(page.locator('span:has-text("none")')).to_be_visible()
+        expect(page.locator('span:has-text("none")').nth(1)).to_be_visible()
