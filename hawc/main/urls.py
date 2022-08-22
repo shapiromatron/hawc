@@ -17,6 +17,7 @@ import hawc.apps.study.urls
 import hawc.apps.summary.urls
 import hawc.apps.vocab.urls
 from hawc.apps.assessment import views
+from hawc.apps.common.autocomplete import get_autocomplete
 
 urlpatterns = [
     # Portal
@@ -50,6 +51,7 @@ urlpatterns = [
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
     path("rasterize/", views.RasterizeCss.as_view(), name="css-rasterize"),
     path("selectable/", include("selectable.urls")),
+    path("autocomplete/<str:autocomplete_name>/", get_autocomplete, name="autocomplete"),
     # Error-pages
     path("401/", views.Error401.as_view(), name="401"),
     path("403/", views.Error403.as_view(), name="403"),

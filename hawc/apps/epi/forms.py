@@ -6,19 +6,25 @@ from django.db.models import Q
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
-from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
+from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
+from ..assessment.lookups import BaseEndpointLookup
 from ..assessment.models import DoseUnits
 from ..common import selectable
+from ..common.autocomplete import (
+    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+)
 from ..common.forms import (
     ASSESSMENT_UNIQUE_MESSAGE,
     BaseFormHelper,
-    CopyAsNewSelectorForm,
+    CopyAsNewSelectorFormV2,
     form_actions_apply_filters,
     form_actions_create_or_close,
 )
 from ..common.helper import tryParseInt
-from ..study.lookups import EpiStudyLookup
-from . import constants, lookups, models
+from ..study.autocomplete import StudyAutocomplete
+from . import autocomplete, constants, lookups, models
 
 
 class CriteriaForm(forms.ModelForm):
@@ -91,16 +97,16 @@ class StudyPopulationForm(forms.ModelForm):
         "confounding_criteria": "C",
     }
 
-    inclusion_criteria = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=lookups.CriteriaLookup, required=False
+    inclusion_criteria = AutocompleteMultipleChoiceField(
+        autocomplete_class=autocomplete.CriteriaAutocomplete, required=False
     )
 
-    exclusion_criteria = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=lookups.CriteriaLookup, required=False
+    exclusion_criteria = AutocompleteMultipleChoiceField(
+        autocomplete_class=autocomplete.CriteriaAutocomplete, required=False
     )
 
-    confounding_criteria = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=lookups.CriteriaLookup, required=False
+    confounding_criteria = AutocompleteMultipleChoiceField(
+        autocomplete_class=autocomplete.CriteriaAutocomplete, required=False
     )
 
     class Meta:
@@ -123,9 +129,7 @@ class StudyPopulationForm(forms.ModelForm):
             self.instance.study = study
 
         for fld in self.CRITERION_FIELDS:
-            self.fields[fld].widget.update_query_parameters(
-                {"related": self.instance.study.assessment_id}
-            )
+            self.fields[fld].set_filters({"assessment_id": self.instance.study.assessment_id})
             if self.instance.id:
                 self.fields[fld].initial = getattr(self.instance, fld)
 
@@ -201,9 +205,10 @@ class StudyPopulationForm(forms.ModelForm):
         return cleaned_data
 
 
-class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
+class StudyPopulationSelectorForm(CopyAsNewSelectorFormV2):
     label = "Study Population"
-    lookup_class = lookups.StudyPopulationByStudyLookup
+    parent_field = "study_id"
+    autocomplete_class = autocomplete.StudyPopulationAutocomplete
 
 
 class AdjustmentFactorForm(forms.ModelForm):
@@ -264,14 +269,12 @@ class ExposureForm(forms.ModelForm):
     class Meta:
         model = models.Exposure
         exclude = ("study_population",)
+        widgets = {"dtxsid": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete)}
 
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["dtxsid"].widget = selectable.AutoCompleteSelectWidget(
-            lookup_class=DssToxIdLookup
-        )
         self.fields["measured"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.ExposureMeasuredLookup, allow_new=True
         )
@@ -332,9 +335,10 @@ class ExposureForm(forms.ModelForm):
         return helper
 
 
-class ExposureSelectorForm(CopyAsNewSelectorForm):
+class ExposureSelectorForm(CopyAsNewSelectorFormV2):
     label = "Exposure"
-    lookup_class = lookups.ExposureByStudyPopulationLookup
+    parent_field = "study_population_id"
+    autocomplete_class = autocomplete.ExposureAutocomplete
 
 
 class OutcomeForm(forms.ModelForm):
@@ -351,6 +355,9 @@ class OutcomeForm(forms.ModelForm):
         model = models.Outcome
         exclude = ("assessment", "study_population")
         labels = {"summary": "Comments"}
+        widgets = {
+            "effects": AutocompleteSelectMultipleWidget(autocomplete_class=EffectTagAutocomplete)
+        }
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment", None)
@@ -370,9 +377,6 @@ class OutcomeForm(forms.ModelForm):
         )
         self.fields["age_of_measurement"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AgeOfMeasurementLookup, allow_new=True
-        )
-        self.fields["effects"].widget = selectable.AutoCompleteSelectMultipleWidget(
-            lookup_class=EffectTagLookup
         )
         if assessment:
             self.instance.assessment = assessment
@@ -423,9 +427,9 @@ class OutcomeFilterForm(forms.Form):
         ("diagnostic", "diagnostic"),
     )
 
-    studies = selectable.AutoCompleteSelectMultipleField(
+    studies = AutocompleteMultipleChoiceField(
+        autocomplete_class=StudyAutocomplete,
         label="Study reference",
-        lookup_class=EpiStudyLookup,
         help_text="ex: Smith et al. 2010",
         required=False,
     )
@@ -519,9 +523,17 @@ class OutcomeFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
+        self.fields["studies"].set_filters({"assessment_id": assessment.id, "epi": True})
         self.fields["metric_units"].queryset = DoseUnits.objects.get_epi_units(assessment.id)
         for field in self.fields:
-            if field not in ("design", "diagnostic", "metric_units", "order_by", "paginate_by"):
+            if field not in (
+                "studies",
+                "design",
+                "diagnostic",
+                "metric_units",
+                "order_by",
+                "paginate_by",
+            ):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
     @property
@@ -586,9 +598,10 @@ class OutcomeFilterForm(forms.Form):
         return self.cleaned_data.get("order_by", self.ORDER_BY_CHOICES[0][0])
 
 
-class OutcomeSelectorForm(CopyAsNewSelectorForm):
+class OutcomeSelectorForm(CopyAsNewSelectorFormV2):
     label = "Outcome"
-    lookup_class = lookups.OutcomeByStudyPopulationLookup
+    parent_field = "study_population_id"
+    autocomplete_class = autocomplete.OutcomeAutocomplete
 
 
 class ComparisonSet(forms.ModelForm):
@@ -645,14 +658,16 @@ class ComparisonSet(forms.ModelForm):
         return helper
 
 
-class ComparisonSetByStudyPopulationSelectorForm(CopyAsNewSelectorForm):
+class ComparisonSetByStudyPopulationSelectorForm(CopyAsNewSelectorFormV2):
     label = "Comparison set"
-    lookup_class = lookups.ComparisonSetByStudyPopulationLookup
+    parent_field = "study_population_id"
+    autocomplete_class = autocomplete.ComparisonSetAutocomplete
 
 
-class ComparisonSetByOutcomeSelectorForm(CopyAsNewSelectorForm):
+class ComparisonSetByOutcomeSelectorForm(CopyAsNewSelectorFormV2):
     label = "Comparison set"
-    lookup_class = lookups.ComparisonSetByOutcomeLookup
+    parent_field = "outcome_id"
+    autocomplete_class = autocomplete.ComparisonSetAutocomplete
 
 
 class GroupForm(forms.ModelForm):
@@ -765,31 +780,30 @@ class ResultForm(forms.ModelForm):
     HELP_TEXT_UPDATE = """Update results found for measured outcome."""
     ADJUSTMENT_FIELDS = ["factors_applied", "factors_considered"]
 
-    factors_applied = selectable.AutoCompleteSelectMultipleField(
+    factors_applied = AutocompleteMultipleChoiceField(
+        autocomplete_class=autocomplete.AdjustmentFactorAutocomplete,
         help_text="All adjustment factors included in final statistical model",
-        lookup_class=lookups.AdjustmentFactorLookup,
         required=False,
     )
 
-    factors_considered = selectable.AutoCompleteSelectMultipleField(
+    factors_considered = AutocompleteMultipleChoiceField(
+        autocomplete_class=autocomplete.AdjustmentFactorAutocomplete,
         label="Adjustment factors considered",
         help_text=models.OPTIONAL_NOTE,
-        lookup_class=lookups.AdjustmentFactorLookup,
         required=False,
     )
 
     class Meta:
         model = models.Result
         exclude = ("outcome", "adjustment_factors")
+        widgets = {
+            "resulttags": AutocompleteSelectMultipleWidget(autocomplete_class=EffectTagAutocomplete)
+        }
 
     def __init__(self, *args, **kwargs):
         outcome = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         self.fields["comments"] = self.fields.pop("comments")  # move to end
-
-        self.fields["resulttags"].widget = selectable.AutoCompleteSelectMultipleWidget(
-            lookup_class=EffectTagLookup
-        )
 
         if outcome:
             self.instance.outcome = outcome
@@ -801,9 +815,7 @@ class ResultForm(forms.ModelForm):
         )
 
         for fld in self.ADJUSTMENT_FIELDS:
-            self.fields[fld].widget.update_query_parameters(
-                {"related": self.instance.outcome.assessment_id}
-            )
+            self.fields[fld].set_filters({"assessment_id": self.instance.outcome.assessment_id})
             if self.instance.id:
                 self.fields[fld].initial = getattr(self.instance, fld)
 
@@ -896,9 +908,10 @@ class ResultForm(forms.ModelForm):
         return helper
 
 
-class ResultSelectorForm(CopyAsNewSelectorForm):
+class ResultSelectorForm(CopyAsNewSelectorFormV2):
     label = "Result"
-    lookup_class = lookups.ResultByOutcomeLookup
+    parent_field = "outcome_id"
+    autocomplete_class = autocomplete.ResultAutocomplete
 
 
 class ResultUpdateForm(ResultForm):

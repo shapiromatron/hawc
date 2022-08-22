@@ -1,13 +1,7 @@
 from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
-from ..common.helper import new_window_a
-from ..common.lookups import (
-    DistinctStringLookup,
-    RelatedDistinctStringLookup,
-    RelatedLookup,
-    UserSpecifiedRelatedLookup,
-)
+from ..common.lookups import DistinctStringLookup, RelatedDistinctStringLookup, RelatedLookup
 from . import models
 
 
@@ -15,18 +9,6 @@ class RelatedExperimentCASLookup(RelatedDistinctStringLookup):
     model = models.Experiment
     distinct_field = "cas"
     related_filter = "study__assessment_id"
-
-
-class ExperimentByStudyLookup(RelatedLookup):
-    model = models.Experiment
-    search_fields = ("name__icontains",)
-    related_filter = "study_id"
-
-
-class AnimalGroupByExperimentLookup(RelatedLookup):
-    model = models.AnimalGroup
-    search_fields = ("name__icontains",)
-    related_filter = "experiment_id"
 
 
 class RelatedAnimalGroupLifestageExposedLookup(RelatedDistinctStringLookup):
@@ -115,25 +97,6 @@ class EndpointNameLookup(DistinctStringLookup):
     distinct_field = "name"
 
 
-class EndpointByStudyLookup(UserSpecifiedRelatedLookup):
-    # Return names of endpoints available for a particular study
-    model = models.Endpoint
-    related_filter = "animal_group__experiment__study"
-    search_fields = None  # user choices below instead
-    search_fields_choices = {
-        "animal_group__experiment__name",
-        "animal_group__name",
-        "name",
-        "created",
-        "last_updated",
-        "data_type",
-        "response_units",
-        "observation_time",
-        "system",
-    }
-    order_by_choices = {"id", "name", "created", "last_updated"}
-
-
 class EndpointByAssessmentLookup(RelatedLookup):
     # Return names of endpoints available for a assessment study
     model = models.Endpoint
@@ -168,13 +131,6 @@ class EndpointIdByAssessmentLookup(EndpointByAssessmentLookup):
         return obj.id
 
 
-class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
-    def get_item_value(self, obj):
-        return new_window_a(obj.get_absolute_url(), self.get_item_label(obj))
-
-
-registry.register(ExperimentByStudyLookup)
-registry.register(AnimalGroupByExperimentLookup)
 registry.register(RelatedExperimentCASLookup)
 registry.register(RelatedAnimalGroupLifestageExposedLookup)
 registry.register(RelatedAnimalGroupLifestageAssessedLookup)
@@ -194,8 +150,6 @@ registry.register(EndpointEffectSubtypeLookup)
 registry.register(EndpointStatisticalTestLookup)
 
 registry.register(EndpointNameLookup)
-registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
 registry.register(EndpointByAssessmentTextLookup)
 registry.register(EndpointIdByAssessmentLookup)
-registry.register(EndpointByAssessmentLookupHtml)

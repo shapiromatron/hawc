@@ -17,8 +17,11 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.http import QueryDict
+from django.urls import reverse
 from django.utils.encoding import force_str
+from django.utils.functional import lazy
 from django.utils.html import strip_tags
+from django.utils.http import urlencode
 from docx.document import Document
 from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter
@@ -414,6 +417,27 @@ def event_plot(series: pd.Series) -> Axes:
 
     plt.tight_layout()
     return ax
+
+
+def reverse_with_query(*args, query: dict, **kwargs):
+    """
+    Performs Django's `reverse` and appends a query string.
+
+    Args:
+        *args: Arguments for Django's `reverse`
+        **kwargs: Named arguments for Django's `reverse`
+        query (dict): Dictionary to build query string from
+
+    Returns:
+        str: reversed url with query string
+    """
+    url = reverse(*args, **kwargs)
+    query = urlencode(query)
+    query = f"?{query}" if query else query
+    return url + query
+
+
+reverse_with_query_lazy = lazy(reverse_with_query, str)
 
 
 class PydanticToDjangoError:

@@ -13,12 +13,6 @@ class StudyPopulationByAssessmentLookup(RelatedLookup):
         return super().get_query(request, term).distinct("name")
 
 
-class StudyPopulationByStudyLookup(RelatedLookup):
-    model = models.StudyPopulation
-    search_fields = ("name__icontains",)
-    related_filter = "study_id"
-
-
 class RelatedStudyPopulationAgeProfileLookup(RelatedDistinctStringLookup):
     model = models.StudyPopulation
     distinct_field = "age_profile"
@@ -59,22 +53,6 @@ class AdjustmentFactorLookup(RelatedLookup):
     related_filter = "assessment_id"
 
 
-class ComparisonSetByStudyPopulationLookup(RelatedLookup):
-    model = models.ComparisonSet
-    search_fields = ("name__icontains",)
-    related_filter = "study_population_id"
-
-
-class ComparisonSetByOutcomeLookup(ComparisonSetByStudyPopulationLookup):
-    related_filter = "outcome_id"
-
-
-class ExposureByStudyPopulationLookup(RelatedLookup):
-    model = models.Exposure
-    search_fields = ("name__icontains",)
-    related_filter = "study_population_id"
-
-
 class ExposureMeasuredLookup(DistinctStringLookup):
     model = models.Exposure
     distinct_field = "measured"
@@ -100,12 +78,6 @@ class OutcomeLookup(RelatedLookup):
     model = models.Outcome
     search_fields = ("name__icontains",)
     related_filter = "assessment_id"
-
-
-class OutcomeByStudyPopulationLookup(RelatedLookup):
-    model = models.Outcome
-    search_fields = ("name__icontains",)
-    related_filter = "study_population_id"
 
 
 class SystemLookup(DistinctStringLookup):
@@ -146,14 +118,7 @@ class RelatedEffectSubtypeLookup(RelatedDistinctStringLookup):
     related_filter = "assessment_id"
 
 
-class ResultByOutcomeLookup(RelatedLookup):
-    model = models.Result
-    search_fields = ("metric__metric__icontains", "comparison_set__name__icontains")
-    related_filter = "outcome_id"
-
-
 registry.register(StudyPopulationByAssessmentLookup)
-registry.register(StudyPopulationByStudyLookup)
 registry.register(RelatedStudyPopulationAgeProfileLookup)
 registry.register(RelatedStudyPopulationSourceLookup)
 registry.register(RelatedCountryNameLookup)
@@ -161,15 +126,11 @@ registry.register(RegionLookup)
 registry.register(StateLookup)
 registry.register(CriteriaLookup)
 registry.register(AdjustmentFactorLookup)
-registry.register(ExposureByStudyPopulationLookup)
 registry.register(ExposureMeasuredLookup)
 registry.register(ExposureMetricLookup)
 registry.register(RelatedExposureMetricLookup)
 registry.register(AgeOfExposureLookup)
-registry.register(ComparisonSetByStudyPopulationLookup)
-registry.register(ComparisonSetByOutcomeLookup)
 registry.register(OutcomeLookup)
-registry.register(OutcomeByStudyPopulationLookup)
 registry.register(SystemLookup)
 registry.register(EffectLookup)
 registry.register(EffectSubtypeLookup)
@@ -177,4 +138,3 @@ registry.register(RelatedSystemLookup)
 registry.register(RelatedEffectLookup)
 registry.register(RelatedEffectSubtypeLookup)
 registry.register(AgeOfMeasurementLookup)
-registry.register(ResultByOutcomeLookup)

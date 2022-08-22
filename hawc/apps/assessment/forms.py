@@ -15,13 +15,14 @@ from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
-from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
+from ..common.selectable import AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
-from ..myuser.lookups import HAWCUserLookup
+from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
-from . import lookups, models
+from . import autocomplete, lookups, models
 
 
 class AssessmentForm(forms.ModelForm):
@@ -51,22 +52,23 @@ class AssessmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+
+        self.fields["dtxsids"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=autocomplete.DSSToxAutocomplete
+        )
+        self.fields["project_manager"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=UserAutocomplete
+        )
+        self.fields["team_members"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=UserAutocomplete
+        )
+        self.fields["reviewers"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=UserAutocomplete
+        )
+
         if self.instance.id is None:
             self.instance.creator = self.user
             self.fields["project_manager"].initial = [self.user]
-
-        self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=lookups.DssToxIdLookup
-        )
-        self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["team_members"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"

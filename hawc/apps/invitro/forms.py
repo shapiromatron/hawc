@@ -6,11 +6,16 @@ from django.forms.models import BaseModelFormSet, inlineformset_factory, modelfo
 from django.forms.widgets import Select
 from django.urls import reverse
 
-from ..assessment.lookups import DssToxIdLookup, EffectTagLookup
+from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
 from ..assessment.models import DoseUnits
 from ..common import selectable
+from ..common.autocomplete import (
+    AutocompleteChoiceField,
+    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
+)
 from ..common.forms import BaseFormHelper, form_actions_apply_filters
-from ..study.lookups import InvitroStudyLookup
+from ..study.autocomplete import StudyAutocomplete
 from . import lookups, models
 
 
@@ -33,12 +38,9 @@ class IVChemicalForm(forms.ModelForm):
         if study:
             self.instance.study = study
 
+        self.fields["dtxsid"] = AutocompleteChoiceField(autocomplete_class=DSSToxAutocomplete)
         self.fields["source"].widget.update_query_parameters(
             {"related": self.instance.study.assessment.id}
-        )
-
-        self.fields["dtxsid"].widget = selectable.AutoCompleteSelectWidget(
-            lookup_class=DssToxIdLookup
         )
 
     @property
@@ -266,6 +268,7 @@ class IVEndpointForm(forms.ModelForm):
         widgets = {
             "NOEL": OELWidget(),
             "LOEL": OELWidget(),
+            "effects": AutocompleteSelectMultipleWidget(autocomplete_class=EffectTagAutocomplete),
         }
 
     def __init__(self, *args, **kwargs):
@@ -284,9 +287,6 @@ class IVEndpointForm(forms.ModelForm):
             lookups.IVEndpointEffectLookup, allow_new=True
         )
 
-        self.fields["effects"].widget = selectable.AutoCompleteSelectMultipleWidget(
-            lookup_class=EffectTagLookup
-        )
         self.fields["effects"].help_text = "Tags used to help categorize effect description."
 
         self.fields["chemical"].queryset = self.fields["chemical"].queryset.filter(
@@ -363,9 +363,9 @@ class IVEndpointFilterForm(forms.Form):
         ("response_units", "response units"),
     )
 
-    studies = selectable.AutoCompleteSelectMultipleField(
+    studies = AutocompleteMultipleChoiceField(
         label="Study reference",
-        lookup_class=InvitroStudyLookup,
+        autocomplete_class=StudyAutocomplete,
         help_text="ex: Smith et al. 2010",
         required=False,
     )
@@ -433,8 +433,9 @@ class IVEndpointFilterForm(forms.Form):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["dose_units"].queryset = DoseUnits.objects.get_iv_units(assessment.id)
+        self.fields["studies"].set_filters({"assessment_id": assessment.id, "in_vitro": True})
         for field in self.fields:
-            if field not in ("dose_units", "order_by", "paginate_by"):
+            if field not in ("studies", "dose_units", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
     @property
