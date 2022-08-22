@@ -10,6 +10,7 @@ from django.core.mail import mail_admins
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 
 from hawc.services.epa.dsstox import DssSubstance
 
@@ -52,6 +53,7 @@ class AssessmentForm(forms.ModelForm):
         if self.instance.id is None:
             self.instance.creator = self.user
             self.fields["project_manager"].initial = [self.user]
+            self.fields["year"].initial = timezone.now().year
 
         self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=lookups.DssToxIdLookup
