@@ -57,6 +57,7 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator("text=Exposure Levels Add Row >> button").click()
         page.locator('input[name="name"]').click()
         page.locator('input[name="name"]').fill("water adult serum")
+        page.pause()
         page.locator('select[name="chemical"]').select_option("5")
         page.locator('select[name="exposure_measurement"]').select_option("4")
         page.locator("#exposurelevel-save").click()

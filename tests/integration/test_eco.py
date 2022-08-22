@@ -42,10 +42,10 @@ class TestEco(PlaywrightTestCase):
         page.keyboard.type("cause as reported")
         page.locator("#cause-save").click()
         # Copy cause
-        page.locator("#cause-2 >> #cause-clone").click()
+        page.locator("#cause-clone").nth(1).click()
         expect(page.locator("text=new cause (2)")).to_be_visible()
         # Delete new cause
-        page.locator("#cause-3 >> #cause-delete").click()
+        page.locator("#cause-delete").nth(2).click()
         page.locator("#cause-confirm-del").click()
         # Create effect
         page.locator("#effect-create").click()
@@ -60,10 +60,10 @@ class TestEco(PlaywrightTestCase):
         page.keyboard.type("effect as reported")
         page.locator("#effect-save").click()
         # Copy effect
-        page.locator("#effect-2 >> #effect-clone").click()
+        page.locator("#effect-clone").nth(1).click()
         expect(page.locator("text=new effect (2)")).to_be_visible()
         # Delete copied effect
-        page.locator("#effect-3 >> #effect-delete").click()
+        page.locator("#effect-delete").nth(2).click()
         page.locator("#effect-confirm-del").click()
         # Create result
         page.locator("#result-create").click()
@@ -78,10 +78,10 @@ class TestEco(PlaywrightTestCase):
         page.locator("#result-save").click()
         expect(page.locator('span:has-text("none")')).to_be_visible()
         # Copy result
-        page.locator("#result-2 >> #result-clone").click()
-        expect(page.locator("#result-3")).to_be_visible()
+        page.locator("#result-clone").nth(1).click()
+        expect(page.locator('span:has-text("none")').nth(1)).to_be_visible()
         # Delete copy
-        page.locator("#result-3 >> #result-delete").click()
+        page.locator("#result-delete").nth(2).click()
         page.locator("text=Confirm").click()
         page.locator("#design-page-cancel").click()
 
