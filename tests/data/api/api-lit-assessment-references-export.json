@@ -98,5 +98,30 @@
     "PubMed ID": 24004895,
     "Title": "Prenatal folic acid and risk of asthma in children: a systematic review and meta-analysis.",
     "Year": 2013
+  },
+  {
+    "Abstract": "This review article on the skin microbiota was written in response to recent advances that transitioned from culture methods to PCR amplification and sequencing of bacterial and fungal genes as a result of the Human Microbiome Project. This transition enables the investigation of the full diversity of microorganisms inhabiting human skin. The skin provides a range of habitats with different microbiota associated with the three major regions of the skin, namely the moist axilla, perineum, and toe webs; oily or sebaceous head, neck, and trunk; and dry forearms and legs. These new culture-independent tools are revealing the diversity of the human skin microbiota in the different locations of the body and with skin depth. These tools should lead to a better understanding of the state of homeostasis between the microbiota and the host and the overall functionality of that microbiota.",
+    "Authors": "Cundell AM",
+    "Authors short": "Cundell AM",
+    "Citation": "Cundell AM 2018",
+    "Created": 1660749174897,
+    "DOI": null,
+    "Exclusion": false,
+    "Exclusion|Tier I": false,
+    "Exclusion|Tier II": false,
+    "Exclusion|Tier III": false,
+    "Full Citation": "Cundell AM. Microbial Ecology of the Human Skin. Microb Ecol 2018; 76 (1):113-120. ",
+    "Full text URL": "",
+    "HAWC ID": 9,
+    "HERO ID": null,
+    "Inclusion": false,
+    "Inclusion|Animal Study": false,
+    "Inclusion|Human Study": false,
+    "Inclusion|Mechanistic Study": false,
+    "Journal": "Microb Ecol 2018; 76 (1):113-120",
+    "Last updated": 1660749193097,
+    "PubMed ID": 27245597,
+    "Title": "Microbial Ecology of the Human Skin.",
+    "Year": 2018
   }
 ]

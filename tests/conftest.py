@@ -7,6 +7,7 @@ import pytest
 from django.core.management import call_command
 from django.db import connections
 
+
 CI = os.environ.get("CI") == "true"
 
 

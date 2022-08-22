@@ -192,6 +192,7 @@
       "coi_reported": "Authors disclosed COI",
       "contact_author": true,
       "created": "2020-05-08T12:03:52.391195-05:00",
+      "eco": false,
       "editable": true,
       "epi": false,
       "epi_meta": false,
