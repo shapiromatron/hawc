@@ -91,7 +91,6 @@ class VizState {
     constructor(options) {
         this.options = options;
         // todo - alt-drag nodes and redraw? w/ node offsets?
-        // todo - show assessment name for root node?
     }
 
     @action.bound changeOption(key, value) {
