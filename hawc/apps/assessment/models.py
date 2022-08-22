@@ -512,7 +512,7 @@ class Values(models.Model):
         blank=True,
         help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022).",
     )
-    pod_value = models.FloatField(verbose_name="POD Value", null=True)
+    pod_value = models.FloatField(verbose_name="POD Value", blank=True, null=True)
     pod_unit = models.ForeignKey(
         "assessment.DoseUnits",
         verbose_name="POD Unit",
@@ -523,6 +523,7 @@ class Values(models.Model):
     )
     # published = models.DateField(verbose_name="Date Published", null=True, blank=True)
     uncertainty = models.FloatField(
+        blank=True,
         null=True,
         verbose_name="Composite Uncertainty Factor",
     )

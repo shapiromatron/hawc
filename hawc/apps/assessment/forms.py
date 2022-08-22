@@ -10,8 +10,8 @@ from django.core.mail import mail_admins
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
-from hawc.apps.assessment import constants
 
+from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 

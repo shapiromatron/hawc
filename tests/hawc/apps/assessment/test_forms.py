@@ -172,6 +172,7 @@ class TestLogFilterForm:
 @pytest.mark.django_db
 class TestAssessmentValuesForm:
     def test_errors(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
         valid_data = {
             "system": "nervous",
             "evaluation_type": "CANCER",
@@ -192,27 +193,74 @@ class TestAssessmentValuesForm:
             "comments": "",
             "extra_metadata": "",
         }
-        form = AssessmentValuesForm(
-            data=valid_data, parent=Assessment.objects.get(id=db_keys.assessment_working)
-        )
+        form = AssessmentValuesForm(data=valid_data, parent=assessment)
         assert form.is_valid()
 
         # Value should not be None
-        data = valid_data.update({"value_type": "OSF"})
-        form = AssessmentValuesForm(
-            data=data, parent=Assessment.objects.get(id=db_keys.assessment_working)
-        )
+        data = valid_data.copy()
+        data.update(value_type="OSF", value=None)
+        form = AssessmentValuesForm(data=data, parent=assessment)
         assert form.is_valid() is False
-        assert form.errors == {"value": ['Value is required unless Value Type is "No Value".']}
+        assert form.errors["value"] == ['Value is required unless Value Type is "No Value".']
+
         # Value type should not be No Value
-        data = valid_data.update({"value": 0.5})
-        form = AssessmentValuesForm(
-            data=data, parent=Assessment.objects.get(id=db_keys.assessment_working)
-        )
+        data = valid_data.copy()
+        data.update(value=0.5, value_type="No Value")
+        form = AssessmentValuesForm(data=data, parent=assessment)
         assert form.is_valid() is False
-        assert form.errors == {
-            "value_type": ['"No Value" is not a valid Value Type when a Value is given.']
-        }
+        assert form.errors["value_type"] == [
+            '"No Value" is not a valid Value Type when a Value is given.'
+        ]
+
         # Cancer fields aren't filled out
+        data = valid_data.copy()
+        data.update(evaluation_type="CANCER", tumor_type="", extrapolation_method="", evidence="")
+        form = AssessmentValuesForm(data=data, parent=assessment)
+        assert form.is_valid() is False
+        error_str = "This field is required when Cancer is the selected evaluation type."
+        assert form.errors == {
+            "tumor_type": [error_str],
+            "extrapolation_method": [error_str],
+            "evidence": [error_str],
+        }
+
         # Noncancer field isn't filled out
-        # Extra metadata is dict[str, str]
+        data = valid_data.copy()
+        data.update(evaluation_type="NONCANCER", uncertainty=None)
+        form = AssessmentValuesForm(data=data, parent=assessment)
+        assert form.is_valid() is False
+        assert form.errors["uncertainty"] == [
+            "This field is required when Noncancer is the selected evaluation type."
+        ]
+
+    def test_extra_metadata(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        data = {
+            "system": "nervous",
+            "evaluation_type": "CANCER",
+            "value_type": "No Value",
+            "value": None,
+            "value_unit": None,
+            "basis": "",
+            "pod_value": 5.0,
+            "pod_unit": 2,
+            "uncertainty": 8.0,
+            "confidence": "",
+            "species_studied": "",
+            "duration": "",
+            "study": None,
+            "tumor_type": "big",
+            "extrapolation_method": "very carefully",
+            "evidence": "strong evidence",
+            "comments": "",
+            "extra_metadata": {"key": "value"},
+        }
+        form = AssessmentValuesForm(data=data, parent=assessment)
+        assert form.is_valid()
+
+        data.update(extra_metadata={"key": {"values": ["value1", "value2"]}})
+        form = AssessmentValuesForm(data=data, parent=assessment)
+        assert form.is_valid() is False
+        assert form.errors["extra_metadata"] == [
+            "Extra metadata must be a dictionary of string key and value pairs. Lists and nested dictionaries are not valid."
+        ]
