@@ -13,8 +13,6 @@
   "settings": {
     "height": 500,
     "hide_empty_tag_nodes": false,
-    "legend_position": {"x": 25, "y": 25},
-    "node_offsets": {},
     "pruned_tags": [],
     "required_tags": [],
     "root_node": 11,

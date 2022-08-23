@@ -67,9 +67,7 @@ export default {
                 height: 800,
                 can_edit: config.can_edit,
                 show_legend: true,
-                legend_position: {x: 25, y: 25},
                 show_counts: true,
-                node_offsets: {},
             };
         tagtree.rename_top_level_node(config.assessment_name);
         tagtree.add_references(config.references);
