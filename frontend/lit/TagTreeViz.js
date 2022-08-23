@@ -4,11 +4,11 @@ import * as d3 from "d3";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
 import {observer} from "mobx-react";
-import {action, observable} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 import PropTypes from "prop-types";
 
 @observer
@@ -19,64 +19,12 @@ class VizOptions extends Component {
         this.props.viz.build_plot();
     }
     render() {
-        const {store} = this.props;
+        const key = this.props.store.rerenderKey;
         return (
-            <div className="row">
-                <div className="col-md-12">
-                    <p className="form-text text-muted">
-                        Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view
-                        references associated with an node (except root-node).
-                    </p>
-                </div>
-                <div id="accordionExample" className="accordion col-md-12">
-                    <div className="card">
-                        <div className="card-header" id="headingOne">
-                            <button
-                                className="btn btn-link btn-block text-left"
-                                type="button"
-                                data-toggle="collapse"
-                                data-target="#collapseOne"
-                                aria-expanded="true"
-                                aria-controls="collapseOne">
-                                Customize
-                            </button>
-                        </div>
-                        <div
-                            id="collapseOne"
-                            className="collapse"
-                            aria-labelledby="headingOne"
-                            data-parent="#accordionExample">
-                            <div className="card-body">
-                                <CheckboxInput
-                                    label={"Hide tags with no references"}
-                                    onChange={e =>
-                                        store.changeOption("hide_empty_tag_nodes", e.target.checked)
-                                    }
-                                    checked={store.options.hide_empty_tag_nodes}
-                                />
-                                <CheckboxInput
-                                    label={"Show legend"}
-                                    onChange={e => {
-                                        store.updateLegendPosition(25, 25);
-                                        store.changeOption("show_legend", e.target.checked);
-                                    }}
-                                    checked={store.options.show_legend}
-                                />
-                                <CheckboxInput
-                                    label={"Show counts"}
-                                    onChange={e =>
-                                        store.changeOption("show_counts", e.target.checked)
-                                    }
-                                    checked={store.options.show_counts}
-                                />
-                                <p className="text-muted my-2">
-                                    Customize the current visual. Changes are not saved.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p className="form-text text-muted" data-value={key}>
+                Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references
+                associated with an node (except root-node).
+            </p>
         );
     }
 }
@@ -90,9 +38,16 @@ class VizState {
 
     constructor(options) {
         this.options = options;
-        // todo - alt-drag nodes and redraw? w/ node offsets?
     }
-
+    @computed
+    get rerenderKey() {
+        const options = this.options,
+            values = ["show_legend", "show_counts", "hide_empty_tag_nodes"].map(d => options[d]);
+        return h.hashString(JSON.stringify(toJS(values)));
+    }
+    @action.bound toggleOption(key) {
+        this.options[key] = !this.options[key];
+    }
     @action.bound changeOption(key, value) {
         this.options[key] = value;
     }
@@ -127,7 +82,36 @@ class TagTreeViz extends D3Plot {
         this.prepare_data();
         this.draw_visualization();
         this.add_menu();
+        this._add_configuration();
         this.trigger_resize();
+    }
+
+    _add_configuration() {
+        const {toggleOption, options} = this.stateStore,
+            addToggle = (field, value, string) => {
+                {
+                    const text = (value ? "Hide" : "Show") + " " + string;
+                    return $(`<button class="dropdown-item">${text}</button>`).on("click", () =>
+                        toggleOption(field)
+                    );
+                }
+            },
+            group = $('<div class="dropdown btn-group">').append(
+                $(
+                    '<button class="btn btn-sm dropdown-toggle" data-toggle="dropdown">Options</button>'
+                ).append(
+                    $('<div class="dropdown-menu dropdown-menu-right">').append(
+                        addToggle(
+                            "hide_empty_tag_nodes",
+                            !options.hide_empty_tag_nodes,
+                            "tags with no references"
+                        ),
+                        addToggle("show_legend", options.show_legend, "legend"),
+                        addToggle("show_counts", options.show_counts, "counts")
+                    )
+                )
+            );
+        this.menu_div.append(group);
     }
 
     build_options() {
