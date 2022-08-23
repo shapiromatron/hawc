@@ -72,6 +72,16 @@ const IntegrationForm = observer(props => {
 
                 <div className="col-md-6">
                     <QuillTextInput
+                        label="Description"
+                        helpText="Enter the overall summary of expert interpretation across the assessed set of biological events, potential mechanisms of toxicity, or other analysis approach (e.g., AOP). Include the primary evidence supporting the interpretation(s).  Describe and substantiate the extent to which the evidence influences inferences across evidence streams. Characterize the limitations of the analyses and highlight data gaps. May have overlap with factors summarized for other streams"
+                        value={summary_judgement.description}
+                        onChange={value =>
+                            store.updateValue("summary_judgement.description", value)
+                        }
+                    />
+                </div>
+                <div className="col-md-6">
+                    <QuillTextInput
                         label="Human relevance"
                         helpText="Use ‘N/A, judgments driven by human data’ or explain the interpretation of the relevance of the animal data to humans. In many cases, a statement such as, ‘without evidence to the contrary, [health effect described in the table] responses in animals are presumed to be relevant to humans’. If possible, include some brief text describing the interpreted comparability of experimental animal organs/systems to humans based on underlying biological similarity (e.g., thyroid signaling processes are well conserved across rodents and humans)."
                         value={summary_judgement.human_relevance}

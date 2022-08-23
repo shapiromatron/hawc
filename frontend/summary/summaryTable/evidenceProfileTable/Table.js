@@ -27,8 +27,8 @@ const subTitleStyle = {backgroundColor: "#f5f5f5"},
                 <td>
                     <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
-                <FactorsCell content={row.certain_factors} increase={true} />
-                <FactorsCell content={row.uncertain_factors} increase={false} />
+                <FactorsCell content={row.certain_factors} isIncreasing={true} />
+                <FactorsCell content={row.uncertain_factors} isIncreasing={false} />
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
                         <Judgement
@@ -54,9 +54,12 @@ const TextBlock = observer(props => {
 
     return (
         <>
-            <p>
-                <em>{props.label}:</em>&nbsp;
-            </p>
+            <br />
+            {props.label ? (
+                <p>
+                    <em>{props.label}:</em>&nbsp;
+                </p>
+            ) : null}
             <div dangerouslySetInnerHTML={{__html: props.html}}></div>
         </>
     );
@@ -75,6 +78,7 @@ class SummaryCell extends Component {
                     judgement={summary_judgement}
                     summary={true}
                 />
+                <TextBlock html={summary_judgement.description} />
                 <TextBlock
                     label="Human relevance of findings in animals"
                     html={summary_judgement.human_relevance}

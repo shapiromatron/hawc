@@ -27,8 +27,8 @@ const increaseFactors = [
         {key: -100, label: "Other", displayLabel: false},
     ],
     FactorsForm = observer(props => {
-        const {store, updateKey, content, increase} = props,
-            choices = increase ? increaseFactors : decreaseFactors;
+        const {store, updateKey, content, isIncreasing} = props,
+            choices = isIncreasing ? increaseFactors : decreaseFactors;
 
         return (
             <div>
@@ -88,9 +88,9 @@ const increaseFactors = [
         Users provide descriptive text in html using a wysiwyg editor. We update the text provided
         to inject the header-text if available, as well as the help-text popup, if available.
         */
-        const {content, increase} = props,
+        const {content, isIncreasing} = props,
             factorMap = new Map(content.factors.map(e => [e.key, e])),
-            factors = increase ? increaseFactors : decreaseFactors,
+            factors = isIncreasing ? increaseFactors : decreaseFactors,
             injectText = (block, injectionText) =>
                 h.addOuterTag(block, "p").replace(/^<p>/gm, `<p>${injectionText}`),
             injectPopup = (block, factorType, factor) => {
@@ -144,11 +144,11 @@ FactorsForm.propTypes = {
     store: PropTypes.object.isRequired,
     updateKey: PropTypes.string.isRequired,
     content: PropTypes.object.isRequired,
-    increase: PropTypes.bool.isRequired,
+    isIncreasing: PropTypes.bool.isRequired,
 };
 FactorsCell.propTypes = {
     content: PropTypes.object.isRequired,
-    increase: PropTypes.bool.isRequired,
+    isIncreasing: PropTypes.bool.isRequired,
 };
 
 export {FactorsForm, FactorsCell};

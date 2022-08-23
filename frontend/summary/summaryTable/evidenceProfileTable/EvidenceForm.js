@@ -162,7 +162,7 @@ const EvidenceForm = observer(props => {
                         store={store}
                         updateKey={`${contentType}.rows[${index}].certain_factors`}
                         content={row.certain_factors}
-                        increase={true}
+                        isIncreasing={true}
                     />
                 </td>
                 <td>
@@ -170,7 +170,7 @@ const EvidenceForm = observer(props => {
                         store={store}
                         updateKey={`${contentType}.rows[${index}].uncertain_factors`}
                         content={row.uncertain_factors}
-                        increase={false}
+                        isIncreasing={false}
                     />
                 </td>
                 <td>

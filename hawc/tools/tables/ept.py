@@ -54,6 +54,7 @@ class SummaryJudgementCell(BaseCell):
     custom_judgement_icon: str = ""
     custom_judgement_label: str = ""
 
+    description: str
     human_relevance: str
     cross_stream_coherence: str
     susceptibility: str
@@ -80,6 +81,8 @@ class SummaryJudgementCell(BaseCell):
     def to_docx(self, parser: QuillParser, block):
         text = ""
         text += self.judgement_html()
+        if has_inner_text(self.description):
+            text += f"\n{self.description}"
         if has_inner_text(self.human_relevance):
             text += tag_wrapper("\nHuman relevance of findings in animals:", "p", "em")
             text += self.human_relevance
@@ -542,6 +545,7 @@ class EvidenceProfileTable(BaseTable):
                 "judgement": SummaryJudgementChoices.Inadequate,
                 "custom_judgement_icon": "",
                 "custom_judgement_label": "",
+                "description": "<p></p>",
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",
                 "susceptibility": "<p></p>",
