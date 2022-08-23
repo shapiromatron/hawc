@@ -23,7 +23,8 @@ class VizOptions extends Component {
         return (
             <p className="form-text text-muted" data-value={key}>
                 Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references
-                associated with an node (except root-node).
+                associated with an node (except root-node). Hold shift to drag nodes to new
+                positions.
             </p>
         );
     }
@@ -277,7 +278,14 @@ class TagTreeViz extends D3Plot {
 
                 // Transition nodes to their new position.
                 var nodeUpdate = nodeEnter.merge(node);
-                nodeUpdate.transition(t).attr("transform", d => `translate(${d.y},${d.x})`);
+                nodeUpdate.transition(t).attr("transform", d => {
+                    const override = options.node_offsets[d.data.id];
+                    if (override) {
+                        d.x = override.y;
+                        d.y = override.x;
+                    }
+                    return `translate(${d.y},${d.x})`;
+                });
 
                 nodeUpdate
                     .selectAll("circle")
