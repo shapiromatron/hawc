@@ -27,7 +27,7 @@ class NestedDomainSerializer(serializers.ModelSerializer):
 class SimpleRiskOfBiasDomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasDomain
-        fields = ("id", "name", "description", "is_overall_confidence")
+        fields = ("id", "sort_order", "name", "description", "is_overall_confidence")
 
 
 class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
@@ -38,6 +38,7 @@ class SimpleRiskOfBiasMetricSerializer(serializers.ModelSerializer):
         model = models.RiskOfBiasMetric
         fields = (
             "id",
+            "sort_order",
             "name",
             "description",
             "domain_id",
