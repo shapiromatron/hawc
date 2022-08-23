@@ -36,6 +36,8 @@ VizOptions.propTypes = {
 
 class VizState {
     @observable options = null;
+    @observable legend_position = {x: 25, y: 25};
+    @observable node_offsets = {};
 
     constructor(options) {
         this.options = options;
@@ -53,10 +55,10 @@ class VizState {
         this.options[key] = value;
     }
     @action.bound updateLegendPosition(x, y) {
-        this.options.legend_position = {x, y};
+        this.legend_position = {x, y};
     }
     @action.bound updateDragLocation(id, x, y) {
-        this.options.node_offsets[id] = {x, y};
+        this.node_offsets[id] = {x, y};
     }
 }
 
@@ -147,7 +149,7 @@ class TagTreeViz extends D3Plot {
     }
 
     draw_visualization() {
-        var options = this.stateStore.options,
+        var {node_offsets, options} = this.stateStore,
             store = this.stateStore,
             i = 0,
             vis = this.vis,
@@ -279,7 +281,7 @@ class TagTreeViz extends D3Plot {
                 // Transition nodes to their new position.
                 var nodeUpdate = nodeEnter.merge(node);
                 nodeUpdate.transition(t).attr("transform", d => {
-                    const override = options.node_offsets[d.data.id];
+                    const override = node_offsets[d.data.id];
                     if (override) {
                         d.x = override.y;
                         d.y = override.x;
@@ -378,7 +380,7 @@ class TagTreeViz extends D3Plot {
     add_legend() {
         // create a new g.legend_group object on the main svg graphic
         const store = this.stateStore,
-            legendPosition = store.options.legend_position,
+            legendPosition = store.legend_position,
             buff = 5,
             data = [
                 {fill: "lightsteelblue", text: "Has additional sub-tagging"},
