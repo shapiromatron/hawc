@@ -61,15 +61,16 @@ class EvaluationType(models.TextChoices):
 
 
 class ValueType(models.TextChoices):
-    SCREEN_RFD = "SCREEN_RFD", "Screening-Level RfD"
-    SCREEN_RFC = "SCREEN_RFC", "Screening-Level RfC"
-    ORGAN_RFD = "ORGAN_RFD", "Organ-Specific RfD"
-    ORGAN_RFC = "ORGAN_RFC", "Organ-Specific RfC"
-    OVERALL_RFD = "OVERALL_RFD", "Overall RfD"
-    OVERALL_RFC = "OVERALL_RFC", "Overall RfC"
+    SCREEN_RFD = "Screening-Level RfD", "Screening-Level RfD"
+    SCREEN_RFC = "Screening-Level RfC", "Screening-Level RfC"
+    ORGAN_RFD = "Organ-Specific RfD", "Organ-Specific RfD"
+    ORGAN_RFC = "Organ-Specific RfC", "Organ-Specific RfC"
+    OVERALL_RFD = "Overall RfD", "Overall RfD"
+    OVERALL_RFC = "Overall RfC", "Overall RfC"
     IUR = "IUR", "IUR"
     OSF = "OSF", "OSF"
-    NONE = "NONE", "No Value"
+    NONE = "No Value", "No Value"
+    OTHER = "Other", "Other"
 
 
 class Confidence(models.TextChoices):

@@ -19,7 +19,7 @@ from ..common.autocomplete import AutocompleteChoiceField, AutocompleteMultipleC
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteWidget
-from ..common.widgets import DateCheckboxInput
+from ..common.widgets import DateCheckboxInput, SelectOtherWidget
 from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
 from . import autocomplete, lookups, models
@@ -144,8 +144,8 @@ class AssessmentDetailsForm(forms.ModelForm):
             self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
 
-        self.fields["project_type"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.ProjectTypeAutocomplete
+        self.fields["project_type"].widget = AutoCompleteWidget(
+            lookup_class=lookups.ProjectTypeLookup
         )
 
     def clean_extra_metadata(self):
@@ -191,6 +191,17 @@ class AssessmentValuesForm(forms.ModelForm):
     class Meta:
         model = models.Values
         exclude = ["assessment"]
+        widgets = {
+            "duration": AutoCompleteWidget(lookup_class=lookups.DurationLookup, allow_new=True),
+            "tumor_type": AutoCompleteWidget(lookup_class=lookups.TumorTypeLookup, allow_new=True),
+            "extrapolation_method": AutoCompleteWidget(
+                lookup_class=lookups.ExtrapolationMethodLookup, allow_new=True
+            ),
+            "evidence": AutoCompleteWidget(lookup_class=lookups.EvidenceLookup, allow_new=True),
+            "value_type": SelectOtherWidget(
+                choices=constants.ValueType.choices, other_choice="Other"
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -203,25 +214,13 @@ class AssessmentValuesForm(forms.ModelForm):
             autocomplete_class=autocomplete.SystemAutocomplete
         )
         self.fields["value_unit"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.DoseUnitsAutocomplete
+            autocomplete_class=autocomplete.DoseUnitsAutocomplete, required=False
         )
         self.fields["pod_unit"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.DoseUnitsAutocomplete
+            autocomplete_class=autocomplete.DoseUnitsAutocomplete, required=False
         )
-        self.fields["species"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.SpeciesAutocomplete
-        )
-        self.fields["duration"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.DurationAutocomplete
-        )
-        self.fields["tumor_type"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.TumorTypeAutocomplete
-        )
-        self.fields["extrapolation_method"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.ExtrapolationMethodAutocomplete
-        )
-        self.fields["evidence"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.EvidenceAutocomplete
+        self.fields["species_studied"] = AutocompleteChoiceField(
+            autocomplete_class=autocomplete.SpeciesAutocomplete, required=False
         )
 
     def clean_extra_metadata(self):
@@ -261,10 +260,8 @@ class AssessmentValuesForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["comments", "basis"]:
-            self.fields[fld].widget.attrs["class"] = "html5text"
+        for fld in ["comments", "basis", "extra_metadata"]:
             self.fields[fld].widget.attrs["rows"] = 3
-        self.fields["extra_metadata"].widget.attrs["rows"] = 3
 
         if self.instance.id:
             helper = BaseFormHelper(

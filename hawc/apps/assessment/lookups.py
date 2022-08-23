@@ -19,6 +19,31 @@ class EffectTagLookup(ModelLookup):
     search_fields = ("name__icontains",)
 
 
+class ProjectTypeLookup(ModelLookup):
+    model = models.AssessmentDetails
+    search_fields = ("project_type__icontains",)
+
+
+class DurationLookup(ModelLookup):
+    model = models.Values
+    search_fields = ("duration__icontains",)
+
+
+class TumorTypeLookup(ModelLookup):
+    model = models.Values
+    search_fields = ("tumor_type__icontains",)
+
+
+class ExtrapolationMethodLookup(ModelLookup):
+    model = models.Values
+    search_fields = ("extrapolation_method__icontains",)
+
+
+class EvidenceLookup(ModelLookup):
+    model = models.Values
+    search_fields = ("evidence__icontains",)
+
+
 registry.register(DoseUnitsLookup)
 registry.register(EffectTagLookup)
 registry.register(BaseEndpointLookup)
