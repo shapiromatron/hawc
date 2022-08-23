@@ -55,7 +55,7 @@ class VizState {
         this.options.legend_position = {x, y};
     }
     @action.bound updateDragLocation(id, x, y) {
-        this.options.node_offsets[id] = [x, y];
+        this.options.node_offsets[id] = {x, y};
     }
 }
 
@@ -134,7 +134,6 @@ class TagTreeViz extends D3Plot {
         // so we check for how many path_lengths, rounded up, the graph extends
         // past the viewBox and set the viewBox.width to the graph width +
         // additional path_lengths.
-
         let {x, y, width, height} = this.svg.viewBox.baseVal,
             increment = Math.ceil(-(this.w - value - this.path_length) / this.path_length);
         width = this.w + this.padding.left + this.padding.right + this.path_length * increment;
@@ -238,10 +237,14 @@ class TagTreeViz extends D3Plot {
                         }
                     })
                     .call(
-                        HAWCUtils.updateDragLocationTransform(function(x, y) {
-                            var p = d3.select(this);
-                            store.updateDragLocation(p.data()[0].data.id, x, y);
-                        })
+                        HAWCUtils.updateDragLocationTransform(
+                            function(x, y) {
+                                var p = d3.select(this),
+                                    id = p.data()[0].data.id;
+                                store.updateDragLocation(id, x, y);
+                            },
+                            {shift: true}
+                        )
                     );
 
                 nodeEnter
