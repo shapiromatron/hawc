@@ -1245,6 +1245,7 @@ class System(models.Model):
         return self.name
 
 
+reversion.register(System)
 reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(Values)
