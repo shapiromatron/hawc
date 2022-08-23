@@ -152,10 +152,10 @@ class LitterEffect(models.TextChoices):
 
 class TreatmentEffect(models.IntegerChoices):
     NR = 0, "not reported"
-    YI = 1, "yes ↑"
-    YD = 2, "yes ↓"
-    Y = 3, "yes"
-    N = 4, "no"
+    YES_UP = 1, "yes ↑"
+    YES_DOWN = 2, "yes ↓"
+    YES = 3, "yes"
+    NO = 4, "no"
 
 
 # bool can't be subclassed with models.Choices

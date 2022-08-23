@@ -129,18 +129,19 @@ class StudyEvaluationTable(BaseTable):
                 cell.judgment = -1 if values.size == 0 else values[0]
 
     def _get_selection(self, row: Row, column: Column) -> pd.DataFrame:
+        data_selection = self._data.loc[(row.type, row.id)]
         if column.attribute.value == "rob":
             try:
-                selection = self._rob.loc[(row.id, column.metric_id)]
+                rob_selection = self._rob.loc[(data_selection["study_id"], column.metric_id)]
             except KeyError:
                 return pd.DataFrame(columns=self._rob.columns)
             # if there are duplicate indices, selection is a dataframe
-            if isinstance(selection, pd.DataFrame):
-                return selection.loc[selection["content_type_id"].isnull()]
+            if isinstance(rob_selection, pd.DataFrame):
+                return rob_selection.loc[rob_selection["content_type_id"].isnull()]
             # if there are no duplicate indices, selection is a series
-            return pd.DataFrame([selection])
+            return pd.DataFrame([rob_selection])
         else:
-            return self._data.loc[(row.type, row.id)]
+            return data_selection
 
     def _rows_group(self):
         cells = []

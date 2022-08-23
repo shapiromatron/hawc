@@ -83,9 +83,10 @@ class EndpointTable {
             default:
                 throw "Unknown data type.";
         }
-        this.hasTreatment = this.hasValues("treatment_effect");
-        if (this.hasTreatment) tr.append("<th>Treatment Related Effect</th>");
-
+        this.hasTreatmentColumn = this.hasValues("treatment_effect");
+        if (this.hasTreatmentColumn) {
+            tr.append("<th>Treatment Related Effect</th>");
+        }
         this.number_columns = tr.children().length;
         this.thead = $("<thead>").append(tr);
     }
@@ -115,7 +116,9 @@ class EndpointTable {
                     `<td>${self.endpoint._dichotomous_percent_change_incidence(v)}%</td>`
                 );
             }
-            if (self.hasTreatment) tr.append(`<td>${v.treatment_effect || " --- "}</td>`);
+            if (self.hasTreatmentColumn) {
+                tr.append(`<td>${v.treatment_effect || "---"}</td>`);
+            }
             self.tbody.append(tr);
         });
     }

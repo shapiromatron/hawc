@@ -56,10 +56,11 @@ dev: ## Start development environment
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-docs: ## Generate Sphinx HTML documentation, including API docs
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+docs: ## Build documentation
+	cd docs; mkdocs build --strict
+
+docs-serve: ## Generate documentation
+	cd docs; mkdocs serve -a localhost:8010
 
 loc: ## Generate lines of code report
 	@cloc \
@@ -90,11 +91,11 @@ test:  ## Run python tests
 
 test-integration:  ## Run integration tests (requires `npm run start`)
 	@playwright install --with-deps chromium
-	@HAWC_INTEGRATION_TESTS=1 py.test -sv tests/integration/
+	@INTEGRATION_TESTS=1 py.test -sv tests/integration/
 
 test-integration-debug:  ## Run integration tests in debug mode (requires npm run start)
 	@playwright install --with-deps chromium
-	@HAWC_INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/
+	@INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/
 
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes

@@ -588,13 +588,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
             sigs.extend([None] * (self.num_doses - len(sigs)))
-
             row.extend(sigs)
 
-            trt = [dose["treatment_effect"] for dose in ser["groups"]]
-            trt.extend([None] * (self.num_doses - len(trt)))
-
-            row.extend(trt)
+            tres = [dose["treatment_effect"] for dose in ser["groups"]]
+            tres.extend([None] * (self.num_doses - len(tres)))
+            row.extend(tres)
 
             row.extend(
                 [self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()]
