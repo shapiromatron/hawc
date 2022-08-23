@@ -482,6 +482,7 @@ class Migration(migrations.Migration):
             field=models.FloatField(
                 blank=True,
                 default=None,
+                help_text="Enter statistical significance level for the effect. Typically this is as presented in the study. Indicate in the results comment field if it is based on statistical analysis conducted by the assessment team",
                 null=True,
                 validators=[
                     django.core.validators.MinValueValidator(0),
