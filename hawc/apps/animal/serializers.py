@@ -114,6 +114,9 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
         dose_groups = set([d["dose_group_id"] for d in doses])
         units = set([d["dose_units_id"] for d in doses])
 
+        if len(dose_groups) == 0:
+            raise serializers.ValidationError("Must have at least one dose-group.")
+
         expected_dose_groups = list(range(max(dose_groups) + 1))
         if dose_groups != set(expected_dose_groups):
             raise serializers.ValidationError(f"Expected `dose_group_id` in {expected_dose_groups}")
