@@ -795,7 +795,9 @@ class LogObjectList(ListView):
             first_log=self.first_log,
             assessment=self.assessment,
             breadcrumbs=self.get_breadcrumbs(),
-            audit_logs=Version.objects.get_for_object(self.first_log.content_object),
+            audit_logs=Version.objects.filter(
+                content_type=self.first_log.content_type, object_id=self.first_log.object_id
+            ).select_related("revision"),
         )
         return context
 

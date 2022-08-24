@@ -65,5 +65,25 @@
 {% include 'assessment/_logs_note.html' %}
 
 <h3>Audit Logs</h3>
-{% for log in audit_logs %}{{log.id}},&nbsp;{% empty %}-{% endfor %}
+
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Snapshot</th>
+            <th>User</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for log in audit_logs %}
+        <tr>
+            <td>{{log.serialized_data}}</td>
+            <td>{{log.revision.user}}</td>
+            <td>{{log.revision.date_created}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
 {% endblock content %}
