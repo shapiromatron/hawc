@@ -136,6 +136,11 @@ class AssessmentDetailsForm(forms.ModelForm):
     class Meta:
         model = models.AssessmentDetails
         fields = "__all__"
+        widgets = {
+            "project_type": AutoCompleteWidget(
+                lookup_class=lookups.ProjectTypeLookup, allow_new=True
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -143,10 +148,6 @@ class AssessmentDetailsForm(forms.ModelForm):
         if assessment:
             self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
-
-        self.fields["project_type"].widget = AutoCompleteWidget(
-            lookup_class=lookups.ProjectTypeLookup
-        )
 
     def clean_extra_metadata(self):
         extra_metadata = self.cleaned_data["extra_metadata"]

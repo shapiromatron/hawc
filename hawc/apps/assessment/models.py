@@ -425,12 +425,6 @@ class Assessment(models.Model):
         Communication.set_message(self, text)
 
 
-class ProjectType(models.Model):
-    name = models.CharField(max_length=64)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-
 class AssessmentDetails(models.Model):
     objects = managers.AssessmentDetailsManager()
     assessment = models.OneToOneField(Assessment, models.CASCADE, related_name="details")
