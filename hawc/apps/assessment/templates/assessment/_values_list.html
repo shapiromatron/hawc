@@ -20,7 +20,7 @@
     <tbody>
         {% for object in object_list %}
         <tr>
-            <td><a href="{% url 'assessment:values-detail' object.pk %}">{{object.system}}</a></td>
+            <td><a href="{% url 'assessment:values-detail' object.pk %}">{{object.system.first}}</a></td>
             <td>{{object.get_evaluation_type_display}}</td>
             <td>{{object.value_type}}</td>
             <td>{{object.value}} {{object.value_units}}</td>

@@ -1,6 +1,7 @@
 from selectable.base import ModelLookup
 from selectable.registry import registry
 
+from ..common.lookups import DistinctStringLookup
 from . import models
 
 
@@ -19,31 +20,36 @@ class EffectTagLookup(ModelLookup):
     search_fields = ("name__icontains",)
 
 
-class ProjectTypeLookup(ModelLookup):
+class ProjectTypeLookup(DistinctStringLookup):
     model = models.AssessmentDetails
-    search_fields = ("project_type__icontains",)
+    distinct_field = "project_type"
 
 
-class DurationLookup(ModelLookup):
+class DurationLookup(DistinctStringLookup):
     model = models.Values
-    search_fields = ("duration__icontains",)
+    distinct_field = "duration"
 
 
-class TumorTypeLookup(ModelLookup):
+class TumorTypeLookup(DistinctStringLookup):
     model = models.Values
-    search_fields = ("tumor_type__icontains",)
+    distinct_field = "tumor_type"
 
 
-class ExtrapolationMethodLookup(ModelLookup):
+class ExtrapolationMethodLookup(DistinctStringLookup):
     model = models.Values
-    search_fields = ("extrapolation_method__icontains",)
+    distinct_field = "extrapolation_method"
 
 
-class EvidenceLookup(ModelLookup):
+class EvidenceLookup(DistinctStringLookup):
     model = models.Values
-    search_fields = ("evidence__icontains",)
+    distinct_field = "evidence"
 
 
 registry.register(DoseUnitsLookup)
 registry.register(EffectTagLookup)
 registry.register(BaseEndpointLookup)
+registry.register(ProjectTypeLookup)
+registry.register(DurationLookup)
+registry.register(TumorTypeLookup)
+registry.register(ExtrapolationMethodLookup)
+registry.register(EvidenceLookup)
