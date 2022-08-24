@@ -280,8 +280,10 @@ class AssessmentValuesForm(forms.ModelForm):
         helper.add_row("system", 2, "col-md-6")
         helper.add_row("value_type", 3, "col-md-4")
         helper.add_row("basis", 3, "col-md-4")
-        helper.add_row("uncertainty", 6, "col-md-2")
-        helper.add_row("extrapolation_method", 2, "col-md-6")
+        helper.add_row(
+            "species_studied", 5, ["col-md-3", "col-md-3", "col-md-2", "col-md-2", "col-md-2"]
+        )
+        helper.add_row("tumor_type", 3, "col-md-4")
         helper.add_row("comments", 2, "col-md-6")
 
         return helper

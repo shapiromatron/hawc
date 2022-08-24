@@ -528,16 +528,6 @@ class Values(models.Model):
         related_name="values_set_pod",
     )
     # published = models.DateField(verbose_name="Date Published", null=True, blank=True)
-    uncertainty = models.FloatField(
-        blank=True,
-        null=True,
-        verbose_name="Composite Uncertainty Factor",
-    )
-    confidence = models.TextField(
-        blank=True,
-        choices=constants.Confidence.choices,
-        help_text="Select the overall study level confidence.",
-    )
     species_studied = models.ForeignKey(
         "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
     )
@@ -553,6 +543,16 @@ class Values(models.Model):
         blank=True,
         null=True,
         verbose_name="HAWC Study",
+    )
+    confidence = models.TextField(
+        blank=True,
+        choices=constants.Confidence.choices,
+        help_text="Select the overall study level confidence.",
+    )
+    uncertainty = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="Composite Uncertainty Factor",
     )
     tumor_type = models.CharField(
         max_length=64,
