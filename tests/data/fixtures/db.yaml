@@ -2289,6 +2289,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 2
   fields:
@@ -2302,6 +2303,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 3
   fields:
@@ -2315,6 +2317,7 @@
     upper_ci: null
     significant: true
     significance_level: 0.05
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 4
   fields:
@@ -2328,6 +2331,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 5
   fields:
@@ -2341,6 +2345,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 6
   fields:
@@ -2354,6 +2359,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 7
   fields:
@@ -2367,6 +2373,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 8
   fields:
@@ -2380,6 +2387,7 @@
     upper_ci: null
     significant: true
     significance_level: 0.05
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 9
   fields:
@@ -2393,6 +2401,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 10
   fields:
@@ -2406,6 +2415,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 11
   fields:
@@ -2419,6 +2429,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 12
   fields:
@@ -2432,6 +2443,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 13
   fields:
@@ -2445,6 +2457,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 14
   fields:
@@ -2458,6 +2471,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 15
   fields:
@@ -2471,6 +2485,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 16
   fields:
@@ -2484,6 +2499,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 17
   fields:
@@ -2497,6 +2513,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: animal.endpointgroup
   pk: 18
   fields:
@@ -2510,6 +2527,7 @@
     upper_ci: null
     significant: false
     significance_level: null
+    treatment_effect: null
 - model: bmd.assessmentsettings
   pk: 1
   fields:

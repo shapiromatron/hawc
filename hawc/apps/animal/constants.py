@@ -150,6 +150,14 @@ class LitterEffect(models.TextChoices):
     O = "O", "Other"  # noqa: E741
 
 
+class TreatmentEffect(models.IntegerChoices):
+    NR = 0, "not reported"
+    YES_UP = 1, "yes ↑"
+    YES_DOWN = 2, "yes ↓"
+    YES = 3, "yes"
+    NO = 4, "no"
+
+
 # bool can't be subclassed with models.Choices
 POSITIVE_CONTROL_CHOICES = (
     (True, "Yes"),
