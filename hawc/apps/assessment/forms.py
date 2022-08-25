@@ -193,15 +193,13 @@ class AssessmentValuesForm(forms.ModelForm):
         model = models.Values
         exclude = ["assessment"]
         widgets = {
+            "system": AutoCompleteWidget(lookup_class=lookups.SystemLookup, allow_new=True),
             "duration": AutoCompleteWidget(lookup_class=lookups.DurationLookup, allow_new=True),
             "tumor_type": AutoCompleteWidget(lookup_class=lookups.TumorTypeLookup, allow_new=True),
             "extrapolation_method": AutoCompleteWidget(
                 lookup_class=lookups.ExtrapolationMethodLookup, allow_new=True
             ),
             "evidence": AutoCompleteWidget(lookup_class=lookups.EvidenceLookup, allow_new=True),
-            "value_type": SelectOtherWidget(
-                choices=constants.ValueType.choices, other_choice="Other"
-            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -211,9 +209,6 @@ class AssessmentValuesForm(forms.ModelForm):
             self.instance.assessment = assessment
         self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
 
-        self.fields["system"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=autocomplete.SystemAutocomplete
-        )
         self.fields["value_unit"] = AutocompleteChoiceField(
             autocomplete_class=autocomplete.DoseUnitsAutocomplete, required=False
         )

@@ -25,6 +25,11 @@ class ProjectTypeLookup(DistinctStringLookup):
     distinct_field = "project_type"
 
 
+class SystemLookup(DistinctStringLookup):
+    model = models.Values
+    distinct_field = "system"
+
+
 class DurationLookup(DistinctStringLookup):
     model = models.Values
     distinct_field = "duration"

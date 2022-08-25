@@ -154,12 +154,6 @@ class ValuesAdmin(admin.ModelAdmin):
     search_fields = ("assessment", "value", "comments")
 
 
-@admin.register(models.System)
-class OrganSystemAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
-    search_fields = ("name",)
-
-
 @admin.register(models.Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
     list_select_related = ("content_type",)

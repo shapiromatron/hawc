@@ -4,27 +4,31 @@
     <colgroup>
         <col style="width: 20%;">
         <col style="width: 20%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
     </colgroup>
     <thead>
         <tr>
-            <th>System</th>
+
             <th>Evaluation Type</th>
             <th>Value Type</th>
             <th>Value</th>
-            <th>Comments</th>
+            <th>System</th>
+            <th>POD</th>
+            <th>Composite Uncertainty Factor</th>
         </tr>
     </thead>
     <tbody>
         {% for object in object_list %}
         <tr>
-            <td><a href="{% url 'assessment:values-detail' object.pk %}">{{object.system.first}}</a></td>
-            <td>{{object.get_evaluation_type_display}}</td>
+            <td><a href="{% url 'assessment:values-detail' object.pk %}">{{object.get_evaluation_type_display}}</a></td>
             <td>{{object.value_type}}</td>
-            <td>{{object.value}} {{object.value_units}}</td>
-            <td>{{object.comments}}</td>
+            <td>{{object.value}} {{object.value_unit}}</td>
+            <td>{{object.system}}</td>
+            <td>{{object.pod_value}} {{object.pod_unit}}</td>
+            <td>{{object.uncertainty}}</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -487,8 +487,8 @@ class AssessmentDetails(models.Model):
 class Values(models.Model):
     objects = managers.ValuesManager()
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
-    system = models.ManyToManyField(
-        "assessment.System",
+    system = models.CharField(
+        max_length=128,
         help_text="Identify the organ system of concern (e.g., Hepatic, Nervous, Reproductive).",
     )
     evaluation_type = models.CharField(
@@ -500,6 +500,7 @@ class Values(models.Model):
     value_type = models.CharField(
         max_length=64,
         help_text="Enter the type of toxicity value that was derived.",
+        choices=constants.ValueType.choices,
     )
     value = models.FloatField(blank=True, null=True)
     value_unit = models.ForeignKey(
@@ -1230,16 +1231,6 @@ class Content(models.Model):
         return html
 
 
-class System(models.Model):
-    name = models.CharField(max_length=64)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
-
-reversion.register(System)
 reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(Values)
