@@ -11,7 +11,7 @@ const judgementChoices = [
         {value: 20, icon: "⊕⊕⊙", text: "Moderate"},
         {value: 10, icon: "⊕⊙⊙", text: "Slight"},
         {value: 1, icon: "⊙⊙⊙", text: "Indeterminate"},
-        {value: -10, icon: "⊝⊝⊝", text: "Evidence of no effect"},
+        {value: -10, icon: "⊝⊝⊝", text: "Compelling evidence of no effect"},
         {value: NO_JUDGEMENT, icon: "", text: "None"},
         {value: CUSTOM_JUDGEMENT, icon: "", text: "Custom"},
     ],
