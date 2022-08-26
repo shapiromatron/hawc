@@ -113,7 +113,8 @@ const IntegrationForm = observer(props => {
                 </div>
                 <div className="col-md-6">
                     <QuillTextInput
-                        label="Plausibility"
+                        label="Biological plausibility"
+                        helpText="Mechanistic support for biological plausibility"
                         value={summary_judgement.plausibility}
                         onChange={value =>
                             store.updateValue("summary_judgement.plausibility", value)
@@ -124,7 +125,7 @@ const IntegrationForm = observer(props => {
                 <div className="col-md-6">
                     <QuillTextInput
                         label="Other inferences"
-                        helpText="Other Mode of Action (MOA) analysis inferences (e.g., judgments relevant to dose response analysis), relevant information from other sources (e.g., read across)"
+                        helpText="ADME, Other Mode of Action (MOA) analysis inferences (e.g., judgments relevant to dose response analysis), relevant information from other sources (e.g., read across)"
                         value={summary_judgement.other}
                         onChange={value => store.updateValue("summary_judgement.other", value)}
                     />

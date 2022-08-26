@@ -92,10 +92,7 @@ class SummaryCell extends Component {
                     html={summary_judgement.susceptibility}
                 />
                 <TextBlock label="Biological plausibility" html={summary_judgement.plausibility} />
-                <TextBlock
-                    label="Other critical inferences (e.g., ADME, or other supplemental information)"
-                    html={summary_judgement.other}
-                />
+                <TextBlock label="Other critical inferences" html={summary_judgement.other} />
             </td>
         );
     }
@@ -258,7 +255,7 @@ class Table extends Component {
                         <col style={{width: "15%"}}></col>
                         <col style={{width: "15%"}}></col>
                         <col style={{width: "15%"}}></col>
-                        <col style={{width: "25%"}}></col>
+                        {summary_judgement.hide_content ? null : <col style={{width: "25%"}}></col>}
                     </colgroup>
                 )}
                 <thead>
@@ -279,7 +276,7 @@ class Table extends Component {
                             <th>Factors that increase certainty</th>
                             <th>Factors that decrease certainty</th>
                             <th>Evidence Synthesis Judgment(s)</th>
-                            <SummaryCell store={store} />
+                            {summary_judgement.hide_content ? null : <SummaryCell store={store} />}
                         </tr>
                     )}
                     {exposed_human.hide_content ? null : <EpidemiologyEvidenceRows store={store} />}
