@@ -26,7 +26,7 @@ def unchange_ept_settings(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("summary", "0036_ept_summary_judgment_other"),
+        ("summary", "0037_tagtree_customizations"),
     ]
 
     operations = [
