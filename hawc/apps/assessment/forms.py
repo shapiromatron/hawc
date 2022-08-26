@@ -19,7 +19,7 @@ from ..common.autocomplete import AutocompleteChoiceField, AutocompleteMultipleC
 from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteWidget
-from ..common.widgets import DateCheckboxInput, SelectOtherWidget
+from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
 from . import autocomplete, lookups, models
