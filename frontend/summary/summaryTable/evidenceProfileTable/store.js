@@ -58,6 +58,7 @@ class EvidenceProfileTableStore {
             hide_mechanistic = this.settings.mechanistic.hide_content;
 
         let rows = 0;
+        rows += hide_exposed_human && hide_animal ? 0 : 1;
         rows += hide_exposed_human ? 0 : 1 + Math.max(this.settings.exposed_human.rows.length, 1);
         rows += hide_animal ? 0 : 1 + Math.max(this.settings.animal.rows.length, 1);
         rows += hide_mechanistic ? 0 : 2 + Math.max(this.settings.mechanistic.rows.length, 1);

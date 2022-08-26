@@ -1,10 +1,11 @@
+import re
 import urllib.parse
 from html.parser import HTMLParser
 
 import docx
 
 
-def tag_wrapper(text, tag, *args):
+def tag_wrapper(text: str, tag: str, *args):
     if len(args) == 0:
         return f"<{tag}>{text}</{tag}>"
     arg_tag = args[-1]
@@ -12,19 +13,27 @@ def tag_wrapper(text, tag, *args):
     return tag_wrapper(text, tag, *args[:-1])
 
 
-def strip_tags(text, tag, *args):
-    text = text.replace(f"<{tag}>", "").replace(f"</{tag}>", "")
-    for arg_tag in args:
-        text = text.replace(f"<{arg_tag}>", "").replace(f"</{arg_tag}>", "")
+def strip_tags(text: str):
+    return re.sub("<[^<]+?>", "", text)
+
+
+def strip_enclosing_tag(text: str, tag: str):
+    if text.startswith(f"<{tag}>") and text.endswith(f"</{tag}>"):
+        return text[2 + len(tag) : -(3 + len(tag))]
     return text
 
 
-def ul_wrapper(texts):
+def has_inner_text(text: str):
+    # check for inner text by removing tags and whitespace
+    return bool(strip_tags(text).strip())
+
+
+def ul_wrapper(texts: list[str]):
     list_items = map(lambda text: tag_wrapper(text, "li"), texts)
     return f"<ul>{''.join(list_items)}</ul>"
 
 
-def ol_wrapper(texts):
+def ol_wrapper(texts: list[str]):
     list_items = map(lambda text: tag_wrapper(text, "li"), texts)
     return f"<ol>{''.join(list_items)}</ol>"
 
