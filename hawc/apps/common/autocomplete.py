@@ -1,4 +1,5 @@
 from dal import autocomplete
+from django.conf import settings
 from django.forms import ModelChoiceField, ModelMultipleChoiceField
 from django.http import Http404, HttpResponseForbidden
 from django.utils.encoding import force_str
@@ -32,10 +33,7 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         }
 
     def get_results(self, context):
-        return [
-            self.get_field_result(obj) if self.field else self.get_result(obj)
-            for obj in context["object_list"]
-        ]
+        return [self.get_field_result(obj) if self.field else self.get_result(obj) for obj in context["object_list"]]
 
     def update_qs(self, qs):
         return qs
@@ -120,7 +118,14 @@ class SearchLabelMixin:
 
 
 class AutocompleteWidgetMixin:
-    def __init__(self, autocomplete_class: BaseAutocomplete, filters: dict = None, *args, **kwargs):
+    def __init__(
+        self,
+        autocomplete_class: BaseAutocomplete,
+        filters: dict = None,
+        autocomplete_function: str = None,
+        *args,
+        **kwargs,
+    ):
         # set url
         filters = filters or {}
         kwargs["url"] = autocomplete_class.url(**filters)
@@ -132,6 +137,8 @@ class AutocompleteWidgetMixin:
         kwargs["attrs"] = attrs
 
         super().__init__(*args, **kwargs)
+
+        self.autocomplete_function = autocomplete_function or self.autocomplete_function
 
 
 class AutocompleteSelectWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect2):
@@ -150,11 +157,12 @@ class AutocompleteSelectMultipleWidget(AutocompleteWidgetMixin, autocomplete.Mod
 
 # TODO remove or tailor it better for char field choices
 class FoobarWidget(AutocompleteWidgetMixin, autocomplete.Select2):
+    class Media:
+        js = (f"{settings.STATIC_URL}js/autocomplete_text.js",)
+
     def __init__(self, *args, **kwargs):
         # add tags to attrs
         attrs = kwargs.get("attrs", {})
-        attrs["data-tags"] = 1
-        attrs["data-token-separators"] = "null"
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)
 
@@ -205,9 +213,7 @@ class AutocompleteRegistry:
 
     def validate(self, lookup):
         if not issubclass(lookup, BaseAutocomplete):
-            raise ValueError(
-                "Registered autocompletes must inherit from the BaseAutocomplete class"
-            )
+            raise ValueError("Registered autocompletes must inherit from the BaseAutocomplete class")
 
     def register(self, lookup):
         self.validate(lookup)
