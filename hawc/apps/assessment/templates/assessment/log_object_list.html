@@ -1,8 +1,8 @@
-{% extends assessment|yesno:"assessment-rooted.html,crumbless.html" %}
+{% extends first_log.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
 
-<h2>{{object_name}} Logs</h2>
+<h2>{{first_log}}s</h2>
 
 <table class="table table-sm table-striped">
     <colgroup>
@@ -14,11 +14,11 @@
         <tr>
             <th>Item</th>
             <td>
-                {% with object.get_absolute_url as absolute_url %}
+                {% with first_log.content_object.get_absolute_url as absolute_url %}
                     {% if absolute_url %}
-                    <a href="{{absolute_url}}">{{object_name}}</a>
+                    <a href="{{absolute_url}}">{{first_log.get_object_name}}</a>
                     {% else %}
-                    {{object_name}}
+                    {{first_log.get_object_name}}
                     {% endif %}
                 {% endwith %}
             </td>
@@ -26,12 +26,12 @@
 
         <tr>
             <th>Data type</th>
-            <td>{{content_type}}</td>
+            <td>{{first_log.content_type}}</td>
         </tr>
 
         <tr>
             <th>Assessment</th>
-            <td>{{assessment}}</td>
+            <td>{{first_log.assessment}}</td>
         </tr>
 
     </tbody>

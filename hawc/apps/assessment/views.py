@@ -768,22 +768,19 @@ class LogObjectList(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            self.ct = ContentType.objects.get_for_id(self.kwargs["content_type"])
+            content_type = ContentType.objects.get_for_id(kwargs["content_type"])
         except ObjectDoesNotExist:
             raise Http404()
-        try:
-            self.object = self.ct.get_object_for_this_type(pk=self.kwargs["object_id"])
-        except ObjectDoesNotExist:
-            self.object = None
+        first_log = self.model.objects.filter(**self.kwargs).first()
+        if not first_log:
+            first_log = self.model(content_type=content_type, object_id=kwargs["object_id"])
+            if hasattr(first_log.content_object, "get_assessment"):
+                first_log.assessment = first_log.content_object.get_assessment()
+        if not first_log.user_can_view(request.user):
+            raise PermissionDenied()
 
-        if not hasattr(self.object, "get_assessment"):
-            self.assessment = None
-            if not request.user.is_staff:
-                raise PermissionDenied()
-        else:
-            self.assessment = self.object.get_assessment()
-            if not self.assessment.user_is_team_member_or_higher(request.user):
-                raise PermissionDenied()
+        self.first_log = first_log
+        self.assessment = first_log.assessment
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -802,13 +799,7 @@ class LogObjectList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(assessment=self.assessment, object=self.object, content_type=self.ct)
-        if self.object:
-            context["object_name"] = str(self.object)
-        else:
-            context[
-                "object_name"
-            ] = f"{self.ct.app_label}.{self.ct.model} #{self.kwargs['object_id']}"
+        context.update(assessment=self.assessment, first_log=self.first_log)
         if self.assessment:
             context["breadcrumbs"] = self.get_breadcrumbs()
         return context
