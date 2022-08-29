@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2>{{first_log}}s</h2>
+<h2>{{object_name}} Logs</h2>
 
 <table class="table table-sm table-striped">
     <colgroup>
@@ -14,11 +14,11 @@
         <tr>
             <th>Item</th>
             <td>
-                {% with first_log.content_object.get_absolute_url as absolute_url %}
+                {% with object.get_absolute_url as absolute_url %}
                     {% if absolute_url %}
-                    <a href="{{absolute_url}}">{{first_log.get_object_name}}</a>
+                    <a href="{{absolute_url}}">{{object_name}}</a>
                     {% else %}
-                    {{first_log.get_object_name}}
+                    {{object_name}}
                     {% endif %}
                 {% endwith %}
             </td>
@@ -26,7 +26,7 @@
 
         <tr>
             <th>Data type</th>
-            <td>{{first_log.content_type}}</td>
+            <td>{{content_type}}</td>
         </tr>
 
         <tr>
@@ -43,15 +43,17 @@
     <thead>
         <tr>
             <th>Message</th>
+            <th>Snapshot</th>
             <th>User</th>
             <th>Timestamp</th>
         </tr>
     </thead>
     <tbody>
 
-        {% for obj in page_obj %}
+        {% for obj in object_list %}
         <tr>
             <td>{{obj.message}}</td>
+            <td>{{obj.snapshot}}</td>
             <td>{{obj.user}}</td>
             <td>{{obj.created}}</td>
         </tr>
@@ -60,30 +62,5 @@
     </tbody>
 </table>
 
-{% include "includes/paginator.html" %}
-
 {% include 'assessment/_logs_note.html' %}
-
-<h3>Audit Logs</h3>
-
-<table class="table table-sm table-striped">
-    <thead>
-        <tr>
-            <th>Snapshot</th>
-            <th>User</th>
-            <th>Timestamp</th>
-        </tr>
-    </thead>
-    <tbody>
-
-        {% for log in audit_logs %}
-        <tr>
-            <td>{{log.serialized_data}}</td>
-            <td>{{log.revision.user}}</td>
-            <td>{{log.revision.date_created}}</td>
-        </tr>
-        {% endfor %}
-
-    </tbody>
-</table>
 {% endblock content %}

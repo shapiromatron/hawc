@@ -8,7 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Count
 from django.http import (
@@ -27,7 +27,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
-from reversion.models import Version
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
@@ -766,20 +765,33 @@ class LogDetail(DetailView):
 class LogObjectList(ListView):
     template_name = "assessment/log_object_list.html"
     model = models.Log
-    paginate_by = 25
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.ct = ContentType.objects.get_for_id(self.kwargs["content_type"])
+        except ObjectDoesNotExist:
+            raise Http404()
+        try:
+            self.object = self.ct.get_object_for_this_type(pk=self.kwargs["object_id"])
+        except ObjectDoesNotExist:
+            self.object = None
+
+        if not hasattr(self.object, "get_assessment"):
+            self.assessment = None
+            if not request.user.is_staff:
+                raise PermissionDenied()
+        else:
+            self.assessment = self.object.get_assessment()
+            if not self.assessment.user_is_team_member_or_higher(request.user):
+                raise PermissionDenied()
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(**self.kwargs)
-        if qs.count() == 0:
-            raise Http404()
-        self.first_log = qs[0]
-        self.assessment = qs[0].assessment
-        if not qs[0].user_can_view(self.request.user):
-            raise PermissionDenied()
-        return qs
+        return self.model.objects.get_object_audit(**self.kwargs)
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        crumbs = Breadcrumb.build_crumbs(
+        return Breadcrumb.build_crumbs(
             self.request.user,
             "Logs",
             [
@@ -787,18 +799,18 @@ class LogObjectList(ListView):
                 Breadcrumb(name="Logs", url=self.assessment.get_assessment_logs_url()),
             ],
         )
-        return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            first_log=self.first_log,
-            assessment=self.assessment,
-            breadcrumbs=self.get_breadcrumbs(),
-            audit_logs=Version.objects.filter(
-                content_type=self.first_log.content_type, object_id=self.first_log.object_id
-            ).select_related("revision"),
-        )
+        context.update(assessment=self.assessment, object=self.object, content_type=self.ct)
+        if self.object:
+            context["object_name"] = str(self.object)
+        else:
+            context[
+                "object_name"
+            ] = f"{self.ct.app_label}.{self.ct.model} #{self.kwargs['object_id']}"
+        if self.assessment:
+            context["breadcrumbs"] = self.get_breadcrumbs()
         return context
 
 

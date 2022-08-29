@@ -1,7 +1,10 @@
 import json
+from datetime import timedelta
+from typing import Union
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, QuerySet
+from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
@@ -140,3 +143,96 @@ class TimeSpentEditingManager(BaseManager):
 
 class DatasetManager(BaseManager):
     assessment_relation = "assessment"
+
+
+class LogManager(BaseManager):
+    assessment_relation = "assessment"
+
+    def get_object_audit(self, content_type: Union[ContentType, int], object_id: int) -> list[dict]:
+        """
+        Combines information from HAWC's internal logs and reversion logs for a more complete audit.
+        Matching is attempted between these two log types to account for same operations.
+
+        Args:
+            content_type (Union[ContentType, int]): Content type of interested object.
+            object_id (int): ID of interested object.
+
+        Returns:
+            list[dict]: Serialized logs with message, snapshot, user, and date created.
+        """
+        logs = list(self.filter(content_type=content_type, object_id=object_id))
+        versions = list(
+            Version.objects.filter(content_type=content_type, object_id=object_id).select_related(
+                "revision"
+            )
+        )
+
+        audit = []
+
+        while logs and versions:
+            # if there are only versions left, append them
+            if not logs:
+                audit.extend(
+                    [
+                        {
+                            "message": "",
+                            "snapshot": version.serialized_data,
+                            "user": version.revision.user,
+                            "created": version.revision.created_date,
+                        }
+                        for version in versions
+                    ]
+                )
+                break
+            # if there are only logs left, append them
+            if not versions:
+                audit.extend(
+                    [
+                        {
+                            "message": log.message,
+                            "snapshot": "",
+                            "user": log.user,
+                            "created": log.created,
+                        }
+                        for log in logs
+                    ]
+                )
+                break
+            # if log and version are close enough in time,
+            # assume they are from the same operation
+            diff = abs(logs[0].created - versions[0].revision.date_created)
+            if diff < timedelta(minutes=1):
+                log = logs.pop(0)
+                version = versions.pop(0)
+                audit.append(
+                    {
+                        "message": log.message,
+                        "snapshot": version.serialized_data,
+                        "user": log.user or version.revision.user,
+                        "created": log.created,
+                    }
+                )
+            # if log occurs earlier than version, append log
+            elif logs[0].created <= versions[0].revision.date_created:
+                log = logs.pop(0)
+                audit.append(
+                    {
+                        "message": log.message,
+                        "snapshot": "",
+                        "user": log.user,
+                        "created": log.created,
+                    }
+                )
+            # if version occurs earlier than log, append version
+            else:
+                version = versions.pop(0)
+                audit.append(
+                    {
+                        "message": "",
+                        "snapshot": version.serialized_data,
+                        "user": version.revision.user,
+                        "created": version.revision.created_date,
+                    }
+                )
+
+        return audit

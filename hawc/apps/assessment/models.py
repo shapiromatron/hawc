@@ -914,6 +914,8 @@ class Communication(models.Model):
 
 
 class Log(models.Model):
+    objects = managers.LogManager()
+
     assessment = models.ForeignKey(
         Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
     )
