@@ -108,7 +108,7 @@ class TestSummary(PlaywrightTestCase):
         page.goto(self.live_server_url + "/summary/visual/assessment/2/tagtree/")
         expect(page.locator("text='Human Study'")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
-        expect(page.locator("svg >> .tagnode")).to_have_count(4)
+        expect(page.locator("svg >> .tagnode")).to_have_count(5)
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/exploratory-heatmap/")
         expect(page.locator("h2:has-text('exploratory-heatmap')")).to_be_visible()
