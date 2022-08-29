@@ -120,15 +120,6 @@ def int_or_float(val: float) -> Union[int, float]:
     return int(val) if int(val) == val else val
 
 
-def create_uuid(id: int) -> str:
-    """
-    Creates a UUID from a given ID
-    """
-    hashed_id = hashlib.md5(str(id).encode())
-    hashed_id.update(settings.SECRET_KEY.encode())
-    return str(uuid.UUID(bytes=hashed_id.digest()))
-
-
 def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -> pd.DataFrame:
     """Move target column after another column.
 
