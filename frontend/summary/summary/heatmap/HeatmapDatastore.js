@@ -19,6 +19,7 @@ class HeatmapDatastore {
     colorScale = null;
     maxValue = null;
     extensions = null;
+    maxCells = 3000;
 
     @observable dataset = null;
     @observable settings = null;
@@ -27,8 +28,7 @@ class HeatmapDatastore {
     @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
-        this.getDetailUrl = this.getDetailUrl.bind(this);
-        this.modal = new HAWCModal();
+        // basic initialization, enough for bound checking
         this.settings = settings;
         this.dataset = applyRowFilters(
             dataset,
@@ -36,11 +36,17 @@ class HeatmapDatastore {
             settings.filtersLogic,
             settings.filtersQuery
         );
-        this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
-        this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
         this.totals = this.setTotals();
+    }
+
+    initialize() {
+        // further initialization for full store use
+        this.getDetailUrl = this.getDetailUrl.bind(this);
+        this.modal = new HAWCModal();
+        this.dpe = new DataPivotExtension();
+        this.filterWidgetState = this.setFilterWidgetState();
         this.extensions = this.setDataExtensions();
         this.setColorScale();
     }
@@ -223,13 +229,42 @@ class HeatmapDatastore {
             .range(this.settings.color_range);
     }
 
-    @computed
-    get getFilterHash() {
+    @computed get settingsHash() {
+        return h.hashString(JSON.stringify(this.settings));
+    }
+
+    @computed get hasDataset() {
+        return this.dataset !== null && this.dataset.length > 0;
+    }
+
+    @computed get n_rows() {
+        return this.scales.y.filter((d, i) =>
+            this.settings.compress_y ? this.totals.y[i] > 0 : true
+        ).length;
+    }
+
+    @computed get n_cols() {
+        return this.scales.x.filter((d, i) =>
+            this.settings.compress_x ? this.totals.x[i] > 0 : true
+        ).length;
+    }
+
+    @computed get n_cells() {
+        return this.n_rows * this.n_cols;
+    }
+
+    @computed get withinRenderableBounds() {
+        // ensure that the heatmap being generate is of a reasonable size that it could
+        // potentially be calculated. In some cases users may configure settings that generate
+        // a heatmap so large it becomes too large to reasonably compute.
+        return this.n_cells <= this.maxCells;
+    }
+
+    @computed get getFilterHash() {
         return h.hashString(JSON.stringify(toJS(this.filterWidgetState)));
     }
 
-    @computed
-    get rowsRemovedByFilters() {
+    @computed get rowsRemovedByFilters() {
         // returns a Set of row indexes to remove
         let removedRows = [];
         const {intersection} = this;
@@ -248,8 +283,7 @@ class HeatmapDatastore {
         return new Set(removedRows);
     }
 
-    @computed
-    get usableRows() {
+    @computed get usableRows() {
         /*
         Return a Set of row indices which should be presented in heatmap.
         If `settings.show_null`, use all row indices. If false, filter rows which are non-null for
@@ -274,8 +308,7 @@ class HeatmapDatastore {
         }
     }
 
-    @computed
-    get matrixDataset() {
+    @computed get matrixDataset() {
         // build the dataset required to generate the matrix
         const hash = this.getFilterHash;
         if (this.matrixDatasetCache[hash]) {
@@ -369,8 +402,7 @@ class HeatmapDatastore {
         return xy_map;
     }
 
-    @computed
-    get getTableData() {
+    @computed get getTableData() {
         let rows, data;
         if (this.tableDataFilters.size > 0) {
             let filtered_rows = [...this.tableDataFilters].map(

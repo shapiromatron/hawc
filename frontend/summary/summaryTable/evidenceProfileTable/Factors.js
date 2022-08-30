@@ -9,27 +9,26 @@ import CheckboxInput from "shared/components/CheckboxInput";
 
 const increaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
+        {key: 70, label: "Most studies are medium or high confidence", displayLabel: true},
         {key: 20, label: "Consistency", displayLabel: true},
-        {key: 30, label: "Dose - response gradient", displayLabel: true},
-        {key: 40, label: "Coherence of effects", displayLabel: true},
+        {key: 30, label: "Dose-response gradient", displayLabel: true},
         {key: 50, label: "Large or concerning magnitude of effect", displayLabel: true},
-        {key: 60, label: "Mechanistic evidence providing plausibility", displayLabel: true},
-        {key: 70, label: "Medium or high confidence studies", displayLabel: true},
+        {key: 40, label: "Coherence", displayLabel: true},
         {key: 100, label: "Other", displayLabel: false},
     ],
     decreaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
+        {key: -60, label: "Most studies are low confidence", displayLabel: true},
         {key: -20, label: "Unexplained inconsistency", displayLabel: true},
         {key: -30, label: "Imprecision", displayLabel: true},
+        {key: -80, label: "Concerns about biological significance", displayLabel: true},
+        {key: -90, label: "Indirect outcome measures", displayLabel: true},
         {key: -40, label: "Lack of expected coherence", displayLabel: true},
-        {key: -50, label: "Evidence demonstrating implausibility", displayLabel: true},
-        {key: -60, label: "Low confidence studies", displayLabel: true},
-        {key: -70, label: "Interpretation limitations", displayLabel: true},
         {key: -100, label: "Other", displayLabel: false},
     ],
     FactorsForm = observer(props => {
-        const {store, updateKey, content, increase} = props,
-            choices = increase ? increaseFactors : decreaseFactors;
+        const {store, updateKey, content, isIncreasing} = props,
+            choices = isIncreasing ? increaseFactors : decreaseFactors;
 
         return (
             <div>
@@ -89,8 +88,9 @@ const increaseFactors = [
         Users provide descriptive text in html using a wysiwyg editor. We update the text provided
         to inject the header-text if available, as well as the help-text popup, if available.
         */
-        const {content} = props,
-            _factors = increaseFactors.concat(decreaseFactors),
+        const {content, isIncreasing} = props,
+            factorMap = new Map(content.factors.map(e => [e.key, e])),
+            factors = isIncreasing ? increaseFactors : decreaseFactors,
             injectText = (block, injectionText) =>
                 h.addOuterTag(block, "p").replace(/^<p>/gm, `<p>${injectionText}`),
             injectPopup = (block, factorType, factor) => {
@@ -110,15 +110,17 @@ const increaseFactors = [
 
         return (
             <td>
-                {content.factors.length > 0 ? (
+                {factorMap.size > 0 ? (
                     <ul>
-                        {content.factors.map((factor, index) => {
-                            let factorType = _factors.find(_factor => _factor.key == factor.key),
-                                dashText =
+                        {factors.map((factorType, index) => {
+                            let factor = factorMap.get(factorType.key);
+                            if (factor == undefined) {
+                                return null;
+                            }
+                            let dashText =
                                     h.hasInnerText(factor.short_description) > 0 ? " - " : "",
                                 labelText = `<em>${factorType.label}</em>${dashText}`,
                                 html = factor.short_description;
-
                             // prefix label if it exists
                             if (factorType.displayLabel) {
                                 html = injectText(factor.short_description, labelText);
@@ -142,10 +144,11 @@ FactorsForm.propTypes = {
     store: PropTypes.object.isRequired,
     updateKey: PropTypes.string.isRequired,
     content: PropTypes.object.isRequired,
-    increase: PropTypes.bool.isRequired,
+    isIncreasing: PropTypes.bool.isRequired,
 };
 FactorsCell.propTypes = {
     content: PropTypes.object.isRequired,
+    isIncreasing: PropTypes.bool.isRequired,
 };
 
 export {FactorsForm, FactorsCell};

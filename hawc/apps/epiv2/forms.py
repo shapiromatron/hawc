@@ -130,6 +130,24 @@ class ExposureLevelForm(forms.ModelForm):
         self.fields["chemical"].queryset = self.instance.design.chemicals.all()
         self.fields["exposure_measurement"].queryset = self.instance.design.exposures.all()
 
+    def clean(self):
+        data = super().clean()
+
+        variance_type = data["variance_type"]
+        variance = data["variance"]
+        if variance and variance_type == constants.VarianceType.NA:
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            self.add_error("variance_type", msg)
+
+        ci_type = data["ci_type"]
+        upper = data["ci_ucl"]
+        lower = data["ci_lcl"]
+        if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
+            msg = "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
+            self.add_error("ci_type", msg)
+
+        return data
+
     @property
     def helper(self):
         for fld in ["comments"]:
@@ -176,8 +194,11 @@ class OutcomeForm(forms.ModelForm):
             "endpoint": selectable.AutoCompleteWidget(
                 lookup_class=lookups.EndpointLookup, allow_new=True
             ),
-            "health_outcome": selectable.AutoCompleteWidget(
-                lookup_class=lookups.HealthOutcomeLookup, allow_new=True
+            "effect": selectable.AutoCompleteWidget(
+                lookup_class=lookups.EffectLookup, allow_new=True
+            ),
+            "effect_detail": selectable.AutoCompleteWidget(
+                lookup_class=lookups.EffectDetailLookup, allow_new=True
             ),
         }
 
@@ -191,7 +212,7 @@ class OutcomeForm(forms.ModelForm):
     def helper(self):
         self.fields["comments"].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
-        helper.add_row("endpoint", 4, "col-md-3")
+        helper.add_row("system", 4, "col-md-3")
         helper.form_tag = False
         return helper
 
@@ -203,6 +224,13 @@ class DataExtractionForm(forms.ModelForm):
         widgets = {
             "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
+            "effect_estimate_type": SelectOtherWidget(choices=constants.EffectEstimateType.choices),
+            "confidence": selectable.AutoCompleteWidget(
+                lookup_class=lookups.DataExtractionConfidenceLookup, allow_new=True
+            ),
+            "units": selectable.AutoCompleteWidget(
+                lookup_class=lookups.DataExtractionUnitsLookup, allow_new=True
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -214,15 +242,31 @@ class DataExtractionForm(forms.ModelForm):
         self.fields["exposure_level"].queryset = self.instance.design.exposure_levels.all()
         self.fields["factors"].queryset = self.instance.design.adjustment_factors.all()
 
+    def clean(self):
+        data = super().clean()
+
+        variance_type = data["variance_type"]
+        variance = data["variance"]
+        if variance and variance_type == constants.VarianceType.NA:
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            self.add_error("variance_type", msg)
+
+        ci_type = data["ci_type"]
+        upper = data["ci_ucl"]
+        lower = data["ci_lcl"]
+        if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
+            msg = "A Lower/Upper Bound Type must be selected when a value is given for the Lower or Upper bound."
+            self.add_error("ci_type", msg)
+
+        return data
+
     @property
     def helper(self):
         for fld in ["effect_description", "statistical_method", "comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.add_row("outcome", 4, "col-md-3")
-        helper.add_row(
-            "effect_estimate_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
-        )
+        helper.add_row("effect_estimate_type", 6, "col-md-2")
         helper.add_row(
             "variance_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
         )

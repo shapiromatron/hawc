@@ -145,8 +145,10 @@ class PandasXlsxRenderer(PandasBaseRenderer):
         Args:
             df (pd.DataFrame): the input dataframe
         """
-        for col in df.select_dtypes(include="object"):
-            df.loc[:, col] = df.loc[:, col].str.replace(ILLEGAL_CHARACTERS_RE, "")
+        columns: list[str] = df.select_dtypes(include="object").columns.values
+        for column in columns:
+            if hasattr(df.loc[:, column], "str"):
+                df.loc[:, column] = df.loc[:, column].str.replace(ILLEGAL_CHARACTERS_RE, "")
 
     def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
         response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
