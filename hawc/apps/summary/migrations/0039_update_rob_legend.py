@@ -18,7 +18,7 @@ def change_legend_settings(apps, schema_editor):
         if legend_x == -1 and legend_y == 9999:
             settings["legend_x"] = 9999
             settings["legend_y"] = 9999
-            settings["padding_right"] = 350
+            settings["padding_right"] = 330
         visual.settings = json.dumps(settings)
         visual.save()
 
@@ -36,7 +36,7 @@ def unchange_legend_settings(apps, schema_editor):
         if legend_x == 9999 and legend_y == 9999:
             settings["legend_x"] = -1
             settings["legend_y"] = 9999
-            settings["padding_right"] = 10
+            settings["padding_right"] = 25
         visual.settings = json.dumps(settings)
         visual.save()
 

@@ -1,5 +1,6 @@
 import _ from "lodash";
 
+import {DEFAULT} from "shared/constants";
 import RoBBarchart from "summary/summary/RoBBarchart";
 
 import RoBHeatmapForm from "./RoBHeatmapForm";
@@ -69,7 +70,7 @@ _.extend(RoBBarchartForm, {
             type: IntegerField,
             name: "padding_right",
             label: "Plot padding-right (px)",
-            def: 350,
+            def: 330,
             tab: "overall",
         },
         {
@@ -130,16 +131,16 @@ _.extend(RoBBarchartForm, {
             type: IntegerField,
             name: "legend_x",
             label: "Legend x-location (px)",
-            def: 9999,
-            helpText: "Absolute location of legend; set 9999 to default",
+            def: DEFAULT,
+            helpText: `Absolute legend location; for default set to ${DEFAULT}`,
             tab: "legend",
         },
         {
             type: IntegerField,
             name: "legend_y",
             label: "Legend y-location (px)",
-            def: 9999,
-            helpText: "Absolute location of legend; set 9999 to default",
+            def: DEFAULT,
+            helpText: `Absolute legend location; for default set to ${DEFAULT}`,
             tab: "legend",
         },
     ],

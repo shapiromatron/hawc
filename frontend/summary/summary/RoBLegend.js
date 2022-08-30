@@ -1,6 +1,7 @@
 import _ from "lodash";
 import * as d3 from "d3";
 
+import {DEFAULT} from "shared/constants";
 import h from "shared/utils/helpers";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
@@ -12,8 +13,6 @@ import {
     SCORE_TEXT_DESCRIPTION_LEGEND,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
 } from "riskofbias/constants";
-
-const DEFAULT = 9999;
 
 class RoBLegend {
     constructor(svg, data, footnotes, options) {
