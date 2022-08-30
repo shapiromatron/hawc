@@ -6,9 +6,9 @@ rob_visual_types = (2, 3)
 
 
 def change_legend_settings(apps, schema_editor):
-    for visual in apps.get_model("summary", "visual").objects.filter(
-        visual_type__in=rob_visual_types
-    ):
+    Visual = apps.get_model("summary", "visual")
+    updates = []
+    for visual in Visual.objects.filter(visual_type__in=rob_visual_types):
         try:
             settings = json.loads(visual.settings)
         except json.JSONDecodeError:
@@ -19,14 +19,16 @@ def change_legend_settings(apps, schema_editor):
             settings["legend_x"] = 9999
             settings["legend_y"] = 9999
             settings["padding_right"] = 330
-        visual.settings = json.dumps(settings)
-        visual.save()
+            visual.settings = json.dumps(settings)
+            updates.append(visual)
+    if updates:
+        Visual.objects.bulk_update(updates, ["settings"])
 
 
 def unchange_legend_settings(apps, schema_editor):
-    for visual in apps.get_model("summary", "visual").objects.filter(
-        visual_type__in=rob_visual_types
-    ):
+    Visual = apps.get_model("summary", "visual")
+    updates = []
+    for visual in Visual.objects.filter(visual_type__in=rob_visual_types):
         try:
             settings = json.loads(visual.settings)
         except json.JSONDecodeError:
@@ -37,8 +39,10 @@ def unchange_legend_settings(apps, schema_editor):
             settings["legend_x"] = -1
             settings["legend_y"] = 9999
             settings["padding_right"] = 25
-        visual.settings = json.dumps(settings)
-        visual.save()
+            visual.settings = json.dumps(settings)
+            updates.append(visual)
+    if updates:
+        Visual.objects.bulk_update(updates, ["settings"])
 
 
 class Migration(migrations.Migration):
