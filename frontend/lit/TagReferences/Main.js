@@ -34,10 +34,16 @@ class TagReferencesMain extends Component {
             anyTagged = store.referencesTagged.length > 0,
             anyUntagged = store.referencesUntagged.length > 0;
         return (
-            <div className="row">
+            <div className="row mb-3">
                 <div className="col-md-3">
                     <ReferenceSortSelector onChange={store.sortReferences} />
                     <h4>References</h4>
+                    <div className="input-group mb-2 mt-1">
+                        <input type="text" className="form-control" placeholder="Search by Title/Abstract"></input>
+                        <div className="input-group-append">
+                            <button className="btn btn-primary" type="button"><i className="fa fa-search" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
                     <div className="card">
                         <div className="card-header p-2">
                             <button

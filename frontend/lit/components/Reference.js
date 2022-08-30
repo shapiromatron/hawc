@@ -10,6 +10,17 @@ import Hero from "shared/utils/Hero";
 import ReferenceButton from "./ReferenceButton";
 
 class Reference extends Component {
+    renderTokenHighlights(abstract, positive_tokens, negative_tokens) {
+        const all_tokens = positive_tokens.concat(negative_tokens);
+        const all_re = new RegExp(all_tokens.join("|"), 'gim');
+        const pos_re = new RegExp(`<mark>(?<token>${positive_tokens.join("|")})</mark>`, 'gim');
+        const neg_re = new RegExp(`<mark>(?<token>${negative_tokens.join("|")})</mark>`, 'gim');
+        abstract = abstract.replace(all_re, (match) => `<mark>${match}</mark>`);
+        abstract = abstract.replace(pos_re, (match, token) => `<mark class='hawc-mk-pos'>${token}</mark>`);
+        abstract = abstract.replace(neg_re, (match, token) => `<mark class='hawc-mk-neg'>${token}</mark>`);
+        return abstract
+    }
+
     renderIdentifiers(data) {
         const nodes = [];
 
@@ -100,7 +111,7 @@ class Reference extends Component {
                 {data.title ? <p className="ref_title">{data.title}</p> : null}
                 {data.journal ? <p className="ref_small">{data.journal}</p> : null}
                 {data.abstract ? (
-                    <div className="abstracts" dangerouslySetInnerHTML={{__html: data.abstract}} />
+                    <div className="abstracts" dangerouslySetInnerHTML={{ __html: `${this.renderTokenHighlights(data.abstract, ["methane"], ["rumen"])}`}} />
                 ) : null}
                 {showTags && tags.length > 0 ? (
                     <p>

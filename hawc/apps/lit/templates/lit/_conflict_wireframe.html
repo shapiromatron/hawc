@@ -1,0 +1,90 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<div class="row pb-3">
+    <div class="col-md-3">
+        <div class="input-group mb-2 mt-1">
+            <input type="text" class="form-control" placeholder="Filter by Title/Abstract"></input>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-1">Filter by tag</h5>
+            </div>
+            <div class="card-body p-0 pl-1">
+                <div id="main"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9 pl-0">
+        <h4>References with Tag Conflicts</h4>
+        <ul class="list-group list-group-flush m-0">
+            {% for ref in refs %}
+                <li class="list-group-item list-group-item-action px-2 py-4" style="border-bottom: 4px solid lightgray;">
+                    <div  href="{{ref.get_absolute_url}}" class="ref_title m-0" style="font-size: 1.1rem;">
+                        <span class="badge badge-pill badge-secondary mr-2 pb-1">TiAb</span>{{ref.title}}
+                    </div>
+                    <div class="ref_small mb-1">
+                            {% for id in ref.identifiers.all %}
+                            <a href="{{id.get_url}}" class="ids badge badge-info hidden">{{id.get_database_display}}</a>
+                            {% endfor %}
+                            <a href="{{ref.get_absolute_url}}" class="ids badge badge-warning hidden">HAWC</a>
+                        {{ref.authors}}
+                    </div>
+                    <p class="abstract_wf abstract_expand mb-1">{{ref.abstract|safe}}</p>
+                    <div class="row pl-2 mb-2 mt-3">
+                        <div class="col-md-6">
+                            <div class="mb-1">
+                                <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
+                                    Approve <i class="fa fa-check" aria-hidden="true"></i></a>
+                                    <b class="mb-0">User One</b> <i class="m-0 small">userone@hawcproject.org</i>
+                            </div>
+                        <p>
+                        {% for tag in ref.tags.all %}
+                            <span class="refTag" style="font-size: 0.9rem;">
+                                {% for ptag in tag.get_ancestors|slice:"1:" %}
+                                        {{ptag.name}} ➤
+                                {% endfor %}
+                                {{tag.name}}
+                            </span>
+                        {% endfor %}
+                        </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-1">
+                                <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
+                                    Approve <i class="fa fa-check" aria-hidden="true"></i></a>
+                                <b class="mb-0">User Two</b> <i class="m-0 small">usertwo@hawcproject.org</i>
+                            </div>
+                        {% for tag in ref.tags.all %}
+                        <span class="refTag" style="font-size: 0.9rem;">
+                            {% for ptag in tag.get_ancestors|slice:"1:" %}
+                            {{ptag.name}} ➤
+                            {% endfor %}
+                            {{tag.name}}
+                        </span>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extrajs %}
+    {{ config|json_script:"config" }}
+    <script type="text/javascript">
+        $(function () {
+                $(".list-group-item").on("click", function (e) {
+                    $(this).children(".abstract_wf").toggleClass("abstract_expand");
+                    $(this).toggleClass("list-item-clicked")
+                    $(this).children(".ref_small").children(".ids").toggleClass("hidden");
+                })
+            });
+    </script>
+{% endblock extrajs %}

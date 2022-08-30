@@ -88,6 +88,13 @@
   </div>
   {% endif %}
 
+  <div class="alert alert-danger mt-3">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <b>References have tag conflicts.</b><br>
+    <p>7 references are ready for conflict resolution.
+      <a href="{% url 'lit:tag_conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
+  </div>
+
   <h3>Literature searches & imports</h3>
   {% include "lit/_search_list.html" %}
 

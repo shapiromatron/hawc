@@ -362,6 +362,43 @@ class TagByUntagged(TagReferences):
         return context
 
 
+class ConflictWireframe(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
+    # WebappMixin
+    template_name = "lit/_conflict_wireframe.html"
+    model = Assessment
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        assessment = self.get_assessment(self.request, **kwargs)
+        context["assessment"] = assessment
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, assessment, "Reference Tag Conflict Resolution"
+        )
+        context["refs"] = models.Reference.objects.filter(
+            assessment_id=self.assessment.id
+        ).order_by("-last_updated")[:7]
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        refs = models.Reference.objects.filter(assessment_id=self.assessment.id).order_by(
+            "-last_updated"
+        )[:7]
+        refs = refs.prefetch_related("searches", "identifiers", "tags")
+        return WebappConfig(
+            app="litStartup",
+            page="startupConflict",
+            data=dict(
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                refs=[ref.to_dict() for ref in refs],
+                csrf=get_token(self.request),
+            ),
+        )
+
+
 def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
     qs = search.references.all() if search else assessment.references.all()
     return WebappConfig(

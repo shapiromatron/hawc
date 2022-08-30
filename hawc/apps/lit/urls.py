@@ -143,5 +143,10 @@ urlpatterns = [
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
     ),
+    path(
+        "assessment/<int:pk>/tag-conflicts/",
+        views.ConflictWireframe.as_view(),
+        name="tag_conflicts",
+    ),
     path("api/", include((router.urls, "api"))),
 ]

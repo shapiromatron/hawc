@@ -14,6 +14,8 @@ import BulkTagReferencesMain from "./BulkTagReferences/Main";
 import BulkTagReferencesMainStore from "./BulkTagReferences/store";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
+import TagConflictsMain from "./TagConflicts/Main";
+import TagConflictsMainStore from "./TagConflicts/store";
 
 export default {
     TagTree,
@@ -72,5 +74,13 @@ export default {
         tagtree.rename_top_level_node(config.assessment_name);
         tagtree.add_references(config.references);
         new TagTreeViz(tagtree, el, config.title, settings);
+    },
+    startupConflict(el, config) {
+        ReactDOM.render(
+            <Provider store={new TagConflictsMainStore(config)}>
+                <TagConflictsMain />
+            </Provider>,
+            el
+        );
     },
 };
