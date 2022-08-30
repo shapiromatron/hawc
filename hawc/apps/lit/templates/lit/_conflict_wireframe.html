@@ -82,25 +82,23 @@
                     {{refs.0.authors}}
                 </div>
                 <p class="abstract_wf abstract_expand mb-1">{{refs.0.abstract|safe}}</p>
-                <div class="row pl-2">
-                    <div class="col-md-12 py-2">
+                <div class="row">
+                    <div class="col-md-11 pt-1 pb-3 mx-3" style="border-bottom: 3px solid rgb(228, 228, 228);">
                         <div class="mb-1">
                             <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
                                 Approve <i class="fa fa-check" aria-hidden="true"></i></a>
                             <b class="mb-0">User One</b> <i class="m-0 small">userone@hawcproject.org</i>
                         </div>
-                        <p>
-                            {% for tag in refs.0.tags.all %}
-                            <span class="refTag" style="font-size: 0.9rem;">
-                                {% for ptag in tag.get_ancestors|slice:"1:" %}
-                                {{ptag.name}} ➤
-                                {% endfor %}
-                                {{tag.name}}
-                            </span>
+                        {% for tag in refs.0.tags.all %}
+                        <span class="refTag" style="font-size: 0.9rem;">
+                            {% for ptag in tag.get_ancestors|slice:"1:" %}
+                            {{ptag.name}} ➤
                             {% endfor %}
-                        </p>
+                            {{tag.name}}
+                        </span>
+                        {% endfor %}
                     </div>
-                    <div class="col-md-12 py-2">
+                    <div class="col-md-11 py-3 mx-3" style="border-bottom: 3px solid rgb(228, 228, 228);">
                         <div class="mb-1">
                             <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
                                 Approve <i class="fa fa-check" aria-hidden="true"></i></a>
@@ -115,7 +113,7 @@
                         </span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-12 py-2">
+                    <div class="col-md-11 py-3 mx-3" style="border-bottom: 3px solid rgb(228, 228, 228);">
                         <div class="mb-1">
                             <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
                                 Approve <i class="fa fa-check" aria-hidden="true"></i></a>
@@ -130,7 +128,7 @@
                         </span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-12 py-2">
+                    <div class="col-md-11 py-3 mx-3">
                         <div class="mb-1">
                             <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
                                 Approve <i class="fa fa-check" aria-hidden="true"></i></a>
