@@ -3,27 +3,13 @@ import importlib
 
 # TODO - this can be removed after django==4.1 upgrade
 # https://blog.serindu.com/2019/11/12/django-in-fips-mode/
+# https://github.com/django/django/pull/14763
+# https://github.com/django/django/blob/stable/4.1.x/django/utils/crypto.py#L84
+
 
 def _non_security_md5(*args, **kwargs):
     kwargs["usedforsecurity"] = False
     return hashlib.md5(*args, **kwargs)
-
-
-def patch_md5():
-    try:
-        hashlib.md5()
-    except ValueError:
-        # https://github.com/django/django/pull/14763
-        # https://github.com/django/django/blob/stable/4.1.x/django/utils/crypto.py#L84
-        monkey_patch_md5(
-            [
-                "django.contrib.staticfiles.storage",
-                "django.core.cache.backends.filebased",
-                "django.core.cache.utils",
-                "django.db.backends.utils",
-                "django.utils.cache",
-            ]
-        )
 
 
 def monkey_patch_md5(modules_to_patch):
@@ -39,9 +25,21 @@ def monkey_patch_md5(modules_to_patch):
     patched_hashlib = importlib.util.module_from_spec(HASHLIB_SPEC)
     HASHLIB_SPEC.loader.exec_module(patched_hashlib)
 
-    patched_hashlib.md5 = _non_security_md5  # Monkey patch MD5
+    patched_hashlib.md5 = _non_security_md5
 
     # Inject our patched_hashlib for all requested modules
     for module_name in modules_to_patch:
         module = importlib.import_module(module_name)
         module.hashlib = patched_hashlib
+
+
+def patch_md5():
+    monkey_patch_md5(
+        [
+            "django.contrib.staticfiles.storage",
+            "django.core.cache.backends.filebased",
+            "django.core.cache.utils",
+            "django.db.backends.utils",
+            "django.utils.cache",
+        ]
+    )
