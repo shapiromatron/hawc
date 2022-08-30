@@ -33,7 +33,10 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         }
 
     def get_results(self, context):
-        return [self.get_field_result(obj) if self.field else self.get_result(obj) for obj in context["object_list"]]
+        return [
+            self.get_field_result(obj) if self.field else self.get_result(obj)
+            for obj in context["object_list"]
+        ]
 
     def update_qs(self, qs):
         return qs
@@ -155,15 +158,17 @@ class AutocompleteSelectMultipleWidget(AutocompleteWidgetMixin, autocomplete.Mod
         super().__init__(*args, **kwargs)
 
 
-# TODO remove or tailor it better for char field choices
-class FoobarWidget(AutocompleteWidgetMixin, autocomplete.Select2):
+class AutocompleteTextWidget(AutocompleteWidgetMixin, autocomplete.Select2):
+    autocomplete_function = "select2text"
+
     class Media:
         js = (f"{settings.STATIC_URL}js/autocomplete_text.js",)
 
-    def __init__(self, *args, **kwargs):
-        # add tags to attrs
-        attrs = kwargs.get("attrs", {})
-        kwargs["attrs"] = attrs
+    def __init__(self, field: str, *args, **kwargs):
+        # add field to filters
+        filters = kwargs.get("filters", {})
+        filters.setdefault("field", field)
+        kwargs["filters"] = filters
         super().__init__(*args, **kwargs)
 
     def filter_choices_to_render(self, selected_choices):
@@ -213,7 +218,9 @@ class AutocompleteRegistry:
 
     def validate(self, lookup):
         if not issubclass(lookup, BaseAutocomplete):
-            raise ValueError("Registered autocompletes must inherit from the BaseAutocomplete class")
+            raise ValueError(
+                "Registered autocompletes must inherit from the BaseAutocomplete class"
+            )
 
     def register(self, lookup):
         self.validate(lookup)
