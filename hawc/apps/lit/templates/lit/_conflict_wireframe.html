@@ -70,6 +70,83 @@
                     </div>
                 </li>
             {% endfor %}
+            <li class="list-group-item list-group-item-action px-2 py-4" style="border-bottom: 4px solid lightgray;">
+                <div href="{{refs.0.get_absolute_url}}" class="ref_title m-0" style="font-size: 1.1rem;">
+                    <span class="badge badge-pill badge-secondary mr-2 pb-1">TiAb</span>{{refs.0.title}}
+                </div>
+                <div class="ref_small mb-1">
+                    {% for id in refs.0.identifiers.all %}
+                    <a href="{{id.get_url}}" class="ids badge badge-info hidden">{{id.get_database_display}}</a>
+                    {% endfor %}
+                    <a href="{{refs.0.get_absolute_url}}" class="ids badge badge-warning hidden">HAWC</a>
+                    {{refs.0.authors}}
+                </div>
+                <p class="abstract_wf abstract_expand mb-1">{{refs.0.abstract|safe}}</p>
+                <div class="row pl-2">
+                    <div class="col-md-12 py-2">
+                        <div class="mb-1">
+                            <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
+                                Approve <i class="fa fa-check" aria-hidden="true"></i></a>
+                            <b class="mb-0">User One</b> <i class="m-0 small">userone@hawcproject.org</i>
+                        </div>
+                        <p>
+                            {% for tag in refs.0.tags.all %}
+                            <span class="refTag" style="font-size: 0.9rem;">
+                                {% for ptag in tag.get_ancestors|slice:"1:" %}
+                                {{ptag.name}} ➤
+                                {% endfor %}
+                                {{tag.name}}
+                            </span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <div class="col-md-12 py-2">
+                        <div class="mb-1">
+                            <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
+                                Approve <i class="fa fa-check" aria-hidden="true"></i></a>
+                            <b class="mb-0">User Two</b> <i class="m-0 small">usertwo@hawcproject.org</i>
+                        </div>
+                        {% for tag in refs.0.tags.all %}
+                        <span class="refTag" style="font-size: 0.9rem;">
+                            {% for ptag in tag.get_ancestors|slice:"1:" %}
+                            {{ptag.name}} ➤
+                            {% endfor %}
+                            {{tag.name}}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-12 py-2">
+                        <div class="mb-1">
+                            <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
+                                Approve <i class="fa fa-check" aria-hidden="true"></i></a>
+                            <b class="mb-0">User Three</b> <i class="m-0 small">usethree@hawcproject.org</i>
+                        </div>
+                        {% for tag in refs.0.tags.all %}
+                        <span class="refTag" style="font-size: 0.9rem;">
+                            {% for ptag in tag.get_ancestors|slice:"1:" %}
+                            {{ptag.name}} ➤
+                            {% endfor %}
+                            {{tag.name}}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-12 py-2">
+                        <div class="mb-1">
+                            <a href="#" class="btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
+                                Approve <i class="fa fa-check" aria-hidden="true"></i></a>
+                            <b class="mb-0">User Four</b> <i class="m-0 small">userfour@hawcproject.org</i>
+                        </div>
+                        {% for tag in refs.0.tags.all %}
+                        <span class="refTag" style="font-size: 0.9rem;">
+                            {% for ptag in tag.get_ancestors|slice:"1:" %}
+                            {{ptag.name}} ➤
+                            {% endfor %}
+                            {{tag.name}}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
         </ul>
     </div>
 </div>
@@ -80,11 +157,14 @@
     {{ config|json_script:"config" }}
     <script type="text/javascript">
         $(function () {
-                $(".list-group-item").on("click", function (e) {
+                $(".btn").click(function(e) {
+                    e.stopPropagation();
+                });
+                $(".list-group-item").click(function(e) {
                     $(this).children(".abstract_wf").toggleClass("abstract_expand");
                     $(this).toggleClass("list-item-clicked")
                     $(this).children(".ref_small").children(".ids").toggleClass("hidden");
-                })
+                });
             });
     </script>
 {% endblock extrajs %}
