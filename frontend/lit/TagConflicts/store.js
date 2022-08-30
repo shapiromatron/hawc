@@ -1,10 +1,7 @@
-import $ from "$";
-import _ from "lodash";
-import { action, computed, toJS, observable } from "mobx";
+import {observable} from "mobx";
 
 import Reference from "../Reference";
 import TagTree from "../TagTree";
-import { sortReferences } from "../constants";
 
 class Store {
     config = null;

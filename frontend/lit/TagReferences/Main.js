@@ -39,9 +39,14 @@ class TagReferencesMain extends Component {
                     <ReferenceSortSelector onChange={store.sortReferences} />
                     <h4>References</h4>
                     <div className="input-group mb-2 mt-1">
-                        <input type="text" className="form-control" placeholder="Search by Title/Abstract"></input>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search by Title/Abstract"></input>
                         <div className="input-group-append">
-                            <button className="btn btn-primary" type="button"><i className="fa fa-search" aria-hidden="true"></i></button>
+                            <button className="btn btn-primary" type="button">
+                                <i className="fa fa-search" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
                     <div className="card">
