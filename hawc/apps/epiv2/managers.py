@@ -58,4 +58,7 @@ class AdjustmentFactorManager(BaseManager):
 
 
 class DataExtractionManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
+
+    def published(self, assessment_id):
+        return self.assessment_qs(assessment_id).filter(design__study__published=True)

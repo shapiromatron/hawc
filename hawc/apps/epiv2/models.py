@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 
 from ..assessment.models import DSSTox
+from ..common.helper import SerializerHelper
 from ..common.models import NumericTextField
 from ..epi.models import Country
 from ..study.models import Study
@@ -100,6 +101,50 @@ class Design(models.Model):
     def __str__(self):
         return f"{self.summary}"
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "design-pk",
+            "design-summary",
+            "design-study_name",
+            "design-study_design",
+            "design-source",
+            "design-age_profile",
+            "design-age_description",
+            "design-sex",
+            "design-race",
+            "design-participant_n",
+            "design-years_enrolled",
+            "design-years_followup",
+            "design-countries",
+            "design-region",
+            "design-criteria",
+            "design-susceptibility",
+            "design-comments",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["pk"],
+            ser["summary"],
+            ser["study_name"],
+            ser["study_design"],
+            ser["source"],
+            ser["age_profile"],
+            ser["age_description"],
+            ser["sex"],
+            ser["race"],
+            ser["participant_n"],
+            ser["years_enrolled"],
+            ser["years_followup"],
+            "|".join(ser["countries"]),
+            ser["region"],
+            ser["criteria"],
+            ser["susceptibility"],
+            ser["comments"],
+        )
+
 
 class Chemical(models.Model):
     objects = managers.ChemicalManager()
@@ -137,6 +182,22 @@ class Chemical(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "chemical-pk",
+            "chemical-name",
+            "chemical-dsstox",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["pk"],
+            ser["name"],
+            ser["dsstox"],
+        )
 
 
 class Exposure(models.Model):
@@ -196,6 +257,34 @@ class Exposure(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "exposure-pk",
+            "exposure-name",
+            "exposure-measurement_type",
+            "exposure-biomonitoring_matrix",
+            "exposure-biomonitoring_source",
+            "exposure-measurement_timing",
+            "exposure-exposure_route",
+            "exposure-measurement_method",
+            "exposure-comments",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["pk"],
+            ser["name"],
+            ser["measurement_type"],
+            ser["biomonitoring_matrix"],
+            ser["biomonitoring_source"],
+            ser["measurement_timing"],
+            ser["exposure_route"],
+            ser["measurement_method"],
+            ser["comments"],
+        )
 
 
 class ExposureLevel(models.Model):
@@ -299,6 +388,50 @@ class ExposureLevel(models.Model):
         self.save()
         return self
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "exposure_level-pk",
+            "exposure_level-name",
+            "exposure_level-exposure_measurement",
+            "exposure_level-sub_population",
+            "exposure_level-median",
+            "exposure_level-mean",
+            "exposure_level-variance",
+            "exposure_level-variance_type",
+            "exposure_level-units",
+            "exposure_level-ci_lcl",
+            "exposure_level-percentile_25",
+            "exposure_level-percentile_75",
+            "exposure_level-ci_ucl",
+            "exposure_level-ci_type",
+            "exposure_level-negligible_exposure",
+            "exposure_level-data_location",
+            "exposure_level-comments",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["pk"],
+            ser["name"],
+            ser["exposure_measurement"],
+            ser["sub_population"],
+            ser["median"],
+            ser["mean"],
+            ser["variance"],
+            ser["variance_type"],
+            ser["units"],
+            ser["ci_lcl"],
+            ser["percentile_25"],
+            ser["percentile_75"],
+            ser["ci_ucl"],
+            ser["ci_type"],
+            ser["negligible_exposure"],
+            ser["data_location"],
+            ser["comments"],
+        )
+
 
 class Outcome(models.Model):
     objects = managers.OutcomeManager()
@@ -345,6 +478,28 @@ class Outcome(models.Model):
         self.save()
         return self
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "outcome-pk",
+            "outcome-system",
+            "outcome-effect",
+            "outcome-effect_detail",
+            "outcome-endpoint",
+            "outcome-comments",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["pk"],
+            ser["system"],
+            ser["effect"],
+            ser["effect_detail"],
+            ser["endpoint"],
+            ser["comments"],
+        )
+
 
 class AdjustmentFactor(models.Model):
     objects = managers.AdjustmentFactorManager()
@@ -379,6 +534,25 @@ class AdjustmentFactor(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "adjustment_factor-pk",
+            "adjustment_factor-name",
+            "adjustment_factor-description",
+            "adjustment_factor-comments",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["pk"],
+            ser["name"],
+            ser["description"],
+            ser["effect_estimate_type"],
+            ser["comments"],
+        )
 
 
 class DataExtraction(models.Model):
@@ -491,10 +665,69 @@ class DataExtraction(models.Model):
             value += f" [{self.ci_lcl}, {self.ci_ucl}]"
         return value
 
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
+
     def clone(self):
         self.id = None
         self.save()
         return self
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "data_extraction-pk",
+            "data_extraction-sub_population",
+            "data_extraction-outcome_measurement_timing",
+            "data_extraction-effect_estimate_type",
+            "data_extraction-effect_estimate",
+            "data_extraction-ci_lcl",
+            "data_extraction-ci_ucl",
+            "data_extraction-ci_type",
+            "data_extraction-units",
+            "data_extraction-variance_type",
+            "data_extraction-variance",
+            "data_extraction-n",
+            "data_extraction-p_value",
+            "data_extraction-significant",
+            "data_extraction-group",
+            "data_extraction-exposure_rank",
+            "data_extraction-exposure_transform",
+            "data_extraction-outcome_transform",
+            "data_extraction-confidence",
+            "data_extraction-data_location",
+            "data_extraction-effect_description",
+            "data_extraction-statistical_method",
+            "data_extraction-comments",
+        )
+
+    @staticmethod
+    def flat_complete_data_row(ser):
+        return (
+            ser["pk"],
+            ser["sub_population"],
+            ser["outcome_measurement_timing"],
+            ser["effect_estimate_type"],
+            ser["effect_estimate"],
+            ser["ci_lcl"],
+            ser["ci_ucl"],
+            ser["ci_type"],
+            ser["units"],
+            ser["variance_type"],
+            ser["variance"],
+            ser["n"],
+            ser["p_value"],
+            ser["significant"],
+            ser["group"],
+            ser["exposure_rank"],
+            ser["exposure_transform"],
+            ser["outcome_transform"],
+            ser["confidence"],
+            ser["data_location"],
+            ser["effect_description"],
+            ser["statistical_method"],
+            ser["comments"],
+        )
 
 
 reversion.register(Design, follow=("countries",))

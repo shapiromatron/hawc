@@ -5,6 +5,7 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"design", api.Design, basename="design")
+router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
 
 app_name = "epiv2"
 urlpatterns = [
