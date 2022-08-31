@@ -79,7 +79,7 @@ createdb -T template0 -E UTF8 hawc-test
 
 ## Running the application
 
-After initial setup, here are the steps needed to run the application in development.  Most python based commands can be accessed form the command-line using the `hawc` entrypoint. Note that this is aliased to a few other entry-points; you can also use `manage.py` or `manage`, this was done to mirror the standard [manage.py](https://docs.djangoproject.com/en/4.1/ref/django-admin/) convention. In our docs, we'll use the `hawc` command below.
+After installing hawc above, you can access the hawc application management commands using the `manage` command in your terminal. You can also use `manage.py` on mac or linux; this was done to mirror the django [manage.py](https://docs.djangoproject.com/en/4.1/ref/django-admin/) convention.
 
 ### Linux/Mac
 

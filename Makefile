@@ -27,14 +27,15 @@ sync-dev:  ## Sync dev environment after code checkout
 	python -m pip install -U pip
 	pip install -r requirements/dev.txt
 	yarn --cwd frontend
-	hawc migrate
-	hawc recreate_views
+	manage migrate
+	manage recreate_views
 
 build:  ## build hawc package
 	npm --prefix ./frontend run build
-	hawc set_git_commit
+	manage set_git_commit
 	rm -rf build/ dist/
-	python -m build
+	python -m build --wheel
+	twine check dist/*.whl
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \

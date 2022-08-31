@@ -48,15 +48,15 @@ goto :eof
 python -m pip install -U pip
 pip install -r requirements/dev.txt
 yarn --cwd frontend
-hawc migrate
-hawc recreate_views
+manage migrate
+manage recreate_views
 goto :eof
 
 :build
 del /f /q .\build .\dist
 call npm --prefix .\frontend run build
-hawc set_git_commit
-python setup.py bdist_wheel
+manage set_git_commit
+python -m build --wheel
 goto :eof
 
 :docs

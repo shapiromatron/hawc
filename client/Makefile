@@ -18,8 +18,7 @@ clean: ## Remove old artifacts
 	rm -rf dist build *.egg-info
 
 build: clean  ## Build python distribution
-	python setup.py build
-	python -m build
+	python -m build --wheel
 	twine check dist/*.whl
 
 upload-testpypi:  ## Upload packages to testpypi
