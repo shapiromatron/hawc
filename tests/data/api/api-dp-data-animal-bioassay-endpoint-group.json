@@ -61,6 +61,7 @@
     "system": "developmental",
     "tags": "|tag1|",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "significant",
     "trend test value": 0.04,
     "upper_ci": 15.7956244909
@@ -127,6 +128,7 @@
     "system": "developmental",
     "tags": "|tag1|",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "significant",
     "trend test value": 0.04,
     "upper_ci": 11.8892273722
@@ -193,6 +195,7 @@
     "system": "developmental",
     "tags": "|tag1|",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "significant",
     "trend test value": 0.04,
     "upper_ci": 16.0764331348
@@ -259,6 +262,7 @@
     "system": "developmental",
     "tags": "|tag1|",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "significant",
     "trend test value": 0.04,
     "upper_ci": 13.0296316941
@@ -325,6 +329,7 @@
     "system": "developmental",
     "tags": "|tag1|",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "significant",
     "trend test value": 0.04,
     "upper_ci": 9.5616172877
@@ -391,6 +396,7 @@
     "system": "",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": null
@@ -457,6 +463,7 @@
     "system": "",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": null
@@ -523,6 +530,7 @@
     "system": "",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": null
@@ -589,6 +597,7 @@
     "system": "",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": null
@@ -655,6 +664,7 @@
     "system": "",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": null
@@ -721,6 +731,7 @@
     "system": "Cardiovascular",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": 0.3408051366
@@ -787,6 +798,7 @@
     "system": "Cardiovascular",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": 0.3408051366
@@ -853,6 +865,7 @@
     "system": "Cardiovascular",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": 0.4871743473
@@ -919,6 +932,7 @@
     "system": "Cardiovascular",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": 0.4171011516
@@ -985,6 +999,7 @@
     "system": "Cardiovascular",
     "tags": "||",
     "treatment period": "developmental (3 days)",
+    "treatment related effect": null,
     "trend test result": "not reported",
     "trend test value": null,
     "upper_ci": 0.7265646156

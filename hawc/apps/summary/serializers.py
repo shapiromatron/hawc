@@ -76,6 +76,7 @@ class VisualSerializer(CollectionVisualSerializer):
         ]
 
         ret["assessment_rob_name"] = instance.assessment.get_rob_name_display()
+        ret["assessment_name"] = str(instance.assessment)
 
         return ret
 

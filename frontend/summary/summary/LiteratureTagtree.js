@@ -17,7 +17,7 @@ class LiteratureTagtree extends BaseVisual {
 
         if (tagtree.rootNode.data.name.startsWith("assessment-")) {
             // if this is an assessment-root node; hide the name
-            tagtree.rename_top_level_node("");
+            tagtree.rename_top_level_node(this.data.assessment_name);
         }
 
         /*
