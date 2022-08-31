@@ -38,7 +38,7 @@
                         {{ref.authors}}
                     </div>
                     <p class="abstract_wf abstract_expand mb-1">{{ref.abstract|safe}}</p>
-                    <div class="row pl-2 mb-2 mt-3">
+                    <div class="row pl-2 mb-2">
                         <div class="col-md-6">
                             <div>
                                 <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
@@ -53,7 +53,7 @@
                             {{tag.name}}
                         </span>
                         {% endfor %}
-                        {% with tags.1 as tag %}
+                        {% with tags.0 as tag %}
                         <span class="refTagDiff">
                             {% for ptag in tag.get_ancestors|slice:"1:" %}
                             {{ptag.name}} ➤
@@ -76,7 +76,7 @@
                             {{tag.name}}
                         </span>
                         {% endfor %}
-                        {% with tags.3 as tag %}
+                        {% with tags.1 as tag %}
                         <span class="refTagDiff">
                             {% for ptag in tag.get_ancestors|slice:"1:" %}
                             {{ptag.name}} ➤
