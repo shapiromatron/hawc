@@ -94,7 +94,7 @@ source ./venv/bin/activate
 make sync-dev
 
 # run development webserver
-hawc runserver
+manage runserver
 ```
 
 In a second terminal, run the node development webserver for javascript:
@@ -127,7 +127,7 @@ pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 make sync-dev
 
 :: run development webserver
-hawc runserver
+manage runserver
 ```
 
 In a second terminal, run the node development webserver for javascript:
@@ -245,12 +245,12 @@ export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
 
 # load existing test
 createdb hawc-fixture
-hawc load_test_db
+manage load_test_db
 
 # now make edits to the database using the GUI or via command line
 
 # export database
-hawc dump_test_db
+manage dump_test_db
 ```
 
 ```batch title="Windows"
@@ -259,12 +259,12 @@ set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
 
 :: load existing test
 createdb -T template0 -E UTF8 hawc-fixture
-hawc load_test_db
+manage load_test_db
 
 :: now make edits to the database using the GUI or via command line
 
 :: export database
-hawc dump_test_db
+manage dump_test_db
 ```
 
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database with the command ``dropdb hawc-test``.
@@ -294,7 +294,7 @@ Here's how to create a database dump:
 
 ```bash
 # anonymize data
-hawc scrub_db
+manage scrub_db
 
 # dump in gzipped format
 pg_dump -U hawc hawc | gzip > db_dump.sql.gz
@@ -460,10 +460,10 @@ views are refreshed daily via a persistent celery task, as well as up to every f
 flag for updating the data is set.
 
 In development however, we generally do not run the celery task service in the backend. Thus, to
-trigger a materialized view rest, you can use a `hawc` command:
+trigger a materialized view rest, you can use a `manage` command:
 
 ```bash
-hawc refresh_views
+manage refresh_views
 ```
 
 You may need to do this periodically if your data is stale.

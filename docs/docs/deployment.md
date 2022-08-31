@@ -58,7 +58,7 @@ docker-compose up -d web workers cron nginx
 curl -I http://127.0.0.1:8000/static/css/hawc.css
 # check django request
 curl -I http://127.0.0.1:8000/user/login/
-docker-compose exec web hawc createsuperuser
+docker-compose exec web manage createsuperuser
 docker-compose logs -f
 
 # shut down containers
