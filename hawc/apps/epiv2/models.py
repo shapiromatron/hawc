@@ -276,7 +276,7 @@ class Exposure(models.Model):
         return (
             self.pk,
             self.name,
-            self.get_measurement_type_display(),
+            self.measurement_type,
             self.get_biomonitoring_matrix_display(),
             self.get_biomonitoring_source_display(),
             self.measurement_timing,
