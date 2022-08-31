@@ -105,6 +105,7 @@ class Design(models.Model):
     def flat_complete_header_row():
         return (
             "design-pk",
+            "design-url",
             "design-summary",
             "design-study_name",
             "design-study_design",
@@ -126,13 +127,14 @@ class Design(models.Model):
     def flat_complete_data_row(self):
         return (
             self.pk,
+            self.get_absolute_url(),
             self.summary,
             self.study_name,
-            self.study_design,
-            self.source,
-            self.age_profile,
+            self.get_study_design_display(),
+            self.get_source_display(),
+            self.get_age_profile_display(),
             self.age_description,
-            self.sex,
+            self.get_sex_display(),
             self.race,
             self.participant_n,
             self.years_enrolled,
@@ -187,14 +189,14 @@ class Chemical(models.Model):
         return (
             "chemical-pk",
             "chemical-name",
-            "chemical-dsstox",
+            "chemical-DTSXID",
         )
 
     def flat_complete_data_row(self):
         return (
             self.pk,
             self.name,
-            self.dsstox,
+            self.dsstox.dtxsid,
         )
 
 
@@ -274,11 +276,11 @@ class Exposure(models.Model):
         return (
             self.pk,
             self.name,
-            self.measurement_type,
-            self.biomonitoring_matrix,
-            self.biomonitoring_source,
+            self.get_measurement_type_display(),
+            self.get_biomonitoring_matrix_display(),
+            self.get_biomonitoring_source_display(),
             self.measurement_timing,
-            self.exposure_route,
+            self.get_exposure_route_display(),
             self.measurement_method,
             self.comments,
         )
@@ -390,7 +392,6 @@ class ExposureLevel(models.Model):
         return (
             "exposure_level-pk",
             "exposure_level-name",
-            "exposure_level-exposure_measurement",
             "exposure_level-sub_population",
             "exposure_level-median",
             "exposure_level-mean",
@@ -411,7 +412,6 @@ class ExposureLevel(models.Model):
         return (
             self.pk,
             self.name,
-            self.exposure_measurement,
             self.sub_population,
             self.median,
             self.mean,
@@ -422,7 +422,7 @@ class ExposureLevel(models.Model):
             self.percentile_25,
             self.percentile_75,
             self.ci_ucl,
-            self.ci_type,
+            self.get_ci_type_display(),
             self.negligible_exposure,
             self.data_location,
             self.comments,

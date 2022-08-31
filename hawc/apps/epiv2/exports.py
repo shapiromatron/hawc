@@ -27,13 +27,12 @@ class EpiFlatComplete(FlatFileExporter):
         for obj in self.queryset:
             row = []
             row.extend(Study.flat_complete_data_row(obj.design.study.get_json(json_encode=False)))
-            row.extend(models.Design.flat_complete_data_row(obj.design))
-            row.extend(models.Chemical.flat_complete_data_row(obj.exposure_level.chemical))
-            row.extend(
-                models.Exposure.flat_complete_data_row(obj.exposure_level.exposure_measurement)
-            )
-            row.extend(models.ExposureLevel.flat_complete_data_row(obj.exposure_level))
-            row.extend(models.Outcome.flat_complete_data_row(obj.outcome))
-            row.extend(models.AdjustmentFactor.flat_complete_data_row(obj.factors))
-            row.extend(models.DataExtraction.flat_complete_data_row(obj))
+            row.extend(obj.design.flat_complete_data_row())
+            row.extend(obj.exposure_level.chemical.flat_complete_data_row())
+            row.extend(obj.exposure_level.exposure_measurement.flat_complete_data_row())
+            row.extend(obj.exposure_level.flat_complete_data_row())
+            row.extend(obj.outcome.flat_complete_data_row())
+            row.extend(obj.factors.flat_complete_data_row())
+            row.extend(obj.flat_complete_data_row())
+            rows.append(row)
         return rows
