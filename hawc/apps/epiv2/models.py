@@ -123,26 +123,25 @@ class Design(models.Model):
             "design-comments",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(self):
         return (
-            ser["pk"],
-            ser["summary"],
-            ser["study_name"],
-            ser["study_design"],
-            ser["source"],
-            ser["age_profile"],
-            ser["age_description"],
-            ser["sex"],
-            ser["race"],
-            ser["participant_n"],
-            ser["years_enrolled"],
-            ser["years_followup"],
-            "|".join(ser["countries"]),
-            ser["region"],
-            ser["criteria"],
-            ser["susceptibility"],
-            ser["comments"],
+            self.pk,
+            self.summary,
+            self.study_name,
+            self.study_design,
+            self.source,
+            self.age_profile,
+            self.age_description,
+            self.sex,
+            self.race,
+            self.participant_n,
+            self.years_enrolled,
+            self.years_followup,
+            self.countries,
+            self.region,
+            self.criteria,
+            self.susceptibility,
+            self.comments,
         )
 
 
@@ -191,12 +190,11 @@ class Chemical(models.Model):
             "chemical-dsstox",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(self):
         return (
-            ser["pk"],
-            ser["name"],
-            ser["dsstox"],
+            self.pk,
+            self.name,
+            self.dsstox,
         )
 
 
@@ -272,18 +270,17 @@ class Exposure(models.Model):
             "exposure-comments",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(self):
         return (
-            ser["pk"],
-            ser["name"],
-            ser["measurement_type"],
-            ser["biomonitoring_matrix"],
-            ser["biomonitoring_source"],
-            ser["measurement_timing"],
-            ser["exposure_route"],
-            ser["measurement_method"],
-            ser["comments"],
+            self.pk,
+            self.name,
+            self.measurement_type,
+            self.biomonitoring_matrix,
+            self.biomonitoring_source,
+            self.measurement_timing,
+            self.exposure_route,
+            self.measurement_method,
+            self.comments,
         )
 
 
@@ -410,26 +407,25 @@ class ExposureLevel(models.Model):
             "exposure_level-comments",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(self):
         return (
-            ser["pk"],
-            ser["name"],
-            ser["exposure_measurement"],
-            ser["sub_population"],
-            ser["median"],
-            ser["mean"],
-            ser["variance"],
-            ser["variance_type"],
-            ser["units"],
-            ser["ci_lcl"],
-            ser["percentile_25"],
-            ser["percentile_75"],
-            ser["ci_ucl"],
-            ser["ci_type"],
-            ser["negligible_exposure"],
-            ser["data_location"],
-            ser["comments"],
+            self.pk,
+            self.name,
+            self.exposure_measurement,
+            self.sub_population,
+            self.median,
+            self.mean,
+            self.variance,
+            self.variance_type,
+            self.units,
+            self.ci_lcl,
+            self.percentile_25,
+            self.percentile_75,
+            self.ci_ucl,
+            self.ci_type,
+            self.negligible_exposure,
+            self.data_location,
+            self.comments,
         )
 
 
@@ -489,15 +485,14 @@ class Outcome(models.Model):
             "outcome-comments",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(self):
         return (
-            ser["pk"],
-            ser["system"],
-            ser["effect"],
-            ser["effect_detail"],
-            ser["endpoint"],
-            ser["comments"],
+            self.pk,
+            self.system,
+            self.effect,
+            self.effect_detail,
+            self.endpoint,
+            self.comments,
         )
 
 
@@ -544,14 +539,12 @@ class AdjustmentFactor(models.Model):
             "adjustment_factor-comments",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(self):
         return (
-            ser["pk"],
-            ser["name"],
-            ser["description"],
-            ser["effect_estimate_type"],
-            ser["comments"],
+            self.pk,
+            self.name,
+            self.description,
+            self.comments,
         )
 
 
@@ -701,32 +694,31 @@ class DataExtraction(models.Model):
             "data_extraction-comments",
         )
 
-    @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(self):
         return (
-            ser["pk"],
-            ser["sub_population"],
-            ser["outcome_measurement_timing"],
-            ser["effect_estimate_type"],
-            ser["effect_estimate"],
-            ser["ci_lcl"],
-            ser["ci_ucl"],
-            ser["ci_type"],
-            ser["units"],
-            ser["variance_type"],
-            ser["variance"],
-            ser["n"],
-            ser["p_value"],
-            ser["significant"],
-            ser["group"],
-            ser["exposure_rank"],
-            ser["exposure_transform"],
-            ser["outcome_transform"],
-            ser["confidence"],
-            ser["data_location"],
-            ser["effect_description"],
-            ser["statistical_method"],
-            ser["comments"],
+            self.pk,
+            self.sub_population,
+            self.outcome_measurement_timing,
+            self.effect_estimate_type,
+            self.effect_estimate,
+            self.ci_lcl,
+            self.ci_ucl,
+            self.ci_type,
+            self.units,
+            self.variance_type,
+            self.variance,
+            self.n,
+            self.p_value,
+            self.significant,
+            self.group,
+            self.exposure_rank,
+            self.exposure_transform,
+            self.outcome_transform,
+            self.confidence,
+            self.data_location,
+            self.effect_description,
+            self.statistical_method,
+            self.comments,
         )
 
 
