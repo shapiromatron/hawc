@@ -51,10 +51,10 @@
           let casrn = event.params.data.casrn,
               chemical_name = event.params.data.chemical_name;
           if (casrn) {
-            $('#id_cas').val(casrn);
+            $('#id_cas').append(new Option(casrn, casrn, false, true));
           }
           if (chemical_name) {
-            $('#id_chemical').val(chemical_name);
+            $('#id_chemical').append(new Option(chemical_name, chemical_name, false, true));
           }
         });
 

@@ -20,7 +20,7 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_field_result(self, obj):
         return {
-            "id": self.get_field(obj),
+            "id": self.get_result_value(obj),
             "text": self.get_field(obj),
             "selected_text": self.get_field(obj),
         }
@@ -141,7 +141,17 @@ class AutocompleteWidgetMixin:
 
         super().__init__(*args, **kwargs)
 
+        self.filters = filters
+        self.autocomplete_class = autocomplete_class
         self.autocomplete_function = autocomplete_function or self.autocomplete_function
+
+    def set_filters(self, filters: dict):
+        self.filters = filters
+        self.url = self.autocomplete_class.url(**self.filters)
+
+    def update_filters(self, filters: dict):
+        self.filters.update(filters)
+        self.url = self.autocomplete_class.url(**self.filters)
 
 
 class AutocompleteSelectWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect2):
@@ -196,9 +206,9 @@ class AutocompleteFieldMixin:
 
         return super().__init__(*args, **kwargs)
 
-    def set_filters(self, filters):
+    def set_filters(self, filters: dict):
         self.queryset = self.autocomplete_class.get_base_queryset(filters)
-        self.widget.url = self.autocomplete_class.url(**filters)
+        self.widget.set_filters(filters)
 
 
 class AutocompleteChoiceField(AutocompleteFieldMixin, ModelChoiceField):

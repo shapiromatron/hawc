@@ -6,14 +6,14 @@ from . import models
 class ExperimentAutocomplete(BaseAutocomplete):
     model = models.Experiment
     search_fields = ["name"]
-    filter_fields = ["study_id"]
+    filter_fields = ["study_id", "study__assessment_id"]
 
 
 @register
 class AnimalGroupAutocomplete(BaseAutocomplete):
     model = models.AnimalGroup
     search_fields = ["name"]
-    filter_fields = ["experiment_id"]
+    filter_fields = ["experiment_id", "experiment__study__assessment_id"]
 
 
 @register
