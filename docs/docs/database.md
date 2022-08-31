@@ -47,31 +47,31 @@ The HAWC database is a [PostgreSQL](https://www.postgresql.org/) database; it ut
 To generate these database schema diagrams:
 
 ```bash
-manage.py graph_models \
+hawc graph_models \
     -a -g --pydot \
     -o ./docs/source/_static/hawc-schema.png
 
-manage.py graph_models \
+hawc graph_models \
     lit study riskofbias \
     -g --pydot \
     -o ./docs/source/_static/hawc-study-schema.png
 
-manage.py graph_models \
+hawc graph_models \
     animal bmd \
     -g --pydot \
     -o ./docs/source/_static/hawc-animal-schema.png
 
-manage.py graph_models \
+hawc graph_models \
     epi epimeta \
     -g --pydot \
     -o ./docs/source/_static/hawc-epi-schema.png
 
-manage.py graph_models \
+hawc graph_models \
     invitro \
     -g --pydot \
     -o ./docs/source/_static/hawc-invitro-schema.png
 
-manage.py graph_models \
+hawc graph_models \
     vocab \
     -g --pydot \
     -o ./docs/source/_static/hawc-vocab-schema.png

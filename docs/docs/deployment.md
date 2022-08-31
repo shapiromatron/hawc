@@ -58,7 +58,7 @@ docker-compose up -d web workers cron nginx
 curl -I http://127.0.0.1:8000/static/css/hawc.css
 # check django request
 curl -I http://127.0.0.1:8000/user/login/
-docker-compose exec web manage.py createsuperuser
+docker-compose exec web hawc createsuperuser
 docker-compose logs -f
 
 # shut down containers
@@ -66,26 +66,6 @@ docker-compose down
 ```
 
 The same approach can be done in production, except please harden the deployment :) .
-
-### Pex
-
-Currently we're exploring the use of [pex](https://pypi.org/project/pex/) for bundling the entire python virtual environment into a single file, so it's available as a single environment that only requires a python runtime.  We expect that the containers may be modified in the future to use this pex artifact, but will requires further testing.
-
-The following commands are used to generate and run the pex artifact:
-
-```bash
-# build pex artifact
-make build-pex
-
-# activate environment variables ...
-
-# commands to run gunicorn WSGI server
-./dist/hawc.pex run_gunicorn --bind 0.0.0.0:5000
-
-# commands to run workers and beat for scheduled tasks
-./dist/hawc.pex run_celery --app=hawc.main.celery beat --loglevel=INFO
-./dist/hawc.pex run_celery --app=hawc.main.celery worker --loglevel=INFO
-```
 
 ## Configuration
 
