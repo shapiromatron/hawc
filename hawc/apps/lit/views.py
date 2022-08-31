@@ -381,6 +381,9 @@ class ConflictWireframe(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
         context["refs"] = models.Reference.objects.filter(
             assessment_id=self.assessment.id
         ).order_by("-last_updated")[:7]
+        context["tags"] = models.ReferenceFilterTag.assessment_qs(self.assessment.id).filter(
+            depth__gt=4
+        )
         return context
 
     def get_app_config(self, context) -> WebappConfig:
