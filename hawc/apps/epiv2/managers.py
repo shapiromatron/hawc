@@ -30,6 +30,17 @@ class DesignQuerySet(QuerySet):
         )
 
 
+class DataExtractionQuerySet(QuerySet):
+    def complete(self):
+        return self.select_related(
+            "design__study",
+            "exposure_level__chemical",
+            "exposure_level__exposure_measurement",
+            "outcome",
+            "factors",
+        ).prefetch_related("design__countries")
+
+
 class DesignManager(BaseManager):
     assessment_relation = "study__assessment"
 
@@ -59,6 +70,9 @@ class AdjustmentFactorManager(BaseManager):
 
 class DataExtractionManager(BaseManager):
     assessment_relation = "design__study__assessment"
+
+    def get_queryset(self):
+        return DataExtractionQuerySet(self.model, using=self._db)
 
     def published(self, assessment_id):
         return self.assessment_qs(assessment_id).filter(design__study__published=True)

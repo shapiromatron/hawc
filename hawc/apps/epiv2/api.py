@@ -34,8 +34,8 @@ class EpiAssessmentViewset(
     def get_queryset(self):
         perms = self.get_obj_perms()
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
+            return self.model.objects.published(self.assessment).complete()
+        return self.model.objects.get_qs(self.assessment).complete()
 
     @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
     def export(self, request, pk):
