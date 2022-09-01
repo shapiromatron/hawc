@@ -61,10 +61,11 @@ const toolbarOptions = {
     };
 
 export default function() {
-    let modal = $("#smartTagModal"),
+    let focusedItem = $(":focus"),
+        modal = $("#smartTagModal"),
         showHawcTools = modal.length === 1;
 
-    return this.each(function() {
+    this.each(function() {
         let editor = document.createElement("div"),
             textarea = $(this),
             q;
@@ -98,4 +99,7 @@ export default function() {
             q.stc.enableModals();
         }
     });
+
+    // restore original focus
+    $(focusedItem).focus();
 }

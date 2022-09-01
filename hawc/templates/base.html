@@ -107,6 +107,9 @@
     <script type="text/javascript" src="{% static 'vendor/jqueryui/1.10.3/jquery-ui.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/htmx/1.6.1/htmx.min.js' %}"></script>
     {% render_bundle 'main' %}
+    {% if form %}
+      {{ form.media }}
+    {% endif %}
     {% block extrajs %}{% endblock %}
   </body>
 </html>
