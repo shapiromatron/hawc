@@ -12,7 +12,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
-from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
@@ -27,6 +26,7 @@ from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
+    PydanticToDjangoError,
     ReportExport,
     SerializerHelper,
     tryParseInt,
@@ -225,9 +225,9 @@ class SummaryTable(models.Model):
         instance.content = schema.get_default_props()
         return instance
 
-    def to_docx(self, base_url: str = ""):
+    def to_docx(self, base_url: str = "", landscape: bool = True):
         table = self.get_table()
-        docx = table.to_docx(parser=QuillParser(base_url=base_url))
+        docx = table.to_docx(parser=QuillParser(base_url=base_url), landscape=landscape)
         return ReportExport(docx=docx, filename=self.slug)
 
     @classmethod
@@ -236,12 +236,11 @@ class SummaryTable(models.Model):
 
     def clean(self):
         # make sure table can be built
-        try:
-            self.get_table()
-        except PydanticError as e:
-            raise ValidationError({"content": e.json()})
-        except ValueError as e:
-            raise ValidationError({"content": str(e)})
+        with PydanticToDjangoError(field="content"):
+            try:
+                self.get_table()
+            except ValueError as e:
+                raise ValidationError({"content": str(e)})
 
         # clean up control characters before string validation
         content_str = json.dumps(self.content).replace('\\"', '"')

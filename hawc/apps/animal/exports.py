@@ -223,6 +223,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             "route",
             "treatment period",
             "duration exposure",
+            "duration exposure (days)",
             "endpoint id",
             "endpoint name",
             "system",
@@ -257,6 +258,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             "upper_ci",
             "pairwise significant",
             "pairwise significant value",
+            "treatment related effect",
             "percent control mean",
             "percent control low",
             "percent control high",
@@ -306,6 +308,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                     ser["animal_group"]["dosing_regime"],
                 ),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
+                ser["animal_group"]["dosing_regime"]["duration_exposure"],
                 ser["id"],
                 ser["name"],
                 ser["system"],
@@ -356,6 +359,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                         eg["upper_ci"],
                         eg["significant"],
                         eg["significance_level"],
+                        eg["treatment_effect"],
                         eg["percentControlMean"],
                         eg["percentControlLow"],
                         eg["percentControlHigh"],
@@ -405,6 +409,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             "route",
             "treatment period",
             "duration exposure",
+            "duration exposure (days)",
             "endpoint id",
             "endpoint name",
             "system",
@@ -435,6 +440,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         rng = range(1, num_doses + 1)
         header.extend([f"Dose {i}" for i in rng])
         header.extend([f"Significant {i}" for i in rng])
+        header.extend([f"Treatment Related Effect {i}" for i in rng])
         header.extend(list(self.rob_headers.values()))
 
         # distinct applied last so that queryset can add annotations above
@@ -531,6 +537,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                     ser["animal_group"]["dosing_regime"],
                 ),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
+                ser["animal_group"]["dosing_regime"]["duration_exposure"],
                 ser["id"],
                 ser["name"],
                 ser["system"],
@@ -581,8 +588,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
             sigs.extend([None] * (self.num_doses - len(sigs)))
-
             row.extend(sigs)
+
+            tres = [dose["treatment_effect"] for dose in ser["groups"]]
+            tres.extend([None] * (self.num_doses - len(tres)))
+            row.extend(tres)
 
             row.extend(
                 [self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()]

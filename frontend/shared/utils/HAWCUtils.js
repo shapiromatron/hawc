@@ -97,10 +97,11 @@ class HAWCUtils {
         throw "Abstract method; requires implementation";
     }
 
-    static updateDragLocationTransform(setDragCB) {
+    static updateDragLocationTransform(setDragCB, options) {
         // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
-        const re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
+        const opts = options || {},
+            re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
             getFloats = function(txt) {
                 // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
                 if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
@@ -113,6 +114,10 @@ class HAWCUtils {
                 p = d3.select(this),
                 text = p.attr("transform"),
                 coords = getFloats(text);
+
+            if (opts.shift && !event.sourceEvent.shiftKey) {
+                return;
+            }
 
             if (coords && coords.length >= 2) {
                 if (coords.length === 2) {
@@ -140,7 +145,7 @@ class HAWCUtils {
 
     static updateDragLocationXY(setDragCB) {
         // a new drag location, requires binding to d3.drag,
-        // and requires a _.partial injection of th settings module.
+        // and requires a _.partial injection of the settings module.
         return d3.drag().on("drag", function(event) {
             var p = d3.select(this),
                 x = parseInt(parseInt(p.attr("x"), 10) + event.dx, 10),

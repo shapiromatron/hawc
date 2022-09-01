@@ -82,17 +82,6 @@ const IntegrationForm = observer(props => {
                 </div>
                 <div className="col-md-6">
                     <QuillTextInput
-                        label="Susceptibility"
-                        helpText="Use ‘no evidence to inform’ or include specific evidence-based documentation of potential susceptible populations or lifestages, with brief rationale."
-                        value={summary_judgement.susceptibility}
-                        onChange={value =>
-                            store.updateValue("summary_judgement.susceptibility", value)
-                        }
-                    />
-                </div>
-
-                <div className="col-md-6">
-                    <QuillTextInput
                         label="Human relevance"
                         helpText="Use ‘N/A, judgments driven by human data’ or explain the interpretation of the relevance of the animal data to humans. In many cases, a statement such as, ‘without evidence to the contrary, [health effect described in the table] responses in animals are presumed to be relevant to humans’. If possible, include some brief text describing the interpreted comparability of experimental animal organs/systems to humans based on underlying biological similarity (e.g., thyroid signaling processes are well conserved across rodents and humans)."
                         value={summary_judgement.human_relevance}
@@ -114,8 +103,29 @@ const IntegrationForm = observer(props => {
 
                 <div className="col-md-6">
                     <QuillTextInput
+                        label="Susceptibility"
+                        helpText="Use ‘no evidence to inform’ or include specific evidence-based documentation of potential susceptible populations or lifestages, with brief rationale."
+                        value={summary_judgement.susceptibility}
+                        onChange={value =>
+                            store.updateValue("summary_judgement.susceptibility", value)
+                        }
+                    />
+                </div>
+                <div className="col-md-6">
+                    <QuillTextInput
+                        label="Biological plausibility"
+                        helpText="Mechanistic support for biological plausibility"
+                        value={summary_judgement.plausibility}
+                        onChange={value =>
+                            store.updateValue("summary_judgement.plausibility", value)
+                        }
+                    />
+                </div>
+
+                <div className="col-md-6">
+                    <QuillTextInput
                         label="Other inferences"
-                        helpText="Other Mode of Action (MOA) analysis inferences (e.g., judgments relevant to dose response analysis), relevant information from other sources (e.g., read across)"
+                        helpText="ADME, Other Mode of Action (MOA) analysis inferences (e.g., judgments relevant to dose response analysis), relevant information from other sources (e.g., read across)"
                         value={summary_judgement.other}
                         onChange={value => store.updateValue("summary_judgement.other", value)}
                     />

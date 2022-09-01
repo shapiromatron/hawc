@@ -27,8 +27,8 @@ const subTitleStyle = {backgroundColor: "#f5f5f5"},
                 <td>
                     <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
-                <FactorsCell content={row.certain_factors} />
-                <FactorsCell content={row.uncertain_factors} />
+                <FactorsCell content={row.certain_factors} isIncreasing={true} />
+                <FactorsCell content={row.uncertain_factors} isIncreasing={false} />
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
                         <Judgement
@@ -54,9 +54,12 @@ const TextBlock = observer(props => {
 
     return (
         <>
-            <p>
-                <em>{props.label}:</em>&nbsp;
-            </p>
+            <br />
+            {props.label ? (
+                <p>
+                    <em>{props.label}:</em>&nbsp;
+                </p>
+            ) : null}
             <div dangerouslySetInnerHTML={{__html: props.html}}></div>
         </>
     );
@@ -75,17 +78,21 @@ class SummaryCell extends Component {
                     judgement={summary_judgement}
                     summary={true}
                 />
-                <TextBlock label="Primary basis" html={summary_judgement.description} />
-                <TextBlock label="Human relevance" html={summary_judgement.human_relevance} />
+                <TextBlock html={summary_judgement.description} />
+                <TextBlock
+                    label="Human relevance of findings in animals"
+                    html={summary_judgement.human_relevance}
+                />
                 <TextBlock
                     label="Cross-stream coherence"
                     html={summary_judgement.cross_stream_coherence}
                 />
                 <TextBlock
-                    label="Susceptible populations and lifestages"
+                    label="Potential susceptibility"
                     html={summary_judgement.susceptibility}
                 />
-                <TextBlock label="Other inferences" html={summary_judgement.other} />
+                <TextBlock label="Biological plausibility" html={summary_judgement.plausibility} />
+                <TextBlock label="Other critical inferences" html={summary_judgement.other} />
             </td>
         );
     }
@@ -98,15 +105,13 @@ SummaryCell.propTypes = {
 class EpidemiologyEvidenceRows extends Component {
     render() {
         const {numEpiJudgementRowSpan} = this.props.store,
-            {exposed_human} = this.props.store.settings,
-            show_summary = !this.props.store.settings.summary_judgement.hide_content;
+            {exposed_human} = this.props.store.settings;
         return (
             <>
                 <tr>
                     <th colSpan={5} style={subTitleStyle}>
                         {exposed_human.title}
                     </th>
-                    {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
                 {exposed_human.rows.length == 0 ? NoDataRow(exposed_human.no_content_text) : null}
                 {exposed_human.rows.map((row, index) => (
@@ -130,17 +135,13 @@ EpidemiologyEvidenceRows.propTypes = {
 class AnimalEvidenceRows extends Component {
     render() {
         const {numAniJudgementRowSpan} = this.props.store,
-            {animal} = this.props.store.settings,
-            show_summary =
-                !this.props.store.settings.summary_judgement.hide_content &&
-                this.props.store.settings.exposed_human.hide_content;
+            {animal} = this.props.store.settings;
         return (
             <>
                 <tr>
                     <th colSpan={5} style={subTitleStyle}>
                         {animal.title}
                     </th>
-                    {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
                 {animal.rows.length == 0 ? NoDataRow(animal.no_content_text) : null}
                 {animal.rows.map((row, index) => (
@@ -180,7 +181,7 @@ class MechanisticEvidenceRows extends Component {
                 <tr>
                     <th>{mechanistic.col_header_1}</th>
                     <th colSpan={3}>Summary of key findings and interpretation</th>
-                    <th>Judgment(s) and rationale</th>
+                    <th>Evidence Synthesis Judgment(s)</th>
                 </tr>
                 {mechanistic.rows.length == 0 ? NoDataRow(mechanistic.no_content_text) : null}
                 {mechanistic.rows.map((row, index) => {
@@ -254,31 +255,30 @@ class Table extends Component {
                         <col style={{width: "15%"}}></col>
                         <col style={{width: "15%"}}></col>
                         <col style={{width: "15%"}}></col>
-                        <col style={{width: "25%"}}></col>
+                        {summary_judgement.hide_content ? null : <col style={{width: "25%"}}></col>}
                     </colgroup>
                 )}
                 <thead>
                     <tr>
                         {hide_evidence ? null : (
-                            <th colSpan={5}>Evidence Summary and Interpretation</th>
+                            <th colSpan={5}>Evidence Synthesis (Strength of Evidence) Judgments</th>
                         )}
                         {summary_judgement.hide_content ? null : (
-                            <th rowSpan={exposed_human.hide_content && animal.hide_content ? 1 : 2}>
-                                Inferences and Summary Judgment
-                            </th>
+                            <th>Evidence Integration (Weight of Evidence) Judgment(s)</th>
                         )}
                     </tr>
+                </thead>
+                <tbody>
                     {exposed_human.hide_content && animal.hide_content ? null : (
                         <tr>
-                            <th>Studies, outcomes, and confidence</th>
+                            <th>Studies</th>
                             <th>Summary of key findings</th>
                             <th>Factors that increase certainty</th>
                             <th>Factors that decrease certainty</th>
-                            <th>Judgment(s) and rationale</th>
+                            <th>Evidence Synthesis Judgment(s)</th>
+                            {summary_judgement.hide_content ? null : <SummaryCell store={store} />}
                         </tr>
                     )}
-                </thead>
-                <tbody>
                     {exposed_human.hide_content ? null : <EpidemiologyEvidenceRows store={store} />}
                     {animal.hide_content ? null : <AnimalEvidenceRows store={store} />}
                     {mechanistic.hide_content ? null : <MechanisticEvidenceRows store={store} />}

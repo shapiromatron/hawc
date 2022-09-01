@@ -4,11 +4,11 @@ import * as d3 from "d3";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
 import {observer} from "mobx-react";
-import {action, observable} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 import PropTypes from "prop-types";
 
 @observer
@@ -19,13 +19,13 @@ class VizOptions extends Component {
         this.props.viz.build_plot();
     }
     render() {
-        const {store} = this.props;
+        const key = this.props.store.rerenderKey;
         return (
-            <CheckboxInput
-                label={"Hide tags with no references"}
-                onChange={e => store.changeOption("hide_empty_tag_nodes", e.target.checked)}
-                checked={store.options.hide_empty_tag_nodes}
-            />
+            <p className="form-text text-muted" data-value={key}>
+                Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references
+                associated with an node (except root-node). Hold shift to drag nodes to new
+                positions.
+            </p>
         );
     }
 }
@@ -36,13 +36,29 @@ VizOptions.propTypes = {
 
 class VizState {
     @observable options = null;
+    @observable legendPosition = {x: 25, y: 25};
+    @observable nodeOffsets = {};
 
     constructor(options) {
         this.options = options;
     }
-
+    @computed
+    get rerenderKey() {
+        const options = this.options,
+            values = ["show_legend", "show_counts", "hide_empty_tag_nodes"].map(d => options[d]);
+        return h.hashString(JSON.stringify(toJS(values)));
+    }
+    @action.bound toggleOption(key) {
+        this.options[key] = !this.options[key];
+    }
     @action.bound changeOption(key, value) {
         this.options[key] = value;
+    }
+    @action.bound updateLegendPosition(x, y) {
+        this.legendPosition = {x, y};
+    }
+    @action.bound updateDragLocation(id, x, y) {
+        this.nodeOffsets[id] = {x, y};
     }
 }
 
@@ -69,7 +85,36 @@ class TagTreeViz extends D3Plot {
         this.prepare_data();
         this.draw_visualization();
         this.add_menu();
+        this._add_configuration();
         this.trigger_resize();
+    }
+
+    _add_configuration() {
+        const {toggleOption, options} = this.stateStore,
+            addToggle = (field, value, string) => {
+                {
+                    const text = (value ? "Hide" : "Show") + " " + string;
+                    return $(`<button class="dropdown-item">${text}</button>`).on("click", () =>
+                        toggleOption(field)
+                    );
+                }
+            },
+            group = $('<div class="dropdown btn-group">').append(
+                $(
+                    '<button class="btn btn-sm dropdown-toggle" data-toggle="dropdown">Options</button>'
+                ).append(
+                    $('<div class="dropdown-menu dropdown-menu-right">').append(
+                        addToggle(
+                            "hide_empty_tag_nodes",
+                            !options.hide_empty_tag_nodes,
+                            "tags with no references"
+                        ),
+                        addToggle("show_legend", options.show_legend, "legend"),
+                        addToggle("show_counts", options.show_counts, "counts")
+                    )
+                )
+            );
+        this.menu_div.append(group);
     }
 
     build_options() {
@@ -92,7 +137,6 @@ class TagTreeViz extends D3Plot {
         // so we check for how many path_lengths, rounded up, the graph extends
         // past the viewBox and set the viewBox.width to the graph width +
         // additional path_lengths.
-
         let {x, y, width, height} = this.svg.viewBox.baseVal,
             increment = Math.ceil(-(this.w - value - this.path_length) / this.path_length);
         width = this.w + this.padding.left + this.padding.right + this.path_length * increment;
@@ -105,7 +149,9 @@ class TagTreeViz extends D3Plot {
     }
 
     draw_visualization() {
-        var i = 0,
+        var {nodeOffsets, options} = this.stateStore,
+            store = this.stateStore,
+            i = 0,
             vis = this.vis,
             diagonal = d3
                 .linkHorizontal()
@@ -152,7 +198,12 @@ class TagTreeViz extends D3Plot {
                     .addFooter("")
                     .show({maxWidth: 1200});
 
-                tag.renderPaginatedReferenceList(div.get(0), self.stateStore.options.can_edit);
+                tag.renderPaginatedReferenceList(
+                    div.get(0),
+                    self.stateStore.options.can_edit,
+                    self.stateStore.options.required_tags,
+                    self.stateStore.options.pruned_tags
+                );
             },
             update = function(event, source) {
                 var duration = event && event.altKey ? 5000 : 500,
@@ -187,7 +238,17 @@ class TagTreeViz extends D3Plot {
                             toggle(d);
                             update(event, d);
                         }
-                    });
+                    })
+                    .call(
+                        HAWCUtils.updateDragLocationTransform(
+                            function(x, y) {
+                                var p = d3.select(this),
+                                    id = p.data()[0].data.id;
+                                store.updateDragLocation(id, x, y);
+                            },
+                            {shift: true}
+                        )
+                    );
 
                 nodeEnter
                     .append("svg:circle")
@@ -206,18 +267,27 @@ class TagTreeViz extends D3Plot {
                         HAWCUtils.wrapText(this, 170);
                     });
 
-                nodeEnter
-                    .append("svg:text")
-                    .attr("x", 0)
-                    .attr("dy", "3.5px")
-                    .attr("class", "node_value")
-                    .attr("text-anchor", "middle")
-                    .text(d => d.data.numReferencesDeep)
-                    .style("fill-opacity", 1e-6);
+                if (options.show_counts) {
+                    nodeEnter
+                        .append("svg:text")
+                        .attr("x", 0)
+                        .attr("dy", "3.5px")
+                        .attr("class", "node_value")
+                        .attr("text-anchor", "middle")
+                        .text(d => d.data.numReferencesDeep)
+                        .style("fill-opacity", 1e-6);
+                }
 
                 // Transition nodes to their new position.
                 var nodeUpdate = nodeEnter.merge(node);
-                nodeUpdate.transition(t).attr("transform", d => `translate(${d.y},${d.x})`);
+                nodeUpdate.transition(t).attr("transform", d => {
+                    const override = nodeOffsets[d.data.id];
+                    if (override) {
+                        d.x = override.y;
+                        d.y = override.x;
+                    }
+                    return `translate(${d.y},${d.x})`;
+                });
 
                 nodeUpdate
                     .selectAll("circle")
@@ -284,6 +354,9 @@ class TagTreeViz extends D3Plot {
             };
 
         this.add_title();
+        if (options.show_legend) {
+            this.add_legend();
+        }
         treeNode.x0 = this.h / 2;
         treeNode.y0 = 0;
 
@@ -291,10 +364,67 @@ class TagTreeViz extends D3Plot {
             .scalePow()
             .exponent(0.5)
             .domain([0, treeNode.data.numReferencesDeep])
-            .range([this.minimum_radius, this.maximum_radius]);
+            .range(
+                options.show_counts
+                    ? [this.minimum_radius, this.maximum_radius]
+                    : [
+                          d3.mean([this.maximum_radius, this.minimum_radius]),
+                          d3.mean([this.maximum_radius, this.minimum_radius]),
+                      ]
+            );
 
         treeNode.children.forEach(toggleAll);
         update(null, treeNode);
+    }
+
+    add_legend() {
+        // create a new g.legend_group object on the main svg graphic
+        const store = this.stateStore,
+            legendPosition = store.legendPosition,
+            buff = 5,
+            data = [
+                {fill: "lightsteelblue", text: "Has additional sub-tagging"},
+                {fill: "white", text: "No additional sub-tagging"},
+            ];
+
+        const g = d3
+            .select(this.svg)
+            .append("g")
+            .attr("transform", `translate(${legendPosition.x}, ${legendPosition.y})`)
+            .attr("cursor", "pointer")
+            .call(HAWCUtils.updateDragLocationTransform(store.updateLegendPosition));
+
+        // Add color rectangles
+        g.append("g")
+            .attr("class", "tagnode")
+            .selectAll("svg.circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", 10)
+            .attr("cy", (d, i) => 10 + i * 25)
+            .attr("r", 10)
+            .style("fill", d => d.fill);
+
+        // Add text label
+        g.append("g")
+            .selectAll("svg.text.labels")
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("x", 25)
+            .attr("y", (d, i) => 10 + i * 25)
+            .attr("dy", "3.5px")
+            .text(d => d.text);
+
+        // // add bounding-rectangle around legend
+        const dim = g.node().getBBox();
+        g.insert("svg:rect", ":first-child")
+            .attr("class", "legend")
+            .attr("x", -buff)
+            .attr("y", -buff)
+            .attr("height", dim.height + 2 * buff)
+            .attr("width", dim.width + 2 * buff);
     }
 }
 

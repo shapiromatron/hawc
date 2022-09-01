@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -15,6 +16,7 @@ from hawc.apps.lit.forms import (
 )
 from hawc.apps.lit.models import Reference
 from hawc.apps.study.models import Study
+from hawc.services.utils.ris import ReferenceParser
 
 
 @pytest.mark.django_db
@@ -190,17 +192,38 @@ class TestRisImportForm:
         assert form.is_valid() is False
         assert form.errors == {"import_file": [RisImportForm.UNPARSABLE_RIS]}
 
-    def test_long_doi(self, db_keys):
-        fn = Path(__file__).parent / "data/ris-big-doi.txt"
-        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", fn.read_bytes()))
+    def test_doi(self, db_keys):
+        base_text = (Path(__file__).parent / "data/single_ris.txt").read_text()
+        text = re.sub("DO  - 10.1016/j.fct.2009.02.003", "DO  - " + "a" * 257, base_text)
+        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", text.encode()))
         assert form.is_valid() is False
-        assert form.errors == {"import_file": [RisImportForm.DOI_TOO_LONG]}
+        assert "DOI too long" in form.errors["import_file"][0]
 
-    def test_missing_doi(self, db_keys):
-        fn = Path(__file__).parent / "data/no-id.txt"
-        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", fn.read_bytes()))
-        assert form.is_valid() is False
-        assert form.errors == {"import_file": [RisImportForm.ID_MISSING]}
+    def test_id(self, db_keys):
+        base_text = (Path(__file__).parent / "data/single_ris.txt").read_text()
+        for replace in ("ID  - abc\n", "ID  - \n", ""):  # non-numeric or missing
+            text = re.sub("ID  - 37\r?\n", replace, base_text)
+            form = self._create_form(db_keys, SimpleUploadedFile("test.ris", text.encode()))
+            assert form.is_valid() is False
+            assert form.errors == {"import_file": [ReferenceParser.ID_MISSING]}
+
+    def test_year(self, db_keys):
+        base_text = (Path(__file__).parent / "data/single_ris.txt").read_text()
+        year_re = "PY  - 2009\r?\n"
+
+        # valid, but cast to None
+        for replace in ("PY  - \n", "PY  -   \n", ""):
+            text = re.sub(year_re, replace, base_text)
+            form = self._create_form(db_keys, SimpleUploadedFile("test.ris", text.encode()))
+            assert form.is_valid()
+            assert form._references[0]["year"] is None
+
+        # invalid
+        for replace in ("PY  - abc\n", "PY  - 2009-2010\n"):
+            text = re.sub(year_re, replace, base_text)
+            form = self._create_form(db_keys, SimpleUploadedFile("test.ris", text.encode()))
+            assert form.is_valid() is False
+            assert "Invalid year:" in form.errors["import_file"][0]
 
     def test_no_references(self, db_keys):
         form = self._create_form(db_keys, SimpleUploadedFile("test.ris", b"\n"))
@@ -223,7 +246,7 @@ class TestReferenceForm:
         assert form.is_valid() is False
         assert form.errors["doi_id"][0] == 'Invalid DOI; should be in format "10.1234/s123456"'
 
-        # make sure pubmed is unchanged by default
+        # make sure doi is unchanged by default
         form = ReferenceForm(instance=ref, data=data)
         assert form.fields["doi_id"].initial == doi
         assert form.is_valid() is True
@@ -231,7 +254,15 @@ class TestReferenceForm:
         ref.refresh_from_db()
         assert ref.get_doi_id() == doi
 
-        # make sure pubmed can be removed
+        # make sure doi is transformed to lowercase
+        form = ReferenceForm(instance=ref, data={**data, "doi_id": doi.upper()})
+        assert form.fields["doi_id"].initial == doi
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_doi_id() == doi
+
+        # make sure doi can be removed
         form = ReferenceForm(instance=ref, data={**data, "doi_id": None})
         assert form.fields["doi_id"].initial == doi
         assert form.is_valid() is True
@@ -239,7 +270,7 @@ class TestReferenceForm:
         ref.refresh_from_db()
         assert ref.get_doi_id() is None
 
-        # make sure pubmed can be added
+        # make sure doi can be added
         form = ReferenceForm(instance=ref, data=data)
         assert form.fields["doi_id"].initial is None
         assert form.is_valid() is True
@@ -247,7 +278,7 @@ class TestReferenceForm:
         ref.refresh_from_db()
         assert ref.get_doi_id() == doi
 
-        # existing pubmed validation check
+        # existing doi validation check
         form = ReferenceForm(instance=Reference.objects.get(id=6), data=data)
         assert form.is_valid() is False
         assert (

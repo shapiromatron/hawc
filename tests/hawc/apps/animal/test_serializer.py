@@ -77,6 +77,14 @@ class TestDosingRegimeSerializer:
 
     def test_dose_group_failures(self):
         datasets = [
+            # no dose groups
+            {
+                "doses": [],
+                "route_of_exposure": "OR",
+            },
+            {
+                "route_of_exposure": "OR",
+            },
             # `dose_group_id` doesn't start at 0
             {
                 "doses": [

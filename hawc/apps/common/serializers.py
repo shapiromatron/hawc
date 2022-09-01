@@ -1,11 +1,15 @@
-from typing import Any, Dict, List, Tuple, Type
+from collections import defaultdict
+from typing import Any, Dict, List, Tuple, Type, Union
 
 import jsonschema
-import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.utils import timezone
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError as DrfValidationError
+from rest_framework.request import QueryDict
 from rest_framework.settings import api_settings
 from rest_framework.utils import html
 from rest_framework.validators import UniqueTogetherValidator
@@ -13,13 +17,11 @@ from rest_framework.validators import UniqueTogetherValidator
 from .helper import get_id_from_choices
 
 
-def validate_pydantic(
-    pydantic_class: Type[pydantic.BaseModel], field: str, data: Any
-) -> pydantic.BaseModel:
-    """Validation helper to validate a field to a pydnatic model.
+def validate_pydantic(pydantic_class: Type[BaseModel], field: str, data: Any) -> BaseModel:
+    """Validation helper to validate a field to a pydantic model.
 
     Args:
-        pydantic_class (pydantic.BaseModel): A Pydantic base class
+        pydantic_class (BaseModel): A Pydantic base class
         field (str): the field to raise the error on
         data (Any): the data to be validated
 
@@ -27,11 +29,11 @@ def validate_pydantic(
         ValidationError: a Django Validation error
 
     Returns:
-        pydantic.BaseModel: The pydantic BaseModel
+        BaseModel: The pydantic BaseModel
     """
     try:
         return pydantic_class.parse_obj(data)
-    except pydantic.ValidationError as err:
+    except PydanticError as err:
         raise ValidationError({field: err.json()})
 
 
@@ -503,3 +505,31 @@ class BulkSerializer(serializers.ListSerializer):
         Model = self.child.Meta.model
         instances = [Model(**data) for data in validated_data]
         return Model.objects.bulk_create(instances)
+
+
+class PydanticDrfSerializer(BaseModel):
+    @classmethod
+    def from_drf(cls, data: Union[dict, QueryDict], **extras):
+        """Generate an instance of a Pydantic model assuming successful validation.
+
+        Args:
+            data (Union[dict, QueryDict]): request.data (POST) or request.query_params (GET)
+            **extras: extra data passed to the model constructor
+
+        Raises:
+            DrfValidationError: A Django Reset Framework Validation Error in unsuccessful.
+        """
+        d = data
+        if isinstance(data, QueryDict):
+            d = data.dict()
+        if extras:
+            d.update(extras)
+        try:
+            return cls.parse_obj(d)
+        except PydanticError as err:
+            errors = defaultdict(list)
+            for e in err.errors():
+                for key in e["loc"]:
+                    error_key = key if key != "__root__" else "non_field_errors"
+                    errors[error_key].append(e["msg"])
+            raise DrfValidationError(errors)
