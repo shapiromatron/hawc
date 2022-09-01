@@ -43,10 +43,10 @@
 
     <li>
         <b>Epidemiology data</b><br>
-        {% if assessment.epi_version == 1 %}
+        {% if assessment.epi_version == EpiVersion.V1 %}
         <a class='btn btn-primary' href="{% url 'epi:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
-        {% elif assessment.epi_version == 2 %}
+        {% elif assessment.epi_version == EpiVersion.V2 %}
         <a class='btn btn-primary' href="{% url 'epiv2:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
         {% endif %}
