@@ -17,7 +17,7 @@ from ..common.autocomplete import (
 from ..common.forms import (
     ASSESSMENT_UNIQUE_MESSAGE,
     BaseFormHelper,
-    CopyAsNewSelectorFormV2,
+    CopyAsNewSelectorForm,
     form_actions_apply_filters,
     form_actions_create_or_close,
 )
@@ -205,7 +205,7 @@ class StudyPopulationForm(forms.ModelForm):
         return cleaned_data
 
 
-class StudyPopulationSelectorForm(CopyAsNewSelectorFormV2):
+class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
     label = "Study Population"
     parent_field = "study_id"
     autocomplete_class = autocomplete.StudyPopulationAutocomplete
@@ -334,7 +334,7 @@ class ExposureForm(forms.ModelForm):
         return helper
 
 
-class ExposureSelectorForm(CopyAsNewSelectorFormV2):
+class ExposureSelectorForm(CopyAsNewSelectorForm):
     label = "Exposure"
     parent_field = "study_population_id"
     autocomplete_class = autocomplete.ExposureAutocomplete
@@ -621,7 +621,7 @@ class OutcomeFilterForm(forms.Form):
         return self.cleaned_data.get("order_by", self.ORDER_BY_CHOICES[0][0])
 
 
-class OutcomeSelectorForm(CopyAsNewSelectorFormV2):
+class OutcomeSelectorForm(CopyAsNewSelectorForm):
     label = "Outcome"
     parent_field = "study_population_id"
     autocomplete_class = autocomplete.OutcomeAutocomplete
@@ -681,13 +681,13 @@ class ComparisonSet(forms.ModelForm):
         return helper
 
 
-class ComparisonSetByStudyPopulationSelectorForm(CopyAsNewSelectorFormV2):
+class ComparisonSetByStudyPopulationSelectorForm(CopyAsNewSelectorForm):
     label = "Comparison set"
     parent_field = "study_population_id"
     autocomplete_class = autocomplete.ComparisonSetAutocomplete
 
 
-class ComparisonSetByOutcomeSelectorForm(CopyAsNewSelectorFormV2):
+class ComparisonSetByOutcomeSelectorForm(CopyAsNewSelectorForm):
     label = "Comparison set"
     parent_field = "outcome_id"
     autocomplete_class = autocomplete.ComparisonSetAutocomplete
@@ -931,7 +931,7 @@ class ResultForm(forms.ModelForm):
         return helper
 
 
-class ResultSelectorForm(CopyAsNewSelectorFormV2):
+class ResultSelectorForm(CopyAsNewSelectorForm):
     label = "Result"
     parent_field = "outcome_id"
     autocomplete_class = autocomplete.ResultAutocomplete
