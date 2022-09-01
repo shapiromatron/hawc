@@ -4,12 +4,15 @@ from django.urls import reverse
 from hawc.apps.common.forms import BaseFormHelper
 
 from ..assessment.autocomplete import DSSToxAutocomplete
-from ..common import selectable
-from ..common.autocomplete import AutocompleteMultipleChoiceField, AutocompleteSelectWidget
+from ..common.autocomplete import (
+    AutocompleteMultipleChoiceField,
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import ArrayCheckboxSelectMultiple
 from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from ..epi.autocomplete import CountryAutocomplete
-from . import constants, lookups, models
+from . import autocomplete, constants, models
 
 
 class DesignForm(forms.ModelForm):
@@ -65,8 +68,8 @@ class ChemicalForm(forms.ModelForm):
         model = models.Chemical
         exclude = ("design",)
         widgets = {
-            "name": selectable.AutoCompleteWidget(
-                lookup_class=lookups.ChemicalNameLookup, allow_new=True
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ChemicalAutocomplete, field="name"
             ),
             "dsstox": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
         }
@@ -119,8 +122,8 @@ class ExposureLevelForm(forms.ModelForm):
         model = models.ExposureLevel
         exclude = ("design",)
         widgets = {
-            "units": selectable.AutoCompleteWidget(
-                lookup_class=lookups.ExposureLevelUnitsLookup, allow_new=True
+            "units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ExposureLevelAutocomplete, field="units"
             ),
         }
 
@@ -193,14 +196,14 @@ class OutcomeForm(forms.ModelForm):
         model = models.Outcome
         exclude = ("design",)
         widgets = {
-            "endpoint": selectable.AutoCompleteWidget(
-                lookup_class=lookups.EndpointLookup, allow_new=True
+            "endpoint": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="endpoint"
             ),
-            "effect": selectable.AutoCompleteWidget(
-                lookup_class=lookups.EffectLookup, allow_new=True
+            "effect": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect"
             ),
-            "effect_detail": selectable.AutoCompleteWidget(
-                lookup_class=lookups.EffectDetailLookup, allow_new=True
+            "effect_detail": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect_detail"
             ),
         }
 
@@ -227,11 +230,11 @@ class DataExtractionForm(forms.ModelForm):
             "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "effect_estimate_type": SelectOtherWidget(choices=constants.EffectEstimateType.choices),
-            "confidence": selectable.AutoCompleteWidget(
-                lookup_class=lookups.DataExtractionConfidenceLookup, allow_new=True
+            "confidence": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DataExtractionAutocomplete, field="confidence"
             ),
-            "units": selectable.AutoCompleteWidget(
-                lookup_class=lookups.DataExtractionUnitsLookup, allow_new=True
+            "units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DataExtractionAutocomplete, field="units"
             ),
         }
 
