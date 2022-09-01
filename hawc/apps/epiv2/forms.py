@@ -5,7 +5,7 @@ from hawc.apps.common.forms import BaseFormHelper
 
 from ..assessment.lookups import DssToxIdLookup
 from ..common import selectable
-from ..common.forms import ArrayCheckboxSelectMultiple
+from ..common.forms import ArrayCheckboxSelectMultiple, QuillField
 from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from . import constants, lookups, models
 
@@ -23,6 +23,11 @@ class DesignForm(forms.ModelForm):
         model = models.Design
         exclude = ("study",)
         widgets = {"age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices)}
+        field_classes = {
+            "criteria": QuillField,
+            "susceptibility": QuillField,
+            "comments": QuillField,
+        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -32,10 +37,6 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("criteria", "susceptibility", "comments"):
-            self.fields[fld].widget.attrs["class"] = "html5text"
-            self.fields[fld].widget.attrs["rows"] = 3
-
         if self.instance.id:
             helper = BaseFormHelper(self)
             helper.form_tag = False
