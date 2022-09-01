@@ -5,10 +5,7 @@ import {EXPOSURE_BIOMONITORING} from "./constants";
 
 const designFormStartup = function(form) {
         $(form)
-            .find(".html5text")
-            .quillify();
-        $(form)
-            .find("#id_study_design")
+            .find("#id_summary")
             .focus();
     },
     exposureFormStartup = function(form) {

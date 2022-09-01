@@ -14,7 +14,12 @@ from django.utils import timezone
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    form_actions_apply_filters,
+    form_actions_create_or_close,
+)
 from ..common.helper import new_window_a, tryParseInt
 from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
@@ -25,10 +30,9 @@ from . import lookups, models
 
 class AssessmentForm(forms.ModelForm):
 
-    internal_communications = forms.CharField(
+    internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this assessment; this field is only displayed to assessment team members.",
-        widget=forms.Textarea,
     )
 
     class Meta:
@@ -45,6 +49,12 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
+        }
+        field_classes = {
+            "assessment_objective": QuillField,
+            "authors": QuillField,
+            "conflicts_of_interest": QuillField,
+            "funding_source": QuillField,
         }
 
     def __init__(self, *args, **kwargs):
@@ -85,13 +95,6 @@ class AssessmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -223,6 +226,7 @@ class AttachmentForm(forms.ModelForm):
     class Meta:
         model = models.Attachment
         exclude = ("content_type", "object_id", "content_object")
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         obj = kwargs.pop("parent", None)
@@ -234,7 +238,6 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["description"].widget.attrs["class"] = "html5text"
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("title", 2, "col-md-6")
@@ -441,13 +444,6 @@ class DatasetForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in self.fields.keys():
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -537,6 +533,7 @@ class DatasetForm(forms.ModelForm):
     class Meta:
         model = models.Dataset
         fields = ("name", "description", "published")
+        field_classes = {"description": QuillField}
 
 
 class LogFilterForm(forms.Form):
