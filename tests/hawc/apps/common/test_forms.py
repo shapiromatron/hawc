@@ -8,34 +8,33 @@ class TestQuillField:
     def test_validate(self):
         fld = QuillField()
 
-        # invalid scheme
-        html = '<a href="ftp://www.example.gov">link</a>'
-        with pytest.raises(ValidationError):
-            fld.validate(html)
-
-        # invalid TLD
-        html = '<a href="http://www.example.com">link</a>'
-        with pytest.raises(ValidationError):
-            fld.validate(html)
-
         # valid
         html = '<a href="http://www.example.gov">link</a>'
         fld.validate(html)
 
+        # invalid
+        for html in [
+            '<a href="ftp://www.example.gov">link</a>',  # schema
+            '<a href="http://www.example.com">link</a>',  # tld
+        ]:
+            with pytest.raises(ValidationError):
+                fld.validate(html)
+
     def test_to_python(self):
         fld = QuillField()
-
-        # tags should be cleaned
-        html = "<script>alert();</script>"
-        cleaned_html = fld.to_python(html)
-        assert cleaned_html == "alert();"
-
-        # attrs should be cleaned
-        html = '<a href="www.example.com" title="title">link</a>'
-        cleaned_html = fld.to_python(html)
-        assert cleaned_html == '<a href="www.example.com">link</a>'
-
-        # styles should be cleaned
-        html = '<span style="color:blue;display:none">test</span>'
-        cleaned_html = fld.to_python(html)
-        assert cleaned_html == '<span style="color:blue;">test</span>'
+        data = [
+            # remove script tag
+            ("<script>alert();</script>", "alert();"),
+            # remove attribute
+            (
+                '<a href="www.example.com" title="title">link</a>',
+                '<a href="www.example.com">link</a>',
+            ),
+            # remove some styles
+            (
+                '<span style="color:blue;display:none">test</span>',
+                '<span style="color:blue;">test</span>',
+            ),
+        ]
+        for input_html, output_html in data:
+            assert fld.to_python(input_html) == output_html
