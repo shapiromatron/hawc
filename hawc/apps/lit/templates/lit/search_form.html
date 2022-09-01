@@ -9,8 +9,6 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-        $('.html5text').quillify();
-
         $('#id_title').on('keyup', function () {
           $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
         });
