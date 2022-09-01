@@ -18,8 +18,8 @@ class EpiFlatComplete(FlatFileExporter):
         header.extend(models.Exposure.flat_complete_header_row())
         header.extend(models.ExposureLevel.flat_complete_header_row())
         header.extend(models.Outcome.flat_complete_header_row())
-        header.extend(models.AdjustmentFactor.flat_complete_header_row())
         header.extend(models.DataExtraction.flat_complete_header_row())
+        header.extend(models.AdjustmentFactor.flat_complete_header_row())
         return header
 
     def _get_data_rows(self):
@@ -32,7 +32,7 @@ class EpiFlatComplete(FlatFileExporter):
             row.extend(obj.exposure_level.exposure_measurement.flat_complete_data_row())
             row.extend(obj.exposure_level.flat_complete_data_row())
             row.extend(obj.outcome.flat_complete_data_row())
-            row.extend(obj.factors.flat_complete_data_row())
             row.extend(obj.flat_complete_data_row())
+            row.extend(obj.factors.flat_complete_data_row())
             rows.append(row)
         return rows
