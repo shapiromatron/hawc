@@ -475,6 +475,9 @@ class ReferenceForm(forms.ModelForm):
             self._ident_removals.extend(list(existing))
 
     def clean_doi_id(self):
+        value = self.cleaned_data["doi_id"]
+        if value:
+            self.cleaned_data["doi_id"] = value.lower()
         self._update_identifier(constants.ReferenceDatabase.DOI, "doi_id")
 
     def clean_pubmed_id(self):

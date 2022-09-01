@@ -133,7 +133,7 @@ class TestHero:
             "title": "example search",
             "slug": "example-search",
             "description": "search description",
-            "search_string": "51001",
+            "search_string": "9961932",
         }
 
         # get initial counts
@@ -148,19 +148,21 @@ class TestHero:
 
         # check expected results
         assert models.Search.objects.count() == initial_searches + 1
-        assert models.Identifiers.objects.count() == initial_identifiers + 1
+        assert models.Identifiers.objects.count() == initial_identifiers + 2
         assert models.Reference.objects.count() == initial_refs + 1
 
         search = models.Search.objects.get(assessment=assessment_pk, title="example search")
         ref = models.Reference.objects.get(
-            title="Effect of thyroid hormone on growth and development"
+            title="Occurrence of selected per- and polyfluorinated alkyl substances (PFASs) in food available on the European market - A review on levels and human exposure assessment"
         )
-        ident = models.Identifiers.objects.get(
-            unique_id="51001", database=constants.ReferenceDatabase.HERO
+        assert models.Identifiers.objects.get(
+            unique_id="9961932", database=constants.ReferenceDatabase.HERO
+        )
+        assert models.Identifiers.objects.get(
+            unique_id="10.1016/j.chemosphere.2021.132378", database=constants.ReferenceDatabase.DOI
         )
 
         assert ref.searches.all()[0] == search
-        assert ref.identifiers.all()[0] == ident
 
     def test_failed(self, db_keys):
         """
