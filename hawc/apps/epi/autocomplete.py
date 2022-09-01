@@ -13,21 +13,21 @@ class CriteriaAutocomplete(BaseAutocomplete):
 class StudyPopulationAutocomplete(BaseAutocomplete):
     model = models.StudyPopulation
     search_fields = ["name"]
-    filter_fields = ["study_id"]
+    filter_fields = ["study_id", "study__assessment_id"]
 
 
 @register
 class ExposureAutocomplete(BaseAutocomplete):
     model = models.Exposure
     search_fields = ["name"]
-    filter_fields = ["study_population_id"]
+    filter_fields = ["study_population_id", "study_population__study__assessment_id"]
 
 
 @register
 class OutcomeAutocomplete(BaseAutocomplete):
     model = models.Outcome
     search_fields = ["name"]
-    filter_fields = ["study_population_id"]
+    filter_fields = ["study_population_id", "study_population__study__assessment_id"]
 
 
 @register
@@ -55,3 +55,4 @@ class ResultAutocomplete(BaseAutocomplete):
 class CountryAutocomplete(BaseAutocomplete):
     model = models.Country
     search_fields = ["name"]
+    filter_fields = ["studypopulation__study__assessment_id"]

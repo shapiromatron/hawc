@@ -111,9 +111,7 @@ document.addEventListener("dal-init-function", function () {
       $element.append(new Option($input.val(), $input.val(), false, true));
     })
     $element.on("select2:open", function(e){
-      // not working as intended; trying to retrigger query with old input
-      // manually triggering query here still performs initial query for some reason
-      $input.val($element.val()).trigger("input");
+      $input.val($element.val());
     });
   });
 });
