@@ -1,5 +1,5 @@
 import re
-from typing import Sequence
+from typing import Optional, Sequence
 from urllib import parse
 
 import bleach
@@ -36,12 +36,13 @@ valid_html_attrs = {"*": ["style"], "a": ["href", "rel", "target"]}
 valid_css_properties = {"color", "background-color"}
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {
-    ".gov",
     ".edu",
+    ".gov",
     ".who.int",
-    "sciencedirect.com",
+    "doi.org",
     "elsevier.com",
     "public.tableau.com",
+    "sciencedirect.com",
 }
 
 
@@ -67,7 +68,7 @@ def clean_html(html: str) -> str:
     )
 
 
-def validate_html_tags(html: str, field: str = None) -> str:
+def validate_html_tags(html: str, field: Optional[str] = None) -> str:
     """Html contains a subset of acceptable tags.
 
     Args:
