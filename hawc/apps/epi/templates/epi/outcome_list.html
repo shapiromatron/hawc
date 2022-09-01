@@ -22,7 +22,6 @@
 {% endblock content %}
 
 {% block extrajs %}
-    {{ form.media }}
     {{ config|json_script:"config" }}
     <script type="text/javascript">
         window.app.startup("epiStartup", function(app){

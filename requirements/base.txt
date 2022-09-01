@@ -26,6 +26,7 @@ redis==4.1.4
 requests==2.27.1
 pydantic==1.9.0
 myst-parser==0.16.1
+bleach[css]==5.0.1
 
 # computational
 numpy==1.22.2

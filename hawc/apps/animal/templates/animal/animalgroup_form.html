@@ -40,7 +40,6 @@
 {% endblock %}
 
 {% block extrajs %}
-{{form.media}}
 <script type="text/javascript">
 $(document).ready(function() {
     var printf = window.app.HAWCUtils.printf,
@@ -68,8 +67,6 @@ $(document).ready(function() {
                 );
             };
 
-            $('#id_comments').quillify();
-            $('#id_description').quillify();
             $('#id_species')
                 .change(onSpeciesChange)
                 .trigger('change');
