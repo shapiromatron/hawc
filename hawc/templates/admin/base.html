@@ -1,12 +1,6 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 
-{% block extrahead %}
-    {% load selectable_tags %}
-    {% include_ui_theme %}
-    {% include_jquery_libs %}
-{% endblock %}
-
 {% block userlinks %}
     {% if site_url %}
         <a href="{{ site_url }}">{% trans 'View site' %}</a> /

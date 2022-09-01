@@ -1,5 +1,4 @@
 {% extends "admin/change_form.html" %}
-{% load selectable_tags %}
 {% load static %}
 
 {% block extrahead %}
@@ -10,6 +9,4 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.js"></script>
     <script type="text/javascript" src="{% static 'selectable/js/jquery.dj.selectable.js' %}"></script>
-    {% include_ui_theme %}
-    {% include_jquery_libs %}
 {% endblock %}

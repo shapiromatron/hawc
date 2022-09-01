@@ -1,11 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
-{% load selectable_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
   {% include "hawc/_copy_as_new.html" with name="meta-result" notes="Select an existing meta-result as a template to create a new one." %}
