@@ -5,12 +5,11 @@ from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.urls import reverse
 
-from ..common import selectable
-from ..common.autocomplete import AutocompleteMultipleChoiceField
+from ..common.autocomplete import AutocompleteMultipleChoiceField, AutocompleteTextWidget
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorFormV2, form_actions_apply_filters
 from ..epi.autocomplete import AdjustmentFactorAutocomplete, CriteriaAutocomplete
 from ..study.autocomplete import StudyAutocomplete
-from . import autocomplete, lookups, models
+from . import autocomplete, models
 
 
 class MetaProtocolForm(forms.ModelForm):
@@ -111,26 +110,30 @@ class MetaResultForm(forms.ModelForm):
     class Meta:
         model = models.MetaResult
         exclude = ("protocol",)
+        widgets = {
+            "health_outcome": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.MetaResultAutocomplete, field="health_outcome"
+            ),
+            "exposure_name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.MetaResultAutocomplete, field="exposure_name"
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
         assessment = kwargs.pop("assessment", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["health_outcome"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.MetaResultHealthOutcomeLookup, allow_new=True
-        )
-
-        self.fields["exposure_name"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.MetaResultExposureNameLookup, allow_new=True
-        )
-
         if parent:
             self.instance.protocol = parent
 
         self.fields["adjustment_factors"].set_filters({"assessment_id": assessment.id})
-        self.fields["health_outcome"].widget.update_query_parameters({"related": assessment.id})
-        self.fields["exposure_name"].widget.update_query_parameters({"related": assessment.id})
+        self.fields["health_outcome"].widget.update_filters(
+            {"protocol__study__assessment_id": assessment.id}
+        )
+        self.fields["exposure_name"].widget.update_filters(
+            {"protocol__study__assessment_id": assessment.id}
+        )
 
     @property
     def helper(self):
@@ -190,28 +193,36 @@ class MetaResultFilterForm(forms.Form):
 
     label = forms.CharField(
         label="Meta result label",
-        widget=selectable.AutoCompleteWidget(lookups.MetaResultByAssessmentLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
+        ),
         help_text="ex: ALL, folic acid, any time",
         required=False,
     )
 
     protocol = forms.CharField(
         label="Protocol",
-        widget=selectable.AutoCompleteWidget(lookups.MetaProtocolLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaProtocolAutocomplete, field="name"
+        ),
         help_text="ex: B vitamins and risk of cancer",
         required=False,
     )
 
     health_outcome = forms.CharField(
         label="Health outcome",
-        widget=selectable.AutoCompleteWidget(lookups.MetaResultHealthOutcomeLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaResultAutocomplete, field="health_outcome"
+        ),
         help_text="ex: Any adenoma",
         required=False,
     )
 
     exposure_name = forms.CharField(
         label="Exposure name",
-        widget=selectable.AutoCompleteWidget(lookups.ExposureLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaResultAutocomplete, field="exposure_name"
+        ),
         help_text="ex: Folate",
         required=False,
     )
@@ -228,9 +239,11 @@ class MetaResultFilterForm(forms.Form):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["studies"].set_filters({"assessment_id": assessment.id, "epi_meta": True})
+        self.fields["protocol"].widget.update_filters({"study__assessment_id": assessment.id})
         for field in self.fields:
-            if field not in ("studies", "order_by", "paginate_by"):
-                self.fields[field].widget.update_query_parameters({"related": assessment.id})
+            widget = self.fields[field].widget
+            if field in ("label", "health_outcome", "exposure_name"):
+                widget.update_filters({"protocol__study__assessment_id": assessment.id})
 
     @property
     def helper(self):
