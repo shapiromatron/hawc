@@ -34,7 +34,7 @@ class DataExtractionQuerySet(QuerySet):
     def complete(self):
         return self.select_related(
             "design__study",
-            "exposure_level__chemical",
+            "exposure_level__chemical__dsstox",
             "exposure_level__exposure_measurement",
             "outcome",
             "factors",
