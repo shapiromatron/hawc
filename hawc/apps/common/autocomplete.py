@@ -1,6 +1,7 @@
 from dal import autocomplete
+from dal_select2.widgets import I18N_PATH
 from django.conf import settings
-from django.forms import ModelChoiceField, ModelMultipleChoiceField
+from django.forms import Media, ModelChoiceField, ModelMultipleChoiceField
 from django.http import Http404, HttpResponseForbidden
 from django.utils.encoding import force_str
 from django.utils.module_loading import autodiscover_modules
@@ -121,6 +122,31 @@ class SearchLabelMixin:
 
 
 class AutocompleteWidgetMixin:
+    @property
+    def media(self):
+        """Return JS/CSS resources for the widget."""
+        extra = "" if settings.DEBUG else ".min"
+        i18n_name = self._get_language_code()
+        i18n_file = (f"{I18N_PATH}{i18n_name}.js",) if i18n_name else ()
+
+        return Media(
+            js=(
+                "admin/js/vendor/select2/select2.full.js",
+                f"{settings.STATIC_URL}vendor/dal/3.9.4/js/autocomplete_light.js",
+                f"autocomplete_light/select2{extra}.js",
+                f"{settings.STATIC_URL}vendor/dal/3.9.4/js/select2text.js",
+            )
+            + i18n_file,
+            css={
+                "screen": (
+                    f"admin/css/vendor/select2/select2{extra}.css",
+                    "admin/css/autocomplete.css",
+                    "autocomplete_light/select2.css",
+                    f"{settings.STATIC_URL}vendor/dal/3.9.4/css/select2-bootstrap.css",
+                ),
+            },
+        )
+
     def __init__(
         self,
         autocomplete_class: BaseAutocomplete,
@@ -170,9 +196,6 @@ class AutocompleteSelectMultipleWidget(AutocompleteWidgetMixin, autocomplete.Mod
 
 class AutocompleteTextWidget(AutocompleteWidgetMixin, autocomplete.Select2):
     autocomplete_function = "select2text"
-
-    class Media:
-        js = (f"{settings.STATIC_URL}js/autocomplete_text.js",)
 
     def __init__(self, field: str, *args, **kwargs):
         # add field to filters
