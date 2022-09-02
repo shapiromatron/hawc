@@ -196,7 +196,7 @@ class Chemical(models.Model):
         return (
             self.pk,
             self.name,
-            self.dsstox.dtxsid,
+            self.dsstox.dtxsid if self.dsstox else None,
         )
 
 
