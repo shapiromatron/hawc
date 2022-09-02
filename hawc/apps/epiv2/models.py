@@ -122,6 +122,8 @@ class Design(models.Model):
             "design-criteria",
             "design-susceptibility",
             "design-comments",
+            "design-created",
+            "design-last_updated",
         )
 
     def flat_complete_data_row(self):
@@ -144,6 +146,8 @@ class Design(models.Model):
             self.criteria,
             self.susceptibility,
             self.comments,
+            self.created,
+            self.last_updated,
         )
 
 
@@ -190,6 +194,8 @@ class Chemical(models.Model):
             "chemical-pk",
             "chemical-name",
             "chemical-DTSXID",
+            "chemical-created",
+            "chemical-last_updated",
         )
 
     def flat_complete_data_row(self):
@@ -197,6 +203,8 @@ class Chemical(models.Model):
             self.pk,
             self.name,
             self.dsstox.dtxsid if self.dsstox else None,
+            self.created,
+            self.last_updated,
         )
 
 
@@ -270,6 +278,8 @@ class Exposure(models.Model):
             "exposure-exposure_route",
             "exposure-measurement_method",
             "exposure-comments",
+            "exposure-created",
+            "exposure-last_updated",
         )
 
     def flat_complete_data_row(self):
@@ -283,6 +293,8 @@ class Exposure(models.Model):
             self.get_exposure_route_display(),
             self.measurement_method,
             self.comments,
+            self.created,
+            self.last_updated,
         )
 
 
@@ -406,6 +418,8 @@ class ExposureLevel(models.Model):
             "exposure_level-negligible_exposure",
             "exposure_level-data_location",
             "exposure_level-comments",
+            "exposure_level-created",
+            "exposure_level-last_updated",
         )
 
     def flat_complete_data_row(self):
@@ -426,6 +440,8 @@ class ExposureLevel(models.Model):
             self.negligible_exposure,
             self.data_location,
             self.comments,
+            self.created,
+            self.last_updated,
         )
 
 
@@ -483,6 +499,8 @@ class Outcome(models.Model):
             "outcome-effect_detail",
             "outcome-endpoint",
             "outcome-comments",
+            "outcome-created",
+            "outcome-last_updated",
         )
 
     def flat_complete_data_row(self):
@@ -493,6 +511,8 @@ class Outcome(models.Model):
             self.effect_detail,
             self.endpoint,
             self.comments,
+            self.created,
+            self.last_updated,
         )
 
 
@@ -537,6 +557,8 @@ class AdjustmentFactor(models.Model):
             "adjustment_factor-name",
             "adjustment_factor-description",
             "adjustment_factor-comments",
+            "adjustment_factor-created",
+            "adjustment_factor-last_updated",
         )
 
     def flat_complete_data_row(self):
@@ -545,6 +567,8 @@ class AdjustmentFactor(models.Model):
             self.name,
             self.description,
             self.comments,
+            self.created,
+            self.last_updated,
         )
 
 
@@ -692,6 +716,8 @@ class DataExtraction(models.Model):
             "data_extraction-effect_description",
             "data_extraction-statistical_method",
             "data_extraction-comments",
+            "data_extraction-created",
+            "data_extraction-last_updated",
         )
 
     def flat_complete_data_row(self):
@@ -719,6 +745,8 @@ class DataExtraction(models.Model):
             self.effect_description,
             self.statistical_method,
             self.comments,
+            self.created,
+            self.last_updated,
         )
 
 
