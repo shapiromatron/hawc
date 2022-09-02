@@ -146,7 +146,7 @@ class InAssessmentFilter(filters.BaseFilterBackend):
         return queryset.filter(**filters)
 
 
-class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
+class BaseAssessmentViewset(viewsets.GenericViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter,)
@@ -154,6 +154,10 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewset):
+    pass
 
 
 # all http methods except PUT
