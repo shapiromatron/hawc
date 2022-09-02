@@ -460,6 +460,10 @@ class AssessmentDownloads(BaseDetail):
     template_name = "assessment/assessment_downloads.html"
     breadcrumb_active_name = "Downloads"
 
+    def get_context_data(self, **kwargs):
+        kwargs.update(EpiVersion=constants.EpiVersion)
+        return super().get_context_data(**kwargs)
+
 
 # Attachment viewset
 class AttachmentViewset(HtmxViewSet):
