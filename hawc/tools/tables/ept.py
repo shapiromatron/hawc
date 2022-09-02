@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
-from .parser import QuillParser, tag_wrapper, ul_wrapper
+from .parser import QuillParser, has_inner_text, strip_enclosing_tag, tag_wrapper, ul_wrapper
 
 
 class JudgementTexts(Enum):
@@ -14,7 +14,7 @@ class JudgementTexts(Enum):
     Moderate = ("⊕⊕⊙", "Moderate")
     Slight = ("⊕⊙⊙", "Slight")
     Indeterminate = ("⊙⊙⊙", "Indeterminate")
-    NoEffect = ("⊝⊝⊝", "Evidence of no effect")
+    NoEffect = ("⊝⊝⊝", "Compelling evidence of no effect")
 
 
 class SummaryJudgementTexts(Enum):
@@ -58,6 +58,7 @@ class SummaryJudgementCell(BaseCell):
     human_relevance: str
     cross_stream_coherence: str
     susceptibility: str
+    plausibility: str
     other: str
 
     hide_content: bool
@@ -80,16 +81,27 @@ class SummaryJudgementCell(BaseCell):
     def to_docx(self, parser: QuillParser, block):
         text = ""
         text += self.judgement_html()
-        text += tag_wrapper("\nPrimary basis:", "p", "em")
-        text += self.description
-        text += tag_wrapper("\nHuman relevance:", "p", "em")
-        text += self.human_relevance
-        text += tag_wrapper("\nCross-stream coherence:", "p", "em")
-        text += self.cross_stream_coherence
-        text += tag_wrapper("\nSusceptible populations and lifestages:", "p", "em")
-        text += self.susceptibility
-        text += tag_wrapper("\nOther inferences:", "p", "em")
-        text += self.other
+        if has_inner_text(self.description):
+            text += f"\n{self.description}"
+        if has_inner_text(self.human_relevance):
+            text += tag_wrapper("\nHuman relevance of findings in animals:", "p", "em")
+            text += self.human_relevance
+        if has_inner_text(self.cross_stream_coherence):
+            text += tag_wrapper("\nCross-stream coherence:", "p", "em")
+            text += self.cross_stream_coherence
+        if has_inner_text(self.susceptibility):
+            text += tag_wrapper("\nPotential susceptibility:", "p", "em")
+            text += self.susceptibility
+        if has_inner_text(self.plausibility):
+            text += tag_wrapper("\nBiological plausibility:", "p", "em")
+            text += self.plausibility
+        if has_inner_text(self.other):
+            text += tag_wrapper(
+                "\nOther critical inferences (e.g., ADME, or other supplemental information):",
+                "p",
+                "em",
+            )
+            text += self.other
         parser.feed(text, block)
         if self.judgement != SummaryJudgementChoices.NoJudgement:
             for paragraph in block.paragraphs[0:2]:
@@ -121,18 +133,20 @@ class SummaryCell(BaseCell):
 class FactorLabel(Enum):
     NoFactors = "No factors noted"
     UpConsistency = "Consistency"
-    UpDoseGradient = "Dose - response gradient"
-    UpCoherence = "Coherence of effects"
+    UpDoseGradient = "Dose-response gradient"
+    UpCoherence = "Coherence"
     UpEffect = "Large or concerning magnitude of effect"
     UpPlausible = "Mechanistic evidence providing plausibility"
-    UpConfidence = "Medium or high confidence studies"
+    UpConfidence = "Most studies are medium or high confidence"
     UpOther = ""
     DownConsistency = "Unexplained inconsistency"
     DownImprecision = "Imprecision"
     DownCoherence = "Lack of expected coherence"
     DownImplausible = "Evidence demonstrating implausibility"
-    DownConfidence = "Low confidence studies"
+    DownConfidence = "Most studies are low confidence"
     DownInterpretation = "Interpretation limitations"
+    DownSignificance = "Concerns about biological significance"
+    DownMeasures = "Indirect outcome measures"
     DownOther = ""
 
 
@@ -151,7 +165,31 @@ class FactorType(IntEnum):
     DownImplausible = -50
     DownConfidence = -60
     DownInterpretation = -70
+    DownSignificance = -80
+    DownMeasures = -90
     DownOther = -100
+
+
+CERTAIN_FACTORS = [
+    FactorType.NoFactors,
+    FactorType.UpConfidence,
+    FactorType.UpConsistency,
+    FactorType.UpDoseGradient,
+    FactorType.UpEffect,
+    FactorType.UpCoherence,
+    FactorType.UpOther,
+]
+
+UNCERTAIN_FACTORS = [
+    FactorType.NoFactors,
+    FactorType.DownConfidence,
+    FactorType.DownConsistency,
+    FactorType.DownImprecision,
+    FactorType.DownSignificance,
+    FactorType.DownMeasures,
+    FactorType.DownCoherence,
+    FactorType.DownOther,
+]
 
 
 class Factor(BaseModel):
@@ -161,22 +199,34 @@ class Factor(BaseModel):
 
     def to_html(self):
         label = FactorLabel[self.key.name].value
+        short_description = strip_enclosing_tag(self.short_description, "p")
         if label:
-            if self.short_description.startswith("<p>"):
-                # same logic as in Factors.js; insert label into user-specified content
-                replacement_header = f"<p>{tag_wrapper(label, 'em')} - "
-                return self.short_description.replace("<p>", replacement_header, 1)
-            return tag_wrapper(label, "em") + " - " + self.short_description
+            if has_inner_text(short_description):
+                return f"{tag_wrapper(label, 'em')} - {short_description}"
+            return tag_wrapper(label, "em")
         else:
-            return self.short_description
+            return short_description
 
 
 class FactorsCell(BaseCell):
     factors: List[Factor]
     text: str
 
+    @property
+    def factor_types(self):
+        raise NotImplementedError()
+
+    @property
+    def sorted_factors(self):
+        factor_map = {factor.key: factor for factor in self.factors}
+        return [
+            factor_map.get(factor_type)
+            for factor_type in self.factor_types
+            if factor_type in factor_map
+        ]
+
     def to_docx(self, parser: QuillParser, block):
-        factors = [factor.to_html() for factor in self.factors]
+        factors = [factor.to_html() for factor in self.sorted_factors]
         text = ""
         if len(factors):
             text = ul_wrapper(factors)
@@ -187,9 +237,17 @@ class FactorsCell(BaseCell):
 class CertainFactorsCell(FactorsCell):
     column: int = 2
 
+    @property
+    def factor_types(self):
+        return CERTAIN_FACTORS
+
 
 class UncertainFactorsCell(FactorsCell):
     column: int = 3
+
+    @property
+    def factor_types(self):
+        return UNCERTAIN_FACTORS
 
 
 class JudgementCell(BaseCell):
@@ -328,7 +386,7 @@ class MechanisticGroup(BaseCellGroup):
     def column_headers(self):
         text1 = tag_wrapper(self.col_header_1, "p", "strong")
         text2 = tag_wrapper("Summary of key findings and interpretation", "p", "strong")
-        text3 = tag_wrapper("Judgment(s) and rationale", "p", "strong")
+        text3 = tag_wrapper("Evidence Synthesis Judgment(s)", "p", "strong")
         return [
             GenericCell.parse_args(True, 1, 0, 1, 1, text1),
             GenericCell.parse_args(
@@ -376,9 +434,7 @@ class EvidenceProfileTable(BaseTable):
     @property
     def column_headers(self):
         return [
-            GenericCell.parse_args(
-                True, 1, 0, 1, 1, tag_wrapper("Studies, outcomes, and confidence", "p", "strong")
-            ),
+            GenericCell.parse_args(True, 1, 0, 1, 1, tag_wrapper("Studies", "p", "strong")),
             GenericCell.parse_args(
                 True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")
             ),
@@ -389,7 +445,7 @@ class EvidenceProfileTable(BaseTable):
                 True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 4, 1, 1, tag_wrapper("Judgment(s) and rationale", "p", "strong")
+                True, 1, 4, 1, 1, tag_wrapper("Evidence Synthesis Judgment(s)", "p", "strong")
             ),
         ]
 
@@ -398,7 +454,7 @@ class EvidenceProfileTable(BaseTable):
         hide_evidence = self.exposed_human.hide_content and self.animal.hide_content
 
         if not (hide_evidence and self.mechanistic.hide_content):
-            text = tag_wrapper("Evidence Summary and Interpretation", "h2")
+            text = tag_wrapper("Evidence Synthesis (Strength of Evidence) Judgments", "h2")
             cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
         rows = 1
 
@@ -419,18 +475,17 @@ class EvidenceProfileTable(BaseTable):
             rows = self.mechanistic.rows
 
         if not self.summary_judgement.hide_content:
-            text = tag_wrapper("Inferences and Summary Judgment", "h2")
+            text = tag_wrapper("Evidence Integration (Weight of Evidence) Judgment(s)", "h2")
             if hide_evidence and self.mechanistic.hide_content:
                 cells.append(GenericCell.parse_args(True, 0, 0, 1, 1, text))
                 self.summary_judgement.row = 1
                 self.summary_judgement.column = 0
                 cells.append(self.summary_judgement)
             else:
-                header_row_span = 2 if not hide_evidence else 1
-                cells.append(GenericCell.parse_args(True, 0, 5, header_row_span, 1, text))
-                self.summary_judgement.row = header_row_span
+                cells.append(GenericCell.parse_args(True, 0, 5, 1, 1, text))
+                self.summary_judgement.row = 1
                 self.summary_judgement.column = 5
-                self.summary_judgement.row_span = rows - header_row_span
+                self.summary_judgement.row_span = rows - 1
                 cells.append(self.summary_judgement)
 
         self.cells = cells
@@ -439,7 +494,7 @@ class EvidenceProfileTable(BaseTable):
     def get_default_props(cls):
         return {
             "exposed_human": {
-                "title": "Evidence from studies of exposed humans",
+                "title": "Evidence from human studies",
                 "rows": [
                     {
                         "summary": {"findings": "<p></p>"},
@@ -494,6 +549,7 @@ class EvidenceProfileTable(BaseTable):
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",
                 "susceptibility": "<p></p>",
+                "plausibility": "<p></p>",
                 "other": "<p></p>",
                 "hide_content": False,
             },

@@ -123,7 +123,7 @@ jobs:
       DJANGO_DB_NAME: hawc
       DJANGO_DB_PW: password
       DJANGO_DB_USER: hawc
-      HAWC_INTEGRATION_TESTS: 1
+      INTEGRATION_TESTS: 1
       LIVESERVER_HOST: localhost
       LIVESERVER_PORT: 8000
       PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
@@ -156,13 +156,13 @@ jobs:
       id: test
       continue-on-error: true
       run: |
-        LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
+        py.test -sv tests/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        LLR_INTEGRATION_TESTS=1 py.test -sv tests/integration/
+        py.test -sv tests/integration/
     - name: set status
       if: always()
       run: |

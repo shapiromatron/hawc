@@ -23,8 +23,13 @@ from ..common.autocomplete import (
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
 from ..study.autocomplete import StudyAutocomplete
+from ..common.forms import (
+    BaseFormHelper,
+    CopyAsNewSelectorForm,
+    QuillField,
+    form_actions_apply_filters,
+)
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
@@ -33,6 +38,7 @@ class ExperimentForm(ModelForm):
     class Meta:
         model = models.Experiment
         exclude = ("study",)
+        field_classes = {"description": QuillField}
         widgets = {
             "dtxsid": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
             "chemical": AutocompleteTextWidget(
@@ -68,8 +74,6 @@ class ExperimentForm(ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "form-control"
-
-        self.fields["description"].widget.attrs["rows"] = 4
 
         if self.instance.id:
             inputs = {
@@ -142,6 +146,7 @@ class AnimalGroupForm(ModelForm):
         model = models.AnimalGroup
         exclude = ("experiment", "dosing_regime", "generation", "parents")
         labels = {"lifestage_assessed": "Lifestage at assessment"}
+        field_classes = {"comments": QuillField}
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
@@ -172,8 +177,6 @@ class AnimalGroupForm(ModelForm):
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment
         )
-
-        self.fields["comments"].widget.attrs["rows"] = 4
 
     @property
     def helper(self):
@@ -260,14 +263,13 @@ class DosingRegimeForm(ModelForm):
     class Meta:
         model = models.DosingRegime
         exclude = ("dosed_animals",)
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
-
-        self.fields["description"].widget.attrs["rows"] = 4
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs["class"] = "form-control"
 
@@ -418,6 +420,7 @@ class EndpointForm(ModelForm):
                 autocomplete_class=autocomplete.EndpointAutocomplete, field="statistical_test"
             ),
         }
+        field_classes = {"results_notes": QuillField, "endpoint_notes": QuillField}
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop("parent", None)

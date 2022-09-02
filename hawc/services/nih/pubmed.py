@@ -310,6 +310,6 @@ class PubMedParser:
     def _get_doi(cls, tree: ET.Element, search_string) -> Optional[str]:
         doi = tree.find(search_string)
         if doi is not None:
-            return doi.text
+            return doi.text.lower()
         else:
             return None
