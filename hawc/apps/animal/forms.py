@@ -23,13 +23,13 @@ from ..common.autocomplete import (
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
-from ..study.autocomplete import StudyAutocomplete
 from ..common.forms import (
     BaseFormHelper,
     CopyAsNewSelectorForm,
     QuillField,
     form_actions_apply_filters,
 )
+from ..study.autocomplete import StudyAutocomplete
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
