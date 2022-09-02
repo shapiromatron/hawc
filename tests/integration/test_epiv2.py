@@ -34,8 +34,8 @@ class TestEpiV2(PlaywrightTestCase):
 
         # Check chemical CCRUD
         page.locator("text=Chemicals Add Row >> button").click()
-        page.locator('input[name="name"]').click()
-        page.locator('input[name="name"]').fill("water")
+        page.locator('select[name="name"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("water")
         page.locator("#chemical-save").click()
         page.locator("text=water - >> #chemical-clone").click()
         page.locator("text=water (2)").click()
@@ -71,10 +71,10 @@ class TestEpiV2(PlaywrightTestCase):
         # Check outcome CCRUD
         page.locator("text=Outcomes Add Row >> button").click()
         page.locator('select[name="system"]').select_option("IM")
-        page.locator('input[name="effect"]').click()
-        page.locator('input[name="effect"]').fill("asthma 2")
-        page.locator('input[name="endpoint"]').click()
-        page.locator('input[name="endpoint"]').fill("asthma within previous 10 years")
+        page.locator('select[name="effect"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("asthma 2")
+        page.locator('select[name="endpoint"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("asthma within previous 10 years")
         page.locator("#outcome-save").click()
         page.locator(
             "text=Immune asthma 2 asthma within previous 10 years >> #outcome-clone"
