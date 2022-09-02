@@ -1,6 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 {% load bs4 %}
-{% load static %}
 
 {% block content %}
 <h2 class="d-inline-block">Update {{object.summary}}</h2>
@@ -150,9 +149,5 @@ window.app.startup("epiv2Startup", function(app){
     app.formStartup(document);
 });
 </script>
-<script type="text/javascript" src="{% static 'admin/js/vendor/select2/select2.full.js' %}"></script>
-<script type="text/javascript" src="{% static 'autocomplete_light/autocomplete_light.js' %}"></script>
-<script type="text/javascript" src="{% static 'autocomplete_light/select2.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/autocomplete.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/autocomplete_text.js' %}"></script>
+{% include "common/autocomplete_scripts.html" %}
 {% endblock %}
