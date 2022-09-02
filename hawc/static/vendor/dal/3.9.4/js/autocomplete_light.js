@@ -3,7 +3,19 @@
  */
 
 var yl = yl || {};
-yl.functions = {};
+
+/**
+ * START CHANGES
+ *
+ * Functions shouldn't be lost if this script is loaded again.
+ */
+
+yl.functions = yl.functions || {};
+
+/**
+ * END CHANGES
+ */
+
 /**
  * Register your own JS function for DAL.
  *
