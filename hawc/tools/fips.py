@@ -30,6 +30,7 @@ def monkey_patch_md5(modules_to_patch):
 
 
 def patch_md5():
+    print("FIPS monkeypatch enabled...")
     monkey_patch_md5(
         [
             "django.contrib.staticfiles.storage",
