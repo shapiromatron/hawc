@@ -101,13 +101,6 @@ mark,.mark {
     right: 0;
 }
 
-/* jQueryUI OVERRIDES */
-.ui-front{
-    /* must be higher than bootstrap modal for smart-tags */
-    z-index: 1055;
-}
-/* jQueryUI OVERRIDES */
-
 /* Disable html5 number spinners in Chrome */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {

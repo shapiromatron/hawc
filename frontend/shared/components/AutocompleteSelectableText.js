@@ -14,7 +14,7 @@ import "./Autocomplete/Autocomplete.css";
 
 class AutocompleteSelectableText extends Component {
     /*
-    Autocomplete widget; works with `hawc.apps.common.lookups.DistinctStringLookup`
+    Autocomplete widget; works with django-autocomplete-light
     */
 
     constructor(props) {
