@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 
 from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
+from hawc.tools import fips
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -126,6 +127,10 @@ INSTALLED_APPS = (
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
 )
+
+# TODO - remove with django==4.1
+if HAWC_FEATURES.FIPS_MODE is True:
+    fips.patch_md5()
 
 if HAWC_FEATURES.ENABLE_ECO:
     INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
