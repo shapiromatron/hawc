@@ -19,9 +19,9 @@ class AutocompleteWidgetMixin:
         return Media(
             js=(
                 "admin/js/vendor/select2/select2.full.js",
-                f"{settings.STATIC_URL}vendor/dal/3.9.4/js/autocomplete_light.js",
+                f"{settings.STATIC_URL}patched/dal/3.9.4/js/autocomplete_light.js",
                 f"autocomplete_light/select2{extra}.js",
-                f"{settings.STATIC_URL}vendor/dal/3.9.4/js/select2text.js",
+                f"{settings.STATIC_URL}patched/dal/3.9.4/js/select2text.js",
             )
             + i18n_file,
             css={
@@ -29,7 +29,7 @@ class AutocompleteWidgetMixin:
                     f"admin/css/vendor/select2/select2{extra}.css",
                     "admin/css/autocomplete.css",
                     "autocomplete_light/select2.css",
-                    f"{settings.STATIC_URL}vendor/dal/3.9.4/css/select2-bootstrap.css",
+                    f"{settings.STATIC_URL}patched/dal/3.9.4/css/select2-bootstrap.css",
                 ),
             },
         )

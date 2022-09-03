@@ -1,20 +1,18 @@
 /*!
  * Django Autocomplete Light
+ *
+ * modified for htmx compatibility; see `HAWC CHANGES START` and `HAWC CHANGES END`
  */
 
 var yl = yl || {};
 
 /**
- * START CHANGES
+ * HAWC CHANGES START
  *
  * Functions shouldn't be lost if this script is loaded again.
  */
-
 yl.functions = yl.functions || {};
-
-/**
- * END CHANGES
- */
+/* HAWC CHANGES END */
 
 /**
  * Register your own JS function for DAL.
@@ -26,14 +24,13 @@ yl.functions = yl.functions || {};
 yl.registerFunction = function (name, func) {
   if (this.functions.hasOwnProperty(name)) {
     /**
-     * START CHANGES
+     * HAWC CHANGES START
      *
      * Remove the console error when a DAL function tries to reregister;
      * reregister attempts are expected with htmx
-     *
-     * END CHANGES
      */
     return;
+    /* HAWC CHANGES END */
   }
   if (typeof func != "function") {
     // It's not a function kill it.
@@ -162,16 +159,12 @@ window.addEventListener("load", function () {
       }
 
       /**
-       * START CHANGES
+       * HAWC CHANGES START
        *
        * Add a unique identifier to element; needed if element id is not unique
        */
-
       $(element).attr("data-select2-id", Math.floor(Math.random() * 1000) + 1);
-
-      /**
-       * END CHANGES
-       */
+      /* HAWC CHANGES END */
 
       // The DAL function to execute.
       var dalFunction = $(element).attr("data-autocomplete-light-function");
@@ -217,21 +210,17 @@ window.addEventListener("load", function () {
       });
 
       /**
-       * START CHANGES
+       * HAWC CHANGES START
        *
        * DOM manipulation with regards to DAL should only really happen through htmx
        */
-
       htmx.onLoad(function (el) {
         $(el)
           .find("[data-autocomplete-light-function]")
           .excludeTemplateForms()
           .each(initialize);
       });
-
-      /**
-       * END CHANGES
-       */
+      /* HAWC CHANGES END */
     }
 
     // using jQuery
