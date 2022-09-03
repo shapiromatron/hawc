@@ -1,7 +1,7 @@
 # TODO - remove module after django>=4.1 -> https://github.com/django/django/pull/14763/
-import os
 import hashlib
 import importlib
+import os
 
 
 def _non_security_md5(*args, **kwargs):
