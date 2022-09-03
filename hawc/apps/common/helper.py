@@ -1,8 +1,6 @@
 import decimal
-import hashlib
 import logging
 import re
-import uuid
 from collections import OrderedDict, defaultdict
 from datetime import timedelta
 from math import inf
@@ -11,7 +9,6 @@ from typing import Any, Dict, List, NamedTuple, Optional, Set, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -121,15 +118,6 @@ def int_or_float(val: float) -> Union[int, float]:
     If unable to, it returns the original float.
     """
     return int(val) if int(val) == val else val
-
-
-def create_uuid(id: int) -> str:
-    """
-    Creates a UUID from a given ID
-    """
-    hashed_id = hashlib.md5(str(id).encode())
-    hashed_id.update(settings.SECRET_KEY.encode())
-    return str(uuid.UUID(bytes=hashed_id.digest()))
 
 
 def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -> pd.DataFrame:
