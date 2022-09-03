@@ -1,4 +1,5 @@
 # TODO - remove module after django>=4.1 -> https://github.com/django/django/pull/14763/
+import os
 import hashlib
 import importlib
 
@@ -30,6 +31,10 @@ def monkey_patch_md5(modules_to_patch):
 
 
 def patch_md5():
+    run_once = os.environ.get("HAWC_RUN_ONCE")
+    if run_once is not None:
+        return
+    os.environ["HAWC_RUN_ONCE"] = "True"
     print("FIPS monkeypatch enabled...")
     monkey_patch_md5(
         [
