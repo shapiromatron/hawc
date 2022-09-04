@@ -37,7 +37,7 @@ class TestBioassay(PlaywrightTestCase):
     def test_write(self):
         page = self.page
         page.goto(self.live_server_url)
-        self.login_and_goto_url(page, f"{self.live_server_url}/study/1/", "pm@hawcproject.org")
+        self.login_and_goto_url(page, f"{self.live_server_url}/study/1/", "team@hawcproject.org")
         page.locator("text=Actions").click()
         page.locator("text=Create new experiment").click()
 
