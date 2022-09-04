@@ -10,12 +10,6 @@ class EndpointFormStore {
     @observable useControlledVocabulary = null;
 
     constructor(config) {
-        fields.map(field => {
-            // set null values to empty strings; required for endpoint creates
-            if (config.object[field] === null) {
-                config.object[field] = "";
-            }
-        });
         this.config = config;
         this.setUseControlledVocabulary();
     }
