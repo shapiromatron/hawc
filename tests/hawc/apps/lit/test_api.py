@@ -281,6 +281,10 @@ class TestLiteratureAssessmentViewset:
         resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
         assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
 
+        # invalid; no file returns an error
+        resp = c.post(url)
+        assert resp.status_code == 400 and resp.json() == {"file": "A file is required"}
+
 
 @pytest.mark.django_db
 class TestReferenceFilterTagViewset:
