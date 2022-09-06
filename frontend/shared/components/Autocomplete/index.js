@@ -5,6 +5,7 @@ import AutoSuggest from "react-autosuggest";
 
 import h from "shared/utils/helpers";
 import {DEFAULT_MIN_SEARCH_LENGTH, DEBOUNCE_MS, theme} from "../Autocomplete/constants";
+import {InlineAutosuggest, renderInlineAutosuggest} from "./Inline";
 import "./Autocomplete.css";
 
 class Autocomplete extends Component {
@@ -82,4 +83,5 @@ Autocomplete.propTypes = {
     minSearchLength: PropTypes.number,
 };
 
+export {InlineAutosuggest, renderInlineAutosuggest};
 export default Autocomplete;
