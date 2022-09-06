@@ -301,7 +301,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
         file_ = request.data["file"]
 
-        if not file_.name.endswith(".xlsx"):
+        if file_ is None:
+            raise ValidationError({"file": "A file is required"})
+        elif not file_.name.endswith(".xlsx"):
             raise ValidationError({"file": "File extension must be .xlsx"})
 
         try:
