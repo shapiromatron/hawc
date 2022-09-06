@@ -42,6 +42,10 @@ class MetaProtocolForm(forms.ModelForm):
     class Meta:
         model = models.MetaProtocol
         exclude = ("study",)
+        widgets = {
+            "lit_search_start_date": forms.DateInput(attrs={"type": "date"}),
+            "lit_search_end_date": forms.DateInput(attrs={"type": "date"}),
+        }
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)

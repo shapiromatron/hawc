@@ -5,17 +5,3 @@
 {% block content %}
   {% crispy form %}
 {% endblock %}
-
-{% block extrajs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('#id_lit_search_start_date, #id_lit_search_end_date')
-        .datepicker({
-          showAnim: "slideDown",
-          changeMonth: true,
-          changeYear: true,
-          yearRange: '1930 : * '
-        });
-    });
-  </script>
-{% endblock extrajs %}
