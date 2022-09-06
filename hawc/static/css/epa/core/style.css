@@ -1,6 +1,406 @@
 /** Font-faces *************************************************/
  /* Baseline Grid: 1.5em (25.5px)*/
 
+.l-header {
+ 	position: relative;
+ 	z-index: 2;
+ }
+.footer {
+	background-color: #3d4551;
+	color: #fff;
+	min-height: 11.25rem;
+	padding: 2.5rem 0;
+}
+
+.footer__epa-seal {
+	float: left;
+	margin: 0 2.5rem 2.5rem 0
+}
+
+@media (min-width: 43.75em) {
+	.footer__epa-seal {
+		margin-right: 5.7142857143%
+	}
+}
+
+.footer__content {
+	display: inline-block
+}
+.usa-section--dark a:link,
+.usa-dark-background a:link,
+.definition__tooltip a:link,
+.footer a:link,
+.usa-section--dark a:visited,
+.usa-dark-background a:visited,
+.definition__tooltip a:visited,
+.footer a:visited {
+	color: #dfe1e2;
+}
+
+@media (min-width: 43.75em) {
+	.footer__content {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-pack: justify;
+		-ms-flex-pack: justify;
+		justify-content: space-between
+	}
+}
+
+.footer__column {
+	margin-bottom: 2.925rem
+}
+
+@media (min-width: 43.75em) {
+	.footer__column {
+		margin-bottom: 0;
+		width: 30%
+	}
+}
+@media (min-width: 65em) {
+	.menu--social {
+		-webkit-box-pack: start;
+		justify-content: space-between;
+		max-width: 100%;
+	}
+}
+.external-link__tag {
+	display: inline-block;
+	font-size: 0.75rem !important;
+	margin-left: 0.25em;
+	padding: 0 0.5em !important;
+	text-decoration: none;
+}
+.menu--social .menu__link {
+	display: block;
+	font-size: 2.5rem;
+	line-height: 0.5;
+	text-decoration: none;
+}
+.icon--pager, .icon--social {
+    top: 0px;
+}
+.icon {
+	display: inline-block;
+	fill: currentcolor;
+	height: 1em;
+	position: relative;
+	top: -2px;
+	vertical-align: middle;
+	width: 1em;
+	transition: none 0s ease 0s;
+	overflow: visible !important;
+}
+.menu--social .menu__link::after,
+.menu--social .menu__link .external-link__tag {
+	display: none !important;
+}
+.menu__item {
+	max-width: initial;
+}
+li {
+	display: list-item;
+	text-align: -webkit-match-parent;
+}
+.menu--social {
+	display: flex;
+	flex-wrap: wrap;
+	list-style-type: none;
+	padding: 0px;
+	margin-bottom: 1em;
+}
+.external-link__tag {
+	display: inline-block;
+	font-size: 0.75rem;
+	margin-left: 0.25em;
+	padding: 0px 0.5em;
+	text-decoration: none;
+}
+.u-visually-hidden {
+	clip: rect(1px, 1px, 1px, 1px) !important;
+	height: 1px !important;
+	position: absolute !important;
+	width: 1px !important;
+	overflow-wrap: normal !important;
+	overflow: hidden !important;
+}
+.footer a:link {
+	color: rgb(223, 225, 226);
+}
+.footer__column > h2 {
+	font-family: "Merriweather Web", "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 1.95rem;
+	font-weight: 700;
+	line-height: 1.2;
+}
+.menu--footer {
+	list-style-type: none;
+	padding: 0
+}
+
+.menu--footer .menu__item {
+	margin: 0 0 1rem;
+	padding-left: 0
+}
+
+.menu--footer .menu__link {
+	display: block;
+	font-family: Merriweather Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 1.1rem;
+	font-weight: 700;
+	line-height: 1.2;
+	outline-offset: .25rem;
+	text-decoration: none
+}
+
+.menu--footer .menu__link:hover,
+.menu--footer .menu__link:focus,
+.menu--footer .menu__link:active {
+	text-decoration: underline
+}
+.footer__column:last-child {
+	margin-bottom: 0
+}
+
+.site-logo:visited {
+	color: #005ea2;
+}
+.site-logo__image {
+	display: block;
+	padding-bottom: 13.8679245283%;
+	position: relative;
+	width: 100%;
+}
+.site-logo__svg {
+	fill: currentColor;
+	height: 100%;
+	position: absolute;
+}
+
+.site-logo {
+	color: #005ea2;
+	display: block;
+	margin: 1rem 1rem 1rem -.5rem;
+	max-width: 100%;
+	min-width: 12.5rem;
+	padding: .5rem;
+	width: 22.625rem
+}
+
+@media all and (min-width: 64em) {
+	.menu--main {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex
+	}
+}
+
+.menu--main .menu__link {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	background: transparent;
+	border: 0;
+	color: #fff;
+	cursor: pointer;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	font-family: Merriweather Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: .98rem;
+	font-weight: bold;
+	-webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+	justify-content: space-between;
+	line-height: 1.0204081633;
+	padding: 1rem 1.5rem;
+	text-align: left;
+	text-decoration: none;
+	width: 100%
+}
+
+.menu--main .menu__link:visited {
+	color: #fff
+}
+
+.menu--main .menu__link:hover,
+.menu--main .menu__link:focus,
+.menu--main .menu__link[aria-expanded='true'] {
+	background: #1a4480
+}
+
+@media all and (min-width: 64em) {
+	.menu--main .menu__link {
+		width: auto
+	}
+}
+
+.menu--main, .menu__link, .menu__item {
+	transition-duration: 200ms;
+	transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
+	transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.menu--main .menu__link.has-subnav::after {
+	background-image: url("../images/main-menu-arrow.svg");
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	color: #fff;
+	content: '';
+	display: inline-block;
+	height: 1em;
+	margin-left: .5rem;
+	-webkit-transform: rotate(-180deg);
+	transform: rotate(-180deg);
+	-webkit-transition: -webkit-transform 375ms cubic-bezier(0.0, 0, 0.2, 1);
+	transition: -webkit-transform 375ms cubic-bezier(0.0, 0, 0.2, 1);
+	transition: transform 375ms cubic-bezier(0.0, 0, 0.2, 1);
+	transition: transform 375ms cubic-bezier(0.0, 0, 0.2, 1), -webkit-transform 375ms cubic-bezier(0.0, 0, 0.2, 1);
+	width: 1em
+}
+
+.menu--main .menu__link.has-subnav[aria-expanded='true']::after {
+	-webkit-transform: rotate(0deg);
+	transform: rotate(0deg)
+}
+
+@media all and (min-width: 64em) {
+	.usa-nav--epa {
+		background: #005ea2;
+		float: none;
+		width: auto
+	}
+}
+
+.usa-nav--epa .usa-nav__inner {
+	position: relative
+}
+
+@media all and (min-width: 64em) {
+	.usa-nav--epa .usa-nav__inner {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 64rem;
+		padding-left: 1.5rem;
+		padding-right: 1.5rem
+	}
+}
+
+@media all and (min-width: 64em) and (min-width: 64em) {
+	.usa-nav--epa .usa-nav__inner {
+		padding-left: 2rem;
+		padding-right: 2rem
+	}
+}
+
+@media all and (min-width: 64em) {
+	body.has-wide-template .usa-nav--epa .usa-nav__inner {
+		max-width: 100%
+	}
+}
+
+.usa-nav--epa .usa-nav__close {
+	color: #565c65;
+	font-size: 1rem;
+	margin: -.5rem;
+	margin-bottom: .5rem
+}
+
+.usa-nav--epa .usa-nav__menu {
+	margin: 1.5rem -1rem
+}
+
+@media all and (min-width: 64em) {
+	.usa-nav--epa .usa-nav__menu {
+		margin: 0
+	}
+}
+
+@media all and (min-width: 64em) {
+ 	.l-header__navbar {
+ 		-webkit-box-align: center;
+ 		-ms-flex-align: center;
+ 		align-items: center;
+ 		display: -webkit-box;
+ 		display: -ms-flexbox;
+ 		display: flex;
+ 		-webkit-box-pack: justify;
+ 		-ms-flex-pack: justify;
+ 		justify-content: space-between
+ 	}
+ }
+
+.l-header__branding {
+ 	-webkit-box-align: center;
+ 	-ms-flex-align: center;
+ 	align-items: center;
+ 	display: -webkit-box;
+ 	display: -ms-flexbox;
+ 	display: flex;
+ 	-webkit-box-pack: justify;
+ 	-ms-flex-pack: justify;
+ 	justify-content: space-between
+ }
+
+.l-header__menu-button {
+ 	margin-right: 0 !important;
+ 	width: auto !important
+ }
+
+@media all and (min-width: 64em) {
+ 	.l-header__menu-button {
+ 		display: none !important
+ 	}
+ }
+
+.l-constrain {
+ 	margin-left: auto;
+ 	margin-right: auto;
+ 	max-width: 64rem;
+ 	padding-left: 1.5rem;
+ 	padding-right: 1.5rem
+ }
+
+@media all and (min-width: 64em) {
+ 	.l-constrain {
+ 		padding-left: 2rem;
+ 		padding-right: 2rem
+ 	}
+ }
+body.has-wide-template .l-constrain {
+	max-width: 100%
+}
+
+.l-constrain--large {
+	max-width: 75rem
+}
+
+.l-constrain--no-padding {
+	padding-left: 0;
+	padding-right: 0
+}
+
+@media all and (min-width: 64em) {
+	.l-page__footer {
+		padding-bottom: 2rem;
+		padding-top: 2rem
+	}
+
+	.l-page__footer .l-constrain,
+	.l-page__footer .block {
+		-webkit-box-align: center;
+		-ms-flex-align: center;
+		align-items: center;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-pack: justify;
+		-ms-flex-pack: justify;
+		justify-content: space-between;
+		width: 100%
+	}
+}
 @font-face {
   font-family: "Source Sans Pro";
   font-style: normal;
@@ -460,417 +860,414 @@
     z-index: 9999;
   }
   header {
-		display: block
+	display: block
+}
+header {
+	background: #fff
+}
+header button, header select {
+	text-transform: none
+}
+header button, header input, header optgroup, header select, header textarea {
+	font-family: inherit;
+	font-size: 100%;
+	margin: 0;
+	max-width: 100%;
+	vertical-align: baseline
+}
+header button, header input {
+	line-height: normal
+}
+header img, header input, header textarea, header video {
+	height: auto;
+	max-width: 100%
+}
+header, header dl, header figure, header form {
+	margin: 0
+}
+header button {
+	width: auto;
+	overflow: visible
+}
+@media screen {
+	header, header button, header input, header select, header textarea {
+		font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
 	}
-	header {
-		background: #fff
+}
+@media screen {
+	header h1 {
+		font-size: 235.29%;
 	}
-	header button, header select {
-		text-transform: none
+}
+header a {
+	color: #0071bc
+}
+header::selection {
+	background: #5b616b;
+	color: #fff;
+	text-shadow: none
+}
+header .main-content, header .main-footer>.main-footer__inner, header .main-nav>.nav__inner, .masthead, header .region-alert>.block-alert, header .secondary-nav {
+	margin: 0 auto;
+	max-width: 35em;
+	padding: 0 1em
+}
+@media screen and (min-width:35em), print and (min-width:35em) {
+	header .main-nav>.nav__inner, header.masthead, header .region-alert>.block-alert, header .secondary-nav, header .main-content, header .main-footer>.main-footer__inner {
+		max-width: 60em;
 	}
-	header button, header input, header optgroup, header select, header textarea {
-		font-family: inherit;
-		font-size: 100%;
-		margin: 0;
+}
+header.masthead {
+	color: #fff;
+	padding-bottom: 1em;
+	padding-top: 1.4em;
+	position: relative
+}
+header.clearfix::after, header .menu::after, header .pane-content::after, header .pipeline::after, header .tabs::after, header .slat::after, header .row::after, header .col::after {
+	clear: both;
+	content: "";
+	display: table
+}
+@media screen and (min-width:35em), print and (min-width:35em) {
+	.wide-template header .region-alert>.block-alert, .wide-template header.masthead, .wide-template header .nav, .wide-template header .main-content, .wide-template header .main-footer>.main-footer__inner {
 		max-width: 100%;
-		vertical-align: baseline
 	}
-	header button, header input {
-		line-height: normal
+}
+header img {
+	border: 0;
+	-ms-interpolation-mode: bicubic
+}
+@media screen and (min-width:50em) {
+	header .site-name-and-slogan {
+		float: left;
 	}
-	header img, header input, header textarea, header video {
-		height: auto;
-		max-width: 100%
-	}
-	header, header dl, header figure, header form {
-		margin: 0
-	}
-	header button {
-		width: auto;
-		overflow: visible
-	}
-	@media screen {
-		header, header button, header input, header select, header textarea {
-			font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-		}
-	}
-	@media screen {
-		header h1 {
-			font-size: 235.29%;
-		}
-	}
-	header a {
-		color: #0071bc
-	}
-	header::selection {
-		background: #5b616b;
-		color: #fff;
-		text-shadow: none
-	}
-	header .main-content, header .main-footer>.main-footer__inner, header .main-nav>.nav__inner, .masthead, header .region-alert>.block-alert, header .secondary-nav {
-		margin: 0 auto;
-		max-width: 35em;
-		padding: 0 1em
-	}
-	@media screen and (min-width:35em), print and (min-width:35em) {
-		header .main-nav>.nav__inner, header.masthead, header .region-alert>.block-alert, header .secondary-nav, header .main-content, header .main-footer>.main-footer__inner {
-			max-width: 60em;
-		}
-	}
-	header.masthead {
-		color: #fff;
-		padding-bottom: 1em;
-		padding-top: 1.4em;
-		position: relative
-	}
-	header.clearfix::after, header .menu::after, header .pane-content::after, header .pipeline::after, header .tabs::after, header .slat::after, header .row::after, header .col::after {
-		clear: both;
-		content: "";
-		display: table
-	}
-	@media screen and (min-width:35em), print and (min-width:35em) {
-		.wide-template header .region-alert>.block-alert, .wide-template header.masthead, .wide-template header .nav, .wide-template header .main-content, .wide-template header .main-footer>.main-footer__inner {
-			max-width: 100%;
-		}
-	}
-	header img {
-		border: 0;
-		-ms-interpolation-mode: bicubic
-	}
-	header .site-logo {
-		display: none
-	}
-	@media screen and (min-width:50em) {
-		header .site-name-and-slogan {
-			float: left;
-		}
-	}
-	header #block-epa-core-gsa-epa-search {
-		position: initial
-	}
+}
+header #block-epa-core-gsa-epa-search {
+	position: initial
+}
+header .epa-search {
+	clear: both;
+	padding-top: 1em;
+	position: relative
+}
+@media screen and (min-width:50em) {
 	header .epa-search {
-		clear: both;
-		padding-top: 1em;
-		position: relative
+		clear: right;
+		padding-top: 0px;
+		float: right;
+		width: 16.5em;
 	}
-	@media screen and (min-width:50em) {
-		header .epa-search {
-			clear: right;
-			padding-top: 0px;
-			float: right;
-			width: 16.5em;
-		}
-	}
-	@media screen and (min-width:65em) {
-		header .epa-search {
-			bottom: 0.5em;
-			padding-right: 1em;
-			position: absolute;
-			right: 0px;
-		}
-		.js header .epa-search {
-			bottom: -2.29em;
-		}
-	}
-	header label {
-		display: block
-	}
-	header .element-hidden {
-		display: none
-	}
-  .element-invisible {
-  clip: rect(1px,1px,1px,1px);
-  position: absolute!important;
-  }
-  .element-invisible.element-focusable:active, .element-invisible.element-focusable:focus {
-    clip: auto;
-    position: static!important;
-  }
-	header .form-select, header .form-text, header .form-textarea {
-		-moz-appearance: none;
-		-webkit-appearance: none;
-		appearance: none;
-		background-color: #fff;
-		border: 1px solid #5b616b;
-		border-radius: 0;
-		color: #212121;
-		line-height: 1.2352;
-		min-width: 10em;
-		padding: 0.4117647059em 0.6470588235em
-	}
-	header .epa-search>.form-text {
-		border-color: #0071bc;
-		border-radius: 0 3px 3px 0;
-		color: #212121;
-		height: 1.64em;
-		line-height: 1;
-		padding: 0.2647058824em 2.8235294118em 0.2647058824em 0.6470588235em;
-		width: 100%
-	}
-	@media screen and (min-width:65em) {
-		.js header .epa-search > .form-text {
-			border-color: #fff;
-		}
-	}
-	header .ui-helper-hidden-accessible {
-		border: 0;
-		clip: rect(0px, 0px, 0px, 0px);
-		height: 1px;
-		margin: -1px;
-		overflow: hidden;
-		padding: 0;
+}
+@media screen and (min-width:65em) {
+	header .epa-search {
+		bottom: 0.5em;
+		padding-right: 1em;
 		position: absolute;
-		width: 1px
-	}
-	header button, header input[type='button'], header input[type='reset'], header input[type='submit'] {
-		cursor: pointer;
-		-webkit-appearance: button
-	}
-	header button, header fieldset.collapsed legend, header input[type='button'], header input[type='reset'], header input[type='submit'], header .archive, header .button, header ins.new::before, header .password-suggestions, header .progress .bar, header #edit-cancel, header .addtocal {
-		border-radius: 3px
-	}
-	header button, input[type='button'], header input[type='reset'], header input[type='submit'], header .button, header #edit-cancel, header .addtocal {
-		background-color: #0071bc;
-		border: 0;
-		color: #fff;
-		cursor: pointer;
-		display: inline-block;
-		font-weight: bold;
-		line-height: 1;
-		text-align: center;
-		text-decoration: none;
-		vertical-align: baseline;
-		white-space: normal
-	}
-	header .epa-search-button {
-		background-color: #02bfe7;
-		background-image: url("https://www.epa.gov/sites/all/themes/epa/img/svg/search.svg");
-		background-position: 50% 50%;
-		background-repeat: no-repeat;
-		background-size: 12px 12px;
-		border-color: #02bfe7;
-		border-radius: 0 3px 3px 0;
-		box-sizing: border-box;
-		color: #4aa564;
-		font: 0/0 a;
-		height: 28px;
 		right: 0px;
-		position: absolute;
-		text-decoration: none;
-		text-indent: -999em;
-		text-shadow: none;
-		top: 17px;
-		width: 44px
 	}
-	@media screen and (min-width:50em) {
-		header .epa-search-button {
-			top: 0px;
-		}
+	.js header .epa-search {
+		bottom: -2.29em;
 	}
-	@media screen and (min-width:65em) {
-		header .epa-search-button {
-			right: 16px;
-		}
+}
+header label {
+	display: block
+}
+header .element-hidden {
+	display: none
+}
+.element-invisible {
+clip: rect(1px,1px,1px,1px);
+position: absolute!important;
+}
+.element-invisible.element-focusable:active, .element-invisible.element-focusable:focus {
+clip: auto;
+position: static!important;
+}
+header .form-select, header .form-text, header .form-textarea {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: #fff;
+	border: 1px solid #5b616b;
+	border-radius: 0;
+	color: #212121;
+	line-height: 1.2352;
+	min-width: 10em;
+	padding: 0.4117647059em 0.6470588235em
+}
+header .epa-search>.form-text {
+	border-color: #0071bc;
+	border-radius: 0 3px 3px 0;
+	color: #212121;
+	height: 1.64em;
+	line-height: 1;
+	padding: 0.2647058824em 2.8235294118em 0.2647058824em 0.6470588235em;
+	width: 100%
+}
+@media screen and (min-width:65em) {
+	.js header .epa-search > .form-text {
+		border-color: #fff;
 	}
-	@media screen {
-		header h1, header h2, header h3, header h4, header h5, header h6, header legend, header caption {
-			font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
-			font-weight: bold;
-			line-height: 1.3;
-			margin: 0;
-			text-rendering: optimizeLegibility;
-		}
+}
+header .ui-helper-hidden-accessible {
+	border: 0;
+	clip: rect(0px, 0px, 0px, 0px);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px
+}
+header button, header input[type='button'], header input[type='reset'], header input[type='submit'] {
+	cursor: pointer;
+	-webkit-appearance: button
+}
+header button, header fieldset.collapsed legend, header input[type='button'], header input[type='reset'], header input[type='submit'], header .archive, header .button, header ins.new::before, header .password-suggestions, header .progress .bar, header #edit-cancel, header .addtocal {
+	border-radius: 3px
+}
+header button, input[type='button'], header input[type='reset'], header input[type='submit'], header .button, header #edit-cancel, header .addtocal {
+	background-color: #0071bc;
+	border: 0;
+	color: #fff;
+	cursor: pointer;
+	display: inline-block;
+	font-weight: bold;
+	line-height: 1;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: baseline;
+	white-space: normal
+}
+header .epa-search-button {
+	background-color: #02bfe7;
+	background-image: url("https://www.epa.gov/sites/all/themes/epa/img/svg/search.svg");
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: 12px 12px;
+	border-color: #02bfe7;
+	border-radius: 0 3px 3px 0;
+	box-sizing: border-box;
+	color: #4aa564;
+	font: 0/0 a;
+	height: 28px;
+	right: 0px;
+	position: absolute;
+	text-decoration: none;
+	text-indent: -999em;
+	text-shadow: none;
+	top: 17px;
+	width: 44px
+}
+@media screen and (min-width:50em) {
+	header .epa-search-button {
+		top: 0px;
 	}
-	@media screen {
-		header h1, header h2, header h3, header h4, header h5, header h6 {
-			padding: 0 0 0.5em;
-		}
+}
+@media screen and (min-width:65em) {
+	header .epa-search-button {
+		right: 16px;
 	}
-	header .site-name {
-		height: 31px;
-		margin: 0 0 0.125em;
-		padding: 0;
-		width: 101px
-	}
-	@media screen and (min-width:23em) {
-		header .site-name {
-			float: left;
-			margin-right: 0.2em;
-		}
-	}
-	header .site-slogan {
-		color: #0071bc;
-		font-family: Arial, sans-serif;
-		font-size: 0.64em;
-		font-weight: 500;
-		line-height: 1;
-		position: relative
-	}
-	@media screen and (min-width:23em) {
-		header .site-slogan {
-			top: -1px;
-			width: 21.8em;
-		}
-	}
-	header a {
-		outline-offset: 2px
-	}
-	@media screen {
-		header h1 a, header h2 a, header h3 a, header h4 a, header h5 a, header h6 a {
-			text-decoration: none;
-		}
-	}
-	header a:link {
-		-webkit-tap-highlight-color: rgba(0, 0, 0, 0)
-	}
-	header a:visited {
-		color: #4c2c92
-	}
-	header .site-name>a {
-		display: block;
+}
+@media screen {
+	header h1, header h2, header h3, header h4, header h5, header h6, header legend, header caption {
+		font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
+		font-weight: bold;
+		line-height: 1.3;
 		margin: 0;
-		padding: 0;
-		position: relative;
-		z-index: 1
+		text-rendering: optimizeLegibility;
 	}
-	header .site-name span {
-		background: url(https://www.epa.gov/sites/all/themes/epa/img/svg/epa-logo.svg) no-repeat;
-		color: transparent;
-		display: block;
-		font: 0/0 a;
-		height: 31px;
-		text-shadow: none
+}
+@media screen {
+	header h1, header h2, header h3, header h4, header h5, header h6 {
+		padding: 0 0 0.5em;
 	}
+}
+header .site-name {
+	height: 31px;
+	margin: 0 0 0.125em;
+	padding: 0;
+	width: 101px
+}
+@media screen and (min-width:23em) {
+	header .site-name {
+		float: left;
+		margin-right: 0.2em;
+	}
+}
+header .site-slogan {
+	color: #0071bc;
+	font-family: Arial, sans-serif;
+	font-size: 0.64em;
+	font-weight: 500;
+	line-height: 1;
+	position: relative
+}
+@media screen and (min-width:23em) {
+	header .site-slogan {
+		top: -1px;
+		width: 21.8em;
+	}
+}
+header a {
+	outline-offset: 2px
+}
+@media screen {
+	header h1 a, header h2 a, header h3 a, header h4 a, header h5 a, header h6 a {
+		text-decoration: none;
+	}
+}
+header a:link {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+}
+header a:visited {
+	color: #4c2c92
+}
+header .site-name>a {
+	display: block;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	z-index: 1
+}
+header .site-name span {
+	background: url(https://www.epa.gov/sites/all/themes/epa/img/svg/epa-logo.svg) no-repeat;
+	color: transparent;
+	display: block;
+	font: 0/0 a;
+	height: 31px;
+	text-shadow: none
+}
 
 /** EPA Global Navigation *************************************************/
-	nav {
-		display: block
+nav {
+	display: block
+}
+nav {
+	background: #fff
+}
+@media screen {
+	nav h2 {
+		font-size: 176.47%;
 	}
-	nav {
-		background: #fff
+}
+@media screen {
+	nav dd, nav ol, nav p, nav ul, nav .fieldset-description, nav .form-actions, nav .form-item, nav .pane-content>.node, nav .node-teaser, nav :not(.file).view-mode-teaser, nav .view-mode-teaser2, nav .view-mode-title2, nav ul.accordion ul {
+		margin: 0;
+		padding-bottom: 1.5em;
+		word-wrap: break-word;
 	}
-	@media screen {
-		nav h2 {
-			font-size: 176.47%;
-		}
+}
+@media screen {
+	nav ul {
+		padding-left: 1.2em;
 	}
-	@media screen {
-		nav dd, nav ol, nav p, nav ul, nav .fieldset-description, nav .form-actions, nav .form-item, nav .pane-content>.node, nav .node-teaser, nav :not(.file).view-mode-teaser, nav .view-mode-teaser2, nav .view-mode-title2, nav ul.accordion ul {
-			margin: 0;
-			padding-bottom: 1.5em;
-			word-wrap: break-word;
-		}
-	}
-	@media screen {
-		nav ul {
-			padding-left: 1.2em;
-		}
-	}
-	nav a {
-		outline-offset: 2px
-	}
-	nav a {
-		color: #0071bc
-	}
-	nav::selection {
-		background: #5b616b;
-		color: #fff;
-		text-shadow: none
-	}
-	nav.main-nav {
-		background-color: #0071bc;
-		line-height: 1
-	}
+}
+nav a {
+	outline-offset: 2px
+}
+nav a {
+	color: #0071bc
+}
+nav::selection {
+	background: #5b616b;
+	color: #fff;
+	text-shadow: none
+}
+nav.main-nav {
+	background-color: #0071bc;
+	line-height: 1
+}
+.js nav .simple-nav, nav.main-nav, nav .secondary-nav {
+	display: none
+}
+@media screen and (min-width:50em) {
 	.js nav .simple-nav, nav.main-nav, nav .secondary-nav {
-		display: none
-	}
-	@media screen and (min-width:50em) {
-		.js nav .simple-nav, nav.main-nav, nav .secondary-nav {
-			display: block;
-		}
-	}
-	@media screen {
-		nav ol li:last-child p:last-child, nav ol ol, nav ol ul, nav p:empty, nav ul li:last-child p:last-child, nav ul ol, nav ul ul, nav .form-checkboxes .form-item, nav .form-radios .form-item, nav .pane-content>.view-mode-title>h3, nav .pane-content>.node> :last-child, nav .pane-content> :last-child, nav ul.accordion ul ul {
-			padding-bottom: 0px;
-		}
-	}
-	nav .links, nav .menu, nav .pipeline, nav .tabs {
-		list-style: none !important;
-		margin: 0;
-		padding: 0
-	}
-	nav.clearfix::after, nav .menu::after, nav .pane-content::after, nav .pipeline::after, nav .tabs::after, nav .slat::after, nav .row::after, nav .col::after {
-		clear: both;
-		content: "";
-		display: table
-	}
-	@media screen and (min-width:35em), print and (min-width:35em) {
-		.wide-template nav .region-alert>.block-alert, .wide-template nav .masthead, .wide-template nav.nav, .wide-template nav .main-content, .wide-template nav .main-footer>.main-footer__inner {
-			max-width: 100%;
-		}
-	}
-	nav, nav dl, nav figure, nav form {
-		margin: 0
-	}
-	@media screen {
-		nav, nav button, nav input, nav select, nav textarea {
-			font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-		}
-	}
-	nav .main-content, nav .main-footer>.main-footer__inner, nav.main-nav>.nav__inner, nav .masthead, .region-alert>.block-alert, nav .secondary-nav {
-		margin: 0 auto;
-		max-width: 35em;
-		padding: 0 1em
-	}
-	@media screen and (min-width:35em), print and (min-width:35em) {
-		nav.main-nav>.nav__inner, nav .masthead, nav .region-alert>.block-alert, nav .secondary-nav, nav .main-content, nav .main-footer>.main-footer__inner {
-			max-width: 60em;
-		}
-	}
-	@media screen {
-		nav h1, nav h2, nav h3, nav h4, nav h5, nav h6, nav legend, nav caption {
-			font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
-			font-weight: bold;
-			line-height: 1.3;
-			margin: 0;
-			text-rendering: optimizeLegibility;
-		}
-	}
-	@media screen {
-		nav h1, nav h2, nav h3, nav h4, nav h5, nav h6 {
-			padding: 0 0 0.5em;
-		}
-	}
-	nav .element-invisible {
-		clip: rect(1px, 1px, 1px, 1px);
-		position: absolute !important
-	}
-	nav.main-nav>.nav__inner>.menu {
-		float: left
-	}
-	nav.main-nav>.nav__inner>.menu>.menu-item {
-		float: left
-	}
-	nav .menu-link, .pipeline>li>a, nav .tabs>li>a {
 		display: block;
-		margin: 0;
-		padding: 0
 	}
-	nav a:link {
-		-webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+}
+@media screen {
+	nav ol li:last-child p:last-child, nav ol ol, nav ol ul, nav p:empty, nav ul li:last-child p:last-child, nav ul ol, nav ul ul, nav .form-checkboxes .form-item, nav .form-radios .form-item, nav .pane-content>.view-mode-title>h3, nav .pane-content>.node> :last-child, nav .pane-content> :last-child, nav ul.accordion ul ul {
+		padding-bottom: 0px;
 	}
-	nav a:visited {
-		color: #4c2c92
+}
+nav .links, nav .menu, nav .pipeline, nav .tabs {
+	list-style: none !important;
+	margin: 0;
+	padding: 0
+}
+nav.clearfix::after, nav .menu::after, nav .pane-content::after, nav .pipeline::after, nav .tabs::after, nav .slat::after, nav .row::after, nav .col::after {
+	clear: both;
+	content: "";
+	display: table
+}
+@media screen and (min-width:35em), print and (min-width:35em) {
+	.wide-template nav .region-alert>.block-alert, .wide-template nav .masthead, .wide-template nav.nav, .wide-template nav .main-content, .wide-template nav .main-footer>.main-footer__inner {
+		max-width: 100%;
 	}
-	nav.main-nav>.nav__inner>.menu>.menu-item>.menu-link {
-		color: #fff;
+}
+nav, nav dl, nav figure, nav form {
+	margin: 0
+}
+@media screen {
+	nav, nav button, nav input, nav select, nav textarea {
+		font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+	}
+}
+nav .main-content, nav .main-footer>.main-footer__inner, nav.main-nav>.nav__inner, nav .masthead, .region-alert>.block-alert, nav .secondary-nav {
+	margin: 0 auto;
+	max-width: 35em;
+	padding: 0 1em
+}
+@media screen and (min-width:35em), print and (min-width:35em) {
+	nav.main-nav>.nav__inner, nav .masthead, nav .region-alert>.block-alert, nav .secondary-nav, nav .main-content, nav .main-footer>.main-footer__inner {
+		max-width: 60em;
+	}
+}
+@media screen {
+	nav h1, nav h2, nav h3, nav h4, nav h5, nav h6, nav legend, nav caption {
 		font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
-		font-size: 76.47%;
 		font-weight: bold;
-		line-height: 1;
-		padding: 1.2em 1.6em;
-		text-decoration: none
+		line-height: 1.3;
+		margin: 0;
+		text-rendering: optimizeLegibility;
 	}
+}
+@media screen {
+	nav h1, nav h2, nav h3, nav h4, nav h5, nav h6 {
+		padding: 0 0 0.5em;
+	}
+}
+nav .element-invisible {
+	clip: rect(1px, 1px, 1px, 1px);
+	position: absolute !important
+}
+nav.main-nav>.nav__inner>.menu {
+	float: left
+}
+nav.main-nav>.nav__inner>.menu>.menu-item {
+	float: left
+}
+nav .menu-link, .pipeline>li>a, nav .tabs>li>a {
+	display: block;
+	margin: 0;
+	padding: 0
+}
+nav a:link {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+}
+nav a:visited {
+	color: #4c2c92
+}
+nav.main-nav>.nav__inner>.menu>.menu-item>.menu-link {
+	color: #fff;
+	font-family: "Merriweather", "Georgia", "Cambria", "Times New Roman", "Times", serif;
+	font-size: 76.47%;
+	font-weight: bold;
+	line-height: 1;
+	padding: 1.2em 1.6em;
+	text-decoration: none
+}
 .main-nav > .nav__inner > .menu > .menu-item > .active {
   background-color: #205493;
 }
@@ -1188,11 +1585,6 @@
 	}
 	footer .col {
 		padding: 0 1em
-	}
-	footer .links, footer .menu, footer .pipeline, footer .tabs {
-		list-style: none !important;
-		margin: 0;
-		padding: 0
 	}
 	footer.clearfix::after, footer .menu::after, footer .pane-content::after, footer .pipeline::after, footer .tabs::after, footer .slat::after, footer .row::after, footer .col::after {
 		clear: both;

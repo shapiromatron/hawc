@@ -10,6 +10,9 @@
 .hawc-header .navbar-toggler:focus {
     outline: initial;
 }
+[href]:focus {
+    outline: none !important;
+}
 
 /* Sidebar  */
 .sidebar {
