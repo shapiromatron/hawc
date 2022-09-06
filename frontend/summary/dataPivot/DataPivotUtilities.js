@@ -1,5 +1,6 @@
 import $ from "$";
 
+import {renderInlineAutosuggest} from "shared/components/Autocomplete";
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";
 import {NULL_CASE} from "./shared";
@@ -150,7 +151,8 @@ class _DataPivot_settings_label {
 
 class _DataPivot_settings_filters {
     constructor(data_pivot, values) {
-        var self = this;
+        var self = this,
+            valueTd = $("<td>").data("initialValue", values.value);
         this.data_pivot = data_pivot;
         this.values = values;
 
@@ -174,14 +176,11 @@ class _DataPivot_settings_filters {
         this.content.quantifier = $('<select class="form-control"></select>').html(
             get_quantifier_options()
         );
-        this.content.value = $('<input class="form-control" type="text">').autocomplete({
-            source: values.value,
-        });
+        this.content.valueTd = valueTd;
 
         // set default values
         this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
         this.content.quantifier.find(`option[value="${values.quantifier}"]`).prop("selected", true);
-        this.content.value.val(values.value);
 
         var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.filters, this, {
             showSort: true,
@@ -190,21 +189,19 @@ class _DataPivot_settings_filters {
         this.tr = $("<tr>")
             .append($("<td>").append(this.content.field_name))
             .append($("<td>").append(this.content.quantifier))
-            .append($("<td>").append(this.content.value))
+            .append(this.content.valueTd)
             .append(movement_td)
-            .on("change autocompletechange autocompleteselect", "input,select", function() {
-                self.data_push();
-            });
+            .on("change blur", "input,select", () => this.data_push());
 
         var content = this.content,
-            enable_autocomplete = function(request, response) {
+            enable_autocomplete = function() {
                 var field = content.field_name.find("option:selected").val(),
-                    values = Array.from(new Set(data_pivot.data.map(v => v[field])).values());
-                content.value.autocomplete("option", {source: values});
+                    values = Array.from(new Set(data_pivot.data.map(v => v[field])).values()),
+                    initialValue = valueTd.find("input").val() || valueTd.data("initialValue");
+                renderInlineAutosuggest(valueTd[0], "value", initialValue, values);
             };
 
-        this.content.field_name.on("change", enable_autocomplete);
-        enable_autocomplete();
+        this.content.field_name.on("change", enable_autocomplete).trigger("change");
 
         this.data_push();
         return this;
@@ -221,7 +218,7 @@ class _DataPivot_settings_filters {
     data_push() {
         this.values.field_name = this.content.field_name.find("option:selected").val();
         this.values.quantifier = this.content.quantifier.find("option:selected").val();
-        this.values.value = this.content.value.val();
+        this.values.value = this.content.valueTd.find("input").val();
     }
 }
 
