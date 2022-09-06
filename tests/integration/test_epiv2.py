@@ -1,3 +1,5 @@
+import re
+
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
@@ -26,9 +28,9 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator('a:has-text("Update")').click()
 
         # Update study design
+        expect(page).to_have_url(re.compile(r"/epidemiology/design/\d+/update/"))
         expect(page.locator("text=Update design")).to_be_visible()
         page.locator("#design-update").click()
-        page.locator('input[name="participant_n"]').click()
         page.locator('input[name="participant_n"]').fill("460")
         page.locator("text=Save").click()
 

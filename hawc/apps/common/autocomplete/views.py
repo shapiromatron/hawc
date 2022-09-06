@@ -1,13 +1,15 @@
+from typing import Optional
+
 from dal import autocomplete
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
 
 from ..helper import reverse_with_query_lazy
 
 
 class BaseAutocomplete(autocomplete.Select2QuerySetView):
-    filter_fields = []
-    order_by = ""
-    order_direction = ""
+    filter_fields: list[str] = []
+    order_by: str = ""
+    order_direction: str = ""
 
     def get_field(self, obj):
         return getattr(obj, self.field)
@@ -36,7 +38,7 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     @classmethod
-    def get_base_queryset(cls, filters: dict = None):
+    def get_base_queryset(cls, filters: Optional[dict] = None):
         """
         Gets the base queryset to perform searches on
 
@@ -75,8 +77,7 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.is_ajax():
-            pass
-            # return HttpResponseForbidden("AJAX required")
+            raise HttpResponseBadRequest("AJAX required")
         if not request.user.is_authenticated:
             return HttpResponseForbidden("Authentication required")
         self.field = request.GET.get("field", "")

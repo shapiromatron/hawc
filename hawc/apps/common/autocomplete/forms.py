@@ -73,11 +73,10 @@ class AutocompleteSelectWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect
 
 class AutocompleteSelectMultipleWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect2Multiple):
     def __init__(self, *args, **kwargs):
-        # remove ability to delete all selections at once
         attrs = kwargs.get("attrs", {})
+        # remove ability to delete all selections at once
         attrs.setdefault("data-allow-clear", "false")
         kwargs["attrs"] = attrs
-
         super().__init__(*args, **kwargs)
 
 
