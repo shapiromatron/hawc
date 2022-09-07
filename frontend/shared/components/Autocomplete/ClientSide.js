@@ -3,14 +3,13 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import Autosuggest from "react-autosuggest";
 import {theme} from "./constants";
+import h from "shared/utils/helpers";
 
-// https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
-const escapeRegexCharacters = function(str) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-};
-
-class InlineAutosuggest extends Component {
-    // Inline autosuggest; all possibilities are already client-side
+class ClientSideAutosuggest extends Component {
+    /*
+    Client-side autocomplete; all possibilities are passed to the component via an input prop;
+    the component just filters possibilities based on typing.
+    */
     constructor(props) {
         super(props);
         this.state = {
@@ -25,10 +24,12 @@ class InlineAutosuggest extends Component {
             <Autosuggest
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={({value}) => {
-                    const qry = escapeRegexCharacters(value.trim()),
+                    const qry = h.escapeRegexString(value.trim()),
                         regex = new RegExp(qry, "i"),
                         suggestions =
-                            qry.length == 0 ? options : options.filter(v => regex.test(v));
+                            qry.length == 0
+                                ? options
+                                : options.filter(v => regex.test(v)).slice(0, 30);
                     this.setState({suggestions});
                 }}
                 onSuggestionsClearRequested={() => {
@@ -49,14 +50,14 @@ class InlineAutosuggest extends Component {
         );
     }
 }
-InlineAutosuggest.propTypes = {
+ClientSideAutosuggest.propTypes = {
     name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     options: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-const renderInlineAutosuggest = function(el, name, value, options) {
-    ReactDOM.render(<InlineAutosuggest name={name} value={value} options={options} />, el);
+const renderClientSideAutosuggest = function(el, name, value, options) {
+    ReactDOM.render(<ClientSideAutosuggest name={name} value={value} options={options} />, el);
 };
 
-export {InlineAutosuggest, renderInlineAutosuggest};
+export {ClientSideAutosuggest, renderClientSideAutosuggest};

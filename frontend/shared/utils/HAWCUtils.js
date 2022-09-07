@@ -48,7 +48,7 @@ class HAWCUtils {
             submitter = config.form.find("#submit_form");
 
         submitter.on("click", function() {
-            var val = parseInt(selector.select2("data")[0].id, 10);
+            var val = parseInt(selector.select2("data")[0].id);
             if (val) {
                 submitter.attr("href", `${config.base_url}?initial=${val}`);
                 return true;

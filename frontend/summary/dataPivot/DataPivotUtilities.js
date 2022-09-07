@@ -1,6 +1,6 @@
 import $ from "$";
 
-import {renderInlineAutosuggest} from "shared/components/Autocomplete";
+import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";
 import {NULL_CASE} from "./shared";
@@ -198,7 +198,7 @@ class _DataPivot_settings_filters {
                 var field = content.field_name.find("option:selected").val(),
                     values = Array.from(new Set(data_pivot.data.map(v => v[field])).values()),
                     initialValue = valueTd.find("input").val() || valueTd.data("initialValue");
-                renderInlineAutosuggest(valueTd[0], "value", initialValue, values);
+                renderClientSideAutosuggest(valueTd[0], "value", initialValue, values);
             };
 
         this.content.field_name.on("change", enable_autocomplete).trigger("change");

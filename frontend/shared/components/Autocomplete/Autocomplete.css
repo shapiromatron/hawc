@@ -21,7 +21,7 @@
 .autocomplete__container--open .autocomplete__suggestions-container {
     display: block;
     position: absolute;
-    top: 30px;
+    top: 45px;
     border: 1px solid #aaa;
     background-color: #fff;
     z-index: 2;

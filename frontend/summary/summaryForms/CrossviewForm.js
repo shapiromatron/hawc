@@ -5,7 +5,7 @@ import Endpoint from "animal/Endpoint";
 import CrossviewPlot from "summary/summary/CrossviewPlot";
 import Crossview from "summary/summary/Crossview";
 import {DATA_FILTER_OPTIONS, filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
-import {renderInlineAutosuggest} from "shared/components/Autocomplete";
+import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
 
 import BaseVisualForm from "./BaseVisualForm";
 import {TextField, IntegerField, ColorField, CheckboxField, RadioField} from "./Fields";
@@ -215,7 +215,7 @@ class CrossviewEndpointFilterField extends TableField {
             setAutocomplete = () => {
                 var isLog = $('input[name="dose_isLog"]').prop("checked"),
                     options = CrossviewPlot.get_options(this.parent.endpoints, field.val(), isLog);
-                renderInlineAutosuggest(valueTd[0], "value", "", options);
+                renderClientSideAutosuggest(valueTd[0], "value", "", options);
             };
 
         field.on("change", setAutocomplete).trigger("change");

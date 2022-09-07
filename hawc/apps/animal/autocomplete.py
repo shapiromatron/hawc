@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ..common.autocomplete import BaseAutocomplete, SearchLabelMixin, register
 from . import models
 
@@ -18,6 +20,7 @@ class AnimalGroupAutocomplete(BaseAutocomplete):
 
 @register
 class EndpointAutocomplete(SearchLabelMixin, BaseAutocomplete):
+    paginate_by = 50
     model = models.Endpoint
     search_fields = [
         "animal_group__experiment__study__short_citation",
@@ -31,5 +34,5 @@ class EndpointAutocomplete(SearchLabelMixin, BaseAutocomplete):
     ]
 
     @classmethod
-    def get_base_queryset(cls, filters: dict = None):
+    def get_base_queryset(cls, filters: Optional[dict] = None):
         return super().get_base_queryset(filters).select_related("animal_group__experiment__study")

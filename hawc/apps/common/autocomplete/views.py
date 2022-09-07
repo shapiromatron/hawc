@@ -1,7 +1,7 @@
 from typing import Optional
 
 from dal import autocomplete
-from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 
 from ..helper import reverse_with_query_lazy
 
@@ -10,6 +10,7 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
     filter_fields: list[str] = []
     order_by: str = ""
     order_direction: str = ""
+    paginate_by: int = 30
 
     def get_field(self, obj):
         return getattr(obj, self.field)
@@ -76,8 +77,6 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.is_ajax():
-            raise HttpResponseBadRequest("AJAX required")
         if not request.user.is_authenticated:
             return HttpResponseForbidden("Authentication required")
         self.field = request.GET.get("field", "")
