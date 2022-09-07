@@ -30,7 +30,10 @@ class TestEpiV2(PlaywrightTestCase):
         # Update study design
         expect(page).to_have_url(re.compile(r"/epidemiology/design/\d+/update/"))
         expect(page.locator("text=Update design")).to_be_visible()
-        page.locator("#design-update").click()
+        page.wait_for_load_state("networkidle")
+        btn = page.locator("#design-update")
+        btn.scroll_into_view_if_needed()
+        btn.click(delay=100)
         page.locator('input[name="participant_n"]').fill("460")
         page.locator("text=Save").click()
 
@@ -61,30 +64,29 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator('input[name="name"]').fill("water adult serum")
         page.locator('select[name="chemical"]').select_option("5")
         page.locator('select[name="exposure_measurement"]').select_option("4")
-        page.locator("#exposurelevel-save").click()
+        page.locator("#exposurelevel-save").click(delay=100)
         page.locator("text=water adult serum").click()
-        page.locator("text=water adult serum water adult serum - - >> #exposurelevel-clone").click()
+        page.locator("text=water adult serum water adult serum - - >> #exposurelevel-clone").click(
+            delay=100
+        )
         page.locator("text=water adult serum (2)").click()
         page.locator(
             "text=water adult serum (2) water adult serum - - >> #exposurelevel-delete"
-        ).click()
-        page.locator("#exposurelevel-confirm-del").click()
+        ).click(delay=100)
+        page.locator("#exposurelevel-confirm-del").click(delay=100)
 
         # Check outcome CCRUD
         page.locator("text=Outcomes Add Row >> button").click()
         page.locator('select[name="system"]').select_option("IM")
         page.locator('select[name="effect"]+span.select2-container').click()
-        page.locator('input[role="searchbox"]').fill("asthma 2")
+        page.locator('input[role="searchbox"]').fill("asthma-2")
         page.locator('select[name="endpoint"]+span.select2-container').click()
-        page.locator('input[role="searchbox"]').fill("asthma within previous 10 years")
-        page.locator("#outcome-save").click()
-        page.locator(
-            "text=Immune asthma 2 asthma within previous 10 years >> #outcome-clone"
-        ).click()
-        page.locator(
-            "text=Immune asthma 2 asthma within previous 10 years (2) >> #outcome-delete"
-        ).click()
-        page.locator("#outcome-confirm-del").click()
+        page.locator('input[role="searchbox"]').fill("10 years")
+        page.locator("#outcome-save").scroll_into_view_if_needed()
+        page.locator("#outcome-save").click(delay=100)
+        page.locator("tr", has_text="asthma-2").locator("#outcome-clone").click(delay=100)
+        page.locator("tr", has_text="10 years (2)").locator("#outcome-delete").click(delay=100)
+        page.locator("#outcome-confirm-del").click(delay=100)
 
         # Check adjustment factor CCRUD
         page.locator("text=Adjustment Factors Add Row >> button").click()
@@ -102,11 +104,9 @@ class TestEpiV2(PlaywrightTestCase):
 
         # Check data extraction CCRUD
         page.locator("text=Data Extractions Add Row >> button").click()
-        page.locator('select[name="outcome"]').select_option("4")
-        page.locator('select[name="exposure_level"]').select_option("7")
-        page.locator('input[name="effect_estimate"]').click()
+        page.locator('select[name="outcome"]').select_option(index=1)
+        page.locator('select[name="exposure_level"]').select_option(index=1)
         page.locator('input[name="effect_estimate"]').fill("0")
-        page.locator('input[name="group"]').click()
         page.locator('input[name="group"]').fill("Group 3")
         page.locator('select[name="factors"]').select_option("6")
         page.locator("#dataextraction-save").click()
@@ -118,6 +118,6 @@ class TestEpiV2(PlaywrightTestCase):
         expect(page.locator("text=water >> nth=0")).to_be_visible()
         expect(page.locator("text=adult serum >> nth=0")).to_be_visible()
         expect(page.locator("text=water adult serum >> nth=0")).to_be_visible()
-        expect(page.locator("text=asthma within previous 10 years >> nth=0")).to_be_visible()
+        expect(page.locator("text=10 years >> nth=0")).to_be_visible()
         expect(page.locator('td:has-text("B")').nth(4)).to_be_visible()
         expect(page.locator("text=Group 3")).to_be_visible()
