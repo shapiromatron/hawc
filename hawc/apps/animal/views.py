@@ -336,7 +336,7 @@ class EndpointCreate(BaseCreateWithFormset):
             models.EndpointGroup,
             form=forms.EndpointGroupForm,
             formset=forms.BaseEndpointGroupFormSet,
-            extra=self.parent.dosing_regime.num_dose_groups,
+            extra=self.parent.dosing_regime.num_dose_groups if self.parent.dosing_regime else 1,
         )
         return Formset(queryset=models.EndpointGroup.objects.none())
 
