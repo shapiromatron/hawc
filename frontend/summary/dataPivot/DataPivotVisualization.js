@@ -881,7 +881,8 @@ class DataPivotVisualization extends D3Plot {
             self = this,
             barHeight = d3.min(this.row_heights, d => d.max - d.min) - barPadding * 2,
             lineMidpoint = barHeight * 0.5 + barPadding,
-            relativeErrors = _.includes(["stdev"], barchart.error_low_field_name),
+            relativeErrorLow = _.includes(["stdev"], barchart.error_low_field_name),
+            relativeErrorHigh = _.includes(["stdev"], barchart.error_high_field_name),
             lineData = null;
 
         bars_g
@@ -912,10 +913,10 @@ class DataPivotVisualization extends D3Plot {
         }
 
         lineData = datarows.map(d => {
-            const xMin = relativeErrors
+            const xMin = relativeErrorLow
                     ? d[barchart.field_name] - d[barchart.error_low_field_name]
                     : d[barchart.error_low_field_name],
-                xMax = relativeErrors
+                xMax = relativeErrorHigh
                     ? d[barchart.field_name] + d[barchart.error_high_field_name]
                     : d[barchart.error_high_field_name];
             return {
