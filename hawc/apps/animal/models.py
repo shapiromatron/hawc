@@ -544,16 +544,20 @@ class DosingRegime(models.Model):
     @staticmethod
     def flat_complete_data_row(ser):
         return (
-            ser["id"],
-            AnimalGroup.get_relation_id(ser["dosed_animals"]),
-            ser["route_of_exposure"],
-            ser["duration_exposure"],
-            ser["duration_exposure_text"],
-            ser["duration_observation"],
-            ser["num_dose_groups"],
-            ser["positive_control"],
-            ser["negative_control"],
-            cleanHTML(ser["description"]),
+            (
+                ser["id"],
+                AnimalGroup.get_relation_id(ser["dosed_animals"]),
+                ser["route_of_exposure"],
+                ser["duration_exposure"],
+                ser["duration_exposure_text"],
+                ser["duration_observation"],
+                ser["num_dose_groups"],
+                ser["positive_control"],
+                ser["negative_control"],
+                cleanHTML(ser["description"]),
+            )
+            if ser
+            else (None for _ in range(10))
         )
 
     def get_doses_json(self, json_encode=True):
