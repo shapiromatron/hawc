@@ -113,12 +113,6 @@ input[type='number'] {
     -moz-appearance: textfield;
 }
 
-/* handle conflict w/ bootstrap and jquery ui */
-.ui-autocomplete-input[disabled] {
-    background: none !important;
-    background-color: #efefef !important;
-}
-
 /* Override bootstrap modal width */
 .modal-dialog {
     min-width: 950px;
