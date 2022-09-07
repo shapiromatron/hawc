@@ -383,9 +383,8 @@ class AdminUserForm(PasswordForm):
             ):
                 self.fields[field].disabled = True
 
-        self.fields["project_manager"].widget.attrs["data-theme"] = "default"
-        self.fields["team_member"].widget.attrs["data-theme"] = "default"
-        self.fields["reviewer"].widget.attrs["data-theme"] = "default"
+        for field in ["project_manager", "team_member", "reviewer"]:
+            self.fields[field].widget.attrs["data-theme"] = "default"
 
         if self.instance.id:
             self.fields["password1"].required = False

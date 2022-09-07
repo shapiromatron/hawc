@@ -693,10 +693,6 @@ class EndpointSelectorForm(CopyAsNewSelectorForm):
     autocomplete_class = autocomplete.EndpointAutocomplete
 
 
-class UploadFileForm(forms.Form):
-    file = forms.FileField()
-
-
 class EndpointFilterForm(forms.Form):
 
     ORDER_BY_CHOICES = [

@@ -68,19 +68,10 @@ class AssessmentForm(forms.ModelForm):
         self.fields["dtxsids"] = AutocompleteMultipleChoiceField(
             autocomplete_class=autocomplete.DSSToxAutocomplete
         )
-        self.fields["project_manager"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=UserAutocomplete
-        )
-        self.fields["team_members"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=UserAutocomplete
-        )
-        self.fields["reviewers"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=UserAutocomplete
-        )
-
-        if self.instance.id is None:
-            self.instance.creator = self.user
-            self.fields["project_manager"].initial = [self.user]
+        for field in ["project_manager", "team_members", "reviewers"]:
+            self.fields[field] = AutocompleteMultipleChoiceField(
+                autocomplete_class=UserAutocomplete
+            )
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
