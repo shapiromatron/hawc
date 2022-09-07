@@ -944,31 +944,36 @@ class DataPivotVisualization extends D3Plot {
         if (!barchart.error_show_tails) {
             return;
         }
-        errorbars_g
-            .selectAll()
-            .data(lineData)
-            .enter()
-            .append("svg:line")
-            .attr("x1", d => d.xLow)
-            .attr("x2", d => d.xLow)
-            .attr("y1", d => d.y + lineMidpoint - barPadding)
-            .attr("y2", d => d.y + lineMidpoint + barPadding)
-            .each(function(d) {
-                applyStyles(self.svg, this, d.styles);
-            });
 
-        errorbars_g
-            .selectAll()
-            .data(lineData)
-            .enter()
-            .append("svg:line")
-            .attr("x1", d => d.xHigh)
-            .attr("x2", d => d.xHigh)
-            .attr("y1", d => d.y + lineMidpoint - barPadding)
-            .attr("y2", d => d.y + lineMidpoint + barPadding)
-            .each(function(d) {
-                applyStyles(self.svg, this, d.styles);
-            });
+        if (barchart.error_low_field_name !== barchart.field_name) {
+            errorbars_g
+                .selectAll()
+                .data(lineData)
+                .enter()
+                .append("svg:line")
+                .attr("x1", d => d.xLow)
+                .attr("x2", d => d.xLow)
+                .attr("y1", d => d.y + lineMidpoint - barPadding)
+                .attr("y2", d => d.y + lineMidpoint + barPadding)
+                .each(function(d) {
+                    applyStyles(self.svg, this, d.styles);
+                });
+        }
+
+        if (barchart.error_high_field_name !== barchart.field_name) {
+            errorbars_g
+                .selectAll()
+                .data(lineData)
+                .enter()
+                .append("svg:line")
+                .attr("x1", d => d.xHigh)
+                .attr("x2", d => d.xHigh)
+                .attr("y1", d => d.y + lineMidpoint - barPadding)
+                .attr("y2", d => d.y + lineMidpoint + barPadding)
+                .each(function(d) {
+                    applyStyles(self.svg, this, d.styles);
+                });
+        }
     }
 
     renderDataPoints() {
