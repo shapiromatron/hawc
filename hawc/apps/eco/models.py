@@ -27,6 +27,10 @@ class NestedTerm(MP_Node):
 
     node_order_by = ["name"]
 
+    @property
+    def nested_text(self) -> str:
+        return "- " * (self.depth - 1) + self.name
+
 
 class Vocab(models.Model):
     category = models.IntegerField(choices=VocabCategories.choices)
@@ -122,7 +126,7 @@ class Design(models.Model):
         verbose_name_plural = "Ecological Designs"
 
     def __str__(self):
-        return f"{self.study} - {self.name} - ecological design"
+        return self.name
 
     def clone(self):
         self.id = None
@@ -232,7 +236,7 @@ class Cause(models.Model):
         return self.study
 
     def __str__(self):
-        return f"{self.study} | {self.term.name} | {self.name}"
+        return self.name
 
 
 class Effect(models.Model):
@@ -294,7 +298,7 @@ class Effect(models.Model):
         return self.study
 
     def __str__(self):
-        return f"{self.study} | {self.term.name} | {self.name}"
+        return self.name
 
 
 class Result(models.Model):
@@ -407,10 +411,7 @@ class Result(models.Model):
         ordering = ("effect", "sort_order")
 
     def __str__(self):
-        if self.measure_type:
-            return f"{self.cause.study} | {self.cause.term.name} |{self.effect.term.name} | {self.measure_type.value}"
-        else:
-            return f"{self.cause.study} | {self.cause.term.name} | {self.effect.term.name}"
+        return f"{self.cause} | {self.effect}"
 
     def clone(self):
         self.id = None

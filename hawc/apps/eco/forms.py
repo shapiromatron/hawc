@@ -1,8 +1,10 @@
 from django import forms
+from django.urls import reverse_lazy
 
+from ..common.helper import new_window_a
 from ..common.autocomplete import (
-    AutocompleteMultipleChoiceField,
     AutocompleteChoiceField,
+    AutocompleteMultipleChoiceField,
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper
@@ -55,6 +57,11 @@ class DesignForm(forms.ModelForm):
         return helper
 
 
+def _term_help_text():
+    a = new_window_a(reverse_lazy("eco:term_list"), "term list")
+    return f"Controlled vocabulary term; view entire {a}."
+
+
 class CauseForm(forms.ModelForm):
 
     term = AutocompleteChoiceField(autocomplete_class=autocomplete.NestedTermAutocomplete)
@@ -73,6 +80,8 @@ class CauseForm(forms.ModelForm):
     def helper(self):
         for fld in ("comment", "as_reported"):
             self.fields[fld].widget.attrs["rows"] = 3
+
+        self.fields["term"].help_text = _term_help_text()
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
@@ -101,6 +110,8 @@ class EffectForm(forms.ModelForm):
     def helper(self):
         for fld in ("comment", "as_reported"):
             self.fields[fld].widget.attrs["rows"] = 3
+
+        self.fields["term"].help_text = _term_help_text()
 
         helper = BaseFormHelper(self)
         helper.form_tag = False

@@ -1,5 +1,6 @@
 from django.http import HttpRequest
 from django.shortcuts import render
+from django.views.generic import ListView
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
@@ -72,7 +73,12 @@ class DesignDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
-# Design viewset
+# Term preview
+class NestedTermList(ListView):
+    model = models.NestedTerm
+
+
+# Viewsets
 class DesignViewset(HtmxViewSet):
     actions = {"read", "update"}
     parent_model = Study
@@ -151,23 +157,20 @@ class DesignChildViewset(HtmxViewSet):
         return context
 
 
-# Result viewset
-class ResultViewset(DesignChildViewset):
-    model = models.Result
-    form_class = forms.ResultForm
-    parent_model = models.Design
-    detail_fragment = "eco/fragments/result_row.html"
-
-
-# Cause viewset
 class CauseViewset(DesignChildViewset):
     model = models.Cause
     form_class = forms.CauseForm
     detail_fragment = "eco/fragments/cause_row.html"
 
 
-# Effect viewset
 class EffectViewset(DesignChildViewset):
     model = models.Effect
     form_class = forms.EffectForm
     detail_fragment = "eco/fragments/effect_row.html"
+
+
+class ResultViewset(DesignChildViewset):
+    model = models.Result
+    form_class = forms.ResultForm
+    parent_model = models.Design
+    detail_fragment = "eco/fragments/result_row.html"

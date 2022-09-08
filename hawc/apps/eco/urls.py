@@ -4,6 +4,7 @@ from . import views
 
 app_name = "eco"
 urlpatterns = [
+    path("terms/", views.NestedTermList.as_view(), name="term_list"),
     path(
         "study/<int:pk>/design/create/",
         views.DesignCreate.as_view(),

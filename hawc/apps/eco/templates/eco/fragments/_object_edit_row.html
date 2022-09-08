@@ -4,6 +4,9 @@
     {% if form %}
     <td colspan="100%">
         <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-{{model}}">
+            <div class="d-flex justify-content-end">
+                {% include "common/scientific_pulldown.html" %}
+            </div>
             {% crispy form %}
             <div class="form-row pull-right">
                 {% if form.instance.id %}
