@@ -18,8 +18,6 @@ class HawcTooltip {
             tooltip = $('<div class="hawcTooltip popover" style="display: none;">')
                 .append(heading)
                 .append('<div class="hawcTooltipContent popover-content">')
-                .draggable()
-                .resizable({handles: "se", autoHide: true})
                 .appendTo("body");
         }
 

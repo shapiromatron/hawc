@@ -95,6 +95,8 @@ INSTALLED_APPS = (
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dal",
+    "dal_select2",
     "django.contrib.admin",
     "django.contrib.humanize",
     "django.contrib.postgres",
@@ -105,7 +107,6 @@ INSTALLED_APPS = (
     "reversion",
     "taggit",
     "treebeard",
-    "selectable",
     "crispy_forms",
     "webpack_loader",
     # Custom apps
@@ -309,9 +310,6 @@ REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
 }
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
-
-# Django selectable settings
-SELECTABLE_MAX_LIMIT = 100
 
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = "bootstrap4"

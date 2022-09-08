@@ -1,11 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
-{% load selectable_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
 <div class="tabbable" style="display:none;">
@@ -46,7 +41,7 @@
           "visual_type": {{visual_type}},
           "cancel_url": "{% if crud == "Create" %}{% url 'summary:visualization_list' pk=assessment.id %}{% else %}{{object.get_absolute_url}}{% endif %}",
           "data_url": "{% url 'summary:api:visual-list' %}",
-          "endpoint_url": "{% url 'selectable-lookup' 'animal-endpointidbyassessmentlookup' %}",
+          "endpoint_url": "{% url 'autocomplete' 'animal-endpointautocomplete' %}",
           "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type %}",
           "rob_metrics": {{rob_metrics|safe}},
           "initial_data": {{initial_data|safe}},

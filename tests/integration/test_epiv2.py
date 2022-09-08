@@ -1,3 +1,5 @@
+import re
+
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
@@ -26,6 +28,8 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator('a:has-text("Update")').click()
 
         # Update study design
+        expect(page).to_have_url(re.compile(r"/epidemiology/design/\d+/update/"))
+        page.wait_for_load_state("networkidle")
         expect(page.locator("text=Update design")).to_be_visible()
         page.locator("#design-update").click()
         page.locator('input[name="participant_n"]').click()
@@ -34,8 +38,8 @@ class TestEpiV2(PlaywrightTestCase):
 
         # Check chemical CCRUD
         page.locator("text=Chemicals Add Row >> button").click()
-        page.locator('input[name="name"]').click()
-        page.locator('input[name="name"]').fill("water")
+        page.locator('select[name="name"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("water")
         page.locator("#chemical-save").click()
         page.locator("text=water - >> #chemical-clone").click()
         page.locator("text=water (2)").click()
@@ -57,8 +61,8 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator("text=Exposure Levels Add Row >> button").click()
         page.locator('input[name="name"]').click()
         page.locator('input[name="name"]').fill("water adult serum")
-        page.locator('select[name="chemical"]').select_option("5")
-        page.locator('select[name="exposure_measurement"]').select_option("4")
+        page.locator('select[name="chemical"]').select_option(label="water")
+        page.locator('select[name="exposure_measurement"]').select_option(label="adult serum")
         page.locator("#exposurelevel-save").click()
         page.locator("text=water adult serum").click()
         page.locator("text=water adult serum water adult serum - - >> #exposurelevel-clone").click()
@@ -71,10 +75,10 @@ class TestEpiV2(PlaywrightTestCase):
         # Check outcome CCRUD
         page.locator("text=Outcomes Add Row >> button").click()
         page.locator('select[name="system"]').select_option("IM")
-        page.locator('input[name="effect"]').click()
-        page.locator('input[name="effect"]').fill("asthma 2")
-        page.locator('input[name="endpoint"]').click()
-        page.locator('input[name="endpoint"]').fill("asthma within previous 10 years")
+        page.locator('select[name="effect"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("asthma 2")
+        page.locator('select[name="endpoint"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("asthma within previous 10 years")
         page.locator("#outcome-save").click()
         page.locator(
             "text=Immune asthma 2 asthma within previous 10 years >> #outcome-clone"
@@ -100,8 +104,10 @@ class TestEpiV2(PlaywrightTestCase):
 
         # Check data extraction CCRUD
         page.locator("text=Data Extractions Add Row >> button").click()
-        page.locator('select[name="outcome"]').select_option("4")
-        page.locator('select[name="exposure_level"]').select_option("7")
+        page.locator('select[name="outcome"]').select_option(
+            label="asthma within previous 10 years"
+        )
+        page.locator('select[name="exposure_level"]').select_option(label="water adult serum")
         page.locator('input[name="effect_estimate"]').click()
         page.locator('input[name="effect_estimate"]').fill("0")
         page.locator('input[name="group"]').click()
