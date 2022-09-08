@@ -318,7 +318,8 @@ class AnimalGroup(models.Model):
     def get_doses_json(self, json_encode=True):
         if not hasattr(self, "doses"):
             self.doses = [{"error": "no dosing regime"}]
-            self.doses = self.dosing_regime.get_doses_json(False)
+            if self.dosing_regime:
+                self.doses = self.dosing_regime.get_doses_json(False)
         if json_encode:
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses

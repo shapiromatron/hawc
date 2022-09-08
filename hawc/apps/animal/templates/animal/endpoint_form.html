@@ -10,6 +10,10 @@
 
 {% block content %}
 
+  {% if not animal_group.dose_regime %}
+    <div class="alert alert-danger" role="alert">You can not create an endpoint when the Animal Group has no Dose Regime. <a href="{{animal_group.get_absolute_url}}" class="alert-link">Click here to go back to the animal group</a>.</div>
+  {% endif %}
+
   {% crispy form %}
 
   {# extra stuff that JS will move to correct location #}
