@@ -59,7 +59,7 @@
         {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-empty-row" model="result" %}
         <table class="table table-sm table-striped">
             {% bs4_colgroup '15,15,10,15,15,15,15' %}
-            {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value,Edit' %}
+            {% bs4_thead 'Cause,Effect,Relationship Direction,Modifying Factors,Description,Derived Value,Edit' %}
             <tbody>
                 {% if results %}
                     {% for object in results %}
