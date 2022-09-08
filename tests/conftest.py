@@ -47,18 +47,9 @@ class Keys:
         self.pm_user = UserCredential("pm@hawcproject.org", "pw")
         self.pm_user_id = 2
 
-        self.job_assessment = "204faaa7-fdfa-4426-a09f-f0d1af9db33d"
-        self.job_global = "08ca9f23-5368-4ed6-9b18-29625add9aa8"
-
-        self.log_assessment = 1
-        self.log_global = 2
-
-        self.blog_published = 2
-        self.blog_unpublished = 1
+        self.eco_design = 1
 
         self.epiv2_design = 1
-
-        self.eco_design = 1
 
 
 _keys = Keys()

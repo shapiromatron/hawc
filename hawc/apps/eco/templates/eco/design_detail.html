@@ -18,23 +18,6 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Results</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '20,15,15,15,20,15' %}
-            {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value' %}
-            <tbody id="result-tbody">
-                {% for object in results %}
-                    {% include "eco/fragments/result_row.html" %}
-                {% empty %}
-                    {% bs4_fullrow 'No results available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="card my-4 mx-2">
-    <div class="card-body">
         <h3 class="card-title">Causes</h3>
         <table class="table table-sm table-striped">
             {% bs4_colgroup '15,20,15,15,15,20' %}
@@ -61,6 +44,23 @@
                 {% include "eco/fragments/effect_row.html" %}
                 {% empty %}
                 {% bs4_fullrow 'No effects available.' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Results</h3>
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '20,15,15,15,20,15' %}
+            {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value' %}
+            <tbody id="result-tbody">
+                {% for object in results %}
+                    {% include "eco/fragments/result_row.html" %}
+                {% empty %}
+                    {% bs4_fullrow 'No results available.' %}
                 {% endfor %}
             </tbody>
         </table>

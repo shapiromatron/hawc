@@ -13,27 +13,6 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'eco:result-create' object.pk as result_create %}
-        {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-empty-row" model="result" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '15,15,10,15,15,15,15' %}
-            {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value,Edit' %}
-            <tbody>
-                {% if results %}
-                    {% for object in results %}
-                        {% include "eco/fragments/result_row.html" %}
-                    {% endfor %}
-                    {% include "eco/fragments/_create_one.html" with id="result-empty-row" text="" %}
-                {% else %}
-                    {% include "eco/fragments/_create_one.html" with id="result-empty-row" text="results" %}
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="card my-4 mx-2">
-    <div class="card-body">
         {% url 'eco:cause-create' object.pk as cause_create %}
         {% include "eco/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target="#cause-empty-row" model="cause" %}
         <table class="table table-sm table-striped">
@@ -73,13 +52,29 @@
         </table>
     </div>
 </div>
+
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'eco:result-create' object.pk as result_create %}
+        {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-empty-row" model="result" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '15,15,10,15,15,15,15' %}
+            {% bs4_thead 'Cause,Effect,Measure Type,Modifying Factors,Description,Derived Value,Edit' %}
+            <tbody>
+                {% if results %}
+                    {% for object in results %}
+                        {% include "eco/fragments/result_row.html" %}
+                    {% endfor %}
+                    {% include "eco/fragments/_create_one.html" with id="result-empty-row" text="" %}
+                {% else %}
+                    {% include "eco/fragments/_create_one.html" with id="result-empty-row" text="results" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="well text-center">
     <a class="btn btn-light my-3" id="design-page-cancel" href="{{object.get_absolute_url}}"><i class="fa fa-fw fa-times"></i>Cancel</a>
 </div>
 {% endblock %}
-{% block extrajs %}
-
-<script type="text/javascript">
-    $('.html5text').quillify();
-</script>
-{% endblock extrajs %}
