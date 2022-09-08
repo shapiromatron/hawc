@@ -13,21 +13,21 @@
         {% optional_table_row "Study setting" object.study_setting %}
         <tr>
             <th>Countries</th>
-            <td>{% for object in object.country.all %}
+            <td>{% for object in object.countries.all %}
                 <span class="badge badge-secondary">{{object.name}}</span>
                 {% endfor %}
             </td>
         </tr>
         <tr>
             <th>State(s)</th>
-            <td>{% for object in object.state.all %}
+            <td>{% for object in object.states.all %}
                 <span class="badge badge-secondary">{{object.name}}</span>
                 {% endfor %}
             </td>
         </tr>
         <tr>
             <th>Ecoregion(s)</th>
-            <td>{% for object in object.ecoregion.all %}
+            <td>{% for object in object.ecoregions.all %}
                 <span class="badge badge-secondary">{{object}}</span>
                 {% endfor %}
             </td>
@@ -41,7 +41,7 @@
         {% endif %}
         <tr>
             <th>Climate</th>
-            <td>{% for object in object.climate.all %}
+            <td>{% for object in object.climates.all %}
                 <span class="badge badge-secondary">{{object}}</span>
                 {% endfor %}
             </td>

@@ -4,7 +4,7 @@
     <td>{{object.species }}</td>
     <td>{{object.level }}</td>
     <td>{{object.level_units }}</td>
-    <td>{{object.comment|safe }}</td>
+    <td>{{object.comments }}</td>
     {% include "eco/fragments/_object_row.html" with model="cause" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}

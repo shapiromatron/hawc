@@ -4572,12 +4572,12 @@
     climate_as_reported: ''
     created: 2022-08-18 17:45:22.970314+00:00
     last_updated: 2022-08-18 17:45:22.970314+00:00
-    country:
+    countries:
     - 3
-    state: []
-    ecoregion:
+    states: []
+    ecoregions:
     - 110
-    climate:
+    climates:
     - 103
 - model: eco.cause
   pk: 1
@@ -4585,7 +4585,7 @@
     name: cause
     study: 1
     term: 1
-    bio_org: 29
+    biological_organization: 29
     species: ''
     level: '2'
     level_value: null
@@ -4593,7 +4593,7 @@
     duration: '2'
     duration_value: null
     duration_units: ''
-    comment: ''
+    comments: ''
     as_reported: <p><strong>Cause/treatment as reported</strong></p>
     created: 2022-08-17 16:20:31.982792+00:00
     last_updated: 2022-08-17 18:21:25.677256+00:00
@@ -4605,8 +4605,8 @@
     term: 1
     units: g
     species: ''
-    bio_org: 29
-    comment: ''
+    biological_organization: 29
+    comments: ''
     as_reported: <p><strong>Effect as reported</strong></p>
     created: 2022-08-17 16:20:14.052436+00:00
     last_updated: 2022-08-17 16:20:14.052436+00:00

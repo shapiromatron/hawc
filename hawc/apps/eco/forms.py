@@ -1,13 +1,13 @@
 from django import forms
 from django.urls import reverse_lazy
 
-from ..common.helper import new_window_a
 from ..common.autocomplete import (
     AutocompleteChoiceField,
     AutocompleteMultipleChoiceField,
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper
+from ..common.helper import new_window_a
 from ..epi.autocomplete import CountryAutocomplete
 from . import autocomplete, models
 
@@ -17,9 +17,9 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update an existing study design."
 
-    country = AutocompleteMultipleChoiceField(autocomplete_class=CountryAutocomplete)
-    state = AutocompleteMultipleChoiceField(autocomplete_class=autocomplete.StateAutocomplete)
-    ecoregion = AutocompleteMultipleChoiceField(
+    countries = AutocompleteMultipleChoiceField(autocomplete_class=CountryAutocomplete)
+    states = AutocompleteMultipleChoiceField(autocomplete_class=autocomplete.StateAutocomplete)
+    ecoregions = AutocompleteMultipleChoiceField(
         autocomplete_class=autocomplete.EcoregionAutocomplete
     )
 
@@ -52,7 +52,7 @@ class DesignForm(forms.ModelForm):
             helper = BaseFormHelper(self, **inputs)
 
         helper.add_row("name", 3, "col-md-4")
-        helper.add_row("country", 3, "col-md-4")
+        helper.add_row("countries", 3, "col-md-4")
         helper.add_row("habitat", 4, "col-md-3")
         return helper
 
@@ -69,6 +69,23 @@ class CauseForm(forms.ModelForm):
     class Meta:
         exclude = ("study",)
         model = models.Cause
+        widgets = {
+            "species": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.CauseAutocomplete, field="species"
+            ),
+            "level": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.CauseAutocomplete, field="level"
+            ),
+            "level_units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.CauseAutocomplete, field="level_units"
+            ),
+            "duration": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.CauseAutocomplete, field="duration"
+            ),
+            "duration_units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.CauseAutocomplete, field="duration_units"
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -78,7 +95,7 @@ class CauseForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("comment", "as_reported"):
+        for fld in ("as_reported", "comments"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         self.fields["term"].help_text = _term_help_text()
@@ -86,9 +103,10 @@ class CauseForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 2, ["col-md-4", "col-md-8"])
-        helper.add_row("bio_org", 4, "col-md-3")
-        helper.add_row("level_units", 4, "col-md-3")
-        helper.add_row("comment", 2, "col-md-6")
+        helper.add_row("biological_organization", 2, "col-md-6")
+        helper.add_row("level", 3, "col-md-4")
+        helper.add_row("duration", 3, "col-md-4")
+        helper.add_row("as_reported", 2, "col-md-6")
         return helper
 
 
@@ -99,6 +117,14 @@ class EffectForm(forms.ModelForm):
     class Meta:
         exclude = ("study",)
         model = models.Effect
+        widgets = {
+            "species": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.EffectAutocomplete, field="species"
+            ),
+            "units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.EffectAutocomplete, field="units"
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
@@ -108,7 +134,7 @@ class EffectForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("comment", "as_reported"):
+        for fld in ("as_reported", "comments"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         self.fields["term"].help_text = _term_help_text()
@@ -116,8 +142,8 @@ class EffectForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 2, ["col-md-4", "col-md-8"])
-        helper.add_row("units", 3, "col-md-4")
-        helper.add_row("comment", 2, "col-md-6")
+        helper.add_row("biological_organization", 3, "col-md-4")
+        helper.add_row("as_reported", 2, "col-md-6")
         return helper
 
 
@@ -139,8 +165,10 @@ class ResultForm(forms.ModelForm):
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("cause", 4, "col-md-3")
-        helper.add_row("relationship_comment", 4, "col-md-3")
+        helper.add_row("cause", 3, "col-md-4")
+        helper.add_row("relationship_direction", 2, "col-md-6")
         helper.add_row("measure_type", 4, "col-md-3")
-        helper.add_row("low_variability", 5, "col-md-2")
+        helper.add_row("variability", 3, "col-md-3")
+        helper.add_row("modifying_factors", 2, "col-md-6")
+        helper.add_row("statistical_sig_type", 3, "col-md-4")
         return helper

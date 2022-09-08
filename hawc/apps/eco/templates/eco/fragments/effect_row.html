@@ -3,8 +3,8 @@
     <td>{{object.term.name}}</td>
     <td>{{object.species }}</td>
     <td>{{object.units }}</td>
-    <td>{{object.as_reported|safe }}</td>
-    <td>{{object.comment|safe }}</td>
+    <td>{{object.as_reported }}</td>
+    <td>{{object.comments }}</td>
     {% include "eco/fragments/_object_row.html" with model="effect" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
