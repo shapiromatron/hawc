@@ -61,8 +61,8 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator("text=Exposure Levels Add Row >> button").click()
         page.locator('input[name="name"]').click()
         page.locator('input[name="name"]').fill("water adult serum")
-        page.locator('select[name="chemical"]').select_option(index=1)
-        page.locator('select[name="exposure_measurement"]').select_option(index=1)
+        page.locator('select[name="chemical"]').select_option(label="water")
+        page.locator('select[name="exposure_measurement"]').select_option(label="adult serum")
         page.locator("#exposurelevel-save").click()
         page.locator("text=water adult serum").click()
         page.locator("text=water adult serum water adult serum - - >> #exposurelevel-clone").click()
@@ -104,8 +104,10 @@ class TestEpiV2(PlaywrightTestCase):
 
         # Check data extraction CCRUD
         page.locator("text=Data Extractions Add Row >> button").click()
-        page.locator('select[name="outcome"]').select_option(index=1)
-        page.locator('select[name="exposure_level"]').select_option(index=1)
+        page.locator('select[name="outcome"]').select_option(
+            label="asthma within previous 10 years"
+        )
+        page.locator('select[name="exposure_level"]').select_option(label="water adult serum")
         page.locator('input[name="effect_estimate"]').click()
         page.locator('input[name="effect_estimate"]').fill("0")
         page.locator('input[name="group"]').click()
