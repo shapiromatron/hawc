@@ -23,6 +23,18 @@ class DesignCreate(BaseCreate):
         return context
 
 
+def get_design_relations(design):
+    cause_effect = models.Study.objects.filter(id=design.study_id).prefetch_related(
+        "eco_causes", "eco_effects"
+    )
+    results = models.Result.objects.filter(design=design.id)
+    return {
+        "causes": cause_effect[0].eco_causes.all(),
+        "effects": cause_effect[0].eco_effects.all(),
+        "results": results,
+    }
+
+
 class DesignUpdate(BaseUpdate):
     success_message = "Study design updated."
     parent_model = Study
@@ -32,12 +44,8 @@ class DesignUpdate(BaseUpdate):
     template_name = "eco/design_update.html"
 
     def get_context_data(self, **kwargs):
-        design_id = self.kwargs.pop("pk")
         context = super().get_context_data(**kwargs)
-        study_id = self.object.study_id
-        context["causes"] = models.Cause.objects.filter(study=study_id)
-        context["effects"] = models.Effect.objects.filter(study=study_id)
-        context["results"] = models.Result.objects.filter(design=design_id)
+        context.update(get_design_relations(self.object))
         return context
 
 
@@ -46,12 +54,8 @@ class DesignDetail(BaseDetail):
     template_name = "eco/design_detail.html"
 
     def get_context_data(self, **kwargs):
-        design_id = self.kwargs.get("pk")
         context = super().get_context_data(**kwargs)
-        study_id = self.object.study_id
-        context["causes"] = models.Cause.objects.filter(study=study_id)
-        context["effects"] = models.Effect.objects.filter(study=study_id)
-        context["results"] = models.Result.objects.filter(design=design_id)
+        context.update(get_design_relations(self.object))
         return context
 
 
@@ -60,12 +64,8 @@ class DesignDelete(BaseDelete):
     model = models.Design
 
     def get_context_data(self, **kwargs):
-        design_id = self.kwargs.pop("pk")
         context = super().get_context_data(**kwargs)
-        study_id = self.object.study_id
-        context["causes"] = models.Cause.objects.filter(study=study_id)
-        context["effects"] = models.Effect.objects.filter(study=study_id)
-        context["results"] = models.Result.objects.filter(design=design_id)
+        context.update(get_design_relations(self.object))
         return context
 
     def get_success_url(self):

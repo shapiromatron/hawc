@@ -7,7 +7,7 @@ from treebeard.mp_tree import MP_Node
 from ..epi.models import Country
 from ..study.models import Study
 from . import managers
-from .constants import ChangeTrajectory, VocabCategories
+from .constants import ChangeTrajectory, TypeChoices, VocabCategories
 
 
 class State(models.Model):
@@ -19,10 +19,8 @@ class State(models.Model):
 
 
 class NestedTerm(MP_Node):
-    type_choices = (("CE", "cause/effect"),)
-
     name = models.CharField(max_length=128)
-    type = models.CharField(choices=type_choices, max_length=2, default="CE")
+    type = models.CharField(choices=TypeChoices.choices, max_length=2, default="CE")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
@@ -152,7 +150,7 @@ class Cause(models.Model):
     objects = managers.CauseManager()
 
     name = models.CharField(blank=True, max_length=128)
-    study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="eco_causes")
     term = models.ForeignKey(
         NestedTerm,
         related_name="causes",
@@ -241,7 +239,7 @@ class Effect(models.Model):
     objects = managers.EffectManager()
 
     name = models.CharField(blank=True, max_length=128)
-    study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="eco_effects")
     term = models.ForeignKey(
         NestedTerm,
         related_name="effects",

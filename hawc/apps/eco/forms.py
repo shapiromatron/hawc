@@ -28,7 +28,6 @@ class DesignForm(forms.ModelForm):
     @property
     def helper(self):
         for fld in ("habitat_as_reported", "climate_as_reported"):
-            self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:
@@ -71,7 +70,6 @@ class CauseForm(forms.ModelForm):
     @property
     def helper(self):
         for fld in ("comment", "as_reported"):
-            self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
 
         helper = BaseFormHelper(self)
@@ -104,7 +102,6 @@ class EffectForm(forms.ModelForm):
     @property
     def helper(self):
         for fld in ("comment", "as_reported"):
-            self.fields[fld].widget.attrs["class"] = "html5text"
             self.fields[fld].widget.attrs["rows"] = 3
 
         helper = BaseFormHelper(self)
