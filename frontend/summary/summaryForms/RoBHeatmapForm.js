@@ -1,6 +1,7 @@
 import _ from "lodash";
 import $ from "$";
 
+import {DEFAULT} from "shared/constants";
 import RoBHeatmap from "summary/summary/RoBHeatmap";
 
 import BaseVisualForm from "./BaseVisualForm";
@@ -82,7 +83,7 @@ _.extend(RoBHeatmapForm, {
             type: IntegerField,
             name: "padding_right",
             label: "Plot padding-right (px)",
-            def: 10,
+            def: 330,
             tab: "overall",
         },
         {
@@ -167,16 +168,16 @@ _.extend(RoBHeatmapForm, {
             type: IntegerField,
             name: "legend_x",
             label: "Legend x-location (px)",
-            def: -1,
-            helpText: "Set to -1 to be at the left, or 9999 to be at the right",
+            def: DEFAULT,
+            helpText: `Absolute legend location; for default set to ${DEFAULT}`,
             tab: "legend",
         },
         {
             type: IntegerField,
             name: "legend_y",
             label: "Legend y-location (px)",
-            def: 9999,
-            helpText: "Set to -1 to be at the top, or 9999 to be at the bottom",
+            def: DEFAULT,
+            helpText: `Absolute legend location; for default set to ${DEFAULT}`,
             tab: "legend",
         },
     ],

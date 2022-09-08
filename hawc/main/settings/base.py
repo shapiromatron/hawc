@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 
 from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
+from hawc.tools import fips
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -94,6 +95,8 @@ INSTALLED_APPS = (
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dal",
+    "dal_select2",
     "django.contrib.admin",
     "django.contrib.humanize",
     "django.contrib.postgres",
@@ -104,7 +107,6 @@ INSTALLED_APPS = (
     "reversion",
     "taggit",
     "treebeard",
-    "selectable",
     "crispy_forms",
     "webpack_loader",
     # Custom apps
@@ -126,6 +128,10 @@ INSTALLED_APPS = (
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
 )
+
+# TODO - remove with django==4.1
+if HAWC_FEATURES.FIPS_MODE is True:
+    fips.patch_md5()
 
 if HAWC_FEATURES.ENABLE_ECO:
     INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
@@ -304,9 +310,6 @@ REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
 }
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
-
-# Django selectable settings
-SELECTABLE_MAX_LIMIT = 100
 
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = "bootstrap4"

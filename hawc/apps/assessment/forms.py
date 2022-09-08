@@ -14,21 +14,25 @@ from django.utils import timezone
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.forms import BaseFormHelper, form_actions_apply_filters, form_actions_create_or_close
+from ..common.autocomplete import AutocompleteMultipleChoiceField, AutocompleteTextWidget
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    form_actions_apply_filters,
+    form_actions_create_or_close,
+)
 from ..common.helper import new_window_a, tryParseInt
-from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
-from ..myuser.lookups import HAWCUserLookup
+from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
-from . import lookups, models
+from . import autocomplete, models
 
 
 class AssessmentForm(forms.ModelForm):
 
-    internal_communications = forms.CharField(
+    internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this assessment; this field is only displayed to assessment team members.",
-        widget=forms.Textarea,
     )
 
     class Meta:
@@ -46,6 +50,12 @@ class AssessmentForm(forms.ModelForm):
         widgets = {
             "public_on": DateCheckboxInput,
         }
+        field_classes = {
+            "assessment_objective": QuillField,
+            "authors": QuillField,
+            "conflicts_of_interest": QuillField,
+            "funding_source": QuillField,
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
@@ -55,18 +65,13 @@ class AssessmentForm(forms.ModelForm):
             self.fields["project_manager"].initial = [self.user]
             self.fields["year"].initial = timezone.now().year
 
-        self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=lookups.DssToxIdLookup
+        self.fields["dtxsids"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=autocomplete.DSSToxAutocomplete
         )
-        self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["team_members"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
+        for field in ["project_manager", "team_members", "reviewers"]:
+            self.fields[field] = AutocompleteMultipleChoiceField(
+                autocomplete_class=UserAutocomplete
+            )
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
@@ -85,13 +90,6 @@ class AssessmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -223,6 +221,7 @@ class AttachmentForm(forms.ModelForm):
     class Meta:
         model = models.Attachment
         exclude = ("content_type", "object_id", "content_object")
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         obj = kwargs.pop("parent", None)
@@ -234,7 +233,6 @@ class AttachmentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["description"].widget.attrs["class"] = "html5text"
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("title", 2, "col-md-6")
@@ -294,13 +292,15 @@ class DoseUnitsForm(forms.ModelForm):
     class Meta:
         model = models.DoseUnits
         fields = "__all__"
+        widgets = {
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DoseUnitsAutocomplete, field="name"
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        self.fields["name"].widget = AutoCompleteWidget(
-            lookup_class=lookups.DoseUnitsLookup, allow_new=True
-        )
 
     @property
     def helper(self):
@@ -348,13 +348,15 @@ class EffectTagForm(forms.ModelForm):
     class Meta:
         model = models.EffectTag
         fields = "__all__"
+        widgets = {
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.EffectTagAutocomplete, field="name"
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent")
         super().__init__(*args, **kwargs)
-        self.fields["name"].widget = AutoCompleteWidget(
-            lookup_class=lookups.EffectTagLookup, allow_new=True
-        )
 
     @property
     def helper(self):
@@ -441,13 +443,6 @@ class DatasetForm(forms.ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in self.fields.keys():
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -537,6 +532,7 @@ class DatasetForm(forms.ModelForm):
     class Meta:
         model = models.Dataset
         fields = ("name", "description", "published")
+        field_classes = {"description": QuillField}
 
 
 class LogFilterForm(forms.Form):

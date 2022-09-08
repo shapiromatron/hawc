@@ -9,17 +9,17 @@ from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
-from ..animal.lookups import EndpointByAssessmentLookup
+from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
-from ..common import selectable
+from ..common.autocomplete import AutocompleteChoiceField
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
-from ..study.lookups import StudyLookup
+from ..study.autocomplete import StudyAutocomplete
 from ..study.models import Study
-from . import constants, lookups, models
+from . import autocomplete, constants, models
 
 
 def clean_slug(form):
@@ -821,12 +821,26 @@ class TagtreeForm(VisualForm):
         required=True,
         help_text="The height of the visual, in pixels. If you have overlapping nodes, add more height",
     )
+    show_legend = forms.BooleanField(
+        label="Show Legend",
+        help_text="Describes what each node type indicates",
+        initial=True,
+        required=False,
+    )
+    show_counts = forms.BooleanField(
+        label="Show Node Counts",
+        help_text="Display the count for each node and scale size accordingly",
+        initial=True,
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
         self.helper.add_row("root_node", 3, "col-md-4")
-        self.helper.add_row("hide_empty_tag_nodes", 3, "col-md-4")
+        self.helper.add_row(
+            "hide_empty_tag_nodes", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"]
+        )
 
         choices = [
             (tag.id, tag.get_nested_name())
@@ -854,6 +868,10 @@ class TagtreeForm(VisualForm):
             self.fields["width"].initial = data["width"]
         if "height" in data:
             self.fields["height"].initial = data["height"]
+        if "show_legend" in data:
+            self.fields["show_legend"].initial = data["show_legend"]
+        if "show_counts" in data:
+            self.fields["show_counts"].initial = data["show_counts"]
 
     def save(self, commit=True):
         self.instance.settings = json.dumps(
@@ -864,6 +882,8 @@ class TagtreeForm(VisualForm):
                 hide_empty_tag_nodes=self.cleaned_data["hide_empty_tag_nodes"],
                 width=self.cleaned_data["width"],
                 height=self.cleaned_data["height"],
+                show_legend=self.cleaned_data["show_legend"],
+                show_counts=self.cleaned_data["show_counts"],
             )
         )
         return super().save(commit)
@@ -881,6 +901,8 @@ class TagtreeForm(VisualForm):
             "hide_empty_tag_nodes",
             "width",
             "height",
+            "show_legend",
+            "show_counts",
         )
 
 
@@ -1180,27 +1202,29 @@ class SmartTagForm(forms.Form):
         ("data_pivot", "Data Pivot"),
     )
     resource = forms.ChoiceField(choices=RESOURCE_CHOICES)
-    study = selectable.AutoCompleteSelectField(
-        lookup_class=StudyLookup,
+    study = AutocompleteChoiceField(
+        autocomplete_class=StudyAutocomplete,
         help_text="Type a few characters of the study name, then click to select.",
     )
-    endpoint = selectable.AutoCompleteSelectField(
-        lookup_class=EndpointByAssessmentLookup,
+    endpoint = AutocompleteChoiceField(
+        autocomplete_class=EndpointAutocomplete,
         help_text="Type a few characters of the endpoint name, then click to select.",
     )
-    visual = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.VisualLookup,
+    visual = AutocompleteChoiceField(
+        autocomplete_class=autocomplete.VisualAutocomplete,
         help_text="Type a few characters of the visual name, then click to select.",
     )
-    data_pivot = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.DataPivotLookup,
+    data_pivot = AutocompleteChoiceField(
+        autocomplete_class=autocomplete.DataPivotAutocomplete,
         help_text="Type a few characters of the data-pivot name, then click to select.",
     )
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop("assessment_id", -1)
         super().__init__(*args, **kwargs)
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if hasattr(widget, "update_query_parameters"):
-                widget.update_query_parameters({"related": assessment_id})
+        self.fields["study"].set_filters({"assessment_id": assessment_id})
+        self.fields["endpoint"].set_filters(
+            {"animal_group__experiment__study__assessment_id": assessment_id}
+        )
+        self.fields["visual"].set_filters({"assessment_id": assessment_id})
+        self.fields["data_pivot"].set_filters({"assessment_id": assessment_id})

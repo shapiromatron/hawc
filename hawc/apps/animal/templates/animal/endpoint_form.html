@@ -1,12 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
 
@@ -55,7 +50,12 @@
                 <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
                 <th class="p_only">Low CI (%)</th>
                 <th class="p_only">High CI (%)</th>
-                <th>Significance<br>Level<br>(if significant)</th>
+                <th>Significance<br>Level<br>(if significant)
+                  {% include "common/helptext_popup.html" with text=formset.0.significance_level.help_text %}
+                </th>
+                <th>Treatment Related Effect
+                  {% include "common/helptext_popup.html" with text=formset.0.treatment_effect.help_text %}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -77,6 +77,7 @@
                   <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-danger"}}</th>
                   <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-danger"}}</th>
                   <td>{{form.significance_level}}</td>
+                  <td>{{form.treatment_effect}}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -92,7 +93,6 @@
 {% endblock %}
 
 {% block extrajs %}
-  {{ form.media }}
   <script type="text/json" id="config">
     {
       "vocabulary": {{vocabulary|safe}},
@@ -134,4 +134,5 @@
     });
   });
   </script>
+  {% include "common/helptext_popup_js.html" %}
 {% endblock %}

@@ -57,5 +57,22 @@ class AdjustmentFactorManager(BaseManager):
     assessment_relation = "studypopulation__study__assessment"
 
 
+class DataExtractionQuerySet(QuerySet):
+    def published_only(self, published_only: bool):
+        return self.filter(design__study__published=True) if published_only else self
+
+    def complete(self):
+        return self.select_related(
+            "design__study",
+            "exposure_level__chemical__dsstox",
+            "exposure_level__exposure_measurement",
+            "outcome",
+            "factors",
+        ).prefetch_related("design__countries")
+
+
 class DataExtractionManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
+
+    def get_queryset(self):
+        return DataExtractionQuerySet(self.model, using=self._db)
