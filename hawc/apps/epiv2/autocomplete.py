@@ -23,4 +23,4 @@ class OutcomeAutocomplete(BaseAutocomplete):
 @register
 class DataExtractionAutocomplete(BaseAutocomplete):
     model = models.DataExtraction
-    search_fields = ["comments"]
+    search_fields = []

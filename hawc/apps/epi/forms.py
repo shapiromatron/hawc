@@ -118,6 +118,9 @@ class StudyPopulationForm(forms.ModelForm):
             "state": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="state"
             ),
+            "countries": AutocompleteSelectMultipleWidget(
+                autocomplete_class=autocomplete.CountryAutocomplete
+            ),
         }
 
     def __init__(self, *args, **kwargs):
