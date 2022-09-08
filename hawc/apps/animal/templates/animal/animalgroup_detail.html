@@ -37,8 +37,7 @@
 <script type="text/javascript">
 window.app.startup("animalStartup", function(animal){
     const data = window.app.getConfig();
-    var dosing_
-    regime = "{{ object.dosing_regime }}"
+    var dosing_regime = "{{ object.dosing_regime }}"
     console.log(dosing_regime)
     animal.AnimalGroup.get_object(data.id, function(d){
         if (dosing_regime != "None"){
