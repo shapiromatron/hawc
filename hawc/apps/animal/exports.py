@@ -115,16 +115,17 @@ class EndpointGroupFlatComplete(FlatFileExporter):
             row.extend(Study.flat_complete_data_row(ser["animal_group"]["experiment"]["study"]))
             row.extend(models.Experiment.flat_complete_data_row(ser["animal_group"]["experiment"]))
             row.extend(models.AnimalGroup.flat_complete_data_row(ser["animal_group"]))
-            row.extend(
-                models.DosingRegime.flat_complete_data_row(ser["animal_group"]["dosing_regime"])
-            )
+            ser_dosing_regime = ser["animal_group"]["dosing_regime"]
+            row.extend(models.DosingRegime.flat_complete_data_row(ser_dosing_regime))
             row.extend(models.Endpoint.flat_complete_data_row(ser))
             for i, eg in enumerate(ser["groups"]):
                 row_copy = copy(row)
+                ser_doses = ser_dosing_regime["doses"] if ser_dosing_regime else None
                 row_copy.extend(
-                    models.DoseGroup.flat_complete_data_row(
-                        ser["animal_group"]["dosing_regime"]["doses"], self.doses, i
-                    )
+                    models.DoseGroup.flat_complete_data_row(ser_doses, self.doses, i)
+                    if ser_doses
+                    else None
+                    for _ in self.doses
                 )
                 row_copy.extend(models.EndpointGroup.flat_complete_data_row(eg, ser))
                 rows.append(row_copy)
