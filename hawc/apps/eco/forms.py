@@ -2,8 +2,8 @@ from django import forms
 from django.urls import reverse_lazy
 
 from ..common.autocomplete import (
-    AutocompleteChoiceField,
-    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper
@@ -17,15 +17,18 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update an existing study design."
 
-    countries = AutocompleteMultipleChoiceField(autocomplete_class=CountryAutocomplete)
-    states = AutocompleteMultipleChoiceField(autocomplete_class=autocomplete.StateAutocomplete)
-    ecoregions = AutocompleteMultipleChoiceField(
-        autocomplete_class=autocomplete.EcoregionAutocomplete
-    )
-
     class Meta:
         exclude = ("study",)
         model = models.Design
+        widgets = {
+            "countries": AutocompleteSelectMultipleWidget(autocomplete_class=CountryAutocomplete),
+            "states": AutocompleteSelectMultipleWidget(
+                autocomplete_class=autocomplete.StateAutocomplete
+            ),
+            "ecoregions": AutocompleteSelectMultipleWidget(
+                autocomplete_class=autocomplete.EcoregionAutocomplete
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -63,13 +66,13 @@ def _term_help_text():
 
 
 class CauseForm(forms.ModelForm):
-
-    term = AutocompleteChoiceField(autocomplete_class=autocomplete.NestedTermAutocomplete)
-
     class Meta:
         exclude = ("study",)
         model = models.Cause
         widgets = {
+            "term": AutocompleteSelectWidget(
+                autocomplete_class=autocomplete.NestedTermAutocomplete
+            ),
             "species": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.CauseAutocomplete, field="species"
             ),
@@ -111,13 +114,13 @@ class CauseForm(forms.ModelForm):
 
 
 class EffectForm(forms.ModelForm):
-
-    term = AutocompleteChoiceField(autocomplete_class=autocomplete.NestedTermAutocomplete)
-
     class Meta:
         exclude = ("study",)
         model = models.Effect
         widgets = {
+            "term": AutocompleteSelectWidget(
+                autocomplete_class=autocomplete.NestedTermAutocomplete
+            ),
             "species": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.EffectAutocomplete, field="species"
             ),

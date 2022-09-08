@@ -243,7 +243,7 @@ class Migration(migrations.Migration):
                 (
                     "ecoregions",
                     models.ManyToManyField(
-                        help_text="Select one or more Level III Ecoregions, if known",
+                        help_text='Select one or more <a rel="noopener noreferrer" target="_blank" href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">Level III Ecoregions</a>, if known',
                         limit_choices_to={"category": 12},
                         related_name="_eco_design_ecoregions_+",
                         to="eco.Vocab",

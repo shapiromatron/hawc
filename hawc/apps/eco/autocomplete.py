@@ -7,17 +7,11 @@ class CauseAutocomplete(BaseAutocomplete):
     model = models.Cause
     filter_fields = ["study__assessment_id"]
 
-    def get_result_label(self, item):
-        return f"{item.term.name} | {item.name}"
-
 
 @register
 class EffectAutocomplete(BaseAutocomplete):
     model = models.Effect
     filter_fields = ["study__assessment_id"]
-
-    def get_result_label(self, item):
-        return f"{item.term.name} | {item.name}"
 
 
 @register
@@ -41,8 +35,4 @@ class NestedTermAutocomplete(BaseAutocomplete):
     search_fields = ["name"]
 
     def get_result_label(self, obj):
-        path = ""
-        for node in obj.get_ancestors():
-            path += f"{node.name} > "
-        path += f"{obj.name}"
-        return path
+        return obj.label()

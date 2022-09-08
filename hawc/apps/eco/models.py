@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.urls import reverse
 from treebeard.mp_tree import MP_Node
 
+from ..common.helper import new_window_a
 from ..epi.models import Country
 from ..study.models import Study
 from . import managers
@@ -27,9 +28,20 @@ class NestedTerm(MP_Node):
 
     node_order_by = ["name"]
 
+    def __str__(self) -> str:
+        return self.label()
+
     @property
     def nested_text(self) -> str:
         return "- " * (self.depth - 1) + self.name
+
+    def label(self) -> str:
+        # expensive - calls `get_ancestors()`` for each item
+        path = ""
+        for node in self.get_ancestors():
+            path += f"{node.name} > "
+        path += f"{self.name}"
+        return path
 
 
 class Vocab(models.Model):
@@ -85,7 +97,7 @@ class Design(models.Model):
     ecoregions = models.ManyToManyField(
         Vocab,
         limit_choices_to={"category": VocabCategories.ECOREGION},
-        help_text="Select one or more Level III Ecoregions, if known",
+        help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')}, if known",
         related_name="+",
     )
     habitat = models.ForeignKey(

@@ -9,11 +9,12 @@ _successful_post = {
     "name": "example eco design",
     "design": "1",
     "study_setting": "6",
-    "country": "2",
-    "ecoregion": "110",
+    "countries": ["2"],
+    "states": [],
+    "ecoregions": ["110"],
     "habitat": "12",
     "habitat_as_reported": "habitat here",
-    "climate": "103",
+    "climates": ["103"],
     "climate_as_reported": "climate here",
 }
 
