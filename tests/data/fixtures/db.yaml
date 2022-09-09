@@ -4594,7 +4594,7 @@
     duration_value: null
     duration_units: ''
     comments: ''
-    as_reported: <p><strong>Cause/treatment as reported</strong></p>
+    as_reported: Cause/treatment as reported
     created: 2022-08-17 16:20:31.982792+00:00
     last_updated: 2022-08-17 18:21:25.677256+00:00
 - model: eco.effect
@@ -4607,7 +4607,7 @@
     species: ''
     biological_organization: 29
     comments: ''
-    as_reported: <p><strong>Effect as reported</strong></p>
+    as_reported: Effect as reported
     created: 2022-08-17 16:20:14.052436+00:00
     last_updated: 2022-08-17 16:20:14.052436+00:00
 - model: eco.result

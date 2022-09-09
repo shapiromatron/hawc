@@ -28,18 +28,16 @@ class TestEco(PlaywrightTestCase):
 
         # Create new Cause
         page.locator("#cause-create").click()
-        page.locator('input[name="term_0"]').click()
-        page.locator('input[name="term_0"]').fill("term")
-        page.locator('span:has-text("term")').click()
-        page.locator('input[name="level"]').click()
-        page.locator('input[name="level"]').fill("2")
-        page.locator('input[name="level_units"]').click()
-        page.locator('input[name="level_units"]').fill("g")
-        page.locator('input[name="duration"]').click()
-        page.locator('input[name="duration"]').fill("2")
         page.locator('input[name="name"]').fill("new cause")
-        page.locator("#div_id_as_reported > div > .ql-container > .ql-editor").click()
-        page.keyboard.type("cause as reported")
+        page.locator('select[name="term"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').type("term")
+        page.locator('li[role="option"]:has-text("term")').click()
+        page.locator('select[name="level"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("2")
+        page.locator('select[name="level_units"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("grams")
+        page.locator('select[name="duration"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("test")
         page.locator("#cause-save").click()
         # Copy cause
         page.locator("#cause-clone").nth(1).click()
@@ -47,17 +45,15 @@ class TestEco(PlaywrightTestCase):
         # Delete new cause
         page.locator("#cause-delete").nth(2).click()
         page.locator("#cause-confirm-del").click()
+
         # Create effect
         page.locator("#effect-create").click()
-        page.locator('input[name="name"]').click()
         page.locator('input[name="name"]').fill("new effect")
-        page.locator('input[name="term_0"]').click()
-        page.locator('input[name="term_0"]').fill("term")
-        page.locator("#ui-id-4").click()
-        page.locator('input[name="units"]').click()
-        page.locator('input[name="units"]').fill("g")
-        page.locator("#div_id_as_reported > div > .ql-container > .ql-editor").click()
-        page.keyboard.type("effect as reported")
+        page.locator('select[name="term"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').type("term")
+        page.locator('li[role="option"]:has-text("term")').click()
+        page.locator('select[name="units"]+span.select2-container').click()
+        page.locator('input[role="searchbox"]').fill("grams")
         page.locator("#effect-save").click()
         # Copy effect
         page.locator("#effect-clone").nth(1).click()
@@ -65,11 +61,11 @@ class TestEco(PlaywrightTestCase):
         # Delete copied effect
         page.locator("#effect-delete").nth(2).click()
         page.locator("#effect-confirm-del").click()
+
         # Create result
         page.locator("#result-create").click()
-        page.locator('select[name="cause"]').select_option("2")
-        page.locator('select[name="effect"]').select_option("2")
-        page.locator('input[name="sort_order"]').click()
+        page.locator('select[name="cause"]').select_option(index=2)
+        page.locator('select[name="effect"]').select_option(index=2)
         page.locator('select[name="relationship_direction"]').select_option("0")
         page.locator('input[name="modifying_factors"]').click()
         page.locator('input[name="modifying_factors"]').fill("none")
