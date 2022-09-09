@@ -14,7 +14,11 @@ from django.utils import timezone
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import AutocompleteMultipleChoiceField, AutocompleteTextWidget
+from ..common.autocomplete import (
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -49,6 +53,10 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
+            "dtxsids": AutocompleteSelectWidget(autocomplete.DSSToxAutocomplete),
+            "project_manager": AutocompleteSelectMultipleWidget(UserAutocomplete),
+            "team_members": AutocompleteSelectMultipleWidget(UserAutocomplete),
+            "reviewers": AutocompleteSelectMultipleWidget(UserAutocomplete),
         }
         field_classes = {
             "assessment_objective": QuillField,
@@ -64,14 +72,6 @@ class AssessmentForm(forms.ModelForm):
             self.instance.creator = self.user
             self.fields["project_manager"].initial = [self.user]
             self.fields["year"].initial = timezone.now().year
-
-        self.fields["dtxsids"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=autocomplete.DSSToxAutocomplete
-        )
-        for field in ["project_manager", "team_members", "reviewers"]:
-            self.fields[field] = AutocompleteMultipleChoiceField(
-                autocomplete_class=UserAutocomplete
-            )
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"

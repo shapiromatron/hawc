@@ -12,6 +12,7 @@ from ..common.autocomplete import (
     AutocompleteChoiceField,
     AutocompleteMultipleChoiceField,
     AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper, form_actions_apply_filters
@@ -33,6 +34,9 @@ class IVChemicalForm(forms.ModelForm):
     class Meta:
         model = models.IVChemical
         exclude = ("study",)
+        widgets = {
+            "dtxsid": AutocompleteSelectWidget(DSSToxAutocomplete),
+        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -40,7 +44,7 @@ class IVChemicalForm(forms.ModelForm):
         if study:
             self.instance.study = study
 
-        self.fields["dtxsid"] = AutocompleteChoiceField(autocomplete_class=DSSToxAutocomplete)
+        # self.fields["dtxsid"] = AutocompleteChoiceField(autocomplete_class=DSSToxAutocomplete)
         self.fields["source"].widget.update_filters(
             {"study__assessment_id": self.instance.study.assessment_id}
         )
