@@ -36,8 +36,8 @@ class TestCreatePermissions:
         n_assessments = Assessment.objects.count()
         with assertTemplateUsed("assessment/assessment_detail.html"):
             response = c.post(url, data=_successful_post, follow=True)
-            assert Assessment.objects.count() == n_assessments + 1
-            assert response.status_code == 200
+        assert response.status_code == 200
+        assert Assessment.objects.count() == n_assessments + 1
 
     def test_failure(self):
         # without authentication
@@ -66,19 +66,20 @@ class TestDetailPermissions:
             assert c.login(email=user, password="pw") is True
             for view in views:
                 for pk in db_keys.assessment_keys:
-                    response = c.get(reverse(view, args=(pk,)))
+                    url = reverse(view, args=(pk,))
+                    response = c.get(url)
                     assert response.status_code == 200
 
         # anon user should not view
         c = Client()
         for view in views:
-            url = reverse(view, kwargs={"pk": db_keys.assessment_working})
+            url = reverse(view, args=(db_keys.assessment_working,))
             response = c.get(url)
             assert response.status_code == 403
 
         # this is public
         for view in views:
-            url = reverse(view, kwargs={"pk": db_keys.assessment_final})
+            url = reverse(view, args=(db_keys.assessment_final,))
             response = c.get(url)
             assert response.status_code == 200
 
@@ -98,27 +99,15 @@ class TestEditPermissions:
             assert response.status_code == 200
 
             # check post updates `assessment_working`
+            url = reverse("assessment:update", args=(db_keys.assessment_working,))
             with assertTemplateUsed("assessment/assessment_detail.html"):
-                response = c.post(
-                    reverse(
-                        "assessment:update",
-                        kwargs={"pk": db_keys.assessment_working},
-                    ),
-                    data=_successful_post,
-                    follow=True,
-                )
+                response = c.post(url, data=_successful_post, follow=True)
                 assert response.status_code == 200
 
             # check post updates `assessment_final`
+            url = reverse("assessment:update", args=(db_keys.assessment_final,))
             with assertTemplateUsed("assessment/assessment_detail.html"):
-                response = c.post(
-                    reverse(
-                        "assessment:update",
-                        kwargs={"pk": db_keys.assessment_final},
-                    ),
-                    data=_successful_post,
-                    follow=True,
-                )
+                response = c.post(url, data=_successful_post, follow=True)
                 assert response.status_code == 200
 
         # rollback in test doesn't clear permissions cache; clear manually
@@ -133,17 +122,12 @@ class TestEditPermissions:
                 assert c.login(email=client, password="pw") is True
 
             for pk in db_keys.assessment_keys:
-                view = "assessment:update"
+                url = reverse("assessment:update", args=(pk,))
                 with assertTemplateUsed("403.html"):
-                    response = c.get(reverse(view, args=(pk,)), follow=True)
+                    response = c.get(url, follow=True)
                     assert response.status_code == 403
-
-                # check POST
                 with assertTemplateUsed("403.html"):
-                    response = c.post(
-                        reverse("assessment:update", args=(pk,)),
-                        {"name": "foo manchu"},
-                    )
+                    response = c.post(url, {"name": "foo manchu"})
                     assert response.status_code == 403
 
 
@@ -168,32 +152,27 @@ class TestDeletePermissions:
             if client:
                 assert c.login(email=client, password="pw") is True
             for pk in db_keys.assessment_keys:
-                view = "assessment:delete"
+                url = reverse("assessment:delete", args=(pk,))
                 with assertTemplateUsed("403.html"):
-                    response = c.get(reverse(view, args=(pk,)), follow=True)
-                    assert response.status_code == 403
+                    response = c.get(url, follow=True)
+                assert response.status_code == 403
 
                 # check POST
+                url = reverse("assessment:update", args=(pk,))
                 with assertTemplateUsed("403.html"):
-                    response = c.post(
-                        reverse("assessment:update", args=(pk,)),
-                        {"name": "foo manchu"},
-                    )
-                    assert response.status_code == 403
+                    response = c.post(url, {"name": "foo manchu"})
+                assert response.status_code == 403
 
     def _test_delete_client_success(self, c, db_keys):
+        url = reverse("assessment:delete", args=(db_keys.assessment_working,))
         with assertTemplateUsed("assessment/assessment_home.html"):
-            response = c.post(
-                reverse("assessment:delete", args=(db_keys.assessment_working,)),
-                follow=True,
-            )
-            assert response.status_code == 200
+            response = c.post(url, follow=True)
+        assert response.status_code == 200
 
+        url = reverse("assessment:delete", args=(db_keys.assessment_final,))
         with assertTemplateUsed("assessment/assessment_home.html"):
-            response = c.post(
-                reverse("assessment:delete", args=(db_keys.assessment_final,)), follow=True
-            )
-            assert response.status_code == 200
+            response = c.post(url, follow=True)
+        assert response.status_code == 200
 
     def test_delete_superuser(self, db_keys):
         c = Client()

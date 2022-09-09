@@ -14,11 +14,7 @@ from django.utils import timezone
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import (
-    AutocompleteSelectMultipleWidget,
-    AutocompleteSelectWidget,
-    AutocompleteTextWidget,
-)
+from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -53,7 +49,7 @@ class AssessmentForm(forms.ModelForm):
         model = models.Assessment
         widgets = {
             "public_on": DateCheckboxInput,
-            "dtxsids": AutocompleteSelectWidget(autocomplete.DSSToxAutocomplete),
+            "dtxsids": AutocompleteSelectMultipleWidget(autocomplete.DSSToxAutocomplete),
             "project_manager": AutocompleteSelectMultipleWidget(UserAutocomplete),
             "team_members": AutocompleteSelectMultipleWidget(UserAutocomplete),
             "reviewers": AutocompleteSelectMultipleWidget(UserAutocomplete),
