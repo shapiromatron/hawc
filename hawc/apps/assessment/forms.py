@@ -14,6 +14,7 @@ from django.utils import timezone
 
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.autocomplete import AutocompleteMultipleChoiceField, AutocompleteTextWidget
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -21,11 +22,10 @@ from ..common.forms import (
     form_actions_create_or_close,
 )
 from ..common.helper import new_window_a, tryParseInt
-from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..common.widgets import DateCheckboxInput
-from ..myuser.lookups import HAWCUserLookup
+from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
-from . import lookups, models
+from . import autocomplete, models
 
 
 class AssessmentForm(forms.ModelForm):
@@ -65,18 +65,13 @@ class AssessmentForm(forms.ModelForm):
             self.fields["project_manager"].initial = [self.user]
             self.fields["year"].initial = timezone.now().year
 
-        self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=lookups.DssToxIdLookup
+        self.fields["dtxsids"] = AutocompleteMultipleChoiceField(
+            autocomplete_class=autocomplete.DSSToxAutocomplete
         )
-        self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["team_members"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
-        self.fields["reviewers"].widget = AutoCompleteSelectMultipleWidget(
-            lookup_class=HAWCUserLookup
-        )
+        for field in ["project_manager", "team_members", "reviewers"]:
+            self.fields[field] = AutocompleteMultipleChoiceField(
+                autocomplete_class=UserAutocomplete
+            )
 
         if not settings.PM_CAN_MAKE_PUBLIC:
             help_text = "&nbsp;<b>Contact the HAWC team to change.</b>"
@@ -297,13 +292,15 @@ class DoseUnitsForm(forms.ModelForm):
     class Meta:
         model = models.DoseUnits
         fields = "__all__"
+        widgets = {
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DoseUnitsAutocomplete, field="name"
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        self.fields["name"].widget = AutoCompleteWidget(
-            lookup_class=lookups.DoseUnitsLookup, allow_new=True
-        )
 
     @property
     def helper(self):
@@ -351,13 +348,15 @@ class EffectTagForm(forms.ModelForm):
     class Meta:
         model = models.EffectTag
         fields = "__all__"
+        widgets = {
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.EffectTagAutocomplete, field="name"
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent")
         super().__init__(*args, **kwargs)
-        self.fields["name"].widget = AutoCompleteWidget(
-            lookup_class=lookups.EffectTagLookup, allow_new=True
-        )
 
     @property
     def helper(self):

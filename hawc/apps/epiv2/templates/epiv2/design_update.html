@@ -144,6 +144,7 @@
 
 
 {% block extrajs %}
+{% include "common/htmx_autocomplete.html" %}
 <script type="text/javascript">
 window.app.startup("epiv2Startup", function(app){
     app.formStartup(document);
