@@ -262,7 +262,9 @@ class StudyEvaluationSerializer(serializers.Serializer):
 
     def _get_rob_df(self):
         study_ids = Study.objects.filter(**self._study_filters).values_list("id", flat=True)
-        rob_values = FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).values()
+        rob_values = (
+            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).order_by("id").values()
+        )
         # specify the columns in case rob_values is empty; this is needed when building the report
         df = pd.DataFrame(
             rob_values,
