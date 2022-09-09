@@ -79,7 +79,7 @@ class TestAssessmentViewset:
             reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,))
             + "?format=json"
         )
-        self._test_flat_export(True, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_endpoint_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-endpoint-export.json"
