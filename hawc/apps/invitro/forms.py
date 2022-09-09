@@ -44,7 +44,6 @@ class IVChemicalForm(forms.ModelForm):
         if study:
             self.instance.study = study
 
-        # self.fields["dtxsid"] = AutocompleteChoiceField(autocomplete_class=DSSToxAutocomplete)
         self.fields["source"].widget.update_filters(
             {"study__assessment_id": self.instance.study.assessment_id}
         )
