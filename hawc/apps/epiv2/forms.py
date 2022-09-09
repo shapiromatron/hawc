@@ -5,7 +5,7 @@ from hawc.apps.common.forms import BaseFormHelper
 
 from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common.autocomplete import (
-    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
@@ -20,14 +20,13 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
-    countries = AutocompleteMultipleChoiceField(
-        autocomplete_class=CountryAutocomplete, required=False
-    )
-
     class Meta:
         model = models.Design
         exclude = ("study",)
-        widgets = {"age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices)}
+        widgets = {
+            "age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices),
+            "countries": AutocompleteSelectMultipleWidget(autocomplete_class=CountryAutocomplete),
+        }
         field_classes = {
             "criteria": QuillField,
             "susceptibility": QuillField,
@@ -57,9 +56,8 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
-        helper.add_row(
-            "participant_n", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
-        )
+        helper.add_row("participant_n", 3, "col-md-4")
+        helper.add_row("countries", 2, "col-md-4")
         helper.add_row("criteria", 3, "col-md-4")
         return helper
 
