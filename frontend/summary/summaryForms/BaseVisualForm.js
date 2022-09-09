@@ -26,7 +26,6 @@ class BaseVisualForm {
 
         // check if any data have changed
         $data.find(":input").on("change", setDataChanged);
-        $data.on("djselectableadd djselectableremove", setDataChanged);
 
         // whenever data is synced, rebuild
         $settings.on("dataSynced", this.unpackSettings.bind(this));
