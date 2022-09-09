@@ -12,7 +12,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 0.0,
+    "doses-mg/kg/d": [
+      0.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -121,7 +123,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 1.0,
+    "doses-mg/kg/d": [
+      1.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -230,7 +234,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 10.0,
+    "doses-mg/kg/d": [
+      10.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -339,7 +345,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 100.0,
+    "doses-mg/kg/d": [
+      100.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -448,7 +456,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 1000.0,
+    "doses-mg/kg/d": [
+      1000.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -557,7 +567,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 0.0,
+    "doses-mg/kg/d": [
+      0.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -666,7 +678,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 1.0,
+    "doses-mg/kg/d": [
+      1.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -775,7 +789,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 10.0,
+    "doses-mg/kg/d": [
+      10.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -884,7 +900,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 100.0,
+    "doses-mg/kg/d": [
+      100.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -993,7 +1011,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 1000.0,
+    "doses-mg/kg/d": [
+      1000.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -1102,7 +1122,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 0.0,
+    "doses-mg/kg/d": [
+      0.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -1211,7 +1233,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 1.0,
+    "doses-mg/kg/d": [
+      1.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -1320,7 +1344,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 10.0,
+    "doses-mg/kg/d": [
+      10.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -1429,7 +1455,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 100.0,
+    "doses-mg/kg/d": [
+      100.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,
@@ -1538,7 +1566,9 @@
     "animal_group-sex": "Combined",
     "animal_group-siblings": null,
     "animal_group-url": "/ani/animal-group/3/",
-    "doses-mg/kg/d": 1000.0,
+    "doses-mg/kg/d": [
+      1000.0
+    ],
     "dosing_regime-description": "description",
     "dosing_regime-dosed_animals": "3",
     "dosing_regime-duration_exposure": 3.0,

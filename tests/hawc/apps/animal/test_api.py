@@ -7,6 +7,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.animal import forms, models
+from hawc.apps.assessment.models import Species, Strain
 
 from ..test_utils import check_details_of_last_log_entry
 
@@ -55,6 +56,30 @@ class TestAssessmentViewset:
             + "?format=json"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_missing_dosing_regime(self, rewrite_data_files: bool, db_keys):
+        # create an animal group/endpoint with no dosing regime and make sure the export doesn't cause a 500 error
+        fn = "api-animal-assessment-full-export-missing-dr.json"
+        experiment = models.Experiment.objects.get(pk=1)
+        species = Species.objects.get(pk=1)
+        strain = Strain.objects.get(pk=1)
+        animal_group = models.AnimalGroup(
+            experiment=experiment,
+            species=species,
+            strain=strain,
+            sex="C",
+        )
+        animal_group.save()
+        endpoint = models.Endpoint(
+            assessment_id=db_keys.assessment_working,
+            animal_group=animal_group,
+        )
+        endpoint.save()
+        url = (
+            reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,))
+            + "?format=json"
+        )
+        self._test_flat_export(True, fn, url)
 
     def test_endpoint_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-endpoint-export.json"
