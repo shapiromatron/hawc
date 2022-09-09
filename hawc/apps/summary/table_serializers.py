@@ -280,7 +280,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
                 "content_type_id",
                 "object_id",
             ],
-        )
+        ).sort_values("id")
         return df.convert_dtypes()
 
     def _get_df(self):
