@@ -1,3 +1,5 @@
+import re
+
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
@@ -21,13 +23,17 @@ class TestEco(PlaywrightTestCase):
         page.locator('a:has-text("Update")').click()
 
         # Update study design
-        page.locator("#design-update").click()
+        with page.expect_response(re.compile(r"/eco/designv2/\d+/update/")) as resp:
+            page.locator("#design-update").click(delay=100)
+        assert resp.value.ok is True
         page.locator('textarea[name="habitat_as_reported"]').click()
         page.locator('textarea[name="habitat_as_reported"]').fill("habitat update")
         page.locator("text=Save").click()
 
         # Create new Cause
-        page.locator("#cause-create").click()
+        with page.expect_response(re.compile(r"/eco/cause/\d+/create/")) as resp:
+            page.locator("#cause-create").click()
+        assert resp.value.ok is True
         page.locator('input[name="name"]').fill("new cause")
         page.locator('select[name="term"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').type("term")
@@ -39,15 +45,18 @@ class TestEco(PlaywrightTestCase):
         page.locator('select[name="duration"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').fill("test")
         page.locator("#cause-save").click()
-        # Copy cause
-        page.locator("#cause-clone").nth(1).click()
-        expect(page.locator("text=new cause (2)")).to_be_visible()
+        # clone cause
+        with page.expect_response(re.compile(r"/eco/cause/\d+/clone/")) as resp:
+            page.locator("#cause-clone").nth(1).click(delay=100)
+        assert resp.value.ok is True
         # Delete new cause
         page.locator("#cause-delete").nth(2).click()
         page.locator("#cause-confirm-del").click()
 
         # Create effect
-        page.locator("#effect-create").click()
+        with page.expect_response(re.compile(r"/eco/effect/\d+/create/")) as resp:
+            page.locator("#effect-create").click()
+        assert resp.value.ok is True
         page.locator('input[name="name"]').fill("new effect")
         page.locator('select[name="term"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').type("term")
@@ -55,15 +64,18 @@ class TestEco(PlaywrightTestCase):
         page.locator('select[name="units"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').fill("grams")
         page.locator("#effect-save").click()
-        # Copy effect
-        page.locator("#effect-clone").nth(1).click()
-        expect(page.locator("text=new effect (2)")).to_be_visible()
+        # clone effect
+        with page.expect_response(re.compile(r"/eco/effect/\d+/clone/")) as resp:
+            page.locator("#effect-clone").nth(1).click(delay=100)
+        assert resp.value.ok is True
         # Delete copied effect
         page.locator("#effect-delete").nth(2).click()
         page.locator("#effect-confirm-del").click()
 
         # Create result
-        page.locator("#result-create").click()
+        with page.expect_response(re.compile(r"/eco/result/\d+/create/")) as resp:
+            page.locator("#result-create").click()
+        assert resp.value.ok is True
         page.locator('select[name="cause"]').select_option(index=2)
         page.locator('select[name="effect"]').select_option(index=2)
         page.locator('select[name="relationship_direction"]').select_option("0")
@@ -73,9 +85,10 @@ class TestEco(PlaywrightTestCase):
         page.locator('select[name="statistical_sig_type"]').select_option("99")
         page.locator("#result-save").click()
         expect(page.locator('span:has-text("none")')).to_be_visible()
-        # Copy result
-        page.locator("#result-clone").nth(1).click()
-        expect(page.locator('span:has-text("none")').nth(1)).to_be_visible()
+        # clone result
+        with page.expect_response(re.compile(r"/eco/result/\d+/clone/")) as resp:
+            page.locator("#result-clone").nth(1).click(delay=100)
+        assert resp.value.ok is True
         # Delete copy
         page.locator("#result-delete").nth(2).click()
         page.locator("#result-confirm-del").click()

@@ -37,37 +37,6 @@ urlpatterns = [
         {"action": "update"},
         name="design-update",
     ),
-    # result
-    path(
-        "result/<int:pk>/create/",
-        views.ResultViewset.as_view(),
-        {"action": "create"},
-        name="result-create",
-    ),
-    path(
-        "result/<int:pk>/",
-        views.ResultViewset.as_view(),
-        {"action": "read"},
-        name="result-detail",
-    ),
-    path(
-        "result/<int:pk>/clone/",
-        views.ResultViewset.as_view(),
-        {"action": "clone"},
-        name="result-clone",
-    ),
-    path(
-        "result/<int:pk>/update/",
-        views.ResultViewset.as_view(),
-        {"action": "update"},
-        name="result-update",
-    ),
-    path(
-        "result/<int:pk>/delete/",
-        views.ResultViewset.as_view(),
-        {"action": "delete"},
-        name="result-delete",
-    ),
     # cause
     path(
         "cause/<int:pk>/create/",
@@ -129,5 +98,36 @@ urlpatterns = [
         views.EffectViewset.as_view(),
         {"action": "delete"},
         name="effect-delete",
+    ),
+    # result
+    path(
+        "result/<int:pk>/create/",
+        views.ResultViewset.as_view(),
+        {"action": "create"},
+        name="result-create",
+    ),
+    path(
+        "result/<int:pk>/",
+        views.ResultViewset.as_view(),
+        {"action": "read"},
+        name="result-detail",
+    ),
+    path(
+        "result/<int:pk>/clone/",
+        views.ResultViewset.as_view(),
+        {"action": "clone"},
+        name="result-clone",
+    ),
+    path(
+        "result/<int:pk>/update/",
+        views.ResultViewset.as_view(),
+        {"action": "update"},
+        name="result-update",
+    ),
+    path(
+        "result/<int:pk>/delete/",
+        views.ResultViewset.as_view(),
+        {"action": "delete"},
+        name="result-delete",
     ),
 ]
