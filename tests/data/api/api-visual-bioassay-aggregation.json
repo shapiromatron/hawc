@@ -3,7 +3,7 @@
   "assessment_name": "Chemical X (2020)",
   "assessment_rob_name": "Risk of bias",
   "caption": "",
-  "created": "2020-11-25T12:32:07.260499-06:00",
+  "created": "2020-11-25T13:32:07.260499-05:00",
   "dose_units": 1,
   "endpoints": [
     {
@@ -15,10 +15,10 @@
         "animal_source": "Charles River",
         "children": [],
         "comments": "<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>",
-        "created": "2020-05-08T12:40:30.086088-05:00",
+        "created": "2020-05-08T13:40:30.086088-04:00",
         "diet": "Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)",
         "dosing_regime": {
-          "created": "2020-05-08T12:40:29.993336-05:00",
+          "created": "2020-05-08T13:40:29.993336-04:00",
           "description": "<p>description</p>",
           "dosed_animals": {
             "id": 3,
@@ -27,81 +27,81 @@
           },
           "doses": [
             {
-              "created": "2020-05-08T12:40:30.255630-05:00",
+              "created": "2020-05-08T13:40:30.255630-04:00",
               "dose": 0.0,
               "dose_group_id": 0,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 8,
-              "last_updated": "2020-05-08T12:40:30.255654-05:00"
+              "last_updated": "2020-05-08T13:40:30.255654-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.283493-05:00",
+              "created": "2020-05-08T13:40:30.283493-04:00",
               "dose": 1.0,
               "dose_group_id": 1,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 9,
-              "last_updated": "2020-05-08T12:40:30.283514-05:00"
+              "last_updated": "2020-05-08T13:40:30.283514-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.296393-05:00",
+              "created": "2020-05-08T13:40:30.296393-04:00",
               "dose": 10.0,
               "dose_group_id": 2,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 10,
-              "last_updated": "2020-05-08T12:40:30.296412-05:00"
+              "last_updated": "2020-05-08T13:40:30.296412-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.309262-05:00",
+              "created": "2020-05-08T13:40:30.309262-04:00",
               "dose": 100.0,
               "dose_group_id": 3,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 11,
-              "last_updated": "2020-05-08T12:40:30.309281-05:00"
+              "last_updated": "2020-05-08T13:40:30.309281-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.321662-05:00",
+              "created": "2020-05-08T13:40:30.321662-04:00",
               "dose": 1000.0,
               "dose_group_id": 4,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 12,
-              "last_updated": "2020-05-08T12:40:30.321682-05:00"
+              "last_updated": "2020-05-08T13:40:30.321682-04:00"
             }
           ],
           "duration_exposure": 3.0,
           "duration_exposure_text": "3 days",
           "duration_observation": null,
           "id": 3,
-          "last_updated": "2020-05-08T12:40:30.178820-05:00",
+          "last_updated": "2020-05-08T13:40:30.178820-04:00",
           "negative_control": "Vehicle-treated",
           "num_dose_groups": 5,
           "positive_control": "No",
@@ -111,14 +111,14 @@
           "cas": "1163-19-5",
           "chemical": "PBDE 209",
           "chemical_source": "Albemarle Corporation (Baton Rouge, LA), Chemtura Corporation, and ICL-IP America",
-          "created": "2020-05-08T12:38:22.190951-05:00",
+          "created": "2020-05-08T13:38:22.190951-04:00",
           "description": "<p>comments</p>",
           "dtxsid": null,
           "guideline_compliance": "guideline",
           "has_multiple_generations": true,
           "id": 3,
           "is_generational": true,
-          "last_updated": "2020-05-08T12:38:22.190975-05:00",
+          "last_updated": "2020-05-08T13:38:22.190975-04:00",
           "name": "developmental",
           "purity": 97.51,
           "purity_available": true,
@@ -134,7 +134,7 @@
             "coi_details": "J.B., H.S., J.A., S.J., M.H. and T.S. are employed by specialty chemical manufacturers whose product lines include brominated flame retardants. M.B., N.M., A.R., D.W.S. and D.G.S. are employed by WIL Research Laboratories, a contract research organization commissioned to conduct the guideline DNT study presented herein. L.F. is employed with BioSTAT Consultants and was commissioned to design and evaluate the statistical aspects of the DNT study. The views and opinions expressed in this article are those of the authors and not necessarily those of their respective employers.",
             "coi_reported": "Authors disclosed COI",
             "contact_author": true,
-            "created": "2020-05-08T12:03:52.391195-05:00",
+            "created": "2020-05-08T13:03:52.391195-04:00",
             "editable": true,
             "epi": false,
             "epi_meta": false,
@@ -147,7 +147,7 @@
             ],
             "in_vitro": false,
             "journal": "Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35",
-            "last_updated": "2020-05-08T12:56:45.324222-05:00",
+            "last_updated": "2020-05-08T13:56:45.324222-04:00",
             "published": true,
             "searches": [
               5
@@ -165,7 +165,7 @@
         },
         "generation": "P0",
         "id": 3,
-        "last_updated": "2020-05-08T12:40:30.333334-05:00",
+        "last_updated": "2020-05-08T13:40:30.333334-04:00",
         "lifestage_assessed": "Adult",
         "lifestage_exposed": "Adult",
         "name": "sd rats",
@@ -180,7 +180,7 @@
       "assessment": 2,
       "bmds": [],
       "confidence_interval": null,
-      "created": "2020-05-08T12:47:49.464004-05:00",
+      "created": "2020-05-08T13:47:49.464004-04:00",
       "data_extracted": true,
       "data_location": "Figure 5; Table S 41",
       "data_reported": true,
@@ -325,7 +325,7 @@
         }
       ],
       "id": 3,
-      "last_updated": "2020-05-08T12:47:49.464028-05:00",
+      "last_updated": "2020-05-08T13:47:49.464028-04:00",
       "litter_effect_notes": "notes",
       "litter_effects": "YS",
       "litter_effects_display": "Yes, statistical control",
@@ -359,7 +359,7 @@
     }
   ],
   "id": 10,
-  "last_updated": "2020-11-25T12:35:00.094667-06:00",
+  "last_updated": "2020-11-25T13:35:00.094667-05:00",
   "prefilters": "{}",
   "published": true,
   "settings": {},

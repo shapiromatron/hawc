@@ -151,11 +151,11 @@ const dodgeLogarithmic = (data, x, radius, options) => {
 
                 // get max range for each group to determine spacing
                 _.each(filteredData, d => {
-                    dodgeLogarithmic(d, x, itemRadius, {
+                    dodgeLogarithmic(d.values, x, itemRadius, {
                         approximateXValues: settings.approximateXValues,
                         twoSided: true,
                     });
-                    range = d3.extent(d, d => d.y);
+                    range = d3.extent(d.values, el => el.y);
                     if (range[1] - range[0] > maxYRange) {
                         maxYRange = Math.ceil(range[1] - range[0]);
                     }
@@ -163,7 +163,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
 
                 let systems = _.chain(filteredData)
                         .map(d => {
-                            return {name: d[0].data.system, median: d3.mean(d, el => el.dose)};
+                            return {name: d.key, median: d3.mean(d.values, el => el.dose)};
                         })
                         .sortBy(d => d.median)
                         .value(),
@@ -173,9 +173,9 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                         .range([0, systems.length * maxYRange * 1.2])
                         .padding(0.3);
 
-                _.each(filteredData, data => {
-                    let addition = yGroupScale(data[0].data.system);
-                    _.each(data, d => (d.y = d.y + addition));
+                _.each(filteredData, d => {
+                    let addition = yGroupScale(d.key);
+                    _.each(d.values, el => (el.y = el.y + addition));
                 });
 
                 // Reset y domain using new data
@@ -183,7 +183,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                 y.domain([0, maxY]);
                 yGroupScale.range([yBaseMaxRange, 0]);
 
-                filteredData = _.flatten(filteredData);
+                filteredData = _.flatten(_.map(filteredData, "values"));
 
                 itemsGroup
                     .selectAll(".critical-dose-group-g")
@@ -266,7 +266,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                     .attr("cy", d => y(d.y))
                     .attr("r", itemRadius);
 
-                bindTooltip($tooltip, items, d => <Tooltip d={d} />, {
+                bindTooltip($tooltip, items, (e, d) => <Tooltip d={d} />, {
                     mouseEnterExtra: () => d3.select(event.target).moveToFront(),
                 });
             },

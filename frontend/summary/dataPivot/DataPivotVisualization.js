@@ -881,7 +881,8 @@ class DataPivotVisualization extends D3Plot {
             self = this,
             barHeight = d3.min(this.row_heights, d => d.max - d.min) - barPadding * 2,
             lineMidpoint = barHeight * 0.5 + barPadding,
-            relativeErrors = _.includes(["stdev"], barchart.error_low_field_name),
+            relativeErrorLow = _.includes(["stdev"], barchart.error_low_field_name),
+            relativeErrorHigh = _.includes(["stdev"], barchart.error_high_field_name),
             lineData = null;
 
         bars_g
@@ -912,10 +913,10 @@ class DataPivotVisualization extends D3Plot {
         }
 
         lineData = datarows.map(d => {
-            const xMin = relativeErrors
+            const xMin = relativeErrorLow
                     ? d[barchart.field_name] - d[barchart.error_low_field_name]
                     : d[barchart.error_low_field_name],
-                xMax = relativeErrors
+                xMax = relativeErrorHigh
                     ? d[barchart.field_name] + d[barchart.error_high_field_name]
                     : d[barchart.error_high_field_name];
             return {
@@ -943,31 +944,36 @@ class DataPivotVisualization extends D3Plot {
         if (!barchart.error_show_tails) {
             return;
         }
-        errorbars_g
-            .selectAll()
-            .data(lineData)
-            .enter()
-            .append("svg:line")
-            .attr("x1", d => d.xLow)
-            .attr("x2", d => d.xLow)
-            .attr("y1", d => d.y + lineMidpoint - barPadding)
-            .attr("y2", d => d.y + lineMidpoint + barPadding)
-            .each(function(d) {
-                applyStyles(self.svg, this, d.styles);
-            });
 
-        errorbars_g
-            .selectAll()
-            .data(lineData)
-            .enter()
-            .append("svg:line")
-            .attr("x1", d => d.xHigh)
-            .attr("x2", d => d.xHigh)
-            .attr("y1", d => d.y + lineMidpoint - barPadding)
-            .attr("y2", d => d.y + lineMidpoint + barPadding)
-            .each(function(d) {
-                applyStyles(self.svg, this, d.styles);
-            });
+        if (barchart.error_low_field_name !== barchart.field_name) {
+            errorbars_g
+                .selectAll()
+                .data(lineData)
+                .enter()
+                .append("svg:line")
+                .attr("x1", d => d.xLow)
+                .attr("x2", d => d.xLow)
+                .attr("y1", d => d.y + lineMidpoint - barPadding)
+                .attr("y2", d => d.y + lineMidpoint + barPadding)
+                .each(function(d) {
+                    applyStyles(self.svg, this, d.styles);
+                });
+        }
+
+        if (barchart.error_high_field_name !== barchart.field_name) {
+            errorbars_g
+                .selectAll()
+                .data(lineData)
+                .enter()
+                .append("svg:line")
+                .attr("x1", d => d.xHigh)
+                .attr("x2", d => d.xHigh)
+                .attr("y1", d => d.y + lineMidpoint - barPadding)
+                .attr("y2", d => d.y + lineMidpoint + barPadding)
+                .each(function(d) {
+                    applyStyles(self.svg, this, d.styles);
+                });
+        }
     }
 
     renderDataPoints() {

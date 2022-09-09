@@ -24,7 +24,7 @@ WSGI_APPLICATION = "hawc.main.wsgi.application"
 SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
-TIME_ZONE = "America/Chicago"
+TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
 USE_I18N = False
 USE_L10N = True
 USE_TZ = True
@@ -95,6 +95,8 @@ INSTALLED_APPS = (
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dal",
+    "dal_select2",
     "django.contrib.admin",
     "django.contrib.humanize",
     "django.contrib.postgres",
@@ -105,7 +107,6 @@ INSTALLED_APPS = (
     "reversion",
     "taggit",
     "treebeard",
-    "selectable",
     "crispy_forms",
     "webpack_loader",
     # Custom apps
@@ -309,9 +310,6 @@ REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
 }
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
-
-# Django selectable settings
-SELECTABLE_MAX_LIMIT = 100
 
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = "bootstrap4"

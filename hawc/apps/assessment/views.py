@@ -503,11 +503,13 @@ class AttachmentViewset(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        data = request.POST if request.method == "POST" else None
-        form = forms.AttachmentForm(data=data, instance=request.item.object)
-        if request.method == "POST" and form.is_valid():
-            self.perform_update(request.item, form)
-            template = self.detail_fragment
+        if request.method == "POST":
+            form = forms.AttachmentForm(request.POST, request.FILES, instance=request.item.object)
+            if form.is_valid():
+                self.perform_update(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.AttachmentForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
