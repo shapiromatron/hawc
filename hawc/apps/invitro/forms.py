@@ -9,7 +9,6 @@ from django.urls import reverse
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
 from ..assessment.models import DoseUnits
 from ..common.autocomplete import (
-    AutocompleteChoiceField,
     AutocompleteMultipleChoiceField,
     AutocompleteSelectMultipleWidget,
     AutocompleteSelectWidget,
