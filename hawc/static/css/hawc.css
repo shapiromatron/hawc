@@ -101,13 +101,6 @@ mark,.mark {
     right: 0;
 }
 
-/* jQueryUI OVERRIDES */
-.ui-front{
-    /* must be higher than bootstrap modal for smart-tags */
-    z-index: 1055;
-}
-/* jQueryUI OVERRIDES */
-
 /* Disable html5 number spinners in Chrome */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
@@ -118,12 +111,6 @@ input[type='number']::-webkit-outer-spin-button {
 /* Disable html5 number spinners in Firefox */
 input[type='number'] {
     -moz-appearance: textfield;
-}
-
-/* handle conflict w/ bootstrap and jquery ui */
-.ui-autocomplete-input[disabled] {
-    background: none !important;
-    background-color: #efefef !important;
 }
 
 /* Override bootstrap modal width */

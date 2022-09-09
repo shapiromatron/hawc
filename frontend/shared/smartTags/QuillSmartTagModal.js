@@ -76,16 +76,16 @@ class SmartTagModal {
 
         switch (type) {
             case "study":
-                pk = m.find("#id_study_1").val();
+                pk = m.find("#id_study").val();
                 break;
             case "endpoint":
-                pk = m.find("#id_endpoint_1").val();
+                pk = m.find("#id_endpoint").val();
                 break;
             case "data_pivot":
-                pk = m.find("#id_data_pivot_1").val();
+                pk = m.find("#id_data_pivot").val();
                 break;
             case "visual":
-                pk = m.find("#id_visual_1").val();
+                pk = m.find("#id_visual").val();
                 break;
         }
 

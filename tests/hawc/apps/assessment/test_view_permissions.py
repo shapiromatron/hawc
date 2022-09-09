@@ -15,15 +15,11 @@ _successful_post = {
     "noel_name": 0,
     "rob_name": 0,
     "editable": "on",
-    "project_manager_0": ("2",),
-    "project_manager_1": ("2",),
-    "team_members_0": ("1", "2"),
-    "team_members_1": ("1", "2"),
-    "reviewers_0": ("1",),
-    "reviewers_1": ("1",),
+    "project_manager": ("2",),
+    "team_members": ("1", "2"),
+    "reviewers": ("1",),
     "epi_version": ("1",),
-    "dtxsids_0": ("DTXSID7020970",),
-    "dtxsids_1": ("DTXSID7020970",),
+    "dtxsids": ("DTXSID7020970",),
 }
 
 
