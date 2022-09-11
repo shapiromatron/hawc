@@ -1,7 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
-{% load selectable_tags %}
 
 {% block content %}
   {% crispy form %}
@@ -45,12 +44,14 @@
       // handle all logic related to dtxid + cas + chemical fields
       var handleChemicalPropertiesInformation = function(){
         // if `dtxsid` is selected, change casrn/chemical_name
-        $('input[name=dtxsid_0]').bind('djselectableselect', function (event, item) {
-          if (item.item.casrn) {
-            $('#id_cas').val(item.item.casrn);
+        $('select[name=dtxsid]').on('select2:select', function (event) {
+          let casrn = event.params.data.casrn,
+              chemical_name = event.params.data.chemical_name;
+          if (casrn) {
+            $('#id_cas').append(new Option(casrn, casrn, false, true));
           }
-          if (item.item.chemical_name) {
-            $('#id_chemical').val(item.item.chemical_name);
+          if (chemical_name) {
+            $('#id_chemical').append(new Option(chemical_name, chemical_name, false, true));
           }
         });
 
