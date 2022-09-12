@@ -240,6 +240,8 @@ class AnimalGroupDelete(BaseDelete):
     model = models.AnimalGroup
 
     def get_success_url(self):
+        if not self.object.can_delete():
+            raise ValueError("Cannot be deleted")
         return self.object.experiment.get_absolute_url()
 
 

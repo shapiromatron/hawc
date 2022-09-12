@@ -383,6 +383,12 @@ class AnimalGroup(models.Model):
             Endpoint.objects.filter(animal_group__in=ids).values_list("id", flat=True)
         )
 
+    def can_delete(self) -> bool:
+        # can only be deleted if dosing regime is not associated with other animal groups
+        if self.dosing_regime.dosed_animals_id != self.id:
+            return True
+        return self.dosing_regime.can_delete()
+
     def copy_across_assessments(self, cw, skip_siblings: bool = False):
         children = list(self.endpoints.all().order_by("id"))
         old_id = self.id
@@ -560,6 +566,10 @@ class DosingRegime(models.Model):
             if ser
             else (None for _ in range(10))
         )
+
+    def can_delete(self) -> bool:
+        # can delete only if no animals others than those dosed are related
+        return self.animalgroup_set.exclude(id=self.dosed_animals_id).count() == 0
 
     def get_doses_json(self, json_encode=True):
         doses = []

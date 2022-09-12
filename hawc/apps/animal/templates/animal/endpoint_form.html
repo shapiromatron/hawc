@@ -7,7 +7,7 @@
   {% if animal_group.dosing_regime %}
     {% crispy form %}
   {% else %}
-    <div class="alert alert-danger" role="alert">You can not create an endpoint. The animal group has no dose regime.</div>
+    <div class="alert alert-danger" role="alert">Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.</div>
   {% endif %}
 
   {# extra stuff that JS will move to correct location #}
