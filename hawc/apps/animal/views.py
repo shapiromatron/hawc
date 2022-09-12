@@ -201,6 +201,7 @@ class AnimalGroupRead(BaseDetail):
         )
         context["config"] = dict(
             id=self.object.id,
+            has_dosing_regime=self.object.dosing_regime is not None,
             endpoints=[endpoint.get_json(json_encode=False) for endpoint in endpoints],
         )
         return context
@@ -332,11 +333,12 @@ class EndpointCreate(BaseCreateWithFormset):
         return kwargs
 
     def build_initial_formset_factory(self):
+        num_groups = self.parent.dosing_regime.num_dose_groups if self.parent.dosing_regime else 1
         Formset = modelformset_factory(
             models.EndpointGroup,
             form=forms.EndpointGroupForm,
             formset=forms.BaseEndpointGroupFormSet,
-            extra=self.parent.dosing_regime.num_dose_groups if self.parent.dosing_regime else 1,
+            extra=num_groups,
         )
         return Formset(queryset=models.EndpointGroup.objects.none())
 

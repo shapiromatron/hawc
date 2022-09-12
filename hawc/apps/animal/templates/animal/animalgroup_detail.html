@@ -37,23 +37,13 @@
 <script type="text/javascript">
 window.app.startup("animalStartup", function(animal){
     const data = window.app.getConfig();
-    var dosing_regime = "{{ object.dosing_regime }}"
-    console.log(dosing_regime)
     animal.AnimalGroup.get_object(data.id, function(d){
-        if (dosing_regime != "None"){
-          $('h2#animal-group-header')
-            .after(
-              d.build_details_table(),
-              $("<h3>Dosing regime</h3>"),
-              d.build_dr_details_table()
-            );
-        } else {
-          $('h2#animal-group-header')
-            .after(
-              d.build_details_table(),
-            );
-        }
-
+      inserts = [d.build_details_table()];
+      if (data.has_dosing_regime){
+        inserts.push($("<h3>Dosing regime</h3>"));
+        inserts.push(d.build_dr_details_table());
+      }
+      $('h2#animal-group-header').after(inserts);
     });
     animal.startupAnimalGroupTable(document.getElementById("animalGroupTableMain"), data);
   });
