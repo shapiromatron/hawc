@@ -4,6 +4,13 @@ from hawc.apps.animal import models
 
 
 @pytest.mark.django_db
+class TestAnimalGroup:
+    def test_can_delete(self):
+        # TODO - add
+        assert 1 == 2
+
+
+@pytest.mark.django_db
 class TestEndpoint:
     def test_save(self, db_keys):
         # make sure our strip() methods work
