@@ -54,7 +54,3 @@ class StrainAutocomplete(BaseAutocomplete):
 class DoseUnitsAutocomplete(BaseAutocomplete):
     model = models.DoseUnits
     search_fields = ["name"]
-
-    @classmethod
-    def get_base_queryset(cls, filters: dict = None):
-        return super().get_base_queryset(filters).distinct()

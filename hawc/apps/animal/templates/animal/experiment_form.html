@@ -1,17 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
-{% load selectable_tags %}
 
 {% block content %}
   {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-  {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
-      $('#id_description').quillify();
       $('#id_name').focus();
       var pa = $('#id_purity_available'),
           addBlankOption = function(setAsBlank){
@@ -51,10 +48,10 @@
           let casrn = event.params.data.casrn,
               chemical_name = event.params.data.chemical_name;
           if (casrn) {
-            $('#id_cas').val(casrn);
+            $('#id_cas').append(new Option(casrn, casrn, false, true));
           }
           if (chemical_name) {
-            $('#id_chemical').val(chemical_name);
+            $('#id_chemical').append(new Option(chemical_name, chemical_name, false, true));
           }
         });
 

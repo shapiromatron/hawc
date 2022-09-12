@@ -25,7 +25,7 @@ class TestLiterature(PlaywrightTestCase):
         # /lit/assessment/:id/references/visualization/
         page.goto(self.live_server_url + "/lit/assessment/2/references/visualization/")
         expect(page.locator("svg")).not_to_have_count(0)
-        expect(page.locator("svg >> .tagnode")).to_have_count(3)
+        expect(page.locator("svg >> .tagnode")).to_have_count(4)
 
         # /lit/assessment/:id/references/search/
         page.goto(self.live_server_url + "/lit/assessment/2/references/search/")

@@ -821,12 +821,26 @@ class TagtreeForm(VisualForm):
         required=True,
         help_text="The height of the visual, in pixels. If you have overlapping nodes, add more height",
     )
+    show_legend = forms.BooleanField(
+        label="Show Legend",
+        help_text="Describes what each node type indicates",
+        initial=True,
+        required=False,
+    )
+    show_counts = forms.BooleanField(
+        label="Show Node Counts",
+        help_text="Display the count for each node and scale size accordingly",
+        initial=True,
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
         self.helper.add_row("root_node", 3, "col-md-4")
-        self.helper.add_row("hide_empty_tag_nodes", 3, "col-md-4")
+        self.helper.add_row(
+            "hide_empty_tag_nodes", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"]
+        )
 
         choices = [
             (tag.id, tag.get_nested_name())
@@ -854,6 +868,10 @@ class TagtreeForm(VisualForm):
             self.fields["width"].initial = data["width"]
         if "height" in data:
             self.fields["height"].initial = data["height"]
+        if "show_legend" in data:
+            self.fields["show_legend"].initial = data["show_legend"]
+        if "show_counts" in data:
+            self.fields["show_counts"].initial = data["show_counts"]
 
     def save(self, commit=True):
         self.instance.settings = json.dumps(
@@ -864,6 +882,8 @@ class TagtreeForm(VisualForm):
                 hide_empty_tag_nodes=self.cleaned_data["hide_empty_tag_nodes"],
                 width=self.cleaned_data["width"],
                 height=self.cleaned_data["height"],
+                show_legend=self.cleaned_data["show_legend"],
+                show_counts=self.cleaned_data["show_counts"],
             )
         )
         return super().save(commit)
@@ -881,6 +901,8 @@ class TagtreeForm(VisualForm):
             "hide_empty_tag_nodes",
             "width",
             "height",
+            "show_legend",
+            "show_counts",
         )
 
 

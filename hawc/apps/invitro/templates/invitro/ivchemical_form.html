@@ -1,18 +1,13 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
   {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-  {{ form.media }}<script type="text/javascript">
+  <script type="text/javascript">
     $(document).ready(function () {
 
       // handle all logic related to dtxid + cas

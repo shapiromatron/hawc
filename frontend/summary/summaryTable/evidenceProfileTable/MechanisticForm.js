@@ -76,7 +76,7 @@ const MechanisticForm = observer(props => {
                                     />
                                 </th>
                                 <th>
-                                    Judgment(s) and rationale
+                                    Evidence Synthesis Judgment(s)
                                     <HelpTextPopup
                                         title="Help-text"
                                         content="Summary of findings across the body of evidence (may focus on or emphasize highly informative designs or findings), including key sources of uncertainty or identified limitations of the study designs tested (e.g., regarding the biological event or pathway being examined)."

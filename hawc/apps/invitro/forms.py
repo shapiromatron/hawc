@@ -8,15 +8,15 @@ from django.urls import reverse
 
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
 from ..assessment.models import DoseUnits
-from ..common import selectable
 from ..common.autocomplete import (
-    AutocompleteChoiceField,
     AutocompleteMultipleChoiceField,
     AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper, form_actions_apply_filters
 from ..study.autocomplete import StudyAutocomplete
-from . import lookups, models
+from . import autocomplete, models
 
 
 class IVChemicalForm(forms.ModelForm):
@@ -25,12 +25,17 @@ class IVChemicalForm(forms.ModelForm):
 
     source = forms.CharField(
         label="Source of chemical",
-        widget=selectable.AutoCompleteWidget(lookups.IVChemicalSourceLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVChemicalAutocomplete, field="source"
+        ),
     )
 
     class Meta:
         model = models.IVChemical
         exclude = ("study",)
+        widgets = {
+            "dtxsid": AutocompleteSelectWidget(DSSToxAutocomplete),
+        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -38,9 +43,8 @@ class IVChemicalForm(forms.ModelForm):
         if study:
             self.instance.study = study
 
-        self.fields["dtxsid"] = AutocompleteChoiceField(autocomplete_class=DSSToxAutocomplete)
-        self.fields["source"].widget.update_query_parameters(
-            {"related": self.instance.study.assessment.id}
+        self.fields["source"].widget.update_filters(
+            {"study__assessment_id": self.instance.study.assessment_id}
         )
 
     @property
@@ -81,23 +85,33 @@ class IVCellTypeForm(forms.ModelForm):
 
     species = forms.CharField(
         label="Species",
-        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeSpeciesLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="species"
+        ),
     )
     strain = forms.CharField(
         label="Strain",
-        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeStrainLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="strain"
+        ),
     )
     cell_type = forms.CharField(
         label="Cell type",
-        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeCellTypeLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="cell_type"
+        ),
     )
     tissue = forms.CharField(
         label="Tissue",
-        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeTissueLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="tissue"
+        ),
     )
     source = forms.CharField(
         label="Source of cell cultures",
-        widget=selectable.AutoCompleteWidget(lookups.IVCellTypeSourceLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="source"
+        ),
     )
 
     class Meta:
@@ -111,8 +125,8 @@ class IVCellTypeForm(forms.ModelForm):
             self.instance.study = study
 
         for field in ("species", "strain", "cell_type", "tissue", "source"):
-            self.fields[field].widget.update_query_parameters(
-                {"related": self.instance.study.assessment.id}
+            self.fields[field].widget.update_filters(
+                {"study__assessment_id": self.instance.study.assessment.id}
             )
 
     @property
@@ -150,21 +164,23 @@ class IVExperimentForm(forms.ModelForm):
     HELP_TEXT_UPDATE = "Update an existing experiment."
 
     transfection = forms.CharField(
-        widget=selectable.AutoCompleteWidget(lookups.IVExperimentTransfectionLookup, allow_new=True)
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVExperimentAutocomplete, field="transfection"
+        )
     )
     positive_control = forms.CharField(
-        widget=selectable.AutoCompleteWidget(
-            lookups.IVExperimentPositiveControlLookup, allow_new=True
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVExperimentAutocomplete, field="positive_control"
         )
     )
     negative_control = forms.CharField(
-        widget=selectable.AutoCompleteWidget(
-            lookups.IVExperimentNegativeControlLookup, allow_new=True
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVExperimentAutocomplete, field="negative_control"
         )
     )
     vehicle_control = forms.CharField(
-        widget=selectable.AutoCompleteWidget(
-            lookups.IVExperimentVehicleControlLookup, allow_new=True
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVExperimentAutocomplete, field="vehicle_control"
         )
     )
 
@@ -187,8 +203,8 @@ class IVExperimentForm(forms.ModelForm):
             "negative_control",
             "vehicle_control",
         ):
-            self.fields[field].widget.update_query_parameters(
-                {"related": self.instance.study.assessment.id}
+            self.fields[field].widget.update_filters(
+                {"study__assessment_id": self.instance.study.assessment.id}
             )
 
     @property
@@ -252,11 +268,15 @@ class IVEndpointForm(forms.ModelForm):
     )
     assay_type = forms.CharField(
         label="Assay Type",
-        widget=selectable.AutoCompleteWidget(lookups.IVEndpointAssayTypeLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="assay_type"
+        ),
     )
     response_units = forms.CharField(
         label="Response Units",
-        widget=selectable.AutoCompleteWidget(lookups.IVEndpointResponseUnitsLookup, allow_new=True),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="response_units"
+        ),
     )
 
     class Meta:
@@ -283,8 +303,8 @@ class IVEndpointForm(forms.ModelForm):
         self.fields["NOEL"].widget.set_default_choices(self.instance)
         self.fields["LOEL"].widget.set_default_choices(self.instance)
 
-        self.fields["effect"].widget = selectable.AutoCompleteWidget(
-            lookups.IVEndpointEffectLookup, allow_new=True
+        self.fields["effect"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="effect"
         )
 
         self.fields["effects"].help_text = "Tags used to help categorize effect description."
@@ -298,8 +318,8 @@ class IVEndpointForm(forms.ModelForm):
         )
 
         for field in ("assay_type", "response_units", "effect"):
-            self.fields[field].widget.update_query_parameters(
-                {"related": self.instance.assessment_id}
+            self.fields[field].widget.update_filters(
+                {"experiment__study__assessment_id": self.instance.assessment_id}
             )
 
     def clean_additional_fields(self):
@@ -372,49 +392,63 @@ class IVEndpointFilterForm(forms.Form):
 
     name = forms.CharField(
         label="Endpoint name",
-        widget=selectable.AutoCompleteWidget(lookups.IVEndpointByAssessmentTextLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"
+        ),
         help_text="ex: B cells",
         required=False,
     )
 
     chemical = forms.CharField(
         label="Chemical name",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedIVChemicalNameLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVChemicalAutocomplete, field="name"
+        ),
         help_text="ex: PFOA",
         required=False,
     )
 
     cas = forms.CharField(
         label="CAS",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedIVChemicalCASLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVChemicalAutocomplete, field="cas"
+        ),
         help_text="ex: 107-02-8",
         required=False,
     )
 
     cell_type = forms.CharField(
         label="Cell type",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedIVCellTypeNameLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="cell_type"
+        ),
         help_text="ex: HeLa",
         required=False,
     )
 
     tissue = forms.CharField(
         label="Tissue",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedIVCellTypeTissueLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="tissue"
+        ),
         help_text="ex: adipocytes",
         required=False,
     )
 
     effect = forms.CharField(
         label="Effect",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedIVEndpointEffectLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="effect"
+        ),
         help_text="ex: gene expression",
         required=False,
     )
 
     response_units = forms.CharField(
         label="Response units",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedIVEndpointResponseUnitsLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="response_units"
+        ),
         help_text="ex: counts",
         required=False,
     )
@@ -434,9 +468,17 @@ class IVEndpointFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["dose_units"].queryset = DoseUnits.objects.get_iv_units(assessment.id)
         self.fields["studies"].set_filters({"assessment_id": assessment.id, "in_vitro": True})
-        for field in self.fields:
-            if field not in ("studies", "dose_units", "order_by", "paginate_by"):
-                self.fields[field].widget.update_query_parameters({"related": assessment.id})
+        # for endpoint autocomplete
+        for field in ("name", "effect", "response_units"):
+            self.fields[field].widget.update_filters(
+                {"experiment__study__assessment_id": assessment.id}
+            )
+        # for chemical autocomplete
+        for field in ("chemical", "cas"):
+            self.fields[field].widget.update_filters({"study__assessment_id": assessment.id})
+        # for cell type autocomplete
+        for field in ("cell_type", "tissue"):
+            self.fields[field].widget.update_filters({"study__assessment_id": assessment.id})
 
     @property
     def helper(self):

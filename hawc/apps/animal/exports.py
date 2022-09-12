@@ -115,16 +115,16 @@ class EndpointGroupFlatComplete(FlatFileExporter):
             row.extend(Study.flat_complete_data_row(ser["animal_group"]["experiment"]["study"]))
             row.extend(models.Experiment.flat_complete_data_row(ser["animal_group"]["experiment"]))
             row.extend(models.AnimalGroup.flat_complete_data_row(ser["animal_group"]))
-            row.extend(
-                models.DosingRegime.flat_complete_data_row(ser["animal_group"]["dosing_regime"])
-            )
+            ser_dosing_regime = ser["animal_group"]["dosing_regime"]
+            row.extend(models.DosingRegime.flat_complete_data_row(ser_dosing_regime))
             row.extend(models.Endpoint.flat_complete_data_row(ser))
             for i, eg in enumerate(ser["groups"]):
                 row_copy = copy(row)
+                ser_doses = ser_dosing_regime["doses"] if ser_dosing_regime else None
                 row_copy.extend(
-                    models.DoseGroup.flat_complete_data_row(
-                        ser["animal_group"]["dosing_regime"]["doses"], self.doses, i
-                    )
+                    models.DoseGroup.flat_complete_data_row(ser_doses, self.doses, i)
+                    if ser_doses
+                    else [None for _ in self.doses]
                 )
                 row_copy.extend(models.EndpointGroup.flat_complete_data_row(eg, ser))
                 rows.append(row_copy)
@@ -258,6 +258,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             "upper_ci",
             "pairwise significant",
             "pairwise significant value",
+            "treatment related effect",
             "percent control mean",
             "percent control low",
             "percent control high",
@@ -358,6 +359,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                         eg["upper_ci"],
                         eg["significant"],
                         eg["significance_level"],
+                        eg["treatment_effect"],
                         eg["percentControlMean"],
                         eg["percentControlLow"],
                         eg["percentControlHigh"],
@@ -438,6 +440,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         rng = range(1, num_doses + 1)
         header.extend([f"Dose {i}" for i in rng])
         header.extend([f"Significant {i}" for i in rng])
+        header.extend([f"Treatment Related Effect {i}" for i in rng])
         header.extend(list(self.rob_headers.values()))
 
         # distinct applied last so that queryset can add annotations above
@@ -585,8 +588,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
             sigs.extend([None] * (self.num_doses - len(sigs)))
-
             row.extend(sigs)
+
+            tres = [dose["treatment_effect"] for dose in ser["groups"]]
+            tres.extend([None] * (self.num_doses - len(tres)))
+            row.extend(tres)
 
             row.extend(
                 [self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()]

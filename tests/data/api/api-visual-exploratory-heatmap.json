@@ -1,12 +1,13 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
   "assessment_rob_name": "Risk of bias",
   "caption": "",
-  "created": "2020-11-25T08:25:27.528283-06:00",
+  "created": "2020-11-25T09:25:27.528283-05:00",
   "dose_units": null,
   "endpoints": [],
   "id": 8,
-  "last_updated": "2020-11-25T08:29:33.991892-06:00",
+  "last_updated": "2020-11-25T09:29:33.991892-05:00",
   "prefilters": "{}",
   "published": true,
   "settings": {

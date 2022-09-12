@@ -31,7 +31,7 @@ def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
                 doi = doi[:index]
             if (index2 := doi.find("</ELocationID>")) >= 0:
                 doi = doi[:index2]
-    return doi
+    return doi.lower() if doi else None
 
 
 def get_doi_from_identifier(ident) -> Optional[str]:

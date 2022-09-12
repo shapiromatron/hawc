@@ -43,7 +43,7 @@ class TestAdminDashboardViewset:
 
 @pytest.mark.django_db
 class TestAdminDiagnosticViewset:
-    def test_throttgle(self):
+    def test_throttle(self):
         client = APIClient()
 
         # failure - not admin

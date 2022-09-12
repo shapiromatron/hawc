@@ -4,12 +4,15 @@ from django.urls import reverse
 from hawc.apps.common.forms import BaseFormHelper
 
 from ..assessment.autocomplete import DSSToxAutocomplete
-from ..common import selectable
-from ..common.autocomplete import AutocompleteMultipleChoiceField, AutocompleteSelectWidget
-from ..common.forms import ArrayCheckboxSelectMultiple
+from ..common.autocomplete import (
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
+)
+from ..common.forms import ArrayCheckboxSelectMultiple, QuillField
 from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from ..epi.autocomplete import CountryAutocomplete
-from . import constants, lookups, models
+from . import autocomplete, constants, models
 
 
 class DesignForm(forms.ModelForm):
@@ -17,14 +20,18 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
-    countries = AutocompleteMultipleChoiceField(
-        autocomplete_class=CountryAutocomplete, required=False
-    )
-
     class Meta:
         model = models.Design
         exclude = ("study",)
-        widgets = {"age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices)}
+        widgets = {
+            "age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices),
+            "countries": AutocompleteSelectMultipleWidget(autocomplete_class=CountryAutocomplete),
+        }
+        field_classes = {
+            "criteria": QuillField,
+            "susceptibility": QuillField,
+            "comments": QuillField,
+        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -34,10 +41,6 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("criteria", "susceptibility", "comments"):
-            self.fields[fld].widget.attrs["class"] = "html5text"
-            self.fields[fld].widget.attrs["rows"] = 3
-
         if self.instance.id:
             helper = BaseFormHelper(self)
             helper.form_tag = False
@@ -53,9 +56,8 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
-        helper.add_row(
-            "participant_n", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
-        )
+        helper.add_row("participant_n", 3, "col-md-4")
+        helper.add_row("countries", 2, "col-md-4")
         helper.add_row("criteria", 3, "col-md-4")
         return helper
 
@@ -65,8 +67,8 @@ class ChemicalForm(forms.ModelForm):
         model = models.Chemical
         exclude = ("design",)
         widgets = {
-            "name": selectable.AutoCompleteWidget(
-                lookup_class=lookups.ChemicalNameLookup, allow_new=True
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ChemicalAutocomplete, field="name"
             ),
             "dsstox": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
         }
@@ -119,8 +121,8 @@ class ExposureLevelForm(forms.ModelForm):
         model = models.ExposureLevel
         exclude = ("design",)
         widgets = {
-            "units": selectable.AutoCompleteWidget(
-                lookup_class=lookups.ExposureLevelUnitsLookup, allow_new=True
+            "units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ExposureLevelAutocomplete, field="units"
             ),
         }
 
@@ -193,14 +195,14 @@ class OutcomeForm(forms.ModelForm):
         model = models.Outcome
         exclude = ("design",)
         widgets = {
-            "endpoint": selectable.AutoCompleteWidget(
-                lookup_class=lookups.EndpointLookup, allow_new=True
+            "endpoint": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="endpoint"
             ),
-            "effect": selectable.AutoCompleteWidget(
-                lookup_class=lookups.EffectLookup, allow_new=True
+            "effect": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect"
             ),
-            "effect_detail": selectable.AutoCompleteWidget(
-                lookup_class=lookups.EffectDetailLookup, allow_new=True
+            "effect_detail": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect_detail"
             ),
         }
 
@@ -227,11 +229,11 @@ class DataExtractionForm(forms.ModelForm):
             "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "effect_estimate_type": SelectOtherWidget(choices=constants.EffectEstimateType.choices),
-            "confidence": selectable.AutoCompleteWidget(
-                lookup_class=lookups.DataExtractionConfidenceLookup, allow_new=True
+            "confidence": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DataExtractionAutocomplete, field="confidence"
             ),
-            "units": selectable.AutoCompleteWidget(
-                lookup_class=lookups.DataExtractionUnitsLookup, allow_new=True
+            "units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DataExtractionAutocomplete, field="units"
             ),
         }
 

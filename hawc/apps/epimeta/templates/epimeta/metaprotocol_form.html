@@ -1,30 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
   {% crispy form %}
 {% endblock %}
-
-{% block extrajs %}
-  {{ form.media }}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      var assessment = function(qry){qry.assessment = {{assessment.pk}};}
-      $('#id_inclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
-      $('#id_exclusion_criteria_0').djselectable('option', 'prepareQuery', assessment);
-      $('#id_lit_search_start_date, #id_lit_search_end_date')
-        .datepicker({
-          showAnim: "slideDown",
-          changeMonth: true,
-          changeYear: true,
-          yearRange: '1930 : * '
-        });
-    });
-  </script>
-{% endblock extrajs %}

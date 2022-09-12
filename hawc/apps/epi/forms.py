@@ -7,13 +7,12 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
-from ..assessment.lookups import BaseEndpointLookup
 from ..assessment.models import DoseUnits
-from ..common import selectable
 from ..common.autocomplete import (
     AutocompleteMultipleChoiceField,
     AutocompleteSelectMultipleWidget,
     AutocompleteSelectWidget,
+    AutocompleteTextWidget,
 )
 from ..common.forms import (
     ASSESSMENT_UNIQUE_MESSAGE,
@@ -24,7 +23,7 @@ from ..common.forms import (
 )
 from ..common.helper import tryParseInt
 from ..study.autocomplete import StudyAutocomplete
-from . import autocomplete, constants, lookups, models
+from . import autocomplete, constants, models
 
 
 class CriteriaForm(forms.ModelForm):
@@ -44,12 +43,11 @@ class CriteriaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        self.fields["description"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.CriteriaLookup, allow_new=True
-        )
         self.instance.assessment = assessment
-        self.fields["description"].widget.update_query_parameters(
-            {"related": self.instance.assessment_id}
+        self.fields["description"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.CriteriaAutocomplete,
+            field="description",
+            filters={"assessment_id": assessment.id},
         )
 
     def clean(self):
@@ -113,18 +111,23 @@ class StudyPopulationForm(forms.ModelForm):
         model = models.StudyPopulation
         exclude = ("study", "criteria")
         labels = {"comments": "Recruitment description"}
+        widgets = {
+            "region": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="region"
+            ),
+            "state": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="state"
+            ),
+            "countries": AutocompleteSelectMultipleWidget(
+                autocomplete_class=autocomplete.CountryAutocomplete
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         self.fields["countries"].required = True
         self.fields["comments"] = self.fields.pop("comments")  # move to end
-        self.fields["region"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.RegionLookup, allow_new=True
-        )
-        self.fields["state"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.StateLookup, allow_new=True
-        )
         if study:
             self.instance.study = study
 
@@ -228,12 +231,11 @@ class AdjustmentFactorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        self.fields["description"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AdjustmentFactorLookup, allow_new=True
-        )
         self.instance.assessment = assessment
-        self.fields["description"].widget.update_query_parameters(
-            {"related": self.instance.assessment_id}
+        self.fields["description"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.AdjustmentFactorAutocomplete,
+            field="description",
+            filters={"assessment_id": assessment.id},
         )
 
     def clean(self):
@@ -275,14 +277,14 @@ class ExposureForm(forms.ModelForm):
         study_population = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["measured"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.ExposureMeasuredLookup, allow_new=True
+        self.fields["measured"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExposureAutocomplete, field="measured"
         )
-        self.fields["metric"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.ExposureMetricLookup, allow_new=True
+        self.fields["metric"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExposureAutocomplete, field="metric"
         )
-        self.fields["age_of_exposure"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AgeOfExposureLookup, allow_new=True
+        self.fields["age_of_exposure"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExposureAutocomplete, field="age_of_exposure"
         )
 
         if study_population:
@@ -363,20 +365,20 @@ class OutcomeForm(forms.ModelForm):
         assessment = kwargs.pop("assessment", None)
         study_population = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        self.fields["name"].widget = selectable.AutoCompleteWidget(
-            lookup_class=BaseEndpointLookup, allow_new=True
+        self.fields["name"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="name"
         )
-        self.fields["system"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.SystemLookup, allow_new=True
+        self.fields["system"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="system"
         )
-        self.fields["effect"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.EffectLookup, allow_new=True
+        self.fields["effect"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect"
         )
-        self.fields["effect_subtype"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.EffectSubtypeLookup, allow_new=True
+        self.fields["effect_subtype"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect_subtype"
         )
-        self.fields["age_of_measurement"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.AgeOfMeasurementLookup, allow_new=True
+        self.fields["age_of_measurement"].widget = AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="age_of_measurement"
         )
         if assessment:
             self.instance.assessment = assessment
@@ -436,42 +438,54 @@ class OutcomeFilterForm(forms.Form):
 
     name = forms.CharField(
         label="Outcome name",
-        widget=selectable.AutoCompleteWidget(lookups.OutcomeLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="name"
+        ),
         help_text="ex: blood, glucose",
         required=False,
     )
 
     study_population = forms.CharField(
         label="Study population",
-        widget=selectable.AutoCompleteWidget(lookups.StudyPopulationByAssessmentLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="name"
+        ),
         help_text="ex: population near a Teflon manufacturing plant",
         required=False,
     )
 
     metric = forms.CharField(
         label="Measurement metric",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedExposureMetricLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExposureAutocomplete, field="metric"
+        ),
         help_text="ex: drinking water",
         required=False,
     )
 
     age_profile = forms.CharField(
         label="Age profile",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedStudyPopulationAgeProfileLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="age_profile"
+        ),
         help_text="ex: children",
         required=False,
     )
 
     source = forms.CharField(
         label="Study population source",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedStudyPopulationSourceLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="source"
+        ),
         help_text="ex: occupational exposure",
         required=False,
     )
 
     country = forms.CharField(
         label="Study population country",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedCountryNameLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.CountryAutocomplete, field="name"
+        ),
         help_text="ex: Japan",
         required=False,
     )
@@ -486,21 +500,27 @@ class OutcomeFilterForm(forms.Form):
 
     system = forms.CharField(
         label="System",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedSystemLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="system"
+        ),
         help_text="ex: immune and lymphatic system",
         required=False,
     )
 
     effect = forms.CharField(
         label="Effect",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedEffectLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect"
+        ),
         help_text="ex: Cancer",
         required=False,
     )
 
     effect_subtype = forms.CharField(
         label="Effect subtype",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedEffectSubtypeLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect_subtype"
+        ),
         help_text="ex: Melanoma",
         required=False,
     )
@@ -524,17 +544,23 @@ class OutcomeFilterForm(forms.Form):
         assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["studies"].set_filters({"assessment_id": assessment.id, "epi": True})
+        self.fields["metric"].widget.update_filters(
+            {"study_population__study__assessment_id": assessment.id}
+        )
+        self.fields["country"].widget.update_filters(
+            {"studypopulation__study__assessment_id": assessment.id}
+        )
         self.fields["metric_units"].queryset = DoseUnits.objects.get_epi_units(assessment.id)
+        ("study_population")
+
         for field in self.fields:
-            if field not in (
-                "studies",
-                "design",
-                "diagnostic",
-                "metric_units",
-                "order_by",
-                "paginate_by",
-            ):
-                self.fields[field].widget.update_query_parameters({"related": assessment.id})
+            widget = self.fields[field].widget
+            # for study population autocomplete
+            if field in ("study_population", "age_profile", "source"):
+                widget.update_filters({"study__assessment_id": assessment.id})
+            # for outcome autocomplete
+            elif field in ("name", "system", "effect", "effect_subtype"):
+                widget.update_filters({"study_population__study__assessment_id": assessment.id})
 
     @property
     def helper(self):

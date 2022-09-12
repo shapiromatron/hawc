@@ -50,7 +50,6 @@ urlpatterns = [
     # common functionality
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
     path("rasterize/", views.RasterizeCss.as_view(), name="css-rasterize"),
-    path("selectable/", include("selectable.urls")),
     path("autocomplete/<str:autocomplete_name>/", get_autocomplete, name="autocomplete"),
     # Error-pages
     path("401/", views.Error401.as_view(), name="401"),

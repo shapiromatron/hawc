@@ -4,7 +4,8 @@ if "%~1" == "" goto :help
 if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev
 if /I %1 == build goto :build
-if /I %1 == build-pex goto :build-pex
+if /I %1 == docs goto :docs
+if /I %1 == docs-serve goto :docs-serve
 if /I %1 == lint goto :lint
 if /I %1 == format goto :format
 if /I %1 == lint-py goto :lint-py
@@ -25,7 +26,8 @@ goto :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  sync-dev          sync dev environment after code checkout
 echo.  build             build python wheel
-echo.  build-pex         build pex bundle (mac/linux only)
+echo.  docs              Build documentation
+echo.  docs-serve        Generate documentation
 echo.  test              run python tests
 echo.  test-integration  run integration tests (requires npm run start)
 echo.  test-integration-debug   run integration tests in debug mode (requires npm run start)
@@ -46,19 +48,25 @@ goto :eof
 python -m pip install -U pip
 pip install -r requirements/dev.txt
 yarn --cwd frontend
-manage.py migrate
-manage.py recreate_views
+manage migrate
+manage recreate_views
 goto :eof
 
 :build
 del /f /q .\build .\dist
 call npm --prefix .\frontend run build
-manage.py set_git_commit
-python setup.py bdist_wheel
+manage set_git_commit
+python -m build --wheel
 goto :eof
 
-:build-pex
-echo.Pex is not compatibile with windows; linux or mac is required.
+:docs
+cd docs
+mkdocks build --strict
+goto :eof
+
+:docs-serve
+cd docs
+mkdocs serve -a localhost:8010
 goto :eof
 
 :lint
@@ -93,14 +101,14 @@ goto :eof
 
 :test-integration
 playwright install --with-deps chromium
-set HAWC_INTEGRATION_TESTS=1
+set INTEGRATION_TESTS=1
 set PWDEBUG=0
 py.test -sv tests/integration/
 goto :eof
 
 :test-integration-debug
 playwright install --with-deps chromium
-set HAWC_INTEGRATION_TESTS=1
+set INTEGRATION_TESTS=1
 set PWDEBUG=1
 py.test -sv tests/integration/
 goto :eof
