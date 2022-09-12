@@ -135,7 +135,7 @@ class ExperimentForm(ModelForm):
         return self.cleaned_data.get("purity_qualifier", "")
 
 
-class ExperimentSelectorForm(CopyAsNewSelectorFormV2):
+class ExperimentSelectorForm(CopyAsNewSelectorForm):
     label = "Experiment"
     parent_field = "study_id"
     autocomplete_class = autocomplete.ExperimentAutocomplete
@@ -236,7 +236,7 @@ class AnimalGroupForm(ModelForm):
         return cleaned_data
 
 
-class AnimalGroupSelectorForm(CopyAsNewSelectorFormV2):
+class AnimalGroupSelectorForm(CopyAsNewSelectorForm):
     label = "Animal group"
     parent_field = "experiment_id"
     autocomplete_class = autocomplete.AnimalGroupAutocomplete
@@ -687,7 +687,7 @@ EndpointGroupFormSet = modelformset_factory(
 )
 
 
-class EndpointSelectorForm(CopyAsNewSelectorFormV2):
+class EndpointSelectorForm(CopyAsNewSelectorForm):
     label = "Endpoint"
     parent_field = "animal_group__experiment__study_id"
     autocomplete_class = autocomplete.EndpointAutocomplete

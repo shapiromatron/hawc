@@ -141,30 +141,6 @@ class CopyAsNewSelectorForm(forms.Form):
         self.fields["selector"] = fld
 
 
-class CopyAsNewSelectorFormV2(forms.Form):
-    label = None
-    parent_field = None
-    autocomplete_class = None
-
-    def __init__(self, *args, **kwargs):
-        parent_id = kwargs.pop("parent_id")
-        super().__init__(*args, **kwargs)
-        self.setupSelector(parent_id)
-
-    @property
-    def helper(self):
-        return BaseFormHelper(self)
-
-    def setupSelector(self, parent_id):
-        filters = {self.parent_field: parent_id}
-        fld = autocomplete.AutocompleteChoiceField(
-            autocomplete_class=self.autocomplete_class, filters=filters, label=self.label
-        )
-        fld.widget.forward = ["search_fields", "order_by", "order_direction"]
-        fld.widget.attrs["class"] = "col-md-10"
-        self.fields["selector"] = fld
-
-
 def form_error_list_to_lis(form):
     # Convert a list of errors from a form into a list of li,
     # used for endpoint group since everything is controlled by AJAX and JSON

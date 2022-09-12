@@ -67,19 +67,6 @@ class AssessmentForm(forms.ModelForm):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["dtxsids"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=autocomplete.DSSToxAutocomplete
-        )
-        self.fields["project_manager"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=UserAutocomplete
-        )
-        self.fields["team_members"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=UserAutocomplete
-        )
-        self.fields["reviewers"] = AutocompleteMultipleChoiceField(
-            autocomplete_class=UserAutocomplete
-        )
-
         if self.instance.id is None:
             self.instance.creator = self.user
             self.fields["project_manager"].initial = [self.user]
@@ -145,9 +132,9 @@ class AssessmentDetailsForm(forms.ModelForm):
         model = models.AssessmentDetails
         fields = "__all__"
         widgets = {
-            "project_type": AutoCompleteWidget(
-                lookup_class=lookups.ProjectTypeLookup, allow_new=True
-            ),
+            # "project_type": AutoCompleteWidget(
+            #     lookup_class=lookups.ProjectTypeLookup, allow_new=True
+            # ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -201,13 +188,13 @@ class AssessmentValuesForm(forms.ModelForm):
         model = models.Values
         exclude = ["assessment"]
         widgets = {
-            "system": AutoCompleteWidget(lookup_class=lookups.SystemLookup, allow_new=True),
-            "duration": AutoCompleteWidget(lookup_class=lookups.DurationLookup, allow_new=True),
-            "tumor_type": AutoCompleteWidget(lookup_class=lookups.TumorTypeLookup, allow_new=True),
-            "extrapolation_method": AutoCompleteWidget(
-                lookup_class=lookups.ExtrapolationMethodLookup, allow_new=True
-            ),
-            "evidence": AutoCompleteWidget(lookup_class=lookups.EvidenceLookup, allow_new=True),
+            # "system": AutoCompleteWidget(lookup_class=lookups.SystemLookup, allow_new=True),
+            # "duration": AutoCompleteWidget(lookup_class=lookups.DurationLookup, allow_new=True),
+            # "tumor_type": AutoCompleteWidget(lookup_class=lookups.TumorTypeLookup, allow_new=True),
+            # "extrapolation_method": AutoCompleteWidget(
+            #     lookup_class=lookups.ExtrapolationMethodLookup, allow_new=True
+            # ),
+            # "evidence": AutoCompleteWidget(lookup_class=lookups.EvidenceLookup, allow_new=True),
         }
 
     def __init__(self, *args, **kwargs):
@@ -217,15 +204,15 @@ class AssessmentValuesForm(forms.ModelForm):
             self.instance.assessment = assessment
         self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
 
-        self.fields["value_unit"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.DoseUnitsAutocomplete, required=False
-        )
-        self.fields["pod_unit"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.DoseUnitsAutocomplete, required=False
-        )
-        self.fields["species_studied"] = AutocompleteChoiceField(
-            autocomplete_class=autocomplete.SpeciesAutocomplete, required=False
-        )
+        # self.fields["value_unit"] = AutocompleteChoiceField(
+        #     autocomplete_class=autocomplete.DoseUnitsAutocomplete, required=False
+        # )
+        # self.fields["pod_unit"] = AutocompleteChoiceField(
+        #     autocomplete_class=autocomplete.DoseUnitsAutocomplete, required=False
+        # )
+        # self.fields["species_studied"] = AutocompleteChoiceField(
+        #     autocomplete_class=autocomplete.SpeciesAutocomplete, required=False
+        # )
 
     def clean_extra_metadata(self):
         extra_metadata = self.cleaned_data["extra_metadata"]

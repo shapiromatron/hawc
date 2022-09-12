@@ -322,7 +322,7 @@ SingleResultFormset = modelformset_factory(
 )
 
 
-class MetaResultSelectorForm(CopyAsNewSelectorFormV2):
+class MetaResultSelectorForm(CopyAsNewSelectorForm):
     label = "Meta Result"
     parent_field = "protocol_id"
     autocomplete_class = autocomplete.MetaResultAutocomplete
