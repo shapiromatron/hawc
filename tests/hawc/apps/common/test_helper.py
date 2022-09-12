@@ -1,4 +1,3 @@
-import time
 from io import StringIO
 
 import pandas as pd
@@ -19,19 +18,6 @@ def test_rename_duplicate_columns():
 
     df = pd.DataFrame(data=[[1, 2, 3]], columns=["a", "b", "a"])
     assert helper.rename_duplicate_columns(df).columns.tolist() == ["a.1", "b", "a.2"]
-
-
-def test_create_uuid():
-    # Make sure UUID creation is stable over time
-    id_1 = 1234
-    uuid_1 = helper.create_uuid(id_1)
-    time.sleep(1)
-    assert uuid_1 == helper.create_uuid(id_1)
-
-    # Simple test to ensure our UUID creation is unique
-    id_2 = 12345
-    uuid_2 = helper.create_uuid(id_2)
-    assert uuid_1 != uuid_2
 
 
 class TestFlatFileExporter:

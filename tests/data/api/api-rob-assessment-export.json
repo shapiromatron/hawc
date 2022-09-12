@@ -1,11 +1,11 @@
 [
   {
-    "rob-created": "2020-05-08T12:56:46.183552-05:00",
+    "rob-created": "2020-05-08T13:56:46.183552-04:00",
     "rob-domain_description": "<p>description</p>",
     "rob-domain_id": 10,
     "rob-domain_name": "domain 1",
     "rob-id": 6,
-    "rob-last_updated": "2020-05-08T14:34:31.468702-05:00",
+    "rob-last_updated": "2020-05-08T15:34:31.468702-04:00",
     "rob-metric_description": "<p>description</p>",
     "rob-metric_id": 14,
     "rob-metric_name": "metric 1",
@@ -35,12 +35,12 @@
     "study-url": "/study/7/"
   },
   {
-    "rob-created": "2020-05-08T12:56:46.183552-05:00",
+    "rob-created": "2020-05-08T13:56:46.183552-04:00",
     "rob-domain_description": "<p>description</p>",
     "rob-domain_id": 10,
     "rob-domain_name": "domain 1",
     "rob-id": 6,
-    "rob-last_updated": "2020-05-08T14:34:31.468702-05:00",
+    "rob-last_updated": "2020-05-08T15:34:31.468702-04:00",
     "rob-metric_description": "<p>description</p>",
     "rob-metric_id": 14,
     "rob-metric_name": "metric 1",
@@ -70,12 +70,12 @@
     "study-url": "/study/7/"
   },
   {
-    "rob-created": "2020-05-08T12:56:46.183552-05:00",
+    "rob-created": "2020-05-08T13:56:46.183552-04:00",
     "rob-domain_description": "<p>description</p>",
     "rob-domain_id": 11,
     "rob-domain_name": "overall",
     "rob-id": 6,
-    "rob-last_updated": "2020-05-08T14:34:31.468702-05:00",
+    "rob-last_updated": "2020-05-08T15:34:31.468702-04:00",
     "rob-metric_description": "<p>overall description</p>",
     "rob-metric_id": 15,
     "rob-metric_name": "overall metric 1",

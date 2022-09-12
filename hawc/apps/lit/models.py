@@ -708,6 +708,11 @@ class Identifiers(models.Model):
             ).values_list("unique_id", "id")
         }
 
+    def save(self, *args, **kwargs):
+        if self.database == constants.ReferenceDatabase.DOI:
+            self.unique_id = self.unique_id.lower()
+        return super(Identifiers, self).save(*args, **kwargs)
+
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"

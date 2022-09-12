@@ -1,4 +1,4 @@
-.PHONY: sync-dev build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-integration-debug test-refresh test-js coverage
+.PHONY: sync-dev build dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-integration-debug test-refresh test-js coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -27,24 +27,15 @@ sync-dev:  ## Sync dev environment after code checkout
 	python -m pip install -U pip
 	pip install -r requirements/dev.txt
 	yarn --cwd frontend
-	manage.py migrate
-	manage.py recreate_views
+	manage migrate
+	manage recreate_views
 
 build:  ## build hawc package
 	npm --prefix ./frontend run build
-	manage.py set_git_commit
+	manage set_git_commit
 	rm -rf build/ dist/
-	python setup.py bdist_wheel
-
-build-pex: build ## build pex
-	cd requirements; pex \
-		-r production.txt \
-		-c manage.py \
-		-o ../dist/hawc.pex \
-		--python-shebang='#!/usr/bin/env python'  \
-		--disable-cache \
-		--ignore-errors \
-		../dist/hawc-0.1-py3-none-any.whl
+	python -m build --wheel
+	twine check dist/*.whl
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \

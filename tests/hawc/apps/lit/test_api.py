@@ -271,6 +271,10 @@ class TestLiteratureAssessmentViewset:
             "detail": "Missing filename. Request should include a Content-Disposition header with a filename parameter."
         }
 
+        # invalid; no file returns an error
+        resp = c.post(url)
+        assert resp.status_code == 400 and resp.json() == {"file": "A file is required"}
+
         # invalid; non excel files return an error
         resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION="attachment; filename=test.csv")
         assert resp.status_code == 400 and resp.json() == {"file": "File extension must be .xlsx"}

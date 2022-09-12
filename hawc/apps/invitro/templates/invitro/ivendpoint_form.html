@@ -1,11 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-{% block extrastyle %}
-    {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
     <div id="eForm">
@@ -29,7 +24,6 @@
 {% endblock %}
 
 {% block extrajs %}
-{{ form.media }}
 <script type="text/javascript">
 
     var OELwidget = function($el){
