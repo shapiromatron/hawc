@@ -385,7 +385,7 @@ class AnimalGroup(models.Model):
 
     def can_delete(self) -> bool:
         # can only be deleted if dosing regime is not associated with other animal groups
-        if self.dosing_regime.dosed_animals_id != self.id:
+        if not self.dosing_regime or self.dosing_regime.dosed_animals_id != self.id:
             return True
         return self.dosing_regime.can_delete()
 
