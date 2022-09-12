@@ -3,7 +3,7 @@
   "assessment_name": "Chemical X (2020)",
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>example</p>",
-  "created": "2020-05-08T14:37:19.255703-05:00",
+  "created": "2020-05-08T15:37:19.255703-04:00",
   "dose_units": 1,
   "endpoints": [
     {
@@ -15,10 +15,10 @@
         "animal_source": "Charles River",
         "children": [],
         "comments": "<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>",
-        "created": "2020-05-08T12:40:30.086088-05:00",
+        "created": "2020-05-08T13:40:30.086088-04:00",
         "diet": "Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)",
         "dosing_regime": {
-          "created": "2020-05-08T12:40:29.993336-05:00",
+          "created": "2020-05-08T13:40:29.993336-04:00",
           "description": "<p>description</p>",
           "dosed_animals": {
             "id": 3,
@@ -27,81 +27,81 @@
           },
           "doses": [
             {
-              "created": "2020-05-08T12:40:30.255630-05:00",
+              "created": "2020-05-08T13:40:30.255630-04:00",
               "dose": 0.0,
               "dose_group_id": 0,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 8,
-              "last_updated": "2020-05-08T12:40:30.255654-05:00"
+              "last_updated": "2020-05-08T13:40:30.255654-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.283493-05:00",
+              "created": "2020-05-08T13:40:30.283493-04:00",
               "dose": 1.0,
               "dose_group_id": 1,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 9,
-              "last_updated": "2020-05-08T12:40:30.283514-05:00"
+              "last_updated": "2020-05-08T13:40:30.283514-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.296393-05:00",
+              "created": "2020-05-08T13:40:30.296393-04:00",
               "dose": 10.0,
               "dose_group_id": 2,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 10,
-              "last_updated": "2020-05-08T12:40:30.296412-05:00"
+              "last_updated": "2020-05-08T13:40:30.296412-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.309262-05:00",
+              "created": "2020-05-08T13:40:30.309262-04:00",
               "dose": 100.0,
               "dose_group_id": 3,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 11,
-              "last_updated": "2020-05-08T12:40:30.309281-05:00"
+              "last_updated": "2020-05-08T13:40:30.309281-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.321662-05:00",
+              "created": "2020-05-08T13:40:30.321662-04:00",
               "dose": 1000.0,
               "dose_group_id": 4,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 12,
-              "last_updated": "2020-05-08T12:40:30.321682-05:00"
+              "last_updated": "2020-05-08T13:40:30.321682-04:00"
             }
           ],
           "duration_exposure": 3.0,
           "duration_exposure_text": "3 days",
           "duration_observation": null,
           "id": 3,
-          "last_updated": "2020-05-08T12:40:30.178820-05:00",
+          "last_updated": "2020-05-08T13:40:30.178820-04:00",
           "negative_control": "Vehicle-treated",
           "num_dose_groups": 5,
           "positive_control": "No",
@@ -111,14 +111,14 @@
           "cas": "1163-19-5",
           "chemical": "PBDE 209",
           "chemical_source": "Albemarle Corporation (Baton Rouge, LA), Chemtura Corporation, and ICL-IP America",
-          "created": "2020-05-08T12:38:22.190951-05:00",
+          "created": "2020-05-08T13:38:22.190951-04:00",
           "description": "<p>comments</p>",
           "dtxsid": null,
           "guideline_compliance": "guideline",
           "has_multiple_generations": true,
           "id": 3,
           "is_generational": true,
-          "last_updated": "2020-05-08T12:38:22.190975-05:00",
+          "last_updated": "2020-05-08T13:38:22.190975-04:00",
           "name": "developmental",
           "purity": 97.51,
           "purity_available": true,
@@ -134,7 +134,7 @@
             "coi_details": "J.B., H.S., J.A., S.J., M.H. and T.S. are employed by specialty chemical manufacturers whose product lines include brominated flame retardants. M.B., N.M., A.R., D.W.S. and D.G.S. are employed by WIL Research Laboratories, a contract research organization commissioned to conduct the guideline DNT study presented herein. L.F. is employed with BioSTAT Consultants and was commissioned to design and evaluate the statistical aspects of the DNT study. The views and opinions expressed in this article are those of the authors and not necessarily those of their respective employers.",
             "coi_reported": "Authors disclosed COI",
             "contact_author": true,
-            "created": "2020-05-08T12:03:52.391195-05:00",
+            "created": "2020-05-08T13:03:52.391195-04:00",
             "eco": false,
             "editable": true,
             "epi": false,
@@ -148,7 +148,7 @@
             ],
             "in_vitro": false,
             "journal": "Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35",
-            "last_updated": "2020-05-08T12:56:45.324222-05:00",
+            "last_updated": "2020-05-08T13:56:45.324222-04:00",
             "published": true,
             "searches": [
               5
@@ -166,7 +166,7 @@
         },
         "generation": "P0",
         "id": 3,
-        "last_updated": "2020-05-08T12:40:30.333334-05:00",
+        "last_updated": "2020-05-08T13:40:30.333334-04:00",
         "lifestage_assessed": "Adult",
         "lifestage_exposed": "Adult",
         "name": "sd rats",
@@ -181,7 +181,7 @@
       "assessment": 2,
       "bmds": [],
       "confidence_interval": null,
-      "created": "2020-05-08T12:47:49.464004-05:00",
+      "created": "2020-05-08T13:47:49.464004-04:00",
       "data_extracted": true,
       "data_location": "Figure 5; Table S 41",
       "data_reported": true,
@@ -326,7 +326,7 @@
         }
       ],
       "id": 3,
-      "last_updated": "2020-05-08T12:47:49.464028-05:00",
+      "last_updated": "2020-05-08T13:47:49.464028-04:00",
       "litter_effect_notes": "notes",
       "litter_effects": "YS",
       "litter_effects_display": "Yes, statistical control",
@@ -367,10 +367,10 @@
         "animal_source": "Charles River",
         "children": [],
         "comments": "<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>",
-        "created": "2020-05-08T12:40:30.086088-05:00",
+        "created": "2020-05-08T13:40:30.086088-04:00",
         "diet": "Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)",
         "dosing_regime": {
-          "created": "2020-05-08T12:40:29.993336-05:00",
+          "created": "2020-05-08T13:40:29.993336-04:00",
           "description": "<p>description</p>",
           "dosed_animals": {
             "id": 3,
@@ -379,81 +379,81 @@
           },
           "doses": [
             {
-              "created": "2020-05-08T12:40:30.255630-05:00",
+              "created": "2020-05-08T13:40:30.255630-04:00",
               "dose": 0.0,
               "dose_group_id": 0,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 8,
-              "last_updated": "2020-05-08T12:40:30.255654-05:00"
+              "last_updated": "2020-05-08T13:40:30.255654-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.283493-05:00",
+              "created": "2020-05-08T13:40:30.283493-04:00",
               "dose": 1.0,
               "dose_group_id": 1,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 9,
-              "last_updated": "2020-05-08T12:40:30.283514-05:00"
+              "last_updated": "2020-05-08T13:40:30.283514-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.296393-05:00",
+              "created": "2020-05-08T13:40:30.296393-04:00",
               "dose": 10.0,
               "dose_group_id": 2,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 10,
-              "last_updated": "2020-05-08T12:40:30.296412-05:00"
+              "last_updated": "2020-05-08T13:40:30.296412-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.309262-05:00",
+              "created": "2020-05-08T13:40:30.309262-04:00",
               "dose": 100.0,
               "dose_group_id": 3,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 11,
-              "last_updated": "2020-05-08T12:40:30.309281-05:00"
+              "last_updated": "2020-05-08T13:40:30.309281-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.321662-05:00",
+              "created": "2020-05-08T13:40:30.321662-04:00",
               "dose": 1000.0,
               "dose_group_id": 4,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 12,
-              "last_updated": "2020-05-08T12:40:30.321682-05:00"
+              "last_updated": "2020-05-08T13:40:30.321682-04:00"
             }
           ],
           "duration_exposure": 3.0,
           "duration_exposure_text": "3 days",
           "duration_observation": null,
           "id": 3,
-          "last_updated": "2020-05-08T12:40:30.178820-05:00",
+          "last_updated": "2020-05-08T13:40:30.178820-04:00",
           "negative_control": "Vehicle-treated",
           "num_dose_groups": 5,
           "positive_control": "No",
@@ -463,14 +463,14 @@
           "cas": "1163-19-5",
           "chemical": "PBDE 209",
           "chemical_source": "Albemarle Corporation (Baton Rouge, LA), Chemtura Corporation, and ICL-IP America",
-          "created": "2020-05-08T12:38:22.190951-05:00",
+          "created": "2020-05-08T13:38:22.190951-04:00",
           "description": "<p>comments</p>",
           "dtxsid": null,
           "guideline_compliance": "guideline",
           "has_multiple_generations": true,
           "id": 3,
           "is_generational": true,
-          "last_updated": "2020-05-08T12:38:22.190975-05:00",
+          "last_updated": "2020-05-08T13:38:22.190975-04:00",
           "name": "developmental",
           "purity": 97.51,
           "purity_available": true,
@@ -486,7 +486,7 @@
             "coi_details": "J.B., H.S., J.A., S.J., M.H. and T.S. are employed by specialty chemical manufacturers whose product lines include brominated flame retardants. M.B., N.M., A.R., D.W.S. and D.G.S. are employed by WIL Research Laboratories, a contract research organization commissioned to conduct the guideline DNT study presented herein. L.F. is employed with BioSTAT Consultants and was commissioned to design and evaluate the statistical aspects of the DNT study. The views and opinions expressed in this article are those of the authors and not necessarily those of their respective employers.",
             "coi_reported": "Authors disclosed COI",
             "contact_author": true,
-            "created": "2020-05-08T12:03:52.391195-05:00",
+            "created": "2020-05-08T13:03:52.391195-04:00",
             "eco": false,
             "editable": true,
             "epi": false,
@@ -500,7 +500,7 @@
             ],
             "in_vitro": false,
             "journal": "Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35",
-            "last_updated": "2020-05-08T12:56:45.324222-05:00",
+            "last_updated": "2020-05-08T13:56:45.324222-04:00",
             "published": true,
             "searches": [
               5
@@ -518,7 +518,7 @@
         },
         "generation": "P0",
         "id": 3,
-        "last_updated": "2020-05-08T12:40:30.333334-05:00",
+        "last_updated": "2020-05-08T13:40:30.333334-04:00",
         "lifestage_assessed": "Adult",
         "lifestage_exposed": "Adult",
         "name": "sd rats",
@@ -533,7 +533,7 @@
       "assessment": 2,
       "bmds": [],
       "confidence_interval": null,
-      "created": "2020-07-06T14:45:07.271513-05:00",
+      "created": "2020-07-06T15:45:07.271513-04:00",
       "data_extracted": true,
       "data_location": "",
       "data_reported": true,
@@ -673,7 +673,7 @@
         }
       ],
       "id": 6,
-      "last_updated": "2020-07-06T14:46:42.948733-05:00",
+      "last_updated": "2020-07-06T15:46:42.948733-04:00",
       "litter_effect_notes": "",
       "litter_effects": "NR",
       "litter_effects_display": "Not reported",
@@ -714,10 +714,10 @@
         "animal_source": "Charles River",
         "children": [],
         "comments": "<p>Rats were assigned to individual housing in stainless steel, wire-bottomed cages. Animal care, cages, and housing conditionswere in accordance with the Guide for the Care and Use of Laboratory Animals (ILAR, 1996). Rats were given ad libitum access to Certified Rodent Diet R #5002 (PMI Nutrition International Inc., St. Louis, MO) in individual feeders. The study was conducted in a facility accredited by the Association for Assessment and Accreditation of Laboratory Animal Care International. All procedures involving laboratory animals were reviewed and approved by the Institutional Animal Care and Use Committee associated with the facility in which the laboratory animals were housed.</p>",
-        "created": "2020-05-08T12:40:30.086088-05:00",
+        "created": "2020-05-08T13:40:30.086088-04:00",
         "diet": "Certified Rodent Diet R #5002 (PMI Nutrition International Inc.)",
         "dosing_regime": {
-          "created": "2020-05-08T12:40:29.993336-05:00",
+          "created": "2020-05-08T13:40:29.993336-04:00",
           "description": "<p>description</p>",
           "dosed_animals": {
             "id": 3,
@@ -726,81 +726,81 @@
           },
           "doses": [
             {
-              "created": "2020-05-08T12:40:30.255630-05:00",
+              "created": "2020-05-08T13:40:30.255630-04:00",
               "dose": 0.0,
               "dose_group_id": 0,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 8,
-              "last_updated": "2020-05-08T12:40:30.255654-05:00"
+              "last_updated": "2020-05-08T13:40:30.255654-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.283493-05:00",
+              "created": "2020-05-08T13:40:30.283493-04:00",
               "dose": 1.0,
               "dose_group_id": 1,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 9,
-              "last_updated": "2020-05-08T12:40:30.283514-05:00"
+              "last_updated": "2020-05-08T13:40:30.283514-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.296393-05:00",
+              "created": "2020-05-08T13:40:30.296393-04:00",
               "dose": 10.0,
               "dose_group_id": 2,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 10,
-              "last_updated": "2020-05-08T12:40:30.296412-05:00"
+              "last_updated": "2020-05-08T13:40:30.296412-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.309262-05:00",
+              "created": "2020-05-08T13:40:30.309262-04:00",
               "dose": 100.0,
               "dose_group_id": 3,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 11,
-              "last_updated": "2020-05-08T12:40:30.309281-05:00"
+              "last_updated": "2020-05-08T13:40:30.309281-04:00"
             },
             {
-              "created": "2020-05-08T12:40:30.321662-05:00",
+              "created": "2020-05-08T13:40:30.321662-04:00",
               "dose": 1000.0,
               "dose_group_id": 4,
               "dose_regime": 3,
               "dose_units": {
-                "created": "2020-02-27T14:37:27.650973-06:00",
+                "created": "2020-02-27T15:37:27.650973-05:00",
                 "id": 1,
-                "last_updated": "2020-02-27T14:37:27.651000-06:00",
+                "last_updated": "2020-02-27T15:37:27.651000-05:00",
                 "name": "mg/kg/d"
               },
               "id": 12,
-              "last_updated": "2020-05-08T12:40:30.321682-05:00"
+              "last_updated": "2020-05-08T13:40:30.321682-04:00"
             }
           ],
           "duration_exposure": 3.0,
           "duration_exposure_text": "3 days",
           "duration_observation": null,
           "id": 3,
-          "last_updated": "2020-05-08T12:40:30.178820-05:00",
+          "last_updated": "2020-05-08T13:40:30.178820-04:00",
           "negative_control": "Vehicle-treated",
           "num_dose_groups": 5,
           "positive_control": "No",
@@ -810,14 +810,14 @@
           "cas": "1163-19-5",
           "chemical": "PBDE 209",
           "chemical_source": "Albemarle Corporation (Baton Rouge, LA), Chemtura Corporation, and ICL-IP America",
-          "created": "2020-05-08T12:38:22.190951-05:00",
+          "created": "2020-05-08T13:38:22.190951-04:00",
           "description": "<p>comments</p>",
           "dtxsid": null,
           "guideline_compliance": "guideline",
           "has_multiple_generations": true,
           "id": 3,
           "is_generational": true,
-          "last_updated": "2020-05-08T12:38:22.190975-05:00",
+          "last_updated": "2020-05-08T13:38:22.190975-04:00",
           "name": "developmental",
           "purity": 97.51,
           "purity_available": true,
@@ -833,7 +833,7 @@
             "coi_details": "J.B., H.S., J.A., S.J., M.H. and T.S. are employed by specialty chemical manufacturers whose product lines include brominated flame retardants. M.B., N.M., A.R., D.W.S. and D.G.S. are employed by WIL Research Laboratories, a contract research organization commissioned to conduct the guideline DNT study presented herein. L.F. is employed with BioSTAT Consultants and was commissioned to design and evaluate the statistical aspects of the DNT study. The views and opinions expressed in this article are those of the authors and not necessarily those of their respective employers.",
             "coi_reported": "Authors disclosed COI",
             "contact_author": true,
-            "created": "2020-05-08T12:03:52.391195-05:00",
+            "created": "2020-05-08T13:03:52.391195-04:00",
             "eco": false,
             "editable": true,
             "epi": false,
@@ -847,7 +847,7 @@
             ],
             "in_vitro": false,
             "journal": "Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35",
-            "last_updated": "2020-05-08T12:56:45.324222-05:00",
+            "last_updated": "2020-05-08T13:56:45.324222-04:00",
             "published": true,
             "searches": [
               5
@@ -865,7 +865,7 @@
         },
         "generation": "P0",
         "id": 3,
-        "last_updated": "2020-05-08T12:40:30.333334-05:00",
+        "last_updated": "2020-05-08T13:40:30.333334-04:00",
         "lifestage_assessed": "Adult",
         "lifestage_exposed": "Adult",
         "name": "sd rats",
@@ -883,12 +883,12 @@
           "dose_units_id": 1,
           "model": {
             "bmr_id": 0,
-            "created": "2020-11-27T23:35:09.127297-06:00",
-            "date_executed": "2020-11-27T23:35:14.130064-06:00",
+            "created": "2020-11-28T00:35:09.127297-05:00",
+            "date_executed": "2020-11-28T00:35:14.130064-05:00",
             "dose_units": 1,
             "execution_error": false,
             "id": 8,
-            "last_updated": "2020-11-27T23:35:14.130216-06:00",
+            "last_updated": "2020-11-28T00:35:14.130216-05:00",
             "model_id": 0,
             "name": "Logistic",
             "outfile": "\n\n ==================================================================== \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input Data File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting File:  C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov 28 00:35:10 2020\n ==================================================================== \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\n\n   Dependent variable = Incidence\n   Independent variable = Dose\n   Slope parameter is not restricted\n\n   Total number of observations = 5\n   Total number of records with missing values = 0\n   Maximum number of iterations = 500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter Convergence has been set to: 1e-008\n\n\n\n                  Default Initial Parameter Values  \n                     background =            0   Specified\n                      intercept =     -1.92753\n                          slope =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter Estimates\n\n           ( *** The model parameter(s)  -background   \n                 have been estimated at a boundary point, or have been specified by the user,\n                 and do not appear in the correlation matrix )\n\n              intercept        slope\n\n intercept            1        -0.64\n\n     slope        -0.64            1\n\n\n\n                                 Parameter Estimates\n\n                                                         95.0% Wald Confidence Interval\n       Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit\n      intercept         -2.08369         0.415186            -2.89744            -1.26994\n          slope       0.00195426        0.0006745          0.00063226          0.00327625\n\n\n\n                        Analysis of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted model        -31.9271         2       1.63842      3          0.6507\n  Reduced model        -36.1015         1       9.98719      4         0.04064\n\n           AIC:         67.8542\n\n\n                                  Goodness  of  Fit \n                                                                 Scaled\n     Dose     Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n    0.0000     0.1107         1.660     1.000      15.000       -0.543\n    1.0000     0.1109         1.663     1.000      15.000       -0.545\n   10.0000     0.1126         1.689     3.000      15.000        1.070\n  100.0000     0.1314         1.972     2.000      15.000        0.022\n 1000.0000     0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74      d.f. = 3        P-value = 0.6283\n\n\n   Benchmark Dose Computation\n\nSpecified effect =            0.1\n\nRisk Type        =      Extra risk \n\nConfidence level =           0.95\n\n             BMD =        355.654\n\n            BMDL =        238.329\n\n            BMDU =        667.165\n\n",
@@ -978,7 +978,7 @@
         }
       ],
       "confidence_interval": null,
-      "created": "2020-11-27T21:16:20.324080-06:00",
+      "created": "2020-11-27T22:16:20.324080-05:00",
       "data_extracted": true,
       "data_location": "",
       "data_reported": true,
@@ -1118,7 +1118,7 @@
         }
       ],
       "id": 8,
-      "last_updated": "2020-11-27T21:16:20.324104-06:00",
+      "last_updated": "2020-11-27T22:16:20.324104-05:00",
       "litter_effect_notes": "",
       "litter_effects": "N",
       "litter_effects_display": "No",
@@ -1152,7 +1152,7 @@
     }
   ],
   "id": 4,
-  "last_updated": "2020-05-08T14:37:19.255730-05:00",
+  "last_updated": "2020-05-08T15:37:19.255730-04:00",
   "prefilters": "{\"animal_group__experiment__study__published\": true}",
   "published": true,
   "settings": {
