@@ -124,8 +124,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
                 row_copy.extend(
                     models.DoseGroup.flat_complete_data_row(ser_doses, self.doses, i)
                     if ser_doses
-                    else None
-                    for _ in self.doses
+                    else [None for _ in self.doses]
                 )
                 row_copy.extend(models.EndpointGroup.flat_complete_data_row(eg, ser))
                 rows.append(row_copy)
