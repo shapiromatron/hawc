@@ -4,12 +4,11 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
-  {% if not animal_group.dose_regime %}
-    <div class="alert alert-danger" role="alert">You can not create an endpoint when the Animal Group has no Dose Regime. <a href="{{animal_group.get_absolute_url}}" class="alert-link">Click here to go back to the animal group</a>.</div>
+  {% if animal_group.dosing_regime %}
+    {% crispy form %}
+  {% else %}
+    <div class="alert alert-danger" role="alert">You can not create an endpoint. The animal group has no dose regime.</div>
   {% endif %}
-
-  {% crispy form %}
 
   {# extra stuff that JS will move to correct location #}
   <div id="extra" class="hidden">
