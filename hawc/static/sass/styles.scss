@@ -1,3 +1,16 @@
-@forward "uswds-theme";
-@forward "uswds";
+//@forward "uswds-settings.scss";
+//@forward ".../node_modules/@uswds/uswds";
+@use "uswds-core" with ($theme-show-compile-warnings: false,
+    $theme-show-notifications: false,
+);
+@forward "usa-accordion";
+@forward "usa-button";
+@forward "usa-banner";
+@forward "usa-tag";
+@forward "usa-media-block";
+@forward "usa-search";
+@forward "usa-input";
+@forward "usa-nav";
 @forward "uswds-theme-custom-styles";
+@forward "uswds-theme";
+@forward "uswds-core";
