@@ -189,7 +189,8 @@ class RobFormStore extends StudyRobStore {
                             this.editableScores.forEach(
                                 (score, index) => (score.errors = data.scores[index])
                             );
-                            this.error = "Unable to submit scores. Check the form for any errors.";
+                            this.error =
+                                "Changes could not be saved. Review the form above for any clarifying error messages.";
                         } else {
                             this.error = data;
                         }
