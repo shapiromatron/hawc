@@ -61,12 +61,11 @@
       {% include 'includes/environment_banner.html' %}
     {% endif %}
 
-
+    {% cache 3600 header %}
     {% if flavor == "EPA" %}
       {% include 'includes/epa/header.html' %}
     {% endif %}
-
-
+    {% endcache %}
 
     {% block content_row_outer %}
       <section class="main-content clearfix" id="main-content">
@@ -96,13 +95,13 @@
       </section>
     {% endblock content_row_outer %}
 
-
+    {% cache 3600 footer %}
     {% if flavor == "EPA" %}
       {% include "./includes/epa/footer.html" %}
     {% else %}
       {% include "./includes/base/footer.html" %}
     {% endif %}
-
+    {% endcache %}
     <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/jquery-migrate/3.3.1/jquery-migrate.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/popper.js/1.16.1/umd/popper.min.js' %}"></script>
