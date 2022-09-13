@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, Validat
 from django.db import transaction
 from rest_framework import serializers
 
+from ..common import validators
 from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
@@ -124,6 +125,10 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
             "score_symbol",
             "score_shade",
         )
+
+    def validate_notes(self, value):
+        validators.validate_hyperlinks(value)
+        return validators.clean_html(value)
 
 
 class StudyScoreSerializer(RiskOfBiasScoreSerializer):

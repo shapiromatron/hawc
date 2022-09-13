@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 import {observer, inject} from "mobx-react";
 
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
+import QuillTextInput from "shared/components/QuillTextInput";
 import SelectInput from "shared/components/SelectInput";
 import Spacer from "shared/components/Spacer";
 import TextInput from "shared/components/TextInput";
@@ -27,7 +28,7 @@ class ScoreInput extends Component {
         }
     }
     render() {
-        const {choices, value, handleChange} = this.props;
+        const {choices, value, handleChange, errors} = this.props;
         return (
             <>
                 <SelectInput
@@ -37,6 +38,7 @@ class ScoreInput extends Component {
                     multiple={false}
                     value={value}
                     handleSelect={handleChange}
+                    errors={errors}
                 />
                 <ScoreIcon score={value} />
             </>
@@ -48,18 +50,21 @@ ScoreInput.propTypes = {
     value: PropTypes.number.isRequired,
     handleChange: PropTypes.func.isRequired,
     defaultValue: PropTypes.number.isRequired,
+    errors: PropTypes.array,
 };
 
 class ScoreNotesInput extends Component {
     render() {
         const {scoreId, value, handleChange} = this.props;
         return (
-            <ReactQuill
-                id={`${scoreId}-notes`}
-                value={value}
-                onChange={handleChange}
-                className="score-editor"
-            />
+            <div className="form-group">
+                <ReactQuill
+                    id={`${scoreId}-notes`}
+                    value={value}
+                    onChange={handleChange}
+                    className="score-editor"
+                />
+            </div>
         );
     }
 }
@@ -154,6 +159,7 @@ class ScoreForm extends Component {
                                 handleChange={value => {
                                     store.updateScoreState(score, "score", parseInt(value));
                                 }}
+                                errors={score.errors.score}
                             />
                             <SelectInput
                                 id={`${score.id}-direction`}
@@ -168,16 +174,19 @@ class ScoreForm extends Component {
                                         parseInt(value)
                                     );
                                 }}
+                                errors={score.errors.bias_direction}
                             />
                         </div>
                     ) : null}
                     <div className="col-md-9">
-                        <ScoreNotesInput
-                            scoreId={score.id}
+                        <QuillTextInput
+                            id={`${score.id}-notes`}
+                            className="score-editor"
                             value={score.notes}
-                            handleChange={htmlContent => {
+                            onChange={htmlContent => {
                                 store.updateScoreState(score, "notes", htmlContent);
                             }}
+                            errors={score.errors.notes}
                         />
                     </div>
                 </div>

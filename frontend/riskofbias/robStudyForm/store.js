@@ -54,6 +54,7 @@ class RobFormStore extends StudyRobStore {
             score_symbol: this.settings.score_metadata.symbols[score.score],
             score_shade: this.settings.score_metadata.colors[score.score],
             score_description: this.settings.score_metadata.choices[score.score],
+            errors: {},
         });
     }
 
@@ -173,6 +174,7 @@ class RobFormStore extends StudyRobStore {
             )}`;
 
         this.error = null;
+        this.editableScores.forEach(score => (score.errors = {}));
         return fetch(url, opts)
             .then(response => {
                 if (response.ok) {
@@ -182,8 +184,15 @@ class RobFormStore extends StudyRobStore {
                         this.setChangedSavedDiv();
                     }
                 } else {
-                    response.text().then(text => {
-                        this.error = text;
+                    response.json().then(data => {
+                        if (data.scores) {
+                            this.editableScores.forEach(
+                                (score, index) => (score.errors = data.scores[index])
+                            );
+                            this.error = "Unable to submit scores. Check the form for any errors.";
+                        } else {
+                            this.error = data;
+                        }
                     });
                 }
             })
