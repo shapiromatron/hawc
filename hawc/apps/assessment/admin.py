@@ -143,6 +143,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 @admin.register(models.AssessmentDetails)
 class DetailsAdmin(admin.ModelAdmin):
     list_select_related = ("assessment",)
+    list_filter = ("project_type",)
     list_display = ("id", "assessment", "project_type")
 
 
@@ -151,7 +152,15 @@ class ValuesAdmin(admin.ModelAdmin):
     list_select_related = ("assessment",)
     list_display = ("id", "assessment", "value_type", "value", "comments")
     list_filter = ("assessment",)
-    search_fields = ("assessment", "value", "comments")
+    search_fields = (
+        "assessment",
+        "comments",
+        "system",
+        "basis",
+        "tumor_type",
+        "extrapolation_method",
+        "evidence",
+    )
 
 
 @admin.register(models.Attachment)

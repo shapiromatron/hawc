@@ -522,7 +522,6 @@ class Values(models.Model):
         null=True,
         related_name="values_set_pod",
     )
-    # published = models.DateField(verbose_name="Date Published", null=True, blank=True)
     species_studied = models.ForeignKey(
         "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
     )
