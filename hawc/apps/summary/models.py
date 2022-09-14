@@ -4,6 +4,7 @@ import os
 from operator import methodcaller
 from typing import Dict, List
 
+import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -11,7 +12,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
-from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
@@ -26,9 +26,9 @@ from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
+    PydanticToDjangoError,
     ReportExport,
     SerializerHelper,
-    read_excel,
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
@@ -225,9 +225,9 @@ class SummaryTable(models.Model):
         instance.content = schema.get_default_props()
         return instance
 
-    def to_docx(self, base_url: str = ""):
+    def to_docx(self, base_url: str = "", landscape: bool = True):
         table = self.get_table()
-        docx = table.to_docx(parser=QuillParser(base_url=base_url))
+        docx = table.to_docx(parser=QuillParser(base_url=base_url), landscape=landscape)
         return ReportExport(docx=docx, filename=self.slug)
 
     @classmethod
@@ -236,12 +236,11 @@ class SummaryTable(models.Model):
 
     def clean(self):
         # make sure table can be built
-        try:
-            self.get_table()
-        except PydanticError as e:
-            raise ValidationError({"content": e.json()})
-        except ValueError as e:
-            raise ValidationError({"content": str(e)})
+        with PydanticToDjangoError(field="content"):
+            try:
+                self.get_table()
+            except ValueError as e:
+                raise ValidationError({"content": str(e)})
 
         # clean up control characters before string validation
         content_str = json.dumps(self.content).replace('\\"', '"')
@@ -711,7 +710,7 @@ class DataPivotUpload(DataPivot):
 
     def get_dataset(self) -> FlatExport:
         worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
-        df = read_excel(self.excel_file.file, sheet_name=worksheet_name)
+        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
         filename = os.path.splitext(os.path.basename(self.excel_file.file.name))[0]
         return FlatExport(df=df, filename=filename)
 

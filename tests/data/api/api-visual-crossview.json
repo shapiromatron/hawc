@@ -1,5 +1,6 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>example</p>",
   "created": "2020-05-08T14:37:19.255703-05:00",
@@ -222,6 +223,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": 1.7,
+          "treatment_effect": null,
           "upper_ci": 15.795624490913847,
           "variance": 1.7
         },
@@ -245,6 +247,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": 1.9,
+          "treatment_effect": null,
           "upper_ci": 11.889227372197828,
           "variance": 1.9
         },
@@ -268,6 +271,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": 2.3,
+          "treatment_effect": null,
           "upper_ci": 16.076433134765793,
           "variance": 2.3
         },
@@ -291,6 +295,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": 2.2,
+          "treatment_effect": null,
           "upper_ci": 13.0296316941238,
           "variance": 2.2
         },
@@ -314,6 +319,7 @@
           "significance_level": 0.05,
           "significant": true,
           "stdev": 1.2,
+          "treatment_effect": null,
           "upper_ci": 9.561617287703891,
           "variance": 1.2
         }
@@ -563,6 +569,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": null,
           "variance": null
         },
@@ -586,6 +593,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": null,
           "variance": null
         },
@@ -609,6 +617,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": null,
           "variance": null
         },
@@ -632,6 +641,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": null,
           "variance": null
         },
@@ -655,6 +665,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": null,
           "variance": null
         }
@@ -1002,6 +1013,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": 0.34080513655132844,
           "variance": null
         },
@@ -1025,6 +1037,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": 0.34080513655132844,
           "variance": null
         },
@@ -1048,6 +1061,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": 0.4871743472696062,
           "variance": null
         },
@@ -1071,6 +1085,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": 0.41710115160024647,
           "variance": null
         },
@@ -1094,6 +1109,7 @@
           "significance_level": null,
           "significant": false,
           "stdev": null,
+          "treatment_effect": null,
           "upper_ci": 0.726564615591361,
           "variance": null
         }

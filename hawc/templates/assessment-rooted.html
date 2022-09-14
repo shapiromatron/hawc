@@ -5,107 +5,17 @@
 {% endblock title %}
 
 {% block sidebar_outer %}
-<div id="sidebar-container" class="sidebar {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
-    data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
-
-    {% if user.is_authenticated %}
-    <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
-        <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
-    </a>
-    {% endif %}
-
-    <nav class="nav flex-column pt-3">
-
-        {% if flavor == "EPA" %}
-        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
-        {% endif %}
-
-        <li class="nav-item">
-            {% if user.is_authenticated %}
-            <a class="nav-link" href="{% url 'portal' %}">Portal</a>
-            {% else %}
-            <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
-            {% endif %}
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'assessment:detail' assessment.pk %}">
-                <i class="fa fa-angle-right"></i>
-                {{ assessment }}</a>
-        </li>
-
-        {% if assessment.enable_literature_review %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'lit:overview' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Literature review</a>
-        </li>
-        {% endif %}
-
-        {% if assessment.enable_project_management and request.user.is_authenticated %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Management dashboard</a>
-        </li>
-        {% endif %}
-
-        {% if assessment.enable_data_extraction %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'study:list' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Study list</a>
-        </li>
-
-        {% if assessment.enable_risk_of_bias %}
-        <li class="nav-item">
-            <a class="nav-link"
-                href="{% url 'riskofbias:arob_detail' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                {{assessment.get_rob_name_display}}</a>
-        </li>
-        {% endif %}
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'assessment:endpoint_list' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Endpoint list</a>
-        </li>
-        {% endif %}
-
-        <li class="nav-item">
-            <a class="nav-link"
-                href="{% url 'summary:tables_list' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Summary tables</a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link"
-                href="{% url 'summary:visualization_list' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Visualizations</a>
-        </li>
-
-        {% if assessment.enable_summary_text %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'summary:list' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Executive summary</a>
-        </li>
-        {% endif %}
-
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'assessment:downloads' assessment.pk %}">
-                <i class="fa fa-angle-double-right"></i>
-                Downloads</a>
-        </li>
-
-        {% if flavor == "EPA" %}
-        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
-        {% endif %}
-
+<div class="sidebar">
+    <div class="dropdown d-block d-lg-none px-1 pt-3">
+        <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <i class="fa fa-bars" title="Mobile navigation panel"></i>
+        </button>
+        <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
+            {% include "includes/_sidebar_links.html" %}
+        </div>
+    </div>
+    <nav class="nav flex-column pt-3 d-none d-lg-block">
+        {% include "includes/_sidebar_links.html" %}
     </nav>
 </div>
 {% endblock sidebar_outer %}

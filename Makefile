@@ -1,4 +1,4 @@
-.PHONY: sync-dev build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-refresh test-js coverage
+.PHONY: sync-dev build build-pex dev docs loc lint format lint-py format-py lint-js format-js test test-integration test-integration-debug test-refresh test-js coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -56,10 +56,11 @@ dev: ## Start development environment
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-docs: ## Generate Sphinx HTML documentation, including API docs
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+docs: ## Build documentation
+	cd docs; mkdocs build --strict
+
+docs-serve: ## Generate documentation
+	cd docs; mkdocs serve -a localhost:8010
 
 loc: ## Generate lines of code report
 	@cloc \
@@ -89,7 +90,12 @@ test:  ## Run python tests
 	@py.test
 
 test-integration:  ## Run integration tests (requires `npm run start`)
-	@HAWC_INTEGRATION_TESTS=1 SHOW_BROWSER=1 BROWSER="firefox" py.test -s tests/frontend/integration/
+	@playwright install --with-deps chromium
+	@INTEGRATION_TESTS=1 py.test -sv tests/integration/
+
+test-integration-debug:  ## Run integration tests in debug mode (requires npm run start)
+	@playwright install --with-deps chromium
+	@INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/
 
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes

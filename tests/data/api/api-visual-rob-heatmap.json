@@ -1,5 +1,6 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>caption</p>",
   "created": "2020-05-08T14:35:41.634588-05:00",
@@ -16,13 +17,15 @@
         "description": "<p>description</p>",
         "id": 10,
         "is_overall_confidence": false,
-        "name": "domain 1"
+        "name": "domain 1",
+        "sort_order": 1
       },
       {
         "description": "<p>description</p>",
         "id": 11,
         "is_overall_confidence": true,
-        "name": "overall"
+        "name": "overall",
+        "sort_order": 2
       }
     ],
     "metrics": [
@@ -42,6 +45,7 @@
         ],
         "responses": 1,
         "short_name": "metric 1 short",
+        "sort_order": 1,
         "use_short_name": false
       },
       {
@@ -60,6 +64,7 @@
         ],
         "responses": 1,
         "short_name": "overall short",
+        "sort_order": 1,
         "use_short_name": false
       }
     ],
@@ -292,13 +297,15 @@
             "description": "<p>description</p>",
             "id": 10,
             "is_overall_confidence": false,
-            "name": "domain 1"
+            "name": "domain 1",
+            "sort_order": 1
           },
           {
             "description": "<p>description</p>",
             "id": 11,
             "is_overall_confidence": true,
-            "name": "overall"
+            "name": "overall",
+            "sort_order": 2
           }
         ],
         "metrics": [
@@ -318,6 +325,7 @@
             ],
             "responses": 1,
             "short_name": "metric 1 short",
+            "sort_order": 1,
             "use_short_name": false
           },
           {
@@ -336,6 +344,7 @@
             ],
             "responses": 1,
             "short_name": "overall short",
+            "sort_order": 1,
             "use_short_name": false
           }
         ],

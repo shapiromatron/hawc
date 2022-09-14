@@ -25,7 +25,7 @@ from ..common.api import (
     OncePerMinuteThrottle,
     PaginationWithCount,
 )
-from ..common.helper import FlatExport, re_digits, read_excel, tryParseInt
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
@@ -80,28 +80,18 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get references for an assessment
 
         Args (via GET parameters):
-            - search_id: Search object id; if provided, gets references within a search
-            - tag_id: Tag object id; if provided, gets references with tag
-            - all: include references; no pagination (default None)
-            - untagged: include untagged references (default None)
+            - search_id: gets references within a given search
+            - tag_id: gets references with a given tagTag object id; if provided, gets references with tag
+            - all: fetch all references without pagination (default False)
+            - untagged: include untagged references (default False)
+            - required_tags: requires references to have at least one of the given tags
+            - pruned_tags: prunes references with any of the given tags if they no longer belong in the subtree without said tag
         """
         assessment = self.get_object()
-        qs = assessment.references.all()
-
-        if search_id := tryParseInt(request.query_params.get("search_id")):
-            qs = qs.filter(searches=search_id)
-
-        if "untagged" in request.query_params:
-            qs = qs.untagged()
-        elif tag_id := tryParseInt(request.query_params.get("tag_id")):
-            if tag := models.ReferenceFilterTag.objects.filter(id=tag_id).first():
-                qs = qs.with_tag(tag=tag, descendants=True)
-
-        qs = (
-            qs.select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
-            .order_by("id")
+        ref_filters = serializers.FilterReferences.from_drf(
+            request.query_params, assessment_id=assessment.pk
         )
+        qs = ref_filters.get_queryset()
 
         if "all" in request.query_params:
             serializer = serializers.ReferenceSerializer(qs, many=True)
@@ -315,7 +305,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             raise ValidationError({"file": "File extension must be .xlsx"})
 
         try:
-            df = read_excel(file_)
+            # engine required since this is a BytesIO stream
+            df = pd.read_excel(file_, engine="openpyxl")
         except (BadZipFile, ValueError):
             raise ParseError({"file": "Unable to parse excel file"})
 
