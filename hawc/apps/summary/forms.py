@@ -12,6 +12,7 @@ from openpyxl.utils.exceptions import InvalidFileException
 from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
+from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
 from ..epi.models import Outcome
@@ -602,6 +603,11 @@ class VisualForm(forms.ModelForm):
     def clean_slug(self):
         return clean_slug(self)
 
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
+
 
 class VisualModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
@@ -1057,6 +1063,11 @@ class DataPivotForm(forms.ModelForm):
 
     def clean_slug(self):
         return clean_slug(self)
+
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
 
 
 class DataPivotUploadForm(DataPivotForm):
