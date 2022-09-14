@@ -43,6 +43,7 @@ valid_netloc_endings = {
     "elsevier.com",
     "public.tableau.com",
     "sciencedirect.com",
+    "hawcproject.org",
 }
 
 
