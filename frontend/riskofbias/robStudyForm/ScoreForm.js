@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import ReactQuill from "react-quill";
 import {observer, inject} from "mobx-react";
 
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
