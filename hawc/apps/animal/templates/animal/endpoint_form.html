@@ -1,16 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
 
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
-
 {% block content %}
-
-  {% crispy form %}
+  {% if animal_group.dosing_regime %}
+    {% crispy form %}
+  {% else %}
+    <div class="alert alert-danger" role="alert">Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.</div>
+  {% endif %}
 
   {# extra stuff that JS will move to correct location #}
   <div id="extra" class="hidden">
@@ -98,7 +96,6 @@
 {% endblock %}
 
 {% block extrajs %}
-  {{ form.media }}
   <script type="text/json" id="config">
     {
       "vocabulary": {{vocabulary|safe}},

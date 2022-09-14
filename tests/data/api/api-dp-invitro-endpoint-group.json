@@ -1,11 +1,11 @@
 {
   "assessment": 2,
   "caption": "<p>demo.</p>",
-  "created": "2020-05-10T23:12:54.866928-05:00",
+  "created": "2020-05-11T00:12:54.866928-04:00",
   "data_url": "/summary/api/data_pivot/6/data/?format=tsv",
   "download_url": "/summary/api/data_pivot/6/data/",
   "id": 6,
-  "last_updated": "2020-05-10T23:12:54.866957-05:00",
+  "last_updated": "2020-05-11T00:12:54.866957-04:00",
   "published": true,
   "settings": {
     "barchart": {

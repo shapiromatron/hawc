@@ -23,10 +23,6 @@ class EditEndpoint {
         // reorganize forms
         $("#endpointGroups").insertBefore($("div.form-actions"));
 
-        // html5 enabled form
-        $("#id_results_notes").quillify();
-        $("#id_endpoint_notes").quillify();
-
         //update values in doses table
         $("#doses_title").html(`Dose<br>(${firstDoses.name})`);
         $(".doses").each(function(i, v) {

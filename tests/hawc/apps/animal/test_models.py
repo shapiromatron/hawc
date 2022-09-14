@@ -1,6 +1,52 @@
 import pytest
 
 from hawc.apps.animal import models
+from hawc.apps.assessment.models import Species, Strain
+from hawc.apps.study.models import Study
+
+
+@pytest.mark.django_db
+class TestAnimalGroup:
+    def test_can_delete(self):
+        study = Study.objects.get(pk=1)
+        experiment = models.Experiment(
+            study=study,
+            name="test",
+            type="Rp",
+        )
+        experiment.save()
+        species = Species.objects.get(pk=1)
+        strain = Strain.objects.get(pk=1)
+        dr = models.DosingRegime(route_of_exposure="OR")
+        dr.save()
+        parent = models.AnimalGroup(
+            experiment=experiment,
+            name="parent",
+            sex="C",
+            dosing_regime=dr,
+            species=species,
+            strain=strain,
+        )
+        dr.dosed_animals = parent
+        parent.save()
+        dr.save()
+        child = models.AnimalGroup(
+            experiment=experiment,
+            name="child",
+            sex="C",
+            dosing_regime=dr,
+            species=species,
+            strain=strain,
+        )
+        child.save()
+        assert parent.can_delete() is False
+        assert child.can_delete() is True
+        child.delete()
+        assert parent.can_delete() is True
+
+        # animal group with no dosing regime can be deleted
+        parent.dosing_regime = None
+        assert parent.can_delete() is True
 
 
 @pytest.mark.django_db

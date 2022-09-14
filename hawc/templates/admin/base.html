@@ -1,10 +1,12 @@
 {% extends "admin/base.html" %}
+
 {% load i18n %}
+{% load static %}
 
 {% block extrahead %}
-    {% load selectable_tags %}
-    {% include_ui_theme %}
-    {% include_jquery_libs %}
+    <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/htmx/1.8.0/htmx.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/plotly/2.9.0/plotly.min.js' %}"></script>
 {% endblock %}
 
 {% block userlinks %}

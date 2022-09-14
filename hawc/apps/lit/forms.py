@@ -10,7 +10,7 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, addPopupLink
+from ..common.forms import BaseFormHelper, QuillField, addPopupLink
 from ..study.models import Study
 from . import constants, models
 
@@ -56,6 +56,7 @@ class SearchForm(forms.ModelForm):
     class Meta:
         model = models.Search
         fields = ("assessment", "source", "title", "slug", "description", "search_string")
+        field_classes = {"description": QuillField, "search_string": QuillField}
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -66,12 +67,8 @@ class SearchForm(forms.ModelForm):
             self.instance.assessment = assessment
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice
-        self.fields["description"].widget.attrs["rows"] = 3
-        self.fields["description"].widget.attrs["class"] = "html5text"
         if "search_string" in self.fields:
-            self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
-            self.fields["search_string"].widget.attrs["class"] = "html5text"
 
     @property
     def helper(self):
@@ -97,6 +94,9 @@ class SearchForm(forms.ModelForm):
 
 
 class ImportForm(SearchForm):
+    class Meta(SearchForm.Meta):
+        field_classes = {"description": QuillField}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["source"].choices = [(1, "PubMed"), (2, "HERO")]
@@ -106,7 +106,6 @@ class ImportForm(SearchForm):
                 "search_string"
             ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
             self.fields["search_string"].label = "ID List"
-            self.fields["search_string"].widget.attrs.pop("class")
         else:
             self.fields.pop("search_string")
 
@@ -477,6 +476,9 @@ class ReferenceForm(forms.ModelForm):
             self._ident_removals.extend(list(existing))
 
     def clean_doi_id(self):
+        value = self.cleaned_data["doi_id"]
+        if value:
+            self.cleaned_data["doi_id"] = value.lower()
         self._update_identifier(constants.ReferenceDatabase.DOI, "doi_id")
 
     def clean_pubmed_id(self):

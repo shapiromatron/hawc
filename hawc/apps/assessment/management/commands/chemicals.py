@@ -11,7 +11,7 @@ from hawc.services.epa.dsstox import DssSubstance
 
 def _dict_hash(dict: Dict[str, Any]) -> str:
     """MD5 hash of a dictionary"""
-    dhash = hashlib.md5()
+    dhash = hashlib.md5(usedforsecurity=False)
     encoded = json.dumps(dict, sort_keys=True).encode()
     dhash.update(encoded)
     return dhash.hexdigest()
