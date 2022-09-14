@@ -53,27 +53,6 @@ ScoreInput.propTypes = {
     errors: PropTypes.array,
 };
 
-class ScoreNotesInput extends Component {
-    render() {
-        const {scoreId, value, handleChange} = this.props;
-        return (
-            <div className="form-group">
-                <ReactQuill
-                    id={`${scoreId}-notes`}
-                    value={value}
-                    onChange={handleChange}
-                    className="score-editor"
-                />
-            </div>
-        );
-    }
-}
-ScoreNotesInput.propTypes = {
-    scoreId: PropTypes.number.isRequired,
-    value: PropTypes.string.isRequired,
-    handleChange: PropTypes.func.isRequired,
-};
-
 @inject("store")
 @observer
 class ScoreForm extends Component {
@@ -206,4 +185,4 @@ ScoreForm.propTypes = {
     store: PropTypes.object,
 };
 
-export {ScoreForm, ScoreInput, ScoreNotesInput};
+export {ScoreForm, ScoreInput};
