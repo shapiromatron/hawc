@@ -19,7 +19,7 @@
             {% if assessment.enable_literature_review %}
             <li class="usa-sidenav__item">
                 {% url 'lit:overview' assessment.pk as url %}
-                <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                <a {% if '/lit/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Literature review</a>
             </li>
             {% endif %}
@@ -27,7 +27,7 @@
             {% if assessment.enable_project_management and request.user.is_authenticated %}
             <li class="usa-sidenav__item">
                 {% url 'mgmt:assessment_dashboard' assessment.pk as url %}
-                <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                <a {% if '/mgmt/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Management dashboard</a>
             </li>
             {% endif %}
@@ -35,48 +35,48 @@
             {% if assessment.enable_data_extraction %}
             <li class="usa-sidenav__item">
                 {% url 'study:list' assessment.pk as url %}
-                <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                <a {% if '/study/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Study list</a>
             </li>
 
             {% if assessment.enable_risk_of_bias %}
             <li class="usa-sidenav__item">
                 {% url 'riskofbias:arob_detail' assessment.pk as url %}
-                    <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                    <a {% if '/rob/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     {{assessment.get_rob_name_display}}</a>
             </li>
             {% endif %}
 
             <li class="usa-sidenav__item">
                 {% url 'assessment:endpoint_list' assessment.pk as url %}
-                    <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                    <a {% if '/endpoints/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Endpoint list</a>
             </li>
             {% endif %}
 
             <li class="usa-sidenav__item">
                 {% url 'summary:tables_list' assessment.pk as url %}
-                    <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                    <a {% if '/tables/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Summary tables</a>
             </li>
 
             <li class="usa-sidenav__item">
                 {% url 'summary:visualization_list' assessment.pk as url %}
-                <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                <a {% if '/visual/' in request.path or '/data-pivot/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Visualizations</a>
             </li>
 
             {% if assessment.enable_summary_text %}
             <li class="usa-sidenav__item">
                 {% url 'summary:list' assessment.pk as url %}
-                <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                <a {% if '/summaries/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Executive summary</a>
             </li>
             {% endif %}
 
             <li class="usa-sidenav__item">
                 {% url 'assessment:downloads' assessment.pk as url %}
-                <a {% if request.path == url %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
+                <a {% if '/download/' in request.path %} class="menu__link usa-current" {% else %} class="menu__link" {% endif %} href="{{ url }}">
                     Downloads</a>
             </li>
         </ul>
