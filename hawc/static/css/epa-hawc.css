@@ -2,7 +2,9 @@
 #search-box {
     margin-top: 0px;
 }
-
+html {
+    font-size: 16px;
+}
 /* Top nav */
 .hawc-header .navbar-toggler {
     color: initial;
