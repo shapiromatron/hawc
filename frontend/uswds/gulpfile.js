@@ -14,13 +14,13 @@ uswds.settings.version = 3;
  * Set as many as you need
  */
 
-uswds.paths.dist.css = './hawc/static/css';
-uswds.paths.dist.sass = './hawc/static/sass';
-uswds.paths.dist.theme = './hawc/static/sass';
-uswds.paths.dist.img = './hawc/static/vendor/uswds/3.1.0/img';
-uswds.paths.dist.fonts = './hawc/static/vendor/uswds/3.1.0/fonts';
-uswds.paths.dist.js = './hawc/static/vendor/uswds/3.1.0/js';
-uswds.paths.dist.css = './hawc/static/vendor/uswds/3.1.0/css';
+uswds.paths.dist.css = '../../hawc/static/css';
+uswds.paths.dist.sass = '../../sass';
+uswds.paths.dist.theme = '../../frontend/sass';
+uswds.paths.dist.img = '../../hawc/static/vendor/uswds/3.1.0/img';
+uswds.paths.dist.fonts = '../../hawc/static/vendor/uswds/3.1.0/fonts';
+uswds.paths.dist.js = '../../hawc/static/vendor/uswds/3.1.0/js';
+uswds.paths.dist.css = '../../hawc/static/vendor/uswds/3.1.0/css';
 uswds.paths.src.uswds = './node_modules/@uswds';
 uswds.paths.src.sass = './node_modules/@uswds/uswds/packages';
 uswds.paths.src.theme = './node_modules/@uswds/uswds/dist/theme';

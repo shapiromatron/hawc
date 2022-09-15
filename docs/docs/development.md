@@ -446,6 +446,7 @@ Possible values include:
 - PRIME (default application; as hosted at <https://hawcproject.org>)
 - EPA (EPA application; as hosted at EPA)
 
+The EPA flavor uses a substitute user interface designed to fit EPA's style guidelines, which features components from the [US Web Design System](https://designsystem.digital.gov/). Since USWDS is a fairly large package, HAWC only includes files for the components necessary to maintain the EPA style. Including further components requires [installing USWDS](https://designsystem.digital.gov/documentation/getting-started-for-developers/), adding the component name to [frontend/uswds/styles.scss](https://designsystem.digital.gov/components/packages/), and manually deleting any unnecessary fonts and images added by the USWDS installation.
 
 ### Materialized views
 
