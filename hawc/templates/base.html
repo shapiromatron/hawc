@@ -35,6 +35,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     {% if flavor == "EPA" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/accordions.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/boxes.css' %}" />
@@ -42,11 +43,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa/tabs.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa-bootstrap.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/epa-hawc.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}" />
     <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds-init.min.js' %}"></script>
     {% endif %}
     {% block extrastyle %}{% endblock %}
-
   </head>
 
   <body class="html">
@@ -102,13 +101,15 @@
       {% include "./includes/base/footer.html" %}
     {% endif %}
     {% endcache %}
+    {% if flavor == "EPA" %}
+    <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
+    {% endif %}
     <script type="text/javascript" src="{% static 'vendor/jquery/3.5.1/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/jquery-migrate/3.3.1/jquery-migrate.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/popper.js/1.16.1/umd/popper.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.5.3/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/jqueryui/1.10.3/jquery-ui.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/htmx/1.6.1/htmx.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
   </body>
