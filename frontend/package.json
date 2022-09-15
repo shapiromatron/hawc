@@ -6,6 +6,8 @@
     "scripts": {
         "clean": "rimraf ../hawc/static/bundles/* && rimraf ../hawc/webpack-stats.json",
         "build": "npm run clean && webpack --config webpack.config.js",
+        "uswds-compile": "gulp -f ./uswds/gulpfile.js compileSass",
+        "uswds-copy-assets": "gulp -f ./uswds/gulpfile.js copyAssets",
         "start": "node devServer.js",
         "lint": "eslint --cache .",
         "format": "eslint --cache --fix .",
