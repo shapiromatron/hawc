@@ -18,30 +18,27 @@
 .sidebar {
     background-color: #ffffff;
 }
-.sidebar .nav-item.nav-link {
+.usa-sidenav a:not(.usa-button):not(.usa-current) {
+    color: #565c65 !important;
+}
+.sidebar .nav-item.nav-link{
     color: black !important;
     font-weight: bold;
 }
-.sidebar .nav-item .nav-link {
+.sidebar .nav-item .nav-link, .sidebar .usa-sidenav .usa-sidenav__item{
     color: black !important;
     font-weight: normal;
 }
-.sidebar .nav-item .nav-link:hover {
+.sidebar .nav-item .nav-link:hover,
+.sidebar .usa-sidenav .usa-sidenav__item .menu__link:hover {
     color: #0071bc !important;
     background-color: #f1f1f1;
 }
-.sidebar li {
-    border-top: 1px solid #5b616b;
+.usa--sidenav .menu__link {
+    color: #005ea2 !important;
 }
-.sidebar li:first-of-type {
-    border-top: 0;
-}
-.sidebar .bg-primary {
-    background-color: white !important;
-}
-.sidebar .btn {
-    color: black !important;
-}
-.sidebar .dropdown-menu {
-    background-color: white !important;
+.usa-sidenav .usa-current {
+    position: relative !important;
+    color: #005ea2 !important;
+    font-weight: 700 !important;
 }

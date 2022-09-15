@@ -11,11 +11,19 @@
             <i class="fa fa-bars" title="Mobile navigation panel"></i>
         </button>
         <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
+            {% if flavor == "EPA" %}
+            {% include "includes/epa/epa_sidebar_links.html" %}
+            {% else %}
             {% include "includes/_sidebar_links.html" %}
+            {% endif %}
         </div>
     </div>
     <nav class="nav flex-column pt-3 d-none d-lg-block">
+        {% if flavor == "EPA" %}
+        {% include "includes/epa/epa_sidebar_links.html" %}
+        {% else %}
         {% include "includes/_sidebar_links.html" %}
+        {% endif %}
     </nav>
 </div>
 {% endblock sidebar_outer %}
