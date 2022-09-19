@@ -13,7 +13,7 @@ var yl = yl || {};
  * Also add a global counter for initialized select2 components.
  */
 yl.functions = yl.functions || {};
-yl.counter = yl.counter || 0
+yl.idCounter = yl.idCounter || 0;
 /* HAWC CHANGES END */
 
 /**
@@ -167,7 +167,7 @@ window.addEventListener("load", function () {
        */
       $(element).attr(
         "data-select2-id",
-        `select2-data-${element.id}-${++yl.counter}-${Math.floor(Math.random() * 1000) + 1}`
+        `select2-data-${element.id}-${++yl.idCounter}-${Math.floor(Math.random() * 10000) + 1}`
       );
       /* HAWC CHANGES END */
 
