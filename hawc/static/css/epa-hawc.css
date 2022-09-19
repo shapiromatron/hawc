@@ -1,10 +1,16 @@
+/* Global */
+html {
+    font-size: 16px;
+}
+[href]:focus {
+    outline: none !important;
+}
+
 /* Header */
 #search-box {
     margin-top: 0px;
 }
-html {
-    font-size: 16px;
-}
+
 /* Top nav */
 .hawc-header .navbar-toggler {
     color: initial;
@@ -12,8 +18,13 @@ html {
 .hawc-header .navbar-toggler:focus {
     outline: initial;
 }
-[href]:focus {
-    outline: none !important;
+
+/* Top nav (mobile) */
+.usa-nav.is-visible {
+    background-color: white;
+}
+.usa-nav.is-visible .usa-nav__menu {
+    background-color: #005ea2;
 }
 
 /* Sidebar  */
