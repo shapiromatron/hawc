@@ -69,15 +69,13 @@ class ScoreForm extends Component {
                 }
             ),
             showOverrideCreate = score.is_default === true,
-            isOverride = score.is_default === false;
+            isOverride = score.is_default === false,
+            errorClass = Object.keys(score.errors).length > 0 ? "border border-danger " : "";
 
         return (
             <>
                 {isOverride ? <Spacer borderStyle="4px dashed #323a45" /> : null}
-                <div
-                    className={`score-form container-fluid ${
-                        Object.keys(score.errors).length > 0 ? "border border-danger " : ""
-                    }`}>
+                <div className={`score-form container-fluid ${errorClass}`}>
                     <div className="row mt-3">
                         <div className="col-md-3">
                             {editableMetricHasOverrides ? (

@@ -190,7 +190,7 @@ class RobFormStore extends StudyRobStore {
                                 (score, index) => (score.errors = data.scores[index])
                             );
                             this.error =
-                                "Changes could not be saved. Review the form above for any clarifying error messages.";
+                                "Changes could not be saved. Review the form above for error messages.";
                         } else {
                             this.error = data;
                         }
