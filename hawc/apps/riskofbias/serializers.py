@@ -98,11 +98,12 @@ class RiskOfBiasScoreOverrideObjectSerializer(serializers.ModelSerializer):
 class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RiskOfBiasScore
-        fields = (
-            "id",
-            "score",
-            "notes",
-        )
+        fields = ("id", "score", "notes")
+        read_only_fields = ("id",)
+
+    def validate_notes(self, value):
+        validators.validate_hyperlinks(value)
+        return validators.clean_html(value)
 
 
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
