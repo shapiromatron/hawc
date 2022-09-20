@@ -13,26 +13,13 @@ from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
+from ..common.forms import BaseFormHelper, check_unique_for_assessment, form_actions_apply_filters
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
 from ..study.autocomplete import StudyAutocomplete
 from ..study.models import Study
 from . import autocomplete, constants, models
-
-
-def clean_slug(form):
-    # ensure unique slug for assessment
-    slug = form.cleaned_data.get("slug", None)
-    if (
-        form.instance.__class__.objects.filter(assessment_id=form.instance.assessment_id, slug=slug)
-        .exclude(id=form.instance.id)
-        .count()
-        > 0
-    ):
-        raise forms.ValidationError(ASSESSMENT_UNIQUE_MESSAGE)
-    return slug
 
 
 class PrefilterMixin:
@@ -458,8 +445,6 @@ class SummaryTextForm(forms.ModelForm):
 
 
 class SummaryTableForm(forms.ModelForm):
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
-
     class Meta:
         model = models.SummaryTable
         exclude = ("table_type",)
@@ -477,6 +462,12 @@ class SummaryTableForm(forms.ModelForm):
             self.instance.title = self.initial["title"]
             self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
+
+    def clean_slug(self):
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
 
 
 class SummaryTableSelectorForm(forms.Form):
@@ -548,11 +539,9 @@ class SummaryTableCopySelectorForm(forms.Form):
 
 
 class VisualForm(forms.ModelForm):
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
-
     class Meta:
         model = models.Visual
-        exclude = ("visual_type", "prefilters")
+        exclude = ("assessment", "visual_type", "prefilters")
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -562,7 +551,6 @@ class VisualForm(forms.ModelForm):
             self.fields["settings"].widget.attrs["rows"] = 2
         if assessment:
             self.instance.assessment = assessment
-            self.fields["assessment"].initial = assessment.id
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
         if self.instance.visual_type not in [
@@ -605,7 +593,10 @@ class VisualForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
 
 
 class VisualModelChoiceField(forms.ModelChoiceField):
@@ -1062,15 +1053,16 @@ class DataPivotForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
 
 
 class DataPivotUploadForm(DataPivotForm):
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
-
     class Meta:
         model = models.DataPivotUpload
-        fields = "__all__"
+        exclude = ("assessment",)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -1106,19 +1098,16 @@ class DataPivotUploadForm(DataPivotForm):
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
-
     prefilter_include = ("study", "bioassay", "epi", "invitro", "effect_tags")
 
     class Meta:
         model = models.DataPivotQuery
         fields = (
-            "assessment",
+            "title",
+            "slug",
             "evidence_type",
             "export_style",
-            "title",
             "preferred_units",
-            "slug",
             "settings",
             "caption",
             "published",
