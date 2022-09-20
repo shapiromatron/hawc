@@ -10,7 +10,7 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, QuillField, addPopupLink
+from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
 from ..study.models import Study
 from . import constants, models
 
@@ -43,7 +43,6 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
 
 class SearchForm(forms.ModelForm):
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
     title_str = "Literature Search"
     help_text = (
@@ -55,7 +54,7 @@ class SearchForm(forms.ModelForm):
 
     class Meta:
         model = models.Search
-        fields = ("assessment", "source", "title", "slug", "description", "search_string")
+        fields = ("source", "title", "slug", "description", "search_string")
         field_classes = {"description": QuillField, "search_string": QuillField}
 
     def __init__(self, *args, **kwargs):
@@ -63,12 +62,17 @@ class SearchForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.instance.search_type = "s"
         if assessment:
-            self.fields["assessment"].initial = assessment
             self.instance.assessment = assessment
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice
         if "search_string" in self.fields:
             self.fields["search_string"].required = True
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_slug(self):
+        return check_unique_for_assessment(self, "slug")
 
     @property
     def helper(self):

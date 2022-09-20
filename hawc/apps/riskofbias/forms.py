@@ -5,7 +5,12 @@ from django.db.models import Q
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, QuillField, form_actions_apply_filters
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    check_unique_for_assessment,
+    form_actions_apply_filters,
+)
 from ..myuser.models import HAWCUser
 from ..study.forms import StudyFilterForm
 from . import models
@@ -29,15 +34,12 @@ class RobTextForm(forms.ModelForm):
 
 
 class RoBDomainForm(forms.ModelForm):
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
-
     class Meta:
         model = models.RiskOfBiasDomain
         fields = (
             "name",
             "is_overall_confidence",
             "description",
-            "assessment",
         )
         field_classes = {"description": QuillField}
 
@@ -46,7 +48,6 @@ class RoBDomainForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-            self.fields["assessment"].initial = assessment
 
     @property
     def helper(self):
@@ -66,16 +67,8 @@ class RoBDomainForm(forms.ModelForm):
         helper.add_row("name", 2, "col-md-6")
         return helper
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if (
-            "name" in self.changed_data
-            and self._meta.model.objects.filter(
-                assessment=self.instance.assessment, name=cleaned_data["name"]
-            ).count()
-            > 0
-        ):
-            raise forms.ValidationError("Domain already exists for assessment.")
+    def clean_name(self):
+        return check_unique_for_assessment(self, "name")
 
 
 class RoBMetricForm(forms.ModelForm):
