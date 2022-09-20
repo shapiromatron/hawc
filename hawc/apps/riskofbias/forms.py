@@ -41,6 +41,7 @@ class RoBDomainForm(forms.ModelForm):
             "is_overall_confidence",
             "description",
         )
+        exclude = ("assessment",)
         field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
