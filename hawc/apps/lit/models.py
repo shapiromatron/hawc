@@ -14,7 +14,7 @@ from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.urls import reverse
@@ -27,7 +27,6 @@ from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -229,30 +228,6 @@ class Search(models.Model):
         return (
             self.search_type == constants.SearchType.IMPORT and self.slug == self.MANUAL_IMPORT_SLUG
         )
-
-    def clean(self):
-        # unique_together constraint checked above;
-        # not done in form because assessment is excluded
-        pk_exclusion = {}
-        errors = {}
-        if self.pk:
-            pk_exclusion["pk"] = self.pk
-        if (
-            Search.objects.filter(assessment=self.assessment, title=self.title)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            errors["title"] = ASSESSMENT_UNIQUE_MESSAGE
-        if (
-            Search.objects.filter(assessment=self.assessment, slug=self.slug)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            errors["slug"] = ASSESSMENT_UNIQUE_MESSAGE
-        if errors:
-            raise ValidationError(errors)
 
     def get_absolute_url(self):
         return reverse("lit:search_detail", args=(self.assessment_id, self.slug))

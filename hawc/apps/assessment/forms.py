@@ -18,6 +18,7 @@ from ..common.autocomplete import AutocompleteSelectMultipleWidget, Autocomplete
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
+    check_unique_for_assessment,
     form_actions_apply_filters,
     form_actions_create_or_close,
 )
@@ -507,6 +508,9 @@ class DatasetForm(forms.ModelForm):
                 )
 
         return cleaned_data
+
+    def clean_name(self):
+        return check_unique_for_assessment(self, "name")
 
     @transaction.atomic
     def save(self, commit=True):

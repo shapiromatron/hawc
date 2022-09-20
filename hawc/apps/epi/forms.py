@@ -15,9 +15,9 @@ from ..common.autocomplete import (
     AutocompleteTextWidget,
 )
 from ..common.forms import (
-    ASSESSMENT_UNIQUE_MESSAGE,
     BaseFormHelper,
     CopyAsNewSelectorForm,
+    check_unique_for_assessment,
     form_actions_apply_filters,
     form_actions_create_or_close,
 )
@@ -50,20 +50,8 @@ class CriteriaForm(forms.ModelForm):
             filters={"assessment_id": assessment.id},
         )
 
-    def clean(self):
-        super().clean()
-        # assessment-description unique-together constraint check must be
-        # added since assessment is not included on form
-        pk = getattr(self.instance, "pk", None)
-        crits = models.Criteria.objects.filter(
-            assessment=self.instance.assessment,
-            description=self.cleaned_data.get("description", ""),
-        ).exclude(pk=pk)
-
-        if crits.count() > 0:
-            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
-
-        return self.cleaned_data
+    def clean_description(self):
+        return check_unique_for_assessment(self, "description")
 
     @property
     def helper(self):
@@ -238,20 +226,8 @@ class AdjustmentFactorForm(forms.ModelForm):
             filters={"assessment_id": assessment.id},
         )
 
-    def clean(self):
-        super().clean()
-        # assessment-description unique-together constraint check must be
-        # added since assessment is not included on form
-        pk = getattr(self.instance, "pk", None)
-        crits = models.AdjustmentFactor.objects.filter(
-            assessment=self.instance.assessment,
-            description=self.cleaned_data.get("description", ""),
-        ).exclude(pk=pk)
-
-        if crits.count() > 0:
-            self.add_error("description", ASSESSMENT_UNIQUE_MESSAGE)
-
-        return self.cleaned_data
+    def clean_description(self):
+        return check_unique_for_assessment(self, "description")
 
     @property
     def helper(self):
