@@ -447,7 +447,7 @@ class SummaryTextForm(forms.ModelForm):
 class SummaryTableForm(forms.ModelForm):
     class Meta:
         model = models.SummaryTable
-        exclude = ("table_type",)
+        exclude = ("assessment", "table_type")
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
@@ -1019,7 +1019,6 @@ class DataPivotForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-            self.fields["assessment"].initial = assessment
         self.helper = self.setHelper()
         self.fields["settings"].widget.attrs["rows"] = 2
 

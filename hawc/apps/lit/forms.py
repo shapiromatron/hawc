@@ -99,6 +99,7 @@ class SearchForm(forms.ModelForm):
 
 class ImportForm(SearchForm):
     class Meta(SearchForm.Meta):
+        exclude = ("assessment",)
         field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
