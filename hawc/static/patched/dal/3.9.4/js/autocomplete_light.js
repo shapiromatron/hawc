@@ -10,8 +10,10 @@ var yl = yl || {};
  * HAWC CHANGES START
  *
  * Functions shouldn't be lost if this script is loaded again.
+ * Also add a global counter for initialized select2 components.
  */
 yl.functions = yl.functions || {};
+yl.idCounter = yl.idCounter || 0;
 /* HAWC CHANGES END */
 
 /**
@@ -163,7 +165,10 @@ window.addEventListener("load", function () {
        *
        * Add a unique identifier to element; needed if element id is not unique
        */
-      $(element).attr("data-select2-id", Math.floor(Math.random() * 1000) + 1);
+      $(element).attr(
+        "data-select2-id",
+        `select2-data-${element.id}-${++yl.idCounter}-${Math.floor(Math.random() * 10000) + 1}`
+      );
       /* HAWC CHANGES END */
 
       // The DAL function to execute.
