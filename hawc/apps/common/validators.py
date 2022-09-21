@@ -15,6 +15,7 @@ valid_html_tags = {
     "a",
     "blockquote",
     "br",
+    "div",
     "em",
     "h1",
     "h2",
@@ -32,7 +33,12 @@ valid_html_tags = {
     "ul",
     "u",
 }
-valid_html_attrs = {"*": ["style"], "a": ["href", "rel", "target"]}
+valid_html_attrs = {
+    "*": ["style"],
+    "a": ["href", "rel", "target"],
+    "span": ["class", "data-pk", "data-type"],
+    "div": ["class", "data-pk", "data-type"],
+}
 valid_css_properties = {"color", "background-color"}
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {
@@ -43,6 +49,7 @@ valid_netloc_endings = {
     "elsevier.com",
     "public.tableau.com",
     "sciencedirect.com",
+    "hawcproject.org",
 }
 
 
