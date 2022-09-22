@@ -1,7 +1,9 @@
 from enum import Enum
+from typing import Optional
 
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import QuerySet
 from reversion.models import Version
 
 from ...common.helper import FlatExport
@@ -10,13 +12,16 @@ from ..constants import EpiVersion
 from ..models import Assessment
 
 
-def versions_by_content_type(app_label: str, model: str, qs=None):
-    qs = Version.objects.all() if qs is None else qs
+def versions_by_content_type(app_label: str, model: str, qs: Optional[QuerySet] = None) -> QuerySet:
+    if qs is None:
+        qs = Version.objects.all()
     ct = ContentType.objects.get(app_label=app_label, model=model)
     return qs.filter(content_type=ct)
 
 
-def versions_by_related_field(related_field: str, related_values: list, qs=None):
+def versions_by_related_field(
+    related_field: str, related_values: list, qs: Optional[QuerySet] = None
+) -> QuerySet:
     qs = Version.objects.all() if qs is None else qs
     ored_values = "|".join([str(id) for id in related_values])
     data_regex = (
@@ -30,7 +35,6 @@ class AuditType(str, Enum):
     ANIMAL = "animal"
     EPI = "epi"
     ROB = "riskofbias"
-    SUMMARY = "summary"
 
 
 class AssessmentAuditSerializer(PydanticDrfSerializer):
@@ -41,7 +45,59 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
         arbitrary_types_allowed = True
 
     def get_assessment_queryset(self):
-        return Version.objects.get_for_model(Assessment).filter(object_id=self.assessment.pk)
+        # assessments
+        assess_qs = Version.objects.get_for_model(Assessment).filter(object_id=self.assessment.pk)
+
+        # get assessment attachments
+        attach_qs = versions_by_content_type("assessment", "attachment")
+        attach_qs = versions_by_related_field(
+            "content_type", [ContentType.objects.get_for_model(Assessment).id], attach_qs
+        )
+        attach_qs = versions_by_related_field("object_id", [self.assessment.pk], attach_qs)
+
+        # get assessment datasets
+        dataset_qs = versions_by_content_type("assessment", "dataset")
+        dataset_qs = versions_by_related_field("assessment", [self.assessment.pk], dataset_qs)
+
+        # get assessment dataset revisions
+        dataset_revision_qs = versions_by_content_type("assessment", "datasetrevision")
+        dataset_revision_qs = versions_by_related_field(
+            "dataset", set(dataset_qs.values_list("object_id", flat=True)), dataset_revision_qs
+        )
+
+        # get assessment summary tables
+        summary_table_qs = versions_by_content_type("summary", "summarytable")
+        summary_table_qs = versions_by_related_field(
+            "assessment", [self.assessment.pk], summary_table_qs
+        )
+        # get assessment visuals
+        visual_qs = versions_by_content_type("summary", "visual")
+        visual_qs = versions_by_related_field("assessment", [self.assessment.pk], visual_qs)
+        # get assessment data pivots
+        data_pivot_qs = versions_by_content_type("summary", "datapivot")
+        data_pivot_qs = versions_by_related_field("assessment", [self.assessment.pk], data_pivot_qs)
+        # get data pivot uploads
+        data_pivot_upload_qs = versions_by_content_type("summary", "datapivotupload")
+        data_pivot_upload_qs = data_pivot_upload_qs.filter(
+            object_id__in=set(data_pivot_qs.values_list("object_id", flat=True))
+        )
+        # get data pivot queries
+        data_pivot_query_qs = versions_by_content_type("summary", "datapivotquery")
+        data_pivot_query_qs = data_pivot_query_qs.filter(
+            object_id__in=set(data_pivot_qs.values_list("object_id", flat=True))
+        )
+
+        return (
+            assess_qs
+            | attach_qs
+            | dataset_qs
+            | dataset_revision_qs
+            | summary_table_qs
+            | visual_qs
+            | data_pivot_qs
+            | data_pivot_upload_qs
+            | data_pivot_query_qs
+        )
 
     def get_animal_queryset(self):
         # get assessment references
@@ -183,45 +239,10 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
 
         return domain_qs | metric_qs | score_qs
 
-    def get_summary_queryset(self):
-        # get assessment summary tables
-        summary_table_qs = versions_by_content_type("summary", "summarytable")
-        summary_table_qs = versions_by_related_field(
-            "assessment", [self.assessment.pk], summary_table_qs
-        )
-        # get assessment visuals
-        visual_qs = versions_by_content_type("summary", "visual")
-        visual_qs = versions_by_related_field("assessment", [self.assessment.pk], visual_qs)
-        # get assessment data pivots
-        data_pivot_qs = versions_by_content_type("summary", "datapivot")
-        data_pivot_qs = versions_by_related_field("assessment", [self.assessment.pk], data_pivot_qs)
-        # get data pivot uploads
-        data_pivot_upload_qs = versions_by_content_type("summary", "datapivotupload")
-        data_pivot_upload_qs = data_pivot_upload_qs.filter(
-            object_id__in=set(data_pivot_qs.values_list("object_id", flat=True))
-        )
-        # get data pivot queries
-        data_pivot_query_qs = versions_by_content_type("summary", "datapivotquery")
-        data_pivot_query_qs = data_pivot_query_qs.filter(
-            object_id__in=set(data_pivot_qs.values_list("object_id", flat=True))
-        )
-
-        return (
-            summary_table_qs
-            | visual_qs
-            | data_pivot_qs
-            | data_pivot_upload_qs
-            | data_pivot_query_qs
-        )
-
     def get_queryset(self):
         audit_type = self.type
         if audit_type == AuditType.EPI:
-            audit_type = (
-                audit_type + "v1"
-                if self.assessment.epi_version == EpiVersion.V1
-                else audit_type + "v2"
-            )
+            audit_type = "epiv1" if self.assessment.epi_version == EpiVersion.V1 else "epiv2"
         qs = getattr(self, f"get_{audit_type}_queryset")()
         return qs.select_related("content_type", "revision")
 

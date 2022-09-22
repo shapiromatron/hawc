@@ -1041,6 +1041,7 @@ class Content(models.Model):
 
 reversion.register(DSSTox)
 reversion.register(Assessment)
+reversion.register(Attachment)
 reversion.register(EffectTag)
 reversion.register(Species)
 reversion.register(Strain)
