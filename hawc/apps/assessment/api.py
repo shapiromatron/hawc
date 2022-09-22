@@ -460,9 +460,11 @@ class Assessment(AssessmentViewset):
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
 
-    @action(detail=True, url_path=r"audit/(?P<type>[\w]+)", renderer_classes=PandasRenderers)
-    def audit(self, request: Request, pk: int, type: str):
+    @action(detail=True, url_path=r"logs/(?P<type>[\w]+)", renderer_classes=PandasRenderers)
+    def logs(self, request: Request, pk: int, type: str):
         instance = self.get_object()
+        if not instance.user_is_team_member_or_higher(self.request.user):
+            raise PermissionDenied()
         serializer = AssessmentAuditSerializer.from_drf(data=dict(assessment=instance, type=type))
         export = serializer.export()
         return Response(export)
