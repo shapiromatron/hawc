@@ -1,7 +1,4 @@
 /* Global */
-html {
-    font-size: 16px;
-}
 [href]:focus {
     outline: none !important;
 }
