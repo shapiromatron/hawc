@@ -1,7 +1,10 @@
 import json
+from datetime import datetime, timedelta
+from typing import Any, NamedTuple, Union
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, QuerySet
+from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
@@ -140,3 +143,112 @@ class TimeSpentEditingManager(BaseManager):
 
 class DatasetManager(BaseManager):
     assessment_relation = "assessment"
+
+
+class Event(NamedTuple):
+    """A potentially collapsed changed event between Logs and Reversions"""
+
+    message: str
+    snapshot: str
+    user: Any
+    created: datetime
+
+
+class EventPair:
+    """An Event Pair Comparison between a Log and Reversion"""
+
+    def __init__(self, item_1, item_2=None):
+        """Build an event pair, or at least one event.
+
+        Args:
+            item_1 (Union[Log, Version]): The first item in the pair
+            item_2 (Union[Log, Version], optional): The optional second item in the pair
+        """
+        self.log = None
+        self.version = None
+        if isinstance(item_1, Version):
+            self.version = item_1
+        else:
+            self.log = item_1
+        if item_2:
+            if isinstance(item_2, Version):
+                self.version = item_2
+            else:
+                self.log = item_2
+
+    def collapsable(self) -> bool:
+        # should the two items be collapsed?
+        if self.log is None or self.version is None:
+            return False
+        return abs(self.log.created - self.version.revision.date_created) < timedelta(seconds=10)
+
+    def output(self) -> Event:
+        # Return a collapsed event
+        return Event(
+            message=self.log.message if self.log else "",
+            snapshot=self.version.serialized_data if self.version else "",
+            user=self.log.user if self.log else self.version.revision.user,
+            created=self.log.created if self.log else self.version.revision.date_created,
+        )
+
+
+class LogManager(BaseManager):
+    assessment_relation = "assessment"
+
+    def get_object_audit(
+        self, content_type: Union[ContentType, int], object_id: int
+    ) -> list[Event]:
+        """
+        Combines information from HAWC's internal logs and reversion logs for a more complete audit.
+        Matching is attempted between these two log types to account for same operations.
+
+        Args:
+            content_type (Union[ContentType, int]): Content type of interested object.
+            object_id (int): ID of interested object.
+
+        Returns:
+            list[Event]: Serialized logs with message, snapshot, user, and date created.
+        """
+        # sort all events in descending order
+        logs = (
+            self.filter(content_type=content_type, object_id=object_id)
+            .select_related("user")
+            .order_by("id")
+        )
+        versions = (
+            Version.objects.filter(content_type=content_type, object_id=object_id)
+            .select_related("revision__user")
+            .order_by("id")
+        )
+        events = list(logs) + list(versions)
+        events.sort(
+            key=lambda el: el.created if isinstance(el, self.model) else el.revision.date_created,
+            reverse=True,
+        )
+
+        # build event aggregations
+        aggregations = []
+        used_next_event = None
+        for i, this_event in enumerate(events):
+            # skip current item if we've already used it
+            if this_event is used_next_event:
+                continue
+
+            # try to get next event to compare; if we dont have one, add the current
+            try:
+                next_event = events[i + 1]
+            except IndexError:
+                aggregations.append(EventPair(this_event).output())
+                break
+
+            # run pair comparisons
+            pair = EventPair(this_event, next_event)
+            if pair.collapsable():
+                # add both; mark second as consumed
+                aggregations.append(pair.output())
+                used_next_event = next_event
+            else:
+                # just add one
+                aggregations.append(EventPair(this_event).output())
+
+        return aggregations

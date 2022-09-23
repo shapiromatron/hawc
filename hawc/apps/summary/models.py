@@ -1027,6 +1027,7 @@ class Prefilter:
 
 reversion.register(SummaryText)
 reversion.register(SummaryTable)
+reversion.register(DataPivot)
 reversion.register(DataPivotUpload)
 reversion.register(DataPivotQuery)
 reversion.register(Visual)
