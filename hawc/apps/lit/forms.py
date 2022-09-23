@@ -10,7 +10,7 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, QuillField, addPopupLink
+from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
 from ..study.models import Study
 from . import constants, models
 
@@ -68,6 +68,12 @@ class SearchForm(forms.ModelForm):
         if "search_string" in self.fields:
             self.fields["search_string"].required = True
 
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_slug(self):
+        return check_unique_for_assessment(self, "slug")
+
     @property
     def helper(self):
         if self.instance.id:
@@ -93,6 +99,7 @@ class SearchForm(forms.ModelForm):
 
 class ImportForm(SearchForm):
     class Meta(SearchForm.Meta):
+        exclude = ("assessment",)
         field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
