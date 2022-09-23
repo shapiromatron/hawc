@@ -446,7 +446,21 @@ Possible values include:
 - PRIME (default application; as hosted at <https://hawcproject.org>)
 - EPA (EPA application; as hosted at EPA)
 
-The EPA flavor uses a substitute user interface designed to fit EPA's style guidelines, which features components from the [US Web Design System](https://designsystem.digital.gov/). Since USWDS is a fairly large package, HAWC only includes files for the components necessary to maintain the EPA style. Including further components requires [installing USWDS](https://designsystem.digital.gov/documentation/getting-started-for-developers/), adding the component name to [frontend/uswds/styles.scss](https://designsystem.digital.gov/components/packages/), and manually deleting any unnecessary fonts and images added by the USWDS installation.
+### Compiling USWDS
+
+The EPA flavor of HAWC uses a framework from the [U.S. Web Design System](https://designsystem.digital.gov/) (USWDS) adapted for the agency. USWDS is a large package with thousands of resources; HAWC only includes a subset of these files. Including further components requires installing USWDS, and adding the component names to [`frontend/uswds/sass/styles.scss`](https://designsystem.digital.gov/components/packages/). The following command will rebuild this code:
+
+```bash
+cd ~/dev/hawc/frontend
+
+# rebuild CSS
+npm run uswds-compile
+
+# copy fonts, img, js
+npm run uswds-copy-assets
+```
+
+After running, manually delete unused fonts and images.
 
 ### Materialized views
 
