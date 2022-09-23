@@ -58,3 +58,19 @@ html {
 .sidebar .dropdown-menu {
     background-color: white !important;
 }
+/* table */
+table td {
+    background-color: unset !important;
+
+}
+/* dropdown */
+a.dropdown-toggle:not([href])::after {
+    display: inline-block !important;
+}
+.dropdown-menu {
+    transition-duration: unset;
+    -webkit-transition-duration: unset;
+    -webkit-transition-timing-function: unset;
+    transition-property: none;
+    transition-timing-function: unset;
+}
