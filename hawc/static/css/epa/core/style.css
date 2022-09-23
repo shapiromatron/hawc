@@ -986,7 +986,7 @@ template {
     font-style: normal;
     font-weight: 300;
     font-display: fallback;
-    src: url(../fonts/roboto-mono/roboto-mono-v5-latin-300.woff2) format("woff2"), url(../fonts/roboto-mono/roboto-mono-v5-latin-300.woff) format("woff"), url(../fonts/roboto-mono/roboto-mono-v5-latin-300.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-300.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-300.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-300.ttf) format("truetype")
 }
 
 @font-face {
@@ -994,7 +994,7 @@ template {
     font-style: normal;
     font-weight: 400;
     font-display: fallback;
-    src: url(../fonts/roboto-mono/roboto-mono-v5-latin-regular.woff2) format("woff2"), url(../fonts/roboto-mono/roboto-mono-v5-latin-regular.woff) format("woff"), url(../fonts/roboto-mono/roboto-mono-v5-latin-regular.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-regular.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-regular.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-regular.ttf) format("truetype")
 }
 
 @font-face {
@@ -1002,7 +1002,7 @@ template {
     font-style: normal;
     font-weight: 700;
     font-display: fallback;
-    src: url(../fonts/roboto-mono/roboto-mono-v5-latin-700.woff2) format("woff2"), url(../fonts/roboto-mono/roboto-mono-v5-latin-700.woff) format("woff"), url(../fonts/roboto-mono/roboto-mono-v5-latin-700.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-700.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-700.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-700.ttf) format("truetype")
 }
 
 @font-face {
@@ -1010,7 +1010,7 @@ template {
     font-style: italic;
     font-weight: 300;
     font-display: fallback;
-    src: url(../fonts/roboto-mono/roboto-mono-v5-latin-300italic.woff2) format("woff2"), url(../fonts/roboto-mono/roboto-mono-v5-latin-300italic.woff) format("woff"), url(../fonts/roboto-mono/roboto-mono-v5-latin-300italic.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-300italic.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-300italic.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-300italic.ttf) format("truetype")
 }
 
 @font-face {
@@ -1018,7 +1018,7 @@ template {
     font-style: italic;
     font-weight: 400;
     font-display: fallback;
-    src: url(../fonts/roboto-mono/roboto-mono-v5-latin-italic.woff2) format("woff2"), url(../fonts/roboto-mono/roboto-mono-v5-latin-italic.woff) format("woff"), url(../fonts/roboto-mono/roboto-mono-v5-latin-italic.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-italic.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-italic.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-italic.ttf) format("truetype")
 }
 
 @font-face {
@@ -1026,7 +1026,7 @@ template {
     font-style: italic;
     font-weight: 700;
     font-display: fallback;
-    src: url(../fonts/roboto-mono/roboto-mono-v5-latin-700italic.woff2) format("woff2"), url(../fonts/roboto-mono/roboto-mono-v5-latin-700italic.woff) format("woff"), url(../fonts/roboto-mono/roboto-mono-v5-latin-700italic.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-700italic.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-700italic.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/roboto-mono/roboto-mono-v5-latin-700italic.ttf) format("truetype")
 }
 
 @font-face {
@@ -1034,7 +1034,7 @@ template {
     font-style: normal;
     font-weight: 300;
     font-display: fallback;
-    src: url(../fonts/source-sans-pro/sourcesanspro-light-webfont.woff2) format("woff2"), url(../fonts/source-sans-pro/sourcesanspro-light-webfont.woff) format("woff"), url(../fonts/source-sans-pro/sourcesanspro-light-webfont.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-light-webfont.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-light-webfont.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-light-webfont.ttf) format("truetype")
 }
 
 @font-face {
@@ -1042,7 +1042,7 @@ template {
     font-style: normal;
     font-weight: 400;
     font-display: fallback;
-    src: url(../fonts/source-sans-pro/sourcesanspro-regular-webfont.woff2) format("woff2"), url(../fonts/source-sans-pro/sourcesanspro-regular-webfont.woff) format("woff"), url(../fonts/source-sans-pro/sourcesanspro-regular-webfont.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-regular-webfont.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-regular-webfont.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-regular-webfont.ttf) format("truetype")
 }
 
 @font-face {
@@ -1050,7 +1050,7 @@ template {
     font-style: normal;
     font-weight: 700;
     font-display: fallback;
-    src: url(../fonts/source-sans-pro/sourcesanspro-bold-webfont.woff2) format("woff2"), url(../fonts/source-sans-pro/sourcesanspro-bold-webfont.woff) format("woff"), url(../fonts/source-sans-pro/sourcesanspro-bold-webfont.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-bold-webfont.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-bold-webfont.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-bold-webfont.ttf) format("truetype")
 }
 
 @font-face {
@@ -1058,7 +1058,7 @@ template {
     font-style: italic;
     font-weight: 300;
     font-display: fallback;
-    src: url(../fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.woff2) format("woff2"), url(../fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.woff) format("woff"), url(../fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.ttf) format("truetype")
 }
 
 @font-face {
@@ -1066,7 +1066,7 @@ template {
     font-style: italic;
     font-weight: 400;
     font-display: fallback;
-    src: url(../fonts/source-sans-pro/sourcesanspro-italic-webfont.woff2) format("woff2"), url(../fonts/source-sans-pro/sourcesanspro-italic-webfont.woff) format("woff"), url(../fonts/source-sans-pro/sourcesanspro-italic-webfont.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-italic-webfont.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-italic-webfont.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-italic-webfont.ttf) format("truetype")
 }
 
 @font-face {
@@ -1074,7 +1074,7 @@ template {
     font-style: italic;
     font-weight: 700;
     font-display: fallback;
-    src: url(../fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.woff2) format("woff2"), url(../fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.woff) format("woff"), url(../fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.ttf) format("truetype")
 }
 
 @font-face {
@@ -1082,7 +1082,7 @@ template {
     font-style: normal;
     font-weight: 300;
     font-display: fallback;
-    src: url(../fonts/merriweather/Latin-Merriweather-Light.woff2) format("woff2"), url(../fonts/merriweather/Latin-Merriweather-Light.woff) format("woff"), url(../fonts/merriweather/Latin-Merriweather-Light.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Light.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Light.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Light.ttf) format("truetype")
 }
 
 @font-face {
@@ -1090,7 +1090,7 @@ template {
     font-style: normal;
     font-weight: 400;
     font-display: fallback;
-    src: url(../fonts/merriweather/Latin-Merriweather-Regular.woff2) format("woff2"), url(../fonts/merriweather/Latin-Merriweather-Regular.woff) format("woff"), url(../fonts/merriweather/Latin-Merriweather-Regular.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Regular.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Regular.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Regular.ttf) format("truetype")
 }
 
 @font-face {
@@ -1098,7 +1098,7 @@ template {
     font-style: normal;
     font-weight: 700;
     font-display: fallback;
-    src: url(../fonts/merriweather/Latin-Merriweather-Bold.woff2) format("woff2"), url(../fonts/merriweather/Latin-Merriweather-Bold.woff) format("woff"), url(../fonts/merriweather/Latin-Merriweather-Bold.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Bold.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Bold.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Bold.ttf) format("truetype")
 }
 
 @font-face {
@@ -1106,7 +1106,7 @@ template {
     font-style: italic;
     font-weight: 300;
     font-display: fallback;
-    src: url(../fonts/merriweather/Latin-Merriweather-LightItalic.woff2) format("woff2"), url(../fonts/merriweather/Latin-Merriweather-LightItalic.woff) format("woff"), url(../fonts/merriweather/Latin-Merriweather-LightItalic.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-LightItalic.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-LightItalic.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-LightItalic.ttf) format("truetype")
 }
 
 @font-face {
@@ -1114,7 +1114,7 @@ template {
     font-style: italic;
     font-weight: 400;
     font-display: fallback;
-    src: url(../fonts/merriweather/Latin-Merriweather-Italic.woff2) format("woff2"), url(../fonts/merriweather/Latin-Merriweather-Italic.woff) format("woff"), url(../fonts/merriweather/Latin-Merriweather-Italic.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Italic.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Italic.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-Italic.ttf) format("truetype")
 }
 
 @font-face {
@@ -1122,7 +1122,7 @@ template {
     font-style: italic;
     font-weight: 700;
     font-display: fallback;
-    src: url(../fonts/merriweather/Latin-Merriweather-BoldItalic.woff2) format("woff2"), url(../fonts/merriweather/Latin-Merriweather-BoldItalic.woff) format("woff"), url(../fonts/merriweather/Latin-Merriweather-BoldItalic.ttf) format("truetype")
+    src: url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-BoldItalic.woff2) format("woff2"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-BoldItalic.woff) format("woff"), url(../../../vendor/uswds/3.1.0/fonts/merriweather/Latin-Merriweather-BoldItalic.ttf) format("truetype")
 }
 
 input:not([disabled]):focus,
@@ -1842,7 +1842,7 @@ html.no-js .definition__tooltip a:visited::after,
 .definition__tooltip html.no-js a:visited::after,
 html.no-js .footer a:visited::after,
 .footer html.no-js a:visited::after {
-    background-image: url("../images/external-link--gray-2.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-2.svg") !important
 }
 
 .usa-section--dark a:hover,
@@ -1884,7 +1884,7 @@ html.no-js .definition__tooltip a:active::after,
 .definition__tooltip html.no-js a:active::after,
 html.no-js .footer a:active::after,
 .footer html.no-js a:active::after {
-    background-image: url("../images/external-link--white.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg") !important
 }
 
 /*! uswds @version */
@@ -3284,8 +3284,8 @@ abbr[title="required"] {
 .form-item__checkbox:checked:disabled+.usa-checkbox__label::before,
 .form-item--checkbox .usa-checkbox__input:checked:disabled+.form-item__label::before,
 .form-item--checkbox .form-item__checkbox:checked:disabled+.form-item__label::before {
-    background-image: url("../images/correct8.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/correct8.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/correct8.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/correct8.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: .75rem auto
@@ -3303,7 +3303,7 @@ abbr[title="required"] {
     .form-item--checkbox .form-item__checkbox:checked:disabled+.form-item__label::before {
         background-image: none;
         background-color: #fff;
-        content: url("../images/checkbox-check-print.svg");
+        content: url("../../../vendor/uswds/3.1.0/img/checkbox-check-print.svg");
         text-indent: 0
     }
 }
@@ -3437,8 +3437,8 @@ abbr[title="required"] {
 
 .usa-select,
 .form-item__select {
-    background-image: url("../images/usa-icons/unfold_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/unfold_more.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/unfold_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/unfold_more.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -3636,8 +3636,8 @@ abbr[title="required"] {
 }
 
 .usa-file-input__preview-image.is-loading {
-    background-image: url("../images/loader.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/loader.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/loader.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/loader.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-position: center center;
     background-repeat: no-repeat;
@@ -3655,32 +3655,32 @@ abbr[title="required"] {
 }
 
 .usa-file-input__preview-image--pdf {
-    background-image: url("../images/file-pdf.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/file-pdf.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-pdf.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-pdf.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-file-input__preview-image--generic {
-    background-image: url("../images/file.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/file.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/file.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/file.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-file-input__preview-image--word {
-    background-image: url("../images/file-word.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/file-word.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-word.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-word.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-file-input__preview-image--excel {
-    background-image: url("../images/file-excel.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/file-excel.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-excel.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-excel.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-file-input__preview-image--video {
-    background-image: url("../images/file-video.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/file-video.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-video.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/file-video.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
@@ -3946,16 +3946,16 @@ button.usa-combo-box__clear-input:focus {
 }
 
 .usa-combo-box__clear-input {
-    background-image: url("../images/usa-icons/close.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/close.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/close.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/close.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     display: none;
     right: calc(2.5em + 3px)
 }
 
 .usa-combo-box__toggle-list {
-    background-image: url("../images/usa-icons/expand_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/expand_more.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-size: auto 2rem;
     right: 1px
@@ -4121,8 +4121,8 @@ button.usa-combo-box__clear-input:focus {
 }
 
 .usa-date-picker__button {
-    background-image: url("../images/usa-icons/calendar_today.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/calendar_today.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/calendar_today.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/calendar_today.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     -ms-flex-item-align: stretch;
     align-self: stretch;
@@ -4205,26 +4205,26 @@ button.usa-combo-box__clear-input:focus {
 }
 
 .usa-date-picker__calendar__previous-year:not([disabled]) {
-    background-image: url("../images/usa-icons/navigate_far_before.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/navigate_far_before.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_far_before.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_far_before.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-date-picker__calendar__previous-month:not([disabled]) {
-    background-image: url("../images/usa-icons/navigate_before.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/navigate_before.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_before.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_before.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-date-picker__calendar__next-year:not([disabled]) {
-    background-image: url("../images/usa-icons/navigate_far_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/navigate_far_next.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_far_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_far_next.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-date-picker__calendar__next-month:not([disabled]) {
-    background-image: url("../images/usa-icons/navigate_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/navigate_next.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
@@ -4374,14 +4374,14 @@ button.usa-combo-box__clear-input:focus {
 }
 
 .usa-date-picker__calendar__previous-year-chunk:not([disabled]) {
-    background-image: url("../images/usa-icons/navigate_before.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/navigate_before.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_before.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_before.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-date-picker__calendar__next-year-chunk:not([disabled]) {
-    background-image: url("../images/usa-icons/navigate_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/navigate_next.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
@@ -6882,7 +6882,7 @@ h6,
 }
 
 .usa-link--external::after {
-    background-image: url("../images/usa-icons-bg/launch--blue-60v.svg");
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/launch--blue-60v.svg");
     background-position: 50% 60%;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -6893,13 +6893,13 @@ h6,
 }
 
 .usa-link--external:hover::after {
-    background-image: url("../images/usa-icons-bg/launch--blue-70v.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons-bg/launch--blue-70v.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/launch--blue-70v.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/launch--blue-70v.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-link--external.usa-link--alt::after {
-    background-image: url("../images/usa-icons-bg/launch--gray-5.svg");
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/launch--gray-5.svg");
     background-position: 50% 60%;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -6910,8 +6910,8 @@ h6,
 }
 
 .usa-link--external.usa-link--alt:hover::after {
-    background-image: url("../images/usa-icons-bg/launch--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons-bg/launch--white.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/launch--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/launch--white.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
@@ -7192,8 +7192,8 @@ h6,
     margin: 0;
     padding: 0;
     text-align: left;
-    background-image: url("../images/usa-icons/remove.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/remove.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/remove.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/remove.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-color: #f0f0f0;
     background-position: right 1.25rem center;
@@ -7271,8 +7271,8 @@ h6,
 }
 
 .usa-accordion__button[aria-expanded="false"] {
-    background-image: url("../images/usa-icons/add.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/add.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/add.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/add.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-size: 1.5rem
 }
@@ -7315,7 +7315,7 @@ h6,
 }
 
 .usa-alert--success:before {
-    background: url("../images/usa-icons/check_circle.svg") no-repeat center / 2rem 2rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons/check_circle.svg") no-repeat center / 2rem 2rem;
     display: inline-block;
     height: 2rem;
     width: 2rem;
@@ -7331,8 +7331,8 @@ h6,
     .usa-alert--success:before {
         background: none;
         background-color: #1b1b1b;
-        -webkit-mask: url("../images/usa-icons/check_circle.svg") no-repeat center / 2rem 2rem;
-        mask: url("../images/usa-icons/check_circle.svg") no-repeat center / 2rem 2rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/check_circle.svg") no-repeat center / 2rem 2rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/check_circle.svg") no-repeat center / 2rem 2rem
     }
 }
 
@@ -7381,7 +7381,7 @@ h6,
 }
 
 .usa-alert--warning:before {
-    background: url("../images/usa-icons/warning.svg") no-repeat center / 2rem 2rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons/warning.svg") no-repeat center / 2rem 2rem;
     display: inline-block;
     height: 2rem;
     width: 2rem;
@@ -7397,8 +7397,8 @@ h6,
     .usa-alert--warning:before {
         background: none;
         background-color: #1b1b1b;
-        -webkit-mask: url("../images/usa-icons/warning.svg") no-repeat center / 2rem 2rem;
-        mask: url("../images/usa-icons/warning.svg") no-repeat center / 2rem 2rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/warning.svg") no-repeat center / 2rem 2rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/warning.svg") no-repeat center / 2rem 2rem
     }
 }
 
@@ -7447,7 +7447,7 @@ h6,
 }
 
 .usa-alert--error:before {
-    background: url("../images/usa-icons/error.svg") no-repeat center / 2rem 2rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons/error.svg") no-repeat center / 2rem 2rem;
     display: inline-block;
     height: 2rem;
     width: 2rem;
@@ -7463,8 +7463,8 @@ h6,
     .usa-alert--error:before {
         background: none;
         background-color: #1b1b1b;
-        -webkit-mask: url("../images/usa-icons/error.svg") no-repeat center / 2rem 2rem;
-        mask: url("../images/usa-icons/error.svg") no-repeat center / 2rem 2rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/error.svg") no-repeat center / 2rem 2rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/error.svg") no-repeat center / 2rem 2rem
     }
 }
 
@@ -7513,7 +7513,7 @@ h6,
 }
 
 .usa-alert--info:before {
-    background: url("../images/usa-icons/info.svg") no-repeat center / 2rem 2rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons/info.svg") no-repeat center / 2rem 2rem;
     display: inline-block;
     height: 2rem;
     width: 2rem;
@@ -7529,8 +7529,8 @@ h6,
     .usa-alert--info:before {
         background: none;
         background-color: #1b1b1b;
-        -webkit-mask: url("../images/usa-icons/info.svg") no-repeat center / 2rem 2rem;
-        mask: url("../images/usa-icons/info.svg") no-repeat center / 2rem 2rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/info.svg") no-repeat center / 2rem 2rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/info.svg") no-repeat center / 2rem 2rem
     }
 }
 
@@ -7579,7 +7579,7 @@ h6,
 }
 
 .usa-alert--emergency:before {
-    background: url("../images/usa-icons-bg/error--white.svg") no-repeat center / 2rem 2rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/error--white.svg") no-repeat center / 2rem 2rem;
     display: inline-block;
     height: 2rem;
     width: 2rem;
@@ -7595,8 +7595,8 @@ h6,
     .usa-alert--emergency:before {
         background: none;
         background-color: #fff;
-        -webkit-mask: url("../images/usa-icons/error.svg") no-repeat center / 2rem 2rem;
-        mask: url("../images/usa-icons/error.svg") no-repeat center / 2rem 2rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/error.svg") no-repeat center / 2rem 2rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/error.svg") no-repeat center / 2rem 2rem
     }
 }
 
@@ -7870,7 +7870,7 @@ body.has-wide-template .usa-banner__inner {
 }
 
 .usa-banner__header-action::after {
-    background: url("../images/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
     display: inline-block;
     height: 1rem;
     width: 1rem;
@@ -7883,8 +7883,8 @@ body.has-wide-template .usa-banner__inner {
     .usa-banner__header-action::after {
         background: none;
         background-color: #005ea2;
-        -webkit-mask: url("../images/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
-        mask: url("../images/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem
     }
 
     .usa-banner__header-action::after:hover {
@@ -8076,7 +8076,7 @@ body.has-wide-template .usa-banner__inner {
     }
 
     .usa-banner__button::after {
-        background: url("../images/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
+        background: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
         display: inline-block;
         height: 1rem;
         width: 1rem;
@@ -8089,8 +8089,8 @@ body.has-wide-template .usa-banner__inner {
         .usa-banner__button::after {
             background: none;
             background-color: #005ea2;
-            -webkit-mask: url("../images/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
-            mask: url("../images/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem
+            -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem;
+            mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg") no-repeat center / 1rem 1rem
         }
 
         .usa-banner__button::after:hover {
@@ -8131,7 +8131,7 @@ body.has-wide-template .usa-banner__inner {
 
 @media all and (max-width: 39.99em) {
     .usa-banner__button[aria-expanded="true"]::after {
-        background: url("../images/usa-icons/close.svg") no-repeat center / 1.5rem 1.5rem;
+        background: url("../../../vendor/uswds/3.1.0/img/usa-icons/close.svg") no-repeat center / 1.5rem 1.5rem;
         display: inline-block;
         height: 3rem;
         width: 3rem;
@@ -8144,8 +8144,8 @@ body.has-wide-template .usa-banner__inner {
         .usa-banner__button[aria-expanded="true"]::after {
             background: none;
             background-color: #005ea2;
-            -webkit-mask: url("../images/usa-icons/close.svg") no-repeat center / 1.5rem 1.5rem;
-            mask: url("../images/usa-icons/close.svg") no-repeat center / 1.5rem 1.5rem
+            -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/close.svg") no-repeat center / 1.5rem 1.5rem;
+            mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/close.svg") no-repeat center / 1.5rem 1.5rem
         }
     }
 
@@ -8179,7 +8179,7 @@ body.has-wide-template .usa-banner__inner {
     }
 
     .usa-banner__button[aria-expanded="true"]::after {
-        background: url("../images/usa-icons/expand_less.svg") no-repeat center / 1rem 1rem;
+        background: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_less.svg") no-repeat center / 1rem 1rem;
         display: inline-block;
         height: 1rem;
         width: 1rem;
@@ -8192,8 +8192,8 @@ body.has-wide-template .usa-banner__inner {
         .usa-banner__button[aria-expanded="true"]::after {
             background: none;
             background-color: #005ea2;
-            -webkit-mask: url("../images/usa-icons/expand_less.svg") no-repeat center / 1rem 1rem;
-            mask: url("../images/usa-icons/expand_less.svg") no-repeat center / 1rem 1rem
+            -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_less.svg") no-repeat center / 1rem 1rem;
+            mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_less.svg") no-repeat center / 1rem 1rem
         }
 
         .usa-banner__button[aria-expanded="true"]::after:hover {
@@ -8371,7 +8371,7 @@ body.has-wide-template .usa-banner__inner {
     }
 
     .usa-breadcrumb__list-item:nth-last-child(2) .usa-breadcrumb__link::before {
-        background: url("../images/usa-icons/arrow_back.svg") no-repeat center / 2ex 2ex;
+        background: url("../../../vendor/uswds/3.1.0/img/usa-icons/arrow_back.svg") no-repeat center / 2ex 2ex;
         display: inline-block;
         height: 2ex;
         width: 2ex;
@@ -8384,8 +8384,8 @@ body.has-wide-template .usa-banner__inner {
         .usa-breadcrumb__list-item:nth-last-child(2) .usa-breadcrumb__link::before {
             background: none;
             background-color: #71767a;
-            -webkit-mask: url("../images/usa-icons/arrow_back.svg") no-repeat center / 2ex 2ex;
-            mask: url("../images/usa-icons/arrow_back.svg") no-repeat center / 2ex 2ex
+            -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/arrow_back.svg") no-repeat center / 2ex 2ex;
+            mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/arrow_back.svg") no-repeat center / 2ex 2ex
         }
     }
 
@@ -8425,7 +8425,7 @@ body.has-wide-template .usa-banner__inner {
     }
 
     .usa-breadcrumb__list-item:not(:last-child)::after {
-        background: url("../images/usa-icons/navigate_next.svg") no-repeat center / 2ex 2ex;
+        background: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg") no-repeat center / 2ex 2ex;
         display: inline-block;
         height: 2ex;
         width: 2ex;
@@ -8438,8 +8438,8 @@ body.has-wide-template .usa-banner__inner {
         .usa-breadcrumb__list-item:not(:last-child)::after {
             background: none;
             background-color: #71767a;
-            -webkit-mask: url("../images/usa-icons/navigate_next.svg") no-repeat center / 2ex 2ex;
-            mask: url("../images/usa-icons/navigate_next.svg") no-repeat center / 2ex 2ex
+            -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg") no-repeat center / 2ex 2ex;
+            mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg") no-repeat center / 2ex 2ex
         }
     }
 
@@ -9134,8 +9134,8 @@ body.has-wide-template .usa-prose .usa-card {
 }
 
 .usa-checklist__item.usa-checklist__item--checked::before {
-    background-image: url("../images/usa-icons-bg/check--blue-60v.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons-bg/check--blue-60v.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/check--blue-60v.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/check--blue-60v.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 1.5rem
@@ -9711,32 +9711,32 @@ body.has-wide-template .usa-footer__secondary-section>.grid-container {
 }
 
 .usa-social-link--facebook {
-    background-image: url("../images/usa-icons/facebook.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/facebook.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/facebook.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/facebook.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-social-link--twitter {
-    background-image: url("../images/usa-icons/twitter.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/twitter.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/twitter.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/twitter.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-social-link--youtube {
-    background-image: url("../images/usa-icons/youtube.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/youtube.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/youtube.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/youtube.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-social-link--instagram {
-    background-image: url("../images/usa-icons/instagram.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/instagram.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/instagram.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/instagram.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
 .usa-social-link--rss {
-    background-image: url("../images/usa-icons/rss_feed.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/rss_feed.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/rss_feed.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/rss_feed.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
@@ -9848,8 +9848,8 @@ body.has-wide-template .usa-footer__secondary-section>.grid-container {
 }
 
 .usa-footer--big .usa-footer__primary-content--collapsible .usa-footer__primary-link::before {
-    background-image: url("../images/usa-icons/expand_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/expand_more.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     height: 1.25rem;
     width: 1.25rem;
@@ -9879,8 +9879,8 @@ body.has-wide-template .usa-footer__secondary-section>.grid-container {
 }
 
 .usa-footer--big .usa-footer__primary-content--collapsible.hidden .usa-footer__primary-link::before {
-    background-image: url("../images/usa-icons/navigate_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/navigate_next.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/navigate_next.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat
 }
 
@@ -10541,7 +10541,7 @@ html.usa-js-loading .usa-nav__submenu.usa-megamenu {
     line-height: 1.5;
     padding-bottom: 2rem;
     padding-top: 2rem;
-    background-image: url("../images/hero.png");
+    background-image: url("../../../vendor/uswds/3.1.0/img/hero.png");
     background-position: center;
     background-size: cover;
     color: #fff
@@ -12277,8 +12277,8 @@ body.has-wide-template .usa-identifier__container {
 }
 
 .usa-nav__primary button[aria-expanded="false"] {
-    background-image: url("../images/usa-icons/add.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/add.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/add.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/add.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-position: right 0 center;
     background-size: 1.25rem
@@ -12286,8 +12286,8 @@ body.has-wide-template .usa-identifier__container {
 
 @media all and (min-width: 64em) {
     .usa-nav__primary button[aria-expanded="false"] {
-        background-image: url("../images/usa-icons/expand_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-        background-image: url("../images/usa-icons/expand_more.svg"), linear-gradient(transparent, transparent);
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/expand_more.svg"), linear-gradient(transparent, transparent);
         background-repeat: no-repeat;
         background-size: 1rem;
         background-position: right .75rem top 53%
@@ -12296,15 +12296,15 @@ body.has-wide-template .usa-identifier__container {
 
 @media all and (min-width: 64em) {
     .usa-nav__primary button[aria-expanded="false"]:hover {
-        background-image: url("../images/usa-icons-bg/expand_more--blue-warm-70v.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-        background-image: url("../images/usa-icons-bg/expand_more--blue-warm-70v.svg"), linear-gradient(transparent, transparent);
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/expand_more--blue-warm-70v.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/expand_more--blue-warm-70v.svg"), linear-gradient(transparent, transparent);
         background-repeat: no-repeat
     }
 }
 
 .usa-nav__primary button[aria-expanded="true"] {
-    background-image: url("../images/usa-icons/remove.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons/remove.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/remove.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons/remove.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-position: right 0 center;
     background-size: 1.25rem
@@ -12312,8 +12312,8 @@ body.has-wide-template .usa-identifier__container {
 
 @media all and (min-width: 64em) {
     .usa-nav__primary button[aria-expanded="true"] {
-        background-image: url("../images/usa-icons-bg/expand_less--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-        background-image: url("../images/usa-icons-bg/expand_less--white.svg"), linear-gradient(transparent, transparent);
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/expand_less--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/expand_less--white.svg"), linear-gradient(transparent, transparent);
         background-repeat: no-repeat;
         -moz-osx-font-smoothing: grayscale;
         -webkit-font-smoothing: antialiased;
@@ -12781,8 +12781,8 @@ body.has-wide-template .usa-identifier__container {
 }
 
 .usa-search [type="submit"] {
-    background-image: url("../images/usa-icons-bg/search--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-    background-image: url("../images/usa-icons-bg/search--white.svg"), linear-gradient(transparent, transparent);
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/search--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+    background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/search--white.svg"), linear-gradient(transparent, transparent);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 1.5rem;
@@ -12828,8 +12828,8 @@ body.has-wide-template .usa-identifier__container {
 
     .usa-search--small [type="submit"],
     .usa-search--small .usa-search__submit {
-        background-image: url("../images/usa-icons-bg/search--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
-        background-image: url("../images/usa-icons-bg/search--white.svg"), linear-gradient(transparent, transparent);
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/search--white.svg"), -webkit-gradient(linear, left top, left bottom, from(transparent), to(transparent));
+        background-image: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/search--white.svg"), linear-gradient(transparent, transparent);
         background-repeat: no-repeat;
         background-position: center center;
         background-size: 1.5rem;
@@ -13151,7 +13151,7 @@ body.has-wide-template .usa-site-alert .usa-alert {
 }
 
 .usa-site-alert--info .usa-alert:before {
-    background: url("../images/usa-icons/info.svg") no-repeat center / 2rem 2rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons/info.svg") no-repeat center / 2rem 2rem;
     display: inline-block;
     height: 2rem;
     width: 2rem;
@@ -13167,8 +13167,8 @@ body.has-wide-template .usa-site-alert .usa-alert {
     .usa-site-alert--info .usa-alert:before {
         background: none;
         background-color: #1b1b1b;
-        -webkit-mask: url("../images/usa-icons/info.svg") no-repeat center / 2rem 2rem;
-        mask: url("../images/usa-icons/info.svg") no-repeat center / 2rem 2rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/info.svg") no-repeat center / 2rem 2rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/info.svg") no-repeat center / 2rem 2rem
     }
 }
 
@@ -13240,7 +13240,7 @@ body.has-wide-template .usa-site-alert .usa-alert {
 }
 
 .usa-site-alert--emergency .usa-alert:before {
-    background: url("../images/usa-icons-bg/error--white.svg") no-repeat center / 2rem 2rem;
+    background: url("../../../vendor/uswds/3.1.0/img/usa-icons-bg/error--white.svg") no-repeat center / 2rem 2rem;
     display: inline-block;
     height: 2rem;
     width: 2rem;
@@ -13256,8 +13256,8 @@ body.has-wide-template .usa-site-alert .usa-alert {
     .usa-site-alert--emergency .usa-alert:before {
         background: none;
         background-color: #fff;
-        -webkit-mask: url("../images/usa-icons/error.svg") no-repeat center / 2rem 2rem;
-        mask: url("../images/usa-icons/error.svg") no-repeat center / 2rem 2rem
+        -webkit-mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/error.svg") no-repeat center / 2rem 2rem;
+        mask: url("../../../vendor/uswds/3.1.0/img/usa-icons/error.svg") no-repeat center / 2rem 2rem
     }
 }
 
@@ -13885,7 +13885,7 @@ html.no-js .usa-banner:hover .usa-banner__content {
         .usa-banner__button[aria-expanded='false']::after,
         .usa-banner__button[aria-expanded='true']::after,
         .usa-banner__button[aria-expanded='true']:hover::after {
-            background: transparent url("../images/chevron.svg") no-repeat center/8px 5px;
+            background: transparent url("../../../vendor/uswds/3.1.0/img/chevron.svg") no-repeat center/8px 5px;
             -webkit-mask: none;
             mask: none
         }
@@ -14778,7 +14778,7 @@ details.details {
 }
 
 .details__summary {
-    background-image: url("../images/plus.svg");
+    background-image: url("../../../vendor/uswds/3.1.0/img/plus.svg");
     background-color: #dfe1e2;
     background-position: right 1.5rem center;
     background-repeat: no-repeat;
@@ -14800,7 +14800,7 @@ details.details {
 }
 
 [open]>.details__summary {
-    background-image: url("../images/minus.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/minus.svg")
 }
 
 .details__summary:hover {
@@ -15061,7 +15061,7 @@ ul.toolbar-menu li::before {
 .box--news>.box__title>.box__title-link::after,
 .box--related-info>.box__title>.box__title-link::after,
 .box--rss>.box__title>.box__title-link::after {
-    background-image: url("../images/external-link--white.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg") !important
 }
 
 .box--alert>.box__title,
@@ -15225,7 +15225,7 @@ ul.toolbar-menu li::before {
 }
 
 .box--alert>.box__title>.box__title-link::after {
-    background-image: url("../images/external-link--white.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg") !important
 }
 
 .box--alert>.box__image,
@@ -15249,7 +15249,7 @@ ul.toolbar-menu li::before {
 }
 
 .box--blog>.box__title>.box__title-link::after {
-    background-image: url("../images/external-link--gray-7.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-7.svg") !important
 }
 
 .box--blog>.box__image,
@@ -15284,7 +15284,7 @@ ul.toolbar-menu li::before {
 }
 
 .box--highlight>.box__title>.box__title-link::after {
-    background-image: url("../images/external-link--gray-7.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-7.svg") !important
 }
 
 .box--highlight>.box__image,
@@ -15323,7 +15323,7 @@ ul.toolbar-menu li::before {
 }
 
 .box--news>.box__title>.box__title-link::after {
-    background-image: url("../images/external-link--white.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg") !important
 }
 
 .box--news>.box__image,
@@ -15347,7 +15347,7 @@ ul.toolbar-menu li::before {
 }
 
 .box--related-info>.box__title>.box__title-link::after {
-    background-image: url("../images/external-link--white.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg") !important
 }
 
 .box--related-info>.box__image,
@@ -15360,7 +15360,7 @@ ul.toolbar-menu li::before {
 }
 
 .box--report-violation {
-    background-image: url("../images/report-a-violation.png");
+    background-image: url("../../../vendor/uswds/3.1.0/img/report-a-violation.png");
     background-repeat: no-repeat;
     min-height: 4.75rem;
     padding-top: 5.75rem
@@ -15401,7 +15401,7 @@ ul.toolbar-menu li::before {
 }
 
 .box--rss>.box__title>.box__title-link::after {
-    background-image: url("../images/external-link--white.svg") !important
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg") !important
 }
 
 .box--rss>.box__image,
@@ -15725,7 +15725,7 @@ ul.toolbar-menu li::before {
 }
 
 .dropbutton.is-open .dropbutton__toggle-button {
-    background-image: url("../images/dropbutton-arrow-up.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/dropbutton-arrow-up.svg")
 }
 
 .dropbutton+.dropbutton,
@@ -15789,7 +15789,7 @@ ul.toolbar-menu li::before {
     transition: background 200ms cubic-bezier(0.4, 0, 1, 1);
     vertical-align: top;
     white-space: normal;
-    background-image: url("../images/dropbutton-arrow-down.svg");
+    background-image: url("../../../vendor/uswds/3.1.0/img/dropbutton-arrow-down.svg");
     background-position: 50% 1rem;
     background-repeat: no-repeat;
     background-size: .75rem;
@@ -15866,7 +15866,7 @@ ul.toolbar-menu li::before {
 
 html.no-js a:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
 html.no-js .external-link::after {
-    background-image: url("../images/external-link--blue-base.svg");
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--blue-base.svg");
     background-repeat: no-repeat;
     background-size: 100% 100%;
     content: '';
@@ -15882,7 +15882,7 @@ html.no-js a:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='h
 html.no-js .external-link:focus::after,
 html.no-js a:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):active::after,
 html.no-js .external-link:active::after {
-    background-image: url("../images/external-link--blue-dark.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--blue-dark.svg")
 }
 
 html.no-js a.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
@@ -15901,7 +15901,7 @@ html.no-js a.dropbutton__toggle-button:not([href$='//www.epa.gov']):not([href$='
 html.no-js .dropbutton__toggle-button.external-link::after,
 html.no-js a.usa-button:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
 html.no-js .usa-button.external-link::after {
-    background-image: url("../images/external-link--white.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg")
 }
 
 html.no-js a.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):hover::after,
@@ -15960,7 +15960,7 @@ html.no-js a.dropbutton__toggle-button:not([href$='//www.epa.gov']):not([href$='
 html.no-js .dropbutton__toggle-button.external-link:active::after,
 html.no-js a.usa-button:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):active::after,
 html.no-js .usa-button.external-link:active::after {
-    background-image: url("../images/external-link--white.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg")
 }
 
 .button-group--outline html.no-js a.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
@@ -16021,7 +16021,7 @@ html.no-js a.usa-button.facets-soft-limit-link:not([href$='//www.epa.gov']):not(
 html.no-js .usa-button.usa-button--unstyled.external-link::after,
 html.no-js .usa-button.external-link.facet-limit::after,
 html.no-js .usa-button.external-link.facets-soft-limit-link::after {
-    background-image: url("../images/external-link--blue-dark.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--blue-dark.svg")
 }
 
 .button-group--outline html.no-js a.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):hover::after,
@@ -16262,7 +16262,7 @@ html.no-js a.usa-button.facets-soft-limit-link:not([href$='//www.epa.gov']):not(
 html.no-js .usa-button.usa-button--unstyled.external-link:active::after,
 html.no-js .usa-button.external-link.facet-limit:active::after,
 html.no-js .usa-button.external-link.facets-soft-limit-link:active::after {
-    background-image: url("../images/external-link-hover.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link-hover.svg")
 }
 
 .button-group--outline html.no-js a.usa-button--inverse.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
@@ -16279,7 +16279,7 @@ html.no-js a.usa-button--outline.usa-button--inverse.dropbutton__toggle-button:n
 html.no-js .usa-button--outline.usa-button--inverse.dropbutton__toggle-button.external-link::after,
 html.no-js a.usa-button.usa-button--outline.usa-button--inverse:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
 html.no-js .usa-button.usa-button--outline.usa-button--inverse.external-link::after {
-    background-image: url("../images/external-link--gray-2.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-2.svg")
 }
 
 .button-group--outline html.no-js a.usa-button--inverse.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):hover::after,
@@ -16340,7 +16340,7 @@ html.no-js a.usa-button--outline.usa-button--inverse.dropbutton__toggle-button:n
 html.no-js .usa-button--outline.usa-button--inverse.dropbutton__toggle-button.external-link:active::after,
 html.no-js a.usa-button.usa-button--outline.usa-button--inverse:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):active::after,
 html.no-js .usa-button.usa-button--outline.usa-button--inverse.external-link:active::after {
-    background-image: url("../images/external-link--gray-2.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-2.svg")
 }
 
 html.no-js a.usa-button--accent-cool.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
@@ -16353,7 +16353,7 @@ html.no-js a.usa-button--accent-cool.dropbutton__toggle-button:not([href$='//www
 html.no-js .usa-button--accent-cool.dropbutton__toggle-button.external-link::after,
 html.no-js a.usa-button.usa-button--accent-cool:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//'])::after,
 html.no-js .usa-button.usa-button--accent-cool.external-link::after {
-    background-image: url("../images/external-link--gray-7.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-7.svg")
 }
 
 html.no-js a.usa-button--accent-cool.button-group__link:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):hover::after,
@@ -16394,7 +16394,7 @@ html.no-js a.usa-button--accent-cool.dropbutton__toggle-button:not([href$='//www
 html.no-js .usa-button--accent-cool.dropbutton__toggle-button.external-link:active::after,
 html.no-js a.usa-button.usa-button--accent-cool:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):active::after,
 html.no-js .usa-button.usa-button--accent-cool.external-link:active::after {
-    background-image: url("../images/external-link--gray-7.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-7.svg")
 }
 
 a:not([href])::after {
@@ -16451,7 +16451,7 @@ html.no-js .external-link--inverse:link::after,
 html.no-js .usa-dark-background a:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):link::after,
 html.no-js .external-link--inverse:visited::after,
 html.no-js .usa-dark-background a:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):visited::after {
-    background-image: url("../images/external-link--gray-2.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--gray-2.svg")
 }
 
 .external-link--inverse:hover,
@@ -16469,7 +16469,7 @@ html.no-js .external-link--inverse:focus::after,
 html.no-js .usa-dark-background a:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):focus::after,
 html.no-js .external-link--inverse:active::after,
 html.no-js .usa-dark-background a:not([href$='//www.epa.gov']):not([href$='//epa.gov']):not([href^='http://www.epa.gov/']):not([href^='https://www.epa.gov/']):not([href^='http://epa.gov/']):not([href^='https://epa.gov/']):not([href^='//epa.gov/']):not([href^='//www.epa.gov/']):where([href^='http://'], [href^='https://'], [href^='//']):active::after {
-    background-image: url("../images/external-link--white.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/external-link--white.svg")
 }
 
 .facet-limit,
@@ -17923,7 +17923,7 @@ h6.highlight {
 }
 
 .menu--main .menu__link.has-subnav::after {
-    background-image: url("../images/main-menu-arrow.svg");
+    background-image: url("../../../vendor/uswds/3.1.0/img/main-menu-arrow.svg");
     background-position: 50% 50%;
     background-repeat: no-repeat;
     color: #fff;
@@ -18737,7 +18737,7 @@ html.no-js .usa-alert__close {
 }
 
 html.js .usa-table--sortable thead th {
-    background-image: url("../images/sort.svg");
+    background-image: url("../../../vendor/uswds/3.1.0/img/sort.svg");
     background-position: right 0.25rem top 50%;
     background-repeat: no-repeat;
     background-size: 1.5rem;
@@ -18746,23 +18746,23 @@ html.js .usa-table--sortable thead th {
 }
 
 html.js .usa-table--sortable thead th:hover {
-    background-image: url("../images/sort-black.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/sort-black.svg")
 }
 
 html.js .usa-table--sortable thead th[aria-sort='ascending'] {
-    background-image: url("../images/sort-up.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/sort-up.svg")
 }
 
 html.js .usa-table--sortable thead th[aria-sort='ascending']:hover {
-    background-image: url("../images/sort-up-black.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/sort-up-black.svg")
 }
 
 html.js .usa-table--sortable thead th[aria-sort='descending'] {
-    background-image: url("../images/sort-down.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/sort-down.svg")
 }
 
 html.js .usa-table--sortable thead th[aria-sort='descending']:hover {
-    background-image: url("../images/sort-down-black.svg")
+    background-image: url("../../../vendor/uswds/3.1.0/img/sort-down-black.svg")
 }
 
 .usa-table--striped tbody th {
