@@ -1,9 +1,5 @@
 - model: sites.site
   fields:
-    domain: example.com
-    name: example.com
-- model: sites.site
-  fields:
     domain: 127.0.0.1:8000
     name: localhost
 - model: contenttypes.contenttype
@@ -1187,59 +1183,6 @@
     - assessment
     object_id: 1
     created: 2021-09-17 18:47:19.786686+00:00
-- model: assessment.log
-  pk: 5
-  fields:
-    assessment: 2
-    user:
-    - admin@hawcproject.org
-    message: 'Created assessment.assessmentdetails #1: "Additional Details for Chemical
-      X (2020)"'
-    content: {}
-    content_type:
-    - assessment
-    - assessmentdetails
-    object_id: 1
-    created: 2022-09-13 13:42:59.246408+00:00
-- model: assessment.log
-  pk: 6
-  fields:
-    assessment: 2
-    user:
-    - admin@hawcproject.org
-    message: 'Created assessment.values #1: "Values for Chemical X (2020)"'
-    content: {}
-    content_type:
-    - assessment
-    - values
-    object_id: 1
-    created: 2022-09-13 13:48:21.011683+00:00
-- model: assessment.log
-  pk: 7
-  fields:
-    assessment: 2
-    user:
-    - admin@hawcproject.org
-    message: 'Created assessment.values #2: "Values for Chemical X (2020)"'
-    content: {}
-    content_type:
-    - assessment
-    - values
-    object_id: 2
-    created: 2022-09-13 13:49:46.315836+00:00
-- model: assessment.log
-  pk: 8
-  fields:
-    assessment: 2
-    user:
-    - admin@hawcproject.org
-    message: 'Created assessment.values #3: "Values for Chemical X (2020)"'
-    content: {}
-    content_type:
-    - assessment
-    - values
-    object_id: 3
-    created: 2022-09-13 13:53:35.080552+00:00
 - model: assessment.blog
   pk: 1
   fields:
