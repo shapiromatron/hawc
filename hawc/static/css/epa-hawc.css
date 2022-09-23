@@ -1,6 +1,16 @@
 /* Global */
-[href]:focus {
+:focus {
     outline: none !important;
+}
+
+/* disable this rule; breaks svg.d3 layout */
+* {
+    -webkit-transition-duration: none !important;
+    transition-duration: none !important;
+    -webkit-transition-property: none !important;
+    transition-property: none !important;
+    -webkit-transition-timing-function: none !important;
+    transition-timing-function: none !important;
 }
 
 /* Header */
@@ -15,13 +25,8 @@
 .hawc-header .navbar-toggler:focus {
     outline: initial;
 }
-
-/* Top nav (mobile) */
-.usa-nav.is-visible {
-    background-color: white;
-}
-.usa-nav.is-visible .usa-nav__menu {
-    background-color: #005ea2;
+.hawc-header a {
+    text-decoration: none;
 }
 
 /* Sidebar  */
@@ -55,19 +60,13 @@
 .sidebar .dropdown-menu {
     background-color: white !important;
 }
+
 /* table */
 table td {
     background-color: unset !important;
 
 }
-/* dropdown */
+/* caret on dropdown menu */
 a.dropdown-toggle:not([href])::after {
     display: inline-block !important;
-}
-.dropdown-menu {
-    transition-duration: unset;
-    -webkit-transition-duration: unset;
-    -webkit-transition-timing-function: unset;
-    transition-property: none;
-    transition-timing-function: unset;
 }
