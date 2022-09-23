@@ -385,11 +385,19 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
     model: design
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
     model: chemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: criteria
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
@@ -410,14 +418,6 @@
   fields:
     app_label: epiv2
     model: dataextraction
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
-    model: country
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
-    model: criteria
 - model: contenttypes.contenttype
   fields:
     app_label: eco
