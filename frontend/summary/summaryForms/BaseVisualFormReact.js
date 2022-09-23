@@ -92,10 +92,10 @@ class BaseVisualForm extends Component {
     }
 
     fetchEndpoints = (input, callback) => {
-        const url = `${this.config.endpoint_url}?related=${this.config.assessment}&term=${input}`;
+        const url = `${this.config.endpoint_url}?animal_group__experiment__study__assessment_id=${this.config.assessment}&q=${input}`;
         fetch(url, h.fetchGet)
             .then(response => response.json())
-            .then(json => callback(json.data));
+            .then(json => callback(json.results));
     };
 
     renderForm() {

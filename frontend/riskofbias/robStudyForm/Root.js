@@ -22,7 +22,6 @@ class Root extends Component {
 
         return (
             <div className="riskofbias-display">
-                <ScrollToErrorBox error={store.error} />
                 <form>
                     {store.domainIds.map(domainId => {
                         return <Domain key={domainId} domainId={domainId} />;
@@ -37,6 +36,7 @@ class Root extends Component {
                                 </p>
                             </div>
                         ) : null}
+                        <ScrollToErrorBox error={store.error} />
                         <div className="d-flex justify-content-between">
                             <button
                                 className="btn btn-primary"

@@ -5,7 +5,12 @@ from django.db.models import Q
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, form_actions_apply_filters
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    check_unique_for_assessment,
+    form_actions_apply_filters,
+)
 from ..myuser.models import HAWCUser
 from ..study.forms import StudyFilterForm
 from . import models
@@ -16,10 +21,7 @@ class RobTextForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasAssessment
         fields = ("help_text",)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["help_text"].widget.attrs["class"] = "html5text"
+        field_classes = {"help_text": QuillField}
 
     @property
     def helper(self):
@@ -40,6 +42,7 @@ class RoBDomainForm(forms.ModelForm):
             "description",
         )
         exclude = ("assessment",)
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -61,26 +64,19 @@ class RoBDomainForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} domain."
 
         helper = BaseFormHelper(self, **inputs)
-        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
+        helper["description"].wrap(cfl.Field, css_class="col-md-12")
         helper.add_row("name", 2, "col-md-6")
         return helper
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if (
-            "name" in self.changed_data
-            and self._meta.model.objects.filter(
-                assessment=self.instance.assessment, name=cleaned_data["name"]
-            ).count()
-            > 0
-        ):
-            raise forms.ValidationError("Domain already exists for assessment.")
+    def clean_name(self):
+        return check_unique_for_assessment(self, "name")
 
 
 class RoBMetricForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasMetric
         exclude = ("domain", "hide_description", "sort_order")
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         domain = kwargs.pop("parent", None)
@@ -103,7 +99,6 @@ class RoBMetricForm(forms.ModelForm):
         else:
             inputs["legend_text"] = f"Create new {rob_name} metric"
             inputs["help_text"] = f"Create a new {rob_name} metric."
-        self.fields["description"].widget.attrs.update({"class": "html5text"})
         helper = BaseFormHelper(self, **inputs)
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("description", 2, ["col-md-8", "col-md-4"])

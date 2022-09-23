@@ -4,7 +4,6 @@ if "%~1" == "" goto :help
 if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev
 if /I %1 == build goto :build
-if /I %1 == build-pex goto :build-pex
 if /I %1 == docs goto :docs
 if /I %1 == docs-serve goto :docs-serve
 if /I %1 == lint goto :lint
@@ -27,7 +26,6 @@ goto :help
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  sync-dev          sync dev environment after code checkout
 echo.  build             build python wheel
-echo.  build-pex         build pex bundle (mac/linux only)
 echo.  docs              Build documentation
 echo.  docs-serve        Generate documentation
 echo.  test              run python tests
@@ -50,19 +48,15 @@ goto :eof
 python -m pip install -U pip
 pip install -r requirements/dev.txt
 yarn --cwd frontend
-manage.py migrate
-manage.py recreate_views
+manage migrate
+manage recreate_views
 goto :eof
 
 :build
 del /f /q .\build .\dist
 call npm --prefix .\frontend run build
-manage.py set_git_commit
-python setup.py bdist_wheel
-goto :eof
-
-:build-pex
-echo.Pex is not compatibile with windows; linux or mac is required.
+manage set_git_commit
+python -m build --wheel
 goto :eof
 
 :docs

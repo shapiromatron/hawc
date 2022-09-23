@@ -299,9 +299,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     def excel_to_json(self, request, pk):
         self.get_object()  # permissions check
 
-        file_ = request.data["file"]
+        file_ = request.data.get("file")
 
-        if not file_.name.endswith(".xlsx"):
+        if file_ is None:
+            raise ValidationError({"file": "A file is required"})
+        elif not file_.name.endswith(".xlsx"):
             raise ValidationError({"file": "File extension must be .xlsx"})
 
         try:

@@ -5,7 +5,12 @@ from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, form_actions_apply_filters
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    check_unique_for_assessment,
+    form_actions_apply_filters,
+)
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
@@ -14,8 +19,7 @@ from . import models
 
 class BaseStudyForm(forms.ModelForm):
 
-    internal_communications = forms.CharField(
-        widget=forms.Textarea,
+    internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
     )
@@ -39,6 +43,7 @@ class BaseStudyForm(forms.ModelForm):
             "summary",
             "published",
         )
+        field_classes = {"summary": QuillField}
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
@@ -65,9 +70,6 @@ class BaseStudyForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        for fld in ("summary", "internal_communications"):
-            self.fields[fld].widget.attrs["class"] += " html5text"
-
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
@@ -87,6 +89,9 @@ class BaseStudyForm(forms.ModelForm):
             ),
         )
         return helper
+
+    def clean_short_citation(self):
+        return check_unique_for_assessment(self, "short_citation")
 
     def save(self, commit=True):
         instance = super().save(commit=commit)
@@ -147,6 +152,7 @@ class ReferenceStudyForm(BaseStudyForm):
             "summary",
             "published",
         )
+        field_classes = {"summary": QuillField}
 
     def setHelper(self):
         self.fields["title"].widget = TextInput()

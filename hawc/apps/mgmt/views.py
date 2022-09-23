@@ -82,11 +82,7 @@ class RobTaskMixin:
                     "url": task_url,
                     "list": self.model.get_qs_json(context["object_list"], json_encode=False),
                 },
-                "autocomplete": {
-                    "url": reverse(
-                        "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
-                    )
-                },
+                "autocomplete": {"url": reverse("autocomplete", args=("myuser-userautocomplete",))},
             },
         )
 
@@ -174,8 +170,6 @@ class TaskDetail(TaskDashboard):
                 tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
                 taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
                 studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
-                userAutocompleteUrl=reverse(
-                    "selectable-lookup", args=("myuser-assessmentteammemberorhigherlookup",)
-                ),
+                userAutocompleteUrl=reverse("autocomplete", args=("myuser-userautocomplete",)),
             ),
         )
