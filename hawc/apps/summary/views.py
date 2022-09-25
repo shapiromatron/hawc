@@ -721,3 +721,21 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
 
 class DatasetInteractivity(TemplateView):
     template_name = "summary/dataset_interactivity.html"
+
+
+from typing import Any
+from ..animal.models import Endpoint
+from .filters import EndpointFilter
+
+
+class PrefilterTemp(TemplateView):
+    template_name = "summary/prefilter_temp.html"
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        assessment_id = self.kwargs["pk"]
+        qs = Endpoint.objects.filter(assessment_id=assessment_id)
+        f = EndpointFilter(self.request.GET, queryset=qs, assessment_id=assessment_id)
+        f.limit_filters()
+        context = super().get_context_data(**kwargs)
+        context.update(object_list=f.qs, form=f.form)
+        return context

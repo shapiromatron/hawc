@@ -57,6 +57,11 @@ urlpatterns = [
         views.SummaryTableDelete.as_view(),
         name="tables_delete",
     ),
+    path(
+        "prefilters/<int:pk>/temp/",
+        views.PrefilterTemp.as_view(),
+        name="prefilters_temp",
+    ),
     # VISUALIZATIONS
     path(
         "assessment/<int:pk>/visuals/",
