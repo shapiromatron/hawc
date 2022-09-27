@@ -192,6 +192,7 @@ class Study {
             HAWCUtils.booleanCheckbox(this.data.epi),
             HAWCUtils.booleanCheckbox(this.data.epi_meta),
             HAWCUtils.booleanCheckbox(this.data.in_vitro),
+            HAWCUtils.booleanCheckbox(this.data.eco),
         ];
     }
 
@@ -209,6 +210,7 @@ Study.typeNames = {
     epi: "Epidemiology",
     epi_meta: "Epidemiology meta-analysis/pooled analysis",
     in_vitro: "In vitro",
+    eco: "Ecology",
 };
 
 export default Study;
