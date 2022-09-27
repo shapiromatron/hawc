@@ -3,24 +3,16 @@
     outline: none !important;
 }
 
-/* disable this rule; breaks svg.d3 layout */
-* {
-    -webkit-transition-duration: none !important;
-    transition-duration: none !important;
-    -webkit-transition-property: none !important;
-    transition-property: none !important;
-    -webkit-transition-timing-function: none !important;
-    transition-timing-function: none !important;
-}
+/* this rule was disabled in the epa style; re-enable to header */
 header.l-header * {
-    -webkit-transition-duration: 200ms !important;
-    transition-duration: 200ms !important;
-    -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform !important;
-    transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform !important;
-    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform !important;
-    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform !important;
-    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+    -webkit-transition-duration: 200ms;
+    transition-duration: 200ms;
+    -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
+    transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
+    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform;
+    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
+    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
 }
 
 /* Header */

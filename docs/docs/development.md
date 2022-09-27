@@ -462,6 +462,10 @@ npm run uswds-copy-assets
 
 After running, manually delete unused fonts and images.
 
+A few major revisions were made to the compiled USWDS assets, most notably:
+
+- Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
+
 ### Materialized views
 
 HAWC is in essence two different systems with very different data requirements:

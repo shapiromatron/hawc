@@ -1158,6 +1158,7 @@ html {
     box-sizing: inherit
 }
 
+/* HAWC CHANGES START
 * {
     -webkit-transition-duration: 200ms;
     transition-duration: 200ms;
@@ -1168,6 +1169,7 @@ html {
     -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
 }
+ HAWC CHANGES END */
 
 @media print {
     * {
