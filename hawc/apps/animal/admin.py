@@ -1,10 +1,11 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 from . import models
 
 
 @admin.register(models.Experiment)
-class ExperimentAdmin(admin.ModelAdmin):
+class ExperimentAdmin(VersionAdmin, admin.ModelAdmin):
     raw_id_fields = ("study", "dtxsid")
     list_display = (
         "id",
@@ -24,7 +25,7 @@ class ExperimentAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.AnimalGroup)
-class AnimalGroupAdmin(admin.ModelAdmin):
+class AnimalGroupAdmin(VersionAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "experiment",
@@ -46,7 +47,7 @@ class DoseGroupInline(admin.TabularInline):
 
 
 @admin.register(models.DosingRegime)
-class DosingRegimeAdmin(admin.ModelAdmin):
+class DosingRegimeAdmin(VersionAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "dosed_animals",
@@ -72,7 +73,7 @@ class EndpointGroupInline(admin.TabularInline):
 
 
 @admin.register(models.Endpoint)
-class EndpointAdmin(admin.ModelAdmin):
+class EndpointAdmin(VersionAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "assessment_id",

@@ -4,7 +4,7 @@ import logging
 import os
 
 from django.apps import apps
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist, ValidationError
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models, transaction
 from django.http import Http404
 from django.urls import reverse
@@ -12,7 +12,6 @@ from reversion import revisions as reversion
 
 from ..assessment.models import Assessment, Communication
 from ..assessment.serializers import AssessmentSerializer
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper, cleanHTML
 from ..lit.models import Reference, Search
 from . import constants, managers
@@ -240,21 +239,6 @@ class Study(Reference):
 
         # save self to crosswalk
         cw[self.COPY_NAME][old_id] = self.id
-
-    def clean(self):
-        pk_exclusion = {}
-        errors = {}
-        if self.pk:
-            pk_exclusion["pk"] = self.pk
-        if (
-            Study.objects.filter(assessment=self.assessment, short_citation=self.short_citation)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            errors["short_citation"] = ASSESSMENT_UNIQUE_MESSAGE
-        if errors:
-            raise ValidationError(errors)
 
     def __str__(self):
         return self.short_citation

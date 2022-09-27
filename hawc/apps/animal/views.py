@@ -201,6 +201,7 @@ class AnimalGroupRead(BaseDetail):
         )
         context["config"] = dict(
             id=self.object.id,
+            has_dosing_regime=self.object.dosing_regime is not None,
             endpoints=[endpoint.get_json(json_encode=False) for endpoint in endpoints],
         )
         return context
@@ -239,6 +240,8 @@ class AnimalGroupDelete(BaseDelete):
     model = models.AnimalGroup
 
     def get_success_url(self):
+        if not self.object.can_delete():
+            raise ValueError("Cannot be deleted")
         return self.object.experiment.get_absolute_url()
 
 
@@ -332,11 +335,12 @@ class EndpointCreate(BaseCreateWithFormset):
         return kwargs
 
     def build_initial_formset_factory(self):
+        num_groups = self.parent.dosing_regime.num_dose_groups if self.parent.dosing_regime else 1
         Formset = modelformset_factory(
             models.EndpointGroup,
             form=forms.EndpointGroupForm,
             formset=forms.BaseEndpointGroupFormSet,
-            extra=self.parent.dosing_regime.num_dose_groups,
+            extra=num_groups,
         )
         return Formset(queryset=models.EndpointGroup.objects.none())
 
@@ -365,6 +369,7 @@ class EndpointCreate(BaseCreateWithFormset):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["animal_group"] = self.parent
         context["vocabulary"] = self.model.get_vocabulary_settings(self.assessment, context["form"])
         return context
 

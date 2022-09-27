@@ -12,27 +12,15 @@ from openpyxl.utils.exceptions import InvalidFileException
 from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
+from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
+from ..common.forms import BaseFormHelper, check_unique_for_assessment, form_actions_apply_filters
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
 from ..study.autocomplete import StudyAutocomplete
 from ..study.models import Study
 from . import autocomplete, constants, models
-
-
-def clean_slug(form):
-    # ensure unique slug for assessment
-    slug = form.cleaned_data.get("slug", None)
-    if (
-        form.instance.__class__.objects.filter(assessment_id=form.instance.assessment_id, slug=slug)
-        .exclude(id=form.instance.id)
-        .count()
-        > 0
-    ):
-        raise forms.ValidationError(ASSESSMENT_UNIQUE_MESSAGE)
-    return slug
 
 
 class PrefilterMixin:
@@ -476,6 +464,12 @@ class SummaryTableForm(forms.ModelForm):
             self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
 
+    def clean_slug(self):
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
 
 class SummaryTableSelectorForm(forms.Form):
     table_type = forms.IntegerField(widget=forms.Select(choices=constants.TableType.choices))
@@ -600,7 +594,15 @@ class VisualForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
 
 
 class VisualModelChoiceField(forms.ModelChoiceField):
@@ -1056,7 +1058,15 @@ class DataPivotForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
 
 
 class DataPivotUploadForm(DataPivotForm):
@@ -1098,17 +1108,16 @@ class DataPivotUploadForm(DataPivotForm):
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
-
     prefilter_include = ("study", "bioassay", "epi", "invitro", "effect_tags")
 
     class Meta:
         model = models.DataPivotQuery
         fields = (
+            "title",
+            "slug",
             "evidence_type",
             "export_style",
-            "title",
             "preferred_units",
-            "slug",
             "settings",
             "caption",
             "published",

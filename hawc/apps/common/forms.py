@@ -12,6 +12,35 @@ from . import autocomplete, validators, widgets
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
 
+def check_unique_for_assessment(form: forms.ModelForm, field: str) -> Any:
+    """Validate that item is unique for an assessment, and return the value.
+
+    The `unique_together` restraints are normally checked in a ModelForm if both fields are
+    available on that form; however, we generally dont expose the assessment ID as an input
+    on the ModelForm for many models. This method can be used instead in the form clean methods.
+
+    Args:
+        form (forms.ModelForm): the bound form
+        field (str): the field to check
+
+    Raises:
+        forms.ValidationError: If value is not unique for an assessment
+
+    Returns:
+        Any: The cleaned value
+    """
+
+    Model = form.instance.__class__
+    value = form.cleaned_data[field]
+    filters = {"assessment_id": form.instance.assessment.id, field: value}
+    qs = Model.objects.filter(**filters)
+    if form.instance.id:
+        qs = qs.exclude(id=form.instance.id)
+    if qs.exists():
+        raise forms.ValidationError(ASSESSMENT_UNIQUE_MESSAGE)
+    return value
+
+
 def form_actions_create_or_close():
     """Add form actions to create or close the window (for popups)"""
     return [

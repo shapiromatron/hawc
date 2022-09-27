@@ -5,7 +5,12 @@ from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, QuillField, form_actions_apply_filters
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    check_unique_for_assessment,
+    form_actions_apply_filters,
+)
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
@@ -85,6 +90,9 @@ class BaseStudyForm(forms.ModelForm):
             ),
         )
         return helper
+
+    def clean_short_citation(self):
+        return check_unique_for_assessment(self, "short_citation")
 
     def save(self, commit=True):
         instance = super().save(commit=commit)

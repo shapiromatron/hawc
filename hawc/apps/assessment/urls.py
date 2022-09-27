@@ -38,7 +38,7 @@ urlpatterns = [
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
     # log object
     path(
-        "<int:content_type>/<int:object_id>/log/",
+        "log/<int:content_type>/<int:object_id>/",
         views.LogObjectList.as_view(),
         name="log_object_list",
     ),

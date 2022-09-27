@@ -23,7 +23,6 @@ def test_validate_html_tags():
 
     # these are invalid
     for text in [
-        "<div></div>",
         "<script></script>",
         "<style></style>",
     ]:
@@ -42,6 +41,7 @@ def test_validate_hyperlinks():
         '<a href="https://iarc.who.int/">Valid</a>',
         '<a href="https://www.unc.edu/">Valid</a>',
         '<a href="https://oehha.ca.gov/">Valid</a>',
+        '<a href="https://hawcproject.org">Valid</a>',
         '<a href="http://epa.gov">Valid</a>',
         '<a href="/local-path#test?foo=T&bar=F">Valid</a>',
     ]:

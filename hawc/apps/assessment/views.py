@@ -8,7 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Count
 from django.http import (
@@ -771,20 +771,30 @@ class LogDetail(DetailView):
 class LogObjectList(ListView):
     template_name = "assessment/log_object_list.html"
     model = models.Log
-    paginate_by = 25
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            content_type = ContentType.objects.get_for_id(kwargs["content_type"])
+        except ObjectDoesNotExist:
+            raise Http404()
+        first_log = self.model.objects.filter(**self.kwargs).first()
+        if not first_log:
+            first_log = self.model(content_type=content_type, object_id=kwargs["object_id"])
+            if hasattr(first_log.content_object, "get_assessment"):
+                first_log.assessment = first_log.content_object.get_assessment()
+        if not first_log.user_can_view(request.user):
+            raise PermissionDenied()
+
+        self.first_log = first_log
+        self.assessment = first_log.assessment
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(**self.kwargs)
-        if qs.count() == 0:
-            raise Http404()
-        self.first_log = qs[0]
-        self.assessment = qs[0].assessment
-        if not qs[0].user_can_view(self.request.user):
-            raise PermissionDenied()
-        return qs
+        return self.model.objects.get_object_audit(**self.kwargs)
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        crumbs = Breadcrumb.build_crumbs(
+        return Breadcrumb.build_crumbs(
             self.request.user,
             "Logs",
             [
@@ -792,13 +802,12 @@ class LogObjectList(ListView):
                 Breadcrumb(name="Logs", url=self.assessment.get_assessment_logs_url()),
             ],
         )
-        return crumbs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["first_log"] = self.first_log
-        context["assessment"] = self.assessment
-        context["breadcrumbs"] = self.get_breadcrumbs()
+        context.update(assessment=self.assessment, first_log=self.first_log)
+        if self.assessment:
+            context["breadcrumbs"] = self.get_breadcrumbs()
         return context
 
 
