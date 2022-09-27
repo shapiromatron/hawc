@@ -445,11 +445,27 @@
 - model: contenttypes.contenttype
   fields:
     app_label: eco
-    model: cause
+    model: result
 - model: contenttypes.contenttype
   fields:
     app_label: eco
-    model: effect
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: climate
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: ecoregion
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: reference
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: metadata
 - model: contenttypes.contenttype
   fields:
     app_label: eco
@@ -1356,6 +1372,13 @@
     database: 4
     content: ''
     url: ''
+- model: lit.identifiers
+  pk: 9
+  fields:
+    unique_id: '27245597'
+    database: 1
+    content: ''
+    url: ''
 - model: lit.referencefiltertag
   pk: 1
   fields:
@@ -1827,6 +1850,35 @@
     - 5
     identifiers:
     - 3
+- model: lit.reference
+  pk: 9
+  fields:
+    assessment: 2
+    title: Microbial Ecology of the Human Skin.
+    authors_short: Cundell AM
+    authors: Cundell AM
+    year: 2018
+    journal: Microb Ecol 2018; 76 (1):113-120
+    abstract: This review article on the skin microbiota was written in response to
+      recent advances that transitioned from culture methods to PCR amplification
+      and sequencing of bacterial and fungal genes as a result of the Human Microbiome
+      Project. This transition enables the investigation of the full diversity of
+      microorganisms inhabiting human skin. The skin provides a range of habitats
+      with different microbiota associated with the three major regions of the skin,
+      namely the moist axilla, perineum, and toe webs; oily or sebaceous head, neck,
+      and trunk; and dry forearms and legs. These new culture-independent tools are
+      revealing the diversity of the human skin microbiota in the different locations
+      of the body and with skin depth. These tools should lead to a better understanding
+      of the state of homeostasis between the microbiota and the host and the overall
+      functionality of that microbiota.
+    full_text_url: ''
+    created: 2022-08-17 15:12:54.897196+00:00
+    last_updated: 2022-08-17 15:13:13.097661+00:00
+    block_id: null
+    searches:
+    - 2
+    identifiers:
+    - 9
 - model: study.study
   pk: 1
   fields:
@@ -1835,6 +1887,7 @@
     epi: true
     epi_meta: false
     in_vitro: false
+    eco: true
     short_citation: Foo et al.
     full_citation: Foo et al. 2010
     coi_reported: 4
@@ -1854,6 +1907,7 @@
     epi: true
     epi_meta: true
     in_vitro: true
+    eco: true
     short_citation: Yoshida R and Ogawa Y 2000
     full_citation: "Yoshida R, Ogawa Y. Oxidative stress induced by 2,3,7,8-tetrachlorodibenzo-p-dioxin: an application of oxidative stress markers to cancer risk assessment of dioxins. Ind Health 2000; 38 (1):5-14."
     coi_reported: 0
@@ -1873,6 +1927,7 @@
     epi: true
     epi_meta: false
     in_vitro: false
+    eco: false
     short_citation: Kawana N, Ishimatsu S, and Kanda K 2001
     full_citation: Kawana N, Ishimatsu S, Kanda K. Psycho-physiological effects of
       the terrorist sarin attack on the Tokyo subway system. Mil Med 2001; 166 (12
@@ -1897,6 +1952,7 @@
     epi: false
     epi_meta: false
     in_vitro: true
+    eco: false
     short_citation: Letcher RJ et al. 2005
     full_citation: Letcher RJ, Sanderson JT, Bokkers A, Giesy JP, van den Berg M.
       Effects of bisphenol A-related diphenylalkanes on vitellogenin production in
@@ -1921,6 +1977,7 @@
     epi: false
     epi_meta: false
     in_vitro: false
+    eco: false
     short_citation: Biesemeier JA et al. 2011
     full_citation: Biesemeier JA, Beck MJ, Silberberg H, Myers NR, Ariano JM, Radovsky
       A, Freshwater L, Sved DW, Jacobi S, Stump DG, Hardy ML, Stedeford T. An oral
@@ -1951,6 +2008,7 @@
     epi: false
     epi_meta: true
     in_vitro: false
+    eco: false
     short_citation: Crider KS et al. 2013
     full_citation: 'Crider KS, Cordero AM, Qi YP, Mulinare J, Dowling NF, Berry RJ.
       Prenatal folic acid and risk of asthma in children: a systematic review and
@@ -1967,6 +2025,27 @@
     published: true
     summary: <p>Adapted from <a href="https://hawcproject.org/study/41226/" rel="noopener
       noreferrer" target="_blank">https://hawcproject.org/study/41226/</a>.</p>
+    editable: true
+- model: study.study
+  pk: 9
+  fields:
+    reference_ptr: 9
+    bioassay: false
+    epi: false
+    epi_meta: false
+    in_vitro: false
+    eco: true
+    short_citation: Cundell AM 2018
+    full_citation: Cundell AM. Microbial Ecology of the Human Skin. Microb Ecol 2018;
+      76 (1):113-120.
+    coi_reported: 2
+    coi_details: ''
+    funding_source: ''
+    study_identifier: ''
+    contact_author: false
+    ask_author: ''
+    published: true
+    summary: ''
     editable: true
 - model: animal.experiment
   pk: 1
@@ -4528,6 +4607,149 @@
       risk of bias metrics can be entered for a metric of bias for each study. Risk
       of Bias metrics are organized by domain. The following questions are required
       for evaluation for this assessment.</p>
+- model: eco.state
+  pk: 1
+  fields:
+    code: AL
+    name: Alabama
+- model: eco.nestedterm
+  pk: 1
+  fields:
+    path: '1'
+    depth: 1
+    numchild: 0
+    name: term
+    type: CE
+    created: 2022-08-17 16:18:17.157486+00:00
+    last_updated: 2022-08-17 16:19:52.200042+00:00
+    notes: ''
+- model: eco.vocab
+  pk: 1
+  fields:
+    category: 0
+    value: Observational/gradient
+    parent: null
+- model: eco.vocab
+  pk: 6
+  fields:
+    category: 1
+    value: Field
+    parent: null
+- model: eco.vocab
+  pk: 12
+  fields:
+    category: 2
+    value: Terrestrial
+    parent: null
+- model: eco.vocab
+  pk: 29
+  fields:
+    category: 5
+    value: Ecosystem
+    parent: null
+- model: eco.vocab
+  pk: 51
+  fields:
+    category: 8
+    value: Correlation coefficient
+    parent: null
+- model: eco.vocab
+  pk: 94
+  fields:
+    category: 9
+    value: 95% CI
+    parent: null
+- model: eco.vocab
+  pk: 99
+  fields:
+    category: 10
+    value: P-value
+    parent: null
+- model: eco.vocab
+  pk: 103
+  fields:
+    category: 11
+    value: Temperate
+    parent: null
+- model: eco.vocab
+  pk: 110
+  fields:
+    category: 12
+    value: Coast Range
+    parent: null
+- model: eco.design
+  pk: 1
+  fields:
+    name: example eco design
+    study: 1
+    design: 1
+    study_setting: 6
+    habitat: 12
+    habitat_as_reported: ''
+    climate_as_reported: ''
+    created: 2022-08-18 17:45:22.970314+00:00
+    last_updated: 2022-08-18 17:45:22.970314+00:00
+    countries:
+    - 3
+    states: []
+    ecoregions:
+    - 110
+    climates:
+    - 103
+- model: eco.cause
+  pk: 1
+  fields:
+    name: cause
+    study: 1
+    term: 1
+    biological_organization: 29
+    species: ''
+    level: '2'
+    level_value: null
+    level_units: g
+    duration: '2'
+    duration_value: null
+    duration_units: ''
+    comments: ''
+    as_reported: Cause/treatment as reported
+    created: 2022-08-17 16:20:31.982792+00:00
+    last_updated: 2022-08-17 18:21:25.677256+00:00
+- model: eco.effect
+  pk: 1
+  fields:
+    name: effect
+    study: 1
+    term: 1
+    units: g
+    species: ''
+    biological_organization: 29
+    comments: ''
+    as_reported: Effect as reported
+    created: 2022-08-17 16:20:14.052436+00:00
+    last_updated: 2022-08-17 16:20:14.052436+00:00
+- model: eco.result
+  pk: 1
+  fields:
+    design: 1
+    cause: 1
+    effect: 1
+    sort_order: 0
+    relationship_direction: 0
+    relationship_comment: ''
+    modifying_factors: one
+    modifying_factors_comment: ''
+    sample_size: null
+    measure_type: null
+    measure_value: null
+    description: ''
+    variability: 94
+    low_variability: null
+    upper_variability: null
+    statistical_sig_type: 99
+    statistical_sig_value: null
+    derived_value: null
+    created: 2022-08-17 16:20:45.453359+00:00
+    last_updated: 2022-08-17 18:52:22.777238+00:00
 - model: epi.criteria
   pk: 1
   fields:

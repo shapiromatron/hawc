@@ -1,4 +1,4 @@
-{% extends assessment|yesno:"assessment-rooted.html,crumbless.html" %}
+{% extends first_log.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
 
@@ -31,7 +31,7 @@
 
         <tr>
             <th>Assessment</th>
-            <td>{{assessment}}</td>
+            <td>{{first_log.assessment}}</td>
         </tr>
 
     </tbody>
@@ -40,28 +40,34 @@
 <h3>Logs</h3>
 
 <table class="table table-sm table-striped">
+    <colgroup>
+        <col width="20%" />
+        <col width="20%" />
+        <col width="60%" />
+    </colgroup>
     <thead>
         <tr>
-            <th>Message</th>
-            <th>User</th>
             <th>Timestamp</th>
+            <th>User</th>
+            <th>Message</th>
         </tr>
     </thead>
     <tbody>
-
-        {% for obj in page_obj %}
+        {% for event in object_list %}
         <tr>
-            <td>{{obj.message}}</td>
-            <td>{{obj.user}}</td>
-            <td>{{obj.created}}</td>
+            <td>{{event.created}}</td>
+            <td>{{event.user}}</td>
+            <td>{% if event.message %}<p class="mb-1">{{event.message}}</p>{% endif %}{{event.snapshot}}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">
+                <i>No logs available; see details below.</i>
+            </td>
         </tr>
         {% endfor %}
-
     </tbody>
 </table>
 
-{% include "includes/paginator.html" %}
-
 {% include 'assessment/_logs_note.html' %}
-
 {% endblock content %}

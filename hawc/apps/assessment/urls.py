@@ -60,7 +60,7 @@ urlpatterns = [
     path("values/<int:pk>/delete/", views.AssessmentValuesDelete.as_view(), name="values-delete"),
     # log object
     path(
-        "<int:content_type>/<int:object_id>/log/",
+        "log/<int:content_type>/<int:object_id>/",
         views.LogObjectList.as_view(),
         name="log_object_list",
     ),

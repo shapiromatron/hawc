@@ -20,6 +20,7 @@ from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
+from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
@@ -1021,3 +1022,6 @@ class Reference(models.Model):
             logger.write(
                 f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
             )
+
+
+reversion.register(Reference)
