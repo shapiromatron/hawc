@@ -446,6 +446,25 @@ Possible values include:
 - PRIME (default application; as hosted at <https://hawcproject.org>)
 - EPA (EPA application; as hosted at EPA)
 
+### Compiling USWDS
+
+The EPA flavor of HAWC uses a framework from the [U.S. Web Design System](https://designsystem.digital.gov/) (USWDS) adapted for the agency. USWDS is a large package with thousands of resources; HAWC only includes a subset of these files. Including further components requires installing USWDS, and adding the component names to [`frontend/uswds/sass/styles.scss`](https://designsystem.digital.gov/components/packages/). The following command will rebuild this code:
+
+```bash
+cd ~/dev/hawc/frontend
+
+# rebuild CSS
+npm run uswds-compile
+
+# copy fonts, img, js
+npm run uswds-copy-assets
+```
+
+After running, manually delete unused fonts and images.
+
+A few major revisions were made to the compiled USWDS assets, most notably:
+
+- Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
 
 ### Materialized views
 
