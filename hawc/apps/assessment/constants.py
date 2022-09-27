@@ -27,57 +27,45 @@ class EpiVersion(models.IntegerChoices):
     V2 = 2, "v2"
 
 
-class AssessmentType(models.TextChoices):
-    IRIS = "IRIS", "IRIS"
-    PPRTV = "PPRTV", "PPRTV"
-    TSCA = "TSCA", "TSCA"
-    RE = "RE", "RE"
-    OW_HESD = "OW HESD", "OW HESD"
-    OTHER = "Other", "Other"
+class Status(models.IntegerChoices):
+    SCOPING = 0, "Scoping"
+    PROBLEM_FORM = 5, "Problem Formulation"
+    INTERNAL_REVIEW = 10, "Internal Review"
+    INTERAGENCY_REVIEW = 15, "Interagency Review"
+    PUBLIC_COMMENT = 20, "Public Comment"
+    EXTERNAL_REVIEW = 25, "External Peer Review"
+    FINAL = 30, "Final"
+    Other = 35, "Other"
 
 
-class Milestone(models.TextChoices):
-    SCOPING = "Scoping", "Scoping"
-    PROBLEM_FORM = "Problem Formulation", "Problem Formulation"
-    INTERNAL_R = "Internal Review", "Internal Review"
-    INTERAGENCY_R = "Interagency Review", "Interagency Review"
-    PUBLIC_COMMENT = "Public Comment", "Public Comment"
-    EXTERNAL_PR = "External Peer Review", "External Peer Review"
-    FINAL = "Final", "Final"
+class PeerReviewType(models.IntegerChoices):
+    CONTRACT = 0, "Contract-Led"
+    FACA = 5, "FACA Panel"
+    NASEM = 10, "NASEM"
+    JOURNAL = 15, "Journal Review"
+    NONE = 20, "No Review"
 
 
-class PRType(models.TextChoices):
-    CONTRACT = "CL", "Contract-Led"
-    FACA = "FACA", "FACA Panel"
-    NASEM = "NASEM", "NASEM"
-    JOURNAL = "JR", "Journal Review"
-    NONE = "NONE", "No Review"
+class EvaluationType(models.IntegerChoices):
+    CANCER = 0, "Cancer"
+    NONCANCER = 1, "Noncancer"
+    BOTH = 2, "Cancer and Noncancer"
 
 
-class EvaluationType(models.TextChoices):
-    CANCER = "CANCER", "Cancer"
-    NONCANCER = "NONCANCER", "Noncancer"
-    BOTH = "BOTH", "Cancer and Noncancer"
+class ValueType(models.IntegerChoices):
+    SCREEN_RFD = 0, "Screening-Level RfD"
+    SCREEN_RFC = 5, "Screening-Level RfC"
+    ORGAN_RFD = 10, "Organ-Specific RfD"
+    ORGAN_RFC = 15, "Organ-Specific RfC"
+    OVERALL_RFD = 20, "Overall RfD"
+    OVERALL_RFC = 25, "Overall RfC"
+    IUR = 30, "IUR"
+    OSF = 35, "OSF"
+    OTHER = 45, "Other"
 
 
-class ValueType(models.TextChoices):
-    SCREEN_RFD = "Screening-Level RfD", "Screening-Level RfD"
-    SCREEN_RFC = "Screening-Level RfC", "Screening-Level RfC"
-    ORGAN_RFD = "Organ-Specific RfD", "Organ-Specific RfD"
-    ORGAN_RFC = "Organ-Specific RfC", "Organ-Specific RfC"
-    OVERALL_RFD = "Overall RfD", "Overall RfD"
-    OVERALL_RFC = "Overall RfC", "Overall RfC"
-    IUR = "IUR", "IUR"
-    OSF = "OSF", "OSF"
-    NONE = "No Value", "No Value"
-    OTHER = "Other", "Other"
-
-
-class Confidence(models.TextChoices):
-    HIGH = "HI", "High"
-    MEDIUM = "MED", "Medium"
-    LOW = "LOW", "Low"
-
-
-def default_metadata() -> dict[str, str]:
-    return dict(key="value")
+class Confidence(models.IntegerChoices):
+    HIGH = 30, "High"
+    MEDIUM = 20, "Medium"
+    LOW = 10, "Low"
+    NA = 0, "Not Applicable"

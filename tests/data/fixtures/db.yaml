@@ -69,7 +69,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: assessmentdetails
+    model: AssessmentDetail
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
@@ -817,79 +817,79 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
-- model: assessment.assessmentdetails
+- model: assessment.AssessmentDetail
   pk: 1
   fields:
     assessment: 2
     project_type: IRIS
-    project_status: Internal Review
-    pr_status: NONE
-    report_number: 51001
-    docs_link: https://www.example.document.com
-    project_link: https://www.example.page.com
-    qa_id: 490063
-    qa_link: https://www.example.qa.com
-    extra_metadata:
+    project_status: 10
+    peer_review_status: 0
+    report_id: "51001"
+    report_url: https://hawcproject.org/report
+    project_url: https://hawcproject.org/project
+    qa_id: "490063"
+    qa_url: https://hawcproject.org/qa
+    extra:
       key: value
     created: 2022-09-13 13:42:59.234154+00:00
     last_updated: 2022-09-13 13:42:59.234174+00:00
-- model: assessment.values
+- model: assessment.AssessmentValue
   pk: 1
   fields:
     assessment: 2
     system: Urinary
-    evaluation_type: NONCANCER
-    value_type: Screening-Level RfD
+    evaluation_type: 1
+    value_type: 0
     value: 1.0
     value_unit: 1
     basis: Increased absolute kidney weight in female rats
     pod_value: 28.8
     pod_unit: 1
     species_studied: 1
-    duration: null
+    duration: ''
     study: 7
-    confidence: HI
+    confidence: 30
     uncertainty: 30.0
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
     comments: ''
-    extra_metadata:
+    extra:
       key: value
     created: 2022-09-13 13:48:20.997337+00:00
     last_updated: 2022-09-13 13:48:20.997355+00:00
-- model: assessment.values
+- model: assessment.AssessmentValue
   pk: 2
   fields:
     assessment: 2
     system: Urinary
-    evaluation_type: NONCANCER
-    value_type: Screening-Level RfC
+    evaluation_type: 1
+    value_type: 5
     value: 4.0
     value_unit: 1
     basis: Increased absolute kidney weight in female rats
     pod_value: 111.0
     pod_unit: 1
     species_studied: 1
-    duration: null
+    duration: ''
     study: 7
-    confidence: MED
+    confidence: 20
     uncertainty: 30.0
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
     comments: ''
-    extra_metadata:
+    extra:
       key: value
     created: 2022-09-13 13:49:46.311430+00:00
     last_updated: 2022-09-13 13:49:46.311448+00:00
-- model: assessment.values
+- model: assessment.AssessmentValue
   pk: 3
   fields:
     assessment: 2
     system: Urinary
-    evaluation_type: CANCER
-    value_type: IUR
+    evaluation_type: 0
+    value_type: 30
     value: 8.0e-05
     value_unit: 2
     basis: "Under EPA’s Guidelines for Carcinogen Risk Assessment (U.S. EPA, 2005),
@@ -900,16 +900,16 @@
     pod_value: null
     pod_unit: null
     species_studied: 1
-    duration: null
+    duration: ''
     study: 7
-    confidence: ''
+    confidence: 0
     uncertainty: null
     tumor_type: Hepatocellular adenomas and carcinomas
     extrapolation_method: Linear extrapolation from the POD ((BMCL10(HED)) associated
       with 10% extra cancer risk.
     evidence: Suggestive evidence of carcinogenic potential (Inhalation route)
     comments: ''
-    extra_metadata:
+    extra:
       key: value
     created: 2022-09-13 13:53:35.075708+00:00
     last_updated: 2022-09-13 13:53:35.075726+00:00

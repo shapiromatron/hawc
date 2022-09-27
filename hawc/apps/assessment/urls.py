@@ -38,26 +38,20 @@ urlpatterns = [
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
     # assessment details
     path(
-        "extra-details/<int:pk>/new/",
-        views.AssessmentDetailsCreate.as_view(),
+        "details/<int:pk>/new/",
+        views.AssessmentDetailCreate.as_view(),
         name="details-create",
     ),
-    path("extra-details/<int:pk>/", views.AssessmentDetailsDetail.as_view(), name="details-detail"),
     path(
-        "extra-details/<int:pk>/update/",
-        views.AssessmentDetailsUpdate.as_view(),
+        "details/<int:pk>/update/",
+        views.AssessmentDetailUpdate.as_view(),
         name="details-update",
     ),
-    path(
-        "extra-details/<int:pk>/delete/",
-        views.AssessmentDetailsDelete.as_view(),
-        name="details-delete",
-    ),
     # assessment values
-    path("values/<int:pk>/new/", views.AssessmentValuesCreate.as_view(), name="values-create"),
-    path("values/<int:pk>/", views.AssessmentValuesDetail.as_view(), name="values-detail"),
-    path("values/<int:pk>/update/", views.AssessmentValuesUpdate.as_view(), name="values-update"),
-    path("values/<int:pk>/delete/", views.AssessmentValuesDelete.as_view(), name="values-delete"),
+    path("values/<int:pk>/new/", views.AssessmentValueCreate.as_view(), name="values-create"),
+    path("values/<int:pk>/", views.AssessmentValueDetail.as_view(), name="values-detail"),
+    path("values/<int:pk>/update/", views.AssessmentValueUpdate.as_view(), name="values-update"),
+    path("values/<int:pk>/delete/", views.AssessmentValueDelete.as_view(), name="values-delete"),
     # log object
     path(
         "log/<int:content_type>/<int:object_id>/",

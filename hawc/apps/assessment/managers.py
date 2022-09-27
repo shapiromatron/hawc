@@ -149,7 +149,7 @@ class ValuesManager(BaseManager):
     assessment_relation = "assessment"
 
 
-class AssessmentDetailsManager(BaseManager):
+class AssessmentDetailManager(BaseManager):
     assessment_relation = "assessment"
 
 

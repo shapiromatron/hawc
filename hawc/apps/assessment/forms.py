@@ -125,7 +125,7 @@ class AssessmentForm(forms.ModelForm):
         return helper
 
 
-class AssessmentDetailsForm(forms.ModelForm):
+class AssessmentDetailForm(forms.ModelForm):
     CREATE_LEGEND = "Add additional Assessment details"
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update additional details for this Assessment."
@@ -133,42 +133,37 @@ class AssessmentDetailsForm(forms.ModelForm):
     assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
     class Meta:
-        model = models.AssessmentDetails
+        model = models.AssessmentDetail
         fields = "__all__"
         widgets = {
             "project_type": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.DetailsAutocomplete, field="project_type"
+                autocomplete_class=autocomplete.AssessmentDetailAutocomplete, field="project_type"
             ),
         }
 
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("parent", None)
+        self.assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        if assessment:
-            self.fields["assessment"].initial = assessment
-            self.instance.assessment = assessment
+        if self.assessment:
+            self.fields["assessment"].initial = self.assessment
+            self.instance.assessment = self.assessment
 
-    def clean_extra_metadata(self):
-        extra_metadata = self.cleaned_data["extra_metadata"]
-        if not extra_metadata:
-            return dict()
-        for key, value in extra_metadata.items():
-            if type(key) != str or type(value) != str:
-                raise forms.ValidationError(
-                    "Extra metadata must be a dictionary of string key and value pairs. Lists and nested dictionaries are not valid."
-                )
-        return extra_metadata
+    def clean(self) -> dict:
+        cleaned_data = super().clean()
+        # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
+        if cleaned_data["extra"] is None:
+            cleaned_data["extra"] = dict()
+        return cleaned_data
 
     @property
     def helper(self):
-        self.fields["extra_metadata"].widget.attrs["rows"] = 3
+        self.fields["extra"].widget.attrs["rows"] = 3
         if self.instance.id:
             helper = BaseFormHelper(
                 self,
                 help_text=self.UPDATE_HELP_TEXT,
                 cancel_url=self.instance.get_absolute_url(),
             )
-
         else:
             helper = BaseFormHelper(
                 self,
@@ -176,36 +171,37 @@ class AssessmentDetailsForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
-        helper.add_row("project_type", 3, "col-md-4")
-        helper.add_row("report_number", 3, "col-md-4")
-        helper.add_row("qa_id", 2, "col-md-6")
 
+        helper.add_row("project_type", 3, "col-md-4")
+        helper.add_row("peer_review_status", 3, "col-md-4")
+        helper.add_row("report_id", 3, "col-md-4")
         return helper
 
 
-class AssessmentValuesForm(forms.ModelForm):
+class AssessmentValueForm(forms.ModelForm):
     CREATE_LEGEND = "Create Assessment values"
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update values for this Assessment."
 
     class Meta:
-        model = models.Values
+        model = models.AssessmentValue
         exclude = ["assessment"]
         widgets = {
             "system": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.ValuesAutocomplete, field="system"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="system"
             ),
             "duration": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.ValuesAutocomplete, field="duration"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="duration"
             ),
             "tumor_type": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.ValuesAutocomplete, field="tumor_type"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="tumor_type"
             ),
             "extrapolation_method": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.ValuesAutocomplete, field="extrapolation_method"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="extrapolation_method",
             ),
             "evidence": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.ValuesAutocomplete, field="evidence"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="evidence"
             ),
             "value_unit": AutocompleteSelectWidget(
                 autocomplete_class=autocomplete.DoseUnitsAutocomplete
@@ -225,19 +221,13 @@ class AssessmentValuesForm(forms.ModelForm):
             self.instance.assessment = assessment
         self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
 
-    def clean_extra_metadata(self):
-        extra_metadata = self.cleaned_data["extra_metadata"]
-        if not extra_metadata:
-            return dict()
-        for key, value in extra_metadata.items():
-            if type(key) != str or type(value) != str:
-                raise forms.ValidationError(
-                    "Extra metadata must be a dictionary of string key and value pairs. Lists and nested dictionaries are not valid."
-                )
-        return extra_metadata
-
     def clean(self):
         cleaned_data = super().clean()
+
+        # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
+        if cleaned_data["extra"] is None:
+            cleaned_data["extra"] = dict()
+
         value = cleaned_data.get("value")
         value_type = cleaned_data.get("value_type")
         if value is None and value_type != "No Value":
@@ -262,7 +252,7 @@ class AssessmentValuesForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["comments", "basis", "extra_metadata"]:
+        for fld in ["comments", "basis", "extra"]:
             self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:

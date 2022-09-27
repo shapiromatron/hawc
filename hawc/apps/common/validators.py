@@ -5,7 +5,7 @@ from urllib import parse
 import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, URLValidator
+from django.core.validators import RegexValidator, URLValidator, BaseValidator
 from django.utils.encoding import force_str
 
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
@@ -93,19 +93,26 @@ def validate_html_tags(html: str, field: Optional[str] = None) -> str:
     return html
 
 
-def valid_url(url_str: str) -> bool:
+def validate_hyperlink(value: str, raise_exception: bool = True) -> bool:
     """Only allow URLs to some locations. Relative paths and a small subset of the internet domains are considered valid at this point; can increase the options with time.
 
     Args:
-        url_str (str): The URL string
+        value (str): The URL string
+        raise_exception (bool, default True): Raise an exception if an invalid hyperlink
+
+    Raises:
+        ValidationError: If not valid and raise_exception is True
 
     Returns:
         bool: if URL can be used
     """
-    url = parse.urlparse(url_str)
-    if url.scheme not in valid_scheme:
-        return False
-    return url.netloc == "" or any(url.netloc.endswith(ending) for ending in valid_netloc_endings)
+    url = parse.urlparse(value)
+    valid = url.scheme in valid_scheme and (
+        url.netloc == "" or any(url.netloc.endswith(ending) for ending in valid_netloc_endings)
+    )
+    if raise_exception and not valid:
+        raise ValidationError(f"Invalid hyperlink: {value}")
+    return valid
 
 
 def validate_hyperlinks(html: str, field: str = None) -> str:
@@ -126,7 +133,7 @@ def validate_hyperlinks(html: str, field: str = None) -> str:
     """
     invalid_links = []
     for hyperlink in hyperlink_regex.findall(html):
-        if not valid_url(hyperlink):
+        if not validate_hyperlink(hyperlink, raise_exception=False):
             invalid_links.append(hyperlink)
     if invalid_links:
         err_msg = f"Invalid hyperlinks: {', '.join(invalid_links)}"
@@ -178,3 +185,36 @@ class NumericTextValidator(RegexValidator):
     # alternative: r"^[<,≤,≥,>]? (?:LOD|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
     regex = r"^[<,≤,≥,>]? ?(?:LOD|LOQ|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
     message = "Must be number-like, including {<,≤,≥,>,LOD,LOQ} (ex: 3.4, 1.2E-5, < LOD)"
+
+
+class FlatJSON:
+    """A JSON based-field where all key and values are strings."""
+
+    HELP_TEXT = """A <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> object where keys are strings and values are strings or numbers. For example, <code>{"My Custom Field Name": "The Custom Value", "Extra ID": 12345}</code>."""
+    ERROR_MSG = "Flat JSON object required; arrays and nested objects are not valid."
+
+    @classmethod
+    def validate(cls, value: dict, raise_exception: bool = True) -> bool:
+        """Validate that all keys are values are strings and only strings
+
+        Args:
+            value (str): The dictionary
+            raise_exception (bool, optional): Defaults to True.
+
+        Raises:
+            ValidationError: If not valid and raise_exception is True
+
+        Returns:
+            bool: if validation is successful
+        """
+        valid = True
+
+        if not isinstance(value, dict):
+            raise ValidationError(cls.ERROR_MSG)
+        for key, value in value.items():
+            if not isinstance(key, str) or isinstance(value, (list, dict)):
+                valid = False
+                break
+        if valid is False and raise_exception:
+            raise ValidationError(cls.ERROR_MSG)
+        return valid

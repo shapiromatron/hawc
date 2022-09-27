@@ -57,12 +57,10 @@ class DoseUnitsAutocomplete(BaseAutocomplete):
 
 
 @register
-class DetailsAutocomplete(BaseAutocomplete):
-    model = models.AssessmentDetails
-    search_fields = ["project_type"]
+class AssessmentDetailAutocomplete(BaseAutocomplete):
+    model = models.AssessmentDetail
 
 
 @register
-class ValuesAutocomplete(BaseAutocomplete):
-    model = models.Values
-    search_fields = ["system", "duration", "tumor_type", "evidence"]
+class AssessmentValueAutocomplete(BaseAutocomplete):
+    model = models.AssessmentValue

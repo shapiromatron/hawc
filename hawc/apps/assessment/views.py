@@ -465,51 +465,22 @@ class AssessmentDownloads(BaseDetail):
         return super().get_context_data(**kwargs)
 
 
-# Assessment Values views
-class AssessmentValuesCreate(BaseCreate):
-    success_message = "Assessment Value created."
-    model = models.Values
-    parent_model = models.Assessment
-    form_class = forms.AssessmentValuesForm
-
-    def get_success_url(self):
-        return self.object.assessment.get_absolute_url()
-
-
-class AssessmentValuesUpdate(BaseUpdate):
-    success_message = "Assessment Value updated."
-    model = models.Values
-    parent_model = models.Assessment
-    form_class = forms.AssessmentValuesForm
-
-
-class AssessmentValuesDetail(BaseDetail):
-    model = models.Values
-
-
-class AssessmentValuesDelete(BaseDelete):
-    model = models.Values
-
-    def get_success_url(self):
-        return self.object.assessment.get_absolute_url()
-
-
-# Assessment Details views
-class AssessmentDetailsCreate(BaseCreate):
+# Assessment Detail views
+class AssessmentDetailCreate(BaseCreate):
     success_message = "Assessment Details created."
-    model = models.AssessmentDetails
+    model = models.AssessmentDetail
     parent_model = models.Assessment
-    form_class = forms.AssessmentDetailsForm
+    form_class = forms.AssessmentDetailForm
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()
 
 
-class AssessmentDetailsUpdate(BaseUpdate):
+class AssessmentDetailUpdate(BaseUpdate):
     success_message = "Assessment Details updated."
-    model = models.AssessmentDetails
+    model = models.AssessmentDetail
     parent_model = models.Assessment
-    form_class = forms.AssessmentDetailsForm
+    form_class = forms.AssessmentDetailForm
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()
@@ -518,17 +489,32 @@ class AssessmentDetailsUpdate(BaseUpdate):
         return self.object.assessment.get_absolute_url()
 
 
-class AssessmentDetailsDetail(BaseDetail):
-    model = models.AssessmentDetails
-
-
-class AssessmentDetailsDelete(BaseDelete):
-    model = models.AssessmentDetails
+# Assessment Value views
+class AssessmentValueCreate(BaseCreate):
+    success_message = "Assessment Value created."
+    model = models.AssessmentValue
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValueForm
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()
 
-    def get_cancel_url(self):
+
+class AssessmentValueUpdate(BaseUpdate):
+    success_message = "Assessment Value updated."
+    model = models.AssessmentValue
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValueForm
+
+
+class AssessmentValueDetail(BaseDetail):
+    model = models.AssessmentValue
+
+
+class AssessmentValueDelete(BaseDelete):
+    model = models.AssessmentValue
+
+    def get_success_url(self):
         return self.object.assessment.get_absolute_url()
 
 

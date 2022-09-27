@@ -24,6 +24,7 @@ from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a
 from ..common.models import get_private_data_storage
+from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
 from ..vocab.constants import VocabularyNamespace
@@ -293,6 +294,13 @@ class Assessment(models.Model):
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
 
+    def get_details_form_url(self):
+        return (
+            reverse("assessment:details-update", args=(self.details.id,))
+            if hasattr(self, "details")
+            else reverse("assessment:details-create", args=(self.id,))
+        )
+
     class Meta:
         ordering = ("-created",)
 
@@ -425,102 +433,121 @@ class Assessment(models.Model):
         Communication.set_message(self, text)
 
 
-class AssessmentDetails(models.Model):
-    objects = managers.AssessmentDetailsManager()
+class AssessmentDetail(models.Model):
+    objects = managers.AssessmentDetailManager()
     assessment = models.OneToOneField(Assessment, models.CASCADE, related_name="details")
     project_type = models.CharField(
         max_length=64,
-        help_text="Name the product line relevant to this chemical evaluation.",
-    )
-    project_status = models.CharField(
-        max_length=64,
-        choices=constants.Milestone.choices,
-        help_text="If relevant, insert high-level project management milestones for this assessment.",
         blank=True,
+        help_text="If part of a product line, the name of the project type",
     )
-    pr_status = models.CharField(
-        max_length=64,
+    project_status = models.PositiveSmallIntegerField(
+        choices=constants.Status.choices,
+        default=constants.Status.SCOPING,
+        help_text="High-level project management milestones for this assessment",
+    )
+    project_url = models.URLField(
+        blank=True,
+        validators=[validate_hyperlink],
+        verbose_name="External Project URL",
+        help_text="The URL to an external project page, if one exists",
+    )
+    peer_review_status = models.PositiveSmallIntegerField(
         verbose_name="Peer Review Status",
-        choices=constants.PRType.choices,
-        help_text="Define the method by which this assessment was externally reviewed.",  # TODO: modify help_text
-        default=constants.PRType.NONE,
+        choices=constants.PeerReviewType.choices,
+        help_text="Define the current status of peer review of this assessment, if any",
+        default=constants.PeerReviewType.NONE,
     )
-    report_number = models.IntegerField(
-        help_text="eg., EPA report number",
+    qa_id = models.CharField(
+        max_length=16,
         blank=True,
-        null=True,
+        verbose_name="Quality Assurance (QA) tracking identifier",
+        help_text="Quality Assurance (QA) tracking identifier, if one exists.",
     )
-    docs_link = models.URLField(
-        verbose_name="Link to External Document Page",
+    qa_url = models.URLField(
         blank=True,
+        verbose_name="Quality Assurance (QA) URL",
+        help_text="Quality Assurance Website, if any",
+        validators=[validate_hyperlink],
     )
-    project_link = models.URLField(
-        verbose_name="Link to External Page",
-        help_text="eg., HERO Project page",
+    report_id = models.CharField(
+        max_length=16,
         blank=True,
+        verbose_name="Report identifier",
+        help_text="A external report number or identifier, if any",
     )
-    qa_id = models.IntegerField(
-        verbose_name="QA Tracking ID",
+    report_url = models.URLField(
         blank=True,
-        null=True,
+        validators=[validate_hyperlink],
+        verbose_name="External Document URL",
+        help_text="The URL to the final document or publication, if one exists",
     )
-    qa_link = models.URLField(
-        verbose_name="Link to QA Tracking Page",
+    extra = models.JSONField(
+        default=dict,
+        validators=[FlatJSON.validate],
         blank=True,
+        verbose_name="Additional attributes",
+        help_text="Any additional custom attributes; " + FlatJSON.HELP_TEXT,
     )
-    extra_metadata = models.JSONField(blank=True, default=constants.default_metadata)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     BREADCRUMB_PARENT = "assessment"
 
     def __str__(self):
-        return f"Additional Details for {self.assessment}"
+        return f"{self.assessment}: Details"
 
     def get_assessment(self):
         return self.assessment
 
     def get_absolute_url(self):
-        return reverse("assessment:details-detail", args=[self.pk])
+        return reverse("assessment:detail", args=(self.assessment_id,))
 
 
-class Values(models.Model):
+class AssessmentValue(models.Model):
     objects = managers.ValuesManager()
+
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
     system = models.CharField(
         max_length=128,
-        help_text="Identify the organ system of concern (e.g., Hepatic, Nervous, Reproductive).",
+        help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive).",
     )
-    evaluation_type = models.CharField(
-        max_length=32,
+    evaluation_type = models.PositiveSmallIntegerField(
         choices=constants.EvaluationType.choices,
-        help_text="Select the type of chemical evaluation that was conducted.",
         default=constants.EvaluationType.CANCER,
+        help_text="Substance evaluation conducted.",
     )
-    value_type = models.CharField(
-        max_length=64,
-        help_text="Enter the type of toxicity value that was derived.",
+    value_type = models.PositiveSmallIntegerField(
         choices=constants.ValueType.choices,
+        help_text="Type of derived value.",
     )
-    value = models.FloatField(blank=True, null=True)
+    value = models.FloatField(
+        blank=True,
+        help_text="The derived value",
+    )
     value_unit = models.ForeignKey(
         "assessment.DoseUnits",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
+        related_name="assessment_values",
     )
     basis = models.TextField(
         blank=True,
         help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022).",
     )
-    pod_value = models.FloatField(verbose_name="POD Value", blank=True, null=True)
+    pod_value = models.FloatField(
+        verbose_name="POD Value",
+        blank=True,
+        null=True,
+        help_text="Describe the Point of Departure (POD) for the final value",
+    )
     pod_unit = models.ForeignKey(
         "assessment.DoseUnits",
         verbose_name="POD Unit",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name="values_set_pod",
+        related_name="assessment_pods",
+        help_text="Units for the Point of Departure (POD)",
     )
     species_studied = models.ForeignKey(
         "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
@@ -528,20 +555,19 @@ class Values(models.Model):
     duration = models.CharField(
         max_length=128,
         blank=True,
-        null=True,
-        help_text="Describe the duration of the study selected to support the derivation of the toxicity value.",
+        help_text="Describe the duration of the study selected to support the derivation of the value.",
     )
     study = models.ForeignKey(
         "study.Study",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        verbose_name="HAWC Study",
+        verbose_name="Corresponding study as entered in HAWC, if available.",
     )
-    confidence = models.TextField(
-        blank=True,
+    confidence = models.PositiveSmallIntegerField(
+        default=constants.Confidence.NA,
         choices=constants.Confidence.choices,
-        help_text="Select the overall study level confidence.",
+        help_text="Overall study level confidence for study or key studies.",
     )
     uncertainty = models.FloatField(
         blank=True,
@@ -550,7 +576,7 @@ class Values(models.Model):
     )
     tumor_type = models.CharField(
         max_length=64,
-        verbose_name="Tumor Type/Cancer",
+        verbose_name="Tumor/Cancer Type",
         blank=True,
         help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site).",
     )
@@ -561,10 +587,16 @@ class Values(models.Model):
     evidence = models.TextField(
         verbose_name="Evidence Characterization",
         blank=True,
-        help_text="If applicable, describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
+        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
     )
     comments = models.TextField(blank=True)
-    extra_metadata = models.JSONField(blank=True, default=constants.default_metadata)
+    extra = models.JSONField(
+        default=dict,
+        blank=True,
+        validators=[FlatJSON.validate],
+        verbose_name="Additional attributes",
+        help_text="Any additional custom attributes; " + FlatJSON.HELP_TEXT,
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -586,14 +618,15 @@ class Values(models.Model):
     def get_df(cls, queryset: models.QuerySet) -> pd.DataFrame:
         """Get a dataframe of Assessment Values from given Queryset of Values."""
         # TODO: possibly include more assessment metadata? use kwargs for included/excluded columns?
+        # TODO: update this?
         mapping: dict[str, str] = {
             "id": "id",
             "assessment": "assessment_id",
             "assessment__name": "assessment_name",
             "assessment__details__project_type": "project_type",
             "assessment__details__project_status": "project_status",
-            "assessment__details__pr_status": "peer_review_status",
-            "assessment__details__report_number": "report_number",
+            "assessment__details__peer_review_status": "peer_review_status",
+            "assessment__details__report_id": "report_id",
             "assessment__details__qa_id": "qa_tracking_id",
             "system": "system",
             "evaluation_type": "evaluation_type",
@@ -1234,7 +1267,8 @@ class Content(models.Model):
 
 reversion.register(DSSTox)
 reversion.register(Assessment)
-reversion.register(Values)
+reversion.register(AssessmentDetail)
+reversion.register(AssessmentValue)
 reversion.register(Attachment)
 reversion.register(EffectTag)
 reversion.register(Species)
