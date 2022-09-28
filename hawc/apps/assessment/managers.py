@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Any, NamedTuple, Union
 
+import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, QuerySet
 from reversion.models import Version
@@ -145,8 +146,53 @@ class DatasetManager(BaseManager):
     assessment_relation = "assessment"
 
 
-class ValuesManager(BaseManager):
+class AssessmentValueManager(BaseManager):
     assessment_relation = "assessment"
+
+    def get_df(self) -> pd.DataFrame:
+        """Get a dataframe of Assessment Values from given Queryset of Values."""
+        mapping: dict[str, str] = {
+            "id": "id",
+            "assessment_id": "assessment_id",
+            "assessment__name": "assessment_name",
+            "assessment__created": "assessment_created",
+            "assessment__last_updated": "assessment_last_updated",
+            "assessment__details__project_type": "project_type",
+            "assessment__details__project_status": "project_status",
+            "assessment__details__project_url": "project_url",
+            "assessment__details__peer_review_status": "peer_review_status",
+            "assessment__details__qa_id": "qa_id",
+            "assessment__details__qa_url": "qa_url",
+            "assessment__details__report_id": "report_id",
+            "assessment__details__report_url": "report_url",
+            "assessment__details__extra": "assessment_extra",
+            "evaluation_type": "evaluation_type",
+            "system": "system",
+            "value_type": "value_type",
+            "value": "value",
+            "value_unit": "value_unit",
+            "basis": "basis",
+            "pod_value": "pod_value",
+            "pod_unit": "pod_unit",
+            "species_studied": "species_studied",
+            "duration": "duration",
+            "study": "study",
+            "confidence": "confidence",
+            "uncertainty": "uncertainty",
+            "tumor_type": "tumor_type",
+            "extrapolation_method": "extrapolation_method",
+            "evidence": "evidence",
+            "comments": "comments",
+            "extra": "extra",
+        }
+        # todo - write a map_enum(df, col, map) helper method to detail with this
+        # todo - get dose units name and study name for optional foreign keys
+        # todo - deal w/ json fields
+        # http://127.0.0.1:8000/admin/api/reports/values/?format=html
+        data = self.select_related("assessment__details").values_list(*list(mapping.keys()))
+        return pd.DataFrame(data=data, columns=list(mapping.values())).sort_values(
+            ["assessment_id", "id"]
+        )
 
 
 class AssessmentDetailManager(BaseManager):

@@ -505,7 +505,7 @@ class AssessmentDetail(models.Model):
 
 
 class AssessmentValue(models.Model):
-    objects = managers.ValuesManager()
+    objects = managers.AssessmentValueManager()
 
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
     evaluation_type = models.PositiveSmallIntegerField(
@@ -615,42 +615,6 @@ class AssessmentValue(models.Model):
 
     def get_absolute_url(self):
         return reverse("assessment:values-detail", args=[self.pk])
-
-    @classmethod
-    def get_df(cls, queryset: models.QuerySet) -> pd.DataFrame:
-        """Get a dataframe of Assessment Values from given Queryset of Values."""
-        # TODO: possibly include more assessment metadata? use kwargs for included/excluded columns?
-        # TODO: update this?
-        mapping: dict[str, str] = {
-            "id": "id",
-            "assessment": "assessment_id",
-            "assessment__name": "assessment_name",
-            "assessment__details__project_type": "project_type",
-            "assessment__details__project_status": "project_status",
-            "assessment__details__peer_review_status": "peer_review_status",
-            "assessment__details__report_id": "report_id",
-            "assessment__details__qa_id": "qa_tracking_id",
-            "system": "system",
-            "evaluation_type": "evaluation_type",
-            "value_type": "value_type",
-            "value": "value",
-            "value_unit__name": "value_unit",
-            "basis": "basis",
-            "pod_value": "pod_value",
-            "pod_unit__name": "pod_unit",
-            "uncertainty": "uncertainty",
-            "confidence": "confidence",
-            "species_studied": "species_studied",
-            "duration": "duration",
-            "study": "hawc_study_id",
-            "tumor_type": "tumor_type",
-            "extrapolation_method": "extrapolation_method",
-            "evidence": "evidence_characterization",
-            "comments": "value_comments",
-        }
-        data = queryset.values_list(*list(mapping.keys()))
-        df = pd.DataFrame(data=data, columns=list(mapping.values()))
-        return df
 
 
 class Attachment(models.Model):

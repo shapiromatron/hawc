@@ -6,4 +6,4 @@ from hawc.apps.common.helper import FlatFileExporter
 
 class ValuesListExport(FlatFileExporter):
     def build_df(self) -> pd.DataFrame:
-        return AssessmentValue.get_df(self.queryset)
+        return AssessmentValue.objects.get_df()
