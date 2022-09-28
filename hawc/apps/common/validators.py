@@ -5,7 +5,7 @@ from urllib import parse
 import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, URLValidator, BaseValidator
+from django.core.validators import RegexValidator, URLValidator
 from django.utils.encoding import force_str
 
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")

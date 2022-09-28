@@ -198,19 +198,12 @@ class TestAssessmentValueForm:
         form = AssessmentValueForm(data=valid_data, parent=assessment)
         assert form.is_valid()
 
-        # Value should not be None
-        data = valid_data.copy()
-        data.update(value_type=35, value=None)
-        form = AssessmentValueForm(data=data, parent=assessment)
-        assert form.is_valid() is False
-        assert form.errors["value"] == ['Value is required unless Value Type is "No Value".']
-
         # Cancer fields aren't filled out
         data = valid_data.copy()
         data.update(evaluation_type=0, tumor_type="", extrapolation_method="", evidence="")
         form = AssessmentValueForm(data=data, parent=assessment)
         assert form.is_valid() is False
-        error_str = "This field is required when Cancer is the selected evaluation type."
+        error_str = "Required for Cancer evaluation types."
         assert form.errors == {
             "tumor_type": [error_str],
             "extrapolation_method": [error_str],
@@ -222,9 +215,7 @@ class TestAssessmentValueForm:
         data.update(evaluation_type=1, uncertainty=None)
         form = AssessmentValueForm(data=data, parent=assessment)
         assert form.is_valid() is False
-        assert form.errors["uncertainty"] == [
-            "This field is required when Noncancer is the selected evaluation type."
-        ]
+        assert form.errors["uncertainty"] == ["Required for Noncancer evaluation types."]
 
     def test_extra(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)

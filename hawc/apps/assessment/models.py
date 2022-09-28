@@ -511,15 +511,15 @@ class AssessmentValue(models.Model):
     evaluation_type = models.PositiveSmallIntegerField(
         choices=constants.EvaluationType.choices,
         default=constants.EvaluationType.CANCER,
-        help_text="Substance evaluation conducted.",
+        help_text="Substance evaluation conducted",
     )
     system = models.CharField(
         max_length=128,
-        help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive).",
+        help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive)",
     )
     value_type = models.PositiveSmallIntegerField(
         choices=constants.ValueType.choices,
-        help_text="Type of derived value.",
+        help_text="Type of derived value",
     )
     value = models.FloatField(
         help_text="The derived value",
@@ -532,13 +532,13 @@ class AssessmentValue(models.Model):
     )
     basis = models.TextField(
         blank=True,
-        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022).",
+        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022)",
     )
     pod_value = models.FloatField(
         verbose_name="POD Value",
         blank=True,
         null=True,
-        help_text="Describe the Point of Departure (POD) for the final value",
+        help_text="The Point of Departure (POD)",
     )
     pod_unit = models.ForeignKey(
         "assessment.DoseUnits",
@@ -555,7 +555,7 @@ class AssessmentValue(models.Model):
     duration = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Describe the duration of the study selected to support the derivation of the value.",
+        help_text="Duration of key study supporting value derivation",
     )
     study = models.ForeignKey(
         "study.Study",
@@ -563,33 +563,33 @@ class AssessmentValue(models.Model):
         blank=True,
         null=True,
         verbose_name="Key study",
-        help_text="Corresponding study as entered in HAWC, if available.",
+        help_text="Key study in HAWC, if available",
     )
     confidence = models.PositiveSmallIntegerField(
         default=constants.Confidence.NA,
         choices=constants.Confidence.choices,
-        help_text="Overall study level confidence for study or key studies.",
+        help_text="Overall confidence for study or key studies",
     )
     uncertainty = models.FloatField(
         blank=True,
         null=True,
         verbose_name="Uncertainty factor",
-        help_text="Composite uncertainty factor",
+        help_text="Composite uncertainty factor applied to POD to derive the final value",
     )
     tumor_type = models.CharField(
         max_length=64,
         verbose_name="Tumor/Cancer type",
         blank=True,
-        help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site).",
+        help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site)",
     )
     extrapolation_method = models.TextField(
         blank=True,
-        help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk).",
+        help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
     )
     evidence = models.TextField(
         verbose_name="Evidence characterization",
         blank=True,
-        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
+        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans)",
     )
     comments = models.TextField(blank=True)
     extra = models.JSONField(
