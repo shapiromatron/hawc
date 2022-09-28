@@ -131,7 +131,7 @@
       {% endif %}
 
       {% if object.details %}
-        {% include "assessment/_details_fragment.html" with object=object.details %}
+        {% include "assessment/fragments/assessmentdetail_table.html" with object=object.details %}
       {% endif %}
 
       {% if object.vocabulary %}
@@ -233,10 +233,7 @@
   {% if crud == "Read" %}
     {% include "assessment/fragments/attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
     {% include "assessment/_dataset_list.html" with object_list=datasets %}
-    {% if object.details %}
-      {% include "assessment/_details_fragment.html" with object=object.details %}
-    {% endif %}
-    {% include "assessment/_values_list.html" with object_list=object.values.all %}
+    {% include "assessment/fragments/assessmentvalue_list.html" with object_list=object.values.all %}
   {% endif %}
 
 {% endblock content %}

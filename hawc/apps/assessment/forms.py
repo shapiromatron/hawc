@@ -181,7 +181,7 @@ class AssessmentDetailForm(forms.ModelForm):
 class AssessmentValueForm(forms.ModelForm):
     CREATE_LEGEND = "Create Assessment values"
     CREATE_HELP_TEXT = ""
-    UPDATE_HELP_TEXT = "Update values for this Assessment."
+    UPDATE_HELP_TEXT = "Update current assessment value."
 
     class Meta:
         model = models.AssessmentValue
@@ -228,27 +228,16 @@ class AssessmentValueForm(forms.ModelForm):
         if cleaned_data["extra"] is None:
             cleaned_data["extra"] = dict()
 
-        value = cleaned_data.get("value")
-        value_type = cleaned_data.get("value_type")
-        if value is None and value_type != "No Value":
-            self.add_error("value", 'Value is required unless Value Type is "No Value".')
-        if value_type == "No Value" and value:
-            self.add_error(
-                "value_type", '"No Value" is not a valid Value Type when a Value is given.'
-            )
         evaluation_type = cleaned_data.get("evaluation_type")
         if evaluation_type != constants.EvaluationType.NONCANCER:
             for field in ["tumor_type", "extrapolation_method", "evidence"]:
                 if not cleaned_data.get(field):
-                    self.add_error(
-                        field, "This field is required when Cancer is the selected evaluation type."
-                    )
+                    msg = "Required for Cancer evaluation types."
+                    self.add_error(field, msg)
         if evaluation_type != constants.EvaluationType.CANCER:
             if not cleaned_data.get("uncertainty"):
-                self.add_error(
-                    "uncertainty",
-                    "This field is required when Noncancer is the selected evaluation type.",
-                )
+                msg = "Required for Noncancer evaluation types."
+                self.add_error("uncertainty", msg)
 
     @property
     def helper(self):
@@ -269,7 +258,7 @@ class AssessmentValueForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
-        helper.add_row("system", 2, "col-md-6")
+        helper.add_row("evaluation_type", 2, "col-md-6")
         helper.add_row("value_type", 3, "col-md-4")
         helper.add_row("basis", 3, "col-md-4")
         helper.add_row(

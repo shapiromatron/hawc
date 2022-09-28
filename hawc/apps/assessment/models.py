@@ -508,25 +508,25 @@ class AssessmentValue(models.Model):
     objects = managers.ValuesManager()
 
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
-    system = models.CharField(
-        max_length=128,
-        help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive).",
-    )
     evaluation_type = models.PositiveSmallIntegerField(
         choices=constants.EvaluationType.choices,
         default=constants.EvaluationType.CANCER,
         help_text="Substance evaluation conducted.",
+    )
+    system = models.CharField(
+        max_length=128,
+        help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive).",
     )
     value_type = models.PositiveSmallIntegerField(
         choices=constants.ValueType.choices,
         help_text="Type of derived value.",
     )
     value = models.FloatField(
-        blank=True,
         help_text="The derived value",
     )
     value_unit = models.ForeignKey(
         "assessment.DoseUnits",
+        verbose_name="Value units",
         on_delete=models.CASCADE,
         related_name="assessment_values",
     )
@@ -542,7 +542,7 @@ class AssessmentValue(models.Model):
     )
     pod_unit = models.ForeignKey(
         "assessment.DoseUnits",
-        verbose_name="POD Unit",
+        verbose_name="POD units",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -562,7 +562,8 @@ class AssessmentValue(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        verbose_name="Corresponding study as entered in HAWC, if available.",
+        verbose_name="Key study",
+        help_text="Corresponding study as entered in HAWC, if available.",
     )
     confidence = models.PositiveSmallIntegerField(
         default=constants.Confidence.NA,
@@ -572,11 +573,12 @@ class AssessmentValue(models.Model):
     uncertainty = models.FloatField(
         blank=True,
         null=True,
-        verbose_name="Composite Uncertainty Factor",
+        verbose_name="Uncertainty factor",
+        help_text="Composite uncertainty factor",
     )
     tumor_type = models.CharField(
         max_length=64,
-        verbose_name="Tumor/Cancer Type",
+        verbose_name="Tumor/Cancer type",
         blank=True,
         help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site).",
     )
@@ -585,7 +587,7 @@ class AssessmentValue(models.Model):
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk).",
     )
     evidence = models.TextField(
-        verbose_name="Evidence Characterization",
+        verbose_name="Evidence characterization",
         blank=True,
         help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans).",
     )

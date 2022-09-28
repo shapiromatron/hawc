@@ -1,85 +1,51 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load hawc %}
+
 {% block content %}
 {% if crud == "Read" %}
 <div class="dropdown btn-group float-right">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
         {% if obj_perms.edit %}
-        <a class="dropdown-item" href="{% url 'assessment:values-update' object.pk %}">Update value</a>
-        <a class="dropdown-item" href="{% url 'assessment:values-delete' object.pk %}">Delete value</a>
+        <a class="dropdown-item" href="{% url 'assessment:values-update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'assessment:values-delete' object.pk %}">Delete</a>
         {% endif %}
     </div>
 </div>
+{% endif %}
 <h3>Assessment Value for {{object.assessment}}</h3>
 <table class="table table-sm table-striped">
     <colgroup>
-        <col style="width: 20%;">
-        <col style="width: 80%;">
+        <col style="width: 30%;">
+        <col style="width: 70%;">
     </colgroup>
     <tbody>
-        <tr>
-            <th>System</th>
-            <td>{{object.system}}</td>
-        </tr>
-        <tr>
-            <th>Evaluation Type</th>
-            <td>{{object.get_evaluation_type_display}}</td>
-        </tr>
-        <tr>
-            <th>Value Type</th>
-            <td>{{object.value_type}}</td>
-        </tr>
+        {% optional_table_row "Evaluation Type" object.get_evaluation_type_display %}
+        {% optional_table_row "System" object.system %}
+        {% optional_table_row "Value Type" object.get_value_type_display %}
         <tr>
             <th>Value</th>
-            <td>{{object.value}} {{object.value_unit}}</td>
+            <td>{{object.value}} {{object.value_unit|default:""}}</td>
         </tr>
-        <tr>
-            <th>Basis</th>
-            <td>{{object.basis}}</td>
-        </tr>
+        {% if object.pod_value %}
         <tr>
             <th>POD Value</th>
-            <td>{{object.pod_value}} {{object.pod_unit}}</td>
+            <td>{{object.pod_value|default:""}} {{object.pod_unit|default:""}}</td>
         </tr>
-        <tr>
-            <th>Composite Uncertainty Factor</th>
-            <td>{{object.uncertainty}}</td>
-        </tr>
-        <tr>
-            <th>Confidence</th>
-            <td>{{object.get_confidence_display}}</td>
-        </tr>
-        <tr>
-            <th>Species Studied</th>
-            <td>{{object.species_studied}}</td>
-        </tr>
-        <tr>
-            <th>Duration</th>
-            <td>{{object.duration}}</td>
-        </tr>
+        {% endif %}
+        {% optional_table_row "Composite uncertainty factor" object.uncertainty %}
+        {% optional_table_row "Overall confidence" object.confidence %}
+        {% optional_table_row "Basis" object.basis %}
+        {% optional_table_row "Species studied" object.species_studied|default:"" %}
+        {% optional_table_row "Duration" object.duration %}
         {% if object.study %}
         <tr>
-            <th>HAWC Study</th>
+            <th>Key Study</th>
             <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
         </tr>
         {% endif %}
-        <tr>
-            <th>Tumor Type/Cancer</th>
-            <td>{{object.tumor_type}}</td>
-        </tr>
-        <tr>
-            <th>Extrapolation Method</th>
-            <td>{{object.extrapolation_method}}</td>
-        </tr>
-        <tr>
-            <th>Evidence Characterization</th>
-            <td>{{object.evidence}}</td>
-        </tr>
-        <tr>
-            <th>Comments</th>
-            <td>{{object.comments}}</td>
-        </tr>
+        {% optional_table_row "Comments" object.comments %}
         {% for key, value in object.extra.items %}
         <tr>
             <th>{{key}}</th>
@@ -89,5 +55,4 @@
         {% endfor %}
     </tbody>
 </table>
-{% endif %}
 {% endblock %}

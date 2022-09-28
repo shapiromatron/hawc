@@ -1,6 +1,6 @@
-{% extends 'assessment-rooted.html' %}
+{% extends 'assessment/assessmentvalue_detail.html' %}
 
 {% block content %}
-{% include "hawc/_delete_block.html" with name="assessment value" %}
-{{ block.super }}
+  {{ block.super }}
+  {% include "hawc/_delete_block.html" with name="assessment value"  %}
 {% endblock content %}
