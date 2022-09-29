@@ -4,9 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from hawc.apps.assessment.exports import ValuesListExport
-from hawc.apps.assessment.models import AssessmentValue
-
+from ..assessment.exports import ValuesListExport
+from ..assessment.models import AssessmentValue
 from ..common.api import FivePerMinuteThrottle
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers

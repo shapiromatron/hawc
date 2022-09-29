@@ -1,7 +1,7 @@
 import pandas as pd
 
-from hawc.apps.assessment.models import AssessmentValue
-from hawc.apps.common.helper import FlatFileExporter
+from ..common.helper import FlatFileExporter
+from .models import AssessmentValue
 
 
 class ValuesListExport(FlatFileExporter):
