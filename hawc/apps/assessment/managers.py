@@ -2,12 +2,14 @@ import json
 from datetime import datetime, timedelta
 from typing import Any, NamedTuple, Union
 
+import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, QuerySet
 from reversion.models import Version
 
-from ..common.helper import HAWCDjangoJSONEncoder
+from ..common.helper import HAWCDjangoJSONEncoder, map_enum
 from ..common.models import BaseManager
+from . import constants
 
 
 class AssessmentManager(BaseManager):
@@ -142,6 +144,62 @@ class TimeSpentEditingManager(BaseManager):
 
 
 class DatasetManager(BaseManager):
+    assessment_relation = "assessment"
+
+
+class AssessmentValueManager(BaseManager):
+    assessment_relation = "assessment"
+
+    def get_df(self) -> pd.DataFrame:
+        """Get a dataframe of Assessment Values from given Queryset of Values."""
+        mapping: dict[str, str] = {
+            "assessment_id": "assessment_id",
+            "assessment__name": "assessment_name",
+            "assessment__created": "assessment_created",
+            "assessment__last_updated": "assessment_last_updated",
+            "assessment__details__project_type": "project_type",
+            "assessment__details__project_status": "project_status",
+            "assessment__details__project_url": "project_url",
+            "assessment__details__peer_review_status": "peer_review_status",
+            "assessment__details__qa_id": "qa_id",
+            "assessment__details__qa_url": "qa_url",
+            "assessment__details__report_id": "report_id",
+            "assessment__details__report_url": "report_url",
+            "assessment__details__extra": "assessment_extra",
+            "evaluation_type": "evaluation_type",
+            "id": "value_id",
+            "system": "system",
+            "value_type": "value_type",
+            "value": "value",
+            "value_unit__name": "value_unit",
+            "basis": "basis",
+            "pod_value": "pod_value",
+            "pod_unit__name": "pod_unit",
+            "species_studied": "species_studied",
+            "duration": "duration",
+            "study_id": "study_id",
+            "study__short_citation": "study_citation",
+            "confidence": "confidence",
+            "uncertainty": "uncertainty",
+            "tumor_type": "tumor_type",
+            "extrapolation_method": "extrapolation_method",
+            "evidence": "evidence",
+            "comments": "comments",
+            "extra": "extra",
+        }
+        data = self.select_related("assessment__details").values_list(*list(mapping.keys()))
+        df = pd.DataFrame(data=data, columns=list(mapping.values())).sort_values(
+            ["assessment_id", "value_id"]
+        )
+        map_enum(df, "project_status", constants.Status, replace=True)
+        map_enum(df, "peer_review_status", constants.PeerReviewType, replace=True)
+        map_enum(df, "evaluation_type", constants.EvaluationType, replace=True)
+        map_enum(df, "value_type", constants.ValueType, replace=True)
+        map_enum(df, "confidence", constants.Confidence, replace=True)
+        return df
+
+
+class AssessmentDetailManager(BaseManager):
     assessment_relation = "assessment"
 
 

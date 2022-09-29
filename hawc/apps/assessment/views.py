@@ -465,6 +465,59 @@ class AssessmentDownloads(BaseDetail):
         return super().get_context_data(**kwargs)
 
 
+# Assessment Detail views
+class AssessmentDetailCreate(BaseCreate):
+    success_message = "Assessment Details created."
+    model = models.AssessmentDetail
+    parent_model = models.Assessment
+    form_class = forms.AssessmentDetailForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentDetailUpdate(BaseUpdate):
+    success_message = "Assessment Details updated."
+    model = models.AssessmentDetail
+    parent_model = models.Assessment
+    form_class = forms.AssessmentDetailForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+    def get_cancel_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+# Assessment Value views
+class AssessmentValueCreate(BaseCreate):
+    success_message = "Assessment Value created."
+    model = models.AssessmentValue
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValueForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentValueUpdate(BaseUpdate):
+    success_message = "Assessment Value updated."
+    model = models.AssessmentValue
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValueForm
+
+
+class AssessmentValueDetail(BaseDetail):
+    model = models.AssessmentValue
+
+
+class AssessmentValueDelete(BaseDelete):
+    model = models.AssessmentValue
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
 # Attachment viewset
 class AttachmentViewset(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}

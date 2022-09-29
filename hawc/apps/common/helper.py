@@ -12,7 +12,7 @@ import pandas as pd
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import QuerySet
+from django.db.models import Choices, QuerySet
 from django.http import QueryDict
 from django.urls import reverse
 from django.utils.encoding import force_str
@@ -118,6 +118,26 @@ def int_or_float(val: float) -> Union[int, float]:
     If unable to, it returns the original float.
     """
     return int(val) if int(val) == val else val
+
+
+def map_enum(df: pd.DataFrame, field: str, choices: Choices, replace: bool = False):
+    """Add new column inplace in dataframe with enum text display versions of a field.
+
+    Args:
+        df (pd.DataFrame): The input/output dataframe
+        field (str): The field with the enum
+        choices (Choices): The field to map
+        replace (bool, default False): If True, replaces the current field. If false, adds a
+            "_display" suffix to the end of the field name and create a new field
+
+    """
+    key = f"{field}_display"
+    mapping = {key: value for (key, value) in choices.choices}
+    df.loc[:, key] = df[field].map(mapping)
+    df.insert(df.columns.get_loc(field) + 1, key, df.pop(key))
+    if replace:
+        df.pop(field)
+        df.rename(columns={key: field}, inplace=True)
 
 
 def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -> pd.DataFrame:

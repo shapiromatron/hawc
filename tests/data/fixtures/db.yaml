@@ -69,6 +69,14 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
+    model: AssessmentDetail
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: values
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
     model: attachment
 - model: contenttypes.contenttype
   fields:
@@ -106,6 +114,10 @@
   fields:
     app_label: assessment
     model: job
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: communication
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
@@ -368,6 +380,10 @@
     model: task
 - model: contenttypes.contenttype
   fields:
+    app_label: materialized
+    model: finalriskofbiasscore
+- model: contenttypes.contenttype
+  fields:
     app_label: epiv2
     model: country
 - model: contenttypes.contenttype
@@ -462,6 +478,7 @@
     email: admin@hawcproject.org
     first_name: a
     last_name: superuser
+    external_id: null
     is_staff: true
     is_active: true
     license_v1_accepted: false
@@ -477,6 +494,7 @@
     email: pm@hawcproject.org
     first_name: Project
     last_name: Manager
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -492,6 +510,7 @@
     email: team@hawcproject.org
     first_name: Team
     last_name: Member
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -507,6 +526,7 @@
     email: reviewer@hawcproject.org
     first_name: a
     last_name: reviewer
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -522,6 +542,7 @@
     email: public@hawcproject.org
     first_name: ''
     last_name: ''
+    external_id: null
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -796,6 +817,102 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+- model: assessment.AssessmentDetail
+  pk: 1
+  fields:
+    assessment: 2
+    project_type: IRIS
+    project_status: 10
+    peer_review_status: 0
+    report_id: "51001"
+    report_url: https://hawcproject.org/report
+    project_url: https://hawcproject.org/project
+    qa_id: "490063"
+    qa_url: https://hawcproject.org/qa
+    extra:
+      key: value
+    created: 2022-09-13 13:42:59.234154+00:00
+    last_updated: 2022-09-13 13:42:59.234174+00:00
+- model: assessment.AssessmentValue
+  pk: 1
+  fields:
+    assessment: 2
+    system: Urinary
+    evaluation_type: 1
+    value_type: 0
+    value: 1.0
+    value_unit: 1
+    basis: Increased absolute kidney weight in female rats
+    pod_value: 28.8
+    pod_unit: 1
+    species_studied: 1
+    duration: ''
+    study: 7
+    confidence: 30
+    uncertainty: 30.0
+    tumor_type: ''
+    extrapolation_method: ''
+    evidence: ''
+    comments: ''
+    extra:
+      key: value
+    created: 2022-09-13 13:48:20.997337+00:00
+    last_updated: 2022-09-13 13:48:20.997355+00:00
+- model: assessment.AssessmentValue
+  pk: 2
+  fields:
+    assessment: 2
+    system: Urinary
+    evaluation_type: 1
+    value_type: 5
+    value: 4.0
+    value_unit: 1
+    basis: Increased absolute kidney weight in female rats
+    pod_value: 111.0
+    pod_unit: 1
+    species_studied: 1
+    duration: ''
+    study: 7
+    confidence: 20
+    uncertainty: 30.0
+    tumor_type: ''
+    extrapolation_method: ''
+    evidence: ''
+    comments: ''
+    extra:
+      key: value
+    created: 2022-09-13 13:49:46.311430+00:00
+    last_updated: 2022-09-13 13:49:46.311448+00:00
+- model: assessment.AssessmentValue
+  pk: 3
+  fields:
+    assessment: 2
+    system: Urinary
+    evaluation_type: 0
+    value_type: 30
+    value: 8.0e-05
+    value_unit: 2
+    basis: "Under EPA’s Guidelines for Carcinogen Risk Assessment (U.S. EPA, 2005),
+      ethyl tertiary butyl ether has “suggestive evidence of carcinogenic potential\"
+      for the inhalation route and “inadequate information to assess carcinogenic
+      potential” for the oral route.\r\nThis may be a synopsis of the full weight-of-evidence
+      narrative."
+    pod_value: null
+    pod_unit: null
+    species_studied: 1
+    duration: ''
+    study: 7
+    confidence: 0
+    uncertainty: null
+    tumor_type: Hepatocellular adenomas and carcinomas
+    extrapolation_method: Linear extrapolation from the POD ((BMCL10(HED)) associated
+      with 10% extra cancer risk.
+    evidence: Suggestive evidence of carcinogenic potential (Inhalation route)
+    comments: ''
+    extra:
+      key: value
+    created: 2022-09-13 13:53:35.075708+00:00
+    last_updated: 2022-09-13 13:53:35.075726+00:00
 - model: assessment.attachment
   pk: 3
   fields:
