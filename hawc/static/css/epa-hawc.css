@@ -31,14 +31,6 @@ header.l-header * {
     text-decoration: none;
 }
 
-/* Top nav (mobile) */
-.usa-nav.is-visible {
-    background-color: white;
-}
-.usa-nav.is-visible .usa-nav__menu {
-    background-color: #005ea2;
-}
-
 /* Sidebar  */
 .sidebar {
     background-color: #ffffff;
