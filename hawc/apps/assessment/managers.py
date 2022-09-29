@@ -7,8 +7,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, QuerySet
 from reversion.models import Version
 
-from ..common.helper import HAWCDjangoJSONEncoder
+from ..common.helper import HAWCDjangoJSONEncoder, map_enum
 from ..common.models import BaseManager
+from . import constants
 
 
 class AssessmentManager(BaseManager):
@@ -152,7 +153,6 @@ class AssessmentValueManager(BaseManager):
     def get_df(self) -> pd.DataFrame:
         """Get a dataframe of Assessment Values from given Queryset of Values."""
         mapping: dict[str, str] = {
-            "id": "id",
             "assessment_id": "assessment_id",
             "assessment__name": "assessment_name",
             "assessment__created": "assessment_created",
@@ -167,16 +167,18 @@ class AssessmentValueManager(BaseManager):
             "assessment__details__report_url": "report_url",
             "assessment__details__extra": "assessment_extra",
             "evaluation_type": "evaluation_type",
+            "id": "value_id",
             "system": "system",
             "value_type": "value_type",
             "value": "value",
-            "value_unit": "value_unit",
+            "value_unit__name": "value_unit",
             "basis": "basis",
             "pod_value": "pod_value",
-            "pod_unit": "pod_unit",
+            "pod_unit__name": "pod_unit",
             "species_studied": "species_studied",
             "duration": "duration",
-            "study": "study",
+            "study_id": "study_id",
+            "study__short_citation": "study_citation",
             "confidence": "confidence",
             "uncertainty": "uncertainty",
             "tumor_type": "tumor_type",
@@ -185,14 +187,16 @@ class AssessmentValueManager(BaseManager):
             "comments": "comments",
             "extra": "extra",
         }
-        # todo - write a map_enum(df, col, map) helper method to detail with this
-        # todo - get dose units name and study name for optional foreign keys
-        # todo - deal w/ json fields
-        # http://127.0.0.1:8000/admin/api/reports/values/?format=html
         data = self.select_related("assessment__details").values_list(*list(mapping.keys()))
-        return pd.DataFrame(data=data, columns=list(mapping.values())).sort_values(
-            ["assessment_id", "id"]
+        df = pd.DataFrame(data=data, columns=list(mapping.values())).sort_values(
+            ["assessment_id", "value_id"]
         )
+        map_enum(df, "project_status", constants.Status, replace=True)
+        map_enum(df, "peer_review_status", constants.PeerReviewType, replace=True)
+        map_enum(df, "evaluation_type", constants.EvaluationType, replace=True)
+        map_enum(df, "value_type", constants.ValueType, replace=True)
+        map_enum(df, "confidence", constants.Confidence, replace=True)
+        return df
 
 
 class AssessmentDetailManager(BaseManager):
