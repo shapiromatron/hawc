@@ -9,45 +9,57 @@ from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
-from ..assessment.lookups import DssToxIdLookup, EffectTagLookup, SpeciesLookup, StrainLookup
+from ..assessment.autocomplete import (
+    DSSToxAutocomplete,
+    EffectTagAutocomplete,
+    SpeciesAutocomplete,
+    StrainAutocomplete,
+)
 from ..assessment.models import DoseUnits
-from ..common import selectable
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
-from ..study.lookups import AnimalStudyLookup
+from ..common.autocomplete import (
+    AutocompleteChoiceField,
+    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
+)
+from ..common.forms import (
+    BaseFormHelper,
+    CopyAsNewSelectorForm,
+    QuillField,
+    form_actions_apply_filters,
+)
+from ..study.autocomplete import StudyAutocomplete
 from ..vocab.constants import VocabularyNamespace
-from . import constants, lookups, models
+from . import autocomplete, constants, models
 
 
 class ExperimentForm(ModelForm):
     class Meta:
         model = models.Experiment
         exclude = ("study",)
+        field_classes = {"description": QuillField}
+        widgets = {
+            "dtxsid": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
+            "chemical": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ExperimentAutocomplete, field="chemical"
+            ),
+            "cas": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ExperimentAutocomplete, field="cas"
+            ),
+            "chemical_source": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ExperimentAutocomplete, field="chemical_source"
+            ),
+            "guideline_compliance": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ExperimentAutocomplete, field="guideline_compliance"
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
-
-        self.fields["dtxsid"].widget = selectable.AutoCompleteSelectWidget(
-            lookup_class=DssToxIdLookup
-        )
-
-        self.fields["chemical"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.ExpChemicalLookup, allow_new=True
-        )
-
-        self.fields["cas"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.ExpCasLookup, allow_new=True
-        )
-
-        self.fields["chemical_source"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.ExpChemSourceLookup, allow_new=True
-        )
-
-        self.fields["guideline_compliance"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.ExpGlpLookup, allow_new=True
-        )
 
         # change checkbox to select box
         self.fields["has_multiple_generations"].widget = forms.Select(
@@ -62,8 +74,6 @@ class ExperimentForm(ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "form-control"
-
-        self.fields["description"].widget.attrs["rows"] = 4
 
         if self.instance.id:
             inputs = {
@@ -127,7 +137,8 @@ class ExperimentForm(ModelForm):
 
 class ExperimentSelectorForm(CopyAsNewSelectorForm):
     label = "Experiment"
-    lookup_class = lookups.ExperimentByStudyLookup
+    parent_field = "study_id"
+    autocomplete_class = autocomplete.ExperimentAutocomplete
 
 
 class AnimalGroupForm(ModelForm):
@@ -135,6 +146,7 @@ class AnimalGroupForm(ModelForm):
         model = models.AnimalGroup
         exclude = ("experiment", "dosing_regime", "generation", "parents")
         labels = {"lifestage_assessed": "Lifestage at assessment"}
+        field_classes = {"comments": QuillField}
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
@@ -165,8 +177,6 @@ class AnimalGroupForm(ModelForm):
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment
         )
-
-        self.fields["comments"].widget.attrs["rows"] = 4
 
     @property
     def helper(self):
@@ -228,7 +238,8 @@ class AnimalGroupForm(ModelForm):
 
 class AnimalGroupSelectorForm(CopyAsNewSelectorForm):
     label = "Animal group"
-    lookup_class = lookups.AnimalGroupByExperimentLookup
+    parent_field = "experiment_id"
+    autocomplete_class = autocomplete.AnimalGroupAutocomplete
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):
@@ -252,14 +263,13 @@ class DosingRegimeForm(ModelForm):
     class Meta:
         model = models.DosingRegime
         exclude = ("dosed_animals",)
+        field_classes = {"description": QuillField}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
-
-        self.fields["description"].widget.attrs["rows"] = 4
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs["class"] = "form-control"
 
@@ -359,14 +369,6 @@ def dosegroup_formset_factory(groups, num_dose_groups):
 
 
 class EndpointForm(ModelForm):
-
-    effects = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=EffectTagLookup,
-        required=False,
-        help_text="Any additional descriptive-tags used to categorize the outcome",
-        label="Additional tags",
-    )
-
     class Meta:
         model = models.Endpoint
         fields = (
@@ -413,12 +415,22 @@ class EndpointForm(ModelForm):
             "organ_term": forms.HiddenInput,
             "effect_term": forms.HiddenInput,
             "effect_subtype_term": forms.HiddenInput,
+            "effects": AutocompleteSelectMultipleWidget(autocomplete_class=EffectTagAutocomplete),
+            "statistical_test": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.EndpointAutocomplete, field="statistical_test"
+            ),
         }
+        field_classes = {"results_notes": QuillField, "endpoint_notes": QuillField}
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop("parent", None)
         assessment = kwargs.pop("assessment", None)
         super().__init__(*args, **kwargs)
+
+        self.fields["effects"].label = "Additional tags"
+        self.fields[
+            "effects"
+        ].help_text = "Any additional descriptive-tags used to categorize the outcome"
 
         self.fields["NOEL"].widget = forms.Select()
         self.fields["LOEL"].widget = forms.Select()
@@ -429,26 +441,6 @@ class EndpointForm(ModelForm):
         self.fields["NOEL"].help_text = noel_names.noel_help_text
         self.fields["LOEL"].label = noel_names.loel
         self.fields["LOEL"].help_text = noel_names.loel_help_text
-
-        self.fields["system"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.EndpointSystemLookup, allow_new=True
-        )
-
-        self.fields["organ"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.EndpointOrganLookup, allow_new=True
-        )
-
-        self.fields["effect"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.EndpointEffectLookup, allow_new=True
-        )
-
-        self.fields["effect_subtype"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.EndpointEffectSubtypeLookup, allow_new=True
-        )
-
-        self.fields["statistical_test"].widget = selectable.AutoCompleteWidget(
-            lookup_class=lookups.EndpointStatisticalTestLookup, allow_new=True
-        )
 
         if animal_group:
             self.instance.animal_group = animal_group
@@ -697,11 +689,8 @@ EndpointGroupFormSet = modelformset_factory(
 
 class EndpointSelectorForm(CopyAsNewSelectorForm):
     label = "Endpoint"
-    lookup_class = lookups.EndpointByStudyLookup
-
-
-class UploadFileForm(forms.Form):
-    file = forms.FileField()
+    parent_field = "animal_group__experiment__study_id"
+    autocomplete_class = autocomplete.EndpointAutocomplete
 
 
 class EndpointFilterForm(forms.Form):
@@ -723,51 +712,59 @@ class EndpointFilterForm(forms.Form):
         ("animal_group__experiment__chemical", "chemical"),
     ]
 
-    studies = selectable.AutoCompleteSelectMultipleField(
+    studies = AutocompleteMultipleChoiceField(
+        autocomplete_class=StudyAutocomplete,
         label="Study reference",
-        lookup_class=AnimalStudyLookup,
         help_text="ex: Smith et al. 2010",
         required=False,
     )
 
     chemical = forms.CharField(
         label="Chemical name",
-        widget=selectable.AutoCompleteWidget(lookups.ExpChemicalLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExperimentAutocomplete, field="chemical"
+        ),
         help_text="ex: sodium",
         required=False,
     )
 
     cas = forms.CharField(
         label="CAS",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedExperimentCASLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExperimentAutocomplete, field="cas"
+        ),
         help_text="ex: 107-02-8",
         required=False,
     )
 
     lifestage_exposed = forms.CharField(
         label="Lifestage exposed",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedAnimalGroupLifestageExposedLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.AnimalGroupAutocomplete, field="lifestage_exposed"
+        ),
         help_text="ex: pup",
         required=False,
     )
 
     lifestage_assessed = forms.CharField(
         label="Lifestage assessed",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedAnimalGroupLifestageAssessedLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.AnimalGroupAutocomplete, field="lifestage_assessed"
+        ),
         help_text="ex: adult",
         required=False,
     )
 
-    species = selectable.AutoCompleteSelectField(
+    species = AutocompleteChoiceField(
+        autocomplete_class=SpeciesAutocomplete,
         label="Species",
-        lookup_class=SpeciesLookup,
         help_text="ex: Mouse",
         required=False,
     )
 
-    strain = selectable.AutoCompleteSelectField(
+    strain = AutocompleteChoiceField(
+        autocomplete_class=StrainAutocomplete,
         label="Strain",
-        lookup_class=StrainLookup,
         help_text="ex: B6C3F1",
         required=False,
     )
@@ -787,42 +784,52 @@ class EndpointFilterForm(forms.Form):
 
     name = forms.CharField(
         label="Endpoint name",
-        widget=selectable.AutoCompleteWidget(lookups.EndpointByAssessmentTextLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.EndpointAutocomplete, field="name"
+        ),
         help_text="ex: heart weight",
         required=False,
     )
 
     system = forms.CharField(
         label="System",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointSystemLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.EndpointAutocomplete, field="system"
+        ),
         help_text="ex: endocrine",
         required=False,
     )
 
     organ = forms.CharField(
         label="Organ",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointOrganLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.EndpointAutocomplete, field="organ"
+        ),
         help_text="ex: pituitary",
         required=False,
     )
 
     effect = forms.CharField(
         label="Effect",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointEffectLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.EndpointAutocomplete, field="effect"
+        ),
         help_text="ex: alanine aminotransferase (ALT)",
         required=False,
     )
 
     effect_subtype = forms.CharField(
         label="Effect Subtype",
-        widget=selectable.AutoCompleteWidget(lookups.RelatedEndpointEffectSubtypeLookup),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.EndpointAutocomplete, field="effect_subtype"
+        ),
         help_text="ex: ",
         required=False,
     )
 
     tags = forms.CharField(
         label="Tags",
-        widget=selectable.AutoCompleteWidget(EffectTagLookup),
+        widget=AutocompleteTextWidget(autocomplete_class=EffectTagAutocomplete, field="name"),
         help_text="ex: antibody response",
         required=False,
     )
@@ -842,16 +849,26 @@ class EndpointFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         noel_names = assessment.get_noel_names()
 
-        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(assessment.id)
+        self.fields["studies"].set_filters({"assessment_id": assessment.id, "bioassay": True})
+        self.fields["species"].set_filters(
+            {"animalgroup__experiment__study__assessment_id": assessment.id}
+        )
+        self.fields["strain"].set_filters(
+            {"animalgroup__experiment__study__assessment_id": assessment.id}
+        )
+
         for field in self.fields:
-            if field not in (
-                "sex",
-                "data_extracted",
-                "dose_units",
-                "order_by",
-                "paginate_by",
-            ):
-                self.fields[field].widget.update_query_parameters({"related": assessment.id})
+            widget = self.fields[field].widget
+            if field in ("chemical", "cas"):
+                widget.update_filters({"study__assessment_id": assessment.id})
+            elif field in ("lifestage_exposed", "lifestage_assessed"):
+                widget.update_filters({"experiment__study__assessment_id": assessment.id})
+            elif field in ("name", "system", "organ", "effect", "effect_subtype"):
+                widget.update_filters(
+                    {"animal_group__experiment__study__assessment_id": assessment.id}
+                )
+
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(assessment.id)
 
         for i, (k, v) in enumerate(self.fields["order_by"].choices):
             if v == "<NOEL-NAME>":

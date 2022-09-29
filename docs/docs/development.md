@@ -79,7 +79,7 @@ createdb -T template0 -E UTF8 hawc-test
 
 ## Running the application
 
-After initial setup, here are the steps needed to run the application in development.
+After installing hawc above, you can access the hawc application management commands using the `manage` command in your terminal. You can also use `manage.py` on mac or linux; this was done to mirror the django [manage.py](https://docs.djangoproject.com/en/4.1/ref/django-admin/) convention.
 
 ### Linux/Mac
 
@@ -94,7 +94,7 @@ source ./venv/bin/activate
 make sync-dev
 
 # run development webserver
-manage.py runserver
+manage runserver
 ```
 
 In a second terminal, run the node development webserver for javascript:
@@ -127,7 +127,7 @@ pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 make sync-dev
 
 :: run development webserver
-manage.py runserver
+manage runserver
 ```
 
 In a second terminal, run the node development webserver for javascript:
@@ -245,12 +245,12 @@ export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
 
 # load existing test
 createdb hawc-fixture
-manage.py load_test_db
+manage load_test_db
 
 # now make edits to the database using the GUI or via command line
 
 # export database
-manage.py dump_test_db
+manage dump_test_db
 ```
 
 ```batch title="Windows"
@@ -259,12 +259,12 @@ set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
 
 :: load existing test
 createdb -T template0 -E UTF8 hawc-fixture
-manage.py load_test_db
+manage load_test_db
 
 :: now make edits to the database using the GUI or via command line
 
 :: export database
-manage.py dump_test_db
+manage dump_test_db
 ```
 
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database with the command ``dropdb hawc-test``.
@@ -294,7 +294,7 @@ Here's how to create a database dump:
 
 ```bash
 # anonymize data
-manage.py scrub_db
+manage scrub_db
 
 # dump in gzipped format
 pg_dump -U hawc hawc | gzip > db_dump.sql.gz
@@ -462,6 +462,10 @@ npm run uswds-copy-assets
 
 After running, manually delete unused fonts and images.
 
+A few major revisions were made to the compiled USWDS assets, most notably:
+
+- Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
+
 ### Materialized views
 
 HAWC is in essence two different systems with very different data requirements:
@@ -475,10 +479,10 @@ views are refreshed daily via a persistent celery task, as well as up to every f
 flag for updating the data is set.
 
 In development however, we generally do not run the celery task service in the backend. Thus, to
-trigger a materialized view rest, you can use a manage.py command:
+trigger a materialized view rest, you can use a `manage` command:
 
 ```bash
-manage.py refresh_views
+manage refresh_views
 ```
 
 You may need to do this periodically if your data is stale.

@@ -14,12 +14,13 @@ from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
+from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
@@ -27,7 +28,6 @@ from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -229,30 +229,6 @@ class Search(models.Model):
         return (
             self.search_type == constants.SearchType.IMPORT and self.slug == self.MANUAL_IMPORT_SLUG
         )
-
-    def clean(self):
-        # unique_together constraint checked above;
-        # not done in form because assessment is excluded
-        pk_exclusion = {}
-        errors = {}
-        if self.pk:
-            pk_exclusion["pk"] = self.pk
-        if (
-            Search.objects.filter(assessment=self.assessment, title=self.title)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            errors["title"] = ASSESSMENT_UNIQUE_MESSAGE
-        if (
-            Search.objects.filter(assessment=self.assessment, slug=self.slug)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            errors["slug"] = ASSESSMENT_UNIQUE_MESSAGE
-        if errors:
-            raise ValidationError(errors)
 
     def get_absolute_url(self):
         return reverse("lit:search_detail", args=(self.assessment_id, self.slug))
@@ -707,6 +683,11 @@ class Identifiers(models.Model):
             ).values_list("unique_id", "id")
         }
 
+    def save(self, *args, **kwargs):
+        if self.database == constants.ReferenceDatabase.DOI:
+            self.unique_id = self.unique_id.lower()
+        return super(Identifiers, self).save(*args, **kwargs)
+
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"
@@ -1041,3 +1022,6 @@ class Reference(models.Model):
             logger.write(
                 f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
             )
+
+
+reversion.register(Reference)

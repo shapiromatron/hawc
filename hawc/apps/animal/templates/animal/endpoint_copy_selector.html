@@ -2,11 +2,6 @@
 
 
 {% load add_class %}
-{% load selectable_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
 
@@ -30,16 +25,16 @@
     </div>
   </div>
   <div class="form-group form-row">
-    <label class="col-md-2 col-form-label" for="sort_by">Sort by:</label>
+    <label class="col-md-2 col-form-label" for="order_by">Order by:</label>
     <div class="col-md-5">
-      <select class="search_trigger form-control" name="sort_by">
+      <select class="search_trigger form-control" name="order_by">
         <option value="name">Endpoint Name</option>
         <option value="created">Date Created</option>
         <option value="last_updated">Date Updated</option>
       </select>
     </div>
     <div class="col-md-5">
-      <select class="search_trigger form-control" name="sort_direction">
+      <select class="search_trigger form-control" name="order_direction">
         <option value="">Ascending</option>
         <option value="-">Descending</option>
       </select>
@@ -50,29 +45,10 @@
 {% endblock content %}
 
 {% block extrajs %}
-  {{ form.media }}
   <script type="text/javascript">
-    let rerunSearch = function() {
-        // rerun whenever settings change and an item isn't selected
-        if ($("#id_selector_0").val() != "") {
-          $("#id_selector_0").djselectable('search').focus();
-        }
-      }, attachCustomParamsToSearchQuery = function(query) {
-        var searchFields = $("input[name='search_fields']:checked").map(function () {
-            return $(this).val();
-          }).get().join(","),
-          sortOrder = $("select[name='sort_direction']").val(),
-          sortField = $("select[name='sort_by']").val();
-        query.search_fields = searchFields;
-        query.order_by = sortOrder + sortField;
-      },
-      url = "{% url 'animal:endpoint_new' object.pk %}";
-
     $(document).ready(function(){
-      new window.app.HAWCUtils.InitialForm({form: $('form'), base_url: url});
+      new window.app.HAWCUtils.InitialForm({form: $('form'), base_url: "{% url 'animal:endpoint_new' object.pk %}" });
       $("#endpoint_search_additions").detach().appendTo($("#copy-form fieldset")).removeClass("hidden");
-      $("#id_selector_0").djselectable('option', 'prepareQuery', attachCustomParamsToSearchQuery);
-      $(".search_trigger").change(rerunSearch);
     });
   </script>
 {% endblock extrajs %}

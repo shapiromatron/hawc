@@ -699,6 +699,8 @@ class Migration(migrations.Migration):
                     ("RT", "Randomized controlled trial"),
                     ("NT", "Non-randomized controlled trial"),
                     ("CS", "Cross-sectional"),
+                    ("EC", "Ecological"),
+                    ("OT", "Other"),
                 ],
                 help_text="Choose the most specific description of study design.<span class='important-note'>This field is commonly used in HAWC visualizations</span>",
                 max_length=2,

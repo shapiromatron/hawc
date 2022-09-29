@@ -318,7 +318,8 @@ class AnimalGroup(models.Model):
     def get_doses_json(self, json_encode=True):
         if not hasattr(self, "doses"):
             self.doses = [{"error": "no dosing regime"}]
-            self.doses = self.dosing_regime.get_doses_json(False)
+            if self.dosing_regime:
+                self.doses = self.dosing_regime.get_doses_json(False)
         if json_encode:
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses
@@ -381,6 +382,12 @@ class AnimalGroup(models.Model):
         Endpoint.delete_caches(
             Endpoint.objects.filter(animal_group__in=ids).values_list("id", flat=True)
         )
+
+    def can_delete(self) -> bool:
+        # can only be deleted if dosing regime is not associated with other animal groups
+        if not self.dosing_regime or self.dosing_regime.dosed_animals_id != self.id:
+            return True
+        return self.dosing_regime.can_delete()
 
     def copy_across_assessments(self, cw, skip_siblings: bool = False):
         children = list(self.endpoints.all().order_by("id"))
@@ -544,17 +551,25 @@ class DosingRegime(models.Model):
     @staticmethod
     def flat_complete_data_row(ser):
         return (
-            ser["id"],
-            AnimalGroup.get_relation_id(ser["dosed_animals"]),
-            ser["route_of_exposure"],
-            ser["duration_exposure"],
-            ser["duration_exposure_text"],
-            ser["duration_observation"],
-            ser["num_dose_groups"],
-            ser["positive_control"],
-            ser["negative_control"],
-            cleanHTML(ser["description"]),
+            (
+                ser["id"],
+                AnimalGroup.get_relation_id(ser["dosed_animals"]),
+                ser["route_of_exposure"],
+                ser["duration_exposure"],
+                ser["duration_exposure_text"],
+                ser["duration_observation"],
+                ser["num_dose_groups"],
+                ser["positive_control"],
+                ser["negative_control"],
+                cleanHTML(ser["description"]),
+            )
+            if ser
+            else (None for _ in range(10))
         )
+
+    def can_delete(self) -> bool:
+        # can delete only if no animals others than those dosed are related
+        return self.animalgroup_set.exclude(id=self.dosed_animals_id).count() == 0
 
     def get_doses_json(self, json_encode=True):
         doses = []
@@ -1008,11 +1023,11 @@ class Endpoint(BaseEndpoint):
                 "vocabulary": assessment.vocabulary,
                 "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
-                    "system": form["system"].value(),
-                    "organ": form["organ"].value(),
-                    "effect": form["effect"].value(),
-                    "effect_subtype": form["effect_subtype"].value(),
-                    "name": form["name"].value(),
+                    "system": form["system"].value() or "",
+                    "organ": form["organ"].value() or "",
+                    "effect": form["effect"].value() or "",
+                    "effect_subtype": form["effect_subtype"].value() or "",
+                    "name": form["name"].value() or "",
                     "system_term_id": form["system_term"].value(),
                     "organ_term_id": form["organ_term"].value(),
                     "effect_term_id": form["effect_term"].value(),
