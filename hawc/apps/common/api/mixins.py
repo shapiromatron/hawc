@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import DataError
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_str
 from rest_framework import status
+from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.response import Response
 
 
@@ -67,7 +69,13 @@ class ListUpdateModelMixin:
         update_bulk_dict = {}
         for field_name, field in serializer.fields.items():
             if field_name in data and not field.read_only:
-                update_bulk_dict[field.source or field_name] = data[field_name]
+                value = data[field_name]
+                if validator := getattr(serializer, f"validate_{field_name}", None):
+                    try:
+                        value = validator(value)
+                    except ValidationError as err:
+                        raise DrfValidationError(err)
+                update_bulk_dict[field.source or field_name] = value
         return update_bulk_dict
 
     def pre_save_bulk(self, queryset, update_bulk_dict):

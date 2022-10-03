@@ -2,6 +2,7 @@ import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import Alert from "shared/components/Alert";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import TextInput from "shared/components/TextInput";
 import TextAreaInput from "shared/components/TextAreaInput";
@@ -65,6 +66,9 @@ class DjangoForm extends Component {
                     errors={formErrors.published}
                     helpText="If published (and your assessment is public), the table can be viewed by the public"
                 />
+                {formErrors.non_field_errors ? (
+                    <Alert message={formErrors.non_field_errors} />
+                ) : null}
             </div>
         );
     }

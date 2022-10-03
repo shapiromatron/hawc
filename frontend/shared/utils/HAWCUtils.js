@@ -44,11 +44,11 @@ class HAWCUtils {
     }
 
     static InitialForm(config) {
-        var selector_val = config.form.find("#id_selector_1"),
+        var selector = config.form.find("select[name='selector']"),
             submitter = config.form.find("#submit_form");
 
         submitter.on("click", function() {
-            var val = parseInt(selector_val.val(), 10);
+            var val = parseInt(selector.select2("data")[0].id);
             if (val) {
                 submitter.attr("href", `${config.base_url}?initial=${val}`);
                 return true;

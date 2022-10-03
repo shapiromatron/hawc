@@ -246,7 +246,7 @@ class TestReferenceForm:
         assert form.is_valid() is False
         assert form.errors["doi_id"][0] == 'Invalid DOI; should be in format "10.1234/s123456"'
 
-        # make sure pubmed is unchanged by default
+        # make sure doi is unchanged by default
         form = ReferenceForm(instance=ref, data=data)
         assert form.fields["doi_id"].initial == doi
         assert form.is_valid() is True
@@ -254,7 +254,15 @@ class TestReferenceForm:
         ref.refresh_from_db()
         assert ref.get_doi_id() == doi
 
-        # make sure pubmed can be removed
+        # make sure doi is transformed to lowercase
+        form = ReferenceForm(instance=ref, data={**data, "doi_id": doi.upper()})
+        assert form.fields["doi_id"].initial == doi
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_doi_id() == doi
+
+        # make sure doi can be removed
         form = ReferenceForm(instance=ref, data={**data, "doi_id": None})
         assert form.fields["doi_id"].initial == doi
         assert form.is_valid() is True
@@ -262,7 +270,7 @@ class TestReferenceForm:
         ref.refresh_from_db()
         assert ref.get_doi_id() is None
 
-        # make sure pubmed can be added
+        # make sure doi can be added
         form = ReferenceForm(instance=ref, data=data)
         assert form.fields["doi_id"].initial is None
         assert form.is_valid() is True
@@ -270,7 +278,7 @@ class TestReferenceForm:
         ref.refresh_from_db()
         assert ref.get_doi_id() == doi
 
-        # existing pubmed validation check
+        # existing doi validation check
         form = ReferenceForm(instance=Reference.objects.get(id=6), data=data)
         assert form.is_valid() is False
         assert (

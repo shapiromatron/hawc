@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
+router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
 router.register(r"design", api.Design, basename="design")
 
 app_name = "epiv2"

@@ -1,22 +1,16 @@
 {% extends 'crumbless.html' %}
 
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
   {% crispy form %}
 {% endblock content %}
 
 {% block extrajs %}
-  {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
-      $('#id_name').on('keyup', function(){
-        $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val(),128));
+      $('#id_name').on('select2:close', function(){
+        $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()||"",128));
       });
     });
   </script>
