@@ -72,3 +72,8 @@ table td {
 a.dropdown-toggle:not([href])::after {
     display: inline-block !important;
 }
+
+/* autocomplete dropdown */
+.select2-results__options {
+    width: 100%;
+}
