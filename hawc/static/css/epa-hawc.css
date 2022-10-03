@@ -59,22 +59,7 @@ header.l-header * {
     color: #005ea2 !important;
     font-weight: 700 !important;
 }
-/* table */
-table td {
-    background-color: unset !important;
 
-}
-/* dropdown */
-a.dropdown-toggle:not([href])::after {
-    display: inline-block !important;
-}
-.dropdown-menu {
-    transition-duration: unset;
-    -webkit-transition-duration: unset;
-    -webkit-transition-timing-function: unset;
-    transition-property: none;
-    transition-timing-function: unset;
-}
 
 /* table */
 table td {
