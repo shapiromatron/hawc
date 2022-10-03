@@ -7,22 +7,22 @@
 {% block sidebar_outer %}
 <div class="sidebar">
     <div class="dropdown d-block d-lg-none px-1 pt-3">
-        <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <button class="btn {% if flavor == 'PRIME' %} text-white {% endif %}" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i class="fa fa-bars" title="Mobile navigation panel"></i>
         </button>
-        <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
+        <div class="dropdown-menu {% if flavor == 'PRIME' %} bg-dark {% else %} bg-light {% endif %} py-0" aria-labelledby="assessmentToggleMenu">
             {% if flavor == "EPA" %}
-            {% include "includes/epa/epa_sidebar_links.html" %}
+            {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav mb-0 border-0" sub_ul="usa-sidenav__sublist" %}
             {% else %}
-            {% include "includes/_sidebar_links.html" %}
+            {% include "includes/sidebar.html"  with li_class="nav-item" a_class="nav-link" ul_class="nav flex-column" sub_ul="nav flex-column ml-3" %}
             {% endif %}
         </div>
     </div>
-    <nav class="nav flex-column pt-3 d-none d-lg-block">
+    <nav class="nav flex-column pt-2 d-none d-lg-block">
         {% if flavor == "EPA" %}
-        {% include "includes/epa/epa_sidebar_links.html" %}
+        {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav" sub_ul="usa-sidenav__sublist" %}
         {% else %}
-        {% include "includes/_sidebar_links.html" %}
+        {% include "includes/sidebar.html"  with li_class="nav-item" a_class="nav-link" ul_class="nav flex-column" sub_ul="nav flex-column ml-3" %}
         {% endif %}
     </nav>
 </div>

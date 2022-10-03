@@ -4,28 +4,15 @@
 <div class="sidebar">
     {% if flavor == "EPA" %}
     <div class="dropdown d-block d-lg-none px-1 pt-3">
-        <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <button class="btn" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i class="fa fa-bars" title="Mobile navigation panel"></i>
         </button>
-        <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
-            {% if flavor == "EPA" %}
-                {% include "includes/epa/epa_sidebar_links.html" %}
-            {% else %}
-                {% include "includes/_sidebar_links.html" %}
-            {% endif %}
+        <div class="dropdown-menu bg-light py-0" aria-labelledby="assessmentToggleMenu">
+            {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav mb-0 border-0" sub_ul="usa-sidenav__sublist" %}
         </div>
     </div>
-    <nav class="nav flex-column pt-3 d-none d-lg-block">
-        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">HAWC Home</a></li>
-        <li class="nav-item">
-            {% if user.is_authenticated %}
-            <a class="nav-link" href="{% url 'portal' %}">Portal</a>
-            {% else %}
-            <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
-            {% endif %}
-        </li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About HAWC</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">HAWC Resources</a></li>
+    <nav class="nav flex-column pt-2 d-none d-lg-block">
+        {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav" sub_ul="usa-sidenav__sublist" %}
     </nav>
     {% endif %}
 </div>
