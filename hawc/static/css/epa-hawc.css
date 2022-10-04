@@ -43,28 +43,13 @@ header.l-header * {
 .usa-sidenav a:not(.usa-button):not(.usa-current) {
     color: #565c65 !important;
 }
-.sidebar .nav-item.nav-link{
-    color: black !important;
-    font-weight: bold;
-}
-.sidebar .nav-item .nav-link, .sidebar .usa-sidenav .usa-sidenav__item{
-    color: black !important;
+.sidebar .usa-sidenav .usa-sidenav__item {
     font-weight: normal;
 }
-.sidebar .nav-item .nav-link:hover,
 .sidebar .usa-sidenav .usa-sidenav__item .menu__link:hover {
     color: #0071bc !important;
     background-color: #f1f1f1;
 }
-.usa--sidenav .menu__link {
-    color: #005ea2 !important;
-}
-.usa-sidenav .usa-current {
-    position: relative !important;
-    color: #005ea2 !important;
-    font-weight: 700 !important;
-}
-
 
 /* table */
 table td {
