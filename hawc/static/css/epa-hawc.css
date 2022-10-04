@@ -31,36 +31,24 @@ header.l-header * {
     text-decoration: none;
 }
 
+/* override environment banner position */
+.env-banner {
+    margin: 0 10% 0 70%;
+}
+
 /* Sidebar  */
 .sidebar {
     background-color: #ffffff;
 }
-.sidebar .nav-item.nav-link {
-    color: black !important;
-    font-weight: bold;
+.usa-sidenav a:not(.usa-button):not(.usa-current) {
+    color: #565c65 !important;
 }
-.sidebar .nav-item .nav-link {
-    color: black !important;
+.sidebar .usa-sidenav .usa-sidenav__item {
     font-weight: normal;
 }
-.sidebar .nav-item .nav-link:hover {
+.sidebar .usa-sidenav .usa-sidenav__item .menu__link:hover {
     color: #0071bc !important;
     background-color: #f1f1f1;
-}
-.sidebar li {
-    border-top: 1px solid #5b616b;
-}
-.sidebar li:first-of-type {
-    border-top: 0;
-}
-.sidebar .bg-primary {
-    background-color: white !important;
-}
-.sidebar .btn {
-    color: black !important;
-}
-.sidebar .dropdown-menu {
-    background-color: white !important;
 }
 
 /* table */
@@ -71,4 +59,9 @@ table td {
 /* caret on dropdown menu */
 a.dropdown-toggle:not([href])::after {
     display: inline-block !important;
+}
+
+/* autocomplete dropdown */
+.select2-results__options {
+    width: 100%;
 }
