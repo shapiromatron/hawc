@@ -6,7 +6,7 @@
     text-align: center;
     text-transform: uppercase;
     opacity: 80%;
-    margin: 0 10% 0 70%;
+    margin: 0 40%;
 }
 
 /* main  */
@@ -39,6 +39,13 @@
 }
 .sidebar .nav {
     font-weight: bold;
+}
+.sidebar .nav.flex-column .nav-item .nav-link:hover {
+    background-color: #252b31;
+}
+.nav.flex-column.sub-list .nav-item .nav-link {
+    padding-left: 2rem;
+    font-weight: normal;
 }
 /* end sidebar */
 
