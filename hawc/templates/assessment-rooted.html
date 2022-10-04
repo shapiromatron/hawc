@@ -5,19 +5,7 @@
 {% endblock title %}
 
 {% block sidebar_outer %}
-<div class="sidebar">
-    <div class="dropdown d-block d-lg-none px-1 pt-3">
-        <button class="btn text-white" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="fa fa-bars" title="Mobile navigation panel"></i>
-        </button>
-        <div class="dropdown-menu bg-dark py-0" aria-labelledby="assessmentToggleMenu">
-            {% include "includes/_sidebar_links.html" %}
-        </div>
-    </div>
-    <nav class="nav flex-column pt-3 d-none d-lg-block">
-        {% include "includes/_sidebar_links.html" %}
-    </nav>
-</div>
+    {% include "includes/sidebar_container.html" %}
 {% endblock sidebar_outer %}
 
 {% block breadcrumbs_outer %}
