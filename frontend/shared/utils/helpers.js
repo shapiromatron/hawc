@@ -341,6 +341,7 @@ const helpers = {
         // scroll into view if not currently visible; can optionally specify an offset too.
         // eslint-disable-next-line react/no-find-dom-node
         const node = ReactDOM.findDOMNode(reactNode);
+        options = options || {};
         if (node) {
             setTimeout(() => {
                 const rect = node.getBoundingClientRect(),

@@ -11,7 +11,7 @@ class UserAutocomplete extends Component {
                 display: task.owner ? task.owner.full_name : null,
                 id: task.owner ? task.owner.id : null,
             },
-            submitUrl = `${url}?related=${task.study.assessment.id}`;
+            submitUrl = `${url}?assessment_id=${task.study.assessment.id}`;
 
         return (
             <div className="form-group">

@@ -14,7 +14,7 @@ import "./Autocomplete/Autocomplete.css";
 
 class AutocompleteSelectableText extends Component {
     /*
-    Autocomplete widget; works with `hawc.apps.common.lookups.DistinctStringLookup`
+    Autocomplete widget; works with django-autocomplete-light
     */
 
     constructor(props) {
@@ -33,11 +33,11 @@ class AutocompleteSelectableText extends Component {
             return;
         }
 
-        const queryUrl = `${url}&term=${value}`;
+        const queryUrl = `${url}&q=${value}`;
         fetch(queryUrl, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                const values = json.data.map(d => d.value);
+                const values = json.results.map(d => d.text);
                 this.setState({suggestions: values});
             });
     }

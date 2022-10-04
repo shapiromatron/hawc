@@ -7,9 +7,38 @@ from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
 from django.template.loader import render_to_string
 
-from . import selectable, validators
+from . import autocomplete, validators, widgets
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
+
+
+def check_unique_for_assessment(form: forms.ModelForm, field: str) -> Any:
+    """Validate that item is unique for an assessment, and return the value.
+
+    The `unique_together` restraints are normally checked in a ModelForm if both fields are
+    available on that form; however, we generally dont expose the assessment ID as an input
+    on the ModelForm for many models. This method can be used instead in the form clean methods.
+
+    Args:
+        form (forms.ModelForm): the bound form
+        field (str): the field to check
+
+    Raises:
+        forms.ValidationError: If value is not unique for an assessment
+
+    Returns:
+        Any: The cleaned value
+    """
+
+    Model = form.instance.__class__
+    value = form.cleaned_data[field]
+    filters = {"assessment_id": form.instance.assessment.id, field: value}
+    qs = Model.objects.filter(**filters)
+    if form.instance.id:
+        qs = qs.exclude(id=form.instance.id)
+    if qs.exists():
+        raise forms.ValidationError(ASSESSMENT_UNIQUE_MESSAGE)
+    return value
 
 
 def form_actions_create_or_close():
@@ -32,6 +61,7 @@ class BaseFormHelper(cf.FormHelper):
 
     error_text_inline = False
     use_custom_control = True
+    include_media = False
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -118,11 +148,12 @@ class BaseFormHelper(cf.FormHelper):
 
 class CopyAsNewSelectorForm(forms.Form):
     label = None
-    lookup_class = None
+    parent_field = None
+    autocomplete_class = None
 
     def __init__(self, *args, **kwargs):
         parent_id = kwargs.pop("parent_id")
-        super(CopyAsNewSelectorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.setupSelector(parent_id)
 
     @property
@@ -130,13 +161,11 @@ class CopyAsNewSelectorForm(forms.Form):
         return BaseFormHelper(self)
 
     def setupSelector(self, parent_id):
-        fld = selectable.AutoCompleteSelectField(
-            lookup_class=self.lookup_class,
-            allow_new=False,
-            label=self.label,
-            widget=selectable.AutoComboboxSelectWidget,
+        filters = {self.parent_field: parent_id}
+        fld = autocomplete.AutocompleteChoiceField(
+            autocomplete_class=self.autocomplete_class, filters=filters, label=self.label
         )
-        fld.widget.update_query_parameters({"related": parent_id})
+        fld.widget.forward = ["search_fields", "order_by", "order_direction"]
         fld.widget.attrs["class"] = "col-md-10"
         self.fields["selector"] = fld
 
@@ -222,3 +251,26 @@ class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         if value is None:
             return []
         return value.split(",")
+
+
+class QuillField(forms.CharField):
+    """
+    Quill text editor input.
+    Cleans HTML and validates urls.
+    """
+
+    widget = widgets.QuillWidget
+
+    def __init__(self, *args, **kwargs):
+        # Force use of Quill widget
+        kwargs["widget"] = self.widget
+        super().__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        value = super().to_python(value)
+        return validators.clean_html(value) if value else value
+
+    def validate(self, value):
+        super().validate(value)
+        if value:
+            validators.validate_hyperlinks(value)

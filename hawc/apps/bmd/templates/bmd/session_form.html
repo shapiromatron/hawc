@@ -1,11 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
     <a class="btn btn-primary float-right" href="{{object.get_absolute_url}}">Cancel</a>

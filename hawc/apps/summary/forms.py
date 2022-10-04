@@ -9,30 +9,18 @@ from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
-from ..animal.lookups import EndpointByAssessmentLookup
+from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
-from ..common import selectable
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
+from ..common import validators
+from ..common.autocomplete import AutocompleteChoiceField
+from ..common.forms import BaseFormHelper, check_unique_for_assessment, form_actions_apply_filters
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
-from ..study.lookups import StudyLookup
+from ..study.autocomplete import StudyAutocomplete
 from ..study.models import Study
-from . import constants, lookups, models
-
-
-def clean_slug(form):
-    # ensure unique slug for assessment
-    slug = form.cleaned_data.get("slug", None)
-    if (
-        form.instance.__class__.objects.filter(assessment_id=form.instance.assessment_id, slug=slug)
-        .exclude(id=form.instance.id)
-        .count()
-        > 0
-    ):
-        raise forms.ValidationError(ASSESSMENT_UNIQUE_MESSAGE)
-    return slug
+from . import autocomplete, constants, models
 
 
 class PrefilterMixin:
@@ -476,6 +464,12 @@ class SummaryTableForm(forms.ModelForm):
             self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
 
+    def clean_slug(self):
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
 
 class SummaryTableSelectorForm(forms.Form):
     table_type = forms.IntegerField(widget=forms.Select(choices=constants.TableType.choices))
@@ -600,7 +594,15 @@ class VisualForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
 
 
 class VisualModelChoiceField(forms.ModelChoiceField):
@@ -1056,7 +1058,15 @@ class DataPivotForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
 
 
 class DataPivotUploadForm(DataPivotForm):
@@ -1098,17 +1108,16 @@ class DataPivotUploadForm(DataPivotForm):
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
-
     prefilter_include = ("study", "bioassay", "epi", "invitro", "effect_tags")
 
     class Meta:
         model = models.DataPivotQuery
         fields = (
+            "title",
+            "slug",
             "evidence_type",
             "export_style",
-            "title",
             "preferred_units",
-            "slug",
             "settings",
             "caption",
             "published",
@@ -1202,27 +1211,29 @@ class SmartTagForm(forms.Form):
         ("data_pivot", "Data Pivot"),
     )
     resource = forms.ChoiceField(choices=RESOURCE_CHOICES)
-    study = selectable.AutoCompleteSelectField(
-        lookup_class=StudyLookup,
+    study = AutocompleteChoiceField(
+        autocomplete_class=StudyAutocomplete,
         help_text="Type a few characters of the study name, then click to select.",
     )
-    endpoint = selectable.AutoCompleteSelectField(
-        lookup_class=EndpointByAssessmentLookup,
+    endpoint = AutocompleteChoiceField(
+        autocomplete_class=EndpointAutocomplete,
         help_text="Type a few characters of the endpoint name, then click to select.",
     )
-    visual = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.VisualLookup,
+    visual = AutocompleteChoiceField(
+        autocomplete_class=autocomplete.VisualAutocomplete,
         help_text="Type a few characters of the visual name, then click to select.",
     )
-    data_pivot = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.DataPivotLookup,
+    data_pivot = AutocompleteChoiceField(
+        autocomplete_class=autocomplete.DataPivotAutocomplete,
         help_text="Type a few characters of the data-pivot name, then click to select.",
     )
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop("assessment_id", -1)
         super().__init__(*args, **kwargs)
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if hasattr(widget, "update_query_parameters"):
-                widget.update_query_parameters({"related": assessment_id})
+        self.fields["study"].set_filters({"assessment_id": assessment_id})
+        self.fields["endpoint"].set_filters(
+            {"animal_group__experiment__study__assessment_id": assessment_id}
+        )
+        self.fields["visual"].set_filters({"assessment_id": assessment_id})
+        self.fields["data_pivot"].set_filters({"assessment_id": assessment_id})

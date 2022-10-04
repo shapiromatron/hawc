@@ -162,7 +162,7 @@ jobs:
       id: retry
       continue-on-error: true
       run: |
-        py.test -sv tests/integration/
+        py.test -sv --lf tests/integration/
     - name: set status
       if: always()
       run: |

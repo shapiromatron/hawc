@@ -1,3 +1,20 @@
+/* Global */
+:focus {
+    outline: none !important;
+}
+
+/* this rule was disabled in the epa style; re-enable to header */
+header.l-header * {
+    -webkit-transition-duration: 200ms;
+    transition-duration: 200ms;
+    -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
+    transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
+    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform;
+    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
+    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
+}
+
 /* Header */
 #search-box {
     margin-top: 0px;
@@ -9,6 +26,9 @@
 }
 .hawc-header .navbar-toggler:focus {
     outline: initial;
+}
+.hawc-header a {
+    text-decoration: none;
 }
 
 /* Sidebar  */
@@ -41,4 +61,14 @@
 }
 .sidebar .dropdown-menu {
     background-color: white !important;
+}
+
+/* table */
+table td {
+    background-color: unset !important;
+
+}
+/* caret on dropdown menu */
+a.dropdown-toggle:not([href])::after {
+    display: inline-block !important;
 }

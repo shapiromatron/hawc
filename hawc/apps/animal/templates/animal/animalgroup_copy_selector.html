@@ -2,11 +2,6 @@
 
 
 {% load add_class %}
-{% load selectable_tags %}
-
-{% block extrastyle %}
-  {% include_ui_theme %}
-{% endblock %}
 
 {% block content %}
 
@@ -15,7 +10,6 @@
 {% endblock content %}
 
 {% block extrajs %}
-  {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
 

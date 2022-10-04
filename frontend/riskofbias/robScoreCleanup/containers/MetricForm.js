@@ -4,7 +4,8 @@ import {inject, observer} from "mobx-react";
 
 import h from "shared/utils/helpers";
 
-import {ScoreInput, ScoreNotesInput} from "../../robStudyForm/ScoreForm";
+import QuillTextInput from "shared/components/QuillTextInput";
+import {ScoreInput} from "../../robStudyForm/ScoreForm";
 
 @inject("store")
 @observer
@@ -37,10 +38,10 @@ class MetricForm extends React.Component {
                     </p>
                 </div>
                 <div className="col-md-7">
-                    <ScoreNotesInput
-                        scoreId={-1}
+                    <QuillTextInput
+                        className="score-editor"
                         value={store.formNotes}
-                        handleChange={value => store.setFormNotes(value)}
+                        onChange={value => store.setFormNotes(value)}
                     />
                 </div>
             </div>
