@@ -1,18 +1,13 @@
 <ul class="{{ul_class}}">
-    {% if flavor == "EPA" %}
     <li class="{{li_class}}">
         <a class="{{a_class}}"  href="{% url 'home' %}">HAWC Home</a>
     </li>
-    {% endif %}
     <li class="{{li_class}}">
-        {% if user.is_authenticated %}
         <a class="{{a_class}}" href="{% url 'assessment:public_list' %}">Public Assessments</a>
-        {% endif %}
     </li>
     {% if assessment %}
     <li class="{{li_class}}">
-        {% url 'assessment:detail' assessment.pk as url %}
-        <a class="{{a_class}}" href="{% url 'assessment:detail' assessment.pk %}">{{ assessment }}</a>
+        <a class="{{a_class}}" href="{{ assessment.get_absolute_url }}">{{ assessment }}</a>
         <ul class="{{sub_ul}}">
             {% if assessment.enable_literature_review %}
             <li class="{{li_class}}">
@@ -20,61 +15,48 @@
             </li>
             {% endif %}
 
-            {% if assessment.enable_project_management and request.user.is_authenticated %}
+            {% if assessment.enable_project_management and user.is_authenticated %}
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">
-                    Management dashboard</a>
+                <a class="{{a_class}}" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a>
             </li>
             {% endif %}
 
             {% if assessment.enable_data_extraction %}
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'study:list' assessment.pk %}">
-                    Study list</a>
+                <a class="{{a_class}}" href="{% url 'study:list' assessment.pk %}">Study list</a>
             </li>
 
             {% if assessment.enable_risk_of_bias %}
             <li class="{{li_class}}">
-                <a class="{{a_class}}"
-                href="{% url 'riskofbias:arob_detail' assessment.pk %}">
-                    {{assessment.get_rob_name_display}}</a>
+                <a class="{{a_class}}" href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a>
             </li>
             {% endif %}
 
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'assessment:endpoint_list' assessment.pk %}">
-                    Endpoint list</a>
+                <a class="{{a_class}}" href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a>
             </li>
             {% endif %}
 
             <li class="{{li_class}}">
-                <a class="{{a_class}}"
-                    href="{% url 'summary:tables_list' assessment.pk %}">
-                    Summary tables</a>
+                <a class="{{a_class}}" href="{% url 'summary:tables_list' assessment.pk %}">Summary tables</a>
             </li>
 
             <li class="{{li_class}}">
-                <a class="{{a_class}}"
-                    href="{% url 'summary:visualization_list' assessment.pk %}">
-                    Visualizations</a>
+                <a class="{{a_class}}" href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
             </li>
 
             {% if assessment.enable_summary_text %}
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'summary:list' assessment.pk %}">
-                    Executive summary</a>
+                <a class="{{a_class}}" href="{% url 'summary:list' assessment.pk %}">Executive summary</a>
             </li>
             {% endif %}
 
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'assessment:downloads' assessment.pk %}">
-                    Downloads</a>
+                <a class="{{a_class}}" href="{% url 'assessment:downloads' assessment.pk %}">Downloads</a>
             </li>
         </ul>
     </li>
     {% endif %}
-    {% if flavor == "EPA" %}
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About HAWC</a></li>
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">HAWC Resources</a></li>
-    {% endif %}
 </ul>

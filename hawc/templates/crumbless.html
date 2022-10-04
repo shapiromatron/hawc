@@ -1,24 +1,5 @@
 {% extends 'base.html' %}
 
-{% block sidebar_outer %}
-<div class="sidebar">
-    {% if flavor == "EPA" %}
-    <div class="dropdown d-block d-lg-none px-1 pt-3">
-        <button class="btn" type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="fa fa-bars" title="Mobile navigation panel"></i>
-        </button>
-        <div class="dropdown-menu bg-light py-0" aria-labelledby="assessmentToggleMenu">
-            {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav mb-0 border-0" sub_ul="usa-sidenav__sublist" %}
-        </div>
-    </div>
-    <nav class="nav flex-column pt-2 d-none d-lg-block">
-        {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav" sub_ul="usa-sidenav__sublist" %}
-    </nav>
-    {% endif %}
-</div>
-{% endblock sidebar_outer %}
-
-
 {% block content_outer %}
 <div class="col-xl-10 col-lg-12" >
     {% block content %}

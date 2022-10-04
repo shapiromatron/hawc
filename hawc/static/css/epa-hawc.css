@@ -31,6 +31,11 @@ header.l-header * {
     text-decoration: none;
 }
 
+/* override environment banner position */
+.env-banner {
+    margin: 0 10% 0 70%;
+}
+
 /* Sidebar  */
 .sidebar {
     background-color: #ffffff;
