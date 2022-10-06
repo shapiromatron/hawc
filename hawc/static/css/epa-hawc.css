@@ -65,3 +65,13 @@ a.dropdown-toggle:not([href])::after {
 .select2-results__options {
     width: 100%;
 }
+
+/* navigation tabs react-router-dom */
+.nav-item, .react-tabs__tab {
+    margin-bottom: 0;
+}
+
+/* bootstrap popover header */
+.popover-header {
+    margin-top: 0;
+}
