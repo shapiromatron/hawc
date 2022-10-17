@@ -65,7 +65,7 @@ class LitOverview(BaseList):
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
             ),
         }
-        context["allow_ris"] = settings.ALLOW_RIS_IMPORTS
+        context["allow_ris"] = settings.HAWC_FEATURES.ALLOW_RIS_IMPORTS
         return context
 
 
