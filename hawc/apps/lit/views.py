@@ -1,6 +1,7 @@
 import json
 from typing import Dict, List
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
@@ -10,7 +11,6 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
-from django.conf import settings
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
