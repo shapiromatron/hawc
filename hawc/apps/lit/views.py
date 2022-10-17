@@ -10,6 +10,7 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
+from django.conf import settings
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
@@ -64,6 +65,7 @@ class LitOverview(BaseList):
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
             ),
         }
+        context["allow_ris"] = settings.ALLOW_RIS_IMPORTS
         return context
 
 
