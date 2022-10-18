@@ -209,3 +209,17 @@ class BulkRobCopyAction(BaseApiAction):
             message=json.dumps(src_to_dst),
         )
         return {"mapping": src_to_dst}
+
+    def has_permission(self, request) -> Tuple[bool, str]:
+        """
+        Role of Project Manager or higher is required for both assessments.
+        """
+
+        src_assessment = Assessment.objects.filter(id=self.inputs.src_assessment_id).first()
+        if not src_assessment.user_can_edit_assessment(request.user):
+            return False, "Not a Project Manager or higher for source assessment."
+        dst_assessment = Assessment.objects.filter(id=self.inputs.dst_assessment_id).first()
+        if not dst_assessment.user_can_edit_assessment(request.user):
+            return False, "Not a Project Manager or higher for destination assessment."
+        else:
+            return super().has_permission(request)
