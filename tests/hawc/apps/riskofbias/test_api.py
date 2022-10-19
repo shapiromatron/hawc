@@ -107,13 +107,13 @@ class TestRiskOfBiasAssessmentViewset:
             "author_mode": 1,
         }
 
-        # only admin can perform this action
-        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        # only pm and higher can perform this action
+        assert client.login(username="curator@hawcproject.org", password="pw") is True
         resp = client.post(url, data, format="json")
-        assert resp.status_code == 403
+        assert resp.status_code == 200
 
         # valid request
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.post(url, data, format="json")
         assert resp.status_code == 200
         assert list(resp.data.keys()) == ["mapping"]
