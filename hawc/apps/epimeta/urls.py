@@ -37,7 +37,7 @@ urlpatterns = [
     # result views
     path(
         "assessment/<int:pk>/results/",
-        views.MetaResultList.as_view(),
+        views.MetaResultFilterList.as_view(),
         name="result_list",
     ),
     path(

@@ -103,7 +103,7 @@ urlpatterns = [
     # Outcome
     path(
         "assessment/<int:pk>/outcomes/",
-        views.OutcomeList.as_view(),
+        views.OutcomeFilterList.as_view(),
         name="outcome_list",
     ),
     path(

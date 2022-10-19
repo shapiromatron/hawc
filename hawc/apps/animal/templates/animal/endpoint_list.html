@@ -1,32 +1,63 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
-    <h2>Assessment endpoints ({{page_obj.paginator.count}} found)</h2>
-    <div class="card">
-        <div class="card-header">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
-                Filter endpoints
-            </button>
-        </div>
-        <div id="EndpointForm" class="collapse">
-            <div class="card-body">
-                {% crispy form %}
-            </div>
-        </div>
-    </div>
-    <div id="endpointTable"></div>
-    {% include "includes/paginator.html" %}
-{% endblock content %}
+
+<h2>Assessment endpoints ({{page_obj.paginator.count}} found)</h2>
+
+{% include 'common/filter_list.html' with plural_object_name='endpoints' %}
+
+<table id="mainTbl" class="table table-sm table-striped">
+
+    <colgroup>
+        <col width="15%" />
+        <col width="20%" />
+        <col width="15%" />
+        <col width="50%" />
+    </colgroup>
+
+
+    <thead>
+        <tr>
+            <th>Study</th>
+            <th>Experiment</th>
+            <th>Animal group</th>
+            <th>Endpoint</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>
+                <a
+                    href="{% url 'study:detail' object.animal_group.experiment.study.pk %}">{{object.animal_group.experiment.study.short_citation}}</a>
+            </td>
+            <td>
+                <a
+                    href="{% url 'animal:experiment_detail' object.animal_group.experiment.pk %}">{{object.animal_group.experiment.name}}</a>
+            </td>
+            <td>
+                <a href="{% url 'animal:animal_group_detail' object.animal_group.pk %}">{{object.animal_group.name}}</a>
+            </td>
+            <td>
+                <span class="previewModalParent">
+                    <a href="{% url 'animal:endpoint_detail' object.pk %}">{{object.name}}</a>
+                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include 'includes/paginator_with_total.html' with plural_object_name='endpoints' %}
+
+{% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
-    <script type="text/javascript">
-        window.app.startup("animalStartup", function(animal){
-            const data = window.app.getConfig(),
-                tbl = new animal.EndpointListTable(data.items, data.dose_units);
-            $("#endpointTable").html(tbl.build_table());
-        });
-    </script>
+<script type="text/javascript">
+    window.app.startup("animalStartup", function (animal) {
+        $("i.previewModalIcon").click(e=>animal.Endpoint.displayAsModal($(e.target).data("id"), { complete: true }));
+    });
+</script>
 {% endblock %}

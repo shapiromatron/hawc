@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from django.views.generic import DetailView
@@ -11,7 +10,7 @@ from ..common.views import (
     BaseCreateWithFormset,
     BaseDelete,
     BaseDetail,
-    BaseEndpointFilterList,
+    BaseFilterList,
     BaseUpdate,
     BaseUpdateWithFormset,
     ProjectManagerOrHigherMixin,
@@ -19,7 +18,7 @@ from ..common.views import (
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
 
 
 # Experiment
@@ -218,18 +217,7 @@ class EndpointDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
-class EndpointList(BaseEndpointFilterList):
+class EndpointFilterList(BaseFilterList):
     parent_model = Assessment
     model = models.IVEndpoint
-    form_class = forms.IVEndpointFilterForm
-
-    def get_query(self, perms):
-        query = Q(assessment=self.assessment)
-        if not perms["edit"]:
-            query &= Q(experiment__study__published=True)
-        return query
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"]["dose_units"] = self.form.get_dose_units_id()
-        return context
+    filterset_class = filterset.EndpointFilterSet

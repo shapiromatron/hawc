@@ -87,7 +87,7 @@ urlpatterns = [
     # endpoint
     path(
         "assessment/<int:pk>/endpoints/",
-        views.EndpointList.as_view(),
+        views.EndpointFilterList.as_view(),
         name="endpoint_list",
     ),
     path(

@@ -1,19 +1,20 @@
-from django.db.models import Q
+from django.db.models import Case, F, When
 
+from ..assessment.models import Assessment
 from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
     BaseDetail,
-    BaseEndpointFilterList,
+    BaseFilterList,
     BaseUpdate,
     BaseUpdateWithFormset,
     CopyAsNewSelectorMixin,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
 
 
 def get_app_config_metaprotocol(self, context) -> WebappConfig:
@@ -129,19 +130,18 @@ class MetaResultDelete(BaseDelete):
         return self.object.protocol.get_absolute_url()
 
 
-class MetaResultList(BaseEndpointFilterList):
+class MetaResultFilterList(BaseFilterList):
+    parent_model = Assessment
     model = models.MetaResult
-    form_class = forms.MetaResultFilterForm
+    filterset_class = filterset.MetaResultFilterSet
 
-    def get_query(self, perms):
-        query = Q(protocol__study__assessment=self.assessment)
-        if not perms["edit"]:
-            query &= Q(protocol__study__published=True)
-        return query
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="epiMetaStartup",
-            page="startupMetaResultListPage",
-            data={"items": self.model.get_qs_json(context["object_list"], json_encode=False)},
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                ci_units_percentage=Case(
+                    When(ci_units=None, then=None), default=F("ci_units") * 100
+                )
+            )
         )

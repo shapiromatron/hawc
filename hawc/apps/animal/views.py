@@ -1,8 +1,6 @@
 import json
 
 from django.db import transaction
-from django.db.models import Q
-from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -16,7 +14,7 @@ from ..common.views import (
     BaseCreateWithFormset,
     BaseDelete,
     BaseDetail,
-    BaseEndpointFilterList,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
@@ -27,7 +25,7 @@ from ..common.views import (
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from ..study.views import StudyRead
-from . import forms, models
+from . import filterset, forms, models
 
 
 # Heatmap views
@@ -406,6 +404,36 @@ class EndpointUpdate(BaseUpdateWithFormset):
         return context
 
 
+class EndpointFilterList(BaseFilterList):
+    parent_model = Assessment
+    model = models.Endpoint
+    filterset_class = filterset.EndpointFilterSet
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related(
+                "assessment",
+                "animal_group__experiment__dtxsid",
+                "animal_group__experiment__study",
+                "animal_group__species",
+                "animal_group__strain",
+            )
+            .prefetch_related(
+                "bmd_models",
+                "effects",
+                "groups",
+                "animal_group__parents",
+                "animal_group__siblings",
+                "animal_group__children",
+                "animal_group__dosing_regime__doses__dose_units",
+                "animal_group__experiment__study__searches",
+                "animal_group__experiment__study__identifiers",
+            )
+        )
+
+
 @method_decorator(beta_tester_required, name="dispatch")
 class EndpointListV2(BaseList):
     parent_model = Assessment
@@ -421,68 +449,10 @@ class EndpointListV2(BaseList):
         )
 
 
-class EndpointList(BaseEndpointFilterList):
-    # List of Endpoints associated with assessment
-    parent_model = Assessment
-    model = models.Endpoint
-    form_class = forms.EndpointFilterForm
-
-    def get_query(self, perms):
-        query = Q(assessment=self.assessment)
-        if not perms["edit"]:
-            query &= Q(animal_group__experiment__study__published=True)
-        return query
-
-    def get_queryset(self):
-        # TODO - revisit after upgrading to 2.1 to see if this can be handled outside of
-        # RawSQL query
-        perms = super().get_obj_perms()
-        order_by = None
-
-        query = self.get_query(perms)
-
-        if self.form.is_valid():
-            query &= self.form.get_query()
-            order_by = self.form.get_order_by()
-
-        qs = self.model.objects.filter(query).distinct()
-
-        if order_by:
-            if order_by == "bmd":
-                qs = qs.order_by(RawSQL("bmd_model.output->>'BMD'", ()), "bmd_models__model")
-            elif order_by == "bmdl":
-                qs = qs.order_by(RawSQL("bmd_model.output->>'BMDL'", ()), "bmd_models__model")
-            else:
-                qs = qs.order_by(order_by)
-
-        return qs.select_related(
-            "assessment",
-            "animal_group__experiment__dtxsid",
-            "animal_group__experiment__study",
-            "animal_group__species",
-            "animal_group__strain",
-        ).prefetch_related(
-            "bmd_models",
-            "effects",
-            "groups",
-            "animal_group__parents",
-            "animal_group__siblings",
-            "animal_group__children",
-            "animal_group__dosing_regime__doses__dose_units",
-            "animal_group__experiment__study__searches",
-            "animal_group__experiment__study__identifiers",
-        )
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["config"]["dose_units"] = self.form.get_dose_units_id()
-        return context
-
-
-class EndpointTags(EndpointList):
+class EndpointTags(EndpointFilterList):
     # List of Endpoints associated with an assessment and tag
 
-    def get_queryset(self):
+    def get_base_queryset(self):
         return self.model.objects.tag_qs(self.assessment.pk, self.kwargs["tag_slug"])
 
 
