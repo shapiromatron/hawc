@@ -63,6 +63,12 @@
                 {{object.response_units|default:"--"}}
             </td>
         </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">
+                No endpoints available
+            </td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>

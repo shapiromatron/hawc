@@ -63,6 +63,12 @@
                 {{object.estimate_formatted|default:"--"}}
             </td>
         </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">
+                No results available
+            </td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
