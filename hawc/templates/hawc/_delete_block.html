@@ -18,12 +18,12 @@
 </div>
 
 {% if confirm %}
-<script >
+<script>
   window.addEventListener('load', function () {
     $('#confirmationText').on('keyup', function(){
       if (this.value === "delete") {
-        $('#deleteConfirmationActionsDiv').show();
-        $('#deleteConfirm').hide();
+        $('#deleteConfirmationActionsDiv').removeClass('hidden');
+        $('#deleteConfirm').addClass('hidden');
       }
     });
   });

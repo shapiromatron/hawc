@@ -20,6 +20,8 @@ class Design(models.TextChoices):
     RT = "RT", "Randomized controlled trial"
     NT = "NT", "Non-randomized controlled trial"
     CS = "CS", "Cross-sectional"
+    EC = "EC", "Ecological"
+    OT = "OT", "Other"
 
 
 class Diagnostic(models.IntegerChoices):
