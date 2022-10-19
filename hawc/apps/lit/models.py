@@ -24,6 +24,8 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from hawc.constants import FeatureFlags
+
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -35,6 +37,7 @@ from ..common.models import (
     NonUniqueTagBase,
     get_private_data_storage,
 )
+from ..myuser.models import HAWCUser
 from . import constants, managers, tasks
 
 logger = logging.getLogger(__name__)
@@ -79,6 +82,76 @@ class LiteratureAssessment(models.Model):
     )
     topic_tsne_refresh_requested = models.DateTimeField(null=True)
     topic_tsne_last_refresh = models.DateTimeField(null=True)
+    keyword_list_1 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    color_list_1 = models.CharField(
+        blank=True,
+        max_length=7,
+        verbose_name="Highlight Color 1",
+        default="#00ff00",
+        help_text="Keywords in list 1 will be highlighted this color",
+    )
+    name_list_1 = models.CharField(
+        blank=True,
+        max_length=128,
+        verbose_name="Name List 1",
+        default="Positive",
+        help_text="Name for this list of keywords",
+    )
+    keyword_list_2 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    color_list_2 = models.CharField(
+        blank=True,
+        max_length=7,
+        verbose_name="Highlight Color 2",
+        default="#ff0000",
+        help_text="Keywords in list 2 will be highlighted this color",
+    )
+    name_list_2 = models.CharField(
+        blank=True,
+        max_length=128,
+        verbose_name="Name List 2",
+        default="Negative",
+        help_text="Name for this list of keywords",
+    )
+    keyword_list_3 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    color_list_3 = models.CharField(
+        blank=True,
+        max_length=7,
+        verbose_name="Highlight Color 3",
+        default="#0000ff",
+        help_text="Keywords in list 3 will be highlighted this color",
+    )
+    name_list_3 = models.CharField(
+        blank=True,
+        max_length=128,
+        verbose_name="Name List 3",
+        default="Additional",
+        help_text="Name for this list of keywords",
+    )
+    screening_instructions = models.TextField(
+        blank=True,
+        help_text="""Add instructions for screeners. This information will be shown on the
+        literature screening page and will never be made public.""",
+    )
+    conflict_resolution = models.BooleanField(
+        default=FeatureFlags.from_env("HAWC_FEATURE_FLAGS").DEFAULT_CONFLICT_RES,
+        verbose_name="Conflict Resolution",
+        help_text="Enable conflict resolution for reference screening. TODO: ADD FURTHER HELP TEXT",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -1024,4 +1097,17 @@ class Reference(models.Model):
             )
 
 
+class UserReferenceTag(models.Model):
+    tags = managers.ReferenceFilterTagManager(through=ReferenceTags, blank=True)
+    user = models.ForeignKey(
+        HAWCUser, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_items"
+    )
+    reference = models.ForeignKey(
+        Reference, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_items"
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
 reversion.register(Reference)
+reversion.register(UserReferenceTag)

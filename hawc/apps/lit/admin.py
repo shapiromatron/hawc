@@ -19,6 +19,11 @@ class LiteratureAssessmentAdmin(admin.ModelAdmin):
     list_select_related = ("assessment", "extraction_tag")
 
 
+@admin.register(models.UserReferenceTag)
+class UserReferenceTagAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(models.ReferenceFilterTag)
 class ReferenceFilterTagAdmin(TreeAdmin):
     pass
