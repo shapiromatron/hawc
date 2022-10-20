@@ -53,14 +53,20 @@ const URL_TEMPLATES = "/rasterize/",
             downloadBlob(blob, 'attachment; filename="download.svg"');
         });
     },
+    getScalingFactor = maxDim => {
+        // There is a maximum canvas size of 32767; we make sure we don't go beyond this
+        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas#maximum_canvas_size
+        return maxDim * 5 > 32000 ? 32000 / maxDim : 5;
+    },
     toRaster = (svgElement, mime) => {
         getSvgString(svgElement, svgStr => {
             const canvas = document.createElement("canvas"),
                 ctx = canvas.getContext("2d"),
                 bb = svgElement.getBBox(),
                 img = document.createElement("img"),
-                height = Math.ceil(bb.height * 5),
-                width = Math.ceil(bb.width * 5),
+                scaling = getScalingFactor(Math.max(bb.height, bb.width)),
+                height = Math.ceil(bb.height * scaling),
+                width = Math.ceil(bb.width * scaling),
                 imgData = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgStr))),
                 extension = mime.slice(mime.match("/").index + 1);
 
