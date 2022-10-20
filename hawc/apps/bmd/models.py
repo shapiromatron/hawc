@@ -21,7 +21,7 @@ class AssessmentSettings(models.Model):
         "assessment.Assessment", on_delete=models.CASCADE, related_name="bmd_settings"
     )
     version = models.CharField(
-        max_length=10, choices=constants.BmdsVersion.choices, default=constants.BmdsVersion.BMDS270
+        max_length=10, choices=constants.BmdsVersion.choices, default=constants.BmdsVersion.BMDS330
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -169,6 +169,9 @@ class Session(models.Model):
 
     def get_selected_model_url(self):
         return reverse("bmd:api:session-selected-model", args=[self.id])
+
+    def can_edit(self):
+        return self.version == constants.BmdsVersion.BMDS330
 
     @classmethod
     def create_new(cls, endpoint):
