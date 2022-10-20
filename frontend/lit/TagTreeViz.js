@@ -356,6 +356,7 @@ class TagTreeViz extends D3Plot {
             };
 
         this.add_title();
+        this.title.style("cursor", "pointer").call(HAWCUtils.updateDragLocationXY(h.noop));
         if (options.show_legend) {
             this.add_legend();
         }
