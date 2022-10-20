@@ -593,6 +593,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             tres = [dose["treatment_effect"] for dose in ser["groups"]]
             tres.extend([None] * (self.num_doses - len(tres)))
             row.extend(tres)
+            if len(tres) != len(dose_list):
+                raise ValueError("TODO - fix")
 
             row.extend(
                 [self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()]
