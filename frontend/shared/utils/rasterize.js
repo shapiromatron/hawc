@@ -3,6 +3,10 @@ import * as d3 from "d3";
 const URL_TEMPLATES = "/rasterize/",
     downloadBlob = (blob, contentDisposition) => {
         // https://stackoverflow.com/a/42274086/906385
+        if (!blob) {
+            alert("An error occurred; no download available.");
+            return;
+        }
         const url = window.URL.createObjectURL(blob),
             a = document.createElement("a"),
             filename = /filename="(.+?)"/.exec(contentDisposition);
