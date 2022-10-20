@@ -250,6 +250,29 @@ class DataPivotVisualization extends D3Plot {
         this.add_axes();
         this.draw_visualizations();
         this.add_final_rectangle();
+        if (!this.dp_settings.plot_settings.as_barchart) {
+            const BUFF = 8;
+            this.vis
+                .select(".dp_bg")
+                .attr("height", this.h)
+                .attr("width", this.w + BUFF * 2)
+                .attr("x", -BUFF);
+            this.vis
+                .select(".bounding_rectangle")
+                .attr("width", this.w + BUFF * 2)
+                .attr("x", -BUFF);
+            this.vis
+                .selectAll(".y_gridlines")
+                .attr("x1", -BUFF)
+                .attr("x2", this.w + BUFF);
+            // todo - this is gross and will break current visualas if the text is close to the
+            // border;
+            // ideally you'd want this to shift everything else right, instead of cropping
+            // also, we'd want to effectively "shift" everything right by
+            this.vis.selectAll(".dp-bg-text").each(function() {
+                this.setAttribute("width", Math.floor(this.getAttribute("width")) - BUFF);
+            });
+        }
         this.legend = new DataPivotLegend(
             this.svg,
             this.vis,
@@ -795,6 +818,7 @@ class DataPivotVisualization extends D3Plot {
             .data(this.bg_rectangles_data)
             .enter()
             .append("rect")
+            .attr("class", "dp-bg-text")
             .attr("x", d => d.x)
             .attr("y", d => d.y)
             .attr("height", d => d.h)
