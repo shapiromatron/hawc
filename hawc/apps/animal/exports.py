@@ -555,12 +555,19 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 ser["expected_adversity_direction"],
             ]
 
-            # doses sorted by dose_group_id
-            # doses with unrecorded data are None
-            dose_list = [
-                self._get_dose(doses, i) if self._dose_is_reported(i, ser["groups"]) else None
-                for i in range(len(doses))
-            ]
+            # if groups exist, pull all available. Otherwise, start with an empty list. This
+            # is preferred than just pulling in edge cases where an endpoint has no data
+            # extracted but has more dose-groups at the animal group level than are avaiable
+            # for the entire data export. For example, an endpoint may have no data extracted
+            # and dose-groups, but the entire export may only have data with 4 dose-groups.
+            dose_list = (
+                [
+                    self._get_dose(doses, i) if self._dose_is_reported(i, ser["groups"]) else None
+                    for i in range(len(doses))
+                ]
+                if ser["groups"]
+                else []
+            )
 
             # dose-group specific information
             row.extend(self._dose_low_high(dose_list))
@@ -593,8 +600,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             tres = [dose["treatment_effect"] for dose in ser["groups"]]
             tres.extend([None] * (self.num_doses - len(tres)))
             row.extend(tres)
-            if len(tres) != len(dose_list):
-                raise ValueError("TODO - fix")
 
             row.extend(
                 [self.rob_data[(ser["id"], metric_id)] for metric_id in self.rob_headers.keys()]
