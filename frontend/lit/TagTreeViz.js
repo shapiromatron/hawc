@@ -24,7 +24,7 @@ class VizOptions extends Component {
             <p className="form-text text-muted" data-value={key}>
                 Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references
                 associated with an node (except root-node). Hold shift to drag nodes to new
-                positions.
+                positions; click a node after dragging to update layout.
             </p>
         );
     }
