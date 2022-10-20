@@ -253,7 +253,9 @@ class TagTreeViz extends D3Plot {
                 nodeEnter
                     .append("svg:circle")
                     .attr("r", 1e-6)
-                    .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"));
+                    .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"))
+                    .append("svg:title")
+                    .text("Ctrl-click or ⌘-click to view references");
 
                 nodeEnter
                     .append("svg:text")
