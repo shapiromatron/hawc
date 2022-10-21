@@ -13,6 +13,24 @@ class TagReferencesMain extends Component {
     constructor(props) {
         super(props);
         this.savedPopup = React.createRef();
+        this.state = {
+            filterClass: '',
+        }
+        this.filterClicked = this.filterClicked.bind(this);
+    }
+
+    filterClicked() {
+        if (this.state.filterClass === '') {
+            this.setState({
+                filterClass: 'slideAway',
+            })
+        }
+        else {
+            this.setState({
+                filterClass: '',
+            })
+        }
+
     }
     _setSaveIndicator() {
         const el = this.savedPopup.current;
@@ -35,50 +53,19 @@ class TagReferencesMain extends Component {
             anyUntagged = store.referencesUntagged.length > 0;
         return (
             <div className="row">
-                <div className="col-md-3">
-                    <ReferenceSortSelector onChange={store.sortReferences} />
-                    <h4>References</h4>
-                    <div className="card">
-                        <div className="card-header p-2">
-                            <button
-                                className="btn btn-link"
-                                data-toggle="collapse"
-                                data-target="#taggedRefList">
-                                Tagged
-                            </button>
-                        </div>
-                        <div
-                            id="taggedRefList"
-                            className="show card-body ref-container px-1 resize-y"
-                            style={{minHeight: "10vh", height: anyTagged ? "40vh" : "10vh"}}>
-                            {store.referencesTagged.map(ref => (
-                                <p
-                                    key={ref.data.pk}
-                                    className={
-                                        ref.data.pk === selectedReferencePk
-                                            ? "reference selected"
-                                            : "reference"
-                                    }
-                                    onClick={() => store.changeSelectedReference(ref)}>
-                                    {ref.shortCitation()}
-                                </p>
-                            ))}
-                        </div>
+                <div className={this.state.filterClass} id="refFilter">
+                    <div className="row px-3 justify-content-between">
+                        <h4 className="pt-2 mb-1">
+                            References
+                        </h4>
+                        <ReferenceSortSelector onChange={store.sortReferences} />
                     </div>
-                    <div className="card mt-3">
-                        <div className="card-header p-2">
-                            <button
-                                className="btn btn-link"
-                                data-toggle="collapse"
-                                data-target="#untaggedRefList">
-                                Untagged
-                            </button>
-                        </div>
+                    <div className="card">
                         <div
-                            id="untaggedRefList"
-                            className="show card-body px-1 resize-y"
-                            style={{minHeight: "10vh", height: anyUntagged ? "40vh" : "10vh"}}>
-                            {store.referencesUntagged.map(ref => (
+                            id="fullRefList"
+                            className="show card-body ref-container px-1 resize-y"
+                            style={{ minHeight: "10vh", height: "70vh" }}>
+                            {store.references.map(ref => (
                                 <p
                                     key={ref.data.pk}
                                     className={
@@ -87,17 +74,49 @@ class TagReferencesMain extends Component {
                                             : "reference"
                                     }
                                     onClick={() => store.changeSelectedReference(ref)}>
-                                    {ref.shortCitation()}
+                                    {ref.shortCitation()}&nbsp;
+                                    {ref.tags.length > 0 ? <i class="fa fa-tags" title="tagged" aria-hidden="true"></i> : null}
                                 </p>
                             ))}
                         </div>
                     </div>
                 </div>
-                <div className="col-md-6">
+                <div className={this.state.filterClass} id="taggingCol">
                     {store.selectedReference ? (
                         <div>
-                            <h4>Tags for current reference</h4>
-                            <div className="well" style={{minHeight: "50px"}}>
+                            <div className="d-flex justify-content-between">
+                                <h4 className="pt-2 my-0">
+                                    <button id="collapse-btn" className="btn btn-sm btn-info" type="button" onClick={this.filterClicked}>
+                                        <div className={this.state.filterClass} id="filter-btn">
+                                            <i id="caret-left" className="fa fa-caret-left " aria-hidden="true"></i>&nbsp;
+                                            <i className="fa fa-list-ul" aria-hidden="true"></i>&nbsp;
+                                        </div>
+                                    </button>
+                                    &nbsp;
+                                    Currently Applied Tags
+                                </h4>
+                                <span>&nbsp;</span>
+                                <span
+                                    ref={this.savedPopup}
+                                    className="alert alert-success litSavedIcon"
+                                    style={{ display: "none" }}>
+                                    Saved!
+                                </span>
+                                <div className="pt-1">
+                                    <button
+                                        className="btn btn-light mx-2 align-self-end"
+                                        title="Remove all tags"
+                                        onClick={() => store.removeAllTags()}>
+                                        <i className="fa fa-times" aria-hidden="true"></i>
+                                    </button>
+                                    <button
+                                        className="btn btn-primary align-self-end"
+                                        onClick={() => store.saveAndNext()}>
+                                        Save and go to next untagged
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="well" style={{ minHeight: "50px" }}>
                                 {selectedReferenceTags.map((tag, i) => (
                                     <span
                                         key={i}
@@ -114,38 +133,13 @@ class TagReferencesMain extends Component {
                                     the error persists please contact HAWC staff.
                                 </div>
                             ) : null}
-                            <div style={{paddingBottom: "1em"}}>
-                                <button
-                                    className="btn btn-primary"
-                                    onClick={() => store.saveAndNext()}>
-                                    Save and go to next untagged
-                                </button>
-                                <span>&nbsp;</span>
-                                <button
-                                    className="btn btn-light"
-                                    onClick={() => store.removeAllTags()}>
-                                    Remove all tags
-                                </button>
-                                <span
-                                    ref={this.savedPopup}
-                                    className="btn litSavedIcon"
-                                    style={{display: "none"}}>
-                                    Saved!
-                                </span>
-                                <a
-                                    className="btn btn-light float-right"
-                                    rel="noopener noreferrer"
-                                    target="_blank"
-                                    href={store.selectedReference.get_edit_url()}
-                                    title="Cleanup imported reference details">
-                                    Edit
-                                </a>
-                            </div>
                             <Reference
                                 reference={store.selectedReference}
                                 showActions={false}
                                 showHr={false}
                                 showTags={false}
+                                showActionsTagless={true}
+                                actionsBtnClassName={"btn-sm btn-secondary"}
                             />
                         </div>
                     ) : (
@@ -157,8 +151,8 @@ class TagReferencesMain extends Component {
                         </div>
                     ) : null}
                 </div>
-                <div className="col-md-3">
-                    <h4>Available tags</h4>
+                <div className="px-3" id="tagtree-col">
+                    <h4 className="pt-2">Available tags</h4>
                     <TagTree
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.addTag(tag)}

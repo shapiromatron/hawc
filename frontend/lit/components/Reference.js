@@ -71,7 +71,7 @@ class Reference extends Component {
     }
 
     render() {
-        const {reference, showActions, showTags, showHr, actionsBtnClassName} = this.props,
+        const {reference, showActions, showTags, showHr, showActionsTagless, actionsBtnClassName} = this.props,
             {data, tags} = reference,
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
             year = data.year || "",
@@ -82,10 +82,16 @@ class Reference extends Component {
             ];
 
         return (
-            <div className="referenceDetail">
+            <div className="referenceDetail pb-2">
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
                     <div className="ref_small">
+                        {showActionsTagless ? (
+                            <ActionsButton
+                                dropdownClasses={actionsBtnClassName}
+                                items={actionItems.slice(1)}
+                            />
+                        ) : null}
                         <span>
                             {authors}&nbsp;{year}
                         </span>
@@ -97,10 +103,11 @@ class Reference extends Component {
                         ) : null}
                     </div>
                 }
-                {data.title ? <p className="ref_title">{data.title}</p> : null}
+                {data.title ? <p className="ref_title py-1">{data.title}</p> : null}
                 {data.journal ? <p className="ref_small">{data.journal}</p> : null}
                 {data.abstract ? (
-                    <div className="abstracts" dangerouslySetInnerHTML={{__html: data.abstract}} />
+                    <div className="abstracts resize-y p-2"
+                    dangerouslySetInnerHTML={{__html: data.abstract}} />
                 ) : null}
                 {showTags && tags.length > 0 ? (
                     <p>
