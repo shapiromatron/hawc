@@ -31,16 +31,16 @@ class LiteratureAssessmentForm(forms.ModelForm):
         fields = (
             "extraction_tag",
             "conflict_resolution",
-            "keyword_list_1",
-            "color_list_1",
-            "name_list_1",
-            "keyword_list_2",
-            "color_list_2",
-            "name_list_2",
-            "keyword_list_3",
-            "color_list_3",
-            "name_list_3",
             "screening_instructions",
+            "name_list_1",
+            "color_list_1",
+            "keyword_list_1",
+            "name_list_2",
+            "color_list_2",
+            "keyword_list_2",
+            "name_list_3",
+            "color_list_3",
+            "keyword_list_3",
         )
         field_classes = {
             "screening_instructions": QuillField,
@@ -61,12 +61,11 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
-            self.fields[fld].widget.attrs["rows"] = 1
-
+            self.fields[fld].widget.attrs["rows"] = 3
         helper.add_row("extraction_tag", 2, "col-md-6")
-        helper.add_row("keyword_list_1", 3, ["col-md-7 pr-3", "col-md-2 px-2", "col-md-3 pl-3"])
-        helper.add_row("keyword_list_2", 3, ["col-md-7 pr-3", "col-md-2 px-2", "col-md-3 pl-3"])
-        helper.add_row("keyword_list_3", 3, ["col-md-7 pr-3", "col-md-2 px-2", "col-md-3 pl-3"])
+        helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_3", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         return helper
 
 

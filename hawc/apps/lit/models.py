@@ -66,6 +66,11 @@ class LiteratureAssessment(models.Model):
         on_delete=models.CASCADE,
         related_name="literature_settings",
     )
+    conflict_resolution = models.BooleanField(
+        default=settings.HAWC_FEATURES.DEFAULT_CONFLICT_RES,
+        verbose_name="Conflict Resolution",
+        help_text="Enable conflict resolution for reference screening. TODO: ADD FURTHER HELP TEXT",
+    )
     extraction_tag = models.ForeignKey(
         "lit.ReferenceFilterTag",
         blank=True,
@@ -73,15 +78,11 @@ class LiteratureAssessment(models.Model):
         on_delete=models.SET_NULL,
         help_text="All references or child references of this tag will be marked as ready for extraction.",
     )
-    topic_tsne_data = models.FileField(
+    screening_instructions = models.TextField(
         blank=True,
-        null=True,
-        editable=False,
-        upload_to="lit/topic_model",
-        storage=get_private_data_storage(),
+        help_text="""Add instructions for screeners. This information will be shown on the
+        literature screening page and will never be made public.""",
     )
-    topic_tsne_refresh_requested = models.DateTimeField(null=True)
-    topic_tsne_last_refresh = models.DateTimeField(null=True)
     keyword_list_1 = models.TextField(
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
@@ -142,16 +143,15 @@ class LiteratureAssessment(models.Model):
         default="Additional",
         help_text="Name for this list of keywords",
     )
-    screening_instructions = models.TextField(
+    topic_tsne_data = models.FileField(
         blank=True,
-        help_text="""Add instructions for screeners. This information will be shown on the
-        literature screening page and will never be made public.""",
+        null=True,
+        editable=False,
+        upload_to="lit/topic_model",
+        storage=get_private_data_storage(),
     )
-    conflict_resolution = models.BooleanField(
-        default=FeatureFlags.from_env("HAWC_FEATURE_FLAGS").DEFAULT_CONFLICT_RES,
-        verbose_name="Conflict Resolution",
-        help_text="Enable conflict resolution for reference screening. TODO: ADD FURTHER HELP TEXT",
-    )
+    topic_tsne_refresh_requested = models.DateTimeField(null=True)
+    topic_tsne_last_refresh = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
