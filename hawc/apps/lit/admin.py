@@ -10,18 +10,14 @@ class LiteratureAssessmentAdmin(admin.ModelAdmin):
     form = forms.LiteratureAssessmentForm
     readonly_fields = ("assessment", "topic_tsne_refresh_requested", "topic_tsne_last_refresh")
     list_display = (
-        "assessment",
+        "assessment_id",
+        "conflict_resolution",
         "extraction_tag",
-        "topic_tsne_data",
         "topic_tsne_refresh_requested",
         "topic_tsne_last_refresh",
     )
-    list_select_related = ("assessment", "extraction_tag")
-
-
-@admin.register(models.UserReferenceTag)
-class UserReferenceTagAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ("conflict_resolution",)
+    list_select_related = ("extraction_tag",)
 
 
 @admin.register(models.ReferenceFilterTag)
@@ -96,3 +92,9 @@ class ReferenceAdmin(admin.ModelAdmin):
     list_filter = ("year", ("assessment", admin.RelatedOnlyFieldListFilter))
     raw_id_fields = ("searches", "identifiers")
     search_fields = ("title", "authors", "year")
+
+
+@admin.register(models.UserReferenceTag)
+class UserReferenceTagAdmin(admin.ModelAdmin):
+    raw_id_fields = ("reference",)
+    list_select_related = ("user", "reference")
