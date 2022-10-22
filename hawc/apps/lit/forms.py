@@ -29,8 +29,8 @@ class LiteratureAssessmentForm(forms.ModelForm):
     class Meta:
         model = models.LiteratureAssessment
         fields = (
-            "extraction_tag",
             "conflict_resolution",
+            "extraction_tag",
             "screening_instructions",
             "name_list_1",
             "color_list_1",
@@ -62,7 +62,7 @@ class LiteratureAssessmentForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
             self.fields[fld].widget.attrs["rows"] = 3
-        helper.add_row("extraction_tag", 2, "col-md-6")
+        helper.add_row("conflict_resolution", 2, "col-md-6")
         helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         helper.add_row("name_list_3", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
