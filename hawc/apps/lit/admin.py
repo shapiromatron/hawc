@@ -97,4 +97,7 @@ class ReferenceAdmin(admin.ModelAdmin):
 @admin.register(models.UserReferenceTag)
 class UserReferenceTagAdmin(admin.ModelAdmin):
     raw_id_fields = ("reference",)
+    list_display = ("id", "user", "reference", "created", "last_updated")
+    list_filter = ("last_updated",)
     list_select_related = ("user", "reference")
+    readonly_fields = ("created", "last_updated")

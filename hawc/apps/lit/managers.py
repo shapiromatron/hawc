@@ -46,7 +46,9 @@ class _ReferenceFilterTagManager(_TaggableManager):
 
         # make sure we're only using pks for tags with this assessment
         tag_pks = [int(tag) for tag in tag_pks]
-        full_taglist = self.through.tag_model().get_descendants_pks(self.instance.assessment_id)
+        full_taglist = self.through.tag_model().get_descendants_pks(
+            self.instance.assessment_id
+        )
         selected_tags = set(tag_pks).intersection(full_taglist)
 
         tagrefs = []
@@ -736,3 +738,7 @@ class ReferenceTagsManager(BaseManager):
             message=json.dumps({"count": number_deleted, "data": deleted_data}),
         )
         return number_deleted, log.id
+
+
+class UserReferenceTagsManager(BaseManager):
+    assessment_relation = "content_object__reference__assessment"

@@ -18,6 +18,27 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.CreateModel(
+            name="UserReferenceTag",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "reference",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_tags",
+                        to="lit.reference",
+                    ),
+                ),
+            ],
+        ),
         migrations.AddField(
             model_name="literatureassessment",
             name="color_list_1",
@@ -131,7 +152,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.CreateModel(
-            name="UserReferenceTag",
+            name="UserReferenceTags",
             fields=[
                 (
                     "id",
@@ -140,34 +161,43 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "user",
+                    "content_object",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="reference_tags",
-                        to=settings.AUTH_USER_MODEL,
+                        on_delete=django.db.models.deletion.CASCADE, to="lit.userreferencetag"
                     ),
                 ),
                 (
-                    "reference",
+                    "tag",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="user_tags",
-                        to="lit.reference",
+                        related_name="user_references",
+                        to="lit.referencefiltertag",
                     ),
                 ),
-                (
-                    "tags",
-                    managers.ReferenceFilterTagManager(
-                        blank=True,
-                        help_text="A comma-separated list of tags.",
-                        through="lit.ReferenceTags",
-                        to="lit.ReferenceFilterTag",
-                        verbose_name="Tags",
-                    ),
-                ),
-                ("created", models.DateTimeField(auto_now_add=True)),
-                ("last_updated", models.DateTimeField(auto_now=True)),
             ],
+            options={
+                "abstract": False,
+            },
+        ),
+        migrations.AddField(
+            model_name="userreferencetag",
+            name="tags",
+            field=managers.ReferenceFilterTagManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="lit.UserReferenceTags",
+                to="lit.ReferenceFilterTag",
+                verbose_name="Tags",
+            ),
+        ),
+        migrations.AddField(
+            model_name="userreferencetag",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="reference_tags",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.RunPython(disable_conflict_resolution, reverse_code=migrations.RunPython.noop),
     ]

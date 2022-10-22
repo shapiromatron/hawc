@@ -1089,12 +1089,25 @@ class Reference(models.Model):
             )
 
 
+class UserReferenceTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="user_references"
+    )
+    content_object = models.ForeignKey("UserReferenceTag", on_delete=models.CASCADE)
+
+
 class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
-    tags = managers.ReferenceFilterTagManager(through=ReferenceTags, blank=True)
+    tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def assessment_id(self) -> int:
+        return self.reference.assessment_id
 
 
 reversion.register(LiteratureAssessment)
