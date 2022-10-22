@@ -56,7 +56,7 @@ class LiteratureAssessmentForm(forms.ModelForm):
             inputs = {
                 "legend_text": "Update literature assessment settings",
                 "help_text": "Update literature settings for this assessment",
-                "cancel_url": reverse_lazy("lit:tags_update", args=(self.instance.assessment_id,)),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
