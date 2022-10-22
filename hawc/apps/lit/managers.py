@@ -46,9 +46,7 @@ class _ReferenceFilterTagManager(_TaggableManager):
 
         # make sure we're only using pks for tags with this assessment
         tag_pks = [int(tag) for tag in tag_pks]
-        full_taglist = self.through.tag_model().get_descendants_pks(
-            self.instance.assessment_id
-        )
+        full_taglist = self.through.tag_model().get_descendants_pks(self.instance.assessment_id)
         selected_tags = set(tag_pks).intersection(full_taglist)
 
         tagrefs = []
