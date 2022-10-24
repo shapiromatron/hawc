@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 class Bmd3Store {
     constructor(config) {
         this.config = config;
