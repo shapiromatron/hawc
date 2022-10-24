@@ -82,7 +82,7 @@ urlpatterns = [
     ),
     # CRUD searches
     path(
-        "assessment/<int:pk>/search/new/",
+        "assessment/<int:pk>/search/create/",
         views.SearchNew.as_view(),
         name="search_new",
     ),
@@ -113,12 +113,12 @@ urlpatterns = [
     ),
     # CRUD import
     path(
-        "assessment/<int:pk>/import/new/",
+        "assessment/<int:pk>/import/create/",
         views.ImportNew.as_view(),
         name="import_new",
     ),
     path(
-        "assessment/<int:pk>/ris-import/new/",
+        "assessment/<int:pk>/ris-import/create/",
         views.ImportRISNew.as_view(),
         name="import_ris_new",
     ),
