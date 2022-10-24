@@ -703,7 +703,7 @@ class LiteratureAssessmentUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
         return context
 
     def get_success_url(self):
-        return reverse_lazy("lit:tags_update", args=(self.assessment.id,))
+        return reverse_lazy("lit:overview", args=(self.assessment.id,))
 
 
 class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):

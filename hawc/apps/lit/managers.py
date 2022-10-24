@@ -736,3 +736,7 @@ class ReferenceTagsManager(BaseManager):
             message=json.dumps({"count": number_deleted, "data": deleted_data}),
         )
         return number_deleted, log.id
+
+
+class UserReferenceTagsManager(BaseManager):
+    assessment_relation = "content_object__reference__assessment"

@@ -24,6 +24,7 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from ...constants import ColorblindColors
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -35,6 +36,7 @@ from ..common.models import (
     NonUniqueTagBase,
     get_private_data_storage,
 )
+from ..myuser.models import HAWCUser
 from . import constants, managers, tasks
 
 logger = logging.getLogger(__name__)
@@ -63,12 +65,76 @@ class LiteratureAssessment(models.Model):
         on_delete=models.CASCADE,
         related_name="literature_settings",
     )
+    conflict_resolution = models.BooleanField(
+        default=settings.HAWC_FEATURES.DEFAULT_LITERATURE_CONFLICT_RESOLUTION,
+        verbose_name="Conflict resolution required",
+        help_text="Enable conflict resolution for reference screening. If enabled, at least two reviewers must independently review and tag literature, and tag conflicts must be resolved before tags are applied to a reference. If disabled, tags are immediately applied to references.  We do not recommend changing this setting after screening has begun.",
+    )
     extraction_tag = models.ForeignKey(
         "lit.ReferenceFilterTag",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        help_text="All references or child references of this tag will be marked as ready for extraction.",
+        help_text="References tagged with this tag or its descendants will be available for data extraction and study quality/risk of bias evaluation.",
+    )
+    screening_instructions = models.TextField(
+        blank=True,
+        help_text="""Add instructions for screeners. This information will be shown on the
+        literature screening page and will publicly available, if the assessment is made public.""",
+    )
+    name_list_1 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 1",
+        default="Positive",
+        help_text="Name for this list of keywords",
+    )
+    color_list_1 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 1",
+        default=ColorblindColors.BRIGHT[2],
+        help_text="Keywords in list 1 will be highlighted this color",
+    )
+    keyword_list_1 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    name_list_2 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 2",
+        default="Negative",
+        help_text="Name for this list of keywords",
+    )
+    color_list_2 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 2",
+        default=ColorblindColors.BRIGHT[1],
+        help_text="Keywords in list 2 will be highlighted this color",
+    )
+    keyword_list_2 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    name_list_3 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 3",
+        default="Additional",
+        help_text="Name for this list of keywords",
+    )
+    color_list_3 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 3",
+        default=ColorblindColors.BRIGHT[0],
+        help_text="Keywords in list 3 will be highlighted this color",
+    )
+    keyword_list_3 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
     )
     topic_tsne_data = models.FileField(
         blank=True,
@@ -1024,4 +1090,28 @@ class Reference(models.Model):
             )
 
 
+class UserReferenceTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="user_references"
+    )
+    content_object = models.ForeignKey("UserReferenceTag", on_delete=models.CASCADE)
+
+
+class UserReferenceTag(models.Model):
+    user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
+    reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
+    tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def assessment_id(self) -> int:
+        return self.reference.assessment_id
+
+
+reversion.register(LiteratureAssessment)
+reversion.register(Search)
 reversion.register(Reference)
+reversion.register(UserReferenceTag)
