@@ -78,7 +78,14 @@ class TagTree extends Component {
             untaggedCount,
         } = this.props;
         return (
-            <div className="resize-y p-2" style={{maxHeight: "120vh", height: "80vh", backgroundColor: "aliceblue", borderRadius: "7px"}}>
+            <div
+                className="resize-y p-2"
+                style={{
+                    maxHeight: "120vh",
+                    height: "80vh",
+                    backgroundColor: "aliceblue",
+                    borderRadius: "7px",
+                }}>
                 {tagtree.rootNode.children.map((tag, i) => (
                     <TagNode
                         key={i}

@@ -66,7 +66,7 @@ class Store {
                         this.selectedReference = null;
                         this.selectedReferenceTags = null;
                         if (this.referencesUntagged.length > 0) {
-                            this.changeSelectedReference(this.referencesUntagged[0]);
+                            this.changeSelectedReference(this.references[index + 1]);
                         }
                     },
                 });

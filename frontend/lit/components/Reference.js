@@ -71,7 +71,15 @@ class Reference extends Component {
     }
 
     render() {
-        const {reference, showActions, showTags, showHr, showActionsTagless, actionsBtnClassName, extraActions} = this.props,
+        const {
+                reference,
+                showActions,
+                showTags,
+                showHr,
+                showActionsTagless,
+                actionsBtnClassName,
+                extraActions,
+            } = this.props,
             {data, tags} = reference,
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
             year = data.year || "",
@@ -107,8 +115,10 @@ class Reference extends Component {
                 {data.title ? <p className="ref_title py-1">{data.title}</p> : null}
                 {data.journal ? <p className="ref_small">{data.journal}</p> : null}
                 {data.abstract ? (
-                    <div className="abstracts resize-y p-2"
-                    dangerouslySetInnerHTML={{__html: data.abstract}} />
+                    <div
+                        className="abstracts resize-y p-2"
+                        dangerouslySetInnerHTML={{__html: data.abstract}}
+                    />
                 ) : null}
                 {showTags && tags.length > 0 ? (
                     <p>
@@ -152,6 +162,7 @@ Reference.propTypes = {
     showHr: PropTypes.bool,
     showTags: PropTypes.bool,
     showActionsTagless: PropTypes.bool,
+    extraActions: PropTypes.element,
 };
 
 Reference.defaultProps = {
@@ -160,6 +171,7 @@ Reference.defaultProps = {
     showHr: false,
     showTags: true,
     showActionsTagsless: false,
+    extraActions: null,
 };
 
 export default Reference;
