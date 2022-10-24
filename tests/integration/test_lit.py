@@ -35,7 +35,7 @@ class TestLiterature(PlaywrightTestCase):
 
         # /lit/assessment/:id/tag/untagged/
         page.goto(self.live_server_url + "/lit/assessment/1/tag/untagged/")
-        expect(page.locator("text=Tags for current reference")).to_be_visible()
+        expect(page.locator("text=Currently Applied Tags")).to_be_visible()
 
         # /lit/assessment/:id/tags/update/
         page.goto(self.live_server_url + "/lit/assessment/1/tags/update/")
