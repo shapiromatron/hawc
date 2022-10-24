@@ -26,6 +26,7 @@ class ColorblindColors:
     A collection of colorblind friendly color pallettes for use in HAWC, as needed.
     Originally gathered from: https://personal.sron.nl/~pault/
     """
+
     # fmt: off
     BRIGHT = ["#4477AA", "#EE6677", "#228833", "#CCBB44", "#66CCEE", "#AA3377", "#BBBBBB"]
     VIBRANT = ["#EE7733", "#0077BB", "#33BBEE", "#EE3377", "#CC3311", "#009988", "#BBBBBB"]
