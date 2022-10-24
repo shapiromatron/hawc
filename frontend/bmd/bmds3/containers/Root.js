@@ -1,4 +1,3 @@
-import $ from "$";
 import React from "react";
 
 class Root extends React.Component {
@@ -11,4 +10,4 @@ class Root extends React.Component {
     }
 }
 
-export default Root
+export default Root;
