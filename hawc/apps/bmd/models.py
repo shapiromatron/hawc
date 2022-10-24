@@ -44,6 +44,10 @@ class AssessmentSettings(models.Model):
     def build_default(cls, assessment):
         cls.objects.create(assessment=assessment)
 
+    @property
+    def can_create(self):
+        return self.version == constants.BmdsVersion.BMDS330
+
     def copy_across_assessments(self, cw):
         old_id = self.id
 
@@ -170,9 +174,6 @@ class Session(models.Model):
     def get_selected_model_url(self):
         return reverse("bmd:api:session-selected-model", args=[self.id])
 
-    def can_edit(self):
-        return self.version == constants.BmdsVersion.BMDS330
-
     @classmethod
     def create_new(cls, endpoint):
         dose_units = endpoint.get_doses_json(json_encode=False)[0]["id"]
@@ -184,6 +185,10 @@ class Session(models.Model):
     @property
     def is_finished(self):
         return self.date_executed is not None
+
+    @property
+    def can_edit(self):
+        return self.version == constants.BmdsVersion.BMDS330
 
     def execute(self):
         # reset execution datestamp if needed
