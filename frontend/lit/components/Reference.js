@@ -71,7 +71,7 @@ class Reference extends Component {
     }
 
     render() {
-        const {reference, showActions, showTags, showHr, showActionsTagless, actionsBtnClassName} = this.props,
+        const {reference, showActions, showTags, showHr, showActionsTagless, actionsBtnClassName, extraActions} = this.props,
             {data, tags} = reference,
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
             year = data.year || "",
@@ -79,6 +79,7 @@ class Reference extends Component {
                 <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
                 <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
                 <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
+                extraActions ? extraActions : null,
             ];
 
         return (
@@ -150,6 +151,7 @@ Reference.propTypes = {
     actionsBtnClassName: PropTypes.string,
     showHr: PropTypes.bool,
     showTags: PropTypes.bool,
+    showActionsTagless: PropTypes.bool,
 };
 
 Reference.defaultProps = {
@@ -157,6 +159,7 @@ Reference.defaultProps = {
     actionsBtnClassName: "btn-sm",
     showHr: false,
     showTags: true,
+    showActionsTagsless: false,
 };
 
 export default Reference;

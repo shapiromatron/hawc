@@ -54,7 +54,7 @@ class TagReferencesMain extends Component {
         return (
             <div className="row">
                 <div className={this.state.filterClass} id="refFilter">
-                    <div className="row px-3 justify-content-between">
+                    <div className="row px-3 justify-content-between" style={{maxHeight: "1.9rem" }}>
                         <h4 className="pt-2 mb-1">
                             References
                         </h4>
@@ -75,7 +75,7 @@ class TagReferencesMain extends Component {
                                     }
                                     onClick={() => store.changeSelectedReference(ref)}>
                                     {ref.shortCitation()}&nbsp;
-                                    {ref.tags.length > 0 ? <i class="fa fa-tags" title="tagged" aria-hidden="true"></i> : null}
+                                    {ref.tags.length > 0 ? <i className="fa fa-tags" title="tagged" aria-hidden="true"></i> : null}
                                 </p>
                             ))}
                         </div>
@@ -102,19 +102,11 @@ class TagReferencesMain extends Component {
                                     style={{ display: "none" }}>
                                     Saved!
                                 </span>
-                                <div className="pt-1">
-                                    <button
-                                        className="btn btn-light mx-2 align-self-end"
-                                        title="Remove all tags"
-                                        onClick={() => store.removeAllTags()}>
-                                        <i className="fa fa-times" aria-hidden="true"></i>
-                                    </button>
-                                    <button
-                                        className="btn btn-primary align-self-end"
-                                        onClick={() => store.saveAndNext()}>
-                                        Save and go to next untagged
-                                    </button>
-                                </div>
+                                <button
+                                    className="btn btn-primary align-self-end pt-1"
+                                    onClick={() => store.saveAndNext()}>
+                                    Save and go to next untagged
+                                </button>
                             </div>
                             <div className="well" style={{ minHeight: "50px" }}>
                                 {selectedReferenceTags.map((tag, i) => (
@@ -140,6 +132,7 @@ class TagReferencesMain extends Component {
                                 showTags={false}
                                 showActionsTagless={true}
                                 actionsBtnClassName={"btn-sm btn-secondary"}
+                                extraActions={<div className="dropdown-item" key={3} onClick={() => store.removeAllTags()}>{"Remove all tags"}</div>}
                             />
                         </div>
                     ) : (
