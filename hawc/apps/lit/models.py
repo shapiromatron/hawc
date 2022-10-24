@@ -24,6 +24,7 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from ...constants import ColorblindColors
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -90,7 +91,7 @@ class LiteratureAssessment(models.Model):
     color_list_1 = models.CharField(
         max_length=7,
         verbose_name="Highlight Color 1",
-        default="#00ff00",
+        default=ColorblindColors.BRIGHT[2],
         help_text="Keywords in list 1 will be highlighted this color",
     )
     keyword_list_1 = models.TextField(
@@ -108,7 +109,7 @@ class LiteratureAssessment(models.Model):
     color_list_2 = models.CharField(
         max_length=7,
         verbose_name="Highlight Color 2",
-        default="#ff0000",
+        default=ColorblindColors.BRIGHT[1],
         help_text="Keywords in list 2 will be highlighted this color",
     )
     keyword_list_2 = models.TextField(
@@ -117,17 +118,17 @@ class LiteratureAssessment(models.Model):
          Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
          commas.""",
     )
-    color_list_3 = models.CharField(
-        max_length=7,
-        verbose_name="Highlight Color 3",
-        default="#0000ff",
-        help_text="Keywords in list 3 will be highlighted this color",
-    )
     name_list_3 = models.CharField(
         max_length=64,
         verbose_name="Name List 3",
         default="Additional",
         help_text="Name for this list of keywords",
+    )
+    color_list_3 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 3",
+        default=ColorblindColors.BRIGHT[0],
+        help_text="Keywords in list 3 will be highlighted this color",
     )
     keyword_list_3 = models.TextField(
         blank=True,

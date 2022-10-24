@@ -41,95 +41,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="literatureassessment",
-            name="color_list_1",
-            field=models.CharField(
-                default="#00ff00",
-                help_text="Keywords in list 1 will be highlighted this color",
-                max_length=7,
-                verbose_name="Highlight Color 1",
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="color_list_2",
-            field=models.CharField(
-                default="#ff0000",
-                help_text="Keywords in list 2 will be highlighted this color",
-                max_length=7,
-                verbose_name="Highlight Color 2",
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="color_list_3",
-            field=models.CharField(
-                default="#0000ff",
-                help_text="Keywords in list 3 will be highlighted this color",
-                max_length=7,
-                verbose_name="Highlight Color 3",
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
             name="conflict_resolution",
             field=models.BooleanField(
                 default=settings.HAWC_FEATURES.DEFAULT_LITERATURE_CONFLICT_RESOLUTION,
                 help_text="Enable conflict resolution for reference screening. If enabled, at least two reviewers must independently review and tag literature, and tag conflicts must be resolved before tags are applied to a reference. If disabled, tags are immediately applied to references.  We do not recommend changing this setting after screening has begun.",
                 verbose_name="Conflict resolution required",
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="keyword_list_1",
-            field=models.TextField(
-                blank=True,
-                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="keyword_list_2",
-            field=models.TextField(
-                blank=True,
-                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="keyword_list_3",
-            field=models.TextField(
-                blank=True,
-                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="name_list_1",
-            field=models.CharField(
-                default="Positive",
-                help_text="Name for this list of keywords",
-                max_length=64,
-                verbose_name="Name List 1",
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="name_list_2",
-            field=models.CharField(
-                default="Negative",
-                help_text="Name for this list of keywords",
-                max_length=64,
-                verbose_name="Name List 2",
-            ),
-        ),
-        migrations.AddField(
-            model_name="literatureassessment",
-            name="name_list_3",
-            field=models.CharField(
-                default="Additional",
-                help_text="Name for this list of keywords",
-                max_length=64,
-                verbose_name="Name List 3",
             ),
         ),
         migrations.AddField(
@@ -149,6 +65,90 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 to="lit.referencefiltertag",
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="name_list_1",
+            field=models.CharField(
+                default="Positive",
+                help_text="Name for this list of keywords",
+                max_length=64,
+                verbose_name="Name List 1",
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="color_list_1",
+            field=models.CharField(
+                default="#228833",
+                help_text="Keywords in list 1 will be highlighted this color",
+                max_length=7,
+                verbose_name="Highlight Color 1",
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="keyword_list_1",
+            field=models.TextField(
+                blank=True,
+                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="color_list_2",
+            field=models.CharField(
+                default="#EE6677",
+                help_text="Keywords in list 2 will be highlighted this color",
+                max_length=7,
+                verbose_name="Highlight Color 2",
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="name_list_2",
+            field=models.CharField(
+                default="Negative",
+                help_text="Name for this list of keywords",
+                max_length=64,
+                verbose_name="Name List 2",
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="keyword_list_2",
+            field=models.TextField(
+                blank=True,
+                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="name_list_3",
+            field=models.CharField(
+                default="Additional",
+                help_text="Name for this list of keywords",
+                max_length=64,
+                verbose_name="Name List 3",
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="color_list_3",
+            field=models.CharField(
+                default="#4477AA",
+                help_text="Keywords in list 3 will be highlighted this color",
+                max_length=7,
+                verbose_name="Highlight Color 3",
+            ),
+        ),
+        migrations.AddField(
+            model_name="literatureassessment",
+            name="keyword_list_3",
+            field=models.TextField(
+                blank=True,
+                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
             ),
         ),
         migrations.CreateModel(
