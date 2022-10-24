@@ -22,7 +22,7 @@ class LiteratureAssessmentAdmin(admin.ModelAdmin):
 
 @admin.register(models.ReferenceFilterTag)
 class ReferenceFilterTagAdmin(TreeAdmin):
-    pass
+    readonly_fields = ("path", "depth", "numchild")
 
 
 @admin.register(models.Search)
