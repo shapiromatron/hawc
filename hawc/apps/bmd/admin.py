@@ -22,6 +22,7 @@ class ModelAdmin(admin.TabularInline):
 
 @admin.register(models.Session)
 class SessionAdmin(AllListFieldAdmin):
+    list_filter = ("version",)
     raw_id_fields = ("endpoint",)
     inlines = [ModelAdmin]
 
