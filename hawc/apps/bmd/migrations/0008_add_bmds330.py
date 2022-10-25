@@ -44,6 +44,7 @@ class Migration(migrations.Migration):
                 ],
                 default="BMDS330",
                 max_length=10,
+                help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
             ),
         ),
         migrations.AlterField(

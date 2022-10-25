@@ -21,7 +21,10 @@ class AssessmentSettings(models.Model):
         "assessment.Assessment", on_delete=models.CASCADE, related_name="bmd_settings"
     )
     version = models.CharField(
-        max_length=10, choices=constants.BmdsVersion.choices, default=constants.BmdsVersion.BMDS330
+        max_length=10,
+        choices=constants.BmdsVersion.choices,
+        default=constants.BmdsVersion.BMDS330,
+        help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
