@@ -28,17 +28,44 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
     class Meta:
         model = models.LiteratureAssessment
-        fields = ("extraction_tag",)
+        fields = (
+            "conflict_resolution",
+            "extraction_tag",
+            "screening_instructions",
+            "name_list_1",
+            "color_list_1",
+            "keyword_list_1",
+            "name_list_2",
+            "color_list_2",
+            "keyword_list_2",
+            "name_list_3",
+            "color_list_3",
+            "keyword_list_3",
+        )
+        field_classes = {
+            "screening_instructions": QuillField,
+        }
+        widgets = {
+            "color_list_1": forms.TextInput(attrs={"type": "color"}),
+            "color_list_2": forms.TextInput(attrs={"type": "color"}),
+            "color_list_3": forms.TextInput(attrs={"type": "color"}),
+        }
 
     def setHelper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": "Update literature assessment settings",
                 "help_text": "Update literature settings for this assessment",
-                "cancel_url": reverse_lazy("lit:tags_update", args=(self.instance.assessment_id,)),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
+        for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
+            self.fields[fld].widget.attrs["rows"] = 3
+        helper.add_row("conflict_resolution", 2, "col-md-6")
+        helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_3", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         return helper
 
 
