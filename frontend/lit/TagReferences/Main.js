@@ -153,6 +153,13 @@ class TagReferencesMain extends Component {
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.addTag(tag)}
                     />
+                    <div className="alert alert-info mt-3">
+                        <b>Screening Instructions:</b>
+                        <button type="button" className="close" data-dismiss="alert">
+                            &times;
+                        </button>
+                        {store.config.instructions}
+                    </div>
                 </div>
             </div>
         );

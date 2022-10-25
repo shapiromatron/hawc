@@ -270,6 +270,7 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
             app="litStartup",
             page="startupTagReferences",
             data=dict(
+                instructions=self.assessment.literature_settings.screening_instructions,
                 tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
                 refs=[ref.to_dict() for ref in refs],
                 csrf=get_token(self.request),
