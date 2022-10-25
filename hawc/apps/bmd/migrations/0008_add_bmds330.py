@@ -8,14 +8,13 @@ def update_bmd_version(apps, schema_editor, version: str):
     # update BMD version for all assessments modeling completed
     AssessmentSettings = apps.get_model("bmd", "AssessmentSettings")
     Session = apps.get_model("bmd", "Session")
-    assessment_ids_with_bmd = set(
+    qs = (
         Session.objects.annotate(assessment_id=F("endpoint__assessment_id"))
         .values_list("assessment_id", flat=True)
-        .distinct()
+        .order_by("assessment_id")
+        .distinct("assessment_id")
     )
-    AssessmentSettings.objects.exclude(assessment_id__in=assessment_ids_with_bmd).update(
-        version=version
-    )
+    AssessmentSettings.objects.exclude(assessment_id__in=qs).update(version=version)
 
 
 def update_forwards(apps, schema_editor):
