@@ -6,7 +6,7 @@ from . import models
 
 @admin.register(models.AssessmentSettings)
 class AssessmentSettingsAdmin(AllListFieldAdmin):
-    pass
+    list_filter = ("version",)
 
 
 @admin.register(models.LogicField)
