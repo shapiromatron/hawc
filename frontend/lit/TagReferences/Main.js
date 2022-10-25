@@ -6,6 +6,7 @@ import {toJS} from "mobx";
 import Reference from "../components/Reference";
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
+import HelpTextPopup from "shared/components/HelpTextPopup";
 
 @inject("store")
 @observer
@@ -29,8 +30,7 @@ class TagReferencesMain extends Component {
     render() {
         const {store} = this.props,
             selectedReferencePk = store.selectedReference ? store.selectedReference.data.pk : null,
-            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
-            showFullTag = true;
+            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [];
         return (
             <div className="row">
                 <div className={store.filterClass} id="refFilter">
@@ -85,6 +85,10 @@ class TagReferencesMain extends Component {
                                         </div>
                                     </button>
                                     &nbsp; Currently Applied Tags
+                                    <HelpTextPopup
+                                        title={""}
+                                        content={"Click on a tag to remove"}
+                                    />
                                 </h4>
                                 <span>&nbsp;</span>
                                 <span
@@ -99,14 +103,14 @@ class TagReferencesMain extends Component {
                                     Save and go to next
                                 </button>
                             </div>
-                            <div className="well" style={{minHeight: "50px"}} title="click on tag to remove">
+                            <div className="well" style={{minHeight: "50px"}}>
                                 {selectedReferenceTags.map((tag, i) => (
                                     <span
                                         key={i}
-                                        title="click to remove"
+                                        title={tag.get_full_name()}
                                         className="refTag refTagEditing"
                                         onClick={() => store.removeTag(tag)}>
-                                        {showFullTag ? tag.get_full_name() : tag.data.name}
+                                        {store.showFullTag ? tag.get_full_name() : tag.data.name}
                                     </span>
                                 ))}
                             </div>
@@ -123,14 +127,20 @@ class TagReferencesMain extends Component {
                                 showTags={false}
                                 showActionsTagless={true}
                                 actionsBtnClassName={"btn-sm btn-secondary"}
-                                extraActions={
+                                extraActions={[
                                     <div
                                         className="dropdown-item"
                                         key={3}
                                         onClick={() => store.removeAllTags()}>
                                         &nbsp;Remove all tags
-                                    </div>
-                                }
+                                    </div>,
+                                    <div
+                                        className="dropdown-item"
+                                        key={4}
+                                        onClick={() => store.toggleFullTag()}>
+                                        &nbsp;{store.showFullTag ? "Hide" : "Show"} full tag
+                                    </div>,
+                                ]}
                             />
                         </div>
                     ) : (

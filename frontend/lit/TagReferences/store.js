@@ -15,6 +15,7 @@ class Store {
     @observable selectedReferenceTags = null;
     @observable errorOnSave = false;
     @observable filterClass = "";
+    @observable showFullTag = true;
 
     constructor(config) {
         this.config = config;
@@ -91,7 +92,11 @@ class Store {
     }
 
     @action.bound toggleSlideAway() {
-        this.filterClass = this.filterClass == "" ? "slideAway": "";
+        this.filterClass = this.filterClass == "" ? "slideAway" : "";
+    }
+
+    @action.bound toggleFullTag() {
+        this.showFullTag = this.showFullTag ? false : true;
     }
 }
 
