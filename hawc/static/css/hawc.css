@@ -267,54 +267,50 @@ div.smart-tag.active {
 }
 
 /* LITERATURE MODULE */
+#refFilter h4,
+#fullRefList p {
+    overflow: hidden;
+    word-wrap: normal;
+}
+#refFilter p {
+    max-height: 26px;
+}
+#refFilter {
+    transition-property: all !important;
+    transition: width 250ms ease-out;
+    max-width: 22%;
+    width: 22%;
+    padding: 0rem 1rem;
+}
 #refFilter.slideAway {
     transition: all 250ms ease-in;
     max-width: 0%;
     padding: 0px 0px 0px 0px;
     overflow: hidden;
 }
-
-#refFilter h4,
-#fullRefList p {
-    overflow: hidden;
-    word-wrap: normal;
-}
-
-#refFilter p {
-    max-height: 26px;
-}
-
-#refFilter {
-    transition-property: all !important;
-    transition: width 250ms ease-in;
-    max-width: 22%;
-    width: 22%;
-    padding: 0rem 1rem;
-}
-
 #taggingCol {
-    transition: width 250ms ease-in;
+    transition: width 250ms ease-out;
     width: 53%;
     padding: 0rem 1rem;
 }
-
 #taggingCol.slideAway {
     transition: width 250ms ease-in;
     width: 75%;
 }
-
 #filter-btn {
     transition: transform 250ms ease-in-out;
 }
-
 #filter-btn.slideAway>#caret-left {
     transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
     transition: transform 250ms ease-in-out;
 }
-
 #tagtree-col {
     width: 25%;
+}
+#litTagtree {
+    max-height: 120vh;
+    background-color: #e0f0ff;
+    border-radius: 7px;
 }
 .abstracts {
     font-size: 1.1rem;

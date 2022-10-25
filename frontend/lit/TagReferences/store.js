@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import {action, computed, toJS, observable} from "mobx";
+import {action, toJS, observable} from "mobx";
 
 import Reference from "../Reference";
 import TagTree from "../TagTree";
@@ -20,11 +20,7 @@ class Store {
         this.tagtree = new TagTree(config.tags[0]);
         this.references = Reference.sortedArray(config.refs, this.tagtree);
         // set first reference
-        if (this.referencesUntagged.length > 0) {
-            this.changeSelectedReference(this.referencesUntagged[0]);
-        } else if (this.references.length === 1) {
-            this.changeSelectedReference(this.references[0]);
-        }
+        this.changeSelectedReference(this.references[0]);
     }
 
     @action.bound changeSelectedReference(reference) {
@@ -65,8 +61,10 @@ class Store {
                         this.references.splice(index, 1, toJS(this.selectedReference));
                         this.selectedReference = null;
                         this.selectedReferenceTags = null;
-                        if (this.referencesUntagged.length > 0) {
+                        if (this.references.length > index + 1) {
                             this.changeSelectedReference(this.references[index + 1]);
+                        } else {
+                            this.changeSelectedReference(this.references[0]);
                         }
                     },
                 });
@@ -89,13 +87,6 @@ class Store {
 
     @action.bound sortReferences(sortBy) {
         this.references = sortReferences(this.references, sortBy);
-    }
-
-    @computed get referencesTagged() {
-        return this.references.filter(ref => ref.tags.length > 0);
-    }
-    @computed get referencesUntagged() {
-        return this.references.filter(ref => ref.tags.length === 0);
     }
 }
 

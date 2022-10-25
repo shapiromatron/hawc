@@ -45,8 +45,7 @@ class TagReferencesMain extends Component {
     render() {
         const {store} = this.props,
             selectedReferencePk = store.selectedReference ? store.selectedReference.data.pk : null,
-            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
-            allTagged = store.referencesUntagged.length == 0;
+            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [];
         return (
             <div className="row">
                 <div className={this.state.filterClass} id="refFilter">
@@ -144,7 +143,7 @@ class TagReferencesMain extends Component {
                                         className="dropdown-item"
                                         key={3}
                                         onClick={() => store.removeAllTags()}>
-                                        {"Remove all tags"}
+                                        &nbsp;Remove all tags
                                     </div>
                                 }
                             />
@@ -152,11 +151,6 @@ class TagReferencesMain extends Component {
                     ) : (
                         <h4>Select a reference</h4>
                     )}
-                    {selectedReferencePk === null && allTagged ? (
-                        <div className="alert alert-success">
-                            All references have been successfully tagged. Congratulations!
-                        </div>
-                    ) : null}
                 </div>
                 <div className="px-3" id="tagtree-col">
                     <h4 className="pt-2">Available tags</h4>
