@@ -15,7 +15,7 @@ class Store {
     @observable selectedReferenceTags = null;
     @observable errorOnSave = false;
     @observable filterClass = "";
-    @observable showFullTag = true;
+    @observable showInstructionsModal = false;
 
     constructor(config) {
         this.config = config;
@@ -95,8 +95,8 @@ class Store {
         this.filterClass = this.filterClass == "" ? "slideAway" : "";
     }
 
-    @action.bound toggleFullTag() {
-        this.showFullTag = this.showFullTag ? false : true;
+    @action.bound setInstructionsModal(input) {
+        this.showInstructionsModal = input;
     }
 }
 

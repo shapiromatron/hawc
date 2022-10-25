@@ -7,6 +7,7 @@ import Reference from "../components/Reference";
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
 import HelpTextPopup from "shared/components/HelpTextPopup";
+import Modal from "shared/components/Modal";
 
 @inject("store")
 @observer
@@ -14,6 +15,14 @@ class TagReferencesMain extends Component {
     constructor(props) {
         super(props);
         this.savedPopup = React.createRef();
+        this.state = {
+            showFullTag: window.localStorage.getItem("showFullTag")
+                ? window.localStorage.getItem("showFullTag") === "true"
+                : true,
+            pinInstructions: window.localStorage.getItem("pinInstructions")
+                ? window.localStorage.getItem("pinInstructions") === "true"
+                : false,
+        };
     }
     _setSaveIndicator() {
         const el = this.savedPopup.current;
@@ -98,7 +107,7 @@ class TagReferencesMain extends Component {
                                     Saved!
                                 </span>
                                 <button
-                                    className="btn btn-primary align-self-end pt-1"
+                                    className="btn btn-primary pt-1"
                                     onClick={() => store.saveAndNext()}>
                                     Save and go to next
                                 </button>
@@ -110,7 +119,9 @@ class TagReferencesMain extends Component {
                                         title={tag.get_full_name()}
                                         className="refTag refTagEditing"
                                         onClick={() => store.removeTag(tag)}>
-                                        {store.showFullTag ? tag.get_full_name() : tag.data.name}
+                                        {this.state.showFullTag
+                                            ? tag.get_full_name()
+                                            : tag.data.name}
                                     </span>
                                 ))}
                             </div>
@@ -137,8 +148,20 @@ class TagReferencesMain extends Component {
                                     <div
                                         className="dropdown-item"
                                         key={4}
-                                        onClick={() => store.toggleFullTag()}>
-                                        &nbsp;{store.showFullTag ? "Hide" : "Show"} full tag
+                                        onClick={() => {
+                                            window.localStorage.setItem(
+                                                "showFullTag",
+                                                !this.state.showFullTag
+                                            );
+                                            this.setState({showFullTag: !this.state.showFullTag});
+                                        }}>
+                                        &nbsp;{this.state.showFullTag ? "Hide" : "Show"} full tag
+                                    </div>,
+                                    <div
+                                        className="dropdown-item"
+                                        key={5}
+                                        onClick={() => store.setInstructionsModal(true)}>
+                                        &nbsp;View instructions
                                     </div>,
                                 ]}
                             />
@@ -146,21 +169,65 @@ class TagReferencesMain extends Component {
                     ) : (
                         <h4>Select a reference</h4>
                     )}
+                    {this.state.pinInstructions ? (
+                        <div className="alert alert-info mt-3">
+                            <b>Screening Instructions:</b>
+                            <button
+                                type="button"
+                                className="close"
+                                onClick={() => {
+                                    window.localStorage.setItem("pinInstructions", false);
+                                    this.setState({pinInstructions: false});
+                                }}>
+                                &times;
+                            </button>
+                            <div dangerouslySetInnerHTML={{__html: store.config.instructions}} />
+                        </div>
+                    ) : null}
                 </div>
                 <div className="px-3" id="tagtree-col">
-                    <h4 className="pt-2">Available tags</h4>
+                    <h4 className="pt-2 my-0">Available tags</h4>
                     <TagTree
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.addTag(tag)}
                     />
-                    <div className="alert alert-info mt-3">
-                        <b>Screening Instructions:</b>
-                        <button type="button" className="close" data-dismiss="alert">
-                            &times;
-                        </button>
-                        {store.config.instructions}
-                    </div>
                 </div>
+                <Modal
+                    isShown={store.showInstructionsModal}
+                    onClosed={() => store.setInstructionsModal(false)}>
+                    <div className="modal-header pb-0">
+                        <h4>
+                            Screening Instructions
+                            <button
+                                type="button"
+                                title={
+                                    this.state.pinInstructions ? "Unpin from page" : "Pin to page"
+                                }
+                                className="btn btn-sm btn-info ml-3"
+                                onClick={() => {
+                                    window.localStorage.setItem(
+                                        "pinInstructions",
+                                        !this.state.pinInstructions
+                                    );
+                                    this.setState({pinInstructions: !this.state.pinInstructions});
+                                    store.setInstructionsModal(false);
+                                }}>
+                                <i className="fa fa-thumb-tack" aria-hidden="true"></i>
+                            </button>
+                        </h4>
+                        <button
+                            type="button"
+                            className="float-right close"
+                            onClick={() => store.setInstructionsModal(false)}
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div
+                        className="modal-body"
+                        dangerouslySetInnerHTML={{__html: store.config.instructions}}
+                    />
+                </Modal>
             </div>
         );
     }
