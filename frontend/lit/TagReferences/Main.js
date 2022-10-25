@@ -13,22 +13,6 @@ class TagReferencesMain extends Component {
     constructor(props) {
         super(props);
         this.savedPopup = React.createRef();
-        this.state = {
-            filterClass: "",
-        };
-        this.filterClicked = this.filterClicked.bind(this);
-    }
-
-    filterClicked() {
-        if (this.state.filterClass === "") {
-            this.setState({
-                filterClass: "slideAway",
-            });
-        } else {
-            this.setState({
-                filterClass: "",
-            });
-        }
     }
     _setSaveIndicator() {
         const el = this.savedPopup.current;
@@ -45,10 +29,11 @@ class TagReferencesMain extends Component {
     render() {
         const {store} = this.props,
             selectedReferencePk = store.selectedReference ? store.selectedReference.data.pk : null,
-            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [];
+            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
+            showFullTag = true;
         return (
             <div className="row">
-                <div className={this.state.filterClass} id="refFilter">
+                <div className={store.filterClass} id="refFilter">
                     <div className="row px-3 justify-content-between" style={{maxHeight: "1.9rem"}}>
                         <h4 className="pt-2 mb-1">References</h4>
                         <ReferenceSortSelector onChange={store.sortReferences} />
@@ -79,7 +64,7 @@ class TagReferencesMain extends Component {
                         </div>
                     </div>
                 </div>
-                <div className={this.state.filterClass} id="taggingCol">
+                <div className={store.filterClass} id="taggingCol">
                     {store.selectedReference ? (
                         <div>
                             <div className="d-flex justify-content-between">
@@ -88,8 +73,8 @@ class TagReferencesMain extends Component {
                                         id="collapse-btn"
                                         className="btn btn-sm btn-info"
                                         type="button"
-                                        onClick={this.filterClicked}>
-                                        <div className={this.state.filterClass} id="filter-btn">
+                                        onClick={() => store.toggleSlideAway()}>
+                                        <div className={store.filterClass} id="filter-btn">
                                             <i
                                                 id="caret-left"
                                                 className="fa fa-caret-left "
@@ -114,14 +99,14 @@ class TagReferencesMain extends Component {
                                     Save and go to next
                                 </button>
                             </div>
-                            <div className="well" style={{minHeight: "50px"}}>
+                            <div className="well" style={{minHeight: "50px"}} title="click on tag to remove">
                                 {selectedReferenceTags.map((tag, i) => (
                                     <span
                                         key={i}
                                         title="click to remove"
                                         className="refTag refTagEditing"
                                         onClick={() => store.removeTag(tag)}>
-                                        {tag.get_full_name()}
+                                        {showFullTag ? tag.get_full_name() : tag.data.name}
                                     </span>
                                 ))}
                             </div>

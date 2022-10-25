@@ -14,6 +14,7 @@ class Store {
     @observable selectedReference = null;
     @observable selectedReferenceTags = null;
     @observable errorOnSave = false;
+    @observable filterClass = "";
 
     constructor(config) {
         this.config = config;
@@ -87,6 +88,10 @@ class Store {
 
     @action.bound sortReferences(sortBy) {
         this.references = sortReferences(this.references, sortBy);
+    }
+
+    @action.bound toggleSlideAway() {
+        this.filterClass = this.filterClass == "" ? "slideAway": "";
     }
 }
 
