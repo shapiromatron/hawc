@@ -395,8 +395,7 @@ class ReferenceViewset(
         assessment = ref.assessment
         if assessment.user_can_edit_object(self.request.user):
             tag_pks = self.request.POST.getlist("tags[]", [])
-            ref.tags.set(tag_pks)
-            ref.last_updated = timezone.now()
+            ref.update_tags(tag_pks, request.user)
             ref.save()
             response["status"] = "success"
         return Response(response)

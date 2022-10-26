@@ -540,6 +540,20 @@ class TagReferenceForm(forms.ModelForm):
         model = models.Reference
         fields = ("tags",)
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+    @transaction.atomic
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        tags = instance.tags
+        instance.tags = self[
+            "tags"
+        ].initial  # reset instance tags in case conflict resolution is on
+        instance.update_tags(tags, self.user)
+        return instance
+
 
 class TagsCopyForm(forms.Form):
 
