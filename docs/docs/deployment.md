@@ -80,3 +80,18 @@ For configurable parameters, we use environment variables which are loaded in th
     - The "external" authentication provider assumes an upstream server handles authentication and returns appropriate user metadata for integration via `/user/login/wam/`.  If used, `hawc.apps.myuser.views.ExternalAuth.get_user_metadata` requires a custom implementation.
 - `HAWC_LOGOUT_REDIRECT` [str, optional]. URL to redirect to after logout. Defaults to the homepage of hawc; this may need to be modified with some authentication providers.
 - `HAWC_LOAD_TEST_DB` [0/1/2; default 0]. Load a test database with pre-populated fake data: always (2), if empty (1), or never (0; default). This setting is only used in staging and production django settings.
+
+### Feature flags
+
+Some configurations are behind an environment variable in JSON form, `HAWC_FEATURE_FLAGS`. To set these options, you'll need to set the variable to valid JSON as an environment variable. For example:
+
+```bash
+export HAWC_FEATURE_FLAGS='{"THIS_IS_AN_EXAMPLE":true}'
+```
+
+Fields include:
+
+- `ENABLE_ECO`: If true, the experimental ecological data extraction module is enabled. Defaults to false.
+- `FIPS_MODE`: If true, allow deployment on OS with [FIPS mode enabled](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/assembly_installing-a-rhel-8-system-with-fips-mode-enabled_security-hardening). Defaults to false.
+- `ANONYMOUS_ACCOUNT_CREATION`: If true, anonymous users can create accounts. If false, only staff can create new accounts via the admin. Defaults to true.
+- `THIS_IS_AN_EXAMPLE`: Does nothing; used to test configuration.
