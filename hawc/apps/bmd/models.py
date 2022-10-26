@@ -48,7 +48,7 @@ class AssessmentSettings(models.Model):
         cls.objects.create(assessment=assessment)
 
     @property
-    def can_create(self):
+    def can_create_sessions(self):
         return self.version == constants.BmdsVersion.BMDS330
 
     def copy_across_assessments(self, cw):

@@ -52,7 +52,7 @@ class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
         return self.object.assessment
 
     def get_redirect_url(self, *args, **kwargs):
-        if not self.object.assessment.bmd_settings.can_create:
+        if not self.object.assessment.bmd_settings.can_create_sessions:
             raise BadRequest("Assessment BMDS version is unsupported, can't create a new session.")
         obj = models.Session.create_new(self.object)
         return obj.get_update_url()

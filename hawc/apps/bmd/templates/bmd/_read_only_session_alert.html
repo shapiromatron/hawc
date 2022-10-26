@@ -1,18 +1,6 @@
-{% if flavor == "EPA" %}
-<div class="usa-alert usa-alert--warning">
-    <div class="usa-alert__body">
-        <h4 class="usa-alert__heading">This session is read-only</h4>
-        <p class="usa-alert__text">
-            This session uses {{object.get_version_display}}, which is no longer supported by HAWC. To create a benchmark dose analysis, change the assessment's BMDS version to the most recent version.
-        </p>
-    </div>
-</div>
-
-{% else %}
 <div class="alert alert-warning" role="alert">
     <h4 class="alert-heading">This session is read-only</h4>
     <p>This session uses {{object.get_version_display}}, which is no longer supported by HAWC. To create a benchmark dose
     analysis, change the assessment's BMDS version to the most recent version.
     </p>
 </div>
-{% endif %}
