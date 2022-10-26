@@ -185,13 +185,15 @@ class EndpointFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
-        grid_layout = [
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3],
-        ]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}]},
+            ]
+        }
 
     def prefilter_queryset(self, queryset):
         queryset = queryset.filter(assessment=self.assessment)
