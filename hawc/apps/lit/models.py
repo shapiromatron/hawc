@@ -243,9 +243,9 @@ class LiteratureAssessment(models.Model):
         return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
     def get_keyword_data(self) -> Dict:
-        list_1 = [word.strip() for word in self.keyword_list_1.split("|") if word != '']
-        list_2 = [word.strip() for word in self.keyword_list_2.split("|") if word != '']
-        list_3 = [word.strip() for word in self.keyword_list_3.split("|") if word != '']
+        list_1 = [word.strip() for word in self.keyword_list_1.split("|") if word != ""]
+        list_2 = [word.strip() for word in self.keyword_list_2.split("|") if word != ""]
+        list_3 = [word.strip() for word in self.keyword_list_3.split("|") if word != ""]
 
         keyword_dict = {
             "1": {
