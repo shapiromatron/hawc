@@ -313,7 +313,7 @@ div.smart-tag.active {
     border-radius: 7px;
 }
 .abstracts {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     margin-top: 0.25rem;
     height: 25rem;
     background-color: #f5f5f5;
@@ -332,7 +332,7 @@ div.smart-tag.active {
 .ref_title {
     font-weight: bold;
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 1.35rem;
 }
 .refTag {
     color: #ffffff;

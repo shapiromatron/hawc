@@ -140,13 +140,13 @@ class TagReferencesMain extends Component {
                                 actionsBtnClassName={"btn-sm btn-secondary"}
                                 extraActions={[
                                     <div
-                                        className="dropdown-item"
+                                        className="dropdown-item cursor-pointer"
                                         key={3}
                                         onClick={() => store.removeAllTags()}>
                                         &nbsp;Remove all tags
                                     </div>,
                                     <div
-                                        className="dropdown-item"
+                                        className="dropdown-item cursor-pointer"
                                         key={4}
                                         onClick={() => {
                                             window.localStorage.setItem(
@@ -158,7 +158,7 @@ class TagReferencesMain extends Component {
                                         &nbsp;{this.state.showFullTag ? "Hide" : "Show"} full tag
                                     </div>,
                                     <div
-                                        className="dropdown-item"
+                                        className="dropdown-item cursor-pointer"
                                         key={5}
                                         onClick={() => store.setInstructionsModal(true)}>
                                         &nbsp;View instructions
@@ -170,7 +170,8 @@ class TagReferencesMain extends Component {
                         <h4>Select a reference</h4>
                     )}
                     {this.state.pinInstructions ? (
-                        <div className="alert alert-info mt-3">
+                        <div className="alert alert-info mt-3 resize-y"
+                            style={store.config.instructions.length > 1000 ? {height: "30vh"}: null}>
                             <b>Screening Instructions:</b>
                             <button
                                 type="button"
