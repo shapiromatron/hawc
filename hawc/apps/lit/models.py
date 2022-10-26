@@ -242,6 +242,30 @@ class LiteratureAssessment(models.Model):
     def can_request_refresh(self) -> bool:
         return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
+    def get_keyword_data(self) -> Dict:
+        list_1 = [word.strip() for word in self.keyword_list_1.split("|") if word != '']
+        list_2 = [word.strip() for word in self.keyword_list_2.split("|") if word != '']
+        list_3 = [word.strip() for word in self.keyword_list_3.split("|") if word != '']
+
+        keyword_dict = {
+            "1": {
+                "name": self.name_list_1,
+                "color": self.color_list_1,
+                "keywords": list_1,
+            },
+            "2": {
+                "name": self.name_list_2,
+                "color": self.color_list_2,
+                "keywords": list_2,
+            },
+            "3": {
+                "name": self.name_list_3,
+                "color": self.color_list_3,
+                "keywords": list_3,
+            },
+        }
+        return keyword_dict
+
 
 class Search(models.Model):
     objects = managers.SearchManager()

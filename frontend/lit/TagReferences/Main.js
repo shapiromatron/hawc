@@ -133,6 +133,7 @@ class TagReferencesMain extends Component {
                             ) : null}
                             <Reference
                                 reference={store.selectedReference}
+                                keywordDict={store.config.keywords}
                                 showActions={false}
                                 showHr={false}
                                 showTags={false}
@@ -170,8 +171,11 @@ class TagReferencesMain extends Component {
                         <h4>Select a reference</h4>
                     )}
                     {this.state.pinInstructions ? (
-                        <div className="alert alert-info mt-3 resize-y"
-                            style={store.config.instructions.length > 1000 ? {height: "30vh"}: null}>
+                        <div
+                            className="alert alert-info mt-3 resize-y"
+                            style={
+                                store.config.instructions.length > 1000 ? {height: "30vh"} : null
+                            }>
                             <b>Screening Instructions:</b>
                             <button
                                 type="button"

@@ -380,6 +380,16 @@ div.smart-tag.active {
     color: #ffffff;
     background-color: #0044cc;
 }
+.hawc-mk {
+    background-color: transparent;
+    color: inherit;
+    text-decoration: none;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    word-wrap: break-word;
+    border-bottom: 1px solid #0C7BDC;
+    box-shadow: inset 0 -3px 0 #0C7BDC;
+}
 
 /* preview modal icon */
 .previewModalParent:hover .previewModalIcon{
