@@ -4,6 +4,7 @@ import {Provider} from "mobx-react";
 
 import Reference from "./Reference";
 import ReferenceComponent from "./components/Reference";
+import ReferenceTable from "./components/ReferenceTable";
 import ReferenceSearchMain from "./ReferenceSearch/Main";
 import ReferenceSearchStore from "./ReferenceSearch/store";
 import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
@@ -17,6 +18,11 @@ import TagTreeViz from "./TagTreeViz";
 
 export default {
     TagTree,
+    startupReferenceTable(el, config) {
+        let tagtree = new TagTree(config.tags[0]),
+            references = Reference.array(config.references, tagtree);
+        ReactDOM.render(<ReferenceTable references={references} showActions={false} />, el);
+    },
     startupReferenceDetail(el, config) {
         let tagtree = new TagTree(config.tags[0]),
             ref = new Reference(config.reference, tagtree),

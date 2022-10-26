@@ -8,6 +8,7 @@ from ..common.filterset import (
     AutocompleteModelChoiceFilter,
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
+    PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models
@@ -160,6 +161,7 @@ class EndpointFilterSet(BaseFilterSet):
             ("chemical", "chemical"),
         ),
     )
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Endpoint

@@ -13,6 +13,7 @@ from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     MessageMixin,
@@ -20,7 +21,17 @@ from ..common.views import (
 )
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
-from . import forms, models
+from . import filterset, forms, models
+
+
+class StudyFilterList(BaseFilterList):
+    template_name = "study/study_list_v2.html"
+    parent_model = Assessment
+    model = models.Study
+    filterset_class = filterset.StudyFilterSet
+
+    def get_queryset(self):
+        return super().get_queryset().distinct().prefetch_related("identifiers")
 
 
 class StudyList(BaseList):

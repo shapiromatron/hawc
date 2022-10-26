@@ -1,7 +1,11 @@
 import django_filters as df
 
 from ..common.autocomplete import AutocompleteTextWidget
-from ..common.filterset import AutocompleteModelMultipleChoiceFilter, BaseFilterSet
+from ..common.filterset import (
+    AutocompleteModelMultipleChoiceFilter,
+    BaseFilterSet,
+    PaginationFilter,
+)
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, models
 
@@ -62,6 +66,7 @@ class MetaResultFilterSet(BaseFilterSet):
             ("exposure", "exposure"),
         ),
     )
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.MetaResult

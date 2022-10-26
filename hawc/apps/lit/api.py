@@ -29,7 +29,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, models, serializers
+from . import exports, filterset, models, serializers
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -279,15 +279,15 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         if not assessment.user_can_view_object(request.user):
             raise exceptions.PermissionDenied()
 
-        serializer = serializers.ReferenceQuerySerializer(
-            data=request.data, context={"assessment": assessment}
-        )
+        qs = filterset.ReferenceFilterSet(
+            data=request.data,
+            queryset=models.Reference.objects.all(),
+            request=request,
+            assessment=assessment,
+        ).qs
+        qs = qs.select_related("study").prefetch_related("searches", "identifiers")[:100]
 
-        resp = []
-        if serializer.is_valid(raise_exception=True):
-            resp = serializer.search()
-
-        return Response(dict(references=resp))
+        return Response(dict(references=[ref.to_dict() for ref in qs]))
 
     @action(
         detail=True,

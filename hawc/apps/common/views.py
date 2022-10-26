@@ -793,10 +793,11 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 class BaseFilterList(BaseList):
     filterset_class = None  # required
+    paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
         value = self.request.GET.get("paginate_by")
-        return tryParseInt(value, default=25, min_value=10, max_value=500)
+        return tryParseInt(value, default=self.paginate_by, min_value=10, max_value=500)
 
     def get_base_queryset(self):
         return self.model.objects.all()

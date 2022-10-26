@@ -23,8 +23,12 @@ class Reference {
         }
     }
 
+    static array(data, tagtree) {
+        return _.map(data, d => new Reference(d, tagtree));
+    }
+
     static sortedArray(data, tagtree) {
-        const refs = _.map(data, d => new Reference(d, tagtree));
+        const refs = Reference.array(data, tagtree);
         return sortReferences(refs);
     }
 

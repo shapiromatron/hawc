@@ -1,9 +1,33 @@
+from typing import ForwardRef, Optional
+
 import django_filters as df
 from crispy_forms import layout as cfl
 from django import forms
+from pydantic import BaseModel, conlist
 
 from . import autocomplete
 from .forms import BaseFormHelper, form_actions_apply_filters
+
+
+def filter_noop(queryset, name, value):
+    return queryset
+
+
+class PaginationFilter(df.ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        default_kwargs = dict(
+            label="Items per page",
+            choices=(
+                (25, "25"),
+                (50, "50"),
+                (100, "100"),
+                (250, "250"),
+                (500, "500"),
+            ),
+            method=filter_noop,
+        )
+        default_kwargs.update(kwargs)
+        super().__init__(*args, **default_kwargs)
 
 
 class AutocompleteModelMultipleChoiceFilter(df.ModelMultipleChoiceFilter):
@@ -14,9 +38,57 @@ class AutocompleteModelChoiceFilter(df.ModelChoiceFilter):
     field_class = autocomplete.AutocompleteChoiceField
 
 
+GridRow = ForwardRef("GridRow")
+
+
+class GridColumn(BaseModel):
+    rows: list[GridRow] = []
+
+    breakpoint: Optional[str]
+    width: Optional[int]
+
+    def apply_layout(self, helper, index):
+        if self.rows:
+            for i, row in enumerate(self.rows):
+                row.apply_layout(helper, index + i)
+            helper[index : index + len(self.rows)].wrap_together(
+                cfl.Column, css_class=self.css_class
+            )
+        else:
+            helper[index].wrap(cfl.Column, css_class=self.css_class)
+
+    @property
+    def css_class(self):
+        breakpoint = f"-{self.breakpoint}" if self.breakpoint is not None else ""
+        width = f"-{self.width}" if self.width is not None else ""
+        return f"col{breakpoint}{width}"
+
+
+class GridRow(BaseModel):
+    columns: conlist(GridColumn, min_items=1)
+
+    def apply_layout(self, helper, index):
+        for i, column in enumerate(self.columns):
+            column.apply_layout(helper, index + i)
+        helper[index : index + len(self.columns)].wrap_together(cfl.Row)
+
+
+GridColumn.update_forward_refs()
+
+
+class GridLayout(BaseModel):
+    rows: conlist(GridRow, min_items=1)
+
+    def apply_layout(self, helper):
+        for i, row in enumerate(self.rows):
+            row.apply_layout(helper, i)
+
+
 class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        self.grid_layout = kwargs.pop("grid_layout", [])
+        grid_layout = kwargs.pop("grid_layout", None)
+        self.grid_layout = GridLayout.parse_obj(grid_layout) if grid_layout is not None else None
+
         super().__init__(*args, **kwargs)
 
     @property
@@ -24,10 +96,8 @@ class FilterForm(forms.Form):
         helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
         helper.form_method = "GET"
 
-        for i, row in enumerate(self.grid_layout):
-            for j, column in enumerate(row):
-                helper[i + j].wrap(cfl.Column, css_class=f"col-md-{column}")
-            helper[i : i + len(row)].wrap_together(cfl.Row)
+        if self.grid_layout:
+            self.grid_layout.apply_layout(helper)
 
         return helper
 
@@ -64,24 +134,9 @@ class FilterSet(df.filterset.BaseFilterSet, metaclass=FilterSetMetaclass):
 
 
 class BaseFilterSet(FilterSet):
-    paginate_by = df.ChoiceFilter(
-        label="Items per page",
-        choices=(
-            (25, "25"),
-            (50, "50"),
-            (100, "100"),
-            (250, "250"),
-            (500, "500"),
-        ),
-        method="filter_noop",
-    )
-
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-
-    def filter_noop(self, queryset, name, value):
-        return queryset
 
     @property
     def perms(self):
@@ -107,4 +162,4 @@ class BaseFilterSet(FilterSet):
         return super().filter_queryset(queryset)
 
     def change_form(self, form):
-        pass
+        return form

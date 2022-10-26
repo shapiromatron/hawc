@@ -19,6 +19,7 @@ from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     MessageMixin,
@@ -26,7 +27,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     WebappMixin,
 )
-from . import constants, forms, models
+from . import constants, filterset, forms, models
 
 
 def lit_overview_breadcrumb(assessment) -> Breadcrumb:
@@ -451,6 +452,37 @@ class RefList(BaseList):
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_reference_list(self.assessment, context["obj_perms"])
+
+
+class RefFilterList(BaseFilterList):
+    template_name = "lit/reference_search_v2.html"
+    breadcrumb_active_name = "Reference search"
+    parent_model = Assessment
+    model = models.Reference
+    filterset_class = filterset.ReferenceFilterSet
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="litStartup",
+            page="startupReferenceTable",
+            data=dict(
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                references=[ref.to_dict() for ref in context["object_list"]],
+            ),
+        )
 
 
 class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):

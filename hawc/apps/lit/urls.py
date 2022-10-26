@@ -76,6 +76,11 @@ urlpatterns = [
         name="ref_search",
     ),
     path(
+        "assessment/<int:pk>/references/search/v2/",
+        views.RefFilterList.as_view(),
+        name="ref_list_v2",
+    ),
+    path(
         "assessment/<int:pk>/references/upload/",
         views.RefUploadExcel.as_view(),
         name="ref_upload",
