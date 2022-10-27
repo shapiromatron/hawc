@@ -42,7 +42,7 @@ class TestBioassay(PlaywrightTestCase):
         page.locator("text=Create new experiment").click()
 
         # create experiment
-        expect(page).to_have_url(re.compile(r"/ani/study/\d+/experiment/new/"))
+        expect(page).to_have_url(re.compile(r"/ani/study/\d+/experiment/create/"))
         page.locator('input[name="name"]').fill("test")
         page.locator('select[name="type"]').select_option("Sb")
         page.locator("text=Chemical purity available?").click()
@@ -62,7 +62,7 @@ class TestBioassay(PlaywrightTestCase):
         page.locator("text=Actions").click()
         page.locator("text=Create new").click()
 
-        expect(page).to_have_url(re.compile(r"/ani/experiment/\d+/animal-group/new/"))
+        expect(page).to_have_url(re.compile(r"/ani/experiment/\d+/animal-group/create/"))
         page.locator('input[name="name"]').fill("test123")
         page.locator('select[name="species"]').select_option("1")
         page.locator('select[name="sex"]').select_option("M")
@@ -101,7 +101,7 @@ class TestBioassay(PlaywrightTestCase):
         page.locator("text=Create new").click()
 
         # create endpoint
-        expect(page).to_have_url(re.compile(r"/ani/animal-group/\d+/endpoint/new/"))
+        expect(page).to_have_url(re.compile(r"/ani/animal-group/\d+/endpoint/create/"))
         page.locator('[placeholder="Enter term ID"]').fill("5")
         page.locator("text=Load ID").click()
         page.locator('input[name="response_units"]').fill("mg")
