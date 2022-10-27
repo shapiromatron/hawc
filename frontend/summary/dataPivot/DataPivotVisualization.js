@@ -269,7 +269,7 @@ class DataPivotVisualization extends D3Plot {
     use_extra_buffer() {
         // add extra buffer around forest-plot domain, so that points near extremes of the range
         // so that the visual doesn't overflow the boundaries.
-        return this.dp_settings.plot_settings.as_barchart == false;
+        return this.dp_settings.plot_settings.as_barchart === false;
     }
 
     set_font_style() {
@@ -805,7 +805,6 @@ class DataPivotVisualization extends D3Plot {
             .data(this.bg_rectangles_data)
             .enter()
             .append("rect")
-            .attr("class", "dp-bg-text")
             .attr("x", d => d.x)
             .attr("y", d => d.y)
             .attr("height", d => d.h)
