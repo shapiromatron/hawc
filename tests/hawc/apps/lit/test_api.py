@@ -200,7 +200,9 @@ class TestLiteratureAssessmentViewset:
         data = {"year": 2001, "tags": [12]}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert response.json() == {"tags": ["Invalid tag IDs"]}
+        assert response.json() == {
+            "tags": ["Select a valid choice. 12 is not one of the available choices."]
+        }
 
         # valid reference tag
         url = reverse("lit:api:assessment-reference-search", args=(db_keys.assessment_final,))
