@@ -13,6 +13,7 @@ from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     MessageMixin,
@@ -21,6 +22,7 @@ from ..common.views import (
     TimeSpentOnPageMixin,
     get_referrer,
 )
+from ..study.filterset import StudyFilterSet
 from ..study.models import Study
 from . import forms, models
 
@@ -203,6 +205,92 @@ def get_rob_assignment_data(assessment, studies):
             for study in studies
         ],
     }
+
+
+class RobAssignmentListV2(TeamMemberOrHigherMixin, BaseFilterList):
+    parent_model = Assessment
+    model = Study
+    template_name = "riskofbias/rob_assignment_list_v2.html"
+    paginate_by = None
+    filterset_class = StudyFilterSet
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_filterset_kwargs(self):
+        kwargs = super().get_filterset_kwargs()
+        kwargs["include_rob_authors"] = True
+        return kwargs
+
+    def get_queryset(self):
+        if not self.assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        robs = models.RiskOfBias.objects.filter(active=True).prefetch_related("author", "scores")
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"][3] = Breadcrumb(
+            name=f"{self.assessment.get_rob_name_display()} assignments"
+        )
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
+        data.update(
+            edit=False,
+            user_id=self.request.user.id,
+            can_edit_assessment=context["obj_perms"]["edit_assessment"],
+        )
+        return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
+
+
+class RobAssignmentUpdateV2(ProjectManagerOrHigherMixin, BaseFilterList):
+    parent_model = Assessment
+    model = Study
+    template_name = "riskofbias/rob_assignment_update_v2.html"
+    filterset_class = StudyFilterSet
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_filterset_kwargs(self):
+        kwargs = super().get_filterset_kwargs()
+        kwargs["include_rob_authors"] = True
+        return kwargs
+
+    def get_queryset(self):
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied()
+        robs = models.RiskOfBias.objects.prefetch_related("author", "scores")
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update")
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        data = get_rob_assignment_data(assessment=self.assessment, studies=context["object_list"])
+        data.update(
+            edit=True,
+            users=[
+                {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
+            ],
+            csrf=get_token(self.request),
+        )
+        return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
 
 
 class RobAssignmentList(TeamMemberOrHigherMixin, BaseList):

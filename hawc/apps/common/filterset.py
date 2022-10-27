@@ -134,8 +134,8 @@ class FilterSet(df.filterset.BaseFilterSet, metaclass=FilterSetMetaclass):
 
 
 class BaseFilterSet(FilterSet):
-    def __init__(self, *args, **kwargs):
-        self.assessment = kwargs.pop("assessment")
+    def __init__(self, *args, assessment, **kwargs):
+        self.assessment = assessment
         super().__init__(*args, **kwargs)
 
     @property
