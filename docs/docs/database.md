@@ -5,64 +5,64 @@ The HAWC database is a [PostgreSQL](https://www.postgresql.org/) database. See d
 ## Literature screening schema
 
 <figure markdown>
-  ![HAWC literature data schema](./static/img/hawc-schema-lit.jpeg)
+  ![HAWC literature data schema](./static/img/hawc-schema-lit.png)
   <figcaption>Study and literature schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 ## Study and risk of bias schema
 
 <figure markdown>
-  ![HAWC study data schema](./static/img/hawc-schema-study.jpeg)
+  ![HAWC study data schema](./static/img/hawc-schema-study.png)
   <figcaption>Study and risk-of bias schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 ## Animal bioassay schema
 
 <figure markdown>
-  ![HAWC animal bioassay data schema](./static/img/hawc-schema-animal.jpeg)
+  ![HAWC animal bioassay data schema](./static/img/hawc-schema-animal.png)
   <figcaption>Animal bioassay schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 <figure markdown>
-  ![HAWC BMD data schema](./static/img/hawc-schema-bmd.jpeg)
+  ![HAWC BMD data schema](./static/img/hawc-schema-bmd.png)
   <figcaption>BMD schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 ## Epidemiology schema
 
 <figure markdown>
-  ![HAWC epidemiology data schema](./static/img/hawc-schema-epi.jpeg)
-  <figcaption>Epidemiology schema. The image is very large; please save/or open in another tab.</figcaption>
-</figure>
-
-<figure markdown>
-  ![HAWC epidemiology v2 data schema](./static/img/hawc-schema-epiv2.jpeg)
+  ![HAWC epidemiology v2 data schema](./static/img/hawc-schema-epiv2.png)
   <figcaption>Epidemiology v2 schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 <figure markdown>
-  ![HAWC epi meta analysis data schema](./static/img/hawc-schema-epimeta.jpeg)
+  ![HAWC epidemiology data schema](./static/img/hawc-schema-epi.png)
+  <figcaption>Epidemiology schema. The image is very large; please save/or open in another tab.</figcaption>
+</figure>
+
+<figure markdown>
+  ![HAWC epi meta analysis data schema](./static/img/hawc-schema-epimeta.png)
   <figcaption>Epidemiology meta-analysis schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 ## *In-vitro* data schema
 
 <figure markdown>
-  ![HAWC invitro data schema](./static/img/hawc-schema-invitro.jpeg)
+  ![HAWC invitro data schema](./static/img/hawc-schema-invitro.png)
   <figcaption>*In vitro* data schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 ## *Vocabulary* schema
 
 <figure markdown>
-  ![HAWC controlled vocabulary schema](./static/img/hawc-schema-vocab.jpeg)
+  ![HAWC controlled vocabulary schema](./static/img/hawc-schema-vocab.png)
   <figcaption>Controlled vocabulary + ontology mapping data schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
 ## *Summary* schema
 
 <figure markdown>
-  ![HAWC summary data schema](./static/img/hawc-schema-summary.jpeg)
+  ![HAWC summary data schema](./static/img/hawc-schema-summary.png)
   <figcaption>Summary data schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
@@ -71,14 +71,14 @@ The HAWC database is a [PostgreSQL](https://www.postgresql.org/) database. See d
 To generate these database schema diagrams:
 
 ```bash
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-lit.jpeg lit study
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-study.jpeg study riskofbias
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-animal.jpeg animal
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-bmd.jpeg bmd
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epi.jpeg epi
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epiv2.jpeg epiv2
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epimeta.jpeg epimeta
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-invitro.jpeg invitro
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-vocab.jpeg vocab
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-summary.jpeg summary
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-lit.png lit study
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-study.png study riskofbias
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-animal.png animal
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-bmd.png bmd
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epi.png epi
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epiv2.png epiv2
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epimeta.png epimeta
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-invitro.png invitro
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-vocab.png vocab
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-summary.png summary
 ```
