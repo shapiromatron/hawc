@@ -869,13 +869,19 @@ class Reference(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def update_tags(self, tag_pks, user):
-        user_ref_tags, created = UserReferenceTag.objects.get_or_create(reference=self, user=user)
-        user_ref_tags.tags.set(tag_pks)
-        user_ref_tags.save()
-        if not self.assessment.literature_settings.conflict_resolution:
-            self.tags.set(tag_pks)
-        else:
-            raise NotImplementedError
+        user_tag, created = UserReferenceTag.objects.get_or_create(reference=self, user=user)
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        if self.assessment.literature_settings.conflict_resolution:
+            if self.user_tags.count() < 2:
+                return
+            new_tags = list(user_tag.tags.all())
+
+            for ut in self.user_tags.exclude(pk=user_tag.pk):
+                if new_tags != list(ut.tags.all()):
+                    return
+        self.tags.set(tag_pks)
 
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
