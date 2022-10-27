@@ -49,7 +49,7 @@ urlpatterns = [
     ),
     # Experiment
     path(
-        "study/<int:pk>/experiment/new/",
+        "study/<int:pk>/experiment/create/",
         views.ExperimentCreate.as_view(),
         name="experiment_new",
     ),
@@ -75,7 +75,7 @@ urlpatterns = [
     ),
     # AnimalGroup
     path(
-        "experiment/<int:pk>/animal-group/new/",
+        "experiment/<int:pk>/animal-group/create/",
         views.AnimalGroupCreate.as_view(),
         name="animal_group_new",
     ),
@@ -127,7 +127,7 @@ urlpatterns = [
         name="assessment_endpoint_taglist",
     ),
     path(
-        "animal-group/<int:pk>/endpoint/new/",
+        "animal-group/<int:pk>/endpoint/create/",
         views.EndpointCreate.as_view(),
         name="endpoint_new",
     ),
