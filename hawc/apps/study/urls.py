@@ -11,8 +11,7 @@ app_name = "study"
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
     # study
-    path("assessment/<int:pk>/", views.StudyList.as_view(), name="list"),
-    path("assessment/<int:pk>/v2/", views.StudyFilterList.as_view(), name="list_v2"),
+    path("assessment/<int:pk>/", views.StudyFilterList.as_view(), name="list"),
     path("<int:pk>/add-details/", views.StudyCreateFromReference.as_view(), name="new_study"),
     path("assessment/<int:pk>/new-study/", views.ReferenceStudyCreate.as_view(), name="new_ref"),
     path(

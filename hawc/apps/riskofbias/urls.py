@@ -63,16 +63,6 @@ urlpatterns = [
     ),
     # rob reviewers
     path(
-        "assessment/<int:pk>/study-assignments/v2/",
-        views.RobAssignmentListV2.as_view(),
-        name="rob_assignments_v2",
-    ),
-    path(
-        "assessment/<int:pk>/study-assignments/update/v2/",
-        views.RobAssignmentUpdateV2.as_view(),
-        name="rob_assignments_update_v2",
-    ),
-    path(
         "assessment/<int:pk>/study-assignments/",
         views.RobAssignmentList.as_view(),
         name="rob_assignments",
