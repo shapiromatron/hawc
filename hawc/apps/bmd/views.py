@@ -68,10 +68,7 @@ class SessionList(BaseList):
 
 
 def _get_session_config(self, context) -> WebappConfig:
-    if self.object.can_edit:
-        app = "bmds3Startup"
-    else:
-        app = "bmds2Startup"
+    app = "bmds3Startup" if self.object.can_edit else "bmds2Startup"
     edit_mode = self.crud == "Update"
     return WebappConfig(
         app=app,
