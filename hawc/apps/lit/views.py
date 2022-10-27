@@ -455,7 +455,7 @@ class RefList(BaseList):
 
 
 class RefFilterList(BaseFilterList):
-    template_name = "lit/reference_search_v2.html"
+    template_name = "lit/reference_search.html"
     breadcrumb_active_name = "Reference search"
     parent_model = Assessment
     model = models.Reference
@@ -615,29 +615,6 @@ class RefDelete(BaseDelete):
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_ref_app_startup(self, context)
-
-
-class RefSearch(BaseDetail):
-    model = Assessment
-    template_name = "lit/reference_search.html"
-    breadcrumb_active_name = "Reference search"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="litStartup",
-            page="startupSearchReference",
-            data=dict(
-                assessment_id=self.assessment.id,
-                canEdit=context["obj_perms"]["edit"],
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-                csrf=get_token(self.request),
-            ),
-        )
 
 
 class RefVisualization(BaseDetail):
