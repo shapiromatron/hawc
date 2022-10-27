@@ -5,6 +5,7 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -24,6 +25,7 @@ from ..common.api import (
     LegacyAssessmentAdapterMixin,
     OncePerMinuteThrottle,
     PaginationWithCount,
+    PostFilterBackend,
 )
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
@@ -36,6 +38,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    filterset_class = None
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
@@ -273,18 +276,15 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         methods=("post",),
         url_path="reference-search",
         permission_classes=(AssessmentReadPermissions,),
+        filter_backends=(PostFilterBackend,),
+        filterset_class=filterset.ReferenceFilterSet,
     )
     def reference_search(self, request, pk):
-        assessment = self.get_object()
-        if not assessment.user_can_view_object(request.user):
+        self.assessment = get_object_or_404(Assessment, pk=pk)
+        if not self.assessment.user_can_view_object(request.user):
             raise exceptions.PermissionDenied()
 
-        qs = filterset.ReferenceFilterSet(
-            data=request.data,
-            queryset=models.Reference.objects.all(),
-            request=request,
-            assessment=assessment,
-        ).qs
+        qs = self.filter_queryset(models.Reference.objects.all())
         qs = qs.select_related("study").prefetch_related("searches", "identifiers")[:100]
 
         return Response(dict(references=[ref.to_dict() for ref in qs]))

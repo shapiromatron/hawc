@@ -1,3 +1,4 @@
+import django_filters as df
 from rest_framework import exceptions, filters
 
 from ..helper import try_parse_list_ints
@@ -30,3 +31,23 @@ class CleanupBulkIdFilter(filters.BaseFilterBackend):
                 raise exceptions.PermissionDenied()
 
         return queryset
+
+
+class GetFilterBackend(df.rest_framework.DjangoFilterBackend):
+    def get_filterset_kwargs(self, request, queryset, view):
+        return {
+            "data": request.query_params,
+            "queryset": queryset,
+            "request": request,
+            "assessment": view.assessment,
+        }
+
+
+class PostFilterBackend(df.rest_framework.DjangoFilterBackend):
+    def get_filterset_kwargs(self, request, queryset, view):
+        return {
+            "data": request.data,
+            "queryset": queryset,
+            "request": request,
+            "assessment": view.assessment,
+        }
