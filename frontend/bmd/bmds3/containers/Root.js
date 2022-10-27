@@ -2,11 +2,7 @@ import React from "react";
 
 class Root extends React.Component {
     render() {
-        return (
-            <div className="hello-world">
-                <h1>Hello BMDS3!</h1>
-            </div>
-        );
+        return <pre>Hello BMDS3; execution is coming soon...</pre>;
     }
 }
 
