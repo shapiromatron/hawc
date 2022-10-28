@@ -216,10 +216,13 @@ class BulkRobCopyAction(BaseApiAction):
         """
 
         src_assessment = Assessment.objects.filter(id=self.inputs.src_assessment_id).first()
+        dst_assessment = Assessment.objects.filter(id=self.inputs.dst_assessment_id).first()
+        if src_assessment is None:
+            return False, "Invalid source assessment ID."
+        if dst_assessment is None:
+            return False, "Invalid destination assessment ID."
         if not src_assessment.user_can_edit_assessment(request.user):
             return False, "Not a Project Manager or higher for source assessment."
-        dst_assessment = Assessment.objects.filter(id=self.inputs.dst_assessment_id).first()
         if not dst_assessment.user_can_edit_assessment(request.user):
             return False, "Not a Project Manager or higher for destination assessment."
-        else:
-            return super().has_permission(request)
+        return super().has_permission(request)
