@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
-from hawc.apps.assessment.models import Assessment, DoseUnits, Strain
+from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import (
     ComparisonSet,
     Criteria,
