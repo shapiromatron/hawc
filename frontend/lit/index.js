@@ -5,8 +5,6 @@ import {Provider} from "mobx-react";
 import Reference from "./Reference";
 import ReferenceComponent from "./components/Reference";
 import ReferenceTable from "./components/ReferenceTable";
-import ReferenceSearchMain from "./ReferenceSearch/Main";
-import ReferenceSearchStore from "./ReferenceSearch/store";
 import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
 import TagReferencesMain from "./TagReferences/Main";
@@ -32,14 +30,6 @@ export default {
             };
 
         ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);
-    },
-    startupSearchReference(el, config) {
-        ReactDOM.render(
-            <Provider store={new ReferenceSearchStore(config)}>
-                <ReferenceSearchMain />
-            </Provider>,
-            el
-        );
     },
     startupReferenceList(el, config) {
         ReactDOM.render(
