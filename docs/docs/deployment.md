@@ -93,5 +93,6 @@ Fields include:
 
 - `ENABLE_ECO`: If true, the experimental ecological data extraction module is enabled. Defaults to false.
 - `FIPS_MODE`: If true, allow deployment on OS with [FIPS mode enabled](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/assembly_installing-a-rhel-8-system-with-fips-mode-enabled_security-hardening). Defaults to false.
+- `ALLOW_RIS_IMPORTS`: If true, RIS imports are available when working on assessments. If false, the button is not there, but it's still possible for users to import via RIS if the can find the correct URL. Defaults to true.
 - `ANONYMOUS_ACCOUNT_CREATION`: If true, anonymous users can create accounts. If false, only staff can create new accounts via the admin. Defaults to true.
 - `THIS_IS_AN_EXAMPLE`: Does nothing; used to test configuration.
