@@ -14,7 +14,7 @@ from django.contrib.auth.views import (
     SuccessURLAllowedHostsMixin,
 )
 from django.core.mail import mail_admins
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -41,6 +41,9 @@ class HawcUserCreate(CreateView):
 
     @method_decorator(sensitive_post_parameters("password1", "password2"))
     def dispatch(self, *args, **kwargs):
+        # this is redundant with the urls.py, but we can test to confirm it doesn't work
+        if settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION is False:
+            raise Http404()
         return super().dispatch(*args, **kwargs)
 
     def form_valid(self, form):
