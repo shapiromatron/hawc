@@ -21,7 +21,10 @@ class AssessmentSettings(models.Model):
         "assessment.Assessment", on_delete=models.CASCADE, related_name="bmd_settings"
     )
     version = models.CharField(
-        max_length=10, choices=constants.BmdsVersion.choices, default=constants.BmdsVersion.BMDS270
+        max_length=10,
+        choices=constants.BmdsVersion.choices,
+        default=constants.BmdsVersion.BMDS330,
+        help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -43,6 +46,10 @@ class AssessmentSettings(models.Model):
     @classmethod
     def build_default(cls, assessment):
         cls.objects.create(assessment=assessment)
+
+    @property
+    def can_create_sessions(self):
+        return self.version == constants.BmdsVersion.BMDS330
 
     def copy_across_assessments(self, cw):
         old_id = self.id
@@ -181,6 +188,10 @@ class Session(models.Model):
     @property
     def is_finished(self):
         return self.date_executed is not None
+
+    @property
+    def can_edit(self):
+        return self.version == constants.BmdsVersion.BMDS330
 
     def execute(self):
         # reset execution datestamp if needed

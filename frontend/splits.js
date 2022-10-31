@@ -10,6 +10,9 @@ const startup = (name, cb) => {
         case "bmds2Startup":
             import("./bmd/bmds2/index.js").then(app => cb(app.default));
             break;
+        case "bmds3Startup":
+            import("./bmd/bmds3/index.js").then(app => cb(app.default));
+            break;
         case "dataPivotStartup":
             import("./summary/dataPivot/index.js").then(app => cb(app.default));
             break;
