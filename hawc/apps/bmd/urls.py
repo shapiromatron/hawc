@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"session", api.Session, basename="session")
 
 app_name = "bmd"
