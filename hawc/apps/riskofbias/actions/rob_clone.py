@@ -222,5 +222,5 @@ class BulkRobCopyAction(BaseApiAction):
             src_assessment.user_can_edit_assessment(request.user) is False
             or dst_assessment.user_can_edit_assessment(request.user) is False
         ):
-            return False, "Must be a Project Manager for source and/or destination assessments."
+            return False, "Must be a Project Manager for source and destination assessments."
         return super().has_permission(request)
