@@ -212,17 +212,15 @@ class BulkRobCopyAction(BaseApiAction):
 
     def has_permission(self, request) -> Tuple[bool, str]:
         """
-        Role of Project Manager or higher is required for both assessments.
+        Check user is a project manager on both assessments.
         """
-
         src_assessment = Assessment.objects.filter(id=self.inputs.src_assessment_id).first()
         dst_assessment = Assessment.objects.filter(id=self.inputs.dst_assessment_id).first()
-        if src_assessment is None:
-            return False, "Invalid source assessment ID."
-        if dst_assessment is None:
-            return False, "Invalid destination assessment ID."
-        if not src_assessment.user_can_edit_assessment(request.user):
-            return False, "Not a Project Manager or higher for source assessment."
-        if not dst_assessment.user_can_edit_assessment(request.user):
-            return False, "Not a Project Manager or higher for destination assessment."
+        if src_assessment is None or dst_assessment is None:
+            return False, "Invalid source and/or destination assessment ID."
+        if (
+            src_assessment.user_can_edit_assessment(request.user) is False
+            or dst_assessment.user_can_edit_assessment(request.user) is False
+        ):
+            return False, "Must be a Project Manager for source and/or destination assessments."
         return super().has_permission(request)

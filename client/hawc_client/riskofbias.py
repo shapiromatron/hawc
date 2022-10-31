@@ -93,7 +93,7 @@ class RiskOfBiasClient(BaseClient):
         """
         Copy final scores from a subset of studies from one assessment as the scores in a
         different assessment. Useful when an assessment is cloned or repurposed and existing
-        evaluations should be used in a new evaluation.
+        evaluations should be used in a new evaluation. You must be a project-manager on both projects.
 
         Args:
             src_assessment_id (int): source assessment
