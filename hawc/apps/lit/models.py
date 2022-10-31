@@ -874,11 +874,12 @@ class Reference(models.Model):
         user_tag.save()
 
         if self.assessment.literature_settings.conflict_resolution:
-            if self.user_tags.count() < 2:
+            user_tags = self.user_tags.prefetch_related("tags")
+            if user_tags.count() < 2:
                 return
             new_tags = list(user_tag.tags.all())
 
-            for ut in self.user_tags.exclude(pk=user_tag.pk):
+            for ut in user_tags.exclude(pk=user_tag.pk):
                 if new_tags != list(ut.tags.all()):
                     return
         self.tags.set(tag_pks)
