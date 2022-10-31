@@ -1,3 +1,5 @@
+import pytest
+from django.conf import settings
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from django.test.client import Client
@@ -95,7 +97,26 @@ class UserCreationTests(TestCase):
         self.assertTrue(models.HAWCUser.objects.filter(email=email).exists())
 
 
-class ExternalAuth(ExternalAuth):
+@pytest.mark.django_db
+class TestLoginView:
+    def test_create_account_link(self):
+        # default case
+        c = Client()
+        resp = c.get(reverse("user:login"))
+        assert settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION is True
+        assert b"Create an account" in resp.content
+        resp = c.get(reverse("user:register")).status_code == 200
+
+        # override case
+        settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION = False
+        resp = c.get(reverse("user:login"))
+        assert b"Create an account" not in resp.content
+        resp = c.get(reverse("user:register")).status_code == 404
+
+        settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION = True
+
+
+class ExternalAuthSetup(ExternalAuth):
     # mock user metdata handler for test case
     def get_user_metadata(self, request):
         return {
@@ -119,7 +140,7 @@ class ExternalAuthTests(TestCase):
         }
         request = self.request_factory.get("/", **headers)
         self.middleware.process_request(request)
-        return ExternalAuth.as_view()(request)
+        return ExternalAuthSetup.as_view()(request)
 
     def test_valid_auth(self):
         email = "pm@hawcproject.org"
@@ -146,7 +167,7 @@ class ExternalAuthTests(TestCase):
         # Fails if headers are invalid / missing
         forbidden_url = reverse("401")
         request = self.request_factory.get("/")
-        response = ExternalAuth.as_view()(request)
+        response = ExternalAuthSetup.as_view()(request)
         assert response.status_code == 302 and response.url == forbidden_url
 
         # Fails if email/external_id doesn't match
