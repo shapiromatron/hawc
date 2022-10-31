@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from hawc.apps.lit.models import Reference, ReferenceFilterTag, Search
 from hawc.apps.study.models import Study
+from hawc.apps.assessment.models import HAWCUser
 
 
 @pytest.mark.django_db
@@ -61,6 +62,33 @@ class TestReference:
 
         data = ref.to_json()
         assert isinstance(data, str)
+
+    def test_update_tags(self):
+        ref = Reference.objects.get(id=9)
+        pm = HAWCUser.objects.get(id=2)
+        tm = HAWCUser.objects.get(id=3)
+        # No other tags
+        tags = [32]
+        ref.update_tags(tags, pm)
+        ref.save()
+        # reference tags have not been modified
+        assert list(ref.tags.all()) == []
+
+        # existing tags, no conflict
+        ref.update_tags(tags, tm)
+        ref.save()
+        # reference tags have been updated
+        updated_tags = list(ref.tags.all())
+        assert updated_tags != []
+
+        # conflicting tags
+        tags = [33]
+        original_tags = list(ref.tags.all())
+        ref.update_tags(tags, tm)
+        ref.save()
+        # reference tags have not been modified
+        updated_tags = list(ref.tags.all())
+        assert original_tags == updated_tags
 
 
 @pytest.mark.vcr
