@@ -1134,6 +1134,12 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (constants.StudyType.IN_VITRO, "In vitro"),
         )
         self.fields["preferred_units"].required = False
+        self.js_units_choices = json.dumps(
+            [
+                {"id": obj.id, "name": obj.name}
+                for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
+            ]
+        )
         self.helper = self.setHelper()
 
     def save(self, commit=True):

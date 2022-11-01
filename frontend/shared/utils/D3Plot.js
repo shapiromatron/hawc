@@ -548,7 +548,10 @@ class D3Plot {
                         ).on("click", () => handleClick("svg")),
                         $(
                             '<button class="dropdown-item"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a PNG</button>'
-                        ).on("click", () => handleClick("png"))
+                        ).on("click", () => handleClick("png")),
+                        $(
+                            '<button class="dropdown-item"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a JPEG</button>'
+                        ).on("click", () => handleClick("jpeg"))
                     )
                 )
             );

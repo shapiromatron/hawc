@@ -1,3 +1,4 @@
+from django.core.exceptions import BadRequest
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
@@ -51,6 +52,8 @@ class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
         return self.object.assessment
 
     def get_redirect_url(self, *args, **kwargs):
+        if not self.object.assessment.bmd_settings.can_create_sessions:
+            raise BadRequest("Assessment BMDS version is unsupported, can't create a new session.")
         obj = models.Session.create_new(self.object)
         return obj.get_update_url()
 
@@ -65,9 +68,10 @@ class SessionList(BaseList):
 
 
 def _get_session_config(self, context) -> WebappConfig:
+    app = "bmds3Startup" if self.object.can_edit else "bmds2Startup"
     edit_mode = self.crud == "Update"
     return WebappConfig(
-        app="bmds2Startup",
+        app=app,
         data=dict(
             editMode=edit_mode,
             assessment_id=self.assessment.id,
@@ -92,6 +96,12 @@ class SessionUpdate(BaseUpdate):
     model = models.Session
     form_class = forms.SessionForm
     get_app_config = _get_session_config
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if not self.object.can_edit:
+            raise BadRequest("Session BMDS version is unsupported, can't update this session.")
+        return response
 
     def get_redirect_url(self, *args, **kwargs):
         obj = models.Session.create_new(self.object)
