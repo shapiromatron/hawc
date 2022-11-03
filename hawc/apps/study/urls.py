@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"study", api.Study, basename="study")
 router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cleanup")
 

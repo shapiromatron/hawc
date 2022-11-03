@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.SummaryAssessmentViewset, basename="assessment")
 router.register(r"visual", api.VisualViewset, basename="visual")
 router.register(r"data_pivot", api.DataPivotViewset, basename="data_pivot")
