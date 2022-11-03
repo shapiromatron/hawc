@@ -18,6 +18,7 @@ class ReferenceFilterSet(BaseFilterSet):
     title = df.CharFilter(lookup_expr="icontains", label="Title")
     authors = df.CharFilter(method="filter_authors", label="Authors")
     abstract = df.CharFilter(lookup_expr="icontains", label="Abstract")
+    title_abstract = df.CharFilter(method="filter_title_abstract", label="Title/Abstract")
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tags",
@@ -43,28 +44,18 @@ class ReferenceFilterSet(BaseFilterSet):
             "title",
             "authors",
             "abstract",
+            "title_abstract",
             "tags",
             "order_by",
             "paginate_by",
         ]
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {
-                    "columns": [
-                        {
-                            "width": 5,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
-                        },
-                        {"width": 7},
-                    ]
-                },
-                {"columns": [{"width": 3}, {"width": 3}]},
-            ]
-        }
 
     def filter_authors(self, queryset, name, value):
         query = Q(authors_short__unaccent__icontains=value) | Q(authors__unaccent__icontains=value)
+        return queryset.filter(query)
+
+    def filter_title_abstract(self, queryset, name, value):
+        query = Q(title__icontains=value) | Q(abstract__icontains=value)
         return queryset.filter(query)
 
     def filter_tags(self, queryset, name, value):

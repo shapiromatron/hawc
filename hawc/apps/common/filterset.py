@@ -3,6 +3,7 @@ from typing import ForwardRef, Optional
 import django_filters as df
 from crispy_forms import layout as cfl
 from django import forms
+from django_filters.utils import get_model_field
 from pydantic import BaseModel, conlist
 
 from . import autocomplete
@@ -110,7 +111,7 @@ class FilterSetOptions:
 
         self.filter_overrides = getattr(options, "filter_overrides", {})
         self.field_kwargs = getattr(options, "field_kwargs", {})
-        self.grid_layout = getattr(options, "grid_layout", [])
+        self.grid_layout = getattr(options, "grid_layout", None)
 
         self.form = getattr(options, "form", FilterForm)
 
@@ -138,6 +139,58 @@ class BaseFilterSet(FilterSet):
         self.assessment = assessment
         super().__init__(*args, **kwargs)
 
+    @classmethod
+    def get_filters(cls):
+        """
+        Get all filters for the filterset. This is the combination of declared and
+        generated filters.
+
+        Overridden from django-filter's BaseFilterSet; we do not include declared filters by default
+        near the end of the method.
+        """
+
+        # No model specified - skip filter generation
+        if not cls._meta.model:
+            return cls.declared_filters.copy()
+
+        # Determine the filters that should be included on the filterset.
+        filters = {}
+        fields = cls.get_fields()
+        undefined = []
+
+        for field_name, lookups in fields.items():
+            field = get_model_field(cls._meta.model, field_name)
+
+            # warn if the field doesn't exist.
+            if field is None:
+                undefined.append(field_name)
+
+            for lookup_expr in lookups:
+                filter_name = cls.get_filter_name(field_name, lookup_expr)
+
+                # If the filter is explicitly declared on the class, skip generation
+                if filter_name in cls.declared_filters:
+                    filters[filter_name] = cls.declared_filters[filter_name]
+                    continue
+
+                if field is not None:
+                    filters[filter_name] = cls.filter_for_field(field, field_name, lookup_expr)
+
+        # Allow Meta.fields to contain declared filters *only* when a list/tuple
+        if isinstance(cls._meta.fields, (list, tuple)):
+            undefined = [f for f in undefined if f not in cls.declared_filters]
+
+        if undefined:
+            raise TypeError(
+                "'Meta.fields' must not contain non-model field names: %s" % ", ".join(undefined)
+            )
+
+        # Add in declared filters. This is necessary since we don't enforce adding
+        # declared filters to the 'Meta.fields' option
+        ### We actually do want to enforce Meta.fields; this allows dynamically specifying fields
+        # filters.update(cls.declared_filters)
+        return filters
+
     @property
     def perms(self):
         return self.assessment.user_permissions(self.request.user)
@@ -163,3 +216,9 @@ class BaseFilterSet(FilterSet):
 
     def change_form(self, form):
         return form
+
+
+def dynamic_filterset(_class: BaseFilterSet, **meta_kwargs):
+    default_kwargs = _class._meta.__dict__
+    Meta = type("Meta", (object,), {**default_kwargs, **meta_kwargs})
+    return type("DynamicFilterset", (_class,), {"Meta": Meta})

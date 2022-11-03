@@ -11,6 +11,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
+from hawc.apps.common.filterset import dynamic_filterset
+
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, listToUl, tryParseInt
@@ -459,7 +461,25 @@ class RefFilterList(BaseFilterList):
     breadcrumb_active_name = "Reference search"
     parent_model = Assessment
     model = models.Reference
-    filterset_class = filterset.ReferenceFilterSet
+    filterset_class = dynamic_filterset(
+        filterset.ReferenceFilterSet,
+        exclude=["title_abstract"],
+        grid_layout={
+            "rows": [
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {
+                    "columns": [
+                        {
+                            "width": 5,
+                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                        },
+                        {"width": 7},
+                    ]
+                },
+                {"columns": [{"width": 3}, {"width": 3}]},
+            ]
+        },
+    )
 
     def get_queryset(self):
         return (
