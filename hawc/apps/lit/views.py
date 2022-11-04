@@ -763,3 +763,36 @@ class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
+
+
+class ConflictResolution(TeamMemberOrHigherMixin, TemplateView):
+    template_name = "lit/conflict_resolution.html"
+    model = Assessment
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        assessment = self.get_assessment(self.request, **kwargs)
+        context["assessment"] = assessment
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, assessment, "Tag Conflict Resolution"
+        )
+        return context
+
+
+class ReferenceTagHistory(TeamMemberOrHigherMixin, BaseDetail):
+    template_name = "lit/reference_tag_history.html"
+    model = models.Reference
+
+    def get_assessment(self, request, *args, **kwargs):
+        self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
+        return self.object.get_assessment()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
+

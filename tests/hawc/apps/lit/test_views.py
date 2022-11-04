@@ -31,3 +31,36 @@ def test_reference_delete(db_keys):
     # delete fails
     resp = c.delete(url)
     assert resp.status_code == 403
+
+
+@pytest.mark.django_db
+def test_view_read_success(db_keys):
+    clients = [
+        "admin@hawcproject.org",
+        "pm@hawcproject.org",
+        "team@hawcproject.org",
+    ]
+    views = [
+        reverse("lit:tag_history", kwargs={"pk": 3}),
+        reverse("lit:tag_conflicts", kwargs={"pk": db_keys.assessment_working}),
+    ]
+
+    for client in clients:
+        c = Client()
+        assert c.login(username=client, password="pw") is True
+        for view in views:
+            response = c.get(view)
+            assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_view_read_failure(db_keys):
+    # anonymous user
+    c = Client()
+    views = [
+        {"view": reverse("lit:tag_history", kwargs={"pk": 3}), "status": 403},
+        {"view": reverse("lit:tag_conflicts", kwargs={"pk": db_keys.assessment_working}), "status": 403},
+    ]
+    for view in views:
+        response = c.get(view["view"])
+        assert response.status_code == view["status"]

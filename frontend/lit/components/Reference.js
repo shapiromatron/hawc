@@ -79,6 +79,7 @@ class Reference extends Component {
                 <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
                 <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
                 <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
+                <ActionLink key={3} label="Tagging History" href={data.refTagHistoryUrl} />,
             ];
 
         return (
