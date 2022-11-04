@@ -2496,6 +2496,7 @@
     user:
     - team@hawcproject.org
     reference: 11
+    resolved: true
     created: 2022-10-27 21:07:50.089101+00:00
     last_updated: 2022-10-27 21:07:50.420620+00:00
 - model: lit.userreferencetag
@@ -2504,6 +2505,7 @@
     user:
     - team@hawcproject.org
     reference: 10
+    resolved: true
     created: 2022-10-27 21:09:01.953588+00:00
     last_updated: 2022-10-27 21:09:02.014507+00:00
 - model: lit.userreferencetag
@@ -2512,6 +2514,7 @@
     user:
     - pm@hawcproject.org
     reference: 11
+    resolved: true
     created: 2022-10-27 21:19:29.460709+00:00
     last_updated: 2022-10-27 21:36:51.929199+00:00
 - model: lit.userreferencetag
@@ -2520,6 +2523,7 @@
     user:
     - pm@hawcproject.org
     reference: 10
+    resolved: false
     created: 2022-10-27 21:37:16.158160+00:00
     last_updated: 2022-10-27 21:40:28.356071+00:00
 - model: study.study

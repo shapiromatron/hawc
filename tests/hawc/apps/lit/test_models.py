@@ -73,6 +73,7 @@ class TestReference:
         ref.save()
         # reference tags have not been modified
         assert list(ref.tags.all()) == []
+        assert ref.has_conflict is False
 
         # existing tags, no conflict
         ref.update_tags(tags, tm)
@@ -80,6 +81,7 @@ class TestReference:
         # reference tags have been updated
         updated_tags = list(ref.tags.all())
         assert updated_tags != []
+        assert ref.has_conflict is False
 
         # conflicting tags
         tags = [33]
@@ -89,6 +91,7 @@ class TestReference:
         # reference tags have not been modified
         updated_tags = list(ref.tags.all())
         assert original_tags == updated_tags
+        assert ref.has_conflict
 
 
 @pytest.mark.vcr

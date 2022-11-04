@@ -871,18 +871,25 @@ class Reference(models.Model):
     def update_tags(self, tag_pks, user):
         user_tag, created = UserReferenceTag.objects.get_or_create(reference=self, user=user)
         user_tag.tags.set(tag_pks)
-        user_tag.save()
 
         if self.assessment.literature_settings.conflict_resolution:
             user_tags = self.user_tags.prefetch_related("tags")
             if user_tags.count() < 2:
+                user_tag.save()
                 return
             new_tags = list(user_tag.tags.all())
 
             for ut in user_tags.exclude(pk=user_tag.pk):
                 if new_tags != list(ut.tags.all()):
+                    user_tag.resolved = False
+                    user_tag.save()
                     return
+        user_tag.save()
         self.tags.set(tag_pks)
+
+    @property
+    def has_conflict(self):
+        return self.user_tags.filter(resolved=False).exists()
 
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
@@ -1119,6 +1126,7 @@ class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
     tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    resolved = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

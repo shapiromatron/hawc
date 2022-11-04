@@ -27,6 +27,7 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
+                ("resolved", models.BooleanField(default=True)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
