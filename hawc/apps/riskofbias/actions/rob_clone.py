@@ -111,25 +111,6 @@ class BulkRobCopyAction(BaseApiAction):
             msg = f"Invalid destination metric(s) {', '.join([str(id) for id in invalid_dst_metric_ids])}"
             self.errors["src_dst_metric_ids"].append(msg)
 
-        # all users who authored src riskofbiases are team member or higher on dst assessment
-        if self.inputs.author_mode is BulkCopyAuthor.PRESERVE_ORIGINAL:
-            src_user_ids = (
-                RiskOfBias.objects.filter(study__in=src_study_ids, active=True, final=True)
-                .order_by("author_id")
-                .distinct("author_id")
-                .values_list("author_id", flat=True)
-            )
-            _filters = models.Q(assessment_teams=dst_assessment) | models.Q(
-                assessment_pms=dst_assessment
-            )
-            dst_user_ids = HAWCUser.objects.filter(_filters, pk__in=src_user_ids).values_list(
-                "pk", flat=True
-            )
-            invalid_user_ids = set(src_user_ids) - set(dst_user_ids)
-            if len(invalid_user_ids) > 0:
-                msg = f"User id(s) {', '.join([str(id) for id in invalid_user_ids])} not found in destination"
-                self.errors["user_ids"].append(msg)
-
         # if overwriting, a valid author id must be provided
         if self.inputs.author_mode is BulkCopyAuthor.OVERWRITE:
             if self.inputs.dst_author_id is None:
