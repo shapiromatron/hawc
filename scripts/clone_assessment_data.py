@@ -5,7 +5,6 @@ import sys
 from collections import defaultdict
 from itertools import chain
 from pathlib import Path
-from typing import Dict
 
 import django
 from animal import models as ani_models
@@ -47,17 +46,17 @@ class Cloner:
             for key, val in overrides.items():
                 setattr(obj, key, val)
 
-    def _get_m2m(self, obj: Model) -> Dict[str, list[Model]]:
+    def _get_m2m(self, obj: Model) -> dict[str, list[Model]]:
         fields = {}
         for field in self.M2M_FIELDS:
             fields[field] = list(getattr(obj, field).all())
         return fields
 
-    def _set_m2m(self, obj: Model, fields: Dict):
+    def _set_m2m(self, obj: Model, fields: dict):
         for name, values in fields.items():
             getattr(obj, name).set(values)
 
-    def clone(self, obj: Model, overrides: Dict = None) -> Model:
+    def clone(self, obj: Model, overrides: dict = None) -> Model:
         logger.info(f"Cloning: #{obj.id}: {obj}")
         m2ms = self._get_m2m(obj)
         obj.pk = None
@@ -234,7 +233,7 @@ def disable_signals():
     )
 
 
-def apply_lit_tags(study_ids: list[int], cw: Dict):
+def apply_lit_tags(study_ids: list[int], cw: dict):
     # apply the same literature tags previously used in original studies to clones
     lit_models.ReferenceTags.objects.bulk_create(
         [
@@ -247,7 +246,7 @@ def apply_lit_tags(study_ids: list[int], cw: Dict):
     )
 
 
-def apply_ivcategory_tags(study_ids: list[int], cw: Dict):
+def apply_ivcategory_tags(study_ids: list[int], cw: dict):
     raise NotImplementedError("TODO - implement - not needed for this assessment.")
 
 

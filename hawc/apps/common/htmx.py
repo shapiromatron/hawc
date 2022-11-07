@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Callable, Dict, Iterable, Optional, Set
+from typing import Any, Callable, Iterable, Optional, Set
 
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -31,9 +31,9 @@ class Item:
 
     def __post_init__(self):
         self.assessment_permissions: AssessmentPermissions = self.assessment.get_permissions()
-        self._permissions: Optional[Dict[str, bool]] = None
+        self._permissions: Optional[dict[str, bool]] = None
 
-    def to_dict(self, user) -> Dict[str, Any]:
+    def to_dict(self, user) -> dict[str, Any]:
         """Dictionary used for response context"""
         return {
             "assessment": self.assessment,
@@ -42,7 +42,7 @@ class Item:
             "permissions": self.permissions(user),
         }
 
-    def permissions(self, user) -> Dict:
+    def permissions(self, user) -> dict:
         """Generate user specific permissions for this request; cached"""
         if self._permissions is None:
             perms_item = self.parent or self.object  # use parent if exists, else object

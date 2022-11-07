@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -89,7 +88,7 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
     content_object = GenericForeignKey("content_type", "object_id")
 
     @classmethod
-    def get_dp_export(cls, assessment_id: int, ids: list[int], data_type: str) -> tuple[Dict, Dict]:
+    def get_dp_export(cls, assessment_id: int, ids: list[int], data_type: str) -> tuple[dict, dict]:
         """
         Given an assessment, a list of object ids, and a data type, return all the data required to
         build a data pivot risk of bias export for only active, final data.
@@ -103,7 +102,7 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
             data_type (str): The data type to use; one of {"animal", "epi", "invitro"}
 
         Returns:
-            tuple[Dict, Dict]: A {metric_id: header_name} dict for building headers, and a
+            tuple[dict, dict]: A {metric_id: header_name} dict for building headers, and a
                 {(object_id, metric_id): text} dict for building rows
         """
 

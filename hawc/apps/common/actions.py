@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, Type, Union
+from typing import Any, ClassVar, Type, Union
 
 import pandas as pd
 import pydantic
@@ -24,20 +24,20 @@ class BaseApiAction:
 
     input_model: ClassVar[DataModel]  # should be defined
 
-    def __init__(self, data: Dict):
+    def __init__(self, data: dict):
         self.data = data
-        self.errors: Dict[str, list] = defaultdict(list)
+        self.errors: dict[str, list] = defaultdict(list)
         self.inputs = None
 
     @classmethod
-    def format_request_data(cls, request: Request) -> Dict:
+    def format_request_data(cls, request: Request) -> dict:
         """Convert a request into a dictionary of data for the action request
 
         Args:
             request (Request): The incoming request
 
         Returns:
-            Dict: A valid dictionary ready for the action
+            dict: A valid dictionary ready for the action
         """
         return request.data
 
@@ -114,7 +114,7 @@ class BaseApiAction:
         """
         return True, ""
 
-    def evaluate(self) -> Union[Dict[str, Any], pd.DataFrame]:
+    def evaluate(self) -> Union[dict[str, Any], pd.DataFrame]:
         """
         Perform the desired action of the request action. Returns a response type compatible
         with the desired action

@@ -2,7 +2,7 @@ import collections
 import json
 import math
 from itertools import chain
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -859,7 +859,7 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def heatmap_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
-        filters: Dict[str, Any] = {"assessment_id": assessment_id}
+        filters: dict[str, Any] = {"assessment_id": assessment_id}
         if published_only:
             filters["animal_group__experiment__study__published"] = True
         columns = {
@@ -956,7 +956,7 @@ class Endpoint(BaseEndpoint):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment_id, "bioassay": True}
+        filters: dict[str, Any] = {"assessment_id": assessment_id, "bioassay": True}
         if published_only:
             filters["published"] = True
         columns = {

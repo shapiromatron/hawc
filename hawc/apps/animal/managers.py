@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -159,7 +159,7 @@ class EndpointManager(BaseManager):
         return get_distinct_charfield(self, assessment_id, "effect")
 
     def endpoint_df(self, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters: Dict[str, Any] = {"assessment_id": assessment}
+        filters: dict[str, Any] = {"assessment_id": assessment}
         if published_only:
             filters["animal_group__experiment__study__published"] = True
 
@@ -364,7 +364,7 @@ class EndpointManager(BaseManager):
 
         return df
 
-    def _validate_update_terms(self, objs: list[Dict], assessment: Assessment):
+    def _validate_update_terms(self, objs: list[dict], assessment: Assessment):
         # assessment must have vocab
         if assessment.vocabulary is None:
             raise ValidationError("Vocabulary not set in assessment {assessment.id}")
@@ -418,14 +418,14 @@ class EndpointManager(BaseManager):
             raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")
 
     @transaction.atomic
-    def update_terms(self, objs: list[Dict], assessment: Assessment) -> list:
+    def update_terms(self, objs: list[dict], assessment: Assessment) -> list:
         """
         Updates all of the terms and respective text fields
         for a list of endpoints based on the given name term.
         All endpoints must be from the same assessment.
 
         Args:
-            objs (list[Dict]): List of endpoint dicts, where each dict has
+            objs (list[dict]): List of endpoint dicts, where each dict has
                 for keys 'id' and 'name_term_id'
             assessment (Assessment): Assessment for endpoints
 

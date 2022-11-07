@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -252,7 +251,7 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
     form_class = forms.TagReferenceForm
     template_name = "lit/reference_tag.html"
 
-    def get_ref_qs_filters(self) -> Dict:
+    def get_ref_qs_filters(self) -> dict:
         raise NotImplementedError("Subclass requires implementation")
 
     def get_context_data(self, **kwargs):

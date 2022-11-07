@@ -2,7 +2,7 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from itertools import chain
-from typing import Dict, Optional
+from typing import Optional
 
 import requests
 
@@ -109,13 +109,13 @@ class PubMedFetch(PubMedUtility):
         if id_list is None:
             raise Exception("List of IDs are required for a PubMed search")
         self.ids = id_list
-        self.content: list[Dict] = []
+        self.content: list[dict] = []
         self.settings = PubMedFetch.default_settings.copy()
         self._register_instance()
         for k, v in kwargs.items():
             self.settings[k] = v
 
-    def get_content(self) -> list[Dict]:
+    def get_content(self) -> list[dict]:
         data = self.settings.copy()
         rng = list(range(0, len(self.ids), self.settings["retmax"]))
         self.request_count = len(rng)
@@ -149,7 +149,7 @@ class PubMedParser:
     ABSTRACT_BOOK_SEARCH_STRING = "BookDocument/Abstract/AbstractText"
 
     @classmethod
-    def parse(cls, tree: ET.Element) -> Optional[Dict]:
+    def parse(cls, tree: ET.Element) -> Optional[dict]:
         if tree.tag == "PubmedArticle":
             return cls._parse_article(tree)
         elif tree.tag == "PubmedBookArticle":
@@ -159,7 +159,7 @@ class PubMedParser:
             return None
 
     @classmethod
-    def _parse_article(cls, tree: ET.Element) -> Dict:
+    def _parse_article(cls, tree: ET.Element) -> dict:
         d = {
             "xml": ET.tostring(tree, encoding="unicode"),
             "PMID": int(cls._try_single_find(tree, "MedlineCitation/PMID")),
@@ -173,7 +173,7 @@ class PubMedParser:
         return d
 
     @classmethod
-    def _parse_book(cls, tree: ET.Element) -> Dict:
+    def _parse_book(cls, tree: ET.Element) -> dict:
         pmid = int(cls._try_single_find(tree, "BookDocument/PMID"))
         book_title = cls._try_single_find(tree, "BookDocument/Book/BookTitle")
         article_title = cls._try_single_find(tree, "BookDocument/ArticleTitle")
@@ -230,7 +230,7 @@ class PubMedParser:
             return ""
 
     @classmethod
-    def _authors_info(cls, tree: ET.Element, dtype) -> Dict:
+    def _authors_info(cls, tree: ET.Element, dtype) -> dict:
         names = []
 
         if dtype == cls.ARTICLE:

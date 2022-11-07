@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Dict
+from typing import Any
 
 from django.conf import settings
 from django.db import transaction
@@ -15,7 +15,7 @@ class RobApproach(IntegerChoices):
     NTP_OHAT = 1, "US NTP OHAT"
     EPA_IRIS = 2, "US EPA IRIS"
 
-    def load_fixture_data(self) -> Dict[str, Any]:
+    def load_fixture_data(self) -> dict[str, Any]:
         """Return fixture data as generated from data files."""
         _fixture = {
             self.NTP_OHAT: "ohat_study_quality_defaults.json",

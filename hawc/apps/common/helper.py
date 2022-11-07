@@ -4,7 +4,7 @@ import re
 from collections import OrderedDict, defaultdict
 from datetime import timedelta
 from math import inf
-from typing import Any, Dict, NamedTuple, Optional, Set, Union
+from typing import Any, NamedTuple, Optional, Set, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -42,7 +42,7 @@ def rename_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
     if not df.columns.has_duplicates:
         return df
     duplicates: Set[str] = set(df.columns[df.columns.duplicated()].tolist())
-    indexes: Dict[str, int] = defaultdict(lambda: 0)
+    indexes: dict[str, int] = defaultdict(lambda: 0)
     new_cols: list[str] = []
     for col in df.columns:
         if col in duplicates:
@@ -138,12 +138,12 @@ def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -
     return df[cols]
 
 
-def url_query(path: str, query: Dict) -> str:
+def url_query(path: str, query: dict) -> str:
     """Generate a URL with appropriate query string parameters
 
     Args:
         path (str): The url path
-        query (Dict): A dictionary of parameters to add
+        query (dict): A dictionary of parameters to add
 
     Returns:
         str: A url-encoded string with query values
@@ -282,7 +282,7 @@ class FlatFileExporter:
         raise NotImplementedError()
 
     @staticmethod
-    def get_flattened_tags(dict: Dict, key: str) -> str:
+    def get_flattened_tags(dict: dict, key: str) -> str:
         values = [tag.get("name", "") for tag in dict.get(key, [])]
         return f"|{'|'.join(values)}|"
 
@@ -300,7 +300,7 @@ class WebappConfig(PydanticModel):
     # single-page webapp configuration
     app: str
     page: Optional[str]
-    data: Dict
+    data: dict
 
 
 re_digits = r"\d+"

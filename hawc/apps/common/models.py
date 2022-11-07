@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import Dict, Set
+from typing import Set
 
 import django
 import pandas as pd
@@ -334,17 +334,17 @@ class AssessmentRootMixin:
 
     @classmethod
     @transaction.atomic
-    def replace_tree(cls, assessment_id: int, tagtree: list[Dict]) -> list[Dict]:
+    def replace_tree(cls, assessment_id: int, tagtree: list[dict]) -> list[dict]:
         """
         Replaces the tag tree for an assessment; this also removes reference/tag associations.
 
         Args:
             assessment_id (int): assessment id to operate on
-            tagtree (list[Dict]): the user-supplied tags. This method will create the "assessment-<id>"
+            tagtree (list[dict]): the user-supplied tags. This method will create the "assessment-<id>"
                                     top parent tag and should NOT be included in the supplied argument.
 
         Returns:
-            list[Dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
+            list[dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
         """
         cls.add_slugs_to_tagtree(tagtree)
 
@@ -359,7 +359,7 @@ class AssessmentRootMixin:
 
     @classmethod
     @transaction.atomic
-    def copy_tags(cls, src_assessment: int, dest_assessment: int) -> Dict[int, int]:
+    def copy_tags(cls, src_assessment: int, dest_assessment: int) -> dict[int, int]:
         rt = cls.get_assessment_root(src_assessment)
         tree = rt.dump_bulk(rt, keep_ids=True)
         source_tags = tree[0].get("children", [])
@@ -367,19 +367,19 @@ class AssessmentRootMixin:
         return cls.build_tree_mapping(tree, updated_tree)
 
     @classmethod
-    def build_tree_mapping(cls, src: list[Dict], dest: list[Dict]) -> Dict:
+    def build_tree_mapping(cls, src: list[dict], dest: list[dict]) -> dict:
         """Map tags IDs from a source tree to destination tree; assumes trees are equal
 
         Args:
-            src (list[Dict]): A tree export from dump_bulk
-            dest (list[Dict]): A tree export from dump_bulk
+            src (list[dict]): A tree export from dump_bulk
+            dest (list[dict]): A tree export from dump_bulk
 
         Returns:
-            Dict[int, int]: id key mapping from src to dest
+            dict[int, int]: id key mapping from src to dest
         """
         mapping = {}
 
-        def _match_nodes(_src: list[Dict], _dest: list[Dict]):
+        def _match_nodes(_src: list[dict], _dest: list[dict]):
             for idx, src_node in enumerate(_src):
                 dest_node = _dest[idx]
                 mapping[src_node["id"]] = dest_node["id"]

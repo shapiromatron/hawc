@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -68,7 +67,7 @@ def replace_hero_ids(replace: list[list[int]]):
 
     # build map of HERO ID -> Identifier.id
     ref_ids, new_hero_ids = zip(*replace)
-    identifier_map: Dict[int, int] = {
+    identifier_map: dict[int, int] = {
         int(ident.unique_id): ident.id
         for ident in Identifiers.objects.filter(
             database=constants.ReferenceDatabase.HERO, unique_id__in=new_hero_ids
@@ -78,7 +77,7 @@ def replace_hero_ids(replace: list[list[int]]):
         raise ValueError("Identifiers map length != HERO ID length length")
 
     # build map of reference.id -> reference object
-    reference_map: Dict[int, Model] = {
+    reference_map: dict[int, Model] = {
         ref.id: ref
         for ref in Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
     }

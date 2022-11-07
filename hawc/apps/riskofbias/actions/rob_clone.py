@@ -1,6 +1,6 @@
 import json
 from enum import IntEnum
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import pydantic
 from django.db import models
@@ -144,7 +144,7 @@ class BulkRobCopyAction(BaseApiAction):
                     msg = "Author is not part of destination assessment team."
                     self.errors["dst_author_id"].append(msg)
 
-    def evaluate(self) -> Dict[str, Any]:
+    def evaluate(self) -> dict[str, Any]:
         # create src to dst mapping
         src_to_dst = {}
 

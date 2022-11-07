@@ -1,6 +1,5 @@
 from copy import deepcopy
 from operator import itemgetter
-from typing import Dict
 
 import pandas as pd
 
@@ -12,41 +11,41 @@ class AnimalClient(BaseClient):
     Client class for animal experiment requests.
     """
 
-    def create_experiment(self, data: Dict) -> Dict:
+    def create_experiment(self, data: dict) -> dict:
         """
         Create a new experiment.
 
         Args:
-            data (Dict): required metadata for creation
+            data (dict): required metadata for creation
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/ani/api/experiment/"
         return self.session.post(url, data).json()
 
-    def create_animal_group(self, data: Dict) -> Dict:
+    def create_animal_group(self, data: dict) -> dict:
         """
         Create a new animal-group and dosing regime.
 
         Args:
-            data (Dict): required metadata for creation
+            data (dict): required metadata for creation
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/ani/api/animal-group/"
         return self.session.post(url, data).json()
 
-    def create_endpoint(self, data: Dict) -> Dict:
+    def create_endpoint(self, data: dict) -> dict:
         """
         Create a new endpoint.
 
         Args:
-            data (Dict): required metadata for creation
+            data (dict): required metadata for creation
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/ani/api/endpoint/"
         return self.session.post(url, data).json()
@@ -79,7 +78,7 @@ class AnimalClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def _invert_endpoints(self, endpoints: list[Dict]) -> list[Dict]:
+    def _invert_endpoints(self, endpoints: list[dict]) -> list[dict]:
         studies = {}
         for endpoint in deepcopy(endpoints):
             study = endpoint["animal_group"]["experiment"]["study"]
@@ -121,7 +120,7 @@ class AnimalClient(BaseClient):
 
         return studies
 
-    def endpoints(self, assessment_id: int, invert: bool = False) -> list[Dict]:
+    def endpoints(self, assessment_id: int, invert: bool = False) -> list[dict]:
         """
         Retrieves all bioassay endpoints for a given assessment.
 
@@ -133,7 +132,7 @@ class AnimalClient(BaseClient):
                 akin to top-down.
 
         Returns:
-            list[Dict]: A list of endpoints and related studies with each (or a list of studies with
+            list[dict]: A list of endpoints and related studies with each (or a list of studies with
                 a related endpoints if inverted)
         """
         payload = {"assessment_id": assessment_id}
@@ -144,12 +143,12 @@ class AnimalClient(BaseClient):
             data = self._invert_endpoints(data)
         return data
 
-    def metadata(self) -> Dict:
+    def metadata(self) -> dict:
         """
         Retrieves field choices for all animal models.
 
         Returns:
-            Dict: Model metadata
+            dict: Model metadata
         """
         url = f"{self.session.root_url}/ani/api/metadata/"
         return self.session.get(url).json()

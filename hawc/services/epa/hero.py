@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import requests
 
@@ -11,7 +11,7 @@ from ..utils.authors import get_author_short_text, normalize_authors
 logger = logging.getLogger(__name__)
 
 
-def _parse_pseudo_json(d: Dict, field: str) -> Any:
+def _parse_pseudo_json(d: dict, field: str) -> Any:
     # built-in json parser doesn't identify nulls in HERO returns
     v = d.get(field, None)
     if v == "null":
@@ -27,7 +27,7 @@ def _force_int(val, default=None) -> Optional[int]:
         return default
 
 
-def parse_article(content: Dict) -> Dict:
+def parse_article(content: dict) -> dict:
     authors = normalize_authors(content.get("AUTHORS", "").split("; "))
     authors_short = get_author_short_text(authors)
     return dict(
@@ -60,7 +60,7 @@ class HEROFetch:
             raise Exception("List of IDs are required for a PubMed search")
         self.ids = id_list
         self.ids_count = len(id_list)
-        self.content: list[Dict] = []
+        self.content: list[dict] = []
         self.failures: list[int] = []
         self.settings = HEROFetch.default_settings.copy()
         for k, v in kwargs.items():

@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pandas as pd
 
 from .client import BaseClient
@@ -12,7 +10,7 @@ class LiteratureClient(BaseClient):
 
     def _import(
         self, source: int, assessment_id: int, title: str, description: str, ids: list[int]
-    ) -> Dict:
+    ) -> dict:
         """
         Imports a list of IDs as literature references for the given assessment.
 
@@ -24,7 +22,7 @@ class LiteratureClient(BaseClient):
             ids (list[int]): IDs
 
         Returns:
-            Dict: JSON response
+            dict: JSON response
         """
         payload = {
             "assessment": assessment_id,
@@ -37,7 +35,7 @@ class LiteratureClient(BaseClient):
         url = f"{self.session.root_url}/lit/api/search/"
         return self.session.post(url, payload).json()
 
-    def import_hero(self, assessment_id: int, title: str, description: str, ids: list[int]) -> Dict:
+    def import_hero(self, assessment_id: int, title: str, description: str, ids: list[int]) -> dict:
         """
         Imports a list of HERO IDs as literature references for the given assessment.
 
@@ -48,13 +46,13 @@ class LiteratureClient(BaseClient):
             ids (list[int]): HERO IDs
 
         Returns:
-            Dict: JSON response
+            dict: JSON response
         """
         return self._import(2, assessment_id, title, description, ids)
 
     def import_pubmed(
         self, assessment_id: int, title: str, description: str, ids: list[int]
-    ) -> Dict:
+    ) -> dict:
         """
         Imports a list of PubMed IDs as literature references for the given assessment.
 
@@ -65,7 +63,7 @@ class LiteratureClient(BaseClient):
             ids (list[int]): PubMed IDs
 
         Returns:
-            Dict: JSON response
+            dict: JSON response
         """
         return self._import(1, assessment_id, title, description, ids)
 
@@ -91,7 +89,7 @@ class LiteratureClient(BaseClient):
             assessment_id (int): Assessment ID
 
         Returns:
-            Dict: JSON representation of the tag tree
+            dict: JSON representation of the tag tree
         """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
         response_json = self.session.get(url).json()
@@ -106,7 +104,7 @@ class LiteratureClient(BaseClient):
             target_assessment_id (int): Assessment ID to copy tag tree to
 
         Returns:
-            Dict: JSON representation of the new tag tree
+            dict: JSON representation of the new tag tree
         """
         fetch_url = f"{self.session.root_url}/lit/api/assessment/{source_assessment_id}/tagtree/"
         tree = self.session.get(fetch_url).json()
@@ -116,17 +114,17 @@ class LiteratureClient(BaseClient):
 
         return update_response_json["tree"]
 
-    def update_tagtree(self, assessment_id: int, tags: list[Dict]) -> pd.DataFrame:
+    def update_tagtree(self, assessment_id: int, tags: list[dict]) -> pd.DataFrame:
         """
         Updates the tag tree.
 
         Args:
             assessment_id (int): Assessment ID to update
-            tags (list[Dict]): tag definitions. For each tag Dict element, "name" is required. "slug" is
+            tags (list[dict]): tag definitions. For each tag dict element, "name" is required. "slug" is
                optional. "children" is optional and should contain a recursive list containing valid tags.
 
         Returns:
-            Dict: JSON representation of the new tag tree. If errors, a JSON list containing details.
+            dict: JSON representation of the new tag tree. If errors, a JSON list containing details.
         """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tagtree/"
         response_json = self.session.post(url, {"tree": tags}).json()
@@ -194,7 +192,7 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def reference(self, reference_id: int) -> Dict:
+    def reference(self, reference_id: int) -> dict:
         """
         Retrieves the selected reference.
 
@@ -202,13 +200,13 @@ class LiteratureClient(BaseClient):
             reference_id (int): ID of the reference to retrieve
 
         Returns:
-            Dict: JSON representation of the reference
+            dict: JSON representation of the reference
         """
         url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
         response_json = self.session.get(url).json()
         return response_json
 
-    def update_reference(self, reference_id: int, **kwargs) -> Dict:
+    def update_reference(self, reference_id: int, **kwargs) -> dict:
         """
         Updates reference with given values. Fields not passed as parameters
         are unchanged.
@@ -229,7 +227,7 @@ class LiteratureClient(BaseClient):
             )
 
         Returns:
-            Dict: JSON representation of the updated reference.
+            dict: JSON representation of the updated reference.
         """
         url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
         response_json = self.session.patch(url, kwargs).json()

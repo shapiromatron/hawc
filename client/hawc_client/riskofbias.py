@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Optional
 
 import pandas as pd
 
@@ -41,8 +41,8 @@ class RiskOfBiasClient(BaseClient):
         return pd.DataFrame(response_json)
 
     def create(
-        self, study_id: int, author_id: int, active: bool, final: bool, scores: list[Dict]
-    ) -> Dict:
+        self, study_id: int, author_id: int, active: bool, final: bool, scores: list[dict]
+    ) -> dict:
         """
         Create a Risk of Bias review for a study. The review must be complete and contain answers for
         all required metrics.
@@ -52,7 +52,7 @@ class RiskOfBiasClient(BaseClient):
             author_id (int): id of author of the Risk of Bias data.
             active (bool): create the new Risk of Bias data as active or not
             final (bool): create the new Risk of Bias data as final or not
-            scores (list[Dict]): List of scores. Each element of the list is a Dict containing the following
+            scores (list[dict]): List of scores. Each element of the list is a dict containing the following
                                  string keys / expected values:
                 * "metric_id" (int): the id of the metric for this score
                 * "is_default" (bool): create this score as default or not
@@ -64,8 +64,8 @@ class RiskOfBiasClient(BaseClient):
                                     hawc.apps.riskofbias.constants.SCORE_CHOICES
                                     + hawc.apps.riskofbias.constants.SCORE_SYMBOLS
                 * bias_direction (int, optional): bias direction
-                * "overridden_objects" (list[Dict], optional): a list of overrides for this particular score. Optional.
-                                                     Each element of this list is a Dict containing the
+                * "overridden_objects" (list[dict], optional): a list of overrides for this particular score. Optional.
+                                                     Each element of this list is a dict containing the
                                                      following string keys / expected values:
                     * "content_type_name" (str): the name of the data type relevant to this override.
                     * "object_id" (int): the id of the particular instance of that data type relevant to this override.
@@ -110,7 +110,7 @@ class RiskOfBiasClient(BaseClient):
             dst_author_id (Optional[int]): author for destination RoBs when author_mode = 2.
 
         Returns:
-            Dict: Log information and mapping of all source ids to destination ids
+            dict: Log information and mapping of all source ids to destination ids
         """
 
         payload = {
@@ -139,7 +139,7 @@ class RiskOfBiasClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def reviews(self, assessment_id: int) -> Dict:
+    def reviews(self, assessment_id: int) -> dict:
         """
         Retrieves all reviews for the given assessment.
         Args:

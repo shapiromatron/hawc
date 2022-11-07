@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pandas as pd
 from requests import Response
 
@@ -11,12 +9,12 @@ class EpiClient(BaseClient):
     Client class for epidemiology requests.
     """
 
-    def metadata(self, assessment_id: int) -> Dict:
+    def metadata(self, assessment_id: int) -> dict:
         """
         Retrieves field choices for all epi models.
 
         Returns:
-            Dict: Model metadata
+            dict: Model metadata
         """
         url = f"{self.session.root_url}/epi/api/metadata/{assessment_id}/"
         return self.session.get(url).json()
@@ -35,7 +33,7 @@ class EpiClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def endpoints(self, assessment_id: int) -> list[Dict]:
+    def endpoints(self, assessment_id: int) -> list[dict]:
         """
         Retrieves all of the epidemiology endpoints for the given assessment.
 
@@ -43,7 +41,7 @@ class EpiClient(BaseClient):
             assessment_id (int): Assessment ID
 
         Returns:
-            list[Dict]: Epidemiology endpoints
+            list[dict]: Epidemiology endpoints
         """
         payload = {"assessment_id": assessment_id}
         url = f"{self.session.root_url}/epi/api/outcome/"
@@ -64,7 +62,7 @@ class EpiClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def get_study_population(self, study_population_id: int) -> Dict:
+    def get_study_population(self, study_population_id: int) -> dict:
         """
         Retrieves data for a single study population
 
@@ -72,17 +70,17 @@ class EpiClient(BaseClient):
             study_population_id (int): Study Population ID
 
         Returns:
-           Dict: study population data
+           dict: study population data
         """
         url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
         return self.session.get(url).json()
 
-    def create_study_population(self, data: Dict) -> Dict:
+    def create_study_population(self, data: dict) -> dict:
         """
         Create a new study population.
 
         Args:
-            data (Dict): fields to create on the study population. Example keys:
+            data (dict): fields to create on the study population. Example keys:
                 name (str): name of the study population
                 study (int): id of the study to associate with this study population
                 countries (list[str]): list of country codes to associate with the study pop
@@ -90,12 +88,12 @@ class EpiClient(BaseClient):
                 etc.
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/study-population/"
         return self.session.post(url, data).json()
 
-    def update_study_population(self, study_population_id: int, data: Dict) -> Dict:
+    def update_study_population(self, study_population_id: int, data: dict) -> dict:
         """
         Update an existing study population.
 
@@ -106,7 +104,7 @@ class EpiClient(BaseClient):
                 See "create_study_population" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
@@ -125,7 +123,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/study-population/{study_population_id}/"
         return self.session.delete(url)
 
-    def get_criteria(self, criteria_id: int) -> Dict:
+    def get_criteria(self, criteria_id: int) -> dict:
         """
         Retrieves data for a single criteria
 
@@ -133,27 +131,27 @@ class EpiClient(BaseClient):
             criteria_id (int): criteria ID
 
         Returns:
-            Dict: criteria data
+            dict: criteria data
         """
         url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
         return self.session.get(url).json()
 
-    def create_criteria(self, data: Dict) -> Dict:
+    def create_criteria(self, data: dict) -> dict:
         """
         Create a new criteria
 
         Args:
-            data (Dict): fields to create on the criteria. Keys:
+            data (dict): fields to create on the criteria. Keys:
                 description (str): description of the criteria
                 assessment (int): id of the associated assessment
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/criteria/"
         return self.session.post(url, data).json()
 
-    def update_criteria(self, criteria_id: int, data: Dict) -> Dict:
+    def update_criteria(self, criteria_id: int, data: dict) -> dict:
         """
         Update an existing criteria
 
@@ -164,7 +162,7 @@ class EpiClient(BaseClient):
                 See "create_criteria" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
@@ -183,7 +181,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/criteria/{criteria_id}/"
         return self.session.delete(url)
 
-    def get_comparison_set(self, comparison_set_id: int) -> Dict:
+    def get_comparison_set(self, comparison_set_id: int) -> dict:
         """
         Retrieves data for a single comparison set
 
@@ -191,29 +189,29 @@ class EpiClient(BaseClient):
             comparison_set_id (int): comparison set ID
 
         Returns:
-            Dict: comparison set data
+            dict: comparison set data
         """
         url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
         return self.session.get(url).json()
 
-    def create_comparison_set(self, data: Dict) -> Dict:
+    def create_comparison_set(self, data: dict) -> dict:
         """
         Create a new comparison set
 
         Args:
-            data (Dict): fields to create on the comparison set. Keys:
+            data (dict): fields to create on the comparison set. Keys:
                 name (str): name of the comparison set
                 description (str): description
                 exposure (int): id of the associated exposure population
                 study_population (int): id of the associated study population
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/comparison-set/"
         return self.session.post(url, data).json()
 
-    def update_comparison_set(self, comparison_set_id: int, data: Dict) -> Dict:
+    def update_comparison_set(self, comparison_set_id: int, data: dict) -> dict:
         """
         Update an existing comparison set
 
@@ -224,7 +222,7 @@ class EpiClient(BaseClient):
                 See "create_comparison_set" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
@@ -243,7 +241,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/comparison-set/{comparison_set_id}/"
         return self.session.delete(url)
 
-    def get_group(self, group_id: int) -> Dict:
+    def get_group(self, group_id: int) -> dict:
         """
         Retrieves data for a single group
 
@@ -251,29 +249,29 @@ class EpiClient(BaseClient):
             group_id (int): group ID
 
         Returns:
-            Dict: group data
+            dict: group data
         """
         url = f"{self.session.root_url}/epi/api/group/{group_id}/"
         return self.session.get(url).json()
 
-    def create_group(self, data: Dict) -> Dict:
+    def create_group(self, data: dict) -> dict:
         """
         Create a new group
 
         Args:
-            data (Dict): fields to create on the group. Example keys:
+            data (dict): fields to create on the group. Example keys:
                 name (str): name of the group
                 comparison_set (int): id of the associated comparison set
                 ethnicities (list[Any]): list of id's/names of associated ethnicities
                 etc.
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/group/"
         return self.session.post(url, data).json()
 
-    def update_group(self, group_id: int, data: Dict) -> Dict:
+    def update_group(self, group_id: int, data: dict) -> dict:
         """
         Update an existing group
 
@@ -284,7 +282,7 @@ class EpiClient(BaseClient):
                 See "create_group" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/group/{group_id}/"
@@ -303,7 +301,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/group/{group_id}/"
         return self.session.delete(url)
 
-    def get_numerical_description(self, numerical_description_id: int) -> Dict:
+    def get_numerical_description(self, numerical_description_id: int) -> dict:
         """
         Retrieves data for a single numerical_description
 
@@ -311,17 +309,17 @@ class EpiClient(BaseClient):
             numerical_description_id (int): numerical_description ID
 
         Returns:
-            Dict: numerical_description data
+            dict: numerical_description data
         """
         url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
         return self.session.get(url).json()
 
-    def create_numerical_description(self, data: Dict) -> Dict:
+    def create_numerical_description(self, data: dict) -> dict:
         """
         Create a new numerical description
 
         Args:
-            data (Dict): fields to create on the numerical description. Example keys:
+            data (dict): fields to create on the numerical description. Example keys:
                 description (str): description
                 group (int): id of the associated group
                 mean (Number): mean value
@@ -329,12 +327,12 @@ class EpiClient(BaseClient):
                 etc.
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/numerical-descriptions/"
         return self.session.post(url, data).json()
 
-    def update_numerical_description(self, numerical_description_id: int, data: Dict) -> Dict:
+    def update_numerical_description(self, numerical_description_id: int, data: dict) -> dict:
         """
         Update an existing numerical description
 
@@ -345,7 +343,7 @@ class EpiClient(BaseClient):
                 See "create_numerical_description" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
@@ -364,7 +362,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/numerical-descriptions/{numerical_description_id}/"
         return self.session.delete(url)
 
-    def get_outcome(self, outcome_id: int) -> Dict:
+    def get_outcome(self, outcome_id: int) -> dict:
         """
         Retrieves data for a single outcome
 
@@ -372,17 +370,17 @@ class EpiClient(BaseClient):
             outcome_id (int): outcome ID
 
         Returns:
-            Dict: outcome data
+            dict: outcome data
         """
         url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
         return self.session.get(url).json()
 
-    def create_outcome(self, data: Dict) -> Dict:
+    def create_outcome(self, data: dict) -> dict:
         """
         Create a new outcome
 
         Args:
-            data (Dict): fields to create on the outcome. Example keys:
+            data (dict): fields to create on the outcome. Example keys:
                 name (str): name of the outcome
                 assessment (int): id of the associated assessment
                 study_population (int): id of the associated study population
@@ -390,12 +388,12 @@ class EpiClient(BaseClient):
                 etc.
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/outcome/"
         return self.session.post(url, data).json()
 
-    def update_outcome(self, outcome_id: int, data: Dict) -> Dict:
+    def update_outcome(self, outcome_id: int, data: dict) -> dict:
         """
         Update an existing outcome
 
@@ -406,7 +404,7 @@ class EpiClient(BaseClient):
                 See "create_outcome" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
@@ -425,7 +423,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/outcome/{outcome_id}/"
         return self.session.delete(url)
 
-    def get_result(self, result_id: int) -> Dict:
+    def get_result(self, result_id: int) -> dict:
         """
         Retrieves data for a single result
 
@@ -433,17 +431,17 @@ class EpiClient(BaseClient):
             result_id (int): result ID
 
         Returns:
-            Dict: result data
+            dict: result data
         """
         url = f"{self.session.root_url}/epi/api/result/{result_id}/"
         return self.session.get(url).json()
 
-    def create_result(self, data: Dict) -> Dict:
+    def create_result(self, data: dict) -> dict:
         """
         Create a new result
 
         Args:
-            data (Dict): fields to create on the result. Example keys:
+            data (dict): fields to create on the result. Example keys:
                 name (str): name of the result
                 comments (str): comments on this result
                 outcome (int): id of the associated outcome
@@ -452,12 +450,12 @@ class EpiClient(BaseClient):
                 etc.
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/result/"
         return self.session.post(url, data).json()
 
-    def update_result(self, result_id: int, data: Dict) -> Dict:
+    def update_result(self, result_id: int, data: dict) -> dict:
         """
         Update an existing result
 
@@ -468,7 +466,7 @@ class EpiClient(BaseClient):
                 See "create_result" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/result/{result_id}/"
@@ -487,7 +485,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/result/{result_id}/"
         return self.session.delete(url)
 
-    def get_group_result(self, group_result_id: int) -> Dict:
+    def get_group_result(self, group_result_id: int) -> dict:
         """
         Retrieves data for a single group result
 
@@ -495,29 +493,29 @@ class EpiClient(BaseClient):
             group_result_id (int): group result ID
 
         Returns:
-            Dict: group result data
+            dict: group result data
         """
         url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
         return self.session.get(url).json()
 
-    def create_group_result(self, data: Dict) -> Dict:
+    def create_group_result(self, data: dict) -> dict:
         """
         Create a new group result
 
         Args:
-            data (Dict): fields to create on the group result. Example keys:
+            data (dict): fields to create on the group result. Example keys:
                 name (str): name of the result
                 group (int): id of the associated group
                 result (int): id of the associated result
                 etc.
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/group-result/"
         return self.session.post(url, data).json()
 
-    def update_group_result(self, group_result_id: int, data: Dict) -> Dict:
+    def update_group_result(self, group_result_id: int, data: dict) -> dict:
         """
         Update an existing group result
 
@@ -528,7 +526,7 @@ class EpiClient(BaseClient):
                 See "create_group_result" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
@@ -547,7 +545,7 @@ class EpiClient(BaseClient):
         url = f"{self.session.root_url}/epi/api/group-result/{group_result_id}/"
         return self.session.delete(url)
 
-    def get_exposure(self, exposure_id: int) -> Dict:
+    def get_exposure(self, exposure_id: int) -> dict:
         """
         Retrieves data for a single exposure
 
@@ -555,30 +553,30 @@ class EpiClient(BaseClient):
             exposure_id (int): exposure ID
 
         Returns:
-            Dict: exposure data
+            dict: exposure data
         """
         url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"
         return self.session.get(url).json()
 
-    def create_exposure(self, data: Dict) -> Dict:
+    def create_exposure(self, data: dict) -> dict:
         """
         Create a new exposure
 
         Args:
-            data (Dict): fields to create on the exposure. Example keys:
+            data (dict): fields to create on the exposure. Example keys:
                 name (str): name of the exposure
                 study_population (int): id of the associated study population
                 dtxsid (str): e.g. "DTXSID1020190",
-                central_tendendices (list[Dict]): list of CT's with keys like "estimate", "estimate_type", "lower_ci", etc.
+                central_tendendices (list[dict]): list of CT's with keys like "estimate", "estimate_type", "lower_ci", etc.
                 etc.
 
         Returns:
-            Dict: The resulting object, if create was successful
+            dict: The resulting object, if create was successful
         """
         url = f"{self.session.root_url}/epi/api/exposure/"
         return self.session.post(url, data).json()
 
-    def update_exposure(self, exposure_id: int, data: Dict) -> Dict:
+    def update_exposure(self, exposure_id: int, data: dict) -> dict:
         """
         Update an existing exposure
 
@@ -589,7 +587,7 @@ class EpiClient(BaseClient):
                 See "create_exposure" docstring for example fields.
 
         Returns:
-            Dict: The resulting object, if update was successful
+            dict: The resulting object, if update was successful
         """
 
         url = f"{self.session.root_url}/epi/api/exposure/{exposure_id}/"

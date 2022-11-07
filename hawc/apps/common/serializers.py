@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, Type, Union
+from typing import Any, Type, Union
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -37,12 +37,12 @@ def validate_pydantic(pydantic_class: Type[BaseModel], field: str, data: Any) ->
         raise ValidationError({field: err.json()})
 
 
-def validate_jsonschema(data: Any, schema: Dict) -> Any:
+def validate_jsonschema(data: Any, schema: dict) -> Any:
     """Validate data and return if appropriate; else raise django ValidationError.
 
     Args:
         data (Any): The data to validate
-        schema (Dict): The jsonschema to validate against
+        schema (dict): The jsonschema to validate against
 
     Raises:
         serializers.ValidationError: If validation is unsuccessful
@@ -70,13 +70,13 @@ class HeatmapQuerySerializer(serializers.Serializer):
     unpublished = serializers.BooleanField(default=False)
 
 
-def get_matching_instance(Model: models.Model, data: Dict, field_name: str) -> models.Model:
+def get_matching_instance(Model: models.Model, data: dict, field_name: str) -> models.Model:
     """
     Return a matching django model object or throw ValidationError if not found.
 
     Args:
         model: (models.Model): The model to fetch an instance of
-        data (Dict): the data dictionary
+        data (dict): the data dictionary
         field_name (str): the ID field name
 
     Returns:
@@ -99,13 +99,13 @@ def get_matching_instance(Model: models.Model, data: Dict, field_name: str) -> m
         raise serializers.ValidationError(err)
 
 
-def get_matching_instances(Model: models.Model, data: Dict, field_name: str) -> list[models.Model]:
+def get_matching_instances(Model: models.Model, data: dict, field_name: str) -> list[models.Model]:
     """
     Return a matching django models list or throw ValidationError if not found.
 
     Args:
         model: (models.Model): The model to fetch an instance of
-        data (Dict): the data dictionary
+        data (dict): the data dictionary
         field_name (str): the IDs field name
 
     Returns:
@@ -304,7 +304,7 @@ class FlexibleFieldsMixin:
     Constructor kwargs:
         fields (list[str]): allowlist of field names to include in serializer
         field_prefix (str): prefix to add to all field names
-        field_renames (Dict): mapping of old field names to new field names
+        field_renames (dict): mapping of old field names to new field names
     """
 
     def __init__(self, *args, **kwargs):

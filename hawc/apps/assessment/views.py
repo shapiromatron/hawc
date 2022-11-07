@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from django.apps import apps
 from django.conf import settings
@@ -873,7 +873,7 @@ class AboutContentTypes(TemplateView):
             cts["summary.datapivotquery"],
         ]
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context

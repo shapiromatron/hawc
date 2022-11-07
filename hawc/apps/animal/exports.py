@@ -1,5 +1,5 @@
 from copy import copy
-from typing import Dict, Optional
+from typing import Optional
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
@@ -163,18 +163,18 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         ]
 
     @classmethod
-    def _get_dose_units(cls, doses: list[Dict]) -> str:
+    def _get_dose_units(cls, doses: list[dict]) -> str:
         return doses[0]["dose_units"]["name"]
 
     @classmethod
-    def _get_doses_str(cls, doses: list[Dict]) -> str:
+    def _get_doses_str(cls, doses: list[dict]) -> str:
         if len(doses) == 0:
             return ""
         values = ", ".join([str(float(d["dose"])) for d in doses])
         return f"{values} {cls._get_dose_units(doses)}"
 
     @classmethod
-    def _get_dose(cls, doses: list[Dict], idx: int) -> Optional[float]:
+    def _get_dose(cls, doses: list[dict], idx: int) -> Optional[float]:
         for dose in doses:
             if dose["dose_group_id"] == idx:
                 return float(dose["dose"])
@@ -460,7 +460,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return [None, None]
 
     @staticmethod
-    def _dose_is_reported(dose_group_id: int, groups: list[Dict]) -> bool:
+    def _dose_is_reported(dose_group_id: int, groups: list[dict]) -> bool:
         """
         Check if any numerical data( n, response, or incidence) was entered for a dose-group
         """

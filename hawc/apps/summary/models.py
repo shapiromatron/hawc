@@ -2,7 +2,6 @@ import json
 import logging
 import os
 from operator import methodcaller
-from typing import Dict
 
 import pandas as pd
 from django.apps import apps
@@ -521,7 +520,7 @@ class Visual(models.Model):
             ],
         }
 
-    def copy_across_assessments(self, cw: Dict):
+    def copy_across_assessments(self, cw: dict):
         old_id = self.id
 
         study_cw = cw[get_model_copy_name(Study)]
@@ -548,7 +547,7 @@ class Visual(models.Model):
 
         cw[get_model_copy_name(self)][old_id] = self.id
 
-    def _update_settings_across_assessments(self, cw: Dict) -> str:
+    def _update_settings_across_assessments(self, cw: dict) -> str:
         settings = json.loads(self.settings)
 
         if (
@@ -704,7 +703,7 @@ class DataPivotUpload(DataPivot):
 
         cw[get_model_copy_name(self)][old_id] = self.id
 
-    def _update_settings_across_assessments(self, cw: Dict) -> str:
+    def _update_settings_across_assessments(self, cw: dict) -> str:
         # no changes required
         return self.settings
 
@@ -908,7 +907,7 @@ class DataPivotQuery(DataPivot):
 
         cw[get_model_copy_name(self)][old_id] = self.id
 
-    def _update_settings_across_assessments(self, cw: Dict) -> str:
+    def _update_settings_across_assessments(self, cw: dict) -> str:
         try:
             settings = json.loads(self.settings)
         except json.JSONDecodeError:
@@ -1008,7 +1007,7 @@ class Prefilter:
         filters.update(json.loads(prefilters))
 
     @staticmethod
-    def copy_across_assessments(prefilters: str, cw: Dict) -> str:
+    def copy_across_assessments(prefilters: str, cw: dict) -> str:
         filters = json.loads(prefilters)
         for study_id_key in [
             "animal_group__experiment__study__in",

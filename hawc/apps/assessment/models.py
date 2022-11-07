@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, Dict, NamedTuple
+from typing import Any, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -1022,7 +1022,7 @@ class Content(models.Model):
 
     @classmethod
     def rendered_page(
-        cls, content_type: ContentTypeChoices, request: HttpRequest, context: Dict
+        cls, content_type: ContentTypeChoices, request: HttpRequest, context: dict
     ) -> str:
         """Return rendered template response for the requested content.
 
