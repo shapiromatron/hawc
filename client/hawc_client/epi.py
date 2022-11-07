@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 import pandas as pd
 from requests import Response
@@ -35,7 +35,7 @@ class EpiClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def endpoints(self, assessment_id: int) -> List[Dict]:
+    def endpoints(self, assessment_id: int) -> list[Dict]:
         """
         Retrieves all of the epidemiology endpoints for the given assessment.
 
@@ -43,7 +43,7 @@ class EpiClient(BaseClient):
             assessment_id (int): Assessment ID
 
         Returns:
-            List[Dict]: Epidemiology endpoints
+            list[Dict]: Epidemiology endpoints
         """
         payload = {"assessment_id": assessment_id}
         url = f"{self.session.root_url}/epi/api/outcome/"
@@ -85,7 +85,7 @@ class EpiClient(BaseClient):
             data (Dict): fields to create on the study population. Example keys:
                 name (str): name of the study population
                 study (int): id of the study to associate with this study population
-                countries (List[str]): list of country codes to associate with the study pop
+                countries (list[str]): list of country codes to associate with the study pop
                 design (str): Study Design (CO == Cohort, RT == Randomized controlled trial, etc.)
                 etc.
 
@@ -264,7 +264,7 @@ class EpiClient(BaseClient):
             data (Dict): fields to create on the group. Example keys:
                 name (str): name of the group
                 comparison_set (int): id of the associated comparison set
-                ethnicities (List[Any]): list of id's/names of associated ethnicities
+                ethnicities (list[Any]): list of id's/names of associated ethnicities
                 etc.
 
         Returns:
@@ -448,7 +448,7 @@ class EpiClient(BaseClient):
                 comments (str): comments on this result
                 outcome (int): id of the associated outcome
                 comparison_set (int): id of the associated comparison_set
-                factors_applied (List[str]): list of factor names to apply
+                factors_applied (list[str]): list of factor names to apply
                 etc.
 
         Returns:
@@ -569,7 +569,7 @@ class EpiClient(BaseClient):
                 name (str): name of the exposure
                 study_population (int): id of the associated study population
                 dtxsid (str): e.g. "DTXSID1020190",
-                central_tendendices (List[Dict]): list of CT's with keys like "estimate", "estimate_type", "lower_ci", etc.
+                central_tendendices (list[Dict]): list of CT's with keys like "estimate", "estimate_type", "lower_ci", etc.
                 etc.
 
         Returns:

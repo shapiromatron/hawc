@@ -4,7 +4,7 @@ import re
 from collections import OrderedDict, defaultdict
 from datetime import timedelta
 from math import inf
-from typing import Any, Dict, List, NamedTuple, Optional, Set, Union
+from typing import Any, Dict, NamedTuple, Optional, Set, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -43,7 +43,7 @@ def rename_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
         return df
     duplicates: Set[str] = set(df.columns[df.columns.duplicated()].tolist())
     indexes: Dict[str, int] = defaultdict(lambda: 0)
-    new_cols: List[str] = []
+    new_cols: list[str] = []
     for col in df.columns:
         if col in duplicates:
             indexes[col] += 1
@@ -99,7 +99,7 @@ def tryParseInt(
         return default
 
 
-def try_parse_list_ints(val: str = None) -> List[int]:
+def try_parse_list_ints(val: str = None) -> list[int]:
     """
     Try to parse a list of integers and return a list of integers, eg., `1,2,3` -> [1,2,3].
     If this fails for any reason, an empty list is returned

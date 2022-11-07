@@ -5,7 +5,7 @@ import sys
 from collections import defaultdict
 from itertools import chain
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 
 import django
 from animal import models as ani_models
@@ -40,14 +40,14 @@ logger = logging.getLogger(__name__)
 
 class Cloner:
 
-    M2M_FIELDS: List[str] = []
+    M2M_FIELDS: list[str] = []
 
     def _set_overrides(self, obj, overrides):
         if overrides is not None:
             for key, val in overrides.items():
                 setattr(obj, key, val)
 
-    def _get_m2m(self, obj: Model) -> Dict[str, List[Model]]:
+    def _get_m2m(self, obj: Model) -> Dict[str, list[Model]]:
         fields = {}
         for field in self.M2M_FIELDS:
             fields[field] = list(getattr(obj, field).all())
@@ -234,7 +234,7 @@ def disable_signals():
     )
 
 
-def apply_lit_tags(study_ids: List[int], cw: Dict):
+def apply_lit_tags(study_ids: list[int], cw: Dict):
     # apply the same literature tags previously used in original studies to clones
     lit_models.ReferenceTags.objects.bulk_create(
         [
@@ -247,7 +247,7 @@ def apply_lit_tags(study_ids: List[int], cw: Dict):
     )
 
 
-def apply_ivcategory_tags(study_ids: List[int], cw: Dict):
+def apply_ivcategory_tags(study_ids: list[int], cw: Dict):
     raise NotImplementedError("TODO - implement - not needed for this assessment.")
 
 
@@ -255,9 +255,9 @@ def apply_ivcategory_tags(study_ids: List[int], cw: Dict):
 def clone_assessment(
     old_assessment_id: int,
     new_assessment_name: str,
-    study_ids: List[int],
-    dp_ids: List[int],
-    viz_ids: List[int],
+    study_ids: list[int],
+    dp_ids: list[int],
+    viz_ids: list[int],
 ):
 
     # clone assessment stuff

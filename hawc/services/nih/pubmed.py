@@ -2,7 +2,7 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from itertools import chain
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 import requests
 
@@ -65,7 +65,7 @@ class PubMedSearch(PubMedUtility):
 
         return self.id_count
 
-    def _parse_ids(self, tree: str) -> List[int]:
+    def _parse_ids(self, tree: str) -> list[int]:
         return [int(id.text) for id in ET.fromstring(tree).find("IdList").findall("Id")]
 
     def _fetch_ids(self):
@@ -87,7 +87,7 @@ class PubMedSearch(PubMedUtility):
     def get_ids_count(self) -> int:
         return self._get_id_count()
 
-    def get_ids(self) -> List[int]:
+    def get_ids(self) -> list[int]:
         self._fetch_ids()
         return self.ids
 
@@ -109,13 +109,13 @@ class PubMedFetch(PubMedUtility):
         if id_list is None:
             raise Exception("List of IDs are required for a PubMed search")
         self.ids = id_list
-        self.content: List[Dict] = []
+        self.content: list[Dict] = []
         self.settings = PubMedFetch.default_settings.copy()
         self._register_instance()
         for k, v in kwargs.items():
             self.settings[k] = v
 
-    def get_content(self) -> List[Dict]:
+    def get_content(self) -> list[Dict]:
         data = self.settings.copy()
         rng = list(range(0, len(self.ids), self.settings["retmax"]))
         self.request_count = len(rng)

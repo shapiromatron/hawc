@@ -5,7 +5,7 @@ import pickle
 import re
 from io import BytesIO
 from math import ceil
-from typing import Dict, List
+from typing import Dict
 from urllib import parse
 
 import pandas as pd
@@ -672,7 +672,7 @@ class Identifiers(models.Model):
         tasks.update_pubmed_content.delay([d.unique_id for d in idents])
 
     @classmethod
-    def existing_doi_map(cls, dois: List[str]) -> Dict[str, int]:
+    def existing_doi_map(cls, dois: list[str]) -> Dict[str, int]:
         """
         Return a mapping of DOI and Identifier ID given a list of candidate DOIs
         """

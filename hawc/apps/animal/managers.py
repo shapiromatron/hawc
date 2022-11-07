@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
@@ -364,7 +364,7 @@ class EndpointManager(BaseManager):
 
         return df
 
-    def _validate_update_terms(self, objs: List[Dict], assessment: Assessment):
+    def _validate_update_terms(self, objs: list[Dict], assessment: Assessment):
         # assessment must have vocab
         if assessment.vocabulary is None:
             raise ValidationError("Vocabulary not set in assessment {assessment.id}")
@@ -418,19 +418,19 @@ class EndpointManager(BaseManager):
             raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")
 
     @transaction.atomic
-    def update_terms(self, objs: List[Dict], assessment: Assessment) -> List:
+    def update_terms(self, objs: list[Dict], assessment: Assessment) -> list:
         """
         Updates all of the terms and respective text fields
         for a list of endpoints based on the given name term.
         All endpoints must be from the same assessment.
 
         Args:
-            objs (List[Dict]): List of endpoint dicts, where each dict has
+            objs (list[Dict]): List of endpoint dicts, where each dict has
                 for keys 'id' and 'name_term_id'
             assessment (Assessment): Assessment for endpoints
 
         Returns:
-            List: Updated endpoints
+            list: Updated endpoints
         """
         # validate the endpoints and terms
         self._validate_update_terms(objs, assessment)

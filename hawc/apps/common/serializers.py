@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, List, Tuple, Type, Union
+from typing import Any, Dict, Tuple, Type, Union
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -99,7 +99,7 @@ def get_matching_instance(Model: models.Model, data: Dict, field_name: str) -> m
         raise serializers.ValidationError(err)
 
 
-def get_matching_instances(Model: models.Model, data: Dict, field_name: str) -> List[models.Model]:
+def get_matching_instances(Model: models.Model, data: Dict, field_name: str) -> list[models.Model]:
     """
     Return a matching django models list or throw ValidationError if not found.
 
@@ -302,7 +302,7 @@ class FlexibleFieldsMixin:
     This mixin is primarily meant for serailization and not deserialization.
 
     Constructor kwargs:
-        fields (List[str]): allowlist of field names to include in serializer
+        fields (list[str]): allowlist of field names to include in serializer
         field_prefix (str): prefix to add to all field names
         field_renames (Dict): mapping of old field names to new field names
     """
@@ -455,7 +455,7 @@ class BulkSerializer(serializers.ListSerializer):
         """
         return getattr(instance, field) == value
 
-    def update_fields(self, instance, data) -> Tuple[bool, List]:
+    def update_fields(self, instance, data) -> Tuple[bool, list]:
         """
         Attempts to update an instance with given data.
 
@@ -464,7 +464,7 @@ class BulkSerializer(serializers.ListSerializer):
             data (dict): serialized instance data
 
         Returns:
-            Tuple[bool, List]: a tuple of whether the instance has been updated, and a list of updated fields
+            Tuple[bool, list]: a tuple of whether the instance has been updated, and a list of updated fields
         """
         fields = list(data.keys())
         fields.remove("id")

@@ -3,7 +3,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import List, Tuple
+from typing import Tuple
 
 from django.urls import reverse_lazy
 
@@ -29,7 +29,7 @@ USE_I18N = False
 USE_L10N = True
 USE_TZ = True
 
-ADMINS: List[Tuple[str, str]] = []
+ADMINS: list[Tuple[str, str]] = []
 _admin_names = os.getenv("DJANGO_ADMIN_NAMES", "")
 _admin_emails = os.getenv("DJANGO_ADMIN_EMAILS", "")
 if len(_admin_names) > 0 and len(_admin_emails) > 0:

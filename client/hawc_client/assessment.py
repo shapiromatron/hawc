@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 from .client import BaseClient
 
@@ -8,12 +8,12 @@ class AssessmentClient(BaseClient):
     Client class for assessment requests.
     """
 
-    def public(self) -> List[Dict]:
+    def public(self) -> list[Dict]:
         """
         Retrieves data pertaining to all public assessments
 
         Returns:
-            List[Dict]: Public assessment data
+            list[Dict]: Public assessment data
         """
         url = f"{self.session.root_url}/assessment/api/assessment/public/"
         return self.session.get(url).json()

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 from docx import Document as create_document
 from docx.document import Document
@@ -49,7 +49,7 @@ class BaseCell(BaseModel):
 
 
 class BaseCellGroup(BaseModel):
-    cells: List[BaseCell] = []
+    cells: list[BaseCell] = []
 
     class Config:
         underscore_attrs_are_private = True
@@ -85,7 +85,7 @@ class BaseCellGroup(BaseModel):
 
 
 class BaseTable(BaseCellGroup):
-    column_widths: List[int] = []
+    column_widths: list[int] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

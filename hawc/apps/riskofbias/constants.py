@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 from django.db import models
 
@@ -12,7 +12,7 @@ class RiskOfBiasResponses(models.IntegerChoices):
     MINOR_CRITICAL = 5, "Minor/Critical concerns"
 
 
-RESPONSES_VALUES: Dict[models.IntegerChoices, List[int]] = {
+RESPONSES_VALUES: Dict[models.IntegerChoices, list[int]] = {
     RiskOfBiasResponses.NONE: [0],
     RiskOfBiasResponses.HIGH_LOW_BIAS: [17, 16, 15, 12, 14, 10],
     RiskOfBiasResponses.GOOD_DEFICIENT: [27, 26, 25, 24, 22, 20],

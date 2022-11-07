@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple, Union
+from typing import Any, Tuple, Union
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
@@ -115,7 +115,7 @@ class BaseFormHelper(cf.FormHelper):
         field = layout[index]
         layout[index] = AdderLayout(field, adder_url=url, adder_title=title)
 
-    def add_row(self, firstField: str, numFields: int, classes: Union[str, List[str]]):
+    def add_row(self, firstField: str, numFields: int, classes: Union[str, list[str]]):
         if isinstance(classes, str):
             classes = [classes] * numFields
         first = self.layout.index(firstField)
@@ -246,7 +246,7 @@ class CustomURLField(forms.URLField):
 class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
     """For use in ArrayField with a CharField with choices"""
 
-    def format_value(self, value) -> List[str]:
+    def format_value(self, value) -> list[str]:
         """Return selected values as a list."""
         if value is None:
             return []

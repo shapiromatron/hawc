@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 import pandas as pd
 
@@ -11,7 +11,7 @@ class LiteratureClient(BaseClient):
     """
 
     def _import(
-        self, source: int, assessment_id: int, title: str, description: str, ids: List[int]
+        self, source: int, assessment_id: int, title: str, description: str, ids: list[int]
     ) -> Dict:
         """
         Imports a list of IDs as literature references for the given assessment.
@@ -21,7 +21,7 @@ class LiteratureClient(BaseClient):
             assessment_id (int): Assessment ID
             title (str): Title of import
             description (str): Description of import
-            ids (List[int]): IDs
+            ids (list[int]): IDs
 
         Returns:
             Dict: JSON response
@@ -37,7 +37,7 @@ class LiteratureClient(BaseClient):
         url = f"{self.session.root_url}/lit/api/search/"
         return self.session.post(url, payload).json()
 
-    def import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
+    def import_hero(self, assessment_id: int, title: str, description: str, ids: list[int]) -> Dict:
         """
         Imports a list of HERO IDs as literature references for the given assessment.
 
@@ -45,7 +45,7 @@ class LiteratureClient(BaseClient):
             assessment_id (int): Assessment ID
             title (str): Title of import
             description (str): Description of import
-            ids (List[int]): HERO IDs
+            ids (list[int]): HERO IDs
 
         Returns:
             Dict: JSON response
@@ -53,7 +53,7 @@ class LiteratureClient(BaseClient):
         return self._import(2, assessment_id, title, description, ids)
 
     def import_pubmed(
-        self, assessment_id: int, title: str, description: str, ids: List[int]
+        self, assessment_id: int, title: str, description: str, ids: list[int]
     ) -> Dict:
         """
         Imports a list of PubMed IDs as literature references for the given assessment.
@@ -62,7 +62,7 @@ class LiteratureClient(BaseClient):
             assessment_id (int): Assessment ID
             title (str): Title of import
             description (str): Description of import
-            ids (List[int]): PubMed IDs
+            ids (list[int]): PubMed IDs
 
         Returns:
             Dict: JSON response
@@ -116,14 +116,14 @@ class LiteratureClient(BaseClient):
 
         return update_response_json["tree"]
 
-    def update_tagtree(self, assessment_id: int, tags: List[Dict]) -> pd.DataFrame:
+    def update_tagtree(self, assessment_id: int, tags: list[Dict]) -> pd.DataFrame:
         """
         Updates the tag tree.
 
         Args:
             assessment_id (int): Assessment ID to update
-            tags (List[Dict]): tag definitions. For each tag Dict element, "name" is required. "slug" is
-               optional. "children" is optional and should contain a recursive List containing valid tags.
+            tags (list[Dict]): tag definitions. For each tag Dict element, "name" is required. "slug" is
+               optional. "children" is optional and should contain a recursive list containing valid tags.
 
         Returns:
             Dict: JSON representation of the new tag tree. If errors, a JSON list containing details.
@@ -218,7 +218,7 @@ class LiteratureClient(BaseClient):
             **kwargs (optional): Named parameters of fields to update in reference. Example parameters:
                 title (str): title of the reference
                 abstract (str): reference abstract
-                tags (List[int]): tag IDs to apply to reference;
+                tags (list[int]): tag IDs to apply to reference;
                     replaces the existing tags
 
         Example Usage:
@@ -252,7 +252,7 @@ class LiteratureClient(BaseClient):
         url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
         self.session.delete(url)
 
-    def replace_hero(self, assessment_id: int, replace: List[List[int]]) -> None:
+    def replace_hero(self, assessment_id: int, replace: list[list[int]]) -> None:
         """
         Replace HERO ID associated with each reference with a new HERO ID. Reference
         fields are updated using the new HERO ID's reference metadata.  This request is
@@ -263,7 +263,7 @@ class LiteratureClient(BaseClient):
 
         Args:
             assessment_id (int): Assessment ID for all references in the list.
-            replace (List[List[int]]): List of reference ID / new HERO ID pairings, both values
+            replace (list[list[int]]): List of reference ID / new HERO ID pairings, both values
                 should be integers, ex., [[reference_id, hero_id], ... ]
 
         Returns:

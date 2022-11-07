@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, List, Tuple, Type, Union
+from typing import Any, ClassVar, Dict, Tuple, Type, Union
 
 import pandas as pd
 import pydantic
@@ -26,7 +26,7 @@ class BaseApiAction:
 
     def __init__(self, data: Dict):
         self.data = data
-        self.errors: Dict[str, List] = defaultdict(list)
+        self.errors: Dict[str, list] = defaultdict(list)
         self.inputs = None
 
     @classmethod

@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import requests
 
@@ -55,13 +55,13 @@ class HEROFetch:
 
     default_settings = {"recordsperpage": 100}
 
-    def __init__(self, id_list: List[int], **kwargs):
+    def __init__(self, id_list: list[int], **kwargs):
         if id_list is None:
             raise Exception("List of IDs are required for a PubMed search")
         self.ids = id_list
         self.ids_count = len(id_list)
-        self.content: List[Dict] = []
-        self.failures: List[int] = []
+        self.content: list[Dict] = []
+        self.failures: list[int] = []
         self.settings = HEROFetch.default_settings.copy()
         for k, v in kwargs.items():
             self.settings[k] = v
@@ -88,7 +88,7 @@ class HEROFetch:
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 
-    def _get_missing_ids(self) -> List[int]:
+    def _get_missing_ids(self) -> list[int]:
         requested_ids = set(self.ids)
         found_ids = set([v["HEROID"] for v in self.content])
         missing = sorted(list(requested_ids - found_ids))

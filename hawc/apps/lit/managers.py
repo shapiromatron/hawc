@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 import pandas as pd
 from django.apps import apps
@@ -151,19 +151,19 @@ class IdentifiersManager(BaseManager):
         Identifiers.update_pubmed_content(pimdsFetch)
         return refs
 
-    def validate_hero_ids(self, ids: List[int]) -> Dict:
+    def validate_hero_ids(self, ids: list[int]) -> Dict:
         """Queries HERO to return a valid list HERO content which doesn't already exist in HAWC.
 
         Only queries HERO with identifiers which are not already saved in HAWC.
 
         Args:
-            ids (List[int]): A list of HERO IDs
+            ids (list[int]): A list of HERO IDs
 
         Raises:
             ValidationError: Error if input ids are an invalid format, or HERO cannot find a match
 
         Returns:
-            Dict: {"success": List[Dict], "failures": List[int]}
+            Dict: {"success": list[Dict], "failures": list[int]}
         """
         # cast all ids to int
         invalid_ids = []
@@ -204,7 +204,7 @@ class IdentifiersManager(BaseManager):
             ]
         )
 
-    def hero(self, hero_ids: List[int], allow_missing=False):
+    def hero(self, hero_ids: list[int], allow_missing=False):
         qs = self.filter(database=constants.ReferenceDatabase.HERO, unique_id__in=hero_ids)
 
         if allow_missing is False and qs.count() != len(hero_ids):
@@ -214,19 +214,19 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def validate_pubmed_ids(self, ids: List[int]) -> List[Dict]:
+    def validate_pubmed_ids(self, ids: list[int]) -> list[Dict]:
         """Queries Pubmed to return a valid list Pubmed content which doesn't already exist in HAWC.
 
         Only queries Pubmed with identifiers which are not already saved in HAWC.
 
         Args:
-            ids (List[int]): A list of PMIDs
+            ids (list[int]): A list of PMIDs
 
         Raises:
             ValidationError: If any PMIDs are non-numeric or if PubMed is unable to find a PMID.
 
         Returns:
-            List[Dict]: A list of imported pubmed content
+            list[Dict]: A list of imported pubmed content
         """
         # cast all ids to int
         invalid_ids = []
@@ -271,7 +271,7 @@ class IdentifiersManager(BaseManager):
             ]
         )
 
-    def pubmed(self, pubmed_ids: List[int], allow_missing=False):
+    def pubmed(self, pubmed_ids: list[int], allow_missing=False):
         qs = self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pubmed_ids)
 
         if allow_missing is False and qs.count() != len(pubmed_ids):

@@ -1,5 +1,4 @@
 import re
-from typing import List
 
 # First-group is rest of reference; second-group are initials
 # with optional second initial (middle-name) with optional periods
@@ -24,11 +23,11 @@ def normalize_author(author: str) -> str:
     return author
 
 
-def normalize_authors(authors: List[str]) -> List[str]:
+def normalize_authors(authors: list[str]) -> list[str]:
     return [normalize_author(author) for author in authors]
 
 
-def get_author_short_text(authors: List[str]) -> str:
+def get_author_short_text(authors: list[str]) -> str:
     # Given a list of authors, return citation.
     n_authors = len(authors)
     if n_authors == 0:

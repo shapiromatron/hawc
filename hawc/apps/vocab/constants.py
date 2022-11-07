@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 from django.db.models import IntegerChoices
 from django.utils.functional import classproperty
@@ -17,7 +17,7 @@ class VocabularyNamespace(IntegerChoices):
         return {1: "EPA Environmental health vocabulary"}
 
     @classmethod
-    def display_choices(cls) -> List:
+    def display_choices(cls) -> list:
         return [(key, value) for key, value in cls.display_dict.items()]
 
     @property

@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from operator import methodcaller
-from typing import Dict, List
+from typing import Dict
 
 import pandas as pd
 from django.apps import apps
@@ -257,7 +257,7 @@ class HeatmapDataset(PydanticModel):
 
 
 class HeatmapDatasets(PydanticModel):
-    datasets: List[HeatmapDataset]
+    datasets: list[HeatmapDataset]
 
 
 class Visual(models.Model):

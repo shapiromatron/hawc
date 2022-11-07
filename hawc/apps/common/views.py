@@ -1,6 +1,6 @@
 import abc
 import logging
-from typing import Any, Callable, Iterable, List, Optional
+from typing import Any, Callable, Iterable, Optional
 from urllib.parse import urlparse
 
 import reversion
@@ -475,7 +475,7 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
@@ -527,7 +527,7 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
         context = super().get_context_data(**kwargs)
         return context
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
         crumbs.append(Breadcrumb(name="Delete"))
         return crumbs
@@ -565,7 +565,7 @@ class BaseUpdate(
         context = super().get_context_data(**kwargs)
         return context
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
         crumbs.append(Breadcrumb(name="Update"))
         return crumbs
@@ -630,7 +630,7 @@ class BaseCreate(
     def post_object_save(self, form):
         pass
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         crumbs.append(Breadcrumb(name=f"Create {self.model._meta.verbose_name}"))
         return crumbs
@@ -667,7 +667,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
             context[self.parent_template_name] = self.parent
         return context
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         name = (
             self.breadcrumb_active_name

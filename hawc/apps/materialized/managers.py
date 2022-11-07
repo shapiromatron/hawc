@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Dict, List, NamedTuple, Optional, Tuple
+from typing import Dict, NamedTuple, Optional, Tuple
 
 import pandas as pd
 from django.apps import apps
@@ -21,15 +21,15 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             self._score_values = self.values()
         return self._score_values
 
-    def _study_scores(self, study_id: int) -> List[Dict]:
+    def _study_scores(self, study_id: int) -> list[Dict]:
         return [score for score in self.score_values if study_id == score["study_id"]]
 
-    def _default_tuples(self, scores: List[Dict]) -> List[MetricScore]:
+    def _default_tuples(self, scores: list[Dict]) -> list[MetricScore]:
         return [MetricScore(score["metric_id"], score) for score in scores if score["is_default"]]
 
     def _override_tuples(
-        self, scores: List[Dict], override_model, object_id: int
-    ) -> List[MetricScore]:
+        self, scores: list[Dict], override_model, object_id: int
+    ) -> list[MetricScore]:
         content_type_id = ContentType.objects.get_for_model(override_model).id
         return [
             MetricScore(score["metric_id"], score)
@@ -37,11 +37,11 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             if score["content_type_id"] == content_type_id and object_id == score["object_id"]
         ]
 
-    def study_scores(self, study_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
+    def study_scores(self, study_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
         """Return default scores for study and metric.
 
         Args:
-            study_ids (List[int]): A list of study ids
+            study_ids (list[int]): A list of study ids
 
         Returns:
             Dict[Tuple[int, int], Dict]: Keys are equal to (study_id, metric_id)
@@ -52,7 +52,7 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             if score["study_id"] in study_ids and score["is_default"]
         }
 
-    def endpoint_scores(self, endpoint_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
+    def endpoint_scores(self, endpoint_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
         Endpoint = apps.get_model("animal", "Endpoint")
         AnimalGroup = apps.get_model("animal", "AnimalGroup")
 
@@ -74,7 +74,7 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         return endpoint_scores
 
-    def outcome_scores(self, outcome_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
+    def outcome_scores(self, outcome_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
 
         Outcome = apps.get_model("epi", "Outcome")
 
@@ -93,7 +93,7 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         return outcome_scores
 
-    def result_scores(self, result_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
+    def result_scores(self, result_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
 
         Result = apps.get_model("epi", "Result")
         Outcome = apps.get_model("epi", "Outcome")

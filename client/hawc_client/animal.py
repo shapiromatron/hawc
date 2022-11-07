@@ -1,6 +1,6 @@
 from copy import deepcopy
 from operator import itemgetter
-from typing import Dict, List
+from typing import Dict
 
 import pandas as pd
 
@@ -79,7 +79,7 @@ class AnimalClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def _invert_endpoints(self, endpoints: List[Dict]) -> List[Dict]:
+    def _invert_endpoints(self, endpoints: list[Dict]) -> list[Dict]:
         studies = {}
         for endpoint in deepcopy(endpoints):
             study = endpoint["animal_group"]["experiment"]["study"]
@@ -121,7 +121,7 @@ class AnimalClient(BaseClient):
 
         return studies
 
-    def endpoints(self, assessment_id: int, invert: bool = False) -> List[Dict]:
+    def endpoints(self, assessment_id: int, invert: bool = False) -> list[Dict]:
         """
         Retrieves all bioassay endpoints for a given assessment.
 
@@ -133,7 +133,7 @@ class AnimalClient(BaseClient):
                 akin to top-down.
 
         Returns:
-            List[Dict]: A list of endpoints and related studies with each (or a list of studies with
+            list[Dict]: A list of endpoints and related studies with each (or a list of studies with
                 a related endpoints if inverted)
         """
         payload = {"assessment_id": assessment_id}

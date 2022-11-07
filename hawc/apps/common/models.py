@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import Dict, List, Set, Tuple
+from typing import Dict, Set, Tuple
 
 import django
 import pandas as pd
@@ -54,12 +54,12 @@ class BaseManager(models.Manager):
             .order_by(*ordering)
         )
 
-    def valid_ids(self, ids: List[int], **kwargs) -> Set[int]:
+    def valid_ids(self, ids: list[int], **kwargs) -> Set[int]:
         """
         Determines valid model instance ids from a list of ids
 
         Args:
-            ids (List[int]): model instance ids
+            ids (list[int]): model instance ids
             kwargs: keyword args to pass to validity check
 
         Returns:
@@ -72,12 +72,12 @@ class BaseManager(models.Manager):
             .values_list("pk", flat=True)
         )
 
-    def invalid_ids(self, ids: List[int], **kwargs) -> Set[int]:
+    def invalid_ids(self, ids: list[int], **kwargs) -> Set[int]:
         """
         Determines invalid model instance ids from a list of ids
 
         Args:
-            ids (List[int]): model instance ids
+            ids (list[int]): model instance ids
             kwargs: keyword args to pass to validity check
 
         Returns:
@@ -171,7 +171,7 @@ class AssessmentRootMixin:
         """
 
         last_depth = -math.inf
-        names: List[str] = []
+        names: list[str] = []
         for node in qs:
 
             if node.depth == 1:
@@ -334,17 +334,17 @@ class AssessmentRootMixin:
 
     @classmethod
     @transaction.atomic
-    def replace_tree(cls, assessment_id: int, tagtree: List[Dict]) -> List[Dict]:
+    def replace_tree(cls, assessment_id: int, tagtree: list[Dict]) -> list[Dict]:
         """
         Replaces the tag tree for an assessment; this also removes reference/tag associations.
 
         Args:
             assessment_id (int): assessment id to operate on
-            tagtree (List[Dict]): the user-supplied tags. This method will create the "assessment-<id>"
+            tagtree (list[Dict]): the user-supplied tags. This method will create the "assessment-<id>"
                                     top parent tag and should NOT be included in the supplied argument.
 
         Returns:
-            List[Dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
+            list[Dict]: the new complete tag tree, including the "assessment-<id>" top parent tag and all id's
         """
         cls.add_slugs_to_tagtree(tagtree)
 
@@ -367,19 +367,19 @@ class AssessmentRootMixin:
         return cls.build_tree_mapping(tree, updated_tree)
 
     @classmethod
-    def build_tree_mapping(cls, src: List[Dict], dest: List[Dict]) -> Dict:
+    def build_tree_mapping(cls, src: list[Dict], dest: list[Dict]) -> Dict:
         """Map tags IDs from a source tree to destination tree; assumes trees are equal
 
         Args:
-            src (List[Dict]): A tree export from dump_bulk
-            dest (List[Dict]): A tree export from dump_bulk
+            src (list[Dict]): A tree export from dump_bulk
+            dest (list[Dict]): A tree export from dump_bulk
 
         Returns:
             Dict[int, int]: id key mapping from src to dest
         """
         mapping = {}
 
-        def _match_nodes(_src: List[Dict], _dest: List[Dict]):
+        def _match_nodes(_src: list[Dict], _dest: list[Dict]):
             for idx, src_node in enumerate(_src):
                 dest_node = _dest[idx]
                 mapping[src_node["id"]] = dest_node["id"]

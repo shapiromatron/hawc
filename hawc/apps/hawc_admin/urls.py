@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from django.conf import settings
 from django.contrib import admin
@@ -12,7 +12,7 @@ from hawc import __version__
 from . import api, schema, views
 
 
-def get_admin_urlpatterns(open_api_patterns) -> List:
+def get_admin_urlpatterns(open_api_patterns) -> list:
     """Return a list of admin patterns for inclusion. If Admin is not included via a
     django setting; diagnostic endpoints are still included, but nothing else.
     """
@@ -28,7 +28,7 @@ def get_admin_urlpatterns(open_api_patterns) -> List:
         admin.autodiscover()
 
     # use admin prefix if one exists
-    patterns: List[Any] = [
+    patterns: list[Any] = [
         path(f"{admin_url}/api/", include((router.urls, "api"))),
     ]
 

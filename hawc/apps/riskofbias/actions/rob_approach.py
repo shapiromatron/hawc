@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from django.conf import settings
 from django.db import transaction
@@ -54,7 +54,7 @@ def load_approach(assessment_id: int, approach: RobApproach, user_id: int = None
     settings.save()
 
     # create domains and metrics
-    metrics: List[RiskOfBiasMetric] = []
+    metrics: list[RiskOfBiasMetric] = []
     for sort_order, domain_data in enumerate(data["domains"], start=1):
         metrics_data = domain_data.pop("metrics")
         domain = RiskOfBiasDomain.objects.create(

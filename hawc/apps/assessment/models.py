@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, Dict, List, NamedTuple
+from typing import Any, Dict, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -762,7 +762,7 @@ class DatasetRevision(models.Model):
         extension: str
         num_rows: int
         num_columns: int
-        column_names: List[str]
+        column_names: list[str]
 
     def __str__(self) -> str:
         return f"{self.dataset}: v{self.version}"

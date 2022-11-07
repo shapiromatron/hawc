@@ -1,6 +1,6 @@
 import json
 from enum import IntEnum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import pydantic
 from django.db import models
@@ -26,8 +26,8 @@ class BulkRobCopyData(pydantic.BaseModel):
     src_assessment_id: int
     dst_assessment_id: int
     dst_author_id: Optional[int]
-    src_dst_study_ids: List[Tuple[int, int]]
-    src_dst_metric_ids: List[Tuple[int, int]]
+    src_dst_study_ids: list[Tuple[int, int]]
+    src_dst_metric_ids: list[Tuple[int, int]]
     copy_mode: BulkCopyMode
     author_mode: BulkCopyAuthor
 
