@@ -1,7 +1,7 @@
 import decimal
 import logging
 import re
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from datetime import timedelta
 from math import inf
 from typing import Any, Dict, List, NamedTuple, Optional, Set, Union
@@ -220,7 +220,6 @@ class SerializerHelper:
             obj = obj.optimized_for_serialization()
         serialized = cls._serialize(obj, json=False)
         json_str = JSONRenderer().render(serialized).decode("utf8")
-        serialized = OrderedDict(serialized)  # for pickling
 
         logger.debug(f"setting cache: {name}")
         cache.set_many({name: serialized, json_name: json_str})

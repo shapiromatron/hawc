@@ -1,5 +1,4 @@
 import json
-from collections import OrderedDict
 
 from rest_framework import serializers
 
@@ -88,7 +87,7 @@ class IVEndpointCategorySerializer(AssessmentRootedSerializer):
 
 class IVEndpointCategory(serializers.ModelSerializer):
     def to_representation(self, instance):
-        return OrderedDict(names=instance.get_list_representation())
+        return dict(names=instance.get_list_representation())
 
     class Meta:
         model = models.IVEndpointCategory
