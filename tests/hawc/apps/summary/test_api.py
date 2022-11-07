@@ -92,13 +92,13 @@ class TestVisual:
         assert response.status_code == 200
 
         data = response.json()
-        data = json.dumps(data, indent=2, sort_keys=True)
-        data = re.sub(r"obj_ct=\d+", "obj_ct=9999", data)
+        data_str = json.dumps(data, indent=2, sort_keys=True)
+        data_str = re.sub(r"obj_ct=\d+", "obj_ct=9999", data_str)
 
-        if not rewrite_data_files:
-            fn.write_text(data)
+        if rewrite_data_files:
+            fn.write_text(data_str)
 
-        assert data == fn.read_text()
+        assert data_str == fn.read_text()
 
     def test_bioassay_aggregation(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "bioassay-aggregation")
