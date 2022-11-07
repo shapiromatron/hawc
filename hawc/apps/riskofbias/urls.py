@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.RiskOfBiasAssessmentViewset, basename="assessment")
 router.register(r"domain", api.RiskOfBiasDomain, basename="domain")
 router.register(r"review", api.RiskOfBias, basename="review")

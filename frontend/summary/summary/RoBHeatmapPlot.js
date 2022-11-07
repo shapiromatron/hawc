@@ -483,9 +483,13 @@ class RoBHeatmapPlot extends D3Visualization {
         if (this.legend || !this.data.settings.show_legend) {
             return;
         }
-        const options = {
+        const offset = parseInt(this.cell_size / 3),
+            rowWidths = this.x_scale.domain().length * this.cell_size,
+            options = {
                 dev: this.options.dev || false,
                 collapseNR: false,
+                default_x: this.padding.left + rowWidths + offset,
+                default_y: this.padding.top + offset,
             },
             getFootnoteOptions = () => {
                 let footnotes = [];

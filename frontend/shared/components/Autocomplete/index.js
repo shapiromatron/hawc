@@ -5,12 +5,12 @@ import AutoSuggest from "react-autosuggest";
 
 import h from "shared/utils/helpers";
 import {DEFAULT_MIN_SEARCH_LENGTH, DEBOUNCE_MS, theme} from "../Autocomplete/constants";
+import {ClientSideAutosuggest, renderClientSideAutosuggest} from "./ClientSide";
 import "./Autocomplete.css";
 
 class Autocomplete extends Component {
     /*
-    An autocomplete field for use with django-selectable where the label is text but the value is an int,
-    using pagination
+    An autocomplete field for use with django-autocomplete-light
     */
     constructor(props) {
         super(props);
@@ -30,9 +30,9 @@ class Autocomplete extends Component {
             return;
         }
 
-        fetch(`${url}&term=${value}`, h.fetchGet)
+        fetch(`${url}&q=${value}`, h.fetchGet)
             .then(response => response.json())
-            .then(json => this.setState({suggestions: json.data}));
+            .then(json => this.setState({suggestions: json.results}));
     }
 
     render() {
@@ -52,8 +52,8 @@ class Autocomplete extends Component {
                     this.setState({currentId: suggestion.id});
                     onChange(suggestion);
                 }}
-                getSuggestionValue={suggestion => suggestion.value}
-                renderSuggestion={suggestion => <span>{suggestion.value}</span>}
+                getSuggestionValue={suggestion => suggestion.text}
+                renderSuggestion={suggestion => <span>{suggestion.text}</span>}
                 inputProps={{
                     placeholder,
                     className: "form-control",
@@ -83,4 +83,5 @@ Autocomplete.propTypes = {
     minSearchLength: PropTypes.number,
 };
 
+export {ClientSideAutosuggest, renderClientSideAutosuggest};
 export default Autocomplete;

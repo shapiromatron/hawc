@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 
 from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
+from hawc.tools import fips
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -23,7 +24,7 @@ WSGI_APPLICATION = "hawc.main.wsgi.application"
 SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
-TIME_ZONE = "America/Chicago"
+TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
 USE_I18N = False
 USE_L10N = True
 USE_TZ = True
@@ -35,8 +36,12 @@ if len(_admin_names) > 0 and len(_admin_emails) > 0:
     ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
 MANAGERS = ADMINS
 
-# add randomness to url prefix to prevent easy access
+# add randomness to admin url
 ADMIN_URL_PREFIX = os.getenv("ADMIN_URL_PREFIX", "f09ea0b8-c3d5-4ff9-86c4-27f00e8f643d")
+ADMIN_ROOT = os.environ.get("ADMIN_ROOT", "")
+
+# add randomness to healthcheck url
+HEALTHCHECK_URL_PREFIX = os.getenv("HEALTHCHECK_URL_PREFIX", "4df02970-c4f8-4e16-8a75-e9eaf4dabac7")
 
 # {PRIME, EPA}
 HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
@@ -66,7 +71,6 @@ TEMPLATES = [
     },
 ]
 
-
 # Middleware
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -82,7 +86,6 @@ MIDDLEWARE = (
     "hawc.apps.common.middleware.RequestLogMiddleware",
 )
 
-
 # Install applications
 INSTALLED_APPS = (
     # Django apps
@@ -92,6 +95,8 @@ INSTALLED_APPS = (
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dal",
+    "dal_select2",
     "django.contrib.admin",
     "django.contrib.humanize",
     "django.contrib.postgres",
@@ -102,7 +107,6 @@ INSTALLED_APPS = (
     "reversion",
     "taggit",
     "treebeard",
-    "selectable",
     "crispy_forms",
     "webpack_loader",
     # Custom apps
@@ -125,9 +129,12 @@ INSTALLED_APPS = (
     "hawc.apps.epiv2",
 )
 
+# TODO - remove with django==4.1
+if HAWC_FEATURES.FIPS_MODE is True:
+    fips.patch_md5()
+
 if HAWC_FEATURES.ENABLE_ECO:
     INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
-
 
 # DB settings
 DATABASES = {
@@ -144,17 +151,14 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Celery settings
-CELERY_ACCEPT_CONTENT = ("json", "pickle")
 CELERY_BROKER_URL = os.getenv("DJANGO_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("DJANGO_CELERY_RESULT_BACKEND")
 CELERY_RESULT_EXPIRES = 60 * 60 * 5  # 5 hours
-CELERY_RESULT_SERIALIZER = "pickle"
 CELERY_TASK_ACKS_LATE = True
 CELERY_TASK_SOFT_TIME_LIMIT = 660
 CELERY_TASK_TIME_LIMIT = 600
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 10
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
-
 
 # Cache settings
 CACHES = {
@@ -170,8 +174,8 @@ CACHE_10_MIN = 60 * 10
 
 # Email settings
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[HAWC] ")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@hawcproject.org")
-SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "webmaster@hawcproject.org")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "admin@hawcproject.org")
+SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "admin@hawcproject.org")
 
 # External page handlers
 EXTERNAL_CONTACT_US = os.getenv("HAWC_EXTERNAL_CONTACT_US", "")
@@ -203,12 +207,10 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 
-
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
-
 
 # Logging configuration
 LOGGING = {
@@ -282,7 +284,6 @@ def get_git_commit() -> Commit:
 GIT_COMMIT_FILE = PROJECT_PATH / "gitcommit.json"
 COMMIT = get_git_commit()
 
-
 # Google Tag Manager settings
 GTM_ID = os.getenv("GTM_ID")
 
@@ -297,7 +298,6 @@ BMDS_TOKEN = os.getenv("BMDS_TOKEN", "token")
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
-
 # Django rest framework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -310,9 +310,6 @@ REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
 }
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
-
-# Django selectable settings
-SELECTABLE_MAX_LIMIT = 100
 
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = "bootstrap4"

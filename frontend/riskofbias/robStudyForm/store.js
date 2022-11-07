@@ -27,11 +27,15 @@ class RobFormStore extends StudyRobStore {
         return _.find(this.activeRobs, {id: this.config.riskofbias.id});
     }
     @computed get numIncompleteScores() {
-        return this.editableScores.filter(score => {
-            return (
-                _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
-            );
-        }).length;
+        /*
+        A review is complete if all scores either:
+        1) have a score not equal to NR (default score when created)
+        2) have an NR score, but notes were added
+        */
+        const isIncomplete = score => {
+            return _.includes(NR_KEYS, score.score) && !h.hasInnerText(score.notes);
+        };
+        return this.editableScores.filter(isIncomplete).length;
     }
 
     updateRobScore(score, riskofbias, overrideOptions) {
@@ -50,6 +54,7 @@ class RobFormStore extends StudyRobStore {
             score_symbol: this.settings.score_metadata.symbols[score.score],
             score_shade: this.settings.score_metadata.colors[score.score],
             score_description: this.settings.score_metadata.choices[score.score],
+            errors: {},
         });
     }
 
@@ -142,7 +147,7 @@ class RobFormStore extends StudyRobStore {
     @action.bound cancelSubmitScores() {
         window.location.href = this.config.cancelUrl;
     }
-    @action.bound submitScores() {
+    @action.bound submitScores(redirect) {
         const payload = {
                 id: this.config.riskofbias.id,
                 scores: this.editableScores.map(score => {
@@ -169,19 +174,39 @@ class RobFormStore extends StudyRobStore {
             )}`;
 
         this.error = null;
+        this.editableScores.forEach(score => (score.errors = {}));
         return fetch(url, opts)
             .then(response => {
                 if (response.ok) {
-                    window.location.href = this.config.cancelUrl;
+                    if (redirect) {
+                        window.location.href = this.config.cancelUrl;
+                    } else {
+                        this.setChangedSavedDiv();
+                    }
                 } else {
-                    response.text().then(text => {
-                        this.error = text;
+                    response.json().then(data => {
+                        if (data.scores) {
+                            this.editableScores.forEach(
+                                (score, index) => (score.errors = data.scores[index])
+                            );
+                            this.error =
+                                "Changes could not be saved. Review the form above for error messages.";
+                        } else {
+                            this.error = data;
+                        }
                     });
                 }
             })
             .catch(error => {
                 this.error = error;
             });
+    }
+    @observable changedSavedDiv = false;
+    @action.bound setChangedSavedDiv() {
+        this.changedSavedDiv = true;
+        setTimeout(() => {
+            this.changedSavedDiv = false;
+        }, 2000);
     }
     @action.bound createScoreOverride(payload) {
         let url = `${this.config.riskofbias.scores_url}?assessment_id=${this.config.assessment_id}`,

@@ -12,10 +12,10 @@ from django.forms import ModelForm
 from django.urls import reverse
 
 from ...constants import AuthProvider
-from ..assessment import lookups
+from ..assessment.autocomplete import AssessmentAutocomplete
+from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper
 from ..common.helper import url_query
-from ..common.selectable import AutoCompleteSelectMultipleField
 from . import models
 
 _PASSWORD_HELP = (
@@ -272,33 +272,31 @@ class HAWCAuthenticationForm(AuthenticationForm):
         self.next_url = kwargs.pop("next_url")
         super().__init__(*args, **kwargs)
 
-    @property
-    def helper(self):
-        external_auth_btn = ""
+    def get_extra_text(self) -> str:
+        text = f"""<a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
+        <br/><br/>
+        <a href="{reverse("user:reset_password")}">Forgot your password?</a>"""
         if AuthProvider.external in settings.AUTH_PROVIDERS:
             url = reverse("user:external_auth")
             if self.next_url:
                 url = url_query(url, {REDIRECT_FIELD_NAME: self.next_url})
-            external_auth_btn = (
-                f'&nbsp;<a role="button" class="btn btn-primary" href="{url}">External login</a>'
+            text = (
+                f'<a role="button" class="btn btn-primary mx-2" href="{url}">External login</a>'
+                + text
             )
+        if settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION:
+            text = text + f'<br><a href="{reverse("user:register")}">Create an account</a><br>'
+        return text
+
+    @property
+    def helper(self):
+
         helper = BaseFormHelper(
             self,
             legend_text="HAWC login",
             form_actions=[
                 cfl.Submit("login", "Login"),
-                cfl.HTML(
-                    f"""
-                {external_auth_btn}&nbsp;
-                <a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
-                <br>
-                <br>
-                <a href="{reverse("user:reset_password")}">Forgot your password?</a>
-                <br>
-                <a href="{reverse("user:register")}">Create an account</a>
-                <br>
-                """
-                ),
+                cfl.HTML(self.get_extra_text()),
             ],
         )
         add_disclaimer(helper)
@@ -347,14 +345,14 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
 class AdminUserForm(PasswordForm):
 
-    project_manager = AutoCompleteSelectMultipleField(
-        lookup_class=lookups.AssessmentLookup, label="Project manager", required=False
+    project_manager = AutocompleteMultipleChoiceField(
+        autocomplete_class=AssessmentAutocomplete, label="Project manager", required=False
     )
-    team_member = AutoCompleteSelectMultipleField(
-        lookup_class=lookups.AssessmentLookup, label="Team member", required=False
+    team_member = AutocompleteMultipleChoiceField(
+        autocomplete_class=AssessmentAutocomplete, label="Team member", required=False
     )
-    reviewer = AutoCompleteSelectMultipleField(
-        lookup_class=lookups.AssessmentLookup, label="Reviewer", required=False
+    reviewer = AutocompleteMultipleChoiceField(
+        autocomplete_class=AssessmentAutocomplete, label="Reviewer", required=False
     )
 
     class Meta:
@@ -382,6 +380,9 @@ class AdminUserForm(PasswordForm):
                 "password2",
             ):
                 self.fields[field].disabled = True
+
+        for field in ["project_manager", "team_member", "reviewer"]:
+            self.fields[field].widget.attrs["data-theme"] = "default"
 
         if self.instance.id:
             self.fields["password1"].required = False

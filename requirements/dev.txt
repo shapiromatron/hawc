@@ -1,4 +1,5 @@
 -r base.txt
+-r docs.txt
 
 # lint and formatting tools
 black==22.3.0
@@ -13,20 +14,17 @@ faker==13.3.0
 
 # tests
 coverage==6.3.2
-selenium==3.141.0
 pytest==7.0.1
 pytest-django==4.5.2
 vcrpy==4.1.1
 pytest-vcr==1.0.2
-helium==3.0.8
-
-# docs
-Sphinx==4.4.0
-sphinx-rtd-theme==1.0.0
+playwright==1.25.2
+pytest-playwright==0.3.0
 
 # distribution tools
+build==0.8.0
+twine==4.0.1
 wheel==0.37.1
-pex==2.1.43; platform_system != "Windows"
 
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place

@@ -2,37 +2,25 @@ import json
 from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
+import pandas as pd
 from django import forms
 from django.db.models import Q
 from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
-from ..animal.lookups import EndpointByAssessmentLookup
+from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
-from ..common import selectable
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper, form_actions_apply_filters
-from ..common.helper import read_excel
+from ..common import validators
+from ..common.autocomplete import AutocompleteChoiceField
+from ..common.forms import BaseFormHelper, check_unique_for_assessment, form_actions_apply_filters
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
-from ..study.lookups import StudyLookup
+from ..study.autocomplete import StudyAutocomplete
 from ..study.models import Study
-from . import constants, lookups, models
-
-
-def clean_slug(form):
-    # ensure unique slug for assessment
-    slug = form.cleaned_data.get("slug", None)
-    if (
-        form.instance.__class__.objects.filter(assessment_id=form.instance.assessment_id, slug=slug)
-        .exclude(id=form.instance.id)
-        .count()
-        > 0
-    ):
-        raise forms.ValidationError(ASSESSMENT_UNIQUE_MESSAGE)
-    return slug
+from . import autocomplete, constants, models
 
 
 class PrefilterMixin:
@@ -476,6 +464,12 @@ class SummaryTableForm(forms.ModelForm):
             self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
 
+    def clean_slug(self):
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
 
 class SummaryTableSelectorForm(forms.Form):
     table_type = forms.IntegerField(widget=forms.Select(choices=constants.TableType.choices))
@@ -600,7 +594,15 @@ class VisualForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
 
 
 class VisualModelChoiceField(forms.ModelChoiceField):
@@ -790,7 +792,7 @@ class TagtreeForm(VisualForm):
         coerce=int,
         choices=[],
         label="Filter references by tags",
-        help_text="Filter which references are displayed by selecting required tags. If a tag is selected, only references which have this tag will be displayed.<br><br><i>This field is optional; if no tags are selected, all references will be displayed.</i>",
+        help_text="Filter which references are displayed by selecting required tags. If tags are selected, only references which have one or more of these tags (not including descendants) will be displayed.<br><br><i>This field is optional; if no tags are selected, all references will be displayed.</i>",
         required=False,
     )
     pruned_tags = forms.TypedMultipleChoiceField(
@@ -821,12 +823,26 @@ class TagtreeForm(VisualForm):
         required=True,
         help_text="The height of the visual, in pixels. If you have overlapping nodes, add more height",
     )
+    show_legend = forms.BooleanField(
+        label="Show Legend",
+        help_text="Describes what each node type indicates",
+        initial=True,
+        required=False,
+    )
+    show_counts = forms.BooleanField(
+        label="Show Node Counts",
+        help_text="Display the count for each node and scale size accordingly",
+        initial=True,
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
         self.helper.add_row("root_node", 3, "col-md-4")
-        self.helper.add_row("hide_empty_tag_nodes", 3, "col-md-4")
+        self.helper.add_row(
+            "hide_empty_tag_nodes", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"]
+        )
 
         choices = [
             (tag.id, tag.get_nested_name())
@@ -854,6 +870,10 @@ class TagtreeForm(VisualForm):
             self.fields["width"].initial = data["width"]
         if "height" in data:
             self.fields["height"].initial = data["height"]
+        if "show_legend" in data:
+            self.fields["show_legend"].initial = data["show_legend"]
+        if "show_counts" in data:
+            self.fields["show_counts"].initial = data["show_counts"]
 
     def save(self, commit=True):
         self.instance.settings = json.dumps(
@@ -864,6 +884,8 @@ class TagtreeForm(VisualForm):
                 hide_empty_tag_nodes=self.cleaned_data["hide_empty_tag_nodes"],
                 width=self.cleaned_data["width"],
                 height=self.cleaned_data["height"],
+                show_legend=self.cleaned_data["show_legend"],
+                show_counts=self.cleaned_data["show_counts"],
             )
         )
         return super().save(commit)
@@ -881,6 +903,8 @@ class TagtreeForm(VisualForm):
             "hide_empty_tag_nodes",
             "width",
             "height",
+            "show_legend",
+            "show_counts",
         )
 
 
@@ -1034,7 +1058,15 @@ class DataPivotForm(forms.ModelForm):
         return helper
 
     def clean_slug(self):
-        return clean_slug(self)
+        return check_unique_for_assessment(self, "slug")
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_caption(self):
+        caption = self.cleaned_data["caption"]
+        validators.validate_hyperlinks(caption)
+        return validators.clean_html(caption)
 
 
 class DataPivotUploadForm(DataPivotForm):
@@ -1065,7 +1097,7 @@ class DataPivotUploadForm(DataPivotForm):
             else:
                 worksheet_name = wb.sheetnames[0]
 
-            df = read_excel(excel_file, sheet_name=worksheet_name)
+            df = pd.read_excel(excel_file, sheet_name=worksheet_name)
 
             # check data
             if df.shape[0] < 2:
@@ -1076,17 +1108,16 @@ class DataPivotUploadForm(DataPivotForm):
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
-
     prefilter_include = ("study", "bioassay", "epi", "invitro", "effect_tags")
 
     class Meta:
         model = models.DataPivotQuery
         fields = (
+            "title",
+            "slug",
             "evidence_type",
             "export_style",
-            "title",
             "preferred_units",
-            "slug",
             "settings",
             "caption",
             "published",
@@ -1103,6 +1134,12 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (constants.StudyType.IN_VITRO, "In vitro"),
         )
         self.fields["preferred_units"].required = False
+        self.js_units_choices = json.dumps(
+            [
+                {"id": obj.id, "name": obj.name}
+                for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
+            ]
+        )
         self.helper = self.setHelper()
 
     def save(self, commit=True):
@@ -1180,27 +1217,29 @@ class SmartTagForm(forms.Form):
         ("data_pivot", "Data Pivot"),
     )
     resource = forms.ChoiceField(choices=RESOURCE_CHOICES)
-    study = selectable.AutoCompleteSelectField(
-        lookup_class=StudyLookup,
+    study = AutocompleteChoiceField(
+        autocomplete_class=StudyAutocomplete,
         help_text="Type a few characters of the study name, then click to select.",
     )
-    endpoint = selectable.AutoCompleteSelectField(
-        lookup_class=EndpointByAssessmentLookup,
+    endpoint = AutocompleteChoiceField(
+        autocomplete_class=EndpointAutocomplete,
         help_text="Type a few characters of the endpoint name, then click to select.",
     )
-    visual = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.VisualLookup,
+    visual = AutocompleteChoiceField(
+        autocomplete_class=autocomplete.VisualAutocomplete,
         help_text="Type a few characters of the visual name, then click to select.",
     )
-    data_pivot = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.DataPivotLookup,
+    data_pivot = AutocompleteChoiceField(
+        autocomplete_class=autocomplete.DataPivotAutocomplete,
         help_text="Type a few characters of the data-pivot name, then click to select.",
     )
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop("assessment_id", -1)
         super().__init__(*args, **kwargs)
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if hasattr(widget, "update_query_parameters"):
-                widget.update_query_parameters({"related": assessment_id})
+        self.fields["study"].set_filters({"assessment_id": assessment_id})
+        self.fields["endpoint"].set_filters(
+            {"animal_group__experiment__study__assessment_id": assessment_id}
+        )
+        self.fields["visual"].set_filters({"assessment_id": assessment_id})
+        self.fields["data_pivot"].set_filters({"assessment_id": assessment_id})

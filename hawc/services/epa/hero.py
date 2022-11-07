@@ -4,6 +4,8 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
+from hawc.services.utils.doi import try_get_doi
+
 from ..utils.authors import get_author_short_text, normalize_authors
 
 logger = logging.getLogger(__name__)
@@ -32,6 +34,7 @@ def parse_article(content: Dict) -> Dict:
         json=content,
         HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
         PMID=_force_int(_parse_pseudo_json(content, "PMID")),
+        doi=try_get_doi(_parse_pseudo_json(content, "doi")),
         title=_parse_pseudo_json(content, "TITLE"),
         abstract=_parse_pseudo_json(content, "ABSTRACT"),
         source=_parse_pseudo_json(content, "SOURCE"),
@@ -80,6 +83,8 @@ class HEROFetch:
                     logger.info(f"HERO request failure: {url}")
             except requests.exceptions.Timeout:
                 logger.info(f"HERO request timeout: {url}")
+            except json.JSONDecodeError:
+                logger.info(f"HERO request failure: {url}")
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 

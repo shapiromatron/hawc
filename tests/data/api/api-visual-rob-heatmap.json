@@ -1,12 +1,13 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>caption</p>",
-  "created": "2020-05-08T14:35:41.634588-05:00",
+  "created": "2020-05-08T15:35:41.634588-04:00",
   "dose_units": null,
   "endpoints": [],
   "id": 3,
-  "last_updated": "2020-05-08T14:36:41.324440-05:00",
+  "last_updated": "2020-05-08T15:36:41.324440-04:00",
   "prefilters": "{}",
   "published": true,
   "rob_settings": {
@@ -16,13 +17,15 @@
         "description": "<p>description</p>",
         "id": 10,
         "is_overall_confidence": false,
-        "name": "domain 1"
+        "name": "domain 1",
+        "sort_order": 1
       },
       {
         "description": "<p>description</p>",
         "id": 11,
         "is_overall_confidence": true,
-        "name": "overall"
+        "name": "overall",
+        "sort_order": 2
       }
     ],
     "metrics": [
@@ -42,6 +45,7 @@
         ],
         "responses": 1,
         "short_name": "metric 1 short",
+        "sort_order": 1,
         "use_short_name": false
       },
       {
@@ -60,6 +64,7 @@
         ],
         "responses": 1,
         "short_name": "overall short",
+        "sort_order": 1,
         "use_short_name": false
       }
     ],
@@ -193,7 +198,7 @@
       "coi_details": "J.B., H.S., J.A., S.J., M.H. and T.S. are employed by specialty chemical manufacturers whose product lines include brominated flame retardants. M.B., N.M., A.R., D.W.S. and D.G.S. are employed by WIL Research Laboratories, a contract research organization commissioned to conduct the guideline DNT study presented herein. L.F. is employed with BioSTAT Consultants and was commissioned to design and evaluate the statistical aspects of the DNT study. The views and opinions expressed in this article are those of the authors and not necessarily those of their respective employers.",
       "coi_reported": "Authors disclosed COI",
       "contact_author": true,
-      "created": "2020-05-08T12:03:52.391195-05:00",
+      "created": "2020-05-08T13:03:52.391195-04:00",
       "editable": true,
       "epi": false,
       "epi_meta": false,
@@ -212,15 +217,15 @@
       ],
       "in_vitro": false,
       "journal": "Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35",
-      "last_updated": "2020-05-08T12:56:45.324222-05:00",
+      "last_updated": "2020-05-08T13:56:45.324222-04:00",
       "published": true,
       "riskofbiases": [
         {
           "active": true,
-          "created": "2020-05-08T12:56:46.183552-05:00",
+          "created": "2020-05-08T13:56:46.183552-04:00",
           "final": true,
           "id": 6,
-          "last_updated": "2020-05-08T14:34:31.468702-05:00",
+          "last_updated": "2020-05-08T15:34:31.468702-04:00",
           "scores": [
             {
               "bias_direction": 1,
@@ -292,13 +297,15 @@
             "description": "<p>description</p>",
             "id": 10,
             "is_overall_confidence": false,
-            "name": "domain 1"
+            "name": "domain 1",
+            "sort_order": 1
           },
           {
             "description": "<p>description</p>",
             "id": 11,
             "is_overall_confidence": true,
-            "name": "overall"
+            "name": "overall",
+            "sort_order": 2
           }
         ],
         "metrics": [
@@ -318,6 +325,7 @@
             ],
             "responses": 1,
             "short_name": "metric 1 short",
+            "sort_order": 1,
             "use_short_name": false
           },
           {
@@ -336,6 +344,7 @@
             ],
             "responses": 1,
             "short_name": "overall short",
+            "sort_order": 1,
             "use_short_name": false
           }
         ],

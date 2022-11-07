@@ -1,10 +1,12 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 from . import models
 
 
 @admin.register(models.Experiment)
-class ExperimentAdmin(admin.ModelAdmin):
+class ExperimentAdmin(VersionAdmin, admin.ModelAdmin):
+    raw_id_fields = ("study", "dtxsid")
     list_display = (
         "id",
         "study",
@@ -23,7 +25,7 @@ class ExperimentAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.AnimalGroup)
-class AnimalGroupAdmin(admin.ModelAdmin):
+class AnimalGroupAdmin(VersionAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "experiment",
@@ -35,7 +37,7 @@ class AnimalGroupAdmin(admin.ModelAdmin):
     )
     list_filter = ("species", "strain", "sex", "experiment__study__assessment_id")
     search_fields = ("name",)
-    raw_id_fields = ("experiment", "species", "strain", "dosing_regime", "siblings")
+    raw_id_fields = ("experiment", "species", "strain", "parents", "dosing_regime", "siblings")
 
 
 class DoseGroupInline(admin.TabularInline):
@@ -45,7 +47,7 @@ class DoseGroupInline(admin.TabularInline):
 
 
 @admin.register(models.DosingRegime)
-class DosingRegimeAdmin(admin.ModelAdmin):
+class DosingRegimeAdmin(VersionAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "dosed_animals",
@@ -61,6 +63,7 @@ class DosingRegimeAdmin(admin.ModelAdmin):
     )
     list_select_related = ("dosed_animals",)
     search_fields = ("dosed_animals__name",)
+    raw_id_fields = ("dosed_animals",)
     inlines = (DoseGroupInline,)
 
 
@@ -70,7 +73,7 @@ class EndpointGroupInline(admin.TabularInline):
 
 
 @admin.register(models.Endpoint)
-class EndpointAdmin(admin.ModelAdmin):
+class EndpointAdmin(VersionAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "assessment_id",

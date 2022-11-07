@@ -70,8 +70,8 @@
     <div class="card-body">
         <h3 class="card-title">Outcomes</h3>
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '33,33,34' %}
-            {% bs4_thead 'Endpoint,Health Outcome,Health Outcome System' %}
+            {% bs4_colgroup '25,25,25,25' %}
+            {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome' %}
             <tbody>
                 {% for object in object.outcomes.all %}
                     {% include "epiv2/fragments/outcome_row.html" %}
@@ -104,8 +104,8 @@
     <div class="card-body">
         <h3 class="card-title">Data Extractions</h3>
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '15,15,15,15,5,15,5,15' %}
-            {% bs4_thead 'Group,Outcome,Exposure Level,Measurement Timing,N,Effect Estimate,Confidence,Comments' %}
+            {% bs4_colgroup '12,12,12,12,11,5,11,12,13' %}
+            {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments' %}
             <tbody>
                 {% for object in object.data_extractions.all %}
                     {% include "epiv2/fragments/data_extraction_row.html" %}

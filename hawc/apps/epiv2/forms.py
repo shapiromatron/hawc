@@ -3,11 +3,16 @@ from django.urls import reverse
 
 from hawc.apps.common.forms import BaseFormHelper
 
-from ..assessment.lookups import DssToxIdLookup
-from ..common import selectable
-from ..common.forms import ArrayCheckboxSelectMultiple
+from ..assessment.autocomplete import DSSToxAutocomplete
+from ..common.autocomplete import (
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
+)
+from ..common.forms import ArrayCheckboxSelectMultiple, QuillField
 from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
-from . import constants, lookups, models
+from ..epi.autocomplete import CountryAutocomplete
+from . import autocomplete, constants, models
 
 
 class DesignForm(forms.ModelForm):
@@ -15,14 +20,18 @@ class DesignForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update an existing study-population."
 
-    countries = selectable.AutoCompleteSelectMultipleField(
-        lookup_class=lookups.CountryNameLookup, required=False
-    )
-
     class Meta:
         model = models.Design
         exclude = ("study",)
-        widgets = {"age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices)}
+        widgets = {
+            "age_profile": ArrayCheckboxSelectMultiple(choices=constants.AgeProfile.choices),
+            "countries": AutocompleteSelectMultipleWidget(autocomplete_class=CountryAutocomplete),
+        }
+        field_classes = {
+            "criteria": QuillField,
+            "susceptibility": QuillField,
+            "comments": QuillField,
+        }
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
@@ -32,10 +41,6 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("criteria", "susceptibility", "comments"):
-            self.fields[fld].widget.attrs["class"] = "html5text"
-            self.fields[fld].widget.attrs["rows"] = 3
-
         if self.instance.id:
             helper = BaseFormHelper(self)
             helper.form_tag = False
@@ -51,9 +56,8 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("summary", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
-        helper.add_row(
-            "participant_n", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"]
-        )
+        helper.add_row("participant_n", 3, "col-md-4")
+        helper.add_row("countries", 2, "col-md-4")
         helper.add_row("criteria", 3, "col-md-4")
         return helper
 
@@ -63,10 +67,10 @@ class ChemicalForm(forms.ModelForm):
         model = models.Chemical
         exclude = ("design",)
         widgets = {
-            "name": selectable.AutoCompleteWidget(
-                lookup_class=lookups.ChemicalNameLookup, allow_new=True
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ChemicalAutocomplete, field="name"
             ),
-            "dsstox": selectable.AutoCompleteSelectWidget(lookup_class=DssToxIdLookup),
+            "dsstox": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
         }
 
     def __init__(self, *args, **kwargs):
@@ -117,8 +121,8 @@ class ExposureLevelForm(forms.ModelForm):
         model = models.ExposureLevel
         exclude = ("design",)
         widgets = {
-            "units": selectable.AutoCompleteWidget(
-                lookup_class=lookups.ExposureLevelUnitsLookup, allow_new=True
+            "units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ExposureLevelAutocomplete, field="units"
             ),
         }
 
@@ -129,6 +133,24 @@ class ExposureLevelForm(forms.ModelForm):
             self.instance.design = design
         self.fields["chemical"].queryset = self.instance.design.chemicals.all()
         self.fields["exposure_measurement"].queryset = self.instance.design.exposures.all()
+
+    def clean(self):
+        data = super().clean()
+
+        variance_type = data["variance_type"]
+        variance = data["variance"]
+        if variance and variance_type == constants.VarianceType.NA:
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            self.add_error("variance_type", msg)
+
+        ci_type = data["ci_type"]
+        upper = data["ci_ucl"]
+        lower = data["ci_lcl"]
+        if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
+            msg = "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
+            self.add_error("ci_type", msg)
+
+        return data
 
     @property
     def helper(self):
@@ -173,11 +195,14 @@ class OutcomeForm(forms.ModelForm):
         model = models.Outcome
         exclude = ("design",)
         widgets = {
-            "endpoint": selectable.AutoCompleteWidget(
-                lookup_class=lookups.EndpointLookup, allow_new=True
+            "endpoint": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="endpoint"
             ),
-            "health_outcome": selectable.AutoCompleteWidget(
-                lookup_class=lookups.HealthOutcomeLookup, allow_new=True
+            "effect": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect"
+            ),
+            "effect_detail": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect_detail"
             ),
         }
 
@@ -191,7 +216,7 @@ class OutcomeForm(forms.ModelForm):
     def helper(self):
         self.fields["comments"].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
-        helper.add_row("endpoint", 4, "col-md-3")
+        helper.add_row("system", 4, "col-md-3")
         helper.form_tag = False
         return helper
 
@@ -203,6 +228,13 @@ class DataExtractionForm(forms.ModelForm):
         widgets = {
             "exposure_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
             "outcome_transform": SelectOtherWidget(choices=constants.DataTransforms.choices),
+            "effect_estimate_type": SelectOtherWidget(choices=constants.EffectEstimateType.choices),
+            "confidence": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DataExtractionAutocomplete, field="confidence"
+            ),
+            "units": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.DataExtractionAutocomplete, field="units"
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -214,15 +246,31 @@ class DataExtractionForm(forms.ModelForm):
         self.fields["exposure_level"].queryset = self.instance.design.exposure_levels.all()
         self.fields["factors"].queryset = self.instance.design.adjustment_factors.all()
 
+    def clean(self):
+        data = super().clean()
+
+        variance_type = data["variance_type"]
+        variance = data["variance"]
+        if variance and variance_type == constants.VarianceType.NA:
+            msg = "A Variance Type must be selected when a value is given for Variance."
+            self.add_error("variance_type", msg)
+
+        ci_type = data["ci_type"]
+        upper = data["ci_ucl"]
+        lower = data["ci_lcl"]
+        if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
+            msg = "A Lower/Upper Bound Type must be selected when a value is given for the Lower or Upper bound."
+            self.add_error("ci_type", msg)
+
+        return data
+
     @property
     def helper(self):
         for fld in ["effect_description", "statistical_method", "comments"]:
             self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.add_row("outcome", 4, "col-md-3")
-        helper.add_row(
-            "effect_estimate_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
-        )
+        helper.add_row("effect_estimate_type", 6, "col-md-2")
         helper.add_row(
             "variance_type", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-2", "col-md-3"]
         )

@@ -13,6 +13,7 @@ from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from hawc.services.epa import dsstox
@@ -21,6 +22,7 @@ from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.views import create_object_log
 from . import models, serializers
+from .actions.audit import AssessmentAuditSerializer
 
 
 class DisabledPagination(PageNumberPagination):
@@ -146,7 +148,7 @@ class InAssessmentFilter(filters.BaseFilterBackend):
         return queryset.filter(**filters)
 
 
-class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
+class BaseAssessmentViewset(viewsets.GenericViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter,)
@@ -154,6 +156,10 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewset):
+    pass
 
 
 # all http methods except PUT
@@ -297,7 +303,7 @@ class Assessment(AssessmentViewset):
         return Response(serializer.data)
 
     @action(detail=True)
-    def endpoints(self, request, pk: int = None):
+    def endpoints(self, request, pk: int):
         """
         Optimized for queryset speed; some counts in get_queryset
         and others in the list here; depends on if a "select distinct" is
@@ -453,6 +459,15 @@ class Assessment(AssessmentViewset):
         )
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
+
+    @action(detail=True, url_path=r"logs/(?P<type>[\w]+)", renderer_classes=PandasRenderers)
+    def logs(self, request: Request, pk: int, type: str):
+        instance = self.get_object()
+        if not instance.user_is_team_member_or_higher(self.request.user):
+            raise PermissionDenied()
+        serializer = AssessmentAuditSerializer.from_drf(data=dict(assessment=instance, type=type))
+        export = serializer.export()
+        return Response(export)
 
 
 class DatasetViewset(AssessmentViewset):

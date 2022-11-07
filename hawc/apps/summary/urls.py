@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.SummaryAssessmentViewset, basename="assessment")
 router.register(r"visual", api.VisualViewset, basename="visual")
 router.register(r"data_pivot", api.DataPivotViewset, basename="data_pivot")
@@ -110,22 +110,22 @@ urlpatterns = [
     ),
     # DATA-PIVOT
     path(
-        "data-pivot/assessment/<int:pk>/new/",
+        "data-pivot/assessment/<int:pk>/create/",
         views.DataPivotNewPrompt.as_view(),
         name="dp_new-prompt",
     ),
     path(
-        "data-pivot/assessment/<int:pk>/new/query/",
+        "data-pivot/assessment/<int:pk>/create/query/",
         views.DataPivotQueryNew.as_view(),
         name="dp_new-query",
     ),
     path(
-        "data-pivot/assessment/<int:pk>/new/file/",
+        "data-pivot/assessment/<int:pk>/create/file/",
         views.DataPivotFileNew.as_view(),
         name="dp_new-file",
     ),
     path(
-        "data-pivot/assessment/<int:pk>/new/copy-as-new-selector/",
+        "data-pivot/assessment/<int:pk>/create/copy-as-new-selector/",
         views.DataPivotCopyAsNewSelector.as_view(),
         name="dp_copy_selector",
     ),

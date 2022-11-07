@@ -1,10 +1,16 @@
+from crispy_forms import layout as cfl
 from django import forms
 from django.db.models import Q
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, form_actions_apply_filters
+from ..common.forms import (
+    BaseFormHelper,
+    QuillField,
+    check_unique_for_assessment,
+    form_actions_apply_filters,
+)
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
@@ -13,8 +19,7 @@ from . import models
 
 class BaseStudyForm(forms.ModelForm):
 
-    internal_communications = forms.CharField(
-        widget=forms.Textarea,
+    internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
     )
@@ -38,6 +43,7 @@ class BaseStudyForm(forms.ModelForm):
             "summary",
             "published",
         )
+        field_classes = {"summary": QuillField}
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
@@ -64,16 +70,28 @@ class BaseStudyForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        for fld in ("summary", "internal_communications"):
-            self.fields[fld].widget.attrs["class"] += " html5text"
-
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        helper.add_row("bioassay", 4, "col-md-3")
+        helper.add_row("bioassay", 4, ["col-md-3", "col-md-3", "col-md-3", "col-md-3"])
         helper.add_row("coi_reported", 2, "col-md-6")
+        helper.add_row("funding_source", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
+        study_type_idx = helper.find_layout_idx_for_field_name("bioassay")
+        helper.layout[study_type_idx].css_class = "px-3"
+        helper.layout.insert(
+            study_type_idx,
+            cfl.HTML(
+                """<div class="form-row">
+            <p class="mb-2"><b>Study Type(s)</b></p>
+            <p class="text-muted">Select the type(s) of data contained in this study. Study evaluation and data extraction fields will change depending on the selection. Modifying values after proceeding with study evaluation and/or data extraction may cause data to be removed.</p></div>
+        """
+            ),
+        )
         return helper
+
+    def clean_short_citation(self):
+        return check_unique_for_assessment(self, "short_citation")
 
     def save(self, commit=True):
         instance = super().save(commit=commit)
@@ -134,6 +152,7 @@ class ReferenceStudyForm(BaseStudyForm):
             "summary",
             "published",
         )
+        field_classes = {"summary": QuillField}
 
     def setHelper(self):
         self.fields["title"].widget = TextInput()

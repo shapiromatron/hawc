@@ -94,7 +94,8 @@ class RiskOfBiasClient(BaseClient):
         """
         Copy final scores from a subset of studies from one assessment as the scores in a
         different assessment. Useful when an assessment is cloned or repurposed and existing
-        evaluations should be used in a new evaluation.
+        evaluations should be used in a new evaluation. You must be a project-manager on both
+        assessments.
 
         Args:
             src_assessment_id (int): source assessment
@@ -127,21 +128,28 @@ class RiskOfBiasClient(BaseClient):
         url = f"{self.session.root_url}/rob/api/assessment/bulk_rob_copy/"
         return self.session.post(url, payload).json()
 
-    def get_metrics(self, assessment_id: int):
+    def metrics(self, assessment_id: int) -> pd.DataFrame:
         """
-        Retrieves risk of bias metric details for the selected assessment.
-
+        Retrieves all metrics for the given assessment.
         Args:
             assessment_id (int): Assessment ID
-
         Returns:
-            pd.DataFrame: A dataframe of riskofbias metric metadata
+            pd.DataFrame: A dataframe of metrics
         """
         url = f"{self.session.root_url}/rob/api/metrics/?assessment_id={assessment_id}"
         response_json = self.session.get(url).json()
-        df = pd.DataFrame(data=response_json)
-        df.loc[:, "assessment_id"] = assessment_id
-        return df
+        return pd.DataFrame(data=response_json)
+
+    def reviews(self, assessment_id: int) -> Dict:
+        """
+        Retrieves all reviews for the given assessment.
+        Args:
+            assessment_id (int): Assessment ID
+        Returns:
+            pd.DataFrame: A dictionary of reviews
+        """
+        url = f"{self.session.root_url}/rob/api/review/?assessment_id={assessment_id}"
+        return self.session.get(url).json()
 
     def compare_metrics(
         self, src_assessment_id: int, dest_assessment_id: int
@@ -164,8 +172,8 @@ class RiskOfBiasClient(BaseClient):
         Returns:
             Tuple[pd.DataFrame, pd.DataFrame]: Metrics with matches in source, Metrics in destination
         """
-        src = self.get_metrics(src_assessment_id)
-        dest = self.get_metrics(dest_assessment_id)
+        src = self.metrics(src_assessment_id).assign(assessment_id=src_assessment_id)
+        dest = self.metrics(dest_assessment_id).assign(assessment_id=dest_assessment_id)
         src.loc[:, "_comparison"] = src.short_name + " " + src.name + " " + src.description
         dest.loc[:, "_comparison"] = dest.short_name + " " + dest.name + " " + dest.description
         matched = fuzz_match(src, dest, "_comparison", "_comparison", "id").drop(

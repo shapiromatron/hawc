@@ -8,12 +8,13 @@ import HelpText from "./HelpText";
 
 class QuillTextInput extends Component {
     renderField(fieldId) {
-        const {errors} = this.props;
+        const {errors, className} = this.props,
+            extraClasses = className ? `${this.props.className} ` : "";
 
         return (
             <ReactQuill
                 id={fieldId}
-                className={inputClass("col-12 p-0", errors)}
+                className={inputClass(`${extraClasses}col-12 p-0`, errors)}
                 type="text"
                 required={this.props.required}
                 value={this.props.value}
@@ -45,6 +46,7 @@ QuillTextInput.propTypes = {
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     value: PropTypes.string.isRequired,
+    className: PropTypes.string,
 };
 
 export default QuillTextInput;

@@ -16,7 +16,7 @@ class DssToxDetailTable extends Component {
                     <table className="table table-sm">
                         <tbody>
                             <tr>
-                                <td rowSpan={5} style={{borderTop: "0px"}}>
+                                <td rowSpan={5}>
                                     <a href={data.img_url}>
                                         <img
                                             alt="chemical structure image"

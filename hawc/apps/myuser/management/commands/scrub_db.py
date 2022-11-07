@@ -3,6 +3,7 @@ from textwrap import dedent
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
@@ -33,11 +34,18 @@ class Command(BaseCommand):
             if input("".join(message)) != "yes":
                 raise CommandError("Scrubbing user data cancelled.")
 
+        self.update_site()
+        self.update_users()
+
+    def update_site(self):
+        Site.objects.update(domain="127.0.0.1:8000", name="localhost")
+
+    def update_users(self):
         fake = Faker()
         Faker.seed(555)
 
         # slow; since we're using the same password for everyone... cache it
-        hash_password = make_password("password")
+        hash_password = make_password("pw")
 
         # generate
         for user in get_user_model().objects.all():
@@ -60,7 +68,7 @@ class Command(BaseCommand):
         )
         superuser.first_name = "Super"
         superuser.last_name = "Duper"
-        superuser.email = "webmaster@hawcproject.org"
+        superuser.email = "admin@hawcproject.org"
         superuser.external_id = "sudo"
         user.password = hash_password
         superuser.save()
@@ -71,9 +79,9 @@ class Command(BaseCommand):
         Rewrite complete!
 
         - All {num_users} users have randomly generated names and email addresses.
-        - All {num_users} users have passwords set to `password`
-        - A superuser has the username `webmaster@hawcproject.org`
-        - A superuser has the password `password`
+        - All {num_users} users have passwords set to `pw`
+        - A superuser has the username `admin@hawcproject.org`
+        - A superuser has the password `pw`
         """
         )
 

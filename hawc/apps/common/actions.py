@@ -62,7 +62,7 @@ class BaseApiAction:
         instance.validate(raise_exception=True)
 
         # check permissions
-        has_permission, reason = instance.has_permission()
+        has_permission, reason = instance.has_permission(request)
         if not has_permission:
             raise PermissionDenied(reason)
 
@@ -106,7 +106,7 @@ class BaseApiAction:
         """
         pass
 
-    def has_permission(self) -> Tuple[bool, str]:
+    def has_permission(self, request: Request) -> Tuple[bool, str]:
         """Any additional permission checks after business logic has been validated.
 
         Returns:

@@ -14,12 +14,13 @@ from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
+from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
@@ -27,7 +28,6 @@ from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
-from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -230,30 +230,6 @@ class Search(models.Model):
             self.search_type == constants.SearchType.IMPORT and self.slug == self.MANUAL_IMPORT_SLUG
         )
 
-    def clean(self):
-        # unique_together constraint checked above;
-        # not done in form because assessment is excluded
-        pk_exclusion = {}
-        errors = {}
-        if self.pk:
-            pk_exclusion["pk"] = self.pk
-        if (
-            Search.objects.filter(assessment=self.assessment, title=self.title)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            errors["title"] = ASSESSMENT_UNIQUE_MESSAGE
-        if (
-            Search.objects.filter(assessment=self.assessment, slug=self.slug)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            errors["slug"] = ASSESSMENT_UNIQUE_MESSAGE
-        if errors:
-            raise ValidationError(errors)
-
     def get_absolute_url(self):
         return reverse("lit:search_detail", args=(self.assessment_id, self.slug))
 
@@ -261,9 +237,14 @@ class Search(models.Model):
         return self.assessment
 
     def delete(self, **kwargs):
-        ref_ids = list(self.references.all().values_list("id", flat=True))
+        # cascade delete references which no longer relate to any searches
+        orphans = self.sole_references()
+        if orphans.count() > 0:
+            logger.info(
+                f"Removed {orphans.count()} orphan references from assessment {self.assessment_id}"
+            )
+            orphans.delete()
         super().delete(**kwargs)
-        Reference.objects.delete_orphans(assessment_id=self.assessment_id, ref_ids=ref_ids)
 
     @property
     def search_string_text(self):
@@ -280,6 +261,7 @@ class Search(models.Model):
             pubmed = PubMedQuery(search=self)
             results_dictionary = pubmed.run_new_query(prior_query)
             self.create_new_references(results_dictionary)
+            self.delete_old_references(results_dictionary)
         else:
             raise Exception("Search functionality disabled")
 
@@ -396,6 +378,61 @@ class Search(models.Model):
             # finally, remove temporary identifier used for re-query after bulk_create
             logger.debug("Removing block-id from created references")
             refs.update(block_id=None)
+
+    def delete_old_references(self, results):
+        """Conservatively delete results which were removed in the most recent search.
+
+        Only delete references that meet the following criteria:
+
+        1. were "removed" in the latest result set
+        2. are not associated in any other searches
+        3. do not have any tags applied
+        4. do not have any studies
+        """
+        if results["removed"]:
+            ids = [str(id) for id in results["removed"]]
+            # filter removed references with no tags
+            no_tags = list(
+                self.references.filter(identifiers__unique_id__in=ids)
+                .annotate(ntags=models.Count("tags"))
+                .filter(ntags=0)
+                .values_list("id", flat=True)
+            )
+            # filter untagged references with only one search (this one)
+            no_searches = (
+                Reference.objects.filter(id__in=no_tags)
+                .annotate(nsearches=models.Count("searches"))
+                .filter(nsearches=1)
+            )
+            # filter references where studies exist
+            _ids = no_searches.values_list("id", flat=True)
+            Study = apps.get_model("study", "Study")
+            no_studies = no_searches.exclude(id__in=Study.objects.filter(id__in=_ids))
+
+            # remove candidate deletions
+            n = no_studies.count()
+            if n > 0:
+                logger.info(f"Removing {n} references from search {self.id}")
+                no_studies.delete()
+
+    def studies(self) -> models.QuerySet:
+        Study = apps.get_model("study", "study")
+        ids = self.references.values_list("id", flat=True)
+        return Study.objects.filter(id__in=ids)
+
+    def sole_studies(self) -> models.QuerySet:
+        """Studies associated with this and only this search."""
+        Study = apps.get_model("study", "study")
+        ids = self.sole_references().values_list("id", flat=True)
+        return Study.objects.filter(id__in=ids)
+
+    def sole_references(self) -> models.QuerySet:
+        """References associated with this and only this search."""
+        return (
+            Reference.objects.filter(id__in=self.references.all())
+            .annotate(n_searches=models.Count("searches"))
+            .filter(n_searches=1)
+        )
 
     @property
     def date_last_run(self):
@@ -645,6 +682,11 @@ class Identifiers(models.Model):
                 database=constants.ReferenceDatabase.DOI, unique_id__in=dois
             ).values_list("unique_id", "id")
         }
+
+    def save(self, *args, **kwargs):
+        if self.database == constants.ReferenceDatabase.DOI:
+            self.unique_id = self.unique_id.lower()
+        return super(Identifiers, self).save(*args, **kwargs)
 
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
@@ -980,3 +1022,6 @@ class Reference(models.Model):
             logger.write(
                 f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
             )
+
+
+reversion.register(Reference)

@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
+from ..common import validators
 from ..common.helper import SerializerHelper
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models
@@ -76,6 +77,7 @@ class VisualSerializer(CollectionVisualSerializer):
         ]
 
         ret["assessment_rob_name"] = instance.assessment.get_rob_name_display()
+        ret["assessment_name"] = str(instance.assessment)
 
         return ret
 
@@ -92,6 +94,10 @@ class SummaryTextSerializer(serializers.ModelSerializer):
         model = models.SummaryText
         fields = "__all__"
         read_only_fields = ("depth", "path")
+
+    def validate_text(self, value):
+        validators.validate_hyperlinks(value)
+        return validators.clean_html(value)
 
     def validate(self, data):
         assessment = data["assessment"]

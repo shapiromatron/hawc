@@ -3,14 +3,14 @@ from io import StringIO
 from typing import Dict, List, Tuple, Union
 
 import numpy as np
+import pandas as pd
 from django import forms
 from django.db import transaction
 from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, addPopupLink
-from ..common.helper import read_excel
+from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
 from ..study.models import Study
 from . import constants, models
 
@@ -55,6 +55,7 @@ class SearchForm(forms.ModelForm):
     class Meta:
         model = models.Search
         fields = ("source", "title", "slug", "description", "search_string")
+        field_classes = {"description": QuillField, "search_string": QuillField}
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -64,12 +65,14 @@ class SearchForm(forms.ModelForm):
             self.instance.assessment = assessment
 
         self.fields["source"].choices = [(1, "PubMed")]  # only current choice
-        self.fields["description"].widget.attrs["rows"] = 3
-        self.fields["description"].widget.attrs["class"] = "html5text"
         if "search_string" in self.fields:
-            self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
-            self.fields["search_string"].widget.attrs["class"] = "html5text"
+
+    def clean_title(self):
+        return check_unique_for_assessment(self, "title")
+
+    def clean_slug(self):
+        return check_unique_for_assessment(self, "slug")
 
     @property
     def helper(self):
@@ -95,6 +98,10 @@ class SearchForm(forms.ModelForm):
 
 
 class ImportForm(SearchForm):
+    class Meta(SearchForm.Meta):
+        exclude = ("assessment",)
+        field_classes = {"description": QuillField}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["source"].choices = [(1, "PubMed"), (2, "HERO")]
@@ -104,7 +111,6 @@ class ImportForm(SearchForm):
                 "search_string"
             ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
             self.fields["search_string"].label = "ID List"
-            self.fields["search_string"].widget.attrs.pop("class")
         else:
             self.fields.pop("search_string")
 
@@ -171,8 +177,6 @@ class ImportForm(SearchForm):
 class RisImportForm(SearchForm):
 
     RIS_EXTENSION = 'File must have an ".ris" or ".txt" file-extension'
-    DOI_TOO_LONG = "DOI field too long on one or more references (length > 256)"
-    ID_MISSING = "ID field not found for all references"
     UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
     NO_REFERENCES = "RIS formatted incorrectly; contains 0 references"
 
@@ -222,10 +226,7 @@ class RisImportForm(SearchForm):
         if fileObj.size > 1024 * 1024 * 10:
             raise forms.ValidationError("Input file must be <10 MB")
 
-        if fileObj.name[-4:] not in (
-            ".txt",
-            ".ris",
-        ):
+        if fileObj.name[-4:] not in (".txt", ".ris"):
             raise forms.ValidationError(self.RIS_EXTENSION)
 
         # convert BytesIO file to StringIO file
@@ -244,21 +245,13 @@ class RisImportForm(SearchForm):
             f.seek(0)
             fileObj.seek(0)
             try:
-                references = [ref for ref in ris.RisImporter(f).references]
-            except KeyError as err:
-                if "id" in err.args:
-                    raise forms.ValidationError(self.ID_MISSING)
-                else:
-                    raise err
+                self._references = ris.RisImporter(f).references
+            except ValueError as err:
+                raise forms.ValidationError(str(err))
 
         # ensure at least one reference exists
-        if len(references) == 0:
+        if len(self._references) == 0:
             raise forms.ValidationError(self.NO_REFERENCES)
-
-        # ensure the maximum DOI length < 256
-        doi_lengths = [len(ref.get("doi", "")) for ref in references if ref.get("doi") is not None]
-        if doi_lengths and max(doi_lengths) > 256:
-            raise forms.ValidationError(self.DOI_TOO_LONG)
 
         return fileObj
 
@@ -296,7 +289,9 @@ class SearchModelChoiceField(forms.ModelChoiceField):
 
 class SearchSelectorForm(forms.Form):
 
-    searches = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
+    searches = SearchModelChoiceField(
+        queryset=models.Search.objects.all().select_related("assessment"), empty_label=None
+    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -326,6 +321,16 @@ class SearchSelectorForm(forms.Form):
             cancel_url=reverse("lit:overview", args=(self.assessment.id,)),
             submit_text="Copy selected as new",
         )
+
+    def get_success_url(self):
+        search = self.cleaned_data["searches"]
+        pattern = (
+            "lit:search_new"
+            if search.search_type == constants.SearchType.SEARCH
+            else "lit:import_new"
+        )
+        url = reverse(pattern, args=(self.assessment.pk,))
+        return f"{url}?initial={search.pk}"
 
 
 def validate_external_id(
@@ -476,6 +481,9 @@ class ReferenceForm(forms.ModelForm):
             self._ident_removals.extend(list(existing))
 
     def clean_doi_id(self):
+        value = self.cleaned_data["doi_id"]
+        if value:
+            self.cleaned_data["doi_id"] = value.lower()
         self._update_identifier(constants.ReferenceDatabase.DOI, "doi_id")
 
     def clean_pubmed_id(self):
@@ -559,7 +567,7 @@ class ReferenceExcelUploadForm(forms.Form):
             )
 
         try:
-            df = read_excel(fn.file)
+            df = pd.read_excel(fn.file)
             df = df[["HAWC ID", "Full text URL"]]
             df["Full text URL"].fillna("", inplace=True)
             assert df["HAWC ID"].dtype == np.int64

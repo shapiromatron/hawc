@@ -23,7 +23,7 @@
         {% if user.is_staff %}
             <div class="dropdown-divider"></div>
             {% if has_admin %}
-                <a class="dropdown-item" href="{%url 'admin:index' %}">Admin</a>
+                <a class="dropdown-item" href="{{ADMIN_ROOT}}{%url 'admin:index' %}">Admin</a>
             {% endif %}
             <a class="dropdown-item" href="{% url 'assessment:full_list' %}">View all assessments</a>
         {% endif %}

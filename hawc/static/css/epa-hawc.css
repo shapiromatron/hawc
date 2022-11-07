@@ -1,6 +1,23 @@
+/* Global */
+:focus {
+    outline: none !important;
+}
+
+/* this rule was disabled in the epa style; re-enable to header */
+header.l-header * {
+    -webkit-transition-duration: 200ms;
+    transition-duration: 200ms;
+    -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
+    transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
+    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform;
+    transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
+    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
+}
+
 /* Header */
 #search-box {
-  margin-top: 0px;
+    margin-top: 0px;
 }
 
 /* Top nav */
@@ -10,39 +27,51 @@
 .hawc-header .navbar-toggler:focus {
     outline: initial;
 }
+.hawc-header a {
+    text-decoration: none;
+}
+
+/* override environment banner position */
+.env-banner {
+    margin: 0 10% 0 70%;
+}
 
 /* Sidebar  */
 .sidebar {
-    width: 230px;
     background-color: #ffffff;
 }
-.sidebar-collapsed {
-    width: 50px;
+.usa-sidenav a:not(.usa-button):not(.usa-current) {
+    color: #565c65 !important;
 }
-.sidebar-collapsed .nav {
-    opacity: 0;
-}
-#toggle-sidebar, #toggle-sidebar:hover {
-    color: black !important;
-}
-.sidebar .nav-item.nav-link {
-    color: black !important;
-    font-weight: bold;
-}
-.sidebar .nav-item .nav-link{
-    color: black !important;
+.sidebar .usa-sidenav .usa-sidenav__item {
     font-weight: normal;
 }
-.sidebar .nav-item .nav-link:hover {
+.sidebar .usa-sidenav .usa-sidenav__item .menu__link:hover {
     color: #0071bc !important;
     background-color: #f1f1f1;
 }
-.sidebar li {
-    border-top: 1px solid #5b616b;
+
+/* table */
+table td {
+    background-color: unset !important;
+
 }
-.sidebar li:first-of-type {
-    border-top: 0;
+/* caret on dropdown menu */
+a.dropdown-toggle:not([href])::after {
+    display: inline-block !important;
 }
-.sidebar .bg-primary {
-    background-color: white !important;
+
+/* autocomplete dropdown */
+.select2-results__options {
+    width: 100%;
+}
+
+/* navigation tabs react-router-dom */
+.nav-item, .react-tabs__tab {
+    margin-bottom: 0;
+}
+
+/* bootstrap popover header */
+.popover-header {
+    margin-top: 0;
 }

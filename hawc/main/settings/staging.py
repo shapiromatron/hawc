@@ -4,8 +4,8 @@ import os
 
 from .base import *
 
-SERVER_ROLE = "staging"
-SERVER_BANNER_COLOR = "#EE8416"
+SERVER_ROLE = os.environ.get("HAWC_SERVER_ROLE", "staging")
+SERVER_BANNER_COLOR = os.environ.get("HAWC_SERVER_BANNER_COLOR", "#EE8416")
 
 HTTPS_ONLY = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
 SESSION_COOKIE_SECURE = HTTPS_ONLY
@@ -54,6 +54,8 @@ LOGGING["loggers"]["hawc.request"]["handlers"] = ["console", "hawc-request"]
 ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", "True") == "True"
 PM_CAN_MAKE_PUBLIC = os.getenv("HAWC_PM_CAN_MAKE_PUBLIC", "True") == "True"
 ACCEPT_LICENSE_REQUIRED = os.getenv("HAWC_ACCEPT_LICENSE_REQUIRED", "True") == "True"
+
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",)
 
 HAWC_LOAD_TEST_DB = int(os.environ.get("HAWC_LOAD_TEST_DB", 0))  # 0 = no; 1 = ifempty; 2 = always
 if HAWC_LOAD_TEST_DB:

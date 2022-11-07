@@ -31,6 +31,11 @@ app.conf.beat_schedule = {
         "schedule": timedelta(minutes=10),
         "options": {"expires": timedelta(minutes=10).total_seconds()},
     },
+    "create-initial-revisions": {
+        "task": "hawc.apps.common.tasks.create_initial_revisions",
+        "schedule": timedelta(days=1),
+        "options": {"expires": timedelta(days=1).total_seconds()},
+    },
     "lit-schedule_topic_model_reruns-10-min": {
         "task": "hawc.apps.lit.tasks.schedule_topic_model_reruns",
         "schedule": timedelta(minutes=10),

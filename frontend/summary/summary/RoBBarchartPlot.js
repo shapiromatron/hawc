@@ -259,10 +259,13 @@ class RoBBarchartPlot extends D3Visualization {
 
     build_legend() {
         if (this.legend || !this.data.settings.show_legend) return;
-        let options = {
-            dev: this.options.dev || false,
-            collapseNR: true,
-        };
+        const offset = 20,
+            options = {
+                dev: this.options.dev || false,
+                collapseNR: true,
+                default_x: this.padding.left + this.data.settings.plot_width + offset,
+                default_y: this.padding.top + offset,
+            };
         this.legend = new RoBLegend(this.svg, this.data, [], options);
     }
 }

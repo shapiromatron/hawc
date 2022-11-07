@@ -1,5 +1,4 @@
 from django.apps import apps
-from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
@@ -130,7 +129,6 @@ class StudyRead(BaseDetail):
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
         context["internal_communications"] = self.object.get_communications()
-        context["ENABLE_EPI_V2"] = settings.HAWC_FEATURES.ENABLE_EPI_V2
         return context
 
 

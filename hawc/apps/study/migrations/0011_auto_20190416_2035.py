@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                     (3, "Not reported"),
                     (2, "Unknown"),
                 ],
-                default=4,
+                default=2,
                 help_text="Was a conflict of interest reported by the study authors?",
                 verbose_name="COI reported",
             ),

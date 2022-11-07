@@ -69,6 +69,8 @@ class EndpointAggregationForm extends BaseVisualForm {
                         isMulti
                         name="endpoints"
                         loadOptions={_.debounce(this.fetchEndpoints, 500)}
+                        getOptionLabel={opt => opt.text}
+                        getOptionValue={opt => opt.id}
                         value={this.state.endpoints}
                         onChange={this.handleEndpointSelect}
                     />

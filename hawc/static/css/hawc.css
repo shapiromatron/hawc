@@ -28,17 +28,24 @@
     width: 230px;
     background-color: #323a45;
 }
+/* md/lg breakpoint: https://getbootstrap.com/docs/4.6/layout/overview/#containers */
+@media only screen and (max-width: 992px) {
+    .sidebar {
+        width: 50px;
+    }
+}
 .sidebar a {
     color: #f8f9fa!important;
 }
 .sidebar .nav {
     font-weight: bold;
 }
-.sidebar-collapsed {
-    width: 50px;
+.sidebar .nav.flex-column .nav-item .nav-link:hover {
+    background-color: #252b31;
 }
-.sidebar-collapsed .nav {
-    opacity: 0;
+.nav.flex-column.sub-list .nav-item .nav-link {
+    padding-left: 2rem;
+    font-weight: normal;
 }
 /* end sidebar */
 
@@ -101,13 +108,6 @@ mark,.mark {
     right: 0;
 }
 
-/* jQueryUI OVERRIDES */
-.ui-front{
-    /* must be higher than bootstrap modal for smart-tags */
-    z-index: 1055;
-}
-/* jQueryUI OVERRIDES */
-
 /* Disable html5 number spinners in Chrome */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
@@ -118,12 +118,6 @@ input[type='number']::-webkit-outer-spin-button {
 /* Disable html5 number spinners in Firefox */
 input[type='number'] {
     -moz-appearance: textfield;
-}
-
-/* handle conflict w/ bootstrap and jquery ui */
-.ui-autocomplete-input[disabled] {
-    background: none !important;
-    background-color: #efefef !important;
 }
 
 /* Override bootstrap modal width */

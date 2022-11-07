@@ -318,7 +318,8 @@ class AnimalGroup(models.Model):
     def get_doses_json(self, json_encode=True):
         if not hasattr(self, "doses"):
             self.doses = [{"error": "no dosing regime"}]
-            self.doses = self.dosing_regime.get_doses_json(False)
+            if self.dosing_regime:
+                self.doses = self.dosing_regime.get_doses_json(False)
         if json_encode:
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses
@@ -381,6 +382,12 @@ class AnimalGroup(models.Model):
         Endpoint.delete_caches(
             Endpoint.objects.filter(animal_group__in=ids).values_list("id", flat=True)
         )
+
+    def can_delete(self) -> bool:
+        # can only be deleted if dosing regime is not associated with other animal groups
+        if not self.dosing_regime or self.dosing_regime.dosed_animals_id != self.id:
+            return True
+        return self.dosing_regime.can_delete()
 
     def copy_across_assessments(self, cw, skip_siblings: bool = False):
         children = list(self.endpoints.all().order_by("id"))
@@ -544,17 +551,25 @@ class DosingRegime(models.Model):
     @staticmethod
     def flat_complete_data_row(ser):
         return (
-            ser["id"],
-            AnimalGroup.get_relation_id(ser["dosed_animals"]),
-            ser["route_of_exposure"],
-            ser["duration_exposure"],
-            ser["duration_exposure_text"],
-            ser["duration_observation"],
-            ser["num_dose_groups"],
-            ser["positive_control"],
-            ser["negative_control"],
-            cleanHTML(ser["description"]),
+            (
+                ser["id"],
+                AnimalGroup.get_relation_id(ser["dosed_animals"]),
+                ser["route_of_exposure"],
+                ser["duration_exposure"],
+                ser["duration_exposure_text"],
+                ser["duration_observation"],
+                ser["num_dose_groups"],
+                ser["positive_control"],
+                ser["negative_control"],
+                cleanHTML(ser["description"]),
+            )
+            if ser
+            else (None for _ in range(10))
         )
+
+    def can_delete(self) -> bool:
+        # can delete only if no animals others than those dosed are related
+        return self.animalgroup_set.exclude(id=self.dosed_animals_id).count() == 0
 
     def get_doses_json(self, json_encode=True):
         doses = []
@@ -1008,16 +1023,16 @@ class Endpoint(BaseEndpoint):
                 "vocabulary": assessment.vocabulary,
                 "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
-                    "system": form.initial.get("system", ""),
-                    "organ": form.initial.get("organ", ""),
-                    "effect": form.initial.get("effect", ""),
-                    "effect_subtype": form.initial.get("effect_subtype", ""),
-                    "name": form.initial.get("name", ""),
-                    "system_term_id": form.initial.get("system_term", None),
-                    "organ_term_id": form.initial.get("organ_term", None),
-                    "effect_term_id": form.initial.get("effect_term", None),
-                    "effect_subtype_term_id": form.initial.get("effect_subtype_term", None),
-                    "name_term_id": form.initial.get("name_term", None),
+                    "system": form["system"].value() or "",
+                    "organ": form["organ"].value() or "",
+                    "effect": form["effect"].value() or "",
+                    "effect_subtype": form["effect_subtype"].value() or "",
+                    "name": form["name"].value() or "",
+                    "system_term_id": form["system_term"].value(),
+                    "organ_term_id": form["organ_term"].value(),
+                    "effect_term_id": form["effect_term"].value(),
+                    "effect_subtype_term_id": form["effect_subtype_term"].value(),
+                    "name_term_id": form["name_term"].value(),
                 },
             }
         )
@@ -1505,6 +1520,14 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         default=None,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         verbose_name="Statistical significance level",
+        help_text="Enter statistical significance level for the effect. Typically this is as presented in the study. Indicate in the results comment field if it is based on statistical analysis conducted by the assessment team",
+    )
+    treatment_effect = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        default=None,
+        choices=constants.TreatmentEffect.choices,
+        help_text="Expert judgement based report of treatment related effects (add direction if known). Use when statistical analysis not available. In results comments, indicate whether it was author judgment or assessment team judgement",
     )
 
     COPY_NAME = "groups"
@@ -1550,6 +1573,7 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             "endpoint_group-upper_ci",
             "endpoint_group-significant",
             "endpoint_group-significance_level",
+            "endpoint_group-treatment_effect",
             "endpoint_group-NOEL",
             "endpoint_group-LOEL",
             "endpoint_group-FEL",
@@ -1568,6 +1592,7 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             ser["upper_ci"],
             ser["significant"],
             ser["significance_level"],
+            ser["treatment_effect"],
             ser["dose_group_id"] == endpoint["NOEL"],
             ser["dose_group_id"] == endpoint["LOEL"],
             ser["dose_group_id"] == endpoint["FEL"],

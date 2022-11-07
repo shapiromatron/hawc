@@ -1,5 +1,5 @@
 """
-Twitter Boostrap 4 - helper methods
+Twitter Bootstrap 4 - helper methods
 """
 from django import template
 from django.utils.safestring import mark_safe

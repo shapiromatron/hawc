@@ -26,6 +26,7 @@ package-lock.json
 .mypy_cache/
 .vscode/
 /data/
+docs/site
 __pycache__/
 _build/
 build/
@@ -40,6 +41,3 @@ venv/
 # keep folders; not contents
 hawc/static/bundles/*
 !hawc/static/bundles/.gitkeep
-
-compose/app/fonts/*
-!compose/app/fonts/.gitkeep

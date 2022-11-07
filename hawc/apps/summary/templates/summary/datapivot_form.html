@@ -2,7 +2,6 @@
 
 {% load crispy_forms_tags %}
 {% load add_class %}
-{% load selectable_tags %}
 
 {% block content %}
   {% include "assessment/preferred_dose_units_widget.html" %}
@@ -14,7 +13,8 @@
   {{ smart_tag_form.media }}
   <script type="text/javascript">
     $(document).ready(function () {
-      let printf = window.app.HAWCUtils.printf;
+      let js_units_choices = {{form.js_units_choices|safe}},
+        printf = window.app.HAWCUtils.printf;
 
       {% if crud == "Create" %}
         $('#id_title').on('keyup', function(){
@@ -24,7 +24,7 @@
 
       window.app.startup("assessmentStartup", function(app){
         var doseWidget = new app.DoseUnitsWidget($('form'), {
-          api: "{% url 'animal:api:dose_units-list' %}",
+          choices: js_units_choices,
           el: '#id_preferred_units',
         });
       });

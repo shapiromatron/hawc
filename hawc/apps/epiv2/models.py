@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 
 from ..assessment.models import DSSTox
+from ..common.helper import SerializerHelper
 from ..common.models import NumericTextField
 from ..epi.models import Country
 from ..study.models import Study
@@ -31,10 +32,9 @@ class Design(models.Model):
         choices=constants.StudyDesign.choices,
         help_text='Select the most appropriate design from the list. If more than one study design applies (e.g., a cohort with cross-sectional analyses of baseline measures), can either a) select one design ("cohort") and clarify different timing in remaining extraction or b) select "other" and provide details in comments.',
     )
-    source = models.CharField(max_length=2, choices=constants.Source.choices, blank=True)
+    source = models.CharField(max_length=2, choices=constants.Source.choices)
     age_profile = ArrayField(
         models.CharField(max_length=2, choices=constants.AgeProfile.choices),
-        blank=True,
         help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
         verbose_name="Population age category",
     )
@@ -101,6 +101,55 @@ class Design(models.Model):
     def __str__(self):
         return f"{self.summary}"
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "design-pk",
+            "design-url",
+            "design-summary",
+            "design-study_name",
+            "design-study_design",
+            "design-source",
+            "design-age_profile",
+            "design-age_description",
+            "design-sex",
+            "design-race",
+            "design-participant_n",
+            "design-years_enrolled",
+            "design-years_followup",
+            "design-countries",
+            "design-region",
+            "design-criteria",
+            "design-susceptibility",
+            "design-comments",
+            "design-created",
+            "design-last_updated",
+        )
+
+    def flat_complete_data_row(self):
+        return (
+            self.pk,
+            self.get_absolute_url(),
+            self.summary,
+            self.study_name,
+            self.get_study_design_display(),
+            self.get_source_display(),
+            self.get_age_profile_display(),
+            self.age_description,
+            self.get_sex_display(),
+            self.race,
+            self.participant_n,
+            self.years_enrolled,
+            self.years_followup,
+            "|".join(self.countries.values_list("name", flat=True)),
+            self.region,
+            self.criteria,
+            self.susceptibility,
+            self.comments,
+            self.created,
+            self.last_updated,
+        )
+
 
 class Chemical(models.Model):
     objects = managers.ChemicalManager()
@@ -139,6 +188,25 @@ class Chemical(models.Model):
         self.save()
         return self
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "chemical-pk",
+            "chemical-name",
+            "chemical-DTSXID",
+            "chemical-created",
+            "chemical-last_updated",
+        )
+
+    def flat_complete_data_row(self):
+        return (
+            self.pk,
+            self.name,
+            self.dsstox.dtxsid if self.dsstox else None,
+            self.created,
+            self.last_updated,
+        )
+
 
 class Exposure(models.Model):
     objects = managers.ExposureManager()
@@ -150,7 +218,6 @@ class Exposure(models.Model):
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="exposures")
     measurement_type = ArrayField(
         models.CharField(max_length=64),
-        blank=True,
         help_text='Select the most appropriate type from the list. If a study includes multiples exposure measurement types but they are analyzed with outcomes separately, create a separate entry for each. If more than one type are combined for analysis with an outcome, you can select multiple options from the list. "Occupational" should be used when the exposure is based on job duties, etc. (i.e., not occupational exposure measured by biomarkers or air).',
         verbose_name="Exposure measurement types",
     )
@@ -199,6 +266,37 @@ class Exposure(models.Model):
         self.save()
         return self
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "exposure-pk",
+            "exposure-name",
+            "exposure-measurement_type",
+            "exposure-biomonitoring_matrix",
+            "exposure-biomonitoring_source",
+            "exposure-measurement_timing",
+            "exposure-exposure_route",
+            "exposure-measurement_method",
+            "exposure-comments",
+            "exposure-created",
+            "exposure-last_updated",
+        )
+
+    def flat_complete_data_row(self):
+        return (
+            self.pk,
+            self.name,
+            ", ".join(self.measurement_type),
+            self.get_biomonitoring_matrix_display(),
+            self.get_biomonitoring_source_display(),
+            self.measurement_timing,
+            self.get_exposure_route_display(),
+            self.measurement_method,
+            self.comments,
+            self.created,
+            self.last_updated,
+        )
+
 
 class ExposureLevel(models.Model):
     objects = managers.ExposureLevelManager()
@@ -227,7 +325,7 @@ class ExposureLevel(models.Model):
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
-        default=constants.VarianceType.NONE,
+        default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )
@@ -259,7 +357,7 @@ class ExposureLevel(models.Model):
     ci_type = models.CharField(
         max_length=3,
         choices=constants.ConfidenceIntervalType.choices,
-        default=constants.ConfidenceIntervalType.RNG,
+        default=constants.ConfidenceIntervalType.NA,
         verbose_name="Lower/upper interval type",
     )
     negligible_exposure = models.CharField(
@@ -291,11 +389,6 @@ class ExposureLevel(models.Model):
             value = f"{self.median}"
         elif self.mean is not None:
             value = f"{self.mean}"
-        if self.ci_lcl and self.ci_ucl:
-            if value == default_value:
-                value = f"{self.ci_lcl} - {self.ci_ucl}"
-            else:
-                value += f" [{self.ci_lcl}, {self.ci_ucl}]"
         if value != default_value and self.units:
             value += f" {self.units}"
         return value
@@ -306,23 +399,74 @@ class ExposureLevel(models.Model):
         self.save()
         return self
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "exposure_level-pk",
+            "exposure_level-name",
+            "exposure_level-sub_population",
+            "exposure_level-median",
+            "exposure_level-mean",
+            "exposure_level-variance",
+            "exposure_level-variance_type",
+            "exposure_level-units",
+            "exposure_level-ci_lcl",
+            "exposure_level-percentile_25",
+            "exposure_level-percentile_75",
+            "exposure_level-ci_ucl",
+            "exposure_level-ci_type",
+            "exposure_level-negligible_exposure",
+            "exposure_level-data_location",
+            "exposure_level-comments",
+            "exposure_level-created",
+            "exposure_level-last_updated",
+        )
+
+    def flat_complete_data_row(self):
+        return (
+            self.pk,
+            self.name,
+            self.sub_population,
+            self.median,
+            self.mean,
+            self.variance,
+            self.get_variance_type_display(),
+            self.units,
+            self.ci_lcl,
+            self.percentile_25,
+            self.percentile_75,
+            self.ci_ucl,
+            self.get_ci_type_display(),
+            self.negligible_exposure,
+            self.data_location,
+            self.comments,
+            self.created,
+            self.last_updated,
+        )
+
 
 class Outcome(models.Model):
     objects = managers.OutcomeManager()
 
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="outcomes")
-    endpoint = models.CharField(
-        max_length=128,
-        help_text="A unique name for the health effect being measured. The endpoint is generally more specific than the outcome (e.g., cholesterol, asthma within the previous year). Use controlled vocabulary when available.",
-    )
-    health_outcome = models.CharField(
-        max_length=128,
-        help_text="The outcome is generally broader than the endpoint (e.g., serum lipids, asthma). However, if there is not a finer categorization, they may be the same. Use controlled vocabulary when available.",
-    )
-    health_outcome_system = models.CharField(
+    system = models.CharField(
         max_length=2,
         choices=constants.HealthOutcomeSystem.choices,
-        help_text="Select the system from the drop down. Use controlled vocabulary when available. If multiple cancer types are present, report all types under Cancer.",
+        help_text="Select the most relevant system from the drop down menu. If more than one system is applicable refer to assessment team instructions.",
+    )
+    effect = models.CharField(
+        max_length=128,
+        help_text="The health effect of interest. Effect is generally broader than the Endpoint/Outcome and may represent multiple endpoints (e.g., Serum lipids, Asthma, Cognition). However, if there is not a finer categorization, they may be the same. Use controlled vocabulary when available.",
+    )
+    effect_detail = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Optional. If additional specification to the Effect is needed, it can be entered here (e.g., IQ).",
+    )
+    endpoint = models.CharField(
+        verbose_name="Endpoint/Outcome",
+        max_length=128,
+        help_text="A unique name for the specific endpoint/outcome being measured. The endpoint is generally more specific than the effect (e.g., total cholesterol, incident asthma within the previous year, WISC-IV full scale). Use controlled vocabulary when available.",
     )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -346,6 +490,31 @@ class Outcome(models.Model):
         self.save()
         return self
 
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "outcome-pk",
+            "outcome-system",
+            "outcome-effect",
+            "outcome-effect_detail",
+            "outcome-endpoint",
+            "outcome-comments",
+            "outcome-created",
+            "outcome-last_updated",
+        )
+
+    def flat_complete_data_row(self):
+        return (
+            self.pk,
+            self.get_system_display(),
+            self.effect,
+            self.effect_detail,
+            self.endpoint,
+            self.comments,
+            self.created,
+            self.last_updated,
+        )
+
 
 class AdjustmentFactor(models.Model):
     objects = managers.AdjustmentFactorManager()
@@ -356,7 +525,7 @@ class AdjustmentFactor(models.Model):
         help_text='A unique name for this adjustment set that will help you identify it later. It may be descriptive or a dummy variable ("A").',
     )
     description = models.CharField(
-        max_length=256,
+        max_length=512,
         help_text='Enter the list of covariates in the model, separated by commas. These can be brief and ideally entered uniformly across studies when possible. Additional detail can be added in the comments or in study evaluation (e.g., enter "smoking" for consistency instead of "pack-years")',
     )
     comments = models.TextField(blank=True)
@@ -380,6 +549,27 @@ class AdjustmentFactor(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "adjustment_factor-pk",
+            "adjustment_factor-name",
+            "adjustment_factor-description",
+            "adjustment_factor-comments",
+            "adjustment_factor-created",
+            "adjustment_factor-last_updated",
+        )
+
+    def flat_complete_data_row(self):
+        return (
+            self.pk,
+            self.name,
+            self.description,
+            self.comments,
+            self.created,
+            self.last_updated,
+        )
 
 
 class DataExtraction(models.Model):
@@ -409,7 +599,8 @@ class DataExtraction(models.Model):
         help_text='Enter age or other timing (e.g., X years follow-up) for measurement of outcome. If cross-sectional, enter "cross-sectional".',
     )
     effect_estimate_type = models.CharField(
-        max_length=3, choices=constants.EffectEstimateType.choices
+        max_length=128,
+        blank=True,
     )
     effect_estimate = models.FloatField()
     ci_lcl = models.FloatField(verbose_name="Lower bound", blank=True, null=True)
@@ -420,9 +611,10 @@ class DataExtraction(models.Model):
         default=constants.ConfidenceIntervalType.P95,
         verbose_name="Lower/upper bound type",
     )
+    units = models.CharField(max_length=128, blank=True)
     variance_type = models.PositiveSmallIntegerField(
         choices=constants.VarianceType.choices,
-        default=constants.VarianceType.NONE,
+        default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )
@@ -440,12 +632,12 @@ class DataExtraction(models.Model):
         verbose_name="Results group",
         help_text='If a set of results are linked (e.g., results for categories of exposure), each one is entered as a separate entry in the form. This field should be used to link the results. All linked results should have the same value for this field, and it should be unique to those results. The text can be descriptive (e.g., "Quartiles for PFNA and Asthma incidence") or a dummy variable ("Group 1").',
     )
-    exposure_transform = models.CharField(max_length=32, blank=True)
-    outcome_transform = models.CharField(max_length=32, blank=True)
     exposure_rank = models.PositiveSmallIntegerField(
         default=0,
         help_text="If a set of results are linked, use this field to order them (helpful for sorting in visualizations). Rank the comparison groups in the order you would want them to appear (e.g., lowest exposure group=1).",
     )
+    exposure_transform = models.CharField(max_length=32, blank=True)
+    outcome_transform = models.CharField(max_length=32, blank=True)
     factors = models.ForeignKey(
         AdjustmentFactor,
         verbose_name="Adjustment factors",
@@ -490,10 +682,72 @@ class DataExtraction(models.Model):
             value += f" [{self.ci_lcl}, {self.ci_ucl}]"
         return value
 
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
+
     def clone(self):
         self.id = None
         self.save()
         return self
+
+    @staticmethod
+    def flat_complete_header_row():
+        return (
+            "data_extraction-pk",
+            "data_extraction-sub_population",
+            "data_extraction-outcome_measurement_timing",
+            "data_extraction-effect_estimate_type",
+            "data_extraction-effect_estimate",
+            "data_extraction-ci_lcl",
+            "data_extraction-ci_ucl",
+            "data_extraction-ci_type",
+            "data_extraction-units",
+            "data_extraction-variance_type",
+            "data_extraction-variance",
+            "data_extraction-n",
+            "data_extraction-p_value",
+            "data_extraction-significant",
+            "data_extraction-group",
+            "data_extraction-exposure_rank",
+            "data_extraction-exposure_transform",
+            "data_extraction-outcome_transform",
+            "data_extraction-confidence",
+            "data_extraction-data_location",
+            "data_extraction-effect_description",
+            "data_extraction-statistical_method",
+            "data_extraction-comments",
+            "data_extraction-created",
+            "data_extraction-last_updated",
+        )
+
+    def flat_complete_data_row(self):
+        return (
+            self.pk,
+            self.sub_population,
+            self.outcome_measurement_timing,
+            self.effect_estimate_type,
+            self.effect_estimate,
+            self.ci_lcl,
+            self.ci_ucl,
+            self.get_ci_type_display(),
+            self.units,
+            self.get_variance_type_display(),
+            self.variance,
+            self.n,
+            self.p_value,
+            self.get_significant_display(),
+            self.group,
+            self.exposure_rank,
+            self.exposure_transform,
+            self.outcome_transform,
+            self.confidence,
+            self.data_location,
+            self.effect_description,
+            self.statistical_method,
+            self.comments,
+            self.created,
+            self.last_updated,
+        )
 
 
 reversion.register(Design, follow=("countries",))

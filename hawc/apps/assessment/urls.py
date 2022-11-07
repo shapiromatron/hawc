@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
@@ -38,7 +38,7 @@ urlpatterns = [
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
     # log object
     path(
-        "<int:content_type>/<int:object_id>/log/",
+        "log/<int:content_type>/<int:object_id>/",
         views.LogObjectList.as_view(),
         name="log_object_list",
     ),

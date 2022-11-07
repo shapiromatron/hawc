@@ -10,6 +10,24 @@ from hawc.apps.epiv2 import models
 
 
 @pytest.mark.django_db
+class TestEpiAssessmentViewset:
+    def test_export(self):
+        url = reverse("epiv2:api:assessment-export", args=(1,))
+
+        # anon get 403
+        client = APIClient()
+        response = client.get(url, format="json")
+        assert response.status_code == 403
+
+        # pm can get valid response
+        client = APIClient()
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        response = client.get(url, format="json")
+        assert response.status_code == 200
+        assert len(response.json()) == 12
+
+
+@pytest.mark.django_db
 class TestDesignApi:
     def test_permissions(self, db_keys):
         url = reverse("epiv2:api:design-list")
@@ -84,20 +102,12 @@ class TestDesignApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.Design.objects.get(id=just_created_design_id)
 
-        # TODO: add scenarios for create/update for a child model
         create_scenarios = (
             {
                 "desc": "design create",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": data,
-                "post_request_test": design_create_test,
-            },
-            {
-                "desc": "design create; no age_profile",
-                "expected_code": 201,
-                "expected_keys": {"id"},
-                "data": data2,
                 "post_request_test": design_create_test,
             },
         )
