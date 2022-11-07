@@ -83,6 +83,8 @@ class HEROFetch:
                     logger.info(f"HERO request failure: {url}")
             except requests.exceptions.Timeout:
                 logger.info(f"HERO request timeout: {url}")
+            except json.JSONDecodeError:
+                logger.info(f"HERO request failure: {url}")
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 

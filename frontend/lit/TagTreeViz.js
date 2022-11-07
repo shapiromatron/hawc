@@ -24,7 +24,7 @@ class VizOptions extends Component {
             <p className="form-text text-muted" data-value={key}>
                 Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references
                 associated with an node (except root-node). Hold shift to drag nodes to new
-                positions.
+                positions; click a node after dragging to update layout.
             </p>
         );
     }
@@ -253,7 +253,9 @@ class TagTreeViz extends D3Plot {
                 nodeEnter
                     .append("svg:circle")
                     .attr("r", 1e-6)
-                    .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"));
+                    .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"))
+                    .append("svg:title")
+                    .text("Ctrl-click or ⌘-click to view references");
 
                 nodeEnter
                     .append("svg:text")
@@ -354,6 +356,7 @@ class TagTreeViz extends D3Plot {
             };
 
         this.add_title();
+        this.title.style("cursor", "pointer").call(HAWCUtils.updateDragLocationXY(h.noop));
         if (options.show_legend) {
             this.add_legend();
         }
