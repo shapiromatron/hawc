@@ -147,4 +147,3 @@ class EndpointFilterSet(BaseFilterSet):
         # for cell type autocomplete
         for field in ("cell_type", "tissue"):
             form.fields[field].widget.update_filters({"study__assessment_id": self.assessment.id})
-        return form

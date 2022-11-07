@@ -218,4 +218,3 @@ class EndpointFilterSet(BaseFilterSet):
                 )
 
         form.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(self.assessment.id)
-        return form

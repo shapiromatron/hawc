@@ -182,4 +182,3 @@ class OutcomeFilterSet(BaseFilterSet):
                 widget.update_filters(
                     {"study_population__study__assessment_id": self.assessment.id}
                 )
-        return form

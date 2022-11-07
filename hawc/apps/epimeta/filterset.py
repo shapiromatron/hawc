@@ -92,4 +92,3 @@ class MetaResultFilterSet(BaseFilterSet):
             widget = form.fields[field].widget
             if field in ("label", "health_outcome", "exposure_name"):
                 widget.update_filters({"protocol__study__assessment_id": self.assessment.id})
-        return form
