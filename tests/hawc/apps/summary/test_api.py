@@ -355,7 +355,7 @@ class TestSummaryTableViewset:
         if rewrite_data_files:
             fn.write_text(data_str)
 
-        assert data_str == fn.read_text()
+        assert json.loads(data_str) == json.loads(fn.read_text())
 
     def test_data(self, rewrite_data_files: bool):
         data = {"assessment_id": 1, "table_type": 2, "data_source": "ani", "published_only": False}
