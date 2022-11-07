@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, Tuple, Type, Union
+from typing import Any, ClassVar, Dict, Type, Union
 
 import pandas as pd
 import pydantic
@@ -106,11 +106,11 @@ class BaseApiAction:
         """
         pass
 
-    def has_permission(self, request: Request) -> Tuple[bool, str]:
+    def has_permission(self, request: Request) -> tuple[bool, str]:
         """Any additional permission checks after business logic has been validated.
 
         Returns:
-            Tuple[bool, str]: has_permission, reason (if permission denied)
+            tuple[bool, str]: has_permission, reason (if permission denied)
         """
         return True, ""
 

@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict
 
 from .client import BaseClient
 
@@ -34,12 +34,12 @@ class VocabClient(BaseClient):
         url = f"{self.session.root_url}/vocab/api/term/bulk-update/"
         return self.session.patch(url, terms).json()
 
-    def uids(self) -> list[Tuple[int, int]]:
+    def uids(self) -> list[tuple[int, int]]:
         """
         Get all term ids and uids.
 
         Returns:
-            list[Tuple[int,int]]: List of id, uid tuples for all terms.
+            list[tuple[int,int]]: List of id, uid tuples for all terms.
         """
         url = f"{self.session.root_url}/vocab/api/term/uids/"
         return self.session.get(url).json()

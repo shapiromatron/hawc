@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Dict, Tuple
+from typing import Dict
 
 import pandas as pd
 from django.apps import apps
@@ -708,7 +708,7 @@ class ReferenceTagsManager(BaseManager):
     def get_assessment_qs(self, assessment_id: int):
         return self.get_queryset().filter(content_object__assessment_id=assessment_id)
 
-    def delete_orphan_tags(self, assessment_id) -> Tuple[int, int]:
+    def delete_orphan_tags(self, assessment_id) -> tuple[int, int]:
         """
         Deletes all unreachable tags in an assessment's tag tree.
         An assessment log is created detailing these deleted tags.
@@ -717,7 +717,7 @@ class ReferenceTagsManager(BaseManager):
             assessment_id (int): Assessment id
 
         Returns:
-            Tuple[int, int]: Number of tags deleted, followed by log ID.
+            tuple[int, int]: Number of tags deleted, followed by log ID.
         """
         from .models import ReferenceFilterTag
 

@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 
 import pandas as pd
 
@@ -84,8 +84,8 @@ class RiskOfBiasClient(BaseClient):
         self,
         src_assessment_id: int,
         dst_assessment_id: int,
-        src_dst_study_ids: list[Tuple[int, int]],
-        src_dst_metric_ids: list[Tuple[int, int]],
+        src_dst_study_ids: list[tuple[int, int]],
+        src_dst_metric_ids: list[tuple[int, int]],
         copy_mode: int,
         author_mode: int,
         dst_author_id: Optional[int] = None,
@@ -99,8 +99,8 @@ class RiskOfBiasClient(BaseClient):
         Args:
             src_assessment_id (int): source assessment
             dst_assessment_id (int): destination assessment
-            src_dst_study_ids (list[Tuple[int, int]]): source study id, destination study id pairings
-            src_dst_metric_ids (list[Tuple[int, int]]): source metric id, destination metric id pairings
+            src_dst_study_ids (list[tuple[int, int]]): source study id, destination study id pairings
+            src_dst_metric_ids (list[tuple[int, int]]): source metric id, destination metric id pairings
             copy_mode (int): enum for copy mode
                 1 = src active riskofbias -> dest active risk of bias
                 2 = src final riskofbias -> dest initial risk of bias

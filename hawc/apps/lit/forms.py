@@ -1,6 +1,6 @@
 import logging
 from io import StringIO
-from typing import Dict, Tuple, Union
+from typing import Dict, Union
 
 import numpy as np
 import pandas as pd
@@ -335,7 +335,7 @@ class SearchSelectorForm(forms.Form):
 
 def validate_external_id(
     db_type: int, db_id: Union[str, int]
-) -> Tuple[Union[models.Identifiers, None], Union[list, Dict, None]]:
+) -> tuple[Union[models.Identifiers, None], Union[list, Dict, None]]:
     """
     Validates an external ID.
     If the identifier already exists it is returned as the first part of a tuple.
@@ -350,7 +350,7 @@ def validate_external_id(
         ValueError: An invalid db_type was provided
 
     Returns:
-        Tuple[Union[models.Identifiers, None], Union[list, Dict, None]]: Existing identifier, content to create identifier
+        tuple[Union[models.Identifiers, None], Union[list, Dict, None]]: Existing identifier, content to create identifier
     """
     identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(db_id)).first()
 

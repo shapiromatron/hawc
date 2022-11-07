@@ -1,7 +1,6 @@
 import logging
 import re
 import textwrap
-from typing import Tuple
 
 import numpy as np
 import pandas as pd
@@ -57,7 +56,7 @@ def _get_nmf_topics(term_map, vectorizer, n_top_words: int = 10) -> pd.DataFrame
     return pd.DataFrame(data=dict(topic=list(range(term_map.shape[1])), top_words=words))
 
 
-def topic_model_tsne(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def topic_model_tsne(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Given an input dataframe containing a text column, using TFIDF build an NMF topic model.
     Then, reduce topics using TSNE to allow for displaying via a scatterplot.

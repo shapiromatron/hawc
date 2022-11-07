@@ -1,5 +1,5 @@
 from copy import copy
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
@@ -470,7 +470,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return False
 
     @staticmethod
-    def _dose_low_high(dose_list: list[Optional[float]]) -> Tuple[Optional[float], Optional[float]]:
+    def _dose_low_high(dose_list: list[Optional[float]]) -> tuple[Optional[float], Optional[float]]:
         """
         Finds the lowest and highest non-zero dose from a given list of doses,
         ignoring None values. If there are no valid doses, returns None for both
@@ -480,7 +480,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             dose_list (list[Optional[float]]): List of doses
 
         Returns:
-            Tuple[Optional[float], Optional[float]]: Lowest dose and highest dose,
+            tuple[Optional[float], Optional[float]]: Lowest dose and highest dose,
             in that order.
         """
         try:

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, Tuple, Type, Union
+from typing import Any, Dict, Type, Union
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -455,7 +455,7 @@ class BulkSerializer(serializers.ListSerializer):
         """
         return getattr(instance, field) == value
 
-    def update_fields(self, instance, data) -> Tuple[bool, list]:
+    def update_fields(self, instance, data) -> tuple[bool, list]:
         """
         Attempts to update an instance with given data.
 
@@ -464,7 +464,7 @@ class BulkSerializer(serializers.ListSerializer):
             data (dict): serialized instance data
 
         Returns:
-            Tuple[bool, list]: a tuple of whether the instance has been updated, and a list of updated fields
+            tuple[bool, list]: a tuple of whether the instance has been updated, and a list of updated fields
         """
         fields = list(data.keys())
         fields.remove("id")

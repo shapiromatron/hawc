@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict
 
 from django.db import models
 
@@ -31,7 +31,7 @@ RESPONSES_VALUES_DEFAULT: Dict[models.IntegerChoices, int] = {
 }
 
 
-SCORE_CHOICES: Tuple[Tuple[int, str], ...] = (
+SCORE_CHOICES: tuple[tuple[int, str], ...] = (
     (0, "None"),
     (10, "Not applicable"),
     (12, "Not reported"),
@@ -59,8 +59,8 @@ SCORE_CHOICES: Tuple[Tuple[int, str], ...] = (
 
 SCORE_CHOICES_MAP: Dict[int, str] = {k: v for k, v in SCORE_CHOICES}
 
-NA_SCORES: Tuple[int, ...] = (10, 20)
-NR_SCORES: Tuple[int, ...] = (12, 22)
+NA_SCORES: tuple[int, ...] = (10, 20)
+NR_SCORES: tuple[int, ...] = (12, 22)
 
 SCORE_SYMBOLS: Dict[int, str] = {
     0: "━",

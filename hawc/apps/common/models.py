@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import Dict, Set, Tuple
+from typing import Dict, Set
 
 import django
 import pandas as pd
@@ -28,7 +28,7 @@ def get_private_data_storage() -> FileSystemStorage:
 class BaseManager(models.Manager):
     assessment_relation = None
 
-    def _get_order_by(self) -> Tuple[str, ...]:
+    def _get_order_by(self) -> tuple[str, ...]:
         """
         We always want a QuerySet to have some sort of defined order when returning. Therefore,
         first try to use the ordering specified by the model. If no ordering exists, order by id.

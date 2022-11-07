@@ -1,4 +1,4 @@
-from typing import Any, Tuple, Union
+from typing import Any, Union
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
@@ -98,7 +98,7 @@ class BaseFormHelper(cf.FormHelper):
 
         return layout
 
-    def get_layout_item(self, field_name: str) -> Tuple[Any, int]:
+    def get_layout_item(self, field_name: str) -> tuple[Any, int]:
         mapping = {field: index for index, field in self.layout.get_field_names()}
         layout = self.layout
         for idx in mapping[field_name]:

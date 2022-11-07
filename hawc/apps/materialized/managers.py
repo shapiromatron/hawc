@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Dict, NamedTuple, Optional, Tuple
+from typing import Dict, NamedTuple, Optional
 
 import pandas as pd
 from django.apps import apps
@@ -37,14 +37,14 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             if score["content_type_id"] == content_type_id and object_id == score["object_id"]
         ]
 
-    def study_scores(self, study_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
+    def study_scores(self, study_ids: list[int]) -> Dict[tuple[int, int], Dict]:
         """Return default scores for study and metric.
 
         Args:
             study_ids (list[int]): A list of study ids
 
         Returns:
-            Dict[Tuple[int, int], Dict]: Keys are equal to (study_id, metric_id)
+            Dict[tuple[int, int], Dict]: Keys are equal to (study_id, metric_id)
         """
         return {
             (score["study_id"], score["metric_id"]): score
@@ -52,7 +52,7 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             if score["study_id"] in study_ids and score["is_default"]
         }
 
-    def endpoint_scores(self, endpoint_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
+    def endpoint_scores(self, endpoint_ids: list[int]) -> Dict[tuple[int, int], Dict]:
         Endpoint = apps.get_model("animal", "Endpoint")
         AnimalGroup = apps.get_model("animal", "AnimalGroup")
 
@@ -74,7 +74,7 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         return endpoint_scores
 
-    def outcome_scores(self, outcome_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
+    def outcome_scores(self, outcome_ids: list[int]) -> Dict[tuple[int, int], Dict]:
 
         Outcome = apps.get_model("epi", "Outcome")
 
@@ -93,7 +93,7 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         return outcome_scores
 
-    def result_scores(self, result_ids: list[int]) -> Dict[Tuple[int, int], Dict]:
+    def result_scores(self, result_ids: list[int]) -> Dict[tuple[int, int], Dict]:
 
         Result = apps.get_model("epi", "Result")
         Outcome = apps.get_model("epi", "Outcome")
