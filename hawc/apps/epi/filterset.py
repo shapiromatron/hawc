@@ -155,7 +155,7 @@ class OutcomeFilterSet(BaseFilterSet):
             [3, 3, 3],
         ]
 
-    def prefilter_queryset(self, queryset):
+    def filter_queryset(self, queryset):
         queryset = queryset.filter(assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(study_population__study__published=True)

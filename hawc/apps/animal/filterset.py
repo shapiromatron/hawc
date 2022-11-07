@@ -191,7 +191,7 @@ class EndpointFilterSet(BaseFilterSet):
             [3, 3],
         ]
 
-    def prefilter_queryset(self, queryset):
+    def filter_queryset(self, queryset):
         queryset = queryset.filter(assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(animal_group__experiment__study__published=True)

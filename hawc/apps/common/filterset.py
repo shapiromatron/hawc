@@ -1,6 +1,7 @@
 import django_filters as df
 from crispy_forms import layout as cfl
 from django import forms
+from django.db.models import QuerySet
 
 from . import autocomplete
 from .forms import BaseFormHelper, form_actions_apply_filters
@@ -98,13 +99,6 @@ class BaseFilterSet(FilterSet):
             self._form = self.change_form(form)
         return self._form
 
-    def prefilter_queryset(self, queryset):
-        # any prefiltering or annotations necessary for ordering go here
-        pass
-
-    def filter_queryset(self, queryset):
-        queryset = self.prefilter_queryset(queryset)
-        return super().filter_queryset(queryset)
-
-    def change_form(self, form):
+    def change_form(self, form: forms.Form):
+        """Make modifications to the generated form if needed"""
         pass
