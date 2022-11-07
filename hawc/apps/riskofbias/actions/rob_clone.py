@@ -3,7 +3,6 @@ from enum import IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 
 import pydantic
-from django.db import models
 
 from hawc.apps.assessment.models import Assessment, Log
 from hawc.apps.common.actions import BaseApiAction
