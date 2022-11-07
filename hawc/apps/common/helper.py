@@ -4,7 +4,7 @@ import re
 from collections import OrderedDict, defaultdict
 from datetime import timedelta
 from math import inf
-from typing import Any, NamedTuple, Optional, Set, Union
+from typing import Any, NamedTuple, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,7 +41,7 @@ def rename_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     if not df.columns.has_duplicates:
         return df
-    duplicates: Set[str] = set(df.columns[df.columns.duplicated()].tolist())
+    duplicates: set[str] = set(df.columns[df.columns.duplicated()].tolist())
     indexes: dict[str, int] = defaultdict(lambda: 0)
     new_cols: list[str] = []
     for col in df.columns:

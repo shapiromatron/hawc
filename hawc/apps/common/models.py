@@ -1,6 +1,5 @@
 import logging
 import math
-from typing import Set
 
 import django
 import pandas as pd
@@ -54,7 +53,7 @@ class BaseManager(models.Manager):
             .order_by(*ordering)
         )
 
-    def valid_ids(self, ids: list[int], **kwargs) -> Set[int]:
+    def valid_ids(self, ids: list[int], **kwargs) -> set[int]:
         """
         Determines valid model instance ids from a list of ids
 
@@ -63,7 +62,7 @@ class BaseManager(models.Manager):
             kwargs: keyword args to pass to validity check
 
         Returns:
-            Set[int]: A set of all valid ids
+            set[int]: A set of all valid ids
         """
         return set(
             self.filter(pk__in=ids, **kwargs)
@@ -72,7 +71,7 @@ class BaseManager(models.Manager):
             .values_list("pk", flat=True)
         )
 
-    def invalid_ids(self, ids: list[int], **kwargs) -> Set[int]:
+    def invalid_ids(self, ids: list[int], **kwargs) -> set[int]:
         """
         Determines invalid model instance ids from a list of ids
 
@@ -81,7 +80,7 @@ class BaseManager(models.Manager):
             kwargs: keyword args to pass to validity check
 
         Returns:
-            Set[int]: A set of all invalid ids
+            set[int]: A set of all invalid ids
         """
         valid_ids = self.valid_ids(ids, **kwargs)
         return set(ids) - valid_ids
