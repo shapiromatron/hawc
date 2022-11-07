@@ -138,7 +138,7 @@ class RiskOfBiasClient(BaseClient):
         """
         url = f"{self.session.root_url}/rob/api/metrics/?assessment_id={assessment_id}"
         response_json = self.session.get(url).json()
-        return pd.DataFrame(data=response_json)
+        return pd.DataFrame(response_json)
 
     def reviews(self, assessment_id: int) -> Dict:
         """
