@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -91,11 +92,13 @@ class TestVisual:
         assert response.status_code == 200
 
         data = response.json()
+        data = json.dumps(data, indent=2, sort_keys=True)
+        data = re.sub(r"obj_ct=\d+", "obj_ct=9999", data)
 
-        if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
+        if not rewrite_data_files:
+            fn.write_text(data)
 
-        assert data == json.loads(fn.read_text())
+        assert data == fn.read_text()
 
     def test_bioassay_aggregation(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "bioassay-aggregation")
