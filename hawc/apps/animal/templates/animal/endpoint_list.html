@@ -12,7 +12,12 @@
         <col width="15%" />
         <col width="20%" />
         <col width="15%" />
-        <col width="50%" />
+        <col width="25%" />
+        <col width="5%" />
+        <col width="5%" />
+        <col width="5%" />
+        <col width="5%" />
+        <col width="5%" />
     </colgroup>
 
 
@@ -22,6 +27,11 @@
             <th>Experiment</th>
             <th>Animal group</th>
             <th>Endpoint</th>
+            <th>Units</th>
+            <th>NOEL</th>
+            <th>LOEL</th>
+            <th>BMD</th>
+            <th>BMDLS</th>
         </tr>
     </thead>
 
@@ -45,6 +55,11 @@
                     <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
                 </span>
             </td>
+            <td data-id={{object.pk}} class="endpointUnits"></td>
+            <td data-id={{object.pk}} class="endpointNOEL">{{object.NOEL}}</td>
+            <td data-id={{object.pk}} class="endpointLOEL">{{object.LOEL}}</td>
+            <td data-id={{object.pk}} class="endpointBMD"></td>
+            <td data-id={{object.pk}} class="endpointBMD"></td>
         </tr>
         {% empty %}
         <tr>
