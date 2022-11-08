@@ -161,7 +161,8 @@ class OutcomeFilterSet(BaseFilterSet):
             queryset = queryset.filter(study_population__study__published=True)
         return queryset
 
-    def change_form(self, form):
+    def create_form(self):
+        form = super().create_form()
         form.fields["studies"].set_filters({"assessment_id": self.assessment.id, "epi": True})
         form.fields["metric"].widget.update_filters(
             {"study_population__study__assessment_id": self.assessment.id}
@@ -182,3 +183,4 @@ class OutcomeFilterSet(BaseFilterSet):
                 widget.update_filters(
                     {"study_population__study__assessment_id": self.assessment.id}
                 )
+        return form

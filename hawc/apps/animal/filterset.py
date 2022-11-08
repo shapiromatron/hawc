@@ -197,7 +197,8 @@ class EndpointFilterSet(BaseFilterSet):
             queryset = queryset.filter(animal_group__experiment__study__published=True)
         return queryset
 
-    def change_form(self, form):
+    def create_form(self):
+        form = super().create_form()
         form.fields["studies"].set_filters({"assessment_id": self.assessment.id, "bioassay": True})
         form.fields["species"].set_filters(
             {"animalgroup__experiment__study__assessment_id": self.assessment.id}
@@ -218,3 +219,4 @@ class EndpointFilterSet(BaseFilterSet):
                 )
 
         form.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(self.assessment.id)
+        return form

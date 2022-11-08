@@ -85,10 +85,12 @@ class MetaResultFilterSet(BaseFilterSet):
             queryset = queryset.filter(protocol__study__published=True)
         return queryset
 
-    def change_form(self, form):
+    def create_form(self):
+        form = super().create_form()
         form.fields["studies"].set_filters({"assessment_id": self.assessment.id, "epi_meta": True})
         form.fields["protocol"].widget.update_filters({"study__assessment_id": self.assessment.id})
         for field in form.fields:
             widget = form.fields[field].widget
             if field in ("label", "health_outcome", "exposure_name"):
                 widget.update_filters({"protocol__study__assessment_id": self.assessment.id})
+        return form

@@ -1,7 +1,6 @@
 import django_filters as df
 from crispy_forms import layout as cfl
 from django import forms
-from django.db.models import QuerySet
 
 from . import autocomplete
 from .forms import BaseFormHelper, form_actions_apply_filters
@@ -91,14 +90,18 @@ class BaseFilterSet(FilterSet):
     @property
     def form(self):
         if not hasattr(self, "_form"):
-            Form = self.get_form_class()
-            if self.is_bound:
-                form = Form(self.data, prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
-            else:
-                form = Form(prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
-            self._form = self.change_form(form)
+            self._form = self.create_form()
         return self._form
 
-    def change_form(self, form: forms.Form):
-        """Make modifications to the generated form if needed"""
-        pass
+    def create_form(self) -> forms.Form:
+        """Create the form used for the filterset.
+
+        Returns:
+            forms.Form: a django.Form instance
+        """
+        Form = self.get_form_class()
+        if self.is_bound:
+            form = Form(self.data, prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
+        else:
+            form = Form(prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
+        return form

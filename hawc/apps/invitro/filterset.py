@@ -133,7 +133,8 @@ class EndpointFilterSet(BaseFilterSet):
             queryset = queryset.filter(experiment__study__published=True)
         return queryset
 
-    def change_form(self, form):
+    def create_form(self):
+        form = super().create_form()
         form.fields["dose_units"].queryset = DoseUnits.objects.get_iv_units(self.assessment.id)
         form.fields["studies"].set_filters({"assessment_id": self.assessment.id, "in_vitro": True})
         # for endpoint autocomplete
@@ -147,3 +148,4 @@ class EndpointFilterSet(BaseFilterSet):
         # for cell type autocomplete
         for field in ("cell_type", "tissue"):
             form.fields[field].widget.update_filters({"study__assessment_id": self.assessment.id})
+        return form
