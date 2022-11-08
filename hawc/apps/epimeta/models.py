@@ -5,7 +5,6 @@ from django.db import models
 from django.urls import reverse
 from reversion import revisions as reversion
 
-from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..epi.models import AdjustmentFactor, Criteria, ResultMetric
 from ..study.models import Study

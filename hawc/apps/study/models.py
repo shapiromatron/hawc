@@ -11,7 +11,6 @@ from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..assessment.models import Assessment, Communication
-from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import SerializerHelper, cleanHTML
 from ..lit.models import Reference, Search
 from . import constants, managers

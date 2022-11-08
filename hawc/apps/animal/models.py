@@ -16,7 +16,6 @@ from reversion import revisions as reversion
 from scipy import stats
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox
-from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import (
     HAWCDjangoJSONEncoder,
     SerializerHelper,
