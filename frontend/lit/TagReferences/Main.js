@@ -170,6 +170,9 @@ class TagReferencesMain extends Component {
                     ) : (
                         <h4>Select a reference</h4>
                     )}
+                    {selectedReferencePk === null ? (
+                        <div className="alert alert-danger">No references found.</div>
+                    ) : null}
                     {this.state.pinInstructions ? (
                         <div
                             className="alert alert-info mt-3 resize-y"
@@ -186,7 +189,13 @@ class TagReferencesMain extends Component {
                                 }}>
                                 &times;
                             </button>
-                            <div dangerouslySetInnerHTML={{__html: store.config.instructions}} />
+                            <div
+                                dangerouslySetInnerHTML={
+                                    store.config.instructions.length > 0
+                                        ? {__html: store.config.instructions}
+                                        : {__html: "No screening instructions found."}
+                                }
+                            />
                         </div>
                     ) : null}
                 </div>
@@ -230,7 +239,11 @@ class TagReferencesMain extends Component {
                     </div>
                     <div
                         className="modal-body"
-                        dangerouslySetInnerHTML={{__html: store.config.instructions}}
+                        dangerouslySetInnerHTML={
+                            store.config.instructions.length > 0
+                                ? {__html: store.config.instructions}
+                                : {__html: "No screening instructions found."}
+                        }
                     />
                 </Modal>
             </div>

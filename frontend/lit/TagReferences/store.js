@@ -22,7 +22,9 @@ class Store {
         this.tagtree = new TagTree(config.tags[0]);
         this.references = Reference.sortedArray(config.refs, this.tagtree);
         // set first reference
-        this.changeSelectedReference(this.references[0]);
+        if (this.references.length > 0) {
+            this.changeSelectedReference(this.references[0]);
+        }
     }
 
     @action.bound changeSelectedReference(reference) {
