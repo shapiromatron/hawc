@@ -1,4 +1,5 @@
 import BaseTable from "shared/utils/BaseTable";
+
 import MetaResult from "./MetaResult";
 
 class MetaResultListTable {

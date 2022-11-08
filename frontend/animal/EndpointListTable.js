@@ -1,7 +1,8 @@
 import _ from "lodash";
+import BaseTable from "shared/utils/BaseTable";
+
 import $ from "$";
 
-import BaseTable from "shared/utils/BaseTable";
 import Endpoint from "./Endpoint";
 
 const endpointRow = function(endpoint) {

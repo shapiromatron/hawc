@@ -1,6 +1,6 @@
-import Query from "shared/parsers/query";
 import assert from "assert";
 import _ from "lodash";
+import Query from "shared/parsers/query";
 
 const getValue = i => i,
     negateValue = v => ["NOT", v],

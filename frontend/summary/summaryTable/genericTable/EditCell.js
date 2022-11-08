@@ -1,13 +1,11 @@
 import {observer} from "mobx-react";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-
-import h from "shared/utils/helpers";
-
-import Modal from "shared/components/Modal";
-import QuillTextInput from "shared/components/QuillTextInput";
+import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import IntegerInput from "shared/components/IntegerInput";
+import Modal from "shared/components/Modal";
+import QuillTextInput from "shared/components/QuillTextInput";
+import h from "shared/utils/helpers";
 
 import {getCellExcelName} from "./common";
 
@@ -237,4 +235,4 @@ EditCellModal.propTypes = {
     store: PropTypes.object.isRequired,
 };
 
-export {QuickEditCell, EditCellModal};
+export {EditCellModal, QuickEditCell};

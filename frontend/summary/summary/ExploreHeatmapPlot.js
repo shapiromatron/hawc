@@ -1,14 +1,13 @@
-import _ from "lodash";
 import * as d3 from "d3";
+import _ from "lodash";
 import {autorun} from "mobx";
 import React from "react";
 import ReactDOM from "react-dom";
-
-import VisualToolbar from "shared/components/VisualToolbar";
 import bindTooltip from "shared/components/Tooltip";
-import h from "shared/utils/helpers";
+import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 
 import {AxisTooltip, CellTooltip} from "./heatmap/Tooltip";
 

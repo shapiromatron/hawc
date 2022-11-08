@@ -1,5 +1,7 @@
-import $ from "$";
 import BaseTable from "shared/utils/BaseTable";
+
+import $ from "$";
+
 import Outcome from "./Outcome";
 
 class OutcomeListTable {

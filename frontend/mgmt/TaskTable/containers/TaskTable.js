@@ -1,15 +1,14 @@
-import {inject, observer} from "mobx-react";
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import _ from "lodash";
-import moment from "moment";
+import "./Root.css";
 
+import _ from "lodash";
+import {inject, observer} from "mobx-react";
+import moment from "moment";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import PopoverTextSpan from "shared/components/PopoverTextSpan";
 
-import {TASK_TYPES, TASK_TYPE_DESCRIPTIONS} from "../constants";
 import EditableTask from "../components/EditableTask";
-
-import "./Root.css";
+import {TASK_TYPE_DESCRIPTIONS, TASK_TYPES} from "../constants";
 
 @inject("store")
 @observer

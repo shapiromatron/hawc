@@ -1,7 +1,7 @@
-import $ from "$";
-import {observable, action, computed} from "mobx";
-
+import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
+
+import $ from "$";
 
 const TABS = {
     OVERALL: 0,

@@ -1,6 +1,7 @@
+import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
+
 import $ from "$";
 
-import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";
 import {NULL_CASE} from "./shared";
@@ -897,4 +898,4 @@ export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
 export {_DataPivot_settings_barchart};
 export {_DataPivot_settings_general};
-export {buildHeaderTr, buildColGroup};
+export {buildColGroup, buildHeaderTr};

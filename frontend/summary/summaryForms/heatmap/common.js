@@ -1,6 +1,6 @@
-import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 
 class MissingData extends Component {
@@ -69,4 +69,4 @@ const HelpText = {
     wrapText: "Wrap text at a specified length, else auto calculated",
 };
 
-export {MissingData, RefreshRequired, DataStatusIndicator, HelpText};
+export {DataStatusIndicator, HelpText, MissingData, RefreshRequired};

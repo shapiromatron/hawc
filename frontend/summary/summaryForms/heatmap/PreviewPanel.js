@@ -1,10 +1,11 @@
-import $ from "$";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
+import ExploreHeatmap from "summary/summary/ExploreHeatmap";
+
+import $ from "$";
 
 import {MissingData, RefreshRequired} from "./common";
-import ExploreHeatmap from "summary/summary/ExploreHeatmap";
 
 @inject("store")
 @observer

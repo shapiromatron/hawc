@@ -1,6 +1,5 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
-
 import h from "shared/utils/helpers";
 
 const NULL_VALUE = "---",

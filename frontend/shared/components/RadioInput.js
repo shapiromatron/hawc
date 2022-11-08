@@ -1,8 +1,8 @@
-import React, {Component} from "react";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
 
-import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
+import LabelInput from "./LabelInput";
 
 class RadioInput extends Component {
     constructor(props) {

@@ -1,18 +1,17 @@
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CheckboxInput from "shared/components/CheckboxInput";
 import FloatInput from "shared/components/FloatInput";
-import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
 
-import {MissingData, RefreshRequired} from "./common";
 import AxisLabelTable from "./AxisLabelTable";
+import {MissingData, RefreshRequired} from "./common";
+import DetailTable from "./DetailTable";
 import FilterTable from "./FilterTable";
 import FilterWidgetTable from "./FilterWidgetTable";
-import DetailTable from "./DetailTable";
 
 @inject("store")
 @observer

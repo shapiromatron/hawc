@@ -1,12 +1,12 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
-
-import {termUrlLookup, textUrlLookup} from "./constants";
-import {NO_VOCAB_HELP_TEXT} from "../../vocab/constants";
-import h from "shared/utils/helpers";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import AutocompleteSelectableText from "shared/components/AutocompleteSelectableText";
 import AutocompleteTerm from "shared/components/AutocompleteTerm";
+import h from "shared/utils/helpers";
+
+import {NO_VOCAB_HELP_TEXT} from "../../vocab/constants";
+import {termUrlLookup, textUrlLookup} from "./constants";
 
 @inject("store")
 @observer

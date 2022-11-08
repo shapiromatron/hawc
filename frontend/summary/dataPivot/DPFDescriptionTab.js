@@ -1,6 +1,6 @@
 import $ from "$";
 
-import {_DataPivot_settings_description, buildHeaderTr, buildColGroup} from "./DataPivotUtilities";
+import {_DataPivot_settings_description, buildColGroup, buildHeaderTr} from "./DataPivotUtilities";
 
 let buildDescriptionTable = function(tab, dp) {
         let thead = $("<thead>").html(
