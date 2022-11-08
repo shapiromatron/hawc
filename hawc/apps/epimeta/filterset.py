@@ -52,14 +52,14 @@ class MetaResultFilterSet(BaseFilterSet):
             ("label", "meta result label"),
             ("protocol__name", "protocol"),
             ("health_outcome", "health outcome"),
-            ("exposure", "exposure"),
+            ("estimate", "estimate"),
         ),
         choices=(
             ("study", "study"),
             ("meta result label", "meta result label"),
             ("protocol", "protocol"),
             ("health outcome", "health outcome"),
-            ("exposure", "exposure"),
+            ("estimate", "estimate"),
         ),
     )
 
@@ -80,10 +80,11 @@ class MetaResultFilterSet(BaseFilterSet):
         ]
 
     def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         queryset = queryset.filter(protocol__study__assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(protocol__study__published=True)
-        return queryset
+        return queryset.select_related("protocol__study")
 
     def create_form(self):
         form = super().create_form()

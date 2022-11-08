@@ -75,7 +75,7 @@ class EndpointFilterSet(BaseFilterSet):
         help_text="ex: counts",
     )
     dose_units = df.ModelChoiceFilter(
-        field_name="study_population__exposures__metric_units",
+        field_name="experiment__dose_units",
         label="Dose units",
         queryset=DoseUnits.objects.all(),
     )
@@ -128,10 +128,13 @@ class EndpointFilterSet(BaseFilterSet):
         ]
 
     def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         queryset = queryset.filter(assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(experiment__study__published=True)
-        return queryset
+        return queryset.select_related(
+            "experiment__study", "experiment__dose_units", "chemical"
+        ).prefetch_related("effects")
 
     def create_form(self):
         form = super().create_form()

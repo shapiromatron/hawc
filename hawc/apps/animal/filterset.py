@@ -192,10 +192,11 @@ class EndpointFilterSet(BaseFilterSet):
         ]
 
     def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         queryset = queryset.filter(assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(animal_group__experiment__study__published=True)
-        return queryset
+        return queryset.select_related("animal_group__experiment__study")
 
     def create_form(self):
         form = super().create_form()
