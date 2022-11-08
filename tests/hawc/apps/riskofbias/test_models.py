@@ -1,3 +1,4 @@
+import re
 from textwrap import dedent
 
 import pytest
@@ -25,9 +26,9 @@ class TestRiskOfBiasScoreOverrideObject:
     def test_get_orphan_relations(self):
         actual = RiskOfBiasScoreOverrideObject.get_orphan_relations()
         expected = dedent(
-            """
+            r"""
             Found orphaned RiskOfBiasScoreOverrideObjects:
-            id=3;score=16;obj_ct=50;obj_id=99999
+            id=3;score=16;obj_ct=\d+;obj_id=99999
             """
         ).strip()
-        assert actual == expected
+        assert re.match(expected, actual)
