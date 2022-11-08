@@ -328,14 +328,6 @@ class Study(Reference):
             ser["published"],
         )
 
-    @staticmethod
-    def get_docx_template_context(assessment, queryset):
-        studies = [SerializerHelper.get_serialized(study, json=False) for study in queryset]
-        return {
-            "assessment": AssessmentSerializer().to_representation(assessment),
-            "studies": studies,
-        }
-
     @classmethod
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
