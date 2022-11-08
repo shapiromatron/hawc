@@ -21,6 +21,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
+from .filterset import BaseFilterSet
 from .helper import WebappConfig, tryParseInt
 
 logger = logging.getLogger(__name__)
@@ -792,7 +793,7 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 
 class BaseFilterList(BaseList):
-    filterset_class = None  # required
+    filterset_class: BaseFilterSet
 
     def get_paginate_by(self, qs) -> int:
         value = self.request.GET.get("paginate_by")
@@ -805,7 +806,7 @@ class BaseFilterList(BaseList):
     def filterset(self):
         if not hasattr(self, "_filterset"):
             qs = self.get_base_queryset()
-            self._filterset = self.filterset_class(
+            self._filterset: BaseFilterSet = self.filterset_class(
                 data=self.request.GET, queryset=qs, request=self.request, assessment=self.assessment
             )
         return self._filterset

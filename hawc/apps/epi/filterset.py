@@ -172,8 +172,6 @@ class OutcomeFilterSet(BaseFilterSet):
             {"studypopulation__study__assessment_id": self.assessment.id}
         )
         form.fields["metric_units"].queryset = DoseUnits.objects.get_epi_units(self.assessment.id)
-        ("study_population")
-
         for field in form.fields:
             widget = form.fields[field].widget
             # for study population autocomplete
