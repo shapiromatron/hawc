@@ -71,20 +71,20 @@ class TestReference:
 
         # User #1 adds user tags, but not applied to reference since we need 2+ people
         tags = [32]
-        ref.update_tags(tags, pm)
+        ref.update_tags(pm, tags)
         ref.refresh_from_db()
         assert ref.has_user_tag_conflicts() is True
         assert ref.tags.count() == 0
 
         # User #2 adds the same tags, those are now applied to the reference tag
-        ref.update_tags(tags, tm)
+        ref.update_tags(tm, tags)
         ref.refresh_from_db()
         assert ref.has_user_tag_conflicts() is False
         assert ref.tags.count() > 0
 
         # User #2 changes their tags, now there are conflicts again; the reference is unchanged
         new_tags = [33]
-        ref.update_tags(new_tags, tm)
+        ref.update_tags(tm, new_tags)
         ref.refresh_from_db()
         assert ref.has_user_tag_conflicts() is True
         assert list(ref.tags.values_list("id", flat=True)) == tags
