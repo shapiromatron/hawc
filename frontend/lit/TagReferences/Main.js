@@ -43,7 +43,9 @@ class TagReferencesMain extends Component {
         return (
             <div className="row">
                 <div className={store.filterClass} id="refFilter">
-                    <div className="row px-3 mb-2 justify-content-between" style={{maxHeight: "1.9rem"}}>
+                    <div
+                        className="row px-3 mb-2 justify-content-between"
+                        style={{maxHeight: "1.9rem"}}>
                         <h4>References</h4>
                         <ReferenceSortSelector onChange={store.sortReferences} />
                     </div>
