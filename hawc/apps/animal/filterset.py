@@ -196,6 +196,12 @@ class EndpointFilterSet(BaseFilterSet):
         queryset = queryset.filter(assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(animal_group__experiment__study__published=True)
+
+        dose_units = (
+            self.form.cleaned_data["dose_units"] or self.form.fields["dose_units"].queryset.first()
+        )
+        queryset = queryset.annotate_dose_values(dose_units)
+
         return queryset.select_related("animal_group__experiment__study")
 
     def create_form(self):
