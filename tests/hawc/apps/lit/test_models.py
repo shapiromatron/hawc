@@ -64,34 +64,30 @@ class TestReference:
         assert isinstance(data, str)
 
     def test_update_tags(self):
+        # Test that conflict resolution is working
         ref = Reference.objects.get(id=9)
-        pm = HAWCUser.objects.get(id=2)
-        tm = HAWCUser.objects.get(id=3)
-        # No other tags
+        pm = HAWCUser.objects.get(email="pm@hawcproject.org")
+        tm = HAWCUser.objects.get(email="team@hawcproject.org")
+
+        # User #1 adds user tags, but not applied to reference since we need 2+ people
         tags = [32]
         ref.update_tags(tags, pm)
-        ref.save()
-        # reference tags have not been modified
-        assert list(ref.tags.all()) == []
-        assert ref.has_conflict is False
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is True
+        assert ref.tags.count() == 0
 
-        # existing tags, no conflict
+        # User #2 adds the same tags, those are now applied to the reference tag
         ref.update_tags(tags, tm)
-        ref.save()
-        # reference tags have been updated
-        updated_tags = list(ref.tags.all())
-        assert updated_tags != []
-        assert ref.has_conflict is False
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is False
+        assert ref.tags.count() > 0
 
-        # conflicting tags
-        tags = [33]
-        original_tags = list(ref.tags.all())
-        ref.update_tags(tags, tm)
-        ref.save()
-        # reference tags have not been modified
-        updated_tags = list(ref.tags.all())
-        assert original_tags == updated_tags
-        assert ref.has_conflict
+        # User #2 changes their tags, now there are conflicts again; the reference is unchanged
+        new_tags = [33]
+        ref.update_tags(new_tags, tm)
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is True
+        assert list(ref.tags.values_list("id", flat=True)) == tags
 
 
 @pytest.mark.vcr

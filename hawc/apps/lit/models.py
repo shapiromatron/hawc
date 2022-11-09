@@ -869,27 +869,29 @@ class Reference(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def update_tags(self, tag_pks, user):
-        user_tag, created = UserReferenceTag.objects.get_or_create(reference=self, user=user)
+        # save current user settings
+        user_tag, _ = UserReferenceTag.objects.get_or_create(reference=self, user=user)
+        user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
+        user_tag.save()
 
+        update_reference_tags = False
         if self.assessment.literature_settings.conflict_resolution:
             user_tags = self.user_tags.prefetch_related("tags")
-            if user_tags.count() < 2:
-                user_tag.save()
-                return
-            new_tags = list(user_tag.tags.all())
+            if user_tags.count() >= 2:
+                tags = set(tag_pks)
+                if all(tags == {tag.id for tag in user_tag.tags.all()} for user_tag in user_tags):
+                    update_reference_tags = True
+        else:
+            update_reference_tags = True
 
-            for ut in user_tags.exclude(pk=user_tag.pk):
-                if new_tags != list(ut.tags.all()):
-                    user_tag.resolved = False
-                    user_tag.save()
-                    return
-        user_tag.save()
-        self.tags.set(tag_pks)
+        if update_reference_tags:
+            self.user_tags.update(is_resolved=True)
+            self.tags.set(tag_pks)
+            self.last_updated = timezone.now()
 
-    @property
-    def has_conflict(self):
-        return self.user_tags.filter(resolved=False).exists()
+    def has_user_tag_conflicts(self):
+        return self.user_tags.filter(is_resolved=False).exists()
 
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
@@ -1126,7 +1128,9 @@ class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
     tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
-    resolved = models.BooleanField(default=True)
+    is_resolved = models.BooleanField(
+        default=False, help_text="User specific tag differences are resolved for this reference"
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
