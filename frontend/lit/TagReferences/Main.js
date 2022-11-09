@@ -43,8 +43,8 @@ class TagReferencesMain extends Component {
         return (
             <div className="row">
                 <div className={store.filterClass} id="refFilter">
-                    <div className="row px-3 justify-content-between" style={{maxHeight: "1.9rem"}}>
-                        <h4 className="pt-2 mb-1">References</h4>
+                    <div className="row px-3 mb-2 justify-content-between" style={{maxHeight: "1.9rem"}}>
+                        <h4>References</h4>
                         <ReferenceSortSelector onChange={store.sortReferences} />
                     </div>
                     <div className="card">
@@ -77,7 +77,7 @@ class TagReferencesMain extends Component {
                     {store.selectedReference ? (
                         <div>
                             <div className="d-flex justify-content-between">
-                                <h4 className="pt-2 my-0">
+                                <h4 className="my-0">
                                     <button
                                         id="collapse-btn"
                                         className="btn btn-sm btn-info"
@@ -200,7 +200,7 @@ class TagReferencesMain extends Component {
                     ) : null}
                 </div>
                 <div className="px-3" id="tagtree-col">
-                    <h4 className="pt-2 my-0">Available tags</h4>
+                    <h4>Available tags</h4>
                     <TagTree
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.addTag(tag)}
