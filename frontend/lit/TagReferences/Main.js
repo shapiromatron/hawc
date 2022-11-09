@@ -81,6 +81,7 @@ class TagReferencesMain extends Component {
                                     <button
                                         id="collapse-btn"
                                         className="btn btn-sm btn-info"
+                                        title="Show/hide reference sidebar"
                                         type="button"
                                         onClick={() => store.toggleSlideAway()}>
                                         <div className={store.filterClass} id="filter-btn">
@@ -99,17 +100,17 @@ class TagReferencesMain extends Component {
                                         content={"Click on a tag to remove"}
                                     />
                                 </h4>
-                                <span>&nbsp;</span>
                                 <span
                                     ref={this.savedPopup}
-                                    className="alert alert-success litSavedIcon"
+                                    className="bg-success text-white font-weight-bold px-2 rounded"
                                     style={{display: "none"}}>
                                     Saved!
                                 </span>
                                 <button
                                     className="btn btn-primary pt-1"
+                                    title="Save and go to next reference"
                                     onClick={() => store.saveAndNext()}>
-                                    Save and go to next
+                                    <i className="fa fa-save"></i>&nbsp;Save and next
                                 </button>
                             </div>
                             <div className="well" style={{minHeight: "50px"}}>
@@ -156,7 +157,10 @@ class TagReferencesMain extends Component {
                                             );
                                             this.setState({showFullTag: !this.state.showFullTag});
                                         }}>
-                                        &nbsp;{this.state.showFullTag ? "Hide" : "Show"} full tag
+                                        &nbsp;
+                                        {this.state.showFullTag
+                                            ? "Show collapsed tag"
+                                            : "Show full tag"}
                                     </div>,
                                     store.config.instructions.length > 0 ? (
                                         <div

@@ -319,11 +319,6 @@ div.smart-tag.active {
     background-color: #f5f5f5;
     border-radius: 6px;
 }
-.litSavedIcon {
-    font-weight: bold;
-    padding: 3px 8px;
-    margin: 0px;
-}
 .ref_small {
     font-size: 0.8465em;
     display: block;
