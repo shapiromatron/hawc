@@ -409,6 +409,12 @@ class EndpointFilterList(BaseFilterList):
     model = models.Endpoint
     filterset_class = filterset.EndpointFilterSet
 
+    def get_context_data(self, **kwargs):
+        oel_names = self.assessment.get_noel_names()
+        header_names = f"Study,Experiment,Animal group,Endpoint,Units,{oel_names.noel},{oel_names.loel},BMD,BMDL"
+        kwargs.update(header_names=header_names)
+        return super().get_context_data(**kwargs)
+
 
 @method_decorator(beta_tester_required, name="dispatch")
 class EndpointListV2(BaseList):

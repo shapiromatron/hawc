@@ -7,7 +7,7 @@
 {% include 'common/filter_list.html' with plural_object_name='endpoints' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '12,14,15,24,7,7,7,7,7' %}
-    {% bs4_thead 'Study,Experiment,Animal group,Endpoint,Units,NOEL,LOEL,BMD,BMDL' %}
+    {% bs4_thead header_names %}
     <tbody>
         {% for object in object_list %}
         <tr>
