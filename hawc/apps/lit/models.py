@@ -995,7 +995,7 @@ class Reference(models.Model):
 
     @property
     def has_study(self) -> bool:
-        return apps.get_model("study", "Study").objects.filter(id=self.id).exists()
+        return hasattr(self, "study")
 
     def get_pubmed_id(self):
         for ident in self.identifiers.all():

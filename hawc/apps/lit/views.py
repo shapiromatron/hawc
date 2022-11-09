@@ -264,8 +264,8 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
         if hasattr(self, "qs_reference"):
             refs = self.qs_reference
         else:
-            refs = refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
-        refs = refs.prefetch_related("searches", "identifiers", "tags")
+            refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
+        refs = refs.select_related("study").prefetch_related("searches", "identifiers", "tags")
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
