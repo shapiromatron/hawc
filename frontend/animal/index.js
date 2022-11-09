@@ -2,11 +2,11 @@ import AnimalGroup from "./AnimalGroup";
 import startupAnimalGroupTable from "./AnimalGroupTable";
 import DosingRegimeForm from "./DosingRegimeForm";
 import EditEndpoint from "./EditEndpoint";
+import ehvBrowserStartup from "./EhvBrowser";
 import Endpoint from "./Endpoint";
 import startupEndpointForm from "./EndpointForm";
 import startupEndpointListApp from "./EndpointListApp";
 import Experiment from "./Experiment";
-import ehvBrowserStartup from "./EhvBrowser";
 
 export default {
     AnimalGroup,

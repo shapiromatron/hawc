@@ -1,13 +1,13 @@
 import _ from "lodash";
-import $ from "$";
-
 import {DEFAULT} from "shared/constants";
 import RoBHeatmap from "summary/summary/RoBHeatmap";
 
+import $ from "$";
+
 import BaseVisualForm from "./BaseVisualForm";
+import {CheckboxField, IntegerField, SelectField, TextField} from "./Fields";
 import RoBMetricTable from "./RoBMetricTable";
 import RoBScoreExcludeTable from "./RoBScoreExcludeTable";
-import {TextField, IntegerField, CheckboxField, SelectField} from "./Fields";
 
 class RoBHeatmapForm extends BaseVisualForm {
     afterGetDataHook(data) {

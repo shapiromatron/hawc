@@ -11,7 +11,6 @@ from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..assessment.models import Assessment, Communication
-from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import SerializerHelper, cleanHTML
 from ..lit.models import Reference, Search
 from . import constants, managers
@@ -327,14 +326,6 @@ class Study(Reference):
             ser["editable"],
             ser["published"],
         )
-
-    @staticmethod
-    def get_docx_template_context(assessment, queryset):
-        studies = [SerializerHelper.get_serialized(study, json=False) for study in queryset]
-        return {
-            "assessment": AssessmentSerializer().to_representation(assessment),
-            "studies": studies,
-        }
 
     @classmethod
     def delete_caches(cls, ids):

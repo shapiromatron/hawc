@@ -201,10 +201,10 @@ const gcf = function(X, A) {
         });
     };
 export {
-    gammaCDF,
-    normalCDF,
-    inv_tdist_05,
-    addStdev,
     addContinuousConfidenceIntervals,
     addDichotomousConfidenceIntervals,
+    addStdev,
+    gammaCDF,
+    inv_tdist_05,
+    normalCDF,
 };

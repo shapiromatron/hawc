@@ -1,9 +1,8 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-
 import DueDateLabel from "mgmt/TaskTable/components/DueDateLabel";
 import StatusLabel from "mgmt/TaskTable/components/StatusLabel";
 import {TASK_TYPES} from "mgmt/TaskTable/constants";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 
 class TaskLabel extends Component {
     render() {

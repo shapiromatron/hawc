@@ -1,5 +1,5 @@
-import _ from "lodash";
 import * as d3 from "d3";
+import _ from "lodash";
 import textures from "textures";
 
 const Patterns = {
@@ -123,4 +123,4 @@ const Patterns = {
         });
     };
 
-export {Patterns, applyStyles};
+export {applyStyles, Patterns};

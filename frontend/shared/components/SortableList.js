@@ -1,7 +1,7 @@
+import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import Sortable from "sortablejs";
-import {observer} from "mobx-react";
 
 const SortableElement = observer(props => {
     const {item} = props;

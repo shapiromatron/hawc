@@ -1,22 +1,21 @@
-import $ from "$";
-import _ from "lodash";
 import * as d3 from "d3";
-
-import HAWCModal from "shared/utils/HAWCModal";
-
+import _ from "lodash";
 import {
-    getMultiScoreDisplaySettings,
-    BIAS_DIRECTION_UP,
-    BIAS_DIRECTION_DOWN,
     BIAS_DIRECTION_COMPACT,
+    BIAS_DIRECTION_DOWN,
+    BIAS_DIRECTION_UP,
     FOOTNOTES,
+    getMultiScoreDisplaySettings,
 } from "riskofbias/constants";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
+import HAWCModal from "shared/utils/HAWCModal";
 
-import RoBLegend from "./RoBLegend";
+import $ from "$";
+
 import D3Visualization from "./D3Visualization";
+import RoBLegend from "./RoBLegend";
 
 class RoBHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {

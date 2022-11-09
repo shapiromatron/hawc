@@ -1,11 +1,10 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
-
-import IntegerInput from "shared/components/IntegerInput";
-import TextInput from "shared/components/TextInput";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import FormActions from "shared/components/FormActions";
+import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
 
 @inject("store")
 @observer

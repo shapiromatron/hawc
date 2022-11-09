@@ -1,11 +1,12 @@
-import $ from "$";
 import _ from "lodash";
-
 import {
-    addStdev,
     addContinuousConfidenceIntervals,
     addDichotomousConfidenceIntervals,
+    addStdev,
 } from "shared/utils/math";
+
+import $ from "$";
+
 import DRPlot from "./DRPlot";
 import Endpoint from "./Endpoint";
 class EditEndpoint {

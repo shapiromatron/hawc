@@ -1,18 +1,18 @@
-import $ from "$";
-import _ from "lodash";
 import * as d3 from "d3";
-
-import h from "shared/utils/helpers";
-import D3Plot from "shared/utils/D3Plot";
+import _ from "lodash";
 import Query from "shared/parsers/query";
+import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
+
+import $ from "$";
 
 import {applyStyles} from "../summary/common";
 import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
-import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
-import {NULL_CASE, OrderChoices, buildStyleMap} from "./shared";
+import {buildStyleMap, NULL_CASE, OrderChoices} from "./shared";
+import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
 
 const EXTRA_BUFFER = 8; // extra buffer around plots to prevent boundary forest-plot points
 

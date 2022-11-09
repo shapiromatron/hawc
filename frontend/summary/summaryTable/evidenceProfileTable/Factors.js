@@ -2,10 +2,9 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-
-import h from "shared/utils/helpers";
-import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
+import QuillTextInput from "shared/components/QuillTextInput";
+import h from "shared/utils/helpers";
 
 const increaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
@@ -151,4 +150,4 @@ FactorsCell.propTypes = {
     isIncreasing: PropTypes.bool.isRequired,
 };
 
-export {FactorsForm, FactorsCell};
+export {FactorsCell, FactorsForm};

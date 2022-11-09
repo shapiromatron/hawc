@@ -1,9 +1,10 @@
-import React, {Component} from "react";
-import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Autosuggest from "react-autosuggest";
-import {theme} from "./constants";
+import ReactDOM from "react-dom";
 import h from "shared/utils/helpers";
+
+import {theme} from "./constants";
 
 class ClientSideAutosuggest extends Component {
     /*
