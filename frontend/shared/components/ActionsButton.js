@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 const ActionsButton = props => {
     return (
@@ -49,4 +49,4 @@ ActionItem.propTypes = {
     label: PropTypes.string.isRequired,
 };
 
-export {ActionLink, ActionItem, ActionsButton};
+export {ActionItem, ActionLink, ActionsButton};

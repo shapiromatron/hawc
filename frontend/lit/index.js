@@ -1,16 +1,16 @@
+import {Provider} from "mobx-react";
 import React from "react";
 import ReactDOM from "react-dom";
-import {Provider} from "mobx-react";
 
-import Reference from "./Reference";
+import BulkTagReferencesMain from "./BulkTagReferences/Main";
+import BulkTagReferencesMainStore from "./BulkTagReferences/store";
 import ReferenceComponent from "./components/Reference";
 import ReferenceTable from "./components/ReferenceTable";
+import Reference from "./Reference";
 import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
 import TagReferencesMain from "./TagReferences/Main";
 import TagReferencesMainStore from "./TagReferences/store";
-import BulkTagReferencesMain from "./BulkTagReferences/Main";
-import BulkTagReferencesMainStore from "./BulkTagReferences/store";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
 

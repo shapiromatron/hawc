@@ -1,12 +1,11 @@
 import {inject, observer} from "mobx-react";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-
-import HAWCUtils from "shared/utils/HAWCUtils";
+import React, {Component} from "react";
 import NonFieldErrors from "shared/components/NonFieldErrors";
-import TextInput from "shared/components/TextInput";
-import SelectInput from "shared/components/SelectInput";
 import QuillTextInput from "shared/components/QuillTextInput";
+import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 @inject("store")
 @observer

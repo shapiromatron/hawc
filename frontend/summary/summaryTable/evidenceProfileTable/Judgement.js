@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import SelectInput from "shared/components/SelectInput";
 
-import {NO_JUDGEMENT, CUSTOM_JUDGEMENT} from "./common";
+import {CUSTOM_JUDGEMENT, NO_JUDGEMENT} from "./common";
 
 const judgementChoices = [
         {value: 30, icon: "⊕⊕⊕", text: "Robust"},
@@ -80,4 +80,4 @@ Judgement.propTypes = {
     summary: PropTypes.bool.isRequired,
 };
 
-export {JudgementSelector, Judgement};
+export {Judgement, JudgementSelector};

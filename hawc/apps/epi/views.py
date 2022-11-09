@@ -53,15 +53,9 @@ class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
         if "id" in kwargs["initial"]:
             # add additional M2M through relationships
             initial = self.model.objects.get(id=kwargs["initial"]["id"])
-            kwargs["initial"]["inclusion_criteria"] = initial.inclusion_criteria.values_list(
-                "id", flat=True
-            )
-            kwargs["initial"]["exclusion_criteria"] = initial.exclusion_criteria.values_list(
-                "id", flat=True
-            )
-            kwargs["initial"]["confounding_criteria"] = initial.confounding_criteria.values_list(
-                "id", flat=True
-            )
+            kwargs["initial"]["inclusion_criteria"] = initial.inclusion_criteria.values_list("id", flat=True)
+            kwargs["initial"]["exclusion_criteria"] = initial.exclusion_criteria.values_list("id", flat=True)
+            kwargs["initial"]["confounding_criteria"] = initial.confounding_criteria.values_list("id", flat=True)
 
         return kwargs
 
@@ -170,6 +164,9 @@ class OutcomeFilterList(BaseFilterList):
     model = models.Outcome
     filterset_class = filterset.OutcomeFilterSet
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("study_population__study")
+
 
 class OutcomeCreate(BaseCreate):
     success_message = "Outcome created."
@@ -222,12 +219,8 @@ class ResultCreate(BaseCreateWithFormset):
         if "id" in kwargs["initial"]:
             # add additional M2M through relationships
             initial = self.model.objects.get(id=kwargs["initial"]["id"])
-            kwargs["initial"]["factors_applied"] = initial.factors_applied.values_list(
-                "id", flat=True
-            )
-            kwargs["initial"]["factors_considered"] = initial.factors_considered.values_list(
-                "id", flat=True
-            )
+            kwargs["initial"]["factors_applied"] = initial.factors_applied.values_list("id", flat=True)
+            kwargs["initial"]["factors_considered"] = initial.factors_considered.values_list("id", flat=True)
 
         return kwargs
 
@@ -242,9 +235,7 @@ class ResultCreate(BaseCreateWithFormset):
         }
 
     def build_initial_formset_factory(self):
-        return forms.BlankGroupResultFormset(
-            queryset=models.GroupResult.objects.none(), **self.get_formset_kwargs()
-        )
+        return forms.BlankGroupResultFormset(queryset=models.GroupResult.objects.none(), **self.get_formset_kwargs())
 
 
 class ResultCopyAsNewSelector(CopyAsNewSelectorMixin, OutcomeDetail):
@@ -263,9 +254,7 @@ class ResultUpdate(BaseUpdateWithFormset):
     formset_factory = forms.GroupResultFormset
 
     def build_initial_formset_factory(self):
-        return forms.GroupResultFormset(
-            queryset=self.object.results.all(), **self.get_formset_kwargs()
-        )
+        return forms.GroupResultFormset(queryset=self.object.results.all(), **self.get_formset_kwargs())
 
     def get_formset_kwargs(self):
         return {

@@ -1,10 +1,10 @@
 import {
-    defineProps,
-    defineAxis,
-    defineMultiAxis,
-    defineFilter,
-    defineTable,
     COLORS,
+    defineAxis,
+    defineFilter,
+    defineMultiAxis,
+    defineProps,
+    defineTable,
 } from "./shared";
 
 // BSD = bioassay study design
@@ -589,4 +589,4 @@ BEDSettings.DASHBOARDS = [
     },
 ];
 
-export {BSDSettings, BESettings, BEDSettings};
+export {BEDSettings, BESettings, BSDSettings};

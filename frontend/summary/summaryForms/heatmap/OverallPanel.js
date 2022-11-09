@@ -1,12 +1,10 @@
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
-
-import QuillTextInput from "shared/components/QuillTextInput";
-import TextInput from "shared/components/TextInput";
-import TextAreaInput from "shared/components/TextAreaInput";
 import CheckboxInput from "shared/components/CheckboxInput";
-
+import QuillTextInput from "shared/components/QuillTextInput";
+import TextAreaInput from "shared/components/TextAreaInput";
+import TextInput from "shared/components/TextInput";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
 @inject("store")

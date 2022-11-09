@@ -1,11 +1,11 @@
-import $ from "$";
 import {action, computed, observable} from "mobx";
-
 import h from "shared/utils/helpers";
 
+import $ from "$";
+
+import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
-import {sortReferences} from "../constants";
 
 class Store {
     constructor(config) {

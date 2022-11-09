@@ -25,18 +25,14 @@ class EndpointFilterSet(BaseFilterSet):
         field_name="animal_group__experiment__chemical",
         lookup_expr="icontains",
         label="Chemical name",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.ExperimentAutocomplete, field="chemical"
-        ),
+        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.ExperimentAutocomplete, field="chemical"),
         help_text="ex: sodium",
     )
     cas = df.CharFilter(
         field_name="animal_group__experiment__cas",
         lookup_expr="icontains",
         label="CAS",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.ExperimentAutocomplete, field="cas"
-        ),
+        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.ExperimentAutocomplete, field="cas"),
         help_text="ex: 107-02-8",
     )
     lifestage_exposed = df.CharFilter(
@@ -86,41 +82,31 @@ class EndpointFilterSet(BaseFilterSet):
     name = df.CharFilter(
         lookup_expr="icontains",
         label="Endpoint name",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="name"
-        ),
+        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.EndpointAutocomplete, field="name"),
         help_text="ex: heart weight",
     )
     system = df.CharFilter(
         lookup_expr="icontains",
         label="System",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="system"
-        ),
+        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.EndpointAutocomplete, field="system"),
         help_text="ex: endocrine",
     )
     organ = df.CharFilter(
         lookup_expr="icontains",
         label="Organ",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="organ"
-        ),
+        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.EndpointAutocomplete, field="organ"),
         help_text="ex: pituitary",
     )
     effect = df.CharFilter(
         lookup_expr="icontains",
         label="Effect",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="effect"
-        ),
+        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.EndpointAutocomplete, field="effect"),
         help_text="ex: alanine aminotransferase (ALT)",
     )
     effect_subtype = df.CharFilter(
         lookup_expr="icontains",
         label="Effect Subtype",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="effect_subtype"
-        ),
+        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.EndpointAutocomplete, field="effect_subtype"),
         help_text="ex: ",
     )
     tags = df.CharFilter(
@@ -195,20 +181,18 @@ class EndpointFilterSet(BaseFilterSet):
             ]
         }
 
-    def prefilter_queryset(self, queryset):
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         queryset = queryset.filter(assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(animal_group__experiment__study__published=True)
         return queryset
 
-    def change_form(self, form):
+    def create_form(self):
+        form = super().create_form()
         form.fields["studies"].set_filters({"assessment_id": self.assessment.id, "bioassay": True})
-        form.fields["species"].set_filters(
-            {"animalgroup__experiment__study__assessment_id": self.assessment.id}
-        )
-        form.fields["strain"].set_filters(
-            {"animalgroup__experiment__study__assessment_id": self.assessment.id}
-        )
+        form.fields["species"].set_filters({"animalgroup__experiment__study__assessment_id": self.assessment.id})
+        form.fields["strain"].set_filters({"animalgroup__experiment__study__assessment_id": self.assessment.id})
 
         for field in form.fields:
             widget = form.fields[field].widget
@@ -217,9 +201,7 @@ class EndpointFilterSet(BaseFilterSet):
             elif field in ("lifestage_exposed", "lifestage_assessed"):
                 widget.update_filters({"experiment__study__assessment_id": self.assessment.id})
             elif field in ("name", "system", "organ", "effect", "effect_subtype"):
-                widget.update_filters(
-                    {"animal_group__experiment__study__assessment_id": self.assessment.id}
-                )
+                widget.update_filters({"animal_group__experiment__study__assessment_id": self.assessment.id})
 
         form.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(self.assessment.id)
         return form

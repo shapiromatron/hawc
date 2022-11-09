@@ -52,9 +52,7 @@ class GridColumn(BaseModel):
         if self.rows:
             for i, row in enumerate(self.rows):
                 row.apply_layout(helper, index + i)
-            helper[index : index + len(self.rows)].wrap_together(
-                cfl.Column, css_class=self.css_class
-            )
+            helper[index : index + len(self.rows)].wrap_together(cfl.Column, css_class=self.css_class)
         else:
             helper[index].wrap(cfl.Column, css_class=self.css_class)
 
@@ -181,9 +179,7 @@ class BaseFilterSet(FilterSet):
             undefined = [f for f in undefined if f not in cls.declared_filters]
 
         if undefined:
-            raise TypeError(
-                "'Meta.fields' must not contain non-model field names: %s" % ", ".join(undefined)
-            )
+            raise TypeError("'Meta.fields' must not contain non-model field names: %s" % ", ".join(undefined))
 
         # Add in declared filters. This is necessary since we don't enforce adding
         # declared filters to the 'Meta.fields' option
@@ -198,23 +194,20 @@ class BaseFilterSet(FilterSet):
     @property
     def form(self):
         if not hasattr(self, "_form"):
-            Form = self.get_form_class()
-            if self.is_bound:
-                form = Form(self.data, prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
-            else:
-                form = Form(prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
-            self._form = self.change_form(form)
+            self._form = self.create_form()
         return self._form
 
-    def prefilter_queryset(self, queryset):
-        # any prefiltering or annotations necessary for ordering go here
-        pass
+    def create_form(self) -> forms.Form:
+        """Create the form used for the filterset.
 
-    def filter_queryset(self, queryset):
-        queryset = self.prefilter_queryset(queryset)
-        return super().filter_queryset(queryset)
-
-    def change_form(self, form):
+        Returns:
+            forms.Form: a django.Form instance
+        """
+        Form = self.get_form_class()
+        if self.is_bound:
+            form = Form(self.data, prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
+        else:
+            form = Form(prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
         return form
 
 

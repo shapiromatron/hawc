@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.EpiMetaAssessmentViewset, basename="assessment")
 router.register(r"protocol", api.MetaProtocol, basename="protocol")
 router.register(r"result", api.MetaResult, basename="result")

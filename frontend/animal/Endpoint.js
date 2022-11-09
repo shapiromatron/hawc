@@ -1,17 +1,15 @@
-import $ from "$";
-import _ from "lodash";
+import BmdLine from "bmd/common/BmdLine";
 import * as d3 from "d3";
-
-import h from "shared/utils/helpers";
-
+import _ from "lodash";
 import BaseTable from "shared/utils/BaseTable";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 import Observee from "shared/utils/Observee";
-
-import BmdLine from "bmd/common/BmdLine";
 import Study from "study/Study";
+
+import $ from "$";
 
 import AnimalGroup from "./AnimalGroup";
 import BMDResult from "./BMDResult";

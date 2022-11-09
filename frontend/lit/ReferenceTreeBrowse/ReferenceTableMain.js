@@ -1,7 +1,7 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {inject, observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 
 import ReferenceTable from "../components/ReferenceTable";
 import Wordcloud from "./Wordcloud";

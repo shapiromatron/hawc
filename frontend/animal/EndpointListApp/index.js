@@ -1,9 +1,9 @@
+import {Provider} from "mobx-react";
 import React from "react";
 import ReactDOM from "react-dom";
-import {Provider} from "mobx-react";
 
-import EndpointListStore from "./EndpointListStore";
 import EndpointListApp from "./EndpointListApp";
+import EndpointListStore from "./EndpointListStore";
 
 export default function(el, config) {
     const store = new EndpointListStore(config);

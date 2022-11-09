@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"ehv", api.EhvTermViewset, basename="ehv")
 router.register(r"term", api.TermViewset, basename="term")
 

@@ -61,4 +61,4 @@ const defineProps = function(id, label, column) {
         red: "#66002b",
     };
 
-export {defineProps, defineAxis, defineMultiAxis, defineFilter, defineTable, COLORS};
+export {COLORS, defineAxis, defineFilter, defineMultiAxis, defineProps, defineTable};

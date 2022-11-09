@@ -21,6 +21,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
+from .filterset import BaseFilterSet
 from .helper import WebappConfig, tryParseInt
 
 logger = logging.getLogger(__name__)
@@ -99,9 +100,7 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
         content_object=obj,
     )
     # Associate log with reversion
-    comment = (
-        f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
-    )
+    comment = f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
     audit_logger.info(f"[{log.id}] assessment-{assessment_id} user-{user_id} {log_message}")
     reversion.set_comment(comment)
 
@@ -294,9 +293,7 @@ class AssessmentPermissionsMixin:
                 else:
                     obj = queryset.first()
                     if obj is None:
-                        raise EmptyResultSet(
-                            "Cannot determine if objects should be locked for editing"
-                        )
+                        raise EmptyResultSet("Cannot determine if objects should be locked for editing")
                     self.deny_for_locked_study(self.request.user, self.assessment, obj)
                     perms = self.assessment.user_can_edit_object(self.request.user)
             logger.debug("Permissions checked")
@@ -314,9 +311,7 @@ class AssessmentPermissionsMixin:
         user_perms = self.assessment.user_permissions(self.request.user)
 
         contextual_obj = self.get_contextual_object_for_study_editability_check()
-        study_perm_check = self.check_study_editability(
-            self.request.user, self.assessment, contextual_obj
-        )
+        study_perm_check = self.check_study_editability(self.request.user, self.assessment, contextual_obj)
         if study_perm_check is not None:
             user_perms["edit"] = study_perm_check
 
@@ -441,9 +436,7 @@ class CopyAsNewSelectorMixin:
 
         related_id = self.get_related_id()
         context["form"] = self.form_class(parent_id=related_id)
-        context["breadcrumbs"].append(
-            Breadcrumb(name=f"Clone {self.copy_model._meta.verbose_name}")
-        )
+        context["breadcrumbs"].append(Breadcrumb(name=f"Clone {self.copy_model._meta.verbose_name}"))
         return context
 
     def get_template_names(self):
@@ -533,9 +526,7 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
         return crumbs
 
 
-class BaseUpdate(
-    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView
-):
+class BaseUpdate(WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
     crud = "Update"
 
     @transaction.atomic
@@ -571,9 +562,7 @@ class BaseUpdate(
         return crumbs
 
 
-class BaseCreate(
-    WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
-):
+class BaseCreate(WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
     parent_model = None  # required
     parent_template_name: Optional[str] = None  # required
     crud = "Create"
@@ -595,9 +584,7 @@ class BaseCreate(
 
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
-            if initial and initial.get_assessment() in Assessment.objects.get_viewable_assessments(
-                self.request.user
-            ):
+            if initial and initial.get_assessment() in Assessment.objects.get_viewable_assessments(self.request.user):
                 kwargs["initial"] = model_to_dict(initial)
 
         return kwargs
@@ -669,10 +656,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
-        name = (
-            self.breadcrumb_active_name
-            or str(getattr(self.model._meta, "verbose_name_plural", self.model)).title()
-        )
+        name = self.breadcrumb_active_name or str(getattr(self.model._meta, "verbose_name_plural", self.model)).title()
         crumbs.append(Breadcrumb(name=name))
         return crumbs
 
@@ -792,7 +776,7 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 
 class BaseFilterList(BaseList):
-    filterset_class = None  # required
+    filterset_class: BaseFilterSet
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
@@ -849,11 +833,7 @@ class HeatmapBase(BaseList):
         return super().get_context_data(**kwargs)
 
     def get_app_config(self, context) -> WebappConfig:
-        url_args = (
-            "?unpublished=true"
-            if self.request.GET.get("unpublished", "false").lower() == "true"
-            else ""
-        )
+        url_args = "?unpublished=true" if self.request.GET.get("unpublished", "false").lower() == "true" else ""
         can_edit = context["obj_perms"]["edit"]
         create_url = reverse("summary:visualization_create", args=(self.assessment.id, 6))
         return WebappConfig(

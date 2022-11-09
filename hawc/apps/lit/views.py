@@ -1,6 +1,7 @@
 import json
 from typing import Dict, List
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
@@ -67,6 +68,7 @@ class LitOverview(BaseList):
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
             ),
         }
+        context["allow_ris"] = settings.HAWC_FEATURES.ALLOW_RIS_IMPORTS
         return context
 
 

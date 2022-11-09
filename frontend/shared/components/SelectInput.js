@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import _ from "lodash";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 
+import HelpText from "./HelpText";
 import {errorsDiv, inputClass} from "./inputs";
 import LabelInput from "./LabelInput";
-import HelpText from "./HelpText";
 
 class SelectInput extends Component {
     /**

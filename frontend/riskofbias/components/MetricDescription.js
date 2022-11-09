@@ -1,8 +1,7 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
+import {action, observable} from "mobx";
 import {observer} from "mobx-react";
-import {observable, action} from "mobx";
-
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
 class DescriptionStore {

@@ -410,28 +410,7 @@ class EndpointFilterList(BaseFilterList):
     filterset_class = filterset.EndpointFilterSet
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .select_related(
-                "assessment",
-                "animal_group__experiment__dtxsid",
-                "animal_group__experiment__study",
-                "animal_group__species",
-                "animal_group__strain",
-            )
-            .prefetch_related(
-                "bmd_models",
-                "effects",
-                "groups",
-                "animal_group__parents",
-                "animal_group__siblings",
-                "animal_group__children",
-                "animal_group__dosing_regime__doses__dose_units",
-                "animal_group__experiment__study__searches",
-                "animal_group__experiment__study__identifiers",
-            )
-        )
+        return super().get_queryset().select_related("animal_group__experiment__study")
 
 
 @method_decorator(beta_tester_required, name="dispatch")
@@ -444,9 +423,7 @@ class EndpointListV2(BaseList):
         url = reverse("animal:api:assessment-endpoints", args=(self.assessment.id,))
         if self.request.GET.get("unpublished", "false").lower() == "true":
             url += "?unpublished=true"
-        return WebappConfig(
-            app="animalStartup", page="startupEndpointListApp", data=dict(data_url=url)
-        )
+        return WebappConfig(app="animalStartup", page="startupEndpointListApp", data=dict(data_url=url))
 
 
 class EndpointTags(EndpointFilterList):

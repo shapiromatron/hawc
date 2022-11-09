@@ -1,8 +1,7 @@
 import _ from "lodash";
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import ReactDOM from "react-dom";
-
 import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
 
 const RiskOfBiasDisplay = props => {

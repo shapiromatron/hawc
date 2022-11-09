@@ -1,12 +1,11 @@
 import _ from "lodash";
-
 import {DEFAULT} from "shared/constants";
 import RoBBarchart from "summary/summary/RoBBarchart";
 
+import {CheckboxField, IntegerField, TextField} from "./Fields";
 import RoBHeatmapForm from "./RoBHeatmapForm";
 import RoBMetricTable from "./RoBMetricTable";
 import RoBScoreExcludeTable from "./RoBScoreExcludeTable";
-import {TextField, IntegerField, CheckboxField} from "./Fields";
 
 class RoBBarchartForm extends RoBHeatmapForm {
     buildPreview($parent, data) {
