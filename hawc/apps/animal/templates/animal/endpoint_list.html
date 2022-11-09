@@ -52,6 +52,9 @@
 <script type="text/javascript">
     window.app.startup("animalStartup", function (animal) {
         $("i.previewModalIcon").click(e=>animal.Endpoint.displayAsModal($(e.target).data("id"), { complete: true }));
+        const data = window.app.getConfig(),
+            values = animal.Endpoint.get_display_values(data.items, data.dose_units);
+        $("td.endpointUnits").text(e=>values[e.data("id")]["Units"])
     });
 </script>
 {% endblock %}
