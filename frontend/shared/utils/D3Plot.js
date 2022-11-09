@@ -1,7 +1,8 @@
-import $ from "$";
 import * as d3 from "d3";
-
 import h from "shared/utils/helpers";
+
+import $ from "$";
+
 import rasterize from "./rasterize";
 
 // Generic parent for all d3.js visualizations

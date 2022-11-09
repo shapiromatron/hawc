@@ -1,11 +1,9 @@
 import _ from "lodash";
-import React from "react";
 import PropTypes from "prop-types";
-
+import React from "react";
 import h from "shared/utils/helpers";
 
 import {BMR_MODAL_ID} from "../constants";
-
 import BaseModal from "./BaseModal";
 import EditableModalFooter from "./EditableModalFooter";
 

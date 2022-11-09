@@ -1,8 +1,8 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
+import {ActionItem, ActionsButton} from "shared/components/ActionsButton";
 
 import ModelOptionOverrideList from "../containers/ModelOptionOverrideList";
-import {ActionItem, ActionsButton} from "shared/components/ActionsButton";
 
 class ModelOptionTable extends React.Component {
     constructor(props) {

@@ -1,6 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
-
+import React from "react";
 import SelectInput from "shared/components/SelectInput";
 
 class DoseUnitsSelector extends React.Component {

@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React from "react";
 
-import ModelOptionModal from "../components/ModelOptionModal";
 import BMROptionModal from "../components/BMROptionModal";
+import ModelOptionModal from "../components/ModelOptionModal";
 import OutputModal from "../components/OutputModal";
 
 @inject("store")

@@ -1,14 +1,14 @@
-import $ from "$";
 import _ from "lodash";
-
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
+import $ from "$";
+
 import ComparisonSet from "./ComparisonSet";
+import ResultForestPlot from "./ResultForestPlot";
 import ResultGroup from "./ResultGroup";
 import ResultGroupTable from "./ResultGroupTable";
-import ResultForestPlot from "./ResultForestPlot";
 
 class Result {
     constructor(data) {

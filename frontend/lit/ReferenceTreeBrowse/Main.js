@@ -1,16 +1,16 @@
+import TagActions from "lit/components/TagActions";
 import _ from "lodash";
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
-
+import {inject, observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 import TextInput from "shared/components/TextInput";
+
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
-import YearHistogram from "./YearHistogram";
 import ReferenceTableMain from "./ReferenceTableMain";
-import TagActions from "lit/components/TagActions";
+import YearHistogram from "./YearHistogram";
 
 const referenceListItem = ref => {
     return (

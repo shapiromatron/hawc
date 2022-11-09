@@ -1,13 +1,14 @@
+import HAWCUtils from "shared/utils/HAWCUtils";
+
 import $ from "$";
 
 import Crossview from "./Crossview";
 import EndpointAggregation from "./EndpointAggregation";
 import ExploreHeatmap from "./ExploreHeatmap";
 import ExternalSiteVisual from "./ExternalSiteVisual";
+import LiteratureTagtree from "./LiteratureTagtree";
 import RoBBarchart from "./RoBBarchart";
 import RoBHeatmap from "./RoBHeatmap";
-import LiteratureTagtree from "./LiteratureTagtree";
-import HAWCUtils from "shared/utils/HAWCUtils";
 
 class Visual {
     static get_object(id, cb) {

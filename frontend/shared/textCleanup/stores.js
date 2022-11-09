@@ -1,6 +1,5 @@
 import _ from "lodash";
-import {action, computed, toJS, observable} from "mobx";
-
+import {action, computed, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
 class TextCleanupStore {

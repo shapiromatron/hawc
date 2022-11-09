@@ -1,11 +1,11 @@
 import _ from "lodash";
 import {action, observable, toJS} from "mobx";
-
 import {
-    moveArrayElementUp,
-    moveArrayElementDown,
     deleteArrayElement,
+    moveArrayElementDown,
+    moveArrayElementUp,
 } from "shared/components/EditableRowData";
+
 import {NULL_CASE, OrderChoices} from "./shared";
 
 class SortStore {

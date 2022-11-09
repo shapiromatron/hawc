@@ -1,15 +1,16 @@
 import _ from "lodash";
-import $ from "$";
 import React from "react";
 import {render} from "react-dom";
 import AsyncSelect from "react-select/async";
-import BaseVisualForm from "./BaseVisualFormReact";
-import EndpointAggregation from "summary/summary/EndpointAggregation";
-
 import QuillTextInput from "shared/components/QuillTextInput";
 import SelectInput from "shared/components/SelectInput";
-import TextInput from "shared/components/TextInput";
 import TextAreaInput from "shared/components/TextAreaInput";
+import TextInput from "shared/components/TextInput";
+import EndpointAggregation from "summary/summary/EndpointAggregation";
+
+import $ from "$";
+
+import BaseVisualForm from "./BaseVisualFormReact";
 
 class EndpointAggregationForm extends BaseVisualForm {
     getEndpointChoices = endpoints => {

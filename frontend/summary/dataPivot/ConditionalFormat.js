@@ -1,12 +1,12 @@
-import $ from "$";
-import _ from "lodash";
 import * as d3 from "d3";
-
+import _ from "lodash";
 import HAWCModal from "shared/utils/HAWCModal";
+
+import $ from "$";
 
 import DataPivot from "./DataPivot";
 import DataPivotVisualization from "./DataPivotVisualization";
-import {NULL_CASE, buildStyleMap} from "./shared";
+import {buildStyleMap, NULL_CASE} from "./shared";
 
 class _DataPivot_settings_conditionalFormat {
     constructor(parent, data, settings) {

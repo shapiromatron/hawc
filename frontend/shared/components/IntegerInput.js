@@ -1,9 +1,9 @@
-import React, {Component} from "react";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
 
-import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 import HelpTextPopup from "./HelpTextPopup";
+import LabelInput from "./LabelInput";
 
 class IntegerInput extends Component {
     constructor(props) {
