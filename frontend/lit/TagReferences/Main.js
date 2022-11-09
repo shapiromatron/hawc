@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
+import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 import Reference from "../components/Reference";
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
@@ -15,13 +16,11 @@ class TagReferencesMain extends Component {
     constructor(props) {
         super(props);
         this.savedPopup = React.createRef();
+        this.showFullTag = new LocalStorageBoolean("lit-showFullTag", true);
+        this.pinInstructions = new LocalStorageBoolean("lit-pinInstructions", false);
         this.state = {
-            showFullTag: window.localStorage.getItem("showFullTag")
-                ? window.localStorage.getItem("showFullTag") === "true"
-                : true,
-            pinInstructions: window.localStorage.getItem("pinInstructions")
-                ? window.localStorage.getItem("pinInstructions") === "true"
-                : false,
+            showFullTag: this.showFullTag.value,
+            pinInstructions: this.pinInstructions.value,
         };
     }
     _setSaveIndicator() {
@@ -153,11 +152,8 @@ class TagReferencesMain extends Component {
                                         className="dropdown-item cursor-pointer"
                                         key={4}
                                         onClick={() => {
-                                            window.localStorage.setItem(
-                                                "showFullTag",
-                                                !this.state.showFullTag
-                                            );
-                                            this.setState({showFullTag: !this.state.showFullTag});
+                                            this.showFullTag.toggle();
+                                            this.setState({showFullTag: this.showFullTag.value});
                                         }}>
                                         &nbsp;
                                         {this.state.showFullTag
@@ -192,7 +188,7 @@ class TagReferencesMain extends Component {
                                 type="button"
                                 className="close"
                                 onClick={() => {
-                                    window.localStorage.setItem("pinInstructions", false);
+                                    this.pinInstructions.set(false);
                                     this.setState({pinInstructions: false});
                                 }}>
                                 &times;
@@ -221,11 +217,8 @@ class TagReferencesMain extends Component {
                                 }
                                 className="btn btn-sm btn-info ml-3"
                                 onClick={() => {
-                                    window.localStorage.setItem(
-                                        "pinInstructions",
-                                        !this.state.pinInstructions
-                                    );
-                                    this.setState({pinInstructions: !this.state.pinInstructions});
+                                    this.pinInstructions.toggle();
+                                    this.setState({pinInstructions: this.pinInstructions.value});
                                     store.setInstructionsModal(false);
                                 }}>
                                 <i className="fa fa-thumb-tack" aria-hidden="true"></i>
