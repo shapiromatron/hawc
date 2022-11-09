@@ -145,16 +145,6 @@ class Endpoint extends Observee {
         });
     }
 
-    static get_display_values(endpoints, dose_id) {
-        this.endpoints = endpoints.map(d => new Endpoint(d));
-        if (_.isFinite(dose_id)) {
-            this.endpoints.forEach(e => e.doseUnits.activate(dose_id));
-        }
-        var values = {}
-        this.endpoints.forEach(e => values[e.id] = { "Units": e.doseUnits.activeUnit.name, "NOEL": e.get_special_dose_text("NOEL"), "LOEL": e.get_special_dose_text("LOEL"), "BMD": e.get_special_bmd_value("BMD"), "BMDL": e.get_special_bmd_value("BMDl") });
-        return values;
-    }
-
     get_name() {
         return this.data.name;
     }
