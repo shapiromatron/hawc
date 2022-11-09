@@ -1,34 +1,13 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
-
 <h2>Outcomes ({{page_obj.paginator.count}} found)</h2>
-
 {% include 'common/filter_list.html' with plural_object_name='outcomes' %}
-
 <table id="mainTbl" class="table table-sm table-striped">
-
-    <colgroup>
-        <col width="12%" />
-        <col width="25%" />
-        <col width="16%" />
-        <col width="17%" />
-        <col width="10%" />
-        <col width="13%" />
-    </colgroup>
-
-
-    <thead>
-        <tr>
-            <th>Study</th>
-            <th>Study population</th>
-            <th>Outcome</th>
-            <th>System</th>
-            <th>Effect</th>
-            <th>Diagnostic</th>
-        </tr>
-    </thead>
-
+    {% bs4_colgroup '17,20,17,18,14,14' %}
+    {% bs4_thead 'Study,Study population,Outcome,System,Effect,Diagnostic' %}
     <tbody>
         {% for object in object_list %}
         <tr>

@@ -1,37 +1,13 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
-
 <h2><i>In vitro</i> endpoints ({{page_obj.paginator.count}} found)</h2>
-
 {% include 'common/filter_list.html' with plural_object_name='endpoints' %}
-
 <table id="mainTbl" class="table table-sm table-striped">
-
-    <colgroup>
-        <col width="10%" />
-        <col width="16%" />
-        <col width="12%" />
-        <col width="11%" />
-        <col width="16%" />
-        <col width="20%" />
-        <col width="7%" />
-        <col width="7%" />
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th>Study</th>
-            <th>Experiment</th>
-            <th>Chemical</th>
-            <th>Endpoint</th>
-            <th>Effect Category</th>
-            <th>Effects</th>
-            <th>Dose Units</th>
-            <th>Response Units</th>
-        </tr>
-    </thead>
-
+    {% bs4_colgroup '10,13,12,20,16,13,8,8' %}
+    {% bs4_thead 'Study,Experiment,Chemical,Endpoint,Effect Category,Effects,Dose Units,Response Units' %}
     <tbody>
         {% for object in object_list %}
         <tr>

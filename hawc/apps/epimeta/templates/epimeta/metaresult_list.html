@@ -1,35 +1,13 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
-
 <h2>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
-
 {% include 'common/filter_list.html' with plural_object_name='results' %}
-
 <table id="mainTbl" class="table table-sm table-striped">
-
-    <colgroup>
-        <col width="10%" />
-        <col width="16%" />
-        <col width="19%" />
-        <col width="12%" />
-        <col width="11%" />
-        <col width="10%" />
-        <col width="10%" />
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th>Study</th>
-            <th>Meta result</th>
-            <th>Protocol</th>
-            <th>Health outcome</th>
-            <th>Exposure</th>
-            <th>Confidence interval</th>
-            <th>Estimate</th>
-        </tr>
-    </thead>
-
+    {% bs4_colgroup '13,17,19,14,13,12,12' %}
+    {% bs4_thead 'Study,Meta result,Protocol,Health outcome,Exposure,Confidence interval,Estimate' %}
     <tbody>
         {% for object in object_list %}
         <tr>
