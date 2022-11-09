@@ -1,5 +1,4 @@
 import base64
-import collections
 import json
 import os
 
@@ -113,7 +112,7 @@ class LogicField(models.Model):
         """
         fn = str(settings.PROJECT_PATH / "apps/bmd/fixtures/logic.json")
         with open(fn, "r") as f:
-            text = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
+            text = json.loads(f.read())
 
         objects = [cls(assessment_id=assessment.id, **obj) for i, obj in enumerate(text["objects"])]
         cls.objects.bulk_create(objects)
