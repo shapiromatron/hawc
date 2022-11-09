@@ -383,6 +383,14 @@ class ReferenceViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     queryset = models.Reference.objects.all()
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == "tag":
+            qs = qs.select_related("assessment__literature_settings").prefetch_related(
+                "user_tags__tags", "tags"
+            )
+        return qs
+
     @action(detail=True, methods=("post",))
     def tag(self, request, pk):
         response = {"status": "fail"}
@@ -390,7 +398,6 @@ class ReferenceViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         assessment = ref.assessment
         if assessment.user_can_edit_object(self.request.user):
             tag_pks = self.request.POST.getlist("tags[]", [])
-            ref.update_tags(tag_pks, request.user)
-            ref.save()
+            ref.update_tags(request.user, tag_pks)
             response["status"] = "success"
         return Response(response)

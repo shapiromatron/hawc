@@ -868,27 +868,42 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
-    def update_tags(self, tag_pks, user):
-        # save current user settings
-        user_tag, _ = UserReferenceTag.objects.get_or_create(reference=self, user=user)
+    def update_tags(self, user, tag_pks: list[int]):
+        """Update tags for user who requested this tags, and also potentially this reference.
+
+        This method was reviewed to try to reduce the number of db hits required, assuming that
+        the reference model has the required select and prefetch related, the tag comparisons
+        should not require any additional queries (but it may cause up to 5 db writes).
+
+        Args:
+            user: The user requesting the tag changes
+            tag_pks (list[int]): A list of tag IDs
+        """
+        # save user-level tags
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
         user_tag.save()
 
+        # determine if we should save the reference-level tags
         update_reference_tags = False
         if self.assessment.literature_settings.conflict_resolution:
-            user_tags = self.user_tags.prefetch_related("tags")
-            if user_tags.count() >= 2:
+            if self.user_tags.count() >= 2:
                 tags = set(tag_pks)
-                if all(tags == {tag.id for tag in user_tag.tags.all()} for user_tag in user_tags):
+                if all(
+                    tags == {tag.id for tag in user_tag.tags.all()}
+                    for user_tag in self.user_tags.all()
+                ):
                     update_reference_tags = True
         else:
             update_reference_tags = True
 
+        # if we should save reference-level tags, do so
         if update_reference_tags:
             self.user_tags.update(is_resolved=True)
             self.tags.set(tag_pks)
             self.last_updated = timezone.now()
+            self.save()
 
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()

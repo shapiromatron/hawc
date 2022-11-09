@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "resolved",
+                    "is_resolved",
                     models.BooleanField(
                         default=False,
                         help_text="User specific tag differences are resolved for this reference",
