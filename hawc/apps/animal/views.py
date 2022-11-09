@@ -409,6 +409,9 @@ class EndpointFilterList(BaseFilterList):
     model = models.Endpoint
     filterset_class = filterset.EndpointFilterSet
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("animal_group__experiment__study")
+
 
 @method_decorator(beta_tester_required, name="dispatch")
 class EndpointListV2(BaseList):
