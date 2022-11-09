@@ -1,10 +1,10 @@
 import _ from "lodash";
-import $ from "$";
-
 import HAWCUtils from "shared/utils/HAWCUtils";
 import D3Visualization from "summary/summary/D3Visualization";
 
-import {InputField, SpacerNullField, HeaderNullField, HelpTextNullField} from "./Fields";
+import $ from "$";
+
+import {HeaderNullField, HelpTextNullField, InputField, SpacerNullField} from "./Fields";
 
 class TableField extends InputField {
     renderHeader() {

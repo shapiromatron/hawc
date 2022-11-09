@@ -1,7 +1,7 @@
 import $ from "$";
 
-import SmartTagModal from "./SmartTagModal";
 import SmartTagInline from "./SmartTagInline";
+import SmartTagModal from "./SmartTagModal";
 
 class SmartTagContainer {
     constructor($el, options) {

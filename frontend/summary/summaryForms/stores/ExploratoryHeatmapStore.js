@@ -1,15 +1,15 @@
-import {observable, action, computed, toJS} from "mobx";
-
 import _ from "lodash";
+import {action, computed, observable, toJS} from "mobx";
+import {
+    deleteArrayElement,
+    moveArrayElementDown,
+    moveArrayElementUp,
+} from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
+import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
+
 import {NULL_VALUE} from "../../summary/constants";
 import {DATA_FILTER_CONTAINS, DATA_FILTER_LOGIC_AND} from "../../summary/filters";
-import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
-import {
-    moveArrayElementUp,
-    moveArrayElementDown,
-    deleteArrayElement,
-} from "shared/components/EditableRowData";
 
 let createDefaultAxisItem = function() {
         return {column: NULL_VALUE, items: null, wrap_text: 0, delimiter: ""};

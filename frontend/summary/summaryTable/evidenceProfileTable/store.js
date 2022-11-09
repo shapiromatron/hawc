@@ -1,10 +1,9 @@
 import _ from "lodash";
 import {action, autorun, computed, observable} from "mobx";
-
 import {
-    moveArrayElementUp,
-    moveArrayElementDown,
     deleteArrayElement,
+    moveArrayElementDown,
+    moveArrayElementUp,
 } from "shared/components/EditableRowData";
 
 const getDefaultEvidence = () => {

@@ -1,8 +1,9 @@
 import {
-    inv_tdist_05,
     addContinuousConfidenceIntervals,
     addDichotomousConfidenceIntervals,
+    inv_tdist_05,
 } from "shared/utils/math";
+
 import assert from "../../helpers";
 
 describe("shared/utils/math", function() {

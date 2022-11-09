@@ -1,12 +1,11 @@
-import React from "react";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
+import React from "react";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-
-import SetupTab from "./SetupTab";
-import ResultsTab from "./ResultsTab";
 import RecommendationsTab from "./RecommendationsTab";
+import ResultsTab from "./ResultsTab";
+import SetupTab from "./SetupTab";
 
 @inject("store")
 @observer

@@ -1,12 +1,10 @@
-from django.db.models import Q
-
 from ..assessment.models import Assessment
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
     BaseDetail,
-    BaseEndpointFilterList,
+    BaseFilterList,
     BaseUpdate,
     BaseUpdateWithFormset,
     CloseIfSuccessMixin,
@@ -16,7 +14,7 @@ from ..common.views import (
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from ..study.views import StudyRead
-from . import forms, models
+from . import filterset, forms, models
 
 
 # Heatmap views
@@ -167,16 +165,13 @@ class ExposureDelete(BaseDelete):
 
 
 # Outcome
-class OutcomeList(BaseEndpointFilterList):
+class OutcomeFilterList(BaseFilterList):
     parent_model = Assessment
     model = models.Outcome
-    form_class = forms.OutcomeFilterForm
+    filterset_class = filterset.OutcomeFilterSet
 
-    def get_query(self, perms):
-        query = Q(assessment=self.assessment)
-        if not perms["edit"]:
-            query &= Q(study_population__study__published=True)
-        return query
+    def get_queryset(self):
+        return super().get_queryset().select_related("study_population__study")
 
 
 class OutcomeCreate(BaseCreate):

@@ -47,4 +47,4 @@ const termUrlLookup = {
             months = mon, years = y.`,
     };
 
-export {termUrlLookup, textUrlLookup, label, helpText};
+export {helpText, label, termUrlLookup, textUrlLookup};

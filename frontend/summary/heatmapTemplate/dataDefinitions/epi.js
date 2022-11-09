@@ -1,10 +1,10 @@
 import {
-    defineProps,
-    defineAxis,
-    defineMultiAxis,
-    defineFilter,
-    defineTable,
     COLORS,
+    defineAxis,
+    defineFilter,
+    defineMultiAxis,
+    defineProps,
+    defineTable,
 } from "./shared";
 
 // ESD = epi study design
@@ -451,4 +451,4 @@ ERSettings.DASHBOARDS = [
     },
 ];
 
-export {ESDSettings, ERSettings};
+export {ERSettings, ESDSettings};

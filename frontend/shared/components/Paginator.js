@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
 import {observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React from "react";
 
 const Paginator = props => {
     const {onChangePage, page} = props;

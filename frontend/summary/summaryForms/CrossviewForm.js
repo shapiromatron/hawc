@@ -1,20 +1,19 @@
+import Endpoint from "animal/Endpoint";
 import _ from "lodash";
+import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
+import Crossview from "summary/summary/Crossview";
+import CrossviewPlot from "summary/summary/CrossviewPlot";
+
 import $ from "$";
 
-import Endpoint from "animal/Endpoint";
-import CrossviewPlot from "summary/summary/CrossviewPlot";
-import Crossview from "summary/summary/Crossview";
 import {DATA_FILTER_OPTIONS, filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
-import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
-
 import BaseVisualForm from "./BaseVisualForm";
-import {TextField, IntegerField, ColorField, CheckboxField, RadioField} from "./Fields";
-
+import {CheckboxField, ColorField, IntegerField, RadioField, TextField} from "./Fields";
 import {
-    TableField,
+    ReferenceLabelField,
     ReferenceLineField,
     ReferenceRangeField,
-    ReferenceLabelField,
+    TableField,
 } from "./TableFields";
 
 class CrossviewSelectorField extends TableField {

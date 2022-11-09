@@ -1,9 +1,9 @@
-import $ from "$";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
-
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import h from "shared/utils/helpers";
+
+import $ from "$";
 
 const getLabelText = function(item) {
     return `${_.repeat("—", item.depth - 1)} ${item.title}`;

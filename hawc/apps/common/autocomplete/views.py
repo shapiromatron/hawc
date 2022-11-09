@@ -77,8 +77,6 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseForbidden("Authentication required")
         self.field = request.GET.get("field", "")
         if self.field:
             self.search_fields = [self.field]
@@ -94,6 +92,13 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
     def url(cls, **kwargs):
         # must lazily reverse url to prevent circular imports
         return reverse_with_query_lazy("autocomplete", args=[cls.registry_key()], query=kwargs)
+
+
+class BaseAutocompleteAuthenticated(BaseAutocomplete):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden("Authentication required")
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SearchLabelMixin:

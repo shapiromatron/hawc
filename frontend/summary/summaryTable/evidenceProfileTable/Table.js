@@ -1,11 +1,11 @@
 import {observer} from "mobx-react";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {Judgement} from "./Judgement";
-import {FactorsCell} from "./Factors";
+import React, {Component} from "react";
+import {disablePopovers, enablePopovers} from "shared/components/HelpTextPopup";
 import h from "shared/utils/helpers";
 
-import {enablePopovers, disablePopovers} from "shared/components/HelpTextPopup";
+import {FactorsCell} from "./Factors";
+import {Judgement} from "./Judgement";
 
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
     NoDataRow = function(no_content_text) {

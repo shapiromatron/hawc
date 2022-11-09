@@ -1,17 +1,17 @@
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
-import TextInput from "shared/components/TextInput";
+import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import RadioInput from "shared/components/RadioInput";
 import SelectInput from "shared/components/SelectInput";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import TextInput from "shared/components/TextInput";
 
 import {
-    filterLogicHelpText,
-    filterQueryHelpText,
+    DATA_FILTER_LOGIC_CUSTOM,
     DATA_FILTER_LOGIC_OPTIONS,
     DATA_FILTER_OPTIONS,
-    DATA_FILTER_LOGIC_CUSTOM,
+    filterLogicHelpText,
+    filterQueryHelpText,
 } from "../../summary/filters";
 
 const dataKey = "filters",

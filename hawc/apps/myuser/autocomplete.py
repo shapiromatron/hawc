@@ -1,11 +1,11 @@
 from django.db.models import Q
 
-from ..common.autocomplete import BaseAutocomplete, register
+from ..common.autocomplete import BaseAutocompleteAuthenticated, register
 from . import models
 
 
 @register
-class UserAutocomplete(BaseAutocomplete):
+class UserAutocomplete(BaseAutocompleteAuthenticated):
     model = models.HAWCUser
     search_fields = ["first_name", "last_name", "email"]
 

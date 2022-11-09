@@ -19,8 +19,7 @@
     </div>
   </div>
   {% include "assessment/_assessment_list_tbl.html" %}
-  {% include "includes/paginator.html" %}
-  <p>Showing assessments <b>{{page_obj.start_index}}-{{page_obj.end_index}}</b> of <b>{{paginator.count}}</b></p>
+  {% include "includes/paginator.html" with plural_object_name="assessments" %}
 </div>
 {% endblock content_outer %}
 

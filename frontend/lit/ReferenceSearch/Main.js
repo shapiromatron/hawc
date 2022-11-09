@@ -1,13 +1,13 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
-
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
+
+import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import ReferenceTable from "../components/ReferenceTable";
 import SearchForm from "./SearchForm";
-import ReferenceSortSelector from "../components/ReferenceSortSelector";
 
 @inject("store")
 @observer
