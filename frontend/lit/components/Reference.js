@@ -9,28 +9,27 @@ import Hero from "shared/utils/Hero";
 
 import ReferenceButton from "./ReferenceButton";
 
-const markText = (text, settings) => {
-    const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
-    return text.replace(
-        re,
-        (match, token) =>
-            `<mark class="hawc-mk" title="${settings.name}" style='border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};'>${token}</mark>`
-    );
-};
+const markKeywords = (text, allSettings) => {
+        const all_tokens = allSettings["1"].keywords
+                .concat(allSettings["2"].keywords)
+                .concat(allSettings["3"].keywords),
+            all_re = new RegExp(all_tokens.join("|"), "gim");
+        text = text.replace(all_re, match => `<mark>${match}</mark>`);
+        text = markText(text, allSettings["1"]);
+        text = markText(text, allSettings["2"]);
+        text = markText(text, allSettings["3"]);
+        return text;
+    },
+    markText = (text, settings) => {
+        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
+        return text.replace(
+            re,
+            (match, token) =>
+                `<mark class="hawc-mk" title="${settings.name}" style='border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};'>${token}</mark>`
+        );
+    };
 
 class Reference extends Component {
-    renderKeywordHighlights(abstract, keyword_dict) {
-        const all_tokens = keyword_dict["1"]["keywords"]
-            .concat(keyword_dict["2"]["keywords"])
-            .concat(keyword_dict["3"]["keywords"]);
-        const all_re = new RegExp(all_tokens.join("|"), "gim");
-        abstract = abstract.replace(all_re, match => `<mark>${match}</mark>`);
-        abstract = markText(abstract, keyword_dict["1"]);
-        abstract = markText(abstract, keyword_dict["2"]);
-        abstract = markText(abstract, keyword_dict["3"]);
-        return abstract;
-    }
-
     renderIdentifiers(data) {
         const nodes = [];
 
@@ -138,7 +137,7 @@ class Reference extends Component {
                         <p
                             className="ref_title py-1"
                             dangerouslySetInnerHTML={{
-                                __html: this.renderKeywordHighlights(data.title, keywordDict),
+                                __html: markKeywords(data.title, keywordDict),
                             }}
                         />
                     ) : (
@@ -151,7 +150,7 @@ class Reference extends Component {
                         className="abstracts resize-y p-2"
                         dangerouslySetInnerHTML={
                             keywordDict
-                                ? {__html: this.renderKeywordHighlights(data.abstract, keywordDict)}
+                                ? {__html: markKeywords(data.abstract, keywordDict)}
                                 : {__html: data.abstract}
                         }
                     />
