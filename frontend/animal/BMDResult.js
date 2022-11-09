@@ -1,11 +1,10 @@
 import _ from "lodash";
-
-import EndpointCriticalDose from "./EndpointCriticalDose";
+import PropTypes from "prop-types";
 import React from "react";
 import ReactDOM from "react-dom";
-import PropTypes from "prop-types";
-
 import h from "shared/utils/helpers";
+
+import EndpointCriticalDose from "./EndpointCriticalDose";
 
 class BmdResultComponent extends React.Component {
     render() {

@@ -1,26 +1,24 @@
-import _ from "lodash";
-import $ from "$";
 import * as d3 from "d3";
-
+import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
-import HAWCModal from "shared/utils/HAWCModal";
 import DataTable from "shared/components/DataTable";
+import HAWCModal from "shared/utils/HAWCModal";
 
-import Store from "./store";
+import $ from "$";
+
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotExtension from "./DataPivotExtension";
-import {NULL_CASE} from "./shared";
-import StyleManager from "./StyleManager";
-
+import DataPivotVisualization from "./DataPivotVisualization";
+import build_data_tab from "./DPFDataTab";
 import build_description_tab from "./DPFDescriptionTab";
 import build_settings_general_tab from "./DPFGeneralSettingsTab";
-import build_data_tab from "./DPFDataTab";
 import build_ordering_tab from "./DPFOrderTab";
 import build_reference_tab from "./DPFReferenceTab";
 import build_styles_tab from "./DPFStyleTab";
-
-import DataPivotVisualization from "./DataPivotVisualization";
+import {NULL_CASE} from "./shared";
+import Store from "./store";
+import StyleManager from "./StyleManager";
 
 class DataPivot {
     constructor(data, settings, dom_bindings, title, url) {

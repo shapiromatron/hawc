@@ -1,8 +1,7 @@
-import _ from "lodash";
-import React from "react";
-import PropTypes from "prop-types";
-
 import {bmdLabelText} from "bmd/common/constants";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 let getColWidths = function(numBmrs) {
         switch (numBmrs) {

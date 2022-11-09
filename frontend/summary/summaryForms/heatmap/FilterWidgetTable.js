@@ -1,10 +1,10 @@
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
-import TextInput from "shared/components/TextInput";
-import SelectInput from "shared/components/SelectInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import HelpTextPopup from "shared/components/HelpTextPopup";
+import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
 
 import {HelpText} from "./common";
 

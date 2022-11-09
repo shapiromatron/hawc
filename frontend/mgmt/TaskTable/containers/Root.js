@@ -1,14 +1,13 @@
-import {inject, observer} from "mobx-react";
-import React, {Component} from "react";
-import PropTypes from "prop-types";
+import "./Root.css";
 
+import {inject, observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
-import TaskTable from "./TaskTable";
 import StudyFilter from "./StudyFilter";
-
-import "./Root.css";
+import TaskTable from "./TaskTable";
 
 @inject("store")
 @observer

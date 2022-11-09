@@ -1,13 +1,12 @@
 import {observer} from "mobx-react";
-import React from "react";
 import PropTypes from "prop-types";
-
-import TextInput from "shared/components/TextInput";
-import QuillTextInput from "shared/components/QuillTextInput";
+import React from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
-import {JudgementSelector} from "./Judgement";
+import QuillTextInput from "shared/components/QuillTextInput";
+import TextInput from "shared/components/TextInput";
 
 import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
+import {JudgementSelector} from "./Judgement";
 
 const IntegrationForm = observer(props => {
     const {store} = props,

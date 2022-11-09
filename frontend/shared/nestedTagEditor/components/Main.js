@@ -1,15 +1,14 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import Sortable from "sortablejs";
-import {inject, observer} from "mobx-react";
+import "./Main.css";
 
+import {inject, observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Loading from "shared/components/Loading";
+import Sortable from "sortablejs";
 
 import {NO_PARENT} from "../constants";
-import Node from "./Node";
 import EditNode from "./EditNode";
-
-import "./Main.css";
+import Node from "./Node";
 
 @inject("store")
 @observer

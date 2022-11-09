@@ -1,6 +1,5 @@
 import _ from "lodash";
-import {observable, computed, action} from "mobx";
-
+import {action, computed, observable} from "mobx";
 import {NR_KEYS} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 

@@ -1,7 +1,6 @@
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
-
 import Loading from "shared/components/Loading";
 import ExploreHeatmap from "summary/summary/ExploreHeatmap";
 

@@ -1,7 +1,7 @@
 import _ from "lodash";
-import React, {Component} from "react";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import {observer, inject} from "mobx-react";
+import React, {Component} from "react";
 
 import DisplayComponent from "../components/AggregateGraph";
 

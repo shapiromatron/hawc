@@ -18,4 +18,4 @@ const DEFAULT_MIN_SEARCH_LENGTH = 3,
         return text.replace(regex, match => `<b>${match}</b>`);
     };
 
-export {DEFAULT_MIN_SEARCH_LENGTH, DEBOUNCE_MS, boldPatternText, theme};
+export {boldPatternText, DEBOUNCE_MS, DEFAULT_MIN_SEARCH_LENGTH, theme};

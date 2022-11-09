@@ -1,19 +1,20 @@
-import $ from "$";
-import ReactDOM from "react-dom";
+import {inject, observer, Provider} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer, Provider} from "mobx-react";
-
-import h from "shared/utils/helpers";
-import SmartTagContainer from "shared/smartTags/SmartTagContainer";
+import ReactDOM from "react-dom";
 import Loading from "shared/components/Loading";
-import BaseVisual from "./BaseVisual";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
+
+import $ from "$";
+
+import BaseVisual from "./BaseVisual";
+import {NULL_VALUE} from "./constants";
+import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
-import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
-import {NULL_VALUE} from "./constants";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 
 const startupHeatmapAppRender = function(el, settings, datastore, options) {

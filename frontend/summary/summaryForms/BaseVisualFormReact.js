@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-import h from "shared/utils/helpers";
-import HAWCUtils from "shared/utils/HAWCUtils";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
+import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 
 class BaseVisualForm extends Component {
     constructor(props) {

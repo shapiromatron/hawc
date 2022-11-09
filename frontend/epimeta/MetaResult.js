@@ -1,10 +1,10 @@
-import $ from "$";
 import _ from "lodash";
-
 import BaseTable from "shared/utils/BaseTable";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import $ from "$";
 
 import SingleStudyResult from "./SingleStudyResult";
 
@@ -88,24 +88,6 @@ class MetaResult {
             {url: this.data.url, name: this.data.label},
         ];
         return HAWCUtils.build_breadcrumbs(urls);
-    }
-
-    buildListRow() {
-        let link = `<a href="${this.data.url}" target="_blank">${this.data.label}</a>`,
-            detail = $(
-                '<i class="fa fa-eye previewModalIcon ml-2" title="preview in a modal">'
-            ).click(() => this.displayAsModal({complete: true})),
-            endpoint = $('<span class="previewModalParent">').append(link, detail);
-
-        return [
-            `<a href=${this.data.protocol.study.url} target="_blank">${this.data.protocol.study.short_citation}</a>`,
-            endpoint,
-            `<a href=${this.data.protocol.url} target="_blank">${this.data.protocol.name}</a>`,
-            this.data.health_outcome ? this.data.health_outcome : "--",
-            this.data.exposure_name ? this.data.exposure_name : "--",
-            this.data.ci_units ? `${this.data.ci_units * 100}%` : "--",
-            this.data.estimateFormatted ? this.data.estimateFormatted : "--",
-        ];
     }
 
     displayAsModal() {

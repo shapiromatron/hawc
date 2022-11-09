@@ -1,10 +1,11 @@
 import _ from "lodash";
+import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {observer} from "mobx-react";
-import SelectInput from "shared/components/SelectInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import Loading from "shared/components/Loading";
+import SelectInput from "shared/components/SelectInput";
+
 import * as constants from "./constants";
 
 @observer

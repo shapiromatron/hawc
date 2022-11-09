@@ -1,11 +1,12 @@
-import React from "react";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import VisualTab from "./VisualTab";
-import DataTab from "./DataTab";
-import CustomizeTab from "./CustomizeTab";
+import React from "react";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import SelectInput from "shared/components/SelectInput";
+
+import CustomizeTab from "./CustomizeTab";
+import DataTab from "./DataTab";
+import VisualTab from "./VisualTab";
 
 @inject("store")
 @observer

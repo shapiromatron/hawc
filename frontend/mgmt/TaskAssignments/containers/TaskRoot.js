@@ -1,8 +1,7 @@
-import {inject, observer} from "mobx-react";
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import _ from "lodash";
-
+import {inject, observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 
 import AssessmentTasks from "../components/AssessmentTasks";

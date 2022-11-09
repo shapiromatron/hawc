@@ -1,10 +1,10 @@
 import _ from "lodash";
-import {action, computed, toJS, observable} from "mobx";
-
+import {action, computed, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
+
+import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
-import {sortReferences} from "../constants";
 
 class Store {
     config = null;

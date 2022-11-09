@@ -1,6 +1,6 @@
-import $ from "$";
-
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import $ from "$";
 
 class InputField {
     constructor(schema, $parent, parent) {
