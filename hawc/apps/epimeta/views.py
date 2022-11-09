@@ -18,11 +18,15 @@ from . import filterset, forms, models
 
 
 def get_app_config_metaprotocol(self, context) -> WebappConfig:
-    return WebappConfig(app="epiMetaStartup", page="startupMetaProtocolPage", data=dict(id=self.object.id))
+    return WebappConfig(
+        app="epiMetaStartup", page="startupMetaProtocolPage", data=dict(id=self.object.id)
+    )
 
 
 def get_app_config_metaresult(self, context) -> WebappConfig:
-    return WebappConfig(app="epiMetaStartup", page="startupMetaResultPage", data=dict(id=self.object.id))
+    return WebappConfig(
+        app="epiMetaStartup", page="startupMetaResultPage", data=dict(id=self.object.id)
+    )
 
 
 # MetaProtocol
@@ -72,7 +76,9 @@ class MetaResultCreate(BaseCreateWithFormset):
         return {"assessment": self.assessment}
 
     def build_initial_formset_factory(self):
-        return forms.SingleResultFormset(queryset=models.SingleResult.objects.none(), **self.get_formset_kwargs())
+        return forms.SingleResultFormset(
+            queryset=models.SingleResult.objects.none(), **self.get_formset_kwargs()
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -134,5 +140,9 @@ class MetaResultFilterList(BaseFilterList):
             super()
             .get_queryset()
             .select_related("protocol__study")
-            .annotate(ci_units_percentage=Case(When(ci_units=None, then=None), default=F("ci_units") * 100))
+            .annotate(
+                ci_units_percentage=Case(
+                    When(ci_units=None, then=None), default=F("ci_units") * 100
+                )
+            )
         )

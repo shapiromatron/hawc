@@ -20,26 +20,34 @@ class MetaResultFilterSet(BaseFilterSet):
     label = df.CharFilter(
         lookup_expr="icontains",
         label="Meta result label",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
+        ),
         help_text="ex: ALL, folic acid, any time",
     )
     protocol = df.CharFilter(
         field_name="protocol__name",
         lookup_expr="icontains",
         label="Protocol",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.MetaProtocolAutocomplete, field="name"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaProtocolAutocomplete, field="name"
+        ),
         help_text="ex: B vitamins and risk of cancer",
     )
     health_outcome = df.CharFilter(
         lookup_expr="icontains",
         label="Health outcome",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.MetaResultAutocomplete, field="health_outcome"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaResultAutocomplete, field="health_outcome"
+        ),
         help_text="ex: Any adenoma",
     )
     exposure_name = df.CharFilter(
         lookup_expr="icontains",
         label="Exposure name",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.MetaResultAutocomplete, field="exposure_name"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.MetaResultAutocomplete, field="exposure_name"
+        ),
         help_text="ex: Folate",
     )
     order_by = df.OrderingFilter(

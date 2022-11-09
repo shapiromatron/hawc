@@ -21,47 +21,61 @@ class EndpointFilterSet(BaseFilterSet):
     name = df.CharFilter(
         lookup_expr="icontains",
         label="Endpoint name",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"
+        ),
         help_text="ex: B cells",
     )
     chemical = df.CharFilter(
         field_name="chemical__name",
         lookup_expr="icontains",
         label="Chemical name",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.IVChemicalAutocomplete, field="name"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVChemicalAutocomplete, field="name"
+        ),
         help_text="ex: PFOA",
     )
     cas = df.CharFilter(
         field_name="chemical__cas",
         lookup_expr="icontains",
         label="CAS",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.IVChemicalAutocomplete, field="cas"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVChemicalAutocomplete, field="cas"
+        ),
         help_text="ex: 107-02-8",
     )
     cell_type = df.CharFilter(
         field_name="experiment__cell_type__cell_type",
         lookup_expr="icontains",
         label="Cell type",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="cell_type"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="cell_type"
+        ),
         help_text="ex: HeLa",
     )
     tissue = df.CharFilter(
         field_name="experiment__cell_type__tissue",
         lookup_expr="icontains",
         label="Tissue",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="tissue"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="tissue"
+        ),
         help_text="ex: adipocytes",
     )
     effect = df.CharFilter(
         lookup_expr="icontains",
         label="Effect",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.IVEndpointAutocomplete, field="effect"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="effect"
+        ),
         help_text="ex: gene expression",
     )
     response_units = df.CharFilter(
         lookup_expr="icontains",
         label="Response units",
-        widget=AutocompleteTextWidget(autocomplete_class=autocomplete.IVEndpointAutocomplete, field="response_units"),
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="response_units"
+        ),
         help_text="ex: counts",
     )
     dose_units = df.ModelChoiceFilter(
@@ -133,7 +147,9 @@ class EndpointFilterSet(BaseFilterSet):
         form.fields["studies"].set_filters({"assessment_id": self.assessment.id, "in_vitro": True})
         # for endpoint autocomplete
         for field in ("name", "effect", "response_units"):
-            form.fields[field].widget.update_filters({"experiment__study__assessment_id": self.assessment.id})
+            form.fields[field].widget.update_filters(
+                {"experiment__study__assessment_id": self.assessment.id}
+            )
         # for chemical autocomplete
         for field in ("chemical", "cas"):
             form.fields[field].widget.update_filters({"study__assessment_id": self.assessment.id})

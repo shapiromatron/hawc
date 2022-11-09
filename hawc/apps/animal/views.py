@@ -423,7 +423,9 @@ class EndpointListV2(BaseList):
         url = reverse("animal:api:assessment-endpoints", args=(self.assessment.id,))
         if self.request.GET.get("unpublished", "false").lower() == "true":
             url += "?unpublished=true"
-        return WebappConfig(app="animalStartup", page="startupEndpointListApp", data=dict(data_url=url))
+        return WebappConfig(
+            app="animalStartup", page="startupEndpointListApp", data=dict(data_url=url)
+        )
 
 
 class EndpointTags(EndpointFilterList):

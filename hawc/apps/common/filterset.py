@@ -52,7 +52,9 @@ class GridColumn(BaseModel):
         if self.rows:
             for i, row in enumerate(self.rows):
                 row.apply_layout(helper, index + i)
-            helper[index : index + len(self.rows)].wrap_together(cfl.Column, css_class=self.css_class)
+            helper[index : index + len(self.rows)].wrap_together(
+                cfl.Column, css_class=self.css_class
+            )
         else:
             helper[index].wrap(cfl.Column, css_class=self.css_class)
 
@@ -179,7 +181,9 @@ class BaseFilterSet(FilterSet):
             undefined = [f for f in undefined if f not in cls.declared_filters]
 
         if undefined:
-            raise TypeError("'Meta.fields' must not contain non-model field names: %s" % ", ".join(undefined))
+            raise TypeError(
+                "'Meta.fields' must not contain non-model field names: %s" % ", ".join(undefined)
+            )
 
         # Add in declared filters. This is necessary since we don't enforce adding
         # declared filters to the 'Meta.fields' option
