@@ -158,12 +158,14 @@ class TagReferencesMain extends Component {
                                         }}>
                                         &nbsp;{this.state.showFullTag ? "Hide" : "Show"} full tag
                                     </div>,
-                                    <div
-                                        className="dropdown-item cursor-pointer"
-                                        key={5}
-                                        onClick={() => store.setInstructionsModal(true)}>
-                                        &nbsp;View instructions
-                                    </div>,
+                                    store.config.instructions.length > 0 ? (
+                                        <div
+                                            className="dropdown-item cursor-pointer"
+                                            key={5}
+                                            onClick={() => store.setInstructionsModal(true)}>
+                                            &nbsp;View instructions
+                                        </div>
+                                    ) : null,
                                 ]}
                             />
                         </div>
@@ -173,7 +175,7 @@ class TagReferencesMain extends Component {
                     {selectedReferencePk === null ? (
                         <div className="alert alert-danger">No references found.</div>
                     ) : null}
-                    {this.state.pinInstructions ? (
+                    {this.state.pinInstructions && store.config.instructions.length > 0 ? (
                         <div
                             className="alert alert-info mt-3 resize-y"
                             style={
@@ -189,13 +191,7 @@ class TagReferencesMain extends Component {
                                 }}>
                                 &times;
                             </button>
-                            <div
-                                dangerouslySetInnerHTML={
-                                    store.config.instructions.length > 0
-                                        ? {__html: store.config.instructions}
-                                        : {__html: "No screening instructions found."}
-                                }
-                            />
+                            <div dangerouslySetInnerHTML={{__html: store.config.instructions}} />
                         </div>
                     ) : null}
                 </div>
@@ -207,7 +203,7 @@ class TagReferencesMain extends Component {
                     />
                 </div>
                 <Modal
-                    isShown={store.showInstructionsModal}
+                    isShown={store.showInstructionsModal && store.config.instructions.length > 0}
                     onClosed={() => store.setInstructionsModal(false)}>
                     <div className="modal-header pb-0">
                         <h4>
@@ -239,11 +235,7 @@ class TagReferencesMain extends Component {
                     </div>
                     <div
                         className="modal-body"
-                        dangerouslySetInnerHTML={
-                            store.config.instructions.length > 0
-                                ? {__html: store.config.instructions}
-                                : {__html: "No screening instructions found."}
-                        }
+                        dangerouslySetInnerHTML={{__html: store.config.instructions}}
                     />
                 </Modal>
             </div>
