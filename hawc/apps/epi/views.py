@@ -170,6 +170,9 @@ class OutcomeFilterList(BaseFilterList):
     model = models.Outcome
     filterset_class = filterset.OutcomeFilterSet
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("study_population__study")
+
 
 class OutcomeCreate(BaseCreate):
     success_message = "Outcome created."

@@ -139,6 +139,7 @@ class MetaResultFilterList(BaseFilterList):
         return (
             super()
             .get_queryset()
+            .select_related("protocol__study")
             .annotate(
                 ci_units_percentage=Case(
                     When(ci_units=None, then=None), default=F("ci_units") * 100

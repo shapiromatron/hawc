@@ -160,7 +160,7 @@ class OutcomeFilterSet(BaseFilterSet):
         queryset = queryset.filter(assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(study_population__study__published=True)
-        return queryset.select_related("study_population__study")
+        return queryset
 
     def create_form(self):
         form = super().create_form()

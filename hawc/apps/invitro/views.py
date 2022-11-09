@@ -221,3 +221,11 @@ class EndpointFilterList(BaseFilterList):
     parent_model = Assessment
     model = models.IVEndpoint
     filterset_class = filterset.EndpointFilterSet
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("experiment__study", "experiment__dose_units", "chemical")
+            .prefetch_related("effects")
+        )

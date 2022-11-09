@@ -84,7 +84,7 @@ class MetaResultFilterSet(BaseFilterSet):
         queryset = queryset.filter(protocol__study__assessment=self.assessment)
         if not self.perms["edit"]:
             queryset = queryset.filter(protocol__study__published=True)
-        return queryset.select_related("protocol__study")
+        return queryset
 
     def create_form(self):
         form = super().create_form()
