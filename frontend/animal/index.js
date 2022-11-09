@@ -6,7 +6,6 @@ import ehvBrowserStartup from "./EhvBrowser";
 import Endpoint from "./Endpoint";
 import startupEndpointForm from "./EndpointForm";
 import startupEndpointListApp from "./EndpointListApp";
-import EndpointListTable from "./EndpointListTable";
 import Experiment from "./Experiment";
 
 export default {
@@ -17,7 +16,6 @@ export default {
     Endpoint,
     startupEndpointForm,
     startupEndpointListApp,
-    EndpointListTable,
     Experiment,
     ehvBrowserStartup,
 };

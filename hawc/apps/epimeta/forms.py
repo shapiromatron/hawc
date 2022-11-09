@@ -1,18 +1,12 @@
 from functools import partial
 
 from django import forms
-from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.urls import reverse
 
-from ..common.autocomplete import (
-    AutocompleteMultipleChoiceField,
-    AutocompleteSelectMultipleWidget,
-    AutocompleteTextWidget,
-)
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, form_actions_apply_filters
+from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
+from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..epi.autocomplete import AdjustmentFactorAutocomplete, CriteriaAutocomplete
-from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, models
 
 
@@ -170,112 +164,6 @@ class MetaResultForm(forms.ModelForm):
         helper.add_create_btn("adjustment_factors", url, "Create criteria")
 
         return helper
-
-
-class MetaResultFilterForm(forms.Form):
-
-    ORDER_BY_CHOICES = (
-        ("protocol__study__short_citation", "study"),
-        ("label", "meta result label"),
-        ("protocol__name", "protocol"),
-        ("health_outcome", "health outcome"),
-        ("exposure", "exposure"),
-    )
-
-    studies = AutocompleteMultipleChoiceField(
-        label="Study reference",
-        autocomplete_class=StudyAutocomplete,
-        help_text="ex: Smith et al. 2010",
-        required=False,
-    )
-
-    label = forms.CharField(
-        label="Meta result label",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
-        ),
-        help_text="ex: ALL, folic acid, any time",
-        required=False,
-    )
-
-    protocol = forms.CharField(
-        label="Protocol",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.MetaProtocolAutocomplete, field="name"
-        ),
-        help_text="ex: B vitamins and risk of cancer",
-        required=False,
-    )
-
-    health_outcome = forms.CharField(
-        label="Health outcome",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.MetaResultAutocomplete, field="health_outcome"
-        ),
-        help_text="ex: Any adenoma",
-        required=False,
-    )
-
-    exposure_name = forms.CharField(
-        label="Exposure name",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.MetaResultAutocomplete, field="exposure_name"
-        ),
-        help_text="ex: Folate",
-        required=False,
-    )
-
-    order_by = forms.ChoiceField(
-        choices=ORDER_BY_CHOICES,
-    )
-
-    paginate_by = forms.IntegerField(
-        label="Items per page", min_value=10, initial=25, max_value=500, required=False
-    )
-
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("assessment")
-        super().__init__(*args, **kwargs)
-        self.fields["studies"].set_filters({"assessment_id": assessment.id, "epi_meta": True})
-        self.fields["protocol"].widget.update_filters({"study__assessment_id": assessment.id})
-        for field in self.fields:
-            widget = self.fields[field].widget
-            if field in ("label", "health_outcome", "exposure_name"):
-                widget.update_filters({"protocol__study__assessment_id": assessment.id})
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-
-        helper.add_row("studies", 4, "col-md-3")
-        helper.add_row("exposure_name", 3, "col-md-3")
-
-        return helper
-
-    def get_query(self):
-
-        studies = self.cleaned_data.get("studies")
-        label = self.cleaned_data.get("label")
-        protocol = self.cleaned_data.get("protocol")
-        health_outcome = self.cleaned_data.get("health_outcome")
-        exposure_name = self.cleaned_data.get("exposure_name")
-
-        query = Q()
-        if studies:
-            query &= Q(protocol__study__in=studies)
-        if label:
-            query &= Q(label__icontains=label)
-        if protocol:
-            query &= Q(protocol__name__icontains=protocol)
-        if health_outcome:
-            query &= Q(health_outcome__icontains=health_outcome)
-        if exposure_name:
-            query &= Q(exposure_name__icontains=exposure_name)
-        return query
-
-    def get_order_by(self):
-        return self.cleaned_data.get("order_by", self.ORDER_BY_CHOICES[0][0])
 
 
 class SingleResultForm(forms.ModelForm):
