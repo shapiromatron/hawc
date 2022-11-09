@@ -244,17 +244,17 @@ class LiteratureAssessment(models.Model):
 
     def get_keyword_data(self) -> dict:
         return {
-            "1": {
+            "set1": {
                 "name": self.name_list_1,
                 "color": self.color_list_1,
                 "keywords": [word.strip() for word in self.keyword_list_1.split("|") if word],
             },
-            "2": {
+            "set2": {
                 "name": self.name_list_2,
                 "color": self.color_list_2,
                 "keywords": [word.strip() for word in self.keyword_list_2.split("|") if word],
             },
-            "3": {
+            "set3": {
                 "name": self.name_list_3,
                 "color": self.color_list_3,
                 "keywords": [word.strip() for word in self.keyword_list_3.split("|") if word],

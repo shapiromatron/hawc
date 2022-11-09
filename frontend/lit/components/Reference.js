@@ -10,14 +10,14 @@ import Hero from "shared/utils/Hero";
 import ReferenceButton from "./ReferenceButton";
 
 const markKeywords = (text, allSettings) => {
-        const all_tokens = allSettings["1"].keywords
-                .concat(allSettings["2"].keywords)
-                .concat(allSettings["3"].keywords),
+        const all_tokens = allSettings.set1.keywords
+                .concat(allSettings.set2.keywords)
+                .concat(allSettings.set3.keywords),
             all_re = new RegExp(all_tokens.join("|"), "gim");
         text = text.replace(all_re, match => `<mark>${match}</mark>`);
-        text = markText(text, allSettings["1"]);
-        text = markText(text, allSettings["2"]);
-        text = markText(text, allSettings["3"]);
+        text = markText(text, allSettings.set1);
+        text = markText(text, allSettings.set2);
+        text = markText(text, allSettings.set3);
         return text;
     },
     markText = (text, settings) => {
