@@ -1,14 +1,14 @@
 // adapted from `https://observablehq.com/@d3/word-cloud`
-import $ from "$";
-import {observer} from "mobx-react";
 import * as d3 from "d3";
 import * as cloud from "d3-cloud";
+import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
-
 import Loading from "shared/components/Loading";
 import VisualToolbar from "shared/components/VisualToolbar";
+
+import $ from "$";
 
 const padding = 0,
     MIN_REFS = 2,

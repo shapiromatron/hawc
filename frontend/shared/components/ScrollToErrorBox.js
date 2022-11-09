@@ -1,7 +1,6 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import _ from "lodash";
-
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
 class ScrollToErrorBox extends Component {

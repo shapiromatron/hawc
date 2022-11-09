@@ -1,14 +1,13 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import {inject, observer} from "mobx-react";
+import "./App.css";
 
+import {inject, observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 import h from "shared/utils/helpers";
 
 import Breadcrumbs from "./Breadcrumbs";
 import GroupedObjectList from "./GroupedObjectList";
-
-import "./App.css";
 
 @inject("store")
 @observer

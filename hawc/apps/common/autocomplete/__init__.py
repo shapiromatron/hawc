@@ -6,7 +6,7 @@ from .forms import (
     AutocompleteTextWidget,
 )
 from .registry import autodiscover, get_autocomplete, register
-from .views import BaseAutocomplete, SearchLabelMixin
+from .views import BaseAutocomplete, BaseAutocompleteAuthenticated, SearchLabelMixin
 
 __all__ = [
     "AutocompleteChoiceField",
@@ -15,6 +15,7 @@ __all__ = [
     "AutocompleteSelectWidget",
     "AutocompleteTextWidget",
     "BaseAutocomplete",
+    "BaseAutocompleteAuthenticated",
     "SearchLabelMixin",
     "autodiscover",
     "get_autocomplete",

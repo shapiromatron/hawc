@@ -8,4 +8,4 @@ const NO_JUDGEMENT = 900,
         IRIS_HANDBOOK: `See Chapter 11 in the EPA IRIS Handbook.`,
     };
 
-export {NO_JUDGEMENT, CUSTOM_JUDGEMENT, HELP_TEXT};
+export {CUSTOM_JUDGEMENT, HELP_TEXT, NO_JUDGEMENT};

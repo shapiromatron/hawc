@@ -1,6 +1,6 @@
-import React from "react";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
+import React from "react";
 
 import Recommendation from "../components/Recommendation";
 

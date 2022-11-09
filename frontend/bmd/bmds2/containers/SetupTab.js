@@ -1,12 +1,12 @@
-import React from "react";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
+import React from "react";
 
+import BMROptionTable from "../components/BMROptionTable";
 import DoseResponse from "../components/DoseResponse";
 import DoseUnitsSelector from "../components/DoseUnitsSelector";
-import ModelOptionTable from "../components/ModelOptionTable";
-import BMROptionTable from "../components/BMROptionTable";
 import ExecuteWell from "../components/ExecuteWell";
+import ModelOptionTable from "../components/ModelOptionTable";
 
 @inject("store")
 @observer

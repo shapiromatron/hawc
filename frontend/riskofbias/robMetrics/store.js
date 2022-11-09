@@ -1,5 +1,4 @@
-import {observable, computed, action} from "mobx";
-
+import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 class RobMetricsStore {

@@ -1,16 +1,17 @@
-import _ from "lodash";
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import AutoSuggest from "react-autosuggest";
-
-import h from "shared/utils/helpers";
-import {
-    DEFAULT_MIN_SEARCH_LENGTH,
-    DEBOUNCE_MS,
-    theme,
-    boldPatternText,
-} from "./Autocomplete/constants";
 import "./Autocomplete/Autocomplete.css";
+
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
+import AutoSuggest from "react-autosuggest";
+import h from "shared/utils/helpers";
+
+import {
+    boldPatternText,
+    DEBOUNCE_MS,
+    DEFAULT_MIN_SEARCH_LENGTH,
+    theme,
+} from "./Autocomplete/constants";
 
 class AutocompleteTerm extends Component {
     /*

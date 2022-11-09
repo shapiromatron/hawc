@@ -1,9 +1,9 @@
-import $ from "$";
 import _ from "lodash";
-
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import $ from "$";
 
 import ComparisonSet from "./ComparisonSet";
 import Result from "./Result";
@@ -95,23 +95,6 @@ class Outcome {
             }
         }
         return $el;
-    }
-
-    buildListRow() {
-        let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
-            detail = $(
-                '<i class="fa fa-eye previewModalIcon ml-2" title="preview in a modal">'
-            ).click(() => this.displayAsModal({complete: true})),
-            outcome = $('<span class="previewModalParent">').append(link, detail);
-
-        return [
-            `<a href=${this.data.study_population.study.url} target="_blank">${this.data.study_population.study.short_citation}</a>`,
-            `<a href=${this.data.study_population.url} target="_blank">${this.data.study_population.name}</a>`,
-            outcome,
-            this.data.system ? this.data.system : "--",
-            this.data.effect ? this.data.effect : "--",
-            this.data.diagnostic ? this.data.diagnostic : "--",
-        ];
     }
 
     build_breadcrumbs() {
