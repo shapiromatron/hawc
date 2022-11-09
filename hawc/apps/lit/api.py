@@ -377,7 +377,12 @@ class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
     assessment_filter_args = "assessment"
 
 
-class ReferenceViewset(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ReferenceViewset(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     http_method_names = METHODS_NO_PUT
     serializer_class = serializers.ReferenceSerializer
     permission_classes = (AssessmentLevelPermissions,)
