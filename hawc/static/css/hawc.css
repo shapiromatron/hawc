@@ -382,8 +382,6 @@ div.smart-tag.active {
     overflow-wrap: break-word;
     word-break: break-word;
     word-wrap: break-word;
-    border-bottom: 1px solid #0C7BDC;
-    box-shadow: inset 0 -3px 0 #0C7BDC;
 }
 
 /* preview modal icon */

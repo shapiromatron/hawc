@@ -9,40 +9,25 @@ import Hero from "shared/utils/Hero";
 
 import ReferenceButton from "./ReferenceButton";
 
+const markText = (text, settings) => {
+    const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
+    return text.replace(
+        re,
+        (match, token) =>
+            `<mark class="hawc-mk" title="${settings.name}" style='border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};'>${token}</mark>`
+    );
+};
+
 class Reference extends Component {
     renderKeywordHighlights(abstract, keyword_dict) {
         const all_tokens = keyword_dict["1"]["keywords"]
             .concat(keyword_dict["2"]["keywords"])
             .concat(keyword_dict["3"]["keywords"]);
         const all_re = new RegExp(all_tokens.join("|"), "gim");
-        const first_re = new RegExp(
-            `<mark>(?<token>${keyword_dict["1"]["keywords"].join("|")})</mark>`,
-            "gim"
-        );
-        const sec_re = new RegExp(
-            `<mark>(?<token>${keyword_dict["2"]["keywords"].join("|")})</mark>`,
-            "gim"
-        );
-        const third_re = new RegExp(
-            `<mark>(?<token>${keyword_dict["3"]["keywords"].join("|")})</mark>`,
-            "gim"
-        );
         abstract = abstract.replace(all_re, match => `<mark>${match}</mark>`);
-        abstract = abstract.replace(
-            first_re,
-            (match, token) =>
-                `<mark class='hawc-mk' style='border-bottom: 1px solid ${keyword_dict["1"]["color"]}; box-shadow: inset 0 -4px 0 ${keyword_dict["1"]["color"]};'>${token}</mark>`
-        );
-        abstract = abstract.replace(
-            sec_re,
-            (match, token) =>
-                `<mark class='hawc-mk' style='border-bottom: 1px solid ${keyword_dict["2"]["color"]}; box-shadow: inset 0 -4px 0 ${keyword_dict["2"]["color"]};'>${token}</mark>`
-        );
-        abstract = abstract.replace(
-            third_re,
-            (match, token) =>
-                `<mark class='hawc-mk' style='border-bottom: 1px solid ${keyword_dict["3"]["color"]}; box-shadow: inset 0 -4px 0 ${keyword_dict["3"]["color"]};'>${token}</mark>`
-        );
+        abstract = markText(abstract, keyword_dict["1"]);
+        abstract = markText(abstract, keyword_dict["2"]);
+        abstract = markText(abstract, keyword_dict["3"]);
         return abstract;
     }
 
@@ -148,7 +133,18 @@ class Reference extends Component {
                         ) : null}
                     </div>
                 }
-                {data.title ? <p className="ref_title py-1">{data.title}</p> : null}
+                {data.title ? (
+                    keywordDict ? (
+                        <p
+                            className="ref_title py-1"
+                            dangerouslySetInnerHTML={{
+                                __html: this.renderKeywordHighlights(data.title, keywordDict),
+                            }}
+                        />
+                    ) : (
+                        <p className="ref_title py-1">{data.title}</p>
+                    )
+                ) : null}
                 {data.journal ? <p className="ref_small">{data.journal}</p> : null}
                 {data.abstract ? (
                     <div
