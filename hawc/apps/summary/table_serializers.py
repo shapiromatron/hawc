@@ -1,5 +1,4 @@
 import json
-from collections import OrderedDict
 
 import pandas as pd
 from rest_framework import serializers
@@ -85,7 +84,7 @@ class AnimalGroupSerializer(FlexibleFieldsMixin, serializers.ModelSerializer):
         return text
 
     def get_doses(self, obj):
-        dose_dict = OrderedDict()
+        dose_dict = dict()
         dgs = obj.dosing_regime.doses.all()
         for dg in dgs:
             if dg.dose_units.name not in dose_dict:
@@ -228,7 +227,7 @@ class StudyEvaluationSerializer(serializers.Serializer):
 
     def _aggregate_custom(self, series):
         if series.name == "animal_group_doses":
-            aggregated_dict = OrderedDict()
+            aggregated_dict = dict()
             for dose_dict in series.dropna():
                 for key, value in dose_dict.items():
                     if key not in aggregated_dict:
