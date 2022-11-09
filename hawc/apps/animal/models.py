@@ -16,7 +16,6 @@ from reversion import revisions as reversion
 from scipy import stats
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox
-from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import (
     HAWCDjangoJSONEncoder,
     SerializerHelper,
@@ -1204,67 +1203,6 @@ class Endpoint(BaseEndpoint):
             cleanHTML(ser["endpoint_notes"]),
             json.dumps(ser["additional_fields"]),
         )
-
-    @staticmethod
-    def get_docx_template_context(assessment, queryset):
-        """
-        Given a queryset of endpoints, invert the cached results to build
-        a top-down data hierarchy from study to endpoint. We use this
-        approach since our endpoints are cached, so while it may require
-        more computation, its close to free on database access.
-        """
-
-        endpoints = [SerializerHelper.get_serialized(obj, json=False) for obj in queryset]
-        studies = {}
-
-        # flip dictionary nesting
-        for thisEp in endpoints:
-            thisAG = thisEp["animal_group"]
-            thisExp = thisEp["animal_group"]["experiment"]
-            thisStudy = thisEp["animal_group"]["experiment"]["study"]
-
-            study = studies.get(thisStudy["id"])
-            if study is None:
-                study = thisStudy
-                study["exps"] = {}
-                studies[study["id"]] = study
-
-            exp = study["exps"].get(thisExp["id"])
-            if exp is None:
-                exp = thisExp
-                exp["ags"] = {}
-                study["exps"][exp["id"]] = exp
-
-            ag = exp["ags"].get(thisAG["id"])
-            if ag is None:
-                ag = thisAG
-                ag["eps"] = {}
-                exp["ags"][ag["id"]] = ag
-
-            ep = ag["eps"].get(thisEp["id"])
-            if ep is None:
-                ep = thisEp
-                ag["eps"][ep["id"]] = ep
-
-        # convert value dictionaries to lists
-        studies = sorted(list(studies.values()), key=lambda obj: (obj["short_citation"].lower()))
-        for study in studies:
-            study["exps"] = sorted(
-                list(study["exps"].values()), key=lambda obj: (obj["name"].lower())
-            )
-            for exp in study["exps"]:
-                exp["ags"] = sorted(
-                    list(exp["ags"].values()), key=lambda obj: (obj["name"].lower())
-                )
-                for ag in exp["ags"]:
-                    ag["eps"] = sorted(
-                        list(ag["eps"].values()), key=lambda obj: (obj["name"].lower())
-                    )
-
-        return {
-            "assessment": AssessmentSerializer().to_representation(assessment),
-            "studies": studies,
-        }
 
     @staticmethod
     def setMaximumPercentControlChange(ep):
