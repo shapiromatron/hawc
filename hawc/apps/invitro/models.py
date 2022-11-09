@@ -388,14 +388,6 @@ class IVEndpoint(BaseEndpoint):
             max_val = max(qs)
         return max_val
 
-    @staticmethod
-    def get_docx_template_context(queryset):
-        return {
-            "field1": "a",
-            "field2": "b",
-            "field3": "c",
-        }
-
     def copy_across_assessments(self, cw):
         children = list(
             itertools.chain(
