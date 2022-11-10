@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
@@ -64,7 +64,7 @@ jobs:
 
   frontend:
     name: frontend
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
@@ -105,7 +105,7 @@ jobs:
   integration:
     name: integration
     needs: [backend, frontend]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
