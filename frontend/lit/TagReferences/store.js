@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import {action, computed, toJS, observable} from "mobx";
+import {action, toJS, observable} from "mobx";
 
 import Reference from "../Reference";
 import TagTree from "../TagTree";
@@ -14,15 +14,15 @@ class Store {
     @observable selectedReference = null;
     @observable selectedReferenceTags = null;
     @observable errorOnSave = false;
+    @observable filterClass = "";
+    @observable showInstructionsModal = false;
 
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
         this.references = Reference.sortedArray(config.refs, this.tagtree);
         // set first reference
-        if (this.referencesUntagged.length > 0) {
-            this.changeSelectedReference(this.referencesUntagged[0]);
-        } else if (this.references.length === 1) {
+        if (this.references.length > 0) {
             this.changeSelectedReference(this.references[0]);
         }
     }
@@ -65,8 +65,10 @@ class Store {
                         this.references.splice(index, 1, toJS(this.selectedReference));
                         this.selectedReference = null;
                         this.selectedReferenceTags = null;
-                        if (this.referencesUntagged.length > 0) {
-                            this.changeSelectedReference(this.referencesUntagged[0]);
+                        if (this.references.length > index + 1) {
+                            this.changeSelectedReference(this.references[index + 1]);
+                        } else {
+                            this.changeSelectedReference(this.references[0]);
                         }
                     },
                 });
@@ -91,11 +93,12 @@ class Store {
         this.references = sortReferences(this.references, sortBy);
     }
 
-    @computed get referencesTagged() {
-        return this.references.filter(ref => ref.tags.length > 0);
+    @action.bound toggleSlideAway() {
+        this.filterClass = this.filterClass == "" ? "slideAway" : "";
     }
-    @computed get referencesUntagged() {
-        return this.references.filter(ref => ref.tags.length === 0);
+
+    @action.bound setInstructionsModal(input) {
+        this.showInstructionsModal = input;
     }
 }
 

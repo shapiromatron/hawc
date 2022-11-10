@@ -242,6 +242,25 @@ class LiteratureAssessment(models.Model):
     def can_request_refresh(self) -> bool:
         return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
+    def get_keyword_data(self) -> dict:
+        return {
+            "set1": {
+                "name": self.name_list_1,
+                "color": self.color_list_1,
+                "keywords": [word.strip() for word in self.keyword_list_1.split("|") if word],
+            },
+            "set2": {
+                "name": self.name_list_2,
+                "color": self.color_list_2,
+                "keywords": [word.strip() for word in self.keyword_list_2.split("|") if word],
+            },
+            "set3": {
+                "name": self.name_list_3,
+                "color": self.color_list_3,
+                "keywords": [word.strip() for word in self.keyword_list_3.split("|") if word],
+            },
+        }
+
 
 class Search(models.Model):
     objects = managers.SearchManager()
@@ -868,6 +887,46 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
+    def update_tags(self, user, tag_pks: list[int]):
+        """Update tags for user who requested this tags, and also potentially this reference.
+
+        This method was reviewed to try to reduce the number of db hits required, assuming that
+        the reference model has the required select and prefetch related, the tag comparisons
+        should not require any additional queries (but it may cause up to 5 db writes).
+
+        Args:
+            user: The user requesting the tag changes
+            tag_pks (list[int]): A list of tag IDs
+        """
+        # save user-level tags
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
+        user_tag.is_resolved = False
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        # determine if we should save the reference-level tags
+        update_reference_tags = False
+        if self.assessment.literature_settings.conflict_resolution:
+            if self.user_tags.count() >= 2:
+                tags = set(tag_pks)
+                if all(
+                    tags == {tag.id for tag in user_tag.tags.all()}
+                    for user_tag in self.user_tags.all()
+                ):
+                    update_reference_tags = True
+        else:
+            update_reference_tags = True
+
+        # if we should save reference-level tags, do so
+        if update_reference_tags:
+            self.user_tags.update(is_resolved=True)
+            self.tags.set(tag_pks)
+            self.last_updated = timezone.now()
+            self.save()
+
+    def has_user_tag_conflicts(self):
+        return self.user_tags.filter(is_resolved=False).exists()
+
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
 
@@ -976,7 +1035,7 @@ class Reference(models.Model):
 
     @property
     def has_study(self) -> bool:
-        return apps.get_model("study", "Study").objects.filter(id=self.id).exists()
+        return hasattr(self, "study")
 
     def get_pubmed_id(self):
         for ident in self.identifiers.all():
@@ -1103,6 +1162,9 @@ class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
     tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    is_resolved = models.BooleanField(
+        default=False, help_text="User specific tag differences are resolved for this reference"
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

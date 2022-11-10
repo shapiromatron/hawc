@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
-from hawc.apps.assessment.models import Assessment, DoseUnits, Strain
+from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import (
     ComparisonSet,
     Criteria,
@@ -271,8 +271,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_epi_metadata(self):
         client = HawcClient(self.live_server_url)
-        assessment = Assessment.objects.first()
-        response = client.epi.metadata(assessment.id)
+        response = client.epi.metadata(self.db_keys.assessment_client)
         assert isinstance(response, dict)
 
     def test_epi_create(self):
