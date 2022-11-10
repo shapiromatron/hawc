@@ -5,7 +5,6 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -16,7 +15,6 @@ from rest_framework.response import Response
 from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
-    AssessmentReadPermissions,
     AssessmentRootedTagTreeViewset,
 )
 from ..assessment.models import Assessment
@@ -25,13 +23,12 @@ from ..common.api import (
     LegacyAssessmentAdapterMixin,
     OncePerMinuteThrottle,
     PaginationWithCount,
-    PostFilterBackend,
 )
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, filterset, models, serializers
+from . import exports, models, serializers
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -270,28 +267,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             "Updated (HERO metadata)", assessment, assessment.id, self.request.user.id
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(
-        detail=True,
-        methods=("post",),
-        url_path="reference-search",
-        permission_classes=(AssessmentReadPermissions,),
-        filter_backends=(PostFilterBackend,),
-        filterset_class=filterset.ReferenceFilterSet,
-    )
-    def reference_search(self, request, pk):
-        # TODO - remove this endpoint if we dont use in 2022 literature screening rewrite
-        self.assessment = get_object_or_404(Assessment, pk=pk)
-        if not self.assessment.user_can_view_object(request.user):
-            raise exceptions.PermissionDenied()
-
-        qs = self.filter_queryset(models.Reference.objects.all())
-        qs = qs.select_related("study").prefetch_related("searches", "identifiers")
-
-        # TODO - fix case where order_by is ignored, and always returns 100
-        qs = qs[:100]
-
-        return Response(dict(references=[ref.to_dict() for ref in qs]))
 
     @action(
         detail=True,
