@@ -18,7 +18,7 @@ export default {
     TagTree,
     startupReferenceTable(el, config) {
         let tagtree = new TagTree(config.tags[0]),
-            references = Reference.array(config.references, tagtree);
+            references = Reference.array(config.references, tagtree, false);
         ReactDOM.render(<ReferenceTable references={references} showActions={false} />, el);
     },
     startupReferenceDetail(el, config) {

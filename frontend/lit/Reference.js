@@ -22,13 +22,9 @@ class Reference {
         }
     }
 
-    static array(data, tagtree) {
-        return _.map(data, d => new Reference(d, tagtree));
-    }
-
-    static sortedArray(data, tagtree) {
-        const refs = Reference.array(data, tagtree);
-        return sortReferences(refs);
+    static array(data, tagtree, sort = true) {
+        const refs = _.map(data, d => new Reference(d, tagtree));
+        return sort ? sortReferences(refs) : refs;
     }
 
     get_edit_url() {
