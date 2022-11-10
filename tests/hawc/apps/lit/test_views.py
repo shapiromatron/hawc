@@ -59,7 +59,10 @@ def test_view_read_failure(db_keys):
     c = Client()
     views = [
         {"view": reverse("lit:tag_history", kwargs={"pk": 3}), "status": 403},
-        {"view": reverse("lit:tag_conflicts", kwargs={"pk": db_keys.assessment_working}), "status": 403},
+        {
+            "view": reverse("lit:tag_conflicts", kwargs={"pk": db_keys.assessment_working}),
+            "status": 403,
+        },
     ]
     for view in views:
         response = c.get(view["view"])

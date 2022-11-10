@@ -797,4 +797,3 @@ class ReferenceTagHistory(TeamMemberOrHigherMixin, BaseDetail):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
-
