@@ -242,6 +242,25 @@ class LiteratureAssessment(models.Model):
     def can_request_refresh(self) -> bool:
         return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
+    def get_keyword_data(self) -> dict:
+        return {
+            "set1": {
+                "name": self.name_list_1,
+                "color": self.color_list_1,
+                "keywords": [word.strip() for word in self.keyword_list_1.split("|") if word],
+            },
+            "set2": {
+                "name": self.name_list_2,
+                "color": self.color_list_2,
+                "keywords": [word.strip() for word in self.keyword_list_2.split("|") if word],
+            },
+            "set3": {
+                "name": self.name_list_3,
+                "color": self.color_list_3,
+                "keywords": [word.strip() for word in self.keyword_list_3.split("|") if word],
+            },
+        }
+
 
 class Search(models.Model):
     objects = managers.SearchManager()
@@ -1016,7 +1035,7 @@ class Reference(models.Model):
 
     @property
     def has_study(self) -> bool:
-        return apps.get_model("study", "Study").objects.filter(id=self.id).exists()
+        return hasattr(self, "study")
 
     def get_pubmed_id(self):
         for ident in self.identifiers.all():

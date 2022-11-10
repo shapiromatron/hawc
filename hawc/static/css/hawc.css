@@ -267,30 +267,74 @@ div.smart-tag.active {
 }
 
 /* LITERATURE MODULE */
-.litSavedIcon {
-    color: #5b5bef;
-    font-weight: bold;
-    margin-left: 15px;
-    padding: 5px 10px;
-    border-radius: 4px;
-    border: 1px solid #8080c0;
-    box-shadow: 0px 0px 10px 3px #5b5bef;
+#refFilter h4,
+#fullRefList p {
+    overflow: hidden;
+    word-wrap: normal;
+}
+#refFilter p {
+    max-height: 26px;
+}
+#refFilter {
+    transition-property: all !important;
+    transition: width 250ms ease-out;
+    max-width: 22%;
+    width: 22%;
+    padding: 0rem 1rem;
+}
+#refFilter.slideAway {
+    transition: all 250ms ease-in;
+    max-width: 0%;
+    padding: 0px 0px 0px 0px;
+    overflow: hidden;
+}
+#taggingCol {
+    transition: width 250ms ease-out;
+    width: 53%;
+    padding: 0rem 1rem;
+}
+#taggingCol.slideAway {
+    transition: width 250ms ease-in;
+    width: 75%;
+}
+#filter-btn {
+    transition: transform 250ms ease-in-out;
+}
+#filter-btn.slideAway>#caret-left {
+    transform: scaleX(-1);
+    transition: transform 250ms ease-in-out;
+}
+#tagtree-col {
+    width: 25%;
+}
+#litTagtree {
+    max-height: 120vh;
+    background-color: #e0f0ff;
+    border-radius: 7px;
+}
+.abstracts {
+    font-size: 1.15rem;
+    margin-top: 0.25rem;
+    height: 25rem;
+    background-color: #f5f5f5;
+    border-radius: 6px;
 }
 .ref_small {
     font-size: 0.8465em;
     display: block;
+    margin: 0;
 }
 .ref_title {
     font-weight: bold;
-    margin: 0.375em 0;
+    margin: 0;
+    font-size: 1.35rem;
 }
 .refTag {
     color: #ffffff;
-    background-color: maroon;
-    border-radius: 8px;
-    font-weight: bold;
-    padding: 3px 5px 3px 5px;
-    margin: 0 3px 3px 0;
+    background-color: #162e51;
+    border-radius: 10px;
+    padding: 4px 7px 4px 7px;
+    margin: 0 5px 7px 0;
     display: inline-block;
 }
 .referenceTag{
@@ -325,11 +369,19 @@ div.smart-tag.active {
 }
 .reference.selected {
     color: #ffffff;
-    background-color: maroon;
+    background-color: #162e51;
 }
 .reference:hover {
     color: #ffffff;
     background-color: #0044cc;
+}
+.hawc-mk {
+    background-color: transparent;
+    color: inherit;
+    text-decoration: none;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    word-wrap: break-word;
 }
 
 /* preview modal icon */
