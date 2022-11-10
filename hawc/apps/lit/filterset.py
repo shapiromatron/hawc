@@ -64,10 +64,12 @@ class ReferenceFilterSet(BaseFilterSet):
             queryset = queryset.filter(tags__in=tag_ids)
         return queryset.distinct()
 
-    def prefilter_queryset(self, queryset):
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         return queryset.filter(assessment=self.assessment)
 
-    def change_form(self, form):
+    def create_form(self):
+        form = super().create_form()
         tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         form.fields["tags"].queryset = tags
         form.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()

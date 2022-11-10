@@ -71,13 +71,15 @@ class StudyFilterSet(BaseFilterSet):
     def filter_assigned_user(self, queryset, name, value):
         return queryset.filter(riskofbiases__author=value, riskofbiases__active=True)
 
-    def prefilter_queryset(self, queryset):
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
         return queryset.filter(query)
 
-    def change_form(self, form):
+    def create_form(self):
+        form = super().create_form()
         form.fields["assigned_user"].queryset = self.assessment.pms_and_team_users()
         if not self.include_rob_authors:
             form.fields.pop("assigned_user")
