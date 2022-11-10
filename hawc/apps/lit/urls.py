@@ -139,6 +139,11 @@ urlpatterns = [
         name="search_tags_visual",
     ),
     path(
+        "assessment/<int:pk>/tag-conflicts/",
+        views.ConflictResolution.as_view(),
+        name="tag_conflicts",
+    ),
+    path(
         "ris-export-instructions/",
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
