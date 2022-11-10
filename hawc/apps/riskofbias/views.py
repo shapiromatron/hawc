@@ -211,7 +211,7 @@ class RobAssignmentList(TeamMemberOrHigherMixin, BaseFilterList):
     parent_model = Assessment
     model = Study
     template_name = "riskofbias/rob_assignment_list.html"
-    paginate_by = None
+    paginate_by = 50
     filterset_class = StudyFilterSet
 
     def get_assessment(self, request, *args, **kwargs):
@@ -255,6 +255,7 @@ class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseFilterList):
     model = Study
     template_name = "riskofbias/rob_assignment_update.html"
     filterset_class = StudyFilterSet
+    paginate_by = 50
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])

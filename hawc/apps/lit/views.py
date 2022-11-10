@@ -12,10 +12,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
-from hawc.apps.common.filterset import dynamic_filterset
-
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, listToUl, tryParseInt
 from ..common.views import (
     AssessmentPermissionsMixin,

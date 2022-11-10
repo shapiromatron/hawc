@@ -44,13 +44,7 @@ class StudyFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Study
-        fields = [
-            "citation",
-            "identifier",
-            "data_type",
-            "published",
-            "assigned_user",
-        ]
+        fields = ["citation", "identifier", "data_type", "published", "assigned_user"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 4}, {"width": 2}, {"width": 2}, {"width": 2}, {"width": 2}]},
@@ -61,6 +55,13 @@ class StudyFilterSet(BaseFilterSet):
         self.include_rob_authors = include_rob_authors
         super().__init__(*args, assessment=assessment, **kwargs)
 
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        query = Q(assessment=self.assessment)
+        if not self.perms["edit"]:
+            query &= Q(published=True)
+        return queryset.filter(query)
+
     def filter_citation(self, queryset, name, value):
         query = Q(short_citation__icontains=value) | Q(full_citation__icontains=value)
         return queryset.filter(query)
@@ -70,13 +71,6 @@ class StudyFilterSet(BaseFilterSet):
 
     def filter_assigned_user(self, queryset, name, value):
         return queryset.filter(riskofbiases__author=value, riskofbiases__active=True)
-
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        query = Q(assessment=self.assessment)
-        if not self.perms["edit"]:
-            query &= Q(published=True)
-        return queryset.filter(query)
 
     def create_form(self):
         form = super().create_form()

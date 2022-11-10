@@ -46,6 +46,10 @@ class ReferenceFilterSet(BaseFilterSet):
             "tags",
         ]
 
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.filter(assessment=self.assessment)
+
     def filter_authors(self, queryset, name, value):
         query = Q(authors_short__unaccent__icontains=value) | Q(authors__unaccent__icontains=value)
         return queryset.filter(query)
@@ -59,10 +63,6 @@ class ReferenceFilterSet(BaseFilterSet):
             tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
             queryset = queryset.filter(tags__in=tag_ids)
         return queryset.distinct()
-
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        return queryset.filter(assessment=self.assessment)
 
     def create_form(self):
         form = super().create_form()
