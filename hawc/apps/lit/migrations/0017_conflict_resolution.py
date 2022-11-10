@@ -27,6 +27,13 @@ class Migration(migrations.Migration):
                         auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
+                (
+                    "is_resolved",
+                    models.BooleanField(
+                        default=False,
+                        help_text="User specific tag differences are resolved for this reference",
+                    ),
+                ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
