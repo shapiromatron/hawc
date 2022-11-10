@@ -15,10 +15,8 @@ class ReferenceFilterSet(BaseFilterSet):
     )
     year = df.NumberFilter(label="Year", help_text="Year of publication")
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
-    title = df.CharFilter(lookup_expr="icontains", label="Title")
-    authors = df.CharFilter(method="filter_authors", label="Authors")
-    abstract = df.CharFilter(lookup_expr="icontains", label="Abstract")
     title_abstract = df.CharFilter(method="filter_title_abstract", label="Title/Abstract")
+    authors = df.CharFilter(method="filter_authors", label="Authors")
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tags",
@@ -41,13 +39,11 @@ class ReferenceFilterSet(BaseFilterSet):
             "db_id",
             "year",
             "journal",
-            "title",
-            "authors",
-            "abstract",
             "title_abstract",
-            "tags",
+            "authors",
             "order_by",
             "paginate_by",
+            "tags",
         ]
 
     def filter_authors(self, queryset, name, value):
@@ -73,4 +69,5 @@ class ReferenceFilterSet(BaseFilterSet):
         tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         form.fields["tags"].queryset = tags
         form.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+        form.fields["tags"].widget.attrs["size"] = 8
         return form

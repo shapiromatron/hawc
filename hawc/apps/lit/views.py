@@ -465,7 +465,6 @@ class RefFilterList(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
-        exclude=["title_abstract"],
         grid_layout={
             "rows": [
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
@@ -473,12 +472,20 @@ class RefFilterList(BaseFilterList):
                     "columns": [
                         {
                             "width": 5,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                    ]
+                                }
+                            ],
                         },
                         {"width": 7},
                     ]
                 },
-                {"columns": [{"width": 3}, {"width": 3}]},
             ]
         },
     )
