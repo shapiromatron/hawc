@@ -6,8 +6,8 @@
 <h2>Assessment endpoints ({{page_obj.paginator.count}} found)</h2>
 {% include 'common/filter_list.html' with plural_object_name='endpoints' %}
 <table id="mainTbl" class="table table-sm table-striped">
-    {% bs4_colgroup '15,20,15,50' %}
-    {% bs4_thead 'Study,Experiment,Animal group,Endpoint' %}
+    {% bs4_colgroup '12,14,15,24,7,7,7,7,7' %}
+    {% bs4_thead header_names %}
     <tbody>
         {% for object in object_list %}
         <tr>
@@ -28,10 +28,15 @@
                     <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
                 </span>
             </td>
+            <td>{{object.units_name|default:"-"}}</td>
+            <td>{{object.noel_value|default:"-"}}</td>
+            <td>{{object.loel_value|default:"-"}}</td>
+            <td>{{object.bmd|default:"-"}}</td>
+            <td>{{object.bmdl|default:"-"}}</td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="4">
+            <td colspan="9">
                 No endpoints available
             </td>
         </tr>
