@@ -1,7 +1,8 @@
 {% extends 'assessment-rooted.html' %}
 
-{% block content %}
+{% load bs4 %}
 
+{% block content %}
 <h2 class="d-inline-block">Available studies ({{page_obj.paginator.count}} found)</h2>
 {% if obj_perms.edit and crud == "Read" %}
 <div class="dropdown btn-group float-right">
@@ -23,32 +24,10 @@
     </div>
 </div>
 {% endif %}
-
-
 {% include 'common/filter_list.html' with plural_object_name='studies' %}
-
 <table id="mainTbl" class="table table-sm table-striped">
-
-    <colgroup>
-        <col width="25%" />
-        <col width="45%" />
-        <col width="7%" />
-        <col width="8%" />
-        <col width="8%" />
-        <col width="7%" />
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th>Short citation</th>
-            <th>Full citation</th>
-            <th>Bioassay</th>
-            <th>Epidemiology</th>
-            <th>Epi. meta-analysis</th>
-            <th>In vitro</th>
-        </tr>
-    </thead>
-
+    {% bs4_colgroup '25,45,7,8,8,7' %}
+    {% bs4_thead 'Short citation,Full citation,Bioassay,Epidemiology,Epi. meta-analysis,In vitro' %}
     <tbody>
         {% for object in object_list %}
         <tr>
