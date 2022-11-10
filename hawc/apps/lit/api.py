@@ -280,12 +280,16 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         filterset_class=filterset.ReferenceFilterSet,
     )
     def reference_search(self, request, pk):
+        # TODO - remove this endpoint if we dont use in 2022 literature screening rewrite
         self.assessment = get_object_or_404(Assessment, pk=pk)
         if not self.assessment.user_can_view_object(request.user):
             raise exceptions.PermissionDenied()
 
         qs = self.filter_queryset(models.Reference.objects.all())
-        qs = qs.select_related("study").prefetch_related("searches", "identifiers")[:100]
+        qs = qs.select_related("study").prefetch_related("searches", "identifiers")
+
+        # TODO - fix case where order_by is ignored, and always returns 100
+        qs = qs[:100]
 
         return Response(dict(references=[ref.to_dict() for ref in qs]))
 
