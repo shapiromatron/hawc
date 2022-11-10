@@ -8,15 +8,6 @@ jobs:
     runs-on: ubuntu-22.04
 
     services:
-      postgres:
-        image: postgres:12-alpine
-        env:
-          POSTGRES_USER: hawc
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-        ports:
-        - 5432/tcp
       redis:
         image: redis:6-alpine
         options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
@@ -36,6 +27,11 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+    - name: setup postgres
+      run: |
+        sudo systemctl start postgresql.service
+        sudo -u postgres psql --command="CREATE USER hawc PASSWORD 'password'" --command="\du"
+        sudo -u postgres createdb hawc-test --owner=hawc
     - name: loc
       run: |
         sudo apt-get install -y cloc
@@ -50,14 +46,7 @@ jobs:
         make lint-py
     - name: test
       env:
-        # use localhost for the host here because we are running the job on the VM.
-        # If we were running the job on in a container this would be postgres
-        DJANGO_DB_NAME: hawc
-        DJANGO_DB_USER: hawc
-        DJANGO_DB_PW: password
-        DJANGO_DB_HOST: localhost
         DJANGO_CACHE_LOCATION: redis://localhost:${{job.services.redis.ports[6379]}}/0
-        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         py.test --vcr-record=none
@@ -73,8 +62,9 @@ jobs:
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
-    - uses: actions/cache@v3
-      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+    - name: try to restore yarn cache
+      uses: actions/cache@v3
+      id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/package.json') }}
