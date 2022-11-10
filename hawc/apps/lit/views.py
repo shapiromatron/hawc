@@ -489,6 +489,7 @@ class RefFilterList(BaseFilterList):
             ]
         },
     )
+    paginate_by = 50
 
     def get_queryset(self):
         return (

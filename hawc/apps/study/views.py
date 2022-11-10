@@ -27,6 +27,7 @@ class StudyFilterList(BaseFilterList):
     parent_model = Assessment
     model = models.Study
     filterset_class = filterset.StudyFilterSet
+    paginate_by = 50
 
     def get_queryset(self):
         return super().get_queryset().distinct().prefetch_related("identifiers")
