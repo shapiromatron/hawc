@@ -20,10 +20,13 @@
       <div class="dropdown-divider"></div>
       <span class="dropdown-header">References</span>
       <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
+      {% if assessment.literature_settings.conflict_resolution %}
+        <a class="dropdown-item" href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a>
+      {% endif %}
+      <a class="dropdown-item" href="{% url 'lit:bulk_tag' assessment.pk %}">Bulk tag references</a>
       <a class="dropdown-item" href="{% url 'lit:search_tags_edit' assessment.pk manual_import.slug %}">Tag manually-added references</a>
       <a class="dropdown-item" href="{% url 'lit:tag_untagged' assessment.pk %}">Tag untagged references</a>
       <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full-text URLs</a>
-      <a class="dropdown-item" href="{% url 'lit:bulk_tag' assessment.pk %}">Bulk tag references</a>
       <div class="dropdown-divider"></div>
       <span class="dropdown-header">Exports</span>
       <a class="dropdown-item" href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download all references</a>

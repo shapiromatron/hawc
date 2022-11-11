@@ -39,6 +39,11 @@ urlpatterns = [
         views.TagByReference.as_view(),
         name="reference_tags_edit",
     ),
+    path(
+        "reference/<int:pk>/tag-history/",
+        views.ReferenceTagHistory.as_view(),
+        name="tag-history",
+    ),
     path("tag/<int:pk>/tag/", views.TagByTag.as_view(), name="references_tags_edit"),
     path(
         "assessment/<int:pk>/tag/untagged/",
@@ -142,6 +147,11 @@ urlpatterns = [
         "ris-export-instructions/",
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
+    ),
+    path(
+        "assessment/<int:pk>/reference-tag-conflicts/",
+        views.ConflictResolution.as_view(),
+        name="tag-conflicts",
     ),
     path("api/", include((router.urls, "api"))),
 ]
