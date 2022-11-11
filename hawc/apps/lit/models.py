@@ -954,7 +954,7 @@ class Reference(models.Model):
         d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
-        d["refTagHistoryUrl"] = reverse("lit:tag_history", kwargs={"pk": self.pk})
+        d["tagHistoryUrl"] = reverse("lit:tag-history", kwargs={"pk": self.pk})
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
