@@ -226,12 +226,16 @@ class AssessmentPermissionsMixin:
 
         raise ValueError("Cannot determine permissions object")
 
+    # todo remove this next?
     def permission_check_user_can_view(self):
+        # TODO remove?
         logger.debug("Permissions checked")
         if not self.assessment.user_can_view_object(self.request.user):
             raise PermissionDenied
 
+    # todo remove this next?
     def permission_check_user_can_edit(self):
+        # TODO remove?
         logger.debug("Permissions checked")
         if self.model == Assessment:
             canEdit = self.assessment.user_can_edit_assessment(self.request.user)
@@ -446,7 +450,7 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.permission_check_user_can_edit()
+        self.permission_check_user_can_edit()  # todo - remove? in get_object?
         success_url = self.get_success_url()
         self.create_log(self.object)
         self.object.delete()
@@ -528,8 +532,8 @@ class BaseCreate(
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
-        self.assessment = self.parent.get_assessment()
-        self.permission_check_user_can_edit()
+        self.assessment = self.parent.get_assessment()  # todo - remove? in get_object?
+        self.permission_check_user_can_edit()  # todo - remove? in get_object?
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
@@ -597,8 +601,8 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
-        self.assessment = self.parent.get_assessment()
-        self.permission_check_user_can_view()
+        self.assessment = self.parent.get_assessment()  # TODO - remove?
+        self.permission_check_user_can_view()  # TODO - remove? in get_queryset?
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):

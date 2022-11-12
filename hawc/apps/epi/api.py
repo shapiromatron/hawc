@@ -11,23 +11,16 @@ from rest_framework.serializers import ValidationError
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.api import (
-    CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
-    ReadWriteSerializerMixin,
-)
+from ..common.api import CleanupFieldsBaseViewSet, ReadWriteSerializerMixin
 from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 from .actions.model_metadata import EpiAssessmentMetadata
 
 
-class EpiAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
+class EpiAssessmentViewset(viewsets.GenericViewSet):
     parent_model = Assessment
     model = models.Outcome
     permission_classes = (AssessmentLevelPermissions,)
@@ -45,8 +38,6 @@ class EpiAssessmentViewset(
         """
         Retrieve epidemiology data for assessment.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
         return Response(exporter.build_export())
 
@@ -58,8 +49,6 @@ class EpiAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
@@ -81,8 +70,6 @@ class EpiAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]

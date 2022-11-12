@@ -19,12 +19,7 @@ from ..assessment.api import (
     AssessmentRootedTagTreeViewset,
 )
 from ..assessment.models import Assessment
-from ..common.api import (
-    CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
-    OncePerMinuteThrottle,
-    PaginationWithCount,
-)
+from ..common.api import CleanupFieldsBaseViewSet, OncePerMinuteThrottle, PaginationWithCount
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -32,8 +27,7 @@ from ..common.views import create_object_log
 from . import exports, models, serializers
 
 
-class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
-    parent_model = Assessment
+class LiteratureAssessmentViewset(viewsets.GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
@@ -184,8 +178,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     @action(detail=True, methods=("post",), url_path="topic-model-request-refresh")
     def topic_model_request_refresh(self, request, pk):
         assessment = self.get_object()
-        if not assessment.user_can_edit_object(request.user):
-            raise exceptions.PermissionDenied()
         assessment.literature_settings.topic_tsne_refresh_requested = timezone.now()
         assessment.literature_settings.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -276,9 +268,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     )
     def reference_search(self, request, pk):
         assessment = self.get_object()
-        if not assessment.user_can_view_object(request.user):
-            raise exceptions.PermissionDenied()
-
         serializer = serializers.ReferenceQuerySerializer(
             data=request.data, context={"assessment": assessment}
         )

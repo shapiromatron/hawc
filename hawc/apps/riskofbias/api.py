@@ -18,16 +18,11 @@ from ..assessment.api import (
     get_assessment_id_param,
 )
 from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import (
-    CleanupFieldsBaseViewSet,
-    CleanupFieldsPermissions,
-    LegacyAssessmentAdapterMixin,
-)
+from ..common.api import CleanupFieldsBaseViewSet, CleanupFieldsPermissions
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.validators import validate_exact_ids
-from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
@@ -37,9 +32,7 @@ from .actions.rob_clone import BulkRobCopyAction
 logger = logging.getLogger(__name__)
 
 
-class RiskOfBiasAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
+class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
     parent_model = Assessment
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
@@ -47,7 +40,6 @@ class RiskOfBiasAssessmentViewset(
     lookup_value_regex = re_digits
 
     def get_queryset(self):
-
         perms = self.get_obj_perms()
         if not perms["edit"]:
             return self.model.objects.published(self.assessment)
@@ -55,8 +47,6 @@ class RiskOfBiasAssessmentViewset(
 
     @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
     def export(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
             self.get_queryset().none(),
@@ -68,8 +58,6 @@ class RiskOfBiasAssessmentViewset(
 
     @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset().none(),
@@ -87,8 +75,6 @@ class RiskOfBiasAssessmentViewset(
 
     @action(detail=True, url_path="settings")
     def rob_settings(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
         return Response(ser.data)
 

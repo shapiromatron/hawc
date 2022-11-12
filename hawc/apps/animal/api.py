@@ -14,45 +14,37 @@ from ..assessment.api import (
     get_assessment_from_query,
     get_assessment_id_param,
 )
-from ..assessment.models import Assessment
-from ..common.api import (
-    CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
-    user_can_edit_object,
-)
+from ..common.api import CleanupFieldsBaseViewSet, user_can_edit_object
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin, create_object_log
+from ..common.views import create_object_log
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
 from .actions.term_check import term_check
 
 
-class AnimalAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
-    parent_model = Assessment
-    model = models.Endpoint
+class AnimalAssessmentViewset(viewsets.GenericViewSet):
+    model = models.Assessment
+    queryset = models.Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
+    def get_endpoint_queryset(self):
+        perms = self.assessment.get_obj_perms()
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
+            return models.Endpoint.objects.published(self.assessment)
+        return models.Endpoint.objects.get_qs(self.assessment)
 
     @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         """
         Retrieve complete animal data
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_queryset(),
+            self.get_endpoint_queryset(),
             filename=f"{self.assessment}-bioassay-complete",
             assessment=self.assessment,
         )
@@ -63,10 +55,9 @@ class AnimalAssessmentViewset(
         """
         Retrieve endpoint animal data
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         exporter = exports.EndpointSummary(
-            self.get_queryset(),
+            self.get_endpoint_queryset(),
             filename=f"{self.assessment}-bioassay-summary",
             assessment=self.assessment,
         )
@@ -80,8 +71,7 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
@@ -103,8 +93,7 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
@@ -126,8 +115,7 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
@@ -143,8 +131,7 @@ class AnimalAssessmentViewset(
 
     @action(detail=True, renderer_classes=PandasRenderers)
     def endpoints(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
@@ -162,8 +149,7 @@ class AnimalAssessmentViewset(
 
     @action(detail=True, url_path="ehv-check", renderer_classes=PandasRenderers)
     def ehv_check(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_edit()
+        _ = self.get_object()
         df = term_check(pk)
         export = FlatExport(df, f"term-report-{pk}")
         return Response(export)
@@ -184,7 +170,7 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
 
     @transaction.atomic
     def perform_create(self, serializer):
-        # permissions check
+        # permissions check # todo herE?
         user_can_edit_object(serializer.study, self.request.user, raise_exception=True)
         super().perform_create(serializer)
         create_object_log(

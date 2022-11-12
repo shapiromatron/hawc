@@ -20,10 +20,7 @@ from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models, serializers
 
 
-class Study(
-    mixins.CreateModelMixin,
-    viewsets.ReadOnlyModelViewSet,
-):
+class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination

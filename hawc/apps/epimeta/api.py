@@ -4,17 +4,13 @@ from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
 from ..assessment.models import Assessment
-from ..common.api import LegacyAssessmentAdapterMixin
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class EpiMetaAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
+class EpiMetaAssessmentViewset(viewsets.GenericViewSet):
     parent_model = Assessment
     model = models.MetaResult
     permission_classes = (AssessmentLevelPermissions,)
@@ -32,8 +28,6 @@ class EpiMetaAssessmentViewset(
         """
         Retrieve epidemiology metadata for assessment.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         exporter = exports.MetaResultFlatComplete(
             self.get_queryset(), filename=f"{self.assessment}-epi-meta"
         )

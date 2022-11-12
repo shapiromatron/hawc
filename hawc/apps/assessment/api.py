@@ -16,8 +16,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from hawc.services.epa import dsstox
-
+from ...services.epa.dsstox import RE_DTXSID
+from ..common.api.permissions import AssessmentLevelPermissions
 from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.views import create_object_log
@@ -91,39 +91,6 @@ class JobPermissions(permissions.BasePermission):
             # other actions are object specific,
             # and will be caught by object permissions
             return True
-
-
-class AssessmentLevelPermissions(permissions.BasePermission):
-    default_list_actions = ["list"]
-
-    def has_object_permission(self, request, view, obj):
-        if not hasattr(view, "assessment"):
-            view.assessment = obj.get_assessment()
-        if request.method in permissions.SAFE_METHODS:
-            return view.assessment.user_can_view_object(request.user)
-        elif obj == view.assessment:
-            return view.assessment.user_can_edit_assessment(request.user)
-        else:
-            return view.assessment.user_can_edit_object(request.user)
-
-    def has_permission(self, request, view):
-        list_actions = getattr(view, "list_actions", self.default_list_actions)
-        if view.action in list_actions:
-            logger.debug("Permission checked")
-
-            if not hasattr(view, "assessment"):
-                view.assessment = get_assessment_from_query(request)
-
-            return view.assessment.user_can_view_object(request.user)
-
-        return True
-
-
-class AssessmentReadPermissions(AssessmentLevelPermissions):
-    def has_object_permission(self, request, view, obj):
-        if not hasattr(view, "assessment"):
-            view.assessment = obj.get_assessment()
-        return view.assessment.user_can_view_object(request.user)
 
 
 class InAssessmentFilter(filters.BaseFilterBackend):
@@ -510,7 +477,7 @@ class DatasetViewset(AssessmentViewset):
 
 class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = (permissions.AllowAny,)
-    lookup_value_regex = dsstox.RE_DTXSID
+    lookup_value_regex = RE_DTXSID
     model = models.DSSTox
     serializer_class = serializers.DSSToxSerializer
 

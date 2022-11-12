@@ -109,16 +109,6 @@ class DynamicFieldsMixin:
                     self.fields.pop(field_name)
 
 
-class LegacyAssessmentAdapterMixin:
-    """
-    A mixin that allows API viewsets to interact with legacy methods.
-    """
-
-    def set_legacy_attr(self, pk):
-        self.parent = get_object_or_404(self.parent_model, pk=pk)
-        self.assessment = self.parent.get_assessment()
-
-
 class ReadWriteSerializerMixin:
     """
     Class to be mixed into viewsets which enforces use of separate read/write serializers

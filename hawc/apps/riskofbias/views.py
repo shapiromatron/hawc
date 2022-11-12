@@ -209,6 +209,7 @@ class RobAssignmentList(BaseList):
             .filter(assessment=self.assessment)
             .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
         )
+        # is this required? no assessment.can_edit_object in views.py
         if not self.assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
         initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound

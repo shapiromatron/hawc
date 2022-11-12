@@ -8,17 +8,14 @@ from ..assessment.api import (
     AssessmentViewset,
 )
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.api import CleanupFieldsBaseViewSet
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class IVAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
+class IVAssessmentViewset(viewsets.GenericViewSet):
     parent_model = Assessment
     model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
@@ -33,8 +30,6 @@ class IVAssessmentViewset(
 
     @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
         self.object_list = self.get_queryset()
         exporter = exports.DataPivotEndpoint(
             self.object_list, filename=f"{self.assessment}-invitro"
