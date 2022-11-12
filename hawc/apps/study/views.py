@@ -5,19 +5,12 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView
+from django.views.generic import RedirectView
 
 from ..assessment.models import Assessment
+from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
-from ..common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseList,
-    BaseUpdate,
-    MessageMixin,
-    TeamMemberOrHigherMixin,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
@@ -157,7 +150,7 @@ class StudyDelete(BaseDelete):
         return reverse_lazy("study:list", kwargs={"pk": self.assessment.pk})
 
 
-class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
+class StudiesCopy(BaseUpdate):
     """
     Copy one or more studies from one assessment to another. This will copy
     all nested data as well.
@@ -166,13 +159,10 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
     model = Assessment
     template_name = "study/studies_copy.html"
     form_class = forms.StudiesCopy
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user,
             "Copy study",

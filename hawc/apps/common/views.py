@@ -1,4 +1,3 @@
-import abc
 import logging
 from typing import Any, Callable, Iterable, List, Optional
 from urllib.parse import urlparse
@@ -7,7 +6,7 @@ import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import EmptyResultSet, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
@@ -17,9 +16,11 @@ from django.urls import Resolver404, resolve, reverse
 from django.utils.decorators import method_decorator
 from django.utils.http import is_same_domain
 from django.views.generic import DetailView, ListView
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
+from .constants import AssessmentViewPermissions
 from .crumbs import Breadcrumb
 from .filterset import BaseFilterSet
 from .helper import WebappConfig, tryParseInt
@@ -185,6 +186,8 @@ class AssessmentPermissionsMixin:
     by the assessment object but not including the assessment object.
     """
 
+    assessment_permission: AssessmentViewPermissions
+
     def deny_for_locked_study(self, user, assessment, obj):
         # determine relevant study for a given object, and then checks its editable status.
         # If not set, raises a PermissionDenied.
@@ -212,16 +215,16 @@ class AssessmentPermissionsMixin:
         else:
             return False
 
-    # could be a model element (Study, Endpoint, etc.) or a view to create a new one (EndpointCreate, etc.)
-    def get_contextual_object_for_study_editability_check(self):
-        if hasattr(self, "object") and self.object is not None:
-            # looking at a specific object directly
-            return self.object
-        elif hasattr(self, "parent") and self.parent is not None:
-            # looking at a Create view; can look at the parent/container object to determine study editable status
-            return self.parent
-        else:
-            return None
+    def get_object_for_study_editability_check(self):
+        # return object if one exists (detail, update, delete)
+        if object := getattr(self, "object", None):
+            return object
+
+        # return parent if one exists (create)
+        if parent := getattr(self, "parent", None):
+            return parent
+
+        raise ValueError("Cannot determine permissions object")
 
     def permission_check_user_can_view(self):
         logger.debug("Permissions checked")
@@ -236,88 +239,74 @@ class AssessmentPermissionsMixin:
             self.deny_for_locked_study(
                 self.request.user,
                 self.assessment,
-                self.get_contextual_object_for_study_editability_check(),
+                self.get_object_for_study_editability_check(),
             )
             canEdit = self.assessment.user_can_edit_object(self.request.user)
         if not canEdit:
             raise PermissionDenied
 
+    def check_queryset_study_editability(self, queryset):
+        first_object = queryset.first()
+        if first_object is None:
+            raise ValueError("Cannot determine if objects should be locked for editing")
+        self.deny_for_locked_study(self.request.user, self.assessment, first_object)
+
     def get_object(self, **kwargs):
-        """
-        Check to make sure user can view object
-        """
-        obj = kwargs.get("object")
-        if not obj:
-            obj = super().get_object(**kwargs)
+        obj = kwargs.get("object") or super().get_object(**kwargs)
 
         if not hasattr(self, "assessment"):
             self.assessment = obj.get_assessment()
 
-        if self.crud == "Read":
-            perms = self.assessment.user_can_view_object(self.request.user)
-        else:
-            if self.model == Assessment:
-                perms = self.assessment.user_can_edit_assessment(self.request.user)
-            else:
-                self.deny_for_locked_study(self.request.user, self.assessment, obj)
-                perms = self.assessment.user_can_edit_object(self.request.user)
+        has_permission = False
+        if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
+            has_permission = self.assessment.user_can_edit_assessment(self.request.user)
+        elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
+            self.deny_for_locked_study(self.request.user, self.assessment, obj)
+            has_permission = self.assessment.user_can_edit_object(self.request.user)
+        elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
+            has_permission = self.assessment.user_can_view_object(self.request.user)
 
         logger.debug("Permissions checked")
-        if perms:
-            return obj
-        else:
-            raise PermissionDenied
+        if not has_permission:
+            raise PermissionDenied()
+
+        return obj
 
     def get_queryset(self):
-        """
-        IF attempting to use for permissions checking, requires a
-        self.assessment parameter in class with the assessment to check
-        permissions for.
-        """
         queryset = super().get_queryset()
-        if not hasattr(self, "assessment"):
-            # get_object calls get_queryset; thus we must be careful to check
-            # the correct object
+
+        # don't queryset if we have `get_object`; assume we check there
+        if isinstance(self, SingleObjectMixin):
             return queryset
-        else:
-            # IF, the view has a self.assessment identified, this will check
-            # to ensure that a user is allowed to perform the selected actions.
-            #
-            # TODO: might be preferred to check the get_assessment function with
-            # a user, and ensure that get_assessment is called for ALL models
-            # with assessment permissions mixin
-            #
-            if self.crud == "Read":
-                perms = self.assessment.user_can_view_object(self.request.user)
-            else:
-                if self.model == Assessment:
-                    perms = self.assessment.user_can_edit_assessment(self.request.user)
-                else:
-                    obj = queryset.first()
-                    if obj is None:
-                        raise EmptyResultSet(
-                            "Cannot determine if objects should be locked for editing"
-                        )
-                    self.deny_for_locked_study(self.request.user, self.assessment, obj)
-                    perms = self.assessment.user_can_edit_object(self.request.user)
-            logger.debug("Permissions checked")
-            if perms:
-                return queryset
-            else:
-                raise PermissionDenied
+
+        if not hasattr(self, "assessment"):
+            raise ValueError("No assessment object; required to check permission")
+
+        has_permission = False
+        if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
+            self.check_queryset_study_editability(queryset)
+            has_permission = self.assessment.user_can_edit_assessment(self.request.user)
+        elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
+            self.check_queryset_study_editability(queryset)
+            has_permission = self.assessment.user_can_edit_object(self.request.user)
+        elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
+            has_permission = self.assessment.user_can_view_object(self.request.user)
+
+        logger.debug("Permissions checked")
+        if not has_permission:
+            raise PermissionDenied()
+
+        return queryset
 
     def get_obj_perms(self):
         if not hasattr(self, "assessment"):
-            logger.error("unable to determine object permissions")
-            return {"view": False, "edit": False, "edit_assessment": False}
+            raise ValueError("Unable to determine object permissions")
 
         logger.debug("Permissions added")
         user_perms = self.assessment.user_permissions(self.request.user)
 
-        contextual_obj = self.get_contextual_object_for_study_editability_check()
-        study_perm_check = self.check_study_editability(
-            self.request.user, self.assessment, contextual_obj
-        )
+        object = self.get_object_for_study_editability_check()
+        study_perm_check = self.check_study_editability(self.request.user, self.assessment, object)
         if study_perm_check is not None:
             user_perms["edit"] = study_perm_check
 
@@ -341,52 +330,6 @@ class TimeSpentOnPageMixin:
             self.assessment.id,
         )
         return response
-
-
-class ProjectManagerOrHigherMixin:
-    """
-    Mixin for project-manager access to page.
-    Requires a get_assessment method; checked for all HTTP verbs.
-    """
-
-    @abc.abstractmethod
-    def get_assessment(self, request, *args, **kwargs):
-        raise NotImplementedError("get_assessment requires implementation")
-
-    def dispatch(self, request, *args, **kwargs):
-        self.assessment = self.get_assessment(request, *args, **kwargs)
-        logger.debug("Permissions checked")
-        if not self.assessment.user_can_edit_assessment(request.user):
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        return context
-
-
-class TeamMemberOrHigherMixin:
-    """
-    Mixin for team-member access to page.
-    Requires a get_assessment method; checked for all HTTP verbs.
-    """
-
-    @abc.abstractmethod
-    def get_assessment(self, request, *args, **kwargs):
-        raise NotImplementedError("get_assessment requires implementation")
-
-    def dispatch(self, request, *args, **kwargs):
-        self.assessment = self.get_assessment(request, *args, **kwargs)
-        logger.debug("Permissions checked")
-        if not self.assessment.user_can_edit_object(request.user):
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        return context
 
 
 class CanCreateMixin:
@@ -475,6 +418,7 @@ class WebappMixin:
 class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
+    assessment_permission = AssessmentViewPermissions.VIEWER
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
         return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
@@ -497,6 +441,7 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
 
 class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
@@ -538,6 +483,7 @@ class BaseUpdate(
     WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView
 ):
     crud = "Update"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     @transaction.atomic
     def form_valid(self, form):
@@ -578,6 +524,7 @@ class BaseCreate(
     parent_model = None  # required
     parent_template_name: Optional[str] = None  # required
     crud = "Create"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -646,6 +593,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     parent_template_name = None
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
+    assessment_permission = AssessmentViewPermissions.VIEWER
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
