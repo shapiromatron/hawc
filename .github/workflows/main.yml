@@ -31,7 +31,7 @@ jobs:
       run: |
         sudo systemctl start postgresql.service
         sudo -u postgres psql --command="CREATE USER hawc PASSWORD 'password'" --command="\du"
-        sudo -u postgres createdb hawc-test --owner=hawc
+        sudo -u postgres createdb hawc-test --owner=hawc --command="\l"
     - name: loc
       run: |
         sudo apt-get install -y cloc
@@ -49,7 +49,8 @@ jobs:
         DJANGO_CACHE_LOCATION: redis://localhost:${{job.services.redis.ports[6379]}}/0
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
-        py.test --vcr-record=none
+        py.test tests/hawc/apps/animal/test_api.py::TestAssessmentViewset::test_permissions -s
+        # py.test --vcr-record=none
 
   frontend:
     name: frontend

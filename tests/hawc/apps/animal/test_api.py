@@ -36,6 +36,10 @@ class TestAssessmentViewset:
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
+        from django.conf import settings
+
+        print(settings.DATABASES)
+
         urls = [
             reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-export", args=(db_keys.assessment_working,)),
