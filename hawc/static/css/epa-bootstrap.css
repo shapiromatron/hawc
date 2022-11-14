@@ -31,6 +31,7 @@
 .btn-primary:hover, .btn-primary:active, .btn-primary:focus, .show > .btn-primary.dropdown-toggle {
     background-color: var(--epa-primary-hover);
 }
+input[type="submit"].btn,
 section button.btn,
 section input[type="button"].btn,
 section a.btn {
@@ -49,7 +50,6 @@ section a.btn {
 .dropdown-header {
   color: var(--epa-primary);
 }
-
 /* preserve original color for some `a:visited` */
 a.btn:visited, a.badge:visited {
   color: white;
@@ -67,4 +67,8 @@ a.btn-warning:visited, a.badge-warning:visited {
 }
 .hawc-header .nav-link {
   padding: 0 0 0 1em;
+}
+.dropdown-item.active,
+.dropdown-item:active {
+  color: #fff !important;
 }
