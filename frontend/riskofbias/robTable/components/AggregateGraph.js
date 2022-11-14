@@ -1,11 +1,11 @@
+import "./AggregateGraph.css";
+
 import _ from "lodash";
+import PropTypes from "prop-types";
 import React from "react";
 import ReactDOM from "react-dom";
-import PropTypes from "prop-types";
 
 import DomainCell from "./DomainCell";
-
-import "./AggregateGraph.css";
 
 const AggregateGraph = props => {
     return (

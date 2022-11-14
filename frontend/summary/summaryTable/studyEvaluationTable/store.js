@@ -1,13 +1,12 @@
 import _ from "lodash";
 import {action, autorun, computed, observable} from "mobx";
-
-import * as constants from "./constants";
-import h from "shared/utils/helpers";
-
-import HAWCModal from "shared/utils/HAWCModal";
-import Study from "study/Study";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
+import HAWCModal from "shared/utils/HAWCModal";
+import h from "shared/utils/helpers";
+import Study from "study/Study";
+
+import * as constants from "./constants";
 
 class StudyEvaluationTableStore {
     @observable editMode = false;

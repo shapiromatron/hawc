@@ -1,16 +1,17 @@
-import $ from "$";
 import _ from "lodash";
 
+import $ from "$";
+
+import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
+import buildSortingTable from "./components/SortTable";
 import {
     _DataPivot_settings_filters,
     _DataPivot_settings_spacers,
-    buildHeaderTr,
     buildColGroup,
+    buildHeaderTr,
 } from "./DataPivotUtilities";
-import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
-import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
-import buildSortingTable from "./components/SortTable";
+import {NULL_CASE} from "./shared";
 
 let buildFilterTable = function(tab, dp, handleTableChange) {
         var thead = $("<thead>").html(

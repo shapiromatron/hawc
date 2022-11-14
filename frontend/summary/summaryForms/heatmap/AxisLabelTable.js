@@ -1,14 +1,14 @@
 import _ from "lodash";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
 import CheckboxInput from "shared/components/CheckboxInput";
-import IntegerInput from "shared/components/IntegerInput";
-import TextInput from "shared/components/TextInput";
-import SelectInput from "shared/components/SelectInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import HelpTextPopup from "shared/components/HelpTextPopup";
+import IntegerInput from "shared/components/IntegerInput";
+import SelectInput from "shared/components/SelectInput";
 import SortableList from "shared/components/SortableList";
+import TextInput from "shared/components/TextInput";
 
 import {getColumnValues} from "../../summary/heatmap/common";
 import {HelpText} from "./common";

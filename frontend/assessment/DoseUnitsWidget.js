@@ -1,5 +1,6 @@
-import $ from "$";
 import _ from "lodash";
+
+import $ from "$";
 
 class DoseUnitsWidget {
     constructor(form, opts) {

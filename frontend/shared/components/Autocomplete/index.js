@@ -1,12 +1,13 @@
-import _ from "lodash";
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import AutoSuggest from "react-autosuggest";
-
-import h from "shared/utils/helpers";
-import {DEFAULT_MIN_SEARCH_LENGTH, DEBOUNCE_MS, theme} from "../Autocomplete/constants";
-import {ClientSideAutosuggest, renderClientSideAutosuggest} from "./ClientSide";
 import "./Autocomplete.css";
+
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
+import AutoSuggest from "react-autosuggest";
+import h from "shared/utils/helpers";
+
+import {DEBOUNCE_MS, DEFAULT_MIN_SEARCH_LENGTH, theme} from "../Autocomplete/constants";
+import {ClientSideAutosuggest, renderClientSideAutosuggest} from "./ClientSide";
 
 class Autocomplete extends Component {
     /*

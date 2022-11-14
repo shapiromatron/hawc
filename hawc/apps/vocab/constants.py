@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 from django.db.models import IntegerChoices
 from django.utils.functional import classproperty
 
@@ -13,11 +11,11 @@ class VocabularyNamespace(IntegerChoices):
     EHV = 1, "EHV"
 
     @classproperty
-    def display_dict(cls) -> Dict:
+    def display_dict(cls) -> dict:
         return {1: "EPA Environmental health vocabulary"}
 
     @classmethod
-    def display_choices(cls) -> List:
+    def display_choices(cls) -> list:
         return [(key, value) for key, value in cls.display_dict.items()]
 
     @property
@@ -37,7 +35,7 @@ class VocabularyTermType(IntegerChoices):
     endpoint_name = 5, "endpoint_name"
 
     @classmethod
-    def value_to_text_field(cls) -> Dict:
+    def value_to_text_field(cls) -> dict:
         return {
             cls.system.value: "system",
             cls.organ.value: "organ",
@@ -47,7 +45,7 @@ class VocabularyTermType(IntegerChoices):
         }
 
     @classmethod
-    def value_to_term_field(cls) -> Dict:
+    def value_to_term_field(cls) -> dict:
         return {
             cls.system.value: "system_term_id",
             cls.organ.value: "organ_term_id",

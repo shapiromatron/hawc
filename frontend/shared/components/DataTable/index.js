@@ -1,10 +1,10 @@
-import _ from "lodash";
-import React from "react";
-import PropTypes from "prop-types";
-import Tablesort from "tablesort";
-
-import h from "shared/utils/helpers";
 import "./sorts";
+
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import h from "shared/utils/helpers";
+import Tablesort from "tablesort";
 
 class DataTable extends React.Component {
     constructor(props) {

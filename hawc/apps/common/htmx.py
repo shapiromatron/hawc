@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Callable, Dict, Iterable, Optional, Set
+from typing import Any, Callable, Iterable, Optional
 
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -31,9 +31,9 @@ class Item:
 
     def __post_init__(self):
         self.assessment_permissions: AssessmentPermissions = self.assessment.get_permissions()
-        self._permissions: Optional[Dict[str, bool]] = None
+        self._permissions: Optional[dict[str, bool]] = None
 
-    def to_dict(self, user) -> Dict[str, Any]:
+    def to_dict(self, user) -> dict[str, Any]:
         """Dictionary used for response context"""
         return {
             "assessment": self.assessment,
@@ -42,7 +42,7 @@ class Item:
             "permissions": self.permissions(user),
         }
 
-    def permissions(self, user) -> Dict:
+    def permissions(self, user) -> dict:
         """Generate user specific permissions for this request; cached"""
         if self._permissions is None:
             perms_item = self.parent or self.object  # use parent if exists, else object
@@ -115,10 +115,10 @@ class HtmxViewSet(View):
     Base class for implementing htmx-based actions for a given model resource.
 
     Attributes:
-        actions: Set[str]; individual URL-routes for each action on a view. You can add or remove
+        actions: set[str]; individual URL-routes for each action on a view. You can add or remove
             items from this list; each action requires a URL route, and a method added to this
             ViewSet for handling logic.
-        parent_actions: Set[str]; any actions which require a parent object, not the object
+        parent_actions: set[str]; any actions which require a parent object, not the object
             itself. This is commonly done for create and list views since the object does not
             yet exist or there may be multiple objects.
         pk_url_kwarg: str; the name of the item in the URL (from standard django class-based views)
@@ -126,8 +126,8 @@ class HtmxViewSet(View):
         model: A Django models.Model for the base class
     """
 
-    actions: Set[str] = {"create", "read", "update", "delete", "list"}
-    parent_actions: Set[str] = {"create", "list"}
+    actions: set[str] = {"create", "read", "update", "delete", "list"}
+    parent_actions: set[str] = {"create", "list"}
     pk_url_kwarg: str = "pk"
     parent_model: Any = None
     model: Any = None

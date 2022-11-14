@@ -1,5 +1,4 @@
 import json
-from typing import Dict, List
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -17,7 +16,7 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def update_hero_content(ids: List[int]):
+def update_hero_content(ids: list[int]):
     """Fetch the latest data from HERO and update identifier object."""
 
     Identifiers = apps.get_model("lit", "identifiers")
@@ -37,12 +36,12 @@ def update_hero_content(ids: List[int]):
 
 
 @shared_task
-def update_hero_fields(ref_ids: List[int]):
+def update_hero_fields(ref_ids: list[int]):
     """
     Updates the reference fields with most recent content from HERO
 
     Args:
-        ref_ids (List[int]): List of references IDs to update
+        ref_ids (list[int]): List of references IDs to update
     """
 
     Reference = apps.get_model("lit", "reference")
@@ -56,19 +55,19 @@ def update_hero_fields(ref_ids: List[int]):
 
 
 @shared_task
-def replace_hero_ids(replace: List[List[int]]):
+def replace_hero_ids(replace: list[list[int]]):
     """
     Replace the identifier on each reference with the given HERO ID
 
     Args:
-        replace (List[List[int]]): List of reference ID / HERO ID pairings
+        replace (list[list[int]]): List of reference ID / HERO ID pairings
     """
     Reference = apps.get_model("lit", "reference")
     Identifiers = apps.get_model("lit", "identifiers")
 
     # build map of HERO ID -> Identifier.id
     ref_ids, new_hero_ids = zip(*replace)
-    identifier_map: Dict[int, int] = {
+    identifier_map: dict[int, int] = {
         int(ident.unique_id): ident.id
         for ident in Identifiers.objects.filter(
             database=constants.ReferenceDatabase.HERO, unique_id__in=new_hero_ids
@@ -78,7 +77,7 @@ def replace_hero_ids(replace: List[List[int]]):
         raise ValueError("Identifiers map length != HERO ID length length")
 
     # build map of reference.id -> reference object
-    reference_map: Dict[int, Model] = {
+    reference_map: dict[int, Model] = {
         ref.id: ref
         for ref in Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
     }
@@ -99,7 +98,7 @@ def replace_hero_ids(replace: List[List[int]]):
 
 
 @shared_task
-def update_pubmed_content(ids: List[int]):
+def update_pubmed_content(ids: list[int]):
     """Fetch the latest data from Pubmed and update identifier object."""
     Identifiers = apps.get_model("lit", "identifiers")
     fetcher = pubmed.PubMedFetch(ids)

@@ -94,6 +94,6 @@
         {% endfor %}
     </tbody>
 </table>
-{% include "includes/paginator.html" %}
+{% include "includes/paginator.html" with plural_object_name="logs" %}
 {% include 'assessment/_logs_note.html' %}
 {% endblock content %}

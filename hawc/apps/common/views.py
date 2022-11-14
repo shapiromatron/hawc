@@ -1,6 +1,6 @@
 import abc
 import logging
-from typing import Any, Callable, Iterable, List, Optional
+from typing import Any, Callable, Iterable, Optional
 from urllib.parse import urlparse
 
 import reversion
@@ -21,6 +21,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
+from .filterset import BaseFilterSet
 from .helper import WebappConfig, tryParseInt
 
 logger = logging.getLogger(__name__)
@@ -475,7 +476,7 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
     breadcrumb_active_name: Optional[str] = None
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
@@ -527,7 +528,7 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
         context = super().get_context_data(**kwargs)
         return context
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
         crumbs.append(Breadcrumb(name="Delete"))
         return crumbs
@@ -565,7 +566,7 @@ class BaseUpdate(
         context = super().get_context_data(**kwargs)
         return context
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
         crumbs.append(Breadcrumb(name="Update"))
         return crumbs
@@ -630,7 +631,7 @@ class BaseCreate(
     def post_object_save(self, form):
         pass
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         crumbs.append(Breadcrumb(name=f"Create {self.model._meta.verbose_name}"))
         return crumbs
@@ -667,7 +668,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
             context[self.parent_template_name] = self.parent
         return context
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         name = (
             self.breadcrumb_active_name
@@ -791,60 +792,31 @@ class BaseUpdateWithFormset(BaseUpdate):
         return super().get_context_data(**kwargs)
 
 
-class BaseEndpointFilterList(BaseList):
-    parent_model = Assessment
+class BaseFilterList(BaseList):
+    filterset_class: BaseFilterSet
 
     def get_paginate_by(self, qs) -> int:
         value = self.request.GET.get("paginate_by")
         return tryParseInt(value, default=25, min_value=10, max_value=500)
 
-    def get(self, request, *args, **kwargs):
-        if len(self.request.GET) > 0:
-            self.form = self.form_class(self.request.GET, assessment=self.assessment)
-        else:
-            self.form = self.form_class(assessment=self.assessment)
-        return super().get(request, *args, **kwargs)
+    def get_base_queryset(self):
+        return self.model.objects.all()
 
-    def get_query(self, perms):
-        """
-        query = Q(relation__to__assessment=self.assessment)
-        if not perms['edit']:
-            query &= Q(study__published=True)
-        return query
-        """
-        pass
+    @property
+    def filterset(self):
+        if not hasattr(self, "_filterset"):
+            qs = self.get_base_queryset()
+            self._filterset: BaseFilterSet = self.filterset_class(
+                data=self.request.GET, queryset=qs, request=self.request, assessment=self.assessment
+            )
+        return self._filterset
 
     def get_queryset(self):
-        perms = super().get_obj_perms()
-        order_by = None
+        return self.filterset.qs
 
-        query = self.get_query(perms)
-
-        if self.form.is_valid():
-            query &= self.form.get_query()
-            order_by = self.form.get_order_by()
-
-        ids = (
-            self.model.objects.filter(query)
-            .order_by("id")
-            .distinct("id")
-            .values_list("id", flat=True)
-        )
-
-        qs = self.model.objects.filter(id__in=ids)
-
-        if order_by:
-            qs = qs.order_by(order_by)
-
-        return qs
-
-    def get_context_data(self, **kwargs):
-        kwargs["form"] = self.form
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        if "config" not in context:  # TODO - remove this case; implement #507
-            context["config"] = {
-                "items": self.model.get_qs_json(context["object_list"], json_encode=False)
-            }
+        context.update(form=self.filterset.form)
         return context
 
 

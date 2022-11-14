@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {action, computed, toJS, observable} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 
 class EhvBrowseStore {
     @observable query = "";

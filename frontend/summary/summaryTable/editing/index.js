@@ -1,6 +1,6 @@
+import {Provider} from "mobx-react";
 import React from "react";
 import ReactDOM from "react-dom";
-import {Provider} from "mobx-react";
 
 import Root from "./Root";
 import SummaryTableEditStore from "./store";

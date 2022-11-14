@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 from docx import Document as create_document
 from docx.document import Document
 from docx.enum.section import WD_ORIENT
@@ -49,7 +47,7 @@ class BaseCell(BaseModel):
 
 
 class BaseCellGroup(BaseModel):
-    cells: List[BaseCell] = []
+    cells: list[BaseCell] = []
 
     class Config:
         underscore_attrs_are_private = True
@@ -85,7 +83,7 @@ class BaseCellGroup(BaseModel):
 
 
 class BaseTable(BaseCellGroup):
-    column_widths: List[int] = []
+    column_widths: list[int] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -137,12 +135,12 @@ class BaseTable(BaseCellGroup):
         return docx
 
     @classmethod
-    def get_data(cls, assessment_id: int, **kwargs) -> Dict:
+    def get_data(cls, assessment_id: int, **kwargs) -> dict:
         # return any queried data needed to build the table
         return {}
 
     @classmethod
-    def get_default_props(cls) -> Dict:
+    def get_default_props(cls) -> dict:
         """Return the default required properties for a table.
 
         This should be a full set of required fields for a pydantic model, but may not include

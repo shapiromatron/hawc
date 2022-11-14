@@ -1,6 +1,5 @@
 import itertools
 import json
-from typing import Dict
 
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -392,7 +391,7 @@ class VisualizationCreate(BaseCreate):
         )
         return context
 
-    def get_initial_visual(self, context) -> Dict:
+    def get_initial_visual(self, context) -> dict:
         if context["form"].initial:
             instance = self.instance
             instance.id = instance.FAKE_INITIAL_ID

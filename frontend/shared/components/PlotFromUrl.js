@@ -1,7 +1,6 @@
-import React, {Component} from "react";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Plot from "react-plotly.js";
-
 import Loading from "shared/components/Loading";
 
 class PlotFromUrl extends Component {

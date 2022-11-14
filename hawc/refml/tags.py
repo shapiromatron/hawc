@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 from django.db.models import QuerySet
@@ -15,17 +15,17 @@ class TreeNode(PydanticModel):
         return f"{self.name} ({self.id})"
 
 
-TreeNodeDict = Dict[int, TreeNode]
+TreeNodeDict = dict[int, TreeNode]
 
 
-def build_tree_node_dict(tree: Dict) -> TreeNodeDict:
+def build_tree_node_dict(tree: dict) -> TreeNodeDict:
     """Build a dictionary with tag ids and TreeNode instances.
 
     Given a dump from django treebeard, create a dictionary of tree-nodes. This data structure
     is useful in finding all parent nodes given any tag by ID.
 
     Args:
-        tree (Dict): An export from the django-treebeard, `dump_bulk` command.
+        tree (dict): An export from the django-treebeard, `dump_bulk` command.
 
     Returns:
         TreeNodeDict: An instance of the tree.

@@ -1,28 +1,22 @@
-import _ from "lodash";
-import React, {Component} from "react";
-import ReactDOM from "react-dom";
-
-import Reference from "lit/Reference";
-
-import Study from "study/Study";
-
-import Experiment from "animal/Experiment";
 import AnimalGroup from "animal/AnimalGroup";
 import Endpoint from "animal/Endpoint";
-
-import StudyPopulation from "epi/StudyPopulation";
+import Experiment from "animal/Experiment";
 import ComparisonSet from "epi/ComparisonSet";
 import Exposure from "epi/Exposure";
 import Outcome from "epi/Outcome";
 import Result from "epi/Result";
-
+import StudyPopulation from "epi/StudyPopulation";
 import MetaProtocol from "epimeta/MetaProtocol";
 import MetaResult from "epimeta/MetaResult";
-
-import IVChemical from "invitro/IVChemical";
-import IVExperiment from "invitro/IVExperiment";
 import IVCellType from "invitro/IVCellType";
+import IVChemical from "invitro/IVChemical";
 import IVEndpoint from "invitro/IVEndpoint";
+import IVExperiment from "invitro/IVExperiment";
+import Reference from "lit/Reference";
+import _ from "lodash";
+import React, {Component} from "react";
+import ReactDOM from "react-dom";
+import Study from "study/Study";
 
 import {NULL_CASE} from "./shared";
 

@@ -1,16 +1,15 @@
 import {observer} from "mobx-react";
-import React from "react";
 import PropTypes from "prop-types";
-
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import TextInput from "shared/components/TextInput";
-import QuillTextInput from "shared/components/QuillTextInput";
+import React from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
-import {JudgementSelector} from "./Judgement";
-import {FactorsForm} from "./Factors";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+import QuillTextInput from "shared/components/QuillTextInput";
+import TextInput from "shared/components/TextInput";
 
 import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
+import {FactorsForm} from "./Factors";
+import {JudgementSelector} from "./Judgement";
 
 const EvidenceForm = observer(props => {
         const {store, contentType, createMethodName, judgementRowSpan} = props,
