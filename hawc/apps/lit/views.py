@@ -1,5 +1,4 @@
 import json
-from typing import Dict, List
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -34,7 +33,7 @@ def lit_overview_breadcrumb(assessment) -> Breadcrumb:
     return Breadcrumb(name="Literature review", url=reverse("lit:overview", args=(assessment.id,)))
 
 
-def lit_overview_crumbs(user, assessment: Assessment, name: str) -> List[Breadcrumb]:
+def lit_overview_crumbs(user, assessment: Assessment, name: str) -> list[Breadcrumb]:
     return Breadcrumb.build_crumbs(
         user, name, [Breadcrumb.from_object(assessment), lit_overview_breadcrumb(assessment)]
     )
@@ -252,7 +251,7 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
     form_class = forms.TagReferenceForm
     template_name = "lit/reference_tag.html"
 
-    def get_ref_qs_filters(self) -> Dict:
+    def get_ref_qs_filters(self) -> dict:
         raise NotImplementedError("Subclass requires implementation")
 
     def get_context_data(self, **kwargs):

@@ -1,6 +1,5 @@
 import json
 from collections import Counter
-from typing import Dict
 
 from crispy_forms import layout as cfl
 from django import forms
@@ -509,17 +508,17 @@ class EndpointForm(ModelForm):
     NAME_REQ = "Endpoint/Adverse outcome is required"
 
     @classmethod
-    def clean_endpoint(cls, instance: models.Endpoint, data: Dict) -> Dict:
+    def clean_endpoint(cls, instance: models.Endpoint, data: dict) -> dict:
         """Full dataset clean; used for both form and serializer.
 
         Args:
             instance (models.Endpoint): an Endpoint instance (can be unsaved)
-            data (Dict): form/serializer data
+            data (dict): form/serializer data
 
         Returns:
-            Dict: A dictionary of errors; may be empty
+            dict: A dictionary of errors; may be empty
         """
-        errors: Dict[str, str] = {}
+        errors: dict[str, str] = {}
 
         obs_time = data.get("observation_time", None)
         observation_time_units = data.get("observation_time_units", 0)
@@ -605,18 +604,18 @@ class EndpointGroupForm(forms.ModelForm):
     POS_N_REQ = "Incidence must be less-than or equal-to N"
 
     @classmethod
-    def clean_endpoint_group(cls, data_type: str, variance_type: int, data: Dict) -> Dict:
+    def clean_endpoint_group(cls, data_type: str, variance_type: int, data: dict) -> dict:
         """Endpoint group clean; used for both form and serializer.
 
         Args:
             data_type (str): Endpoint.data_type
             variance_type (int): Endpoint.variance_type
-            data (Dict): form/serializer data
+            data (dict): form/serializer data
 
         Returns:
-            Dict: A dictionary of errors; may be empty
+            dict: A dictionary of errors; may be empty
         """
-        errors: Dict[str, str] = {}
+        errors: dict[str, str] = {}
 
         if data_type == constants.DataType.CONTINUOUS:
             var = data.get("variance")
