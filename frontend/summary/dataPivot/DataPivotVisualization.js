@@ -1,18 +1,20 @@
-import $ from "$";
-import _ from "lodash";
 import * as d3 from "d3";
-
-import h from "shared/utils/helpers";
-import D3Plot from "shared/utils/D3Plot";
+import _ from "lodash";
 import Query from "shared/parsers/query";
+import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
+
+import $ from "$";
 
 import {applyStyles} from "../summary/common";
 import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
-import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
-import {NULL_CASE, OrderChoices, buildStyleMap} from "./shared";
+import {buildStyleMap, NULL_CASE, OrderChoices} from "./shared";
+import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
+
+const EXTRA_BUFFER = 8; // extra buffer around plots to prevent boundary forest-plot points
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -262,6 +264,12 @@ class DataPivotVisualization extends D3Plot {
         );
         this.add_menu();
         this.trigger_resize();
+    }
+
+    use_extra_buffer() {
+        // add extra buffer around forest-plot domain, so that points near extremes of the range
+        // so that the visual doesn't overflow the boundaries.
+        return this.dp_settings.plot_settings.as_barchart === false;
     }
 
     set_font_style() {
@@ -718,10 +726,12 @@ class DataPivotVisualization extends D3Plot {
     }
 
     add_axes() {
+        const buffer = this.use_extra_buffer() ? EXTRA_BUFFER : 0;
+
         $.extend(this.x_axis_settings, {
             gridlines: this.dp_settings.plot_settings.show_xticks,
             domain: this.getDomain(),
-            rangeRound: [0, this.w],
+            rangeRound: [0 + buffer, this.w - buffer],
             y_translate: this.h,
         });
 
@@ -803,7 +813,8 @@ class DataPivotVisualization extends D3Plot {
     }
 
     renderYGridlines() {
-        let x = this.x_scale;
+        let x = this.x_scale,
+            buffer = this.use_extra_buffer() ? EXTRA_BUFFER : 0;
 
         this.g_y_gridlines = this.vis.append("g").attr("class", "primary_gridlines y_gridlines");
 
@@ -812,8 +823,8 @@ class DataPivotVisualization extends D3Plot {
             .data(this.y_gridlines_data)
             .enter()
             .append("svg:line")
-            .attr("x1", x.range()[0])
-            .attr("x2", x.range()[1])
+            .attr("x1", x.range()[0] - buffer)
+            .attr("x2", x.range()[1] + buffer)
             .attr("y1", d => d)
             .attr("y2", d => d)
             .attr("class", "primary_gridlines y_gridlines");

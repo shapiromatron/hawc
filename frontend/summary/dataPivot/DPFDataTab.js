@@ -1,11 +1,11 @@
 import $ from "$";
 
 import {
+    _DataPivot_settings_barchart,
     _DataPivot_settings_linedata,
     _DataPivot_settings_pointdata,
-    _DataPivot_settings_barchart,
-    buildHeaderTr,
     buildColGroup,
+    buildHeaderTr,
 } from "./DataPivotUtilities";
 
 const visSelectorId = "visType",

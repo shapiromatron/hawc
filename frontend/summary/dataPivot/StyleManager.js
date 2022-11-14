@@ -1,9 +1,10 @@
+import HAWCModal from "shared/utils/HAWCModal";
+
 import $ from "$";
 
-import StyleViewer from "./StyleViewer";
-import {StyleSymbol, StyleLine, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
-import HAWCModal from "shared/utils/HAWCModal";
+import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
+import StyleViewer from "./StyleViewer";
 
 const _build_options = function(styles) {
         return styles.map(v =>

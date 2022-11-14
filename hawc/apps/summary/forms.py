@@ -1,5 +1,4 @@
 import json
-from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
@@ -39,7 +38,7 @@ class PrefilterMixin:
     ]
 
     def createFields(self):
-        fields = OrderedDict()
+        fields = dict()
 
         if "study" in self.prefilter_include:
             fields.update(
@@ -1134,6 +1133,12 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (constants.StudyType.IN_VITRO, "In vitro"),
         )
         self.fields["preferred_units"].required = False
+        self.js_units_choices = json.dumps(
+            [
+                {"id": obj.id, "name": obj.name}
+                for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
+            ]
+        )
         self.helper = self.setHelper()
 
     def save(self, commit=True):

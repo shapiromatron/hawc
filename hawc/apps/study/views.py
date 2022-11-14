@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -13,42 +12,25 @@ from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
-    BaseList,
+    BaseFilterList,
     BaseUpdate,
     MessageMixin,
     TeamMemberOrHigherMixin,
 )
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
-from . import forms, models
+from . import filterset, forms, models
 
 
-class StudyList(BaseList):
+class StudyFilterList(BaseFilterList):
+    template_name = "study/study_list.html"
     parent_model = Assessment
     model = models.Study
-    form_class = forms.StudyFilterForm
-
-    def get_query(self, qs, perms):
-        query = Q(assessment=self.assessment)
-        if not perms["edit"]:
-            query &= Q(published=True)
-        return qs.filter(query)
+    filterset_class = filterset.StudyFilterSet
+    paginate_by = 50
 
     def get_queryset(self):
-        perms = super().get_obj_perms()
-        qs = super().get_queryset()
-        qs = self.get_query(qs, perms)
-        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
-        self.form = self.form_class(data=initial, can_edit=perms["edit"])
-        if self.form.is_valid():
-            qs = qs.filter(self.form.get_query())
-        return qs.distinct().prefetch_related("identifiers")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["study_list"] = self.get_queryset()
-        context["form"] = self.form
-        return context
+        return super().get_queryset().distinct().prefetch_related("identifiers")
 
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):

@@ -1,25 +1,64 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
+{% load bs4 %}
 
 {% block content %}
-    <h2>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
-    <div class="card">
-        <div class="card-header">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
-                Filter results
-            </button>
-        </div>
-        <div id="EndpointForm" class="collapse">
-            <div class="card-body">
-                {% crispy form %}
-            </div>
-        </div>
-    </div>
-    <div id="main"></div>
-    {% include "includes/paginator.html" %}
-{% endblock content %}
+<h2>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
+{% include 'common/filter_list.html' with plural_object_name='results' %}
+<table id="mainTbl" class="table table-sm table-striped">
+    {% bs4_colgroup '13,17,19,14,13,12,12' %}
+    {% bs4_thead 'Study,Meta result,Protocol,Health outcome,Exposure,Confidence interval,Estimate' %}
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>
+                <a
+                    href="{% url 'study:detail' object.protocol.study.pk %}">{{object.protocol.study.short_citation}}</a>
+            </td>
+            <td>
+                <span class="previewModalParent">
+                    <a href="{% url 'meta:result_detail' object.pk %}">{{object.label}}</a>
+                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
+                </span>
+            </td>
+            <td>
+                <a href="{% url 'meta:protocol_detail' object.protocol.pk %}">{{object.protocol.name}}</a>
+            </td>
+            <td>
+                {{object.health_outcome|default:"--"}}
+            </td>
+            <td>
+                {{object.exposure_name|default:"--"}}
+            </td>
+            <td>
+                {% if object.ci_units_percentage is not None %}
+                    {{object.ci_units_percentage}}%
+                {% else %}
+                    --
+                {% endif %}
+            </td>
+            <td>
+                {{object.estimate_formatted|default:"--"}}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">
+                No results available
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "includes/paginator.html" with plural_object_name="results" %}
+
+{% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
+<script type="text/javascript">
+    window.app.startup("epiMetaStartup", function (app) {
+        $("i.previewModalIcon").click(e=>app.MetaResult.displayAsModal($(e.target).data("id")));
+    });
+</script>
 {% endblock %}

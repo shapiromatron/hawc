@@ -1,5 +1,5 @@
-import VisualForm from "./VisualForm";
 import exploratoryHeatmapFormAppStartup from "./heatmap";
+import VisualForm from "./VisualForm";
 
 export default {
     VisualForm,

@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
 router.register(r"reference", api.ReferenceViewset, basename="reference")
 router.register(r"search", api.SearchViewset, basename="search")
@@ -39,6 +39,11 @@ urlpatterns = [
         views.TagByReference.as_view(),
         name="reference_tags_edit",
     ),
+    path(
+        "reference/<int:pk>/tag-history/",
+        views.ReferenceTagHistory.as_view(),
+        name="tag-history",
+    ),
     path("tag/<int:pk>/tag/", views.TagByTag.as_view(), name="references_tags_edit"),
     path(
         "assessment/<int:pk>/tag/untagged/",
@@ -72,7 +77,7 @@ urlpatterns = [
     ),
     path(
         "assessment/<int:pk>/references/search/",
-        views.RefSearch.as_view(),
+        views.RefFilterList.as_view(),
         name="ref_search",
     ),
     path(
@@ -82,7 +87,7 @@ urlpatterns = [
     ),
     # CRUD searches
     path(
-        "assessment/<int:pk>/search/new/",
+        "assessment/<int:pk>/search/create/",
         views.SearchNew.as_view(),
         name="search_new",
     ),
@@ -113,12 +118,12 @@ urlpatterns = [
     ),
     # CRUD import
     path(
-        "assessment/<int:pk>/import/new/",
+        "assessment/<int:pk>/import/create/",
         views.ImportNew.as_view(),
         name="import_new",
     ),
     path(
-        "assessment/<int:pk>/ris-import/new/",
+        "assessment/<int:pk>/ris-import/create/",
         views.ImportRISNew.as_view(),
         name="import_ris_new",
     ),
@@ -147,6 +152,11 @@ urlpatterns = [
         "ris-export-instructions/",
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
+    ),
+    path(
+        "assessment/<int:pk>/reference-tag-conflicts/",
+        views.ConflictResolution.as_view(),
+        name="tag-conflicts",
     ),
     path("api/", include((router.urls, "api"))),
 ]

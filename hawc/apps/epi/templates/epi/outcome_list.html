@@ -1,32 +1,56 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
+{% load bs4 %}
 
 {% block content %}
-    <h2>Outcomes ({{page_obj.paginator.count}} found)</h2>
-    <div class="card">
-        <div class="card-header">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
-                Filter outcomes
-            </button>
-        </div>
-        <div id="EndpointForm" class="collapse">
-            <div class="card-body">
-                {% crispy form %}
-            </div>
-        </div>
-    </div>
-    <div id="endpointTable"></div>
-    {% include "includes/paginator.html" %}
-{% endblock content %}
+<h2>Outcomes ({{page_obj.paginator.count}} found)</h2>
+{% include 'common/filter_list.html' with plural_object_name='outcomes' %}
+<table id="mainTbl" class="table table-sm table-striped">
+    {% bs4_colgroup '17,20,17,18,14,14' %}
+    {% bs4_thead 'Study,Study population,Outcome,System,Effect,Diagnostic' %}
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>
+                <a href="{% url 'study:detail' object.study_population.study.pk %}">{{object.study_population.study.short_citation}}</a>
+            </td>
+            <td>
+                <a href="{% url 'epi:sp_detail' object.study_population.pk %}">{{object.study_population.name}}</a>
+            </td>
+            <td>
+                <span class="previewModalParent">
+                    <a href="{% url 'epi:outcome_detail' object.pk %}">{{object.name}}</a>
+                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
+                </span>
+            </td>
+            <td>
+                {{object.system|default:"--"}}
+            </td>
+            <td>
+                {{object.effect|default:"--"}}
+            </td>
+            <td>
+                {{object.get_diagnostic_display|default:"--"}}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">
+                No outcomes available
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "includes/paginator.html" with plural_object_name="outcomes" %}
+
+{% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
-    <script type="text/javascript">
-        window.app.startup("epiStartup", function(app){
-            const data = window.app.getConfig(),
-                tbl = new app.OutcomeListTable(data.items);
-            $("#endpointTable").html(tbl.buildTable());
-        });
-    </script>
+<script type="text/javascript">
+    window.app.startup("epiStartup", function (app) {
+        $("i.previewModalIcon").click(e => app.Outcome.displayAsModal($(e.target).data("id")));
+    });
+</script>
 {% endblock %}

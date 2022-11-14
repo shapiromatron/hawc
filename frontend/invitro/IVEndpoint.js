@@ -1,10 +1,10 @@
-import $ from "$";
 import _ from "lodash";
-
 import BaseTable from "shared/utils/BaseTable";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import $ from "$";
 
 import IVChemical from "./IVChemical";
 import IVEndpointGroup from "./IVEndpointGroup";
@@ -170,25 +170,6 @@ class IVEndpoint {
             tbl.addRow(v.build_row(tbl, opts));
         });
         return tbl.getTbl();
-    }
-
-    buildListRow() {
-        let link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
-            detail = $(
-                '<i class="fa fa-eye previewModalIcon ml-2" title="preview in a modal">'
-            ).click(() => this.displayAsModal({complete: true})),
-            endpoint = $('<span class="previewModalParent">').append(link, detail);
-
-        return [
-            `<a href=${this.data.experiment.study.url} target="_blank">${this.data.experiment.study.short_citation}</a>`,
-            `<a href=${this.data.experiment.url} target="_blank">${this.data.experiment.name}</a>`,
-            `<a href=${this.chemical.data.url} target="_blank">${this.chemical.data.name}</a>`,
-            endpoint,
-            this.data.effect ? this.data.effect : "--",
-            this.data.effects.length > 0 ? _.map(this.data.effects, "name").join(", ") : "--",
-            this.data.experiment.dose_units.name ? this.data.experiment.dose_units.name : "--",
-            this.data.response_units ? this.data.response_units : "--",
-        ];
     }
 
     displayAsModal() {

@@ -1,10 +1,11 @@
+import "./MetricDisplay.css";
+
 import _ from "lodash";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
 
 import MetricHeader from "../../components/MetricDescription";
 import MetricScores from "./MetricScores";
-import "./MetricDisplay.css";
 
 class MetricDisplay extends Component {
     render() {

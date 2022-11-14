@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
 import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 class RecommendationTable extends React.Component {
     renderModelTd(d) {

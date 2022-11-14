@@ -1,5 +1,4 @@
 import {action, observable} from "mobx";
-
 import h from "shared/utils/helpers";
 
 class MgmtDashboardStore {

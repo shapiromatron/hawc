@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 const moveArrayElementUp = function(arr, index) {
         if (index === 0) {
@@ -80,4 +80,4 @@ MoveRowTd.propTypes = {
     onDelete: PropTypes.func,
 };
 
-export {ActionsTh, MoveRowTd, moveArrayElementUp, moveArrayElementDown, deleteArrayElement};
+export {ActionsTh, deleteArrayElement, moveArrayElementDown, moveArrayElementUp, MoveRowTd};

@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import Dict, List, Tuple
 
 import pandas as pd
 from django.apps import apps
@@ -151,19 +150,19 @@ class IdentifiersManager(BaseManager):
         Identifiers.update_pubmed_content(pimdsFetch)
         return refs
 
-    def validate_hero_ids(self, ids: List[int]) -> Dict:
+    def validate_hero_ids(self, ids: list[int]) -> dict:
         """Queries HERO to return a valid list HERO content which doesn't already exist in HAWC.
 
         Only queries HERO with identifiers which are not already saved in HAWC.
 
         Args:
-            ids (List[int]): A list of HERO IDs
+            ids (list[int]): A list of HERO IDs
 
         Raises:
             ValidationError: Error if input ids are an invalid format, or HERO cannot find a match
 
         Returns:
-            Dict: {"success": List[Dict], "failures": List[int]}
+            dict: {"success": list[dict], "failures": list[int]}
         """
         # cast all ids to int
         invalid_ids = []
@@ -204,7 +203,7 @@ class IdentifiersManager(BaseManager):
             ]
         )
 
-    def hero(self, hero_ids: List[int], allow_missing=False):
+    def hero(self, hero_ids: list[int], allow_missing=False):
         qs = self.filter(database=constants.ReferenceDatabase.HERO, unique_id__in=hero_ids)
 
         if allow_missing is False and qs.count() != len(hero_ids):
@@ -214,19 +213,19 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def validate_pubmed_ids(self, ids: List[int]) -> List[Dict]:
+    def validate_pubmed_ids(self, ids: list[int]) -> list[dict]:
         """Queries Pubmed to return a valid list Pubmed content which doesn't already exist in HAWC.
 
         Only queries Pubmed with identifiers which are not already saved in HAWC.
 
         Args:
-            ids (List[int]): A list of PMIDs
+            ids (list[int]): A list of PMIDs
 
         Raises:
             ValidationError: If any PMIDs are non-numeric or if PubMed is unable to find a PMID.
 
         Returns:
-            List[Dict]: A list of imported pubmed content
+            list[dict]: A list of imported pubmed content
         """
         # cast all ids to int
         invalid_ids = []
@@ -271,7 +270,7 @@ class IdentifiersManager(BaseManager):
             ]
         )
 
-    def pubmed(self, pubmed_ids: List[int], allow_missing=False):
+    def pubmed(self, pubmed_ids: list[int], allow_missing=False):
         qs = self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pubmed_ids)
 
         if allow_missing is False and qs.count() != len(pubmed_ids):
@@ -708,7 +707,7 @@ class ReferenceTagsManager(BaseManager):
     def get_assessment_qs(self, assessment_id: int):
         return self.get_queryset().filter(content_object__assessment_id=assessment_id)
 
-    def delete_orphan_tags(self, assessment_id) -> Tuple[int, int]:
+    def delete_orphan_tags(self, assessment_id) -> tuple[int, int]:
         """
         Deletes all unreachable tags in an assessment's tag tree.
         An assessment log is created detailing these deleted tags.
@@ -717,7 +716,7 @@ class ReferenceTagsManager(BaseManager):
             assessment_id (int): Assessment id
 
         Returns:
-            Tuple[int, int]: Number of tags deleted, followed by log ID.
+            tuple[int, int]: Number of tags deleted, followed by log ID.
         """
         from .models import ReferenceFilterTag
 

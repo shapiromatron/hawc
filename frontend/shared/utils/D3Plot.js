@@ -1,7 +1,8 @@
-import $ from "$";
 import * as d3 from "d3";
-
 import h from "shared/utils/helpers";
+
+import $ from "$";
+
 import rasterize from "./rasterize";
 
 // Generic parent for all d3.js visualizations
@@ -548,7 +549,10 @@ class D3Plot {
                         ).on("click", () => handleClick("svg")),
                         $(
                             '<button class="dropdown-item"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a PNG</button>'
-                        ).on("click", () => handleClick("png"))
+                        ).on("click", () => handleClick("png")),
+                        $(
+                            '<button class="dropdown-item"><i class="fa fa-fw fa-picture-o"></i>&nbsp;Download as a JPEG</button>'
+                        ).on("click", () => handleClick("jpeg"))
                     )
                 )
             );

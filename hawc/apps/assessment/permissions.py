@@ -1,5 +1,3 @@
-from typing import Set
-
 from django.conf import settings
 from django.core.cache import cache
 from pydantic import BaseModel
@@ -8,9 +6,9 @@ from pydantic import BaseModel
 class AssessmentPermissions(BaseModel):
     public: bool
     editable: bool
-    project_manager: Set[int]
-    team_members: Set[int]
-    reviewers: Set[int]
+    project_manager: set[int]
+    team_members: set[int]
+    reviewers: set[int]
 
     @classmethod
     def get_cache_key(cls, assessment_id: int) -> str:

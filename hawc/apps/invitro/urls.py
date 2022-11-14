@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.IVAssessmentViewset, basename="assessment")
 router.register(r"chemical", api.IVChemical, basename="chemical")
 router.register(r"celltype", api.IVCellType, basename="celltype")
@@ -87,7 +87,7 @@ urlpatterns = [
     # endpoint
     path(
         "assessment/<int:pk>/endpoints/",
-        views.EndpointList.as_view(),
+        views.EndpointFilterList.as_view(),
         name="endpoint_list",
     ),
     path(

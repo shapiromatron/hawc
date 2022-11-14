@@ -1,7 +1,7 @@
 import _ from "lodash";
-import {autorun, observable, computed, action, toJS} from "mobx";
-
+import {action, autorun, computed, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
+
 import {fetchRobSettings, SCORE_TEXT_DESCRIPTION} from "../constants";
 
 class RobCleanupStore {

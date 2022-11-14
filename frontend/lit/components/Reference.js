@@ -1,11 +1,10 @@
 import _ from "lodash";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-
+import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 import h from "shared/utils/helpers";
-import {getReferenceTagListUrl} from "shared/utils/urls";
 import Hero from "shared/utils/Hero";
+import {getReferenceTagListUrl} from "shared/utils/urls";
 
 import ReferenceButton from "./ReferenceButton";
 
@@ -112,9 +111,10 @@ class Reference extends Component {
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
             year = data.year || "",
             actionItems = [
-                <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
                 <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
+                <ActionLink key={0} label="Edit reference tags" href={data.editTagUrl} />,
                 <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
+                <ActionLink key={3} label="Tag history" href={data.tagHistoryUrl} />,
             ].concat(extraActions);
 
         return (

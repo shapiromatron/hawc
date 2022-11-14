@@ -1,10 +1,9 @@
-import $ from "$";
 import _ from "lodash";
 import {action, toJS, observable} from "mobx";
 
+import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
-import {sortReferences} from "../constants";
 
 class Store {
     config = null;
@@ -20,7 +19,7 @@ class Store {
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
-        this.references = Reference.sortedArray(config.refs, this.tagtree);
+        this.references = Reference.array(config.refs, this.tagtree);
         // set first reference
         if (this.references.length > 0) {
             this.changeSelectedReference(this.references[0]);
