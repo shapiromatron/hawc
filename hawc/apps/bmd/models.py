@@ -1,5 +1,4 @@
 import base64
-import collections
 import json
 import os
 
@@ -21,7 +20,10 @@ class AssessmentSettings(models.Model):
         "assessment.Assessment", on_delete=models.CASCADE, related_name="bmd_settings"
     )
     version = models.CharField(
-        max_length=10, choices=constants.BmdsVersion.choices, default=constants.BmdsVersion.BMDS270
+        max_length=10,
+        choices=constants.BmdsVersion.choices,
+        default=constants.BmdsVersion.BMDS330,
+        help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -43,6 +45,10 @@ class AssessmentSettings(models.Model):
     @classmethod
     def build_default(cls, assessment):
         cls.objects.create(assessment=assessment)
+
+    @property
+    def can_create_sessions(self):
+        return self.version == constants.BmdsVersion.BMDS330
 
     def copy_across_assessments(self, cw):
         old_id = self.id
@@ -106,7 +112,7 @@ class LogicField(models.Model):
         """
         fn = str(settings.PROJECT_PATH / "apps/bmd/fixtures/logic.json")
         with open(fn, "r") as f:
-            text = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
+            text = json.loads(f.read())
 
         objects = [cls(assessment_id=assessment.id, **obj) for i, obj in enumerate(text["objects"])]
         cls.objects.bulk_create(objects)
@@ -181,6 +187,10 @@ class Session(models.Model):
     @property
     def is_finished(self):
         return self.date_executed is not None
+
+    @property
+    def can_edit(self):
+        return self.version == constants.BmdsVersion.BMDS330
 
     def execute(self):
         # reset execution datestamp if needed

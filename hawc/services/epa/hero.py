@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import requests
 
@@ -11,7 +11,7 @@ from ..utils.authors import get_author_short_text, normalize_authors
 logger = logging.getLogger(__name__)
 
 
-def _parse_pseudo_json(d: Dict, field: str) -> Any:
+def _parse_pseudo_json(d: dict, field: str) -> Any:
     # built-in json parser doesn't identify nulls in HERO returns
     v = d.get(field, None)
     if v == "null":
@@ -27,7 +27,7 @@ def _force_int(val, default=None) -> Optional[int]:
         return default
 
 
-def parse_article(content: Dict) -> Dict:
+def parse_article(content: dict) -> dict:
     authors = normalize_authors(content.get("AUTHORS", "").split("; "))
     authors_short = get_author_short_text(authors)
     return dict(
@@ -55,13 +55,13 @@ class HEROFetch:
 
     default_settings = {"recordsperpage": 100}
 
-    def __init__(self, id_list: List[int], **kwargs):
+    def __init__(self, id_list: list[int], **kwargs):
         if id_list is None:
             raise Exception("List of IDs are required for a PubMed search")
         self.ids = id_list
         self.ids_count = len(id_list)
-        self.content: List[Dict] = []
-        self.failures: List[int] = []
+        self.content: list[dict] = []
+        self.failures: list[int] = []
         self.settings = HEROFetch.default_settings.copy()
         for k, v in kwargs.items():
             self.settings[k] = v
@@ -83,10 +83,12 @@ class HEROFetch:
                     logger.info(f"HERO request failure: {url}")
             except requests.exceptions.Timeout:
                 logger.info(f"HERO request timeout: {url}")
+            except json.JSONDecodeError:
+                logger.info(f"HERO request failure: {url}")
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 
-    def _get_missing_ids(self) -> List[int]:
+    def _get_missing_ids(self) -> list[int]:
         requested_ids = set(self.ids)
         found_ids = set([v["HEROID"] for v in self.content])
         missing = sorted(list(requested_ids - found_ids))

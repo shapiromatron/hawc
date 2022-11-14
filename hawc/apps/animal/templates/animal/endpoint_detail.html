@@ -19,7 +19,7 @@
           {% if bmd_session %}
             <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
             <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
-          {% else %}
+          {% elif assessment.bmd_settings.can_create_sessions %}
             <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
           {% endif %}
         {% endif %}

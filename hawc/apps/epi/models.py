@@ -2,7 +2,7 @@ import itertools
 import json
 import math
 from operator import xor
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 from django.apps import apps
@@ -1384,7 +1384,7 @@ class Result(models.Model):
             return "|".join(sorted(items))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment_id, "epi": True}
+        filters: dict[str, Any] = {"assessment_id": assessment_id, "epi": True}
         if published_only:
             filters["published"] = True
         columns = {

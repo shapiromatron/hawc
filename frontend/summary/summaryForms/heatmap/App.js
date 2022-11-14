@@ -1,12 +1,13 @@
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {inject, observer} from "mobx-react";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-import OverallPanel from "./OverallPanel";
-import DataPanel from "./DataPanel";
-import VisualCustomizationPanel from "./VisualCustomizationPanel";
-import PreviewPanel from "./PreviewPanel";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
+
+import DataPanel from "./DataPanel";
+import OverallPanel from "./OverallPanel";
+import PreviewPanel from "./PreviewPanel";
+import VisualCustomizationPanel from "./VisualCustomizationPanel";
 
 @inject("store")
 @observer

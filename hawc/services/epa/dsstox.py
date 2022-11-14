@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Dict, NamedTuple
+from typing import NamedTuple
 
 import requests
 
@@ -12,7 +12,7 @@ RE_DTXSID = r"DTXSID\d+"
 
 class DssSubstance(NamedTuple):
     dtxsid: str
-    content: Dict
+    content: dict
 
     @classmethod
     def create_from_dtxsid(cls, dtxsid: str) -> "DssSubstance":

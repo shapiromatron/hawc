@@ -1,8 +1,8 @@
-import React, {Component} from "react";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import {observer, inject} from "mobx-react";
-
+import React, {Component} from "react";
 import Spacer from "shared/components/Spacer";
+
 import Metric from "./Metric";
 
 @inject("store")

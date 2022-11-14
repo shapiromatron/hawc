@@ -1,5 +1,6 @@
-import $ from "$";
 import _ from "lodash";
+
+import $ from "$";
 
 class DoseUnitsWidget {
     constructor(form, opts) {
@@ -17,7 +18,7 @@ class DoseUnitsWidget {
         $("#pduRemove").on("click", this.handleRemove.bind(this));
         $("#pduUp").on("click", this.handleUp.bind(this));
         $("#pduDown").on("click", this.handleDown.bind(this));
-        $.get(opts.api, this.render.bind(this));
+        this.render(opts.choices);
     }
 
     handleAdd() {

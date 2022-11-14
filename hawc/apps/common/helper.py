@@ -1,10 +1,10 @@
 import decimal
 import logging
 import re
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from datetime import timedelta
 from math import inf
-from typing import Any, Dict, List, NamedTuple, Optional, Set, Union
+from typing import Any, NamedTuple, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,9 +41,9 @@ def rename_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     if not df.columns.has_duplicates:
         return df
-    duplicates: Set[str] = set(df.columns[df.columns.duplicated()].tolist())
-    indexes: Dict[str, int] = defaultdict(lambda: 0)
-    new_cols: List[str] = []
+    duplicates: set[str] = set(df.columns[df.columns.duplicated()].tolist())
+    indexes: dict[str, int] = defaultdict(lambda: 0)
+    new_cols: list[str] = []
     for col in df.columns:
         if col in duplicates:
             indexes[col] += 1
@@ -99,7 +99,7 @@ def tryParseInt(
         return default
 
 
-def try_parse_list_ints(val: str = None) -> List[int]:
+def try_parse_list_ints(val: str = None) -> list[int]:
     """
     Try to parse a list of integers and return a list of integers, eg., `1,2,3` -> [1,2,3].
     If this fails for any reason, an empty list is returned
@@ -158,12 +158,12 @@ def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -
     return df[cols]
 
 
-def url_query(path: str, query: Dict) -> str:
+def url_query(path: str, query: dict) -> str:
     """Generate a URL with appropriate query string parameters
 
     Args:
         path (str): The url path
-        query (Dict): A dictionary of parameters to add
+        query (dict): A dictionary of parameters to add
 
     Returns:
         str: A url-encoded string with query values
@@ -240,7 +240,6 @@ class SerializerHelper:
             obj = obj.optimized_for_serialization()
         serialized = cls._serialize(obj, json=False)
         json_str = JSONRenderer().render(serialized).decode("utf8")
-        serialized = OrderedDict(serialized)  # for pickling
 
         logger.debug(f"setting cache: {name}")
         cache.set_many({name: serialized, json_name: json_str})
@@ -302,7 +301,7 @@ class FlatFileExporter:
         raise NotImplementedError()
 
     @staticmethod
-    def get_flattened_tags(dict: Dict, key: str) -> str:
+    def get_flattened_tags(dict: dict, key: str) -> str:
         values = [tag.get("name", "") for tag in dict.get(key, [])]
         return f"|{'|'.join(values)}|"
 
@@ -320,7 +319,7 @@ class WebappConfig(PydanticModel):
     # single-page webapp configuration
     app: str
     page: Optional[str]
-    data: Dict
+    data: dict
 
 
 re_digits = r"\d+"

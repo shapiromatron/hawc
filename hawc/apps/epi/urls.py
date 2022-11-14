@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
 router.register(r"study-population", api.StudyPopulation, basename="study-population")
 router.register(r"criteria", api.Criteria, basename="criteria")
@@ -103,7 +103,7 @@ urlpatterns = [
     # Outcome
     path(
         "assessment/<int:pk>/outcomes/",
-        views.OutcomeList.as_view(),
+        views.OutcomeFilterList.as_view(),
         name="outcome_list",
     ),
     path(

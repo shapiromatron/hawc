@@ -1,5 +1,5 @@
-import _ from "lodash";
 import * as d3 from "d3";
+import _ from "lodash";
 import h from "shared/utils/helpers";
 
 import {CONTINUOUS, DICHOTOMOUS, DICHOTOMOUS_CANCER} from "./constants";

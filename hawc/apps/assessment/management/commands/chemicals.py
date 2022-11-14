@@ -1,6 +1,6 @@
 import hashlib
 import json
-from typing import Any, Dict
+from typing import Any
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -9,7 +9,7 @@ from hawc.apps.assessment.models import DSSTox
 from hawc.services.epa.dsstox import DssSubstance
 
 
-def _dict_hash(dict: Dict[str, Any]) -> str:
+def _dict_hash(dict: dict[str, Any]) -> str:
     """MD5 hash of a dictionary"""
     dhash = hashlib.md5(usedforsecurity=False)
     encoded = json.dumps(dict, sort_keys=True).encode()

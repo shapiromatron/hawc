@@ -1,5 +1,5 @@
-import {BSDSettings, BESettings, BEDSettings} from "./bioassay";
-import {ESDSettings, ERSettings} from "./epi";
+import {BEDSettings, BESettings, BSDSettings} from "./bioassay";
+import {ERSettings, ESDSettings} from "./epi";
 
 const OPTIONS = {
     "bioassay-study-design": BSDSettings,

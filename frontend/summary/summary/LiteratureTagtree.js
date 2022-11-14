@@ -1,10 +1,10 @@
-import _ from "lodash";
-
-import SmartTagContainer from "shared/smartTags/SmartTagContainer";
-import BaseVisual from "./BaseVisual";
 import TagTree from "lit/TagTree";
 import TagTreeViz from "lit/TagTreeViz";
+import _ from "lodash";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
+
+import BaseVisual from "./BaseVisual";
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {

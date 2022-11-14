@@ -1,10 +1,11 @@
-import $ from "$";
 import _ from "lodash";
-import {action, computed, toJS, observable} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 
+import $ from "$";
+
+import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
-import {sortReferences} from "../constants";
 
 class Store {
     config = null;
@@ -18,7 +19,7 @@ class Store {
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
-        this.references = Reference.sortedArray(config.refs, this.tagtree);
+        this.references = Reference.array(config.refs, this.tagtree);
         // set first reference
         if (this.referencesUntagged.length > 0) {
             this.changeSelectedReference(this.referencesUntagged[0]);

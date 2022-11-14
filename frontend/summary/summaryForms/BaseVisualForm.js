@@ -1,6 +1,7 @@
 import _ from "lodash";
-import $ from "$";
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import $ from "$";
 
 class BaseVisualForm {
     constructor($el, config) {

@@ -1,5 +1,4 @@
 from enum import Enum, IntEnum
-from typing import List
 
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from pydantic import BaseModel, Field
@@ -209,7 +208,7 @@ class Factor(BaseModel):
 
 
 class FactorsCell(BaseCell):
-    factors: List[Factor]
+    factors: list[Factor]
     text: str
 
     @property
@@ -348,7 +347,7 @@ class MechanisticRow(BaseCellGroup):
 
 class EvidenceGroup(BaseCellGroup):
     title: str
-    cell_rows: List[EvidenceRow] = Field([], alias="rows")
+    cell_rows: list[EvidenceRow] = Field([], alias="rows")
     merge_judgement: bool
     hide_content: bool
     no_content_text: str
@@ -377,7 +376,7 @@ class EvidenceGroup(BaseCellGroup):
 class MechanisticGroup(BaseCellGroup):
     title: str
     col_header_1: str
-    cell_rows: List[MechanisticRow] = Field([], alias="rows")
+    cell_rows: list[MechanisticRow] = Field([], alias="rows")
     merge_judgement: bool
     hide_content: bool
     no_content_text: str

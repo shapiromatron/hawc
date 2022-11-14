@@ -1,8 +1,7 @@
-import _ from "lodash";
-import React from "react";
-import PropTypes from "prop-types";
-
 import {bmdLabelText} from "bmd/common/constants";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 import SelectInput from "shared/components/SelectInput";
 import TextAreaInput from "shared/components/TextAreaInput";
 

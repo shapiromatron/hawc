@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 from django.test import RequestFactory
@@ -15,7 +15,7 @@ from hawc.apps.myuser.models import HAWCUser
 @pytest.mark.django_db
 class TestExperimentSerializer:
     def _get_valid_dataset(self, db_keys):
-        data: Dict[str, Any] = dict(
+        data: dict[str, Any] = dict(
             study_id=db_keys.study_working,
             name="30 day oral",
             type="St",

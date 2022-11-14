@@ -1,10 +1,10 @@
-from typing import Any, List
+from typing import Any
 
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import permissions
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from rest_framework.schemas import get_schema_view
 
 from hawc import __version__
@@ -12,7 +12,7 @@ from hawc import __version__
 from . import api, schema, views
 
 
-def get_admin_urlpatterns(open_api_patterns) -> List:
+def get_admin_urlpatterns(open_api_patterns) -> list:
     """Return a list of admin patterns for inclusion. If Admin is not included via a
     django setting; diagnostic endpoints are still included, but nothing else.
     """
@@ -20,7 +20,7 @@ def get_admin_urlpatterns(open_api_patterns) -> List:
     admin_url = f"admin/{settings.ADMIN_URL_PREFIX}" if settings.ADMIN_URL_PREFIX else "admin"
 
     # always include API for diagnostics
-    router = DefaultRouter()
+    router = SimpleRouter()
     router.register(r"diagnostic", api.DiagnosticViewset, basename="diagnostic")
     if settings.INCLUDE_ADMIN:
         router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
@@ -29,7 +29,7 @@ def get_admin_urlpatterns(open_api_patterns) -> List:
         admin.autodiscover()
 
     # use admin prefix if one exists
-    patterns: List[Any] = [
+    patterns: list[Any] = [
         path(f"{admin_url}/api/", include((router.urls, "api"))),
     ]
 

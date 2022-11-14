@@ -1,5 +1,3 @@
-from typing import List
-
 from .base import BaseCell, BaseTable
 from .parser import QuillParser
 
@@ -12,7 +10,7 @@ class GenericCell(BaseCell):
 
 
 class GenericTable(BaseTable):
-    cells: List[GenericCell]
+    cells: list[GenericCell]
 
     @classmethod
     def get_default_props(cls):

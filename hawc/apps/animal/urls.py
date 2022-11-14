@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"assessment", api.AnimalAssessmentViewset, basename="assessment")
 router.register(r"endpoint", api.Endpoint, basename="endpoint")
 router.register(r"experiment", api.Experiment, basename="experiment")
@@ -49,7 +49,7 @@ urlpatterns = [
     ),
     # Experiment
     path(
-        "study/<int:pk>/experiment/new/",
+        "study/<int:pk>/experiment/create/",
         views.ExperimentCreate.as_view(),
         name="experiment_new",
     ),
@@ -75,7 +75,7 @@ urlpatterns = [
     ),
     # AnimalGroup
     path(
-        "experiment/<int:pk>/animal-group/new/",
+        "experiment/<int:pk>/animal-group/create/",
         views.AnimalGroupCreate.as_view(),
         name="animal_group_new",
     ),
@@ -113,7 +113,7 @@ urlpatterns = [
     # Endpoint
     path(
         "assessment/<int:pk>/endpoints/",
-        views.EndpointList.as_view(),
+        views.EndpointFilterList.as_view(),
         name="endpoint_list",
     ),
     path(
@@ -127,7 +127,7 @@ urlpatterns = [
         name="assessment_endpoint_taglist",
     ),
     path(
-        "animal-group/<int:pk>/endpoint/new/",
+        "animal-group/<int:pk>/endpoint/create/",
         views.EndpointCreate.as_view(),
         name="endpoint_new",
     ),

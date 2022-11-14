@@ -1,16 +1,10 @@
 from crispy_forms import layout as cfl
 from django import forms
-from django.db.models import Q
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import (
-    BaseFormHelper,
-    QuillField,
-    check_unique_for_assessment,
-    form_actions_apply_filters,
-)
+from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
@@ -291,54 +285,3 @@ class StudiesCopy(forms.Form):
         helper = BaseFormHelper(self, **inputs)
 
         return helper
-
-
-class StudyFilterForm(forms.Form):
-    citation = forms.CharField(required=False, help_text="Authors, year, title, etc.")
-    identifier = forms.CharField(
-        required=False, help_text="Database identifier<br/>(PubMed ID, DOI, HERO ID, etc)"
-    )
-    data_type = forms.ChoiceField(
-        required=False,
-        choices=[
-            ("", "<All>"),
-            ("bioassay", "Bioassay"),
-            ("epi", "Epidemiology"),
-            ("epi_meta", "Epidemiology meta-analysis"),
-            ("in_vitro", "In vitro"),
-        ],
-        help_text="Data type for full-text extraction",
-        widget=forms.Select,
-    )
-    published = forms.ChoiceField(
-        required=False,
-        choices=[("", "<All>"), (True, "Published only"), (False, "Unpublished only")],
-        widget=forms.Select,
-        help_text="Published status for HAWC extraction",
-        initial="",
-    )
-
-    def __init__(self, *args, **kwargs):
-        can_edit = kwargs.pop("can_edit", False)
-        super().__init__(*args, **kwargs)
-        if not can_edit:
-            self.fields.pop("published")
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-        helper.add_row("citation", len(self.fields), "col-md-3")
-        return helper
-
-    def get_query(self):
-        query = Q()
-        if text := self.cleaned_data.get("citation"):
-            query &= Q(short_citation__icontains=text) | Q(full_citation__icontains=text)
-        if data_type := self.cleaned_data.get("data_type"):
-            query &= Q(**{data_type: True})
-        if published := self.cleaned_data.get("published"):
-            query &= Q(published=published)
-        if identifier := self.cleaned_data.get("identifier"):
-            query &= Q(identifiers__unique_id__icontains=identifier)
-        return query

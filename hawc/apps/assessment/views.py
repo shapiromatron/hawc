@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 from django.apps import apps
 from django.conf import settings
@@ -808,7 +808,7 @@ class LogDetail(DetailView):
         context["breadcrumbs"] = self.get_breadcrumbs()
         return context
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         extras = []
         if assessment := self.object.assessment:
             extras.extend(
@@ -846,7 +846,7 @@ class LogObjectList(ListView):
     def get_queryset(self):
         return self.model.objects.get_object_audit(**self.kwargs)
 
-    def get_breadcrumbs(self) -> List[Breadcrumb]:
+    def get_breadcrumbs(self) -> list[Breadcrumb]:
         return Breadcrumb.build_crumbs(
             self.request.user,
             "Logs",
@@ -926,7 +926,7 @@ class AboutContentTypes(TemplateView):
             cts["summary.datapivotquery"],
         ]
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["content_types"] = self.get_cts()
         return context
