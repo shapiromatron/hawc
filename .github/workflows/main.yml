@@ -31,7 +31,8 @@ jobs:
       run: |
         sudo systemctl start postgresql.service
         sudo -u postgres psql --command="CREATE USER hawc PASSWORD 'password'" --command="\du"
-        sudo -u postgres createdb hawc-test --owner=hawc --command="\l"
+        sudo -u postgres createdb hawc-test --owner=hawc
+        sudo -u postgres psql --command="\l"
     - name: loc
       run: |
         sudo apt-get install -y cloc
