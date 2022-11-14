@@ -794,21 +794,27 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 class BaseFilterList(BaseList):
     filterset_class: BaseFilterSet
+    paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
-        value = self.request.GET.get("paginate_by")
-        return tryParseInt(value, default=25, min_value=10, max_value=500)
+        value = self.filterset.form.cleaned_data.get("paginate_by")
+        return tryParseInt(value, default=self.paginate_by, min_value=10, max_value=500)
 
     def get_base_queryset(self):
         return self.model.objects.all()
 
+    def get_filterset_kwargs(self):
+        return dict(
+            data=self.request.GET,
+            queryset=self.get_base_queryset(),
+            request=self.request,
+            assessment=self.assessment,
+        )
+
     @property
     def filterset(self):
         if not hasattr(self, "_filterset"):
-            qs = self.get_base_queryset()
-            self._filterset: BaseFilterSet = self.filterset_class(
-                data=self.request.GET, queryset=qs, request=self.request, assessment=self.assessment
-            )
+            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
         return self._filterset
 
     def get_queryset(self):
