@@ -1,15 +1,14 @@
-import $ from "$";
 import _ from "lodash";
-
-import HAWCModal from "shared/utils/HAWCModal";
-import SmartTagContainer from "shared/smartTags/SmartTagContainer";
-import Study from "study/Study";
 import Aggregation from "riskofbias/Aggregation";
-
-import RoBHeatmapPlot from "./RoBHeatmapPlot";
-import BaseVisual from "./BaseVisual";
-
 import {mutateRobSettings, mutateRobStudies} from "riskofbias/study";
+import SmartTagContainer from "shared/smartTags/SmartTagContainer";
+import HAWCModal from "shared/utils/HAWCModal";
+import Study from "study/Study";
+
+import $ from "$";
+
+import BaseVisual from "./BaseVisual";
+import RoBHeatmapPlot from "./RoBHeatmapPlot";
 
 class RoBHeatmap extends BaseVisual {
     static transformData(data) {

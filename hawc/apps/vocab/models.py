@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pandas as pd
 from django.db import models
 from django.urls import reverse
@@ -98,7 +96,7 @@ class Term(models.Model):
 
         return df
 
-    def ehv_endpoint_name(self) -> Dict:
+    def ehv_endpoint_name(self) -> dict:
         return {
             "system": self.parent.parent.parent.parent.name,
             "organ": self.parent.parent.parent.name,

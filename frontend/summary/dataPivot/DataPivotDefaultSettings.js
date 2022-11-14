@@ -1,8 +1,7 @@
-import DataPivotLegend from "./DataPivotLegend";
-import {StyleSymbol, StyleLine, StyleText, StyleRectangle} from "./Styles";
-import {_DataPivot_settings_barchart} from "./DataPivotUtilities";
-
 import {Patterns} from "../summary/common";
+import DataPivotLegend from "./DataPivotLegend";
+import {_DataPivot_settings_barchart} from "./DataPivotUtilities";
+import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
 
 export default {
     plot_settings: {

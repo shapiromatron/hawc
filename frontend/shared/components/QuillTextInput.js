@@ -1,10 +1,10 @@
-import React, {Component} from "react";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
 import ReactQuill from "react-quill";
 
+import HelpText from "./HelpText";
 import {errorsDiv, inputClass} from "./inputs";
 import LabelInput from "./LabelInput";
-import HelpText from "./HelpText";
 
 class QuillTextInput extends Component {
     renderField(fieldId) {

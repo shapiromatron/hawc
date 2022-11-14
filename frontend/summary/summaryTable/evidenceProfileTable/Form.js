@@ -1,11 +1,11 @@
 import {observer} from "mobx-react";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import React, {Component} from "react";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 
 import EvidenceForm from "./EvidenceForm";
-import MechanisticForm from "./MechanisticForm";
 import IntegrationForm from "./IntegrationForm";
+import MechanisticForm from "./MechanisticForm";
 
 @observer
 class EvidenceProfileForm extends Component {

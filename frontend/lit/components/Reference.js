@@ -1,11 +1,10 @@
 import _ from "lodash";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-
+import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 import h from "shared/utils/helpers";
-import {getReferenceTagListUrl} from "shared/utils/urls";
 import Hero from "shared/utils/Hero";
+import {getReferenceTagListUrl} from "shared/utils/urls";
 
 import ReferenceButton from "./ReferenceButton";
 

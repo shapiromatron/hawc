@@ -1,7 +1,6 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-
 import {STATUS} from "mgmt/TaskTable/constants";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 
 export default class StatusIcon extends Component {
     render() {

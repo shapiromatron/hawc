@@ -1,11 +1,11 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import {toJS} from "mobx";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 
+import {TASK_TYPES} from "../constants";
 import DueDateLabel from "./DueDateLabel";
 import StatusLabel from "./StatusLabel";
 import TaskForm from "./TaskForm";
-import {TASK_TYPES} from "../constants";
 
 class EditableTask extends Component {
     constructor(props) {

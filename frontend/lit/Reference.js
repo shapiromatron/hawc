@@ -1,5 +1,4 @@
 import _ from "lodash";
-
 import Hero from "shared/utils/Hero";
 
 import {sortReferences} from "./constants";
@@ -23,9 +22,9 @@ class Reference {
         }
     }
 
-    static sortedArray(data, tagtree) {
+    static array(data, tagtree, sort = true) {
         const refs = _.map(data, d => new Reference(d, tagtree));
-        return sortReferences(refs);
+        return sort ? sortReferences(refs) : refs;
     }
 
     get_edit_url() {

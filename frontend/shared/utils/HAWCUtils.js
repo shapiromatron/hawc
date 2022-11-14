@@ -1,11 +1,12 @@
-import $ from "$";
-import _ from "lodash";
 import * as d3 from "d3";
+import _ from "lodash";
 import slugify from "slugify";
-
 import Tablesort from "tablesort";
-import Hero from "./Hero";
+
+import $ from "$";
+
 import h from "./helpers";
+import Hero from "./Hero";
 
 class HAWCUtils {
     static Hero = Hero;

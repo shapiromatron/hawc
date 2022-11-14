@@ -2,11 +2,12 @@
 
 {% block content %}
     {% if obj_perms.edit and crud == "Read" %}
+      {% if not object.can_edit %}{% include 'bmd/_read_only_session_alert.html' %}{% endif %}
       <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
         <div class="dropdown-menu dropdown-menu-right">
             <span class="dropdown-header">BMD editing</span>
-            <a class="dropdown-item" href="{{object.get_update_url}}">Update</a>
+            {% if object.can_edit %}<a class="dropdown-item" href="{{object.get_update_url}}">Update</a>{% endif %}
             <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
         </div>
       </div>

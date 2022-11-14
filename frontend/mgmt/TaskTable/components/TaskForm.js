@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import _ from "lodash";
-
-import UserAutocomplete from "./UserAutocomplete";
-import StatusSelection from "./StatusSelection";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import ReactDatePicker from "shared/components/ReactDatePicker";
+
+import StatusSelection from "./StatusSelection";
+import UserAutocomplete from "./UserAutocomplete";
 
 class TaskForm extends Component {
     constructor(props) {

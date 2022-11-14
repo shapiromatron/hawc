@@ -2,7 +2,6 @@ import json
 import logging
 from itertools import product
 from textwrap import dedent
-from typing import Dict
 
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -311,11 +310,11 @@ class RiskOfBias(models.Model):
         for child in children:
             child.copy_across_assessments(cw)
 
-    def get_override_options(self) -> Dict:
+    def get_override_options(self) -> dict:
         """Get risk of bias override options and overrides
 
         Returns:
-            Dict: A dictionary of metadata and choices
+            dict: A dictionary of metadata and choices
         """
         options = {}
 

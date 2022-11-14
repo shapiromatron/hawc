@@ -1,16 +1,16 @@
-import React, {Component} from "react";
+import "./ScoreBar.css";
+
 import PropTypes from "prop-types";
-import {VelocityComponent} from "velocity-react";
+import React, {Component} from "react";
 import h from "shared/utils/helpers";
+import {VelocityComponent} from "velocity-react";
 
 import {
-    SCORE_BAR_WIDTH_PERCENTAGE,
     BIAS_DIRECTION_SIMPLE,
-    BIAS_DIRECTION_VERBOSE,
     BIAS_DIRECTION_UNKNOWN,
+    BIAS_DIRECTION_VERBOSE,
+    SCORE_BAR_WIDTH_PERCENTAGE,
 } from "../../constants";
-
-import "./ScoreBar.css";
 
 class ScoreBar extends Component {
     render_score_bar() {

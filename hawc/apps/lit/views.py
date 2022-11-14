@@ -1,6 +1,6 @@
 import json
-from typing import Dict, List
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
@@ -13,12 +13,14 @@ from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, listToUl, tryParseInt
 from ..common.views import (
     AssessmentPermissionsMixin,
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     MessageMixin,
@@ -26,14 +28,14 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     WebappMixin,
 )
-from . import constants, forms, models
+from . import constants, filterset, forms, models
 
 
 def lit_overview_breadcrumb(assessment) -> Breadcrumb:
     return Breadcrumb(name="Literature review", url=reverse("lit:overview", args=(assessment.id,)))
 
 
-def lit_overview_crumbs(user, assessment: Assessment, name: str) -> List[Breadcrumb]:
+def lit_overview_crumbs(user, assessment: Assessment, name: str) -> list[Breadcrumb]:
     return Breadcrumb.build_crumbs(
         user, name, [Breadcrumb.from_object(assessment), lit_overview_breadcrumb(assessment)]
     )
@@ -64,6 +66,7 @@ class LitOverview(BaseList):
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
             ),
         }
+        context["allow_ris"] = settings.HAWC_FEATURES.ALLOW_RIS_IMPORTS
         return context
 
 
@@ -250,7 +253,7 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
     form_class = forms.TagReferenceForm
     template_name = "lit/reference_tag.html"
 
-    def get_ref_qs_filters(self) -> Dict:
+    def get_ref_qs_filters(self) -> dict:
         raise NotImplementedError("Subclass requires implementation")
 
     def get_context_data(self, **kwargs):
@@ -455,6 +458,63 @@ class RefList(BaseList):
         return _get_reference_list(self.assessment, context["obj_perms"])
 
 
+class RefFilterList(BaseFilterList):
+    template_name = "lit/reference_search.html"
+    breadcrumb_active_name = "Reference search"
+    parent_model = Assessment
+    model = models.Reference
+    filterset_class = dynamic_filterset(
+        filterset.ReferenceFilterSet,
+        grid_layout={
+            "rows": [
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {
+                    "columns": [
+                        {
+                            "width": 5,
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                    ]
+                                }
+                            ],
+                        },
+                        {"width": 7},
+                    ]
+                },
+            ]
+        },
+    )
+    paginate_by = 50
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="litStartup",
+            page="startupReferenceTable",
+            data=dict(
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                references=[ref.to_dict() for ref in context["object_list"]],
+            ),
+        )
+
+
 class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     """
     Upload Excel files and update reference details.
@@ -585,29 +645,6 @@ class RefDelete(BaseDelete):
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_ref_app_startup(self, context)
-
-
-class RefSearch(BaseDetail):
-    model = Assessment
-    template_name = "lit/reference_search.html"
-    breadcrumb_active_name = "Reference search"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="litStartup",
-            page="startupSearchReference",
-            data=dict(
-                assessment_id=self.assessment.id,
-                canEdit=context["obj_perms"]["edit"],
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-                csrf=get_token(self.request),
-            ),
-        )
 
 
 class RefVisualization(BaseDetail):

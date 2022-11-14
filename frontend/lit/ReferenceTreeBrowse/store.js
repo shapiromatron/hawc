@@ -1,11 +1,11 @@
-import $ from "$";
 import {action, computed, observable} from "mobx";
-
 import h from "shared/utils/helpers";
 
+import $ from "$";
+
+import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
-import {sortReferences} from "../constants";
 
 class Store {
     constructor(config) {
@@ -41,7 +41,7 @@ class Store {
         }
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            this.selectedReferences = Reference.sortedArray(results, this.tagtree);
+            this.selectedReferences = Reference.array(results, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
@@ -59,7 +59,7 @@ class Store {
         this.selectedReferences = null;
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            this.selectedReferences = Reference.sortedArray(results, this.tagtree);
+            this.selectedReferences = Reference.array(results, this.tagtree);
             this.selectedReferencesLoading = false;
         });
     }
