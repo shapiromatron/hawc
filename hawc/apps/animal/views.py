@@ -410,7 +410,16 @@ class EndpointFilterList(BaseFilterList):
     filterset_class = filterset.EndpointFilterSet
 
     def get_queryset(self):
-        return super().get_queryset().select_related("animal_group__experiment__study")
+        qs = super().get_queryset()
+        form = self.filterset.form
+        dose_units = form.cleaned_data["dose_units"] or form.fields["dose_units"].queryset.first()
+        return qs.select_related("animal_group__experiment__study").annotate_dose_values(dose_units)
+
+    def get_context_data(self, **kwargs):
+        oel_names = self.assessment.get_noel_names()
+        header_names = f"Study,Experiment,Animal group,Endpoint,Units,{oel_names.noel},{oel_names.loel},BMD,BMDL"
+        kwargs.update(header_names=header_names)
+        return super().get_context_data(**kwargs)
 
 
 @method_decorator(beta_tester_required, name="dispatch")
