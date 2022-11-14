@@ -28,7 +28,7 @@ class ReferenceListStore {
             .then(res => res.json())
             .then(res => {
                 this.currentPage = res;
-                this.formattedReferences = Reference.sortedArray(res.results, tag.tree);
+                this.formattedReferences = Reference.array(res.results, tag.tree);
             });
     }
 

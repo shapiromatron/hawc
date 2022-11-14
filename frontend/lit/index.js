@@ -5,9 +5,8 @@ import ReactDOM from "react-dom";
 import BulkTagReferencesMain from "./BulkTagReferences/Main";
 import BulkTagReferencesMainStore from "./BulkTagReferences/store";
 import ReferenceComponent from "./components/Reference";
+import ReferenceTable from "./components/ReferenceTable";
 import Reference from "./Reference";
-import ReferenceSearchMain from "./ReferenceSearch/Main";
-import ReferenceSearchStore from "./ReferenceSearch/store";
 import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
 import TagReferencesMain from "./TagReferences/Main";
@@ -17,6 +16,11 @@ import TagTreeViz from "./TagTreeViz";
 
 export default {
     TagTree,
+    startupReferenceTable(el, config) {
+        let tagtree = new TagTree(config.tags[0]),
+            references = Reference.array(config.references, tagtree, false);
+        ReactDOM.render(<ReferenceTable references={references} showActions={false} />, el);
+    },
     startupReferenceDetail(el, config) {
         let tagtree = new TagTree(config.tags[0]),
             ref = new Reference(config.reference, tagtree),
@@ -26,14 +30,6 @@ export default {
             };
 
         ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);
-    },
-    startupSearchReference(el, config) {
-        ReactDOM.render(
-            <Provider store={new ReferenceSearchStore(config)}>
-                <ReferenceSearchMain />
-            </Provider>,
-            el
-        );
     },
     startupReferenceList(el, config) {
         ReactDOM.render(
