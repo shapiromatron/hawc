@@ -47,6 +47,11 @@ jobs:
         make lint-py
     - name: test
       env:
+        # use localhost for the host here because we are running the job on the VM.
+        # If we were running the job on in a container this would be postgres
+        DJANGO_DB_NAME: hawc-test
+        DJANGO_DB_USER: hawc
+        DJANGO_DB_PW: password
         DJANGO_CACHE_LOCATION: redis://localhost:${{job.services.redis.ports[6379]}}/0
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
