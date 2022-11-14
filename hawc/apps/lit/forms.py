@@ -12,6 +12,7 @@ from ...services.utils import ris
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
 from ..study.models import Study
+from ..study.constants import StudyTypeChoices
 from . import constants, models
 
 logger = logging.getLogger(__name__)
@@ -589,12 +590,7 @@ class BulkReferenceStudyExtractForm(forms.Form):
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=[
-            ("bioassay", "Animal bioassay"),
-            ("in_vitro", "In vitro"),
-            ("epi", "Epidemiology"),
-            ("epi_meta", "Epidemiology meta-analysis"),
-        ],
+        choices=StudyTypeChoices.choices,
     )
 
     def clean_references(self):
