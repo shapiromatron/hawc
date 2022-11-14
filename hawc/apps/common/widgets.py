@@ -1,5 +1,5 @@
 from random import randint
-from typing import List, Type
+from typing import Type
 
 from django.conf import settings
 from django.forms import ValidationError
@@ -89,7 +89,7 @@ class ChoiceOtherWidget(MultiWidget):
                 else:
                     return None
 
-    def format_value(self, value) -> List[str]:
+    def format_value(self, value) -> list[str]:
         """Return selected values as a list."""
         if value is None:
             return []

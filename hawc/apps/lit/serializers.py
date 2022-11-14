@@ -2,7 +2,6 @@ import itertools
 import logging
 from collections import Counter
 from io import StringIO
-from typing import List
 
 import pandas as pd
 from celery import chain
@@ -65,7 +64,7 @@ class SearchSerializer(serializers.ModelSerializer):
 
         return data
 
-    def validate_import_ids_exist(self, data, ids: List[int]):
+    def validate_import_ids_exist(self, data, ids: list[int]):
         try:
             if data["source"] == constants.ReferenceDatabase.HERO:
                 content = models.Identifiers.objects.validate_hero_ids(ids)
@@ -345,7 +344,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         child=serializers.ListField(min_length=2, max_length=2, child=serializers.IntegerField()),
     )
 
-    def validate_replace(self, replace: List) -> List:
+    def validate_replace(self, replace: list) -> list:
 
         self.ref_ids, self.hero_ids = zip(*replace)
         assessment = self.context["assessment"]

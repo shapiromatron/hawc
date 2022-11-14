@@ -1,6 +1,5 @@
 from pprint import pformat
 from textwrap import dedent
-from typing import Dict
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -201,7 +200,7 @@ class PasswordChanged(MessageMixin, RedirectView):
 
 
 class ExternalAuth(SuccessURLAllowedHostsMixin, View):
-    def get_user_metadata(self, request) -> Dict:
+    def get_user_metadata(self, request) -> dict:
         """
         Retrieve user metadata from request to use for authentication.
 
@@ -212,7 +211,7 @@ class ExternalAuth(SuccessURLAllowedHostsMixin, View):
             request: incoming request
 
         Returns:
-            Dict: user metadata; must include "email" and "external_id" keys
+            dict: user metadata; must include "email" and "external_id" keys
         """
         raise NotImplementedError("Deployment specific; requires implementation")
 
