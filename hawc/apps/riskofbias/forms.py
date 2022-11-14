@@ -1,18 +1,10 @@
 from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
-from django.db.models import Q
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import (
-    BaseFormHelper,
-    QuillField,
-    check_unique_for_assessment,
-    form_actions_apply_filters,
-)
-from ..myuser.models import HAWCUser
-from ..study.forms import StudyFilterForm
+from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
 from . import models
 from .actions import RobApproach, clone_approach, load_approach
 
@@ -187,31 +179,3 @@ class RiskOfBiasLoadApproachForm(forms.Form):
     def evaluate(self):
         rob_type = RobApproach(self.cleaned_data["rob_type"])
         load_approach(self.assessment.id, rob_type, self.user.id)
-
-
-class RoBStudyFilterForm(StudyFilterForm):
-    assigned_user = forms.ModelChoiceField(
-        queryset=HAWCUser.objects.all(),
-        initial=None,
-        required=False,
-        help_text="A user with active study evaluation assignments",
-        empty_label="<All>",
-    )
-
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("assessment")
-        super().__init__(*args, **kwargs)
-        self.fields["assigned_user"].queryset = assessment.pms_and_team_users()
-
-    def get_query(self):
-        query = super().get_query()
-        if user := self.cleaned_data.get("assigned_user"):
-            query &= Q(riskofbiases__author=user, riskofbiases__active=True)
-        return query
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-        helper.add_row("citation", 5, ["col-md-4", "col-md-2", "col-md-2", "col-md-2", "col-md-2"])
-        return helper
