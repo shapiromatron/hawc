@@ -719,18 +719,18 @@ class EndpointSummary(FlatFileExporter):
                 ser["response_units"],
             ]
 
-            responsesList = getResponses(ser["groups"])
-            responseDirection = getResponseDirection(ser["groups"], ser["data_type"])
+            responses_list = getResponses(ser["groups"])
+            response_direction = getResponseDirection(ser["groups"], ser["data_type"])
             for unit in units:
                 row_copy = copy(row)
-                dosesList = getDoses(doses, unit)
+                doses_list = getDoses(doses, unit)
                 row_copy.extend(
                     [
                         unit,  # 'units'
-                        ", ".join(dosesList),  # Doses
-                        ", ".join(responsesList),  # Responses w/ units
-                        getDR(dosesList, responsesList, unit),
-                        responseDirection,
+                        ", ".join(doses_list),  # Doses
+                        ", ".join(responses_list),  # Responses w/ units
+                        getDR(doses_list, responses_list, unit),
+                        response_direction,
                     ]
                 )
                 rows.append(row_copy)

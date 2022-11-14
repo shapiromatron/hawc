@@ -325,14 +325,14 @@ class FlexibleFieldsMixin:
             # If nothing else needs to be done, return
             return
 
-        # 'fields' is a BindingDict, which has an underlying OrderedDict.
+        # 'fields' is a BindingDict, which has an underlying dict.
         # any changes require it to be rebuilt to maintain its order.
         for field_name in list(self.fields):
             if field_name in field_renames:
                 # handle renames
                 new_field_name = field_renames[field_name]
                 if field_name == new_field_name:
-                    # special case; assign on the underlying OrderedDict to avoid error on BindingDict __setitem__
+                    # special case; assign on the underlying dict to avoid error on BindingDict __setitem__
                     self.fields.fields[field_name] = self.fields.pop(field_name)
                 else:
                     self.fields[new_field_name] = self.fields.pop(field_name)
