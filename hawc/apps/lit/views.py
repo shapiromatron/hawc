@@ -269,8 +269,12 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
             refs = self.qs_reference
         else:
             refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
-        user_tags = models.UserReferenceTag.objects.filter(user=self.request.user, reference__in=refs)
-        refs = refs.select_related("study").prefetch_related("searches", "identifiers", "tags", Prefetch("user_tags", queryset=user_tags))
+        user_tags = models.UserReferenceTag.objects.filter(
+            user=self.request.user, reference__in=refs
+        )
+        refs = refs.select_related("study").prefetch_related(
+            "searches", "identifiers", "tags", Prefetch("user_tags", queryset=user_tags)
+        )
 
         return WebappConfig(
             app="litStartup",
