@@ -41,7 +41,7 @@ urlpatterns = [
     ),
     path(
         "assessment/<int:pk>/tag/",
-        views.TagReferencesV2.as_view(),
+        views.TagReferences.as_view(),
         name="tag",
     ),
     path(

@@ -244,8 +244,8 @@ class SearchQuery(BaseUpdate):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class TagReferencesV2(BaseFilterList):
-    template_name = "lit/reference_tag_v2.html"
+class TagReferences(BaseFilterList):
+    template_name = "lit/reference_tag.html"
     parent_model = Assessment
     model = models.Reference
     filterset_class = dynamic_filterset(
