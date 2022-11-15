@@ -369,7 +369,7 @@ class ReferenceViewset(
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.action == "tag":
+        if self.action == "tag" or self.action == "resolve_conflict":
             qs = qs.select_related("assessment__literature_settings").prefetch_related(
                 "user_tags__tags", "tags"
             )
@@ -383,5 +383,16 @@ class ReferenceViewset(
         if assessment.user_can_edit_object(self.request.user):
             tag_pks = self.request.POST.getlist("tags[]", [])
             ref.update_tags(request.user, tag_pks)
+            response["status"] = "success"
+        return Response(response)
+
+    @action(detail=True, methods=("post",))
+    def resolve_conflict(self, request, pk):
+        response = {"status": "fail"}
+        ref = self.get_object()
+        assessment = ref.assessment
+        if assessment.user_can_edit_object(self.request.user):
+            user_tag_id = self.request.POST.get("user_tag_id")
+            ref.resolve_user_tag_conflicts(user_tag_id)
             response["status"] = "success"
         return Response(response)

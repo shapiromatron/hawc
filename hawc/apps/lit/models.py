@@ -926,6 +926,18 @@ class Reference(models.Model):
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()
 
+    def resolve_user_tag_conflicts(self, user_tag_id=None):
+        if user_tag_id:
+            selected_user_tag = self.user_tags.get(pk=user_tag_id)
+            self.tags = selected_user_tag.tags.all()
+            self.save(update_fields=["tags"])
+
+        user_tags = self.user_tags.all()
+        for user_tag in user_tags:
+            user_tag.is_resolved = True
+
+        UserReferenceTag.objects.bulk_update(user_tags, ["is_resolved"])
+
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
 
