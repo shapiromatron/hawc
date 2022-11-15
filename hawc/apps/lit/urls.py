@@ -123,11 +123,6 @@ urlpatterns = [
     ),
     # Edit tags
     path(
-        "assessment/<int:pk>/search/<slug:slug>/tag/",
-        views.TagBySearch.as_view(),
-        name="search_tags_edit",
-    ),
-    path(
         "assessment/<int:pk>/search/<slug:slug>/tags/",
         views.SearchRefList.as_view(),
         name="search_tags",
