@@ -2,7 +2,7 @@ import django_filters as df
 from django.db.models import Q
 from django.forms.widgets import CheckboxInput
 
-from ..common.filterset import BaseFilterSet, PaginationFilter
+from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
 from . import models
 
 
@@ -23,10 +23,13 @@ class ReferenceFilterSet(BaseFilterSet):
         method="filter_tags",
         conjoined=True,
         label="Tags",
-        help_text="Select one or more tags. If a parent tag is selected, tag children are also considered a match. If multiple tags are selected, references must include all selected tags (or their children).",
+        help_text="If multiple tags are selected, references must include all selected tags.",
     )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
+    )
+    include_descendants = df.BooleanFilter(
+        method=filter_noop, widget=CheckboxInput(), label="Include tag descendants"
     )
     untagged = df.BooleanFilter(
         method="filter_untagged", widget=CheckboxInput(), label="Untagged only"
@@ -67,8 +70,13 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.filter(query)
 
     def filter_tags(self, queryset, name, value):
+        include_descendants = self.data.get("include_descendants", False)
         for tag in value:
-            tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
+            tag_ids = (
+                list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                if include_descendants
+                else [tag]
+            )
             queryset = queryset.filter(tags__in=tag_ids)
         return queryset.distinct()
 

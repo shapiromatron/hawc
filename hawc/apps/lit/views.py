@@ -244,51 +244,13 @@ class SearchQuery(BaseUpdate):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
-    """
-    Abstract base-class to tag references, using various methods to get instance.
-    """
-
-    model = Assessment
-    form_class = forms.TagReferenceForm
-    template_name = "lit/reference_tag.html"
-
-    def get_ref_qs_filters(self) -> dict:
-        raise NotImplementedError("Subclass requires implementation")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "CHANGE"),
-        )
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        if hasattr(self, "qs_reference"):
-            refs = self.qs_reference
-        else:
-            refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
-        refs = refs.select_related("study").prefetch_related("searches", "identifiers", "tags")
-        return WebappConfig(
-            app="litStartup",
-            page="startupTagReferences",
-            data=dict(
-                keywords=self.assessment.literature_settings.get_keyword_data(),
-                instructions=self.assessment.literature_settings.screening_instructions,
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-                refs=[ref.to_dict() for ref in refs],
-                csrf=get_token(self.request),
-            ),
-        )
-
-
 class TagReferencesV2(BaseFilterList):
     template_name = "lit/reference_tag_v2.html"
     parent_model = Assessment
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
-        fields=["id", "title_abstract", "search", "tags", "untagged"],
+        fields=["id", "title_abstract", "search", "tags", "include_descendants", "untagged"],
         grid_layout={
             "rows": [
                 {
@@ -297,7 +259,10 @@ class TagReferencesV2(BaseFilterList):
                             "width": 6,
                             "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
                         },
-                        {"width": 6, "rows": [{"columns": [{"width": 12}, {"width": 12}]}]},
+                        {
+                            "width": 6,
+                            "rows": [{"columns": [{"width": 12}, {"width": 6}, {"width": 6}]}],
+                        },
                     ]
                 }
             ]
@@ -324,91 +289,6 @@ class TagReferencesV2(BaseFilterList):
                 csrf=get_token(self.request),
             ),
         )
-
-
-class TagBySearch(TagReferences):
-    """
-    Edit tags for a single Search.
-    """
-
-    model = models.Search
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(
-            self.model, slug=self.kwargs.get("slug"), assessment=self.kwargs.get("pk")
-        )
-        return self.object.get_assessment()
-
-    def get_ref_qs_filters(self):
-        return dict(searches=self.object)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
-        context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
-        return context
-
-
-class TagByReference(TagReferences):
-    """
-    Edit tags for on a single reference.
-    """
-
-    model = models.Reference
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-        return self.object.get_assessment()
-
-    def get_ref_qs_filters(self):
-        return dict(pk=self.object.pk)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
-        context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
-        return context
-
-
-class TagByTag(TagReferences):
-    """
-    Tag references with a specific tag.
-    """
-
-    model = models.ReferenceFilterTag
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-        return self.object.get_assessment()
-
-    def get_ref_qs_filters(self):
-        return dict(tags=self.object.pk)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb(name=f'Update "{self.object.name}" tags')
-        return context
-
-
-class TagByUntagged(TagReferences):
-    """
-    View to tag all untagged references for an assessment.
-    """
-
-    model = Assessment
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
-        return self.object
-
-    def get_ref_qs_filters(self):
-        return dict(tags=self.object.pk)
-
-    def get_context_data(self, **kwargs):
-        self.qs_reference = self.assessment.references.all().untagged()
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb(name="Tag untagged references")
-        return context
 
 
 def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:

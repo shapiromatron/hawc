@@ -297,7 +297,9 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
         ret["has_study"] = instance.has_study
         ret["url"] = instance.get_absolute_url()
-        ret["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": instance.pk})
+        ret["editTagUrl"] = (
+            reverse("lit:tag", kwargs={"pk": instance.assessment_id}) + f"id={instance.pk}"
+        )
         ret["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": instance.pk})
         ret["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": instance.pk})
 
