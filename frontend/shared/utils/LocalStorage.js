@@ -37,4 +37,4 @@ class LocalStorageBoolean extends LocalStorageItem {
     }
 }
 
-export {LocalStorageItem, LocalStorageBoolean};
+export {LocalStorageBoolean, LocalStorageItem};

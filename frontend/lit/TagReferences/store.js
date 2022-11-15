@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, toJS, observable} from "mobx";
+import {action, observable, toJS} from "mobx";
 
 import {sortReferences} from "../constants";
 import Reference from "../Reference";

@@ -2,13 +2,13 @@ import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+import Modal from "shared/components/Modal";
+import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 import Reference from "../components/Reference";
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import Modal from "shared/components/Modal";
-import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 @inject("store")
 @observer
