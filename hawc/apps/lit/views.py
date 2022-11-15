@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db.models import Prefetch
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -268,11 +269,14 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
             refs = self.qs_reference
         else:
             refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
-        refs = refs.select_related("study").prefetch_related("searches", "identifiers", "tags")
+        user_tags = models.UserReferenceTag.objects.filter(user=self.request.user, reference__in=refs)
+        refs = refs.select_related("study").prefetch_related("searches", "identifiers", "tags", Prefetch("user_tags", queryset=user_tags))
+
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
             data=dict(
+                conflict_resolution=self.assessment.literature_settings.conflict_resolution,
                 keywords=self.assessment.literature_settings.get_keyword_data(),
                 instructions=self.assessment.literature_settings.screening_instructions,
                 tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),

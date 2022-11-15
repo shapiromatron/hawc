@@ -333,9 +333,15 @@ div.smart-tag.active {
     color: #ffffff;
     background-color: #162e51;
     border-radius: 10px;
+    border: 0.15rem dotted transparent;
     padding: 4px 7px 4px 7px;
     margin: 0 5px 7px 0;
     display: inline-block;
+}
+.refUserTag {
+    color: #162e51;
+    background-color: #ffffff;
+    border: 0.15rem dotted #162e51;
 }
 .referenceTag{
     text-align: left;
