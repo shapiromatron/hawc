@@ -1,21 +1,17 @@
 import json
 
 from django import forms
-from django.db.models import Q
 from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
 from django.forms.widgets import Select
 from django.urls import reverse
 
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
-from ..assessment.models import DoseUnits
 from ..common.autocomplete import (
-    AutocompleteMultipleChoiceField,
     AutocompleteSelectMultipleWidget,
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
-from ..common.forms import BaseFormHelper, form_actions_apply_filters
-from ..study.autocomplete import StudyAutocomplete
+from ..common.forms import BaseFormHelper
 from . import autocomplete, models
 
 
@@ -366,170 +362,6 @@ class IVEndpointForm(forms.ModelForm):
         helper.add_create_btn("effects", url, "Add new effect tag")
 
         return helper
-
-
-class IVEndpointFilterForm(forms.Form):
-
-    ORDER_BY_CHOICES = (
-        ("experiment__study__short_citation", "study"),
-        ("experiment__name", "experiment name"),
-        ("name", "endpoint name"),
-        ("assay_type", "assay type"),
-        ("effect", "effect"),
-        ("chemical__name", "chemical"),
-        ("category__name", "category"),
-        ("observation_time", "observation time"),
-        ("experiment__dose_units_id", "dose units"),
-        ("response_units", "response units"),
-    )
-
-    studies = AutocompleteMultipleChoiceField(
-        label="Study reference",
-        autocomplete_class=StudyAutocomplete,
-        help_text="ex: Smith et al. 2010",
-        required=False,
-    )
-
-    name = forms.CharField(
-        label="Endpoint name",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"
-        ),
-        help_text="ex: B cells",
-        required=False,
-    )
-
-    chemical = forms.CharField(
-        label="Chemical name",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVChemicalAutocomplete, field="name"
-        ),
-        help_text="ex: PFOA",
-        required=False,
-    )
-
-    cas = forms.CharField(
-        label="CAS",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVChemicalAutocomplete, field="cas"
-        ),
-        help_text="ex: 107-02-8",
-        required=False,
-    )
-
-    cell_type = forms.CharField(
-        label="Cell type",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="cell_type"
-        ),
-        help_text="ex: HeLa",
-        required=False,
-    )
-
-    tissue = forms.CharField(
-        label="Tissue",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVCellTypeAutocomplete, field="tissue"
-        ),
-        help_text="ex: adipocytes",
-        required=False,
-    )
-
-    effect = forms.CharField(
-        label="Effect",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="effect"
-        ),
-        help_text="ex: gene expression",
-        required=False,
-    )
-
-    response_units = forms.CharField(
-        label="Response units",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="response_units"
-        ),
-        help_text="ex: counts",
-        required=False,
-    )
-
-    dose_units = forms.ModelChoiceField(queryset=DoseUnits.objects.all(), required=False)
-
-    order_by = forms.ChoiceField(
-        choices=ORDER_BY_CHOICES,
-    )
-
-    paginate_by = forms.IntegerField(
-        label="Items per page", min_value=10, initial=25, max_value=500, required=False
-    )
-
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("assessment")
-        super().__init__(*args, **kwargs)
-        self.fields["dose_units"].queryset = DoseUnits.objects.get_iv_units(assessment.id)
-        self.fields["studies"].set_filters({"assessment_id": assessment.id, "in_vitro": True})
-        # for endpoint autocomplete
-        for field in ("name", "effect", "response_units"):
-            self.fields[field].widget.update_filters(
-                {"experiment__study__assessment_id": assessment.id}
-            )
-        # for chemical autocomplete
-        for field in ("chemical", "cas"):
-            self.fields[field].widget.update_filters({"study__assessment_id": assessment.id})
-        # for cell type autocomplete
-        for field in ("cell_type", "tissue"):
-            self.fields[field].widget.update_filters({"study__assessment_id": assessment.id})
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-
-        helper.add_row("studies", 4, "col-md-3")
-        helper.add_row("cell_type", 4, "col-md-3")
-        helper.add_row("dose_units", 3, "col-md-3")
-
-        return helper
-
-    def get_query(self):
-
-        studies = self.cleaned_data.get("studies")
-        name = self.cleaned_data.get("name")
-        chemical = self.cleaned_data.get("chemical")
-        cas = self.cleaned_data.get("cas")
-        cell_type = self.cleaned_data.get("cell_type")
-        tissue = self.cleaned_data.get("tissue")
-        effect = self.cleaned_data.get("effect")
-        response_units = self.cleaned_data.get("response_units")
-        dose_units = self.cleaned_data.get("dose_units")
-
-        query = Q()
-        if studies:
-            query &= Q(experiment__study__in=studies)
-        if name:
-            query &= Q(name__icontains=name)
-        if chemical:
-            query &= Q(chemical__name__icontains=chemical)
-        if cas:
-            query &= Q(chemical__cas__icontains=cas)
-        if cell_type:
-            query &= Q(experiment__cell_type__cell_type__icontains=cell_type)
-        if tissue:
-            query &= Q(experiment__cell_type__tissue__icontains=tissue)
-        if effect:
-            query &= Q(effect__icontains=effect)
-        if response_units:
-            query &= Q(response_units__icontains=response_units)
-        if dose_units:
-            query &= Q(experiment__dose_units=dose_units)
-        return query
-
-    def get_order_by(self):
-        return self.cleaned_data.get("order_by", self.ORDER_BY_CHOICES[0][0])
-
-    def get_dose_units_id(self):
-        if hasattr(self, "cleaned_data") and self.cleaned_data.get("dose_units"):
-            return self.cleaned_data.get("dose_units").id
 
 
 class IVEndpointGroupForm(forms.ModelForm):

@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 import pandas as pd
 
@@ -10,13 +10,13 @@ class StudyClient(BaseClient):
     Client class for study requests.
     """
 
-    def create(self, reference_id: int, data: Optional[Dict] = None) -> Dict:
+    def create(self, reference_id: int, data: Optional[dict] = None) -> dict:
         """
         Creates a study using a given reference ID.
 
         Args:
             reference_id (int): Reference ID to create study from.
-            data (Dict, optional): Dict containing any additional field/value pairings for the study.
+            data (dict, optional): Dict containing any additional field/value pairings for the study.
                 Possible pairings are:
                     short_citation (str): Short study citation, can be used as identifier.
                     full_citation (str): Complete study citation.
@@ -38,7 +38,7 @@ class StudyClient(BaseClient):
                 Defaults to {empty}.
 
         Returns:
-            Dict: JSON of the created study
+            dict: JSON of the created study
         """
         if data is None:
             data = {}
@@ -61,7 +61,7 @@ class StudyClient(BaseClient):
 
     def create_from_identifier(
         self, db_type: str, db_id: Union[str, int], assessment_id: int, **kwargs
-    ) -> Dict:
+    ) -> dict:
         """
         Creates a study using the given identifier.
         The identifier and reference are also created as needed.
@@ -72,7 +72,7 @@ class StudyClient(BaseClient):
             assessment_id (int): Assessment ID to create the study under
 
         Returns:
-            Dict: JSON of the created study
+            dict: JSON of the created study
         """
         payload = {"db_type": db_type, "db_id": db_id, "assessment_id": assessment_id, **kwargs}
         url = f"{self.session.root_url}/study/api/study/create-from-identifier/"

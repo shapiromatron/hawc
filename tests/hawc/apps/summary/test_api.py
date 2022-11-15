@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -91,11 +92,13 @@ class TestVisual:
         assert response.status_code == 200
 
         data = response.json()
+        data_str = json.dumps(data, indent=2, sort_keys=True)
+        data_str = re.sub(r"obj_ct=\d+", "obj_ct=9999", data_str)
 
         if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
+            fn.write_text(data_str)
 
-        assert data == json.loads(fn.read_text())
+        assert data_str == fn.read_text()
 
     def test_bioassay_aggregation(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "bioassay-aggregation")
@@ -346,9 +349,13 @@ class TestSummaryTextViewset:
 class TestSummaryTableViewset:
     def _test_data_file(self, rewrite_data_files: bool, fn_key: str, data):
         fn = Path(DATA_ROOT / f"api-summary-table-{fn_key}-data.json")
+        data_str = json.dumps(data, indent=2, sort_keys=True)
+        data_str = re.sub(r'"content_type_id": \d+', '"content_type_id": 9999', data_str)
+
         if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
-        assert json.loads(fn.read_text()) == data
+            fn.write_text(data_str)
+
+        assert json.loads(data_str) == json.loads(fn.read_text())
 
     def test_data(self, rewrite_data_files: bool):
         data = {"assessment_id": 1, "table_type": 2, "data_source": "ani", "published_only": False}

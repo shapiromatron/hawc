@@ -1,5 +1,3 @@
-from typing import List
-
 from django.conf import settings
 from django.core.cache import cache
 from django.urls import reverse
@@ -10,7 +8,7 @@ from ..common.helper import WebappConfig
 from . import models
 
 
-def build_ehv_breadcrumbs(user, name: str) -> List[Breadcrumb]:
+def build_ehv_breadcrumbs(user, name: str) -> list[Breadcrumb]:
     return Breadcrumb.build_crumbs(
         user,
         name,

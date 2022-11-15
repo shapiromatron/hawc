@@ -1,8 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-
-import h from "shared/utils/helpers";
 import StatusIcon from "mgmt/TaskTable/components/StatusIcon";
+import PropTypes from "prop-types";
+import React from "react";
+import h from "shared/utils/helpers";
 
 const StatusLabel = props => {
     return (

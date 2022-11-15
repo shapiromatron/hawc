@@ -5,7 +5,6 @@ import pickle
 import re
 from io import BytesIO
 from math import ceil
-from typing import Dict, List
 from urllib import parse
 
 import pandas as pd
@@ -214,7 +213,7 @@ class LiteratureAssessment(models.Model):
         self.topic_tsne_data.save(self.topic_tsne_data_filename, ContentFile(pickle.dumps(data)))
         cache.delete(self.topic_tsne_fig_dict_cache_key)
 
-    def get_topic_tsne_data(self) -> Dict:
+    def get_topic_tsne_data(self) -> dict:
         if not self.has_topic_model:
             raise ValueError("No data available.")
         data = pickle.load(self.topic_tsne_data.file.file)
@@ -222,7 +221,7 @@ class LiteratureAssessment(models.Model):
         data["topics"] = pd.read_parquet(BytesIO(data["topics"]), engine="pyarrow")
         return data
 
-    def get_topic_tsne_fig_dict(self) -> Dict:
+    def get_topic_tsne_fig_dict(self) -> dict:
         fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
         if fig_dict is None:
             data = self.get_topic_tsne_data()
@@ -749,7 +748,7 @@ class Identifiers(models.Model):
             "url": self.get_url(),
         }
 
-    def get_content(self) -> Dict:
+    def get_content(self) -> dict:
         return json.loads(self.content) if self.content else {}
 
     @staticmethod
@@ -757,7 +756,7 @@ class Identifiers(models.Model):
         tasks.update_pubmed_content.delay([d.unique_id for d in idents])
 
     @classmethod
-    def existing_doi_map(cls, dois: List[str]) -> Dict[str, int]:
+    def existing_doi_map(cls, dois: list[str]) -> dict[str, int]:
         """
         Return a mapping of DOI and Identifier ID given a list of candidate DOIs
         """
@@ -1055,7 +1054,7 @@ class Reference(models.Model):
                 return ident.unique_id
         return None
 
-    def update_from_hero_content(self, content: Dict, save: bool = False):
+    def update_from_hero_content(self, content: dict, save: bool = False):
         """
         Update reference in place given HERO content; optionally save reference
         """

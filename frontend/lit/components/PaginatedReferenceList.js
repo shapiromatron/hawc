@@ -1,11 +1,10 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
-import {observable, action, computed} from "mobx";
-
-import h from "shared/utils/helpers";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 import Paginator from "shared/components/Paginator";
+import h from "shared/utils/helpers";
 
 import Reference from "../Reference";
 import ReferenceTable from "./ReferenceTable";
@@ -29,7 +28,7 @@ class ReferenceListStore {
             .then(res => res.json())
             .then(res => {
                 this.currentPage = res;
-                this.formattedReferences = Reference.sortedArray(res.results, tag.tree);
+                this.formattedReferences = Reference.array(res.results, tag.tree);
             });
     }
 

@@ -20,8 +20,11 @@ urlpatterns = [
 ]
 
 if AuthProvider.django in settings.AUTH_PROVIDERS:
+    if settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION:
+        urlpatterns.append(
+            path("register/", views.HawcUserCreate.as_view(), name="register"),
+        )
     urlpatterns += [
-        path("register/", views.HawcUserCreate.as_view(), name="register"),
         path("password-change/", views.PasswordChange.as_view(), name="change_password"),
         path(
             "password-reset/",

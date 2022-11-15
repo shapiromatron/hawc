@@ -1,5 +1,4 @@
 import re
-from typing import List, Tuple
 
 from django.db import models
 
@@ -16,7 +15,7 @@ class ReferenceDatabase(models.IntegerChoices):
     EMBASE = 7, "Embase"
 
     @classmethod
-    def import_choices(cls) -> List[Tuple[int, str]]:
+    def import_choices(cls) -> list[tuple[int, str]]:
         return [
             (choice.value, choice.label)
             for choice in [ReferenceDatabase.PUBMED, ReferenceDatabase.HERO]

@@ -1,7 +1,7 @@
-import {EndpointAggregationShim} from "./EndpointAggregationFormReact";
 import CrossviewForm from "./CrossviewForm";
-import RoBHeatmapForm from "./RoBHeatmapForm";
+import {EndpointAggregationShim} from "./EndpointAggregationFormReact";
 import RoBBarchartForm from "./RoBBarchartForm";
+import RoBHeatmapForm from "./RoBHeatmapForm";
 
 class VisualForm {
     static create(visual_type, $el, config) {

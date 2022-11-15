@@ -1,10 +1,9 @@
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-
+import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
-import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
+import LabelInput from "./LabelInput";
 
 class FileInput extends Component {
     render() {

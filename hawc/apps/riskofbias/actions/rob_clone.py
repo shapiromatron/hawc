@@ -1,6 +1,6 @@
 import json
 from enum import IntEnum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import pydantic
 from django.db import models
@@ -26,8 +26,8 @@ class BulkRobCopyData(pydantic.BaseModel):
     src_assessment_id: int
     dst_assessment_id: int
     dst_author_id: Optional[int]
-    src_dst_study_ids: List[Tuple[int, int]]
-    src_dst_metric_ids: List[Tuple[int, int]]
+    src_dst_study_ids: list[tuple[int, int]]
+    src_dst_metric_ids: list[tuple[int, int]]
     copy_mode: BulkCopyMode
     author_mode: BulkCopyAuthor
 
@@ -144,7 +144,7 @@ class BulkRobCopyAction(BaseApiAction):
                     msg = "Author is not part of destination assessment team."
                     self.errors["dst_author_id"].append(msg)
 
-    def evaluate(self) -> Dict[str, Any]:
+    def evaluate(self) -> dict[str, Any]:
         # create src to dst mapping
         src_to_dst = {}
 
@@ -209,3 +209,18 @@ class BulkRobCopyAction(BaseApiAction):
             message=json.dumps(src_to_dst),
         )
         return {"mapping": src_to_dst}
+
+    def has_permission(self, request) -> tuple[bool, str]:
+        """
+        Check user is a project manager on both assessments.
+        """
+        src_assessment = Assessment.objects.filter(id=self.inputs.src_assessment_id).first()
+        dst_assessment = Assessment.objects.filter(id=self.inputs.dst_assessment_id).first()
+        if src_assessment is None or dst_assessment is None:
+            return False, "Invalid source and/or destination assessment ID."
+        if (
+            src_assessment.user_can_edit_assessment(request.user) is False
+            or dst_assessment.user_can_edit_assessment(request.user) is False
+        ):
+            return False, "Must be a Project Manager for source and destination assessments."
+        return super().has_permission(request)

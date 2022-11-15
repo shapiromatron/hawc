@@ -1,6 +1,7 @@
-import $ from "$";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
+import React, {Component} from "react";
+
+import $ from "$";
 
 const enablePopovers = $el => {
         $el.popover({
@@ -49,5 +50,5 @@ HelpTextPopover.defaultProps = {
     title: "Help-text",
 };
 
-export {enablePopovers, disablePopovers};
+export {disablePopovers, enablePopovers};
 export default HelpTextPopover;

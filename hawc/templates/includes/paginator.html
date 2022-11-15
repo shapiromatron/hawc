@@ -1,7 +1,7 @@
 {% load url_replace %}
 
 {% if is_paginated %}
-<ul class="pagination justify-content-center">
+<ul class="pagination justify-content-center mb-0">
 
     {% if page_obj.has_previous %}
     <li class="page-item">
@@ -38,4 +38,5 @@
         </select>
     </li>
 </ul>
+<p class="text-center">Showing {{plural_object_name|default:"items"}} <b>{{page_obj.start_index}}-{{page_obj.end_index}}</b> of <b>{{paginator.count}}</b></p>
 {% endif %}

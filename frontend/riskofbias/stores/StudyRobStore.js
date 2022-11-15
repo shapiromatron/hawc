@@ -1,7 +1,7 @@
 import _ from "lodash";
-import {observable, computed, action} from "mobx";
+import {action, computed, observable} from "mobx";
 
-import {fetchRobSettings, fetchStudy, fetchRobStudy} from "../constants";
+import {fetchRobSettings, fetchRobStudy, fetchStudy} from "../constants";
 
 class StudyRobStore {
     @observable settings = null;

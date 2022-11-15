@@ -1,11 +1,11 @@
-import $ from "$";
 import * as d3 from "d3";
-
 import HAWCUtils from "shared/utils/HAWCUtils";
 
-import {StyleSymbol, StyleLine, StyleRectangle} from "./Styles";
-import {NULL_CASE} from "./shared";
+import $ from "$";
+
 import {applyStyles} from "../summary/common";
+import {NULL_CASE} from "./shared";
+import {StyleLine, StyleRectangle, StyleSymbol} from "./Styles";
 
 class DataPivotLegend {
     constructor(svg, vis, settings, dp_settings, options) {

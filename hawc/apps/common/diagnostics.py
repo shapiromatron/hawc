@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from typing import Dict
 
 import pandas as pd
 from django.conf import settings
@@ -102,7 +101,7 @@ class WorkerHealthcheck:
         series = self.series()
         return helper.event_plot(series)
 
-    def stats(self) -> Dict:
+    def stats(self) -> dict:
         inspect = app.control.inspect()
         stats = dict(ping=inspect.ping())
         if stats["ping"]:

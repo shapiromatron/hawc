@@ -1,15 +1,14 @@
-import GenericTableStore from "./genericTable/store.js";
-import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
-import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
 import {TableType} from "./constants";
-
-import GenericTableForm from "./genericTable/TableForm";
-import GenericTable from "./genericTable/Table";
 import EvidenceProfileForm from "./evidenceProfileTable/Form";
+import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
 import EvidenceProfileTable from "./evidenceProfileTable/Table";
-import StudyEvaluationTableForm from "./studyEvaluationTable/TableForm";
-import StudyEvaluationTable from "./studyEvaluationTable/Table";
+import GenericTableStore from "./genericTable/store.js";
+import GenericTable from "./genericTable/Table";
+import GenericTableForm from "./genericTable/TableForm";
 import StudyEvaluationData from "./studyEvaluationTable/DataForm";
+import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
+import StudyEvaluationTable from "./studyEvaluationTable/Table";
+import StudyEvaluationTableForm from "./studyEvaluationTable/TableForm";
 
 const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableStore,
@@ -60,4 +59,4 @@ const tableStoreLookup = {
         return Component;
     };
 
-export {getTableStore, getViewTableComponent, getEditTableComponent, getTableDataComponent};
+export {getEditTableComponent, getTableDataComponent, getTableStore, getViewTableComponent};

@@ -1,8 +1,8 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
+import h from "shared/utils/helpers";
 
 import {getTableStore} from "../lookups";
-import h from "shared/utils/helpers";
 
 class SummaryTableEditStore {
     @observable tableObject = null; // string-representation to be submitted

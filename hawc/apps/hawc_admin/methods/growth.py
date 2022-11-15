@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pandas as pd
 import plotly.express as px
 from django import forms
@@ -48,7 +46,7 @@ class GrowthForm(forms.Form):
         fn = px.bar if df.shape[0] < 300 else px.line
         return fn(df, x="date", y="n", title=title)
 
-    def get_data(self) -> Tuple[pd.DataFrame, Figure]:
+    def get_data(self) -> tuple[pd.DataFrame, Figure]:
         data = self.cleaned_data
         model = data["model"] or self.fields["model"].initial.value
         grouper = data["grouper"] or self.fields["grouper"].initial.value

@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from . import api, views
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r"study", api.Study, basename="study")
 router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cleanup")
 
@@ -11,7 +11,7 @@ app_name = "study"
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
     # study
-    path("assessment/<int:pk>/", views.StudyList.as_view(), name="list"),
+    path("assessment/<int:pk>/", views.StudyFilterList.as_view(), name="list"),
     path("<int:pk>/add-details/", views.StudyCreateFromReference.as_view(), name="new_study"),
     path("assessment/<int:pk>/new-study/", views.ReferenceStudyCreate.as_view(), name="new_ref"),
     path(

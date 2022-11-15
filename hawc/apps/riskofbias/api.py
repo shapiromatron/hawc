@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -78,7 +78,7 @@ class RiskOfBiasAssessmentViewset(
         )
         return Response(exporter.build_export())
 
-    @action(detail=False, methods=("post",), permission_classes=(IsAdminUser,))
+    @action(detail=False, methods=("post",), permission_classes=(IsAuthenticated,))
     def bulk_rob_copy(self, request):
         """
         Bulk copy risk of bias responses from one assessment to another.
@@ -110,7 +110,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         """Reorder domains/metrics in the order specified.
 
         The requests.data is expected to be a list in the following format:
-            List[Tuple[int, List[int]]] where, the first item in the tuple is a domain_id and
+            list[tuple[int, list[int]]] where, the first item in the tuple is a domain_id and
             the second is al ist of metric_ids associated with that domain.
         """
         qs = self.get_queryset().filter(assessment=self.assessment).prefetch_related("metrics")

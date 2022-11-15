@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 import docx
 from docx.oxml.shared import OxmlElement, qn
 from docx.shared import Inches
@@ -12,16 +10,16 @@ class TableMaker:
 
     def __init__(
         self,
-        colWidths: List[float],
-        styles: Dict = None,
+        colWidths: list[float],
+        styles: dict = None,
         numHeaders: int = 1,
         tblStyle: str = None,
         firstRowCaption: bool = True,
     ):
         """
         Args:
-            colWidths (List[float]): Width of columns
-            styles (Dict, optional): Default styles for different fields.
+            colWidths (list[float]): Width of columns
+            styles (dict, optional): Default styles for different fields.
                 Keys include: ["title", "header", "body", "subheading"]. Defaults to None.
             numHeaders (int, optional): Number of headers. Defaults to 1.
             tblStyle (str, optional): Table style. Defaults to None.
@@ -159,7 +157,7 @@ class CellMaker:
                 style (str, optional)
                 shade (str, optional)
                 text (str, optional)
-                runs (List[Dict], optional)
+                runs (list[dict], optional)
                 vertical (bool, optional)
                 height (float, optional)
         """

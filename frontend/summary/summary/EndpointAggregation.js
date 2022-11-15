@@ -1,16 +1,15 @@
-import $ from "$";
-
-import h from "shared/utils/helpers";
-import BaseTable from "shared/utils/BaseTable";
-import HAWCModal from "shared/utils/HAWCModal";
-
 import Endpoint from "animal/Endpoint";
 import EndpointDetailRow from "animal/EndpointDetailRow";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
+import BaseTable from "shared/utils/BaseTable";
+import HAWCModal from "shared/utils/HAWCModal";
+import h from "shared/utils/helpers";
 
+import $ from "$";
+
+import BaseVisual from "./BaseVisual";
 import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
 import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";
-import BaseVisual from "./BaseVisual";
 
 class EndpointAggregation extends BaseVisual {
     constructor(data) {

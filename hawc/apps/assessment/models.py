@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, Dict, List, NamedTuple
+from typing import Any, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -340,7 +340,7 @@ class Assessment(models.Model):
         else:
             return ""
 
-    def get_noel_names(self):
+    def get_noel_names(self) -> NoelNames:
         if self.noel_name == constants.NoelName.NEL:
             return NoelNames(
                 "NEL",
@@ -762,7 +762,7 @@ class DatasetRevision(models.Model):
         extension: str
         num_rows: int
         num_columns: int
-        column_names: List[str]
+        column_names: list[str]
 
     def __str__(self) -> str:
         return f"{self.dataset}: v{self.version}"
@@ -1022,7 +1022,7 @@ class Content(models.Model):
 
     @classmethod
     def rendered_page(
-        cls, content_type: ContentTypeChoices, request: HttpRequest, context: Dict
+        cls, content_type: ContentTypeChoices, request: HttpRequest, context: dict
     ) -> str:
         """Return rendered template response for the requested content.
 
