@@ -352,7 +352,7 @@ div.smart-tag.active {
 .nestedTag > div.tagName {
     display: inline-block;
     position: relative;
-    background: linear-gradient(0deg, #162e51, #162e51) no-repeat right bottom / 0 var(--bg-h);
+    background: linear-gradient(0deg, #484848, #484848) no-repeat right bottom / 0 var(--bg-h);
     transition: background-size 200ms;
     --bg-h: 2px;
     text-decoration: none;
@@ -367,7 +367,7 @@ div.smart-tag.active {
 }
 
 .nestedTag>div.tagName::before {
-    color: #162e51;
+    color: #484848;
     content: "\f067";
     font-family: FontAwesome;
     font-size: 10px;
