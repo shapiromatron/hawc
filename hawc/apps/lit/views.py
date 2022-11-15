@@ -376,7 +376,6 @@ class ConflictResolution(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
         self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
         return self.object
 
-    # TODO: annotate tags w/ same and diff
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         assessment = self.get_assessment(self.request, **kwargs)
@@ -384,10 +383,15 @@ class ConflictResolution(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
         context["breadcrumbs"] = lit_overview_crumbs(
             self.request.user, assessment, "Reference Tag Conflict Resolution"
         )
-        context["refs"] = models.Reference.objects.filter(
-            assessment_id=self.assessment.id,
-            user_tags__is_resolved=False,
-        ).order_by("-last_updated")
+        context["refs"] = (
+            models.Reference.objects.filter(
+                assessment_id=self.assessment.id,
+                user_tags__is_resolved=False,
+            )
+            .order_by("-last_updated")
+            .prefetch_related("user_tags__tags")
+        )
+
         return context
 
     def get_app_config(self, context) -> WebappConfig:

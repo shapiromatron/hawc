@@ -1167,16 +1167,6 @@ class UserReferenceTag(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    def get_tags_diff(self):
-        all_tags = set(self.tags.all())
-        all_tags = set(self.reference.tags.all())
-        for user_tag in self.reference.user_tags.exclude(pk=self.id):
-            all_tags.update(set(user_tag.tags.all()))
-        self_tags = set(self.tags.all())
-        tags_diff = self_tags.difference(all_tags)
-        tags_same = self_tags.intersection(all_tags)
-        return dict(diff=tags_diff, same=tags_same)
-
     @property
     def assessment_id(self) -> int:
         return self.reference.assessment_id
