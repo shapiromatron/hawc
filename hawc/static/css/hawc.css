@@ -353,10 +353,11 @@ div.smart-tag.active {
     display: inline-block;
     position: relative;
     background: linear-gradient(0deg, #162e51, #162e51) no-repeat right bottom / 0 var(--bg-h);
-    transition: background-size 300ms;
+    transition: background-size 200ms;
     --bg-h: 2px;
     text-decoration: none;
     padding-left: 5px;
+    padding-right: 15px;
     border: 3px solid transparent;
 }
 
@@ -380,7 +381,7 @@ div.smart-tag.active {
     height: 110%;
     transform: scale(1, 0);
     transform-origin: bottom;
-    transition: all 150ms ease-in 150ms;
+    transition: all 75ms ease-in 125ms;
 }
 
 .nestedTag>div.tagName:hover::before {
