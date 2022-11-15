@@ -1,13 +1,7 @@
 {% extends 'embedded.html' %}
 
-{% load static %}
-
 {% block content %}
-<div class="embedded_banner">
-    <a href="{{object.get_absolute_url}}" >
-        <img alt="The website logo" src="{% static 'img/HAWC-400.png' %}"  width="68" />
-    </a>
-</div>
+{% include "includes/embedded_logo.html" with url=object.get_absolute_url %}
 <div class='visualization'></div>
 {% endblock content %}
 
