@@ -51,6 +51,11 @@ urlpatterns = [
         name="tag_untagged",
     ),
     path(
+        "assessment/<int:pk>/tag/",
+        views.TagReferencesV2.as_view(),
+        name="tag_v2",
+    ),
+    path(
         "assessment/<int:pk>/tag/bulk/",
         views.BulkTagReferences.as_view(),
         name="bulk_tag",

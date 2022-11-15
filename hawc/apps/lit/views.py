@@ -282,6 +282,50 @@ class TagReferences(WebappMixin, TeamMemberOrHigherMixin, FormView):
         )
 
 
+class TagReferencesV2(BaseFilterList):
+    template_name = "lit/reference_tag_v2.html"
+    parent_model = Assessment
+    model = models.Reference
+    filterset_class = dynamic_filterset(
+        filterset.ReferenceFilterSet,
+        fields=["id", "title_abstract", "search", "tags", "untagged"],
+        grid_layout={
+            "rows": [
+                {
+                    "columns": [
+                        {
+                            "width": 6,
+                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                        },
+                        {"width": 6, "rows": [{"columns": [{"width": 12}, {"width": 12}]}]},
+                    ]
+                }
+            ]
+        },
+    )
+    paginate_by = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Update tags"),
+        )
+        return context
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(
+            app="litStartup",
+            page="startupTagReferences",
+            data=dict(
+                keywords=self.assessment.literature_settings.get_keyword_data(),
+                instructions=self.assessment.literature_settings.screening_instructions,
+                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                refs=[ref.to_dict() for ref in context["object_list"]],
+                csrf=get_token(self.request),
+            ),
+        )
+
+
 class TagBySearch(TagReferences):
     """
     Edit tags for a single Search.

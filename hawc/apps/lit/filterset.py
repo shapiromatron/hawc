@@ -1,5 +1,6 @@
 import django_filters as df
 from django.db.models import Q
+from django.forms.widgets import CheckboxInput
 
 from ..common.filterset import BaseFilterSet, PaginationFilter
 from . import models
@@ -24,6 +25,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Tags",
         help_text="Select one or more tags. If a parent tag is selected, tag children are also considered a match. If multiple tags are selected, references must include all selected tags (or their children).",
     )
+    search = df.ModelChoiceFilter(
+        field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
+    )
+    untagged = df.BooleanFilter(
+        method="filter_untagged", widget=CheckboxInput(), label="Untagged only"
+    )
     order_by = df.OrderingFilter(
         fields=(
             ("authors", "authors"),
@@ -44,6 +51,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
             "tags",
+            "search",
         ]
 
     def filter_queryset(self, queryset):
@@ -64,10 +72,18 @@ class ReferenceFilterSet(BaseFilterSet):
             queryset = queryset.filter(tags__in=tag_ids)
         return queryset.distinct()
 
+    def filter_untagged(self, queryset, name, value):
+        return queryset.untagged() if value else queryset
+
     def create_form(self):
         form = super().create_form()
-        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-        form.fields["tags"].queryset = tags
-        form.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
-        form.fields["tags"].widget.attrs["size"] = 8
+        if "tags" in form.fields:
+            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+            form.fields["tags"].queryset = tags
+            form.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+            form.fields["tags"].widget.attrs["size"] = 8
+        if "search" in form.fields:
+            form.fields["search"].queryset = models.Search.objects.filter(
+                assessment=self.assessment
+            )
         return form
