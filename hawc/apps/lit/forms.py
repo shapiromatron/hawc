@@ -11,8 +11,8 @@ from django.urls import reverse, reverse_lazy
 from ...services.utils import ris
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
-from ..study.models import Study
 from ..study.constants import StudyTypeChoices
+from ..study.models import Study
 from . import constants, models
 
 logger = logging.getLogger(__name__)

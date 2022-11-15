@@ -336,3 +336,5 @@ IS_TESTING = False
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
 
 DISCLAIMER_TEXT = ""
+
+CSP_FRAME_ANCESTORS = os.environ.get("CSP_FRAME_ANCESTORS", "frame-ancestors http://127.0.0.1:5005")

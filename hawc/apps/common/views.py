@@ -1,9 +1,11 @@
 import abc
 import logging
+from functools import wraps
 from typing import Any, Callable, Iterable, Optional
 from urllib.parse import urlparse
 
 import reversion
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -26,6 +28,22 @@ from .helper import WebappConfig, tryParseInt
 
 logger = logging.getLogger(__name__)
 audit_logger = logging.getLogger("hawc.audit.change")
+
+
+def iframe_allowed(view_func):
+    """Decorator; allows view to be embedded in an iframe.
+
+    Adapts `django.views.decorators.clickjacking.xframe_options_exempt`;
+    also adds the CSP rules from HAWC settings.
+    """
+
+    def wrapped_view(*args, **kwargs):
+        resp = view_func(*args, **kwargs)
+        resp.xframe_options_exempt = True
+        resp.headers["Content-Security-Policy"] = settings.CSP_FRAME_ANCESTORS
+        return resp
+
+    return wraps(view_func)(wrapped_view)
 
 
 def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):

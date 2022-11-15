@@ -99,6 +99,11 @@ urlpatterns = [
         name="visualization_detail",
     ),
     path(
+        "visual/assessment/<int:pk>/<slug:slug>/embedded/",
+        views.VisualizationEmbedded.as_view(),
+        name="visualization_embed",
+    ),
+    path(
         "visual/assessment/<int:pk>/<slug:slug>/update/",
         views.VisualizationUpdate.as_view(),
         name="visualization_update",
@@ -138,6 +143,11 @@ urlpatterns = [
         "data-pivot/assessment/<int:pk>/<slug:slug>/",
         views.DataPivotDetail.as_view(),
         name="dp_detail",
+    ),
+    path(
+        "data-pivot/assessment/<int:pk>/<slug:slug>/embedded/",
+        views.DataPivotEmbedded.as_view(),
+        name="dp_embedded",
     ),
     path(
         "data-pivot/assessment/<int:pk>/<slug:slug>/update/",

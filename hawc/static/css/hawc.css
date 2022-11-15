@@ -9,6 +9,19 @@
     margin: 0 40%;
 }
 
+.embedded_banner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 95%;
+    background-color: white;
+    padding: 5px;
+    margin: 5px 8px;
+    border: 1px solid #cacaca;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 3px #20549375;
+}
+
 /* main  */
 #main-container {
     padding-left: 1em;

@@ -1,0 +1,22 @@
+{% extends 'embedded.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="embedded_banner">
+    <a href="{{object.get_absolute_url}}" >
+        <img alt="The website logo" src="{% static 'img/HAWC-400.png' %}"  width="68" />
+    </a>
+</div>
+<div class='visualization'></div>
+{% endblock content %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+window.app.startup("summaryStartup", function(summary){
+    window.isEditable = {{obj_perms.edit|lower}};
+    summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
+});
+</script>
+{% endblock extrajs %}

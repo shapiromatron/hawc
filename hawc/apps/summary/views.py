@@ -7,6 +7,7 @@ from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
@@ -19,6 +20,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     TeamMemberOrHigherMixin,
+    iframe_allowed,
 )
 from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, forms, models, serializers
@@ -324,6 +326,11 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         return context
+
+
+@method_decorator(iframe_allowed, name="dispatch")
+class VisualizationEmbedded(VisualizationDetail):
+    template_name = "summary/visual_embedded.html"
 
 
 class VisualizationCreateSelector(BaseDetail):
@@ -644,6 +651,7 @@ class DataPivotByIdDetail(RedirectView):
         return get_object_or_404(models.DataPivot, id=kwargs.get("pk")).get_absolute_url()
 
 
+@method_decorator(iframe_allowed, name="dispatch")
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
     template_name = "summary/datapivot_detail.html"
@@ -654,6 +662,10 @@ class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         return context
+
+
+class DataPivotEmbedded(DataPivotDetail):
+    template_name = "summary/datapivot_embedded.html"
 
 
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
