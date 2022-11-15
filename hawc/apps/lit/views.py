@@ -376,6 +376,7 @@ class ConflictResolution(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
         self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
         return self.object
 
+    # TODO: annotate tags w/ same and diff
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         assessment = self.get_assessment(self.request, **kwargs)
@@ -384,17 +385,15 @@ class ConflictResolution(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
             self.request.user, assessment, "Reference Tag Conflict Resolution"
         )
         context["refs"] = models.Reference.objects.filter(
-            assessment_id=self.assessment.id
-        ).order_by("-last_updated")[:7]
-        context["tags"] = models.ReferenceFilterTag.assessment_qs(self.assessment.id).filter(
-            depth__gt=4
-        )
+            assessment_id=self.assessment.id,
+            user_tags__is_resolved=False,
+        ).order_by("-last_updated")
         return context
 
     def get_app_config(self, context) -> WebappConfig:
         refs = models.Reference.objects.filter(assessment_id=self.assessment.id).order_by(
             "-last_updated"
-        )[:7]
+        )
         refs = refs.prefetch_related("searches", "identifiers", "tags")
         return WebappConfig(
             app="litStartup",
@@ -842,21 +841,6 @@ class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
-
-
-class ConflictResolution(TeamMemberOrHigherMixin, BaseDetail):
-    template_name = "lit/conflict_resolution.html"
-    model = Assessment
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, id=self.kwargs.get("pk"))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Tag Conflict Resolution"
-        )
-        return context
 
 
 class ReferenceTagHistory(TeamMemberOrHigherMixin, BaseDetail):

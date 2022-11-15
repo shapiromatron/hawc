@@ -78,6 +78,52 @@ tfoot > tr > td {
     transition: all 0.5s ease-in-out;
 }
 
+/* abstract expansion */
+.abstract_expand {
+    overflow: hidden;
+    white-space: nowrap !important;
+    width: 600px !important;
+    height: 30px;
+}
+
+.abstract {
+    text-overflow: ellipsis;
+    display: block;
+    white-space: unset;
+    width: auto;
+}
+
+.list-item-clicked,
+.list-item-clicked:hover {
+    background-color: #eeeeee;
+}
+
+.refTagDiff,
+.refTagSame {
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: bold;
+    margin: 4px 2px 4px 8px;
+    display: inline-block;
+}
+
+.refTagDiff {
+    color: #ffffff;
+    background-color: maroon !important;
+    font-weight: bold;
+    padding: 8px 10px 8px 10px;
+    font-size: 1rem;
+}
+
+.refTagSame {
+    color: #ffffff;
+    font-size: 0.85rem;
+    padding: 5px 7px 5px 7px;
+    background-color: #7e7e7e;
+}
+
+/* end abstract expansion */
+
 /* BOOTSTRAP 4 OVERRIDES */
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;

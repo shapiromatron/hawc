@@ -28,71 +28,6 @@
         </h4>
         <ul class="list-group list-group-flush m-0">
             {% for ref in refs %}
-            <li class="list-group-item list-group-item-action px-2 py-4"
-                style="border-bottom: 5px solid rgb(224, 224, 224);">
-                <div href="{{ref.get_absolute_url}}" class="ref_title m-0" style="font-size: 1.1rem;">
-                    <span class="badge badge-pill badge-secondary mr-2 pb-1">Ti/Ab</span>{{ref.title}}
-                </div>
-                <div class="ref_small mb-1">
-                    {% for id in ref.identifiers.all %}
-                    <a href="{{id.get_url}}" class="ids badge badge-info hidden">{{id.get_database_display}}</a>
-                    {% endfor %}
-                    <a href="{{ref.get_absolute_url}}" class="ids badge badge-warning hidden">HAWC</a>
-                    {{ref.year}};
-                    {{ref.authors}}
-                </div>
-                <p class="abstract_wf abstract_expand mb-1">{{ref.abstract|safe}}</p>
-                <div class="row pl-2 mb-2">
-                    <div class="col-md-6">
-                        <div>
-                            <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
-                                Approve <i class="fa fa-check" aria-hidden="true"></i></button>
-                            <b class="mb-0">User One</b> <i class="m-0 small">userone@hawcproject.org</i>
-                        </div>
-                        {% for tag in ref.tags.all %}
-                        <span class="refTagSame">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endfor %}
-                        {% with tags.0 as tag %}
-                        <span class="refTagDiff">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endwith %}
-                    </div>
-                    <div class="col-md-6">
-                        <div>
-                            <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
-                                Approve <i class="fa fa-check" aria-hidden="true"></i></button>
-                            <b class="mb-0">User Two</b> <i class="m-0 small">usertwo@hawcproject.org</i>
-                        </div>
-                        {% for tag in ref.tags.all %}
-                        <span class="refTagSame">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endfor %}
-                        {% with tags.1 as tag %}
-                        <span class="refTagDiff">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endwith %}
-                    </div>
-                </div>
-            </li>
-            {% endfor %}
-            {% with refs.6 as ref %}
             <li class="list-group-item list-group-item-action px-2 py-4" style="border-bottom: 5px solid lightgray;">
                 <div href="{{ref.get_absolute_url}}" class="ref_title m-0" style="font-size: 1.1rem;">
                     <span class="badge badge-pill badge-secondary mr-2 pb-1">Full</span>{{ref.title}}
@@ -104,103 +39,38 @@
                     <a href="{{ref.get_absolute_url}}" class="ids badge badge-warning hidden">HAWC</a>
                     {{ref.authors}}
                 </div>
-                <p class="abstract_wf abstract_expand mb-1">{{ref.abstract|safe}}</p>
+                <p class="abstract abstract_expand mb-1">{{ref.abstract|safe}}</p>
                 <div class="row">
                     <div class="col-md-11 pt-1 pb-3 mx-3">
-                        <div>
-                            <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
-                                Approve <i class="fa fa-check" aria-hidden="true"></i></button>
-                            <b class="mb-0">User One</b> <i class="m-0 small">userone@hawcproject.org</i>
-                        </div>
-                        {% for tag in ref.tags.all %}
-                        <span class="refTagSame" style="font-size: 0.9rem;">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
+                        {% for user_tag in ref.user_tags.all %}
+                            <div>
+                                <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
+                                    Approve <i class="fa fa-check" aria-hidden="true"></i></button>
+                                <b class="mb-0">{{user_tag.user.get_full_name}}</b> <i class="m-0 small">{{user_tag.user.email}}</i>
+                            </div>
+                            {% with user_tag.get_tags_diff as tags%}
+                                {% for tag in tags.same %}
+                                    <span class="refTagSame" style="font-size: 0.9rem;">
+                                        {% for ptag in tag.get_ancestors|slice:"1:" %}
+                                        {{ptag.name}} ➤
+                                        {% endfor %}
+                                        {{tag.name}}
+                                    </span>
+                                {% endfor %}
+                                {% for tag in tags.diff %}
+                                    <span class="refTagDiff">
+                                        {% for ptag in tag.get_ancestors|slice:"1:" %}
+                                        {{ptag.name}} ➤
+                                        {% endfor %}
+                                        {{tag.name}}
+                                    </span>
+                                {% endfor %}
+                            {% endwith %}
                         {% endfor %}
-                        {% with tags.0 as tag %}
-                        <span class="refTagDiff">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endwith %}
-                    </div>
-                    <div class="col-md-11 py-3 mx-3" style="border-top: 3px solid rgb(231, 238, 240);">
-                        <div>
-                            <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
-                                Approve <i class="fa fa-check" aria-hidden="true"></i></button>
-                            <b class="mb-0">User Two</b> <i class="m-0 small">usertwo@hawcproject.org</i>
-                        </div>
-                        {% for tag in ref.tags.all %}
-                        <span class="refTagSame" style="font-size: 0.9rem;">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endfor %}
-                        {% with tags.4 as tag %}
-                        <span class="refTagDiff">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endwith %}
-                    </div>
-                    <div class="col-md-11 py-3 mx-3" style="border-top: 3px solid rgb(231, 238, 240);">
-                        <div>
-                            <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
-                                Approve <i class="fa fa-check" aria-hidden="true"></i></button>
-                            <b class="mb-0">User Three</b> <i class="m-0 small">usethree@hawcproject.org</i>
-                        </div>
-                        {% for tag in ref.tags.all %}
-                        <span class="refTagSame" style="font-size: 0.9rem;">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endfor %}
-                        {% with tags.1 as tag %}
-                        <span class="refTagDiff">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endwith %}
-                    </div>
-                    <div class="col-md-11 py-3 mx-3" style="border-top: 3px solid rgb(231, 238, 240);">
-                        <div>
-                            <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1">
-                                Approve <i class="fa fa-check" aria-hidden="true"></i></button>
-                            <b class="mb-0">User Four</b> <i class="m-0 small">userfour@hawcproject.org</i>
-                        </div>
-                        {% for tag in ref.tags.all %}
-                        <span class="refTagSame" style="font-size: 0.9rem;">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endfor %}
-                        {% with tags.2 as tag %}
-                        <span class="refTagDiff">
-                            {% for ptag in tag.get_ancestors|slice:"1:" %}
-                            {{ptag.name}} ➤
-                            {% endfor %}
-                            {{tag.name}}
-                        </span>
-                        {% endwith %}
                     </div>
                 </div>
             </li>
-            {% endwith %}
+            {% endfor %}
         </ul>
     </div>
 </div>
@@ -211,19 +81,8 @@
 {{ config|json_script:"config" }}
 <script type="text/javascript">
         $(function () {
-                $("#collapse-btn").click(function(e) {
-                    $("#list-col").toggleClass("col-md-9")
-                    $("#list-col").toggleClass("col-md-auto")
-                    $("#filter-group").toggleClass("hidden")
-                    $("#caret-right").toggleClass("hidden")
-                    $("#caret-left").toggleClass("hidden")
-                });
-                $(".approve").click(function(e) {
-                    $(this).parent().parent().parent().parent().addClass("hidden")
-                    e.stopPropagation();
-                });
                 $(".list-group-item").click(function(e) {
-                    $(this).children(".abstract_wf").toggleClass("abstract_expand");
+                    $(this).children(".abstract").toggleClass("abstract_expand");
                     $(this).toggleClass("list-item-clicked")
                     $(this).children(".ref_small").children(".ids").toggleClass("hidden");
                 });
