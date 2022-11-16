@@ -1,11 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
 
+import h from "/shared/utils/helpers";
+
 class ModelOptionField extends React.Component {
     renderInput() {
         let v = this.props.value,
             d = this.props.settings,
-            handleChange = this.props.handleChange;
+            handleChange = h.noop;
 
         switch (d.t) {
             case "i":
@@ -84,7 +86,6 @@ class ModelOptionField extends React.Component {
 ModelOptionField.propTypes = {
     index: PropTypes.number.isRequired,
     settings: PropTypes.object.isRequired,
-    handleChange: PropTypes.func.isRequired,
     value: PropTypes.any.isRequired,
 };
 

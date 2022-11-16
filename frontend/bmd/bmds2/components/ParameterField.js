@@ -1,17 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
 
+import h from "/shared/utils/helpers";
+
 class ParameterField extends React.Component {
     constructor(props) {
         super(props);
         this.selector = React.createRef();
         this.value = React.createRef();
-    }
-
-    handleChange(e) {
-        let type = this.selector.current.value,
-            value = type === "d" ? "" : parseFloat(this.value.current.value || 0);
-        this.props.handleChange(`${type}|${value}`);
     }
 
     render() {
@@ -31,7 +27,7 @@ class ParameterField extends React.Component {
                         style={{marginRight: "1em"}}
                         value={vals[0]}
                         ref={this.selector}
-                        onChange={this.handleChange.bind(this)}>
+                        onChange={h.noop}>
                         <option value="d">Default</option>
                         <option value="s">Specified</option>
                         <option value="i">Initialized</option>
@@ -45,7 +41,7 @@ class ParameterField extends React.Component {
                         step="1e-8"
                         value={vals[1]}
                         ref={this.value}
-                        onChange={this.handleChange.bind(this)}
+                        onChange={h.noop}
                     />
                 </div>
             </div>
@@ -56,7 +52,6 @@ class ParameterField extends React.Component {
 ParameterField.propTypes = {
     index: PropTypes.number.isRequired,
     settings: PropTypes.object.isRequired,
-    handleChange: PropTypes.func.isRequired,
     value: PropTypes.any.isRequired,
 };
 
