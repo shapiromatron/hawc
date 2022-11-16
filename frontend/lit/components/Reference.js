@@ -155,6 +155,9 @@ class Reference extends Component {
                 {data.abstract ? (
                     <div
                         className="abstracts resize-y p-2"
+                        style={
+                            data.abstract.length > 1500 ? { height: "45vh" } : null
+                        }
                         dangerouslySetInnerHTML={
                             keywordDict
                                 ? {__html: markKeywords(data.abstract, keywordDict)}
