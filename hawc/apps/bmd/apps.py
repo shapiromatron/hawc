@@ -6,5 +6,4 @@ class BMDConfig(AppConfig):
     verbose_name = "Benchmark dose modeling"
 
     def ready(self):
-        # load signals
         from . import signals  # noqa

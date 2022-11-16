@@ -1,10 +1,6 @@
-import json
-
-from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
-from ..common.models import get_model_copy_name
 from . import bmd_interface, constants, managers
 
 
@@ -44,82 +40,6 @@ class AssessmentSettings(models.Model):
     @property
     def can_create_sessions(self):
         return self.version == constants.BmdsVersion.BMDS330
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.assessment_id = cw[self.assessment.COPY_NAME][self.assessment_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
-
-class LogicField(models.Model):
-    objects = managers.LogicFieldManager()
-
-    assessment = models.ForeignKey(
-        "assessment.Assessment",
-        on_delete=models.CASCADE,
-        related_name="bmd_logic_fields",
-        editable=False,
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=30, editable=False)
-    description = models.TextField(editable=False)
-    failure_bin = models.PositiveSmallIntegerField(
-        choices=constants.LogicBin.choices,
-        blank=False,
-        help_text="If the test fails, select the model-bin should the model be placed into.",
-    )  # noqa
-    threshold = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        help_text="If a threshold is required for the test, threshold can be specified to non-default.",
-    )  # noqa
-    continuous_on = models.BooleanField(default=True, verbose_name="Continuous Datasets")
-    dichotomous_on = models.BooleanField(default=True, verbose_name="Dichotomous Datasets")
-    cancer_dichotomous_on = models.BooleanField(
-        default=True, verbose_name="Cancer Dichotomous Datasets"
-    )
-
-    BREADCRUMB_PARENT = "assessment"
-
-    class Meta:
-        ordering = ("id",)
-
-    def __str__(self):
-        return self.description
-
-    def get_absolute_url(self):
-        return reverse("bmd:assess_settings_detail", args=[self.assessment_id])
-
-    def get_assessment(self):
-        return self.assessment
-
-    @classmethod
-    def build_defaults(cls, assessment):
-        """
-        Build default BMD decision logic.
-        """
-        fn = str(settings.PROJECT_PATH / "apps/bmd/fixtures/logic.json")
-        with open(fn, "r") as f:
-            text = json.loads(f.read())
-
-        objects = [cls(assessment_id=assessment.id, **obj) for i, obj in enumerate(text["objects"])]
-        cls.objects.bulk_create(objects)
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.assessment_id = cw[self.assessment.COPY_NAME][self.assessment_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
 
 
 class Session(models.Model):
@@ -220,9 +140,6 @@ class Session(models.Model):
         return SelectedModel.objects.filter(
             endpoint=self.endpoint_id, dose_units=self.dose_units_id
         ).first()
-
-    def get_logic(self):
-        return LogicField.objects.filter(assessment=self.endpoint.assessment_id)
 
     def get_study(self):
         return self.endpoint.get_study()

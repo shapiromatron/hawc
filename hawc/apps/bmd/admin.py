@@ -9,11 +9,6 @@ class AssessmentSettingsAdmin(AllListFieldAdmin):
     list_filter = ("version",)
 
 
-@admin.register(models.LogicField)
-class LogicFieldAdmin(AllListFieldAdmin):
-    pass
-
-
 class ModelAdmin(admin.TabularInline):
     model = models.Model
     fk_name = "session"

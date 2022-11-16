@@ -1,22 +1,7 @@
 from rest_framework import serializers
 
 from ..common.serializers import validate_jsonschema
-from . import models
-
-
-class LogicFieldSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.LogicField
-        fields = (
-            "id",
-            "name",
-            "description",
-            "failure_bin",
-            "threshold",
-            "continuous_on",
-            "dichotomous_on",
-            "cancer_dichotomous_on",
-        )
+from . import constants, models
 
 
 class SelectedModelSerializer(serializers.ModelSerializer):
@@ -53,7 +38,11 @@ class SessionSerializer(serializers.ModelSerializer):
     allBmrOptions = serializers.JSONField(source="get_bmr_options", read_only=True)
     selected_model = SelectedModelSerializer(source="get_selected_model", read_only=True)
     models = ModelSerializer(many=True)
-    logic = LogicFieldSerializer(source="get_logic", many=True)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["logic"] = constants.bmds2_logic()
+        return ret
 
     class Meta:
         model = models.Session
@@ -65,7 +54,6 @@ class SessionSerializer(serializers.ModelSerializer):
             "allModelOptions",
             "allBmrOptions",
             "selected_model",
-            "logic",
             "is_finished",
         )
 

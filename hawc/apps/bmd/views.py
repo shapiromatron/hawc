@@ -36,15 +36,6 @@ class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
         return get_object_or_404(Assessment, pk=kwargs["pk"])
 
 
-class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
-    success_message = "BMD logic settings updated."
-    model = models.LogicField
-    form_class = forms.LogicFieldForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return self.get_object().get_assessment()
-
-
 # BMD sessions
 class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
     def get_assessment(self, request, *args, **kwargs):

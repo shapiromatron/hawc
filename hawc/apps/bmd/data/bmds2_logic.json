@@ -1,0 +1,182 @@
+[
+    {
+        "name": "BMD",
+        "description": "A BMD value was successfully calculated.",
+        "failure_bin": 2,
+        "threshold": null,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "BMDL",
+        "description": "A BMDL value was successfully calculated.",
+        "failure_bin": 2,
+        "threshold": null,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "BMDU",
+        "description": "A BMDU value was successfully calculated.",
+        "failure_bin": 0,
+        "threshold": null,
+        "continuous_on": false,
+        "dichotomous_on": false,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "AIC",
+        "description": "An AIC value was successfully calculated.",
+        "failure_bin": 2,
+        "threshold": null,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Variance Type",
+        "description": "The correct variance model was used (based on p-test #2).",
+        "failure_bin": 1,
+        "threshold": 0.1,
+        "continuous_on": true,
+        "dichotomous_on": false,
+        "cancer_dichotomous_on": false
+    },
+    {
+        "name": "Variance Fit",
+        "description": "The variance model appropriately captures the variance of the dataset being modeled (based on p-test #3).",
+        "failure_bin": 1,
+        "threshold": 0.1,
+        "continuous_on": true,
+        "dichotomous_on": false,
+        "cancer_dichotomous_on": false
+    },
+    {
+        "name": "GGOF",
+        "description": "The mean model is appropriately modeling the dataset, based on the global-goodness-of-fit (p-test #4).",
+        "failure_bin": 1,
+        "threshold": 0.1,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": false
+    },
+    {
+        "name": "GGOF (Cancer)",
+        "description": "The mean model is appropriately modeling the dataset, based on the global-goodness-of-fit (p-test #4).",
+        "failure_bin": 1,
+        "threshold": 0.05,
+        "continuous_on": false,
+        "dichotomous_on": false,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "BMD/BMDL (serious)",
+        "description": "The ratio between the BMD and BMDL values is large, indicating a large spread of estimates in the range of interest (warning).",
+        "failure_bin": 1,
+        "threshold": 20.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "BMD/BMDL (warning)",
+        "description": "The ratio between the BMD and BMDL values is large, indicating a large spread of estimates in the range of interest (caution).",
+        "failure_bin": 0,
+        "threshold": 5.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Residual of Interest",
+        "description": "The absolute value of the residual at the dose closest to the BMD is large, which means the model may not be estimating well in this range.",
+        "failure_bin": 1,
+        "threshold": 2.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Warnings",
+        "description": "The model output file included additional warnings.",
+        "failure_bin": 0,
+        "threshold": null,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "BMD higher",
+        "description": "The BMD estimate is higher than the maximum dose modeled, thus the model is extrapolating a result.",
+        "failure_bin": 0,
+        "threshold": 1.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "BMDL higher",
+        "description": "The BMDL estimate is higher than the maximum dose modeled, thus the model is extrapolating a result.",
+        "failure_bin": 1,
+        "threshold": 1.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Low BMD (warning)",
+        "description": "The BMD estimate is lower than the lowest non-zero dose  (caution).",
+        "failure_bin": 0,
+        "threshold": 3.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Low BMDL (warning)",
+        "description": "The BMDL estimate is lower than the lowest non-zero dose  (caution).",
+        "failure_bin": 0,
+        "threshold": 3.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Low BMD (serious)",
+        "description": "The BMD estimate is lower than the lowest non-zero dose  (warning).",
+        "failure_bin": 1,
+        "threshold": 10.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Low BMDL (serious)",
+        "description": "The BMDL estimate is lower than the lowest non-zero dose  (warning).",
+        "failure_bin": 1,
+        "threshold": 10.0,
+        "continuous_on": true,
+        "dichotomous_on": true,
+        "cancer_dichotomous_on": true
+    },
+    {
+        "name": "Control residual",
+        "description": "The absolute value of the residual at the control is large, which is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.",
+        "failure_bin": 1,
+        "threshold": 2.0,
+        "continuous_on": true,
+        "dichotomous_on": false,
+        "cancer_dichotomous_on": false
+    },
+    {
+        "name": "Control stdev",
+        "description": "The standard deviation estimate at the control is different the the reported deviation, which is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.",
+        "failure_bin": 1,
+        "threshold": 1.5,
+        "continuous_on": true,
+        "dichotomous_on": false,
+        "cancer_dichotomous_on": false
+    }
+]
