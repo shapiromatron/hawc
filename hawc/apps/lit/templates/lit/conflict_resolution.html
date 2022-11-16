@@ -28,41 +28,7 @@
         </h4>
         <ul class="list-group list-group-flush m-0">
             {% for ref in refs %}
-            <li class="list-group-item list-group-item-action px-2 py-4" id="ref-form-{{ref.pk}}" style="border-bottom: 5px solid lightgray;">
-                <div href="{{ref.get_absolute_url}}" class="ref_title m-0" style="font-size: 1.1rem;">
-                    <span class="badge badge-pill badge-secondary mr-2 pb-1">Full</span>{{ref.title}}
-                </div>
-                <div class="ref_small mb-1">
-                    {% for id in ref.identifiers.all %}
-                    <a href="{{id.get_url}}" class="ids badge badge-info hidden">{{id.get_database_display}}</a>
-                    {% endfor %}
-                    <a href="{{ref.get_absolute_url}}" class="ids badge badge-warning hidden">HAWC</a>
-                    {{ref.authors}}
-                </div>
-                <p class="abstract abstract_expand mb-1">{{ref.abstract|safe}}</p>
-                <div class="row">
-                    <div class="col-md-11 pt-1 pb-3 mx-3">
-                        {% for user_tag in ref.user_tags.all %}
-                        <form>
-                            <div>
-                                <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1" hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}" hx-target="#ref-form-{{ref.pk}}">
-                                    Approve <i class="fa fa-check" aria-hidden="true"></i></button>
-                                <b class="mb-0">{{user_tag.user.get_full_name}}</b> <i class="m-0 small">{{user_tag.user.email}}</i>
-                                <input name="user_tag_id" value={{user_tag.pk}} class="d-none">
-                            </div>
-                            {% for tag in user_tag.tags.all %}
-                                <span class="refTagSame" style="font-size: 0.9rem;">
-                                    {% for ptag in tag.get_ancestors|slice:"1:" %}
-                                    {{ptag.name}} ➤
-                                    {% endfor %}
-                                    {{tag.name}}
-                                </span>
-                            {% endfor %}
-                        </form>
-                        {% endfor %}
-                    </div>
-                </div>
-            </li>
+            {% include 'lit/_reference_tag_conflict.html' with ref=ref %}
             {% endfor %}
         </ul>
     </div>
