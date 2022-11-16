@@ -41,6 +41,3 @@ scikit-learn==1.0.2
 # exports
 rispy==0.7.1
 python-docx==0.8.11
-
-# bmds; https://github.com/shapiromatron/bmds/commit/36c102cfc0340ad98efcb57686dfcd72a8a02895
-vendor/bmds-0.11.0.tar.gz
