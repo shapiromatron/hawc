@@ -18,15 +18,15 @@ class ReferenceFilterSet(BaseFilterSet):
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
     title_abstract = df.CharFilter(method="filter_title_abstract", label="Title/Abstract")
     authors = df.CharFilter(method="filter_authors", label="Authors")
+    search = df.ModelChoiceFilter(
+        field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
+    )
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tags",
         conjoined=True,
         label="Tags",
         help_text="If multiple tags are selected, references must include all selected tags.",
-    )
-    search = df.ModelChoiceFilter(
-        field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
     )
     include_descendants = df.BooleanFilter(
         method=filter_noop, widget=CheckboxInput(), label="Include tag descendants"
@@ -51,10 +51,12 @@ class ReferenceFilterSet(BaseFilterSet):
             "journal",
             "title_abstract",
             "authors",
+            "search",
+            "tags",
+            "include_descendants",
+            "untagged",
             "order_by",
             "paginate_by",
-            "tags",
-            "search",
         ]
 
     def filter_queryset(self, queryset):

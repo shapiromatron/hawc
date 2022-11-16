@@ -389,27 +389,45 @@ class RefFilterList(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
+        fields=[
+            "id",
+            "db_id",
+            "search",
+            "year",
+            "journal",
+            "title_abstract",
+            "authors",
+            "tags",
+            "include_descendants",
+            "untagged",
+            "order_by",
+            "paginate_by",
+        ],
         grid_layout={
             "rows": [
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
                 {
                     "columns": [
                         {
-                            "width": 5,
+                            "width": 6,
                             "rows": [
                                 {
                                     "columns": [
                                         {"width": 12},
                                         {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12},
+                                        {"width": 12},
                                     ]
                                 }
                             ],
                         },
-                        {"width": 7},
+                        {
+                            "width": 6,
+                            "rows": [{"columns": [{"width": 12}, {"width": 6}, {"width": 6}]}],
+                        },
                     ]
                 },
+                {"columns": [{"width": 6}, {"width": 6}]},
             ]
         },
     )
