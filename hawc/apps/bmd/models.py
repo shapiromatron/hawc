@@ -1,16 +1,11 @@
-import base64
 import json
-import os
 
-import bmds
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-from django.utils.timezone import now
 
-from ..animal.constants import DataType
 from ..common.models import get_model_copy_name
-from . import constants, managers
+from . import bmd_interface, constants, managers
 
 
 class AssessmentSettings(models.Model):
@@ -177,7 +172,7 @@ class Session(models.Model):
         return reverse("bmd:api:session-selected-model", args=[self.id])
 
     @classmethod
-    def create_new(cls, endpoint):
+    def create_new(cls, endpoint) -> "Session":
         dose_units = endpoint.get_doses_json(json_encode=False)[0]["id"]
         version = endpoint.assessment.bmd_settings.version
         return cls.objects.create(
@@ -195,69 +190,15 @@ class Session(models.Model):
     def execute(self):
         raise NotImplementedError()
 
-    def get_endpoint_dataset(self, doses_to_drop: int = 0):
-        ds = self.endpoint.get_json(json_encode=False)
-        doses = [
-            dose["dose"]
-            for dose in ds["animal_group"]["dosing_regime"]["doses"]
-            if dose["dose_units"]["id"] == self.dose_units_id
-        ]
-        grps = ds["groups"]
-
-        # only get doses where data are reported
-        doses = [d for d, grp in zip(doses, grps) if grp["isReported"]]
-
-        if self.endpoint.data_type == DataType.CONTINUOUS:
-            Cls = bmds.ContinuousDataset
-            kwargs = dict(
-                doses=doses,
-                ns=[d["n"] for d in grps if d["isReported"]],
-                means=[d["response"] for d in grps if d["isReported"]],
-                stdevs=[d["stdev"] for d in grps if d["isReported"]],
-            )
-        else:
-            Cls = bmds.DichotomousDataset
-            kwargs = dict(
-                doses=doses,
-                ns=[d["n"] for d in grps if d["isReported"]],
-                incidences=[d["incidence"] for d in grps if d["isReported"]],
-            )
-
-        # drop doses from the top
-        for i in range(doses_to_drop):
-            [lst.pop() for lst in kwargs.values()]
-
-        return Cls(**kwargs)
-
-    def get_bmr_overrides(self, session, index):
-        # convert bmr overrides from GUI to modeling version
-        bmr = self.bmrs[index]
-        type_ = bmds.constants.BMR_CROSSWALK[session.dtype][bmr["type"]]
-        return {
-            "bmr_type": type_,
-            "bmr": bmr["value"],
-            "confidence_level": bmr["confidence_level"],
-        }
-
     def get_session(self, with_models=False):
 
         session = getattr(self, "_session", None)
 
         if session is None:
-
-            # drop doses is complicated. In the UI, doses are dropped at the
-            # model level, but in the bmds library, they're dropped at the
-            # session level. Therefore, we drop doses only if ALL models have
-            # the same drop_dose value, by default zero doses are dropped.
-            doses_to_drop = {model.overrides.get("dose_drop", 0) for model in self.models.all()}
-            doses_to_drop = doses_to_drop.pop() if len(doses_to_drop) == 1 else 0
-
-            version = self.endpoint.assessment.bmd_settings.version
-            if version == "BMDS2601":
-                version = "BMDS270"
-            Session = bmds.BMDS.version(version)
-            dataset = self.get_endpoint_dataset(doses_to_drop=doses_to_drop)
-            session = Session(self.endpoint.data_type, dataset=dataset)
+            dataset = bmd_interface.build_dataset(
+                self.endpoint, dose_units_id=self.dose_units_id, n_drop_doses=self.n_drop_doses()
+            )
+            session = bmd_interface.build_session(dataset, self.version)
             self._session = session
 
         if with_models and not session.has_models:
@@ -265,6 +206,9 @@ class Session(models.Model):
                 session.add_model(model.name, overrides=model.overrides, id=model.id)
 
         return session
+
+    def n_drop_doses(self) -> int:
+        return max([0] + [model.overrides.get("dose_drop", 0) for model in self.models.all()])
 
     def get_model_options(self):
         return self.get_session().get_model_options()
@@ -281,21 +225,7 @@ class Session(models.Model):
         return LogicField.objects.filter(assessment=self.endpoint.assessment_id)
 
     def get_study(self):
-        if self.endpoint is not None:
-            return self.endpoint.get_study()
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        children = list(self.models.all().order_by("id"))
-
-        self.id = None
-        self.endpoint_id = cw[self.endpoint.COPY_NAME][self.endpoint_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
+        return self.endpoint.get_study()
 
 
 class Model(models.Model):
@@ -327,36 +257,6 @@ class Model(models.Model):
     def get_assessment(self):
         return self.session.get_assessment()
 
-    def save_model(self, model):
-        self.dfile = model.as_dfile()
-        self.execution_error = not model.has_successfully_executed
-
-        if model.has_successfully_executed:
-            self.outfile = model.outfile
-            self.output = model.output
-            self.date_executed = now()
-
-        if hasattr(model, "plot_base64"):
-            fn = os.path.join(self.IMAGE_UPLOAD_TO, str(self.id) + ".emf")
-            with open(os.path.join(self.plot.storage.location, fn), "wb") as f:
-                f.write(base64.b64decode(model.plot_base64))
-            self.plot = fn
-
-        self.save()
-
-    def copy_across_assessments(self, cw):
-        children = list(self.selectedmodel_set.all().order_by("id"))
-        old_id = self.id
-
-        self.id = None
-        self.session_id = cw[get_model_copy_name(self.session)][self.session_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
-
 
 class SelectedModel(models.Model):
     objects = managers.SelectedModelManager()
@@ -378,13 +278,3 @@ class SelectedModel(models.Model):
 
     def get_assessment(self):
         return self.endpoint.get_assessment()
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.model_id = cw[get_model_copy_name(self.model)][self.model_id]
-        self.endpoint_id = cw[self.endpoint.COPY_NAME][self.endpoint_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
