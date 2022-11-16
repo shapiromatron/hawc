@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from rest_framework import serializers
 
 from ..common.serializers import validate_jsonschema
@@ -112,27 +110,7 @@ class SessionUpdateSerializer(serializers.Serializer):
         return validate_jsonschema(value, self.model_schema)
 
     def save(self):
-        self.instance.bmrs = self.validated_data["bmrs"]
-        self.instance.date_executed = None
-        self.instance.dose_units_id = self.validated_data["dose_units"]
-        self.instance.save()
-
-        self.instance.models.all().delete()
-        objects = []
-        for i, bmr in enumerate(self.validated_data["bmrs"]):
-            bmr_overrides = self.instance.get_bmr_overrides(self.instance.get_session(), i)
-            for j, settings in enumerate(self.validated_data["modelSettings"]):
-                overrides = deepcopy(settings["overrides"])
-                overrides.update(bmr_overrides)
-                obj = models.Model(
-                    session=self.instance,
-                    bmr_id=i,
-                    model_id=j,
-                    name=settings["name"],
-                    overrides=overrides,
-                )
-                objects.append(obj)
-        models.Model.objects.bulk_create(objects)
+        raise NotImplementedError()
 
 
 class SelectedModelUpdateSerializer(serializers.ModelSerializer):

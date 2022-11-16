@@ -193,18 +193,7 @@ class Session(models.Model):
         return self.version == constants.BmdsVersion.BMDS330
 
     def execute(self):
-        # reset execution datestamp if needed
-        if self.date_executed is not None:
-            self.date_executed = None
-            self.save()
-
-        session = self.get_session(with_models=True)
-        session.execute()
-        self.date_executed = now()
-        for model, resp in zip(self.models.all(), session.models):
-            assert model.id == resp.id
-            model.save_model(resp)
-        self.save()
+        raise NotImplementedError()
 
     def get_endpoint_dataset(self, doses_to_drop: int = 0):
         ds = self.endpoint.get_json(json_encode=False)
@@ -264,7 +253,9 @@ class Session(models.Model):
             doses_to_drop = doses_to_drop.pop() if len(doses_to_drop) == 1 else 0
 
             version = self.endpoint.assessment.bmd_settings.version
-            Session = bmds.BMDS.versions[version]
+            if version == "BMDS2601":
+                version = "BMDS270"
+            Session = bmds.BMDS.version(version)
             dataset = self.get_endpoint_dataset(doses_to_drop=doses_to_drop)
             session = Session(self.endpoint.data_type, dataset=dataset)
             self._session = session
