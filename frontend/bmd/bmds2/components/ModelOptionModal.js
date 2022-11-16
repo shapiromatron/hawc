@@ -1,4 +1,5 @@
 import _ from "lodash";
+import {toJS} from "mobx";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -35,7 +36,18 @@ class ModelOptionModal extends BaseModal {
         }
 
         let {model} = this.props,
-            title = `${model.name} options`;
+            title = `${model.name} options`,
+            getOpts = function(type) {
+                return _.chain(model.defaults)
+                    .values()
+                    .filter(d => d.c === type && d.n !== undefined)
+                    .value();
+            },
+            models = getOpts("ot"),
+            optimizers = getOpts("op"),
+            params = getOpts("p");
+
+        // TODO - implement tables?;
 
         return (
             <div className="modal" id={types.OPTION_MODAL_ID}>

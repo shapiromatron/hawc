@@ -36,7 +36,6 @@ class BMROptionModal extends BaseModal {
                                 ×
                             </button>
                         </div>
-
                         <div className="modal-body">
                             <table className="table table-sm table-striped">
                                 <tbody>
@@ -55,7 +54,6 @@ class BMROptionModal extends BaseModal {
                                 </tbody>
                             </table>
                         </div>
-
                         <ModalFooter />
                     </div>
                 </div>
