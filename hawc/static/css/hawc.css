@@ -354,7 +354,7 @@ div.smart-tag.active {
     border: 1px solid transparent;
 }
 
-.nestedTag > div.tagName {
+.nestedTag > div.tagHoverAdd {
     display: inline-block;
     position: relative;
     background: linear-gradient(0deg, #484848, #484848) no-repeat right bottom / 0 var(--bg-h);
@@ -366,12 +366,12 @@ div.smart-tag.active {
     border: 3px solid transparent;
 }
 
-.nestedTag > div.tagName:where(:hover, :focus-visible) {
+.nestedTag > div.tagHoverAdd:where(:hover, :focus-visible) {
     background-size: 100% var(--bg-h);
     background-position-x: left;
 }
 
-.nestedTag>div.tagName::before {
+.nestedTag>div.tagHoverAdd::before {
     color: #484848;
     content: "\f067";
     font-family: FontAwesome;
@@ -389,15 +389,25 @@ div.smart-tag.active {
     transition: all 75ms ease-in 125ms;
 }
 
-.nestedTag>div.tagName:hover::before {
+.nestedTag>div.tagHoverAdd:hover::before {
     transform: scale(1, 1);
 }
+.tagHoverSimple {
+    padding-left: 5px;
+    display: inline-block;
+    position: relative;
+    border: 2px solid transparent;
+    text-decoration: none;
+}
+.tagHoverSimple:hover, .tagSelected {
+    --bg-h: 2px;
+    background: linear-gradient(0deg, #484848, #484848) no-repeat right bottom / 0 var(--bg-h);
+    background-size: 100% var(--bg-h);
+    background-position-x: left;
+}
 
-.nestedTag.selected {
-    color: #0044cc;
+.tagSelected {
     font-weight: bold;
-    border: 2px solid #ababab;
-    background-color: gold;
 }
 .reference {
     padding-left: 0.5rem;

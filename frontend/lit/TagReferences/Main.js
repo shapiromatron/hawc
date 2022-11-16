@@ -232,7 +232,7 @@ class TagReferencesMain extends Component {
                     <TagTree
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.addTag(tag)}
-                        showTagHover={true}
+                        showTagHoverAdd={true}
                     />
                 </div>
                 <Modal
