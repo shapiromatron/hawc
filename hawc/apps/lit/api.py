@@ -5,6 +5,7 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
+from django.shortcuts import render
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -388,11 +389,17 @@ class ReferenceViewset(
 
     @action(detail=True, methods=("post",))
     def resolve_conflict(self, request, pk):
-        response = {"status": "fail"}
+        template = "lit/_reference_tag_conflict.html"
+        errors = None
         ref = self.get_object()
         assessment = ref.assessment
         if assessment.user_can_edit_object(self.request.user):
-            user_tag_id = self.request.POST.get("user_tag_id")
-            ref.resolve_user_tag_conflicts(user_tag_id)
-            response["status"] = "success"
-        return Response(response)
+            try:
+                user_tag_id = request.POST.get("user_tag_id")
+                ref.resolve_user_tag_conflicts(user_tag_id)
+                template = "lit/_conflict_resolved.html"
+            except Exception:
+                errors = "There was an error applying those tags to the reference."
+        else:
+            errors = "You do not have permission to approve tags for this reference."
+        return render(request, template, {"ref": ref, "conflict_errors": errors})

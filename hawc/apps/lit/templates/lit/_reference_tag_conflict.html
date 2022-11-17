@@ -1,5 +1,8 @@
 <li class="list-group-item list-group-item-action px-2 py-4" id="ref-form-{{ref.pk}}"
     style="border-bottom: 5px solid lightgray;">
+    {% if conflict_errors %}
+        <div class="alert alert-danger" role="alert">{{conflict_errors}}</div>
+    {% endif %}
     <div href="{{ref.get_absolute_url}}" class="ref_title m-0" style="font-size: 1.1rem;">
         {{ref.title}}
     </div>
@@ -18,7 +21,8 @@
                 <div>
                     <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1"
                         hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}"
-                        hx-target="#ref-form-{{ref.pk}}">
+                        hx-target="#ref-form-{{ref.pk}}"
+                        hx-swap="outerHTML">
                         Approve <i class="fa fa-check" aria-hidden="true"></i></button>
                     <b class="mb-0">{{user_tag.user.get_full_name}}</b> <i class="m-0 small">{{user_tag.user.email}}</i>
                     <input name="user_tag_id" value={{user_tag.pk}} class="d-none">
