@@ -286,6 +286,10 @@ class TagReferences(BaseFilterList):
         return context
 
     def get_app_config(self, context) -> WebappConfig:
+        references = [ref.to_dict() for ref in context["object_list"]]
+        ref_tags = context["object_list"].user_tags(user_id=self.request.user.id)
+        for reference in references:
+            reference["user_tags"] = ref_tags.get(reference["pk"], [])
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
@@ -294,7 +298,7 @@ class TagReferences(BaseFilterList):
                 keywords=self.assessment.literature_settings.get_keyword_data(),
                 instructions=self.assessment.literature_settings.screening_instructions,
                 tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-                refs=[ref.to_dict() for ref in context["object_list"]],
+                refs=references,
                 csrf=get_token(self.request),
             ),
         )

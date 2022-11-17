@@ -3,6 +3,7 @@ import logging
 
 import pandas as pd
 from django.apps import apps
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
@@ -350,6 +351,18 @@ class ReferenceQuerySet(models.QuerySet):
             tags__in=[tag.pk for tag in safe_tags]
         )
         return self.exclude(query).distinct("pk")
+
+    def user_tags(self, user_id: int) -> dict[int, list[int]]:
+        # Return a dictionary of reference_id: list[tag_ids] items for all references in a queryset
+        # TODO - update to annotate queryset with Django 4.1?
+        # https://docs.djangoproject.com/en/4.1/ref/contrib/postgres/expressions/#arraysubquery-expressions
+        UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+        user_qs = (
+            UserReferenceTag.objects.filter(reference__in=self, user=user_id)
+            .annotate(tag_ids=ArrayAgg("tags__id"))
+            .values_list("reference_id", "tag_ids")
+        )
+        return {reference_id: tag_ids for reference_id, tag_ids in user_qs}
 
 
 class ReferenceManager(BaseManager):

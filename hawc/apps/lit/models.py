@@ -959,9 +959,6 @@ class Reference(models.Model):
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
 
         d["tags"] = [tag.id for tag in self.tags.all()]
-        d["user_tags"] = (
-            [tag.id for tag in self.user_tags.first().tags.all()] if self.user_tags.exists() else []
-        )
         return d
 
     def to_json(self):
