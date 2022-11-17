@@ -950,7 +950,7 @@ class Reference(models.Model):
             d[field] = getattr(self, field)
 
         d["url"] = self.get_absolute_url()
-        d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
+        d["editTagUrl"] = reverse("lit:tag", kwargs={"pk": self.assessment_id}) + f"?id={self.pk}"
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
         d["tagHistoryUrl"] = reverse("lit:tag-history", kwargs={"pk": self.pk})
