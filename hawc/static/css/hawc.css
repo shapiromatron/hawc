@@ -312,7 +312,6 @@ div.smart-tag.active {
 .abstracts {
     font-size: 1.15rem;
     margin-top: 0.25rem;
-    max-height: 50vh;
     background-color: #f5f5f5;
     border-radius: 6px;
 }
@@ -330,9 +329,15 @@ div.smart-tag.active {
     color: #ffffff;
     background-color: #162e51;
     border-radius: 10px;
+    border: 0.15rem dotted transparent;
     padding: 4px 7px 4px 7px;
     margin: 0 5px 7px 0;
     display: inline-block;
+}
+.refUserTag {
+    color: #162e51;
+    background-color: #ffffff;
+    border: 0.15rem dotted #162e51;
 }
 .referenceTag{
     text-align: left;
@@ -349,7 +354,7 @@ div.smart-tag.active {
     border: 1px solid transparent;
 }
 
-.nestedTag > div.tagName {
+.nestedTag > div.tagHoverAdd {
     display: inline-block;
     position: relative;
     background: linear-gradient(0deg, #484848, #484848) no-repeat right bottom / 0 var(--bg-h);
@@ -361,12 +366,12 @@ div.smart-tag.active {
     border: 3px solid transparent;
 }
 
-.nestedTag > div.tagName:where(:hover, :focus-visible) {
+.nestedTag > div.tagHoverAdd:where(:hover, :focus-visible) {
     background-size: 100% var(--bg-h);
     background-position-x: left;
 }
 
-.nestedTag>div.tagName::before {
+.nestedTag>div.tagHoverAdd::before {
     color: #484848;
     content: "\f067";
     font-family: FontAwesome;
@@ -384,15 +389,25 @@ div.smart-tag.active {
     transition: all 75ms ease-in 125ms;
 }
 
-.nestedTag>div.tagName:hover::before {
+.nestedTag>div.tagHoverAdd:hover::before {
     transform: scale(1, 1);
 }
+.tagHoverSimple {
+    padding-left: 5px;
+    display: inline-block;
+    position: relative;
+    border: 2px solid transparent;
+    text-decoration: none;
+}
+.tagHoverSimple:hover, .tagSelected {
+    --bg-h: 2px;
+    background: linear-gradient(0deg, #484848, #484848) no-repeat right bottom / 0 var(--bg-h);
+    background-size: 100% var(--bg-h);
+    background-position-x: left;
+}
 
-.nestedTag.selected {
-    color: #0044cc;
+.tagSelected {
     font-weight: bold;
-    border: 2px solid #ababab;
-    background-color: gold;
 }
 .reference {
     padding-left: 0.5rem;

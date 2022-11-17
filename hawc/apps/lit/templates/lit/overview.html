@@ -107,7 +107,7 @@
 
   window.app.startup("litStartup", function(lit){
     let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
-    tagtree.render(document.getElementById('tags'))
+    tagtree.render(document.getElementById('tags'), {handleTagClick: (x) => {window.location.href = x.get_list_link()}})
   });
 
   const histo = document.getElementById("referenceYearHistogram");
