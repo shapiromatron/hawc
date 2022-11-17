@@ -2,7 +2,6 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.db.models import Prefetch
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -272,10 +271,11 @@ class TagReferences(BaseFilterList):
     paginate_by = None
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        user_tags = models.UserReferenceTag.objects.filter(user=self.request.user, reference__in=qs)
-        return qs.select_related("study").prefetch_related(
-            "searches", "identifiers", "tags", Prefetch("user_tags", queryset=user_tags)
+        return (
+            super()
+            .get_queryset()
+            .select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
         )
 
     def get_context_data(self, **kwargs):
