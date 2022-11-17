@@ -13,8 +13,11 @@ class TagNode extends Component {
         };
     }
     render() {
-        const {tag, showReferenceCount, handleOnClick, selectedTag} = this.props,
-            tagClass = tag === selectedTag ? "d-flex nestedTag selected" : "d-flex nestedTag",
+        const {tag, showReferenceCount, handleOnClick, selectedTag, showTagHover} = this.props,
+            tagClass =
+                tag === selectedTag
+                    ? "d-flex nestedTag selected align-items-center"
+                    : "d-flex nestedTag align-items-center",
             hasChildren = tag.children.length > 0,
             expanderIcon = this.state.expanded ? "fa-minus" : "fa-plus",
             toggleExpander = e => {
@@ -27,16 +30,18 @@ class TagNode extends Component {
         return (
             <>
                 <div className={tagClass} onClick={() => handleOnClick(tag)}>
-                    <div style={{width: (tag.depth - 1) * 10 + 25}}>
+                    <div
+                        className="d-flex justify-content-end"
+                        style={{width: (tag.depth - 1) * 10 + 25}}>
                         {hasChildren ? (
-                            <button
-                                className="float-right btn btn-sm px-2"
-                                onClick={toggleExpander}>
-                                <i className={`fa ${expanderIcon}`}></i>
+                            <button className="d-flex btn btn-sm px-1" onClick={toggleExpander}>
+                                <i
+                                    className={`fa ${expanderIcon}`}
+                                    style={{fontSize: "0.8rem"}}></i>
                             </button>
                         ) : null}
                     </div>
-                    <div style={{flex: 1}}>
+                    <div className={showTagHover ? "tagName" : null} style={{flex: 1}}>
                         <span>
                             {tag.data.name}
                             {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
@@ -51,6 +56,7 @@ class TagNode extends Component {
                               handleOnClick={handleOnClick}
                               showReferenceCount={showReferenceCount}
                               selectedTag={selectedTag}
+                              showTagHover={showTagHover}
                           />
                       ))
                     : null}
@@ -63,6 +69,7 @@ TagNode.propTypes = {
     handleOnClick: PropTypes.func.isRequired,
     showReferenceCount: PropTypes.bool.isRequired,
     selectedTag: PropTypes.object,
+    showTagHover: PropTypes.bool,
 };
 
 @observer
@@ -75,6 +82,7 @@ class TagTree extends Component {
             selectedTag,
             untaggedHandleClick,
             untaggedCount,
+            showTagHover,
         } = this.props;
         return (
             <div id="litTagtree" className="resize-y p-2 mt-2">
@@ -85,6 +93,7 @@ class TagTree extends Component {
                         handleOnClick={handleTagClick}
                         showReferenceCount={showReferenceCount}
                         selectedTag={selectedTag}
+                        showTagHover={showTagHover}
                     />
                 ))}
                 {untaggedHandleClick ? (
@@ -103,10 +112,12 @@ TagTree.propTypes = {
     selectedTag: PropTypes.object,
     untaggedCount: PropTypes.number,
     untaggedHandleClick: PropTypes.func,
+    showTagHover: PropTypes.bool,
 };
 TagTree.defaultProps = {
     showReferenceCount: false,
     handleTagClick: h.noop,
+    showTagHover: false,
 };
 
 export default TagTree;

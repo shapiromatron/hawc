@@ -2,6 +2,12 @@
 :focus {
     outline: none !important;
 }
+ a:visited {
+    color: #005ea2;
+ }
+ p {
+    margin-bottom: 0rem;
+ }
 
 /* this rule was disabled in the epa style; re-enable to header */
 header.l-header * {
@@ -53,9 +59,17 @@ header.l-header * {
 
 /* table */
 table td {
-    background-color: unset !important;
+    background-color: unset;
 
 }
+table {
+    margin-top: 0;
+}
+/* list */
+li {
+    margin-bottom: 0rem;
+}
+
 /* caret on dropdown menu */
 a.dropdown-toggle:not([href])::after {
     display: inline-block !important;
