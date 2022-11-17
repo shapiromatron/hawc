@@ -326,21 +326,6 @@ class ConflictResolution(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
 
         return context
 
-    def get_app_config(self, context) -> WebappConfig:
-        refs = models.Reference.objects.filter(assessment_id=self.assessment.id).order_by(
-            "-last_updated"
-        )
-        refs = refs.prefetch_related("searches", "identifiers", "tags")
-        return WebappConfig(
-            app="litStartup",
-            page="startupConflict",
-            data=dict(
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-                refs=[ref.to_dict() for ref in refs],
-                csrf=get_token(self.request),
-            ),
-        )
-
 
 def _get_reference_list(assessment, permissions, search=None) -> WebappConfig:
     qs = search.references.all() if search else assessment.references.all()
