@@ -111,8 +111,8 @@ class Reference extends Component {
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
             year = data.year || "",
             actionItems = [
-                <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
                 <ActionLink key={0} label="Edit reference tags" href={data.editTagUrl} />,
+                <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
                 <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
                 <ActionLink key={3} label="Tag history" href={data.tagHistoryUrl} />,
             ].concat(extraActions);
@@ -155,6 +155,7 @@ class Reference extends Component {
                 {data.abstract ? (
                     <div
                         className="abstracts resize-y p-2"
+                        style={data.abstract.length > 1500 ? {height: "45vh"} : null}
                         dangerouslySetInnerHTML={
                             keywordDict
                                 ? {__html: markKeywords(data.abstract, keywordDict)}
@@ -166,9 +167,10 @@ class Reference extends Component {
                     <p>
                         {tags.map((tag, i) => (
                             <a
+                                style={{color: "white"}}
                                 key={i}
                                 href={getReferenceTagListUrl(data.assessment_id, tag.data.pk)}
-                                className="referenceTag badge badge-info mr-1">
+                                className="refTag mt-1">
                                 {tag.get_full_name()}
                             </a>
                         ))}

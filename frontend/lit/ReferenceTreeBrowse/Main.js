@@ -72,15 +72,17 @@ class ReferenceTreeMain extends Component {
                     ) : store.selectedTag === null ? (
                         <h4>Available references</h4>
                     ) : (
-                        <h4>
-                            <span>
-                                {selectedReferences && selectedReferences.length > 0
-                                    ? `${filteredReferences.length} references tagged:`
-                                    : "References tagged:"}
-                            </span>
+                        <div className="d-flex align-items-center">
+                            <h4>
+                                <span>
+                                    {selectedReferences && selectedReferences.length > 0
+                                        ? `${filteredReferences.length} references tagged:`
+                                        : "References tagged:"}
+                                </span>
+                            </h4>
                             <span className="ml-2 refTag">{store.selectedTag.get_full_name()}</span>
                             <span>{yearText}</span>
-                        </h4>
+                        </div>
                     )}
                 </div>
                 <div className="col-md-3">

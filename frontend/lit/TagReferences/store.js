@@ -12,6 +12,7 @@ class Store {
     @observable references = [];
     @observable selectedReference = null;
     @observable selectedReferenceTags = null;
+    @observable selectedReferenceUserTags = null;
     @observable errorOnSave = false;
     @observable filterClass = "";
     @observable showInstructionsModal = false;
@@ -29,22 +30,37 @@ class Store {
     @action.bound changeSelectedReference(reference) {
         this.selectedReference = reference;
         this.selectedReferenceTags = reference.tags.slice(0); // shallow copy
+        this.selectedReferenceUserTags = reference.userTags.slice(0);
     }
     @action.bound addTag(tag) {
         if (
             this.selectedReference &&
-            !_.find(this.selectedReferenceTags, el => el.data.pk === tag.data.pk)
+            !_.find(
+                this.config.conflict_resolution
+                    ? this.selectedReferenceUserTags
+                    : this.selectedReferenceTags,
+                el => el.data.pk === tag.data.pk
+            )
         ) {
-            this.selectedReferenceTags.push(tag);
+            this.config.conflict_resolution
+                ? this.selectedReferenceUserTags.push(tag)
+                : this.selectedReferenceTags.push(tag);
         }
     }
     @action.bound removeTag(tag) {
-        _.remove(this.selectedReferenceTags, el => el.data.pk === tag.data.pk);
+        _.remove(
+            this.config.conflict_resolution
+                ? this.selectedReferenceUserTags
+                : this.selectedReferenceTags,
+            el => el.data.pk === tag.data.pk
+        );
     }
     @action.bound saveAndNext() {
         const payload = {
                 pk: this.selectedReference.data.pk,
-                tags: this.selectedReferenceTags.map(tag => tag.data.pk),
+                tags: this.config.conflict_resolution
+                    ? this.selectedReferenceUserTags.map(tag => tag.data.pk)
+                    : this.selectedReferenceTags.map(tag => tag.data.pk),
             },
             success = () => {
                 const $el = $(this.saveIndicatorElement),
@@ -61,9 +77,11 @@ class Store {
                 $el.fadeIn().fadeOut({
                     complete: () => {
                         this.selectedReference.tags = toJS(this.selectedReferenceTags);
+                        this.selectedReference.userTags = toJS(this.selectedReferenceUserTags);
                         this.references.splice(index, 1, toJS(this.selectedReference));
                         this.selectedReference = null;
                         this.selectedReferenceTags = null;
+                        this.selectedReferenceUserTags = null;
                         if (this.references.length > index + 1) {
                             this.changeSelectedReference(this.references[index + 1]);
                         } else {
@@ -82,7 +100,9 @@ class Store {
         ).fail(failure);
     }
     @action.bound removeAllTags() {
-        this.selectedReferenceTags = [];
+        this.config.conflict_resolution
+            ? (this.selectedReferenceUserTags = [])
+            : (this.selectedReferenceTags = []);
     }
     @action.bound setSaveIndicatorElement(el) {
         this.saveIndicatorElement = el;

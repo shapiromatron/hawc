@@ -38,7 +38,10 @@ class TagReferencesMain extends Component {
     render() {
         const {store} = this.props,
             selectedReferencePk = store.selectedReference ? store.selectedReference.data.pk : null,
-            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [];
+            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
+            selectedReferenceUserTags = store.selectedReferenceUserTags
+                ? store.selectedReferenceUserTags
+                : [];
         return (
             <div className="row">
                 <div className={store.filterClass} id="refFilter">
@@ -66,7 +69,11 @@ class TagReferencesMain extends Component {
                                     {ref.tags.length > 0 ? (
                                         <i
                                             className="fa fa-tags"
-                                            title="tagged"
+                                            title={
+                                                store.config.conflict_resolution
+                                                    ? "has resolved tag(s)"
+                                                    : "tagged"
+                                            }
                                             aria-hidden="true"></i>
                                     ) : null}
                                 </p>
@@ -118,9 +125,32 @@ class TagReferencesMain extends Component {
                                 {selectedReferenceTags.map((tag, i) => (
                                     <span
                                         key={i}
-                                        title={tag.get_full_name()}
+                                        title={
+                                            store.config.conflict_resolution
+                                                ? "Resolved Tag: ".concat(tag.get_full_name())
+                                                : tag.get_full_name()
+                                        }
                                         className="refTag refTagEditing"
-                                        onClick={() => store.removeTag(tag)}>
+                                        onClick={
+                                            store.config.conflict_resolution
+                                                ? null
+                                                : () => store.removeTag(tag)
+                                        }>
+                                        {this.state.showFullTag
+                                            ? tag.get_full_name()
+                                            : tag.data.name}
+                                    </span>
+                                ))}
+                                {selectedReferenceUserTags.map((tag, i) => (
+                                    <span
+                                        key={i}
+                                        title={tag.get_full_name()}
+                                        className="refTag refUserTag refTagEditing"
+                                        onClick={
+                                            store.config.conflict_resolution
+                                                ? () => store.removeTag(tag)
+                                                : null
+                                        }>
                                         {this.state.showFullTag
                                             ? tag.get_full_name()
                                             : tag.data.name}
@@ -144,13 +174,13 @@ class TagReferencesMain extends Component {
                                 extraActions={[
                                     <div
                                         className="dropdown-item cursor-pointer"
-                                        key={3}
+                                        key={4}
                                         onClick={() => store.removeAllTags()}>
                                         &nbsp;Remove all tags
                                     </div>,
                                     <div
                                         className="dropdown-item cursor-pointer"
-                                        key={4}
+                                        key={5}
                                         onClick={() => {
                                             this.showFullTag.toggle();
                                             this.setState({showFullTag: this.showFullTag.value});
@@ -163,7 +193,7 @@ class TagReferencesMain extends Component {
                                     store.config.instructions.length > 0 ? (
                                         <div
                                             className="dropdown-item cursor-pointer"
-                                            key={5}
+                                            key={6}
                                             onClick={() => store.setInstructionsModal(true)}>
                                             &nbsp;View instructions
                                         </div>
@@ -202,7 +232,7 @@ class TagReferencesMain extends Component {
                     <TagTree
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.addTag(tag)}
-                        showTagHover={true}
+                        showTagHoverAdd={true}
                     />
                 </div>
                 <Modal
