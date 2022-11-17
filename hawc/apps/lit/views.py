@@ -321,7 +321,7 @@ class ConflictResolution(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
                 user_tags__is_resolved=False,
             )
             .order_by("-last_updated")
-            .prefetch_related("user_tags__tags", "user_tags__user")
+            .prefetch_related("tags", "user_tags__tags", "user_tags__user")
         )
 
         return context

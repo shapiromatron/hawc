@@ -16,6 +16,17 @@
     <p class="abstract abstract_expand mb-1">{{ref.abstract|safe}}</p>
     <div class="row">
         <div class="col-md-11 pt-1 pb-3 mx-3">
+            {% if ref.tags.exists %}
+                <div><b>Existing Tags</b></div>
+                {% for tag in ref.tags.all %}
+                <span class="refTag" style="font-size: 0.9rem;">
+                    {% for ptag in tag.get_ancestors|slice:"1:" %}
+                    {{ptag.name}} ➤
+                    {% endfor %}
+                    {{tag.name}}
+                </span>
+                {% endfor %}
+            {% endif %}
             {% for user_tag in ref.user_tags.all %}
             <form>
                 <div>
