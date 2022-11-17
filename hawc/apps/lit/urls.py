@@ -35,20 +35,14 @@ urlpatterns = [
     path("reference/<int:pk>/update/", views.RefEdit.as_view(), name="ref_edit"),
     path("reference/<int:pk>/delete/", views.RefDelete.as_view(), name="ref_delete"),
     path(
-        "reference/<int:pk>/tag/",
-        views.TagByReference.as_view(),
-        name="reference_tags_edit",
-    ),
-    path(
         "reference/<int:pk>/tag-history/",
         views.ReferenceTagHistory.as_view(),
         name="tag-history",
     ),
-    path("tag/<int:pk>/tag/", views.TagByTag.as_view(), name="references_tags_edit"),
     path(
-        "assessment/<int:pk>/tag/untagged/",
-        views.TagByUntagged.as_view(),
-        name="tag_untagged",
+        "assessment/<int:pk>/tag/",
+        views.TagReferences.as_view(),
+        name="tag",
     ),
     path(
         "assessment/<int:pk>/tag/bulk/",
@@ -128,11 +122,6 @@ urlpatterns = [
         name="import_ris_new",
     ),
     # Edit tags
-    path(
-        "assessment/<int:pk>/search/<slug:slug>/tag/",
-        views.TagBySearch.as_view(),
-        name="search_tags_edit",
-    ),
     path(
         "assessment/<int:pk>/search/<slug:slug>/tags/",
         views.SearchRefList.as_view(),
