@@ -250,7 +250,7 @@ class TagReferences(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
-        fields=["id", "title_abstract", "search", "tags", "include_descendants", "untagged"],
+        fields=["title_abstract", "search", "id", "tags", "include_descendants", "untagged"],
         grid_layout={
             "rows": [
                 {
@@ -269,6 +269,14 @@ class TagReferences(BaseFilterList):
         },
     )
     paginate_by = None
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
