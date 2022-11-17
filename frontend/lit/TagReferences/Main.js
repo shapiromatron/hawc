@@ -2,13 +2,13 @@ import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+import Modal from "shared/components/Modal";
+import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 import Reference from "../components/Reference";
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import Modal from "shared/components/Modal";
-import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 @inject("store")
 @observer
@@ -197,11 +197,12 @@ class TagReferencesMain extends Component {
                         </div>
                     ) : null}
                 </div>
-                <div className="px-3" id="tagtree-col">
+                <div className="px-3 w-25">
                     <h4>Available tags</h4>
                     <TagTree
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.addTag(tag)}
+                        showTagHover={true}
                     />
                 </div>
                 <Modal

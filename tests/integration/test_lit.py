@@ -34,8 +34,8 @@ class TestLiterature(PlaywrightTestCase):
         page.locator("text=Apply filters").click()
         expect(page.locator("text=References (1 found)")).to_be_visible()
 
-        # /lit/assessment/:id/tag/untagged/
-        page.goto(self.live_server_url + "/lit/assessment/1/tag/untagged/")
+        # /lit/assessment/:id/tag/
+        page.goto(self.live_server_url + "/lit/assessment/1/tag/")
         expect(page.locator("text=Currently Applied Tags")).to_be_visible()
 
         # /lit/assessment/:id/tags/update/
