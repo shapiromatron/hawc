@@ -312,7 +312,7 @@ div.smart-tag.active {
 .abstracts {
     font-size: 1.15rem;
     margin-top: 0.25rem;
-    height: 50vh;
+    max-height: 50vh;
     background-color: #f5f5f5;
     border-radius: 6px;
 }
