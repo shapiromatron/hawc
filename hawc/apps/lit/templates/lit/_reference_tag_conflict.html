@@ -38,14 +38,24 @@
                     <b class="mb-0">{{user_tag.user.get_full_name}}</b> <i class="m-0 small">{{user_tag.user.email}}</i>
                     <input name="user_tag_id" value={{user_tag.pk}} class="d-none">
                 </div>
-                {% for tag in user_tag.tags.all %}
-                <span class="refTag refUserTag" style="font-size: 0.9rem;">
-                    {% for ptag in tag.get_ancestors|slice:"1:" %}
-                    {{ptag.name}} ➤
+                {% with user_tag.get_tags_diff as tags%}
+                    {% for tag in tags.same %}
+                    <span class="refTag refUserTag" style="font-size: 0.9rem;">
+                        {% for ptag in tag.get_ancestors|slice:"1:" %}
+                        {{ptag.name}} ➤
+                        {% endfor %}
+                        {{tag.name}}
+                    </span>
                     {% endfor %}
-                    {{tag.name}}
-                </span>
-                {% endfor %}
+                    {% for tag in tags.diff %}
+                    <span class="refTag refUserTagDiff">
+                        {% for ptag in tag.get_ancestors|slice:"1:" %}
+                        {{ptag.name}} ➤
+                        {% endfor %}
+                        {{tag.name}}
+                    </span>
+                    {% endfor %}
+                {% endwith %}
             </form>
             {% endfor %}
         </div>
