@@ -39,7 +39,7 @@
                     <input name="user_tag_id" value={{user_tag.pk}} class="d-none">
                 </div>
                 {% for tag in user_tag.tags.all %}
-                <span class="refTagSame" style="font-size: 0.9rem;">
+                <span class="refTag refUserTag" style="font-size: 0.9rem;">
                     {% for ptag in tag.get_ancestors|slice:"1:" %}
                     {{ptag.name}} ➤
                     {% endfor %}
