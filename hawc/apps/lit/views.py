@@ -321,7 +321,8 @@ class ConflictResolution(TeamMemberOrHigherMixin, BaseDetail):
             self.request.user, assessment, "Reference Tag Conflict Resolution"
         )
         context["refs"] = (
-            models.Reference.objects.filter(
+            models.Reference.objects.distinct()
+            .filter(
                 assessment_id=self.assessment.id,
                 user_tags__is_resolved=False,
             )
