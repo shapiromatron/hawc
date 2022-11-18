@@ -304,7 +304,7 @@ class TagReferences(BaseFilterList):
         )
 
 
-class ConflictResolution(WebappMixin, TeamMemberOrHigherMixin, TemplateView):
+class ConflictResolution(TeamMemberOrHigherMixin, BaseDetail):
     # WebappMixin
     template_name = "lit/conflict_resolution.html"
     model = Assessment
