@@ -103,8 +103,16 @@ tfoot>tr>td {
     display: block;
     white-space: unset;
     width: auto;
+    font-size: 1.15rem;
+    color: #232323;
 }
-
+.tag-conf-item {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 16px;
+    margin: 16px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
 .list-item-clicked,
 .list-item-clicked:hover {
     background-color: #eeeeee;
@@ -420,6 +428,7 @@ div.smart-tag.active {
     font-weight: bold;
     margin: 0;
     font-size: 1.35rem;
+    color: #1b1b1b;
 }
 
 .refTag {
@@ -515,7 +524,8 @@ div.smart-tag.active {
 }
 
 .reference {
-    padding-left: 0.5rem;
+    border-bottom: 3px solid lightgray;
+    padding: 0.3rem 0rem 0.3rem 0.5rem;
 }
 
 .reference:hover {
@@ -529,7 +539,7 @@ div.smart-tag.active {
 
 .reference:hover {
     color: #ffffff;
-    background-color: #0044cc;
+    background-color: #1c4fb7;
 }
 
 .hawc-mk {
