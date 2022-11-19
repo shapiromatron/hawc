@@ -54,10 +54,10 @@ class TagReferencesMain extends Component {
                     <div className="card">
                         <div
                             id="fullRefList"
-                            className="show card-body ref-container px-1 resize-y"
+                            className="show card-body ref-container px-0 py-1 resize-y"
                             style={{minHeight: "10vh", height: "70vh"}}>
                             {store.references.map(ref => (
-                                <p
+                                <div
                                     key={ref.data.pk}
                                     className={
                                         ref.data.pk === selectedReferencePk
@@ -65,18 +65,25 @@ class TagReferencesMain extends Component {
                                             : "reference"
                                     }
                                     onClick={() => store.changeSelectedReference(ref)}>
-                                    {ref.shortCitation()}&nbsp;
-                                    {ref.tags.length > 0 ? (
-                                        <i
-                                            className="fa fa-tags"
-                                            title={
-                                                store.config.conflict_resolution
-                                                    ? "has resolved tag(s)"
-                                                    : "tagged"
-                                            }
-                                            aria-hidden="true"></i>
-                                    ) : null}
-                                </p>
+                                    {ref
+                                        .shortCitation()
+                                        .match(/.{1,26}(?=\s|$)/g)
+                                        .map((txt, i, ary) => (
+                                            <p className="my-0" style={{maxHeight: "26px"}} key={i}>
+                                                {txt}&nbsp;
+                                                {i + 1 === ary.length && ref.tags.length > 0 ? (
+                                                    <i
+                                                        className="fa fa-tags"
+                                                        title={
+                                                            store.config.conflict_resolution
+                                                                ? "has resolved tag(s)"
+                                                                : "tagged"
+                                                        }
+                                                        aria-hidden="true"></i>
+                                                ) : null}
+                                            </p>
+                                        ))}
+                                </div>
                             ))}
                         </div>
                     </div>
