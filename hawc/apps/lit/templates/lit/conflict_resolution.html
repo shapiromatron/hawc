@@ -7,7 +7,7 @@
         {% include 'common/filter_list.html' with plural_object_name='references' %}
         <ul class="list-group list-group-flush m-0">
             {% for ref in object_list %}
-            {% include 'lit/_reference_tag_conflict.html' with ref=ref %}
+            {% include 'lit/_reference_tag_conflict.html' with ref=ref first=forloop.first %}
             {% endfor %}
         </ul>
     </div>
@@ -19,10 +19,13 @@
 {{ config|json_script:"config" }}
 <script type="text/javascript">
         $(function () {
-                $(".abstract").click(function(e) {
-                    $(this).toggleClass("abstract_expand");
-                    $(this).parent(".list-group-item").toggleClass("list-item-clicked")
-                    $(this).siblings(".ref_small").children(".ids").toggleClass("hidden");
+                $(".approve").click(function(e) {
+                    e.stopPropagation();
+                });
+                $(".list-group-item").click(function(e) {
+                    $(this).children(".abstract").toggleClass("abstract_expand");
+                    $(this).toggleClass("list-item-clicked")
+                    $(this).children(".ref_small").children(".ids").toggleClass("hidden");
                 });
             });
 </script>
