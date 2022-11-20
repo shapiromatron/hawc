@@ -1,9 +1,17 @@
 import django_filters as df
-from django.db.models import Q
+from django.db.models import Count, Q, TextChoices
 from django.forms.widgets import CheckboxInput
 
 from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
 from . import models
+
+
+class TagChoices(TextChoices):
+    RESOLVED_AND_USER = "resolved_and_user", "Resolved and user tags"
+    RESOLVED_AND_MINE = "resolved_and_mine", "Resolved and my tags"
+    RESOLVED = "resolved", "Only resolved tags"
+    USER = "user", "Only user tags"
+    MINE = "mine", "Only my tags"
 
 
 class ReferenceFilterSet(BaseFilterSet):
@@ -27,6 +35,11 @@ class ReferenceFilterSet(BaseFilterSet):
         conjoined=True,
         label="Tags",
         help_text="If multiple tags are selected, references must include all selected tags.",
+    )
+    tag_choice = df.ChoiceFilter(
+        method=filter_noop,
+        choices=TagChoices.choices,
+        label="Tag choice",
     )
     include_descendants = df.BooleanFilter(
         method=filter_noop, widget=CheckboxInput(), label="Include tag descendants"
@@ -53,11 +66,22 @@ class ReferenceFilterSet(BaseFilterSet):
             "authors",
             "search",
             "tags",
+            "tag_choice",
             "include_descendants",
             "untagged",
             "order_by",
             "paginate_by",
         ]
+
+    def get_tag_choice(self) -> TagChoices:
+        # tag choices are only provided with conflict resolution enabled
+        if not self.assessment.literature_settings.conflict_resolution:
+            return TagChoices.RESOLVED
+        try:
+            return TagChoices(self.data.get("tag_choice"))
+        except ValueError:
+            # the default for conflict resolution is to use resolved and user tags
+            return TagChoices.RESOLVED_AND_USER
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -73,17 +97,64 @@ class ReferenceFilterSet(BaseFilterSet):
 
     def filter_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_descendants", False)
+        tag_choice = self.get_tag_choice()
+
         for tag in value:
             tag_ids = (
                 list(tag.get_tree(parent=tag).values_list("id", flat=True))
                 if include_descendants
                 else [tag]
             )
-            queryset = queryset.filter(tags__in=tag_ids)
+            resolved_query = Q(tags__in=tag_ids)
+            user_query = Q(user_tags__tags__in=tag_ids, user_tags__is_resolved=False)
+            mine_query = Q(
+                user_tags__tags__in=tag_ids,
+                user_tags__is_resolved=False,
+                user_tags__user=self.request.user,
+            )
+            if tag_choice == TagChoices.RESOLVED_AND_USER:
+                query = resolved_query | user_query
+            elif tag_choice == TagChoices.RESOLVED_AND_MINE:
+                query = resolved_query | mine_query
+            elif tag_choice == TagChoices.RESOLVED:
+                query = resolved_query
+            elif tag_choice == TagChoices.USER:
+                query = user_query
+            elif tag_choice == TagChoices.MINE:
+                query = mine_query
+            queryset = queryset.filter(query)
         return queryset.distinct()
 
     def filter_untagged(self, queryset, name, value):
-        return queryset.untagged() if value else queryset
+        if not value:
+            return queryset
+        tag_choice = self.get_tag_choice()
+        if tag_choice == TagChoices.RESOLVED_AND_USER:
+            return queryset.annotate(
+                resolved_tag_count=Count("tags"),
+                user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
+            ).filter(resolved_tag_count=0, user_tag_count=0)
+        elif tag_choice == TagChoices.RESOLVED_AND_MINE:
+            return queryset.annotate(
+                resolved_tag_count=Count("tags"),
+                user_tag_count=Count(
+                    "user_tags",
+                    filter=Q(user_tags__is_resolved=False) & Q(user_tags__user=self.request.user),
+                ),
+            ).filter(resolved_tag_count=0, user_tag_count=0)
+        elif tag_choice == TagChoices.RESOLVED:
+            return queryset.annotate(resolved_tag_count=Count("tags")).filter(resolved_tag_count=0)
+        elif tag_choice == TagChoices.USER:
+            return queryset.annotate(
+                user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+            ).filter(user_tag_count=0)
+        elif tag_choice == TagChoices.MINE:
+            return queryset.annotate(
+                user_tag_count=Count(
+                    "user_tags",
+                    filter=Q(user_tags__is_resolved=False) & Q(user_tags__user=self.request.user),
+                )
+            ).filter(user_tag_count=0)
 
     def create_form(self):
         form = super().create_form()
@@ -96,4 +167,7 @@ class ReferenceFilterSet(BaseFilterSet):
             form.fields["search"].queryset = models.Search.objects.filter(
                 assessment=self.assessment
             )
+        if "tag_choice" in form.fields:
+            if not self.assessment.literature_settings.conflict_resolution:
+                form.fields["tag_choice"].disabled = True
         return form

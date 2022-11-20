@@ -4,8 +4,9 @@
 <div class="row pb-3">
     <div id="list-col" class="col-md-12">
         <h4>References with Tag Conflicts</h4>
+        {% include 'common/filter_list.html' with plural_object_name='references' %}
         <ul class="list-group list-group-flush m-0">
-            {% for ref in refs %}
+            {% for ref in object_list %}
             {% include 'lit/_reference_tag_conflict.html' with ref=ref %}
             {% endfor %}
         </ul>
