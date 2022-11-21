@@ -351,19 +351,37 @@ class ConflictResolution(BaseFilterList):
         return (
             super()
             .get_queryset()
-            .filter(
-                user_tags__is_resolved=False,
-            )
+            .filter(user_tags__is_resolved=False)
             .order_by("-last_updated")
-            .prefetch_related("tags", "user_tags__tags", "user_tags__user")
+            .prefetch_related("tags", "identifiers", "user_tags__tags", "user_tags__user")
             .distinct()
         )
 
+    def cache_tag_parents(self, tag, tag_map):
+        tag.parents = []
+        path = tag.path
+        while len(path) > 4:
+            path = tag._get_parent_path_from_path(path)
+            if len(path) <= 4:
+                break
+            tag.parents.append(tag_map[path])
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Reference Tag Conflict Resolution"
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        context.update(
+            tags=tags,
+            breadcrumbs=lit_overview_crumbs(
+                self.request.user, self.assessment, "Resolve Tag Conflicts"
+            ),
         )
+        tag_map = {tag.path: tag for tag in tags}
+        for ref in context["object_list"]:
+            for tag in ref.tags.all():
+                self.cache_tag_parents(tag, tag_map)
+            for user_tag in ref.user_tags.all():
+                for tag in user_tag.tags.all():
+                    self.cache_tag_parents(tag, tag_map)
         return context
 
 
