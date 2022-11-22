@@ -250,7 +250,15 @@ class TagReferences(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
-        fields=["title_abstract", "search", "id", "tags", "include_descendants", "untagged"],
+        fields=[
+            "title_abstract",
+            "search",
+            "id",
+            "tag_choice",
+            "tags",
+            "include_descendants",
+            "untagged",
+        ],
         grid_layout={
             "rows": [
                 {
@@ -261,7 +269,16 @@ class TagReferences(BaseFilterList):
                         },
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 6}, {"width": 6}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                    ]
+                                }
+                            ],
                         },
                     ]
                 }
@@ -304,32 +321,66 @@ class TagReferences(BaseFilterList):
         )
 
 
-class ConflictResolution(TeamMemberOrHigherMixin, BaseDetail):
-    # WebappMixin
+class ConflictResolution(BaseFilterList):
     template_name = "lit/conflict_resolution.html"
-    model = Assessment
+    parent_model = Assessment
+    model = models.Reference
+    filterset_class = dynamic_filterset(
+        filterset.ReferenceFilterSet,
+        fields=["id", "title_abstract", "tag_choice", "tags", "include_descendants"],
+        grid_layout={
+            "rows": [
+                {
+                    "columns": [
+                        {
+                            "width": 6,
+                            "rows": [{"columns": [{"width": 12}, {"width": 12}]}],
+                        },
+                        {
+                            "width": 6,
+                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                        },
+                    ]
+                }
+            ]
+        },
+    )
+    paginate_by = None
 
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
-        return self.object
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(user_tags__is_resolved=False)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
+
+    def cache_tag_parents(self, tag, tag_map):
+        tag.parents = []
+        path = tag.path
+        while len(path) > 4:
+            path = tag._get_parent_path_from_path(path)
+            if len(path) <= 4:
+                break
+            tag.parents.append(tag_map[path])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        assessment = self.get_assessment(self.request, **kwargs)
-        context["assessment"] = assessment
-        context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, assessment, "Reference Tag Conflict Resolution"
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        context.update(
+            tags=tags,
+            breadcrumbs=lit_overview_crumbs(
+                self.request.user, self.assessment, "Resolve Tag Conflicts"
+            ),
         )
-        context["refs"] = (
-            models.Reference.objects.distinct()
-            .filter(
-                assessment_id=self.assessment.id,
-                user_tags__is_resolved=False,
-            )
-            .order_by("-last_updated")
-            .prefetch_related("tags", "user_tags__tags", "user_tags__user")
-        )
-
+        tag_map = {tag.path: tag for tag in tags}
+        for ref in context["object_list"]:
+            for tag in ref.tags.all():
+                self.cache_tag_parents(tag, tag_map)
+            for user_tag in ref.user_tags.all():
+                for tag in user_tag.tags.all():
+                    self.cache_tag_parents(tag, tag_map)
         return context
 
 
@@ -439,6 +490,7 @@ class RefFilterList(BaseFilterList):
             "journal",
             "title_abstract",
             "authors",
+            "tag_choice",
             "tags",
             "include_descendants",
             "untagged",
@@ -465,7 +517,16 @@ class RefFilterList(BaseFilterList):
                         },
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 6}, {"width": 6}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                    ]
+                                }
+                            ],
                         },
                     ]
                 },

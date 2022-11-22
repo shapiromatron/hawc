@@ -547,6 +547,59 @@ div.smart-tag.active {
     word-wrap: break-word;
 }
 
+.conflict-reference-li {
+    border-bottom: 5px solid #b0b0b0 !important;
+}
+
+.abstract_collapsed {
+    overflow: hidden;
+    white-space: nowrap !important;
+    width: 800px !important;
+    height: 30px;
+}
+
+.abstract {
+    text-overflow: ellipsis;
+    display: block;
+    white-space: unset;
+    width: auto;
+}
+
+.tag-conf-item {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 16px;
+    margin: 16px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+.list-item-clicked,
+.list-item-clicked:hover {
+    background-color: #eeeeee;
+}
+
+.refTagDiff,
+.refTagSame {
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: bold;
+    margin: 4px 2px 4px 8px;
+    display: inline-block;
+}
+
+.refUserTagDiff {
+    color: #ffffff;
+    background-color: maroon;
+    border: 0.15rem dotted #ffffff;
+}
+
+.refTagSame {
+    color: #ffffff;
+    font-size: 0.85rem;
+    padding: 5px 7px 5px 7px;
+    background-color: #7e7e7e;
+}
+
 /* preview modal icon */
 .previewModalParent:hover .previewModalIcon {
     display: inherit;
