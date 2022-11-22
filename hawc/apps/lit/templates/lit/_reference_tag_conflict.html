@@ -13,7 +13,7 @@
         {% endfor %}
         <a href="{{ref.get_absolute_url}}" class="ids badge badge-warning">HAWC</a>
     </div>
-    <p class="abstract abstract_collapsed mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
+    <p class="abstract abstract_collapsed cursor-pointer mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
     <div class="row">
         <div class="col-md-11 pt-1">
             {% if ref.tags.exists %}

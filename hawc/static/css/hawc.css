@@ -435,11 +435,15 @@ div.smart-tag.active {
     word-wrap: break-word;
 }
 
+.conflict-reference-li {
+    border-bottom: 5px solid #b0b0b0 !important;
+}
+
 /* abstract expansion */
 .abstract_collapsed {
     overflow: hidden;
     white-space: nowrap !important;
-    width: 600px !important;
+    width: 800px !important;
     height: 30px;
 }
 
@@ -448,6 +452,14 @@ div.smart-tag.active {
     display: block;
     white-space: unset;
     width: auto;
+}
+
+.tag-conf-item {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 16px;
+    margin: 16px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
 }
 
 .list-item-clicked,
