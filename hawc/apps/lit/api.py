@@ -5,10 +5,11 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
@@ -369,7 +370,7 @@ class ReferenceViewset(
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.action == "tag":
+        if self.action in ("tag", "resolve_conflict"):
             qs = qs.select_related("assessment__literature_settings").prefetch_related(
                 "user_tags__tags", "tags"
             )
@@ -385,3 +386,15 @@ class ReferenceViewset(
             ref.update_tags(request.user, tag_pks)
             response["status"] = "success"
         return Response(response)
+
+    @action(detail=True, methods=("post",))
+    def resolve_conflict(self, request, pk):
+        reference = self.get_object()
+        assessment = reference.assessment
+        selected_user_tag = get_object_or_404(
+            models.UserReferenceTag, id=request.POST.get("user_tag_id"), reference_id=reference.id
+        )
+        if not assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        reference.resolve_user_tag_conflicts(selected_user_tag)
+        return render(request, "lit/_conflict_resolved.html", {"ref": reference})

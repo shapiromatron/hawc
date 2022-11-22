@@ -926,6 +926,11 @@ class Reference(models.Model):
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()
 
+    def resolve_user_tag_conflicts(self, user_tag: "UserReferenceTag"):
+        self.tags.set({tag.id for tag in user_tag.tags.all()})
+        self.save()
+        self.user_tags.update(is_resolved=True)
+
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
 
@@ -1170,6 +1175,17 @@ class UserReferenceTag(models.Model):
     @property
     def assessment_id(self) -> int:
         return self.reference.assessment_id
+
+    def get_tags_diff(self):
+        all_tags = set(self.reference.tags.all())
+        for user_tag in self.reference.user_tags.all():
+            if user_tag.id == self.id:
+                continue
+            all_tags.update(set(user_tag.tags.all()))
+        self_tags = set(self.tags.all())
+        tags_diff = self_tags.difference(all_tags)
+        tags_same = self_tags.intersection(all_tags)
+        return dict(diff=tags_diff, same=tags_same)
 
 
 reversion.register(LiteratureAssessment)

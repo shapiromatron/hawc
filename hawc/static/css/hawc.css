@@ -35,7 +35,7 @@
     }
 }
 .sidebar a {
-    color: #f8f9fa!important;
+    color: #f8f9fa !important;
 }
 .sidebar .nav {
     font-weight: bold;
@@ -324,6 +324,7 @@ div.smart-tag.active {
     font-weight: bold;
     margin: 0;
     font-size: 1.35rem;
+    color: #1b1b1b;
 }
 .refTag {
     color: #ffffff;
@@ -410,7 +411,8 @@ div.smart-tag.active {
     font-weight: bold;
 }
 .reference {
-    padding-left: 0.5rem;
+    border-bottom: 3px solid lightgray;
+    padding: 0.3rem 0rem 0.3rem 0.5rem;
 }
 .reference:hover {
     cursor: pointer;
@@ -421,8 +423,9 @@ div.smart-tag.active {
 }
 .reference:hover {
     color: #ffffff;
-    background-color: #0044cc;
+    background-color: #1c4fb7;
 }
+
 .hawc-mk {
     background-color: transparent;
     color: inherit;
@@ -430,6 +433,59 @@ div.smart-tag.active {
     overflow-wrap: break-word;
     word-break: break-word;
     word-wrap: break-word;
+}
+
+.conflict-reference-li {
+    border-bottom: 5px solid #b0b0b0 !important;
+}
+
+.abstract_collapsed {
+    overflow: hidden;
+    white-space: nowrap !important;
+    width: 800px !important;
+    height: 30px;
+}
+
+.abstract {
+    text-overflow: ellipsis;
+    display: block;
+    white-space: unset;
+    width: auto;
+}
+
+.tag-conf-item {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 16px;
+    margin: 16px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+.list-item-clicked,
+.list-item-clicked:hover {
+    background-color: #eeeeee;
+}
+
+.refTagDiff,
+.refTagSame {
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: bold;
+    margin: 4px 2px 4px 8px;
+    display: inline-block;
+}
+
+.refUserTagDiff {
+    color: #ffffff;
+    background-color: maroon;
+    border: 0.15rem dotted #ffffff;
+}
+
+.refTagSame {
+    color: #ffffff;
+    font-size: 0.85rem;
+    padding: 5px 7px 5px 7px;
+    background-color: #7e7e7e;
 }
 
 /* preview modal icon */
