@@ -21,4 +21,5 @@ export const STATUS = {
         {id: "epi", label: "Epidemiology"},
         {id: "epi_meta", label: "Epidemiology meta-analysis"},
         {id: "in_vitro", label: "In vitro"},
+        {id: "eco", label: "Ecology"},
     ];

@@ -28,6 +28,7 @@ class BaseStudyForm(forms.ModelForm):
             "in_vitro",
             "epi",
             "epi_meta",
+            "eco",
             "coi_reported",
             "coi_details",
             "funding_source",
@@ -67,7 +68,7 @@ class BaseStudyForm(forms.ModelForm):
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        helper.add_row("bioassay", 4, ["col-md-3", "col-md-3", "col-md-3", "col-md-3"])
+        helper.add_row("bioassay", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"])
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("funding_source", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
@@ -137,6 +138,7 @@ class ReferenceStudyForm(BaseStudyForm):
             "in_vitro",
             "epi",
             "epi_meta",
+            "eco",
             "coi_reported",
             "coi_details",
             "funding_source",

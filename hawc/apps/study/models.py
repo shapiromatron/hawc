@@ -36,6 +36,7 @@ class Study(Reference):
         "epi",
         "epi_meta",
         "in_vitro",
+        "eco",
     }
 
     bioassay = models.BooleanField(
@@ -54,6 +55,9 @@ class Study(Reference):
         help_text="Study contains epidemiology meta-analysis/pooled analysis data",
     )
     in_vitro = models.BooleanField(default=False, help_text="Study contains in-vitro data")
+    eco = models.BooleanField(
+        verbose_name="Ecology", default=False, help_text="Study contains ecology data"
+    )
     short_citation = models.CharField(
         max_length=256,
         help_text="How the study should be identified (i.e. Smith et al. (2012), etc.)",

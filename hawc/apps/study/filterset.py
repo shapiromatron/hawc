@@ -3,7 +3,7 @@ from django.db.models import Q
 
 from ..common.filterset import BaseFilterSet
 from ..myuser.models import HAWCUser
-from . import models
+from . import constants, models
 
 
 class StudyFilterSet(BaseFilterSet):
@@ -18,12 +18,7 @@ class StudyFilterSet(BaseFilterSet):
     )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
-        choices=[
-            ("bioassay", "Bioassay"),
-            ("epi", "Epidemiology"),
-            ("epi_meta", "Epidemiology meta-analysis"),
-            ("in_vitro", "In vitro"),
-        ],
+        choices=constants.StudyTypeChoices.choices,
         label="Data type",
         help_text="Data type for full-text extraction",
         empty_label="<All>",

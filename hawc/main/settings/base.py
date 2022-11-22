@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     "hawc.apps.riskofbias",
     "hawc.apps.study",
     "hawc.apps.animal",
+    "hawc.apps.eco",
     "hawc.apps.epi",
     "hawc.apps.epimeta",
     "hawc.apps.invitro",
@@ -131,9 +132,6 @@ INSTALLED_APPS = (
 # TODO - remove with django==4.1
 if HAWC_FEATURES.FIPS_MODE is True:
     fips.patch_md5()
-
-if HAWC_FEATURES.ENABLE_ECO:
-    INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
 
 # DB settings
 DATABASES = {

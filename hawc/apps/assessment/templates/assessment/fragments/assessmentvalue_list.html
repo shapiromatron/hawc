@@ -1,0 +1,21 @@
+{% load bs4 %}
+
+{% if object_list.count > 0 %}
+<h3>Assessment Values</h3>
+<table class="table table-sm table-striped">
+    {% bs4_colgroup '20,20,15,15,15,15' %}
+    {% bs4_thead 'Evaluation Type,Value Type,Value,System,Point of Departure,Composite Uncertainty Factor' %}
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td><a href="{{object.get_absolute_url}}">{{object.get_evaluation_type_display}}</a></td>
+            <td>{{object.get_value_type_display}}</td>
+            <td>{{object.value}} {{object.value_unit|default:""}}</td>
+            <td>{{object.system}}</td>
+            <td>{{object.pod_value|default:"-"}} {{object.pod_unit|default:""}}</td>
+            <td>{{object.uncertainty|default:"-"}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

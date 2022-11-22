@@ -6,4 +6,4 @@ from . import models
 class StudyAutocomplete(BaseAutocomplete):
     model = models.Study
     search_fields = ["short_citation"]
-    filter_fields = ["assessment_id", "bioassay", "epi", "epi_meta", "in_vitro"]
+    filter_fields = ["assessment_id", "bioassay", "epi", "epi_meta", "in_vitro", "eco"]
