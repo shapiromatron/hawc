@@ -272,9 +272,6 @@ div.smart-tag.active {
     overflow: hidden;
     word-wrap: normal;
 }
-#refFilter p {
-    max-height: 26px;
-}
 #refFilter {
     transition-property: all !important;
     transition: width 250ms ease-out;
