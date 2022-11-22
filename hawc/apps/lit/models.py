@@ -1184,7 +1184,9 @@ class UserReferenceTag(models.Model):
 
     def get_tags_diff(self):
         all_tags = set(self.reference.tags.all())
-        for user_tag in self.reference.user_tags.exclude(pk=self.id):
+        for user_tag in self.reference.user_tags.all():
+            if user_tag.id == self.id:
+                continue
             all_tags.update(set(user_tag.tags.all()))
         self_tags = set(self.tags.all())
         tags_diff = self_tags.difference(all_tags)

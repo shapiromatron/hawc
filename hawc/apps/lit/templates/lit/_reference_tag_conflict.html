@@ -35,7 +35,6 @@
                         <input name="user_tag_id" value={{user_tag.pk}} class="d-none">
                     </div>
                     {% with user_tag.get_tags_diff as tags%}
-                    AJS TODO HERE
                         {% for tag in tags.same %}
                         <span class="refTag refUserTag" style="font-size: 0.9rem;">
                             {% for ptag in tag.parents reversed %}{{ptag.name}} ➤ {% endfor %}{{tag.name}}
