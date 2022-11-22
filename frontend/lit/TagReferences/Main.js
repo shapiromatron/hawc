@@ -12,6 +12,31 @@ import TagTree from "../components/TagTree";
 
 @inject("store")
 @observer
+class ReferenceListItem extends Component {
+    render() {
+        const {store, reference, selectedReferencePk} = this.props,
+            isSelected = reference.data.pk === selectedReferencePk,
+            divClass = `d-flex justify-content-between reference ${isSelected ? "selected" : ""}`,
+            title = store.config.conflict_resolution ? "has resolved tag(s)" : "tagged";
+
+        return (
+            <div className={divClass} onClick={() => store.changeSelectedReference(reference)}>
+                <p className="mb-0 pr-1">{reference.shortCitation()}</p>
+                {reference.tags.length > 0 ? (
+                    <i className="fa fa-fw fa-tags mx-1" title={title} aria-hidden="true"></i>
+                ) : null}
+            </div>
+        );
+    }
+}
+ReferenceListItem.propTypes = {
+    reference: PropTypes.object.isRequired,
+    selectedReferencePk: PropTypes.number.isRequired,
+    store: PropTypes.object,
+};
+
+@inject("store")
+@observer
 class TagReferencesMain extends Component {
     constructor(props) {
         super(props);
@@ -56,35 +81,15 @@ class TagReferencesMain extends Component {
                             id="fullRefList"
                             className="show card-body ref-container px-0 py-1 resize-y"
                             style={{minHeight: "10vh", height: "70vh"}}>
-                            {store.references.map(ref => (
-                                <div
-                                    key={ref.data.pk}
-                                    className={
-                                        ref.data.pk === selectedReferencePk
-                                            ? "reference selected"
-                                            : "reference"
-                                    }
-                                    onClick={() => store.changeSelectedReference(ref)}>
-                                    {ref
-                                        .shortCitation()
-                                        .match(/.{1,26}(?=\s|$)/g)
-                                        .map((txt, i, ary) => (
-                                            <p className="my-0" style={{maxHeight: "26px"}} key={i}>
-                                                {txt}&nbsp;
-                                                {i + 1 === ary.length && ref.tags.length > 0 ? (
-                                                    <i
-                                                        className="fa fa-tags"
-                                                        title={
-                                                            store.config.conflict_resolution
-                                                                ? "has resolved tag(s)"
-                                                                : "tagged"
-                                                        }
-                                                        aria-hidden="true"></i>
-                                                ) : null}
-                                            </p>
-                                        ))}
-                                </div>
-                            ))}
+                            {store.references.map(reference => {
+                                return (
+                                    <ReferenceListItem
+                                        key={reference.data.pk}
+                                        reference={reference}
+                                        selectedReferencePk={selectedReferencePk}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
