@@ -5,7 +5,9 @@
 {% include 'common/filter_list.html' with plural_object_name='references' %}
 <ul class="list-group list-group-flush m-0">
     {% for ref in object_list %}
-        {% include 'lit/_reference_tag_conflict.html' with ref=ref first=forloop.first %}
+    {% include 'lit/_reference_tag_conflict.html' with ref=ref first=forloop.first %}
+    {% empty %}
+    <li class="list-group-item list-group-item-action my-3">No conflicts to resolve!</li>
     {% endfor %}
 </ul>
 {% endblock content %}

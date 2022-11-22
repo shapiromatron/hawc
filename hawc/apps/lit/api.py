@@ -5,11 +5,11 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
@@ -370,7 +370,7 @@ class ReferenceViewset(
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.action == "tag" or self.action == "resolve_conflict":
+        if self.action in ("tag", "resolve_conflict"):
             qs = qs.select_related("assessment__literature_settings").prefetch_related(
                 "user_tags__tags", "tags"
             )
@@ -389,17 +389,12 @@ class ReferenceViewset(
 
     @action(detail=True, methods=("post",))
     def resolve_conflict(self, request, pk):
-        template = "lit/_reference_tag_conflict.html"
-        errors = None
-        ref = self.get_object()
-        assessment = ref.assessment
-        if assessment.user_can_edit_object(self.request.user):
-            try:
-                user_tag_id = request.POST.get("user_tag_id")
-                ref.resolve_user_tag_conflicts(user_tag_id)
-                template = "lit/_conflict_resolved.html"
-            except Exception:
-                errors = "There was an error applying those tags to the reference."
-        else:
-            errors = "You do not have permission to approve tags for this reference."
-        return render(request, template, {"ref": ref, "conflict_errors": errors})
+        reference = self.get_object()
+        assessment = reference.assessment
+        selected_user_tag = get_object_or_404(
+            models.UserReferenceTag, id=request.POST.get("user_tag_id"), reference_id=reference.id
+        )
+        if not assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        reference.resolve_user_tag_conflicts(selected_user_tag)
+        return render(request, "lit/_conflict_resolved.html", {"ref": reference})

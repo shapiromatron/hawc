@@ -353,8 +353,7 @@ class ConflictResolution(BaseFilterList):
             .get_queryset()
             .filter(user_tags__is_resolved=False)
             .order_by("-last_updated")
-            .prefetch_related("tags", "identifiers", "user_tags__tags", "user_tags__user")
-            .distinct()
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
 
     def cache_tag_parents(self, tag, tag_map):

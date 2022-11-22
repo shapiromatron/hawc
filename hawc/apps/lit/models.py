@@ -926,16 +926,10 @@ class Reference(models.Model):
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()
 
-    def resolve_user_tag_conflicts(self, user_tag_id):
-        selected_user_tag = self.user_tags.get(pk=user_tag_id)
-        self.tags.set({tag.id for tag in selected_user_tag.tags.all()})
+    def resolve_user_tag_conflicts(self, user_tag: "UserReferenceTag"):
+        self.tags.set({tag.id for tag in user_tag.tags.all()})
         self.save()
-
-        user_tags = self.user_tags.all()
-        for user_tag in user_tags:
-            user_tag.is_resolved = True
-
-        UserReferenceTag.objects.bulk_update(user_tags, ["is_resolved"])
+        self.user_tags.update(is_resolved=True)
 
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
