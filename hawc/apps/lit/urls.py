@@ -35,15 +35,14 @@ urlpatterns = [
     path("reference/<int:pk>/update/", views.RefEdit.as_view(), name="ref_edit"),
     path("reference/<int:pk>/delete/", views.RefDelete.as_view(), name="ref_delete"),
     path(
-        "reference/<int:pk>/tag/",
-        views.TagByReference.as_view(),
-        name="reference_tags_edit",
+        "reference/<int:pk>/tag-history/",
+        views.ReferenceTagHistory.as_view(),
+        name="tag-history",
     ),
-    path("tag/<int:pk>/tag/", views.TagByTag.as_view(), name="references_tags_edit"),
     path(
-        "assessment/<int:pk>/tag/untagged/",
-        views.TagByUntagged.as_view(),
-        name="tag_untagged",
+        "assessment/<int:pk>/tag/",
+        views.TagReferences.as_view(),
+        name="tag",
     ),
     path(
         "assessment/<int:pk>/tag/bulk/",
@@ -124,11 +123,6 @@ urlpatterns = [
     ),
     # Edit tags
     path(
-        "assessment/<int:pk>/search/<slug:slug>/tag/",
-        views.TagBySearch.as_view(),
-        name="search_tags_edit",
-    ),
-    path(
         "assessment/<int:pk>/search/<slug:slug>/tags/",
         views.SearchRefList.as_view(),
         name="search_tags",
@@ -142,6 +136,11 @@ urlpatterns = [
         "ris-export-instructions/",
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
+    ),
+    path(
+        "assessment/<int:pk>/reference-tag-conflicts/",
+        views.ConflictResolution.as_view(),
+        name="tag-conflicts",
     ),
     path("api/", include((router.urls, "api"))),
 ]

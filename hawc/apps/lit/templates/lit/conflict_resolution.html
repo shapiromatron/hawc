@@ -1,0 +1,23 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<h2>Resolve Tag Conflicts</h2>
+{% include 'common/filter_list.html' with plural_object_name='references' %}
+<ul class="list-group list-group-flush m-0">
+    {% for ref in object_list %}
+    {% include 'lit/_reference_tag_conflict.html' with ref=ref first=forloop.first %}
+    {% empty %}
+    <li class="list-group-item list-group-item-action my-3">No conflicts to resolve!</li>
+    {% endfor %}
+</ul>
+{% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+$(document).ready(function () {
+    $(".abstract,.ref_authors,.ref_title").click(function(e) {
+        $(e.target).closest('.conflict-reference-li').find('.abstract').toggleClass("abstract_collapsed");
+    });
+});
+</script>
+{% endblock extrajs %}

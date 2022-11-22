@@ -9,7 +9,7 @@ const getActionLinks = function(assessmentId, tagId, untagged, canEdit) {
             <ActionLink
                 key={0}
                 label="Tag untagged references"
-                href={`/lit/assessment/${assessmentId}/tag/untagged/`}
+                href={`/lit/assessment/${assessmentId}/tag/?untagged=on`}
             />
         );
     }
@@ -31,7 +31,7 @@ const getActionLinks = function(assessmentId, tagId, untagged, canEdit) {
                 <ActionLink
                     key={3}
                     label="Tag references with this tag (but not descendants)"
-                    href={`/lit/tag/${tagId}/tag/`}
+                    href={`/lit/assessment/${assessmentId}/tag/?tags=${tagId}`}
                 />
             );
         }

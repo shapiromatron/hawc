@@ -172,6 +172,14 @@
     model: reference
 - model: contenttypes.contenttype
   fields:
+    app_label: lit
+    model: userreferencetags
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: userreferencetag
+- model: contenttypes.contenttype
+  fields:
     app_label: riskofbias
     model: riskofbiasdomain
 - model: contenttypes.contenttype
@@ -817,6 +825,43 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+- model: assessment.assessment
+  pk: 4
+  fields:
+    name: Chemical A
+    year: 2022
+    version: draft
+    cas: ''
+    assessment_objective: <p>This assessment contains example references for testing
+      conflict resolution.</p>
+    authors: <p>The HAWCers</p>
+    creator:
+    - admin@hawcproject.org
+    editable: true
+    public_on: null
+    hide_from_public_page: false
+    enable_literature_review: true
+    enable_project_management: true
+    enable_data_extraction: true
+    enable_risk_of_bias: true
+    enable_bmd: true
+    enable_summary_text: true
+    conflicts_of_interest: ''
+    funding_source: ''
+    noel_name: 0
+    rob_name: 0
+    vocabulary: 1
+    modify_uncontrolled_vocabulary: true
+    epi_version: 2
+    created: 2022-10-27 21:02:28.805681+00:00
+    last_updated: 2022-10-27 21:02:28.805695+00:00
+    dtxsids: []
+    project_manager:
+    - - pm@hawcproject.org
+    team_members:
+    - - team@hawcproject.org
+    reviewers:
+    - - reviewer@hawcproject.org
 - model: assessment.AssessmentDetail
   pk: 1
   fields:
@@ -1242,7 +1287,18 @@
   pk: 1
   fields:
     assessment: 1
+    conflict_resolution: false
     extraction_tag: 2
+    screening_instructions: ''
+    name_list_1: Positive
+    color_list_1: '#228833'
+    keyword_list_1: ''
+    name_list_2: Negative
+    color_list_2: '#EE6677'
+    keyword_list_2: ''
+    name_list_3: Additional
+    color_list_3: '#4477AA'
+    keyword_list_3: ''
     topic_tsne_data: ''
     topic_tsne_refresh_requested: null
     topic_tsne_last_refresh: null
@@ -1252,7 +1308,18 @@
   pk: 2
   fields:
     assessment: 2
+    conflict_resolution: false
     extraction_tag: 11
+    screening_instructions: ''
+    name_list_1: Positive
+    color_list_1: '#228833'
+    keyword_list_1: ''
+    name_list_2: Negative
+    color_list_2: '#EE6677'
+    keyword_list_2: ''
+    name_list_3: Additional
+    color_list_3: '#4477AA'
+    keyword_list_3: ''
     topic_tsne_data: ''
     topic_tsne_refresh_requested: null
     topic_tsne_last_refresh: null
@@ -1262,12 +1329,44 @@
   pk: 3
   fields:
     assessment: 3
+    conflict_resolution: false
     extraction_tag: 23
+    screening_instructions: ''
+    name_list_1: Positive
+    color_list_1: '#228833'
+    keyword_list_1: ''
+    name_list_2: Negative
+    color_list_2: '#EE6677'
+    keyword_list_2: ''
+    name_list_3: Additional
+    color_list_3: '#4477AA'
+    keyword_list_3: ''
     topic_tsne_data: ''
     topic_tsne_refresh_requested: null
     topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
     last_updated: 2020-04-11 20:53:19.390979+00:00
+- model: lit.literatureassessment
+  pk: 4
+  fields:
+    assessment: 4
+    conflict_resolution: true
+    extraction_tag: 32
+    screening_instructions: ''
+    name_list_1: Positive
+    color_list_1: '#228833'
+    keyword_list_1: 'burrito|Aloysia polystachya'
+    name_list_2: Negative
+    color_list_2: '#EE6677'
+    keyword_list_2: ''
+    name_list_3: Additional
+    color_list_3: '#4477AA'
+    keyword_list_3: ''
+    topic_tsne_data: ''
+    topic_tsne_refresh_requested: null
+    topic_tsne_last_refresh: null
+    created: 2022-10-27 21:02:29.769131+00:00
+    last_updated: 2022-10-27 21:02:29.769146+00:00
 - model: lit.search
   pk: 1
   fields:
@@ -1323,6 +1422,33 @@
     import_file: ''
     created: 2020-05-08 17:03:51.608549+00:00
     last_updated: 2020-05-08 17:03:51.608572+00:00
+- model: lit.search
+  pk: 6
+  fields:
+    assessment: 4
+    search_type: i
+    source: 0
+    title: Manual import
+    slug: manual-import
+    description: Default search instance used for manually importing literature into
+      HAWC instead of using a search.
+    search_string: None. This is used to manually enter literature.
+    import_file: ''
+    created: 2022-10-27 21:02:29.773641+00:00
+    last_updated: 2022-10-27 21:02:29.773652+00:00
+- model: lit.search
+  pk: 7
+  fields:
+    assessment: 4
+    search_type: i
+    source: 1
+    title: Burritos
+    slug: burritos
+    description: ''
+    search_string: 33789140, 28572920, 21296532
+    import_file: ''
+    created: 2022-10-27 21:03:01.264891+00:00
+    last_updated: 2022-10-27 21:03:01.264906+00:00
 - model: lit.identifiers
   pk: 2
   fields:
@@ -1375,6 +1501,136 @@
 - model: lit.identifiers
   pk: 9
   fields:
+    unique_id: '28572920'
+    database: 1
+    content: '{"xml": "<PubmedArticle></PubmedArticle>",
+      "PMID": 28572920, "title": "Nutrient content of fish powder from low value fish
+      and fish byproducts.", "abstract": "Consuming small-sized fish species whole,
+      and bones of large fish could contribute significantly to reducing the level
+      of micronutrient and protein malnutrition. These fish products are more affordable
+      and could therefore meet the needs of poor, vulnerable groups, particularly
+      in rural and urban areas where limited economic resources prevent dietary diversity.
+      The objectives of the study were to produce fish powder from dried edible byproducts
+      from fish processing factories, an underutilized fish species, burrito and to
+      determine the physical, micromineral, macronutrient and microbiological quality
+      of the dried fish powder. Edible fish processing byproducts and an underutilized
+      fish, burrito (Brachydeuterus auritus) were cleaned thoroughly and dried with
+      a Council for Scientific and Industrial Research-Food Research Institute (CSIR-FRI)
+      gas-fuelled oven at 55\u00b0C for 8\u00a0h or until dried. The dried products
+      were milled into powder, and packaged into polythene bags. Proximate analysis
+      of the fish powder was done Official Methods of Analysis (AOAC) methods. Minerals
+      and heavy metals in the fish powder were determined by atomic absorption spectrophotometry
+      (AAS). Microbiological quality was determined by Nordic Committee on Food Analysis
+      Method (NMLK) methods. Tuna trimmings contained 80.71\u00a0g/100\u00a0g protein,
+      whereas burrito contained 70.40\u00a0g/100\u00a0g protein. Concentrations of
+      cadmium, arsenic, and mercury varied from <1.00 to 1\u00a0mg/kg. Lead was found
+      at 0.04\u00a0mg/100\u00a0g in tuna frames and gills only. All fish byproducts
+      contained high levels of iron, for example, trimmings contained 16.58\u00a0mg/100\u00a0g,
+      whereas tuna frames and gills also contained 16.82 and 19.54\u00a0mg/100\u00a0g,
+      respectively. Burrito contained 8.92\u00a0mg/100\u00a0g. Zinc levels also ranged
+      from 0.41\u00a0mg/100\u00a0g in tuna trimmings to 1.88\u00a0mg/100\u00a0g in
+      tuna gills. The powdered samples according to the standards set by Ghana Standard
+      Authority, were acceptable. Consuming small- sized fish species whole, and bones
+      of large fish could contribute significantly to reducing the level of micronutrient
+      and protein malnutrition. These are more affordable and could therefore meet
+      the needs of poor, vulnerable groups.", "citation": "Food Sci Nutr 2017; 5 (3):374-379",
+      "year": 2017, "doi": "10.1002/fsn3.402", "authors": ["Abbey L", "Glover-Amengor
+      M", "Atikpo MO", "Atter A", "Toppe J"], "authors_short": "Abbey L et al."}'
+    url: ''
+- model: lit.identifiers
+  pk: 10
+  fields:
+    unique_id: '21296532'
+    database: 1
+    content: '{"xml": "<PubmedArticle></PubmedArticle>",
+      "PMID": 21296532, "title": "The \"Superhero Cape Burrito\": a simple and comfortable
+      method of short-term procedural restraint.", "abstract": "<span class=\"abstract_label\">BACKGROUND:
+      </span>Restraint is sometimes necessary to successfully perform procedures on
+      pediatric patients in the emergency department. A papoose may be intimidating
+      and uncomfortable, and a wrapped sheet may not keep the child''s arms from wiggling
+      free.<br><span class=\"abstract_label\">DISCUSSION: </span>We present an adaptation
+      of the wrapped sheet (burrito) technique, using a pillowcase to better immobilize
+      the child''s arms. The arms are inserted in the pillowcase behind the child''s
+      back, and then the child is placed supine over a horizontally placed sheet and
+      turned to each side so the sheet is tucked behind the back. The child is thereby
+      easily and comfortably restrained.<br><span class=\"abstract_label\">CONCLUSIONS:
+      </span>We believe this technique more successfully restrains the child than
+      the wrapped sheet alone, and is easier to execute than other wrapped sheet techniques
+      aimed at improving arm immobilization.", "citation": "J Emerg Med 2011; 41 (1):74-6",
+      "year": 2011, "doi": "10.1016/j.jemermed.2010.11.024", "authors": ["Brown JC",
+      "Klein EJ"], "authors_short": "Brown JC and Klein EJ"}'
+    url: ''
+- model: lit.identifiers
+  pk: 11
+  fields:
+    unique_id: '33789140'
+    database: 1
+    content: '{"xml": "<PubmedArticle></PubmedArticle>",
+      "PMID": 33789140, "title": "Ethnopharmacological investigation of the cardiovascular
+      effects of the ethanol-soluble fraction of Aloysia polystachya (Griseb.) Moldenke
+      leaves in spontaneously hypertensive rats.", "abstract": "<span class=\"abstract_label\">ETHNOPHARMACOLOGICAL
+      RELEVANCE: </span>Aloysia polystachya (Griseb) Moldenke (Verbenaceae), popularly
+      known as \"burrito\", is a South American species widely prescribed by local
+      Brazilian healers for the treatment of cardiovascular diseases. However, its
+      antihypertensive and cardioprotective effects are still unknown.<br><span class=\"abstract_label\">AIM:
+      </span>To evaluate the role of the ethanol-soluble fraction of A. polystachya
+      leaves (ESAP) against hypertension in spontaneously hypertensive rats (SHRs),
+      as well as its safety, morphoanatomical and phytochemical aspects.<br><span
+      class=\"abstract_label\">MATERIALS AND METHODS: </span>First, the leaves and
+      stems of A. polystachya were analyzed by optical and scanning electron microscopy
+      in order to provide anatomical data for quality control. Then, ESAP was obtained
+      and its chemical profile was analyzed by LC-DAD-MS. In addition, the cytotoxic
+      and acute toxicity potential of ESAP were evaluated in six cell lines and in
+      female Wistar rats, respectively. Next, female spontaneously hypertensive rats
+      (SHRs) received ESAP (30, 100, 300\u00a0mg/kg), hydrochlorothiazide (25\u00a0mg/kg),
+      or vehicle once daily for 28 days. Weekly kidney function was monitored by analyzing
+      urinary parameters. At the end of the 28-day treatment, the electrocardiographic
+      profile, blood pressure, and renal and mesenteric vascular reactivity were evaluated.
+      Relative organ (heart, kidney, and liver) weights and biochemical parameters
+      were also evaluated. Finally, the heart, kidneys, and aorta were collected for
+      determination of the tissue redox state, cardiac morphometry, and histopathological
+      analysis.<br><span class=\"abstract_label\">RESULTS: </span>The chemical profile
+      of ESAP was composed by organic acids, a nucleoside, methoxylated flavones and
+      glycosylated compounds including phenolic acids, phenylpropanoids, iridoids
+      and monoterpenes. No signs of toxicity were observed in all cell''s lines nor
+      in female Wistar rats submitted to this trial. All SHRs from the negative control
+      group presented a reduction in renal function, alterations in the renal and
+      mesenteric vascular reactivity, and electrocardiographic and morphometric changes
+      typical of ventricular hypertrophy. Oral prolonged ESAP-administration in SHRs
+      was able to reverse renal, electrocardiographic and hemodynamic changes induced
+      by hypertension. Moreover, ESAP-treatment was able to modulate the vascular
+      and renal arterial reactivity and tissue redox state. The aforementioned data
+      were accompanied by reduction of cardiac hypertrophy.<br><span class=\"abstract_label\">CONCLUSION:
+      </span>In this study, we present important anatomical and phytochemical data
+      that contributed to the correct identification and quality control of A. polystachya.
+      In addition, we have shown that ESAP is safe after acute administration and
+      present significant cardioprotective effects (at 30, 100, and 300\u00a0mg/kg
+      doses) in SHRs after prolonged treatment.", "citation": "J Ethnopharmacol 2021;
+      274 ():114077", "year": 2021, "doi": "10.1016/j.jep.2021.114077", "authors":
+      ["Marques AAM", "Loren\u00e7one BR", "Rom\u00e3o PVM", "Guarnier LP", "Palozi
+      RAC", "Moreno KGT", "Tirloni CAS", "Dos Santos AC", "Souza RIC", "Klider LM",
+      "Louren\u00e7o ELB", "Tolouei SEL", "Budel JM", "Khan SI", "Silva DB", "Gasparotto
+      Junior A"], "authors_short": "Marques AAM et al."}'
+    url: ''
+- model: lit.identifiers
+  pk: 12
+  fields:
+    unique_id: 10.1016/j.jemermed.2010.11.024
+    database: 4
+    content: ''
+    url: ''
+- model: lit.identifiers
+  pk: 13
+  fields:
+    unique_id: 10.1002/fsn3.402
+    database: 4
+    content: ''
+    url: ''
+- model: lit.identifiers
+  pk: 14
+  fields:
+    unique_id: 10.1016/j.jep.2021.114077
+    database: 4
     unique_id: '27245597'
     database: 1
     content: ''
@@ -1619,6 +1875,78 @@
     numchild: 0
     name: Tier III
     slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 31
+  fields:
+    path: '0004'
+    depth: 1
+    numchild: 2
+    name: assessment-4
+    slug: assessment-4
+- model: lit.referencefiltertag
+  pk: 32
+  fields:
+    path: '00040001'
+    depth: 2
+    numchild: 3
+    name: Inclusion
+    slug: inclusion
+- model: lit.referencefiltertag
+  pk: 33
+  fields:
+    path: '000400010001'
+    depth: 3
+    numchild: 0
+    name: Human Study
+    slug: human-study
+- model: lit.referencefiltertag
+  pk: 34
+  fields:
+    path: '000400010002'
+    depth: 3
+    numchild: 0
+    name: Animal Study
+    slug: animal-study
+- model: lit.referencefiltertag
+  pk: 35
+  fields:
+    path: '000400010003'
+    depth: 3
+    numchild: 0
+    name: Mechanistic Study
+    slug: mechanistic-study
+- model: lit.referencefiltertag
+  pk: 36
+  fields:
+    path: '00040002'
+    depth: 2
+    numchild: 3
+    name: Exclusion
+    slug: exclusion
+- model: lit.referencefiltertag
+  pk: 37
+  fields:
+    path: '000400020001'
+    depth: 3
+    numchild: 0
+    name: Tier I
+    slug: tier-i
+- model: lit.referencefiltertag
+  pk: 38
+  fields:
+    path: '000400020002'
+    depth: 3
+    numchild: 0
+    name: Tier II
+    slug: tier-ii
+- model: lit.referencefiltertag
+  pk: 39
+  fields:
+    path: '000400020003'
+    depth: 3
+    numchild: 0
+    name: Tier III
+    slug: tier-iii
 - model: lit.referencetags
   pk: 2
   fields:
@@ -1639,6 +1967,11 @@
   fields:
     tag: 13
     content_object: 6
+- model: lit.referencetags
+  pk: 6
+  fields:
+    tag: 33
+    content_object: 11
 - model: lit.reference
   pk: 1
   fields:
@@ -1853,6 +2186,142 @@
 - model: lit.reference
   pk: 9
   fields:
+    assessment: 4
+    title: 'The "Superhero Cape Burrito": a simple and comfortable method of short-term
+      procedural restraint.'
+    authors_short: Brown JC and Klein EJ
+    authors: Brown JC, Klein EJ
+    year: 2011
+    journal: J Emerg Med 2011; 41 (1):74-6
+    abstract: '<span class="abstract_label">BACKGROUND: </span>Restraint is sometimes
+      necessary to successfully perform procedures on pediatric patients in the emergency
+      department. A papoose may be intimidating and uncomfortable, and a wrapped sheet
+      may not keep the child''s arms from wiggling free.<br><span class="abstract_label">DISCUSSION:
+      </span>We present an adaptation of the wrapped sheet (burrito) technique, using
+      a pillowcase to better immobilize the child''s arms. The arms are inserted in
+      the pillowcase behind the child''s back, and then the child is placed supine
+      over a horizontally placed sheet and turned to each side so the sheet is tucked
+      behind the back. The child is thereby easily and comfortably restrained.<br><span
+      class="abstract_label">CONCLUSIONS: </span>We believe this technique more successfully
+      restrains the child than the wrapped sheet alone, and is easier to execute than
+      other wrapped sheet techniques aimed at improving arm immobilization.'
+    full_text_url: ''
+    created: 2022-10-27 21:03:01.298079+00:00
+    last_updated: 2022-10-27 21:14:49.841918+00:00
+    block_id: null
+    searches:
+    - 7
+    identifiers:
+    - 10
+    - 12
+- model: lit.reference
+  pk: 10
+  fields:
+    assessment: 4
+    title: Nutrient content of fish powder from low value fish and fish byproducts.
+    authors_short: Abbey L et al.
+    authors: Abbey L, Glover-Amengor M, Atikpo MO, Atter A, Toppe J
+    year: 2017
+    journal: Food Sci Nutr 2017; 5 (3):374-379
+    abstract: Consuming small-sized fish species whole, and bones of large fish could
+      contribute significantly to reducing the level of micronutrient and protein
+      malnutrition. These fish products are more affordable and could therefore meet
+      the needs of poor, vulnerable groups, particularly in rural and urban areas
+      where limited economic resources prevent dietary diversity. The objectives of
+      the study were to produce fish powder from dried edible byproducts from fish
+      processing factories, an underutilized fish species, burrito and to determine
+      the physical, micromineral, macronutrient and microbiological quality of the
+      dried fish powder. Edible fish processing byproducts and an underutilized fish,
+      burrito (Brachydeuterus auritus) were cleaned thoroughly and dried with a Council
+      for Scientific and Industrial Research-Food Research Institute (CSIR-FRI) gas-fuelled
+      oven at 55°C for 8 h or until dried. The dried products were milled into powder,
+      and packaged into polythene bags. Proximate analysis of the fish powder was
+      done Official Methods of Analysis (AOAC) methods. Minerals and heavy metals
+      in the fish powder were determined by atomic absorption spectrophotometry (AAS).
+      Microbiological quality was determined by Nordic Committee on Food Analysis
+      Method (NMLK) methods. Tuna trimmings contained 80.71 g/100 g protein, whereas
+      burrito contained 70.40 g/100 g protein. Concentrations of cadmium, arsenic,
+      and mercury varied from <1.00 to 1 mg/kg. Lead was found at 0.04 mg/100 g in
+      tuna frames and gills only. All fish byproducts contained high levels of iron,
+      for example, trimmings contained 16.58 mg/100 g, whereas tuna frames and gills
+      also contained 16.82 and 19.54 mg/100 g, respectively. Burrito contained 8.92 mg/100 g.
+      Zinc levels also ranged from 0.41 mg/100 g in tuna trimmings to 1.88 mg/100 g
+      in tuna gills. The powdered samples according to the standards set by Ghana
+      Standard Authority, were acceptable. Consuming small- sized fish species whole,
+      and bones of large fish could contribute significantly to reducing the level
+      of micronutrient and protein malnutrition. These are more affordable and could
+      therefore meet the needs of poor, vulnerable groups.
+    full_text_url: ''
+    created: 2022-10-27 21:03:01.424371+00:00
+    last_updated: 2022-10-27 21:40:28.379536+00:00
+    block_id: null
+    searches:
+    - 7
+    identifiers:
+    - 9
+    - 13
+- model: lit.reference
+  pk: 11
+  fields:
+    assessment: 4
+    title: Ethnopharmacological investigation of the cardiovascular effects of the
+      ethanol-soluble fraction of Aloysia polystachya (Griseb.) Moldenke leaves in
+      spontaneously hypertensive rats.
+    authors_short: Marques AAM et al.
+    authors: Marques AAM, Lorençone BR, Romão PVM, Guarnier LP, Palozi RAC, Moreno
+      KGT, Tirloni CAS, Dos Santos AC, Souza RIC, Klider LM, Lourenço ELB, Tolouei
+      SEL, Budel JM, Khan SI, Silva DB, Gasparotto Junior A
+    year: 2021
+    journal: J Ethnopharmacol 2021; 274 ():114077
+    abstract: '<span class="abstract_label">ETHNOPHARMACOLOGICAL RELEVANCE: </span>Aloysia
+      polystachya (Griseb) Moldenke (Verbenaceae), popularly known as "burrito", is
+      a South American species widely prescribed by local Brazilian healers for the
+      treatment of cardiovascular diseases. However, its antihypertensive and cardioprotective
+      effects are still unknown.<br><span class="abstract_label">AIM: </span>To evaluate
+      the role of the ethanol-soluble fraction of A. polystachya leaves (ESAP) against
+      hypertension in spontaneously hypertensive rats (SHRs), as well as its safety,
+      morphoanatomical and phytochemical aspects.<br><span class="abstract_label">MATERIALS
+      AND METHODS: </span>First, the leaves and stems of A. polystachya were analyzed
+      by optical and scanning electron microscopy in order to provide anatomical data
+      for quality control. Then, ESAP was obtained and its chemical profile was analyzed
+      by LC-DAD-MS. In addition, the cytotoxic and acute toxicity potential of ESAP
+      were evaluated in six cell lines and in female Wistar rats, respectively. Next,
+      female spontaneously hypertensive rats (SHRs) received ESAP (30, 100, 300 mg/kg),
+      hydrochlorothiazide (25 mg/kg), or vehicle once daily for 28 days. Weekly kidney
+      function was monitored by analyzing urinary parameters. At the end of the 28-day
+      treatment, the electrocardiographic profile, blood pressure, and renal and mesenteric
+      vascular reactivity were evaluated. Relative organ (heart, kidney, and liver)
+      weights and biochemical parameters were also evaluated. Finally, the heart,
+      kidneys, and aorta were collected for determination of the tissue redox state,
+      cardiac morphometry, and histopathological analysis.<br><span class="abstract_label">RESULTS:
+      </span>The chemical profile of ESAP was composed by organic acids, a nucleoside,
+      methoxylated flavones and glycosylated compounds including phenolic acids, phenylpropanoids,
+      iridoids and monoterpenes. No signs of toxicity were observed in all cell''s
+      lines nor in female Wistar rats submitted to this trial. All SHRs from the negative
+      control group presented a reduction in renal function, alterations in the renal
+      and mesenteric vascular reactivity, and electrocardiographic and morphometric
+      changes typical of ventricular hypertrophy. Oral prolonged ESAP-administration
+      in SHRs was able to reverse renal, electrocardiographic and hemodynamic changes
+      induced by hypertension. Moreover, ESAP-treatment was able to modulate the vascular
+      and renal arterial reactivity and tissue redox state. The aforementioned data
+      were accompanied by reduction of cardiac hypertrophy.<br><span class="abstract_label">CONCLUSION:
+      </span>In this study, we present important anatomical and phytochemical data
+      that contributed to the correct identification and quality control of A. polystachya.
+      In addition, we have shown that ESAP is safe after acute administration and
+      present significant cardioprotective effects (at 30, 100, and 300 mg/kg doses)
+      in SHRs after prolonged treatment.'
+    full_text_url: ''
+    created: 2022-10-27 21:03:01.546964+00:00
+    last_updated: 2022-10-27 21:36:51.995510+00:00
+    block_id: null
+    searches:
+    - 7
+    identifiers:
+    - 11
+    - 14
+- model: lit.reference
+  pk: 12
+  fields:
     assessment: 2
     title: Microbial Ecology of the Human Skin.
     authors_short: Cundell AM
@@ -1879,6 +2348,62 @@
     - 2
     identifiers:
     - 9
+- model: lit.userreferencetags
+  pk: 1
+  fields:
+    tag: 33
+    content_object: 1
+- model: lit.userreferencetags
+  pk: 2
+  fields:
+    tag: 34
+    content_object: 2
+- model: lit.userreferencetags
+  pk: 5
+  fields:
+    tag: 33
+    content_object: 4
+- model: lit.userreferencetags
+  pk: 9
+  fields:
+    tag: 37
+    content_object: 5
+- model: lit.userreferencetag
+  pk: 1
+  fields:
+    user:
+    - team@hawcproject.org
+    reference: 11
+    is_resolved: true
+    created: 2022-10-27 21:07:50.089101+00:00
+    last_updated: 2022-10-27 21:07:50.420620+00:00
+- model: lit.userreferencetag
+  pk: 2
+  fields:
+    user:
+    - team@hawcproject.org
+    reference: 10
+    is_resolved: true
+    created: 2022-10-27 21:09:01.953588+00:00
+    last_updated: 2022-10-27 21:09:02.014507+00:00
+- model: lit.userreferencetag
+  pk: 4
+  fields:
+    user:
+    - pm@hawcproject.org
+    reference: 11
+    is_resolved: true
+    created: 2022-10-27 21:19:29.460709+00:00
+    last_updated: 2022-10-27 21:36:51.929199+00:00
+- model: lit.userreferencetag
+  pk: 5
+  fields:
+    user:
+    - pm@hawcproject.org
+    reference: 10
+    is_resolved: false
+    created: 2022-10-27 21:37:16.158160+00:00
+    last_updated: 2022-10-27 21:40:28.356071+00:00
 - model: study.study
   pk: 1
   fields:
@@ -2745,6 +3270,13 @@
     version: BMDS270
     created: 2020-11-25 16:47:36.244091+00:00
     last_updated: 2020-11-25 16:47:36.244109+00:00
+- model: bmd.assessmentsettings
+  pk: 4
+  fields:
+    assessment: 4
+    version: BMDS270
+    created: 2022-10-27 21:02:29.790125+00:00
+    last_updated: 2022-10-27 21:02:29.790139+00:00
 - model: bmd.logicfield
   pk: 1
   fields:
@@ -3549,6 +4081,277 @@
     assessment: 1
     created: 2020-11-25 16:47:36.239705+00:00
     last_updated: 2020-11-25 16:47:36.239713+00:00
+    name: Control stdev
+    description: The standard deviation estimate at the control is different the the
+      reported deviation, which is often used to estimate the BMR. Thus, the BMR estimate
+      may be inaccurate.
+    failure_bin: 1
+    threshold: '1.50'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 61
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.783955+00:00
+    last_updated: 2022-10-27 21:02:29.783985+00:00
+    name: BMD
+    description: A BMD value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 62
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784008+00:00
+    last_updated: 2022-10-27 21:02:29.784012+00:00
+    name: BMDL
+    description: A BMDL value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 63
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784040+00:00
+    last_updated: 2022-10-27 21:02:29.784043+00:00
+    name: BMDU
+    description: A BMDU value was successfully calculated.
+    failure_bin: 0
+    threshold: null
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 64
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784056+00:00
+    last_updated: 2022-10-27 21:02:29.784059+00:00
+    name: AIC
+    description: An AIC value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 65
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784071+00:00
+    last_updated: 2022-10-27 21:02:29.784074+00:00
+    name: Variance Type
+    description: 'The correct variance model was used (based on p-test #2).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 66
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784145+00:00
+    last_updated: 2022-10-27 21:02:29.784152+00:00
+    name: Variance Fit
+    description: 'The variance model appropriately captures the variance of the dataset
+      being modeled (based on p-test #3).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 67
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784169+00:00
+    last_updated: 2022-10-27 21:02:29.784173+00:00
+    name: GGOF
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 68
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784186+00:00
+    last_updated: 2022-10-27 21:02:29.784189+00:00
+    name: GGOF (Cancer)
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.05'
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 69
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784203+00:00
+    last_updated: 2022-10-27 21:02:29.784206+00:00
+    name: BMD/BMDL (serious)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (warning).
+    failure_bin: 1
+    threshold: '20.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 70
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784221+00:00
+    last_updated: 2022-10-27 21:02:29.784224+00:00
+    name: BMD/BMDL (warning)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (caution).
+    failure_bin: 0
+    threshold: '5.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 71
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784237+00:00
+    last_updated: 2022-10-27 21:02:29.784240+00:00
+    name: Residual of Interest
+    description: The absolute value of the residual at the dose closest to the BMD
+      is large, which means the model may not be estimating well in this range.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 72
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784252+00:00
+    last_updated: 2022-10-27 21:02:29.784255+00:00
+    name: Warnings
+    description: The model output file included additional warnings.
+    failure_bin: 0
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 73
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784288+00:00
+    last_updated: 2022-10-27 21:02:29.784292+00:00
+    name: BMD higher
+    description: The BMD estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 0
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 74
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784326+00:00
+    last_updated: 2022-10-27 21:02:29.784330+00:00
+    name: BMDL higher
+    description: The BMDL estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 1
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 75
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784342+00:00
+    last_updated: 2022-10-27 21:02:29.784346+00:00
+    name: Low BMD (warning)
+    description: The BMD estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 76
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784359+00:00
+    last_updated: 2022-10-27 21:02:29.784362+00:00
+    name: Low BMDL (warning)
+    description: The BMDL estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 77
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784390+00:00
+    last_updated: 2022-10-27 21:02:29.784393+00:00
+    name: Low BMD (serious)
+    description: The BMD estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 78
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784420+00:00
+    last_updated: 2022-10-27 21:02:29.784423+00:00
+    name: Low BMDL (serious)
+    description: The BMDL estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 79
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784435+00:00
+    last_updated: 2022-10-27 21:02:29.784439+00:00
+    name: Control residual
+    description: The absolute value of the residual at the control is large, which
+      is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 80
+  fields:
+    assessment: 4
+    created: 2022-10-27 21:02:29.784451+00:00
+    last_updated: 2022-10-27 21:02:29.784454+00:00
     name: Control stdev
     description: The standard deviation estimate at the control is different the the
       reported deviation, which is often used to estimate the BMR. Thus, the BMR estimate
@@ -4607,6 +5410,12 @@
       risk of bias metrics can be entered for a metric of bias for each study. Risk
       of Bias metrics are organized by domain. The following questions are required
       for evaluation for this assessment.</p>
+- model: riskofbias.riskofbiasassessment
+  pk: 5
+  fields:
+    assessment: 4
+    number_of_reviewers: 1
+    help_text: '<p>Help text.</p>'
 - model: eco.state
   pk: 1
   fields:
@@ -5789,6 +6598,13 @@
     depth: 1
     numchild: 0
     name: assessment-2
+- model: invitro.ivendpointcategory
+  pk: 2
+  fields:
+    path: '0002'
+    depth: 1
+    numchild: 0
+    name: assessment-4
 - model: invitro.ivendpoint
   pk: 5
   fields:
@@ -6017,6 +6833,18 @@
     text: <p>Level 1-B-beta text.</p>
     created: 2020-11-25 20:25:37.723914+00:00
     last_updated: 2020-11-25 20:25:37.723938+00:00
+- model: summary.summarytext
+  pk: 10
+  fields:
+    path: '0004'
+    depth: 1
+    numchild: 0
+    assessment: 4
+    title: assessment-4
+    slug: assessment-4-slug
+    text: Root-level text
+    created: 2022-10-27 21:02:29.800145+00:00
+    last_updated: 2022-10-27 21:02:29.800198+00:00
 - model: summary.summarytable
   pk: 1
   fields:
