@@ -285,6 +285,10 @@ div.smart-tag.active {
     padding: 0px 0px 0px 0px;
     overflow: hidden;
 }
+#refFilter.slideAway div p {
+    /* prevent squashing on collapse */
+    max-height: 26px;
+}
 #taggingCol {
     transition: width 250ms ease-out;
     width: 53%;

@@ -362,7 +362,11 @@ class ReferenceQuerySet(models.QuerySet):
             .annotate(tag_ids=ArrayAgg("tags__id"))
             .values_list("reference_id", "tag_ids")
         )
-        return {reference_id: tag_ids for reference_id, tag_ids in user_qs}
+        # ArrayAgg can return [None] if some cases; filter to remove
+        return {
+            reference_id: [tag for tag in tag_ids if tag is not None]
+            for reference_id, tag_ids in user_qs
+        }
 
 
 class ReferenceManager(BaseManager):
