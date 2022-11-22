@@ -15,7 +15,7 @@ class TestLiterature(PlaywrightTestCase):
         assert page.locator("css=#tags .nestedTag").count() > 5
 
         # /lit/assessment/:id/references/
-        page.locator("text=View By Tag").click()
+        page.locator("text=Browse").click()
         expect(page).to_have_url(self.live_server_url + "/lit/assessment/2/references/")
         expect(page.locator("text=Human Study (2)")).to_be_visible()
         expect(page.locator("#references_detail_div")).not_to_have_count(0)
@@ -34,9 +34,9 @@ class TestLiterature(PlaywrightTestCase):
         page.locator("text=Apply filters").click()
         expect(page.locator("text=References (1 found)")).to_be_visible()
 
-        # /lit/assessment/:id/tag/untagged/
-        page.goto(self.live_server_url + "/lit/assessment/1/tag/untagged/")
-        expect(page.locator("text=Tags for current reference")).to_be_visible()
+        # /lit/assessment/:id/tag/
+        page.goto(self.live_server_url + "/lit/assessment/1/tag/")
+        expect(page.locator("text=Currently Applied Tags")).to_be_visible()
 
         # /lit/assessment/:id/tags/update/
         page.goto(self.live_server_url + "/lit/assessment/1/tags/update/")

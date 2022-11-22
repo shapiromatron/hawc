@@ -23,6 +23,7 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from ...constants import ColorblindColors
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -34,6 +35,7 @@ from ..common.models import (
     NonUniqueTagBase,
     get_private_data_storage,
 )
+from ..myuser.models import HAWCUser
 from . import constants, managers, tasks
 
 logger = logging.getLogger(__name__)
@@ -62,12 +64,76 @@ class LiteratureAssessment(models.Model):
         on_delete=models.CASCADE,
         related_name="literature_settings",
     )
+    conflict_resolution = models.BooleanField(
+        default=settings.HAWC_FEATURES.DEFAULT_LITERATURE_CONFLICT_RESOLUTION,
+        verbose_name="Conflict resolution required",
+        help_text="Enable conflict resolution for reference screening. If enabled, at least two reviewers must independently review and tag literature, and tag conflicts must be resolved before tags are applied to a reference. If disabled, tags are immediately applied to references.  We do not recommend changing this setting after screening has begun.",
+    )
     extraction_tag = models.ForeignKey(
         "lit.ReferenceFilterTag",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        help_text="All references or child references of this tag will be marked as ready for extraction.",
+        help_text="References tagged with this tag or its descendants will be available for data extraction and study quality/risk of bias evaluation.",
+    )
+    screening_instructions = models.TextField(
+        blank=True,
+        help_text="""Add instructions for screeners. This information will be shown on the
+        literature screening page and will publicly available, if the assessment is made public.""",
+    )
+    name_list_1 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 1",
+        default="Positive",
+        help_text="Name for this list of keywords",
+    )
+    color_list_1 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 1",
+        default=ColorblindColors.BRIGHT[2],
+        help_text="Keywords in list 1 will be highlighted this color",
+    )
+    keyword_list_1 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    name_list_2 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 2",
+        default="Negative",
+        help_text="Name for this list of keywords",
+    )
+    color_list_2 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 2",
+        default=ColorblindColors.BRIGHT[1],
+        help_text="Keywords in list 2 will be highlighted this color",
+    )
+    keyword_list_2 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    name_list_3 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 3",
+        default="Additional",
+        help_text="Name for this list of keywords",
+    )
+    color_list_3 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 3",
+        default=ColorblindColors.BRIGHT[0],
+        help_text="Keywords in list 3 will be highlighted this color",
+    )
+    keyword_list_3 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
     )
     topic_tsne_data = models.FileField(
         blank=True,
@@ -174,6 +240,25 @@ class LiteratureAssessment(models.Model):
 
     def can_request_refresh(self) -> bool:
         return self.can_topic_model and self.topic_tsne_refresh_requested is None
+
+    def get_keyword_data(self) -> dict:
+        return {
+            "set1": {
+                "name": self.name_list_1,
+                "color": self.color_list_1,
+                "keywords": [word.strip() for word in self.keyword_list_1.split("|") if word],
+            },
+            "set2": {
+                "name": self.name_list_2,
+                "color": self.color_list_2,
+                "keywords": [word.strip() for word in self.keyword_list_2.split("|") if word],
+            },
+            "set3": {
+                "name": self.name_list_3,
+                "color": self.color_list_3,
+                "keywords": [word.strip() for word in self.keyword_list_3.split("|") if word],
+            },
+        }
 
 
 class Search(models.Model):
@@ -801,6 +886,51 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
+    def update_tags(self, user, tag_pks: list[int]):
+        """Update tags for user who requested this tags, and also potentially this reference.
+
+        This method was reviewed to try to reduce the number of db hits required, assuming that
+        the reference model has the required select and prefetch related, the tag comparisons
+        should not require any additional queries (but it may cause up to 5 db writes).
+
+        Args:
+            user: The user requesting the tag changes
+            tag_pks (list[int]): A list of tag IDs
+        """
+        # save user-level tags
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
+        user_tag.is_resolved = False
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        # determine if we should save the reference-level tags
+        update_reference_tags = False
+        if self.assessment.literature_settings.conflict_resolution:
+            if self.user_tags.count() >= 2:
+                tags = set(tag_pks)
+                if all(
+                    tags == {tag.id for tag in user_tag.tags.all()}
+                    for user_tag in self.user_tags.all()
+                ):
+                    update_reference_tags = True
+        else:
+            update_reference_tags = True
+
+        # if we should save reference-level tags, do so
+        if update_reference_tags:
+            self.user_tags.update(is_resolved=True)
+            self.tags.set(tag_pks)
+            self.last_updated = timezone.now()
+            self.save()
+
+    def has_user_tag_conflicts(self):
+        return self.user_tags.filter(is_resolved=False).exists()
+
+    def resolve_user_tag_conflicts(self, user_tag: "UserReferenceTag"):
+        self.tags.set({tag.id for tag in user_tag.tags.all()})
+        self.save()
+        self.user_tags.update(is_resolved=True)
+
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
 
@@ -825,10 +955,10 @@ class Reference(models.Model):
             d[field] = getattr(self, field)
 
         d["url"] = self.get_absolute_url()
-        d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
+        d["editTagUrl"] = reverse("lit:tag", kwargs={"pk": self.assessment_id}) + f"?id={self.pk}"
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
-
+        d["tagHistoryUrl"] = reverse("lit:tag-history", kwargs={"pk": self.pk})
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
@@ -1023,4 +1153,42 @@ class Reference(models.Model):
             )
 
 
+class UserReferenceTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="user_references"
+    )
+    content_object = models.ForeignKey("UserReferenceTag", on_delete=models.CASCADE)
+
+
+class UserReferenceTag(models.Model):
+    user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
+    reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
+    tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    is_resolved = models.BooleanField(
+        default=False, help_text="User specific tag differences are resolved for this reference"
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def assessment_id(self) -> int:
+        return self.reference.assessment_id
+
+    def get_tags_diff(self):
+        all_tags = set(self.reference.tags.all())
+        for user_tag in self.reference.user_tags.all():
+            if user_tag.id == self.id:
+                continue
+            all_tags.update(set(user_tag.tags.all()))
+        self_tags = set(self.tags.all())
+        tags_diff = self_tags.difference(all_tags)
+        tags_same = self_tags.intersection(all_tags)
+        return dict(diff=tags_diff, same=tags_same)
+
+
+reversion.register(LiteratureAssessment)
+reversion.register(Search)
 reversion.register(Reference)
+reversion.register(UserReferenceTag)

@@ -3,11 +3,7 @@
 {% block content %}
 <div id='main'></div>
 <div class="well">
-  <a class='btn btn-primary'
-     href="{% url 'lit:tags_copy' assessment.pk %}">
-      Copy tags from existing assessment</a>
-  <a class='btn btn-primary float-right' href="{{ lit_assesment_update_url }}">
-    Modify extraction tag</a>
+  <a class='btn btn-primary' href="{% url 'lit:tags_copy' assessment.pk %}">Copy tags from existing assessment</a>
 </div>
 {% endblock %}
 

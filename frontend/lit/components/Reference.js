@@ -8,6 +8,33 @@ import {getReferenceTagListUrl} from "shared/utils/urls";
 
 import ReferenceButton from "./ReferenceButton";
 
+const markKeywords = (text, allSettings) => {
+        const all_tokens = allSettings.set1.keywords
+                .concat(allSettings.set2.keywords)
+                .concat(allSettings.set3.keywords),
+            all_re = new RegExp(all_tokens.join("|"), "gim");
+
+        if (all_tokens.length === 0) {
+            return text;
+        }
+        text = text.replace(all_re, match => `<mark>${match}</mark>`);
+        text = markText(text, allSettings.set1);
+        text = markText(text, allSettings.set2);
+        text = markText(text, allSettings.set3);
+        return text;
+    },
+    markText = (text, settings) => {
+        if (settings.keywords.length === 0) {
+            return text;
+        }
+        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
+        return text.replace(
+            re,
+            (match, token) =>
+                `<mark class="hawc-mk" title="${settings.name}" style='border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};'>${token}</mark>`
+        );
+    };
+
 class Reference extends Component {
     renderIdentifiers(data) {
         const nodes = [];
@@ -70,21 +97,37 @@ class Reference extends Component {
     }
 
     render() {
-        const {reference, showActions, showTags, showHr, actionsBtnClassName} = this.props,
+        const {
+                reference,
+                showActions,
+                showTags,
+                showHr,
+                showActionsTagless,
+                actionsBtnClassName,
+                extraActions,
+                keywordDict,
+            } = this.props,
             {data, tags} = reference,
             authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
             year = data.year || "",
             actionItems = [
-                <ActionLink key={0} label="Edit tags" href={data.editTagUrl} />,
+                <ActionLink key={0} label="Edit reference tags" href={data.editTagUrl} />,
                 <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
                 <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
-            ];
+                <ActionLink key={3} label="Tag history" href={data.tagHistoryUrl} />,
+            ].concat(extraActions);
 
         return (
-            <div className="referenceDetail">
+            <div className="referenceDetail pb-2">
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
                     <div className="ref_small">
+                        {showActionsTagless ? (
+                            <ActionsButton
+                                dropdownClasses={actionsBtnClassName}
+                                items={actionItems.slice(1)}
+                            />
+                        ) : null}
                         <span>
                             {authors}&nbsp;{year}
                         </span>
@@ -96,18 +139,38 @@ class Reference extends Component {
                         ) : null}
                     </div>
                 }
-                {data.title ? <p className="ref_title">{data.title}</p> : null}
+                {data.title ? (
+                    keywordDict ? (
+                        <p
+                            className="ref_title py-1"
+                            dangerouslySetInnerHTML={{
+                                __html: markKeywords(data.title, keywordDict),
+                            }}
+                        />
+                    ) : (
+                        <p className="ref_title py-1">{data.title}</p>
+                    )
+                ) : null}
                 {data.journal ? <p className="ref_small">{data.journal}</p> : null}
                 {data.abstract ? (
-                    <div className="abstracts" dangerouslySetInnerHTML={{__html: data.abstract}} />
+                    <div
+                        className="abstracts resize-y p-2"
+                        style={data.abstract.length > 1500 ? {height: "45vh"} : null}
+                        dangerouslySetInnerHTML={
+                            keywordDict
+                                ? {__html: markKeywords(data.abstract, keywordDict)}
+                                : {__html: data.abstract}
+                        }
+                    />
                 ) : null}
                 {showTags && tags.length > 0 ? (
                     <p>
                         {tags.map((tag, i) => (
                             <a
+                                style={{color: "white"}}
                                 key={i}
                                 href={getReferenceTagListUrl(data.assessment_id, tag.data.pk)}
-                                className="referenceTag badge badge-info mr-1">
+                                className="refTag mt-1">
                                 {tag.get_full_name()}
                             </a>
                         ))}
@@ -142,6 +205,9 @@ Reference.propTypes = {
     actionsBtnClassName: PropTypes.string,
     showHr: PropTypes.bool,
     showTags: PropTypes.bool,
+    showActionsTagless: PropTypes.bool,
+    extraActions: PropTypes.arrayOf(PropTypes.element),
+    keywordDict: PropTypes.object,
 };
 
 Reference.defaultProps = {
@@ -149,6 +215,9 @@ Reference.defaultProps = {
     actionsBtnClassName: "btn-sm",
     showHr: false,
     showTags: true,
+    showActionsTagsless: false,
+    extraActions: null,
+    keywordDict: null,
 };
 
 export default Reference;
