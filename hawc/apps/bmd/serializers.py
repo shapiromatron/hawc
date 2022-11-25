@@ -34,10 +34,8 @@ class ModelSerializer(serializers.ModelSerializer):
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    allModelOptions = serializers.JSONField(source="get_model_options", read_only=True)
-    allBmrOptions = serializers.JSONField(source="get_bmr_options", read_only=True)
-    selected_model = SelectedModelSerializer(source="get_selected_model", read_only=True)
-    models = ModelSerializer(many=True)
+    model_options = serializers.JSONField(source="get_model_options", read_only=True)
+    bmr_options = serializers.JSONField(source="get_bmr_options", read_only=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -48,33 +46,39 @@ class SessionSerializer(serializers.ModelSerializer):
         model = models.Session
         fields = (
             "id",
-            "bmrs",
-            "models",
+            "inputs",
+            "outputs",
             "dose_units",
-            "allModelOptions",
-            "allBmrOptions",
-            "selected_model",
+            "model_options",
+            "bmr_options",
+            "selected",
             "is_finished",
         )
 
 
 class SessionUpdateSerializer(serializers.Serializer):
-    bmrs = serializers.JSONField()
+    inputs = serializers.JSONField()
     modelSettings = serializers.JSONField()
     dose_units = serializers.IntegerField()
 
-    bmr_schema = schema = {
-        "type": "array",
-        "items": {
-            "type": "object",
-            "properties": {
-                "type": {"type": "string"},
-                "value": {"type": "number"},
-                "confidence_level": {"type": "number"},
-            },
-            "required": ["type", "value", "confidence_level"],
+    input_schema = {
+        "type": "object",
+        "properties": {
+            "bmrs": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "type": {"type": "string"},
+                        "value": {"type": "number"},
+                        "confidence_level": {"type": "number"},
+                    },
+                    "required": ["type", "value", "confidence_level"],
+                },
+                "minItems": 1,
+            }
         },
-        "minItems": 1,
+        "required": ["bmrs"],
     }
 
     model_schema = {
@@ -91,8 +95,8 @@ class SessionUpdateSerializer(serializers.Serializer):
         "minItems": 1,
     }
 
-    def validate_bmrs(self, value):
-        return validate_jsonschema(value, self.bmr_schema)
+    def validate_inputs(self, value):
+        return validate_jsonschema(value, self.input_schema)
 
     def validate_modelSettings(self, value):
         return validate_jsonschema(value, self.model_schema)
@@ -107,12 +111,4 @@ class SelectedModelUpdateSerializer(serializers.ModelSerializer):
         fields = ("id", "model", "notes")
 
     def save(self):
-        session = self.context["session"]
-        data = self.validated_data
-        obj, _ = models.SelectedModel.objects.update_or_create(
-            endpoint_id=session.endpoint_id,
-            dose_units_id=session.dose_units_id,
-            defaults={"model": data["model"], "notes": data["notes"]},
-        )
-        self.instance = obj
-        return self.instance
+        raise NotImplementedError()

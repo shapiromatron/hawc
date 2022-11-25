@@ -52,7 +52,10 @@ class Session(models.Model):
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
     )
     version = models.CharField(max_length=10, choices=constants.BmdsVersion.choices)
-    bmrs = models.JSONField(default=list)
+    inputs = models.JSONField(default=dict)
+    outputs = models.JSONField(default=dict)
+    selected = models.JSONField(default=dict)
+    active = models.BooleanField(default=False)
     date_executed = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -118,7 +121,7 @@ class Session(models.Model):
             dataset = bmd_interface.build_dataset(
                 self.endpoint, dose_units_id=self.dose_units_id, n_drop_doses=self.n_drop_doses()
             )
-            session = bmd_interface.build_session(dataset, self.version)
+            session = bmd_interface.build_session(dataset, constants.BmdsVersion(self.version))
             self._session = session
 
         if with_models and not session.has_models:
@@ -135,11 +138,6 @@ class Session(models.Model):
 
     def get_bmr_options(self):
         return self.get_session().get_bmr_options()
-
-    def get_selected_model(self):
-        return SelectedModel.objects.filter(
-            endpoint=self.endpoint_id, dose_units=self.dose_units_id
-        ).first()
 
     def get_study(self):
         return self.endpoint.get_study()

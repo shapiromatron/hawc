@@ -54,32 +54,34 @@ class Bmd2Store {
             .then(response => response.json())
             .then(settings => {
                 // add key-prop to each values dict for parameter
-                _.each(settings.allModelOptions, d => _.each(d.defaults, (v, k) => (v.key = k)));
+                _.each(settings.model_options, d => _.each(d.defaults, (v, k) => (v.key = k)));
 
                 // create model-settings
                 // 1) only get the first bmr instance of the model
                 // 2) add defaults based on the model name
-                const modelSettingsMap = _.keyBy(settings.allModelOptions, "name");
-                settings.models.forEach(d => (d.defaults = modelSettingsMap[d.name].defaults));
+                const modelSettingsMap = _.keyBy(settings.model_options, "name");
+                settings.outputs.models.forEach(
+                    d => (d.defaults = modelSettingsMap[d.name].defaults)
+                );
 
-                const modelSettings = _.chain(settings.models)
+                const modelSettings = _.chain(settings.outputs.models)
                     .filter(d => d.bmr_id === 0)
                     .map(d => h.deepCopy(d))
                     .value();
 
                 // set store features
-                this.models = settings.models;
+                this.models = settings.outputs.models;
                 this.modelSettings = modelSettings;
-                this.bmrs = settings.bmrs;
+                this.bmrs = settings.inputs.bmrs;
                 this.doseUnits = settings.dose_units;
-                this.allModelOptions = settings.allModelOptions;
-                this.allBmrOptions = _.keyBy(settings.allBmrOptions, "type");
+                this.allModelOptions = settings.model_options;
+                this.allBmrOptions = _.keyBy(settings.bmr_options, "type");
                 this.logic = settings.logic;
                 this.hasExecuted = settings.is_finished;
 
-                if (settings.selected_model) {
-                    this.selectedModelId = settings.selected_model.model;
-                    this.selectedModelNotes = settings.selected_model.notes;
+                if (settings.selected) {
+                    this.selectedModelId = settings.selected.model_id;
+                    this.selectedModelNotes = settings.selected.notes;
                 } else {
                     this._resetSelectedModel();
                 }
