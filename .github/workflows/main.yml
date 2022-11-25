@@ -1,11 +1,17 @@
 name: ci-checks
 
-on: [pull_request]
+# run on all pull requests and on select branch pushes
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - next
 
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
@@ -16,21 +22,21 @@ jobs:
           POSTGRES_DB: hawc
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
-        - 5432/tcp
+        - 5432:5432
       redis:
         image: redis:6-alpine
         options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
-          - 6379/tcp
+        - 6379:6379
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
       with:
         python-version: '3.9'
         architecture: 'x64'
     - name: try to restore pip cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
@@ -50,32 +56,28 @@ jobs:
         make lint-py
     - name: test
       env:
-        # use localhost for the host here because we are running the job on the VM.
-        # If we were running the job on in a container this would be postgres
         DJANGO_DB_NAME: hawc
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
-        DJANGO_CACHE_LOCATION: redis://localhost:${{job.services.redis.ports[6379]}}/0
-        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        DJANGO_CACHE_LOCATION: redis://localhost:6379/0
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         py.test --vcr-record=none
 
   frontend:
     name: frontend
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: '16.x'
-    - name: set yarn cache directory
+        node-version: '18.x'
+    - name: Get yarn cache directory path
       id: yarn-cache-dir-path
-      run: |
-        echo "::set-output name=dir::$(yarn cache dir)"
+      run: echo "::set-output name=dir::$(yarn cache dir)"
     - name: try to restore yarn cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -95,7 +97,7 @@ jobs:
       run: |
         npm --prefix ./frontend run build
     - name: Upload webpack build
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: webpack-build
         path: |
@@ -105,7 +107,7 @@ jobs:
   integration:
     name: integration
     needs: [backend, frontend]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
@@ -114,9 +116,9 @@ jobs:
           POSTGRES_USER: hawc
           POSTGRES_PASSWORD: password
           POSTGRES_DB: hawc
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
         - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     env:
       DJANGO_DB_HOST: localhost
@@ -129,20 +131,20 @@ jobs:
       PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
       with:
         python-version: '3.9'
         architecture: 'x64'
     - name: try to restore pip cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Download webpack build
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: webpack-build
         path: hawc
