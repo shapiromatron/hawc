@@ -60,9 +60,10 @@ class Bmd2Store {
                 // 1) only get the first bmr instance of the model
                 // 2) add defaults based on the model name
                 const modelSettingsMap = _.keyBy(settings.model_options, "name");
-                settings.outputs.models.forEach(
-                    d => (d.defaults = modelSettingsMap[d.name].defaults)
-                );
+                settings.outputs.models.forEach(d => {
+                    d.defaults = modelSettingsMap[d.name].defaults;
+                    d.dose_units = settings.dose_units;
+                });
 
                 const modelSettings = _.chain(settings.outputs.models)
                     .filter(d => d.bmr_id === 0)
