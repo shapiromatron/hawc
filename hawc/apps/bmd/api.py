@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentViewset
-from . import models, serializers, tasks
+from . import models, serializers
 
 
 class Session(AssessmentViewset):
@@ -13,31 +13,36 @@ class Session(AssessmentViewset):
 
     def get_serializer_class(self):
         if self.action == "execute":
-            raise NotImplementedError()
+            # TODO - BMDS3 - reimplement after integration
+            return serializers.SessionSerializer
         elif self.action == "selected_model":
-            raise NotImplementedError()
+            # TODO - BMDS3 - reimplement after integration
+            return serializers.SessionSerializer
         else:
             return serializers.SessionSerializer
 
     @action(detail=True, methods=["post"])
     def execute(self, request, pk=None):
+        # TODO - BMDS3 - reimplement after integration
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        tasks.execute.delay(instance.id)
-        return Response({"started": True})
+        # serializer = self.get_serializer(instance, data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save()
+        # tasks.execute.delay(instance.id)
+        return Response({"started": True, "id": instance.id})
 
     @action(detail=True, methods=["get"])
     def execute_status(self, request, pk=None):
+        # TODO - BMDS3 - reimplement after integration
         # ping until execution is complete
         session = self.get_object()
         return Response({"finished": session.is_finished})
 
     @action(detail=True, methods=("post",))
     def selected_model(self, request, pk=None):
-        session = self.get_object()
-        serializer = self.get_serializer(data=request.data, context={"session": session})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({"status": True})
+        # TODO - BMDS3 - reimplement after integration
+        instance = self.get_object()
+        # serializer = self.get_serializer(data=request.data, context={"session": instance})
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save()
+        return Response({"status": True, "id": instance.id})
