@@ -205,7 +205,7 @@ class EndpointManager(BaseManager):
 
         DoseGroup = apps.get_model("animal", "DoseGroup")
         Endpoint = apps.get_model("animal", "Endpoint")
-        SelectedModel = apps.get_model("bmd", "SelectedModel")
+        Session = apps.get_model("bmd", "Session")
 
         # get endpoint level data
         values = dict(
@@ -233,17 +233,16 @@ class EndpointManager(BaseManager):
         values = dict(
             endpoint_id="endpoint id",
             dose_units_id="dose units id",
-            model__output__BMD="BMD",
-            model__output__BMDL="BMDL",
+            selected__bmd="bmd",
+            selected__bmdl="bmdl",
         )
-        qs = SelectedModel.objects.filter(endpoint__assessment=assessment).values_list(
+        qs = Session.objects.filter(endpoint__assessment=assessment, active=True).values_list(
             *values.keys()
         )
         df2 = (
             pd.DataFrame(data=qs, columns=values.values())
             .dropna()
             .set_index(["endpoint id", "dose units id"])
-            .rename(columns=dict(BMD="bmd", BMDL="bmdl"))
         )
 
         # get dose regime values

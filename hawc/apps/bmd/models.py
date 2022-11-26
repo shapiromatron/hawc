@@ -132,7 +132,9 @@ class Session(models.Model):
         return session
 
     def n_drop_doses(self) -> int:
-        return max([0] + [model.overrides.get("dose_drop", 0) for model in self.models.all()])
+        return max(
+            [0] + [model["overrides"].get("dose_drop", 0) for model in self.outputs["models"]]
+        )
 
     def get_model_options(self):
         return self.get_session().get_model_options()
@@ -157,55 +159,3 @@ class Session(models.Model):
             session_url=self.get_absolute_url(),
         )
         return selected
-
-
-class Model(models.Model):
-    objects = managers.ModelManager()
-
-    IMAGE_UPLOAD_TO = "bmds_plot"
-
-    session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="models")
-    model_id = models.PositiveSmallIntegerField()
-    bmr_id = models.PositiveSmallIntegerField()
-    name = models.CharField(max_length=25)
-    overrides = models.JSONField(default=dict)
-    date_executed = models.DateTimeField(null=True)
-    execution_error = models.BooleanField(default=False)
-    dfile = models.TextField(blank=True)
-    outfile = models.TextField(blank=True)
-    output = models.JSONField(default=dict)
-    plot = models.ImageField(upload_to=IMAGE_UPLOAD_TO, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        get_latest_by = "created"
-        ordering = ("model_id", "bmr_id")
-
-    def get_absolute_url(self):
-        return reverse("bmd:session_detail", args=[self.session_id])
-
-    def get_assessment(self):
-        return self.session.get_assessment()
-
-
-class SelectedModel(models.Model):
-    objects = managers.SelectedModelManager()
-
-    endpoint = models.ForeignKey(
-        "animal.Endpoint", on_delete=models.CASCADE, related_name="bmd_models"
-    )
-    dose_units = models.ForeignKey(
-        "assessment.DoseUnits", on_delete=models.CASCADE, related_name="selected_models"
-    )
-    model = models.ForeignKey(Model, on_delete=models.CASCADE, null=True)
-    notes = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        get_latest_by = "created"
-        unique_together = (("endpoint", "dose_units"),)
-
-    def get_assessment(self):
-        return self.endpoint.get_assessment()

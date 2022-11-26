@@ -7,11 +7,3 @@ class AssessmentSettingsManager(BaseManager):
 
 class SessionManager(BaseManager):
     assessment_relation = "endpoint__assessment"
-
-
-class ModelManager(BaseManager):
-    assessment_relation = "session__endpoint__assessment"
-
-
-class SelectedModelManager(BaseManager):
-    assessment_relation = "endpoint__assessment"
