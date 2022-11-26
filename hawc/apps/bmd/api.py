@@ -9,12 +9,13 @@ class Session(AssessmentViewset):
     assessment_filter_args = "endpoint__assessment"
     model = models.Session
     lookup_value_regex = r"\d+"
+    serializer_class = serializers.SessionSerializer
 
     def get_serializer_class(self):
         if self.action == "execute":
-            return serializers.SessionUpdateSerializer
+            raise NotImplementedError()
         elif self.action == "selected_model":
-            return serializers.SelectedModelUpdateSerializer
+            raise NotImplementedError()
         else:
             return serializers.SessionSerializer
 
