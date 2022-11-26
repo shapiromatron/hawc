@@ -13,7 +13,7 @@ class Recommendation extends React.Component {
 
     updateState(props) {
         let d = {
-            bmr: props.models[0].bmr_id,
+            bmr_index: props.models[0].bmr_index,
             model: null,
             notes: props.selectedModelNotes,
         };
@@ -22,7 +22,7 @@ class Recommendation extends React.Component {
             let model = _.find(props.models, {id: props.selectedModelId});
             if (model) {
                 d = {
-                    bmr: model.bmr_id,
+                    bmr_index: model.bmr_index,
                     model: model.id,
                     notes: props.selectedModelNotes,
                 };
@@ -36,9 +36,9 @@ class Recommendation extends React.Component {
     }
 
     render() {
-        const {bmr} = this.state,
+        const {bmr_index} = this.state,
             {models, selectedModelId} = this.props,
-            modelSubset = _.filter(models, {bmr_id: bmr});
+            modelSubset = _.filter(models, {bmr_index});
 
         if (models.length === 0) {
             return null;

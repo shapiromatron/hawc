@@ -54,6 +54,7 @@ class Session(models.Model):
     version = models.CharField(max_length=10, choices=constants.BmdsVersion.choices)
     inputs = models.JSONField(default=dict)
     outputs = models.JSONField(default=dict)
+    errors = models.JSONField(default=dict)
     selected = models.JSONField(default=dict)
     active = models.BooleanField(default=False)
     date_executed = models.DateTimeField(null=True)

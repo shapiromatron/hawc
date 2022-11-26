@@ -66,7 +66,7 @@ class Bmd2Store {
                 });
 
                 const modelSettings = _.chain(settings.outputs.models)
-                    .filter(d => d.bmr_id === 0)
+                    .filter(d => d.bmr_index === 0)
                     .map(d => h.deepCopy(d))
                     .value();
 

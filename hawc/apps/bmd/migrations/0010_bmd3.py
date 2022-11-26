@@ -32,6 +32,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="session",
+            name="errors",
+            field=models.JSONField(default=dict),
+        ),
+        migrations.AddField(
+            model_name="session",
             name="selected",
             field=models.JSONField(default=dict),
         ),
