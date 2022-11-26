@@ -145,18 +145,18 @@ class Session(models.Model):
 
     def get_selected_model(self) -> dict:
         # Get selected model for endpoint representation
+        selected = self.selected.copy()
         model = None
         if model_id := self.selected["model_id"]:
             model = [m for m in self.outputs["models"] if m["id"] == model_id][0]
             model["dose_units"] = self.dose_units_id
-        return {
-            "endpoint_id": self.endpoint_id,
-            "dose_units_id": self.dose_units_id,
-            "notes": self.selected["notes"],
-            "model_id": model_id,
-            "model": model,
-            "session_url": self.get_absolute_url(),
-        }
+        selected.update(
+            endpoint_id=self.endpoint_id,
+            dose_units_id=self.dose_units_id,
+            model=model,
+            session_url=self.get_absolute_url(),
+        )
+        return selected
 
 
 class Model(models.Model):

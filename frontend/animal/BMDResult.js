@@ -12,35 +12,34 @@ class BmdResultComponent extends React.Component {
             dose_units_id = endpoint.doseUnits.activeUnit.id,
             units = endpoint.doseUnits.activeUnit.name,
             selected = _.find(endpoint.data.bmds, d => d.dose_units_id === dose_units_id),
-            hasSelectedModel = selected && selected.model !== null,
-            output = hasSelectedModel ? selected.model.output : null,
-            modelName = output ? output.model_name : <i>no model selected</i>;
+            modelName = selected ? selected.name : <i>no model selected</i>;
 
         if (!selected) {
-            return <p>Modeling not conducted, or results not available with these dose-units.</p>;
+            return (
+                <span>Modeling not conducted, or results not available with these dose-units.</span>
+            );
         }
-
         return (
             <div>
                 <p>
                     <b>Selected model:</b>&nbsp;{modelName}
                     &nbsp;(<a href={selected.session_url}>View details</a>)
                 </p>
-                {hasSelectedModel ? (
+                {selected.name ? (
                     <ul>
                         <li>
-                            <b>BMDL:</b>&nbsp;{h.ff(output.BMDL)}&nbsp;{units}
+                            <b>BMDL:</b>&nbsp;{h.ff(selected.bmdl)}&nbsp;{units}
                         </li>
                         <li>
-                            <b>BMD:</b>&nbsp;{h.ff(output.BMD)}&nbsp;{units}
+                            <b>BMD:</b>&nbsp;{h.ff(selected.bmd)}&nbsp;{units}
                         </li>
                         <li>
-                            <b>BMDU:</b>&nbsp;{h.ff(output.BMDU)}&nbsp;{units}
+                            <b>BMDU:</b>&nbsp;{h.ff(selected.bmdu)}&nbsp;{units}
                         </li>
                     </ul>
                 ) : null}
                 {selected.notes ? (
-                    <p>
+                    <p className="mb-0">
                         <b>Modeling notes:</b>&nbsp;{selected.notes}
                     </p>
                 ) : null}

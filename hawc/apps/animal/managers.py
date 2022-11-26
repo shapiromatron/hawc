@@ -130,16 +130,14 @@ class EndpointQuerySet(QuerySet):
             dose_group_id=OuterRef("LOEL"),
             dose_units=dose_units,
         )
-        Model = apps.get_model("bmd", "Model")
-        bmd_qs = Model.objects.filter(
-            selectedmodel__endpoint=OuterRef("pk"), selectedmodel__dose_units=dose_units
-        )
+        Session = apps.get_model("bmd", "Session")
+        bmd_qs = Session.objects.filter(endpoint=OuterRef("pk"), dose_units=dose_units, active=True)
         return self.annotate(
             units_name=Value(dose_units.name, output_field=models.CharField()),
             noel_value=Subquery(noel_value_qs.values("dose")),
             loel_value=Subquery(loel_value_qs.values("dose")),
-            bmd=Subquery(bmd_qs.values("output__BMD")),  # TODO - next...
-            bmdl=Subquery(bmd_qs.values("output__BMDL")),
+            bmd=Subquery(bmd_qs.values("selected__bmd")),
+            bmdl=Subquery(bmd_qs.values("selected__bmdl")),
         )
 
 
