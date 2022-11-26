@@ -325,10 +325,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: bmd
-    model: logicfield
-- model: contenttypes.contenttype
-  fields:
-    app_label: bmd
     model: session
 - model: contenttypes.contenttype
   fields:
@@ -2555,334 +2551,322 @@
     endpoint: 8
     dose_units: 1
     version: BMDS270
-    bmrs:
-    - type: Extra
-      value: 0.1
-      confidence_level: 0.95
+    inputs:
+      bmrs:
+      - type: Extra
+        value: 0.1
+        confidence_level: 0.95
+    outputs:
+      models:
+      - id: 8
+        name: Logistic
+        dfile: 'Logistic
+
+          BMDS_Model_Run
+
+          /temp/bmd/datafile.dax
+
+          /temp/bmd/output.out
+
+          5
+
+          500 1e-08 1e-08 0 0 0 1 0 0
+
+          0.1 0 0.95
+
+          -9999 -9999 -9999
+
+          0
+
+          -9999 -9999 -9999
+
+          Dose Incidence NEGATIVE_RESPONSE
+
+          0.000000 1 14
+
+          1.000000 1 14
+
+          10.000000 3 12
+
+          100.000000 2 13
+
+          1000.000000 7 8'
+        output:
+          df: 3.0
+          AIC: 67.8542
+          BMD: 355.654
+          CSF: -999
+          BMDL: 238.329
+          BMDU: 667.165
+          Chi2: 1.74
+          fit_dose:
+          - 0.0
+          - 1.0
+          - 10.0
+          - 100.0
+          - 1000.0
+          fit_size:
+          - 15.0
+          - 15.0
+          - 15.0
+          - 15.0
+          - 15.0
+          p_value4: 0.6283
+          warnings: []
+          model_date: 3/20/2017
+          model_name: Logistic
+          parameters:
+            slope:
+              stdev: 0.0006745
+              estimate: 0.00195426
+              95_low_limit: 0.00063226
+              95_high_limit: 0.00327625
+            intercept:
+              stdev: 0.415186
+              estimate: -2.08369
+              95_low_limit: -2.89744
+              95_high_limit: -1.26994
+          fit_est_prob:
+          - 0.1107
+          - 0.1109
+          - 0.1126
+          - 0.1314
+          - 0.4677
+          fit_observed:
+          - 1.0
+          - 1.0
+          - 3.0
+          - 2.0
+          - 7.0
+          fit_estimated:
+          - 1.66
+          - 1.663
+          - 1.689
+          - 1.972
+          - 7.015
+          fit_residuals:
+          - -0.543
+          - -0.545
+          - 1.07
+          - 0.022
+          - -0.008
+          model_version: 2.15
+          execution_duration: 4.622659
+          execution_end_time: '2020-11-27T23:35:14.115467'
+          execution_start_time: '2020-11-27T23:35:09.492808'
+          residual_of_interest: 0.022
+        outfile: "\n\n ====================================================================
+          \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input
+          Data File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting
+          File:  C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov
+          28 00:35:10 2020\n ====================================================================
+          \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
+          \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\n\n
+          \  Dependent variable = Incidence\n   Independent variable = Dose\n   Slope
+          parameter is not restricted\n\n   Total number of observations = 5\n   Total
+          number of records with missing values = 0\n   Maximum number of iterations
+          = 500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter
+          Convergence has been set to: 1e-008\n\n\n\n                  Default Initial
+          Parameter Values  \n                     background =            0   Specified\n
+          \                     intercept =     -1.92753\n                          slope
+          =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter
+          Estimates\n\n           ( *** The model parameter(s)  -background   \n                 have
+          been estimated at a boundary point, or have been specified by the user,\n
+          \                and do not appear in the correlation matrix )\n\n              intercept
+          \       slope\n\n intercept            1        -0.64\n\n     slope        -0.64
+          \           1\n\n\n\n                                 Parameter Estimates\n\n
+          \                                                        95.0% Wald Confidence
+          Interval\n       Variable         Estimate        Std. Err.     Lower Conf.
+          Limit   Upper Conf. Limit\n      intercept         -2.08369         0.415186
+          \           -2.89744            -1.26994\n          slope       0.00195426
+          \       0.0006745          0.00063226          0.00327625\n\n\n\n                        Analysis
+          of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance
+          \ Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted
+          model        -31.9271         2       1.63842      3          0.6507\n  Reduced
+          model        -36.1015         1       9.98719      4         0.04064\n\n
+          \          AIC:         67.8542\n\n\n                                  Goodness
+          \ of  Fit \n                                                                 Scaled\n
+          \    Dose     Est._Prob.    Expected    Observed     Size       Residual\n
+          \ ------------------------------------------------------------------------\n
+          \   0.0000     0.1107         1.660     1.000      15.000       -0.543\n
+          \   1.0000     0.1109         1.663     1.000      15.000       -0.545\n
+          \  10.0000     0.1126         1.689     3.000      15.000        1.070\n
+          \ 100.0000     0.1314         1.972     2.000      15.000        0.022\n
+          1000.0000     0.4677         7.015     7.000      15.000       -0.008\n\n
+          Chi^2 = 1.74      d.f. = 3        P-value = 0.6283\n\n\n   Benchmark Dose
+          Computation\n\nSpecified effect =            0.1\n\nRisk Type        =      Extra
+          risk \n\nConfidence level =           0.95\n\n             BMD =        355.654\n\n
+          \           BMDL =        238.329\n\n            BMDU =        667.165\n\n"
+        bmr_index: 0
+        overrides:
+          bmr: 0.1
+          bmr_type: 0
+          confidence_level: 0.95
+        model_index: 0
+        execution_error: false
+      - id: 9
+        name: Probit
+        dfile: 'Probit
+
+          BMDS_Model_Run
+
+          /temp/bmd/datafile.dax
+
+          /temp/bmd/output.out
+
+          5
+
+          501 1e-08 1e-08 0 0 1 1 0 0
+
+          0.1 0 0.95
+
+          -9999 -9999 -9999
+
+          1
+
+          -9999 1.1 0.1
+
+          Dose Incidence NEGATIVE_RESPONSE
+
+          0.000000 1 14
+
+          1.000000 1 14
+
+          10.000000 3 12
+
+          100.000000 2 13
+
+          1000.000000 7 8'
+        output:
+          df: 3.0
+          AIC: 67.8477
+          BMD: 332.9
+          CSF: -999
+          BMDL: 222.21
+          BMDU: 654.367
+          Chi2: 1.74
+          fit_dose:
+          - 0.0
+          - 1.0
+          - 10.0
+          - 100.0
+          - 1000.0
+          fit_size:
+          - 15.0
+          - 15.0
+          - 15.0
+          - 15.0
+          - 15.0
+          p_value4: 0.6282
+          warnings: []
+          model_date: 5/21/2017
+          model_name: Probit
+          parameters:
+            slope:
+              stdev: 0.000397623
+              estimate: 0.00114535
+              95_low_limit: 0.000366028
+              95_high_limit: 0.00192468
+            intercept:
+              stdev: 0.218122
+              estimate: -1.22642
+              95_low_limit: -1.65394
+              95_high_limit: -0.798914
+          fit_est_prob:
+          - 0.11
+          - 0.1102
+          - 0.1122
+          - 0.1331
+          - 0.4677
+          fit_observed:
+          - 1.0
+          - 1.0
+          - 3.0
+          - 2.0
+          - 7.0
+          fit_estimated:
+          - 1.65
+          - 1.654
+          - 1.683
+          - 1.996
+          - 7.015
+          fit_residuals:
+          - -0.537
+          - -0.539
+          - 1.078
+          - 0.003
+          - -0.008
+          model_version: 3.4
+          execution_duration: 4.623014
+          execution_end_time: '2020-11-27T23:35:14.115822'
+          execution_start_time: '2020-11-27T23:35:09.492808'
+          residual_of_interest: 0.003
+        outfile: "\n\n ====================================================================
+          \n   \t  Probit Model. (Version: 3.4;  Date: 5/21/2017) \n  \t  Input Data
+          File: C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.(d)  \n  \t  Gnuplot Plotting
+          File:  C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.plt\n \t\t\t\t\t\t\tSat Nov
+          28 00:35:10 2020\n ====================================================================
+          \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
+          \n   The form of the probability function is: \n\n   P[response] = CumNorm(Intercept+Slope*Dose),\n\n
+          \  where CumNorm(.) is the cumulative normal distribution function\n\n\n
+          \  Dependent variable = Incidence\n   Independent variable = Dose\n   Slope
+          parameter is restricted as slope >= 1\n\n   Total number of observations
+          = 5\n   Total number of records with missing values = 0\n   Maximum number
+          of iterations = 501\n   Relative Function Convergence has been set to: 1e-008\n
+          \  Parameter Convergence has been set to: 1e-008\n\n\n\n                 User
+          Inputs Initial Parameter Values  \n                     background =        -9999
+          \  Specified\n                      intercept =          0.1\n                          slope
+          =          1.1\n\n\n           Asymptotic Correlation Matrix of Parameter
+          Estimates\n\n           ( *** The model parameter(s)  -background   \n                 have
+          been estimated at a boundary point, or have been specified by the user,\n
+          \                and do not appear in the correlation matrix )\n\n              intercept
+          \       slope\n\n intercept            1        -0.58\n\n     slope        -0.58
+          \           1\n\n\n\n                                 Parameter Estimates\n\n
+          \                                                        95.0% Wald Confidence
+          Interval\n       Variable         Estimate        Std. Err.     Lower Conf.
+          Limit   Upper Conf. Limit\n      intercept         -1.22642         0.218122
+          \           -1.65394           -0.798914\n          slope       0.00114535
+          \     0.000397623         0.000366028          0.00192468\n\n\n\n                        Analysis
+          of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance
+          \ Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted
+          model        -31.9239         2       1.63192      3          0.6522\n  Reduced
+          model        -36.1015         1       9.98719      4         0.04064\n\n
+          \          AIC:         67.8477\n\n\n                                  Goodness
+          \ of  Fit \n                                                                 Scaled\n
+          \    Dose     Est._Prob.    Expected    Observed     Size       Residual\n
+          \ ------------------------------------------------------------------------\n
+          \   0.0000     0.1100         1.650     1.000      15.000       -0.537\n
+          \   1.0000     0.1102         1.654     1.000      15.000       -0.539\n
+          \  10.0000     0.1122         1.683     3.000      15.000        1.078\n
+          \ 100.0000     0.1331         1.996     2.000      15.000        0.003\n
+          1000.0000     0.4677         7.015     7.000      15.000       -0.008\n\n
+          Chi^2 = 1.74      d.f. = 3        P-value = 0.6282\n\n\n   Benchmark Dose
+          Computation\n\nSpecified effect =            0.1\n\nRisk Type        =      Extra
+          risk \n\nConfidence level =           0.95\n\n             BMD =          332.9\n\n
+          \           BMDL =         222.21\n\n            BMDU =        654.367\n\n"
+        bmr_index: 0
+        overrides:
+          bmr: 0.1
+          slope: i|1.1
+          bmr_type: 0
+          intercept: i|0.1
+          max_iterations: 501
+          restrict_slope: 1
+          confidence_level: 0.95
+        model_index: 1
+        execution_error: false
+    errors: {}
+    selected:
+      bmd: 355.654
+      bmdl: 238.329
+      bmdu: 667.165
+      name: Logistic
+      notes: Selected model notes.
+      model_id: 8
+    active: true
     date_executed: 2020-11-28 05:35:14.116103+00:00
     created: 2020-11-28 05:31:14.833635+00:00
-    last_updated: 2020-11-28 05:35:14.157469+00:00
-- model: bmd.model
-  pk: 8
-  fields:
-    session: 2
-    model_id: 0
-    bmr_id: 0
-    name: Logistic
-    overrides:
-      bmr: 0.1
-      bmr_type: 0
-      confidence_level: 0.95
-    date_executed: 2020-11-28 05:35:14.130064+00:00
-    execution_error: false
-    dfile: 'Logistic
-
-      BMDS_Model_Run
-
-      /temp/bmd/datafile.dax
-
-      /temp/bmd/output.out
-
-      5
-
-      500 1e-08 1e-08 0 0 0 1 0 0
-
-      0.1 0 0.95
-
-      -9999 -9999 -9999
-
-      0
-
-      -9999 -9999 -9999
-
-      Dose Incidence NEGATIVE_RESPONSE
-
-      0.000000 1 14
-
-      1.000000 1 14
-
-      10.000000 3 12
-
-      100.000000 2 13
-
-      1000.000000 7 8'
-    outfile: "\n\n ====================================================================\
-      \ \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input Data\
-      \ File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting\
-      \ File:  C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov\
-      \ 28 00:35:10 2020\n ====================================================================\
-      \ \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\
-      \ \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\
-      \n\n   Dependent variable = Incidence\n   Independent variable = Dose\n   Slope\
-      \ parameter is not restricted\n\n   Total number of observations = 5\n   Total\
-      \ number of records with missing values = 0\n   Maximum number of iterations\
-      \ = 500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter\
-      \ Convergence has been set to: 1e-008\n\n\n\n                  Default Initial\
-      \ Parameter Values  \n                     background =            0   Specified\n\
-      \                      intercept =     -1.92753\n                          slope\
-      \ =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter\
-      \ Estimates\n\n           ( *** The model parameter(s)  -background   \n   \
-      \              have been estimated at a boundary point, or have been specified\
-      \ by the user,\n                 and do not appear in the correlation matrix\
-      \ )\n\n              intercept        slope\n\n intercept            1     \
-      \   -0.64\n\n     slope        -0.64            1\n\n\n\n                  \
-      \               Parameter Estimates\n\n                                    \
-      \                     95.0% Wald Confidence Interval\n       Variable      \
-      \   Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit\n  \
-      \    intercept         -2.08369         0.415186            -2.89744       \
-      \     -1.26994\n          slope       0.00195426        0.0006745          0.00063226\
-      \          0.00327625\n\n\n\n                        Analysis of Deviance Table\n\
-      \n       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value\n\
-      \     Full model        -31.1079         5\n   Fitted model        -31.9271\
-      \         2       1.63842      3          0.6507\n  Reduced model        -36.1015\
-      \         1       9.98719      4         0.04064\n\n           AIC:        \
-      \ 67.8542\n\n\n                                  Goodness  of  Fit \n      \
-      \                                                           Scaled\n     Dose\
-      \     Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n\
-      \    0.0000     0.1107         1.660     1.000      15.000       -0.543\n  \
-      \  1.0000     0.1109         1.663     1.000      15.000       -0.545\n   10.0000\
-      \     0.1126         1.689     3.000      15.000        1.070\n  100.0000  \
-      \   0.1314         1.972     2.000      15.000        0.022\n 1000.0000    \
-      \ 0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74 \
-      \     d.f. = 3        P-value = 0.6283\n\n\n   Benchmark Dose Computation\n\n\
-      Specified effect =            0.1\n\nRisk Type        =      Extra risk \n\n\
-      Confidence level =           0.95\n\n             BMD =        355.654\n\n \
-      \           BMDL =        238.329\n\n            BMDU =        667.165\n\n"
-    output:
-      df: 3.0
-      AIC: 67.8542
-      BMD: 355.654
-      CSF: -999
-      BMDL: 238.329
-      BMDU: 667.165
-      Chi2: 1.74
-      fit_dose:
-      - 0.0
-      - 1.0
-      - 10.0
-      - 100.0
-      - 1000.0
-      fit_size:
-      - 15.0
-      - 15.0
-      - 15.0
-      - 15.0
-      - 15.0
-      p_value4: 0.6283
-      warnings: []
-      model_date: 3/20/2017
-      model_name: Logistic
-      parameters:
-        slope:
-          stdev: 0.0006745
-          estimate: 0.00195426
-          95_low_limit: 0.00063226
-          95_high_limit: 0.00327625
-        intercept:
-          stdev: 0.415186
-          estimate: -2.08369
-          95_low_limit: -2.89744
-          95_high_limit: -1.26994
-      fit_est_prob:
-      - 0.1107
-      - 0.1109
-      - 0.1126
-      - 0.1314
-      - 0.4677
-      fit_observed:
-      - 1.0
-      - 1.0
-      - 3.0
-      - 2.0
-      - 7.0
-      fit_estimated:
-      - 1.66
-      - 1.663
-      - 1.689
-      - 1.972
-      - 7.015
-      fit_residuals:
-      - -0.543
-      - -0.545
-      - 1.07
-      - 0.022
-      - -0.008
-      model_version: 2.15
-      execution_duration: 4.622659
-      execution_end_time: '2020-11-27T23:35:14.115467'
-      execution_start_time: '2020-11-27T23:35:09.492808'
-      residual_of_interest: 0.022
-    plot: ''
-    created: 2020-11-28 05:35:09.127297+00:00
-    last_updated: 2020-11-28 05:35:14.130216+00:00
-- model: bmd.model
-  pk: 9
-  fields:
-    session: 2
-    model_id: 1
-    bmr_id: 0
-    name: Probit
-    overrides:
-      bmr: 0.1
-      slope: i|1.1
-      bmr_type: 0
-      intercept: i|0.1
-      max_iterations: 501
-      restrict_slope: 1
-      confidence_level: 0.95
-    date_executed: 2020-11-28 05:35:14.143536+00:00
-    execution_error: false
-    dfile: 'Probit
-
-      BMDS_Model_Run
-
-      /temp/bmd/datafile.dax
-
-      /temp/bmd/output.out
-
-      5
-
-      501 1e-08 1e-08 0 0 1 1 0 0
-
-      0.1 0 0.95
-
-      -9999 -9999 -9999
-
-      1
-
-      -9999 1.1 0.1
-
-      Dose Incidence NEGATIVE_RESPONSE
-
-      0.000000 1 14
-
-      1.000000 1 14
-
-      10.000000 3 12
-
-      100.000000 2 13
-
-      1000.000000 7 8'
-    outfile: "\n\n ====================================================================\
-      \ \n   \t  Probit Model. (Version: 3.4;  Date: 5/21/2017) \n  \t  Input Data\
-      \ File: C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.(d)  \n  \t  Gnuplot Plotting\
-      \ File:  C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.plt\n \t\t\t\t\t\t\tSat Nov\
-      \ 28 00:35:10 2020\n ====================================================================\
-      \ \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\
-      \ \n   The form of the probability function is: \n\n   P[response] = CumNorm(Intercept+Slope*Dose),\n\
-      \n   where CumNorm(.) is the cumulative normal distribution function\n\n\n \
-      \  Dependent variable = Incidence\n   Independent variable = Dose\n   Slope\
-      \ parameter is restricted as slope >= 1\n\n   Total number of observations =\
-      \ 5\n   Total number of records with missing values = 0\n   Maximum number of\
-      \ iterations = 501\n   Relative Function Convergence has been set to: 1e-008\n\
-      \   Parameter Convergence has been set to: 1e-008\n\n\n\n                 User\
-      \ Inputs Initial Parameter Values  \n                     background =     \
-      \   -9999   Specified\n                      intercept =          0.1\n    \
-      \                      slope =          1.1\n\n\n           Asymptotic Correlation\
-      \ Matrix of Parameter Estimates\n\n           ( *** The model parameter(s) \
-      \ -background   \n                 have been estimated at a boundary point,\
-      \ or have been specified by the user,\n                 and do not appear in\
-      \ the correlation matrix )\n\n              intercept        slope\n\n intercept\
-      \            1        -0.58\n\n     slope        -0.58            1\n\n\n\n\
-      \                                 Parameter Estimates\n\n                  \
-      \                                       95.0% Wald Confidence Interval\n   \
-      \    Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper\
-      \ Conf. Limit\n      intercept         -1.22642         0.218122           \
-      \ -1.65394           -0.798914\n          slope       0.00114535      0.000397623\
-      \         0.000366028          0.00192468\n\n\n\n                        Analysis\
-      \ of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance\
-      \  Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted\
-      \ model        -31.9239         2       1.63192      3          0.6522\n  Reduced\
-      \ model        -36.1015         1       9.98719      4         0.04064\n\n \
-      \          AIC:         67.8477\n\n\n                                  Goodness\
-      \  of  Fit \n                                                              \
-      \   Scaled\n     Dose     Est._Prob.    Expected    Observed     Size      \
-      \ Residual\n  ------------------------------------------------------------------------\n\
-      \    0.0000     0.1100         1.650     1.000      15.000       -0.537\n  \
-      \  1.0000     0.1102         1.654     1.000      15.000       -0.539\n   10.0000\
-      \     0.1122         1.683     3.000      15.000        1.078\n  100.0000  \
-      \   0.1331         1.996     2.000      15.000        0.003\n 1000.0000    \
-      \ 0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74 \
-      \     d.f. = 3        P-value = 0.6282\n\n\n   Benchmark Dose Computation\n\n\
-      Specified effect =            0.1\n\nRisk Type        =      Extra risk \n\n\
-      Confidence level =           0.95\n\n             BMD =          332.9\n\n \
-      \           BMDL =         222.21\n\n            BMDU =        654.367\n\n"
-    output:
-      df: 3.0
-      AIC: 67.8477
-      BMD: 332.9
-      CSF: -999
-      BMDL: 222.21
-      BMDU: 654.367
-      Chi2: 1.74
-      fit_dose:
-      - 0.0
-      - 1.0
-      - 10.0
-      - 100.0
-      - 1000.0
-      fit_size:
-      - 15.0
-      - 15.0
-      - 15.0
-      - 15.0
-      - 15.0
-      p_value4: 0.6282
-      warnings: []
-      model_date: 5/21/2017
-      model_name: Probit
-      parameters:
-        slope:
-          stdev: 0.000397623
-          estimate: 0.00114535
-          95_low_limit: 0.000366028
-          95_high_limit: 0.00192468
-        intercept:
-          stdev: 0.218122
-          estimate: -1.22642
-          95_low_limit: -1.65394
-          95_high_limit: -0.798914
-      fit_est_prob:
-      - 0.11
-      - 0.1102
-      - 0.1122
-      - 0.1331
-      - 0.4677
-      fit_observed:
-      - 1.0
-      - 1.0
-      - 3.0
-      - 2.0
-      - 7.0
-      fit_estimated:
-      - 1.65
-      - 1.654
-      - 1.683
-      - 1.996
-      - 7.015
-      fit_residuals:
-      - -0.537
-      - -0.539
-      - 1.078
-      - 0.003
-      - -0.008
-      model_version: 3.4
-      execution_duration: 4.623014
-      execution_end_time: '2020-11-27T23:35:14.115822'
-      execution_start_time: '2020-11-27T23:35:09.492808'
-      residual_of_interest: 0.003
-    plot: ''
-    created: 2020-11-28 05:35:09.127378+00:00
-    last_updated: 2020-11-28 05:35:14.143702+00:00
-- model: bmd.selectedmodel
-  pk: 3
-  fields:
-    endpoint: 8
-    dose_units: 1
-    model: 8
-    notes: Selected model notes.
-    created: 2020-11-28 05:35:28.734847+00:00
-    last_updated: 2020-11-28 05:35:28.734869+00:00
+    last_updated: 2022-11-26 04:22:44.169520+00:00
 - model: riskofbias.riskofbiasdomain
   pk: 1
   fields:
