@@ -30,7 +30,11 @@ class Store {
     @action.bound changeSelectedReference(reference) {
         this.selectedReference = reference;
         this.selectedReferenceTags = reference.tags.slice(0); // shallow copy
-        this.selectedReferenceUserTags = reference.userTags.slice(0);
+        if (!reference.userTags) {
+            this.selectedReferenceUserTags = reference.tags.slice(0);
+        } else {
+            this.selectedReferenceUserTags = reference.userTags.slice(0);
+        }
     }
     @action.bound addTag(tag) {
         if (

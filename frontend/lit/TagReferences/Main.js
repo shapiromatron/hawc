@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
@@ -142,10 +143,24 @@ class TagReferencesMain extends Component {
                                                 ? "Resolved Tag: ".concat(tag.get_full_name())
                                                 : tag.get_full_name()
                                         }
-                                        className="refTag refTagEditing"
+                                        className={
+                                            store.config.conflict_resolution
+                                                ? _.find(
+                                                      selectedReferenceUserTags,
+                                                      e => e.data.pk == tag.data.pk
+                                                  )
+                                                    ? "refTag refTagEditing"
+                                                    : "refTag refUserTagDiff refTagEditing"
+                                                : "refTag refTagEditing"
+                                        }
                                         onClick={
                                             store.config.conflict_resolution
-                                                ? null
+                                                ? _.find(
+                                                      selectedReferenceUserTags,
+                                                      e => e.data.pk == tag.data.pk
+                                                  )
+                                                    ? () => store.removeTag(tag)
+                                                    : () => store.addTag(tag)
                                                 : () => store.removeTag(tag)
                                         }>
                                         {this.state.showFullTag
@@ -153,21 +168,29 @@ class TagReferencesMain extends Component {
                                             : tag.data.name}
                                     </span>
                                 ))}
-                                {selectedReferenceUserTags.map((tag, i) => (
-                                    <span
-                                        key={i}
-                                        title={tag.get_full_name()}
-                                        className="refTag refUserTag refTagEditing"
-                                        onClick={
-                                            store.config.conflict_resolution
-                                                ? () => store.removeTag(tag)
-                                                : null
-                                        }>
-                                        {this.state.showFullTag
-                                            ? tag.get_full_name()
-                                            : tag.data.name}
-                                    </span>
-                                ))}
+                                {selectedReferenceUserTags
+                                    .filter(
+                                        tag =>
+                                            !_.find(
+                                                selectedReferenceTags,
+                                                e => e.data.pk == tag.data.pk
+                                            )
+                                    )
+                                    .map((tag, i) => (
+                                        <span
+                                            key={i}
+                                            title={tag.get_full_name()}
+                                            className="refTag refUserTag refTagEditing"
+                                            onClick={
+                                                store.config.conflict_resolution
+                                                    ? () => store.removeTag(tag)
+                                                    : null
+                                            }>
+                                            {this.state.showFullTag
+                                                ? tag.get_full_name()
+                                                : tag.data.name}
+                                        </span>
+                                    ))}
                             </div>
                             {store.errorOnSave ? (
                                 <div className="alert alert-danger">

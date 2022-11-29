@@ -477,9 +477,10 @@ div.smart-tag.active {
 }
 
 .refUserTagDiff {
-    color: #ffffff;
-    background-color: maroon;
-    border: 0.15rem dotted #ffffff;
+    color: maroon;
+    background-color: #ffffff;
+    border: 0.15rem dotted maroon;
+    text-decoration: line-through;
 }
 
 .refTagSame {
