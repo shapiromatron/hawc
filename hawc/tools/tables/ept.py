@@ -326,8 +326,8 @@ class EvidenceRow(BaseCellGroup):
         self.cells = [
             self.evidence,
             self.summary,
-            self.certain_factors,
             self.uncertain_factors,
+            self.certain_factors,
             self.judgement,
         ]
 
@@ -438,10 +438,10 @@ class EvidenceProfileTable(BaseTable):
                 True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 2, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
+                True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
+                True, 1, 2, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
             ),
             GenericCell.parse_args(
                 True, 1, 4, 1, 1, tag_wrapper("Evidence Synthesis Judgment(s)", "p", "strong")
