@@ -274,6 +274,7 @@ class VisualizationList(BaseList):
     def visual_fs(self):
         if not hasattr(self, "_visual_fs"):
             data = self.request.GET.copy()
+            # only include type if it is a visual type
             if "type" in data:
                 match = re.search(r"v-(\d+)$", data["type"])
                 if match:
@@ -287,6 +288,7 @@ class VisualizationList(BaseList):
     def data_pivot_fs(self):
         if not hasattr(self, "_data_pivot_fs"):
             data = self.request.GET.copy()
+            # only include type if it is a data pivot type
             if "type" in data:
                 match = re.search(r"dp-(\d+)$", data["type"])
                 if match:
@@ -306,6 +308,7 @@ class VisualizationList(BaseList):
             form = CombinedForm(
                 data=self.request.GET, request=self.request, assessment=self.assessment
             ).form
+            # combine type choices for both visual and data pivot
             form.fields["type"].choices = [
                 (f"v-{choice}", _)
                 for choice, _ in self.visual_fs.form.fields["type"].choices
@@ -320,6 +323,7 @@ class VisualizationList(BaseList):
 
     def get_item_list(self):
         self.form.is_valid()
+        # prefilter by type, ie if it is a visual type or data pivot type
         choice = self.form.cleaned_data.get("type", "")
         if choice != "":
             if choice.startswith("v-"):
