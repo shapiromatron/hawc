@@ -1,7 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
 <h2 class="d-inline-block">Available tables</h2>
 {% if obj_perms.edit %}
@@ -18,11 +16,7 @@
 </div>
 {% endif %}
 
-<div class="card">
-  <div class="card-body pb-1">
-    {% crispy form %}
-  </div>
-</div>
+{% include 'common/filter_list.html' with plural_object_name='tables' %}
 
 {% if object_list.exists %}
   <table class="table table-sm table-striped">
@@ -58,7 +52,7 @@
     </tbody>
   </table>
   {% with total=object_list.count %}
-    <p><b>{{total}} table{{ total|pluralize }} available.</b></p>
+    <p><b>{{total}}</b> table{{total|pluralize}} found.</p>
   {% endwith %}
 {% else %}
   {% if obj_perms.edit %}

@@ -8,7 +8,7 @@ from . import constants, models
 class VisualFilterSet(BaseFilterSet):
     text = df.CharFilter(method="filter_text", label="Text", help_text="Title or description text")
     type = df.ChoiceFilter(
-        method="filter_type",
+        field_name="visual_type",
         label="Visualization type",
         help_text="Type of visualization to display",
         empty_label="<All>",
@@ -35,9 +35,6 @@ class VisualFilterSet(BaseFilterSet):
         query = Q(title__icontains=value) | Q(caption__icontains=value)
         return queryset.filter(query)
 
-    def filter_type(self, queryset, name, value):
-        return queryset.filter(visual_type=value)
-
     def create_form(self):
         form = super().create_form()
         if not self.perms["edit"]:
@@ -52,7 +49,7 @@ class VisualFilterSet(BaseFilterSet):
 
 class DataPivotFilterSet(VisualFilterSet):
     type = df.ChoiceFilter(
-        method="filter_type",
+        field_name="datapivotquery__evidence_type",
         label="Visualization type",
         help_text="Type of visualization to display",
         empty_label="<All>",
@@ -60,9 +57,6 @@ class DataPivotFilterSet(VisualFilterSet):
 
     class Meta(VisualFilterSet.Meta):
         model = models.DataPivot
-
-    def filter_type(self, queryset, name, value):
-        return queryset.filter(datapivotquery__evidence_type=value)
 
     def create_form(self):
         form = super(VisualFilterSet, self).create_form()
@@ -79,9 +73,9 @@ class DataPivotFilterSet(VisualFilterSet):
 
 
 class SummaryTableFilterSet(BaseFilterSet):
-    title = df.CharFilter(field_name="title", label="Title")
+    title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title")
     type = df.ChoiceFilter(
-        method="filter_type",
+        field_name="table_type",
         label="Table type",
         help_text="Type of summary table to display",
         empty_label="<All>",
@@ -89,7 +83,7 @@ class SummaryTableFilterSet(BaseFilterSet):
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
-        help_text="Published status for HAWC visualization",
+        help_text="Published status for HAWC summary tables",
         empty_label="<All>",
     )
 
@@ -103,9 +97,6 @@ class SummaryTableFilterSet(BaseFilterSet):
         if not self.perms["edit"]:
             query &= Q(published=True)
         return queryset.filter(query)
-
-    def filter_type(self, queryset, name, value):
-        return queryset.filter(table_type=value)
 
     def create_form(self):
         form = super().create_form()
