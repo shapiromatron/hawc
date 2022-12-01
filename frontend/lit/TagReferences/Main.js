@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
@@ -145,22 +144,14 @@ class TagReferencesMain extends Component {
                                         }
                                         className={
                                             store.config.conflict_resolution
-                                                ? _.find(
-                                                      selectedReferenceUserTags,
-                                                      e => e.data.pk == tag.data.pk
-                                                  )
+                                                ? store.hasTag(selectedReferenceUserTags, tag)
                                                     ? "refTag refTagEditing"
                                                     : "refTag refUserTagDiff refTagEditing"
                                                 : "refTag refTagEditing"
                                         }
                                         onClick={
                                             store.config.conflict_resolution
-                                                ? _.find(
-                                                      selectedReferenceUserTags,
-                                                      e => e.data.pk == tag.data.pk
-                                                  )
-                                                    ? () => store.removeTag(tag)
-                                                    : () => store.addTag(tag)
+                                                ? () => store.toggleTag(tag)
                                                 : () => store.removeTag(tag)
                                         }>
                                         {this.state.showFullTag
@@ -169,13 +160,7 @@ class TagReferencesMain extends Component {
                                     </span>
                                 ))}
                                 {selectedReferenceUserTags
-                                    .filter(
-                                        tag =>
-                                            !_.find(
-                                                selectedReferenceTags,
-                                                e => e.data.pk == tag.data.pk
-                                            )
-                                    )
+                                    .filter(tag => !store.hasTag(selectedReferenceTags, tag))
                                     .map((tag, i) => (
                                         <span
                                             key={i}

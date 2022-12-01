@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, observable, toJS} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 
 import {sortReferences} from "../constants";
 import Reference from "../Reference";
@@ -27,44 +27,39 @@ class Store {
         }
     }
 
+    @computed get workingTags() {
+        return this.config.conflict_resolution
+            ? this.selectedReferenceUserTags
+            : this.selectedReferenceTags;
+    }
     @action.bound changeSelectedReference(reference) {
         this.selectedReference = reference;
         this.selectedReferenceTags = reference.tags.slice(0); // shallow copy
+        // user tags should default to the current consensus tags
         if (!reference.userTags) {
             this.selectedReferenceUserTags = reference.tags.slice(0);
         } else {
             this.selectedReferenceUserTags = reference.userTags.slice(0);
         }
     }
+    hasTag(tags, tag) {
+        return !!_.find(tags, e => e.data.pk == tag.data.pk);
+    }
     @action.bound addTag(tag) {
-        if (
-            this.selectedReference &&
-            !_.find(
-                this.config.conflict_resolution
-                    ? this.selectedReferenceUserTags
-                    : this.selectedReferenceTags,
-                el => el.data.pk === tag.data.pk
-            )
-        ) {
-            this.config.conflict_resolution
-                ? this.selectedReferenceUserTags.push(tag)
-                : this.selectedReferenceTags.push(tag);
+        if (this.selectedReference && !_.find(this.workingTags, el => el.data.pk === tag.data.pk)) {
+            this.workingTags.push(tag);
         }
     }
     @action.bound removeTag(tag) {
-        _.remove(
-            this.config.conflict_resolution
-                ? this.selectedReferenceUserTags
-                : this.selectedReferenceTags,
-            el => el.data.pk === tag.data.pk
-        );
+        _.remove(this.workingTags, el => el.data.pk === tag.data.pk);
+    }
+    @action.bound toggleTag(tag) {
+        return this.hasTag(this.workingTags, tag) ? this.removeTag(tag) : this.addTag(tag);
     }
     @action.bound saveAndNext() {
         const payload = {
                 pk: this.selectedReference.data.pk,
-                tags: this.config.conflict_resolution
-                    ? this.selectedReferenceUserTags.map(tag => tag.data.pk)
-                    : this.selectedReferenceTags.map(tag => tag.data.pk),
+                tags: this.workingTags.map(tag => tag.data.pk),
             },
             success = () => {
                 const $el = $(this.saveIndicatorElement),
@@ -104,9 +99,7 @@ class Store {
         ).fail(failure);
     }
     @action.bound removeAllTags() {
-        this.config.conflict_resolution
-            ? (this.selectedReferenceUserTags = [])
-            : (this.selectedReferenceTags = []);
+        this.workingTags.length = 0;
     }
     @action.bound setSaveIndicatorElement(el) {
         this.saveIndicatorElement = el;
