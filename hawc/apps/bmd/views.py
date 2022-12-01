@@ -24,7 +24,7 @@ class AssessSettingsRead(BaseDetail):
     def get_object(self, **kwargs):
         # get the bmd settings of the specified assessment
         obj = get_object_or_404(self.model, assessment_id=self.kwargs["pk"])
-        return super(AssessSettingsRead, self).get_object(object=obj, **kwargs)
+        return super().get_object(object=obj, **kwargs)
 
 
 class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
