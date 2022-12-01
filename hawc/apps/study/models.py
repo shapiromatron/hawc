@@ -287,6 +287,9 @@ class Study(Reference):
     def flat_complete_header_row():
         return (
             "study-id",
+            "study-hero_id",
+            "study-pubmed_id",
+            "study-doi",
             "study-url",
             "study-short_citation",
             "study-full_citation",
@@ -309,6 +312,9 @@ class Study(Reference):
     def flat_complete_data_row(ser):
         return (
             ser["id"],
+            ser.get("hero_id", None),
+            ser.get("pubmed_id", None),
+            ser.get("doi", None),
             ser["url"],
             ser["short_citation"],
             ser["full_citation"],
