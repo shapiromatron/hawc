@@ -32,6 +32,11 @@ class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
     model = models.AssessmentSettings
     form_class = forms.AssessmentSettingsForm
 
+    def get_object(self, **kwargs):
+        # get the bmd settings of the specified assessment
+        obj = get_object_or_404(self.model, assessment_id=self.kwargs["pk"])
+        return super().get_object(object=obj, **kwargs)
+
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(Assessment, pk=kwargs["pk"])
 

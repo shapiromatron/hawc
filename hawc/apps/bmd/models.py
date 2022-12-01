@@ -28,7 +28,7 @@ class AssessmentSettings(models.Model):
         return "BMD settings"
 
     def get_absolute_url(self):
-        return reverse("bmd:assess_settings_detail", args=[self.assessment.pk])
+        return reverse("bmd:assess_settings_detail", args=(self.assessment_id,))
 
     def get_assessment(self):
         return self.assessment
