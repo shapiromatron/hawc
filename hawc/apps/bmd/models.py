@@ -88,14 +88,8 @@ class Session(models.Model):
     def get_api_url(self):
         return reverse("bmd:api:session-detail", args=(self.id,))
 
-    def get_execute_url(self):
-        return reverse("bmd:api:session-execute", args=(self.id,))
-
     def get_execute_status_url(self):
         return reverse("bmd:api:session-execute-status", args=(self.id,))
-
-    def get_selected_model_url(self):
-        return reverse("bmd:api:session-selected-model", args=(self.id,))
 
     @classmethod
     def create_new(cls, endpoint: Endpoint) -> "Session":
@@ -119,8 +113,8 @@ class Session(models.Model):
         )
 
     @property
-    def is_finished(self):
-        return self.date_executed is not None
+    def is_finished(self) -> bool:
+        return any(map(bool, [self.date_executed, self.outputs, self.errors]))
 
     @property
     def can_edit(self):
@@ -128,6 +122,12 @@ class Session(models.Model):
 
     def execute(self):
         raise NotImplementedError()
+
+    def save_and_execute(self):
+        pass
+
+    def set_selected_model(self):
+        pass
 
     def get_session(self, with_models=False):
 

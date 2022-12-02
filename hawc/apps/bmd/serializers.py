@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from ..animal.serializers import EndpointSerializer
-from . import constants, models
+from . import constants, models, tasks
 
 
 class SessionBmd2Serializer(serializers.ModelSerializer):
@@ -36,9 +36,7 @@ class SessionBmd2Serializer(serializers.ModelSerializer):
 
 class SessionBmd3Serializer(serializers.ModelSerializer):
     url_api = serializers.URLField(source="get_api_url")
-    url_execute = serializers.URLField(source="get_execute_url")
     url_execute_status = serializers.URLField(source="get_execute_status_url")
-    url_select_model = serializers.URLField(source="get_selected_model_url")
     input_options = serializers.JSONField(source="get_input_options")
     endpoint = EndpointSerializer(read_only=True)
 
@@ -47,9 +45,7 @@ class SessionBmd3Serializer(serializers.ModelSerializer):
         fields = (
             "id",
             "url_api",
-            "url_execute",
             "url_execute_status",
-            "url_select_model",
             "input_options",
             "endpoint",
             "dose_units",
@@ -64,3 +60,40 @@ class SessionBmd3Serializer(serializers.ModelSerializer):
             "errors",
             "selected",
         )
+
+
+class SessionBmd3StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Session
+        fields = (
+            "id",
+            "is_finished",
+            "date_executed",
+            "created",
+            "last_updated",
+        )
+
+
+class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Session
+        fields = (
+            "id",
+            "is_finished",
+            "date_executed",
+            "created",
+            "last_updated",
+            "inputs",
+            "outputs",
+            "errors",
+            "selected",
+        )
+        read_only_fields = ["outputs"]
+        extra_kwargs = {"execute": {"write_only": True}}
+
+    def execute(self):
+        print("execute called")
+        # tasks.execute.apply(self.instance.id)
+
+    def select(self):
+        print("select called")

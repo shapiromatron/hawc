@@ -73,7 +73,7 @@ def _get_session_config(self, context, is_editing: bool = False) -> WebappConfig
             data=dict(
                 edit=is_editing,
                 session_url=self.object.get_api_url(),
-                csrf=get_token(self.request) if is_editing else None
+                csrf=get_token(self.request) if is_editing else None,
             ),
         )
     else:
@@ -85,9 +85,6 @@ def _get_session_config(self, context, is_editing: bool = False) -> WebappConfig
                 bmds_version=self.object.get_version_display(),
                 endpoint_id=self.object.endpoint_id,
                 session_url=self.object.get_api_url(),
-                execute_url=self.object.get_execute_url(),
-                execute_status_url=self.object.get_execute_status_url(),
-                selected_model_url=self.object.get_selected_model_url(),
                 csrf=get_token(self.request) if is_editing else None,
             ),
         )
