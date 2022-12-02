@@ -72,3 +72,6 @@ a.btn-warning:visited, a.badge-warning:visited {
 .dropdown-item:active {
   color: #fff !important;
 }
+.dropdown-item.scientific:active {
+  color: black !important;
+}
