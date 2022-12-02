@@ -1,9 +1,11 @@
-from rest_framework.decorators import action
+import random
+from django.conf import settings
 from rest_framework import exceptions
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
-
 from ..assessment.api import BaseAssessmentViewset
+from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
 
@@ -11,6 +13,7 @@ class Session(BaseAssessmentViewset):
     http_method_names = ["get", "patch"]
     assessment_filter_args = "endpoint__assessment"
     model = models.Session
+    serializer_class = UnusedSerializer
 
     def get_queryset(self):
         return (
@@ -41,7 +44,7 @@ class Session(BaseAssessmentViewset):
         serializer.is_valid(raise_exception=True)
         action = request.data.get("action")
         if action == "execute":
-            serializer.execute()
+            serializer.save_and_execute()
         elif action == "select":
             serializer.select()
         return Response({"status": "success", "id": instance.id})
@@ -53,5 +56,12 @@ class Session(BaseAssessmentViewset):
     @action(detail=True, methods=["get"], url_path="execute-status")
     def execute_status(self, request, pk=None):
         instance = self.get_object()
-        serializer = serializers.SessionBmd3StatusSerializer(instance)
+        if instance.version.startswith("BMDS2"):
+            raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
+        SerializerClass = (
+            serializers.SessionBmd3Serializer
+            if instance.is_finished
+            else serializers.SessionBmd3StatusSerializer
+        )
+        serializer = SerializerClass(instance)
         return Response(serializer.data)

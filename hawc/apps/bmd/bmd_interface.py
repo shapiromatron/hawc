@@ -47,4 +47,16 @@ def build_session(dataset: DatasetBase, version: BmdsVersion):
     if version == BmdsVersion.BMDS2601:
         version = BmdsVersion.BMDS270
     Session = bmds.BMDS.version(version.value)
-    return Session(dataset.dtype, dataset=dataset)
+
+    if version.startswith("BMDS2"):
+        return Session(dataset.dtype, dataset=dataset)
+    else:
+        return Session(dataset=dataset)
+
+
+def build_and_execute(endpoint, settings):
+    dataset = build_dataset(endpoint, settings.dose_units_id, settings.num_doses_dropped)
+    session = build_session(dataset, BmdsVersion.BMDS330)
+    settings.add_models(session)
+    session.execute_and_recommend()
+    return session

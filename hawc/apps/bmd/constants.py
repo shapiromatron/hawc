@@ -1,7 +1,9 @@
 import json
 from functools import lru_cache
 from pathlib import Path
+from typing import Type
 
+from bmds import constants
 from bmds.bmds3.constants import DistType
 from bmds.bmds3.types.continuous import ContinuousRiskType
 from bmds.bmds3.types.dichotomous import DichotomousRiskType
@@ -45,6 +47,18 @@ class DichotomousInputSettings(BaseModel):
     bmr_type: DichotomousRiskType = DichotomousRiskType.ExtraRisk
     bmr_value: confloat(gt=0) = 0.1
 
+    def add_models(self, session):
+        settings = {"bmr_type": self.bmr_type, "bmr": self.bmr_value}
+        session.add_model(constants.M_DichotomousHill, settings)
+        session.add_model(constants.M_Gamma, settings)
+        session.add_model(constants.M_Logistic, settings)
+        session.add_model(constants.M_LogLogistic, settings)
+        session.add_model(constants.M_LogProbit, settings)
+        session.add_model(constants.M_Multistage, settings)
+        session.add_model(constants.M_Probit, settings)
+        session.add_model(constants.M_QuantalLinear, settings)
+        session.add_model(constants.M_Weibull, settings)
+
 
 class ContinuousInputSettings(BaseModel):
     dose_units_id: int
@@ -52,6 +66,28 @@ class ContinuousInputSettings(BaseModel):
     bmr_type: ContinuousRiskType = ContinuousRiskType.RelativeDeviation
     bmr_value: confloat(gt=0) = 0.1
     variance_model: DistType = DistType.normal
+
+    def add_models(self, session):
+        settings = {
+            "bmr_type": self.bmr_type,
+            "bmr": self.bmr_value,
+            "disttype": self.variance_model,
+        }
+        session.add_model(constants.M_ExponentialM3, settings)
+        session.add_model(constants.M_ExponentialM5, settings)
+        session.add_model(constants.M_Hill, settings)
+        session.add_model(constants.M_Linear, settings)
+        session.add_model(constants.M_Polynomial, settings)
+        session.add_model(constants.M_Power, settings)
+
+
+def get_input_model(endpoint) -> Type[BaseModel]:
+    if endpoint.data_type == DataType.CONTINUOUS:
+        return ContinuousInputSettings
+    elif endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
+        return DichotomousInputSettings
+    else:
+        raise ValueError(f"Cannot determine input model {endpoint.data_type}")
 
 
 def get_input_options(dtype: str) -> dict:

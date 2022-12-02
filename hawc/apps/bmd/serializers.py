@@ -1,6 +1,8 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from ..animal.serializers import EndpointSerializer
+from ..common.serializers import validate_pydantic
 from . import constants, models, tasks
 
 
@@ -91,9 +93,27 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ["outputs"]
         extra_kwargs = {"execute": {"write_only": True}}
 
-    def execute(self):
-        print("execute called")
-        # tasks.execute.apply(self.instance.id)
+    def validate_inputs(self, value):
+        pydantic_class = constants.get_input_model(self.instance.endpoint)
+        validate_pydantic(pydantic_class, "inputs", value)
+        return value
+
+    def save_and_execute(self):
+        data = self.validated_data
+        instance = self.instance
+
+        # reset model outputs
+        instance.dose_units_id = data["inputs"]["dose_units_id"]
+        instance.inputs = data["inputs"]
+        instance.outputs = {}
+        instance.errors = {}
+        instance.selected = {}
+        instance.active = False
+        instance.date_executed = None
+        instance.save()
+
+        # trigger BMD model execution
+        tasks.execute.delay(instance.id)
 
     def select(self):
         print("select called")

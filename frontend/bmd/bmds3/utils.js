@@ -34,7 +34,7 @@ const getLabel = function(value, items) {
                         values = [group.n, group.response, group.variance];
                         break;
                     case "D":
-                        values = [group.n, group.incidende];
+                        values = [group.n, group.incidence];
                         break;
                     default:
                         throw Error("Unknown data type");

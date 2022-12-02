@@ -5,6 +5,8 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FloatInput from "shared/components/FloatInput";
 import Loading from "shared/components/Loading";
 import SelectInput from "shared/components/SelectInput";
+import TextAreaInput from "shared/components/TextAreaInput";
+import h from "shared/utils/helpers";
 
 import DoseResponse from "/bmd/bmds2/components/DoseResponse";
 
@@ -32,10 +34,14 @@ class Root extends React.Component {
             settings,
             changeSetting,
             isContinuous,
+            executionError,
+            hasOutputs,
         } = store;
 
+        const defaultTabIndex = hasOutputs ? 1 : 0;
+
         return (
-            <Tabs>
+            <Tabs defaultIndex={defaultTabIndex}>
                 <TabList>
                     <Tab>Settings</Tab>
                     <Tab className="react-tabs__tab bmd-results-tab">Results</Tab>
@@ -130,8 +136,11 @@ class Root extends React.Component {
                                                 label="BMR"
                                                 name="BMR"
                                                 value={settings.bmr_value}
-                                                onChange={value =>
-                                                    changeSetting("bmr_value", value)
+                                                onChange={e =>
+                                                    changeSetting(
+                                                        "bmr_value",
+                                                        parseFloat(e.target.value)
+                                                    )
                                                 }
                                                 helpText="..."
                                             />
@@ -170,6 +179,13 @@ class Root extends React.Component {
                                             <i className="fa fa-spinner fa-spin fa-fw fa-2x"></i>
                                         </div>
                                     ) : null}
+                                    {executionError ? (
+                                        <div className="alert alert-danger">
+                                            <i className="fa fa-exclamation-triangle fa-fw"></i>
+                                            &nbsp; An error occurred. If the problem persists,
+                                            please contact the site administrators.
+                                        </div>
+                                    ) : null}
                                 </div>
                             </div>
                         )}
@@ -177,19 +193,107 @@ class Root extends React.Component {
                 </TabPanel>
                 <TabPanel>
                     <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-md-8">
-                                <h3>Summary Table</h3>
+                        {store.hasErrors ? (
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <h3>Execution Error</h3>
+                                    <div className="alert alert-danger">
+                                        <p>
+                                            <i className="fa fa-exclamation-triangle fa-fw"></i> An
+                                            error occurred:
+                                        </p>
+                                        {store.errors.traceback ? (
+                                            <pre>{store.errors.traceback}</pre>
+                                        ) : null}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="col-md-4">
-                                <h3>Summary Figure</h3>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-12">
-                                <h3>Model Selection</h3>
-                            </div>
-                        </div>
+                        ) : null}
+                        {store.hasOutputs ? (
+                            <>
+                                <div className="row">
+                                    <div className="col-xl-8">
+                                        <h3>Summary Table</h3>
+                                        <table className="table table-sm table-striped text-right col-l-1">
+                                            <colgroup>
+                                                <col width="12%" />
+                                                <col width="8%" />
+                                                <col width="8%" />
+                                                <col width="8%" />
+                                                <col width="8%" />
+                                                <col width="8%" />
+                                                <col width="10%" />
+                                                <col width="10%" />
+                                                <col width="28%" />
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th>Model Name</th>
+                                                    <th>BMDL</th>
+                                                    <th>BMD</th>
+                                                    <th>BMDU</th>
+                                                    <th>
+                                                        <i>P</i>-Value
+                                                    </th>
+                                                    <th>AIC</th>
+                                                    <th>Scaled Residual for Dose Group near BMD</th>
+                                                    <th>Scaled Residual for Control Dose Group</th>
+                                                    <th>
+                                                        Recommendation
+                                                        <br />
+                                                        and Notes
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {store.outputs.models.map((model, i) => {
+                                                    return (
+                                                        <tr key={i}>
+                                                            <td>{model.name}</td>
+                                                            <td>{h.ff(model.results.bmdl)}</td>
+                                                            <td>{h.ff(model.results.bmd)}</td>
+                                                            <td>{h.ff(model.results.bmdu)}</td>
+                                                            <td>
+                                                                {h.ff(
+                                                                    model.results.gof.p_value ||
+                                                                        model.results.tests
+                                                                            .p_values[3]
+                                                                )}
+                                                            </td>
+                                                            <td>{h.ff(model.results.fit.aic)}</td>
+                                                            <td>{h.ff(model.results.gof.roi)}</td>
+                                                            <td>
+                                                                {h.ff(
+                                                                    model.results.gof.residual[0]
+                                                                )}
+                                                            </td>
+                                                            <td>TODO.</td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                        <p className="text-muted">
+                                            {store.bmrText}
+                                            {store.variableModelText
+                                                ? `; ${store.variableModelText} Variance`
+                                                : ""}
+                                        </p>
+                                    </div>
+                                    <div className="col-xl-4">
+                                        <h3>Summary Figure</h3>
+                                        <pre>TODO</pre>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-8">
+                                        <h3>Model Selection</h3>
+                                        {/* <SelectInput />
+                                        <TextAreaInput /> */}
+                                    </div>
+                                </div>
+                            </>
+                        ) : null}
                     </div>
                 </TabPanel>
             </Tabs>

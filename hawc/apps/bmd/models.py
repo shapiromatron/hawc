@@ -1,5 +1,10 @@
+import traceback
+from typing import Type
+
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+from pydantic import BaseModel
 
 from ..animal.constants import DataType
 from ..animal.models import Endpoint
@@ -121,13 +126,20 @@ class Session(models.Model):
         return self.version.startswith("BMDS3")
 
     def execute(self):
-        raise NotImplementedError()
-
-    def save_and_execute(self):
-        pass
+        settings = self.get_settings()
+        try:
+            session = bmd_interface.build_and_execute(self.endpoint, settings)
+            self.outputs = session.to_dict()
+        except Exception:
+            self.errors = {"traceback": traceback.format_exc()}
+        self.date_executed = timezone.now()
+        self.save()
 
     def set_selected_model(self):
         pass
+
+    def get_settings(self) -> Type[BaseModel]:
+        return constants.get_input_model(self.endpoint).parse_obj(self.inputs)
 
     def get_session(self, with_models=False):
 
