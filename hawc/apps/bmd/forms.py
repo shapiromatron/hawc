@@ -17,9 +17,3 @@ class AssessmentSettingsForm(ModelForm):
             help_text="Update BMD assessment settings. These are applied globally across the entire assessment.",
             cancel_url=self.instance.get_absolute_url(),
         )
-
-
-class SessionForm(ModelForm):
-    class Meta:
-        model = models.Session
-        fields = "__all__"

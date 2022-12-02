@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 
+from ..animal.constants import DataType
+from ..animal.models import Endpoint
 from . import bmd_interface, constants, managers
 
 
@@ -39,7 +41,7 @@ class AssessmentSettings(models.Model):
 
     @property
     def can_create_sessions(self):
-        return self.version == constants.BmdsVersion.BMDS330
+        return self.version.startswith("BMDS3")
 
 
 class Session(models.Model):
@@ -75,32 +77,45 @@ class Session(models.Model):
         return self.endpoint.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("bmd:session_detail", args=[self.id])
+        return reverse("bmd:session_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("bmd:session_update", args=[self.id])
+        return reverse("bmd:session_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("bmd:session_delete", args=[self.id])
+        return reverse("bmd:session_delete", args=(self.id,))
 
     def get_api_url(self):
-        return reverse("bmd:api:session-detail", args=[self.id])
+        return reverse("bmd:api:session-detail", args=(self.id,))
 
     def get_execute_url(self):
-        return reverse("bmd:api:session-execute", args=[self.id])
+        return reverse("bmd:api:session-execute", args=(self.id,))
 
     def get_execute_status_url(self):
-        return reverse("bmd:api:session-execute-status", args=[self.id])
+        return reverse("bmd:api:session-execute-status", args=(self.id,))
 
     def get_selected_model_url(self):
-        return reverse("bmd:api:session-selected-model", args=[self.id])
+        return reverse("bmd:api:session-selected-model", args=(self.id,))
 
     @classmethod
-    def create_new(cls, endpoint) -> "Session":
-        dose_units = endpoint.get_doses_json(json_encode=False)[0]["id"]
+    def create_new(cls, endpoint: Endpoint) -> "Session":
+        if not endpoint.assessment.bmd_settings.can_create_sessions:
+            raise ValueError("Cannot create new analysis")
+        dose_units_id = endpoint.get_doses_json(json_encode=False)[0]["id"]
         version = endpoint.assessment.bmd_settings.version
+
+        if endpoint.data_type == DataType.CONTINUOUS:
+            inputs = constants.ContinuousInputSettings(dose_units_id=dose_units_id)
+        elif endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
+            inputs = constants.DichotomousInputSettings(dose_units_id=dose_units_id)
+        else:
+            raise ValueError("Cannot create new analysis")
+
         return cls.objects.create(
-            endpoint_id=endpoint.id, dose_units_id=dose_units, version=version
+            endpoint_id=endpoint.id,
+            dose_units_id=dose_units_id,
+            version=version,
+            inputs=inputs.dict(),
         )
 
     @property
@@ -109,7 +124,7 @@ class Session(models.Model):
 
     @property
     def can_edit(self):
-        return self.version == constants.BmdsVersion.BMDS330
+        return self.version.startswith("BMDS3")
 
     def execute(self):
         raise NotImplementedError()
@@ -159,3 +174,6 @@ class Session(models.Model):
             session_url=self.get_absolute_url(),
         )
         return selected
+
+    def get_input_options(self) -> dict:
+        return constants.get_input_options(self.endpoint.data_type)

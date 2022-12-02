@@ -1,25 +1,34 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentViewset
+from ..assessment.api import BaseAssessmentViewset
 from . import models, serializers
 
 
-class Session(AssessmentViewset):
+class Session(BaseAssessmentViewset):
     assessment_filter_args = "endpoint__assessment"
     model = models.Session
-    lookup_value_regex = r"\d+"
-    serializer_class = serializers.SessionSerializer
 
-    def get_serializer_class(self):
-        if self.action == "execute":
-            # TODO - BMDS3 - reimplement after integration
-            return serializers.SessionSerializer
-        elif self.action == "selected_model":
-            # TODO - BMDS3 - reimplement after integration
-            return serializers.SessionSerializer
+    def get_queryset(self):
+        return (
+            self.model.objects.all()
+            .select_related("endpoint__animal_group__experiment__study")
+            .prefetch_related(
+                "endpoint__effects",
+                "endpoint__groups",
+                "endpoint__animal_group__dosing_regime__doses__dose_units",
+                "endpoint__animal_group__experiment__study__searches",
+                "endpoint__animal_group__experiment__study__identifiers",
+            )
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.version.startswith("BMDS2"):
+            serializer = serializers.SessionBmd2Serializer(instance)
         else:
-            return serializers.SessionSerializer
+            serializer = serializers.SessionBmd3Serializer(instance)
+        return Response(serializer.data)
 
     @action(detail=True, methods=["post"])
     def execute(self, request, pk=None):
