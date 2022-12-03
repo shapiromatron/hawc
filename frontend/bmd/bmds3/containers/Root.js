@@ -26,17 +26,19 @@ class Root extends React.Component {
         }
 
         const {
-            doseUnitChoices,
-            doseDropChoices,
-            bmrTypeChoices,
-            varianceModelChoices,
-            endpoint,
-            settings,
-            changeSetting,
-            isContinuous,
-            executionError,
-            hasOutputs,
-        } = store;
+                doseUnitChoices,
+                doseDropChoices,
+                bmrTypeChoices,
+                varianceModelChoices,
+                endpoint,
+                settings,
+                changeSetting,
+                isContinuous,
+                executionError,
+                hasOutputs,
+                selected,
+            } = store,
+            selected_model_index = store.selected.model_index;
 
         const defaultTabIndex = hasOutputs ? 1 : 0;
 
@@ -214,7 +216,7 @@ class Root extends React.Component {
                                 <div className="row">
                                     <div className="col-xl-8">
                                         <h3>Summary Table</h3>
-                                        <table className="table table-sm table-striped text-right col-l-1">
+                                        <table className="table table-sm table-striped table-hover text-right col-l-1">
                                             <colgroup>
                                                 <col width="12%" />
                                                 <col width="8%" />
@@ -229,9 +231,9 @@ class Root extends React.Component {
                                             <thead>
                                                 <tr>
                                                     <th>Model Name</th>
-                                                    <th>BMDL</th>
-                                                    <th>BMD</th>
-                                                    <th>BMDU</th>
+                                                    <th>BMDL ({store.doseUnitsText})</th>
+                                                    <th>BMD ({store.doseUnitsText})</th>
+                                                    <th>BMDU ({store.doseUnitsText})</th>
                                                     <th>
                                                         <i>P</i>-Value
                                                     </th>
@@ -248,7 +250,13 @@ class Root extends React.Component {
                                             <tbody>
                                                 {store.outputs.models.map((model, i) => {
                                                     return (
-                                                        <tr key={i}>
+                                                        <tr
+                                                            key={i}
+                                                            className={
+                                                                selected_model_index === i
+                                                                    ? "table-info"
+                                                                    : ""
+                                                            }>
                                                             <td>{model.name}</td>
                                                             <td>{h.ff(model.results.bmdl)}</td>
                                                             <td>{h.ff(model.results.bmd)}</td>
@@ -286,11 +294,57 @@ class Root extends React.Component {
                                     </div>
                                 </div>
                                 <div className="row">
-                                    <div className="col-md-8">
-                                        <h3>Model Selection</h3>
-                                        {/* <SelectInput />
-                                        <TextAreaInput /> */}
-                                    </div>
+                                    {readOnly ? null : (
+                                        <div className="col-md-12">
+                                            <div className="row">
+                                                <div className="col-md-4">
+                                                    <SelectInput
+                                                        choices={store.selectedChoices}
+                                                        handleSelect={value =>
+                                                            store.changeSelectedModel(
+                                                                parseInt(value)
+                                                            )
+                                                        }
+                                                        value={selected.model_index.toString()}
+                                                        label="Selected best-fitting model"
+                                                        helpText="..."
+                                                    />
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <TextAreaInput
+                                                        label="Selection notes"
+                                                        value={selected.notes}
+                                                        onChange={e =>
+                                                            store.changeSelectedNotes(
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        helpText="..."
+                                                    />
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <label>&nbsp;</label>
+                                                    <button
+                                                        className="btn btn-primary btn-block"
+                                                        onClick={store.handleSelectionSave}>
+                                                        Save model selection
+                                                    </button>
+                                                    {store.showSelectedSaveNotification ? (
+                                                        <div className="alert alert-success text-center mt-2">
+                                                            <i className="fa fa-fw fa-check"></i>
+                                                            &nbsp;Save successful!
+                                                        </div>
+                                                    ) : null}
+                                                    {store.selectedError ? (
+                                                        <div className="alert alert-danger text-center mt-2">
+                                                            <i className="fa fa-fw fa-exclamation-triangle"></i>
+                                                            &nbsp;An error occurred
+                                                        </div>
+                                                    ) : null}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </>
                         ) : null}

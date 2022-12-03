@@ -125,6 +125,11 @@ class Session(models.Model):
     def can_edit(self):
         return self.version.startswith("BMDS3")
 
+    def deactivate_similar_sessions(self):
+        Session.objects.filter(endpoint=self.endpoint, dose_units=self.dose_units).exclude(
+            id=self.id
+        ).update(active=False)
+
     def execute(self):
         settings = self.get_settings()
         try:
@@ -176,7 +181,7 @@ class Session(models.Model):
         # Get selected model for endpoint representation
         selected = self.selected.copy()
         model = None
-        if model_id := self.selected["model_id"]:
+        if model_id := self.selected.get("model_id"):
             model = [m for m in self.outputs["models"] if m["id"] == model_id][0]
             model["dose_units"] = self.dose_units_id
         selected.update(

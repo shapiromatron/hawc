@@ -10,6 +10,7 @@ class AssessmentSettingsAdmin(AllListFieldAdmin):
 
 
 @admin.register(models.Session)
-class SessionAdmin(AllListFieldAdmin):
-    list_filter = ("active", "version")
+class SessionAdmin(admin.ModelAdmin):
+    list_display = ("id", "date_executed", "selected", "created", "last_updated")
+    list_filter = ("active", "version", "date_executed")
     raw_id_fields = ("endpoint",)

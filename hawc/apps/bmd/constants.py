@@ -1,7 +1,7 @@
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Type
+from typing import Optional, Type
 
 from bmds import constants
 from bmds.bmds3.constants import DistType
@@ -104,3 +104,17 @@ def get_input_options(dtype: str) -> dict:
         )
     else:
         raise ValueError(f"Unknown data type: {dtype}")
+
+
+class SelectedModel(BaseModel):
+    model_index: int = -1
+    bmdl: Optional[float] = None
+    bmd: Optional[float] = None
+    bmdu: Optional[float] = None
+    model: str = ""
+    bmr: str = ""
+    notes: str = ""
+
+    def to_bmd_output(self) -> dict:
+        index = None if self.model_index == -1 else self.model_index
+        return {"model_index": index, "notes": self.notes}

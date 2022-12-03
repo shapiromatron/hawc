@@ -28,6 +28,7 @@ class Bmd3Store {
                 this.inputOptions = data.input_options;
                 this.outputs = data.outputs;
                 this.errors = data.errors;
+                this.selected = data.selected;
                 this.hasSessionLoaded = true;
             })
             .catch(ex => console.error("Session fetching failed", ex));
@@ -106,6 +107,7 @@ class Bmd3Store {
                         if (data.is_finished) {
                             this.outputs = data.outputs;
                             this.errors = data.errors;
+                            this.selected = data.selected;
                             this.isExecuting = false;
                             $(".bmd-results-tab").click();
                         } else {
@@ -124,6 +126,55 @@ class Bmd3Store {
     }
     @computed get hasOutputs() {
         return _.isObject(this.outputs) && _.size(this.outputs) > 0;
+    }
+
+    // SELECTED
+    @observable selected = null;
+    @observable showSelectedSaveNotification = false;
+    @observable selectedError = false;
+    @computed get selectedChoices() {
+        const options = [{id: -1, label: "None (no model selected)"}];
+        _.each(this.outputs.models, (model, index) => {
+            options.push({id: index, label: model.name});
+        });
+        return options;
+    }
+    @action.bound changeSelectedNotes(value) {
+        this.selected.notes = value;
+    }
+    @action.bound changeSelectedModel(value) {
+        const model = value >= 0 ? this.outputs.models[value] : null;
+        _.merge(this.selected, {
+            model_index: value,
+            bmr: this.bmrText,
+            model: model ? model.name : "",
+            bmdl: model ? model.results.bmdl : null,
+            bmd: model ? model.results.bmd : null,
+            bmdu: model ? model.results.bmdu : null,
+        });
+    }
+    @action.bound handleSelectionSave() {
+        const url = this.config.session_url,
+            payload = {
+                action: "select",
+                selected: toJS(this.selected),
+            },
+            opts = h.fetchPost(this.config.csrf, payload, "PATCH");
+
+        this.selectedError = false;
+        this.showSelectedSaveNotification = false;
+        fetch(url, opts)
+            .then(response => response.json())
+            .then(response => {
+                this.showSelectedSaveNotification = true;
+                setTimeout(() => {
+                    this.showSelectedSaveNotification = false;
+                }, 3000);
+            })
+            .catch(ex => {
+                console.error("Selection failed", ex);
+                this.selectedError = true;
+            });
     }
 }
 

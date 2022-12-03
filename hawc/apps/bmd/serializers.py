@@ -98,6 +98,11 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
         validate_pydantic(pydantic_class, "inputs", value)
         return value
 
+    def validate_selected(self, value):
+        pydantic_class = constants.SelectedModel
+        validate_pydantic(pydantic_class, "selected", value)
+        return value
+
     def save_and_execute(self):
         data = self.validated_data
         instance = self.instance
@@ -107,7 +112,7 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
         instance.inputs = data["inputs"]
         instance.outputs = {}
         instance.errors = {}
-        instance.selected = {}
+        instance.selected = constants.SelectedModel().dict()
         instance.active = False
         instance.date_executed = None
         instance.save()
@@ -116,4 +121,18 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
         tasks.execute.delay(instance.id)
 
     def select(self):
-        print("select called")
+        data = self.validated_data
+        instance = self.instance
+
+        # deactivate other session
+        instance.deactivate_similar_sessions()
+
+        # save hawc selection
+        instance.selected = data["selected"]
+        instance.active = True
+
+        # set output selection
+        serialized = constants.SelectedModel.parse_obj(data["selected"])
+        instance.outputs["selected"] = serialized.to_bmd_output()
+
+        instance.save()
