@@ -7,6 +7,16 @@ import Endpoint from "../../animal/Endpoint";
 import h from "../../shared/utils/helpers";
 import {bmrLabel, doseDropOptions, getLabel} from "./utils";
 
+const addDoseUnitsToModels = function(outputs, dose_units_id) {
+    // required for plotting
+    if (outputs && outputs.models) {
+        outputs.models.map((model, i) => {
+            model.id = i;
+            model.dose_units = dose_units_id;
+        });
+    }
+};
+
 class Bmd3Store {
     constructor(config) {
         this.config = config;
@@ -26,6 +36,7 @@ class Bmd3Store {
                 this.endpoint = new Endpoint(data.endpoint);
                 this.endpoint.doseUnits.activate(data.inputs.settings.dose_units_id);
                 this.inputOptions = data.input_options;
+                addDoseUnitsToModels(data.outputs, data.inputs.settings.dose_units_id);
                 this.outputs = data.outputs;
                 this.errors = data.errors;
                 this.selected = data.selected;
@@ -109,6 +120,7 @@ class Bmd3Store {
                     .then(response => response.json())
                     .then(data => {
                         if (data.is_finished) {
+                            addDoseUnitsToModels(data.outputs, this.settings.dose_units_id);
                             this.outputs = data.outputs;
                             this.errors = data.errors;
                             this.selected = data.selected;
@@ -130,6 +142,10 @@ class Bmd3Store {
     }
     @computed get hasOutputs() {
         return _.isObject(this.outputs) && _.size(this.outputs) > 0;
+    }
+    @observable hoverModel = null;
+    @action.bound setHoverModel(model) {
+        this.hoverModel = model ? model : null;
     }
 
     // SELECTED

@@ -1,3 +1,4 @@
+import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
@@ -9,6 +10,7 @@ import TextAreaInput from "shared/components/TextAreaInput";
 import h from "shared/utils/helpers";
 
 import DoseResponse from "/bmd/bmds2/components/DoseResponse";
+import OutputFigure from "/bmd/bmds2/components/OutputFigure";
 
 @inject("store")
 @observer
@@ -250,6 +252,12 @@ class Root extends React.Component {
                                                     return (
                                                         <tr
                                                             key={i}
+                                                            onMouseOver={() =>
+                                                                store.setHoverModel(model)
+                                                            }
+                                                            onMouseOut={() =>
+                                                                store.setHoverModel(null)
+                                                            }
                                                             className={
                                                                 selected_model_index === i
                                                                     ? "table-info"
@@ -288,7 +296,11 @@ class Root extends React.Component {
                                     </div>
                                     <div className="col-xl-4">
                                         <h3>Summary Figure</h3>
-                                        <pre>TODO</pre>
+                                        <OutputFigure
+                                            endpoint={endpoint}
+                                            hoverModel={toJS(store.hoverModel)}
+                                            selectedModel={null}
+                                        />
                                     </div>
                                 </div>
                                 <div className="row">
