@@ -1,12 +1,9 @@
 import traceback
-from typing import Type
 
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from pydantic import BaseModel
 
-from ..animal.constants import DataType
 from ..animal.models import Endpoint
 from . import bmd_interface, constants, managers
 
@@ -100,21 +97,14 @@ class Session(models.Model):
     def create_new(cls, endpoint: Endpoint) -> "Session":
         if not endpoint.assessment.bmd_settings.can_create_sessions:
             raise ValueError("Cannot create new analysis")
-        dose_units_id = endpoint.get_doses_json(json_encode=False)[0]["id"]
         version = endpoint.assessment.bmd_settings.version
-
-        if endpoint.data_type == DataType.CONTINUOUS:
-            inputs = constants.ContinuousInputSettings(dose_units_id=dose_units_id)
-        elif endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
-            inputs = constants.DichotomousInputSettings(dose_units_id=dose_units_id)
-        else:
-            raise ValueError("Cannot create new analysis")
-
+        inputs = constants.BmdInputSettings.create_default(endpoint)
         return cls.objects.create(
             endpoint_id=endpoint.id,
-            dose_units_id=dose_units_id,
+            dose_units_id=inputs.settings.dose_units_id,
             version=version,
             inputs=inputs.dict(),
+            selected=constants.SelectedModel().dict(),
         )
 
     @property
@@ -143,8 +133,8 @@ class Session(models.Model):
     def set_selected_model(self):
         pass
 
-    def get_settings(self) -> Type[BaseModel]:
-        return constants.get_input_model(self.endpoint).parse_obj(self.inputs)
+    def get_settings(self) -> constants.BmdInputSettings:
+        return constants.BmdInputSettings.parse_obj(self.inputs)
 
     def get_session(self, with_models=False):
 
@@ -181,9 +171,15 @@ class Session(models.Model):
         # Get selected model for endpoint representation
         selected = self.selected.copy()
         model = None
-        if model_id := self.selected.get("model_id"):
-            model = [m for m in self.outputs["models"] if m["id"] == model_id][0]
-            model["dose_units"] = self.dose_units_id
+        if selected["version"] == 1:
+            if model_id := self.selected.get("model_id"):
+                model = [m for m in self.outputs["models"] if m["id"] == model_id][0]
+                model["dose_units"] = self.dose_units_id
+        elif selected["version"] == 2:
+            if self.selected["model_index"] >= 0:
+                index = self.selected["model_index"]
+                model = self.outputs["models"][index]
+                model["dose_units"] = self.dose_units_id
         selected.update(
             endpoint_id=self.endpoint_id,
             dose_units_id=self.dose_units_id,

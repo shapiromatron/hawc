@@ -54,9 +54,11 @@ def build_session(dataset: DatasetBase, version: BmdsVersion):
         return Session(dataset=dataset)
 
 
-def build_and_execute(endpoint, settings):
-    dataset = build_dataset(endpoint, settings.dose_units_id, settings.num_doses_dropped)
+def build_and_execute(endpoint, inputs):
+    dataset = build_dataset(
+        endpoint, inputs.settings.dose_units_id, inputs.settings.num_doses_dropped
+    )
     session = build_session(dataset, BmdsVersion.BMDS330)
-    settings.add_models(session)
+    inputs.add_models(session)
     session.execute_and_recommend()
     return session

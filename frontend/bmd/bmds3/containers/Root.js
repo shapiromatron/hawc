@@ -147,7 +147,6 @@ class Root extends React.Component {
                                                 helpText="..."
                                             />
                                         </div>
-
                                         <div className="col-md-4">
                                             {isContinuous ? (
                                                 <SelectInput
@@ -166,7 +165,6 @@ class Root extends React.Component {
                                         </div>
                                     </div>
                                 </div>
-
                                 <div className="col-md-3 bg-light">
                                     <button
                                         className="btn btn-primary btn-block my-3 py-3"
@@ -347,6 +345,15 @@ class Root extends React.Component {
                                     )}
                                 </div>
                             </>
+                        ) : null}
+                        {!store.hasErrors && !store.hasOutputs ? (
+                            <div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <p className="text-muted">Analysis not yet executed.</p>
+                                    </div>
+                                </div>
+                            </div>
                         ) : null}
                     </div>
                 </TabPanel>

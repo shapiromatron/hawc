@@ -22,9 +22,9 @@ class Bmd3Store {
             .then(response => response.json())
             .then(data => {
                 this.session = data;
-                this.settings = data.inputs;
+                this.settings = data.inputs.settings;
                 this.endpoint = new Endpoint(data.endpoint);
-                this.endpoint.doseUnits.activate(data.inputs.dose_units_id);
+                this.endpoint.doseUnits.activate(data.inputs.settings.dose_units_id);
                 this.inputOptions = data.input_options;
                 this.outputs = data.outputs;
                 this.errors = data.errors;
@@ -82,7 +82,11 @@ class Bmd3Store {
         const url = this.config.session_url,
             payload = {
                 action: "execute",
-                inputs: toJS(this.settings),
+                inputs: {
+                    version: 2,
+                    dtype: this.inputOptions.dtype,
+                    settings: toJS(this.settings),
+                },
             },
             opts = h.fetchPost(this.config.csrf, payload, "PATCH");
 
@@ -157,7 +161,7 @@ class Bmd3Store {
         const url = this.config.session_url,
             payload = {
                 action: "select",
-                selected: toJS(this.selected),
+                selected: _.merge(toJS(this.selected), {version: 2}),
             },
             opts = h.fetchPost(this.config.csrf, payload, "PATCH");
 

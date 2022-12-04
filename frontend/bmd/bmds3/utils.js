@@ -1,4 +1,5 @@
 import _ from "lodash";
+
 const getLabel = function(value, items) {
         for (let index = 0; index < items.length; index++) {
             const item = items[index];

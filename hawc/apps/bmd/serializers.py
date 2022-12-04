@@ -91,16 +91,14 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
             "selected",
         )
         read_only_fields = ["outputs"]
-        extra_kwargs = {"execute": {"write_only": True}}
+        extra_kwargs = {"action": {"write_only": True}}
 
     def validate_inputs(self, value):
-        pydantic_class = constants.get_input_model(self.instance.endpoint)
-        validate_pydantic(pydantic_class, "inputs", value)
+        validate_pydantic(constants.BmdInputSettings, "inputs", value)
         return value
 
     def validate_selected(self, value):
-        pydantic_class = constants.SelectedModel
-        validate_pydantic(pydantic_class, "selected", value)
+        validate_pydantic(constants.SelectedModel, "selected", value)
         return value
 
     def save_and_execute(self):
@@ -108,7 +106,7 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
         instance = self.instance
 
         # reset model outputs
-        instance.dose_units_id = data["inputs"]["dose_units_id"]
+        instance.dose_units_id = data["inputs"]["settings"]["dose_units_id"]
         instance.inputs = data["inputs"]
         instance.outputs = {}
         instance.errors = {}

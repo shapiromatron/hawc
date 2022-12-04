@@ -39,11 +39,12 @@ def _migrate_session(sm_dict, Session):
             sess_models.append(model_serialized)
         sess_models = sorted(sess_models, key=lambda model: model["id"])
         if isinstance(session.inputs, list):
-            session.inputs = dict(bmrs=session.inputs)
+            session.inputs = dict(version=1, bmrs=session.inputs)
         session.outputs = dict(models=sess_models)
         if selected:
             session.active = True
             session.selected = dict(
+                version=1,
                 model_id=selected.model_id,
                 name=selected.model.name if selected.model else None,
                 bmd=selected.model.output["BMD"] if selected.model else None,

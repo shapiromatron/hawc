@@ -1,7 +1,7 @@
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Type
+from typing import Optional, Union
 
 from bmds import constants
 from bmds.bmds3.constants import DistType
@@ -9,9 +9,10 @@ from bmds.bmds3.types.continuous import ContinuousRiskType
 from bmds.bmds3.types.dichotomous import DichotomousRiskType
 from django.db import models
 from django.db.models import IntegerChoices
-from pydantic import BaseModel, confloat, conint
+from pydantic import BaseModel, Field, confloat, conint
 
 from ..animal.constants import DataType
+from ..animal.models import Endpoint
 
 
 class BmdsVersion(models.TextChoices):
@@ -81,13 +82,29 @@ class ContinuousInputSettings(BaseModel):
         session.add_model(constants.M_Power, settings)
 
 
-def get_input_model(endpoint) -> Type[BaseModel]:
-    if endpoint.data_type == DataType.CONTINUOUS:
-        return ContinuousInputSettings
-    elif endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
-        return DichotomousInputSettings
-    else:
-        raise ValueError(f"Cannot determine input model {endpoint.data_type}")
+class BmdInputSettings(BaseModel):
+    version: int = Field(default=2, const=True)
+    dtype: constants.ModelClass
+    settings: Union[DichotomousInputSettings, ContinuousInputSettings]
+
+    def add_models(self, session):
+        self.settings.add_models(session)
+
+    @classmethod
+    def create_default(cls, endpoint: Endpoint) -> "BmdInputSettings":
+        dose_units_id = endpoint.get_doses_json(json_encode=False)[0]["id"]
+        if endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
+            return cls(
+                dtype=constants.ModelClass.DICHOTOMOUS,
+                settings=DichotomousInputSettings(dose_units_id=dose_units_id),
+            )
+        elif endpoint.data_type in [DataType.CONTINUOUS]:
+            return cls(
+                dtype=constants.ModelClass.CONTINUOUS,
+                settings=ContinuousInputSettings(dose_units_id=dose_units_id),
+            )
+        else:
+            raise ValueError(f"Cannot create default for {endpoint.data_type}")
 
 
 def get_input_options(dtype: str) -> dict:
@@ -107,6 +124,7 @@ def get_input_options(dtype: str) -> dict:
 
 
 class SelectedModel(BaseModel):
+    version: int = Field(default=2, const=True)
     model_index: int = -1
     bmdl: Optional[float] = None
     bmd: Optional[float] = None

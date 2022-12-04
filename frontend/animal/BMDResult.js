@@ -12,7 +12,9 @@ class BmdResultComponent extends React.Component {
             dose_units_id = endpoint.doseUnits.activeUnit.id,
             units = endpoint.doseUnits.activeUnit.name,
             selected = _.find(endpoint.data.bmds, d => d.dose_units_id === dose_units_id),
-            modelName = selected ? selected.name : <i>no model selected</i>;
+            hasSelected = selected !== undefined,
+            hasSelectedModel = hasSelected && selected.model,
+            modelName = hasSelectedModel ? selected.model.name : <i>None selected</i>;
 
         if (!selected) {
             return (
@@ -20,13 +22,18 @@ class BmdResultComponent extends React.Component {
             );
         }
         return (
-            <div>
-                <p>
-                    <b>Selected model:</b>&nbsp;{modelName}
-                    &nbsp;(<a href={selected.session_url}>View details</a>)
-                </p>
-                {selected.name ? (
-                    <ul>
+            <ul className="list-unstyled mb-0">
+                <li>
+                    <b>Model:</b>&nbsp;{modelName}&nbsp;(
+                    <a href={selected.session_url}>View</a>)
+                </li>
+                {selected.bmr ? (
+                    <li>
+                        <b>BMR:</b>&nbsp;{selected.bmr}
+                    </li>
+                ) : null}
+                {selected.model ? (
+                    <>
                         <li>
                             <b>BMDL:</b>&nbsp;{h.ff(selected.bmdl)}&nbsp;{units}
                         </li>
@@ -36,14 +43,9 @@ class BmdResultComponent extends React.Component {
                         <li>
                             <b>BMDU:</b>&nbsp;{h.ff(selected.bmdu)}&nbsp;{units}
                         </li>
-                    </ul>
+                    </>
                 ) : null}
-                {selected.notes ? (
-                    <p className="mb-0">
-                        <b>Modeling notes:</b>&nbsp;{selected.notes}
-                    </p>
-                ) : null}
-            </div>
+            </ul>
         );
     }
 }
