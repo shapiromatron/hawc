@@ -175,7 +175,10 @@ class Cause(models.Model):
         NestedTerm,
         related_name="causes",
         on_delete=models.CASCADE,
-        help_text=format_lazy("Begin typing or scroll to find the most detailed controlled vocabulary term possible; view entire <a href='{link}'>term list</a>", link=reverse_lazy('eco:term_list')),
+        help_text=format_lazy(
+            "Begin typing or scroll to find the most detailed controlled vocabulary term possible; view entire <a href='{link}'>term list</a>",
+            link=reverse_lazy("eco:term_list"),
+        ),
     )
     biological_organization = models.ForeignKey(
         Vocab,
@@ -287,7 +290,10 @@ class Effect(models.Model):
         NestedTerm,
         related_name="effects",
         on_delete=models.CASCADE,
-        help_text=format_lazy("Begin typing or scroll to find the most detailed controlled vocabulary term possible; view entire <a href='{link}'>term list</a>", link=reverse_lazy('eco:term_list')),
+        help_text=format_lazy(
+            "Begin typing or scroll to find the most detailed controlled vocabulary term possible; view entire <a href='{link}'>term list</a>",
+            link=reverse_lazy("eco:term_list"),
+        ),
     )
     biological_organization = models.ForeignKey(
         Vocab,
