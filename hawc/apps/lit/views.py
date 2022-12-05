@@ -349,12 +349,12 @@ class ConflictResolution(BaseFilterList):
     paginate_by = None
 
     def get_queryset(self):
-        num_unresolved = Count("user_tags", filter=Q(user_tags__is_resolved=False))
+        n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
         return (
             super()
             .get_queryset()
-            .annotate(num_unresolved=num_unresolved)
-            .filter(num_unresolved__gte=1)
+            .annotate(n_unapplied_reviews=n_unapplied_reviews)
+            .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
