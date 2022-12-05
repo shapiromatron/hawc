@@ -5,9 +5,12 @@ def _get_selected_model_dict(Session, SelectedModel) -> dict:
     sm_dict = {}
     for sm in SelectedModel.objects.select_related("model"):
         if sm.model:
+            # if we have a model, we know the related bmd session
             key = sm.model.session_id
         else:
-            key = (
+            # if we dont have a model, we need to find the related session
+            # get latest session which was executed successfully
+            latest_session = (
                 Session.objects.filter(
                     endpoint_id=sm.endpoint_id,
                     dose_units_id=sm.dose_units_id,
@@ -15,7 +18,17 @@ def _get_selected_model_dict(Session, SelectedModel) -> dict:
                 )
                 .order_by("-last_updated")
                 .first()
-            ).id
+            )
+            if latest_session is None:
+                # get latest session, regardless of execution status
+                latest_session = (
+                    Session.objects.filter(
+                        endpoint_id=sm.endpoint_id, dose_units_id=sm.dose_units_id
+                    )
+                    .order_by("-last_updated")
+                    .first()
+                )
+            key = latest_session.id
         sm_dict[key] = sm
     return sm_dict
 
