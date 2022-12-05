@@ -1,5 +1,3 @@
-import random
-from django.conf import settings
 from rest_framework import exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response

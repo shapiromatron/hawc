@@ -974,7 +974,8 @@
           "model_id": 8,
           "name": "Logistic",
           "notes": "Selected model notes.",
-          "session_url": "/bmd/session/2/"
+          "session_url": "/bmd/session/2/",
+          "version": 1
         }
       ],
       "confidence_interval": null,

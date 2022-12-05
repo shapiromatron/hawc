@@ -2552,6 +2552,7 @@
     dose_units: 1
     version: BMDS270
     inputs:
+      version: 1
       bmrs:
       - type: Extra
         value: 0.1
@@ -2857,6 +2858,7 @@
         execution_error: false
     errors: {}
     selected:
+      version: 1
       bmd: 355.654
       bmdl: 238.329
       bmdu: 667.165
