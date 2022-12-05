@@ -64,8 +64,8 @@ class DichotomousInputSettings(BaseModel):
 class ContinuousInputSettings(BaseModel):
     dose_units_id: int
     num_doses_dropped: conint(ge=0) = 0
-    bmr_type: ContinuousRiskType = ContinuousRiskType.RelativeDeviation
-    bmr_value: confloat(gt=0) = 0.1
+    bmr_type: ContinuousRiskType = ContinuousRiskType.StandardDeviation
+    bmr_value: confloat(gt=0) = 1
     variance_model: DistType = DistType.normal
 
     def add_models(self, session):
