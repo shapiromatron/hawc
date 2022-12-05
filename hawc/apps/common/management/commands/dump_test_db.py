@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        if "fixture" not in settings.DATABASES["default"]["NAME"]:
+        if settings.DATABASES["default"]["NAME"] not in {"hawc-test", "hawc-fixture"}:
             raise CommandError("Must be using a test database to execute.")
 
         f = StringIO()

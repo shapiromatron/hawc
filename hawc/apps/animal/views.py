@@ -186,7 +186,7 @@ class AnimalGroupRead(BaseDetail):
                 "animal_group__strain",
             )
             .prefetch_related(
-                "bmd_models",
+                "bmd_sessions",
                 "effects",
                 "groups",
                 "animal_group__parents",

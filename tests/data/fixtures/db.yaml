@@ -328,14 +328,6 @@
     model: session
 - model: contenttypes.contenttype
   fields:
-    app_label: bmd
-    model: model
-- model: contenttypes.contenttype
-  fields:
-    app_label: bmd
-    model: selectedmodel
-- model: contenttypes.contenttype
-  fields:
     app_label: summary
     model: summarytext
 - model: contenttypes.contenttype
@@ -878,6 +870,22 @@
     name: Fatty Acid Balance
     created: 2020-11-28 03:16:20.324080+00:00
     last_updated: 2020-11-28 03:16:20.324104+00:00
+    effects: []
+- model: assessment.baseendpoint
+  pk: 9
+  fields:
+    assessment: 2
+    name: bmd3 - continuous
+    created: 2022-12-05 21:14:36.922254+00:00
+    last_updated: 2022-12-05 21:14:36.922254+00:00
+    effects: []
+- model: assessment.baseendpoint
+  pk: 10
+  fields:
+    assessment: 2
+    name: bmds3 - dichotomous
+    created: 2022-12-05 21:17:10.314495+00:00
+    last_updated: 2022-12-05 21:17:10.314495+00:00
     effects: []
 - model: assessment.dataset
   pk: 1
@@ -2272,6 +2280,86 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
+- model: animal.endpoint
+  pk: 9
+  fields:
+    baseendpoint_ptr: 9
+    animal_group: 3
+    name_term: null
+    system: ''
+    system_term: null
+    organ: ''
+    organ_term: null
+    effect: ''
+    effect_term: null
+    effect_subtype: ''
+    effect_subtype_term: null
+    litter_effects: N
+    litter_effect_notes: n/a
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: mg/kg
+    data_type: C
+    variance_type: 1
+    confidence_interval: null
+    NOEL: -999
+    LOEL: -999
+    FEL: -999
+    data_reported: true
+    data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
+- model: animal.endpoint
+  pk: 10
+  fields:
+    baseendpoint_ptr: 10
+    animal_group: 3
+    name_term: null
+    system: ''
+    system_term: null
+    organ: ''
+    organ_term: null
+    effect: ''
+    effect_term: null
+    effect_subtype: ''
+    effect_subtype_term: null
+    litter_effects: N
+    litter_effect_notes: n/a
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: '%'
+    data_type: D
+    variance_type: 0
+    confidence_interval: null
+    NOEL: -999
+    LOEL: -999
+    FEL: -999
+    data_reported: true
+    data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
 - model: animal.endpointgroup
   pk: 1
   fields:
@@ -2524,6 +2612,146 @@
     significant: false
     significance_level: null
     treatment_effect: null
+- model: animal.endpointgroup
+  pk: 19
+  fields:
+    endpoint: 9
+    dose_group_id: 0
+    n: 20
+    incidence: null
+    response: 5.26
+    variance: 2.23
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 20
+  fields:
+    endpoint: 9
+    dose_group_id: 1
+    n: 20
+    incidence: null
+    response: 5.76
+    variance: 1.47
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 21
+  fields:
+    endpoint: 9
+    dose_group_id: 2
+    n: 20
+    incidence: null
+    response: 6.13
+    variance: 2.47
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 22
+  fields:
+    endpoint: 9
+    dose_group_id: 3
+    n: 20
+    incidence: null
+    response: 8.24
+    variance: 2.24
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 23
+  fields:
+    endpoint: 9
+    dose_group_id: 4
+    n: 20
+    incidence: null
+    response: 9.23
+    variance: 1.56
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 24
+  fields:
+    endpoint: 10
+    dose_group_id: 0
+    n: 20
+    incidence: 0
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 25
+  fields:
+    endpoint: 10
+    dose_group_id: 1
+    n: 20
+    incidence: 1
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 26
+  fields:
+    endpoint: 10
+    dose_group_id: 2
+    n: 20
+    incidence: 2
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 27
+  fields:
+    endpoint: 10
+    dose_group_id: 3
+    n: 20
+    incidence: 10
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
+- model: animal.endpointgroup
+  pk: 28
+  fields:
+    endpoint: 10
+    dose_group_id: 4
+    n: 20
+    incidence: 19
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+    treatment_effect: null
 - model: bmd.assessmentsettings
   pk: 1
   fields:
@@ -2535,9 +2763,9 @@
   pk: 2
   fields:
     assessment: 2
-    version: BMDS270
+    version: BMDS330
     created: 2020-11-25 16:47:36.236947+00:00
-    last_updated: 2020-11-25 16:47:36.236964+00:00
+    last_updated: 2022-12-05 21:15:14.684837+00:00
 - model: bmd.assessmentsettings
   pk: 3
   fields:
@@ -2552,11 +2780,11 @@
     dose_units: 1
     version: BMDS270
     inputs:
-      version: 1
       bmrs:
       - type: Extra
         value: 0.1
         confidence_level: 0.95
+      version: 1
     outputs:
       models:
       - id: 8
