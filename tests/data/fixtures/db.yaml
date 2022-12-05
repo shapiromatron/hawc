@@ -2219,7 +2219,7 @@
     user:
     - team@hawcproject.org
     reference: 10
-    is_resolved: true
+    is_resolved: false
     created: 2022-10-27 21:09:01.953588+00:00
     last_updated: 2022-10-27 21:09:02.014507+00:00
 - model: lit.userreferencetag

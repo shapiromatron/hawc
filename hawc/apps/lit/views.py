@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Q
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -348,10 +349,12 @@ class ConflictResolution(BaseFilterList):
     paginate_by = None
 
     def get_queryset(self):
+        num_unresolved = Count("user_tags", filter=Q(user_tags__is_resolved=False))
         return (
             super()
             .get_queryset()
-            .filter(user_tags__is_resolved=False)
+            .annotate(num_unresolved=num_unresolved)
+            .filter(num_unresolved__gte=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )

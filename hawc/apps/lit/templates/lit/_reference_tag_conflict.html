@@ -20,25 +20,27 @@
                 <span><i>&lt;none&gt;</i></span>
             {% endfor %}
             {% for user_tag in ref.user_tags.all %}
-            <div class="tag-conf-item {% if forloop.first %} mt-1 {% endif %}">
-                <form>
-                    <div>
-                        <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1"
-                            hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
-                            <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve</button>
-                        <b class="mb-0">{{user_tag.user.get_full_name}}</b> <i class="m-0 small">{{user_tag.user.email}}</i>
-                        <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
-                    </div>
-                    {% with user_tag.get_tags_diff as tags%}
-                        {% for tag in tags.same %}
-                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
-                        {% endfor %}
-                        {% for tag in tags.diff %}
-                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagDiff' %}
-                        {% endfor %}
-                    {% endwith %}
-                </form>
-            </div>
+                {% if not user_tag.is_resolved %}
+                <div class="tag-conf-item {% if forloop.first %} mt-1 {% endif %}">
+                    <form>
+                        <div>
+                            <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1"
+                                hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
+                                <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve</button>
+                            <b class="mb-0">{{user_tag.user.get_full_name}}</b> <i class="m-0 small">{{user_tag.user.email}}</i>
+                            <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
+                        </div>
+                        {% with user_tag.get_tags_diff as tags%}
+                            {% for tag in tags.same %}
+                                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
+                            {% endfor %}
+                            {% for tag in tags.diff %}
+                                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagDiff' %}
+                            {% endfor %}
+                        {% endwith %}
+                    </form>
+                </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
