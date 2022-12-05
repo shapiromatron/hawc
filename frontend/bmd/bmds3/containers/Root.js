@@ -299,7 +299,7 @@ class Root extends React.Component {
                                         <OutputFigure
                                             endpoint={endpoint}
                                             hoverModel={toJS(store.hoverModel)}
-                                            selectedModel={null}
+                                            selectedModel={store.selectedModel}
                                         />
                                     </div>
                                 </div>
@@ -322,6 +322,7 @@ class Root extends React.Component {
                                                 </div>
                                                 <div className="col-md-4">
                                                     <TextAreaInput
+                                                        name="model_selection"
                                                         label="Selection notes"
                                                         value={selected.notes}
                                                         onChange={e =>

@@ -21,7 +21,7 @@ const getPlotDataV1 = function(model) {
             };
 
         return {
-            id: model.id,
+            id: model.name,
             dose_units_id: model.dose_units,
             name: model.name,
             getData: func,
@@ -35,7 +35,7 @@ const getPlotDataV1 = function(model) {
             {bmd_y, dr_x, dr_y} = model.results.plotting;
 
         return {
-            id: model.model_class.id,
+            id: model.name,
             dose_units_id: dose_units,
             name,
             dr_data: _.zip(dr_x, dr_y).map(d => {
@@ -62,7 +62,7 @@ class BmdLine {
     }
 
     destroy() {
-        this.plot.remove_bmd_line(this.model.id);
+        this.plot.remove_bmd_line(this.model.name);
     }
 
     _getPlotData() {

@@ -53,6 +53,21 @@ const getLabel = function(value, items) {
         }
 
         return options;
+    },
+    addDoseUnitsToModels = function(outputs, dose_units_id) {
+        // modify models to include dose units at root level; necessary for plotting with current
+        // abstractions. In the future this should be revised to no longer be necessary
+        if (outputs && outputs.models) {
+            outputs.models.map(model => {
+                model.id = model.name;
+                model.dose_units = dose_units_id;
+            });
+        }
+    },
+    getModelFromIndex = function(model_index, models) {
+        // return output model content or null, based on model index. If value is -1, return
+        // null; this is the default case when no model is selected.
+        return model_index >= 0 ? models[model_index] : null;
     };
 
-export {bmrLabel, doseDropOptions, getLabel};
+export {addDoseUnitsToModels, bmrLabel, doseDropOptions, getLabel, getModelFromIndex};
