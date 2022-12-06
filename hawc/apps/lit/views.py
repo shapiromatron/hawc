@@ -346,7 +346,7 @@ class ConflictResolution(BaseFilterList):
             ]
         },
     )
-    paginate_by = None
+    paginate_by = 100
 
     def get_queryset(self):
         n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))

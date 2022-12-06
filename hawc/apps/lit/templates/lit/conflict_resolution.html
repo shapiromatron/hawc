@@ -10,6 +10,7 @@
     <li class="list-group-item list-group-item-action my-3">No conflicts to resolve!</li>
     {% endfor %}
 </ul>
+{% include "includes/paginator.html" with plural_object_name="conflicts" %}
 {% endblock content %}
 
 {% block extrajs %}
