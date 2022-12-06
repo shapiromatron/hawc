@@ -44,4 +44,5 @@
             {% endfor %}
         </div>
     </div>
+    <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="btn btn-primary">Tag it yourself</a>
 </li>
