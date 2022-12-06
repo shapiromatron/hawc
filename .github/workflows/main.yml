@@ -72,6 +72,9 @@ jobs:
         DJANGO_CACHE_LOCATION: redis://localhost:6379/0
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          export "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
+        fi
         py.test --vcr-record=none
 
   frontend:
