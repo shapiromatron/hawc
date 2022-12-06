@@ -130,8 +130,12 @@ class Session(models.Model):
         self.date_executed = timezone.now()
         self.save()
 
-    def set_selected_model(self):
-        pass
+    def reset_execution(self):
+        self.outputs = {}
+        self.errors = {}
+        self.selected = constants.SelectedModel().dict()
+        self.active = False
+        self.date_executed = None
 
     def get_settings(self) -> constants.BmdInputSettings:
         return constants.BmdInputSettings.parse_obj(self.inputs)
@@ -187,6 +191,11 @@ class Session(models.Model):
             session_url=self.get_absolute_url(),
         )
         return selected
+
+    def set_selected_model(self, selected: constants.SelectedModel):
+        self.selected = selected.dict()
+        self.active = True
+        self.outputs["selected"] = selected.to_bmd_output()
 
     def get_input_options(self) -> dict:
         return constants.get_input_options(self.endpoint.data_type)

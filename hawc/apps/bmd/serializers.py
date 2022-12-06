@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from ..animal.serializers import EndpointSerializer
@@ -101,35 +102,20 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
         return value
 
     def save_and_execute(self):
-        data = self.validated_data
-        instance = self.instance
-
-        # reset model outputs
-        instance.dose_units_id = data["inputs"]["settings"]["dose_units_id"]
-        instance.inputs = data["inputs"]
-        instance.outputs = {}
-        instance.errors = {}
-        instance.selected = constants.SelectedModel().dict()
-        instance.active = False
-        instance.date_executed = None
-        instance.save()
+        self.instance.dose_units_id = self.validated_data["inputs"]["settings"]["dose_units_id"]
+        self.instance.inputs = self.validated_data["inputs"]
+        self.instance.reset_execution()
+        self.instance.save()
 
         # trigger BMD model execution
-        tasks.execute.delay(instance.id)
+        tasks.execute.delay(self.instance.id)
 
+    @transaction.atomic
     def select(self):
-        data = self.validated_data
-        instance = self.instance
-
         # deactivate other session
-        instance.deactivate_similar_sessions()
+        self.instance.deactivate_similar_sessions()
 
-        # save hawc selection
-        instance.selected = data["selected"]
-        instance.active = True
-
-        # set output selection
-        serialized = constants.SelectedModel.parse_obj(data["selected"])
-        instance.outputs["selected"] = serialized.to_bmd_output()
-
-        instance.save()
+        # set selected model
+        selected = constants.SelectedModel.parse_obj(self.validated_data["selected"])
+        self.instance.set_selected_model(selected)
+        self.instance.save()
