@@ -41,3 +41,5 @@ scikit-learn==1.0.2
 # exports
 rispy==0.7.1
 python-docx==0.8.11
+
+-i https://test.pypi.org/simple/ bmds==22.1
