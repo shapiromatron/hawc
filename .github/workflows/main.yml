@@ -62,7 +62,8 @@ jobs:
         export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
         sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
         sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-        ldd bmds/bin/BMDS330/libDRBMD.so
+        find / -name "libDRBMD.so" 2>/dev/null
+        # ldd bmds/bin/BMDS330/libDRBMD.so
     - name: test
       env:
         DJANGO_DB_NAME: hawc
