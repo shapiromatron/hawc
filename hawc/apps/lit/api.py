@@ -383,8 +383,9 @@ class ReferenceViewset(
         assessment = ref.assessment
         if assessment.user_can_edit_object(self.request.user):
             tag_pks = self.request.POST.getlist("tags[]", [])
-            ref.update_tags(request.user, tag_pks)
+            resolved = ref.update_tags(request.user, tag_pks)
             response["status"] = "success"
+            response["resolved"] = resolved
         return Response(response)
 
     @action(detail=True, methods=("post",))

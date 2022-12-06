@@ -1,13 +1,13 @@
 import _ from "lodash";
 import {action, observable, toJS} from "mobx";
 
-import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
 
 class Store {
     config = null;
-    saveIndicatorElement = null;
+    // a flag used to indicate that state change happened from successful save
+    updateFromSave = false;
     @observable tagtree = null;
     @observable references = [];
     @observable selectedReference = null;
@@ -16,6 +16,7 @@ class Store {
     @observable errorOnSave = false;
     @observable filterClass = "";
     @observable showInstructionsModal = false;
+    @observable lastResolved = false;
 
     constructor(config) {
         this.config = config;
@@ -62,54 +63,45 @@ class Store {
                     ? this.selectedReferenceUserTags.map(tag => tag.data.pk)
                     : this.selectedReferenceTags.map(tag => tag.data.pk),
             },
-            success = () => {
-                const $el = $(this.saveIndicatorElement),
-                    index = _.findIndex(
-                        this.references,
-                        ref => ref.data.pk === this.selectedReference.data.pk
-                    );
+            // since the success function is a promise and makes a number of changes we need to
+            // wrap it in a mobx action so that it doesn't count each individual change
+            success = action(resolved => {
+                const index = _.findIndex(
+                    this.references,
+                    ref => ref.data.pk === this.selectedReference.data.pk
+                );
 
-                if ($el.length !== 1) {
-                    throw "`this.saveIndicatorElement` not found.";
+                this.lastResolved = resolved;
+                this.errorOnSave = false;
+
+                this.selectedReference.tags = toJS(this.selectedReferenceTags);
+                this.selectedReference.userTags = toJS(this.selectedReferenceUserTags);
+                this.references.splice(index, 1, toJS(this.selectedReference));
+                this.selectedReference = null;
+                this.selectedReferenceTags = null;
+                this.selectedReferenceUserTags = null;
+                if (this.references.length > index + 1) {
+                    this.changeSelectedReference(this.references[index + 1]);
+                } else {
+                    this.changeSelectedReference(this.references[0]);
                 }
 
-                this.errorOnSave = false;
-                $el.fadeIn().fadeOut({
-                    complete: () => {
-                        this.selectedReference.tags = toJS(this.selectedReferenceTags);
-                        this.selectedReference.userTags = toJS(this.selectedReferenceUserTags);
-                        this.references.splice(index, 1, toJS(this.selectedReference));
-                        this.selectedReference = null;
-                        this.selectedReferenceTags = null;
-                        this.selectedReferenceUserTags = null;
-                        if (this.references.length > index + 1) {
-                            this.changeSelectedReference(this.references[index + 1]);
-                        } else {
-                            this.changeSelectedReference(this.references[0]);
-                        }
-                    },
-                });
-            },
+                this.updateFromSave = true;
+            }),
             failure = data => {
                 console.error(data);
                 this.errorOnSave = true;
             };
 
+        // we wrap the successful
         $.post(`/lit/api/reference/${this.selectedReference.data.pk}/tag/`, payload, v =>
-            v.status === "success" ? success() : failure()
+            v.status === "success" ? success(v.resolved) : failure()
         ).fail(failure);
     }
     @action.bound removeAllTags() {
         this.config.conflict_resolution
             ? (this.selectedReferenceUserTags = [])
             : (this.selectedReferenceTags = []);
-    }
-    @action.bound setSaveIndicatorElement(el) {
-        this.saveIndicatorElement = el;
-    }
-
-    @action.bound sortReferences(sortBy) {
-        this.references = sortReferences(this.references, sortBy);
     }
 
     @action.bound toggleSlideAway() {

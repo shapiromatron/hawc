@@ -2,12 +2,12 @@ import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import Alert from "shared/components/Alert";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import Modal from "shared/components/Modal";
 import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 import Reference from "../components/Reference";
-import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";
 
 @inject("store")
@@ -48,17 +48,13 @@ class TagReferencesMain extends Component {
             pinInstructions: this.pinInstructions.value,
         };
     }
-    _setSaveIndicator() {
-        const el = this.savedPopup.current;
-        if (el) {
-            this.props.store.setSaveIndicatorElement(el);
-        }
-    }
-    componentDidMount() {
-        this._setSaveIndicator();
-    }
     componentDidUpdate() {
-        this._setSaveIndicator();
+        if (this.props.store.updateFromSave) {
+            $(this.savedPopup.current)
+                .fadeIn()
+                .fadeOut(this.props.store.lastResolved ? 1000 : 500);
+            this.props.store.updateFromSave = false;
+        }
     }
     render() {
         const {store} = this.props,
@@ -74,7 +70,6 @@ class TagReferencesMain extends Component {
                         className="row px-3 mb-2 justify-content-between"
                         style={{maxHeight: "1.9rem"}}>
                         <h4>References</h4>
-                        <ReferenceSortSelector onChange={store.sortReferences} />
                     </div>
                     <div className="card">
                         <div
@@ -120,18 +115,23 @@ class TagReferencesMain extends Component {
                                         content={"Click on a tag to remove"}
                                     />
                                 </h4>
-                                <span
-                                    ref={this.savedPopup}
-                                    className="bg-success text-white font-weight-bold px-2 rounded"
-                                    style={{display: "none"}}>
-                                    Saved!
-                                </span>
                                 <button
                                     className="btn btn-primary pt-1"
                                     title="Save and go to next reference"
                                     onClick={() => store.saveAndNext()}>
                                     <i className="fa fa-save"></i>&nbsp;Save and next
                                 </button>
+                            </div>
+                            <div ref={this.savedPopup} style={{display: "none"}}>
+                                <Alert
+                                    className="alert-success mt-2"
+                                    icon="fa-check-square"
+                                    message={
+                                        store.lastResolved
+                                            ? "Saved! Tags added with no conflict."
+                                            : "Saved!"
+                                    }
+                                />
                             </div>
                             <div className="well" style={{minHeight: "50px"}}>
                                 {selectedReferenceTags.map((tag, i) => (
