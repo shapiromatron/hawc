@@ -399,5 +399,10 @@ class ReferenceViewset(
         if not assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
         reference.resolve_user_tag_conflicts(selected_user_tag)
-        create_object_log(f"Tag conflict resolved with user_tag {user_tag_id}", reference, assessment.pk, request.user.id)
+        create_object_log(
+            f"Tag conflict resolved with user_tag {user_tag_id}",
+            reference,
+            assessment.pk,
+            request.user.id,
+        )
         return render(request, "lit/_conflict_resolved.html", {"ref": reference})
