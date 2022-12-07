@@ -1,4 +1,4 @@
-The bmds python repository made no changes to the NLOPT source code.
+The HAWC python repository made no changes to the NLOPT source code.
 The original copyright notice is shown below.
 
 ---------------------------------------------------------------------------
