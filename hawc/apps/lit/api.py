@@ -382,7 +382,10 @@ class ReferenceViewset(
         ref = self.get_object()
         assessment = ref.assessment
         if assessment.user_can_edit_object(self.request.user):
-            tag_pks = self.request.POST.getlist("tags[]", [])
+            try:
+                tag_pks = [int(tag_pk) for tag_pk in self.request.POST.getlist("tags[]", [])]
+            except ValueError:
+                return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
             resolved = ref.update_tags(request.user, tag_pks)
             response["status"] = "success"
             response["resolved"] = resolved
