@@ -14,17 +14,7 @@ class Session(BaseAssessmentViewset):
     serializer_class = UnusedSerializer
 
     def get_queryset(self):
-        return (
-            self.model.objects.all()
-            .select_related("endpoint__animal_group__experiment__study")
-            .prefetch_related(
-                "endpoint__effects",
-                "endpoint__groups",
-                "endpoint__animal_group__dosing_regime__doses__dose_units",
-                "endpoint__animal_group__experiment__study__searches",
-                "endpoint__animal_group__experiment__study__identifiers",
-            )
-        )
+        return self.model.objects.all().select_related("endpoint")
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

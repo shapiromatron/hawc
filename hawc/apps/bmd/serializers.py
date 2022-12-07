@@ -1,7 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from ..animal.serializers import EndpointSerializer
 from ..common.serializers import validate_pydantic
 from . import constants, models, tasks
 
@@ -40,7 +39,7 @@ class SessionBmd3Serializer(serializers.ModelSerializer):
     url_api = serializers.URLField(source="get_api_url")
     url_execute_status = serializers.URLField(source="get_execute_status_url")
     input_options = serializers.JSONField(source="get_input_options")
-    endpoint = EndpointSerializer(read_only=True)
+    endpoint = serializers.JSONField(source="get_endpoint_serialized", read_only=True)
 
     class Meta:
         model = models.Session

@@ -157,6 +157,9 @@ class Session(models.Model):
 
         return session
 
+    def get_endpoint_serialized(self) -> dict:
+        return self.endpoint.get_json(json_encode=False)
+
     def n_drop_doses(self) -> int:
         return max(
             [0] + [model["overrides"].get("dose_drop", 0) for model in self.outputs["models"]]
