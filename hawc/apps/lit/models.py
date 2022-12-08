@@ -886,7 +886,7 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
-    def update_tags(self, user, tag_pks: list[int]):
+    def update_tags(self, user, tag_pks: list[int]) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
         This method was reviewed to try to reduce the number of db hits required, assuming that
@@ -898,7 +898,7 @@ class Reference(models.Model):
             tag_pks (list[int]): A list of tag IDs
 
         Returns:
-            bool: If tags were also saved as consensus
+            bool: If tags were also saved as consensus for Reference
         """
         # save user-level tags
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
@@ -908,7 +908,8 @@ class Reference(models.Model):
 
         # determine if we should save the reference-level tags
         update_reference_tags = False
-        if self.assessment.literature_settings.conflict_resolution:
+        conflict_resolution = self.assessment.literature_settings.conflict_resolution
+        if conflict_resolution:
             unresolved_user_tags = self.user_tags.filter(is_resolved=False)
             if unresolved_user_tags.count() >= 2:
                 tags = set(tag_pks)
@@ -927,7 +928,7 @@ class Reference(models.Model):
             self.last_updated = timezone.now()
             self.save()
 
-        return self.assessment.literature_settings.conflict_resolution and update_reference_tags
+        return conflict_resolution and update_reference_tags
 
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()
