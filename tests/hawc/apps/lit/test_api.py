@@ -10,6 +10,7 @@ from rest_framework.test import APIClient
 
 from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
+from hawc.apps.myuser.models import HAWCUser
 
 from ..test_utils import check_details_of_last_log_entry
 
@@ -661,3 +662,37 @@ class TestReferenceUpdateApi:
         assert updated_reference.tags.count() == len(tags)
         for id in tags:
             assert updated_reference.tags.filter(id=id).exists()
+
+    def test_conflict_resolution(self, db_keys):
+        ref: models.Reference = models.Reference.objects.get(id=db_keys.reference_untagged)
+        pm = HAWCUser.objects.get(email="pm@hawcproject.org")
+        tm = HAWCUser.objects.get(email="team@hawcproject.org")
+
+        pm_tags = [32]
+        tm_tags = [33]
+
+        update_tags_url = reverse("lit:api:reference-tag", args=(ref.pk,))
+        resolve_conflict_url = reverse("lit:api:reference-resolve-conflict", args=(ref.pk,))
+
+        client = APIClient()
+
+        assert ref.user_tags.count() == 0
+        assert ref.has_user_tag_conflicts() is False
+
+        # create a conflict by applying different tags as two different users
+        client.login(email=tm.email, password="pw")
+        client.post(update_tags_url, data={"tags[]": tm_tags})
+        client.logout()
+        client.login(email=pm.email, password="pw")
+        client.post(update_tags_url, data={"tags[]": pm_tags})
+        ref.refresh_from_db()
+        assert ref.user_tags.count() == 2
+        assert ref.has_user_tag_conflicts() is True
+        assert ref.tags.count() == 0
+
+        # resolve the conflict using Project Manager's tags
+        pm_user_tag = ref.user_tags.get(user=pm)
+        client.post(resolve_conflict_url, data={"user_tag_id": pm_user_tag.pk})
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is False
+        assert list(ref.tags.values_list("id", flat=True)) == pm_tags
