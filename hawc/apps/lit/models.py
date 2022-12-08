@@ -1176,16 +1176,15 @@ class UserReferenceTag(models.Model):
     def assessment_id(self) -> int:
         return self.reference.assessment_id
 
-    def get_tags_diff(self):
-        all_tags = set(self.reference.tags.all())
-        for user_tag in self.reference.user_tags.all():
-            if user_tag.id == self.id:
-                continue
-            all_tags.update(set(user_tag.tags.all()))
+    def consensus_diff(self):
+        # returns set operations done against consensus tags
+        consensus_tags = set(self.reference.tags.all())
         self_tags = set(self.tags.all())
-        tags_diff = self_tags.difference(all_tags)
-        tags_same = self_tags.intersection(all_tags)
-        return dict(diff=tags_diff, same=tags_same)
+        return dict(
+            intersection=self_tags.intersection(consensus_tags),
+            difference=self_tags.difference(consensus_tags),
+            reverse_difference=consensus_tags.difference(self_tags),
+        )
 
 
 reversion.register(LiteratureAssessment)
