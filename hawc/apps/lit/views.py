@@ -307,7 +307,7 @@ class TagReferences(BaseFilterList):
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].user_tags(user_id=self.request.user.id)
         for reference in references:
-            reference["user_tags"] = ref_tags.get(reference["pk"], [])
+            reference["user_tags"] = ref_tags.get(reference["pk"])
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",

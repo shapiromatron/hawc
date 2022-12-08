@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, observable, toJS} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 
 import {sortReferences} from "../constants";
 import Reference from "../Reference";
@@ -10,9 +10,9 @@ class Store {
     saveIndicatorElement = null;
     @observable tagtree = null;
     @observable references = [];
-    @observable selectedReference = null;
-    @observable selectedReferenceTags = null;
-    @observable selectedReferenceUserTags = null;
+    @observable reference = null;
+    @observable referenceTags = null;
+    @observable referenceUserTags = null;
     @observable errorOnSave = false;
     @observable filterClass = "";
     @observable showInstructionsModal = false;
@@ -23,50 +23,47 @@ class Store {
         this.references = Reference.array(config.refs, this.tagtree);
         // set first reference
         if (this.references.length > 0) {
-            this.changeSelectedReference(this.references[0]);
+            this.setReference(this.references[0]);
         }
     }
-
-    @action.bound changeSelectedReference(reference) {
-        this.selectedReference = reference;
-        this.selectedReferenceTags = reference.tags.slice(0); // shallow copy
-        this.selectedReferenceUserTags = reference.userTags.slice(0);
+    @computed get hasReference() {
+        return this.reference !== null;
+    }
+    @action.bound setReference(reference) {
+        this.reference = reference;
+        this.referenceTags = reference.tags.slice(0); // shallow copy
+        this.referenceUserTags = reference.userTags
+            ? reference.userTags.slice(0)
+            : reference.tags.slice(0);
+    }
+    hasTag(tags, tag) {
+        return !!_.find(tags, e => e.data.pk == tag.data.pk);
     }
     @action.bound addTag(tag) {
         if (
-            this.selectedReference &&
-            !_.find(
-                this.config.conflict_resolution
-                    ? this.selectedReferenceUserTags
-                    : this.selectedReferenceTags,
-                el => el.data.pk === tag.data.pk
-            )
+            this.hasReference &&
+            !_.find(this.referenceUserTags, el => el.data.pk === tag.data.pk)
         ) {
-            this.config.conflict_resolution
-                ? this.selectedReferenceUserTags.push(tag)
-                : this.selectedReferenceTags.push(tag);
+            this.referenceUserTags.push(tag);
         }
     }
     @action.bound removeTag(tag) {
-        _.remove(
-            this.config.conflict_resolution
-                ? this.selectedReferenceUserTags
-                : this.selectedReferenceTags,
-            el => el.data.pk === tag.data.pk
-        );
+        _.remove(this.referenceUserTags, el => el.data.pk === tag.data.pk);
+    }
+    @action.bound toggleTag(tag) {
+        return this.hasTag(this.referenceUserTags, tag) ? this.removeTag(tag) : this.addTag(tag);
     }
     @action.bound saveAndNext() {
         const payload = {
-                pk: this.selectedReference.data.pk,
-                tags: this.config.conflict_resolution
-                    ? this.selectedReferenceUserTags.map(tag => tag.data.pk)
-                    : this.selectedReferenceTags.map(tag => tag.data.pk),
+                pk: this.reference.data.pk,
+                tags: this.referenceUserTags.map(tag => tag.data.pk),
             },
+            url = `/lit/api/reference/${this.reference.data.pk}/tag/`,
             success = () => {
                 const $el = $(this.saveIndicatorElement),
                     index = _.findIndex(
                         this.references,
-                        ref => ref.data.pk === this.selectedReference.data.pk
+                        ref => ref.data.pk === this.reference.data.pk
                     );
 
                 if ($el.length !== 1) {
@@ -76,17 +73,13 @@ class Store {
                 this.errorOnSave = false;
                 $el.fadeIn().fadeOut({
                     complete: () => {
-                        this.selectedReference.tags = toJS(this.selectedReferenceTags);
-                        this.selectedReference.userTags = toJS(this.selectedReferenceUserTags);
-                        this.references.splice(index, 1, toJS(this.selectedReference));
-                        this.selectedReference = null;
-                        this.selectedReferenceTags = null;
-                        this.selectedReferenceUserTags = null;
-                        if (this.references.length > index + 1) {
-                            this.changeSelectedReference(this.references[index + 1]);
-                        } else {
-                            this.changeSelectedReference(this.references[0]);
+                        this.reference.userTags = toJS(this.referenceUserTags);
+                        if (!this.config.conflict_resolution) {
+                            this.reference.tags = toJS(this.referenceUserTags);
                         }
+                        const nextIndex = this.references.length > index + 1 ? index + 1 : 0,
+                            reference = this.references[nextIndex];
+                        this.setReference(reference);
                     },
                 });
             },
@@ -94,28 +87,20 @@ class Store {
                 console.error(data);
                 this.errorOnSave = true;
             };
-
-        $.post(`/lit/api/reference/${this.selectedReference.data.pk}/tag/`, payload, v =>
-            v.status === "success" ? success() : failure()
-        ).fail(failure);
+        $.post(url, payload, v => (v.status === "success" ? success() : failure())).fail(failure);
     }
     @action.bound removeAllTags() {
-        this.config.conflict_resolution
-            ? (this.selectedReferenceUserTags = [])
-            : (this.selectedReferenceTags = []);
+        this.referenceUserTags = [];
     }
     @action.bound setSaveIndicatorElement(el) {
         this.saveIndicatorElement = el;
     }
-
     @action.bound sortReferences(sortBy) {
         this.references = sortReferences(this.references, sortBy);
     }
-
     @action.bound toggleSlideAway() {
         this.filterClass = this.filterClass == "" ? "slideAway" : "";
     }
-
     @action.bound setInstructionsModal(input) {
         this.showInstructionsModal = input;
     }
