@@ -2,6 +2,14 @@
     id="ref-form-{{ref.pk}}"
     hx-target="#ref-form-{{ref.pk}}"
     hx-swap="outerHTML">
+    <div class="dropdown btn-group float-right">
+        <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference tags</a>
+            <a href="{% url 'lit:ref_edit' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference</a>
+            <a href="{% url 'lit:tag-history' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag history</a>
+        </div>
+    </div>
     <div class="ref_authors cursor-pointer ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
     <div class="ref_title cursor-pointer m-0">{{ref.title}}</div>
     <div class="ref_small mb-1">
@@ -44,5 +52,4 @@
             {% endfor %}
         </div>
     </div>
-    <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="btn btn-primary" target="_blank" rel="noreferrer">Tag it yourself</a>
 </li>
