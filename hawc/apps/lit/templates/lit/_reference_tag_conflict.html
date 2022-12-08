@@ -29,7 +29,7 @@
                         <b class="mb-0">{{user_tag.user.get_full_name}}</b> <i class="m-0 small">{{user_tag.user.email}}</i>
                         <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
                     </div>
-                    {% with user_tag.consensus_diff as diff%}
+                    {% with user_tag.consensus_diff as diff %}
                         {% for tag in ref.tags.all %}
                             {% if tag in diff.intersection %}
                                 {% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}
