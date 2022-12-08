@@ -20,7 +20,7 @@ class ReferenceListItem extends Component {
             title = store.config.conflict_resolution ? "has resolved tag(s)" : "tagged";
 
         return (
-            <div className={divClass} onClick={() => store.changeSelectedReference(reference)}>
+            <div className={divClass} onClick={() => store.setReference(reference)}>
                 <p className="mb-0 pr-1">{reference.shortCitation()}</p>
                 {reference.tags.length > 0 ? (
                     <i className="fa fa-fw fa-tags mx-1" title={title} aria-hidden="true"></i>
@@ -58,11 +58,8 @@ class TagReferencesMain extends Component {
     }
     render() {
         const {store} = this.props,
-            selectedReferencePk = store.selectedReference ? store.selectedReference.data.pk : null,
-            selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
-            selectedReferenceUserTags = store.selectedReferenceUserTags
-                ? store.selectedReferenceUserTags
-                : [];
+            {hasReference, reference, referenceTags, referenceUserTags} = store,
+            selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
         return (
             <div className="row">
                 <div className={store.filterClass} id="refFilter">
@@ -89,7 +86,7 @@ class TagReferencesMain extends Component {
                     </div>
                 </div>
                 <div className={store.filterClass} id="taggingCol">
-                    {store.selectedReference ? (
+                    {store.hasReference ? (
                         <div>
                             <div className="d-flex justify-content-between">
                                 <h4 className="my-0">
@@ -134,40 +131,38 @@ class TagReferencesMain extends Component {
                                 />
                             </div>
                             <div className="well" style={{minHeight: "50px"}}>
-                                {selectedReferenceTags.map((tag, i) => (
+                                {referenceTags.map((tag, i) => (
                                     <span
                                         key={i}
                                         title={
                                             store.config.conflict_resolution
-                                                ? "Resolved Tag: ".concat(tag.get_full_name())
+                                                ? "Tag: ".concat(tag.get_full_name())
                                                 : tag.get_full_name()
                                         }
-                                        className="refTag refTagEditing"
-                                        onClick={
-                                            store.config.conflict_resolution
-                                                ? null
-                                                : () => store.removeTag(tag)
-                                        }>
+                                        className={
+                                            store.hasTag(referenceUserTags, tag)
+                                                ? "refTag cursor-pointer"
+                                                : "refTag refUserTagRemove cursor-pointer"
+                                        }
+                                        onClick={() => store.toggleTag(tag)}>
                                         {this.state.showFullTag
                                             ? tag.get_full_name()
                                             : tag.data.name}
                                     </span>
                                 ))}
-                                {selectedReferenceUserTags.map((tag, i) => (
-                                    <span
-                                        key={i}
-                                        title={tag.get_full_name()}
-                                        className="refTag refUserTag refTagEditing"
-                                        onClick={
-                                            store.config.conflict_resolution
-                                                ? () => store.removeTag(tag)
-                                                : null
-                                        }>
-                                        {this.state.showFullTag
-                                            ? tag.get_full_name()
-                                            : tag.data.name}
-                                    </span>
-                                ))}
+                                {referenceUserTags
+                                    .filter(tag => !store.hasTag(referenceTags, tag))
+                                    .map((tag, i) => (
+                                        <span
+                                            key={i}
+                                            title={"Proposed: ".concat(tag.get_full_name())}
+                                            className="refTag refUserTag cursor-pointer"
+                                            onClick={() => store.removeTag(tag)}>
+                                            {this.state.showFullTag
+                                                ? tag.get_full_name()
+                                                : tag.data.name}
+                                        </span>
+                                    ))}
                             </div>
                             {store.errorOnSave ? (
                                 <div className="alert alert-danger">
@@ -176,7 +171,7 @@ class TagReferencesMain extends Component {
                                 </div>
                             ) : null}
                             <Reference
-                                reference={store.selectedReference}
+                                reference={reference}
                                 keywordDict={store.config.keywords}
                                 showActions={false}
                                 showHr={false}
