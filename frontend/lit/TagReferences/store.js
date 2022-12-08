@@ -60,7 +60,6 @@ class Store {
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
             },
             url = `/lit/api/reference/${this.reference.data.pk}/tag/`,
-
             // since the success function is a promise and makes a number of changes we need to
             // wrap it in a mobx action so that it doesn't count each individual change
             success = action(resolved => {
@@ -87,7 +86,9 @@ class Store {
                 this.errorOnSave = true;
             };
 
-        $.post(url, payload, v => (v.status === "success" ? success(v.resolved) : failure())).fail(failure);
+        $.post(url, payload, v => (v.status === "success" ? success(v.resolved) : failure())).fail(
+            failure
+        );
     }
     @action.bound removeAllTags() {
         this.referenceUserTags = [];
