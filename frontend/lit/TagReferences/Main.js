@@ -145,9 +145,9 @@ class TagReferencesMain extends Component {
                                         className={
                                             store.config.conflict_resolution
                                                 ? store.hasTag(selectedReferenceUserTags, tag)
-                                                    ? "refTag refTagEditing"
-                                                    : "refTag refUserTagDiff refTagEditing"
-                                                : "refTag refTagEditing"
+                                                    ? "refTag cursor-pointer"
+                                                    : "refTag refUserTagRemove cursor-pointer"
+                                                : "refTag cursor-pointer"
                                         }
                                         onClick={
                                             store.config.conflict_resolution
@@ -165,7 +165,7 @@ class TagReferencesMain extends Component {
                                         <span
                                             key={i}
                                             title={tag.get_full_name()}
-                                            className="refTag refUserTag refTagEditing"
+                                            className="refTag refUserTag cursor-pointer"
                                             onClick={
                                                 store.config.conflict_resolution
                                                     ? () => store.removeTag(tag)

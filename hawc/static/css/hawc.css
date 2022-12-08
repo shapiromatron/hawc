@@ -345,9 +345,6 @@ div.smart-tag.active {
     text-align: left;
     white-space: pre-wrap;
 }
-.refTagEditing {
-    cursor: pointer;
-}
 .abstract_label {
     font-weight: bold;
 }
@@ -476,7 +473,7 @@ div.smart-tag.active {
     display: inline-block;
 }
 
-.refUserTagDiff {
+.refUserTagRemove {
     color: rgb(128,0,0);
     background-color: #ffffff;
     border: 0.15rem dotted rgb(128,0,0);
