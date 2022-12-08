@@ -48,14 +48,6 @@ class TagReferencesMain extends Component {
             pinInstructions: this.pinInstructions.value,
         };
     }
-    componentDidUpdate() {
-        if (this.props.store.updateFromSave) {
-            $(this.savedPopup.current)
-                .fadeIn()
-                .fadeOut(this.props.store.lastResolved ? 1000 : 500);
-            this.props.store.updateFromSave = false;
-        }
-    }
     render() {
         const {store} = this.props,
             {hasReference, reference, referenceTags, referenceUserTags} = store,
@@ -119,17 +111,19 @@ class TagReferencesMain extends Component {
                                     <i className="fa fa-save"></i>&nbsp;Save and next
                                 </button>
                             </div>
-                            <div ref={this.savedPopup} style={{display: "none"}}>
+                            {store.successMessage ? (
                                 <Alert
                                     className="alert-success mt-2"
                                     icon="fa-check-square"
-                                    message={
-                                        store.lastResolved
-                                            ? "Saved! Tags added with no conflict."
-                                            : "Saved!"
-                                    }
+                                    message={store.successMessage}
                                 />
-                            </div>
+                            ) : null}
+                            {store.errorOnSave ? (
+                                <Alert
+                                    className="alert-danger mt-2"
+                                    message="An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
+                                />
+                            ) : null}
                             <div className="well" style={{minHeight: "50px"}}>
                                 {referenceTags.map((tag, i) => (
                                     <span
@@ -164,12 +158,6 @@ class TagReferencesMain extends Component {
                                         </span>
                                     ))}
                             </div>
-                            {store.errorOnSave ? (
-                                <div className="alert alert-danger">
-                                    An error occurred in saving; please wait a moment and retry. If
-                                    the error persists please contact HAWC staff.
-                                </div>
-                            ) : null}
                             <Reference
                                 reference={reference}
                                 keywordDict={store.config.keywords}

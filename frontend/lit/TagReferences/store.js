@@ -1,22 +1,21 @@
 import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
+import h from "shared/utils/helpers";
 
 import Reference from "../Reference";
 import TagTree from "../TagTree";
 
 class Store {
     config = null;
-    // a flag used to indicate that state change happened from successful save
-    updateFromSave = false;
     @observable tagtree = null;
     @observable references = [];
     @observable reference = null;
     @observable referenceTags = null;
     @observable referenceUserTags = null;
     @observable errorOnSave = false;
+    @observable successMessage = "";
     @observable filterClass = "";
     @observable showInstructionsModal = false;
-    @observable lastResolved = false;
 
     constructor(config) {
         this.config = config;
@@ -54,40 +53,47 @@ class Store {
     @action.bound toggleTag(tag) {
         return this.hasTag(this.referenceUserTags, tag) ? this.removeTag(tag) : this.addTag(tag);
     }
+    @action.bound handleSaveSuccess(response) {
+        const {resolved} = response;
+        this.errorOnSave = false;
+        this.reference.userTags = toJS(this.referenceUserTags);
+        if (!this.config.conflict_resolution || resolved) {
+            this.reference.tags = toJS(this.referenceUserTags);
+        }
+        window.setTimeout(
+            action(() => {
+                const index = _.findIndex(
+                        this.references,
+                        ref => ref.data.pk === this.reference.data.pk
+                    ),
+                    nextIndex = this.references.length > index + 1 ? index + 1 : 0,
+                    reference = this.references[nextIndex];
+                this.successMessage = "";
+                this.setReference(reference);
+            }),
+            resolved ? 1000 : 500
+        );
+        this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
+    }
+    @action.bound handleSaveFailure() {
+        this.errorOnSave = true;
+    }
     @action.bound saveAndNext() {
+        this.successMessage = "";
+        this.errorOnSave = false;
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
             },
-            url = `/lit/api/reference/${this.reference.data.pk}/tag/`,
-            // since the success function is a promise and makes a number of changes we need to
-            // wrap it in a mobx action so that it doesn't count each individual change
-            success = action(resolved => {
-                const index = _.findIndex(
-                    this.references,
-                    ref => ref.data.pk === this.reference.data.pk
-                );
-
-                this.lastResolved = resolved;
-                this.errorOnSave = false;
-
-                this.reference.userTags = toJS(this.referenceUserTags);
-                if (!this.config.conflict_resolution) {
-                    this.reference.tags = toJS(this.referenceUserTags);
-                }
-                const nextIndex = this.references.length > index + 1 ? index + 1 : 0,
-                    reference = this.references[nextIndex];
-                this.setReference(reference);
-
-                this.updateFromSave = true;
-            }),
-            failure = data => {
-                console.error(data);
-                this.errorOnSave = true;
-            };
-
-        $.post(url, payload, v => (v.status === "success" ? success(v.resolved) : failure())).fail(
-            failure
+            url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
+        h.handleSubmit(
+            url,
+            "POST",
+            this.config.csrf,
+            payload,
+            this.handleSaveSuccess,
+            this.handleSaveFailure,
+            this.handleSaveFailure
         );
     }
     @action.bound removeAllTags() {
