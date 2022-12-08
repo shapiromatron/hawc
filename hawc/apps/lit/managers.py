@@ -73,8 +73,64 @@ class PubMedQueryManager(BaseManager):
     assessment_relation = "search__assessment"
 
 
+class IdentifiersQuerySet(models.QuerySet):
+    def _foobar(self, identifier_map, identifiers):
+        map = {}
+        missing = []
+        for key in identifier_map:
+            found = False
+            for identifier in identifiers:
+                if identifier.unique_id == identifier_map[key]:
+                    map[key] = identifier
+                    found = True
+                    break
+            if not found:
+                missing.append(key)
+        return map, missing
+
+    def associated_doi(self, create: bool) -> dict[int, list]:
+        _map = {
+            identifier.pk: str(doi)
+            for identifier in self
+            if (doi := get_doi_from_identifier(identifier))
+        }
+        doi_identifiers = self.model.objects.filter(
+            database=constants.ReferenceDatabase.DOI, unique_id__in=_map.values()
+        )
+        # runs at O(n) instead of O(1), but necessary since doi in content won't necessarily be unique
+        map, missing = self._foobar(_map, doi_identifiers)
+        if create and missing:
+            missing_doi = [
+                self.model(database=constants.ReferenceDatabase.DOI, unique_id=_map[key])
+                for key in missing
+            ]
+            created_doi = self.model.objects.bulk_create(missing_doi)
+            _missing_map = {key: _map[key] for key in missing}
+            missing_map, _ = self._foobar(_missing_map, created_doi)
+            map.update(missing_map)
+        return map
+
+    def associated_pubmed(self, create: bool) -> dict[int, list]:
+        _map = {
+            identifier.pk: str(pmid)
+            for identifier in self
+            if (pmid := identifier.get_content().get("PMID"))
+        }
+        pubmed_identifiers = self.model.objects.filter(
+            database=constants.ReferenceDatabase.PUBMED, unique_id__in=_map.values()
+        )
+        # runs at O(n) instead of O(1), but necessary since doi in content won't necessarily be unique
+        map, missing = self._foobar(_map, pubmed_identifiers)
+        if create and missing:
+            raise NotImplementedError()
+        return map
+
+
 class IdentifiersManager(BaseManager):
     assessment_relation = "references__assessment"
+
+    def get_queryset(self):
+        return IdentifiersQuerySet(self.model, using=self._db)
 
     def get_from_ris(self, search_id, references):
         # Return a queryset of identifiers for each object in RIS file.
@@ -403,17 +459,15 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
+        pubmed_map = identifiers.associated_pubmed(create=False)
+        doi_map = identifiers.associated_doi(create=True)
+
         for identifier in identifiers:
             # check if any identifiers have a pubmed ID that already exists
             # in database. If not, save a new reference.
-            content = json.loads(identifier.content)
-            pmid = content.get("PMID", None)
 
-            if pmid:
-                ref = self.get_qs(search.assessment).filter(
-                    identifiers__unique_id=str(pmid),
-                    identifiers__database=constants.ReferenceDatabase.PUBMED,
-                )
+            if pubmed_identifier := pubmed_map.get(identifier.pk):
+                ref = self.get_qs(search.assessment).filter(identifiers=pubmed_identifier)
             else:
                 ref = self.none()
 
@@ -424,13 +478,11 @@ class ReferenceManager(BaseManager):
             else:
                 ref = identifier.create_reference(search.assessment)
                 ref.save()
+                if pubmed_identifier:
+                    ref.identifiers.add(pubmed_identifier)
 
-            Identifiers = apps.get_model("lit", "Identifiers")
-            if doi := get_doi_from_identifier(identifier):
-                doi_id, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=constants.ReferenceDatabase.DOI
-                )
-                ref.identifiers.add(doi_id)
+            if doi_identifier := doi_map.get(identifier.pk):
+                ref.identifiers.add(doi_identifier)
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             refs.append(ref)
@@ -476,17 +528,15 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
-        Identifiers = apps.get_model("lit", "Identifiers")
+        doi_map = identifiers.associated_doi(create=True)
+
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
-            if doi := get_doi_from_identifier(identifier):
-                doi_identifier, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=constants.ReferenceDatabase.DOI
-                )
+            if doi_identifier := doi_map.get(identifier.pk):
                 ref.identifiers.add(doi_identifier)
             refs.append(ref)
 
