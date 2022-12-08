@@ -21,7 +21,7 @@ class Store {
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
-        this.references = Reference.array(config.refs, this.tagtree);
+        this.references = Reference.array(config.refs, this.tagtree, false);
         // set first reference
         if (this.references.length > 0) {
             this.setReference(this.references[0]);
