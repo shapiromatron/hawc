@@ -38,7 +38,7 @@ class Keys:
         self.reference_unlinked = 3
 
         self.reference_untagged = 9
-        self.reference_tag_confict = 10
+        self.reference_tag_conflict = 10
         self.reference_tagged = 11
 
         self.animal_group_working = 1

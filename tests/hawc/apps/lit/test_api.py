@@ -663,7 +663,40 @@ class TestReferenceUpdateApi:
         for id in tags:
             assert updated_reference.tags.filter(id=id).exists()
 
-    def test_conflict_resolution(self, db_keys):
+
+@pytest.mark.django_db
+class TestReferenceConflictResApi:
+    def test_permissions(self, db_keys):
+        ref: models.Reference = models.Reference.objects.get(id=db_keys.reference_tag_conflict)
+        update_tags_url = reverse("lit:api:reference-tag", args=(ref.pk,))
+        resolve_conflict_url = reverse("lit:api:reference-resolve-conflict", args=(ref.pk,))
+
+        assert ref.tags.count() == 0
+        assert ref.user_tags.count() == 2
+        assert ref.user_tags.filter(user__email="reviewer@hawcproject.org").exists() is False
+        assert ref.has_user_tag_conflicts() is True
+
+        # reviewers can't update tags or resolve conflicts
+        client = APIClient()
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        response = client.post(update_tags_url, data={"tags[]": [32, 33]})
+        ref.refresh_from_db()
+
+        assert response.status_code == 403
+        # no user tag was created
+        assert ref.user_tags.count() == 2
+        assert ref.user_tags.filter(user__email="reviewer@hawcproject.org").exists() is False
+
+        user_tag_id = ref.user_tags.first().pk
+        response = client.post(resolve_conflict_url, data={"user_tag_id": user_tag_id})
+        ref.refresh_from_db()
+
+        assert response.status_code == 403
+        # tags were not added to the reference/conflict was not resolved
+        assert ref.tags.count() == 0
+        assert ref.has_user_tag_conflicts() is True
+
+    def test_valid_requests(self, db_keys):
         ref: models.Reference = models.Reference.objects.get(id=db_keys.reference_untagged)
         pm = HAWCUser.objects.get(email="pm@hawcproject.org")
         tm = HAWCUser.objects.get(email="team@hawcproject.org")
@@ -680,10 +713,10 @@ class TestReferenceUpdateApi:
         assert ref.has_user_tag_conflicts() is False
 
         # create a conflict by applying different tags as two different users
-        client.login(email=tm.email, password="pw")
+        assert client.login(email=tm.email, password="pw") is True
         client.post(update_tags_url, data={"tags[]": tm_tags})
         client.logout()
-        client.login(email=pm.email, password="pw")
+        assert client.login(email=pm.email, password="pw") is True
         client.post(update_tags_url, data={"tags[]": pm_tags})
         ref.refresh_from_db()
         assert ref.user_tags.count() == 2
