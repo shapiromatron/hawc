@@ -40,7 +40,6 @@ ReferenceListItem.propTypes = {
 class TagReferencesMain extends Component {
     constructor(props) {
         super(props);
-        this.savedPopup = React.createRef();
         this.showFullTag = new LocalStorageBoolean("lit-showFullTag", true);
         this.pinInstructions = new LocalStorageBoolean("lit-pinInstructions", false);
         this.state = {
@@ -120,7 +119,7 @@ class TagReferencesMain extends Component {
                             <div className="well" style={{minHeight: "50px"}}>
                                 {store.successMessage ? (
                                     <Alert
-                                        className="alert-success"
+                                        className="alert-success fade-in-out"
                                         icon="fa-check-square"
                                         message={store.successMessage}
                                     />

@@ -71,7 +71,7 @@ class Store {
                 this.successMessage = "";
                 this.setReference(reference);
             }),
-            resolved ? 1000 : 500
+            2000
         );
         this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
     }
