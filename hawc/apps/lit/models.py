@@ -938,7 +938,7 @@ class Reference(models.Model):
     def resolve_user_tag_conflicts(self, user_id: int, user_tag: "UserReferenceTag"):
         tags = {tag.id for tag in user_tag.tags.all()}
         log_message = (
-            f'Update lit.Reference tags #{self.id}: use lit.UserReferenceTag #{user_tag.id}: {tags}'
+            f"Update lit.Reference tags #{self.id}: use lit.UserReferenceTag #{user_tag.id}: {tags}"
         )
         Log.objects.create(
             assessment_id=self.assessment_id,
