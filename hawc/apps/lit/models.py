@@ -28,6 +28,7 @@ from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
+from ..assessment.models import Log
 from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -886,7 +887,7 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
-    def update_tags(self, user, tag_pks: list[int]):
+    def update_tags(self, user, tag_pks: list[int]) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
         This method was reviewed to try to reduce the number of db hits required, assuming that
@@ -896,6 +897,9 @@ class Reference(models.Model):
         Args:
             user: The user requesting the tag changes
             tag_pks (list[int]): A list of tag IDs
+
+        Returns:
+            bool: If tags were also saved as consensus for Reference
         """
         # save user-level tags
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
@@ -905,12 +909,14 @@ class Reference(models.Model):
 
         # determine if we should save the reference-level tags
         update_reference_tags = False
-        if self.assessment.literature_settings.conflict_resolution:
-            if self.user_tags.count() >= 2:
+        conflict_resolution = self.assessment.literature_settings.conflict_resolution
+        if conflict_resolution:
+            unresolved_user_tags = self.user_tags.filter(is_resolved=False)
+            if unresolved_user_tags.count() >= 2:
                 tags = set(tag_pks)
                 if all(
                     tags == {tag.id for tag in user_tag.tags.all()}
-                    for user_tag in self.user_tags.all()
+                    for user_tag in unresolved_user_tags
                 ):
                     update_reference_tags = True
         else:
@@ -923,11 +929,24 @@ class Reference(models.Model):
             self.last_updated = timezone.now()
             self.save()
 
+        return conflict_resolution and update_reference_tags
+
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()
 
-    def resolve_user_tag_conflicts(self, user_tag: "UserReferenceTag"):
-        self.tags.set({tag.id for tag in user_tag.tags.all()})
+    @transaction.atomic
+    def resolve_user_tag_conflicts(self, user_id: int, user_tag: "UserReferenceTag"):
+        tags = {tag.id for tag in user_tag.tags.all()}
+        log_message = (
+            f"Update lit.Reference tags #{self.id}: use lit.UserReferenceTag #{user_tag.id}: {tags}"
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user_id,
+            message=log_message,
+            content_object=self,
+        )
+        self.tags.set(tags)
         self.save()
         self.user_tags.update(is_resolved=True)
 

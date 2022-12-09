@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Q
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -254,6 +255,7 @@ class TagReferences(BaseFilterList):
             "title_abstract",
             "search",
             "id",
+            "order_by",
             "tag_choice",
             "tags",
             "include_descendants",
@@ -265,7 +267,16 @@ class TagReferences(BaseFilterList):
                     "columns": [
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 12},
+                                    ]
+                                }
+                            ],
                         },
                         {
                             "width": 6,
@@ -285,7 +296,7 @@ class TagReferences(BaseFilterList):
             ]
         },
     )
-    paginate_by = None
+    paginate_by = 100
 
     def get_queryset(self):
         return (
@@ -304,7 +315,7 @@ class TagReferences(BaseFilterList):
 
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
-        ref_tags = context["object_list"].user_tags(user_id=self.request.user.id)
+        ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
         return WebappConfig(
@@ -345,13 +356,15 @@ class ConflictResolution(BaseFilterList):
             ]
         },
     )
-    paginate_by = None
+    paginate_by = 100
 
     def get_queryset(self):
+        n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
         return (
             super()
             .get_queryset()
-            .filter(user_tags__is_resolved=False)
+            .annotate(n_unapplied_reviews=n_unapplied_reviews)
+            .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )

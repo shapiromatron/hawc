@@ -450,11 +450,12 @@ div.smart-tag.active {
     white-space: unset;
     width: auto;
 }
-
-.tag-conf-item {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    padding: 16px;
+.tag-conflict {
+    padding: 5px 15px;
+}
+.user-tag-conflict {
     margin: 16px 0px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 5px;
     background-color: #ffffff;
 }
@@ -636,6 +637,15 @@ table.bordered td {
 .htmx-swapping {
     opacity: 0;
     transition: opacity 1s ease-out;
+}
+
+/* fade in/out */
+.fade-in-out {
+    animation: fadeInOutKeyFrame 2s linear;
+}
+@keyframes fadeInOutKeyFrame {
+    0%,100% { opacity: 0 }
+    20%,80% { opacity: 1 }
 }
 
 /* quill */
