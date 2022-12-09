@@ -255,6 +255,7 @@ class TagReferences(BaseFilterList):
             "title_abstract",
             "search",
             "id",
+            "order_by",
             "tag_choice",
             "tags",
             "include_descendants",
@@ -266,7 +267,16 @@ class TagReferences(BaseFilterList):
                     "columns": [
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 12},
+                                        {"width": 12},
+                                    ]
+                                }
+                            ],
                         },
                         {
                             "width": 6,
@@ -286,7 +296,7 @@ class TagReferences(BaseFilterList):
             ]
         },
     )
-    paginate_by = None
+    paginate_by = 100
 
     def get_queryset(self):
         return (
@@ -305,7 +315,7 @@ class TagReferences(BaseFilterList):
 
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
-        ref_tags = context["object_list"].user_tags(user_id=self.request.user.id)
+        ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
         return WebappConfig(
