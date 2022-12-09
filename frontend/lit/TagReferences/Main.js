@@ -111,13 +111,6 @@ class TagReferencesMain extends Component {
                                     <i className="fa fa-save"></i>&nbsp;Save and next
                                 </button>
                             </div>
-                            {store.successMessage ? (
-                                <Alert
-                                    className="alert-success mt-2"
-                                    icon="fa-check-square"
-                                    message={store.successMessage}
-                                />
-                            ) : null}
                             {store.errorOnSave ? (
                                 <Alert
                                     className="alert-danger mt-2"
@@ -125,38 +118,48 @@ class TagReferencesMain extends Component {
                                 />
                             ) : null}
                             <div className="well" style={{minHeight: "50px"}}>
-                                {referenceTags.map((tag, i) => (
-                                    <span
-                                        key={i}
-                                        title={
-                                            store.config.conflict_resolution
-                                                ? "Tag: ".concat(tag.get_full_name())
-                                                : tag.get_full_name()
-                                        }
-                                        className={
-                                            store.hasTag(referenceUserTags, tag)
-                                                ? "refTag cursor-pointer"
-                                                : "refTag refUserTagRemove cursor-pointer"
-                                        }
-                                        onClick={() => store.toggleTag(tag)}>
-                                        {this.state.showFullTag
-                                            ? tag.get_full_name()
-                                            : tag.data.name}
-                                    </span>
-                                ))}
-                                {referenceUserTags
-                                    .filter(tag => !store.hasTag(referenceTags, tag))
-                                    .map((tag, i) => (
-                                        <span
-                                            key={i}
-                                            title={"Proposed: ".concat(tag.get_full_name())}
-                                            className="refTag refUserTag cursor-pointer"
-                                            onClick={() => store.removeTag(tag)}>
-                                            {this.state.showFullTag
-                                                ? tag.get_full_name()
-                                                : tag.data.name}
-                                        </span>
-                                    ))}
+                                {store.successMessage ? (
+                                    <Alert
+                                        className="alert-success"
+                                        icon="fa-check-square"
+                                        message={store.successMessage}
+                                    />
+                                ) : (
+                                    <>
+                                        {referenceTags.map((tag, i) => (
+                                            <span
+                                                key={i}
+                                                title={
+                                                    store.config.conflict_resolution
+                                                        ? "Tag: ".concat(tag.get_full_name())
+                                                        : tag.get_full_name()
+                                                }
+                                                className={
+                                                    store.hasTag(referenceUserTags, tag)
+                                                        ? "refTag cursor-pointer"
+                                                        : "refTag refUserTagRemove cursor-pointer"
+                                                }
+                                                onClick={() => store.toggleTag(tag)}>
+                                                {this.state.showFullTag
+                                                    ? tag.get_full_name()
+                                                    : tag.data.name}
+                                            </span>
+                                        ))}
+                                        {referenceUserTags
+                                            .filter(tag => !store.hasTag(referenceTags, tag))
+                                            .map((tag, i) => (
+                                                <span
+                                                    key={i}
+                                                    title={"Proposed: ".concat(tag.get_full_name())}
+                                                    className="refTag refUserTag cursor-pointer"
+                                                    onClick={() => store.removeTag(tag)}>
+                                                    {this.state.showFullTag
+                                                        ? tag.get_full_name()
+                                                        : tag.data.name}
+                                                </span>
+                                            ))}
+                                    </>
+                                )}
                             </div>
                             <Reference
                                 reference={reference}
