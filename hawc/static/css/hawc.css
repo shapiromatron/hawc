@@ -450,11 +450,12 @@ div.smart-tag.active {
     white-space: unset;
     width: auto;
 }
-
-.tag-conf-item {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    padding: 16px;
+.tag-conflict {
+    padding: 5px 15px;
+}
+.user-tag-conflict {
     margin: 16px 0px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 5px;
     background-color: #ffffff;
 }

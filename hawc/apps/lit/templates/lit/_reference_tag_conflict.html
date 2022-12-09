@@ -1,7 +1,7 @@
 <li class="list-group-item list-group-item-action conflict-reference-li {% if first %} pb-4 {% else %} py-4 {% endif %}"
     id="ref-form-{{ref.pk}}"
     hx-target="#ref-form-{{ref.pk}}"
-    hx-swap="outerHTML">
+    hx-swap="delete swap:1s">
     <div class="dropdown btn-group float-right">
         <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
         <div class="dropdown-menu dropdown-menu-right">
@@ -21,15 +21,17 @@
     <p class="abstract abstract_collapsed cursor-pointer mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
     <div class="row">
         <div class="col-md-12 pt-1">
-            <p class="mb-0"><i>Tags currently applied:</i></p>
-            {% for tag in ref.tags.all %}
-                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}
-            {% empty %}
-                <span><i>&lt;none&gt;</i></span>
-            {% endfor %}
+            {% with ref.tags.all as tags%}
+            {% if tags %}
+            <div class="tag-conflict">
+                <p class="mb-1"><b>Consensus tags:</b></p>
+                {% for tag in ref.tags.all %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
             {% for user_tag in ref.user_tags.all %}
                 {% if not user_tag.is_resolved %}
-                <div class="tag-conf-item {% if forloop.first %} mt-1 {% endif %}">
+                <div class="tag-conflict user-tag-conflict {% if forloop.first %} mt-1 {% endif %}">
                     <form>
                         <div>
                             <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1"

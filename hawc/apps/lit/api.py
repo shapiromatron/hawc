@@ -379,34 +379,28 @@ class ReferenceViewset(
     @action(detail=True, methods=("post",))
     def tag(self, request, pk):
         response = {"status": "fail"}
-        ref = self.get_object()
-        assessment = ref.assessment
+        instance = self.get_object()
+        assessment = instance.assessment
         if assessment.user_can_edit_object(self.request.user):
             try:
                 tags = [int(tag) for tag in self.request.data.get("tags", [])]
             except ValueError:
                 return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
-            resolved = ref.update_tags(request.user, tags)
+            resolved = instance.update_tags(request.user, tags)
             response["status"] = "success"
             response["resolved"] = resolved
         return Response(response)
 
-    @transaction.atomic
     @action(detail=True, methods=("post",))
     def resolve_conflict(self, request, pk):
-        reference = self.get_object()
-        assessment = reference.assessment
-        user_tag_id = request.POST.get("user_tag_id")
-        selected_user_tag = get_object_or_404(
-            models.UserReferenceTag, id=user_tag_id, reference_id=reference.id
-        )
+        instance = self.get_object()
+        assessment = instance.assessment
         if not assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
-        reference.resolve_user_tag_conflicts(selected_user_tag)
-        create_object_log(
-            f"Tag conflict resolved with user_tag {user_tag_id}",
-            reference,
-            assessment.pk,
-            request.user.id,
+        user_reference_tag = get_object_or_404(
+            models.UserReferenceTag,
+            reference_id=instance.id,
+            id=int(request.POST.get("user_tag_id", -1)),
         )
-        return render(request, "lit/_conflict_resolved.html", {"ref": reference})
+        instance.resolve_user_tag_conflicts(self.request.user.id, user_reference_tag)
+        return Response({"status": "ok"})
