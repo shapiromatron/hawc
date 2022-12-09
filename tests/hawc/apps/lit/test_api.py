@@ -679,7 +679,7 @@ class TestReferenceConflictResApi:
         # reviewers can't update tags or resolve conflicts
         client = APIClient()
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
-        response = client.post(update_tags_url, data={"tags[]": [32, 33]})
+        response = client.post(update_tags_url, data={"tags": [32, 33]}, format="json")
         ref.refresh_from_db()
 
         assert response.status_code == 403
@@ -714,10 +714,10 @@ class TestReferenceConflictResApi:
 
         # create a conflict by applying different tags as two different users
         assert client.login(email=tm.email, password="pw") is True
-        client.post(update_tags_url, data={"tags[]": tm_tags})
+        client.post(update_tags_url, data={"tags": tm_tags}, format="json")
         client.logout()
         assert client.login(email=pm.email, password="pw") is True
-        client.post(update_tags_url, data={"tags[]": pm_tags})
+        client.post(update_tags_url, data={"tags": pm_tags}, format="json")
         ref.refresh_from_db()
         assert ref.user_tags.count() == 2
         assert ref.has_user_tag_conflicts() is True
