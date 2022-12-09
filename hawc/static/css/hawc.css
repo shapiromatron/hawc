@@ -638,6 +638,15 @@ table.bordered td {
     transition: opacity 1s ease-out;
 }
 
+/* fade in/out */
+.fade-in-out {
+    animation: fadeInOutKeyFrame 2s linear;
+}
+@keyframes fadeInOutKeyFrame {
+    0%,100% { opacity: 0 }
+    20%,80% { opacity: 1 }
+}
+
 /* quill */
 .ql-editor {
     background-color: white !important;

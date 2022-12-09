@@ -1,26 +1,26 @@
 import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
+import h from "shared/utils/helpers";
 
-import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
 
 class Store {
     config = null;
-    saveIndicatorElement = null;
     @observable tagtree = null;
     @observable references = [];
     @observable reference = null;
     @observable referenceTags = null;
     @observable referenceUserTags = null;
     @observable errorOnSave = false;
+    @observable successMessage = "";
     @observable filterClass = "";
     @observable showInstructionsModal = false;
 
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
-        this.references = Reference.array(config.refs, this.tagtree);
+        this.references = Reference.array(config.refs, this.tagtree, false);
         // set first reference
         if (this.references.length > 0) {
             this.setReference(this.references[0]);
@@ -53,50 +53,51 @@ class Store {
     @action.bound toggleTag(tag) {
         return this.hasTag(this.referenceUserTags, tag) ? this.removeTag(tag) : this.addTag(tag);
     }
+    @action.bound handleSaveSuccess(response) {
+        const {resolved} = response;
+        this.errorOnSave = false;
+        this.reference.userTags = toJS(this.referenceUserTags);
+        if (!this.config.conflict_resolution || resolved) {
+            this.reference.tags = toJS(this.referenceUserTags);
+        }
+        window.setTimeout(
+            action(() => {
+                const index = _.findIndex(
+                        this.references,
+                        ref => ref.data.pk === this.reference.data.pk
+                    ),
+                    nextIndex = this.references.length > index + 1 ? index + 1 : 0,
+                    reference = this.references[nextIndex];
+                this.successMessage = "";
+                this.setReference(reference);
+            }),
+            2000
+        );
+        this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
+    }
+    @action.bound handleSaveFailure() {
+        this.errorOnSave = true;
+    }
     @action.bound saveAndNext() {
+        this.successMessage = "";
+        this.errorOnSave = false;
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
             },
-            url = `/lit/api/reference/${this.reference.data.pk}/tag/`,
-            success = () => {
-                const $el = $(this.saveIndicatorElement),
-                    index = _.findIndex(
-                        this.references,
-                        ref => ref.data.pk === this.reference.data.pk
-                    );
-
-                if ($el.length !== 1) {
-                    throw "`this.saveIndicatorElement` not found.";
-                }
-
-                this.errorOnSave = false;
-                $el.fadeIn().fadeOut({
-                    complete: () => {
-                        this.reference.userTags = toJS(this.referenceUserTags);
-                        if (!this.config.conflict_resolution) {
-                            this.reference.tags = toJS(this.referenceUserTags);
-                        }
-                        const nextIndex = this.references.length > index + 1 ? index + 1 : 0,
-                            reference = this.references[nextIndex];
-                        this.setReference(reference);
-                    },
-                });
-            },
-            failure = data => {
-                console.error(data);
-                this.errorOnSave = true;
-            };
-        $.post(url, payload, v => (v.status === "success" ? success() : failure())).fail(failure);
+            url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
+        h.handleSubmit(
+            url,
+            "POST",
+            this.config.csrf,
+            payload,
+            this.handleSaveSuccess,
+            this.handleSaveFailure,
+            this.handleSaveFailure
+        );
     }
     @action.bound removeAllTags() {
         this.referenceUserTags = [];
-    }
-    @action.bound setSaveIndicatorElement(el) {
-        this.saveIndicatorElement = el;
-    }
-    @action.bound sortReferences(sortBy) {
-        this.references = sortReferences(this.references, sortBy);
     }
     @action.bound toggleSlideAway() {
         this.filterClass = this.filterClass == "" ? "slideAway" : "";
