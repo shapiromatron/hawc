@@ -47,3 +47,12 @@ class TestLiterature(PlaywrightTestCase):
         expect(
             page.locator("text=Select an Excel file (.xlsx) to load and process.")
         ).to_be_visible()
+
+    def test_conflict_resolution(self):
+        page = self.page
+        page.goto(self.live_server_url)
+
+        # /lit/assessment/:id/
+        self.login_and_goto_url(
+            page, f"{self.live_server_url}/lit/assessment/4/", "pm@hawcproject.org"
+        )
