@@ -54,5 +54,18 @@ class TestLiterature(PlaywrightTestCase):
 
         # /lit/assessment/:id/
         self.login_and_goto_url(
-            page, f"{self.live_server_url}/lit/assessment/4/", "pm@hawcproject.org"
+            page,
+            f"{self.live_server_url}/lit/assessment/4/reference-tag-conflicts/",
+            "pm@hawcproject.org",
         )
+
+        expect(page.locator(".user-tag-conflict")).to_have_count(2)
+        expect(page.locator(".conflict-reference-li")).to_have_count(1)
+
+        page.locator("text=Approve Team Member team@hawcproject.org >> button").click()
+
+        expect(page.locator(".conflict-reference-li")).not_to_be_visible()
+
+        page.goto("http://localhost:8000/lit/assessment/4/references/")
+
+        expect(page.locator("text=Inclusion ➤ Animal Study")).to_be_visible()
