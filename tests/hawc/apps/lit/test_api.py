@@ -714,10 +714,14 @@ class TestReferenceConflictResApi:
 
         # create a conflict by applying different tags as two different users
         assert client.login(email=tm.email, password="pw") is True
-        client.post(update_tags_url, data={"tags": tm_tags}, format="json")
+        response = client.post(update_tags_url, data={"tags": tm_tags}, format="json")
+        assert response.status_code == 200
         client.logout()
+
         assert client.login(email=pm.email, password="pw") is True
-        client.post(update_tags_url, data={"tags": pm_tags}, format="json")
+        response = client.post(update_tags_url, data={"tags": pm_tags}, format="json")
+        assert response.status_code == 200
+
         ref.refresh_from_db()
         assert ref.user_tags.count() == 2
         assert ref.has_user_tag_conflicts() is True
@@ -725,7 +729,57 @@ class TestReferenceConflictResApi:
 
         # resolve the conflict using Project Manager's tags
         pm_user_tag = ref.user_tags.get(user=pm)
-        client.post(resolve_conflict_url, data={"user_tag_id": pm_user_tag.pk})
+        response = client.post(resolve_conflict_url, data={"user_tag_id": pm_user_tag.pk})
+        assert response.status_code == 200
+
         ref.refresh_from_db()
         assert ref.has_user_tag_conflicts() is False
         assert list(ref.tags.values_list("id", flat=True)) == pm_tags
+
+        # test applying tags w/o conflict resolution
+        ref = models.Reference.objects.get(id=db_keys.reference_linked)
+        update_tags_url = reverse("lit:api:reference-tag", args=(ref.pk,))
+        tags = [2, 3]
+        response = client.post(update_tags_url, data={"tags": tags}, format="json")
+        assert response.status_code == 200
+
+        # tags are applied to the reference without creating a conflict
+        ref.refresh_from_db()
+        assert list(ref.tags.values_list("id", flat=True)) == tags
+        assert ref.has_user_tag_conflicts() is False
+
+    def test_bad_requests(self, db_keys):
+        # Tagging API
+        # test bad id
+        url = reverse("lit:api:reference-tag", args=(-1,))
+        data = {"tags": [2, 3]}
+
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
+
+        # test bad tag
+        url = reverse("lit:api:reference-tag", args=(db_keys.reference_linked,))
+        data = {"tags": [2, 3, -1]}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 400
+        assert response.json() == {"tags": "Array of tags must be valid primary keys"}
+
+        # Resolve Conflict API
+        # test bad ref id
+        url = reverse("lit:api:reference-resolve-conflict", args=(-1,))
+        data = {"user_tag_id": 1}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
+
+        # test bad user_tag_id (wrong reference)
+        url = reverse("lit:api:reference-resolve-conflict", args=(db_keys.reference_tag_conflict,))
+        data = {"user_tag_id": 1}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
+
+        # test bad user_tag_id (doesn't exist)
+        data = {"user_tag_id": -1}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
