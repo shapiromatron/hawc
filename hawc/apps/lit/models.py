@@ -28,6 +28,7 @@ from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
+from ..assessment.models import Log
 from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -933,8 +934,19 @@ class Reference(models.Model):
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()
 
-    def resolve_user_tag_conflicts(self, user_tag: "UserReferenceTag"):
-        self.tags.set({tag.id for tag in user_tag.tags.all()})
+    @transaction.atomic
+    def resolve_user_tag_conflicts(self, user_id: int, user_tag: "UserReferenceTag"):
+        tags = {tag.id for tag in user_tag.tags.all()}
+        log_message = (
+            f"Update lit.Reference tags #{self.id}: use lit.UserReferenceTag #{user_tag.id}: {tags}"
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user_id,
+            message=log_message,
+            content_object=self,
+        )
+        self.tags.set(tags)
         self.save()
         self.user_tags.update(is_resolved=True)
 
