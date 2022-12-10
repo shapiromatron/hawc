@@ -267,6 +267,47 @@ div.smart-tag.active {
 }
 
 /* LITERATURE MODULE */
+.lit-review-box {
+    box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
+    border-radius: 5px;
+    padding: 16px;
+    min-height: 6.5rem;
+    display: flex;
+    justify-content: center;
+    flex-direction:column;
+    margin-bottom: 24px;
+    color: black !important;
+    width: 30%;
+    height: fit-content;
+}
+.lit-review-box.with-icon {
+    justify-content: space-between;
+    flex-direction: row;
+}
+.lit-review-box.with-icon div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.lit-icon {
+    padding-left: 16px;
+}
+.lit-icon .icon-bg {
+    display: flex !important;
+    justify-content: center;
+    background: #aacdec;
+    border-radius: 8px;
+    height: 55px;
+    width: 55px;
+    color: white;
+    font-size: 2em;
+    align-items:center;
+}
+.clickable:hover {
+    cursor: pointer;
+    background-color: #f3f3f3;
+    text-decoration:none;
+}
 #refFilter h4,
 #fullRefList p {
     overflow: hidden;

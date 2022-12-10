@@ -7,7 +7,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -460,7 +460,7 @@ class ReferenceManager(BaseManager):
         total = refs.count()
         total_tagged = refs.annotate(tag_count=models.Count("tags")).filter(tag_count__gt=0).count()
         total_untagged = total - total_tagged
-        total_searched = refs.filter(searches__search_type="s").distinct().count()
+        total_searched = refs.all().filter(searches__search_type="s").distinct().count()
         total_imported = total - total_searched
         overview = {
             "total_references": total,
@@ -469,6 +469,28 @@ class ReferenceManager(BaseManager):
             "total_searched": total_searched,
             "total_imported": total_imported,
         }
+        if assessment.literature_settings.conflict_resolution:
+            refs = refs.prefetch_related("tags", "user_tags")
+            if True:
+                user_tag_counts = refs.all().annotate(user_tag_count=Count("user_tags"))
+                overview["no_tags"] = (
+                    user_tag_counts.all().filter(user_tag_count=0, tags__isnull=True).count()
+                )
+                overview["one_user"] = user_tag_counts.all().filter(user_tag_count=1).count()
+                overview["oneplus_user"] = user_tag_counts.all().filter(user_tag_count__gt=1).count()
+                n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
+                overview["conflicts"] = (
+                    refs.all()
+                    .annotate(n_unapplied_reviews=n_unapplied_reviews)
+                    .filter(n_unapplied_reviews__gt=1)
+                    .count()
+                )
+                UserTags = apps.get_model("lit", "UserReferenceTag")
+                urts = UserTags.objects.filter(reference__in=refs)
+                overview["total_users"] = urts.values_list("user").distinct().count()
+                overview["total_reviews"] = urts.count()
+
+
         return overview
 
     def get_pubmed_references(self, search, identifiers):
