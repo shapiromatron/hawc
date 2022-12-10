@@ -477,7 +477,9 @@ class ReferenceManager(BaseManager):
                     user_tag_counts.all().filter(user_tag_count=0, tags__isnull=True).count()
                 )
                 overview["one_user"] = user_tag_counts.all().filter(user_tag_count=1).count()
-                overview["oneplus_user"] = user_tag_counts.all().filter(user_tag_count__gt=1).count()
+                overview["oneplus_user"] = (
+                    user_tag_counts.all().filter(user_tag_count__gt=1).count()
+                )
                 n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
                 overview["conflicts"] = (
                     refs.all()
@@ -485,11 +487,9 @@ class ReferenceManager(BaseManager):
                     .filter(n_unapplied_reviews__gt=1)
                     .count()
                 )
-                UserTags = apps.get_model("lit", "UserReferenceTag")
-                urts = UserTags.objects.filter(reference__in=refs)
-                overview["total_users"] = urts.values_list("user").distinct().count()
-                overview["total_reviews"] = urts.count()
-
+                user_ids = refs.values_list("user_tags__user", flat=True)
+                overview["total_reviews"] = user_ids.count()
+                overview["total_users"] = len(set(user_ids))
 
         return overview
 

@@ -72,7 +72,7 @@
           </div>
           <div class="lit-icon">
             <span class="fa-stack fa-1x icon-bg" style="background-color: #162e51;">
-              <i class="fa fa-tags fa-stack-1x" style="font-size: 0.65em;"></i>
+              <i class="fa fa-tag fa-stack-1x" style="font-size: 0.65em;"></i>
               <i class="fa fa-ban fa-stack-1x" style="font-size: 1.5em;"></i>
             </span>
           </div>
@@ -93,8 +93,9 @@
         </div>
 
         <div class="lit-review-box" style="width: 40%; height: 235px;">
-          <p>references by year</p>
-          <div id="referenceYearHistogram" style="height: 175px; width: 100%;"></div>
+          <p>references by year:</p>
+          <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
+          </div>
         </div>
 
         {% if assessment.literature_settings.conflict_resolution %}
@@ -138,7 +139,7 @@
             <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> users</p>
           </div>
           <div class="lit-icon">
-            <i class="fa fa-ban icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
+            <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
           </div>
         </div>
 
