@@ -61,7 +61,7 @@
           </div>
         </a>
 
-        <a class="lit-review-box with-icon clickable"  href="{% url 'lit:ref_search' assessment.pk %}?untagged=on">
+        <a class="lit-review-box with-icon clickable"  href="{% url 'lit:ref_search' assessment.pk %}?untagged=on&tag_choice=resolved">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_untagged}}</p>
             {% if assessment.literature_settings.conflict_resolution %}
@@ -143,7 +143,7 @@
           </div>
         </div>
 
-        <div class="lit-review-box with-icon">
+        <a class="lit-review-box with-icon clickable"  href="{% url 'lit:ref_search' assessment.pk %}?untagged=on">
           <div>
             <p class="h3 m-0 mt-1">{{overview.no_tags}}</p>
             <p class="small">completely untagged</p>
@@ -151,7 +151,7 @@
           <div class="lit-icon">
             <i class="fa fa-ban icon-bg" style="background-color: #ff9393;"></i>
           </div>
-        </div>
+        </a>
         {% endif %}
 
       </div>
