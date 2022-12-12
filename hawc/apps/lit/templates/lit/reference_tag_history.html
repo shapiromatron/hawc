@@ -2,5 +2,15 @@
 
 
 {% block content %}
-TODO.
+{% include 'lit/_reference_with_tags.html' with ref=object %}
 {% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".abstract,.ref_authors,.ref_title").click(function (e) {
+            $(e.target).closest('.conflict-reference-li').find('.abstract').toggleClass("abstract_collapsed");
+        });
+    });
+</script>
+{% endblock extrajs %}

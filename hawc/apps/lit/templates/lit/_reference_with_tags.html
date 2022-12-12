@@ -1,0 +1,82 @@
+<div id="tagged-ref-{{ref.pk}}">
+    {% if show_actions %}
+    <div class="dropdown btn-group float-right">
+        <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="dropdown-item" target="_blank"
+                rel="noreferrer">Edit reference tags</a>
+            <a href="{% url 'lit:ref_edit' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Edit
+                reference</a>
+            <a href="{% url 'lit:tag-history' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag
+                history</a>
+        </div>
+    </div>
+    {% endif %}
+    <div>
+        <div class="ref_authors cursor-pointer ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
+        <div class="ref_title cursor-pointer m-0">{{ref.title}}</div>
+        <div class="ref_small mb-1">
+            {% for id in ref.identifiers.all %}
+            <a href="{{id.get_url}}" class="ids badge badge-info">{{id.get_database_display}}</a>
+            {% endfor %}
+            <a href="{{ref.get_absolute_url}}" class="ids badge badge-warning">HAWC</a>
+        </div>
+        <p class="abstract abstract_collapsed cursor-pointer mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
+    </div>
+    <div class="pt-1">
+        {% with ref.tags.all as tags%}
+            {% if tags %}
+                <div class="tag-conflict">
+                    <p class="mb-1"><b>Consensus tags:</b></p>
+                    {% for tag in ref.tags.all %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% for user_tag in ref.user_tags.all %}
+            {% if not user_tag.is_resolved %}
+                <div class="tag-conflict user-tag-conflict {% if forloop.first %} mt-1 {% endif %}">
+                    <div>
+                        {% if conflict_resolution %}
+                            <form class="d-inline-block">
+                                <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1"
+                                    hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
+                                    <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve
+                                </button>
+                                <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
+                            </form>
+                        {% endif %}
+                        <div class="d-inline-block my-2">
+                            <b>{{user_tag.user.get_full_name}}</b> <i class="small">{{user_tag.last_updated}}</i>
+                        </div>
+                    </div>
+                    {% if conflict_resolution %}
+                        {% with user_tag.consensus_diff as diff %}
+                            {% for tag in ref.tags.all %}
+                                {% if tag in diff.intersection %}
+                                    {% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}
+                                {% else %}
+                                    {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
+                                {% endif %}
+                            {% endfor %}
+                            {% for tag in diff.difference %}
+                                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
+                            {% endfor %}
+                        {% endwith %}
+                    {% else %}
+                        {% for tag in user_tag.tags.all %}
+                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<script type="text/javascript">
+    // jQuery is not available when this script is inserted
+    document.querySelectorAll("#tagged-ref-{{ref.pk}} .abstract, #tagged-ref-{{ref.pk}} .ref_authors, #tagged-ref-{{ref.pk}} .ref_title").forEach(el=> el.addEventListener('click', e => {
+            // jQuery should be available by the time we want to handle these events though
+            $(e.target).closest('#tagged-ref-{{ref.pk}}').find('.abstract').toggleClass("abstract_collapsed");
+        }));
+</script>
