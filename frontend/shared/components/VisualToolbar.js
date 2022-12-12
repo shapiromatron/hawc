@@ -69,16 +69,16 @@ class VisualToolbar extends Component {
                     </button>
                     <div className="dropdown-menu float-right dropdown-menu-right">
                         <a className="dropdown-item" href="#" onClick={() => rasterize(svg, "svg")}>
-                            <i className="fa fa-fw fa-file-code-o"></i>&nbsp;Download SVG
+                            <i className="fa fa-fw fa-file-code-o"></i>&nbsp;Download as a SVG
                         </a>
                         <a className="dropdown-item" href="#" onClick={() => rasterize(svg, "png")}>
-                            <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download PNG
+                            <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download as a PNG
                         </a>
                         <a
                             className="dropdown-item"
                             href="#"
                             onClick={() => rasterize(svg, "jpeg")}>
-                            <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download JPEG
+                            <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download as a JPEG
                         </a>
                     </div>
                 </div>
