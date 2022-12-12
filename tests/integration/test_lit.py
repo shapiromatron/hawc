@@ -1,3 +1,4 @@
+import re
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
@@ -62,7 +63,8 @@ class TestLiterature(PlaywrightTestCase):
         expect(page.locator(".user-tag-conflict")).to_have_count(2)
         expect(page.locator(".conflict-reference-li")).to_have_count(1)
 
-        page.locator("text=Approve Team Member team@hawcproject.org >> button").click()
+        with page.expect_response(re.compile(r"resolve_conflict")):
+            page.locator("text=Approve Team Member team@hawcproject.org >> button").click()
 
         expect(page.locator(".conflict-reference-li")).not_to_be_visible()
 
