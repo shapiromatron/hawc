@@ -63,6 +63,9 @@ tfoot > tr > td {
     overflow-y: auto;
     resize:vertical;
 }
+.box-shadow {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
@@ -449,15 +452,6 @@ div.smart-tag.active {
     display: block;
     white-space: unset;
     width: auto;
-}
-.tag-conflict {
-    padding: 5px 15px;
-}
-.user-tag-conflict {
-    margin: 16px 0px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    border-radius: 5px;
-    background-color: #ffffff;
 }
 
 .list-item-clicked,

@@ -23,22 +23,22 @@
         </div>
         <p class="abstract abstract_collapsed cursor-pointer mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
     </div>
-    <div class="pt-1">
+    <div>
         {% with ref.tags.all as tags%}
             {% if tags %}
-                <div class="tag-conflict">
-                    <p class="mb-1"><b>Consensus tags:</b></p>
+                <div class="mt-2">
+                    <p class="my-2"><b>Consensus tags:</b></p>
                     {% for tag in ref.tags.all %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
                 </div>
             {% endif %}
         {% endwith %}
         {% for user_tag in ref.user_tags.all %}
             {% if not user_tag.is_resolved %}
-                <div class="tag-conflict user-tag-conflict {% if forloop.first %} mt-1 {% endif %}">
+                <div class="box-shadow bg-white mt-2 px-2">
                     <div>
                         {% if conflict_resolution %}
                             <form class="d-inline-block">
-                                <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1"
+                                <button class="approve btn btn-sm btn-success mr-2 align-center"
                                     hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
                                     <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve
                                 </button>
