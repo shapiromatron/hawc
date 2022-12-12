@@ -1,4 +1,5 @@
 import re
+
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
