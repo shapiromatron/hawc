@@ -60,14 +60,27 @@ class TestLiterature(PlaywrightTestCase):
             "pm@hawcproject.org",
         )
 
+        expect(
+            page.locator(
+                "text=Nutrient content of fish powder from low value fish and fish byproducts."
+            )
+        ).to_be_visible()
         expect(page.locator(".user-tag-conflict")).to_have_count(2)
         expect(page.locator(".conflict-reference-li")).to_have_count(1)
 
-        with page.expect_response(re.compile(r"resolve_conflict")):
+        with page.expect_response(re.compile(r"resolve_conflict")) as response_info:
             page.locator("text=Approve Team Member team@hawcproject.org >> button").click()
+            response = response_info.value
+            assert response.ok
 
+        # hides reference now that conflict is resolved
         expect(page.locator(".conflict-reference-li")).not_to_be_visible()
 
-        page.goto("http://localhost:8000/lit/assessment/4/references/")
-
-        expect(page.locator("text=Inclusion ➤ Animal Study")).to_be_visible()
+        # check that selected tag has been applied
+        page.goto(f"{self.live_server_url}/lit/assessment/4/references/")
+        page.locator("text=Animal Study (1)").click()
+        expect(
+            page.locator(
+                "text=Nutrient content of fish powder from low value fish and fish byproducts."
+            )
+        ).to_be_visible()
