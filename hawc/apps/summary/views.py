@@ -101,10 +101,7 @@ class GetSummaryTableMixin:
 class SummaryTableList(BaseFilterList):
     parent_model = Assessment
     model = models.SummaryTable
-    filterset_class = dynamic_filterset(
-        filterset.SummaryTableFilterSet,
-        grid_layout={"rows": [{"columns": [{"width": 6}, {"width": 3}, {"width": 3}]}]},
-    )
+    filterset_class = filterset.SummaryTableFilterSet
     breadcrumb_active_name = "Summary tables"
 
 

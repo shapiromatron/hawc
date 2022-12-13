@@ -90,6 +90,11 @@ class SummaryTableFilterSet(BaseFilterSet):
     class Meta:
         model = models.SummaryTable
         fields = ["title", "type", "published"]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
+            ]
+        }
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -100,11 +105,19 @@ class SummaryTableFilterSet(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
+
         if not self.perms["edit"]:
-            form.fields["published"].disabled = True
+            # hide published filter and modifiy layout
+            form.fields.pop("published")
+            form.grid_layout.rows[0].columns[0].width = 8
+            form.grid_layout.rows[0].columns[1].width = 4
+            del form.grid_layout.rows[0].columns[2]
+
+        # set type choices based on what is available
         choices = models.SummaryTable.objects.filter(assessment=self.assessment).values_list(
             "table_type", flat=True
         )
         choices = [constants.TableType(choice) for choice in sorted(set(choices))]
         form.fields["type"].choices = [(choice.value, choice.label) for choice in choices]
+
         return form
