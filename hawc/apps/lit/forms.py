@@ -517,6 +517,11 @@ class TagReferenceForm(forms.ModelForm):
 class TagsCopyForm(forms.Form):
 
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
+    confirmation = forms.CharField(
+        max_length=12,
+        required=True,
+        help_text='Type "confirm" to confirm copying tags into this assessment.',
+    )
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
@@ -526,6 +531,12 @@ class TagsCopyForm(forms.Form):
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id
         )
+
+    def clean_confirmation(self):
+        confirm = self.cleaned_data["confirmation"]
+        if confirm != "confirm":
+            raise forms.ValidationError('Type "confirm" to confirm replacement.')
+        return confirm
 
     @property
     def helper(self):
