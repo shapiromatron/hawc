@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 
-from hawc.apps.common.forms import QuillField
+from hawc.apps.common.forms import ConfirmationField, QuillField
 
 
 class TestQuillField:
@@ -38,3 +38,16 @@ class TestQuillField:
         ]
         for input_html, output_html in data:
             assert fld.to_python(input_html) == output_html
+
+
+class TestConfirmationField:
+    def test_validate(self):
+        fld = ConfirmationField()
+
+        # valid
+        fld.validate("confirm")
+
+        # invalid
+        for value in [" ", "confirm!", " confirm "]:
+            with pytest.raises(ValidationError):
+                fld.validate(value)

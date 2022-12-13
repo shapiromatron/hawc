@@ -10,7 +10,13 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
+from ..common.forms import (
+    BaseFormHelper,
+    ConfirmationField,
+    QuillField,
+    addPopupLink,
+    check_unique_for_assessment,
+)
 from ..study.models import Study
 from . import constants, models
 
@@ -517,11 +523,7 @@ class TagReferenceForm(forms.ModelForm):
 class TagsCopyForm(forms.Form):
 
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
-    confirmation = forms.CharField(
-        max_length=12,
-        required=True,
-        help_text='Type "confirm" to confirm copying tags into this assessment.',
-    )
+    confirmation = ConfirmationField()
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
@@ -531,12 +533,6 @@ class TagsCopyForm(forms.Form):
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id
         )
-
-    def clean_confirmation(self):
-        confirm = self.cleaned_data["confirmation"]
-        if confirm != "confirm":
-            raise forms.ValidationError('Type "confirm" to confirm replacement.')
-        return confirm
 
     @property
     def helper(self):
