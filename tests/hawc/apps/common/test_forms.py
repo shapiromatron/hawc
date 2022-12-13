@@ -51,3 +51,10 @@ class TestConfirmationField:
         for value in [" ", "confirm!", " confirm "]:
             with pytest.raises(ValidationError):
                 fld.validate(value)
+
+    def test_check_value(self):
+        # confirm that changing check value works
+        fld = ConfirmationField(check_value="test")
+        fld.validate("test")
+        with pytest.raises(ValidationError):
+            fld.validate("confirm")
