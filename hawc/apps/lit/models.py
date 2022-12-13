@@ -1208,5 +1208,6 @@ class UserReferenceTag(models.Model):
 
 reversion.register(LiteratureAssessment)
 reversion.register(Search)
-reversion.register(Reference)
-reversion.register(UserReferenceTag)
+reversion.register(ReferenceFilterTag)
+reversion.register(Reference, follow=["tags"])
+reversion.register(UserReferenceTag, follow=["tags"])
