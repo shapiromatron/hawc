@@ -472,7 +472,9 @@ class ReferenceManager(BaseManager):
         if assessment.literature_settings.conflict_resolution:
             refs = refs.prefetch_related("tags", "user_tags")
             if True:
-                user_tag_counts = refs.all().annotate(user_tag_count=Count("user_tags"))
+                user_tag_counts = refs.all().annotate(
+                    user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+                )
                 overview["no_tags"] = (
                     user_tag_counts.all().filter(user_tag_count=0, tags__isnull=True).count()
                 )

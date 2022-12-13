@@ -252,17 +252,25 @@ class TagReferences(BaseFilterList):
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
         fields=[
+            "needs_tagging",
             "title_abstract",
             "search",
             "id",
-            "order_by",
-            "tag_choice",
             "tags",
             "include_descendants",
-            "untagged",
+            "order_by",
+            "my_tags",
+            "include_mytag_descendants",
         ],
         grid_layout={
             "rows": [
+                {
+                    "columns": [
+                        {"width": 3, "extra_css": " pl-3 pt-4"},
+                        {"width": 5},
+                        {"width": 4},
+                    ]
+                },
                 {
                     "columns": [
                         {
@@ -273,7 +281,6 @@ class TagReferences(BaseFilterList):
                                         {"width": 12},
                                         {"width": 12},
                                         {"width": 12},
-                                        {"width": 12},
                                     ]
                                 }
                             ],
@@ -285,14 +292,13 @@ class TagReferences(BaseFilterList):
                                     "columns": [
                                         {"width": 12},
                                         {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12},
                                     ]
                                 }
                             ],
                         },
                     ]
-                }
+                },
             ]
         },
     )
@@ -338,21 +344,48 @@ class ConflictResolution(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
-        fields=["id", "title_abstract", "tag_choice", "tags", "include_descendants"],
+        fields=[
+            "id",
+            "title_abstract",
+            "tags",
+            "include_descendants",
+            "my_tags",
+            "include_mytag_descendants",
+        ],
         grid_layout={
             "rows": [
                 {
                     "columns": [
+                        {"width": 6},
+                        {"width": 6},
+                    ]
+                },
+                {
+                    "columns": [
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                    ]
+                                }
+                            ],
                         },
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 12},
+                                    ]
+                                }
+                            ],
                         },
                     ]
-                }
+                },
             ]
         },
     )
@@ -503,10 +536,8 @@ class RefFilterList(BaseFilterList):
             "journal",
             "title_abstract",
             "authors",
-            "tag_choice",
             "tags",
             "include_descendants",
-            "untagged",
             "order_by",
             "paginate_by",
         ],
@@ -535,8 +566,6 @@ class RefFilterList(BaseFilterList):
                                     "columns": [
                                         {"width": 12},
                                         {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
                                     ]
                                 }
                             ],
