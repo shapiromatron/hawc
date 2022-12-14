@@ -580,15 +580,15 @@ class AssessmentValue(models.Model):
         verbose_name="Key study",
         help_text="Key existing study in HAWC for a key study. If it does not exist or there are multiple studies, leave blank and explain in comments",
     )
+    dosimetric_approach = models.CharField(
+        max_length=128,
+        blank=True,
+    )
     tumor_type = models.CharField(
         max_length=128,
         verbose_name="Tumor/Cancer type",
         blank=True,
         help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site)",
-    )
-    dosimetric_approach = models.CharField(
-        max_length=128,
-        blank=True,
     )
     extrapolation_method = models.TextField(
         blank=True,

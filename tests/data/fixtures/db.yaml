@@ -886,15 +886,15 @@
     evaluation_type: 1
     value_type: 0
     value: 1.0
-    value_unit: 1
+    value_unit: "mg/kg/day"
     basis: Increased absolute kidney weight in female rats
     pod_value: 28.8
-    pod_unit: 1
+    pod_unit: "mg/kg/day"
     species_studied: 1
     duration: ''
     study: 7
     confidence: 30
-    uncertainty: 30.0
+    uncertainty: 30
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
@@ -911,15 +911,15 @@
     evaluation_type: 1
     value_type: 5
     value: 4.0
-    value_unit: 1
+    value_unit: "mg/kg/day"
     basis: Increased absolute kidney weight in female rats
     pod_value: 111.0
-    pod_unit: 1
+    pod_unit: "mg/kg/day"
     species_studied: 1
     duration: ''
     study: 7
     confidence: 20
-    uncertainty: 30.0
+    uncertainty: 30
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
@@ -936,14 +936,14 @@
     evaluation_type: 0
     value_type: 30
     value: 8.0e-05
-    value_unit: 2
+    value_unit: "mg/kg/day"
     basis: "Under EPA’s Guidelines for Carcinogen Risk Assessment (U.S. EPA, 2005),
       ethyl tertiary butyl ether has “suggestive evidence of carcinogenic potential\"
       for the inhalation route and “inadequate information to assess carcinogenic
       potential” for the oral route.\r\nThis may be a synopsis of the full weight-of-evidence
       narrative."
     pod_value: null
-    pod_unit: null
+    pod_unit: "mg/kg/day"
     species_studied: 1
     duration: ''
     study: 7
