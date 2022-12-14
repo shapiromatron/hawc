@@ -233,7 +233,7 @@
   {% if crud == "Read" %}
     {% include "assessment/fragments/attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
     {% include "assessment/_dataset_list.html" with object_list=datasets %}
-    {% include "assessment/fragments/assessmentvalue_list.html" with object_list=object.values.all %}
+    {% include "assessment/fragments/assessmentvalue_list.html" with object_list=values %}
   {% endif %}
 
 {% endblock content %}

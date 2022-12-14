@@ -55,12 +55,12 @@ class EvaluationType(models.IntegerChoices):
 class ValueType(models.IntegerChoices):
     IUR = 0, "IUR"
     OSF = 5, "OSF"
-    SCREEN_RFD = 10, "Screening-Level RfD"
-    SCREEN_RFC = 15, "Screening-Level RfC"
-    ORGAN_RFD = 20, "Organ-Specific RfD"
-    ORGAN_RFC = 25, "Organ-Specific RfC"
-    OVERALL_RFD = 30, "Overall RfD"
-    OVERALL_RFC = 35, "Overall RfC"
+    OVERALL_RFD = 10, "Overall RfD"
+    OVERALL_RFC = 15, "Overall RfC"
+    SCREEN_RFD = 20, "Screening-Level RfD"
+    SCREEN_RFC = 25, "Screening-Level RfC"
+    ORGAN_RFD = 30, "Organ-Specific RfD"
+    ORGAN_RFC = 35, "Organ-Specific RfC"
     OTHER = 45, "Other"
 
 
