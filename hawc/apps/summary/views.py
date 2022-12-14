@@ -11,7 +11,6 @@ from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCreate,
