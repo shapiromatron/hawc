@@ -6,7 +6,7 @@ from . import constants, models
 
 
 class VisualFilterSet(BaseFilterSet):
-    text = df.CharFilter(method="filter_text", label="Text", help_text="Title or description text")
+    title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title text")
     type = df.ChoiceFilter(
         field_name="visual_type",
         label="Visualization type",
@@ -22,17 +22,13 @@ class VisualFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Visual
-        fields = ["text", "type", "published"]
+        fields = ["title", "type", "published"]
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
-        return queryset.filter(query)
-
-    def filter_text(self, queryset, name, value):
-        query = Q(title__icontains=value) | Q(caption__icontains=value)
         return queryset.filter(query)
 
     def create_form(self):
