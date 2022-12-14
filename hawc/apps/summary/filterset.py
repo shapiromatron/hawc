@@ -23,6 +23,11 @@ class VisualFilterSet(BaseFilterSet):
     class Meta:
         model = models.Visual
         fields = ["title", "type", "published"]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
+            ]
+        }
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -31,21 +36,32 @@ class VisualFilterSet(BaseFilterSet):
             query &= Q(published=True)
         return queryset.filter(query)
 
-    def create_form(self):
-        form = super().create_form()
-        if not self.perms["edit"]:
-            form.fields["published"].disabled = True
-        choices = models.Visual.objects.filter(assessment=self.assessment).values_list(
-            "visual_type", flat=True
+    def get_type_choices(self):
+        choices = (
+            models.Visual.objects.filter(assessment=self.assessment)
+            .values_list("visual_type", flat=True)
+            .distinct()
         )
         choices = [constants.VisualType(choice) for choice in sorted(set(choices))]
-        form.fields["type"].choices = [(choice.value, choice.label) for choice in choices]
+        return [(choice.value, choice.label) for choice in choices]
+
+    def create_form(self):
+        form = super().create_form()
+        form.fields["type"].choices = self.get_type_choices()
         return form
+
+    def pop_published(self, form):
+        # hide published filter and modify layout
+        if not self.perms["edit"]:
+            form.fields.pop("published")
+            form.grid_layout.rows[0].columns[0].width = 8
+            form.grid_layout.rows[0].columns[1].width = 4
+            del form.grid_layout.rows[0].columns[2]
 
 
 class DataPivotFilterSet(VisualFilterSet):
     type = df.ChoiceFilter(
-        field_name="datapivotquery__evidence_type",
+        method="filter_evidence_type",
         label="Visualization type",
         help_text="Type of visualization to display",
         empty_label="<All>",
@@ -54,18 +70,30 @@ class DataPivotFilterSet(VisualFilterSet):
     class Meta(VisualFilterSet.Meta):
         model = models.DataPivot
 
-    def create_form(self):
-        form = super(VisualFilterSet, self).create_form()
-        if not self.perms["edit"]:
-            form.fields["published"].disabled = True
-        choices = models.DataPivot.objects.filter(assessment=self.assessment).values_list(
-            "datapivotquery__evidence_type", flat=True
+    def filter_queryset(self, queryset):
+        return super().filter_queryset(queryset).select_related("datapivotquery", "datapivotupload")
+
+    def get_type_choices(self):
+        choice_options = (
+            models.DataPivot.objects.filter(assessment=self.assessment)
+            .values_list("datapivotquery__evidence_type", flat=True)
+            .distinct()
         )
-        choices = [constants.StudyType(choice) for choice in sorted(set(choices))]
-        form.fields["type"].choices = [
-            (choice.value, f"Data pivot ({choice.label})") for choice in choices
-        ]
-        return form
+        choice_options = map(lambda x: x if x is not None else 999, choice_options)
+        choices = []
+        for choice in sorted(set(choice_options)):
+            try:
+                choice = constants.StudyType(choice)
+                choices.append((choice.value, f"Data pivot ({choice.label})"))
+            except ValueError:
+                choices.append((999, "Data pivot (File Upload)"))
+        return choices
+
+    def filter_evidence_type(self, queryset, name, value):
+        value = int(value)
+        if value == 999:
+            return queryset.filter(datapivotupload__id__gt=0)
+        return queryset.filter(datapivotquery__evidence_type=value)
 
 
 class SummaryTableFilterSet(BaseFilterSet):
@@ -103,7 +131,7 @@ class SummaryTableFilterSet(BaseFilterSet):
         form = super().create_form()
 
         if not self.perms["edit"]:
-            # hide published filter and modifiy layout
+            # hide published filter and modify layout
             form.fields.pop("published")
             form.grid_layout.rows[0].columns[0].width = 8
             form.grid_layout.rows[0].columns[1].width = 4

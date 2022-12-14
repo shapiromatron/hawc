@@ -298,13 +298,10 @@ class VisualizationList(BaseList):
     @property
     def form(self):
         if not hasattr(self, "_form"):
-            CombinedForm = dynamic_filterset(
-                filterset.VisualFilterSet,
-                grid_layout={"rows": [{"columns": [{"width": 6}, {"width": 3}, {"width": 3}]}]},
-            )
-            form = CombinedForm(
+            fs = filterset.VisualFilterSet(
                 data=self.request.GET, request=self.request, assessment=self.assessment
-            ).form
+            )
+            form = fs.form
             # combine type choices for both visual and data pivot
             form.fields["type"].choices = [
                 (f"v-{choice}", _)
@@ -315,6 +312,7 @@ class VisualizationList(BaseList):
                 for choice, _ in self.data_pivot_fs.form.fields["type"].choices
                 if choice != ""
             ]
+            fs.pop_published(form)
             self._form = form
         return self._form
 
