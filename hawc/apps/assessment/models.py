@@ -514,6 +514,7 @@ class AssessmentValue(models.Model):
         help_text="Substance evaluation conducted",
     )
     system = models.CharField(
+        verbose_name="System or health effect basis"
         max_length=128,
         help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive)",
     )
@@ -524,15 +525,23 @@ class AssessmentValue(models.Model):
     value = models.FloatField(
         help_text="The derived value",
     )
-    value_unit = models.ForeignKey(
-        "assessment.DoseUnits",
+    value_unit = models.CharField(
         verbose_name="Value units",
-        on_delete=models.CASCADE,
-        related_name="assessment_values",
+        blank=True,
+    )
+    confidence = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text="Overall confidence for the value.",
     )
     basis = models.TextField(
         blank=True,
         help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022)",
+    )
+    pod_type = models.CharField(
+        verbose_name="POD Type",
+        blank=True,
+        help_text="Point of departure type, for example, NOAEL, LOAEL, BMDL (10% extra risk)",
     )
     pod_value = models.FloatField(
         verbose_name="POD Value",
@@ -540,13 +549,9 @@ class AssessmentValue(models.Model):
         null=True,
         help_text="The Point of Departure (POD)",
     )
-    pod_unit = models.ForeignKey(
-        "assessment.DoseUnits",
+    pod_unit = models.CharField(
         verbose_name="POD units",
-        on_delete=models.SET_NULL,
         blank=True,
-        null=True,
-        related_name="assessment_pods",
         help_text="Units for the Point of Departure (POD)",
     )
     species_studied = models.ForeignKey(
@@ -555,7 +560,7 @@ class AssessmentValue(models.Model):
     duration = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Duration of key study supporting value derivation",
+        help_text="Duration of value",
     )
     study = models.ForeignKey(
         "study.Study",
@@ -565,11 +570,6 @@ class AssessmentValue(models.Model):
         verbose_name="Key study",
         help_text="Key study in HAWC, if available",
     )
-    confidence = models.PositiveSmallIntegerField(
-        default=constants.Confidence.NA,
-        choices=constants.Confidence.choices,
-        help_text="Overall confidence for study or key studies",
-    )
     uncertainty = models.FloatField(
         blank=True,
         null=True,
@@ -577,7 +577,7 @@ class AssessmentValue(models.Model):
         help_text="Composite uncertainty factor applied to POD to derive the final value",
     )
     tumor_type = models.CharField(
-        max_length=64,
+        max_length=128,
         verbose_name="Tumor/Cancer type",
         blank=True,
         help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site)",
