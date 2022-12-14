@@ -74,7 +74,7 @@ class PubMedQueryManager(BaseManager):
 
 
 class IdentifiersQuerySet(models.QuerySet):
-    def _foobar(self, identifier_map, identifiers):
+    def _foobar(self, identifier_map: dict, identifiers: list) -> tuple[dict, list]:
         map = {}
         missing = []
         for key in identifier_map:
@@ -122,7 +122,12 @@ class IdentifiersQuerySet(models.QuerySet):
         # runs at O(n) instead of O(1), but necessary since doi in content won't necessarily be unique
         map, missing = self._foobar(_map, pubmed_identifiers)
         if create and missing:
-            raise NotImplementedError()
+            fetcher = pubmed.PubMedFetch([_map[key] for key in missing])
+            fetched_content = fetcher.get_content()
+            created_pubmed = self.model.objects.bulk_create_pubmed_ids(fetched_content)
+            _missing_map = {key: _map[key] for key in missing}
+            missing_map, _ = self._foobar(_missing_map, created_pubmed)
+            map.update(missing_map)
         return map
 
 
@@ -459,7 +464,7 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
-        pubmed_map = identifiers.associated_pubmed(create=False)
+        pubmed_map = identifiers.associated_pubmed(create=True)
         doi_map = identifiers.associated_doi(create=True)
 
         for identifier in identifiers:

@@ -45,13 +45,34 @@ def update_hero_fields(ref_ids: list[int]):
     """
 
     Reference = apps.get_model("lit", "reference")
+    Identifiers = apps.get_model("lit", "identifiers")
     with transaction.atomic():
         references = Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
+        hero_identifiers = Identifiers.objects.filter(
+            database=constants.ReferenceDatabase.HERO, references__in=ref_ids
+        )
+        doi_map = hero_identifiers.associated_doi(create=True)
+        pubmed_map = hero_identifiers.associated_pubmed(create=True)
+
         for reference in references:
-            content = reference.identifiers.get(
-                database=constants.ReferenceDatabase.HERO
-            ).get_content()
+            hero_identifier = reference.identifiers.get(database=constants.ReferenceDatabase.HERO)
+
+            # update reference fields
+            content = hero_identifier.get_content()
             reference.update_from_hero_content(content, save=True)
+
+            # update reference identifiers
+            reference.identifiers.set(
+                [
+                    identifier
+                    for identifier in [
+                        hero_identifier,
+                        doi_map.get(hero_identifier.pk),
+                        pubmed_map.get(hero_identifier.pk),
+                    ]
+                    if identifier
+                ]
+            )
 
 
 @shared_task
