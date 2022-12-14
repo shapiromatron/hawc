@@ -37,7 +37,7 @@
     <div class="col-md-8">
       <div class="d-flex row justify-content-around">
 
-        <a class="lit-review-box with-icon clickable" href="{% url 'lit:ref_search' assessment.pk %}">
+        <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:ref_search' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_references}}</p>
             <p class="small">total references</p>
@@ -47,7 +47,7 @@
           </div>
         </a>
 
-        <a class="lit-review-box with-icon clickable"  href="{% url 'lit:ref_list' assessment.pk %}">
+        <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:ref_list' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_tagged}}</p>
             {% if assessment.literature_settings.conflict_resolution %}
@@ -61,7 +61,7 @@
           </div>
         </a>
 
-        <a class="lit-review-box with-icon clickable"  href="{% url 'lit:ref_search' assessment.pk %}?untagged=on&tag_choice=resolved">
+        <a class="lit-review-box with-icon clickable"  target="_blank" href="{% url 'lit:ref_search' assessment.pk %}?tags=untagged">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_untagged}}</p>
             {% if assessment.literature_settings.conflict_resolution %}
@@ -98,60 +98,51 @@
           </div>
         </div>
 
-        {% if assessment.literature_settings.conflict_resolution %}
+        {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}
 
         <div style="width:30%">
 
-          <div class="lit-review-box with-icon w-100">
+          <a class="lit-review-box with-icon clickable w-100" target="_blank" href="{% url 'lit:tag-conflicts' assessment.pk %}">
             <div>
-              <p class="h3 m-0 mt-1">{{overview.one_user}}</p>
-              <p class="small">tagged by one user</p>
+              <p class="h3 m-0 mt-1">{{overview.conflicts}}</p>
+              <p class="small">with tag conflicts</p>
             </div>
             <div class="lit-icon">
-                <i class="fa fa-user icon-bg"></i>
+              <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
             </div>
-          </div>
+          </a>
 
-          <div class="lit-review-box with-icon w-100">
+          <a class="lit-review-box with-icon clickable w-100" target="_blank" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
             <div>
-              <p class="h3 m-0 mt-1">{{overview.oneplus_user}}</p>
-              <p class="small">tagged by two or more users</p>
+              <p class="h3 m-0 mt-1">{{overview.needs_tagging}}</p>
+              <p class="small">need{{ overview.conflicts|pluralize:" ,s" }}further tagging</p>
             </div>
             <div class="lit-icon">
-              <i class="fa fa-users icon-bg"></i>
+              <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
             </div>
-          </div>
+          </a>
+
 
         </div>
-
-        <a class="lit-review-box with-icon clickable" href="{% url 'lit:tag-conflicts' assessment.pk %}">
-          <div>
-            <p class="h3 m-0 mt-1">{{overview.conflicts}}</p>
-            <p class="small">references with tag conflicts</p>
-          </div>
-          <div class="lit-icon">
-            <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
-          </div>
-        </a>
-
         <div class="lit-review-box with-icon">
           <div>
-            <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> users</p>
+            <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> user{{ overview.total_users|pluralize }}</p>
           </div>
           <div class="lit-icon">
-            <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
+            <i class="fa fa-users icon-bg"></i>
           </div>
         </div>
-
-        <a class="lit-review-box with-icon clickable"  href="{% url 'lit:ref_search' assessment.pk %}?untagged=on">
-          <div>
-            <p class="h3 m-0 mt-1">{{overview.no_tags}}</p>
-            <p class="small">completely untagged</p>
-          </div>
-          <div class="lit-icon">
-            <i class="fa fa-ban icon-bg" style="background-color: #ff9393;"></i>
-          </div>
-        </a>
+        {% if overview.my_reviews > 0 %}
+          <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
+            <div>
+              <p class="h3 m-0 mt-1">{{overview.my_reviews}}</p>
+              <p>reviews done by you</p>
+            </div>
+            <div class="lit-icon">
+              <i class="fa fa-user icon-bg"></i>
+            </div>
+          </a>
+        {% endif %}
         {% endif %}
 
       </div>

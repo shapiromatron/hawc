@@ -34,8 +34,8 @@ class ReferenceFilterSet(BaseFilterSet):
     )
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
-        null_value="no_tags",
-        null_label="[No Tags]",
+        null_value="untagged",
+        null_label="[Untagged]",
         method="filter_tags",
         conjoined=True,
         label="Tags",
@@ -44,10 +44,13 @@ class ReferenceFilterSet(BaseFilterSet):
     include_descendants = df.BooleanFilter(
         method=filter_noop, widget=CheckboxInput(), label="Include tag descendants (resolved tags)"
     )
+    anything_tagged = df.BooleanFilter(
+        method="filter_anything_tagged", widget=CheckboxInput(), label="Show anything tagged"
+    )
     my_tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
-        null_value="no_tags",
-        null_label="[No Tags]",
+        null_value="untagged",
+        null_label="[Untagged]",
         method="filter_my_tags",
         conjoined=True,
         label="My Tags",
@@ -55,6 +58,11 @@ class ReferenceFilterSet(BaseFilterSet):
     )
     include_mytag_descendants = df.BooleanFilter(
         method=filter_noop, widget=CheckboxInput(), label="Include tag descendants (my tags)"
+    )
+    anything_tagged_me = df.BooleanFilter(
+        method="filter_anything_tagged_me",
+        widget=CheckboxInput(),
+        label="Show anything tagged by me",
     )
     order_by = df.OrderingFilter(
         fields=(
@@ -82,8 +90,10 @@ class ReferenceFilterSet(BaseFilterSet):
             "search",
             "tags",
             "include_descendants",
+            "anything_tagged",
             "my_tags",
             "include_mytag_descendants",
+            "anything_tagged_me",
             "order_by",
             "paginate_by",
             "needs_tagging",
@@ -105,23 +115,28 @@ class ReferenceFilterSet(BaseFilterSet):
         include_descendants = self.data.get("include_descendants", False)
 
         for tag in value:
-            if tag == "no_tags":
+            if tag == "untagged":
                 queryset = queryset.filter(tags__isnull=True)
-                break
+            else:
+                tag_ids = (
+                    list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                    if include_descendants
+                    else [tag]
+                )
+                queryset = queryset.filter(tags__in=tag_ids)
+        return queryset.distinct()
 
-            tag_ids = (
-                list(tag.get_tree(parent=tag).values_list("id", flat=True))
-                if include_descendants
-                else [tag]
-            )
-            queryset = queryset.filter(tags__in=tag_ids)
+    def filter_anything_tagged(self, queryset, name, value):
+        if not value:
+            return queryset
+        queryset = queryset.filter(tags__isnull=False)
         return queryset.distinct()
 
     def filter_my_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_mytag_descendants", False)
 
         for tag in value:
-            if tag == "no_tags":
+            if tag == "untagged":
                 queryset = queryset.annotate(
                     user_tag_count=Count(
                         "user_tags",
@@ -129,18 +144,23 @@ class ReferenceFilterSet(BaseFilterSet):
                         & Q(user_tags__user=self.request.user),
                     )
                 ).filter(user_tag_count=0)
-                break
+            else:
+                tag_ids = (
+                    list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                    if include_descendants
+                    else [tag]
+                )
+                queryset = queryset.filter(
+                    user_tags__tags__in=tag_ids,
+                    user_tags__is_resolved=False,
+                    user_tags__user=self.request.user,
+                )
+        return queryset.distinct()
 
-            tag_ids = (
-                list(tag.get_tree(parent=tag).values_list("id", flat=True))
-                if include_descendants
-                else [tag]
-            )
-            queryset = queryset.filter(
-                user_tags__tags__in=tag_ids,
-                user_tags__is_resolved=False,
-                user_tags__user=self.request.user,
-            )
+    def filter_anything_tagged_me(self, queryset, name, value):
+        if not value:
+            return queryset
+        queryset = queryset.filter(user_tags__is_resolved=False, user_tags__user=self.request.user)
         return queryset.distinct()
 
     def filter_needs_tagging(self, queryset, name, value):

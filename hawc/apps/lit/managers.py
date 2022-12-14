@@ -475,12 +475,8 @@ class ReferenceManager(BaseManager):
                 user_tag_counts = refs.all().annotate(
                     user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
                 )
-                overview["no_tags"] = (
-                    user_tag_counts.all().filter(user_tag_count=0, tags__isnull=True).count()
-                )
-                overview["one_user"] = user_tag_counts.all().filter(user_tag_count=1).count()
-                overview["oneplus_user"] = (
-                    user_tag_counts.all().filter(user_tag_count__gt=1).count()
+                overview["needs_tagging"] = (
+                    user_tag_counts.all().filter(user_tag_count__lt=2, tags__isnull=True).count()
                 )
                 n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
                 overview["conflicts"] = (

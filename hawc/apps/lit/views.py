@@ -54,6 +54,14 @@ class LitOverview(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
+        context["overview"]["my_reviews"] = (
+            models.Reference.objects.filter(assessment=self.assessment)
+            .filter(
+                user_tags__is_resolved=False,
+                user_tags__user=self.request.user,
+            )
+            .count()
+        )
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)
         if context["obj_perms"]["edit"]:
             context["need_import_count"] = models.Reference.objects.get_references_ready_for_import(
@@ -258,17 +266,19 @@ class TagReferences(BaseFilterList):
             "id",
             "tags",
             "include_descendants",
+            "anything_tagged",
             "order_by",
             "my_tags",
             "include_mytag_descendants",
+            "anything_tagged_me",
         ],
         grid_layout={
             "rows": [
                 {
                     "columns": [
-                        {"width": 3, "extra_css": " pl-3 pt-4"},
-                        {"width": 5},
-                        {"width": 4},
+                        {"width": 3, "extra_css": "pl-5 pt-3"},
+                        {"width": 5, "extra_css": "px-4 py-2"},
+                        {"width": 4, "extra_css": "px-4 py-2 pr-5"},
                     ]
                 },
                 {
@@ -278,9 +288,10 @@ class TagReferences(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 12},
-                                        {"width": 12},
+                                        {"width": 12, "extra_css": "pl-5 pr-4 py-2"},
+                                        {"width": 12, "extra_css": "pl-5 pr-4 pt-2"},
+                                        {"width": 6, "extra_css": "pl-5 pr-4 pb-2"},
+                                        {"width": 6, "extra_css": "px-4 pb-2"},
                                     ]
                                 }
                             ],
@@ -290,9 +301,10 @@ class TagReferences(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 12},
-                                        {"width": 12},
+                                        {"width": 12, "extra_css": "pl-4 pr-5 py-2"},
+                                        {"width": 12, "extra_css": "pl-4 pr-5 pt-2"},
+                                        {"width": 6, "extra_css": "px-4 pb-2"},
+                                        {"width": 6, "extra_css": "pr-5 pb-2"},
                                     ]
                                 }
                             ],
@@ -349,8 +361,10 @@ class ConflictResolution(BaseFilterList):
             "title_abstract",
             "tags",
             "include_descendants",
+            "anything_tagged",
             "my_tags",
             "include_mytag_descendants",
+            "anything_tagged_me",
         ],
         grid_layout={
             "rows": [
@@ -368,7 +382,8 @@ class ConflictResolution(BaseFilterList):
                                 {
                                     "columns": [
                                         {"width": 12},
-                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
                                     ]
                                 }
                             ],
@@ -379,7 +394,8 @@ class ConflictResolution(BaseFilterList):
                                 {
                                     "columns": [
                                         {"width": 12},
-                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
                                     ]
                                 }
                             ],
@@ -538,6 +554,7 @@ class RefFilterList(BaseFilterList):
             "authors",
             "tags",
             "include_descendants",
+            "anything_tagged",
             "order_by",
             "paginate_by",
         ],
@@ -565,7 +582,8 @@ class RefFilterList(BaseFilterList):
                                 {
                                     "columns": [
                                         {"width": 12},
-                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
                                     ]
                                 }
                             ],
