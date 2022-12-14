@@ -514,7 +514,7 @@ class AssessmentValue(models.Model):
         help_text="Substance evaluation conducted",
     )
     system = models.CharField(
-        verbose_name="System or health effect basis"
+        verbose_name="System or health effect basis",
         max_length=128,
         help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive)",
     )
@@ -527,6 +527,7 @@ class AssessmentValue(models.Model):
     )
     value_unit = models.CharField(
         verbose_name="Value units",
+        max_length=32,
         blank=True,
     )
     confidence = models.CharField(
@@ -534,12 +535,18 @@ class AssessmentValue(models.Model):
         blank=True,
         help_text="Overall confidence for the value.",
     )
+    duration = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Duration of value",
+    )
     basis = models.TextField(
         blank=True,
         help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022)",
     )
     pod_type = models.CharField(
         verbose_name="POD Type",
+        max_length=32,
         blank=True,
         help_text="Point of departure type, for example, NOAEL, LOAEL, BMDL (10% extra risk)",
     )
@@ -551,16 +558,19 @@ class AssessmentValue(models.Model):
     )
     pod_unit = models.CharField(
         verbose_name="POD units",
+        max_length=32,
         blank=True,
         help_text="Units for the Point of Departure (POD)",
     )
+    uncertainty = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=constants.UncertaintyChoices.choices,
+        verbose_name="Uncertainty factor",
+        help_text="Composite uncertainty factor applied to POD to derive the final value",
+    )
     species_studied = models.ForeignKey(
         "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
-    )
-    duration = models.CharField(
-        max_length=128,
-        blank=True,
-        help_text="Duration of value",
     )
     study = models.ForeignKey(
         "study.Study",
@@ -568,19 +578,17 @@ class AssessmentValue(models.Model):
         blank=True,
         null=True,
         verbose_name="Key study",
-        help_text="Key study in HAWC, if available",
-    )
-    uncertainty = models.FloatField(
-        blank=True,
-        null=True,
-        verbose_name="Uncertainty factor",
-        help_text="Composite uncertainty factor applied to POD to derive the final value",
+        help_text="Key existing study in HAWC for a key study. If it does not exist or there are multiple studies, leave blank and explain in comments",
     )
     tumor_type = models.CharField(
         max_length=128,
         verbose_name="Tumor/Cancer type",
         blank=True,
         help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site)",
+    )
+    dosimetric_approach = models.CharField(
+        max_length=128,
+        blank=True,
     )
     extrapolation_method = models.TextField(
         blank=True,
