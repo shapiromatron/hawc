@@ -710,7 +710,9 @@ class TestClient(LiveServerTestCase, TestCase):
         )
         assert isinstance(df_src, pd.DataFrame) and df_src.shape == (11, 18)
         assert isinstance(df_dst, pd.DataFrame) and df_dst.shape == (2, 16)
-        assert all(col in df_src.columns for col in ["fuzz_key", "fuzz_score", "fuzz_text"])
+        assert all(
+            col in df_src.columns for col in ["matched_key", "matched_score", "matched_text"]
+        )
 
     def test_riskofbias_reviews(self):
         client = HawcClient(self.live_server_url)
