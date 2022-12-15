@@ -153,7 +153,7 @@ class RiskOfBiasClient(BaseClient):
 
     def compare_metrics(
         self, src_assessment_id: int, dest_assessment_id: int
-    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Match metrics across two different assessments, returning best-matched results.
 
         This uses a fuzzy-text matching algorithm to attempt to match text between two different
@@ -170,7 +170,7 @@ class RiskOfBiasClient(BaseClient):
             dest_assessment_id (int): The target assessment, where matches are returned from
 
         Returns:
-            Tuple[pd.DataFrame, pd.DataFrame]: Metrics with matches in source, Metrics in destination
+            tuple[pd.DataFrame, pd.DataFrame]: Metrics with matches in source, Metrics in destination
         """
         src = self.metrics(src_assessment_id).assign(assessment_id=src_assessment_id)
         dest = self.metrics(dest_assessment_id).assign(assessment_id=dest_assessment_id)

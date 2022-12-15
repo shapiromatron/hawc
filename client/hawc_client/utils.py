@@ -18,7 +18,7 @@ def fuzz_match(
         key_src (str): The column name to attempt to match in the source
         key_dest (str): The column name to match to in the destination
         match_key (str): The key value to return for a match
-        match_prefix (str, optional): Prefix for new columns; to "fuzz".
+        match_prefix (str, optional): Prefix for new columns; to "fuzz"
 
     Returns:
         pd.DataFrame: _description_
