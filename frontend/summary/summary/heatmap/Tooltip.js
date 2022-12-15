@@ -1,6 +1,5 @@
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-
+import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
 class CellTooltip extends Component {
@@ -77,4 +76,4 @@ AxisTooltip.propTypes = {
     data: PropTypes.object,
 };
 
-export {CellTooltip, AxisTooltip};
+export {AxisTooltip, CellTooltip};

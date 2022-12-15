@@ -1,11 +1,12 @@
-import * as d3 from "d3";
-import $ from "$";
-
 import "react-tabs/style/react-tabs.css";
 
-import tryWebAppStartup from "./utils/tryWebAppStartup";
-import Quillify from "./utils/Quillify";
+import * as d3 from "d3";
+
+import $ from "$";
+
 import checkSession from "./utils/checkSession";
+import Quillify from "./utils/Quillify";
+import tryWebAppStartup from "./utils/tryWebAppStartup";
 
 $.fn.quillify = Quillify;
 

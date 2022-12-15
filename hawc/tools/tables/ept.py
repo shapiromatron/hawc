@@ -1,5 +1,4 @@
 from enum import Enum, IntEnum
-from typing import List
 
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from pydantic import BaseModel, Field
@@ -209,7 +208,7 @@ class Factor(BaseModel):
 
 
 class FactorsCell(BaseCell):
-    factors: List[Factor]
+    factors: list[Factor]
     text: str
 
     @property
@@ -235,7 +234,7 @@ class FactorsCell(BaseCell):
 
 
 class CertainFactorsCell(FactorsCell):
-    column: int = 2
+    column: int = 3
 
     @property
     def factor_types(self):
@@ -243,7 +242,7 @@ class CertainFactorsCell(FactorsCell):
 
 
 class UncertainFactorsCell(FactorsCell):
-    column: int = 3
+    column: int = 2
 
     @property
     def factor_types(self):
@@ -327,8 +326,8 @@ class EvidenceRow(BaseCellGroup):
         self.cells = [
             self.evidence,
             self.summary,
-            self.certain_factors,
             self.uncertain_factors,
+            self.certain_factors,
             self.judgement,
         ]
 
@@ -348,7 +347,7 @@ class MechanisticRow(BaseCellGroup):
 
 class EvidenceGroup(BaseCellGroup):
     title: str
-    cell_rows: List[EvidenceRow] = Field([], alias="rows")
+    cell_rows: list[EvidenceRow] = Field([], alias="rows")
     merge_judgement: bool
     hide_content: bool
     no_content_text: str
@@ -377,7 +376,7 @@ class EvidenceGroup(BaseCellGroup):
 class MechanisticGroup(BaseCellGroup):
     title: str
     col_header_1: str
-    cell_rows: List[MechanisticRow] = Field([], alias="rows")
+    cell_rows: list[MechanisticRow] = Field([], alias="rows")
     merge_judgement: bool
     hide_content: bool
     no_content_text: str
@@ -439,10 +438,10 @@ class EvidenceProfileTable(BaseTable):
                 True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 2, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
+                True, 1, 2, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
+                True, 1, 3, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
             ),
             GenericCell.parse_args(
                 True, 1, 4, 1, 1, tag_wrapper("Evidence Synthesis Judgment(s)", "p", "strong")

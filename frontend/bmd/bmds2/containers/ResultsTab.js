@@ -1,11 +1,11 @@
-import React from "react";
-import {inject, observer} from "mobx-react";
 import _ from "lodash";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
+import React from "react";
 
-import RecommendationNotes from "../components/RecommendationNotes";
-import OutputTable from "../components/OutputTable";
 import OutputFigure from "../components/OutputFigure";
+import OutputTable from "../components/OutputTable";
+import RecommendationNotes from "../components/RecommendationNotes";
 
 @inject("store")
 @observer

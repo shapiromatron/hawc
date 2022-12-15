@@ -1,5 +1,3 @@
-from typing import Dict, List, Tuple
-
 from django.db import models
 
 
@@ -12,7 +10,7 @@ class RiskOfBiasResponses(models.IntegerChoices):
     MINOR_CRITICAL = 5, "Minor/Critical concerns"
 
 
-RESPONSES_VALUES: Dict[models.IntegerChoices, List[int]] = {
+RESPONSES_VALUES: dict[models.IntegerChoices, list[int]] = {
     RiskOfBiasResponses.NONE: [0],
     RiskOfBiasResponses.HIGH_LOW_BIAS: [17, 16, 15, 12, 14, 10],
     RiskOfBiasResponses.GOOD_DEFICIENT: [27, 26, 25, 24, 22, 20],
@@ -21,7 +19,7 @@ RESPONSES_VALUES: Dict[models.IntegerChoices, List[int]] = {
     RiskOfBiasResponses.MINOR_CRITICAL: [53, 52, 51, 50, 22, 20],
 }
 
-RESPONSES_VALUES_DEFAULT: Dict[models.IntegerChoices, int] = {
+RESPONSES_VALUES_DEFAULT: dict[models.IntegerChoices, int] = {
     RiskOfBiasResponses.NONE: 0,
     RiskOfBiasResponses.HIGH_LOW_BIAS: 12,
     RiskOfBiasResponses.GOOD_DEFICIENT: 22,
@@ -31,7 +29,7 @@ RESPONSES_VALUES_DEFAULT: Dict[models.IntegerChoices, int] = {
 }
 
 
-SCORE_CHOICES: Tuple[Tuple[int, str], ...] = (
+SCORE_CHOICES: tuple[tuple[int, str], ...] = (
     (0, "None"),
     (10, "Not applicable"),
     (12, "Not reported"),
@@ -57,12 +55,12 @@ SCORE_CHOICES: Tuple[Tuple[int, str], ...] = (
     (53, "Minor concerns"),
 )
 
-SCORE_CHOICES_MAP: Dict[int, str] = {k: v for k, v in SCORE_CHOICES}
+SCORE_CHOICES_MAP: dict[int, str] = {k: v for k, v in SCORE_CHOICES}
 
-NA_SCORES: Tuple[int, ...] = (10, 20)
-NR_SCORES: Tuple[int, ...] = (12, 22)
+NA_SCORES: tuple[int, ...] = (10, 20)
+NR_SCORES: tuple[int, ...] = (12, 22)
 
-SCORE_SYMBOLS: Dict[int, str] = {
+SCORE_SYMBOLS: dict[int, str] = {
     0: "━",
     10: "N/A",
     12: "NR",
@@ -88,7 +86,7 @@ SCORE_SYMBOLS: Dict[int, str] = {
     53: "+++",
 }
 
-SCORE_SHADES: Dict[int, str] = {
+SCORE_SHADES: dict[int, str] = {
     0: "#DFDFDF",
     10: "#E8E8E8",
     12: "#FFCC00",

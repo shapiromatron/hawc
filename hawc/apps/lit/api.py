@@ -15,7 +15,6 @@ from rest_framework.response import Response
 from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
-    AssessmentReadPermissions,
     AssessmentRootedTagTreeViewset,
 )
 from ..assessment.models import Assessment
@@ -36,6 +35,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    filterset_class = None
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
@@ -267,27 +267,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             "Updated (HERO metadata)", assessment, assessment.id, self.request.user.id
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(
-        detail=True,
-        methods=("post",),
-        url_path="reference-search",
-        permission_classes=(AssessmentReadPermissions,),
-    )
-    def reference_search(self, request, pk):
-        assessment = self.get_object()
-        if not assessment.user_can_view_object(request.user):
-            raise exceptions.PermissionDenied()
-
-        serializer = serializers.ReferenceQuerySerializer(
-            data=request.data, context={"assessment": assessment}
-        )
-
-        resp = []
-        if serializer.is_valid(raise_exception=True):
-            resp = serializer.search()
-
-        return Response(dict(references=resp))
 
     @action(
         detail=True,

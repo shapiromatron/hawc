@@ -1,6 +1,6 @@
 import json
 from enum import IntEnum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import pydantic
 
@@ -25,8 +25,8 @@ class BulkRobCopyData(pydantic.BaseModel):
     src_assessment_id: int
     dst_assessment_id: int
     dst_author_id: Optional[int]
-    src_dst_study_ids: List[Tuple[int, int]]
-    src_dst_metric_ids: List[Tuple[int, int]]
+    src_dst_study_ids: list[tuple[int, int]]
+    src_dst_metric_ids: list[tuple[int, int]]
     copy_mode: BulkCopyMode
     author_mode: BulkCopyAuthor
 
@@ -124,7 +124,7 @@ class BulkRobCopyAction(BaseApiAction):
                     msg = "Author is not part of destination assessment team."
                     self.errors["dst_author_id"].append(msg)
 
-    def evaluate(self) -> Dict[str, Any]:
+    def evaluate(self) -> dict[str, Any]:
         # create src to dst mapping
         src_to_dst = {}
 
@@ -190,7 +190,7 @@ class BulkRobCopyAction(BaseApiAction):
         )
         return {"mapping": src_to_dst}
 
-    def has_permission(self, request) -> Tuple[bool, str]:
+    def has_permission(self, request) -> tuple[bool, str]:
         """
         Check user is a project manager on both assessments.
         """

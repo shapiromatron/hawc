@@ -1,9 +1,9 @@
 import _ from "lodash";
-import React, {Component} from "react";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import {observer, inject} from "mobx-react";
-import SelectInput from "shared/components/SelectInput";
+import React, {Component} from "react";
 import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
+import SelectInput from "shared/components/SelectInput";
 
 class OverrideObjectTypeSelector extends Component {
     render() {

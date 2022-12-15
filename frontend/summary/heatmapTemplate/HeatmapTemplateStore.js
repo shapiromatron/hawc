@@ -1,9 +1,9 @@
 import _ from "lodash";
-import h from "shared/utils/helpers";
 import {action, computed, observable, toJS} from "mobx";
+import h from "shared/utils/helpers";
 
-import OPTIONS from "./dataDefinitions";
 import {DATA_FILTER_LOGIC_AND} from "../summary/filters";
+import OPTIONS from "./dataDefinitions";
 
 class HeatmapTemplateStore {
     config = null;

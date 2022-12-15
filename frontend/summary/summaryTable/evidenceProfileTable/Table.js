@@ -1,11 +1,11 @@
 import {observer} from "mobx-react";
-import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {Judgement} from "./Judgement";
-import {FactorsCell} from "./Factors";
+import React, {Component} from "react";
+import {disablePopovers, enablePopovers} from "shared/components/HelpTextPopup";
 import h from "shared/utils/helpers";
 
-import {enablePopovers, disablePopovers} from "shared/components/HelpTextPopup";
+import {FactorsCell} from "./Factors";
+import {Judgement} from "./Judgement";
 
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
     NoDataRow = function(no_content_text) {
@@ -27,8 +27,8 @@ const subTitleStyle = {backgroundColor: "#f5f5f5"},
                 <td>
                     <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
-                <FactorsCell content={row.certain_factors} isIncreasing={true} />
                 <FactorsCell content={row.uncertain_factors} isIncreasing={false} />
+                <FactorsCell content={row.certain_factors} isIncreasing={true} />
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
                         <Judgement
@@ -273,8 +273,8 @@ class Table extends Component {
                         <tr>
                             <th>Studies</th>
                             <th>Summary of key findings</th>
-                            <th>Factors that increase certainty</th>
                             <th>Factors that decrease certainty</th>
+                            <th>Factors that increase certainty</th>
                             <th>Evidence Synthesis Judgment(s)</th>
                             {summary_judgement.hide_content ? null : <SummaryCell store={store} />}
                         </tr>

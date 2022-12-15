@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from django.urls import reverse
 from pydantic import BaseModel
@@ -28,7 +28,7 @@ class Breadcrumb(BaseModel):
         return cls(name=str(obj), url=obj.get_absolute_url())
 
     @classmethod
-    def build_assessment_crumbs(cls, user, obj) -> List["Breadcrumb"]:
+    def build_assessment_crumbs(cls, user, obj) -> list["Breadcrumb"]:
         """
         Recursively get a list of breadcrumb objects from current object to assessment root.
 
@@ -38,7 +38,7 @@ class Breadcrumb(BaseModel):
             obj: a model instance related to an assessment.
 
         Returns:
-            List[Breadcrumb]: A list of crumbs; with assessment first
+            list[Breadcrumb]: A list of crumbs; with assessment first
         """
         crumbs = []
         while True:
@@ -53,8 +53,8 @@ class Breadcrumb(BaseModel):
 
     @classmethod
     def build_crumbs(
-        cls, user, name: str, extras: Optional[List["Breadcrumb"]] = None
-    ) -> List["Breadcrumb"]:
+        cls, user, name: str, extras: Optional[list["Breadcrumb"]] = None
+    ) -> list["Breadcrumb"]:
         """
         Build crumbs where there is not an assessment root.
 

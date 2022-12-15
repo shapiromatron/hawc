@@ -72,7 +72,7 @@ urlpatterns = [
     ),
     path(
         "assessment/<int:pk>/references/search/",
-        views.RefSearch.as_view(),
+        views.RefFilterList.as_view(),
         name="ref_search",
     ),
     path(

@@ -7,7 +7,6 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
-from ..assessment.models import DoseUnits
 from ..common.autocomplete import (
     AutocompleteMultipleChoiceField,
     AutocompleteSelectMultipleWidget,
@@ -18,12 +17,10 @@ from ..common.forms import (
     BaseFormHelper,
     CopyAsNewSelectorForm,
     check_unique_for_assessment,
-    form_actions_apply_filters,
     form_actions_create_or_close,
 )
 from ..common.helper import tryParseInt
-from ..study.autocomplete import StudyAutocomplete
-from . import autocomplete, constants, models
+from . import autocomplete, models
 
 
 class CriteriaForm(forms.ModelForm):
@@ -394,212 +391,6 @@ class OutcomeForm(forms.ModelForm):
         return helper
 
 
-class OutcomeFilterForm(forms.Form):
-
-    ORDER_BY_CHOICES = (
-        ("study_population__study__short_citation", "study"),
-        ("study_population__name", "study population"),
-        ("name", "outcome name"),
-        ("system", "system"),
-        ("effect", "effect"),
-        ("diagnostic", "diagnostic"),
-    )
-
-    studies = AutocompleteMultipleChoiceField(
-        autocomplete_class=StudyAutocomplete,
-        label="Study reference",
-        help_text="ex: Smith et al. 2010",
-        required=False,
-    )
-
-    name = forms.CharField(
-        label="Outcome name",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.OutcomeAutocomplete, field="name"
-        ),
-        help_text="ex: blood, glucose",
-        required=False,
-    )
-
-    study_population = forms.CharField(
-        label="Study population",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="name"
-        ),
-        help_text="ex: population near a Teflon manufacturing plant",
-        required=False,
-    )
-
-    metric = forms.CharField(
-        label="Measurement metric",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.ExposureAutocomplete, field="metric"
-        ),
-        help_text="ex: drinking water",
-        required=False,
-    )
-
-    age_profile = forms.CharField(
-        label="Age profile",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="age_profile"
-        ),
-        help_text="ex: children",
-        required=False,
-    )
-
-    source = forms.CharField(
-        label="Study population source",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.StudyPopulationAutocomplete, field="source"
-        ),
-        help_text="ex: occupational exposure",
-        required=False,
-    )
-
-    country = forms.CharField(
-        label="Study population country",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.CountryAutocomplete, field="name"
-        ),
-        help_text="ex: Japan",
-        required=False,
-    )
-
-    design = forms.MultipleChoiceField(
-        label="Study design",
-        choices=constants.Design.choices,
-        widget=forms.CheckboxSelectMultiple,
-        initial=constants.Design.values,
-        required=False,
-    )
-
-    system = forms.CharField(
-        label="System",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.OutcomeAutocomplete, field="system"
-        ),
-        help_text="ex: immune and lymphatic system",
-        required=False,
-    )
-
-    effect = forms.CharField(
-        label="Effect",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect"
-        ),
-        help_text="ex: Cancer",
-        required=False,
-    )
-
-    effect_subtype = forms.CharField(
-        label="Effect subtype",
-        widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.OutcomeAutocomplete, field="effect_subtype"
-        ),
-        help_text="ex: Melanoma",
-        required=False,
-    )
-
-    diagnostic = forms.MultipleChoiceField(
-        choices=constants.Diagnostic.choices,
-        widget=forms.CheckboxSelectMultiple,
-        initial=constants.Diagnostic.values,
-        required=False,
-    )
-
-    metric_units = forms.ModelChoiceField(queryset=DoseUnits.objects.all(), required=False)
-    order_by = forms.ChoiceField(
-        choices=ORDER_BY_CHOICES,
-    )
-    paginate_by = forms.IntegerField(
-        label="Items per page", min_value=10, initial=25, max_value=500, required=False
-    )
-
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("assessment")
-        super().__init__(*args, **kwargs)
-        self.fields["studies"].set_filters({"assessment_id": assessment.id, "epi": True})
-        self.fields["metric"].widget.update_filters(
-            {"study_population__study__assessment_id": assessment.id}
-        )
-        self.fields["country"].widget.update_filters(
-            {"studypopulation__study__assessment_id": assessment.id}
-        )
-        self.fields["metric_units"].queryset = DoseUnits.objects.get_epi_units(assessment.id)
-        ("study_population")
-
-        for field in self.fields:
-            widget = self.fields[field].widget
-            # for study population autocomplete
-            if field in ("study_population", "age_profile", "source"):
-                widget.update_filters({"study__assessment_id": assessment.id})
-            # for outcome autocomplete
-            elif field in ("name", "system", "effect", "effect_subtype"):
-                widget.update_filters({"study_population__study__assessment_id": assessment.id})
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-
-        helper.form_method = "GET"
-
-        helper.add_row("studies", 4, "col-md-3")
-        helper.add_row("age_profile", 4, "col-md-3")
-        helper.add_row("system", 4, "col-md-3")
-        helper.add_row("metric_units", 3, "col-md-3")
-
-        return helper
-
-    def get_query(self):
-
-        studies = self.cleaned_data.get("studies")
-        name = self.cleaned_data.get("name")
-        study_population = self.cleaned_data.get("study_population")
-        metric = self.cleaned_data.get("metric")
-        age_profile = self.cleaned_data.get("age_profile")
-        source = self.cleaned_data.get("source")
-        country = self.cleaned_data.get("country")
-        design = self.cleaned_data.get("design")
-        system = self.cleaned_data.get("system")
-        effect = self.cleaned_data.get("effect")
-        effect_subtype = self.cleaned_data.get("effect_subtype")
-        diagnostic = self.cleaned_data.get("diagnostic")
-        metric_units = self.cleaned_data.get("metric_units")
-
-        query = Q()
-        if studies:
-            query &= Q(study_population__study__in=studies)
-        if name:
-            query &= Q(name__icontains=name)
-        if study_population:
-            query &= Q(study_population__name__icontains=study_population)
-        if metric:
-            query &= Q(study_population__exposures__metric__icontains=metric)
-        if age_profile:
-            query &= Q(study_population__age_profile__icontains=age_profile)
-        if source:
-            query &= Q(study_population__source__icontains=source)
-        if country:
-            query &= Q(study_population__countries__name__icontains=country)
-        if design:
-            query &= Q(study_population__design__in=design)
-        if system:
-            query &= Q(system__icontains=system)
-        if effect:
-            query &= Q(effect__icontains=effect)
-        if effect_subtype:
-            query &= Q(effect_subtype__icontains=effect_subtype)
-        if diagnostic:
-            query &= Q(diagnostic__in=diagnostic)
-        if metric_units:
-            query &= Q(study_population__exposures__metric_units=metric_units)
-        return query
-
-    def get_order_by(self):
-        return self.cleaned_data.get("order_by", self.ORDER_BY_CHOICES[0][0])
-
-
 class OutcomeSelectorForm(CopyAsNewSelectorForm):
     label = "Outcome"
     parent_field = "study_population_id"
@@ -922,10 +713,20 @@ class ResultUpdateForm(ResultForm):
         self.fields["comparison_set"].widget.attrs["disabled"] = True
 
 
+class GroupSelectWidget(forms.Select):
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        # show the parent's name in case groups are named the same across comparison sets
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        if value:
+            option["label"] = f"{value.instance.comparison_set} - {value.instance.name}"
+        return option
+
+
 class GroupResultForm(forms.ModelForm):
     class Meta:
         model = models.GroupResult
         exclude = ("result",)
+        widgets = {"group": GroupSelectWidget}
 
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop("study_population", None)
@@ -935,7 +736,7 @@ class GroupResultForm(forms.ModelForm):
         self.fields["group"].queryset = models.Group.objects.filter(
             Q(comparison_set__study_population=study_population)
             | Q(comparison_set__outcome=outcome)
-        )
+        ).select_related("comparison_set")
         if result:
             self.instance.result = result
 

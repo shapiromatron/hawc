@@ -1,9 +1,9 @@
+import {Provider} from "mobx-react";
 import React from "react";
 import ReactDOM from "react-dom";
-import {Provider} from "mobx-react";
 
-import MgmtTaskTableStore from "./store";
 import Root from "./containers/Root";
+import MgmtTaskTableStore from "./store";
 
 export default function(el, config) {
     const store = new MgmtTaskTableStore(config);

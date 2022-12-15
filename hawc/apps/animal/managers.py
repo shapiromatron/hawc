@@ -1,13 +1,13 @@
-from typing import Any, Dict, List
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
 from django.apps import apps
-from django.db import transaction
-from django.db.models import Max, Min
+from django.db import models, transaction
+from django.db.models import Max, Min, OuterRef, QuerySet, Subquery, Value
 from rest_framework.serializers import ValidationError
 
-from ..assessment.models import Assessment
+from ..assessment.models import Assessment, DoseUnits
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
 from ..vocab.constants import VocabularyTermType
 from ..vocab.models import Term
@@ -104,8 +104,50 @@ class DoseGroupManager(BaseManager):
         return self.filter(dose_regime=dose_regime)
 
 
+class EndpointQuerySet(QuerySet):
+    def annotate_dose_values(self, dose_units: Optional[DoseUnits] = None) -> QuerySet:
+        """Annotate dose unit-specific responses from queryset, if a dose-unit is available.
+
+        Args:
+            dose_units (Optional[DoseUnits]): selected dose units, if exists
+        """
+        if dose_units is None:
+            return self.annotate(
+                units_name=Value("", output_field=models.CharField()),
+                noel_value=Value(None, output_field=models.FloatField(null=True)),
+                loel_value=Value(None, output_field=models.FloatField(null=True)),
+                bmd=Value(None, output_field=models.FloatField(null=True)),
+                bmdl=Value(None, output_field=models.FloatField(null=True)),
+            )
+        DoseGroup = apps.get_model("animal", "DoseGroup")
+        noel_value_qs = DoseGroup.objects.filter(
+            dose_regime__animalgroup__endpoints=OuterRef("pk"),
+            dose_group_id=OuterRef("NOEL"),
+            dose_units=dose_units,
+        )
+        loel_value_qs = DoseGroup.objects.filter(
+            dose_regime__animalgroup__endpoints=OuterRef("pk"),
+            dose_group_id=OuterRef("LOEL"),
+            dose_units=dose_units,
+        )
+        Model = apps.get_model("bmd", "Model")
+        bmd_qs = Model.objects.filter(
+            selectedmodel__endpoint=OuterRef("pk"), selectedmodel__dose_units=dose_units
+        )
+        return self.annotate(
+            units_name=Value(dose_units.name, output_field=models.CharField()),
+            noel_value=Subquery(noel_value_qs.values("dose")),
+            loel_value=Subquery(loel_value_qs.values("dose")),
+            bmd=Subquery(bmd_qs.values("output__BMD")),
+            bmdl=Subquery(bmd_qs.values("output__BMDL")),
+        )
+
+
 class EndpointManager(BaseManager):
     assessment_relation = "assessment"
+
+    def get_queryset(self):
+        return EndpointQuerySet(self.model, using=self._db)
 
     def published(self, assessment_id=None):
         return self.get_qs(assessment_id).filter(animal_group__experiment__study__published=True)
@@ -159,7 +201,7 @@ class EndpointManager(BaseManager):
         return get_distinct_charfield(self, assessment_id, "effect")
 
     def endpoint_df(self, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters: Dict[str, Any] = {"assessment_id": assessment}
+        filters: dict[str, Any] = {"assessment_id": assessment}
         if published_only:
             filters["animal_group__experiment__study__published"] = True
 
@@ -364,7 +406,7 @@ class EndpointManager(BaseManager):
 
         return df
 
-    def _validate_update_terms(self, objs: List[Dict], assessment: Assessment):
+    def _validate_update_terms(self, objs: list[dict], assessment: Assessment):
         # assessment must have vocab
         if assessment.vocabulary is None:
             raise ValidationError("Vocabulary not set in assessment {assessment.id}")
@@ -418,19 +460,19 @@ class EndpointManager(BaseManager):
             raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")
 
     @transaction.atomic
-    def update_terms(self, objs: List[Dict], assessment: Assessment) -> List:
+    def update_terms(self, objs: list[dict], assessment: Assessment) -> list:
         """
         Updates all of the terms and respective text fields
         for a list of endpoints based on the given name term.
         All endpoints must be from the same assessment.
 
         Args:
-            objs (List[Dict]): List of endpoint dicts, where each dict has
+            objs (list[dict]): List of endpoint dicts, where each dict has
                 for keys 'id' and 'name_term_id'
             assessment (Assessment): Assessment for endpoints
 
         Returns:
-            List: Updated endpoints
+            list: Updated endpoints
         """
         # validate the endpoints and terms
         self._validate_update_terms(objs, assessment)

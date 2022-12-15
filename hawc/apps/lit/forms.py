@@ -1,6 +1,6 @@
 import logging
 from io import StringIO
-from typing import Dict, List, Tuple, Union
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,13 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
+from ..common.forms import (
+    BaseFormHelper,
+    ConfirmationField,
+    QuillField,
+    addPopupLink,
+    check_unique_for_assessment,
+)
 from ..study.models import Study
 from . import constants, models
 
@@ -137,7 +143,7 @@ class ImportForm(SearchForm):
         return helper
 
     @classmethod
-    def validate_import_search_string(cls, search_string) -> List[int]:
+    def validate_import_search_string(cls, search_string) -> list[int]:
         try:
             # convert to a set, then a list to remove duplicate ids
             ids = list(set(int(el) for el in search_string.split(",")))
@@ -335,7 +341,7 @@ class SearchSelectorForm(forms.Form):
 
 def validate_external_id(
     db_type: int, db_id: Union[str, int]
-) -> Tuple[Union[models.Identifiers, None], Union[List, Dict, None]]:
+) -> tuple[Union[models.Identifiers, None], Union[list, dict, None]]:
     """
     Validates an external ID.
     If the identifier already exists it is returned as the first part of a tuple.
@@ -350,7 +356,7 @@ def validate_external_id(
         ValueError: An invalid db_type was provided
 
     Returns:
-        Tuple[Union[models.Identifiers, None], Union[List, Dict, None]]: Existing identifier, content to create identifier
+        tuple[Union[models.Identifiers, None], Union[list, dict, None]]: Existing identifier, content to create identifier
     """
     identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(db_id)).first()
 
@@ -374,14 +380,14 @@ def validate_external_id(
         raise ValueError(f"Unknown database type {db_type}.")
 
 
-def create_external_id(db_type: int, content: Union[List, Dict]) -> models.Identifiers:
+def create_external_id(db_type: int, content: Union[list, dict]) -> models.Identifiers:
     """
     Creates an identifier with the given content.
     This works in tandem with validate_external_id, using the content returned from that method call.
 
     Args:
         db_type (int): Database type
-        content (Union[List, Dict]): Content used to build the identifier with
+        content (Union[list, dict]): Content used to build the identifier with
 
     Raises:
         ValueError: A content of None was provided
@@ -517,6 +523,7 @@ class TagReferenceForm(forms.ModelForm):
 class TagsCopyForm(forms.Form):
 
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
+    confirmation = ConfirmationField()
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)

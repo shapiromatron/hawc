@@ -1,5 +1,5 @@
 from copy import copy
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
@@ -163,18 +163,18 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         ]
 
     @classmethod
-    def _get_dose_units(cls, doses: List[Dict]) -> str:
+    def _get_dose_units(cls, doses: list[dict]) -> str:
         return doses[0]["dose_units"]["name"]
 
     @classmethod
-    def _get_doses_str(cls, doses: List[Dict]) -> str:
+    def _get_doses_str(cls, doses: list[dict]) -> str:
         if len(doses) == 0:
             return ""
         values = ", ".join([str(float(d["dose"])) for d in doses])
         return f"{values} {cls._get_dose_units(doses)}"
 
     @classmethod
-    def _get_dose(cls, doses: List[Dict], idx: int) -> Optional[float]:
+    def _get_dose(cls, doses: list[dict], idx: int) -> Optional[float]:
         for dose in doses:
             if dose["dose_group_id"] == idx:
                 return float(dose["dose"])
@@ -460,7 +460,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return [None, None]
 
     @staticmethod
-    def _dose_is_reported(dose_group_id: int, groups: List[Dict]) -> bool:
+    def _dose_is_reported(dose_group_id: int, groups: list[dict]) -> bool:
         """
         Check if any numerical data( n, response, or incidence) was entered for a dose-group
         """
@@ -470,17 +470,17 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return False
 
     @staticmethod
-    def _dose_low_high(dose_list: List[Optional[float]]) -> Tuple[Optional[float], Optional[float]]:
+    def _dose_low_high(dose_list: list[Optional[float]]) -> tuple[Optional[float], Optional[float]]:
         """
         Finds the lowest and highest non-zero dose from a given list of doses,
         ignoring None values. If there are no valid doses, returns None for both
         lowest and highest dose.
 
         Args:
-            dose_list (List[Optional[float]]): List of doses
+            dose_list (list[Optional[float]]): List of doses
 
         Returns:
-            Tuple[Optional[float], Optional[float]]: Lowest dose and highest dose,
+            tuple[Optional[float], Optional[float]]: Lowest dose and highest dose,
             in that order.
         """
         try:
@@ -719,18 +719,18 @@ class EndpointSummary(FlatFileExporter):
                 ser["response_units"],
             ]
 
-            responsesList = getResponses(ser["groups"])
-            responseDirection = getResponseDirection(ser["groups"], ser["data_type"])
+            responses_list = getResponses(ser["groups"])
+            response_direction = getResponseDirection(ser["groups"], ser["data_type"])
             for unit in units:
                 row_copy = copy(row)
-                dosesList = getDoses(doses, unit)
+                doses_list = getDoses(doses, unit)
                 row_copy.extend(
                     [
                         unit,  # 'units'
-                        ", ".join(dosesList),  # Doses
-                        ", ".join(responsesList),  # Responses w/ units
-                        getDR(dosesList, responsesList, unit),
-                        responseDirection,
+                        ", ".join(doses_list),  # Doses
+                        ", ".join(responses_list),  # Responses w/ units
+                        getDR(doses_list, responses_list, unit),
+                        response_direction,
                     ]
                 )
                 rows.append(row_copy)

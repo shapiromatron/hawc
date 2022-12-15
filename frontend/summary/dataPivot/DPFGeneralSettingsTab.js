@@ -1,4 +1,5 @@
 import $ from "$";
+
 import {_DataPivot_settings_general} from "./DataPivotUtilities";
 import LegendSettings from "./DPFLegendSettings";
 

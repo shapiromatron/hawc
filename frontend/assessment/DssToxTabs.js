@@ -1,10 +1,9 @@
+import DssToxDetailTable from "assessment/components/DssToxDetailTable";
+import DssTox from "assessment/DssTox";
+import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
-import PropTypes from "prop-types";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-
-import DssTox from "assessment/DssTox";
-import DssToxDetailTable from "assessment/components/DssToxDetailTable";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 
 class DssToxTabs extends Component {
     constructor(props) {

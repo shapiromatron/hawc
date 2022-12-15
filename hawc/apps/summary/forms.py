@@ -1,5 +1,4 @@
 import json
-from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
@@ -39,7 +38,7 @@ class PrefilterMixin:
     ]
 
     def createFields(self):
-        fields = OrderedDict()
+        fields = dict()
 
         if "study" in self.prefilter_include:
             fields.update(

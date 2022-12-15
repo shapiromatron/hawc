@@ -1,15 +1,15 @@
-import $ from "$";
 import * as d3 from "d3";
-
+import {action, computed, observable, toJS} from "mobx";
+import {observer} from "mobx-react";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
+import ReactDOM from "react-dom";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
-import ReactDOM from "react-dom";
-import React, {Component} from "react";
-import {observer} from "mobx-react";
-import {action, computed, observable, toJS} from "mobx";
-import PropTypes from "prop-types";
+
+import $ from "$";
 
 @observer
 class VizOptions extends Component {

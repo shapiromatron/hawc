@@ -1,7 +1,6 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
 import {observer} from "mobx-react";
-
+import PropTypes from "prop-types";
+import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
 @observer
@@ -32,7 +31,8 @@ class TagNode extends Component {
                         {hasChildren ? (
                             <button
                                 className="float-right btn btn-sm px-2"
-                                onClick={toggleExpander}>
+                                onClick={toggleExpander}
+                                type="button">
                                 <i className={`fa ${expanderIcon}`}></i>
                             </button>
                         ) : null}
