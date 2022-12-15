@@ -74,61 +74,145 @@ class PubMedQueryManager(BaseManager):
 
 
 class IdentifiersQuerySet(models.QuerySet):
-    def _foobar(self, identifier_map: dict, identifiers: list) -> tuple[dict, list]:
-        map = {}
-        missing = []
-        for key in identifier_map:
-            found = False
-            for identifier in identifiers:
-                if identifier.unique_id == identifier_map[key]:
-                    map[key] = identifier
-                    found = True
-                    break
-            if not found:
-                missing.append(key)
-        return map, missing
+    def _associate_identifiers(
+        self, identifier_to_associated_id: dict, associated_id_to_identifier: dict
+    ) -> tuple[dict, list]:
+        """
+        Creates a dict of identifier to associated identifier given some intermediary dicts.
 
-    def associated_doi(self, create: bool) -> dict[int, list]:
-        _map = {
-            identifier.pk: str(doi)
+        Args:
+            identifier_to_associated_id (dict): dict of identifier to associated id (ie PubMed/DOI string)
+            associated_id_to_identifier (dict): dict of associated ids from first argument to matching identifiers
+
+        Returns:
+            tuple[dict, list]: dict of identifier to associated identifier,
+                list of identifiers where associated identifier wasn't resolved
+        """
+        identifier_to_associated_identifier = {}
+        missing_identifiers = []
+
+        for identifier, associated_id in identifier_to_associated_id.items():
+            found = associated_id in associated_id_to_identifier
+            if found:
+                identifier_to_associated_identifier[identifier] = associated_id_to_identifier[
+                    associated_id
+                ]
+            else:
+                missing_identifiers.append(identifier)
+        return identifier_to_associated_identifier, missing_identifiers
+
+    def associated_doi(self, create: bool) -> dict:
+        """
+        Maps associated DOI identifier with each identifier in this queryset if it exists.
+
+        Args:
+            create (bool): Whether to create any missing DOI identifiers
+
+        Returns:
+            dict: Mapping of each identifier in this queryset to its associated DOI identifier.
+                If the association cannot be resolved, the key is left out.
+        """
+        # find associated doi ids
+        identifier_to_associated_doi = {
+            identifier: str(doi)
             for identifier in self
             if (doi := get_doi_from_identifier(identifier))
         }
-        doi_identifiers = self.model.objects.filter(
-            database=constants.ReferenceDatabase.DOI, unique_id__in=_map.values()
-        )
-        # runs at O(n) instead of O(1), but necessary since doi in content won't necessarily be unique
-        map, missing = self._foobar(_map, doi_identifiers)
-        if create and missing:
-            missing_doi = [
-                self.model(database=constants.ReferenceDatabase.DOI, unique_id=_map[key])
-                for key in missing
-            ]
-            created_doi = self.model.objects.bulk_create(missing_doi)
-            _missing_map = {key: _map[key] for key in missing}
-            missing_map, _ = self._foobar(_missing_map, created_doi)
-            map.update(missing_map)
-        return map
 
-    def associated_pubmed(self, create: bool) -> dict[int, list]:
-        _map = {
-            identifier.pk: str(pmid)
+        # find associated doi identifiers
+        doi_identifiers = self.model.objects.filter(
+            database=constants.ReferenceDatabase.DOI,
+            unique_id__in=identifier_to_associated_doi.values(),
+        )
+        doi_to_matching_identifier = {
+            identifier.unique_id: identifier for identifier in doi_identifiers
+        }
+
+        # map identifiers to associated doi identifiers
+        identifier_to_associated_identifier, missing_identifiers = self._associate_identifiers(
+            identifier_to_associated_doi, doi_to_matching_identifier
+        )
+
+        if create and missing_identifiers:
+            # create any missing doi identifiers
+            missing_doi_identifiers = [
+                self.model(
+                    database=constants.ReferenceDatabase.DOI,
+                    unique_id=identifier_to_associated_doi[identifier],
+                )
+                for identifier in missing_identifiers
+            ]
+            created_doi_identifiers = self.model.objects.bulk_create(missing_doi_identifiers)
+
+            # add these new doi identifiers to the association map
+            _identifier_to_associated_doi = {
+                identifier: identifier_to_associated_doi[identifier]
+                for identifier in missing_identifiers
+            }
+            _doi_to_matching_identifier = {
+                identifier.unique_id: identifier for identifier in created_doi_identifiers
+            }
+            _identifier_to_associated_identifier, _ = self._associate_identifiers(
+                _identifier_to_associated_doi, _doi_to_matching_identifier
+            )
+            identifier_to_associated_identifier.update(_identifier_to_associated_identifier)
+
+        return identifier_to_associated_identifier
+
+    def associated_pubmed(self, create: bool) -> dict:
+        """
+        Maps associated PubMed identifier with each identifier in this queryset if it exists.
+
+        Args:
+            create (bool): Whether to create any missing PubMed identifiers
+
+        Returns:
+            dict: Mapping of each identifier in this queryset to its associated PubMed identifier.
+                If the association cannot be resolved, the key is left out.
+        """
+        # find associated pubmed ids
+        identifier_to_associated_pubmed = {
+            identifier: str(pmid)
             for identifier in self
             if (pmid := identifier.get_content().get("PMID"))
         }
+
+        # find associated pubmed identifiers
         pubmed_identifiers = self.model.objects.filter(
-            database=constants.ReferenceDatabase.PUBMED, unique_id__in=_map.values()
+            database=constants.ReferenceDatabase.PUBMED,
+            unique_id__in=identifier_to_associated_pubmed.values(),
         )
-        # runs at O(n) instead of O(1), but necessary since doi in content won't necessarily be unique
-        map, missing = self._foobar(_map, pubmed_identifiers)
-        if create and missing:
-            fetcher = pubmed.PubMedFetch([_map[key] for key in missing])
+        pubmed_to_matching_identifier = {
+            identifier.unique_id: identifier for identifier in pubmed_identifiers
+        }
+
+        # map identifiers to associated pubmed identifiers
+        identifier_to_associated_identifier, missing_identifiers = self._associate_identifiers(
+            identifier_to_associated_pubmed, pubmed_to_matching_identifier
+        )
+
+        if create and missing_identifiers:
+            # create any missing pubmed identifiers
+            fetcher = pubmed.PubMedFetch(
+                [identifier_to_associated_pubmed[identifier] for identifier in missing_identifiers]
+            )
             fetched_content = fetcher.get_content()
-            created_pubmed = self.model.objects.bulk_create_pubmed_ids(fetched_content)
-            _missing_map = {key: _map[key] for key in missing}
-            missing_map, _ = self._foobar(_missing_map, created_pubmed)
-            map.update(missing_map)
-        return map
+            created_pubmed_identifiers = self.model.objects.bulk_create_pubmed_ids(fetched_content)
+
+            # add these new doi identifiers to the association map
+            _identifier_to_associated_pubmed = {
+                identifier: identifier_to_associated_pubmed[identifier]
+                for identifier in missing_identifiers
+            }
+            _pubmed_to_matching_identifier = {
+                identifier.unique_id: identifier for identifier in created_pubmed_identifiers
+            }
+            _identifier_to_associated_identifier, _ = self._associate_identifiers(
+                _identifier_to_associated_pubmed, _pubmed_to_matching_identifier
+            )
+            identifier_to_associated_identifier.update(_identifier_to_associated_identifier)
+
+        return identifier_to_associated_identifier
 
 
 class IdentifiersManager(BaseManager):
