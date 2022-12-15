@@ -1,50 +1,53 @@
 interactions:
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=-1
+    body: retmax=1000&db=pubmed&retmode=xml&id=-1
     headers:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '84'
+      - '39'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.27.1
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
       string: !!binary |
-        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
+        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
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -59,30 +62,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:22:43 GMT
+      - Thu, 15 Dec 2022 01:12:53 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B44F6B46659C50000294E68107782.1.1.m_3
+      - D0BD453520C482550000599E15DBA9D3.1.1.m_3
       NCBI-SID:
-      - 5176D7622D8AE576_8948SID
+      - 381D8C972F659495_5CB0SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=5176D7622D8AE576_8948SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:22:43 GMT
+      - ncbi_sid=381D8C972F659495_5CB0SID; domain=.nih.gov; path=/; expires=Fri, 15
+        Dec 2023 01:12:54 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '10'
+      - '3'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
