@@ -868,12 +868,12 @@
     assessment: 2
     project_type: IRIS
     project_status: 10
-    peer_review_status: 0
-    report_id: "51001"
-    report_url: https://hawcproject.org/report
     project_url: https://hawcproject.org/project
-    qa_id: "490063"
+    peer_review_status: 0
+    qa_id: '490063'
     qa_url: https://hawcproject.org/qa
+    report_id: '51001'
+    report_url: https://hawcproject.org/report
     extra:
       key: value
     created: 2022-09-13 13:42:59.234154+00:00
@@ -882,23 +882,25 @@
   pk: 1
   fields:
     assessment: 2
-    system: Urinary
     evaluation_type: 1
+    system: Urinary
     value_type: 0
     value: 1.0
-    value_unit: "mg/kg/day"
+    value_unit: mg/kg/day
+    confidence: High
+    duration: 1 month
     basis: Increased absolute kidney weight in female rats
+    pod_type: BMDL
     pod_value: 28.8
-    pod_unit: "mg/kg/day"
-    species_studied: 1
-    duration: ''
-    study: 7
-    confidence: 30
+    pod_unit: mg/kg/day
     uncertainty: 30
+    species_studied: 1
+    study: 7
+    dosimetric_approach: ''
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
-    comments: ''
+    comments: Put your comments here.
     extra:
       key: value
     created: 2022-09-13 13:48:20.997337+00:00
@@ -907,19 +909,21 @@
   pk: 2
   fields:
     assessment: 2
-    system: Urinary
     evaluation_type: 1
+    system: Urinary
     value_type: 5
     value: 4.0
-    value_unit: "mg/kg/day"
+    value_unit: mg/kg/day
+    confidence: Medium High
+    duration: 1 week
     basis: Increased absolute kidney weight in female rats
+    pod_type: NOAEL
     pod_value: 111.0
-    pod_unit: "mg/kg/day"
-    species_studied: 1
-    duration: ''
-    study: 7
-    confidence: 20
+    pod_unit: mg/kg/day
     uncertainty: 30
+    species_studied: 1
+    study: 7
+    dosimetric_approach: ''
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
@@ -932,23 +936,25 @@
   pk: 3
   fields:
     assessment: 2
-    system: Urinary
     evaluation_type: 0
+    system: Urinary
     value_type: 30
     value: 8.0e-05
-    value_unit: "mg/kg/day"
+    value_unit: mg/kg/day
+    confidence: Medium
+    duration: 1 month
     basis: "Under EPA’s Guidelines for Carcinogen Risk Assessment (U.S. EPA, 2005),
       ethyl tertiary butyl ether has “suggestive evidence of carcinogenic potential\"
       for the inhalation route and “inadequate information to assess carcinogenic
       potential” for the oral route.\r\nThis may be a synopsis of the full weight-of-evidence
       narrative."
+    pod_type: ''
     pod_value: null
-    pod_unit: "mg/kg/day"
-    species_studied: 1
-    duration: ''
-    study: 7
-    confidence: 0
+    pod_unit: ''
     uncertainty: null
+    species_studied: 1
+    study: 7
+    dosimetric_approach: ''
     tumor_type: Hepatocellular adenomas and carcinomas
     extrapolation_method: Linear extrapolation from the POD ((BMCL10(HED)) associated
       with 10% extra cancer risk.
@@ -957,7 +963,7 @@
     extra:
       key: value
     created: 2022-09-13 13:53:35.075708+00:00
-    last_updated: 2022-09-13 13:53:35.075726+00:00
+    last_updated: 2022-12-15 15:34:15.754319+00:00
 - model: assessment.attachment
   pk: 3
   fields:
