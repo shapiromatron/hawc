@@ -5,11 +5,11 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: GET
     uri: https://comptox.epa.gov/dashboard-api/ccdapp2/chemical-detail/search/by-dsstoxsid?id=DTXSID1020190
   response:
@@ -22,7 +22,7 @@ interactions:
         : \"Disodium 3-oxo-2-(3-oxo-5-sulfonato-1,3-dihydro-2H-indol-2-ylidene)-2,3-dihydro-1H-indole-5-sulfonate\",\n
         \ \"wikipediaName\" : \"Indigo carmine\",\n  \"meshName\" : \"Indigo Carmine\",\n
         \ \"label\" : \"C.I. Acid Blue 74\",\n  \"inchiKeySkeleton\" : \"KHLVKKOJDHCJMG-UHFFFAOYSA-L\",\n
-        \ \"inchiKey\" : \"KHLVKKOJDHCJMG-UHFFFAOYSA-L\",\n  \"inchiString\" : \"InChI=1S/C16H10N2O8S2.2Na/c19-15-9-5-7(27(21,22)23)1-3-11(9)17-13(15)14-16(20)10-6-8(28(24,25)26)2-4-12(10)18-14;;/h1-6,17-18H,(H,21,22,23)(H,24,25,26);;/q;2*+1/p-2\\n\",\n
+        \ \"inchiKey\" : \"KHLVKKOJDHCJMG-UHFFFAOYSA-L\",\n  \"inchiString\" : \"InChI=1S/C16H10N2O8S2.2Na/c19-15-9-5-7(27(21,22)23)1-3-11(9)17-13(15)14-16(20)10-6-8(28(24,25)26)2-4-12(10)18-14;;/h1-6,17-18H,(H,21,22,23)(H,24,25,26);;/q;2*+1/p-2\",\n
         \ \"inchiSkeleton\" : \"KHLVKKOJDHCJMG-UHFFFAOYSA-L\",\n  \"mixtures\" : \"5\",\n
         \ \"msReadyMappings\" : [ {\n    \"dtxcid\" : \"DTXCID10196640\",\n    \"count\"
         : 4\n  } ],\n  \"similarCompounds\" : null,\n  \"tanimoto\" : null,\n  \"molFormula\"
@@ -31,147 +31,122 @@ interactions:
         \ \"monoisotopicMass\" : 465.95174613,\n  \"molWeight\" : 466.35,\n  \"isMarkush\"
         : false,\n  \"irisLink\" : null,\n  \"citation\" : null,\n  \"qcLevel\" :
         1,\n  \"qcLevelDesc\" : \"Level 1: Expert curated, highest confidence in accuracy
-        and consistency of unique chemical identifiers\",\n  \"qcNotes\" : \"Record
-        was reviewed with Common Chemistry.\\r\\n\",\n  \"safetyUrl\" : \"https://pubchem.ncbi.nlm.nih.gov/compound/2723854#datasheet=LCSS&section=GHS-\",\n
+        and consistency of unique chemical identifiers\",\n  \"qcNotes\" : null,\n
+        \ \"safetyUrl\" : \"https://pubchem.ncbi.nlm.nih.gov/compound/2723854#datasheet=LCSS&section=GHS-\",\n
         \ \"hasStructureImage\" : true,\n  \"relatedSubstanceCount\" : 1,\n  \"relatedStructureCount\"
         : null,\n  \"presenceInLists\" : [ {\n    \"label\" : \"Federal\",\n    \"name\"
         : \"federal\",\n    \"shortDescription\" : \"Lists defined by the US federal
-        government\",\n    \"lists\" : [ {\n      \"label\" : \"CATEGORY|FOOD: Substances
+        government\",\n    \"lists\" : [ {\n      \"label\" : \"LIST:Hazardous Substances
+        Data Bank\",\n      \"name\" : \"HSDB2019\",\n      \"shortDescription\" :
+        \"Toxicology data focused on the toxicology of potentially hazardous chemicals.From
+        the National Library of Medicine.\"\n    }, {\n      \"label\" : \"EPA: Toxicity
+        Values Version 5 (Aug 2018)\",\n      \"name\" : \"TOXVAL_V5\",\n      \"shortDescription\"
+        : \"The Toxicity Values database is delivered via the Hazard Tab in the CompTox
+        Chemicals Dashboard.\"\n    }, {\n      \"label\" : \"CATEGORY|FOOD: Substances
         Added to Food (formerly EAFUS)\",\n      \"name\" : \"FDAFOODSUBS\",\n      \"shortDescription\"
         : \"The Substances Added to Food inventory replaces what was previously known
         as Everything Added to Foods in the United States (EAFUS).\"\n    }, {\n      \"label\"
-        : \"CDR: Chemical Data Reporting 2016 \",\n      \"name\" : \"CDR2016\",\n
-        \     \"shortDescription\" : \"Chemical Data Reporting (CDR) 2016 Use data.
-        \"\n    }, {\n      \"label\" : \"EPA|CHEMINV: EPA Chemical Inventory for
-        ToxCast (20170203)\",\n      \"name\" : \"CHEMINV\",\n      \"shortDescription\"
-        : \"CHEMINV is full list of unique DSSTox substances mapped to historical
-        chemical inventory of physical samples registered by EPA's ToxCast Chemical
-        Contractor (Evotec) since launch of ToxCast program in 2007. \"\n    }, {\n
-        \     \"label\" : \"EPA|CHEMINV: EPA ToxCast ChemInventory DMSO Insolubles
-        at 20mM\",\n      \"name\" : \"CHEMINV_DMSOINSOLUBLES\",\n      \"shortDescription\"
-        : \"Chemicals in EPA's ToxCast physical sample library CHEMINV insoluble in
-        DMSO \"\n    }, {\n      \"label\" : \"EPA|CPDAT: Chemical and Products Database\",\n
-        \     \"name\" : \"CPDAT\",\n      \"shortDescription\" : \"Chemicals contained
-        in the EPA's Chemical and Products Database\"\n    }, {\n      \"label\" :
-        \"EPA|ECOTOX: Ecotoxicology knowledgebase version 4\",\n      \"name\" : \"ECOTOX_V4\",\n
-        \     \"shortDescription\" : \"ECOTOXicology knowledgebase (ECOTOX) is a comprehensive,
-        publicly available knowledgebase providing single chemical environmental toxicity
-        data on aquatic life, terrestrial plants and wildlife\"\n    }, {\n      \"label\"
-        : \"EPA|ENDOCRINE: EDSP Universe of Chemicals\",\n      \"name\" : \"EDSPUOC\",\n
-        \     \"shortDescription\" : \"This list of EDSP-related chemicals on the
-        EPA CompTox Dashboard is not a complete listing from the EDSP Universe of
-        Chemicals.\"\n    }, {\n      \"label\" : \"EPA|CHEMINV: ToxCast/Tox21 Chemical
-        inventory available as DMSO solutions (20181123)\",\n      \"name\" : \"EPACHEMINV_AVAIL\",\n
-        \     \"shortDescription\" : \"EPACHEMINV_AVAIL is list of unique DSSTox substances
-        available as DMSO solutions for ToxCast and Tox21 partner projects, managed
-        by EPA Chemical Contract Services.\"\n    }, {\n      \"label\" : \"EPA|ENDOCRINE:
-        Integrated pathway model for the Estrogen Receptor\",\n      \"name\" : \"ERMODEL\",\n
-        \     \"shortDescription\" : \"Dataset associated with \\\"Integrated Model
-        of Chemical Perturbations of a Biological Pathway Using 18 In Vitro High-Throughput
-        Screening Assays for the Estrogen Receptor\\\" by Judson et al. \"\n    },
-        {\n      \"label\" : \"LIST: FDA UNII List April 12th 2021 Download\",\n      \"name\"
-        : \"FDAUNII0421\",\n      \"shortDescription\" : \"FDA\u2019s Global Substance
-        Registration System Unique Ingredient Identifiers (UNIIs) file: April 12th
-        2021 download subset of chemicals with CASRN and/or structure SMILES\"\n    },
-        {\n      \"label\" : \"PESTICIDES: InertFinder\",\n      \"name\" : \"INERTNONFOOD\",\n
+        : \"TOXCAST: EPA ToxCast  Screening Assay Version 3\",\n      \"name\" : \"TOXCAST_V3\",\n
+        \     \"shortDescription\" : \"InvitroDB is the list of chemicals with corresponding
+        assay data in EPA's ToxCast Database (V3 public release, October 2018) \"\n
+        \   }, {\n      \"label\" : \"EPA ToxCast Screening Library (e1k subset)\",\n
+        \     \"name\" : \"TOXCAST_e1k\",\n      \"shortDescription\" : \"TOXCAST_e1k
+        is the e1k subset of TOXCAST, selected for screening in endocrine-related
+        assays.\"\n    }, {\n      \"label\" : \"EPA ToxCast Screening Library (Phase
+        II subset)\",\n      \"name\" : \"TOXCAST_PhaseII\",\n      \"shortDescription\"
+        : \"TOXCAST_PhaseII is the full set of chemicals screened in Phase II of the
+        ToxCast program, consisting of TOXCAST_ph1v2, ph2 and e1k sublists.\"\n    },
+        {\n      \"label\" : \"EPA ToxCast Screening Library\",\n      \"name\" :
+        \"TOXCAST\",\n      \"shortDescription\" : \"TOXCAST is the complete list
+        of chemicals having undergone some level of screening in EPA's ToxCast research
+        program since 2007 (last updated 4/11/2017); sublists included.\"\n    },
+        {\n      \"label\" : \"EPA|CPDAT: Chemical and Products Database\",\n      \"name\"
+        : \"CPDAT\",\n      \"shortDescription\" : \"Chemicals contained in the EPA's
+        Chemical and Products Database\"\n    }, {\n      \"label\" : \"EPA|ENDOCRINE:
+        EDSP Universe of Chemicals\",\n      \"name\" : \"EDSPUoC\",\n      \"shortDescription\"
+        : \"This list of EDSP-related chemicals on the EPA CompTox Dashboard is not
+        a complete listing from the EDSP Universe of Chemicals.\"\n    }, {\n      \"label\"
+        : \"EPA|ENDOCRINE: Integrated pathway model for the Estrogen Receptor\",\n
+        \     \"name\" : \"ERMODEL\",\n      \"shortDescription\" : \"Dataset associated
+        with \\\"Integrated Model of Chemical Perturbations of a Biological Pathway
+        Using 18 In Vitro High-Throughput Screening Assays for the Estrogen Receptor\\\"
+        by Judson et al. \"\n    }, {\n      \"label\" : \"EPA|CHEMINV: EPA ToxCast
+        ChemInventory DMSO Insolubles at 20mM\",\n      \"name\" : \"CHEMINV_dmsoinsolubles\",\n
+        \     \"shortDescription\" : \"Chemicals in EPA's ToxCast physical sample
+        library CHEMINV insoluble in DMSO \"\n    }, {\n      \"label\" : \"EPA|CHEMINV:
+        EPA Chemical Inventory for ToxCast (20170203)\",\n      \"name\" : \"CHEMINV\",\n
+        \     \"shortDescription\" : \"CHEMINV is full list of unique DSSTox substances
+        mapped to historical chemical inventory of physical samples registered by
+        EPA's ToxCast Chemical Contractor (Evotec) since launch of ToxCast program
+        in 2007. \"\n    }, {\n      \"label\" : \"EPA ToxCast Screening Library (Phase
+        III subset)\",\n      \"name\" : \"TOXCAST_PhaseIII\",\n      \"shortDescription\"
+        : \"TOXCAST_PhaseIII is the full set of chemicals available for screening
+        in Phase III of the ToxCast program, consisting of the majority of chemicals
+        screened in Phase II and newly added ph3 chemicals.\"\n    }, {\n      \"label\"
+        : \"EPA|CHEMINV: ToxCast/Tox21 Chemical inventory available as DMSO solutions
+        (20181123)\",\n      \"name\" : \"EPACHEMINV_AVAIL\",\n      \"shortDescription\"
+        : \"EPACHEMINV_AVAIL is list of unique DSSTox substances available as DMSO
+        solutions for ToxCast and Tox21 partner projects, managed by EPA Chemical
+        Contract Services.\"\n    }, {\n      \"label\" : \"EPA|ECOTOX: Ecotoxicology
+        knowledgebase\",\n      \"name\" : \"ECOTOX_v2\",\n      \"shortDescription\"
+        : \"ECOTOXicology knowledgebase (ECOTOX) is a comprehensive, publicly available
+        knowledgebase providing single chemical environmental toxicity data on aquatic
+        life, terrestrial plants and wildlife.\"\n    }, {\n      \"label\" : \"TSCA
+        Active Inventory non-confidential portion (updated March 20th 2020).\",\n
+        \     \"name\" : \"TSCA_ACTIVE_NCTI_0320\",\n      \"shortDescription\" :
+        \"TSCA Active Inventory non-confidential portion (updated March 20th 2020).
+        The content of the list will change over time as both the non-confidential
+        active TSCA inventory is updated and more substances are curated.\"\n    },
+        {\n      \"label\" : \" InertFinder is an online database for searching substances
+        used as inert ingredients in pesticide products\",\n      \"name\" : \"INERTNONFOOD\",\n
         \     \"shortDescription\" : \"List of chemicals listed in InertFinder as
         Non-Food Use Chemicals\\r\\n\"\n    }, {\n      \"label\" : \"TOX21SL: Tox21
         Screening Library\",\n      \"name\" : \"TOX21SL\",\n      \"shortDescription\"
         : \"TOX21SL is list of unique substances comprising the screening library
         for the Tox21 program, a multi-federal agency collaborative among the US EPA,
-        NIH/NTP, NIH/NCATS, and the US FDA.\"\n    }, {\n      \"label\" : \"TOXCAST
-        is the complete list of chemicals having undergone some level of screening
-        in EPA's ToxCast research program since 2007 (last updated 4/11/2017); sublists
-        included.\",\n      \"name\" : \"TOXCAST\",\n      \"shortDescription\" :
-        \"TOXCAST is the complete list of chemicals having undergone some level of
-        screening in EPA's ToxCast research program since 2007 (last updated 4/11/2017);
-        sublists included.\"\n    }, {\n      \"label\" : \"TOXCAST_e1k is the e1k
-        subset of TOXCAST, selected for screening in endocrine-related assays.\",\n
-        \     \"name\" : \"TOXCAST_E1K\",\n      \"shortDescription\" : \"TOXCAST_e1k
-        is the e1k subset of TOXCAST, selected for screening in endocrine-related
-        assays.\"\n    }, {\n      \"label\" : \"ToxCast EPA contribution to the Tox21
-        inventory\",\n      \"name\" : \"TOXCAST_EPATOX21\",\n      \"shortDescription\"
-        : \"ToxCast EPA contribution to the Tox21 inventory\"\n    }, {\n      \"label\"
-        : \"EPA ToxCast invitrodb v3.0 (October 2018)\",\n      \"name\" : \"TOXCAST_INVITRODB_V3_0\",\n
-        \     \"shortDescription\" : \"This list of chemicals corresponds to chemicals
-        with bioactivity assay data in EPA's ToxCast Database, referred to as invitrodb
-        (v3 public release, October 2018).\"\n    }, {\n      \"label\" : \"EPA ToxCast
-        Screening Library (Phase II subset)\",\n      \"name\" : \"TOXCAST_PHASEII\",\n
-        \     \"shortDescription\" : \"TOXCAST_PhaseII is the full set of chemicals
-        screened in Phase II of the ToxCast program, consisting of TOXCAST_ph1v2,
-        ph2 and e1k sublists.\"\n    }, {\n      \"label\" : \"EPA ToxCast Screening
-        Library (Phase III subset)\",\n      \"name\" : \"TOXCAST_PHASEIII\",\n      \"shortDescription\"
-        : \"TOXCAST_PhaseIII is the full set of chemicals available for screening
-        in Phase III of the ToxCast program, consisting of the majority of chemicals
-        screened in Phase II and newly added ph3 chemicals.\"\n    }, {\n      \"label\"
-        : \"EPA: Toxicity Values Version 5 (Aug 2018)\",\n      \"name\" : \"TOXVAL_V5\",\n
-        \     \"shortDescription\" : \"The Toxicity Values database is delivered via
-        the Hazard Tab in the CompTox Chemicals Dashboard.\"\n    }, {\n      \"label\"
-        : \"TSCA Active Inventory non-confidential portion (updated February 3rd 2021)\",\n
-        \     \"name\" : \"TSCA_ACTIVE_NCTI_0221\",\n      \"shortDescription\" :
-        \"TSCA Active Inventory non-confidential portion (updated February 3rd 2021).
-        The content of the list will change over time as both the non-confidential
-        active TSCA inventory is updated and more substances are curated.\"\n    },
-        {\n      \"label\" : \"TSCA Active Inventory non-confidential portion (updated
-        March 23rd 2022)\",\n      \"name\" : \"TSCA_ACTIVE_NCTI_0222\",\n      \"shortDescription\"
-        : \"TSCA Active Inventory non-confidential portion (updated March 23rd 2022).
-        The content of the list will change over time as both the non-confidential
-        active TSCA inventory is updated and more substances are curated.\"\n    },
-        {\n      \"label\" : \"TSCA Active Inventory non-confidential portion (updated
-        March 20th 2020).\",\n      \"name\" : \"TSCA_ACTIVE_NCTI_0320\",\n      \"shortDescription\"
-        : \"TSCA Active Inventory non-confidential portion (updated March 20th 2020).
-        The content of the list will change over time as both the non-confidential
-        active TSCA inventory is updated and more substances are curated.\"\n    },
-        {\n      \"label\" : \"TSCA Active Inventory non-confidential portion (updated
-        August 20th 2021)\",\n      \"name\" : \"TSCA_ACTIVE_NCTI_0821\",\n      \"shortDescription\"
-        : \"TSCA Active Inventory non-confidential portion (updated August 20th 2021).
-        The content of the list will change over time as both the non-confidential
-        active TSCA inventory is updated and more substances are curated.\\r\\n\"\n
-        \   } ]\n  }, {\n    \"label\" : \"US State\",\n    \"name\" : \"state\",\n
-        \   \"shortDescription\" : \"Lists defined by a US state governement\",\n
-        \   \"lists\" : [ {\n      \"label\" : null,\n      \"name\" : null,\n      \"shortDescription\"
-        : null\n    } ]\n  }, {\n    \"label\" : \"International\",\n    \"name\"
-        : \"international\",\n    \"shortDescription\" : \"Lists defined by an international
-        government \",\n    \"lists\" : [ {\n      \"label\" : \"Canadian Domestic
-        Substances List 2019\",\n      \"name\" : \"CANADADSL\",\n      \"shortDescription\"
-        : \"The domestic substances list (DSL) is the sole standard against which
-        a substance is judged to be \\\"new\\\" to Canada.\\r\\n\"\n    }, {\n      \"label\"
-        : \"FOOD: EFSA OpenFoodTox\",\n      \"name\" : \"EFSAOFT\",\n      \"shortDescription\"
-        : \"The European Food Safety Authority has produced risk assessments for more
-        than 4,000 substances in over 1,600 scientific opinions,\"\n    }, {\n      \"label\"
-        : \"European INventory of Existing Commercial chemical Substances\",\n      \"name\"
-        : \"EINECS\",\n      \"shortDescription\" : \"European INventory of Existing
-        Commercial chemical Substances\"\n    }, {\n      \"label\" : \"NORMAN: Combined
-        2000/2006 EU Cosmetic Ingredients Inventory \",\n      \"name\" : \"EUCOSMETICS\",\n
-        \     \"shortDescription\" : \"EUCOSMETICS contains the Combined Inventory
-        of Ingredients Employed in Cosmetic Products (2000, SCCNFP/0389/00 Final)
-        and Revised Inventory (2006, Decision 2006/257/EC), prepared for NORMAN by
-        P. von der Ohe (UBA) and R. Aalizadeh (Uni. Athens). \"\n    }, {\n      \"label\"
-        : \"NORMAN: REACH Chemicals List Provided to NORMAN Network\",\n      \"name\"
-        : \"REACH2017\",\n      \"shortDescription\" : \"This REACH list of 57760
-        REACH chemicals from the <a href='https://www.norman-network.com/?q=suspect-list-exchange'
-        target='_blank'>NORMAN Suspect List Exchange</a>\"\n    } ]\n  }, {\n    \"label\"
-        : \"Other\",\n    \"name\" : \"other\",\n    \"shortDescription\" : \"All
-        lists not falling into one of the defined categories\",\n    \"lists\" : [
-        {\n      \"label\" : \"LIST: ACS Reagent Chemicals\",\n      \"name\" : \"ACSREAG\",\n
-        \     \"shortDescription\" : \"The ACS Committee on Analytical Reagents sets
-        purity specifications for almost 500 reagent chemicals and over 500 standard-grade
-        reference materials.\"\n    }, {\n      \"label\" : \"CAMEO Hazardous Chemical
-        Datasheets\",\n      \"name\" : \"CAMEOV1\",\n      \"shortDescription\" :
-        \"CAMEO Chemicals is a database of hazardous chemical datasheets (Last updated
-        May 9th 2022)\"\n    }, {\n      \"label\" : \"LIST: Color Index (C.I.) Dyes
-        \",\n      \"name\" : \"CIDYES\",\n      \"shortDescription\" : \"A list of
-        dyes associated with the Color Index list and associated identifiers\"\n    },
+        NIH/NTP, NIH/NCATS, and the US FDA.\"\n    } ]\n  }, {\n    \"label\" : \"US
+        State\",\n    \"name\" : \"state\",\n    \"shortDescription\" : \"Lists defined
+        by a US state governement\",\n    \"lists\" : [ {\n      \"label\" : null,\n
+        \     \"name\" : null,\n      \"shortDescription\" : null\n    } ]\n  }, {\n
+        \   \"label\" : \"International\",\n    \"name\" : \"international\",\n    \"shortDescription\"
+        : \"Lists defined by an international government \",\n    \"lists\" : [ {\n
+        \     \"label\" : \"NORMAN: Combined 2000/2006 EU Cosmetic Ingredients Inventory
+        \",\n      \"name\" : \"EUCOSMETICS\",\n      \"shortDescription\" : \"EUCOSMETICS
+        contains the Combined Inventory of Ingredients Employed in Cosmetic Products
+        (2000, SCCNFP/0389/00 Final) and Revised Inventory (2006, Decision 2006/257/EC),
+        prepared for NORMAN by P. von der Ohe (UBA) and R. Aalizadeh (Uni. Athens).
+        \"\n    }, {\n      \"label\" : \"NORMAN: REACH Chemicals List Provided to
+        NORMAN Network\",\n      \"name\" : \"REACH2017\",\n      \"shortDescription\"
+        : \"This REACH list of 57760 REACH chemicals from the <a href='https://www.norman-network.com/?q=suspect-list-exchange'
+        target='_blank'>NORMAN Suspect List Exchange</a>\"\n    }, {\n      \"label\"
+        : \"Canadian Domestic Substances List 2019\",\n      \"name\" : \"CANADADSL\",\n
+        \     \"shortDescription\" : \"The domestic substances list (DSL) is the sole
+        standard against which a substance is judged to be \\\"new\\\" to Canada.\\r\\n\"\n
+        \   }, {\n      \"label\" : \"FOOD: EFSA OpenFoodTox\",\n      \"name\" :
+        \"EFSAOFT\",\n      \"shortDescription\" : \"The European Food Safety Authority
+        has produced risk assessments for more than 4,000 substances in over 1,600
+        scientific opinions,\"\n    } ]\n  }, {\n    \"label\" : \"Other\",\n    \"name\"
+        : \"other\",\n    \"shortDescription\" : \"All lists not falling into one
+        of the defined categories\",\n    \"lists\" : [ {\n      \"label\" : \"LIST:
+        ACS Reagent Chemicals\",\n      \"name\" : \"ACSREAG\",\n      \"shortDescription\"
+        : \"The ACS Committee on Analytical Reagents sets purity specifications for
+        almost 500 reagent chemicals and over 500 standard-grade reference materials.\"\n
+        \   }, {\n      \"label\" : \"NORMAN: KEMI List of Substances on the Market\",\n
+        \     \"name\" : \"KEMIMARKET\",\n      \"shortDescription\" : \"The KEMI
+        Market List contains chemicals expected to be on the market. Complied by Stellan
+        Fischer, KEMI (Swedish Chemicals Agency) from various regulatory databases,
+        including hazard and exposure scores to support the identification of unknowns.
+        \"\n    }, {\n      \"label\" : \"LIST: Color Index (C.I.) Dyes \",\n      \"name\"
+        : \"CIDYES\",\n      \"shortDescription\" : \"A list of dyes associated with
+        the Color Index list and associated identifiers\"\n    }, {\n      \"label\"
+        : \"EPA|LIST: Article \\\"Workflow for Defining Reference Chemicals for Assessing
+        Performance of In Vitro Assays\\\"\",\n      \"name\" : \"REFCHEMDB\",\n      \"shortDescription\"
+        : \"List of chemicals associated with the article \\\"Workflow for Defining
+        Reference Chemicals for Assessing Performance of In Vitro Assays\\\"\"\n    },
         {\n      \"label\" : \"CATEGORY|COSMETICS: COSMOS DB cosmetics database\",\n
         \     \"name\" : \"COSMOSDB\",\n      \"shortDescription\" : \"COSMOS - Integrated
         in silico models for the prediction of human repeated-dose toxicity of COSMetics
-        to Optimize Safety\"\n    }, {\n      \"label\" : \"Carcinogenic Potency Database
-        Summary Tables - All Species \",\n      \"name\" : \"CPDBAS\",\n      \"shortDescription\"
-        : \"Carcinogenic Potency Database Summary Tables - All Species \"\n    },
-        {\n      \"label\" : \"Comparative Toxicogenomics Database\",\n      \"name\"
-        : \"CTD\",\n      \"shortDescription\" : \"CTD is a robust, publicly available
-        database that aims to advance understanding about how environmental exposures
-        affect human health.\"\n    }, {\n      \"label\" : \"Food Contact Chemicals
+        to Optimize Safety\"\n    }, {\n      \"label\" : \"Food Contact Chemicals
         database (FCCdb) - version 5\",\n      \"name\" : \"FOODCONTACTSDB\",\n      \"shortDescription\"
         : \"A database was created by the Food Packaging Forum Foundation (FPF) and
         is an overview of intentionally used food contact chemicals (FCC). \"\n    },
@@ -183,52 +158,16 @@ interactions:
         : \"List of hair dyes published in a research study by Williams et al , North
         Carolina State University in the article \\\"Toward the Rational Design of
         Sustainable Hair Dyes Using Cheminformatics Approaches: Step 1. Database Development
-        and Analysis\\\"\"\n    }, {\n      \"label\" : \"LIST:Hazardous Substances
-        Data Bank\",\n      \"name\" : \"HSDB2019\",\n      \"shortDescription\" :
-        \"Toxicology data focused on the toxicology of potentially hazardous chemicals.From
-        the National Library of Medicine.\"\n    }, {\n      \"label\" : \"NORMAN:
-        KEMI List of Substances on the Market\",\n      \"name\" : \"KEMIMARKET\",\n
-        \     \"shortDescription\" : \"The KEMI Market List contains chemicals expected
-        to be on the market. Complied by Stellan Fischer, KEMI (Swedish Chemicals
-        Agency) from various regulatory databases, including hazard and exposure scores
-        to support the identification of unknowns. \"\n    }, {\n      \"label\" :
-        \"PLASTICMAP: chemicals related to polymers\",\n      \"name\" : \"PLASTICMAP\",\n
-        \     \"shortDescription\" : \"List of chemicals related to polymers from
-        the publication \\\"Deep Dive into Plastic Monomers, Additives, and Processing
-        Aids\\\" \"\n    }, {\n      \"label\" : \"EPA|LIST: Article \\\"Workflow
-        for Defining Reference Chemicals for Assessing Performance of In Vitro Assays\\\"\",\n
-        \     \"name\" : \"REFCHEMDB\",\n      \"shortDescription\" : \"List of chemicals
-        associated with the article \\\"Workflow for Defining Reference Chemicals
-        for Assessing Performance of In Vitro Assays\\\"\"\n    }, {\n      \"label\"
-        : \"EPA ToxCast invitrodb v3.1 (April 2019)\",\n      \"name\" : \"TOXCAST_INVITRODB_V3_1\",\n
-        \     \"shortDescription\" : \"This list of chemicals corresponds to chemicals
-        with bioactivity assay data in EPA's ToxCast Database, referred to as invitrodb
-        (v3.1 public release, April 2019).\"\n    }, {\n      \"label\" : \"EPA ToxCast
-        invitrodb v3.2 (May 2019)\",\n      \"name\" : \"TOXCAST_INVITRODB_V3_2\",\n
-        \     \"shortDescription\" : \"This list of chemicals corresponds to chemicals
-        with bioactivity assay data in EPA's ToxCast Database, referred to as invitrodb
-        (v3.2 public release, May 2019).\"\n    }, {\n      \"label\" : \"EPA ToxCast
-        invitrodb v3.3 (September 2020)\",\n      \"name\" : \"TOXCAST_INVITRODB_V3_3\",\n
-        \     \"shortDescription\" : \"This list of chemicals corresponds to chemicals
-        with bioactivity assay data in EPA's ToxCast Database, referred to as invitrodb
-        (v3.3 public release, September 2020).\"\n    }, {\n      \"label\" : \"EPA
-        ToxCast invitrodb v3.4 (October 2021)\",\n      \"name\" : \"TOXCAST_INVITRODB_V3_4\",\n
-        \     \"shortDescription\" : \"This list of chemicals corresponds to chemicals
-        with bioactivity assay data in EPA's ToxCast Database, referred to as invitrodb
-        (v3.4 public release, October 2021).\"\n    }, {\n      \"label\" : \"LIST:
-        UHPLC Metabolite Library \",\n      \"name\" : \"UHPLCMS1\",\n      \"shortDescription\"
-        : \"The list of metabolites associated with the library \\\"UHPLC retention
-        time and MS/MS mass spectral fragmentation libraries\\\" from the Analytical
-        and Clinical Metabolomics Group\"\n    }, {\n      \"label\" : \"LIST: Wikipedia
-        Chemicals\",\n      \"name\" : \"WIKIPEDIA\",\n      \"shortDescription\"
-        : \"Wikipedia includes data for thousands of chemicals. ChemBoxes and DrugBoxes
-        includes data such as CAS Registry Numbers, SMILES and InChIs. \"\n    },
-        {\n      \"label\" : \"CATEGORY|PHARMACEUTICALS: >8600 Pharmaceuticals from
-        ZINC15\",\n      \"name\" : \"ZINC15PHARMA\",\n      \"shortDescription\"
-        : \"A list of >8600 pharmaceuticals retrieved from ZINC15, curated and provided
-        by Reza Aalizadeh, University of Athens. \\r\\n\"\n    } ]\n  } ],\n  \"_links\"
-        : {\n    \"self\" : {\n      \"href\" : \"http://ccte-api-ccd.epa.gov/ccdapp2/chemical-detail/630f7bc1b2dd93024d920df3\"\n
-        \   },\n    \"chemical-detail\" : {\n      \"href\" : \"http://ccte-api-ccd.epa.gov/ccdapp2/chemical-detail/630f7bc1b2dd93024d920df3\"\n
+        and Analysis\\\"\"\n    }, {\n      \"label\" : \"LIST: Wikipedia Chemicals\",\n
+        \     \"name\" : \"WIKIPEDIA\",\n      \"shortDescription\" : \"Wikipedia
+        includes data for thousands of chemicals. ChemBoxes and DrugBoxes includes
+        data such as CAS Registry Numbers, SMILES and InChIs. \"\n    }, {\n      \"label\"
+        : \"CATEGORY|PHARMACEUTICALS: >8600 Pharmaceuticals from ZINC15\",\n      \"name\"
+        : \"ZINC15PHARMA\",\n      \"shortDescription\" : \"A list of >8600 pharmaceuticals
+        retrieved from ZINC15, curated and provided by Reza Aalizadeh, University
+        of Athens. \\r\\n\"\n    } ]\n  } ],\n  \"_links\" : {\n    \"self\" : {\n
+        \     \"href\" : \"http://ccte-api-ccd.epa.gov/ccdapp2/chemical-detail/61d32fd535d7d16c4c5661f2\"\n
+        \   },\n    \"chemical-detail\" : {\n      \"href\" : \"http://ccte-api-ccd.epa.gov/ccdapp2/chemical-detail/61d32fd535d7d16c4c5661f2\"\n
         \   }\n  }\n}"
     headers:
       Cache-Control:
@@ -238,13 +177,13 @@ interactions:
       Content-Type:
       - application/hal+json
       Date:
-      - Thu, 15 Dec 2022 01:12:06 GMT
+      - Wed, 19 Jan 2022 23:27:32 GMT
       Expires:
       - Thu, 31 Dec 2037 23:55:55 GMT
       Keep-Alive:
-      - timeout=5, max=100
+      - timeout=5, max=94
       Server:
-      - nginx/1.21.6
+      - nginx/1.21.1
       Strict-Transport-Security:
       - "max-age=63072000; includeSubDomains\xE2\x80\x9C"
       Transfer-Encoding:

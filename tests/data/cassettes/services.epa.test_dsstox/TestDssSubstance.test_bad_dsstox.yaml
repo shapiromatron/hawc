@@ -5,11 +5,11 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: GET
     uri: https://comptox.epa.gov/dashboard-api/ccdapp2/chemical-detail/search/by-dsstoxsid?id=DTXSID123456789
   response:
@@ -21,11 +21,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 15 Dec 2022 01:18:23 GMT
+      - Wed, 19 Jan 2022 23:29:49 GMT
       Keep-Alive:
-      - timeout=5, max=100
+      - timeout=5, max=87
       Server:
-      - nginx/1.21.6
+      - nginx/1.21.1
       Strict-Transport-Security:
       - "max-age=63072000; includeSubDomains\xE2\x80\x9C"
       Transfer-Encoding:

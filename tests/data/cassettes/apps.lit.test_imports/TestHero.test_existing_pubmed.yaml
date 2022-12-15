@@ -5,7 +5,7 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -37,20 +37,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Dec 2022 01:13:12 GMT
+      - Wed, 26 Jan 2022 16:22:48 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C774FB6F9B3350000587FCE1323E9.1.1.m_1
+      - D0BD70A4A27193A50000254F5D3210A4.1.1.m_1
       NCBI-SID:
-      - 3DDA480EFEC827D0_0CDFSID
+      - EA7ABB07D949964E_07E6SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=3DDA480EFEC827D0_0CDFSID; domain=.nih.gov; path=/; expires=Fri, 15
-        Dec 2023 01:13:13 GMT
+      - ncbi_sid=EA7ABB07D949964E_07E6SID; domain=.nih.gov; path=/; expires=Thu, 26
+        Jan 2023 16:22:49 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -59,6 +59,8 @@ interactions:
       - '3'
       X-RateLimit-Remaining:
       - '2'
+      X-Test-Test:
+      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -69,20 +71,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&term=1998+Longstreth+health+risks+ozone+depletion&retstart=0
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=1998+Longstreth+health+risks+ozone+depletion&retstart=0
     headers:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '82'
+      - '127'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -93,10 +95,14 @@ interactions:
         13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
         AP//skGxG8h3zi/NK7EztNGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaWF
         pYmxKVATkM0FIiFyAAAAAP//sgkpSswrzkksAYZMcCrQdCS+nQII2LgV5efaZaQm5pRk2OiDORDx
-        kHw7JYiwUrRvarCHQkhqUW5xrIJ/kAJc3DEnR8EtMzUnBUVcvRiXTFppDh6pvNRinDpRJWz0ga4D
-        u1If2UO4fFeUWZxdjOE5kCi61wAAAAD//1KAiqI7AmwCJU7Ir8rPS1VISS3ISQVJYTgGTR7DXRoQ
-        Faguc/RzUVBC0oMkpwl2NoapRHhAHz3JBJamFlUiK1EytLS0wOISn/y89OKSolT0lAGS1CAzLSnQ
-        PC1pQt1HWXKAmUL/eNS00ceIIS5gEYBWzgAAAAD//wMAnzsIsCUFAAA=
+        kHw7JYiwUrRvarCHQkhqUW5xrIJ/kAJc3DEnR8EtMzUnpTjWRh+oAaxRH9kOXBbmV+XnpSqkpBbk
+        pIKkMGxGk8dwggZEBYoTFBz9XBSUkPQgyWmC3Y1hKroHAAAAAP//vFaxboMwEN37FR2bCWxj7JOQ
+        tyhLVNJIGTo3KK1SJREkUvv3NSYuBBuSKzST4U7g53fP9+72A+QfxbZwYJdRl64q2kRqo8VNEIKe
+        Kmo1vG2V2V9vWGYf7YsiALL1/zJcHaIMqTqpj2IiJnnWJIlDEMIq02SmX4fP/TpTz0lgHyu89eYe
+        IPP9blMc8+z4PgCOoAQNJV0oLYok0KsfmU/iLq466cEVhTGEfpZeUSx1XCsMR5wDFfJPPKXLX5r0
+        Mlumq0UzcIVGR/hIEgmjIUg2BovObUNySIHwiEQDOewA5lx4FDLJBYP7F7evGSPrzPkYJXZ7P5bJ
+        WDA6QmPrcBtso+WSEb/2Ec3NV9h+QV6xQ8wRgP1302nlL03RmGDycsry76Zztg3QTAh+MzKpJ8zE
+        Mzl/Mszz7V/uP/BMksAh7EHPjq0B9QcAAP//AwCwR3G7XgsAAA==
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -111,28 +117,30 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Dec 2022 01:13:12 GMT
+      - Wed, 26 Jan 2022 16:22:48 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B19B7031BEDD5000051A3C063D217.1.1.m_1
+      - 939B44F6B46659C50000484E788390B9.1.1.m_1
       NCBI-SID:
-      - B3AC7FB19EAD78A6_5685SID
+      - 83DCF79E7A2C0FD4_04F4SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=B3AC7FB19EAD78A6_5685SID; domain=.nih.gov; path=/; expires=Fri, 15
-        Dec 2023 01:13:13 GMT
+      - ncbi_sid=83DCF79E7A2C0FD4_04F4SID; domain=.nih.gov; path=/; expires=Thu, 26
+        Jan 2023 16:22:49 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '1'
+      - '9'
+      X-Test-Test:
+      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -143,76 +151,74 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=9894351
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=9894351
     headers:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '44'
+      - '89'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
       string: !!binary |
-        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
+        H4sIAAAAAAAAAFxRUW+DIBh8369gPK8irVvKgjSb+uBSrZldkz4ttpKVBNEoduu/H7jGrn2BQ+47
+        7w66+KkkOPK2E7XyIXZcCBbsjt6Hq2C9zSKQ9buKly+tFnvJc65B9vG6jAMAJwilywShcB1aUjKS
+        HgDuNHgrVF+0JzB1MUEoSiGAB62b7hmhUpeOkpWjxMH5qo9I7XcCNcN/UN3rM/zExMUudgwbGkO3
+        Ptj1F0aNASkUD4QutMkCcrP3nQ+TKFzGaQTB6lvx1ofGNDTDSRyCzRgbMjIn3uwRU2RvGA0LzYO6
+        aiTXvGR0y4uWYUIIRQOkSa30gblTiv6QGTixqUeR3e16NW6P7/woulHL1nKjRa618H+tcfgcd2i8
+        Lrn0YdYKpU2it7pvVSEZjfM8BXHXqfWp4eO9qRJP8MwzFi1h5Btiz4FpjZemQdFXF8VNLfuKM++J
+        ojOkA5vhycyoDNC+gjV4qWg+xvoFAAD//4RXXW/cNhD8K0SebOB85yAo+lA3gJ2iaIsgThM3QB4p
+        indiTJEKSfly/fWdWUp3suu0L8aZovZjdmZ3JcncmnLMa3O8vFl6f3115wpKOJ2puFVDF0s0ne1d
+        LiCRDm09alz0cXdYq5uVuqm/rzb1beR9e900CUgJAV7/od7PVuovvqxumP/ji8dojvBWi79Z7Uun
+        ksv3eX21efTs6r3euTC9P1Hv/S6grhevWMjTCbJeXL1ukJA25fTrzn4rr+86q7qFO6Vzjgbx2Vbt
+        HU7j3zFY1VoyiuzeO+/VgEIZN2jvD6qxqnQx4w7KWaLCk2Q1OKNGDz8PyB3ivVFnf326uDlXSbc1
+        e1zEi1bZ8OBSDL0NZaXc2q5XCxOt7vVOzMrVg80r+eX6fkRY+ZCL7VdSJh7nexfW6mPsrQp2P2XU
+        a9TR58hIwa8U29HM2YmtU8DIAhwAGjYRtwebZ9cCw8UEQ9ipPAJFHQxunN3+8jGfr9Wfow5FmsCD
+        FdfK5uJ6QAlUk1X6QTuvG2hoG5PKDBLOaJzIXCyAt9utNQWp2vUOcBhdNAsmaTJFnMBz+kl1cW/R
+        QismLa6JIxfyuN064wAp429xx8dBZdcjgLQIi4FMzpCR6VD9Cm3M4zAkm9mljuiW+A1Gy+EpRmt1
+        a0Yanqq1TbFHTsp+G2AHVgixH1v8mJ3FWnsTU7B6pbwNyNYBtFrLJRYD6mS9gzz5xMTwZQwGfnFQ
+        HFUM/2RxH9H8Tex7RmzGAnRrVNUng15QDW8v6XliJWj64Vy5XGV/bxOO4Wetrkmh+xD3gShl/Gig
+        tDYAJFIZdUFTZyXwLqJsnZgT4kVjxiS3InJJCrOmjYA+WTKP99Bt4OJNh+icIc9PJrLy7t5CaAtt
+        PS/NCeUjX1Yqfx11H0cEZKFao5NxIfYAfIKmt17XA0FdPejkbC1wLY3fPAL8CTEHcOCwQ+uufRK6
+        GC0NQ4IL+sCYjwZvn+lSVeqKUH9BkfPKbZEzAOBNrVpHiSENSJ33wAa+ej6rHw4G4FNF+ih4CnEH
+        TqkOpWqsDUAJvGDfI6dQiAaVUN3Ya1yS3AMk4bOaHcEiVblWvwee2eTImlyBny8jGdRi5nSnoXtx
+        ljuyBCb2MWU7Ux0UsFwzzKR86QAu8GXHGiFd1rbGUxVeqU1JZ8XCx4D+cVC7GCGMB9daXIJ1oCXq
+        /bd0B68PMKgSWM60JeOZCEDIZpeftBGH5cEZXanHMJ+3zNZRrT2bAmJGlwHpxiCaESC923Xlgh0s
+        AOIhDuCK+FkdiUDUciQ3oUOlhwETXeorY2ZSOUKMidR4omhpulswH7ExvkbnqW18RwgT1iNsWT6d
+        9YCOlhxnJwecK2ovNPIOKLUV7xLpUEPYPZNgo1pkwNj5zv9GPAXrSFCIqXeBw6XmgfNKsDL2kVT4
+        YA07OvCOqa/dCtCiQLsdWnqugcWAkL+TbjUsXKoxc7hJInPwUiahq5QR5RehVCCfGCN0pwbCebuM
+        7HFUc+OSJihRkCHF1RhQYwR9GhdnjYUhTMwGclEcKS9/OEe70VyE2LjYDWXn8BaNG4iRNaQwWDeG
+        BjsVlcM5h2fsByqMfcPOWweu6XxMcetH/EVCDfv+m1/fnD8e/ejuFIKdcpBCVgOZJtip2AVE9x6F
+        qFNnnpK1p/IcwfVYmdl78Fpt8fOtaVs5WRNXe2YSTxQcUqxtiYxdhnjqOS2uDLghwxdNOzvxyFI0
+        1miuNhObpCpJc63nRbQZ9kCB+jjhEfoG/IO8R1J0TASyddwqMDYdZy6IwvGDZUP2oJXqoG4qgm2J
+        nOLUGySCBcFEFk93TI9c5u2B3R6R+6oEFitYpoVoTF1u5HBa1WpKsoy5AvRPKvn6H9vYArW6Gh0d
+        zIPzyWAE7xd7F+d732DLbqU9cwQcTc+cqXWUVCRefohAAV5dt1/GXGSYPLPZXVQP1MvU3eu+bfW9
+        6l17wdRGfpfglbbuB7B5vC2Kpf3J8yu8mdTLy8vV5eVlTUXq/OPyfCWDlC0cWBz4vbH8QDj9iy+H
+        EapLbzGW1fyN+fndzy8+v5gfqU/au3Y+e6tzeafx9fY2hh1s2NJdbebDfwAAAP//rFlfb5swEP8q
+        iKdNmmqgKVDJsxY1a8KapCokk9o3ljgpLYUMllbtp98ZYwLk2jRtnmIu9v3Ovj8+3zF6Di5ejH5R
+        Uo2pl8CuwBEEtRrTLlheLDM0D4JMg8C8pNR+ocR+nP6BM/GFyn1QDsSrW3izcWEqc1DoqKdZhms6
+        37Rp0D3SRKKQZT9mq9l6eZRmS9hvjXXjSyITudUdW4Y0rJ+to7sY3fG55qN7Pvfrm34f0kUWre45
+        CjPShijMaLg/DFgBn92jMAEKEnwAI0vSeI6fGH5e+2MEcQi2j2IMNA9FGXj7w/zmMThgjuL0UZT+
+        /iCT8D56CZ9CFOUaRbneH+UxFHEy04Z8neD+q53hHnyGgpFNGBEo8GiAsM94shTMyy9R3VFZqKgm
+        ycktojb1vus9w7Q7lqtXRZyyWlLUfOqz31h+0tGZKHTxJ2RVmyJFIe3yn6orFTHiLF1DuH9mAVxv
+        L3CZQeSlRBHVikn39UrRZgodxw/TJPq75l6Pua7RObVtSurEou42jBK4PpbtapsiVxybYpZZh9yS
+        +mLU58ui/DUukiZm2wPn5ubCOh5T0vqLCpVfLgJVDVFnapiWrbNL8UAFYZtzQJgNFGnJUBZRxWT+
+        j3kjmNAkwenltwOZ9sk1NQKjPZ7PICBCUi1QS3EMiPeuro3CuzSbpKtoJmx8rLOufMdR0lxVnFaN
+        5zsAOo7jIAA/N8n+AUBsy7YQEFktPAR/1zAx/sUr+fP8pVFs8y+t5NPs3RPHQNgXiUA3h7dHfhg9
+        mJZrY8oOwNO2uV+tIaguIr7hcAX2eGJh9ripQpU1BUoayz8ga6djb505RPdprfblh887tUu2vE4G
+        gMuFzxfwWBG5JzNtB5x9m14FH+XKqoXSg/SX0QHwS0VclM2cslQvGg2qkyL7Mvqr3RCz2cA4Vg2M
+        BsM3+D9I8fYGGEAwZQYlxS8dRQnkoMVcOXq/AFw8Dl4Og2+8jk/qR63uNCkDW60EKb9t3Hflf6o7
+        4c2l7qtPzZvLXo/SUNXMqqags6MI3KW6qr6cul8N8N9j0d15c+E8jURD6QiW2iTfyYC05CZ1syPN
+        Nt5/AAAA//9C44Mm+gAAAAD//wMAduTQNKMcAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -227,28 +233,30 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Dec 2022 01:13:13 GMT
+      - Wed, 26 Jan 2022 16:22:49 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B19B7031BEDD5000030A3C18D46CE.1.1.m_3
+      - 939B44F6B46659C50000594E799DF2C3.1.1.m_3
       NCBI-SID:
-      - 2DBA49D6933B0927_CFCFSID
+      - 873E0E1868C617D6_A4F8SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=2DBA49D6933B0927_CFCFSID; domain=.nih.gov; path=/; expires=Fri, 15
-        Dec 2023 01:13:13 GMT
+      - ncbi_sid=873E0E1868C617D6_A4F8SID; domain=.nih.gov; path=/; expires=Thu, 26
+        Jan 2023 16:22:49 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '0'
+      - '8'
+      X-Test-Test:
+      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -264,29 +272,29 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1200/recordsperpage/100.json
   response:
     body:
-      string: '{"results":[{"REFERENCE_ID":1200,"ABSTRACT":"The health risks associated
-        with ozone depletion will principally be those due to increased ultraviolet
-        B (UV-B) radiation in the environment, i.e., increased damage to the eyes,
-        the immune system, and the skin. Some new risks may also be introduced with
-        the increased use of alternatives to the ozone-depleting substances (ODSs).
-        Quantitative risk estimates are available for some of the UV-B-associated
-        effects, e.g., cataract and skin cancer; however, the data are insufficient
-        to develop similar estimates for effects such as immunosuppression and the
-        toxicity of alternatives. Ocular damage from UV exposures includes effects
-        on the cornea, lens, iris, and associated epithelial and conjunctival tissues.
-        The most common acute ocular effect of environmental ultraviolet radiation
-        (UVR) is photokeratitis. Also known as snowblindness in skiers, this condition
-        also occurs in other outdoor recreationists. Chronic eye conditions likely
-        to increase with ozone depletion include cataract, squamous cell carcinoma,
+      string: '{"results":[{"REFERENCE_ID":1200,"usage_path_key":[33273,"32981|6403|6405"],"ABSTRACT":"The
+        health risks associated with ozone depletion will principally be those due
+        to increased ultraviolet B (UV-B) radiation in the environment, i.e., increased
+        damage to the eyes, the immune system, and the skin. Some new risks may also
+        be introduced with the increased use of alternatives to the ozone-depleting
+        substances (ODSs). Quantitative risk estimates are available for some of the
+        UV-B-associated effects, e.g., cataract and skin cancer; however, the data
+        are insufficient to develop similar estimates for effects such as immunosuppression
+        and the toxicity of alternatives. Ocular damage from UV exposures includes
+        effects on the cornea, lens, iris, and associated epithelial and conjunctival
+        tissues. The most common acute ocular effect of environmental ultraviolet
+        radiation (UVR) is photokeratitis. Also known as snowblindness in skiers,
+        this condition also occurs in other outdoor recreationists. Chronic eye conditions
+        likely to increase with ozone depletion include cataract, squamous cell carcinoma,
         ocular melanoma, and a variety of corneal/conjunctival effects, e.g., pterygium
         and pinguecula. Suppression of local (at the site of UV exposure) and systemic
         (at a distant, unexposed site) immune responses to a variety of antigens has
@@ -315,44 +323,40 @@ interactions:
         and skin-cancer incidence will peak mid-century at additional incidences of
         just under 3 per 100000 and about 7 per 100000, respectively.","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1200","hasPDF":false,"YEAR":1998,"allAuthors":["Longstreth,
         J; de Gruijl, FR; Kripke, ML; Abseck, S; Arnold, F; Slaper, HI; Velders, G;
-        Takizawa, Y; van der Leun, JC"],"HEROID":1200,"id":"1200","project_key":[14,1713,2241],"referencetype":["journal
-        article"],"type":"reference","doi":"10.1016/s1011-1344(98)00183-3","sortYear":1998,"tag_path_text":["NAAQS|LitSearch-O3","Other|LitCiter|SUPM","Other|LitCiter|SPM","Other|LitCiter|WW","Other|LitCiter|Distiller
-        Import 09-Jun-2021 13:40:03","Other|LitCiter|Distiller Import 14-Feb-2022
-        11:39:22","Other|LitCiter|Distiller Import 27-May-2021 09:16:49","PPRTV|1,1,1-Trifluoroethane|Search
-        (01/2015)|Toxline"],"category_key":[1,18,21],"PROJECTS":[{"PROJECT":"LitSearch-O3","PROJECT_ID":14,"USAGES":[]},{"PROJECT":"1,1,1-Trifluoroethane","PROJECT_ID":2241,"USAGES":[{"USAGE_ID":"6403","USAGE":"Search
-        (01/2015)","USAGES":[{"USAGE_ID":"6405","USAGE":"Toxline","USAGES":[]}]}]},{"PROJECT":"LitCiter","PROJECT_ID":1713,"USAGES":[{"USAGE_ID":"1586","USAGE":"WW","USAGES":[]},{"USAGE_ID":"32981","USAGE":"Distiller
-        Import 27-May-2021 09:16:49","USAGES":[]},{"USAGE_ID":"33273","USAGE":"Distiller
-        Import 09-Jun-2021 13:40:03","USAGES":[]},{"USAGE_ID":"35286","USAGE":"Distiller
-        Import 14-Feb-2022 11:39:22","USAGES":[]},{"USAGE_ID":"1492","USAGE":"SUPM","USAGES":[]},{"USAGE_ID":"1491","USAGE":"SPM","USAGES":[]}]}],"tag_path_key":["1|14","18|1713|1492","18|1713|1491","18|1713|1586","18|1713|33273","18|1713|35286","18|1713|32981","21|2241|6403|6405"],"firstAuthor":"Longstreth","AUTHORS":"Longstreth,
+        Takizawa, Y; van der Leun, JC"],"HEROID":1200,"id":1200,"project_key":[14,1713,2241],"referencetype":["journal
+        article"],"type":"reference","doi":"10.1016/s1011-1344(98)00183-3","sortYear":1998,"tag_path_text":["NAAQS|LitSearch-O3","Other|LitCiter|Distiller
+        Import 09-Jun-2021 13:40:03","Other|LitCiter|Distiller Import 27-May-2021
+        09:16:49","PPRTV|1,1,1-Trifluoroethane|Search (01/2015)|Toxline"],"category_key":[1,18,21],"PROJECTS":[{"PROJECT":"LitSearch-O3","PROJECT_ID":14,"USAGES":[]},{"PROJECT":"1,1,1-Trifluoroethane","PROJECT_ID":2241,"USAGES":[{"USAGE_ID":6403,"USAGE":"Search
+        (01/2015)","USAGES":[{"USAGE_ID":6405,"USAGE":"Toxline","USAGES":[]}]}]},{"PROJECT":"LitCiter","PROJECT_ID":1713,"USAGES":[{"USAGE_ID":1586,"USAGE":"WW","USAGES":[]},{"USAGE_ID":32981,"USAGE":"Distiller
+        Import 27-May-2021 09:16:49","USAGES":[]},{"USAGE_ID":33273,"USAGE":"Distiller
+        Import 09-Jun-2021 13:40:03","USAGES":[]},{"USAGE_ID":1492,"USAGE":"SUPM","USAGES":[]},{"USAGE_ID":1491,"USAGE":"SPM","USAGES":[]}]}],"tag_path_key":["1|14","18|1713|33273","18|1713|32981","21|2241|6403|6405"],"firstAuthor":"Longstreth","AUTHORS":"Longstreth,
         J; de Gruijl, FR; Kripke, ML; Abseck, S; Arnold, F; Slaper, HI; Velders, G;
-        Takizawa, Y; van der Leun, JC","noPDFAvailable":false,"tag_path_type":["category|project","category|project|usage","category|project|usage","category|project|usage","category|project|usage","category|project|usage","category|project|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
+        Takizawa, Y; van der Leun, JC","noPDFAvailable":false,"tag_path_type":["category|project","category|project|usage","category|project|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
         of Photochemistry and Photobiology B: Biology 46:20-39. [Review]","wosid":"WOS:000077997100004","TITLE":"Health
-        risks","modified":"2022-06-08T13:58:46Z","PMID":9894351,"keywords":["chlorofluorocarbons;
+        risks","modified":"2021-06-09T17:48:33Z","PMID":9894351,"keywords":["chlorofluorocarbons;
         health risks; ozone-depleting substances; ultraviolet-B radiation; skin cancer;
         cataract; photoaging;"],"journalTitle":"Journal of Photochemistry and Photobiology
-        B: Biology","_version_":1735075275219140608}],"isValid":true,"message":"Success","error":""} '
+        B: Biology","_version_":1702112510179540992}],"isValid":true,"message":"Success","error":""} '
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Dec 2022 01:13:14 GMT
+      - Wed, 26 Jan 2022 16:22:49 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.54 (Win64) OpenSSL/1.1.1p mod_jk/1.2.46
+      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
       Set-Cookie:
-      - CFID=3579243; Expires=Fri, 16-Dec-2022 01:13:14 GMT; Path=/; HttpOnly
-      - CFTOKEN=79755722; Expires=Fri, 16-Dec-2022 01:13:14 GMT; Path=/; HttpOnly
-      - JSESSIONID=571F90D55DAD6D4DCB7EF2188D9AB25D.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F12%2F14%2020%3A13%3A14; Path=/
+      - CFID=9523742; Expires=Thu, 27-Jan-2022 16:22:49 GMT; Path=/; HttpOnly
+      - CFTOKEN=30926130; Expires=Thu, 27-Jan-2022 16:22:49 GMT; Path=/; HttpOnly
+      - JSESSIONID=AEEA7DA720F1706B52ED34E187F70A77.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2022%2F01%2F26%2011%3A22%3A49; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubdomains; preload
       Transfer-Encoding:
       - chunked
-      X-Frame-Options:
-      - SAMEORIGIN
     status:
       code: 200
       message: OK

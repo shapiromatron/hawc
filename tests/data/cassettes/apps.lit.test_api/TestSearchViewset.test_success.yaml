@@ -5,11 +5,11 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/5490558/recordsperpage/100.json
   response:
@@ -27,7 +27,7 @@ interactions:
         \u03BCg/kg body weight per day has been derived, based upon the lower 95%
         confidence limit for the benchmark dose associated with a 5% increase in the
         incidence of pancreatic lesions in male rats in an oral subchronic assay.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5490558\",\"hasPDF\":true,\"YEAR\":2001,\"allAuthors\":[\"Long,
-        G; Meek, ME\"],\"HEROID\":5490558,\"id\":\"5490558\",\"project_key\":[2207,2245,2757,2842,2843],\"referencetype\":[\"journal
+        G; Meek, ME\"],\"HEROID\":5490558,\"id\":5490558,\"project_key\":[2207,2245,2757,2842,2843],\"referencetype\":[\"journal
         article\"],\"type\":\"reference\",\"pdfURL\":\"https://search.proquest.com/docview/14582298?accountid=171501\",\"doi\":\"10.1081/gnc-100103582\",\"sortYear\":2001,\"tag_path_text\":[\"IRIS|BBP
         (Butyl benzyl phthalate)|Literature Search|LitSearch Dec 2012|WOS\",\"IRIS|BBP
         (Butyl benzyl phthalate)|Secondary Literature|Risk assessments \",\"IRIS|Phthalates
@@ -47,49 +47,48 @@ interactions:
         (Date Unlimited)|ProQuest\",\"OPPT REs|OPPT Evidence Map: Di-ethylhexyl phthalate
         (DEHP)|Peer-Reviewed Literature|Literature Search September 2019 (Date Unlimited)|WOS\",\"OPPT
         REs|OPPT Evidence Map: Di-ethylhexyl phthalate (DEHP)|Systematic Review|Hazard\",\"Other|EBTC
-        Zebrafish|Litsearch 2018|WOS_Core Collection\"],\"category_key\":[2,18,32],\"PROJECTS\":[{\"PROJECT\":\"BBP
-        (Butyl benzyl phthalate)\",\"PROJECT_ID\":2207,\"USAGES\":[{\"USAGE_ID\":\"5550\",\"USAGE\":\"Secondary
-        Literature\",\"USAGES\":[{\"USAGE_ID\":\"4477\",\"USAGE\":\"Risk assessments
-        \",\"USAGES\":[]}]},{\"USAGE_ID\":\"5881\",\"USAGE\":\"Literature Search\",\"USAGES\":[{\"USAGE_ID\":\"3822\",\"USAGE\":\"LitSearch
-        Dec 2012\",\"USAGES\":[{\"USAGE_ID\":\"2284\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"EBTC
-        Zebrafish\",\"PROJECT_ID\":2757,\"USAGES\":[{\"USAGE_ID\":\"17338\",\"USAGE\":\"Litsearch
-        2018\",\"USAGES\":[{\"USAGE_ID\":\"17341\",\"USAGE\":\"WOS_Core Collection\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT
-        Evidence Map: Di-ethylhexyl phthalate (DEHP)\",\"PROJECT_ID\":2843,\"USAGES\":[{\"USAGE_ID\":\"31101\",\"USAGE\":\"Systematic
-        Review\",\"USAGES\":[{\"USAGE_ID\":\"31230\",\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":\"31065\",\"USAGE\":\"Peer-Reviewed
-        Literature\",\"USAGES\":[{\"USAGE_ID\":\"20037\",\"USAGE\":\"Literature Search
-        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"20210\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"20209\",\"USAGE\":\"Current
-        Contents\",\"USAGES\":[]},{\"USAGE_ID\":\"20039\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"OPPT
-        Evidence Map: Butyl benzyl phthalate (BBP)\",\"PROJECT_ID\":2842,\"USAGES\":[{\"USAGE_ID\":\"30944\",\"USAGE\":\"Systematic
-        Review\",\"USAGES\":[{\"USAGE_ID\":\"30948\",\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":\"30833\",\"USAGE\":\"Peer-Reviewed
-        Literature\",\"USAGES\":[{\"USAGE_ID\":\"20032\",\"USAGE\":\"Literature Search
-        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"20034\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"20240\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"20239\",\"USAGE\":\"Current
+        Zebrafish|Litsearch 2018|WOS_Core Collection\"],\"category_key\":[2,18,32],\"PROJECTS\":[{\"PROJECT\":\"EBTC
+        Zebrafish\",\"PROJECT_ID\":2757,\"USAGES\":[{\"USAGE_ID\":17338,\"USAGE\":\"Litsearch
+        2018\",\"USAGES\":[{\"USAGE_ID\":17341,\"USAGE\":\"WOS_Core Collection\",\"USAGES\":[]}]}]},{\"PROJECT\":\"BBP
+        (Butyl benzyl phthalate)\",\"PROJECT_ID\":2207,\"USAGES\":[{\"USAGE_ID\":5550,\"USAGE\":\"Secondary
+        Literature\",\"USAGES\":[{\"USAGE_ID\":4477,\"USAGE\":\"Risk assessments \",\"USAGES\":[]}]},{\"USAGE_ID\":5881,\"USAGE\":\"Literature
+        Search\",\"USAGES\":[{\"USAGE_ID\":3822,\"USAGE\":\"LitSearch Dec 2012\",\"USAGES\":[{\"USAGE_ID\":2284,\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Di-ethylhexyl phthalate (DEHP)\",\"PROJECT_ID\":2843,\"USAGES\":[{\"USAGE_ID\":31101,\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":31230,\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":31065,\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":20037,\"USAGE\":\"Literature Search
+        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":20210,\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":20209,\"USAGE\":\"Current
+        Contents\",\"USAGES\":[]},{\"USAGE_ID\":20039,\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Butyl benzyl phthalate (BBP)\",\"PROJECT_ID\":2842,\"USAGES\":[{\"USAGE_ID\":30944,\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":30948,\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":30833,\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":20032,\"USAGE\":\"Literature Search
+        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":20034,\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":20240,\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":20239,\"USAGE\":\"Current
         Contents\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Phthalates \u2013 Targeted
-        Search for Epidemiological Studies\",\"PROJECT_ID\":2245,\"USAGES\":[{\"USAGE_ID\":\"12073\",\"USAGE\":\"Source
-        - August 2017 Update (Private)\",\"USAGES\":[{\"USAGE_ID\":\"15272\",\"USAGE\":\"WOS
-        - Forward Search Results\",\"USAGES\":[]}]},{\"USAGE_ID\":\"4544\",\"USAGE\":\"Excluded\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2207|5881|3822|2284\",\"2|2207|5550|4477\",\"2|2245|4544\",\"2|2245|12073|15272\",\"32|2842|30833|20032|20239\",\"32|2842|30833|20032|20240\",\"32|2842|30833|20032|20034\",\"32|2842|30944|30948\",\"32|2843|31065|20037|20209\",\"32|2843|31065|20037|20210\",\"32|2843|31065|20037|20039\",\"32|2843|31101|31230\",\"18|2757|17338|17341\"],\"firstAuthor\":\"Long\",\"AUTHORS\":\"Long,
+        Search for Epidemiological Studies\",\"PROJECT_ID\":2245,\"USAGES\":[{\"USAGE_ID\":12073,\"USAGE\":\"Source
+        - August 2017 Update (Private)\",\"USAGES\":[{\"USAGE_ID\":15272,\"USAGE\":\"WOS
+        - Forward Search Results\",\"USAGES\":[]}]},{\"USAGE_ID\":4544,\"USAGE\":\"Excluded\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2207|5881|3822|2284\",\"2|2207|5550|4477\",\"2|2245|4544\",\"2|2245|12073|15272\",\"32|2842|30833|20032|20239\",\"32|2842|30833|20032|20240\",\"32|2842|30833|20032|20034\",\"32|2842|30944|30948\",\"32|2843|31065|20037|20209\",\"32|2843|31065|20037|20210\",\"32|2843|31065|20037|20039\",\"32|2843|31101|31230\",\"18|2757|17338|17341\"],\"firstAuthor\":\"Long\",\"AUTHORS\":\"Long,
         G; Meek, ME\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Journal
         of Environmental Science and Health, Part C: Environmental Carcinogenesis
         & Ecotoxicology Reviews C19:105.\",\"wosid\":\"WOS:000174781300006\",\"TITLE\":\"Butylbenzylphthalate:
-        Hazard characterization and exposure-response analysis\",\"modified\":\"2022-06-10T09:01:38Z\",\"PMID\":\"\",\"keywords\":[\"Environment
+        Hazard characterization and exposure-response analysis\",\"modified\":\"2022-03-02T13:51:05Z\",\"PMID\":\"\",\"keywords\":[\"Environment
         Abstracts; RISK ASSESSMENT; DATA, CHEMICAL; DOSE RESPONSE PROFILES; TOXICOLOGY;
         ENA 07:General\"],\"journalTitle\":\"Journal of Environmental Science and
-        Health, Part C: Environmental Carcinogenesis & Ecotoxicology Reviews\",\"_version_\":1735237775271133184}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+        Health, Part C: Environmental Carcinogenesis & Ecotoxicology Reviews\",\"_version_\":1726196301405618176}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Dec 2022 01:12:40 GMT
+      - Mon, 07 Mar 2022 08:27:00 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.54 (Win64) OpenSSL/1.1.1p mod_jk/1.2.46
+      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
       Set-Cookie:
-      - CFID=3579225; Expires=Fri, 16-Dec-2022 01:12:40 GMT; Path=/; HttpOnly
-      - CFTOKEN=56258022; Expires=Fri, 16-Dec-2022 01:12:40 GMT; Path=/; HttpOnly
-      - JSESSIONID=5F47DC90DF830D57BAA9829E00661056.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F12%2F14%2020%3A12%3A40; Path=/
+      - CFID=11205093; Expires=Tue, 08-Mar-2022 08:27:00 GMT; Path=/; HttpOnly
+      - CFTOKEN=54307876; Expires=Tue, 08-Mar-2022 08:27:00 GMT; Path=/; HttpOnly
+      - JSESSIONID=9ED02BACB944746C8FC1C684D91B03B6.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2022%2F03%2F07%2003%3A27%3A00; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubdomains; preload
       Transfer-Encoding:
@@ -105,7 +104,7 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -113,58 +112,56 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
       string: !!binary |
-        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
+        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
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -179,20 +176,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Dec 2022 01:12:40 GMT
+      - Mon, 07 Mar 2022 08:27:01 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C774FB6F9B33500005C7F916521D8.1.1.m_3
+      - 322C5754094EF30500005C39CE129BCA.1.1.m_3
       NCBI-SID:
-      - 98A0235E4E164C01_3021SID
+      - FFA6B1B84D5D4F6C_4D1CSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=98A0235E4E164C01_3021SID; domain=.nih.gov; path=/; expires=Fri, 15
-        Dec 2023 01:12:41 GMT
+      - ncbi_sid=FFA6B1B84D5D4F6C_4D1CSID; domain=.nih.gov; path=/; expires=Tue, 07
+        Mar 2023 08:27:01 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -201,6 +198,8 @@ interactions:
       - '3'
       X-RateLimit-Remaining:
       - '2'
+      X-Test-Test:
+      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -216,7 +215,7 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -224,39 +223,37 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.26.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
       string: !!binary |
-        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
-        AAD//0Ljg8Z8AAAAAP//AwCJc3xxrhIAAA==
+        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
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -271,20 +268,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Dec 2022 01:12:41 GMT
+      - Mon, 07 Mar 2022 08:27:02 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C774FB6F9B33500004A7F92735ABE.1.1.m_3
+      - 939B4C2CE2A63C8500004D57C4F5AF12.1.1.m_3
       NCBI-SID:
-      - 02AA4E1D910C3495_0643SID
+      - 1301D0762F84FA60_4EC9SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=02AA4E1D910C3495_0643SID; domain=.nih.gov; path=/; expires=Fri, 15
-        Dec 2023 01:12:41 GMT
+      - ncbi_sid=1301D0762F84FA60_4EC9SID; domain=.nih.gov; path=/; expires=Tue, 07
+        Mar 2023 08:27:02 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -293,6 +290,8 @@ interactions:
       - '3'
       X-RateLimit-Remaining:
       - '1'
+      X-Test-Test:
+      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
