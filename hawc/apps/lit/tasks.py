@@ -67,8 +67,8 @@ def update_hero_fields(ref_ids: list[int]):
                     identifier
                     for identifier in [
                         hero_identifier,
-                        doi_map.get(hero_identifier.pk),
-                        pubmed_map.get(hero_identifier.pk),
+                        doi_map.get(hero_identifier),
+                        pubmed_map.get(hero_identifier),
                     ]
                     if identifier
                 ]

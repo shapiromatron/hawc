@@ -199,7 +199,7 @@ class IdentifiersQuerySet(models.QuerySet):
             fetched_content = fetcher.get_content()
             created_pubmed_identifiers = self.model.objects.bulk_create_pubmed_ids(fetched_content)
 
-            # add these new doi identifiers to the association map
+            # add these new pubmed identifiers to the association map
             _identifier_to_associated_pubmed = {
                 identifier: identifier_to_associated_pubmed[identifier]
                 for identifier in missing_identifiers
@@ -555,7 +555,7 @@ class ReferenceManager(BaseManager):
             # check if any identifiers have a pubmed ID that already exists
             # in database. If not, save a new reference.
 
-            if pubmed_identifier := pubmed_map.get(identifier.pk):
+            if pubmed_identifier := pubmed_map.get(identifier):
                 ref = self.get_qs(search.assessment).filter(identifiers=pubmed_identifier)
             else:
                 ref = self.none()
@@ -570,7 +570,7 @@ class ReferenceManager(BaseManager):
                 if pubmed_identifier:
                     ref.identifiers.add(pubmed_identifier)
 
-            if doi_identifier := doi_map.get(identifier.pk):
+            if doi_identifier := doi_map.get(identifier):
                 ref.identifiers.add(doi_identifier)
             ref.searches.add(search)
             ref.identifiers.add(identifier)
@@ -625,7 +625,7 @@ class ReferenceManager(BaseManager):
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
-            if doi_identifier := doi_map.get(identifier.pk):
+            if doi_identifier := doi_map.get(identifier):
                 ref.identifiers.add(doi_identifier)
             refs.append(ref)
 
