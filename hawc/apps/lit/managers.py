@@ -49,6 +49,9 @@ class _ReferenceFilterTagManager(_TaggableManager):
         full_taglist = self.through.tag_model().get_descendants_pks(self.instance.assessment_id)
         selected_tags = set(tag_pks).intersection(full_taglist)
 
+        if len(selected_tags) < len(tag_pks):
+            raise ValueError("At least one of the given tags belongs to a different assessment.")
+
         tagrefs = []
         for tag_id in selected_tags:
             tagrefs.append(self.through(tag_id=tag_id, content_object=self.instance))
