@@ -1,7 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
   <h2 class="d-inline-block">Available visualizations</h2>
   {% if obj_perms.edit %}
@@ -18,11 +16,7 @@
       </div>
   {% endif %}
 
-  <div class="card">
-    <div class="card-body pb-1">
-      {% crispy form %}
-    </div>
-  </div>
+{% include 'common/filter_list.html' with plural_object_name='visuals' %}
 
   <table id="mainTbl" class="table table-sm table-striped">
     <colgroup>
@@ -58,7 +52,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <p><b>{{n_objects}}</b> visuals found.</p>
+  <p><b>{{n_objects}}</b> visual{{n_objects|pluralize}} found.</p>
 {% endblock content %}
 
 {% block extrajs %}
