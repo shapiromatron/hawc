@@ -260,8 +260,8 @@ class TagReferences(BaseFilterList):
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
         fields=[
-            "needs_tagging",
             "title_abstract",
+            "needs_tagging",
             "search",
             "id",
             "tags",
@@ -276,9 +276,9 @@ class TagReferences(BaseFilterList):
             "rows": [
                 {
                     "columns": [
-                        {"width": 3, "extra_css": "pl-5 d-flex align-items-center"},
-                        {"width": 5, "extra_css": "px-4 py-2"},
-                        {"width": 4, "extra_css": "px-4 py-2 pr-5"},
+                        {"width": 5, "extra_css": "px-4 pl-5 py-2"},
+                        {"width": 2, "extra_css": "px-2 pt-3 d-flex align-items-center"},
+                        {"width": 5, "extra_css": "px-4 py-2 pr-5"},
                     ]
                 },
                 {

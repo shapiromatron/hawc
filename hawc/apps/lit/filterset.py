@@ -6,17 +6,6 @@ from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
 from . import models
 
 
-class TagChoices(TextChoices):
-    RESOLVED_AND_USER = "resolved_and_user", "Resolved and user tags"
-    RESOLVED_AND_MINE = "resolved_and_mine", "Resolved and my tags"
-    RESOLVED = "resolved", "Only resolved tags"
-    USER = "user", "Only user tags"
-    MINE = "mine", "Only my tags"
-    ZERO_USER = "zero_user", "Tagged by zero users"
-    ONE_USER = "one_user", "Tagged by one user"
-    TWO_PLUS_USERS = "two_plus_users", "Tagged by two or more users"
-
-
 class ReferenceFilterSet(BaseFilterSet):
     id = df.NumberFilter(label="HAWC ID", help_text="HAWC reference ID.")
     db_id = df.CharFilter(
