@@ -26,7 +26,7 @@
     <div>
         {% with ref.tags.all as tags%}
             {% if tags %}
-                <div class="mt-2">
+                <div class="consensus-tag mt-2">
                     <p class="my-2"><b>Consensus tags:</b></p>
                     {% for tag in ref.tags.all %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
                 </div>
@@ -34,7 +34,7 @@
         {% endwith %}
         {% for user_tag in ref.user_tags.all %}
             {% if not user_tag.is_resolved %}
-                <div class="box-shadow bg-white mt-2 px-2">
+                <div class="user-tag box-shadow bg-white mt-2 px-2">
                     <div>
                         {% if conflict_resolution %}
                             <form class="d-inline-block">
