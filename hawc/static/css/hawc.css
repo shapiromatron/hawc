@@ -350,6 +350,7 @@ div.smart-tag.active {
     max-height: 120vh;
     background-color: #e0f0ff;
     border-radius: 7px;
+    height: 25rem;
 }
 .abstracts {
     font-size: 1.15rem;

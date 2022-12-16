@@ -39,13 +39,19 @@ class ReferenceFilterSet(BaseFilterSet):
         method="filter_tags",
         conjoined=True,
         label="Tags",
-        help_text="If multiple tags are selected, references must include all selected tags.",
+        help_text="Select a tag to view references with that specific tag. Choose [Untagged] to view references without any tags. If multiple tags are selected, references must include all selected tags.",
     )
     include_descendants = df.BooleanFilter(
-        method=filter_noop, widget=CheckboxInput(), label="Include tag descendants (resolved tags)"
+        method=filter_noop,
+        widget=CheckboxInput(),
+        label="Include tag descendants",
+        help_text="Applies to tags selected above. By default, only references with the specific selected tag(s) are shown; checking this box includes references that are tagged with any descendant of the selected tag",
     )
     anything_tagged = df.BooleanFilter(
-        method="filter_anything_tagged", widget=CheckboxInput(), label="Show anything tagged"
+        method="filter_anything_tagged",
+        widget=CheckboxInput(),
+        label="Anything tagged",
+        help_text="Check box to view references with at least one tag applied",
     )
     my_tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
@@ -54,15 +60,19 @@ class ReferenceFilterSet(BaseFilterSet):
         method="filter_my_tags",
         conjoined=True,
         label="My Tags",
-        help_text="If multiple tags are selected, references must include all selected tags.",
+        help_text="Select a tag to view references you have applied that specific tag to. Choose [Untagged] to view references that you have not tagged. If multiple tags are selected, references must include all selected tags.",
     )
     include_mytag_descendants = df.BooleanFilter(
-        method=filter_noop, widget=CheckboxInput(), label="Include tag descendants (my tags)"
+        method=filter_noop,
+        widget=CheckboxInput(),
+        label="Include tag descendants",
+        help_text="Applies to tags selected above. By default, only references with the specific selected tag(s) are shown; checking this box includes references that are tagged with any descendant of the selected tag",
     )
     anything_tagged_me = df.BooleanFilter(
         method="filter_anything_tagged_me",
         widget=CheckboxInput(),
-        label="Show anything tagged by me",
+        label="Anything tagged by me",
+        help_text="Check box to view references that you have tagged",
     )
     order_by = df.OrderingFilter(
         fields=(
@@ -75,6 +85,7 @@ class ReferenceFilterSet(BaseFilterSet):
         method="filter_needs_tagging",
         widget=CheckboxInput(),
         label="Needs Tagging",
+        help_text="References tagged by less than two people, and without resolved tags",
     )
     paginate_by = PaginationFilter()
 
@@ -174,6 +185,17 @@ class ReferenceFilterSet(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
+        for field in [
+            "needs_tagging",
+            "tags",
+            "my_tags",
+            "anything_tagged",
+            "anything_tagged_me",
+            "include_mytag_descendants",
+            "include_descendants",
+        ]:
+            if field in form.fields:
+                form.fields[field].hover_help = True
         if "tags" in form.fields:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
             form.fields["tags"].queryset = tags
