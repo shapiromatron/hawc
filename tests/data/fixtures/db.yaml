@@ -896,7 +896,6 @@
     uncertainty: 30
     species_studied: 1
     study: 7
-    dosimetric_approach: ''
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
@@ -923,7 +922,6 @@
     uncertainty: 30
     species_studied: 1
     study: 7
-    dosimetric_approach: ''
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
@@ -954,7 +952,6 @@
     uncertainty: null
     species_studied: 1
     study: 7
-    dosimetric_approach: ''
     tumor_type: Hepatocellular adenomas and carcinomas
     extrapolation_method: Linear extrapolation from the POD ((BMCL10(HED)) associated
       with 10% extra cancer risk.
