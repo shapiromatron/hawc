@@ -7,8 +7,8 @@
                 rel="noreferrer">Edit reference tags</a>
             <a href="{% url 'lit:ref_edit' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Edit
                 reference</a>
-            <a href="{% url 'lit:tag-history' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag
-                history</a>
+            <a href="{% url 'lit:tag-state' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag
+                state</a>
         </div>
     </div>
     {% endif %}

@@ -862,8 +862,8 @@ class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
         )
 
 
-class ReferenceTagHistory(TeamMemberOrHigherMixin, BaseDetail):
-    template_name = "lit/reference_tag_history.html"
+class ReferenceTagState(TeamMemberOrHigherMixin, BaseDetail):
+    template_name = "lit/reference_tag_state.html"
     model = models.Reference
 
     def get_assessment(self, request, *args, **kwargs):
@@ -872,7 +872,7 @@ class ReferenceTagHistory(TeamMemberOrHigherMixin, BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Tag history"
+            self.request.user, self.assessment, "Tag state"
         )
         context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
         return context
