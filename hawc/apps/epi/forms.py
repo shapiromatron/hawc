@@ -713,10 +713,20 @@ class ResultUpdateForm(ResultForm):
         self.fields["comparison_set"].widget.attrs["disabled"] = True
 
 
+class GroupSelectWidget(forms.Select):
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        # show the parent's name in case groups are named the same across comparison sets
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        if value:
+            option["label"] = f"{value.instance.comparison_set} - {value.instance.name}"
+        return option
+
+
 class GroupResultForm(forms.ModelForm):
     class Meta:
         model = models.GroupResult
         exclude = ("result",)
+        widgets = {"group": GroupSelectWidget}
 
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop("study_population", None)
@@ -726,7 +736,7 @@ class GroupResultForm(forms.ModelForm):
         self.fields["group"].queryset = models.Group.objects.filter(
             Q(comparison_set__study_population=study_population)
             | Q(comparison_set__outcome=outcome)
-        )
+        ).select_related("comparison_set")
         if result:
             self.instance.result = result
 
