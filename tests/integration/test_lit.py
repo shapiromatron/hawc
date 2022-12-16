@@ -70,7 +70,7 @@ class TestLiterature(PlaywrightTestCase):
         expect(page.locator(".conflict-reference-li")).to_have_count(1)
 
         with page.expect_response(re.compile(r"resolve_conflict")) as response_info:
-            page.locator("text=Approve Team Member team@hawcproject.org >> button").click()
+            page.locator("text=Approve Team Member >> button").click()
             response = response_info.value
             assert response.ok
 
