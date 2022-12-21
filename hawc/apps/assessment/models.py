@@ -595,6 +595,18 @@ class AssessmentValue(models.Model):
         blank=True,
         help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans)",
     )
+    adaf = models.BooleanField(
+        verbose_name="ADAF applied?",
+        default=False,
+        help_text="If Age Dependent Adjustment Factor was applied to the value",
+    )
+    non_adaf_value = models.CharField(
+        verbose_name="Non-ADAF adjusted value",
+        max_length=64,
+        blank=True,
+        default="",
+        help_text="Input the value without ADAF adjustment, if applicable",
+    )
     comments = models.TextField(blank=True)
     extra = models.JSONField(
         default=dict,
