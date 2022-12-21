@@ -20,21 +20,36 @@
                     $('#div_id_tumor_type').show();
                     $('#div_id_extrapolation_method').show();
                     $('#div_id_evidence').show();
+                    $('#div_id_adaf').show();
                 }
                 if (selected_eval_type == "Noncancer") {
                     $('#div_id_uncertainty').show();
                     $('#div_id_tumor_type').hide();
                     $('#div_id_extrapolation_method').hide();
                     $('#div_id_evidence').hide();
+                    $('#div_id_adaf').hide();
+                    $('#div_id_non_adaf_value').hide();
                 }
                 if (selected_eval_type == "Cancer and Noncancer") {
                     $('#div_id_uncertainty').show();
                     $('#div_id_tumor_type').show();
                     $('#div_id_extrapolation_method').show();
                     $('#div_id_evidence').show();
+                    $('#div_id_adaf').show();
                 }
             };
         eval_type.on('change', showRelevantFields).trigger('change');
+
+        var adaf = $('#id_adaf'),
+            showAdafValue = function(){
+                if (adaf.is(':checked')) {
+                    $('#div_id_non_adaf_value').show();
+                }
+                else {
+                    $('#div_id_non_adaf_value').hide();
+                }
+            };
+        adaf.on('change', showAdafValue).trigger('change');
     });
 </script>
 {% endblock extrajs %}
