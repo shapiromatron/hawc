@@ -32,3 +32,4 @@ class HawcBackend(ModelBackend):
             token = self.get_auth_token(request)
 
             return token.user if token else None
+        return user
