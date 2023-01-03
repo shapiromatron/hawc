@@ -13,6 +13,7 @@ from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
 from ..common.forms import BaseFormHelper, check_unique_for_assessment
+from ..common.validators import pydantic_json_validator
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
@@ -823,12 +824,21 @@ class ExternalSiteForm(VisualForm):
             Embed an external website. The following websites can be linked to:
         </p>
         <ul class="form-text text-muted">
-            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
+            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box. For example, <code>https://public.tableau.com/shared/JWH9N8XGN</code>.</li>
         </ul>
         <p class="form-text text-muted">
             If you'd like to link to another website, please contact us.
         </p>
         """,
+    )
+    filters = forms.CharField(
+        label="Data filters",
+        initial="[]",
+        validators=[pydantic_json_validator(constants.TableauFilterList)],
+        help_text="""<p class="form-text text-muted">
+        Data are expected to be in JSON format, where the each key is a filter name and value is a filter value.
+        For more details, view the <a href="https://help.tableau.com/current/api/embedding_api/en-us/docs/embedding_api_filter.html">Tableau documentation</a>. For example: <code>[{"field": "Category", "value": "Technology"}, {"field": "State", "value": "North Carolina,Virginia"}]</code>. To remove filters, set string to <code>[]</code>.
+        </p>""",
     )
 
     def __init__(self, *args, **kwargs):
@@ -837,6 +847,8 @@ class ExternalSiteForm(VisualForm):
         data = json.loads(self.instance.settings)
         if "external_url" in data:
             self.fields["external_url"].initial = data["external_url"]
+        if "filters" in data:
+            self.fields["filters"].initial = json.dumps(data["filters"])
 
         self.helper = self.setHelper()
 
@@ -847,6 +859,7 @@ class ExternalSiteForm(VisualForm):
                 external_url_hostname=self.cleaned_data["external_url_hostname"],
                 external_url_path=self.cleaned_data["external_url_path"],
                 external_url_query_args=self.cleaned_data["external_url_query_args"],
+                filters=json.loads(self.cleaned_data["filters"]),
             )
         )
         return super().save(commit)

@@ -1,5 +1,6 @@
 import re
-from typing import Optional, Sequence
+from functools import partial
+from typing import Callable, Optional, Sequence
 from urllib import parse
 
 import bleach
@@ -7,6 +8,8 @@ from bleach.css_sanitizer import CSSSanitizer
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, URLValidator
 from django.utils.encoding import force_str
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticValidationError
 
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
 hyperlink_regex = re.compile(r"href\s*=\s*['\"](.*?)['\"]")
@@ -178,3 +181,14 @@ class NumericTextValidator(RegexValidator):
     # alternative: r"^[<,≤,≥,>]? (?:LOD|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
     regex = r"^[<,≤,≥,>]? ?(?:LOD|LOQ|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
     message = "Must be number-like, including {<,≤,≥,>,LOD,LOQ} (ex: 3.4, 1.2E-5, < LOD)"
+
+
+def _pydantic_json_validator(value: str, Model: type[BaseModel]):
+    try:
+        Model.parse_raw(value)
+    except PydanticValidationError as err:
+        raise ValidationError(err.json())
+
+
+def pydantic_json_validator(Model: type[BaseModel]) -> Callable:
+    return partial(_pydantic_json_validator, Model=Model)
