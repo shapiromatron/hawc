@@ -1,5 +1,5 @@
 import django_filters as df
-from django.db.models import Count, Q, TextChoices
+from django.db.models import Count, Q
 from django.forms.widgets import CheckboxInput
 
 from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
