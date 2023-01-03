@@ -275,3 +275,24 @@ class QuillField(forms.CharField):
         super().validate(value)
         if value:
             validators.validate_hyperlinks(value)
+
+
+class ConfirmationField(forms.CharField):
+    """A required field where a user must type in a fixed value; defaults to "confirm".
+
+    Args:
+        check_value (str): the value to check; defaults to "confirm".
+    """
+
+    def __init__(self, *args, **kw):
+        self.check_value = kw.pop("check_value", "confirm")
+        kwargs = dict(
+            max_length=32, required=True, help_text=f'Please type "{self.check_value}" to proceed.'
+        )
+        kwargs.update(kw)
+        super().__init__(*args, **kwargs)
+
+    def validate(self, value):
+        super().validate(value)
+        if value != self.check_value:
+            raise forms.ValidationError(f'The value of "{self.check_value}" is required.')

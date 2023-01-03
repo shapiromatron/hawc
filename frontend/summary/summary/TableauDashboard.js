@@ -6,14 +6,18 @@ class TableauDashboard extends Component {
     /*
     Use the recommended approach for embedding a tableau dashboard into an application. For
     developer documentation, see:
-        https://help.tableau.com/current/pro/desktop/en-us/embed_list.htm
+        https://help.tableau.com/current/api/embedding_api/en-us/index.html
     */
     componentDidMount() {
         // inject tableau script
         const head = document.querySelector("head"),
             script = document.createElement("script");
 
-        script.setAttribute("src", "https://public.tableau.com/javascripts/api/viz_v1.js");
+        script.setAttribute(
+            "src",
+            "https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"
+        );
+        script.setAttribute("type", "module");
         head.appendChild(script);
     }
 
@@ -27,18 +31,7 @@ class TableauDashboard extends Component {
 
         let fullPath = queryArgs && queryArgs.length > 0 ? `${path}?${queryArgs.join("&")}` : path;
 
-        return (
-            <object
-                className="tableauViz"
-                height={`${height}px`}
-                width={`${width}px`}
-                style={{display: "none"}}>
-                <param name="host_url" value={hostUrl} />
-                <param name="path" value={fullPath} />
-                <param name="toolbar" value="yes" />
-                <param name="display_spinner" value="yes" />
-            </object>
-        );
+        return <tableau-viz src={hostUrl + fullPath} height={height} width={width}></tableau-viz>;
     }
 }
 

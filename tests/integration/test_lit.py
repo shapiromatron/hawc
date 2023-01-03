@@ -1,3 +1,5 @@
+import re
+
 from playwright.sync_api import expect
 
 from .common import PlaywrightTestCase
@@ -46,4 +48,40 @@ class TestLiterature(PlaywrightTestCase):
         page.goto(self.live_server_url + "/lit/assessment/1/tag/bulk/")
         expect(
             page.locator("text=Select an Excel file (.xlsx) to load and process.")
+        ).to_be_visible()
+
+    def test_conflict_resolution(self):
+        page = self.page
+        page.goto(self.live_server_url)
+
+        # /lit/assessment/:id/
+        self.login_and_goto_url(
+            page,
+            f"{self.live_server_url}/lit/assessment/4/reference-tag-conflicts/",
+            "pm@hawcproject.org",
+        )
+
+        expect(
+            page.locator(
+                "text=Nutrient content of fish powder from low value fish and fish byproducts."
+            )
+        ).to_be_visible()
+        expect(page.locator(".user-tag-conflict")).to_have_count(2)
+        expect(page.locator(".conflict-reference-li")).to_have_count(1)
+
+        with page.expect_response(re.compile(r"resolve_conflict")) as response_info:
+            page.locator("text=Approve Team Member team@hawcproject.org >> button").click()
+            response = response_info.value
+            assert response.ok
+
+        # hides reference now that conflict is resolved
+        expect(page.locator(".conflict-reference-li")).not_to_be_visible()
+
+        # check that selected tag has been applied
+        page.goto(f"{self.live_server_url}/lit/assessment/4/references/")
+        page.locator("text=Animal Study (1)").click()
+        expect(
+            page.locator(
+                "text=Nutrient content of fish powder from low value fish and fish byproducts."
+            )
         ).to_be_visible()
