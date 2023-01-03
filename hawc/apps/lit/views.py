@@ -56,10 +56,7 @@ class LitOverview(BaseList):
         context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
-            .filter(
-                user_tags__is_resolved=False,
-                user_tags__user=self.request.user,
-            )
+            .filter(user_tags__user=self.request.user)
             .count()
         )
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)

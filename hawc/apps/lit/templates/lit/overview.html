@@ -36,39 +36,28 @@
   <div class="row no-gutter">
     <div class="col-md-8">
       <div class="d-flex row justify-content-around">
-
         <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:ref_search' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_references}}</p>
             <p class="small">total references</p>
           </div>
           <div class="lit-icon">
-            <i class="fa fa-file-text icon-bg" style="color: white;"></i>
+            <i class="fa fa-file-text icon-bg" style="color: white; background-color: #162e51;"></i>
           </div>
         </a>
-
         <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:ref_list' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_tagged}}</p>
-            {% if assessment.literature_settings.conflict_resolution %}
-            <p class="small">with resolved tags</p>
-            {% else %}
             <p class="small">tagged</p>
-            {% endif %}
           </div>
           <div class="lit-icon">
             <i class="fa fa-tags icon-bg" style="color: white; background-color: #162e51;"></i>
           </div>
         </a>
-
         <a class="lit-review-box with-icon clickable"  target="_blank" href="{% url 'lit:ref_search' assessment.pk %}?tags=untagged">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_untagged}}</p>
-            {% if assessment.literature_settings.conflict_resolution %}
-            <p class="small">without resolved tags</p>
-            {% else %}
             <p class="small">untagged</p>
-            {% endif %}
           </div>
           <div class="lit-icon">
             <span class="fa-stack fa-1x icon-bg" style="background-color: #162e51;">
@@ -77,29 +66,23 @@
             </span>
           </div>
         </a>
-
         <div class="lit-review-box" style="width: 20%; height: 235px; min-width: 130px; justify-content: inherit;">
           {% if obj_perms.edit %}
-          <a class="btn btn-primary mb-1 py-1" href="{% url 'lit:tag' assessment.pk %}">Tag</a>
+          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}">Tag</a>
           {% endif %}
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
-          <a class="btn btn-primary mt-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
-          {% if user.is_beta_tester %}
-          {% if can_topic_model %}
-          <a class="betatester btn btn-dark" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
-          {% endif %}
+          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
+          {% if user.is_beta_tester and can_topic_model %}
+          <a class="btn btn-dark betatester mt-1 py-1" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
           {% endif %}
         </div>
-
         <div class="lit-review-box" style="width: 40%; height: 235px;">
           <p>references by year:</p>
           <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
           </div>
         </div>
-
         {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}
-
         <div style="width:30%">
 
           <a class="lit-review-box with-icon clickable w-100" target="_blank" href="{% url 'lit:tag-conflicts' assessment.pk %}">
@@ -115,7 +98,7 @@
           <a class="lit-review-box with-icon clickable w-100" target="_blank" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
             <div>
               <p class="h3 m-0 mt-1">{{overview.needs_tagging}}</p>
-              <p class="small">need{{ overview.conflicts|pluralize:" ,s" }}further tagging</p>
+              <p class="small">need{{ overview.conflicts|pluralize:" ,s" }} further tagging</p>
             </div>
             <div class="lit-icon">
               <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
@@ -144,7 +127,6 @@
           </a>
         {% endif %}
         {% endif %}
-
       </div>
     </div>
     <div class="col-md-4">

@@ -598,7 +598,7 @@ class ReferenceManager(BaseManager):
 
         return refs
 
-    def get_overview_details(self, assessment):
+    def get_overview_details(self, assessment) -> dict[str, int]:
         # Get an overview of tagging progress for an assessment
         refs = self.get_qs(assessment)
         total = refs.count()
@@ -614,26 +614,28 @@ class ReferenceManager(BaseManager):
             "total_imported": total_imported,
         }
         if assessment.literature_settings.conflict_resolution:
-            refs = refs.prefetch_related("tags", "user_tags")
-            if True:
-                user_tag_counts = refs.all().annotate(
-                    user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
-                )
-                overview["needs_tagging"] = user_tag_counts.filter(
-                    user_tag_count__lt=2, tags__isnull=True
-                ).count()
-                n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
-                overview["conflicts"] = (
-                    refs.annotate(n_unapplied_reviews=n_unapplied_reviews)
+            UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+            user_refs = UserReferenceTag.objects.filter(reference__in=refs)
+            overview.update(
+                needs_tagging=(
+                    refs.annotate(
+                        user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+                    )
+                    .filter(user_tag_count__lt=2, tags__isnull=True)
+                    .count()
+                ),
+                conflicts=(
+                    refs.annotate(
+                        n_unapplied_reviews=Count(
+                            "user_tags", filter=Q(user_tags__is_resolved=False)
+                        )
+                    )
                     .filter(n_unapplied_reviews__gt=1)
                     .count()
-                )
-                user_ids = refs.filter(user_tags__user__isnull=False).values_list(
-                    "user_tags__user", flat=True
-                )
-                overview["total_reviews"] = user_ids.count()
-                overview["total_users"] = len(set(user_ids))
-
+                ),
+                total_reviews=user_refs.count(),
+                total_users=user_refs.distinct("user_id").count(),
+            )
         return overview
 
     def get_pubmed_references(self, search, identifiers):
