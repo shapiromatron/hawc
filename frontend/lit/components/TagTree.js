@@ -32,7 +32,10 @@ class TagNode extends Component {
                         className="d-flex justify-content-end"
                         style={{width: (tag.depth - 1) * 10 + 25}}>
                         {hasChildren ? (
-                            <button className="d-flex btn btn-sm px-1" onClick={toggleExpander}>
+                            <button
+                                className="d-flex btn btn-sm px-1"
+                                onClick={toggleExpander}
+                                type="button">
                                 <i
                                     className={`fa ${expanderIcon}`}
                                     style={{fontSize: "0.8rem"}}></i>
