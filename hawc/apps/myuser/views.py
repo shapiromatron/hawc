@@ -47,7 +47,7 @@ class HawcUserCreate(CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        login(self.request, self.object, "django.contrib.auth.backends.ModelBackend")
+        login(self.request, self.object)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -275,5 +275,5 @@ class ExternalAuth(SuccessURLAllowedHostsMixin, View):
             user = models.HAWCUser.objects.create_user(
                 email=email, external_id=external_id, **metadata
             )
-        login(request, user, "django.contrib.auth.backends.ModelBackend")
+        login(request, user)
         return HttpResponseRedirect(self.get_redirect_url())
