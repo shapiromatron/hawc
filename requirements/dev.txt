@@ -24,7 +24,7 @@ pytest-playwright==0.3.0
 # distribution tools
 build==0.8.0
 twine==4.0.1
-wheel==0.37.1
+wheel==0.38.4
 
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place
