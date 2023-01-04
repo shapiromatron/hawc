@@ -9,7 +9,7 @@ class TestViewPermissions:
     def test_success(self, db_keys):
         clients = ["admin@hawcproject.org", "pm@hawcproject.org", "team@hawcproject.org"]
         views = [
-            reverse("lit:tag-state", args=(3,)),
+            reverse("lit:tag-status", args=(3,)),
             reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)),
         ]
         for client in clients:
@@ -23,7 +23,7 @@ class TestViewPermissions:
         # anonymous user
         c = Client()
         views = [
-            (reverse("lit:tag-state", args=(3,)), 403),
+            (reverse("lit:tag-status", args=(3,)), 403),
             (reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)), 403),
         ]
         for (url, status) in views:

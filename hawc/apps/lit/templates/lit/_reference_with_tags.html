@@ -3,12 +3,9 @@
     <div class="dropdown btn-group float-right">
         <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="dropdown-item" target="_blank"
-                rel="noreferrer">Edit reference tags</a>
-            <a href="{% url 'lit:ref_edit' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Edit
-                reference</a>
-            <a href="{% url 'lit:tag-state' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag
-                state</a>
+            <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference tags</a>
+            <a href="{% url 'lit:ref_edit' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference</a>
+            <a href="{% url 'lit:tag-status' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag status</a>
         </div>
     </div>
     {% endif %}

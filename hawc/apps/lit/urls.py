@@ -35,9 +35,9 @@ urlpatterns = [
     path("reference/<int:pk>/update/", views.RefEdit.as_view(), name="ref_edit"),
     path("reference/<int:pk>/delete/", views.RefDelete.as_view(), name="ref_delete"),
     path(
-        "reference/<int:pk>/tag-state/",
-        views.ReferenceTagState.as_view(),
-        name="tag-state",
+        "reference/<int:pk>/tag-status/",
+        views.ReferenceTagStatus.as_view(),
+        name="tag-status",
     ),
     path(
         "assessment/<int:pk>/tag/",
