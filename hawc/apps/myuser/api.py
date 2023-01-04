@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
+from django.contrib.auth import authenticate, login
 
 
 class SustainedAnon(AnonRateThrottle):
@@ -25,4 +26,8 @@ class HawcValidateAuthToken(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
+        # also login for use of other views
+        user = authenticate(request)
+        if user is not None:
+            login(request, user, "hawc.apps.common.backends.TokenBackend")
         return Response({"valid": True})
