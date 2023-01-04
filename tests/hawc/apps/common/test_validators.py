@@ -1,11 +1,13 @@
 import pytest
 from django.core.exceptions import ValidationError
+from pydantic import BaseModel
 
 from hawc.apps.common.validators import (
     NumericTextValidator,
     validate_exact_ids,
     validate_html_tags,
     validate_hyperlinks,
+    validate_json_pydantic,
 )
 
 
@@ -78,3 +80,18 @@ def test_numeric_text_validator():
     for value in ["non-numeric", "< 3.2 LOD", "<", "<<2", "1 2", "e-4"]:
         with pytest.raises(ValidationError, match="Must be number-like"):
             validator(value)
+
+
+class PersonSchema(BaseModel):
+    name: str
+    age: int
+
+
+def test_validate_json_pydantic():
+    validator = validate_json_pydantic(PersonSchema)
+    # invalid
+    for data in ["", "not JSON", "[]", "{}", '{"name": "johnny"}']:
+        with pytest.raises(ValidationError):
+            validator(data)
+    # valid
+    assert validator('{"name": "johnny", "age": 30}') is None

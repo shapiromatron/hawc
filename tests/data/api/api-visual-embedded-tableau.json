@@ -17,7 +17,8 @@
     "external_url_query_args": [
       ":showVizHome=no",
       ":embed=y"
-    ]
+    ],
+    "filters": []
   },
   "slug": "embedded-tableau",
   "sort_order": "short_citation",
