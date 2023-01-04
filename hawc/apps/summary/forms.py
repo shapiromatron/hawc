@@ -13,7 +13,7 @@ from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
 from ..common.forms import BaseFormHelper, check_unique_for_assessment
-from ..common.validators import pydantic_json_validator
+from ..common.validators import validate_json_pydantic
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
@@ -834,7 +834,7 @@ class ExternalSiteForm(VisualForm):
     filters = forms.CharField(
         label="Data filters",
         initial="[]",
-        validators=[pydantic_json_validator(constants.TableauFilterList)],
+        validators=[validate_json_pydantic(constants.TableauFilterList)],
         help_text="""<p class="form-text text-muted">
         Data are expected to be in JSON format, where the each key is a filter name and value is a filter value.
         For more details, view the <a href="https://help.tableau.com/current/api/embedding_api/en-us/docs/embedding_api_filter.html">Tableau documentation</a>. For example: <code>[{"field": "Category", "value": "Technology"}, {"field": "State", "value": "North Carolina,Virginia"}]</code>. To remove filters, set string to <code>[]</code>.

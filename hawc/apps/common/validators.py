@@ -183,12 +183,29 @@ class NumericTextValidator(RegexValidator):
     message = "Must be number-like, including {<,≤,≥,>,LOD,LOQ} (ex: 3.4, 1.2E-5, < LOD)"
 
 
-def _pydantic_json_validator(value: str, Model: type[BaseModel]):
+def _validate_json_pydantic(value: str, Model: type[BaseModel]):
+    """Validate a JSON string to ensure it conforms to a pydantic model
+
+    Args:
+        value (str): an input string
+        Model (type[BaseModel]): A matching pydantic schema
+
+    Raises:
+        django.core.exceptions.ValidationError: If data do not conform
+    """
     try:
         Model.parse_raw(value)
     except PydanticValidationError as err:
         raise ValidationError(err.json())
 
 
-def pydantic_json_validator(Model: type[BaseModel]) -> Callable:
-    return partial(_pydantic_json_validator, Model=Model)
+def validate_json_pydantic(Model: type[BaseModel]) -> Callable:
+    """Create a django validator function to validate JSON in a string field
+
+    Args:
+        Model (type[BaseModel]): A Pydantic model class
+
+    Returns:
+        Callable: A django validator function to be used in a form or model
+    """
+    return partial(_validate_json_pydantic, Model=Model)
