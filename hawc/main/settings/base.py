@@ -186,8 +186,8 @@ EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 AUTH_USER_MODEL = "myuser.HAWCUser"
 AUTH_PROVIDERS = {AuthProvider(p) for p in os.getenv("HAWC_AUTH_PROVIDERS", "django").split("|")}
 AUTHENTICATION_BACKENDS = [
-    "hawc.apps.common.backends.TokenBackend",
     "django.contrib.auth.backends.ModelBackend",
+    "hawc.apps.common.auth.TokenBackend",
 ]
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
 SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week

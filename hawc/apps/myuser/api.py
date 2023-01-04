@@ -29,5 +29,5 @@ class HawcValidateAuthToken(APIView):
         # also login for use of other views
         user = authenticate(request)
         if user is not None:
-            login(request, user, "hawc.apps.common.backends.TokenBackend")
+            login(request, user, "hawc.apps.common.auth.TokenBackend")
         return Response({"valid": True})
