@@ -47,7 +47,9 @@ TableauDashboard.propTypes = {
     hostUrl: PropTypes.string.isRequired,
     path: PropTypes.string.isRequired,
     queryArgs: PropTypes.arrayOf(PropTypes.string),
-    filters: PropTypes.arrayOf({field: PropTypes.string, value: PropTypes.string}),
+    filters: PropTypes.arrayOf(
+        PropTypes.shape({field: PropTypes.string.isRequired, value: PropTypes.string.isRequired})
+    ),
 };
 
 export default TableauDashboard;
