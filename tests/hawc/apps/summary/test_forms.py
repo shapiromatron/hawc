@@ -15,6 +15,7 @@ def test_ExternalSiteForm(db_keys):
         slug="slug",
         description="hi",
         external_url="https://public.tableau.com/views/foo1/foo2?:display_count=y&:origin=viz_share_link",
+        filters="[]",
     )
 
     # demo what success looks like
@@ -33,6 +34,7 @@ def test_ExternalSiteForm(db_keys):
         "external_url_hostname": "https://public.tableau.com",
         "external_url_path": "/views/foo1/foo2",
         "external_url_query_args": [":showVizHome=no", ":embed=y"],
+        "filters": "[]",
     }
 
     # make sure our site allowlist works
