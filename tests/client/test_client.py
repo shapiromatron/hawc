@@ -52,6 +52,10 @@ class TestClient(LiveServerTestCase, TestCase):
         resp = client.set_authentication_token(token)
         assert resp == {"valid": True}
 
+        # can also access regular Django views that are private
+        resp = client.session.get(f"{self.live_server_url}/assessment/1/")
+        assert resp.status_code == 200
+
     ####################
     # BaseClient tests #
     ####################
