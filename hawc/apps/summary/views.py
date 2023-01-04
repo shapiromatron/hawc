@@ -1,8 +1,8 @@
 import itertools
 import json
+import re
 
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
@@ -16,12 +16,13 @@ from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     TeamMemberOrHigherMixin,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, forms, models, serializers
+from . import constants, filterset, forms, models, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -96,16 +97,11 @@ class GetSummaryTableMixin:
         return super().get_object(object=obj)
 
 
-class SummaryTableList(BaseList):
+class SummaryTableList(BaseFilterList):
     parent_model = Assessment
     model = models.SummaryTable
+    filterset_class = filterset.SummaryTableFilterSet
     breadcrumb_active_name = "Summary tables"
-
-    def get_queryset(self):
-        qs = self.model.objects.get_qs(self.assessment)
-        if self.assessment.user_is_part_of_team(self.request.user):
-            return qs
-        return qs.filter(published=True)
 
 
 class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
@@ -269,33 +265,67 @@ class VisualizationList(BaseList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
-    form_class = forms.VisualFilterForm
 
-    def get_filters(self, perms):
-        query = Q(assessment=self.assessment.id)
-        if not perms["edit"]:
-            query &= Q(published=True)
-        return query
+    @property
+    def visual_fs(self):
+        if not hasattr(self, "_visual_fs"):
+            data = self.request.GET.copy()
+            # only include type if it is a visual type
+            if "type" in data:
+                match = re.search(r"v-(\d+)$", data["type"])
+                if match:
+                    data["type"] = match.group(1)
+            self._visual_fs = filterset.VisualFilterSet(
+                data=data, request=self.request, assessment=self.assessment
+            )
+        return self._visual_fs
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        self.perms = super().get_obj_perms()
-        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
-        self.form = self.form_class(data=initial, can_edit=self.perms["edit"])
-        filters = self.get_filters(self.perms)
-        if self.form.is_valid():
-            filters &= self.form.get_visual_filters()
-        return qs.filter(filters).distinct()
+    @property
+    def data_pivot_fs(self):
+        if not hasattr(self, "_data_pivot_fs"):
+            data = self.request.GET.copy()
+            # only include type if it is a data pivot type
+            if "type" in data:
+                match = re.search(r"dp-(\d+)$", data["type"])
+                if match:
+                    data["type"] = match.group(1)
+            self._data_pivot_fs = filterset.DataPivotFilterSet(
+                data=data, request=self.request, assessment=self.assessment
+            )
+        return self._data_pivot_fs
 
-    def get_datapivotset(self):
-        qs = models.DataPivot.objects.all()
-        filters = self.get_filters(self.perms)
-        if self.form.is_valid():
-            filters &= self.form.get_datapivot_filters()
-        return qs.filter(filters).distinct().select_related("datapivotquery", "datapivotupload")
+    @property
+    def form(self):
+        if not hasattr(self, "_form"):
+            fs = filterset.VisualFilterSet(
+                data=self.request.GET, request=self.request, assessment=self.assessment
+            )
+            form = fs.form
+            # combine type choices for both visual and data pivot
+            form.fields["type"].choices = [
+                (f"v-{choice}", _)
+                for choice, _ in self.visual_fs.form.fields["type"].choices
+                if choice != ""
+            ] + [
+                (f"dp-{choice}", _)
+                for choice, _ in self.data_pivot_fs.form.fields["type"].choices
+                if choice != ""
+            ]
+            fs.pop_published(form)
+            self._form = form
+        return self._form
 
     def get_item_list(self):
-        items = list(itertools.chain(self.object_list, self.get_datapivotset()))
+        self.form.is_valid()
+        # prefilter by type, ie if it is a visual type or data pivot type
+        choice = self.form.cleaned_data.get("type", "")
+        if choice != "":
+            if choice.startswith("v-"):
+                items = self.visual_fs.qs
+            else:
+                items = self.data_pivot_fs.qs
+        else:
+            items = list(itertools.chain(self.visual_fs.qs, self.data_pivot_fs.qs))
         return sorted(items, key=lambda d: d.title.lower())
 
     def get_context_data(self, **kwargs):

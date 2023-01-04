@@ -6086,7 +6086,7 @@
     settings: '{"external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
       "external_url_hostname": "https://public.tableau.com", "external_url_path":
       "/views/Iris_15675445278420/Iris-Actual", "external_url_query_args": [":showVizHome=no",
-      ":embed=y"]}'
+      ":embed=y"], "filters": []}'
     caption: <p>iris (flowers)</p>
     published: true
     sort_order: short_citation
