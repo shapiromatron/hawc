@@ -1,6 +1,6 @@
 from django.contrib.auth.backends import BaseBackend
-from rest_framework.authtoken.models import Token
 from rest_framework.authentication import get_authorization_header
+from rest_framework.authtoken.models import Token
 
 from hawc.apps.myuser.models import HAWCUser
 
