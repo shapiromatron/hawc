@@ -35,6 +35,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     license_v1_accepted = models.BooleanField(default=False, verbose_name="Accept license")
     license_v2_accepted = models.BooleanField(default=False, verbose_name="Accept license")
     date_joined = models.DateTimeField("date joined", default=timezone.now)
+    backend = models.CharField(max_length=64, default="django.contrib.auth.backends.ModelBackend")
 
     USERNAME_FIELD = "email"
     CAN_CREATE_ASSESSMENTS = "can-create-assessments"
