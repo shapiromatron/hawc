@@ -47,6 +47,10 @@ class TestClient(LiveServerTestCase, TestCase):
             client.set_authentication_token("123")
         assert err.value.status_code == 403
 
+        with pytest.raises(HawcClientException) as err:
+            client.session.get(f"{self.live_server_url}/assessment/1/")
+        assert err.value.status_code == 403
+
         user = HAWCUser.objects.get(email="pm@hawcproject.org")
         token = user.get_api_token().key
         resp = client.set_authentication_token(token)
