@@ -97,7 +97,7 @@ class TestClient(LiveServerTestCase, TestCase):
         # list of endpoints
         response = client.animal.endpoints(2)
         assert isinstance(response, list)
-        assert len(response) == 3
+        assert len(response) == 5
         assert response[0]["name"] == "Water T maze (learning error)"
         assert (
             response[0]["animal_group"]["experiment"]["study"]["short_citation"]

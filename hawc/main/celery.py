@@ -69,12 +69,3 @@ app.conf.beat_schedule = {
         "options": {"expires": timedelta(days=1).total_seconds()},
     },
 }
-
-# optional; only if service is available and service is real
-has_bmds_service_url = "example" not in os.environ.get("BMDS_SUBMISSION_URL", "example")
-if has_bmds_service_url:
-    app.conf.beat_schedule["bmds2-healthcheck"] = {
-        "task": "hawc.apps.bmd.tasks.bmds2_healthcheck",
-        "schedule": timedelta(hours=12),
-        "options": {"expires": timedelta(hours=12).total_seconds()},
-    }

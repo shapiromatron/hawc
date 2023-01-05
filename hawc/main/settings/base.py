@@ -296,10 +296,6 @@ GTM_ID = os.getenv("GTM_ID")
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
 
-# BMD modeling settings
-BMDS_SUBMISSION_URL = os.getenv("BMDS_SUBMISSION_URL", "http://example.com/api/dfile/")
-BMDS_TOKEN = os.getenv("BMDS_TOKEN", "token")
-
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 

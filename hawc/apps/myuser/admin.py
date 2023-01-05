@@ -4,7 +4,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from ...constants import AuthProvider
-from ..bmd.diagnostics import diagnostic_bmds2_execution
 from ..common.diagnostics import (
     diagnostic_500,
     diagnostic_cache,
@@ -78,5 +77,4 @@ class HAWCUserAdmin(admin.ModelAdmin):
         diagnostic_celery_task,
         diagnostic_cache,
         diagnostic_email,
-        diagnostic_bmds2_execution,
     )
