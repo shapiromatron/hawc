@@ -110,7 +110,7 @@ class TestPubmed:
         assert i_pks.count() == initial_identifiers + 22
         assert (
             models.Reference.objects.filter(identifiers__in=i_pks).count()
-            == initial_identifiers + 22
+            == initial_identifiers + 23
         )
 
 
