@@ -29,7 +29,7 @@
             <td>{{object.value}} {{object.value_unit|default:""}}</td>
         </tr>
         {% optional_table_row "Overall confidence" object.confidence %}
-        {% optional_table_row "Duration" object.duration %}
+        {% optional_table_row "Value Duration" object.duration %}
         {% optional_table_row "Basis" object.basis %}
         {% optional_table_row "POD type" object.pod_type %}
         {% if object.pod_value %}
@@ -46,10 +46,11 @@
             <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
         </tr>
         {% endif %}
-        {% optional_table_row "Dosimetric approach" object.dosimetric_approach %}
         {% optional_table_row "Extrapolation method" object.extrapolation_method %}
         {% optional_table_row "Tumor type" object.tumor_type %}
         {% optional_table_row "Evidence characterization" object.evidence %}
+        {% optional_table_row "ADAF applied?" object.adaf %}
+        {% optional_table_row "Non-ADAF adjusted value" object.non_adaf_value %}
         {% optional_table_row "Comments" object.comments %}
         {% for key, value in object.extra.items %}
         <tr>
