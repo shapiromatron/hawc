@@ -97,7 +97,7 @@ class TestSummary(PlaywrightTestCase):
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/embedded-tableau/")
         expect(page.locator("h2:has-text('embedded-tableau')")).to_be_visible()
-        expect(page.locator(".tableauPlaceholder >> iframe")).to_be_visible()
+        expect(page.locator("tableau-viz >> iframe")).to_be_visible()
         expect(page.locator("iframe")).not_to_have_count(0)
 
         page.goto(self.live_server_url + "/summary/visual/assessment/2/rob-heatmap/")

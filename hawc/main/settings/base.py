@@ -185,8 +185,14 @@ EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
 AUTH_PROVIDERS = {AuthProvider(p) for p in os.getenv("HAWC_AUTH_PROVIDERS", "django").split("|")}
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "hawc.apps.common.auth.TokenBackend",
+]
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
 SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
+SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
+SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
