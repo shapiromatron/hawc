@@ -312,9 +312,9 @@ class Study(Reference):
     def flat_complete_data_row(ser):
         return (
             ser["id"],
-            ser.get("hero_id", None),
-            ser.get("pubmed_id", None),
-            ser.get("doi", None),
+            ser["hero_id"],
+            ser["pubmed_id"],
+            ser["doi"],
             ser["url"],
             ser["short_citation"],
             ser["full_citation"],

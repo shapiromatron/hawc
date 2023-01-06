@@ -2,12 +2,12 @@ from rest_framework import serializers
 
 from ..common.helper import SerializerHelper
 from ..epi.serializers import ResultMetricSerializer
-from ..study.serializers import StudySerializer
+from ..study.serializers import VerboseStudySerializer
 from . import models
 
 
 class SingleResultSerializer(serializers.ModelSerializer):
-    study = StudySerializer()
+    study = VerboseStudySerializer()
     meta_result = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def to_representation(self, instance):
@@ -29,7 +29,7 @@ class MetaResultLinkSerializer(serializers.ModelSerializer):
 
 
 class MetaProtocolSerializer(serializers.ModelSerializer):
-    study = StudySerializer()
+    study = VerboseStudySerializer()
     inclusion_criteria = serializers.StringRelatedField(many=True)
     exclusion_criteria = serializers.StringRelatedField(many=True)
     url = serializers.ReadOnlyField(source="get_absolute_url")

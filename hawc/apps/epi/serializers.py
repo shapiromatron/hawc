@@ -11,7 +11,7 @@ from ..common.serializers import (
     GetOrCreateMixin,
     IdLookupMixin,
 )
-from ..study.serializers import StudySerializer
+from ..study.serializers import VerboseStudySerializer
 from . import constants, models
 
 
@@ -129,7 +129,7 @@ class SimpleStudyPopulationCriteriaSerializer(serializers.ModelSerializer):
 
 
 class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
-    study = StudySerializer()
+    study = VerboseStudySerializer()
     criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True, read_only=True)
     countries = StudyPopulationCountrySerializer(many=True)
     design = FlexibleChoiceField(choices=constants.Design.choices)

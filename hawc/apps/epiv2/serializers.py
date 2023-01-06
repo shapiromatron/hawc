@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from ..common.serializers import FlexibleChoiceField, IdLookupMixin
 from ..epi.serializers import StudyPopulationCountrySerializer
-from ..study.serializers import StudySerializer
+from ..study.serializers import VerboseStudySerializer
 from . import constants, models
 
 
@@ -46,7 +46,7 @@ class DataExtractionSerializer(serializers.ModelSerializer):
 
 
 class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
-    study = StudySerializer()
+    study = VerboseStudySerializer()
     study_design = FlexibleChoiceField(choices=constants.StudyDesign.choices)
     source = FlexibleChoiceField(choices=constants.Source.choices)
     sex = FlexibleChoiceField(choices=constants.Sex.choices)

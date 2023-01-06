@@ -11,13 +11,13 @@ from ..common.api import DynamicFieldsMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
-from ..study.serializers import StudySerializer
+from ..study.serializers import VerboseStudySerializer
 from ..vocab.constants import VocabularyTermType
 from . import forms, models
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
-    study = StudySerializer(required=False, read_only=True)
+    study = VerboseStudySerializer(required=False, read_only=True)
     dtxsid = DSSToxSerializer(required=False, read_only=True)
 
     def to_representation(self, instance):
