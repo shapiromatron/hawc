@@ -36,6 +36,9 @@ class DataPivotEndpoint(FlatFileExporter):
 
         header = [
             "study id",
+            "study hero_id",
+            "study pubmed_id",
+            "study doi",
             "study name",
             "study identifier",
             "study published",
@@ -131,6 +134,9 @@ class DataPivotEndpoint(FlatFileExporter):
 
             row = [
                 ser["experiment"]["study"]["id"],
+                ser["experiment"]["study"]["hero_id"],
+                ser["experiment"]["study"]["pubmed_id"],
+                ser["experiment"]["study"]["doi"],
                 ser["experiment"]["study"]["short_citation"],
                 ser["experiment"]["study"]["study_identifier"],
                 ser["experiment"]["study"]["published"],
