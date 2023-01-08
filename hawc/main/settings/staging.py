@@ -73,3 +73,14 @@ if email_backend == "SMTP" and EMAIL_MESSAGEID_FQDN is not None:
     from django.core.mail.utils import DNS_NAME
 
     DNS_NAME._fqdn = EMAIL_MESSAGEID_FQDN
+
+if SENTRY_DSN := os.environ.get("HAWC_SENTRY_DSN", None):
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=False,
+    )
