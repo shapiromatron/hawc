@@ -129,7 +129,12 @@ class TermSelector extends Component {
                 ) : null}
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />
-                {popup ? null : <div className="form-text text-muted" dangerouslySetInnerHTML={{__html: helpText}}/>}
+                {popup ? null : (
+                    <div
+                        className="form-text text-muted"
+                        dangerouslySetInnerHTML={{__html: helpText}}
+                    />
+                )}
                 {debug ? (
                     <ul>
                         <li>termId: {currentId}</li>

@@ -1,9 +1,9 @@
+import {helpText} from "animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import h from "shared/utils/helpers";
 import Modal from "shared/components/Modal";
-import {helpText} from "animal/EndpointForm/constants";
+import h from "shared/utils/helpers";
 
 const MAX_ROWS = 150;
 
@@ -12,7 +12,7 @@ const MAX_ROWS = 150;
 class Table extends Component {
     render() {
         const store = this.props.store,
-        {filteredDataset, query, showModal, modalText} = this.props.store,
+            {filteredDataset, query, showModal, modalText} = this.props.store,
             regex = query.length > 0 ? new RegExp(h.escapeRegexString(query), "gi") : null,
             highlightedSpan = text => {
                 return regex ? (
@@ -44,43 +44,66 @@ class Table extends Component {
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>System
+                                <th>
+                                    System
                                     <button
                                         type="button"
                                         className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {store.updateModal(true, helpText.system, "System")}}>
+                                        onClick={() => {
+                                            store.updateModal(true, helpText.system, "System");
+                                        }}>
                                         <i className="fa fa-question"></i>
                                     </button>
                                 </th>
-                                <th>Organ
+                                <th>
+                                    Organ
                                     <button
                                         type="button"
                                         className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {store.updateModal(true, helpText.organ, "Organ")}}>
+                                        onClick={() => {
+                                            store.updateModal(true, helpText.organ, "Organ");
+                                        }}>
                                         <i className="fa fa-question"></i>
                                     </button>
                                 </th>
-                                <th>Effect
+                                <th>
+                                    Effect
                                     <button
                                         type="button"
                                         className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {store.updateModal(true, helpText.effect, "Effect")}}>
+                                        onClick={() => {
+                                            store.updateModal(true, helpText.effect, "Effect");
+                                        }}>
                                         <i className="fa fa-question"></i>
                                     </button>
                                 </th>
-                                <th>Effect subtype
+                                <th>
+                                    Effect subtype
                                     <button
                                         type="button"
                                         className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {store.updateModal(true, helpText.effect_subtype, "Effect subtype")}}>
+                                        onClick={() => {
+                                            store.updateModal(
+                                                true,
+                                                helpText.effect_subtype,
+                                                "Effect subtype"
+                                            );
+                                        }}>
                                         <i className="fa fa-question"></i>
                                     </button>
                                 </th>
-                                <th>Endpoint/Outcome
+                                <th>
+                                    Endpoint/Outcome
                                     <button
                                         type="button"
                                         className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {store.updateModal(true, helpText.endpoint_name, "Endpoint/Outcome")}}>
+                                        onClick={() => {
+                                            store.updateModal(
+                                                true,
+                                                helpText.endpoint_name,
+                                                "Endpoint/Outcome"
+                                            );
+                                        }}>
                                         <i className="fa fa-question"></i>
                                     </button>
                                 </th>
@@ -125,7 +148,11 @@ class Table extends Component {
                         </tbody>
                     </table>
                 ) : null}
-                <Modal isShown={showModal} onClosed={() => {store.updateModal(false, "")}}>
+                <Modal
+                    isShown={showModal}
+                    onClosed={() => {
+                        store.updateModal(false, "");
+                    }}>
                     <div className="modal-header">
                         <h4 className="mb-0">{store.modalHeader}</h4>
                         <button
@@ -136,9 +163,9 @@ class Table extends Component {
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div className="modal-body container-fluid" dangerouslySetInnerHTML={{__html: modalText}}>
-
-                    </div>
+                    <div
+                        className="modal-body container-fluid"
+                        dangerouslySetInnerHTML={{__html: modalText}}></div>
                 </Modal>
             </>
         );
