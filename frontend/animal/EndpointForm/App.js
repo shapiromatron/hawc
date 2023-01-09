@@ -31,6 +31,7 @@ class App extends Component {
                             termIdField={"system_term_id"}
                             termTextField={"system"}
                             parentRequired={false}
+                            popup={true}
                         />
                     </div>
                     <div className="col-md-3">
@@ -42,6 +43,7 @@ class App extends Component {
                             termTextField={"organ"}
                             parentIdField={"system_term_id"}
                             parentRequired={true}
+                            popup={true}
                         />
                     </div>
                     <div className="col-md-3">
@@ -53,6 +55,7 @@ class App extends Component {
                             termTextField={"effect"}
                             parentIdField={"organ_term_id"}
                             parentRequired={true}
+                            popup={true}
                         />
                     </div>
                     <div className="col-md-3">
@@ -64,6 +67,7 @@ class App extends Component {
                             termTextField={"effect_subtype"}
                             parentIdField={"effect_term_id"}
                             parentRequired={true}
+                            popup={true}
                         />
                     </div>
                 </div>
