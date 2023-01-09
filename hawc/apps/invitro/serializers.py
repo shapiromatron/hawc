@@ -9,7 +9,7 @@ from ..assessment.serializers import (
 )
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
-from ..study.serializers import VerboseStudySerializer
+from ..study.serializers import StudySerializer
 from . import models
 
 
@@ -28,7 +28,7 @@ class IVCellTypeSerializer(serializers.ModelSerializer):
 
 
 class IVExperimentSerializer(serializers.ModelSerializer):
-    study = VerboseStudySerializer()
+    study = StudySerializer()
     cell_type = IVCellTypeSerializer()
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     metabolic_activation = serializers.CharField(
@@ -53,7 +53,7 @@ class _IVChemicalSerializer(serializers.ModelSerializer):
 
 
 class IVChemicalSerializer(_IVChemicalSerializer):
-    study = VerboseStudySerializer()
+    study = StudySerializer()
 
 
 class IVEndpointGroupSerializer(serializers.ModelSerializer):

@@ -305,7 +305,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
         assert isinstance(study_pop, dict) and study_pop["name"] == study_pop_name
         study_pop_id = study_pop["id"]
-        assessment_id = study_pop["study"]["assessment"]["id"]
+        assessment_id = study_pop["study"]["assessment"]
 
         # criteria
         criteria_desc = "test criteria"
