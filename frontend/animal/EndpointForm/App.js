@@ -15,7 +15,7 @@ class App extends Component {
                 <TermSelector
                     name={"name"}
                     label={label.endpoint_name}
-                    helpText={helpText.endpoint_name}
+                    helpText={helpText.endpoint_name_shortened}
                     termIdField={"name_term_id"}
                     termTextField={"name"}
                     parentIdField={"effect_subtype_term_id"}

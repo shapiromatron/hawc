@@ -3,6 +3,9 @@ import {action, computed, observable, toJS} from "mobx";
 
 class EhvBrowseStore {
     @observable query = "";
+    @observable showModal = false;
+    @observable modalText = "";
+    @observable modalHeader = "";
 
     constructor(config) {
         this.config = config;
@@ -28,6 +31,12 @@ class EhvBrowseStore {
 
     @action.bound updateQuery(value) {
         this.query = value;
+    }
+
+    @action.bound updateModal(show, text, header) {
+        this.showModal = show;
+        this.modalText = text;
+        this.modalHeader = header;
     }
 }
 

@@ -37,7 +37,7 @@ const termUrlLookup = {
             controlled vocabulary term if enabled for your assessment.`,
         endpoint_name: `An observable or measurable biological change used as an index of a potential health effect of 
             a chemical exposure. Often, “endpoint” is used when describing animal toxicological findings while 
-            outcome” is used when describing human findings. Endpoint may also be referred to as effect. 
+            "outcome” is used when describing human findings. Endpoint may also be referred to as effect. 
             Please use a controlled vocabulary term if possible and if enabled for your assessment. Search 
             the vocabulary for the best match based on the author reported term. Note there is a separate 
             field entitled, "Endpoint Name in Study", for optional capture of the endpoint name as reported 
@@ -47,6 +47,9 @@ const termUrlLookup = {
             repeated measure, indicate the time in parentheses, e.g., running wheel activity (6 wk), using 
             the abbreviated format: seconds = sec, minutes = min, hours = h, days = d, weeks = wk, 
             months = mon, years = y.`,
+        endpoint_name_shortened: `An observable or measurable biological change of a potential health effect of a 
+            chemical exposure. Often, “endpoint” is used when describing animal toxicological findings while "outcome” 
+            is used when describing human findings. For more information see the <a href="/vocab/ehv/">EHV page.</a>`,
     };
 
 export {helpText, label, termUrlLookup, textUrlLookup};
