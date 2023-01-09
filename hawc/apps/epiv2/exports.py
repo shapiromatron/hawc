@@ -1,4 +1,4 @@
-from hawc.apps.common.helper import FlatFileExporter
+from hawc.apps.common.helper import FlatFileExporter, get_study_export_identifiers
 from hawc.apps.study.models import Study
 
 from . import models
@@ -24,9 +24,15 @@ class EpiFlatComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
+        identifiers_df = get_study_export_identifiers(self.queryset, "design__study_id")
+
         for obj in self.queryset:
             row = []
-            row.extend(Study.flat_complete_data_row(obj.design.study.get_json(json_encode=False)))
+            row.extend(
+                Study.flat_complete_data_row(
+                    obj.design.study.get_json(json_encode=False), identifiers_df
+                )
+            )
             row.extend(obj.design.flat_complete_data_row())
             row.extend(obj.exposure_level.chemical.flat_complete_data_row())
             row.extend(obj.exposure_level.exposure_measurement.flat_complete_data_row())

@@ -2,6 +2,7 @@ import collections
 import itertools
 import logging
 import os
+import pandas as pd
 
 from django.apps import apps
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -309,12 +310,12 @@ class Study(Reference):
         )
 
     @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(ser, identifiers_df=None):
         return (
             ser["id"],
-            ser["hero_id"],
-            ser["pubmed_id"],
-            ser["doi"],
+            identifiers_df["hero_id"].get(ser["id"]) if identifiers_df is not None else None,
+            identifiers_df["pubmed_id"].get(ser["id"]) if identifiers_df is not None else None,
+            identifiers_df["doi"].get(ser["id"]) if identifiers_df is not None else None,
             ser["url"],
             ser["short_citation"],
             ser["full_citation"],

@@ -2,7 +2,7 @@ from copy import copy
 
 from django.apps import apps
 
-from ..common.helper import FlatFileExporter
+from ..common.helper import FlatFileExporter, get_study_export_identifiers
 from ..materialized.models import FinalRiskOfBiasScore
 
 
@@ -110,10 +110,14 @@ class DataPivotEndpoint(FlatFileExporter):
     def _get_data_rows(self):
         rows = []
 
+        identifiers_df = get_study_export_identifiers(self.queryset, "experiment__study_id")
+
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
 
             doseRange = getDoseRange(ser)
+
+            study_id = obj.experiment.study.pk
 
             cats = ser["category"]["names"] if ser["category"] else []
 
@@ -134,9 +138,9 @@ class DataPivotEndpoint(FlatFileExporter):
 
             row = [
                 ser["experiment"]["study"]["id"],
-                ser["experiment"]["study"]["hero_id"],
-                ser["experiment"]["study"]["pubmed_id"],
-                ser["experiment"]["study"]["doi"],
+                identifiers_df["hero_id"].get(study_id),
+                identifiers_df["pubmed_id"].get(study_id),
+                identifiers_df["doi"].get(study_id),
                 ser["experiment"]["study"]["short_citation"],
                 ser["experiment"]["study"]["study_identifier"],
                 ser["experiment"]["study"]["published"],

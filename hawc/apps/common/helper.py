@@ -26,6 +26,7 @@ from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import ValidationError as DRFValidationError
+from django.apps import apps
 
 logger = logging.getLogger(__name__)
 
@@ -303,6 +304,13 @@ class WebappConfig(PydanticModel):
 
 
 re_digits = r"\d+"
+
+
+def get_study_export_identifiers(qs: QuerySet, relation: str):
+    study_ids = set(qs.values_list(relation, flat=True))
+    studies = apps.get_model("study", "Study").objects.filter(pk__in=study_ids)
+    identifiers_df = apps.get_model("lit", "Reference").objects.identifiers_dataframe(studies)
+    return identifiers_df.set_index("reference_id")
 
 
 def get_id_from_choices(items, lookup_value):
