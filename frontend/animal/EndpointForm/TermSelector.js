@@ -2,8 +2,8 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import AutocompleteSelectableText from "shared/components/AutocompleteSelectableText";
-import HelpTextPopup from "shared/components/HelpTextPopup";
 import AutocompleteTerm from "shared/components/AutocompleteTerm";
+import HelpTextPopup from "shared/components/HelpTextPopup";
 import h from "shared/utils/helpers";
 
 import {NO_VOCAB_HELP_TEXT} from "../../vocab/constants";
@@ -67,7 +67,7 @@ class TermSelector extends Component {
                     </div>
                 ) : null}
                 <label htmlFor={this.randomId}>{label}</label>
-                {popup ? (<HelpTextPopup content={helpText} title={label}/>): null}
+                {popup ? <HelpTextPopup content={helpText} title={label} /> : null}
                 {useControlledVocabulary ? (
                     <AutocompleteTerm
                         url={termUrlLookup[termIdField]}
@@ -129,7 +129,7 @@ class TermSelector extends Component {
                 ) : null}
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />
-                {popup ? null : (<p className="form-text text-muted">{helpText}</p>)}
+                {popup ? null : <p className="form-text text-muted">{helpText}</p>}
                 {debug ? (
                     <ul>
                         <li>termId: {currentId}</li>
