@@ -15,11 +15,15 @@ from rest_framework.response import Response
 from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
-    AssessmentReadPermissions,
     AssessmentRootedTagTreeViewset,
 )
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, OncePerMinuteThrottle, PaginationWithCount
+from ..common.api import (
+    AssessmentReadPermissions,
+    CleanupFieldsBaseViewSet,
+    OncePerMinuteThrottle,
+    PaginationWithCount,
+)
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer

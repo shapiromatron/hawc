@@ -1,6 +1,4 @@
-import logging
 from pathlib import Path
-from typing import Optional
 
 from django.apps import apps
 from django.core import exceptions
@@ -9,56 +7,25 @@ from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException, PermissionDenied
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ...services.epa.dsstox import RE_DTXSID
-from ..common.api.permissions import AssessmentLevelPermissions
-from ..common.helper import FlatExport, re_digits, tryParseInt
-from ..common.renderers import PandasRenderers
-from ..common.views import create_object_log
-from . import models, serializers
-from .actions.audit import AssessmentAuditSerializer
+from ....services.epa.dsstox import RE_DTXSID
+from ...common.api.permissions import AssessmentLevelPermissions
+from ...common.helper import FlatExport, re_digits
+from ...common.renderers import PandasRenderers
+from ...common.views import create_object_log
+from .. import models, serializers
+from ..actions.audit import AssessmentAuditSerializer
+from .helper import get_assessment_from_query, get_assessment_id_param
 
 
 class DisabledPagination(PageNumberPagination):
     page_size = None
-
-
-logger = logging.getLogger(__name__)
-
-
-class RequiresAssessmentID(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Please provide an `assessment_id` argument to your GET request."
-
-
-class InvalidAssessmentID(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Assessment does not exist for given `assessment_id`."
-
-
-def get_assessment_id_param(request) -> int:
-    """
-    If request doesn't contain an integer-based `assessment_id`, an exception is raised.
-    """
-    assessment_id = tryParseInt(request.GET.get("assessment_id"))
-    if assessment_id is None:
-        raise RequiresAssessmentID()
-    return assessment_id
-
-
-def get_assessment_from_query(request) -> Optional[models.Assessment]:
-    """Returns assessment or raises exception if does not exist."""
-    assessment_id = get_assessment_id_param(request)
-    try:
-        return models.Assessment.objects.get(pk=assessment_id)
-    except models.Assessment.DoesNotExist:
-        raise InvalidAssessmentID()
 
 
 class JobPermissions(permissions.BasePermission):

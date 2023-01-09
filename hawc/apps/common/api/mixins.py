@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import DataError
-from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_str
 from rest_framework import status
 from rest_framework.exceptions import ValidationError as DrfValidationError

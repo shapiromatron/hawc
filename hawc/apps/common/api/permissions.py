@@ -3,7 +3,8 @@ import logging
 from django.db import models
 from rest_framework import exceptions, permissions
 
-from ...assessment.api import get_assessment_from_query
+from ...assessment.api.helper import get_assessment_from_query
+from ..constants import AssessmentViewsetPermissions
 
 logger = logging.getLogger(__name__)
 
@@ -49,16 +50,28 @@ class CleanupFieldsPermissions(permissions.BasePermission):
 # https://stackoverflow.com/questions/67153946/
 class AssessmentLevelPermissions(permissions.BasePermission):
     default_list_actions = ["list"]
+    default_action_perms = {
+        "retrieve": AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        "list": AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        "create": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        "update": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        "partial_update": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        "destroy": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+    }
+
+    def assessment_permission(self, view):
+        action_perms = getattr(view, "action_perms", {})
+        if isinstance(action_perms, dict):
+            action_perms = dict(self.default_action_perms, **action_perms)
+            assessment_permission = action_perms.get(view.action)
+        else:
+            assessment_permission = action_perms
+        return assessment_permission
 
     def has_object_permission(self, request, view, obj):
         if not hasattr(view, "assessment"):
             view.assessment = obj.get_assessment()
-        if request.method in permissions.SAFE_METHODS:
-            return view.assessment.user_can_view_object(request.user)
-        elif obj == view.assessment:
-            return view.assessment.user_can_edit_assessment(request.user)
-        else:
-            return view.assessment.user_can_edit_object(request.user)
+        return self.assessment_permission(view).has_permission(view.assessment, request.user)
 
     def has_permission(self, request, view):
         list_actions = getattr(view, "list_actions", self.default_list_actions)
@@ -68,7 +81,7 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             if not hasattr(view, "assessment"):
                 view.assessment = get_assessment_from_query(request)
 
-            return view.assessment.user_can_view_object(request.user)
+            return self.assessment_permission(view).has_permission(view.assessment, request.user)
 
         return True
 
