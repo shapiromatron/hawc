@@ -275,6 +275,10 @@ class Assessment(models.Model):
         default=constants.EpiVersion.V2,
         help_text="Data extraction schema used for epidemiology studies",
     )
+    admin_notes = models.TextField(
+        blank=True,
+        help_text="This field is for capturing information about assessments (e.g., STICS numbers) that is only visible and accessible to HAWC Admins",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

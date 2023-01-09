@@ -50,6 +50,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "team_members__last_name",
         "reviewers__last_name",
         "creator__last_name",
+        "admin_notes",
     )
     actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
     form = forms.AssessmentAdminForm
