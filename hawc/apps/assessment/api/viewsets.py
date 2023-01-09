@@ -7,10 +7,9 @@ from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -21,65 +20,12 @@ from ...common.renderers import PandasRenderers
 from ...common.views import create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
-from .helper import get_assessment_from_query, get_assessment_id_param
+from .filters import InAssessmentFilter
+from .helper import get_assessment_id_param
+from .pagination import DisabledPagination
 
-
-class DisabledPagination(PageNumberPagination):
-    page_size = None
-
-
-class JobPermissions(permissions.BasePermission):
-    """
-    Requires admin permissions where jobs have no associated assessment
-    or when part of a list, and assessment level permissions when jobs
-    have an associated assessment.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        if obj.assessment is None:
-            return bool(request.user and request.user.is_staff)
-        elif request.method in permissions.SAFE_METHODS:
-            return obj.assessment.user_can_view_object(request.user)
-        else:
-            return obj.assessment.user_can_edit_object(request.user)
-
-    def has_permission(self, request, view):
-        if view.action == "list":
-            return bool(request.user and request.user.is_staff)
-        elif view.action == "create":
-            serializer = view.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            assessment = serializer.validated_data.get("assessment")
-            if assessment is None:
-                return bool(request.user and request.user.is_staff)
-            else:
-                return assessment.user_can_edit_object(request.user)
-        else:
-            # other actions are object specific,
-            # and will be caught by object permissions
-            return True
-
-
-class InAssessmentFilter(filters.BaseFilterBackend):
-    """
-    Filter objects which are in a particular assessment.
-    """
-
-    default_list_actions = ["list"]
-
-    def filter_queryset(self, request, queryset, view):
-        list_actions = getattr(view, "list_actions", self.default_list_actions)
-        if view.action not in list_actions:
-            return queryset
-
-        if not hasattr(view, "assessment"):
-            view.assessment = get_assessment_from_query(request)
-
-        if not view.assessment_filter_args:
-            raise ValueError("Viewset requires the `assessment_filter_args` argument")
-
-        filters = {view.assessment_filter_args: view.assessment.id}
-        return queryset.filter(**filters)
+# all http methods except PUT
+METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
 
 class BaseAssessmentViewset(viewsets.GenericViewSet):
@@ -90,14 +36,6 @@ class BaseAssessmentViewset(viewsets.GenericViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
-
-
-class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewset):
-    pass
-
-
-# all http methods except PUT
-METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
 
 class AssessmentEditViewset(viewsets.ModelViewSet):
@@ -135,6 +73,10 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         create_object_log("Deleted", instance, instance.get_assessment().id, self.request.user.id)
         super().perform_destroy(instance)
+
+
+class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewset):
+    pass
 
 
 class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
