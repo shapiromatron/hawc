@@ -671,6 +671,30 @@ class RefDetail(BaseDetail):
         return _get_ref_app_startup(self, context)
 
 
+class ReferenceTagStatus(TeamMemberOrHigherMixin, BaseDetail):
+    template_name = "lit/reference_tag_status.html"
+    model = models.Reference
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("assessment")
+            .prefetch_related("identifiers", "tags", "user_tags__tags", "user_tags__user")
+        )
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object().get_assessment()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Tag status"
+        )
+        context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
+        return context
+
+
 class RefEdit(BaseUpdate):
     success_message = "Reference updated."
     model = models.Reference
@@ -860,19 +884,3 @@ class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
-
-
-class ReferenceTagHistory(TeamMemberOrHigherMixin, BaseDetail):
-    template_name = "lit/reference_tag_history.html"
-    model = models.Reference
-
-    def get_assessment(self, request, *args, **kwargs):
-        return self.get_object().get_assessment()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Tag history"
-        )
-        context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
-        return context
