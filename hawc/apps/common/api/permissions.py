@@ -46,8 +46,6 @@ class CleanupFieldsPermissions(permissions.BasePermission):
         return view.assessment.user_can_edit_object(request.user)
 
 
-# TODO
-# https://stackoverflow.com/questions/67153946/
 class AssessmentLevelPermissions(permissions.BasePermission):
     default_list_actions = ["list"]
     default_action_perms = {
@@ -57,13 +55,35 @@ class AssessmentLevelPermissions(permissions.BasePermission):
         "update": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
         "partial_update": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
         "destroy": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        "metadata": AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
     }
+
+    def fix_view_action(self, request, view):
+        """
+        BrowsableAPIRenderer (ie the renderer used when DEBUG=TRUE) interacts directly with the
+        view when building its forms, and in the process overrides view.action with None on
+        its OPTIONS requests.
+
+        BrowsableAPIRenderer calls override_method:
+        https://github.com/encode/django-rest-framework/blob/bfce663a604bf9d2c891ab2414fee0e59cabeb46/rest_framework/renderers.py#L474
+        which uses view.action_map to set view.action:
+        https://github.com/encode/django-rest-framework/blob/bfce663a604bf9d2c891ab2414fee0e59cabeb46/rest_framework/request.py#L55
+        but OPTIONS isn't included in the mapping on default routes (ie view.action_map):
+        https://github.com/encode/django-rest-framework/blob/bfce663a604bf9d2c891ab2414fee0e59cabeb46/rest_framework/routers.py#L95-L136
+
+        The action for OPTIONS requests is instead added explicitly and by default when the request is initialized:
+        https://github.com/encode/django-rest-framework/blob/bfce663a604bf9d2c891ab2414fee0e59cabeb46/rest_framework/viewsets.py#L148-L152
+
+        The fix is to explicitly set the view.action once again if it is None and the method is OPTIONS.
+        """
+        if view.action is None and request.method == "OPTIONS":
+            view.action = "metadata"
 
     def assessment_permission(self, view):
         action_perms = getattr(view, "action_perms", {})
         if isinstance(action_perms, dict):
             action_perms = dict(self.default_action_perms, **action_perms)
-            assessment_permission = action_perms.get(view.action)
+            assessment_permission = action_perms[view.action]
         else:
             assessment_permission = action_perms
         return assessment_permission
@@ -74,6 +94,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
         return self.assessment_permission(view).has_permission(view.assessment, request.user)
 
     def has_permission(self, request, view):
+        self.fix_view_action(request, view)
+
         list_actions = getattr(view, "list_actions", self.default_list_actions)
         if view.action in list_actions:
             logger.debug("Permission checked")
