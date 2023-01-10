@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple, Union
+from typing import Any, Union
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
@@ -98,7 +98,7 @@ class BaseFormHelper(cf.FormHelper):
 
         return layout
 
-    def get_layout_item(self, field_name: str) -> Tuple[Any, int]:
+    def get_layout_item(self, field_name: str) -> tuple[Any, int]:
         mapping = {field: index for index, field in self.layout.get_field_names()}
         layout = self.layout
         for idx in mapping[field_name]:
@@ -115,7 +115,7 @@ class BaseFormHelper(cf.FormHelper):
         field = layout[index]
         layout[index] = AdderLayout(field, adder_url=url, adder_title=title)
 
-    def add_row(self, firstField: str, numFields: int, classes: Union[str, List[str]]):
+    def add_row(self, firstField: str, numFields: int, classes: Union[str, list[str]]):
         if isinstance(classes, str):
             classes = [classes] * numFields
         first = self.layout.index(firstField)
@@ -246,7 +246,7 @@ class CustomURLField(forms.URLField):
 class ArrayCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
     """For use in ArrayField with a CharField with choices"""
 
-    def format_value(self, value) -> List[str]:
+    def format_value(self, value) -> list[str]:
         """Return selected values as a list."""
         if value is None:
             return []
@@ -274,3 +274,24 @@ class QuillField(forms.CharField):
         super().validate(value)
         if value:
             validators.validate_hyperlinks(value)
+
+
+class ConfirmationField(forms.CharField):
+    """A required field where a user must type in a fixed value; defaults to "confirm".
+
+    Args:
+        check_value (str): the value to check; defaults to "confirm".
+    """
+
+    def __init__(self, *args, **kw):
+        self.check_value = kw.pop("check_value", "confirm")
+        kwargs = dict(
+            max_length=32, required=True, help_text=f'Please type "{self.check_value}" to proceed.'
+        )
+        kwargs.update(kw)
+        super().__init__(*args, **kwargs)
+
+    def validate(self, value):
+        super().validate(value)
+        if value != self.check_value:
+            raise forms.ValidationError(f'The value of "{self.check_value}" is required.')

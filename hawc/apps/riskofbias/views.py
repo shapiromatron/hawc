@@ -13,11 +13,13 @@ from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     TimeSpentOnPageMixin,
     get_referrer,
 )
+from ..study.filterset import StudyFilterSet
 from ..study.models import Study
 from . import forms, models
 
@@ -195,31 +197,32 @@ def get_rob_assignment_data(assessment, studies):
     }
 
 
-class RobAssignmentList(BaseList):
+class RobAssignmentList(BaseFilterList):
     parent_model = Assessment
     model = Study
     template_name = "riskofbias/rob_assignment_list.html"
-    form_class = forms.RoBStudyFilterForm
+    paginate_by = 50
+    filterset_class = StudyFilterSet
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_filterset_kwargs(self):
+        kwargs = super().get_filterset_kwargs()
+        kwargs["include_rob_authors"] = True
+        return kwargs
 
     def get_queryset(self):
-        robs = models.RiskOfBias.objects.filter(active=True).prefetch_related("author", "scores")
-        qs = (
-            super()
-            .get_queryset()
-            .filter(assessment=self.assessment)
-            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
-        )
-        # is this required? no assessment.can_edit_object in views.py
         if not self.assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
-        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
-        self.form = self.form_class(data=initial, can_edit=True, assessment=self.assessment)
-        if self.form.is_valid():
-            qs = qs.filter(self.form.get_query())
-        return qs
+        robs = models.RiskOfBias.objects.filter(active=True).prefetch_related("author", "scores")
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
+        )
 
     def get_context_data(self, **kwargs):
-        kwargs.update(form=self.form)
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(
@@ -237,33 +240,33 @@ class RobAssignmentList(BaseList):
         return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
 
 
-class RobAssignmentUpdate(BaseList):
+class RobAssignmentUpdate(BaseFilterList):
     parent_model = Assessment
     model = Study
     template_name = "riskofbias/rob_assignment_update.html"
-    paginate_by = 25
-    form_class = forms.RoBStudyFilterForm
+    filterset_class = StudyFilterSet
+    paginate_by = 50
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_filterset_kwargs(self):
+        kwargs = super().get_filterset_kwargs()
+        kwargs["include_rob_authors"] = True
+        return kwargs
+
     def get_queryset(self):
+        if not self.assessment.user_can_edit_assessment(self.request.user):
+            raise PermissionDenied()
         robs = models.RiskOfBias.objects.prefetch_related("author", "scores")
-        qs = (
+        return (
             super()
             .get_queryset()
-            .filter(assessment=self.assessment)
             .prefetch_related(Prefetch("riskofbiases", queryset=robs, to_attr="robs"))
         )
-        can_edit = self.assessment.user_can_edit_assessment(self.request.user)
-        if not can_edit:
-            raise PermissionDenied()
-        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
-        self.form = self.form_class(data=initial, can_edit=can_edit, assessment=self.assessment)
-        if self.form.is_valid():
-            qs = qs.filter(self.form.get_query())
-        return qs
 
     def get_context_data(self, **kwargs):
-        kwargs.update(form=self.form)
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
         context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))

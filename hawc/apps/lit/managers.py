@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import Dict, List, Tuple
 
 import pandas as pd
 from django.apps import apps
@@ -74,8 +73,153 @@ class PubMedQueryManager(BaseManager):
     assessment_relation = "search__assessment"
 
 
+class IdentifiersQuerySet(models.QuerySet):
+    def _associate_identifiers(
+        self, identifier_to_associated_id: dict, associated_id_to_identifier: dict
+    ) -> tuple[dict, list]:
+        """
+        Creates a dict of identifier to associated identifier given some intermediary dicts.
+
+        Args:
+            identifier_to_associated_id (dict): dict of identifier to associated id (ie PubMed/DOI string)
+            associated_id_to_identifier (dict): dict of associated ids from first argument to matching identifiers
+
+        Returns:
+            tuple[dict, list]: dict of identifier to associated identifier,
+                list of identifiers where associated identifier wasn't resolved
+        """
+        identifier_to_associated_identifier = {}
+        missing_identifiers = []
+
+        for identifier, associated_id in identifier_to_associated_id.items():
+            found = associated_id in associated_id_to_identifier
+            if found:
+                identifier_to_associated_identifier[identifier] = associated_id_to_identifier[
+                    associated_id
+                ]
+            else:
+                missing_identifiers.append(identifier)
+        return identifier_to_associated_identifier, missing_identifiers
+
+    def associated_doi(self, create: bool) -> dict:
+        """
+        Maps associated DOI identifier with each identifier in this queryset if it exists.
+
+        Args:
+            create (bool): Whether to create any missing DOI identifiers
+
+        Returns:
+            dict: Mapping of each identifier in this queryset to its associated DOI identifier.
+                If the association cannot be resolved, the key is left out.
+        """
+        # find associated doi ids
+        identifier_to_associated_doi = {
+            identifier: str(doi)
+            for identifier in self
+            if (doi := get_doi_from_identifier(identifier))
+        }
+
+        # find associated doi identifiers
+        doi_identifiers = self.model.objects.filter(
+            database=constants.ReferenceDatabase.DOI,
+            unique_id__in=identifier_to_associated_doi.values(),
+        )
+        doi_to_matching_identifier = {
+            identifier.unique_id: identifier for identifier in doi_identifiers
+        }
+
+        # map identifiers to associated doi identifiers
+        identifier_to_associated_identifier, missing_identifiers = self._associate_identifiers(
+            identifier_to_associated_doi, doi_to_matching_identifier
+        )
+
+        if create and missing_identifiers:
+            # create any missing doi identifiers
+            missing_doi_identifiers = [
+                self.model(
+                    database=constants.ReferenceDatabase.DOI,
+                    unique_id=identifier_to_associated_doi[identifier],
+                )
+                for identifier in missing_identifiers
+            ]
+            created_doi_identifiers = self.model.objects.bulk_create(missing_doi_identifiers)
+
+            # add these new doi identifiers to the association map
+            _identifier_to_associated_doi = {
+                identifier: identifier_to_associated_doi[identifier]
+                for identifier in missing_identifiers
+            }
+            _doi_to_matching_identifier = {
+                identifier.unique_id: identifier for identifier in created_doi_identifiers
+            }
+            _identifier_to_associated_identifier, _ = self._associate_identifiers(
+                _identifier_to_associated_doi, _doi_to_matching_identifier
+            )
+            identifier_to_associated_identifier.update(_identifier_to_associated_identifier)
+
+        return identifier_to_associated_identifier
+
+    def associated_pubmed(self, create: bool) -> dict:
+        """
+        Maps associated PubMed identifier with each identifier in this queryset if it exists.
+
+        Args:
+            create (bool): Whether to create any missing PubMed identifiers
+
+        Returns:
+            dict: Mapping of each identifier in this queryset to its associated PubMed identifier.
+                If the association cannot be resolved, the key is left out.
+        """
+        # find associated pubmed ids
+        identifier_to_associated_pubmed = {
+            identifier: str(pmid)
+            for identifier in self
+            if (pmid := identifier.get_content().get("PMID"))
+        }
+
+        # find associated pubmed identifiers
+        pubmed_identifiers = self.model.objects.filter(
+            database=constants.ReferenceDatabase.PUBMED,
+            unique_id__in=identifier_to_associated_pubmed.values(),
+        )
+        pubmed_to_matching_identifier = {
+            identifier.unique_id: identifier for identifier in pubmed_identifiers
+        }
+
+        # map identifiers to associated pubmed identifiers
+        identifier_to_associated_identifier, missing_identifiers = self._associate_identifiers(
+            identifier_to_associated_pubmed, pubmed_to_matching_identifier
+        )
+
+        if create and missing_identifiers:
+            # create any missing pubmed identifiers
+            fetcher = pubmed.PubMedFetch(
+                [identifier_to_associated_pubmed[identifier] for identifier in missing_identifiers]
+            )
+            fetched_content = fetcher.get_content()
+            created_pubmed_identifiers = self.model.objects.bulk_create_pubmed_ids(fetched_content)
+
+            # add these new pubmed identifiers to the association map
+            _identifier_to_associated_pubmed = {
+                identifier: identifier_to_associated_pubmed[identifier]
+                for identifier in missing_identifiers
+            }
+            _pubmed_to_matching_identifier = {
+                identifier.unique_id: identifier for identifier in created_pubmed_identifiers
+            }
+            _identifier_to_associated_identifier, _ = self._associate_identifiers(
+                _identifier_to_associated_pubmed, _pubmed_to_matching_identifier
+            )
+            identifier_to_associated_identifier.update(_identifier_to_associated_identifier)
+
+        return identifier_to_associated_identifier
+
+
 class IdentifiersManager(BaseManager):
     assessment_relation = "references__assessment"
+
+    def get_queryset(self):
+        return IdentifiersQuerySet(self.model, using=self._db)
 
     def get_from_ris(self, search_id, references):
         # Return a queryset of identifiers for each object in RIS file.
@@ -151,19 +295,19 @@ class IdentifiersManager(BaseManager):
         Identifiers.update_pubmed_content(pimdsFetch)
         return refs
 
-    def validate_hero_ids(self, ids: List[int]) -> Dict:
+    def validate_hero_ids(self, ids: list[int]) -> dict:
         """Queries HERO to return a valid list HERO content which doesn't already exist in HAWC.
 
         Only queries HERO with identifiers which are not already saved in HAWC.
 
         Args:
-            ids (List[int]): A list of HERO IDs
+            ids (list[int]): A list of HERO IDs
 
         Raises:
             ValidationError: Error if input ids are an invalid format, or HERO cannot find a match
 
         Returns:
-            Dict: {"success": List[Dict], "failures": List[int]}
+            dict: {"success": list[dict], "failures": list[int]}
         """
         # cast all ids to int
         invalid_ids = []
@@ -204,7 +348,7 @@ class IdentifiersManager(BaseManager):
             ]
         )
 
-    def hero(self, hero_ids: List[int], allow_missing=False):
+    def hero(self, hero_ids: list[int], allow_missing=False):
         qs = self.filter(database=constants.ReferenceDatabase.HERO, unique_id__in=hero_ids)
 
         if allow_missing is False and qs.count() != len(hero_ids):
@@ -214,19 +358,19 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def validate_pubmed_ids(self, ids: List[int]) -> List[Dict]:
+    def validate_pubmed_ids(self, ids: list[int]) -> list[dict]:
         """Queries Pubmed to return a valid list Pubmed content which doesn't already exist in HAWC.
 
         Only queries Pubmed with identifiers which are not already saved in HAWC.
 
         Args:
-            ids (List[int]): A list of PMIDs
+            ids (list[int]): A list of PMIDs
 
         Raises:
             ValidationError: If any PMIDs are non-numeric or if PubMed is unable to find a PMID.
 
         Returns:
-            List[Dict]: A list of imported pubmed content
+            list[dict]: A list of imported pubmed content
         """
         # cast all ids to int
         invalid_ids = []
@@ -271,7 +415,7 @@ class IdentifiersManager(BaseManager):
             ]
         )
 
-    def pubmed(self, pubmed_ids: List[int], allow_missing=False):
+    def pubmed(self, pubmed_ids: list[int], allow_missing=False):
         qs = self.filter(database=constants.ReferenceDatabase.PUBMED, unique_id__in=pubmed_ids)
 
         if allow_missing is False and qs.count() != len(pubmed_ids):
@@ -404,17 +548,15 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
+        pubmed_map = identifiers.associated_pubmed(create=True)
+        doi_map = identifiers.associated_doi(create=True)
+
         for identifier in identifiers:
             # check if any identifiers have a pubmed ID that already exists
             # in database. If not, save a new reference.
-            content = json.loads(identifier.content)
-            pmid = content.get("PMID", None)
 
-            if pmid:
-                ref = self.get_qs(search.assessment).filter(
-                    identifiers__unique_id=str(pmid),
-                    identifiers__database=constants.ReferenceDatabase.PUBMED,
-                )
+            if pubmed_identifier := pubmed_map.get(identifier):
+                ref = self.get_qs(search.assessment).filter(identifiers=pubmed_identifier)
             else:
                 ref = self.none()
 
@@ -425,13 +567,11 @@ class ReferenceManager(BaseManager):
             else:
                 ref = identifier.create_reference(search.assessment)
                 ref.save()
+                if pubmed_identifier:
+                    ref.identifiers.add(pubmed_identifier)
 
-            Identifiers = apps.get_model("lit", "Identifiers")
-            if doi := get_doi_from_identifier(identifier):
-                doi_id, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=constants.ReferenceDatabase.DOI
-                )
-                ref.identifiers.add(doi_id)
+            if doi_identifier := doi_map.get(identifier):
+                ref.identifiers.add(doi_identifier)
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             refs.append(ref)
@@ -477,17 +617,15 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
-        Identifiers = apps.get_model("lit", "Identifiers")
+        doi_map = identifiers.associated_doi(create=True)
+
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
-            if doi := get_doi_from_identifier(identifier):
-                doi_identifier, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=constants.ReferenceDatabase.DOI
-                )
+            if doi_identifier := doi_map.get(identifier):
                 ref.identifiers.add(doi_identifier)
             refs.append(ref)
 
@@ -708,7 +846,7 @@ class ReferenceTagsManager(BaseManager):
     def get_assessment_qs(self, assessment_id: int):
         return self.get_queryset().filter(content_object__assessment_id=assessment_id)
 
-    def delete_orphan_tags(self, assessment_id) -> Tuple[int, int]:
+    def delete_orphan_tags(self, assessment_id) -> tuple[int, int]:
         """
         Deletes all unreachable tags in an assessment's tag tree.
         An assessment log is created detailing these deleted tags.
@@ -717,7 +855,7 @@ class ReferenceTagsManager(BaseManager):
             assessment_id (int): Assessment id
 
         Returns:
-            Tuple[int, int]: Number of tags deleted, followed by log ID.
+            tuple[int, int]: Number of tags deleted, followed by log ID.
         """
         from .models import ReferenceFilterTag
 

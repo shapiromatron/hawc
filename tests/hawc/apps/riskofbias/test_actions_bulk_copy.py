@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 import pytest
 
@@ -10,7 +9,7 @@ from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasScore
 
 @pytest.mark.django_db
 class TestBulkRobCopyAction:
-    def _valid_arguments(self) -> Dict:
+    def _valid_arguments(self) -> dict:
         return {
             "src_assessment_id": 1,
             "dst_assessment_id": 2,

@@ -96,7 +96,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         """Reorder domains/metrics in the order specified.
 
         The requests.data is expected to be a list in the following format:
-            List[Tuple[int, List[int]]] where, the first item in the tuple is a domain_id and
+            list[tuple[int, list[int]]] where, the first item in the tuple is a domain_id and
             the second is al ist of metric_ids associated with that domain.
         """
         qs = self.get_queryset().filter(assessment=self.assessment).prefetch_related("metrics")

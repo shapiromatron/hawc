@@ -3,7 +3,11 @@ from django import forms
 
 from ..assessment.models import DoseUnits
 from ..common.autocomplete import AutocompleteTextWidget
-from ..common.filterset import AutocompleteModelMultipleChoiceFilter, BaseFilterSet
+from ..common.filterset import (
+    AutocompleteModelMultipleChoiceFilter,
+    BaseFilterSet,
+    PaginationFilter,
+)
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models
 
@@ -128,6 +132,7 @@ class OutcomeFilterSet(BaseFilterSet):
             ("diagnostic", "diagnostic"),
         ),
     )
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Outcome
@@ -148,12 +153,14 @@ class OutcomeFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
-        grid_layout = [
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3, 3],
-        ]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
+            ]
+        }
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)

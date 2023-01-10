@@ -8,6 +8,7 @@ from ..common.filterset import (
     AutocompleteModelChoiceFilter,
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
+    PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models
@@ -133,6 +134,7 @@ class EndpointFilterSet(BaseFilterSet):
         field_name="animal_group__dosing_regime__doses__dose_units",
         label="Dose units",
         queryset=DoseUnits.objects.all(),
+        distinct=True,
     )
     order_by = df.OrderingFilter(
         fields=(
@@ -160,6 +162,7 @@ class EndpointFilterSet(BaseFilterSet):
             ("chemical", "chemical"),
         ),
     )
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Endpoint
@@ -183,13 +186,15 @@ class EndpointFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
-        grid_layout = [
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3, 3, 3],
-            [3, 3],
-        ]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}]},
+            ]
+        }
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)

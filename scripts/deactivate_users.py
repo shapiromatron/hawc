@@ -6,7 +6,6 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import List
 
 import django
 from django.core import management
@@ -23,14 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 @transaction.atomic
-def deactivate_user(new_id: int, old_ids: List[int]):
+def deactivate_user(new_id: int, old_ids: list[int]):
     """
     Mark old IDs as inactive; ensure that new ID users have the same id. Used
     when a user creates multiple accounts and only wants to keep one.
 
     Args:
         new_id (int): user ID to keep active
-        old_ids (List[int]): user IDs to mark inactive
+        old_ids (list[int]): user IDs to mark inactive
     """
     # deactivate old user ids, and reassign assessments for current user
     new_user = HAWCUser.objects.get(id=new_id)

@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import pandas as pd
 from pydantic import BaseModel, Field, conint
@@ -62,7 +62,7 @@ class Column(BaseModel):
 class Row(BaseModel):
     id: int
     type: str
-    customized: List
+    customized: list
 
 
 class JudgmentColorCell(BaseCell):
@@ -79,9 +79,9 @@ class StudyEvaluationTable(BaseTable):
     assessment_id: int
     data_source: DataSourceChoices
     published_only: bool
-    subheaders: List[Subheader]
-    cell_columns: List[Column] = Field([], alias="columns")
-    cell_rows: List[Row] = Field([], alias="rows")
+    subheaders: list[Subheader]
+    cell_columns: list[Column] = Field([], alias="columns")
+    cell_rows: list[Row] = Field([], alias="rows")
 
     _data: pd.DataFrame
     _rob: pd.DataFrame

@@ -2,7 +2,6 @@ import itertools
 import logging
 from collections import Counter
 from io import StringIO
-from typing import List
 
 import pandas as pd
 from celery import chain
@@ -65,7 +64,7 @@ class SearchSerializer(serializers.ModelSerializer):
 
         return data
 
-    def validate_import_ids_exist(self, data, ids: List[int]):
+    def validate_import_ids_exist(self, data, ids: list[int]):
         try:
             if data["source"] == constants.ReferenceDatabase.HERO:
                 content = models.Identifiers.objects.validate_hero_ids(ids)
@@ -112,64 +111,6 @@ class IdentifiersSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Identifiers
         fields = "__all__"
-
-
-class ReferenceQuerySerializer(serializers.Serializer):
-    id = serializers.IntegerField(required=False, allow_null=True)
-    db_id = serializers.CharField(required=False, allow_blank=True)
-    year = serializers.IntegerField(required=False, allow_null=True)
-    title = serializers.CharField(required=False, allow_blank=True)
-    authors = serializers.CharField(required=False, allow_blank=True)
-    journal = serializers.CharField(required=False, allow_blank=True)
-    abstract = serializers.CharField(required=False, allow_blank=True)
-    tags = serializers.ListField(
-        child=serializers.IntegerField(),
-        allow_empty=True,
-        required=False,
-        min_length=0,
-        max_length=10,
-    )
-
-    def validate_tags(self, values):
-        assessment = self.context["assessment"]
-        if len(values) > 0:
-            try:
-                self._tags = models.ReferenceFilterTag.get_tags_in_assessment(assessment.id, values)
-            except ValueError:
-                raise serializers.ValidationError("Invalid tag IDs")
-        return values
-
-    def search(self):
-        qs = models.Reference.objects.filter(assessment=self.context["assessment"])
-        query = Q()
-        if "id" in self.data and self.data["id"] is not None:
-            query &= Q(id=self.data["id"])
-        if db_id := self.data.get("db_id", ""):
-            query &= Q(identifiers__unique_id__icontains=db_id)
-        if "year" in self.data and self.data["year"] is not None:
-            query &= Q(year=self.data["year"])
-        if "title" in self.data:
-            query &= Q(title__icontains=self.data["title"])
-        if "authors" in self.data:
-            query &= Q(authors_short__unaccent__icontains=self.data["authors"]) | Q(
-                authors__unaccent__icontains=self.data["authors"]
-            )
-        if "journal" in self.data:
-            query &= Q(journal__icontains=self.data["journal"])
-        if "abstract" in self.data:
-            query &= Q(abstract__icontains=self.data["abstract"])
-        if tags := getattr(self, "_tags", None):
-            # don't use a Q for tags; Q creates a subquery with join instead; this approach
-            # appends additional where clauses which are much more performant
-            for tag in tags:
-                tag_ids = list(tag.get_tree(parent=tag).values_list("id", flat=True))
-                qs = qs.filter(tags__in=tag_ids)
-        qs = (
-            qs.filter(query)
-            .select_related("study")
-            .prefetch_related("searches", "identifiers")[:100]
-        )
-        return [ref.to_dict() for ref in qs]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):
@@ -403,7 +344,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         child=serializers.ListField(min_length=2, max_length=2, child=serializers.IntegerField()),
     )
 
-    def validate_replace(self, replace: List) -> List:
+    def validate_replace(self, replace: list) -> list:
 
         self.ref_ids, self.hero_ids = zip(*replace)
         assessment = self.context["assessment"]

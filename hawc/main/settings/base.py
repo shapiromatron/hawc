@@ -3,7 +3,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
@@ -29,7 +28,7 @@ USE_I18N = False
 USE_L10N = True
 USE_TZ = True
 
-ADMINS: List[Tuple[str, str]] = []
+ADMINS: list[tuple[str, str]] = []
 _admin_names = os.getenv("DJANGO_ADMIN_NAMES", "")
 _admin_emails = os.getenv("DJANGO_ADMIN_EMAILS", "")
 if len(_admin_names) > 0 and len(_admin_emails) > 0:
@@ -186,8 +185,14 @@ EXTERNAL_RESOURCES = os.getenv("HAWC_EXTERNAL_RESOURCES", "")
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
 AUTH_PROVIDERS = {AuthProvider(p) for p in os.getenv("HAWC_AUTH_PROVIDERS", "django").split("|")}
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "hawc.apps.common.auth.TokenBackend",
+]
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
 SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
+SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
+SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")

@@ -1,4 +1,5 @@
 from django.db import models
+from pydantic import BaseModel
 
 
 class StudyType(models.IntegerChoices):
@@ -33,3 +34,12 @@ class SortOrder(models.TextChoices):
 class ExportStyle(models.IntegerChoices):
     EXPORT_GROUP = 0, "One row per Endpoint-group/Result-group"
     EXPORT_ENDPOINT = 1, "One row per Endpoint/Result"
+
+
+class TableauFilter(BaseModel):
+    field: str
+    value: str
+
+
+class TableauFilterList(BaseModel):
+    __root__: list[TableauFilter]
