@@ -9,15 +9,7 @@ from django.views.generic import RedirectView
 from ..assessment.models import Assessment
 from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
-from ..common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseUpdate,
-    MessageMixin,
-    TeamMemberOrHigherMixin,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from . import filterset, forms, models

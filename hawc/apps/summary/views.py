@@ -13,15 +13,7 @@ from ..assessment.models import Assessment
 from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseList,
-    BaseUpdate,
-    TeamMemberOrHigherMixin,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
 from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, filterset, forms, models, serializers
 

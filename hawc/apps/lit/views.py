@@ -15,19 +15,7 @@ from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
 from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, listToUl, tryParseInt
-from ..common.views import (
-    AssessmentPermissionsMixin,
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseList,
-    BaseUpdate,
-    MessageMixin,
-    ProjectManagerOrHigherMixin,
-    TeamMemberOrHigherMixin,
-    WebappMixin,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
 from . import constants, filterset, forms, models
 
 
