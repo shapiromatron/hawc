@@ -10,7 +10,11 @@
         {% include 'lit/_reference_with_tags.html' with conflict_resolution=True show_actions=True %}
     </li>
     {% empty %}
-    <li class="list-group-item list-group-item-action my-3">No references with tag conflicts found.</li>
+    <li class="list-group-item">
+        <div class="alert alert-success">
+            <i class='fa fa-fw fa-check mr-1'></i>&nbsp;Conflict resolution complete! No conflicts to resolve.
+        </div>
+    </li>
     {% endfor %}
 </ul>
 {% include "includes/paginator.html" with plural_object_name="conflicts" %}
