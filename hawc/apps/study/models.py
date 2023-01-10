@@ -313,9 +313,15 @@ class Study(Reference):
     def flat_complete_data_row(ser, identifiers_df=None):
         return (
             ser["id"],
-            identifiers_df["hero_id"].get(ser["id"]) if identifiers_df is not None else None,
-            identifiers_df["pubmed_id"].get(ser["id"]) if identifiers_df is not None else None,
-            identifiers_df["doi"].get(ser["id"]) if identifiers_df is not None else None,
+            identifiers_df["hero_id"].get(ser["id"])
+            if identifiers_df is not None
+            else ser.get("hero_id", None),
+            identifiers_df["pubmed_id"].get(ser["id"])
+            if identifiers_df is not None
+            else ser.get("pubmed_id", None),
+            identifiers_df["doi"].get(ser["id"])
+            if identifiers_df is not None
+            else ser.get("doi", None),
             ser["url"],
             ser["short_citation"],
             ser["full_citation"],

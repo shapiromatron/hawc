@@ -1,4 +1,4 @@
-from ..common.helper import FlatFileExporter
+from ..common.helper import FlatFileExporter, get_study_export_identifiers
 from ..study.models import Study
 from . import models
 
@@ -19,10 +19,11 @@ class MetaResultFlatComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
+        identifiers_df = get_study_export_identifiers(self.queryset, "protocol__study_id")
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             row = []
-            row.extend(Study.flat_complete_data_row(ser["protocol"]["study"]))
+            row.extend(Study.flat_complete_data_row(ser["protocol"]["study"], identifiers_df))
             row.extend(models.MetaProtocol.flat_complete_data_row(ser["protocol"]))
             row.extend(models.MetaResult.flat_complete_data_row(ser))
 

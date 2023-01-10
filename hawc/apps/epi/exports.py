@@ -1,4 +1,4 @@
-from ..common.helper import FlatFileExporter
+from ..common.helper import FlatFileExporter, get_study_export_identifiers
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
 from . import models
@@ -19,10 +19,13 @@ class OutcomeComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
+        identifiers_df = get_study_export_identifiers(self.queryset, "study_population__study_id")
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             row = []
-            row.extend(Study.flat_complete_data_row(ser["study_population"]["study"]))
+            row.extend(
+                Study.flat_complete_data_row(ser["study_population"]["study"], identifiers_df)
+            )
             row.extend(models.StudyPopulation.flat_complete_data_row(ser["study_population"]))
             row.extend(models.Outcome.flat_complete_data_row(ser))
             for res in ser["results"]:
