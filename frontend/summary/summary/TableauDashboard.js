@@ -22,7 +22,7 @@ class TableauDashboard extends Component {
     }
 
     render() {
-        const {hostUrl, path, queryArgs} = this.props,
+        const {hostUrl, path, queryArgs, filters} = this.props,
             contentSize = h.getHawcContentSize(),
             MIN_HEIGHT = 600,
             MIN_WIDTH = 700,
@@ -31,7 +31,15 @@ class TableauDashboard extends Component {
 
         let fullPath = queryArgs && queryArgs.length > 0 ? `${path}?${queryArgs.join("&")}` : path;
 
-        return <tableau-viz src={hostUrl + fullPath} height={height} width={width}></tableau-viz>;
+        return (
+            <tableau-viz src={hostUrl + fullPath} height={height} width={width}>
+                {filters.map((filter, i) => {
+                    return (
+                        <viz-filter key={i} field={filter.field} value={filter.value}></viz-filter>
+                    );
+                })}
+            </tableau-viz>
+        );
     }
 }
 
@@ -39,6 +47,9 @@ TableauDashboard.propTypes = {
     hostUrl: PropTypes.string.isRequired,
     path: PropTypes.string.isRequired,
     queryArgs: PropTypes.arrayOf(PropTypes.string),
+    filters: PropTypes.arrayOf(
+        PropTypes.shape({field: PropTypes.string.isRequired, value: PropTypes.string.isRequired})
+    ),
 };
 
 export default TableauDashboard;

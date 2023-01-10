@@ -302,7 +302,7 @@ class ReferenceSerializer(serializers.ModelSerializer):
         )
         ret["editReferenceUrl"] = reverse("lit:ref_edit", args=(instance.pk,))
         ret["deleteReferenceUrl"] = reverse("lit:ref_delete", args=(instance.pk,))
-        ret["tagHistoryUrl"] = reverse("lit:tag-history", args=(instance.pk,))
+        ret["tagStatusUrl"] = reverse("lit:tag-status", args=(instance.pk,))
 
         ret["identifiers"] = [ident.to_dict() for ident in instance.identifiers.all()]
         ret["searches"] = [search.to_dict() for search in instance.searches.all()]
